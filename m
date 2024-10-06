@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-352343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CB9991DDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE1D991DDF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 12:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BA30B21BC5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79C82823BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 10:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481CF166F34;
-	Sun,  6 Oct 2024 10:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48581172BDF;
+	Sun,  6 Oct 2024 10:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iyInaoA8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2BSxm6q"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EA47F6
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 10:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0568F16D4E5
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 10:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728210620; cv=none; b=LXwRwj+7HdzPfK4KT8yfR9R3T4Dtwaz/7yFZzb3+AAkiq99pT0YZcQtDqQOZLUcJ7YbDpVvLXVJxvhD7SJIaVOHPFqMl9zLWprvGubtUlLRtqPupe/ufRlCYgcZ7tA86LnNAiKaRwoFrOpshseAA8wIJGuQ+Q+CcSJpcLlKzGeQ=
+	t=1728210702; cv=none; b=t+s9pSqOrnYCUj3mdS5oTz+/Cfwqs2vYL9aVoMO1lBQg1mP/892TigWToE31d9Io1wk8kZnmbKZhvXW5hQoTpK/2pDJDxxws4167Yv2d8WN7dAMKt4xTk7iVR47aItUw0ufonGPJwLI3r86lnKZQ9hOnFlKKJWssRCCTUtZ2Lcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728210620; c=relaxed/simple;
-	bh=/q5RSB3zXrOdqleEci0EsSo9N+y89Zu89ixbYXFAuuk=;
+	s=arc-20240116; t=1728210702; c=relaxed/simple;
+	bh=+1hMTw3yjrhtuWg/B41NsVCZVs0eLqPm2W6ekE6WIWo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsE31bLmWq6DsNdPbY+lWMADbSpNi7TotRaljSU9sq/B/J8Wzitf7kMH7itTByLRA5B4M4oll5/xSkxNOUiBoF0SlWW56dq10W1Gn4i+NWOql8dvcT8KvIMJqMRMN1tV4YMDjghRks1nKFU4qiYUpGzF/lhKuu7j79efICD9yqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iyInaoA8; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=dcJ/1cFMzLmWShOoOLDRnkG1ws6dkp/liOYCIPZnkglTxjR7vcp77lscTziNuGtGEnQBbCUZ5uwapFtXMxtwOflM4NKDdJXJsRpd94Rip8WhpzwkN6guyfE7/ZN5Aop5wmLA/jB0130gnnb6u+v8GsQnm/xnBXZV8kZzZeh96BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2BSxm6q; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728210617;
+	s=mimecast20190719; t=1728210700;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oulXyoLt0WKZ+UskwJ8Ah+v4BDE4agdwTAaApYR5Sz8=;
-	b=iyInaoA8UHv6rPfvhkPCvgBYQ76VGScfdHYreo3U4ZF5sG9+cFp4Wv6DtaFMhPGhcpu7xe
-	nvhyJKK7nFeripJlfTnpvdBMZMLUxxOt97IsHMNzjzsUoGFNbmokd8ozmLad78u2+9pjxn
-	S9LtqQsKdQt4YwLewKwlbIAmZgauWr4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=JCGr2POOT5uxbuD68RQ0lpX6z0IGw4KIWstExrGNdbk=;
+	b=c2BSxm6qwBD5GfrTRm6sixBQqHCM1i3e6y5ZkUQrClZQ1VfsKgLzEQaplkOhOlKgZ0jZME
+	/aNcJqK8iZngMkD10C2O8zZIrzNuZMjk8TjfRhFiJXrbdCUEzySYrXg8C2Ue+Wyddk5qkA
+	Bw85DxSdoKThVZ8EMZF6deFnuzq/YhA=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-ydslgbkkMWiEM3HboxXqxQ-1; Sun, 06 Oct 2024 06:30:16 -0400
-X-MC-Unique: ydslgbkkMWiEM3HboxXqxQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a993dc3d6e2so146195366b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 03:30:16 -0700 (PDT)
+ us-mta-653-xiBoOOjlOy6fcXmoMzntjQ-1; Sun, 06 Oct 2024 06:31:38 -0400
+X-MC-Unique: xiBoOOjlOy6fcXmoMzntjQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8711c48990so369938166b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 03:31:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728210615; x=1728815415;
+        d=1e100.net; s=20230601; t=1728210697; x=1728815497;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oulXyoLt0WKZ+UskwJ8Ah+v4BDE4agdwTAaApYR5Sz8=;
-        b=QQ/QDntrCAWkksWX/CnT562IEfgmZ834ntYIJMKqLvd/8WmvL8OCNT3THh8vAmSET/
-         4dStRMgljOWWx2vJIEcd+g4oimpzwvmQ+SI2taQBF0Byp+hVeRt5bWdenaMhYDp9o/dg
-         uF+9xz3TD8s82sR3plQFxiZIgu1iCYORAPZY1wvAeHHKFe7lvqicnq/1wKeaduRmI/3q
-         tL1bWf5YD49E52Hwtd5KGRsVLaZioO/0adtBQxfvycAT1FqBiiSH98i1aeMH5sqNB2O0
-         YPmKnNTcaM30QZ2qX5hymJ0utZIzjuA1ucYBQByOeQZFHI5PcYWAG/MCtLtVfh/ZclqX
-         7aEg==
-X-Gm-Message-State: AOJu0YzkN/n+SDMOBdIsXXQIyW2ekPntTiYgKWXgZJiz4vIIqOdQEKxA
-	HWh7LGsyXQQKleTcKOkiiomHDUguBNYGzLOnxVYC2Ciiwqtx5NQlKqXtIkHBd5kzHQJTNnSe6TQ
-	I3tJV+wtGNor95N6vFA++Y/aCYJHfoH4birxPgdtWdEWA9laiI8osCURsTGl69w==
-X-Received: by 2002:a17:907:6d0b:b0:a99:5466:2556 with SMTP id a640c23a62f3a-a9954662964mr4888866b.61.1728210615399;
-        Sun, 06 Oct 2024 03:30:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnspp1E51AID6UCwdFUYpbPtxjCzqz37ev9d/qB4+LC3pOdnudHEGJ+3lO8dzYGqI5hAlS1g==
-X-Received: by 2002:a17:907:6d0b:b0:a99:5466:2556 with SMTP id a640c23a62f3a-a9954662964mr4886666b.61.1728210614886;
-        Sun, 06 Oct 2024 03:30:14 -0700 (PDT)
+        bh=JCGr2POOT5uxbuD68RQ0lpX6z0IGw4KIWstExrGNdbk=;
+        b=QlcPjn5+7QKXDXpvIZltyYGjRTWq85FBAfJya3ltl0UrwsND1+nmi4YY40YBSj1tjW
+         U6MG2V3StGcqIpbQ7iPOgjRiv9PFC7CKai5enXJ/D60D/JVj98Idmx6OsJDkRZlfBIps
+         ixw7YFTQVd9jSqdksoy/keIROsfUIb0Jv2n3iZrFzsDYDGYrvrsFnbUOSxabkcAFyIGd
+         6LcBMOCppjwu7MtkUolPZwiM65pPs9Hg1PNngNlNRzS6WXR+l721q0zXG8VeofWf96P1
+         Agks4POuY6zQRbM7dL2OOEGGhy9L0zCM/vwXaaIjUWsBMth2DXYhQ3vck5uFWZDtRnFa
+         0L0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpqw8ioxtVyqp4WboMHtu0VFkXFcTImaEsx0Mkn+mf7wgQquzBq4ntuSHCOHEzRJA/+ATEjMMQ94/RT3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu4Xc3GFh8ePa1wLmlCDFbvwnCNWN3YIdUxq8ENMOAXTMbZvdl
+	xOmEQW4//QZJyZWctFKJi3GylRwND71eOlsE5Y14QJftDHkmp5XZpFtO5tUA92/BIEvRJBrP+lS
+	zWcHTwgLlmEDQXAXEGzmGZBAIp26WKvhOQoNFWYbJywKlG26OO1T6V0nOP3IE+A==
+X-Received: by 2002:a17:907:745:b0:a8d:caa:7fee with SMTP id a640c23a62f3a-a991bd04d9fmr915433566b.7.1728210697266;
+        Sun, 06 Oct 2024 03:31:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSx1R/LgYBtLI5vnf0Pf3LDe+dvGQmKU2skfmJeTA+eT0pHsSB2e/ggYoF1agP+LPkJ5N0lg==
+X-Received: by 2002:a17:907:745:b0:a8d:caa:7fee with SMTP id a640c23a62f3a-a991bd04d9fmr915431166b.7.1728210696829;
+        Sun, 06 Oct 2024 03:31:36 -0700 (PDT)
 Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7860cbsm238402766b.120.2024.10.06.03.30.14
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0598947sm1867769a12.11.2024.10.06.03.31.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 03:30:14 -0700 (PDT)
-Message-ID: <00f59e1b-0f43-457b-a7e0-6865934c4752@redhat.com>
-Date: Sun, 6 Oct 2024 12:30:13 +0200
+        Sun, 06 Oct 2024 03:31:35 -0700 (PDT)
+Message-ID: <9cfb6e26-e3d1-403a-a894-4a0902905407@redhat.com>
+Date: Sun, 6 Oct 2024 12:31:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,25 +81,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Update Intel In Field Scan(IFS) entry
-To: Jithu Joseph <jithu.joseph@intel.com>, ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- tony.luck@intel.com, ashok.raj.linux@gmail.com
-References: <20241001170808.203970-1-jithu.joseph@intel.com>
+Subject: Re: [PATCH RESEND v3 3/3] platform/x86: dell-laptop: Do not fail when
+ encountering unsupported batteries
+To: Armin Wolf <W_Armin@gmx.de>, pali@kernel.org, dilinger@queued.net
+Cc: rafael@kernel.org, lenb@kernel.org, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241001212835.341788-1-W_Armin@gmx.de>
+ <20241001212835.341788-4-W_Armin@gmx.de>
 Content-Language: en-US, nl
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241001170808.203970-1-jithu.joseph@intel.com>
+In-Reply-To: <20241001212835.341788-4-W_Armin@gmx.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 Hi,
 
-On 1-Oct-24 7:08 PM, Jithu Joseph wrote:
-> Ashok is no longer with Intel and his e-mail address will start bouncing
-> soon.  Update his email address to the new one he provided to ensure
-> correct contact details in the MAINTAINERS file.
+On 1-Oct-24 11:28 PM, Armin Wolf wrote:
+> If the battery hook encounters a unsupported battery, it will
+> return an error. This in turn will cause the battery driver to
+> automatically unregister the battery hook.
 > 
-> Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
+> On machines with multiple batteries however, this will prevent
+> the battery hook from handling the primary battery, since it will
+> always get unregistered upon encountering one of the unsupported
+> batteries.
+> 
+> Fix this by simply ignoring unsupported batteries.
+> 
+> Reviewed-by: Pali Rohár <pali@kernel.org>
+> Fixes: ab58016c68cc ("platform/x86:dell-laptop: Add knobs to change battery charge settings")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 
 Thank you for your patch/series, I've applied this patch
 (series) to my review-hans branch:
@@ -117,23 +130,48 @@ Hans
 
 
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c27f3190737f..89fb731384ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11496,7 +11496,7 @@ F:	include/uapi/linux/idxd.h
->  
->  INTEL IN FIELD SCAN (IFS) DEVICE
->  M:	Jithu Joseph <jithu.joseph@intel.com>
-> -R:	Ashok Raj <ashok.raj@intel.com>
-> +R:	Ashok Raj <ashok.raj.linux@gmail.com>
->  R:	Tony Luck <tony.luck@intel.com>
->  S:	Maintained
->  F:	drivers/platform/x86/intel/ifs
+> diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
+> index a3cd0505f282..5671bd0deee7 100644
+> --- a/drivers/platform/x86/dell/dell-laptop.c
+> +++ b/drivers/platform/x86/dell/dell-laptop.c
+> @@ -2391,12 +2391,18 @@ static struct attribute *dell_battery_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(dell_battery);
 > 
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> +static bool dell_battery_supported(struct power_supply *battery)
+> +{
+> +	/* We currently only support the primary battery */
+> +	return strcmp(battery->desc->name, "BAT0") == 0;
+> +}
+> +
+>  static int dell_battery_add(struct power_supply *battery,
+>  		struct acpi_battery_hook *hook)
+>  {
+> -	/* this currently only supports the primary battery */
+> -	if (strcmp(battery->desc->name, "BAT0") != 0)
+> -		return -ENODEV;
+> +	/* Return 0 instead of an error to avoid being unloaded */
+> +	if (!dell_battery_supported(battery))
+> +		return 0;
+> 
+>  	return device_add_groups(&battery->dev, dell_battery_groups);
+>  }
+> @@ -2404,6 +2410,9 @@ static int dell_battery_add(struct power_supply *battery,
+>  static int dell_battery_remove(struct power_supply *battery,
+>  		struct acpi_battery_hook *hook)
+>  {
+> +	if (!dell_battery_supported(battery))
+> +		return 0;
+> +
+>  	device_remove_groups(&battery->dev, dell_battery_groups);
+>  	return 0;
+>  }
+> --
+> 2.39.5
+> 
+> 
 
 
