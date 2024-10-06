@@ -1,138 +1,237 @@
-Return-Path: <linux-kernel+bounces-352585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4529B992111
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3874A992113
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 22:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593CE281C5B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB0C281C44
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 20:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5098318B498;
-	Sun,  6 Oct 2024 20:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F39F189F3E;
+	Sun,  6 Oct 2024 20:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMrYpC1T"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoUxOK/S"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E8018A936
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F02EAD8
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 20:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728245693; cv=none; b=FfCmjiouDKArbm5GEKsatuX1cqEcL0cUwf+0v8oztLSy5S/B9J26MdvLM1Hj6QC5yyW6HuUh/Sqeveap9sVdpdsM0fBfQvgnW3T89yPrXu113/d6BH5sgEOzA9rWK4DsKL8WpRjXRyewKz+icAQ1y5Q7pNqvg+GrqJdYEW9RbSM=
+	t=1728245757; cv=none; b=PHcSlUQPVCGzG6GJeI2Bv2NmG4qJX8m6yE17bAnXvpFDslP6yLxEg+9OBmsWrc4RVlbMVNHlthZZNV51Yv3hp/YY9CPu9rzQfnWgn7qU/0xYMLL623pWV59lxFpTdMc43EMgAN8kdqZgfpqFibfByekQ4RRQwWdy2PEH46Hvkzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728245693; c=relaxed/simple;
-	bh=TAOnruZ+UY0G77/aMNG4re8guO/zoiQVSwbD9ShvBKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRil6FVJw6dPZMWt7MCQEpyoesB9KJ3BaMff7K3QsmY2GA8LV7yeXIsJPU26jrzAwe2JgiQoScnsV4cQ0dlhOKRXyXCSGxbMBsAcxNbR1nytlDxxhb4NbC89AY1f6uOe2/NT9n7CCsZyzOQxpQKBnPQVl3Gb8Oh++qFDxZmxcT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LMrYpC1T; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2facf48166bso42504021fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:14:50 -0700 (PDT)
+	s=arc-20240116; t=1728245757; c=relaxed/simple;
+	bh=y1njcVstQVycFLxlcxV4jBl7XZdPqA6YNAwugnvp1U0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEMFTfGIPCF5CfnV2dvYJPqepIaatbrnUe8XapdBbNdwotdPbUXgZQL93r4lKGVc+3Yk+L5Oq/NfE+UHLCp/HykrQoI75EMZd7Iwq9oLMzBvbPl5ZttZqg5MtACVNGvuMBL29UPT2+ydKFEZKKQOn7+OYDMV08w5F3YGCdQ6578=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoUxOK/S; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2facf48166bso42508451fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 13:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728245689; x=1728850489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbcYT7ADpCO6HhcQ0PCuE8br5sqfMeh1whVSG+rVUPY=;
-        b=LMrYpC1T1SLo3lAIkPZjpOxcyN3lvV8aeALnoPg3jBG2IZCXbm582ff3HinmmG5WJe
-         A68bApvrA1QTgbqZFs8lc/4VxolTb89Dj4Y2d2rm52hMEOC8zVWX2bFkKthch2uW+4J0
-         m1u1w0+x6SZBHK52agdGQGSh/7aPlko+U+DMpmMpHC25djjShF5oMBMe8Dwri6UAkpFM
-         ML5ZTjsx3VFpcldcBrnkFEvjbFVki1nIR0UfrT9kkLmV7jgFhdeic4H/toaLnQ2QFRPB
-         vcAl+f0a+55juaamlfcPZgcox9v6HgR6ObsZ1W/zeLSKjEp8rWvZORQprl3TnwfBj306
-         D3Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728245689; x=1728850489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728245754; x=1728850554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bbcYT7ADpCO6HhcQ0PCuE8br5sqfMeh1whVSG+rVUPY=;
-        b=iXt49ovDwcu+XAPjL8dqxg4cITDrGeSTv60fBxkHMZs7VmYIbzRBi3PuFe2zWsDM7f
-         Zs1BLBQsJu8PL++hoH5qSF4lVS+0R38+OWd+TPaii4Y209Lg3UL0XuP3isWExaASf8sX
-         Un1kH5s5FV5RbDOLOdu+hazEbDc/3l8rqEWed5PSgu+0CTzhFt/+XpNVRL1N8gZos4/r
-         wPOP8CSg3NPBjtnsH3tb6p0AeNdY2y/VfpMN2B8KTu4eG6VdRDIYKC8ZDdjKgMIpn8pY
-         MteZdBtG9a8gS2KKV3sEOT3/wU5Lk0P/vj1AyOLS9qgryXA3Uxb8A8fA1vFSR0gQQ5W3
-         PhYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEQuqu1sU8B6nZbSOm5bTnHgt3GvMDDWROde/HNj3NiHczNEwtmX9lUR39KRf0qrhZDovGrpX6dRjXCB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywun2v1HOc+NAgr0KLt5j+5fsEdVv8jvyDEwB66e68EGJU09C12
-	VhGyY91FyN0KzbJrvq/Efby5oiFrSxPnIAYbsfpQxF8TgM3jAef5FwGbUCOs5F8=
-X-Google-Smtp-Source: AGHT+IF2Oz64RqFM18CQ1gi7geZOLRwqYHJ8HBR+9K0ClV1bZqi4bkDZKnMb99BP0u3VkiM4VwSzGg==
-X-Received: by 2002:a2e:a99d:0:b0:2fa:cf82:a1b2 with SMTP id 38308e7fff4ca-2faf3d70794mr49136781fa.31.1728245688751;
-        Sun, 06 Oct 2024 13:14:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b3ace7sm6110591fa.132.2024.10.06.13.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 13:14:48 -0700 (PDT)
-Date: Sun, 6 Oct 2024 23:14:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Karl Chan <exxxxkc@getgoogleoff.me>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
- dts from arm64
-Message-ID: <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
- <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+        bh=lQ41D6YpHw3mMfa3ZeJYQeO4Vo/r+hrFXgDDtjGd1J4=;
+        b=SoUxOK/StJvyXBrLTOgAXTqhqB6V+/8/s4WICxSO71AGAcCbmtN70V5H8mNIh/ahUN
+         k9vf3ulwBshP+6YNiwNhiosMQHYYFF12gkP+SJClCdNoko+8Fq2s7vSmkBf3abQ7gPeo
+         rDJWm6mrWB5yjA31qrUpay1jEKM86cF6lGs1j31xP/viYT5JN4dsNGF4KcPWp5SHcXxn
+         nYiE2J1nKePf6CBK7f5hhe/ZmxKW+e5JxYuB01NI2nYy1OBUTTzeocTQB/7PATFasUPs
+         hNhRx2LdfbZcKWnkhjQfp7EUve3gaaDTywF8f8FI5tWR7Nl987igNr7wYoUR8Kjti16m
+         gCnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728245754; x=1728850554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lQ41D6YpHw3mMfa3ZeJYQeO4Vo/r+hrFXgDDtjGd1J4=;
+        b=j0OlHeS6cGaZq1IvIn7Y/YPaUl6cI+P0aE4o/7K4PrChn0ppbvDK2szYbdQRuzD4bh
+         Xq5OhDyv809cA0Ya2cZdzIjJgj8vh34l49LIpSizVDCKVyEctsChytQiLa9jOeVqVYYW
+         n9WfMBhclJbBujdcmRWWVDXLG42h0BkF4pDvPuWwHyMjIz9bBxwNuEuGL0maZW0S4rvl
+         S6LDCIPuPoj4TuljBKpsiTIDTS8bMY6kZ9t4cV9JhGPnU58y3sNNgTPXPg4qop5GQJss
+         WXUtj6BaBKMhLh7lQQM1AlICFaULU26Hon7Hc9lhcpAm5Gt9vuUyx+gvHxlrPI8xb+VC
+         r8qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYDiBpRgVXrtUZ3PEDNbQgN7U0SHjDz3Z0YTMI0klbZoW2I4ycfHtkRqVJpdhVJ2+MW6TUAYM+zU82Az0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbsypAkjsjkkfjMcHXfJzbcTqcI9mOPtShKYoIj3hz26j3GUjB
+	RJCE5UDTLro8c47/yvBdAImTM2ZqiN5RCciYnN/8d0aekhKCODFkpN+gj+DmWQORFm6pc5Xe0/B
+	PeNX6twvdlDlwCpMyM4hULg71k7c=
+X-Google-Smtp-Source: AGHT+IG9R8rYIz8urcx8DXoB6WpkYs7kTrkH0lAgse4E1WzTnVT5mQBqoMEDNEQWj+dF3rkBsrnefTBwl1ynCBfxAf8=
+X-Received: by 2002:a2e:be84:0:b0:2ef:2b38:879c with SMTP id
+ 38308e7fff4ca-2faf3c0169cmr43054081fa.3.1728245753618; Sun, 06 Oct 2024
+ 13:15:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+References: <20241004142504.4379-1-aha310510@gmail.com>
+In-Reply-To: <20241004142504.4379-1-aha310510@gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Mon, 7 Oct 2024 04:15:37 +0800
+Message-ID: <CAMgjq7A4O=Yruznhxd+hqBE=XohWwHx=UyJVNPENHA+Mx3kLtQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: swap: prevent possible data-race in __try_to_reclaim_swap
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 07:28:04AM GMT, Karl Chan wrote:
-> Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
-
--ETOOLONG. Please wrap the line at 75 chars per line.
-
-While doing it please also add the reason for the change (32-bit
-firmware on the router).
-
-> 
-> The approach to include device tree files from other architectures is
-> inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-> used to build the device tree for both ARM32 and ARM64.
-> 
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+On Fri, Oct 4, 2024 at 10:26=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
+>
+> A report [1] was uploaded from syzbot.
+>
+> In the previous commit 862590ac3708 ("mm: swap: allow cache reclaim to sk=
+ip
+> slot cache"), the __try_to_reclaim_swap() function reads offset and nr_pa=
+ges
+> from folio without folio_lock protection.
+>
+> In the currently reported KCSAN log, it is assumed that the actual data-r=
+ace
+> will not occur because the calltrace that does WRITE already obtains the
+> folio_lock and then writes.
+>
+> However, the existing __try_to_reclaim_swap() function was already implem=
+ented
+> to perform reads under folio_lock protection [1], and there is a risk of =
+a
+> data-race occurring through a function other than the one shown in the KC=
+SAN
+> log.
+>
+> Therefore, I think it is appropriate to change all read operations for
+> folio to be performed under folio_lock.
+>
+> [1]
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KCSAN: data-race in __delete_from_swap_cache / __try_to_reclaim_swap
+>
+> write to 0xffffea0004c90328 of 8 bytes by task 5186 on cpu 0:
+>  __delete_from_swap_cache+0x1f0/0x290 mm/swap_state.c:163
+>  delete_from_swap_cache+0x72/0xe0 mm/swap_state.c:243
+>  folio_free_swap+0x1d8/0x1f0 mm/swapfile.c:1850
+>  free_swap_cache mm/swap_state.c:293 [inline]
+>  free_pages_and_swap_cache+0x1fc/0x410 mm/swap_state.c:325
+>  __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+>  tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+>  tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+>  tlb_flush_mmu+0x2cf/0x440 mm/mmu_gather.c:373
+>  zap_pte_range mm/memory.c:1700 [inline]
+>  zap_pmd_range mm/memory.c:1739 [inline]
+>  zap_pud_range mm/memory.c:1768 [inline]
+>  zap_p4d_range mm/memory.c:1789 [inline]
+>  unmap_page_range+0x1f3c/0x22d0 mm/memory.c:1810
+>  unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
+>  unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
+>  exit_mmap+0x18a/0x690 mm/mmap.c:1864
+>  __mmput+0x28/0x1b0 kernel/fork.c:1347
+>  mmput+0x4c/0x60 kernel/fork.c:1369
+>  exit_mm+0xe4/0x190 kernel/exit.c:571
+>  do_exit+0x55e/0x17f0 kernel/exit.c:926
+>  do_group_exit+0x102/0x150 kernel/exit.c:1088
+>  get_signal+0xf2a/0x1070 kernel/signal.c:2917
+>  arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
+>  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> read to 0xffffea0004c90328 of 8 bytes by task 5189 on cpu 1:
+>  __try_to_reclaim_swap+0x9d/0x510 mm/swapfile.c:198
+>  free_swap_and_cache_nr+0x45d/0x8a0 mm/swapfile.c:1915
+>  zap_pte_range mm/memory.c:1656 [inline]
+>  zap_pmd_range mm/memory.c:1739 [inline]
+>  zap_pud_range mm/memory.c:1768 [inline]
+>  zap_p4d_range mm/memory.c:1789 [inline]
+>  unmap_page_range+0xcf8/0x22d0 mm/memory.c:1810
+>  unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
+>  unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
+>  exit_mmap+0x18a/0x690 mm/mmap.c:1864
+>  __mmput+0x28/0x1b0 kernel/fork.c:1347
+>  mmput+0x4c/0x60 kernel/fork.c:1369
+>  exit_mm+0xe4/0x190 kernel/exit.c:571
+>  do_exit+0x55e/0x17f0 kernel/exit.c:926
+>  __do_sys_exit kernel/exit.c:1055 [inline]
+>  __se_sys_exit kernel/exit.c:1053 [inline]
+>  __x64_sys_exit+0x1f/0x20 kernel/exit.c:1053
+>  x64_sys_call+0x2d46/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:=
+61
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> value changed: 0x0000000000000242 -> 0x0000000000000000
+>
+> Reported-by: syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+> Fixes: 862590ac3708 ("mm: swap: allow cache reclaim to skip slot cache")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 > ---
->  arch/arm/boot/dts/qcom/Makefile                         | 1 +
->  arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
->  2 files changed, 3 insertions(+)
->  create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> 
-> diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-> index f06c6d425e91..147dbeb30a6a 100644
-> --- a/arch/arm/boot/dts/qcom/Makefile
-> +++ b/arch/arm/boot/dts/qcom/Makefile
-> @@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->  	qcom-ipq4019-ap.dk04.1-c3.dtb \
->  	qcom-ipq4019-ap.dk07.1-c1.dtb \
->  	qcom-ipq4019-ap.dk07.1-c2.dtb \
-> +	qcom-ipq5018-linksys-jamaica.dtb \
->  	qcom-ipq8064-ap148.dtb \
->  	qcom-ipq8064-rb3011.dtb \
->  	qcom-msm8226-microsoft-dempsey.dtb \
-> diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> new file mode 100644
-> index 000000000000..9a6ad767ebd7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> @@ -0,0 +1,2 @@
-> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-> +#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
-> -- 
-> 2.46.1
-> 
+>  mm/swapfile.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 0cded32414a1..904c21256fc2 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -193,13 +193,6 @@ static int __try_to_reclaim_swap(struct swap_info_st=
+ruct *si,
+>         folio =3D filemap_get_folio(address_space, swap_cache_index(entry=
+));
+>         if (IS_ERR(folio))
+>                 return 0;
+> -
+> -       /* offset could point to the middle of a large folio */
+> -       entry =3D folio->swap;
+> -       offset =3D swp_offset(entry);
+> -       nr_pages =3D folio_nr_pages(folio);
+> -       ret =3D -nr_pages;
+> -
+>         /*
+>          * When this function is called from scan_swap_map_slots() and it=
+'s
+>          * called by vmscan.c at reclaiming folios. So we hold a folio lo=
+ck
+> @@ -210,6 +203,12 @@ static int __try_to_reclaim_swap(struct swap_info_st=
+ruct *si,
+>         if (!folio_trylock(folio))
+>                 goto out;
+>
+> +       /* offset could point to the middle of a large folio */
+> +       entry =3D folio->swap;
+> +       offset =3D swp_offset(entry);
+> +       nr_pages =3D folio_nr_pages(folio);
+> +       ret =3D -nr_pages;
+> +
+>         need_reclaim =3D ((flags & TTRS_ANYWAY) ||
+>                         ((flags & TTRS_UNMAPPED) && !folio_mapped(folio))=
+ ||
+>                         ((flags & TTRS_FULL) && mem_cgroup_swap_full(foli=
+o)));
+> --
+>
 
--- 
-With best wishes
-Dmitry
+Thanks for catching this!
+
+This could lead to real problems, holding reference is not enough for
+protecting folio->swap. There are several BUG_ONs later that will be
+triggered if it changed.
+
+But you still have to keep `nr_pages ` and `ret` before the
+`folio_trylock `, or `ret` will be uninitialized if folio_trylock
+fails, this function should always return the page number even if the
+try lock failed. And as WIlly said, `folio_nr_pages` doesn't require
+folio lock.
 
