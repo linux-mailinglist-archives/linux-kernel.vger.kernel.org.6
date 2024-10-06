@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-352491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DDC991FF8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:33:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92C1991FFB
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483B71F20FFE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:33:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F810B209C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F3D189F47;
-	Sun,  6 Oct 2024 17:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DBF189BBE;
+	Sun,  6 Oct 2024 17:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifDeqqwp"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J480MbBj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECDF189B8C
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD1F13A3ED;
+	Sun,  6 Oct 2024 17:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728235987; cv=none; b=LaMgZbfPtlnfwx4SG8gXj9ux8BqI3pvHPLMng5b+pg0X4qoH4bYKeqDORa/Zwu8y4j6BRixflrKl125ujUXE60XJ35SowfDLQ67UPQmj1g4ViFKVWkFGvpgBbCKV6kHKaSp1/Bh+hfCvg79DrXCE1pnXOlGkz0KRky7wsLI5Yu0=
+	t=1728236088; cv=none; b=dHkpx9F+h9dQjahOE58LSpMYJo1NUZCX0FEP4Snf3AJB41Y/6rxFiukuUVfbSvMkb1PGm9ls0WrC8sv5O7HGjKFBSmBXxuk94TcsSIZmFnL7qrIu0z/n6tj3Bcoff+BHSKfurc6fJobzwCTQ5Q5kSbp6R5LlTb+O7oYQLuGg0Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728235987; c=relaxed/simple;
-	bh=QhCyGOkQgiBpgvjvqjxBH9vOLjNZpa8j8B//L6DyBoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZXvtOUMkj/YqwHR+8UCX7HykCrHDmgAUx+Ojas+MJb3AFMu+vb4cOzhto8/Yb+OdI3RiiRNfONF2w6SAdtnggvgtftV3TARR3wR1MaU0SRV0hJWwmnztk4tr2kF89Luy1T9A57mDHzpKDctnTe/kRJd38TKM4jhqlXWOiuK1U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifDeqqwp; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2facaa16826so32087451fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728235984; x=1728840784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WIFhis9nbzOYzg4QwZr7uypPsNR98pceYiIiC4Gv7+c=;
-        b=ifDeqqwpeKFCj0KXxkmJnX9bZNi5iT/ntmaGhATi/PUwJg1Qv450psSoO5SZ+hrpru
-         oPw5iMfZcBTUUDg3kPTCI2hMKcVSlg56tBNJvuMvxODmrbcYaf8Ft/ot4QnxWcsbxpER
-         jVXg39Wn0xpDk1qCeLD84p9901ibNlZRGmt52Hc4qz2kNNJ6hMAwHotPvv0TwEdZJsVd
-         o87gbalHS8jmo9mlAt7wvPqP4Bek05hw2T8renKY5wTWq05OV759aDGn2tmw2IJrZgFD
-         S3yp+JAnpNUiWzzqR0b3dU3BP/KSKmdGpyY7j9syEgE/L0FmYXPHX1NvKWFVYARGm8eP
-         64IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728235984; x=1728840784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WIFhis9nbzOYzg4QwZr7uypPsNR98pceYiIiC4Gv7+c=;
-        b=mWQrJ3FoUF1G8QXthsyj8ioT7EAmZg2Go/GHd4STmSye5S7CT9EemidrUZZcYMsH4P
-         rtsnfcQnhjA3d17pur8E3laEPWiQCcdPRfnn3hg03WKPMKNjFUFuF8xlZFxGMLWKgqBm
-         IMNtpb37sEDM3tWYZwhbAXmY/qWbzhUBjAYuso3mlEkL6XXR9hdgIEChSRP+Hd00zjG4
-         b5Gfiy9VpeRYCHACu38gbus5L88CrWqCJfYFIhXo2Q2w+vgcNQxP7ZI5XglKqum84wJ6
-         TvCYrOug+iaa4cqeJ8LCvDUvlQORAlp2Kg1usTcc0oCqGx1KjBrECSpgcAAk19WKQJVl
-         5YAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2QuP9tx/a8gLRGbKpTaJ8UGnvUBSgkyVXboZhgkD7e6CgDx3hMj7IhsL0ToMLGoxc5/WGmL1+t0p+YrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDOYF9ClinNe4WGGRhB4VHn1UW9knDfbP5PwyhTUfMWLD03nBt
-	3WptZ0EjyX1b85WnQAl6xlgWTKE4Wuasda+PBfuFliwBM0r+IrCAKu9QFaNPyIc=
-X-Google-Smtp-Source: AGHT+IEsWkHJHdD9uuGdPDeF23ZAzVVLlr+LsqBI8Z+Fbqrl+fN88PTSQcf204i5YPdtXnCiwFww3g==
-X-Received: by 2002:a2e:1309:0:b0:2f6:484d:cd61 with SMTP id 38308e7fff4ca-2faf3d91a05mr30834981fa.43.1728235983593;
-        Sun, 06 Oct 2024 10:33:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b3374bsm5704401fa.117.2024.10.06.10.33.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 10:33:02 -0700 (PDT)
-Date: Sun, 6 Oct 2024 20:32:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550
- or gcc-sm8650
-Message-ID: <vaovefjpxyzrcobv5vinepfdbgfsmng2cdhuzkph44ojrpvui5@7ckz43wyddsk>
-References: <20241005144047.2226-1-jonathan@marek.ca>
+	s=arc-20240116; t=1728236088; c=relaxed/simple;
+	bh=PGUd8cKsxuUWECeWxoh99/UCrQ9TF9GaW5lv7JRiw1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gdQoCul1T9lJUSXpENUKAuBZceuDkycospxTtxxp71CNR9rvCMJjYc0ZHSu1vDQIW4Zm6pGL5rV0DjFFrkNbs4PafkkFBBpBwzf70JhtIh4/4pNRAZJ9fEsQhd2j7tI2v158ovpPkfRdd/PCJwjgR+q/4lZCOeuiS6BDNhUygvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J480MbBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F126CC4CECD;
+	Sun,  6 Oct 2024 17:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728236088;
+	bh=PGUd8cKsxuUWECeWxoh99/UCrQ9TF9GaW5lv7JRiw1o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J480MbBjhVUTk/P4vqkDvHCTiOubp1bKGJYKOwjwX72rSRczL5nrZJhx444R49VaU
+	 7zbwNndpAKjtrzffOLZV6F1MNSzjmw5Wxx6TM4XdMLRQ3vnTL96wi1wFX/+1SZv3ER
+	 imCcIq0hztCmrZ131el673j8KxSbCHbDrDlgPGgKHoyQg0udKuFmjhCvJz9Xsn/lYo
+	 wmcX9HqGikXE2y5u8OF13yfzLJaE8ZHca23MC7Tfv1JYCtGDZGWs0Lc8yNgqXD18cN
+	 GLzCJ0oo/SY7i9RwBLGPUMaWlw50Gjd7YUOf5rxsg8g0SnwIqLA6a03E09MiuUf3Gz
+	 B/z9y6bstaFBw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so4792108e87.0;
+        Sun, 06 Oct 2024 10:34:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUW2AnG2prJvAU83+LWaKupwZ4icep/k229nSw2J7XrUKyzByVGskohamceq017mnUBC/2XQf6dgeEx@vger.kernel.org, AJvYcCUjQ6gIaE7zStC5cEE0WrUcFtdgnyT1qUj2EyhXles7Ujb/OV9PtDXo/BmSJKJB36M9/J80+Jx2IPXnrGAB@vger.kernel.org, AJvYcCXKcBnjM0cREy78B3hWKmUQupakJ7HctRgXAoYMuMaDursdU+E+QhPL7mZbNqDNrCFW8OILQa0L4toOSFnn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPzKPnFSyoWxL37fnbnMwVKnD/ZH3YBa8O4J+PhHrstuztD6rL
+	z1ZioxZa4kDC/vFh+5jvkqbbP2vwyZjiTM/MDa272+m8zPMkDhn8sBR7KF0tjvZIaAr+145bBqA
+	ptZCat8j04YFSNhgVYEuQg7b1vkA=
+X-Google-Smtp-Source: AGHT+IHM6IrouUIKVFd1yHOeng/VAl/xZqQqdpvGXpl/Q+/O75CQ8MvW/VWtj05/gkK7JydexnP1ZshLEC8/30mfFkQ=
+X-Received: by 2002:a05:6512:110e:b0:539:8f02:f55e with SMTP id
+ 2adb3069b0e04-539ab873373mr4342825e87.33.1728236086679; Sun, 06 Oct 2024
+ 10:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005144047.2226-1-jonathan@marek.ca>
+References: <20240925053230.45606-1-xu.yang_2@nxp.com>
+In-Reply-To: <20240925053230.45606-1-xu.yang_2@nxp.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 7 Oct 2024 02:34:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARPe-R5xkXRWBPW7aMpsQzc4BCyKLJmJ==aKy+_JDKkUg@mail.gmail.com>
+Message-ID: <CAK7LNARPe-R5xkXRWBPW7aMpsQzc4BCyKLJmJ==aKy+_JDKkUg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix a typo dt_binding_schema -> dt_binding_schemas
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	nathan@kernel.org, nicolas@fjasle.eu, devicetree@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 05, 2024 at 10:40:46AM GMT, Jonathan Marek wrote:
-> This driver is compatible with both sm8550 and sm8650, fix the Kconfig
-> entry to reflect that.
-> 
-> Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+On Wed, Sep 25, 2024 at 2:31=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
+>
+> If we follow "make help" to "make dt_binding_schema", we will see
+> below error:
+>
+> $ make dt_binding_schema
+> make[1]: *** No rule to make target 'dt_binding_schema'.  Stop.
+> make: *** [Makefile:224: __sub-make] Error 2
+>
+> It should be a typo. So this will fix it.
+>
+> Fixes: 604a57ba9781 ("dt-bindings: kbuild: Add separate target/dependency=
+ for processed-schema.json")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+
+
+Applied to linux-kbuild. Thanks.
+
 > ---
->  drivers/clk/qcom/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 265dd990a9b6..7aa71c70305e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1645,7 +1645,7 @@ help:
+>                 echo '* dtbs               - Build device tree blobs for =
+enabled boards'; \
+>                 echo '  dtbs_install       - Install dtbs to $(INSTALL_DT=
+BS_PATH)'; \
+>                 echo '  dt_binding_check   - Validate device tree binding=
+ documents and examples'; \
+> -               echo '  dt_binding_schema  - Build processed device tree =
+binding schemas'; \
+> +               echo '  dt_binding_schemas - Build processed device tree =
+binding schemas'; \
+>                 echo '  dtbs_check         - Validate device tree source =
+files';\
+>                 echo '')
+>
+> --
+> 2.34.1
+>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
--- 
-With best wishes
-Dmitry
+--=20
+Best Regards
+Masahiro Yamada
 
