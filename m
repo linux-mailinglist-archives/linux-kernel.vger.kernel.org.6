@@ -1,258 +1,152 @@
-Return-Path: <linux-kernel+bounces-352504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26415992019
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:46:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6794992022
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 19:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 906D01F21781
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:46:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0242E1C20CAB
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 17:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C448D189F2D;
-	Sun,  6 Oct 2024 17:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8637018991B;
+	Sun,  6 Oct 2024 17:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hoiy7ZDo"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3GHxGEZ"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DC6A2D;
-	Sun,  6 Oct 2024 17:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8ED28377
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 17:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728236759; cv=none; b=M9dHGWDouYnicsddPNxUxMxGi9+O1vp2L4sc3C8bIZi2KRXJUqmI2r2pjRoF2LBYBXUPByKfp4PH//klPu1mLbkH3oNXnWNJJRFD/9c3h4trS+tHR0/9IfbNDL2IDNRBVSwp1+L12IxHHPV4B7mjyK388hB0l6EXAoQOWCT4FIs=
+	t=1728237179; cv=none; b=qm6LeOm2Kmm89RdIarU+aCQulRROWmFhz2sMcMwtMtyVOuhkQWEJdzSDTn+xgIyDCvNXVTADrKjALvvBZLEAJhm5Pbp+nJhfTKhtzv5ekwjW92UtsZs548KfQu5vYMRU4Sh7kZTbaz/6era7htSD/X+vn2ykbJFYmLHaY+Uqj8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728236759; c=relaxed/simple;
-	bh=vLA7OwEgRexwtwQqY4A+Kcl2cwPaR5Yhb0YID61kPzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G8kmJedxrhRJVTVs5TTtw+/PGqGXqUv1g1y8IcaAxu7Yyn4RwtevCRtSz68hCyGWPfbAbjJVH8YrSfh4vGXuWxWMC9i9ZD2qavTlX/ITiFbo/CRoZhUvAryLPzXfYXGW34rRFcUV/SGreWPOS8lIVy0Xe0nITUFAmrH/2fqzo9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hoiy7ZDo; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1728237179; c=relaxed/simple;
+	bh=uCTNLqGYGJBN8F9X0TsRm6AjMi7eTfuDTAZs2gcxcyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lEw1sQi5gy305XwYjHEhpUERqe3pSNX2ikzs2Y0hwRgs/G5XfvGkyfqPi7Rv9rnKFDmuJ5YVGeGweQTIsoXKB8G2+e8hnmBnXOcNUpC9NB49mwceXsmMmjeoPWF2el+3L+winQXPMCjtY0etP5k4bH6v7ivm5n8faneOy/F6/08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3GHxGEZ; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac187eef2so43073221fa.3;
-        Sun, 06 Oct 2024 10:45:57 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dbc5db8a31so27793527b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 10:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728236755; x=1728841555; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QtkVAhWObzYD17h0yeTdaPTBSYXwKABgGKk7AeS9LIw=;
-        b=Hoiy7ZDoJZXobpEQtiycS64qpAKBAnuj6Xqo1H3SdFrVHA4P5MGHc3zAgbNXzm9Aqy
-         sQOfGE5Nkx9XxBKb1U1RxxbS35Xhvknq1YNNJbKSOHYVyfOuBScYK/vqkHitCZ3ynBHe
-         UxMjjE/TG+RV+RqX764LgUsf6u2MUN5Gh+H92g1p99wuN0SmITPpDHLLX8RZG7KkJNRZ
-         8YRJwD0t8xE9T8sgfHa/P2bvDmPToMW5mq6T8DCUgisM9tfz4abuSq5SZv0RyvwDSTiQ
-         uZ8sijivpsrH0JUOIWtAvemv/YBikQTQv29z1nOrLRlLjSmAbkkNVC79VjoQB9JOpb2i
-         +4jQ==
+        d=gmail.com; s=20230601; t=1728237176; x=1728841976; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fRmbHG3KTWcHELv1H5/kg1uMVewLUgezzMCppUgp7qk=;
+        b=W3GHxGEZNDMwRGlzKbubL1Xfok/NRDjizkQp2Sg/BCFB7If+jyb6ghYZ+YvNxzX7uR
+         jxJATWd9zM1c5uoxJVYb+VMdRABZsd2F28i4af/84sht2z519jLvbZC1fdEBW+RA055s
+         jmMuMmOFTdInYFKxCT5NuEM215/T53f1qwGWHvgo+N1km7RuG7n+RoE4JUde55WKCbfc
+         h6Xbf+qwLv4g2dS2qccKeee8MX8a3XycQVRT6AOlzFviHTRpFj1877bDHoPo0Yn+rEzp
+         92i5FT+/PSNA1aD+5DpxtWdbdk8JKXsNYAvo6YPRioza+d+iaZ0NhGnQSl23ZyOY2Pdh
+         kGGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728236755; x=1728841555;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QtkVAhWObzYD17h0yeTdaPTBSYXwKABgGKk7AeS9LIw=;
-        b=pTLHvWru9bXDXEZw5xbWvgZuRF9RJkb7JZ+P+ajtYIlg+w8KhTZmc0iDkTxe5vQ0pM
-         gGNQabbaHfak3fXi+5+CKb6jfsgfgcL7KvFl5pLf5tG6LFZDQI1Inv0UQ/60phUCGX8t
-         tlSZmhPbskh2l8GMCvoTmltZNvzcSfegH3N8d3KXx4Mq3yUrHQ96DCD6D2q8MDGfqYO4
-         dyRddvIq05eGsqr7el/sfbwCbYLJdgopk5+UWCFmSimdD+DnvxQBfTjepE17yGrSP5DL
-         OWAjtYc1RrRcGU3a/IpQOMGrdDigtCuvPUNw2P+MSf7ba1UUiNiRpLlk3VaCLLzSmKLM
-         riQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+BKB+1gTe+iCWa/jmJ3QR/uyshuJ7KxwH3xK3Q+MTm1FZPcy/vOVdheq+WOr/FjxrY5L9DXIrHgvp0LQj@vger.kernel.org, AJvYcCWkzxoSFqvOvjtuXNm7Ky2YnjfJL3TTCkB9WyvnFA1lQsh/ygxEHGQKSQieZiBrQNTaOcdp71e4T9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhTqonAfbmih6eq0j3VpgK5+CvaBxb0vJxss1H7Yd60CyxlcRI
-	VOGquYL9rGvYSXmhzoCAXkEx+EZj/XUX6k0o8MzhkkJmpADHUOaLmeErlYit
-X-Google-Smtp-Source: AGHT+IF5UYWhsz4kgh+37Q2uxTmaI/tA8w4Fl+hYOV3yTX6I2fnrlFE9I8Q66f8ZBBa1mylLwY9mCw==
-X-Received: by 2002:a05:651c:2129:b0:2fa:c9ad:3d36 with SMTP id 38308e7fff4ca-2faf3c2fff0mr42793601fa.7.1728236755029;
-        Sun, 06 Oct 2024 10:45:55 -0700 (PDT)
-Received: from [10.0.0.42] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9ac43efsm5666251fa.45.2024.10.06.10.45.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Oct 2024 10:45:54 -0700 (PDT)
-Message-ID: <7bc5091b-fb60-454d-8fd1-805d63b6d818@gmail.com>
-Date: Sun, 6 Oct 2024 20:50:54 +0300
+        d=1e100.net; s=20230601; t=1728237176; x=1728841976;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fRmbHG3KTWcHELv1H5/kg1uMVewLUgezzMCppUgp7qk=;
+        b=kNKjyXSNBZZYO1L4SxkONks4+1x04apBEPhFquvgnlQfZHOm7KBYCJqNlZ95iCqta4
+         CGCBGx36jA2rUpX2YexWn/yU1cHnOvPcV8YhxeQ+cW9JoOppLOY2d8+WVXtMlKVAxysh
+         /Om9Dte19xLPXmqTMEc9bmi9iqCp9mdVNTnpsz/2WCS3dQyFySyTV/0hDzB5Yr4rMaQW
+         nX7p4TajqUFtoC10LsMatC5DqqoZa9TTqJ/mmiNtarRPeiy8tgP2PhwcSgPRioYB1EcC
+         B5BLrx63cLuTqp8ssy1SQ64uwRNXprZ1APVL4+fqoWb/oaRLMRhTZDKuKT0lMSfw6FBa
+         y3ZQ==
+X-Gm-Message-State: AOJu0Yx4ryiUry/UjYtkyzDCfKGiZ3W1tqAc9Y8UV1cq/xys95S5oE12
+	SNvELAXc2OBJyRe3JeSBsJFziG2Co3dOszCETRVWSSvb/eumjv7QwHZGeAdS5FWTxVCyoe3OoZN
+	As1dN+AgCHISEinLBIHp9baSfLUU=
+X-Google-Smtp-Source: AGHT+IE8YaA8HEQyMZgsUgRyeL+AwEhcNAm6/PndcUFQtq1TcbLlsm381l72S3hbT+eqRrt8JwXbU7EhwVC87UWN+rI=
+X-Received: by 2002:a05:690c:4907:b0:6db:d221:b739 with SMTP id
+ 00721157ae682-6e2b5350533mr93012167b3.10.1728237176328; Sun, 06 Oct 2024
+ 10:52:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dmaengine: ti: k3-udma: Set EOP for all TRs in cyclic
- BCDMA transfer
-To: Jai Luthra <jai.luthra@linux.dev>, Vinod Koul <vkoul@kernel.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Devarsh Thakkar <devarsht@ti.com>, Rishikesh Donadkar <r-donadkar@ti.com>,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241006145727.291401-1-luca.boccassi@gmail.com> <20241006172158.GA10213@redhat.com>
+In-Reply-To: <20241006172158.GA10213@redhat.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Sun, 6 Oct 2024 18:52:44 +0100
+Message-ID: <CAMw=ZnS1GTC9RGQCeTqB8g2b78mFXi4zLfg6bumrp+zmgx0VXg@mail.gmail.com>
+Subject: Re: [PATCH v5] pidfd: add ioctl to retrieve pid info
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org, christian@brauner.io
+Content-Type: text/plain; charset="UTF-8"
 
+On Sun, 6 Oct 2024 at 18:22, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> On 10/06, luca.boccassi@gmail.com wrote:
+> >
+> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
+> > +{
+> > +     struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
+> > +     size_t usize = _IOC_SIZE(cmd);
+> > +     struct pidfd_info kinfo = {};
+> > +     struct user_namespace *user_ns;
+> > +     const struct cred *c;
+> > +     __u64 request_mask;
+> > +
+> > +     if (!uinfo)
+> > +             return -EINVAL;
+> > +     if (usize < sizeof(struct pidfd_info))
+> > +             return -EINVAL; /* First version, no smaller struct possible */
+> > +
+> > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
+> > +             return -EFAULT;
+> > +
+> > +     c = get_task_cred(task);
+> > +     if (!c)
+> > +             return -ESRCH;
+> > +
+> > +     /* Unconditionally return identifiers and credentials, the rest only on request */
+> > +
+> > +     kinfo.pid = task_pid_vnr(task);
+> > +     kinfo.tgid = task_tgid_vnr(task);
+> > +     kinfo.ppid = task_ppid_nr_ns(task, task_active_pid_ns(task));
+>                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+> The same problem as with "info.pid = pid_nr_ns(pid, task_active_pid_ns(task));"
+> you used before. You should use the caller's namespace, not the task's namespace.
+>
+>         kinfo.ppid = task_ppid_nr_ns(task, NULL);
+>
+> should work, see __task_pid_nr_ns() which uses task_active_pid_ns(current) if
+> ns == NULL.
+>
+> > +     /*
+> > +      * One last check before returning: the task might have exited while we
+> > +      * were fetching all the data, so check again to be safe. */
+> > +     if (task_pid_vnr(task) == 0)
+> > +             return -ESRCH;
+>
+> Well, this looks strange. It would be better to kill "kinfo.pid = task_pid_vnr()"
+> above and do
+>
+>         kinfo.pid = task_pid_vnr(task);
+>         if (!kinfo.pid)
+>                 return -ESRCH;
+>
+> at the end, but this is minor.
+>
+> I don't think we can rely on this check.
+>
+> Suppose that pidfd_info() runs on CPU_0 and it races with __unhash_process(task)
+> on CPU_1 which does
+>
+>         detach_pid(p, PIDTYPE_PID);
+>         detach_pid(p, PIDTYPE_TGID);
+>
+> Without the barries/locking CPU_0 can see the changes above out of order,
+> so it is possible that pidfd_info() will see task_pid_vnr(task) != 0, but
+> report kinfo.tgid == 0.
+>
+> Oleg.
 
-
-On 9/30/24 8:02 PM, Jai Luthra wrote:
-> From: Jai Luthra <j-luthra@ti.com>
-> 
-> When receiving data in cyclic mode from PDMA peripherals, where reload
-> count is set to infinite, any TR in the set can potentially be the last
-> one of the overall transfer. In such cases, the EOP flag needs to be set
-> in each TR and PDMA's Static TR "Z" parameter should be set, matching
-> the size of the TR.
-> 
-> This is required for the teardown to function properly and cleanup the
-> internal state memory. This only affects platforms using BCDMA and not
-> those using UDMA-P, which could set EOP flag in the teardown TR
-> automatically.
-> 
-> Similarly when transmitting data in cyclic mode to PDMA peripherals, the
-> EOP flag needs to be set to get the teardown completion signal
-> correctly.
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
-
-> Fixes: 017794739702 ("dmaengine: ti: k3-udma: Initial support for K3 BCDMA")
-> Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com> # Toradex Verdin AM62
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> Signed-off-by: Jai Luthra <jai.luthra@linux.dev>
-> ---
-> Changes in v2:
-> - Fix commit message and comments to make it clear that this change is
->   only needed for BCDMA
-> - Drop the redundant pkt_mode check
-> - Link to v1: https://lore.kernel.org/r/20240918-z_cnt-v1-1-2c58fbfb07d6@linux.dev
-> ---
->  drivers/dma/ti/k3-udma.c | 62 ++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 47 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-> index 406ee199c2ac1cffc29edb475df574cf9f0cf222..b3f27b3f92098a65afe9656ca31f9b8027294c16 100644
-> --- a/drivers/dma/ti/k3-udma.c
-> +++ b/drivers/dma/ti/k3-udma.c
-> @@ -3185,27 +3185,40 @@ static int udma_configure_statictr(struct udma_chan *uc, struct udma_desc *d,
->  
->  	d->static_tr.elcnt = elcnt;
->  
-> -	/*
-> -	 * PDMA must to close the packet when the channel is in packet mode.
-> -	 * For TR mode when the channel is not cyclic we also need PDMA to close
-> -	 * the packet otherwise the transfer will stall because PDMA holds on
-> -	 * the data it has received from the peripheral.
-> -	 */
->  	if (uc->config.pkt_mode || !uc->cyclic) {
-> +		/*
-> +		 * PDMA must close the packet when the channel is in packet mode.
-> +		 * For TR mode when the channel is not cyclic we also need PDMA
-> +		 * to close the packet otherwise the transfer will stall because
-> +		 * PDMA holds on the data it has received from the peripheral.
-> +		 */
->  		unsigned int div = dev_width * elcnt;
->  
->  		if (uc->cyclic)
->  			d->static_tr.bstcnt = d->residue / d->sglen / div;
->  		else
->  			d->static_tr.bstcnt = d->residue / div;
-> +	} else if (uc->ud->match_data->type == DMA_TYPE_BCDMA &&
-> +		   uc->config.dir == DMA_DEV_TO_MEM &&
-> +		   uc->cyclic) {
-> +		/*
-> +		 * For cyclic mode with BCDMA we have to set EOP in each TR to
-> +		 * prevent short packet errors seen on channel teardown. So the
-> +		 * PDMA must close the packet after every TR transfer by setting
-> +		 * burst count equal to the number of bytes transferred.
-> +		 */
-> +		struct cppi5_tr_type1_t *tr_req = d->hwdesc[0].tr_req_base;
->  
-> -		if (uc->config.dir == DMA_DEV_TO_MEM &&
-> -		    d->static_tr.bstcnt > uc->ud->match_data->statictr_z_mask)
-> -			return -EINVAL;
-> +		d->static_tr.bstcnt =
-> +			(tr_req->icnt0 * tr_req->icnt1) / dev_width;
->  	} else {
->  		d->static_tr.bstcnt = 0;
->  	}
->  
-> +	if (uc->config.dir == DMA_DEV_TO_MEM &&
-> +	    d->static_tr.bstcnt > uc->ud->match_data->statictr_z_mask)
-> +		return -EINVAL;
-> +
->  	return 0;
->  }
->  
-> @@ -3450,8 +3463,9 @@ udma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
->  	/* static TR for remote PDMA */
->  	if (udma_configure_statictr(uc, d, dev_width, burst)) {
->  		dev_err(uc->ud->dev,
-> -			"%s: StaticTR Z is limited to maximum 4095 (%u)\n",
-> -			__func__, d->static_tr.bstcnt);
-> +			"%s: StaticTR Z is limited to maximum %u (%u)\n",
-> +			__func__, uc->ud->match_data->statictr_z_mask,
-> +			d->static_tr.bstcnt);
->  
->  		udma_free_hwdesc(uc, d);
->  		kfree(d);
-> @@ -3476,6 +3490,7 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
->  	u16 tr0_cnt0, tr0_cnt1, tr1_cnt0;
->  	unsigned int i;
->  	int num_tr;
-> +	u32 period_csf = 0;
->  
->  	num_tr = udma_get_tr_counters(period_len, __ffs(buf_addr), &tr0_cnt0,
->  				      &tr0_cnt1, &tr1_cnt0);
-> @@ -3498,6 +3513,20 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
->  		period_addr = buf_addr |
->  			((u64)uc->config.asel << K3_ADDRESS_ASEL_SHIFT);
->  
-> +	/*
-> +	 * For BCDMA <-> PDMA transfers, the EOP flag needs to be set on the
-> +	 * last TR of a descriptor, to mark the packet as complete.
-> +	 * This is required for getting the teardown completion message in case
-> +	 * of TX, and to avoid short-packet error in case of RX.
-> +	 *
-> +	 * As we are in cyclic mode, we do not know which period might be the
-> +	 * last one, so set the flag for each period.
-> +	 */
-> +	if (uc->config.ep_type == PSIL_EP_PDMA_XY &&
-> +	    uc->ud->match_data->type == DMA_TYPE_BCDMA) {
-> +		period_csf = CPPI5_TR_CSF_EOP;
-> +	}
-> +
->  	for (i = 0; i < periods; i++) {
->  		int tr_idx = i * num_tr;
->  
-> @@ -3525,8 +3554,10 @@ udma_prep_dma_cyclic_tr(struct udma_chan *uc, dma_addr_t buf_addr,
->  		}
->  
->  		if (!(flags & DMA_PREP_INTERRUPT))
-> -			cppi5_tr_csf_set(&tr_req[tr_idx].flags,
-> -					 CPPI5_TR_CSF_SUPR_EVT);
-> +			period_csf |= CPPI5_TR_CSF_SUPR_EVT;
-> +
-> +		if (period_csf)
-> +			cppi5_tr_csf_set(&tr_req[tr_idx].flags, period_csf);
->  
->  		period_addr += period_len;
->  	}
-> @@ -3655,8 +3686,9 @@ udma_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
->  	/* static TR for remote PDMA */
->  	if (udma_configure_statictr(uc, d, dev_width, burst)) {
->  		dev_err(uc->ud->dev,
-> -			"%s: StaticTR Z is limited to maximum 4095 (%u)\n",
-> -			__func__, d->static_tr.bstcnt);
-> +			"%s: StaticTR Z is limited to maximum %u (%u)\n",
-> +			__func__, uc->ud->match_data->statictr_z_mask,
-> +			d->static_tr.bstcnt);
->  
->  		udma_free_hwdesc(uc, d);
->  		kfree(d);
-> 
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240918-z_cnt-3ca5daec76bf
-> 
-> Best regards,
-
--- 
-Péter
-
+I see, so what should I do here then? Check both? Or none? The caller
+needs to verify that the data is still valid at the point they use it
+anyway, so this helps but provides no guarantees anyway
 
