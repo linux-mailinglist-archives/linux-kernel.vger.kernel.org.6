@@ -1,298 +1,145 @@
-Return-Path: <linux-kernel+bounces-352358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C7F991E04
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6D2991E07
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B7A28246A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173761F21ACC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 11:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909D175568;
-	Sun,  6 Oct 2024 11:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965BE175D2A;
+	Sun,  6 Oct 2024 11:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5lNXbFe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S50nD9Rp"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252AB4C91;
-	Sun,  6 Oct 2024 11:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B546F4C91;
+	Sun,  6 Oct 2024 11:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213036; cv=none; b=pPuKZAppI6HIULwULJ5K+mvIOgc9L3vmT3azfYJaeT7j7pHTzatIXTX6s5QAdjRFXjKkAYG9GSTTixs9v+XR5Cpp6RhQa+A7WNzsf0Vm1ozUZx5CpiPjXoBRvoF2ZzL7dR/vX36PMquTxel7TBn5ic7A7nk7653SNBSlIz23fgM=
+	t=1728213178; cv=none; b=O7mEGLZd9GwIaKry5wajme93yDVzTrgXHb24mGCfXk8TtveIWgE1Cdp7z6SYu+OfX8lpBp+W6uJ3DAMzUNM6annW87+bdyTZyZ3unHTt+5RrRX50mbmcszI7myY1X7AaRkMuF/NwKDt0DWQ+QsAX3gWcMBII3kBgajR9zGxDuDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213036; c=relaxed/simple;
-	bh=DYIkOmaCZc2d0QA9SA8rQnwlSBcNSW1VWGEKoTVr91M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DoBzZEEG1lGPbnd4jMTigmzWpKM+44yeFoM/Xb0CWxAWTjViVCpZwpnursO/KQjNcz4KeRyhHP9P8qztwIEuBeJIAfdxGeKnF8TdabxrrGtWmQilq/cpd9UHEV3wvHflWxb2AG0vRRLv+EN79SnuKPqIbgQ1Ysi7CDOV9El29rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5lNXbFe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EB0C4CEC5;
-	Sun,  6 Oct 2024 11:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728213035;
-	bh=DYIkOmaCZc2d0QA9SA8rQnwlSBcNSW1VWGEKoTVr91M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b5lNXbFeJ/sPCXtc8MLl9kab+gSsfJroKoMyLBoT8p2BuXTsRqurNOVa4jUyXPF/N
-	 ZhmzvOhOgygTucdK3aNAGfFVrn8xGZQXmxLst5hUhChEze3wv5v/+6AdOUvHEFg46L
-	 r/R6TLtVI53q9ltLhXpSqU/UzIHo4WosIKZvUgmtYtCqDDj9Tyyzl3kIV4wfTbQ0tU
-	 LGJ746TL9avdVP+lOafoSKNwC+i/QZipYDRjvoTg2La6W8HfPAZI1zwKV44g2QIn33
-	 Whu8l+LOloBEQIEfQPaQTAPAT1xOAQQmgu/adD0BbzMAdNNB7XaZ23SUScBnAd2F6v
-	 4KI7WeoEjSvaA==
-Date: Sun, 6 Oct 2024 12:10:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
- <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
- <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
- <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
- <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v8 2/2] iio: imu: smi240: add driver
-Message-ID: <20241006121025.50802061@jic23-huawei>
-In-Reply-To: <AM8PR10MB47217960E30212DC62ED7821CD712@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240923124017.43867-1-Jianping.Shen@de.bosch.com>
-	<20240923124017.43867-3-Jianping.Shen@de.bosch.com>
-	<20240928181121.0e62f0ad@jic23-huawei>
-	<AM8PR10MB47217960E30212DC62ED7821CD712@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728213178; c=relaxed/simple;
+	bh=2M+3ugLDADABIISUhE1rjXIToJMZ9lQU9ApRZODMpQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OH1J5DS4q2QaCDzgT89nfSN+wG+90jB2nami4+qNkwg0+lJHrzUtwGZ42Js+ZPv0j0J+CdecCbr/L7g9udssHbck/CaqsdW1ceqyncmdqEzf0/mwhgvtYlc4qPBopj0BoCYumfgpRrJcMkKSrIoQ5r4A52iUPeRHyAr/tTV0hos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S50nD9Rp; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728213154; x=1728817954; i=markus.elfring@web.de;
+	bh=Tb+T09tvkffYYzsIjM2Eq9r0VO5GwmF24AJDTdB3JCQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=S50nD9Rpr63Z+S/pAis+bydyXCrJxgPX9WKKQ7w5UFIR8V7bzYjXpVGgAiZJldni
+	 LBtOJgLd7jGwcNKLazvpI3Ox23XnbPFbmY9ynSFXIILxaJQM+QdJarP/DRLx5IwWM
+	 VUavB/EJTFBPK9fRbaEkLvdI6AsaNfzlbPVgAr9avMRQg7EiAu7XATNwR49P0GYBi
+	 Sg53L2EaCfcyEN4/Ro2T2OR7p66BHbwS5jNLZYshL/pEADpVaUcjsg16DMIGpc50j
+	 dPdWGlut0zZBDQT/cimxR+7mCmdPtTXkbPbgtGDkkjgxoqfG7zcK5kieYfujHfWcC
+	 15Pkl57VEEhfYrnMqg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N14tM-1tyhD60k94-01029J; Sun, 06
+ Oct 2024 13:12:34 +0200
+Message-ID: <8e4fe108-cfde-40c0-83f5-c1ce60b0940f@web.de>
+Date: Sun, 6 Oct 2024 13:12:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: ASoC: qcom: Fix NULL Dereference in
+ asoc_qcom_lpass_cpu_platform_probe()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rohit kumar <quic_rohkumar@quicinc.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>, stable@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang <chenyuan0y@gmail.com>,
+ Zijie Zhao <zzjas98@gmail.com>
+References: <20241003152739.9650-1-zichenxie0106@gmail.com>
+ <ee94b16a-baa7-471c-997e-f1bf17b074b8@web.de>
+ <2024100620-decency-discuss-df6e@gregkh>
+ <6d17006d-ee97-4c7c-a355-245f32fe1fc3@web.de>
+ <2024100608-chomp-undiluted-c3e2@gregkh>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <2024100608-chomp-undiluted-c3e2@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yRTbD6sd3+21UNILTwyen9xGDcqeDXPJVM2pwF9pSM2QeHcmLjP
+ 1yVdgSeocfPe/3sQBJC6vnkeAelYEq3Tw4q3vbHmFDEC1XMAUn3QPw6kssQVq8RQhuMMNux
+ zpTVqPDM2AS1Z06J0FrFoQAMvEBlICCMrhaNJq3je+qlH/B4U8zG85LUUfaxmaB1bJlMMC2
+ 26xXZJD3MigttCtcRL9RA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RSBHA8Qa5SQ=;/s/d7cD8oOtzcIkiGSlmatb5uuU
+ cKJixBxA/JdU6u04XbR9kF24yaTTgv62j2NuR+lGXYAtDYP3QL1jvY+N3TJZGuFpXKE3U2Gxn
+ ESDcbRqyxeO9ZfDEigmrhiz1KhLM3+5BzjuK73nytqYZnyN+4A/1BAmJylgq8GqRDJaCSjlRq
+ Uf52NPZSzEFVCLqYvOYPsfIxoQhlV70O6EXtcQSXoABBj0TTR/gHze1XudE5mMaDDqDhrffls
+ EcDn9Lp04gBN+kEq+0Ema75iBhXiRRfDf7jFAbIUjxo9+EbA4iYTQjOp2uvDDRsIyUF/dx0ii
+ sJsaP99NxOthe715M6I0Hp5OZdPLrXcb+WT71Vv0WXyHOJSFvmbJe+9/5YE7HHobavlc1NU0r
+ Q3tFi54IWrKp2fwmMZ+uhsQPJH5oJsT97GrwZ1HutnMcwIdprCyWG+xkA/KRzvYPzO1sSdL0U
+ Y//Ihhfi2w531qQNSby9ZAauyCEnNXC3ynAG4Ar6VQwoWC5poasYwu+96PsNu6Wwd90mhZKn5
+ ICA8kZ0gT2J+/mpkP2Ei9if1L55VWq+IRaFBeXCBG1Fm8Ssx8qtHQQQYNFuCHvFyQpOXQaN86
+ L4pf69gh3F12sEZov8rzQN1vfw1nQpGW4KdYRLgtBPGcgnf5+rwLfKTj8H3CX5eBfFdtVrNhC
+ LTYBeqt2ZaXEUaDZiT5FRBmzzI+vSYRIjVBD74Lo0KDqRNJZAXHV/hyeNPyZWTXcL3gdViPX+
+ 5wB2XiUua3FCv67f7BZTi/uZWLbU760sSJExHWnfIr3MkA/TXLEKKym94g37Up6/vmDyVEdu/
+ IPRseMHC2ZngLkfHfgxnEgkw==
 
-On Thu, 3 Oct 2024 21:44:42 +0000
-"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
+>>>>> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could
+>>>>
+>>>>                    call?
+>>>>
+>>>>
+>>>>> possibly return NULL pointer. NULL Pointer Dereference may be
+>>>>> triggerred without addtional check.
+>>>> =E2=80=A6
+>>>>
+>>>> * How do you think about to use the term =E2=80=9Cnull pointer derefe=
+rence=E2=80=9D
+>>>>   for the final commit message (including the summary phrase)?
+>>>>
+>>>> * Would you like to avoid any typos here?
+>>>>
+>>>>
+>>>> =E2=80=A6
+>>>>> ---
+>>>>>  sound/soc/qcom/lpass-cpu.c | 2 ++
+>>>>
+>>>> Did you overlook to add a version description behind the marker line?
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/Documentation/process/submitting-patches.rst?h=3Dv6.12-rc1#n723
+>> =E2=80=A6
+>>> This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+=E2=80=A6
+>> * Do you care for any spell checking?
+>
+> No.
 
-> >> +
-> >> +static int smi240_regmap_spi_read(void *context, const void *reg_buf,
-> >> +				  size_t reg_size, void *val_buf,
-> >> +				  size_t val_size)
-> >> +{
-> >> +	int ret;
-> >> +	u32 request, response;
-> >> +	u16 *val = val_buf;
-> >> +	struct spi_device *spi = context;
-> >> +	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> >> +	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> >> +
-> >> +	if (reg_size != 1 || val_size != 2)
-> >> +		return -EINVAL;
-> >> +
-> >> +	request = FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> >> +	request |= FIELD_PREP(SMI240_WRITE_CAP_BIT_MASK, iio_priv_data-
-> >>capture);
-> >> +	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
-> >> +	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> >> +
-> >> +	iio_priv_data->spi_buf = cpu_to_be32(request);
-> >> +
-> >> +	/*
-> >> +	 * SMI240 module consists of a 32Bit Out Of Frame (OOF)
-> >> +	 * SPI protocol, where the slave interface responds to
-> >> +	 * the Master request in the next frame.
-> >> +	 * CS signal must toggle (> 700 ns) between the frames.
-> >> +	 */
-> >> +	ret = spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	ret = spi_read(spi, &iio_priv_data->spi_buf, sizeof(response));
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	response = be32_to_cpu(iio_priv_data->spi_buf);
-> >> +
-> >> +	if (!smi240_sensor_data_is_valid(response))
-> >> +		return -EIO;
-> >> +
-> >> +	*val = cpu_to_le16(FIELD_GET(SMI240_READ_DATA_MASK, response));  
-> >So this is line sparse doesn't like which is reasonable given you are forcing an le16
-> >value into a u16.
-> >Minimal fix is just to change type of val to __le16 *
-> >
-> >I still find the endian handling in here mess and am not convinced the complexity is
-> >strictly necessary or correct.
-> >
-> >I'd expect the requirements of reordering to be same in read and write directions
-> >(unless device is really crazy), so why do we need a conversion to le16 here but not
-> >one from le16 in the write?  
-> 
-> Hello Jonathan,
-> 
-> yes, you are right. The "cpu_to_le16" is not required at all.  SMI240 does not use the standard SPI protocol, on the other side the regmap is designed to use standard SPI protocol (by default) and may flip the register value dependent on "val_format_endian". 
-
-It should still need to place the two bytes of that 16 bit value in the
-correct order to send to hardware.  That may be handled via a 32 bit
-word length on SPI though. 
-
->When the both work together, it may lead to confusing.  Let me make it clear.
-> 
-> In the SMI240, the register address is 8 bit and each register is 16 bit. We do not have any register value, which is bigger than 16 bit and need to be stored in multiple registers.  Therefore the device does not need endian. Neither big endian nor Little Endian.   To access the register, it is important to prepare the request frame according to the specification. 
-> 
-> A request is 32 bit
-> 
-> 	ID	ADR	W	CAP	*	WDATA	CRC
-> 	31-30	29-22	21	20	19	18-3		2-0
-> 
-> ID: device id (if more than 1 device)
-> ADR: reg address
-> W: write/read
-> CAP: capture mode on/off
-> *: reserved
-> WDATA: reg value to write
-> CRC: check sum
-> 
-> To prepare the request properly, the bit order is here critical. We need to put each part in its bit position. The request is created as a local u32, with help of FIELD_PREP, we put the value of each part to its bit position. FIELD_PREP will take care of the cpu endian and always put the value to the correct bit position.  Before we send the request via SPI, a cpu endian to big endian conversion is required.
-
-So there are two possibilities here.  Either the byte order is just reversed for the device
-in which case fine as you describe or perhaps the SPI transfers should be using a 32 bit
-word?  You'd do that by overriding the bits_per_word in the individual SPI transfers.
+I find such a feedback surprising.
+Does it indicate any recurring communication difficulties?
 
 
-> Since the spi bus transfers data using big endian. When we get the response from spi, the response is big endian and need to be converted in cpu endian.  Any other manually endian conversion is not required. 
+>> * Do you find any related advice (from other automated responses) helpf=
+ul?
+>
+> No.
 
-The SPI bus itself has no real concept of endian as such. It just sends bits in the order
-it is fed them.  The device may require a particular ordering of course if we assume
-it makes sense to break the transfers up into byte size chnunks.
+I wonder how this answer fits to reminders for the Linux patch review proc=
+ess
+(which were also automatically sent) according to your inbox filter rules.
 
-See if setting the word size to 32 bits solves your issues without the need
-for any endian conversions.
-
-Jonathan
-
-
-> 
-> The SPI read in next version look like that
-> 
-> 1. Prepare request
-> 2. Convert request from cpu endian to big endian and send via spi
-> 3. Get response 
-> 4. Convert response from big endian to cpu endian  and take the reg value from converted response
-> As you mentioned, an additional cpu_to_le16 is not required. Since the response is already converted to cpu endian.
-> 
-> 
-> static int smi240_regmap_spi_read(void *context, const void *reg_buf,
-> 				  size_t reg_size, void *val_buf,
-> 				  size_t val_size)
-> {
-> 	int ret;
-> 	u32 request, response;
-> 	u16 *val = val_buf;
-> 	struct spi_device *spi = context;
-> 	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> 	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> 
-> 	if (reg_size != 1 || val_size != 2)
-> 		return -EINVAL;
-> 
-> 	request = FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> 	request |= FIELD_PREP(SMI240_WRITE_CAP_BIT_MASK, iio_priv_data->capture);
-> 	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
-> 	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> 
-> 	iio_priv_data->spi_buf = cpu_to_be32(request);
-> 
-> 	ret = spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> 	if (ret)
-> 		return ret;
-> 
-> 	ret = spi_read(spi, &iio_priv_data->spi_buf, sizeof(response));
-> 	if (ret)
-> 		return ret;
-> 
-> 	response = be32_to_cpu(iio_priv_data->spi_buf);
-> 
-> 	if (!smi240_sensor_data_is_valid(response))
-> 		return -EIO;
-> 
-> 	*val = FIELD_GET(SMI240_READ_DATA_MASK, response);
-> 
-> 	return 0;
-> }
-> 
-> 
-> The SPI write in next version look like that
-> 
-> 1. Prepare request
-> 2. Convert request from cpu endian to big endian and send via spi
-> 
-> The critical part here is the reg value (WDATA).  As part of the request, the reg value shall be put to bit 18-3 WITHOUT TOUCHING IT. The reg value as a local u16, shall use the same cpu endian as the request. This is to keep the correct bit order for reg value and also for the request.  Nevertheless reg value is passed by regmap_write.  Regmap core may flip the reg value when val_format_endian != cpu_endian. If this happens, then regmap core has actually changed the reg value.  To prevent regmap to flip the reg value we use REGMAP_ENDIAN_NATIVE as val_format_endian. 
-> 
-> static int smi240_regmap_spi_write(void *context, const void *data,
-> 				   size_t count)
-> {
-> 	u8 reg_addr;
-> 	u16 reg_data;
-> 	u32 request;
-> 	const u8 *data_ptr = data;
-> 	struct spi_device *spi = context;
-> 	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> 	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> 
-> 	if (count < 2)
-> 		return -EINVAL;
-> 
-> 	reg_addr = data_ptr[0];
-> 	memcpy(&reg_data, &data_ptr[1], sizeof(reg_data));
-> 
-> 	request = FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> 	request |= FIELD_PREP(SMI240_WRITE_BIT_MASK, 1);
-> 	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, reg_addr);
-> 	request |= FIELD_PREP(SMI240_WRITE_DATA_MASK, reg_data);
-> 	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> 
-> 	iio_priv_data->spi_buf = cpu_to_be32(request);
-> 
-> 	return spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> }
-> 
-> static const struct regmap_config smi240_regmap_config = {
-> 	.reg_bits = 8,
-> 	.val_bits = 16,
-> 	.val_format_endian = REGMAP_ENDIAN_NATIVE,
-> };
-> 
-> 
-> Fazit:
-> 
-> The bit order in request is critical to us.   FIELD_PREP will take care of the byte order (big / little endian) for us, and always put the value of each part to the correct bit position. We shall never manually change the cpu endian to each part. Just convert the whole request to/from big endian when sending / receiving via spi.
-> 
-> I hope this make the endian handling clear to you.
-> 
-> Best Regards
-> 
-> Jianping Shen
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-
+Regards,
+Markus
 
