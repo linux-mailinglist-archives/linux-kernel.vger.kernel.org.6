@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-352395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD35991E7F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27879991E85
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 15:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B9F1C20B43
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2846C1C20D9D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 13:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808C176FDB;
-	Sun,  6 Oct 2024 13:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B64179970;
+	Sun,  6 Oct 2024 13:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPSwuRJC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLb7Bqd5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E77170A3F
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Oct 2024 13:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8927A1779AB;
+	Sun,  6 Oct 2024 13:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728221355; cv=none; b=FmGWdW8jivHU5aSppPcv+i6LHZMbA3yyy1NvI69CBpioNqPI2O7Sm/hZbWF8bwvn5HUSqgrdzffVj1/8nZTTbFaBnEP1DR9SF0fGFxoXwVk4orLCu24tm8hKf7A7Qy6TIiVi8bTqJD7eNNDHKF1xMhZn8yrhulo5JIcXTsVCSjI=
+	t=1728221356; cv=none; b=jUAw4TZVJdUuvUGgrtjhj5KhkNgaSviwa5Pr4j82KN/5MQjTNG+g5ycsNlfo8os0u66DqGdzj/7/3R+QsoW8wSVPSiiDA6B9vk6fAzntar9RrGlalHc/UEoFIeyFCURaSqCYuI4mGhaGVHmIn3kkWTO5r09QvuxxvLdO/sLs/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728221355; c=relaxed/simple;
-	bh=JkezCXci0FhDh/r6gOCJZzc3+278ITOevezbT4aBxLU=;
+	s=arc-20240116; t=1728221356; c=relaxed/simple;
+	bh=BtD6uQeKcar4gJLuDMrO7gB7cz+l9whS8y4o3WOSc8I=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Z/o03HwxqB/EmMNxm2orHilXiA+22BmgPywjYf1QaXxARuoODDIH61rvijlv0XOF2rj6TNRYvocjlx59+dWjSkbln1/QK0t2yNNniPor3j0oz2+HOysKtIlTc568qVkRc7SZSjYWXaqcsycv47P3kGYqaxOfuulawu1Nmpg/Yv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPSwuRJC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EABC4CEC5;
-	Sun,  6 Oct 2024 13:29:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KctZKa+RNQINljSe6O/7DScjUpIV77ujLyzSdnY3hRSL2WwAvM48YwR/hFpLh+UJ1NZMyh1pXqu/7SFDFmRZ/6AJSgW8kOuC99QdICAak8RXXKEiOrFmXxBAAwlTLMOs5poiMH6y3op3HqxKeqkRCerI07xeGEHCM8R7g6swPlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLb7Bqd5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593B9C4CED1;
+	Sun,  6 Oct 2024 13:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728221354;
-	bh=JkezCXci0FhDh/r6gOCJZzc3+278ITOevezbT4aBxLU=;
+	s=k20201202; t=1728221356;
+	bh=BtD6uQeKcar4gJLuDMrO7gB7cz+l9whS8y4o3WOSc8I=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EPSwuRJCldO53+ZotSJ3frgqm8YOBG30DJus2fiLurymQr4dhYZl9VUR/0PoxELZQ
-	 +Y6yhHBrOufmMbDA6Xu7OlzpcEfbqXZHKOXA1PYEx8aSWyOtGSiJw0l5e2IElOm+e+
-	 LXeb+5hxb9/M9FndLt4g3+eJJJKJXdzNXNjCyWDLwIIEMo86R+UHmVThAMI25lP4oR
-	 LlZAg6wSxIDSuB5KUVnW0ap661Hg4hTqIDRQD3twoLKm/j1/AtOW5+EWHKUBa5jtyf
-	 PJB6FPVoIjR1jBFhObcGVeZD+eaO0lsmqbkfbGRK3u527RFzoFV4Oduz7hdj7gY+GW
-	 /t1pYQlmLsUUg==
+	b=BLb7Bqd5DUL9igAN334n3NBJRh+b0UM6zZbgFYtlnE72Ov0F1vp+7NrtaTRNv6341
+	 49y9XNEFPTgSVrodwUyQtm5isKzB7G1puJcxHBsciFGgw6Gd1qeOvbgUTI9WaJDy7M
+	 emG6kYcGhR+RCnlhgJyuqQegLUgpp+dDYLXCPvVr8UeZxgVtbhMVt5AyPFhJwUDuqx
+	 6jHUfcyw/vtcfEyZ1dMi/Iu899d3TW220Y/GYvP1qOOoB2XqlJ6z0cDx5EssEd7PHn
+	 aR5OXHf7RFeXQshB6Pyx5yFxztobnz5WNspC+ZNiOcA4XPXdX4D+Pqj2aNuuzDpb6c
+	 p0Anm5boOhHdQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADC43806656;
-	Sun,  6 Oct 2024 13:29:19 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DB03806656;
+	Sun,  6 Oct 2024 13:29:21 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,45 +51,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 0/3] riscv: Per-thread envcfg CSR support
+Subject: Re: [PATCH 00/33] riscv control-flow integrity for usermode
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172822135876.3395169.3761438771827436861.git-patchwork-notify@kernel.org>
-Date: Sun, 06 Oct 2024 13:29:18 +0000
-References: <20240814081126.956287-1-samuel.holland@sifive.com>
-In-Reply-To: <20240814081126.956287-1-samuel.holland@sifive.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com, leobras@redhat.com,
- aou@eecs.berkeley.edu, xiao.w.wang@intel.com, paul.walmsley@sifive.com,
- charlie@rivosinc.com, linux-kernel@vger.kernel.org, conor@kernel.org,
- conor.dooley@microchip.com, evan@rivosinc.com, guoren@kernel.org,
- andy.chiu@sifive.com, greentime.hu@sifive.com, cleger@rivosinc.com,
- tglx@linutronix.de, ajones@ventanamicro.com, ke.zhao@shingroup.cn,
- debug@rivosinc.com
+ <172822135999.3395169.2185051958968934926.git-patchwork-notify@kernel.org>
+Date: Sun, 06 Oct 2024 13:29:19 +0000
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+In-Reply-To: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ lorenzo.stoakes@oracle.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, conor@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ arnd@arndb.de, brauner@kernel.org, peterz@infradead.org, oleg@redhat.com,
+ ebiederm@xmission.com, kees@kernel.org, corbet@lwn.net, shuah@kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
+ rick.p.edgecombe@intel.com, david@redhat.com, carlos.bilbao.osdev@gmail.com,
+ samuel.holland@sifive.com, ajones@ventanamicro.com,
+ conor.dooley@microchip.com, andy.chiu@sifive.com
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 14 Aug 2024 01:10:53 -0700 you wrote:
-> This series (or equivalent) is a prerequisite for both user-mode pointer
-> masking and CFI support, as both of those are per-thread features and
-> are controlled by fields in the envcfg CSR. These patches are based on
-> v1 of the pointer masking series[1], with significant input from both
-> Deepak and Andrew.
+On Tue, 01 Oct 2024 09:06:05 -0700 you wrote:
+> v5 for cpu assisted riscv user mode control flow integrity.
+> zicfiss and zicfilp [1] are ratified riscv CPU extensions.
 > 
-> [1]: https://lore.kernel.org/linux-riscv/20240319215915.832127-6-samuel.holland@sifive.com/
+> Changes in this version are
+> - rebased on v6.12-rc1
+> - Fixed schema related issues in device tree file
+> - Fixed some of the documentation related issues in zicfilp/ss.rst
+>   (style issues and added index)
+> - added `SHADOW_STACK_SET_MARKER` so that implementation can define base
+>   of shadow stack.
+> - Fixed warnings on definitions added in usercfi.h when
+>   CONFIG_RISCV_USER_CFI is not selected.
+> - Adopted context header based signal handling as proposed by Andy Chiu
+> - Added support for enabling kernel mode access to shadow stack using
+>   FWFT [4]
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,1/3] riscv: Enable cbo.zero only when all harts support Zicboz
+  - [01/33] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+    (no matching commit)
+  - [02/33] mm: helper `is_shadow_stack_vma` to check shadow stack vma
+    (no matching commit)
+  - [03/33] riscv: Enable cbo.zero only when all harts support Zicboz
     https://git.kernel.org/riscv/c/1b57747e978f
-  - [v4,2/3] riscv: Add support for per-thread envcfg CSR values
-    https://git.kernel.org/riscv/c/5fc7355f0137
-  - [v4,3/3] riscv: Call riscv_user_isa_enable() only on the boot hart
-    https://git.kernel.org/riscv/c/368546ebe7e7
+  - [04/33] riscv: Add support for per-thread envcfg CSR values
+    (no matching commit)
+  - [05/33] riscv: Call riscv_user_isa_enable() only on the boot hart
+    (no matching commit)
+  - [06/33] riscv/Kconfig: enable HAVE_EXIT_THREAD for riscv
+    (no matching commit)
+  - [07/33] riscv: zicfilp / zicfiss in dt-bindings (extensions.yaml)
+    (no matching commit)
+  - [08/33] riscv: zicfiss / zicfilp enumeration
+    (no matching commit)
+  - [09/33] riscv: zicfiss / zicfilp extension csr and bit definitions
+    (no matching commit)
+  - [10/33] riscv: usercfi state for task and save/restore of CSR_SSP on trap entry/exit
+    (no matching commit)
+  - [11/33] riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
+    (no matching commit)
+  - [12/33] riscv mm: manufacture shadow stack pte
+    (no matching commit)
+  - [13/33] riscv mmu: teach pte_mkwrite to manufacture shadow stack PTEs
+    (no matching commit)
+  - [14/33] riscv mmu: write protect and shadow stack
+    (no matching commit)
+  - [15/33] riscv/mm: Implement map_shadow_stack() syscall
+    (no matching commit)
+  - [16/33] riscv/shstk: If needed allocate a new shadow stack on clone
+    (no matching commit)
+  - [17/33] prctl: arch-agnostic prctl for shadow stack
+    (no matching commit)
+  - [18/33] prctl: arch-agnostic prctl for indirect branch tracking
+    (no matching commit)
+  - [19/33] riscv: Implements arch agnostic shadow stack prctls
+    (no matching commit)
+  - [20/33] riscv: Implements arch agnostic indirect branch tracking prctls
+    (no matching commit)
+  - [21/33] riscv/traps: Introduce software check exception
+    (no matching commit)
+  - [22/33] riscv: signal: abstract header saving for setup_sigcontext
+    (no matching commit)
+  - [23/33] riscv signal: save and restore of shadow stack for signal
+    (no matching commit)
+  - [24/33] riscv/kernel: update __show_regs to print shadow stack register
+    (no matching commit)
+  - [25/33] riscv/ptrace: riscv cfi status and state via ptrace and in core files
+    (no matching commit)
+  - [26/33] riscv/hwprobe: zicfilp / zicfiss enumeration in hwprobe
+    (no matching commit)
+  - [27/33] riscv: Add Firmware Feature SBI extensions definitions
+    (no matching commit)
+  - [28/33] riscv: enable kernel access to shadow stack memory via FWFT sbi call
+    (no matching commit)
+  - [29/33] riscv: kernel command line option to opt out of user cfi
+    (no matching commit)
+  - [30/33] riscv: create a config for shadow stack and landing pad instr support
+    (no matching commit)
+  - [31/33] riscv: Documentation for landing pad / indirect branch tracking
+    (no matching commit)
+  - [32/33] riscv: Documentation for shadow stack on riscv
+    (no matching commit)
+  - [33/33] kselftest/riscv: kselftest for user mode cfi
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
