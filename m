@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-353154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58484992973
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:46:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29EC992978
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040231F227EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CAF284AB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47A01D14EF;
-	Mon,  7 Oct 2024 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B801D131D;
+	Mon,  7 Oct 2024 10:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHcVNWXq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ei1hjgVK"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9561D1302;
-	Mon,  7 Oct 2024 10:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E62E189F45;
+	Mon,  7 Oct 2024 10:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297978; cv=none; b=PbPJ4iT/UIL17R3q6+1WuZyd8jniUIamf/lmagSe0WRg5WJcwRrDplTBuBzIQvuwXN+OAemjFONrynbOa+hWywyDUw+8gBtOBdP/NOJ1WC+geJKG+cLCFX0AAa/XqX8ERMA92eLsbWrXQEbIcG4K0lM4iU8eDALBpBafvCVkOss=
+	t=1728298057; cv=none; b=EpgxFaU5tEvD9BSYNN8OM/Lm3qI4x7vfyQVv87Hhp9TBPbbHIvO/3q2jXnJA+8DnTPche+mmDNecX94qH4aTNwb/WyC63jFEq5IOE+q1LbOErZivV/t70lcrE9rboGZ3hnAkUGJDxilPIcus71d9j3pCc9oKZeejpGL5nLWuLFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297978; c=relaxed/simple;
-	bh=0LNtMm+7NAynt0K/OYa8Woy9tD2HQZbDYY7j1/mIYfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yym+hrFa/+cVCJ3IsfwFdJM3rNcJfQYJjjA3fWY+3P4xMm69ieovHAKmA0R30AUKk64va40Oct4p8yodh/+PBuK/p3caZgKUzllQBl71oH5LI6srgIL8iwim/jnaj/x7lqXdyEZ2LEqlkCTS4DqwNv1UiD6G/luN45j5BTF8CIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHcVNWXq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E73C4CEC6;
-	Mon,  7 Oct 2024 10:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728297977;
-	bh=0LNtMm+7NAynt0K/OYa8Woy9tD2HQZbDYY7j1/mIYfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NHcVNWXqGMQl36jvAwb7JQz0zh934jJHpIiGhdM35JsrpRijtgu3DsvuKYDQNUm8x
-	 6cfKgau1WjZxNDCQFAd5kFt06rUwNV7zc/IaYz0TakqkkyfDXaMMi/z+PqTbaie4FJ
-	 dnhZ3mszYbrIeY9OjY1KEZmaxjV5q/kyKSkx2uH9qU+pEJAe9Sdog8AFpQFUQMlnZ9
-	 G9a0HrAtx6ijEc8J65M9Uh8+IapMHcVtmyLJ6mbTRYHKKml2JauYZWm9ijYkEE9LHB
-	 CeoisXkRnaJEhjgS+gzWTAkBOHD8KFdOWPAcf1nFsIAxmdGLIbRPEGJG2HKcOIE/Av
-	 mI3h5cD+Eojfw==
-Date: Mon, 7 Oct 2024 12:46:11 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Klaus Jensen <its@irrelevant.dk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
-Message-ID: <20241007104611.bipxx4vao4n3hg3m@joelS2.panther.com>
-References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
- <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
- <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
- <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
- <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
- <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
- <BN9PR11MB52769D1D1FEA9BAF0E6D19718C622@BN9PR11MB5276.namprd11.prod.outlook.com>
- <c54a15d8-fe60-480c-9156-bd77114c196c@linux.intel.com>
- <Zu1wim6MZz3rkbWY@ziepe.ca>
+	s=arc-20240116; t=1728298057; c=relaxed/simple;
+	bh=T4rVdt7fcZiMlQMxDbv2/yloGN/2xnjJVah8iklo5Qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bi+oIVenaMk88/bxUtZcFIibxuXW0PYs/3nXAHOJVAr+GxTahK0DUyszx+s/uvvHTqk7oJRldpVKfRyBXCtTWWQ4tMExS53+YExs00iCXbrMkJUJ3A2ZnYutq3Fe1rDZ9x2kC3+7NO64WGJGBmjjXXmbRQ7B93fdGLrub53wxSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ei1hjgVK; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728298017; x=1728902817; i=markus.elfring@web.de;
+	bh=T4rVdt7fcZiMlQMxDbv2/yloGN/2xnjJVah8iklo5Qg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ei1hjgVKdDnus0cZhlbu542K/e2NmOvEiW5vjvC6OHaGDOtFzeRtZAEKMWVxRyGW
+	 WYnPY2/jeZSUQX+2z56gsnFz/q2zQyd5m+grdvuzRXACT8xe/oThzbWqnbEFF22UK
+	 dUeRKqcKg+X+GHj/W4X6p5gDlDXNi2fI6WANyWCCxXBEk/SJSJglx6XUnMaW6bkqN
+	 q6AbcMkDOQNMb5tiO/or8f00A6XPA1NCb1+GxZkCpIN2LGd5TNzcfvHUlP8HipaQV
+	 x18+Sr7O2jQ5eoJpNMGNVLrbzmV5ZKsikAO9HZctngAsLZ6FKag+rNdbagNh8XIvX
+	 Lb/UKudPZ8MyEreByQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m9J-1swwJm0Ru7-003bcf; Mon, 07
+ Oct 2024 12:46:57 +0200
+Message-ID: <f5296465-b160-4cb7-9a19-7cabd100e7a1@web.de>
+Date: Mon, 7 Oct 2024 12:46:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zu1wim6MZz3rkbWY@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Subject: Re: cleanup: adjust scoped_guard() to avoid potential warning
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@intel.com>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
+ <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
+ <c7844c93-1cc5-4d10-8385-8756a5406c16@web.de>
+ <ac59684b-37fc-4e47-b496-e6f9bac87b8c@intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ac59684b-37fc-4e47-b496-e6f9bac87b8c@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZZiKSbmFNoiK+6VFDwjwkd1Y9TYsd8yg+Bxp0KLxVPWuTvoJ8rl
+ vx7Fgl8eQG0cozX+0cnOBtJ+j1AAGkICN33X2ZkLq7T2oB4NRyPIQ4nM2QEFTsuG6PX94KV
+ pi6Psxwj0Kp1ZdsISsZAHCDFOAd6OPAHDWlZAoco02gZ0/bIT0H8xaZELsxq1JEvcAdCpoX
+ +hig84hT/H7gRaEtwd/pQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Lxew3tJEJdI=;65y2aPgwxFUVZXS29CJmiVrFvNB
+ fA4ALIdA4TOKV3+rLNQM0ttEsgDjLCOpajxI6fKrDyYxZmdsu4bD0iUjWCDbTuzQdmJDEGEeP
+ CFrUzCKnEI9a7HuHwJVzJkbSErs7WA8ocQ83TTKNND9XDh/P6g3mqrXzaBg/IkkFcpHKpB5d8
+ x+xWYpFHNYBDjtP8+cGKzzP+zZomp1DyHIB2fxije67LVdMs7OyYI6CEh1inh0Y2kNh/xbAyB
+ IweB0KTjqPn8su3Y1el+izHOakxTivDe1LDQvR7eNnu/Rr5PS0yp+7YVnYjHa9sgzdJpcqvEH
+ 5YFvnVu5OpnoE+hn85MuHp6LJxPO1vtnfYOqM3LoQED3ovKZklgo9Lb6aKRnCt+9KyTKSRNEh
+ wODHp95szFOGijZWrYjTIHAc6kSJ44Iw/HzlL+IHOHMzLos3LkUC+GchklKLzEKzWbaXmfeoQ
+ OmkNCcbfJcSEX4Hqs9YmDTOZEil+2L9SXiK02VQMmlS3zEtVXahav3EnarGvLIBJ9/Y1UnLUL
+ h9eOfvNS/yYq5MvtJjQcTsBbCLLqVaxd1TixECwyTPce0ryI4xU47e7zNv8xNzCsonxH3gYUx
+ 3Fm6YIfyEIX3HhQbrr3uggzo8ceiriXXCdzKvoo7U2DvbWctlSXKR3Tia/D+OiHx97CjzORtr
+ QrsHTv5JjCi8KIJDnkRyhDZaLc3vrqHVC5vNwKC6ww23872nIILrinx8u5e1bmRbMItt4NpvD
+ GrkYXh18XeG91Ph6wHau7fm/VQ4et7bnzvnONKngJPxje/h35BNQ+hy/bfbO2YLe2ul9qDoQH
+ Qvjg1hloQk/nwt/Fld/l/Llg==
 
-On Fri, Sep 20, 2024 at 09:54:34AM -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 18, 2024 at 07:17:32PM +0800, Baolu Lu wrote:
-> > > more than that... for each IOMMU the current code allocates 16 pages
-> > > and 1 hwirq. Those are unnecessary burdens in majority deployments
-> > > which don't support/require I/O page faults.
-> > 
-> > Yeah! I only focused on the kernel binary size but ignored these system
-> > resources consumed by IOPF. Then, perhaps
-> 
-> If you care about runtime overhead it should be delt with by
-> dynamically allocating the memory and enabling it, not via kconfig
-> 
-> We can dynmaically add IRQS in some cases now for instance
-> 
-> Jason
+>>>> Would you get into the mood to reconsider the usage of leading unders=
+cores
+>>>> any more for selected identifiers?
+>>>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare=
++or+define+a+reserved+identifier
+>>>
+>>> The mentioned URL doesn't cover the special cases like the kernels of =
+the
+>>> operating systems or other quite low level code.
+>> Can such a view be clarified further according to available information=
+?
+=E2=80=A6
+> could you please update CMU SEI wiki to be relevant for kernel drivers
+> development, so future generations of C bureaucrats would not be fooled?
 
-Summary (Please correct if inaccurate):
-1. Kevin Tian & Baolu Lu have proposed a kconfig guard
-   (INTEL_IOMMU_IOPF) to avoid unnecessary resource allocation (of 16
-   pages and 1 hwirq). It can be keep it until it becomes a burden.
-2. Jason Gunthorp: runtime overhead should be handled by dynamically
-   allocating memory and enabling it. Not via Kconfig.
+How do you disagree to mentioned technical aspects?
 
-There was no real consensus reached here. I'll leave IOMMU_IOPF guarded
-under INTEL_IOMMU (no changes from V2), two reasons for this IMO:
-1. The reasoning being that any system that has the resources for
-   INTEL_IOMMU has them for IOMMU_IOPF.
-2. If the IOPF resources are a burden, they should be solved by changing
-   the way we allocate memory instead of hiding them behind a kconfig.
-
-Quick Note: I am adding my new email to the thread so I get the responses
-routed to the correct inbox.
-
-Best
-
--- 
-
-Joel Granados
+Regards,
+Markus
 
