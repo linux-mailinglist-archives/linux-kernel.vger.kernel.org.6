@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-353775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C9499327C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:06:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F26C9931AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E89A5B2492E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1541C21BA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095C21DA2EF;
-	Mon,  7 Oct 2024 16:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7561D958A;
+	Mon,  7 Oct 2024 15:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="gSMDu+29"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s2BeBh98"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822F1D9582;
-	Mon,  7 Oct 2024 16:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767A71D7986
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728317194; cv=none; b=G7hGSVG9uXxM5tuB8V8o6hgZX/9KRAyJXkUiUORhxOW05/ggy8WmHTr99LYKkhlGdskHA6bukzZ/grRMcvg6uZtSEvv/bqGi6sMtkTq/fjY376yOzx7Iav3Mu6rjjZyA4Xy1sCgZIvpfSPumBeeuG8uhS2CxiS4EA/qGJTEPntg=
+	t=1728315801; cv=none; b=s+HgzzUuNfAnlQtg9/MHc2uXtopmKMrOd7e4ZFrNN6mi72FLfzPYSkvZ597rHOE0owYRSsJM+Sf+Oq602UrtWI8o/gQTkwv6mQKpx7S6kqRBF6NGWT55Gc0wQsYOcyatD3lx9/xW6O6awjV+KrgZ+vlTSKKftb/5ZA/Xq78AQKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728317194; c=relaxed/simple;
-	bh=ZB7dJsypTuR1cUU9qPEOx0uhoQUFPI2vkMQHPzvOWaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZDeJc0uUJsblLyN4FjvcnKewdSMZZY789+AVol5LxTr0+3Z/yH70SYIe5FHJekyWI1AC0q06xeP3OZjzBriKyq7CD7LqRmF6XLBnJE3hSb6Zwdb3RxfqWyMGIW5DFD5wh7rGNO7UJrli0OQY+5XExVSfUqH1ZTTT54UycJXE1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=gSMDu+29; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 94C2788365;
-	Mon,  7 Oct 2024 18:06:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728317187;
-	bh=bBYRA6NEh1wZmuhBNUB2eKeJd8Vp9PBvM/JZVxPF1OA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gSMDu+291Aga5QM8YL6kApKlCmxHXLu87h6qft6qEZp+A13AW4MogX5DmmdmCbQdy
-	 rVqdKXHwY2WZh2fmJpMzaMxOQ2emWpl5WjZ4TrOXXGVFOAHJIj5PXENRMxlRVuuYLa
-	 MhSAKrBS6SMdBjejjWtCp5WMkvavtRECwbT6fdr0bSsEqYvXK6xQOT9Ivo0AOkOmK7
-	 uHhij0+CH4bA7UbrDe0zrBAiKlPhsHcWu2sB8Yym4WZQaEud0mcLKq5QN8bDIa4cWA
-	 NpzPlWJ43mj2fcfaYEZ998C9iuOwnx3Tidbr8hMiQfzjkE7xHjOux7n9lH95UHZwGd
-	 swbrM8lFZTvCA==
-Message-ID: <7adc1fb2-8dec-454c-a6e7-edd00c759c70@denx.de>
-Date: Mon, 7 Oct 2024 17:42:02 +0200
+	s=arc-20240116; t=1728315801; c=relaxed/simple;
+	bh=kSkSqHhmhDBjaBptoqL2+wVR6+Rxvbf4cBcn8HyCGwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVUnos76Yr/a+CSZ23nyE9HO9HGc4tQMr7pMhOkA4k51drk71vf8wE7VcqE4UoIvpxhYZdKrCzGP7cHEwEWu4S4S+bJmELOFY3wc9Y/2YnflXuwShNXTiPn/jjc8EQYmpYW4UxFQFJ/RqR+Tdnf3IYfWWvcCJH3i8hF7Uaaeps0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s2BeBh98; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37cd5016d98so3489364f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728315798; x=1728920598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSvmE8n5QuavFu63BnKGQtIIFsakEPc33Q76Ua00ugw=;
+        b=s2BeBh987wzKEOLsl2GwNOpWYWqMfNlrUmkKYznvELLRltVbazu2gjYiUtbudpKcqE
+         xhdzPZoCI5dkyj8GOwCEtUTdza1Y2gC/5fuaugy4Zf65XlimEHTvzhxH7JbFatRoh0rl
+         WwZJO3jF7lRUf0eXQf57UqmbJvgZI2a67zdX8S9xFucr8WQ6wZ9mJZTSwz+vF0eV5vBL
+         rQpTm3xpGx0ASaHu885JmHTfhaDvtLswwGMaIZZOyXNBtDt5yy6yfAGLQAOzXZY5GQNp
+         xIlwaEfZRwZOmlbKQZqauuO8wa99t91BkI25M5Pg+lSei1ssJIibpDPYGijeoN146Wjo
+         lcUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728315798; x=1728920598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WSvmE8n5QuavFu63BnKGQtIIFsakEPc33Q76Ua00ugw=;
+        b=rndDC0vH54VrXQW36jevQdgtBsF3aKU3KkWxOxpmsozZNRhxKeThETXv54861VLcfH
+         ICXf5LEMsrQZVYcNr07ck80SCq5RssIOYrrfHHkDyhxgyIAwQLnNqjh1nESPLpBRd0wQ
+         bydH8OdUIdswQgP1v4rYDjcSrZBL3oW7v380viTwoOklkjY7ajQ/KFpglD3fQVf/pkJZ
+         XZF6vX4ZLfPBgCX2iT6BV4tBxBtWJWm8B30TTb2SkG/emZXUwL6eDrQS8Xq+dKZd6CyH
+         eYjwuXxzx3anI77m5r/e8YCpuD+u9g4yoXwdaSYsGCf65krU0SQYMgfgPz2WZSy5PROG
+         kAnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlWTuQHcNvIM6ga5JKxxQpqhw+yw9hQ+6UGiGKYKg5i/EcaAsi2wpgP8/n+jTwbe5UGvt8I0kKItiJdko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSYtjX+G/znm0Qgy36DAsl7Lz6IlFqAldcnN7jpfzSsUKaxjP8
+	lU/UQeiW9GHqA+yaJk6BcPkzQHd6sqEsxA0qvhTIPByzg1uRUw5CurU3hAjiTxw=
+X-Google-Smtp-Source: AGHT+IGjHRwsGmvROZcACos6DIixkRGOFRJsUfnF/uGhv9Kl6uH4bJ3AmZ7oBHWLx6CZhF59ANd3Vg==
+X-Received: by 2002:a5d:5f4e:0:b0:374:c1a9:b97b with SMTP id ffacd0b85a97d-37d0e6bbab9mr8562598f8f.8.1728315797735;
+        Mon, 07 Oct 2024 08:43:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f79bsm6011795f8f.18.2024.10.07.08.43.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 08:43:17 -0700 (PDT)
+Date: Mon, 7 Oct 2024 18:43:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH] staging: vchiq_core: Fix code indent errors
+Message-ID: <6c860738-07b2-4c72-9c99-1b394482a186@stanley.mountain>
+References: <20241007152214.23240-1-hridesh699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: st: add RNG node on stm32mp251
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Lionel Debieve <lionel.debieve@foss.st.com>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Yang Yingliang <yangyingliang@huawei.com>
-References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
- <20241007132721.168428-5-gatien.chevallier@foss.st.com>
- <869fe073-c20f-4611-ae84-8268a890a12c@denx.de>
- <d4bfc454-5a20-4cee-85f6-118323c46eca@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <d4bfc454-5a20-4cee-85f6-118323c46eca@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007152214.23240-1-hridesh699@gmail.com>
 
-On 10/7/24 4:59 PM, Gatien CHEVALLIER wrote:
+On Mon, Oct 07, 2024 at 08:52:12PM +0530, Hridesh MG wrote:
+> Replace spaces with tabs to adhere to kernel coding style.
 > 
+> Reported by checkpatch:
 > 
-> On 10/7/24 15:55, Marek Vasut wrote:
->> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
->>> Update the device-tree stm32mp251.dtsi by adding the Random Number
->>> Generator(RNG) node.
->>>
->>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
->>> ---
->>>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/ 
->>> boot/dts/st/stm32mp251.dtsi
->>> index 1167cf63d7e8..40b96353a803 100644
->>> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->>> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->>> @@ -493,6 +493,16 @@ uart8: serial@40380000 {
->>>                   status = "disabled";
->>>               };
->>> +            rng: rng@42020000 {
->>> +                compatible = "st,stm32mp25-rng";
->>> +                reg = <0x42020000 0x400>;
->>> +                clocks = <&clk_rcbsec>, <&rcc CK_BUS_RNG>;
->>> +                clock-names = "rng_clk", "rng_hclk";
->>> +                resets = <&rcc RNG_R>;
->>> +                access-controllers = <&rifsc 92>;
->> It would be good if someone finally sorted the access-controllers 
->> property in all the MP2 nodes alphabetically ; that's separate patch/ 
->> series though.
+> ERROR: code indent should use tabs where possible
 > 
-> I'll pin your comment to take a look into that in the near future.
-Thank you !
+> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+> ---
+
+Thanks.
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
