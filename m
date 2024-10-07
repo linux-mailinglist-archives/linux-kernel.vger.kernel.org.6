@@ -1,57 +1,82 @@
-Return-Path: <linux-kernel+bounces-353492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E7A992E83
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:13:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE88F992E85
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD7D283329
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:13:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78ABCB21A89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB951D8A13;
-	Mon,  7 Oct 2024 14:11:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F191D88A2;
-	Mon,  7 Oct 2024 14:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DC41D79B1;
+	Mon,  7 Oct 2024 14:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhoohsx4"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDB61D6199;
+	Mon,  7 Oct 2024 14:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310302; cv=none; b=uVWt4nk3IqukWUS0IW8CJyjPv5VvFwhADn8nZTU1xSmKiNVihhgMcqAZ1ZmgfjMatHJPgYRkIhWhQkbZ0h7eTsBQ982mY2J+R5wCIK2f2W+U0FXeV3/nZDI0mSJPi0pzO5rnRa0CybMoVlXlobrL/KMOfIoxR54BsaWgA4SAouQ=
+	t=1728310311; cv=none; b=qpudSNwqNahwx/XF53IHiqpfqXHhlPCP1Hj32bhZ1zDLHEVmnY8B9oPkTMHOjheJnUMDoFJlWV4dU6FkEF2lbZn4vyYjslcZjS6ThkSw2r1DagFRpOrFys7TifGzJZd6EO4sJUccfbwO9Ugm2jvP3sxbUZR/JU6slLMzg9IJHcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310302; c=relaxed/simple;
-	bh=bTqJlxMu8UAh36R1oSXfPxrxzREjS1ZfQMC89zv8lVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bw9Jkxke2WLTCdLAT9U1Y0BRLunjAzkFbv0xYdAiJRqzDGV8fjv3X+zE9wZfsGfWUALds69z51tKAFdK31CvvP5XOudzoD3tZplHYTfLthQi8QYxQ97aNxLhRULjKrQ2bYV4ylMhHezTrZvOTiCwEudfPU9J3/2+PssuVDkKa18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C68C1FEC;
-	Mon,  7 Oct 2024 07:12:09 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5A0543F64C;
-	Mon,  7 Oct 2024 07:11:38 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	james.clark@linaro.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
-Date: Mon,  7 Oct 2024 15:11:16 +0100
-Message-Id: <20241007141116.882450-4-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241007141116.882450-1-leo.yan@arm.com>
-References: <20241007141116.882450-1-leo.yan@arm.com>
+	s=arc-20240116; t=1728310311; c=relaxed/simple;
+	bh=eejfsxRus9CZwZggt+RZsEBvsrBQQP3CP8F4bYU2aXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJ71Q9l1T5pfCRUcBeXKpdVgxPZ5hJIK1oLoxwERKIcSQd0ZhJh/yiAHKFv/5ac/RjM7ugA5ESi1dTT/+4fuE3S7TBzAy92Azv7UkoZRzPoDpai6ITfbkFiXaCb1EoX4qmoy695wp6hbEa4cU6BBBuXJnrZFfr5MFL7GoFnSBlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhoohsx4; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20bb39d97d1so37740125ad.2;
+        Mon, 07 Oct 2024 07:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728310309; x=1728915109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKR3q2SKM1ngNEIOlb7PrdpNEzp4DiGKIdiJrGREDA4=;
+        b=Uhoohsx4crvEK5RZI/fkssV/pd/pTJfp4wrq5/HdDFb25KhZBiVuPDqbpVysrv2dYa
+         +2fyFpxv8E0X7FCp4N6rNprHooPCGV1CNeB9mTxmEn5YgcFpYLbG0mUXx/EviGALPuhg
+         r/bkQsjAeHTRUa3YngMgLf8Pun9GzzY50GinayPuiyQi+DGpISgEM2u3VG0y3GhUx7yu
+         EALoClUYHma18bDXPWyf5fhIqsdCBaYxXFLAd6SXHUnvOLkaLTnfeUtAaocO31czjYbM
+         HJoiN8SCTyu+BWXpJRPGD5LVGJ0pnhkVQTtq3JvHZ0Aq5fRVWX9BUmVDyBXc2sOjP5Z/
+         9qcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728310309; x=1728915109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RKR3q2SKM1ngNEIOlb7PrdpNEzp4DiGKIdiJrGREDA4=;
+        b=iqAu3+pJ6eDwSysCJQfQzknWPw9p2ZXV97E2+3YsVTlukyphTrWiVMhcF+5itwGYqi
+         i0NO3Ag3c16PZTNJbze/9kziCTi6KYBWdpJNTyTzeYBcDaLrtUVjGUjXJ8meR4HFwWvZ
+         LlJ4cWxXZKdIM1TzEHlNbYYJNRJHJkjU8STZPjkdiQue7GZYoAouK2F57VG/pwE5lCQ0
+         9OHa23yu0LguQ21hUaYAWdsra3MShW2jBh4fEADYuaR+DQIdgjKRjiO9d4mUQxwotJEf
+         tV/csyiF9xFR+wiuwNsv4Mx1vcG1iMk/VF+TE0FuL8axM89liZQIG0lXajbJhf9iqzI6
+         AGlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNXsJJAyHaWy5mBEXyqMXocZfdCMY49oZS3tVH52EEafeUy9dNlRn7huezYsKL8lxQX/PMC1Sa2VOOJz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa43BxST5fMf+PHrYQJZTprV515AZDbVqumkutS1rbI6EFIERO
+	FqjRBI38RiJrtYDm9wLvo4IgwW1tWWr0WG278lfF2sMBDizMFk+6
+X-Google-Smtp-Source: AGHT+IG0K9MBi9CkbCM8lt/ZPaifrzZFJf9HMlkG7E09vaQ3ea4nLLMhsJ4hlzt0MTSgpTMUXpB8Cg==
+X-Received: by 2002:a17:902:f788:b0:20b:8ed8:9c74 with SMTP id d9443c01a7336-20bff1cb9d3mr181970195ad.49.1728310308781;
+        Mon, 07 Oct 2024 07:11:48 -0700 (PDT)
+Received: from B-M149MD6R-0150.lan ([2409:8a55:2e52:c0f1:4d08:3cf4:6043:d1e7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139a6492sm39921265ad.308.2024.10.07.07.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 07:11:48 -0700 (PDT)
+From: Wardenjohn <zhangwarden@gmail.com>
+To: jpoimboe@kernel.org,
+	mbenes@suse.cz,
+	jikos@kernel.org,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wardenjohn <zhangwarden@gmail.com>
+Subject: [PATCH] selftests: livepatch: add test case of stack_order sysfs interface
+Date: Mon,  7 Oct 2024 22:11:39 +0800
+Message-Id: <20241007141139.49171-1-zhangwarden@gmail.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,122 +85,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If a symbol name is longer than the maximum event length (64 bytes),
-generate an new event name with below combination:
+Add test case of stack_order sysfs interface of livepatch.
 
-  TruncatedSymbol + '_' + HashString + '__return' + '\0'
-    `> 46B        + 1B  +   8B       +    8B      + 1B   = 64 Bytes.
-
-With this change, a probe can be injected for long symbol.
-
-Before:
-
-  # nm test_cpp_mangle | grep -E "print_data|Point"
-  0000000000000cac t _GLOBAL__sub_I__Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
-  0000000000000b50 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzR5Point
-  0000000000000b14 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
-
-  # perf probe -x test_cpp_mangle --add \
-        "_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
-  snprintf() failed: -7; the event name nbase='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long
-  Error: Failed to add events.
-
-After:
-
-  # perf probe -x test_cpp_mangle --add \
-	"_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
-
-  Probe event='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long (>= 64 bytes).
-  Generate hashed event name='_Z62this_is_a_very_very_long_print_data_abcdef_91f40679'
-
-  Added new event:
-    probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679
-    (on _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi in /mnt/test_cpp_mangle)
-
-  You can now use it in all perf tools, such as:
-
-      perf record -e probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679 -aR sleep 1
-
-Signed-off-by: Leo Yan <leo.yan@arm.com>
+Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
 ---
- tools/perf/util/probe-event.c | 42 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ .../testing/selftests/livepatch/test-sysfs.sh | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 71acea07cb46..bacd29b95c75 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2837,6 +2837,32 @@ static void warn_uprobe_event_compat(struct probe_trace_event *tev)
- /* Defined in kernel/trace/trace.h */
- #define MAX_EVENT_NAME_LEN	64
+diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh b/tools/testing/selftests/livepatch/test-sysfs.sh
+index 05a14f5a7bfb..81776749a4e3 100755
+--- a/tools/testing/selftests/livepatch/test-sysfs.sh
++++ b/tools/testing/selftests/livepatch/test-sysfs.sh
+@@ -19,6 +19,7 @@ check_sysfs_rights "$MOD_LIVEPATCH" "enabled" "-rw-r--r--"
+ check_sysfs_value  "$MOD_LIVEPATCH" "enabled" "1"
+ check_sysfs_rights "$MOD_LIVEPATCH" "force" "--w-------"
+ check_sysfs_rights "$MOD_LIVEPATCH" "replace" "-r--r--r--"
++check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
+ check_sysfs_rights "$MOD_LIVEPATCH" "transition" "-r--r--r--"
+ check_sysfs_value  "$MOD_LIVEPATCH" "transition" "0"
+ check_sysfs_rights "$MOD_LIVEPATCH" "vmlinux/patched" "-r--r--r--"
+@@ -131,4 +132,27 @@ livepatch: '$MOD_LIVEPATCH': completing unpatching transition
+ livepatch: '$MOD_LIVEPATCH': unpatching complete
+ % rmmod $MOD_LIVEPATCH"
  
-+static char *probe_trace_event__hash_event(const char *event)
-+{
-+	char *str = NULL;
-+	size_t hash;
++start_test "sysfs test stack_order read"
 +
-+	str = malloc(MAX_EVENT_NAME_LEN);
-+	if (!str)
-+		return NULL;
++load_lp $MOD_LIVEPATCH
 +
-+	hash = str_hash(event);
++check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
++check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
 +
-+	/*
-+	 * Reserve characters for the "__return" suffix for the return probe.
-+	 * Thus the string buffer (64 bytes) are used for:
-+	 *   Truncated event:  46 bytes
-+	 *   '_'            :   1 byte
-+	 *   hash string    :   8 bytes
-+	 *   reserved       :   8 bytes (for suffix "__return")
-+	 *   '\0'           :   1 byte
-+	 */
-+	strncpy(str, event, 46);
-+	/* '_' + hash string + '\0' */
-+	snprintf(str + 46, 10, "_%lx", hash);
-+	return str;
-+}
++disable_lp $MOD_LIVEPATCH
++unload_lp $MOD_LIVEPATCH
 +
- /* Set new name from original perf_probe_event and namelist */
- static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 				       struct perf_probe_event *pev,
-@@ -2844,7 +2870,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 				       bool allow_suffix)
- {
- 	const char *event, *group;
--	char *buf;
-+	char *buf, *hash_event = NULL;
- 	int ret;
- 
- 	buf = malloc(MAX_EVENT_NAME_LEN);
-@@ -2864,6 +2890,19 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 			event = pev->point.function;
- 		else
- 			event = tev->point.realname;
++check_result "% insmod test_modules/$MOD_LIVEPATCH.ko replace=0
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++livepatch: '$MOD_LIVEPATCH': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
 +
-+		if (strlen(event) >= MAX_EVENT_NAME_LEN) {
-+			pr_warning("Probe event='%s' is too long (>= %d bytes).\n",
-+				   event, MAX_EVENT_NAME_LEN);
-+
-+			hash_event = probe_trace_event__hash_event(event);
-+			if (!hash_event) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			pr_warning("Generate hashed event name='%s'\n", hash_event);
-+			event = hash_event;
-+		}
- 	}
- 	if (pev->group && !pev->sdt)
- 		group = pev->group;
-@@ -2903,6 +2942,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 		strlist__add(namelist, event);
- 
- out:
-+	free(hash_event);
- 	free(buf);
- 	return ret < 0 ? ret : 0;
- }
+ exit 0
 -- 
-2.34.1
+2.18.2
 
 
