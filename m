@@ -1,122 +1,187 @@
-Return-Path: <linux-kernel+bounces-354206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E1D993987
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:48:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223BA993993
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B428388B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:47:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44B1AB20E65
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1D418BBBD;
-	Mon,  7 Oct 2024 21:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B96018C92B;
+	Mon,  7 Oct 2024 21:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quu0Tzhf"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M2eYu2uZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7308874C08
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3360474C08
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728337675; cv=none; b=ot+Od1N1fvlcUE308Yh9cseYlS0I4kCYoHmu1COPsANiH8f7mZJ3brau4Lx2yShkV50rJ7XEc1IR3FdZQBS39z9RbMAjl9gMoGn9/DKY0erZOX4RsVZFhX30Z5OHfBvGdFHLIgq3t53DFwIPBwCCjY5HO0n/rfoMfVEFcEpDpMs=
+	t=1728337938; cv=none; b=oZMjLdP9yMqEpiiy0YBsKVdwViEmhJWwSNu0pAKRla1ONZA6415yrasry7/mHnT3nhpolDKA/EPTCzi7hkDP2JmTcV1WXGmY9jI3z6xfEPP2JRWwc+VTw52cALP5QyEANuEBVP4p6GSS8iPqkZOD88fIOajNEtFVrENsZXShVR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728337675; c=relaxed/simple;
-	bh=sHaP8gyR0rr7Ip/nUMYIRG8J8W7aXzQPM1mm57KAkYI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QsjTgEt8JoDBpYt3yV9UW+uTGgJ1NJuvE13rYWKqhzvCLmc/fPTydyPJpAOuaFMf2eFJbRa7i/1EDnRYI/fHaWmMSG2cjIyBAYqyGX2OzYvK4Xnor7FZfEaVB/Ek1/bfsekC9/6o3VaRR4frmadzQos4rNSlDArDqgBfuGZ9vCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quu0Tzhf; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so89615e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 14:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728337672; x=1728942472; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECgP5fvdUFoRi7cXjxsv8+LRLTtUHELj5XDo2/F4PEw=;
-        b=quu0TzhfWz2WmIJz43GGKlFe9YROLCGbEaXNWg6wuQSuIIqIQ2o8JAdIQYIflf6THB
-         Qz7xuAqUkEBLMrFDw+q1fZKtr1vs1IPEbA/poiU0K1b/uyyC+Alh4aeFthQ0aw7LT+xm
-         B1A07d2axPOYBsJWQK5g1Wa+IQrAZW+eaJk11lBrBi4HDU7WEPF8QmRqC0iUH7WdOgMZ
-         Ujdk/rd0iFIGT8aRxWnQ7jxywJ8TiBAPFcYze2ll5UmhhzPyqgzNrHwqXZ7ew5Sy0f6M
-         kPXgbbof3Sh5g2QQEy/x1xyokRXlNCjALfyxfOhQtvXam2QiZQULi+g+MzGT1GNfZkXh
-         fDbg==
+	s=arc-20240116; t=1728337938; c=relaxed/simple;
+	bh=V0IYxckZax0MHCL+pk0Wse+pSfLhhZ2PLyVEvlYWrJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xy4ic/wizTV1Bvhjfj6fKmKG8wWIAcSz0EiPkGFvpsvToxOrXGT686zv57NHwVh/TkO81i7jQnosjYimGvVXYGYHLhdU6YnaCqeoPzA9So4ETvBvc/AVO+xl31+WqbZiI8wOiK0T+TTve8S8RsSbM/2Us3tSTtTb+j4lHg6u78U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M2eYu2uZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497EqaSn025830
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Oct 2024 21:52:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5WldPX1HElD7MkR5uLdSM6teFmc3O8Siba0UndRRQH4=; b=M2eYu2uZ8WotBVP9
+	tRHLsARM5MgpgdNUoIfHajRX5wEoxIIQQIindG+57RpPglrwb52K8T0VuuiJi47n
+	6vLHe9henKGAwI2Gp6W3ZKHi5zq1EfDlX6Z1bXpoHkzYS4/ZhKCEwe4OZ6QRxLDk
+	Ol0bg9lKg6BztvGs02+1QUY8XbbFy1txFSHcUaFc4azH/+3Nlq3UUDTo7P1+LmZ9
+	Hlo+OFJ0r30XhZJwfKugGrI/D5XRfai6aXeDTNwWT74Vu1N029DNODVuqH+SRgEd
+	0Yv6TyOv/t5KeMGS5xfl4yjCJ6ezCR3gk/oYEcU2iqxA7MCMetRGpmdEwuillTZz
+	UEa1MQ==
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xtb5emj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 21:52:15 +0000 (GMT)
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb9300ed9so8005445e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 14:52:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728337672; x=1728942472;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ECgP5fvdUFoRi7cXjxsv8+LRLTtUHELj5XDo2/F4PEw=;
-        b=Xs/UZe/06ia7QQLu6i+wKyNNvROSqaX9fHG47mxJwoZBI70AnGPat30Q1h9O70SHFF
-         nrn+uXLsXs8sLhwe+AQ/MaUR2vq7YhsMEuwu4dNQJ/vMF+S+y0b7cHFqYYMyj8a6A6ch
-         /K57Q0miZScIB98QvudyOcrCy3LnhbWk0DYooM0KTEaIuCcMCunFEHpABAszHjpY/bTV
-         6FEGA7GwsceS0D1zABFBQQVMdS+1NRVUW1UOvrj/76rWuT3PtWJvPyOiHXPLtaLkVifg
-         /BPnMJiuY8wiMbDEUTYECoGM2j54GlfG87df32IFO6392Z6gg5+TQyoRt23rAsPUSrnH
-         2ANw==
-X-Forwarded-Encrypted: i=1; AJvYcCWo1S7VojtJ1C+a8pThHZzDuNITkPGOlWorRYhs98aeTghlRGd5p/yTaaJ8wFHAY5prpsrodyrd+O+1Tlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZFJoFWT9bDUDnMAMI9RsZInDY4ihNhK426pMFWKqZOl2BEuDQ
-	WqmzxdkmNzAheXIVRZGFmWzOlD/LpgA8jLhQ0Zy5kAY9GT4/nUXA90RAaGV6FA==
-X-Google-Smtp-Source: AGHT+IGDQO4nHRNWdEKeqZdj/pMWxMLlAciMeijzka1tn8Wn5Hu3zNWJfZA/A0qfuY+py/QO0cYu7Q==
-X-Received: by 2002:a05:600c:5010:b0:428:e6eb:1340 with SMTP id 5b1f17b1804b1-42fcdcddf49mr1500625e9.4.1728337671287;
-        Mon, 07 Oct 2024 14:47:51 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:39d2:ccab:c4ec:585b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a20393sm104521425e9.12.2024.10.07.14.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 14:47:50 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Mon, 07 Oct 2024 23:47:45 +0200
-Subject: [PATCH] maple_tree: fix outdated flag name in comment
+        d=1e100.net; s=20230601; t=1728337934; x=1728942734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WldPX1HElD7MkR5uLdSM6teFmc3O8Siba0UndRRQH4=;
+        b=Mps5iH5Ht2oSkoyvs3CztMXsxPg9OnK9yvrMoMXgfjSrHt2KoIefjmQW1BOjOVpV0B
+         g8ToG5XJZTqSXJslHvP7iBgEgJ4v7iTvsqIGo4OIV4JqjsWh4cn63w4XoARF6wyOPJ6m
+         wwqf5J/3XG/ZmXgX9+MCtsbl3SbbqYkyswoAX0mb0mFur77QkUfjohu/xVl4kh4eW04q
+         qeiLzMIMkT8gzCe4dnKoX+e7miZPX28ffrkJgB0WsDKjQDqrMewSjXPfyM4J8RPib5wX
+         kJUUL0O1n+vgeOi8Ki+ChSUoousPG1BjljqP1leXFdFSnz/zVTEdRfNad4fZkoJWtgYJ
+         Gaeg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0h+J7bK1LQpSHyGaNEk3fb0+99zX47ADJXZXEsRxxyXLo6MBZbrz2ZFPlLtzt0N4LjWSTPVGqrWYhOc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQhmsUg1KzRIb7JwmfRfEujre/bsnrHxGtvJzIR6KPuJ6kcxe1
+	hymiayICwFW4wha0R4ocwsY4CyCYR4OFl/wazI39UyxGEL11pWdW1gW0q6STuBcAbSgd5mHfO7j
+	g8QP01IBaHgPOyhHAwfzuPiK18rzhwQSu8RCiJzu9+t9iiei5KfYDXYpisZUxV+o=
+X-Received: by 2002:a05:6000:1acc:b0:378:c6f5:9e54 with SMTP id ffacd0b85a97d-37d0e7af459mr3493125f8f.5.1728337934196;
+        Mon, 07 Oct 2024 14:52:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFaMbyT7dDMapB076G7LQwkZU0xFaEj25mSmt+D0+BLMUp3fAakSFZUwmy/E7gSJp44UTpC1w==
+X-Received: by 2002:a05:6000:1acc:b0:378:c6f5:9e54 with SMTP id ffacd0b85a97d-37d0e7af459mr3493115f8f.5.1728337933604;
+        Mon, 07 Oct 2024 14:52:13 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a995253abfasm204148166b.185.2024.10.07.14.52.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 14:52:13 -0700 (PDT)
+Message-ID: <374339b4-3875-4680-a0b6-e0d3e69f4935@oss.qualcomm.com>
+Date: Mon, 7 Oct 2024 23:52:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241007-maple-tree-doc-fix-v1-1-6bbf89c1153d@google.com>
-X-B4-Tracking: v=1; b=H4sIAABXBGcC/x2MUQqAIBAFrxL73YJaFHSV6KP0VQtloRGBdPekz
- xmYSRQRBJG6IlHALVEOn0GXBdl19AtYXGYyytRaqZb38dzAVwDYHZZnedhNSjczKqMtKIdnQNb
- /tB/e9wMsaowaZAAAAA==
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728337670; l=1106;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=sHaP8gyR0rr7Ip/nUMYIRG8J8W7aXzQPM1mm57KAkYI=;
- b=MpX4G9zNkSR1p/lJKwqYFyj/FIS3i0E7M/RCPID4+WNzadZyecSH37beYlx4DgU+tBpq+4KEb
- pW7h5lsjPC0BJcgx+4EgQ6beVcgTehUtGFrLdelA5lakauDNg6iWxwp
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3
+ (linksys-jamaica)
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Karl Chan <exxxxkc@getgoogleoff.me>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
+ <CACRpkdbj8fkQf38n0t-==cFZj55TPgoTGM-dzESWgeRGfPHofQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CACRpkdbj8fkQf38n0t-==cFZj55TPgoTGM-dzESWgeRGfPHofQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 0pLQkd0p0eW8LlMSC2nGgA2sNy857Q9G
+X-Proofpoint-GUID: 0pLQkd0p0eW8LlMSC2nGgA2sNy857Q9G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410070150
 
-MAPLE_USE_RCU was renamed to MT_FLAGS_USE_RCU at some point, fix up the
-comment.
+On 7.10.2024 10:23 PM, Linus Walleij wrote:
+> On Mon, Oct 7, 2024 at 6:35 PM Karl Chan <exxxxkc@getgoogleoff.me> wrote:
+> 
+>> Also The original firmware from Linksys can only boot ARM32 kernels.
+>>
+>> As of now There seems to be no way to boot ARM64 kernels on those device.
+> 
+> So this is a Cortex-A53 Aarch64 system running in ARM32 mode.
+> 
+> So I got this interactive U-boot log from Karl showing how the attempt
+> to boot an Aarch64 kernel manifests:
+> 
+> CBT U-Boot ver: 3.2.08  ([IPQ5018].[SPF11.3].[CSU2])
+> 
+> ## Loading kernel from FIT Image at 44000000 ...
+>    Using 'standard' configuration
+>    Trying 'kernel' kernel subimage
+>      Description:  Kernel
+>      Type:         Kernel Image
+>      Compression:  uncompressed
+>      Data Start:   0x440000a8
+>      Data Size:    8249289 Bytes = 7.9 MiB
+>      Architecture: AArch64
+>      OS:           Linux
+>      Load Address: 0x41208000
+>      Entry Point:  0x41208000
+>    Verifying Hash Integrity ... OK
+> (...)
+> ## Loading ramdisk from FIT Image at 44000000 ...
+> (...)
+> ## Loading fdt from FIT Image at 44000000 ...
+> (...)
+> fdt_fixup_qpic: QPIC: unable to find node '/soc/qpic-nand@79b0000'
+> Could not find PCI in device tree
+> Using machid 0x8040001 from environment
+> 
+> Starting kernel ...
+> 
+> undefined instruction
+> pc : [<41208004>]          lr : [<4a921f8f>]
+> reloc pc : [<41208004>]    lr : [<4a921f8f>]
+> sp : 4a822838  ip : 00000001     fp : 00000000
+> r10: 4a83b914  r9 : 4a822ea0     r8 : 00000000
+> r7 : 00000000  r6 : 41208000     r5 : 4a97d848  r4 : 00000000
+> r3 : 644d5241  r2 : 4a0ae000     r1 : 08040001  r0 : 00000000
+> Flags: nzCV  IRQs off  FIQs off  Mode SVC_32
+> Resetting CPU ...
+> 
+> resetting ...
+> 
+> So perhaps someone knows how we can get around this.
+> 
+> It seems to me the U-Boot is in 32bit mode and tries to just
+> execute an Aarch64 binary and that doesn't work.
+> 
+> What we need is a 32bit mode preamble that can switch
+> the machine to Aarch64 and continue.
+> 
+> I don't know *how* to do that, but I would *guess* a botched
+> return from exception where you provide your own stack
+> with the Aarch64 state hardcoded on it should do the job?
+> 
+> The Aarch64 maintainers will know what to do.
+> 
+> Surely it should be possible to add a little code snippet
+> to do this somewhere in memory, and that in turn jumps
+> to execute the actual Aarch64 kernel in Aarch64 mode?
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- include/linux/maple_tree.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not sure about this one, but older (10+yo) qcom socs had a
+secure call to switch to 64bit..
 
-diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-index c2c11004085e..61c236850ca8 100644
---- a/include/linux/maple_tree.h
-+++ b/include/linux/maple_tree.h
-@@ -224,7 +224,7 @@ typedef struct { /* nothing */ } lockdep_map_p;
-  * (set at tree creation time) and dynamic information set under the spinlock.
-  *
-  * Another use of flags are to indicate global states of the tree.  This is the
-- * case with the MAPLE_USE_RCU flag, which indicates the tree is currently in
-+ * case with the MT_FLAGS_USE_RCU flag, which indicates the tree is currently in
-  * RCU mode.  This mode was added to allow the tree to reuse nodes instead of
-  * re-allocating and RCU freeing nodes when there is a single user.
-  */
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241007-maple-tree-doc-fix-db016fe321ce
--- 
-Jann Horn <jannh@google.com>
-
+Konrad
 
