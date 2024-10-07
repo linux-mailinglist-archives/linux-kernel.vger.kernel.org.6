@@ -1,172 +1,295 @@
-Return-Path: <linux-kernel+bounces-353164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980B099298F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:57:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C283992996
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B8B2B20D11
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412242840A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684691D1319;
-	Mon,  7 Oct 2024 10:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB13F1D1F56;
+	Mon,  7 Oct 2024 10:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NJfWi4c+"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Mys1Duz7"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B15315D5C1
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046761D14EC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298642; cv=none; b=ToflE5mNW9FoweNs+ZZscTlFHiLJmpLZEgZh2bWTDPPDxnovq8YUJoMRRa9IB0nzOxfxDawE/ZYt42zpUl0aZGCU3ylN8qdcLN9ko87GW8KW9la99EjmvoSOsEpZTkWqWr0Ic2pk1K6RD0UZj14BW57HW55sd129zDoY05eEY40=
+	t=1728298678; cv=none; b=AJhWMLMr3ctsQBNpy2fE3cOYbx1WFKg+U6rIa/Rki800AtbvxxRCn+Aa6XFjMqmcgfnWPUoZxO3WYL81iTVCWEy5+nhBg2kVz76SR6wFlniLsqAhf6SiJdvflmPIKKdscp81DzrlUIaow2+9Mamqt/1yEswKDHAy+4PLLkrVnsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298642; c=relaxed/simple;
-	bh=dn4X0hktRj/wRHGaaahxxpFAIsii4Hh22fc+Lp6LLY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AJmgbhzX+kZq6hrIr5PoNpdzwbsAHkf+hyw1+fO0XKwVl0y8rp9PYCT2kNy2VY5WnOYkVLao/2QTP7xc5D5RHYPe32BlWP0CIqMCLwcKHNmFtqoYEwp3v+kyU6Raf7NmFVi/Z50Ph9IkV0rTY5NCTQQgx4zoarzpcgJ4As2iKtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NJfWi4c+; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b3d1a77bbso221605ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:57:20 -0700 (PDT)
+	s=arc-20240116; t=1728298678; c=relaxed/simple;
+	bh=eHP43u3qi9pYZ0wncTBBS6KMxs5K+qW3l2saey10/F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YLSnM4Uv4M6P4/BOVUwSS20S4PehoaZm7iXLYsT6ht30a3IHyDGs07d9iuDJNZvudFwpPX9IybzZ9bLyK0l0TaJadO61yRD+OKAU54lA2Z4SXARSIDaRnihHJq6zHrj3WIm3NjkAX0Lrq04ecvq/uKw+qt/1KEl5GgOWYi+5ex8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Mys1Duz7; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cce5b140bso2971393f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728298639; x=1728903439; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9NH9878z7dQuSRPTLVPXr8k7J8PWiV4NBLhQUfEcgW0=;
-        b=NJfWi4c+u2VbDXmKkjVeb3f3/+ShseHz15APbpUupDhmc4Kuynbg7GMaPQ5FSJ8CUQ
-         XaTfOUas434636xNEWFmsX4F0ho2/D/1fdODKRrnJEccLeankFhw5V8On3oigQgPgAIL
-         uwL2YayLqNolCp6W54s+id8dvIAVuFUdRLhxizkyad9smKTuLS1c4cpRK32gKCcEsTMX
-         uPUOKpOUJhGtUg+PVKGpktICWilptuKUqHWVQV0zrVU6CVaLNGEaRV0pR9Cb3Bv38Mut
-         HfKdaqysDCDESRHtjhlNXyfojBKIkSb8lCLtgO/P3aa1O5+nCKFaX36S/fSQ+HNQhmPA
-         2yOw==
+        d=openvpn.net; s=google; t=1728298674; x=1728903474; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=W00gMYbiVAg6GfWlKaTZSO9FJAI5UCkdkkjNlBjRJBs=;
+        b=Mys1Duz7ibMw85uRXKNOHB7/ydE867YPXyESlQhJ0i2XaXkVgwSqnEFPHWee/sOnBN
+         tSpc8Sty59L/Dt/N4RGh0uX+nh+lS9afsdUcoN1AAk5Pe8bQAgwuQWzvMXomZCFv15e3
+         DnPnBVr2gP5uIT1o20aKDUb17zXFxdQna0YJv2/ebqTL3IrDXFjsLiHNA60CJOz07dJy
+         kN6jPDdP6W/hCF4WylqKUWDVGfJebNCstA1iRaswDK6enE0CYJymMJMc6kjRRk636DdK
+         AJNraE1CuYxx6HVKMIhUkU+HBWqWYelPe2cOuTlz/ThijAKr/RsCP0O9FZjnIStklQFh
+         hpwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728298640; x=1728903440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9NH9878z7dQuSRPTLVPXr8k7J8PWiV4NBLhQUfEcgW0=;
-        b=tEfyQkQX/bxbcwcxxmpX0ry/53g13ls+AcZmkUml/QWwVI8jPFRtDRff+Eazfsdq2M
-         bXdBk7v3y35g0YrBh3h78h4S/SYUwyGw36OcQ14P/P4wwaJ6Czfb1lJdZWNVoJSd8osY
-         uiGOuEp08gjS1bogeLz9hukx2Ikca65KrqrxTBtGUgyXa/3kauvGeacp8e+ibKea8iXe
-         h8epoUYdMFVb4a8a8C+iPjTrNPHADQtIAuzPk+raT0xFtzcNhjtNEh73WzblOONFH6wS
-         HAb9lh2V7WjhqmTTSIL0CPLahREzbaE8SOwzmmHQ0Fk3A+5zwAtqBJ6IJbx0/BXjKZKa
-         /AkA==
-X-Gm-Message-State: AOJu0YzxW5abAr4f3KqEANAkxWKH9V+cOmXeibh9q4wEbh6nQdikbCOx
-	OSk6yRXXql/7FPbn9E+KGbvndmwVOeg/3fTWFOkZ9tu0q0kLVyVOGta+oGjiU+zGrDa8wXyZn08
-	haEX9WPfxMlSrgYmwh/OoZVzAyODIcXZacMEI
-X-Google-Smtp-Source: AGHT+IFNdBdVNo669mlzVbqSIRfFshv9Ivfo9gz68mKq+QQz44aMDTFTWohbOA5YzoOslxMdQiCnIV03jaQ7DzGSRm0=
-X-Received: by 2002:a17:903:1d0:b0:20b:93be:a2ac with SMTP id
- d9443c01a7336-20c192a45a0mr2223455ad.17.1728298639206; Mon, 07 Oct 2024
- 03:57:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728298674; x=1728903474;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W00gMYbiVAg6GfWlKaTZSO9FJAI5UCkdkkjNlBjRJBs=;
+        b=O74Qs1kL8+SMCkmE+fdaBD1D2am4HtsQj/f6e5b8oQ/ufd476BSFUBkMV2dgZ0a7Ty
+         EotGqRVr3hl5+RUtYe2o0Rnt1O/VbV/AOTYvkz2wlx+/TQWFfbleAFMC2+b1rRw8zIo/
+         1mbPKlSMCF0s6BDk+3BV97oandB4eiHlG79XD4JRPQGHe53mILsNkW9/qMDy68PwON+I
+         Xnk2NLFRuIpNhzBWPH1SRop1L5G7PnfR+DPI1inASpi0fJ95E0pKCho43vS0Y7ZKE1Pi
+         f/uuvpB0QKzEIE7JVRxpkZVXTLvehzT5HJ+Bg7JjCAvKB8rSxSjwPCNKfhRGkWTetRnh
+         kf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUeEkn5oS+mmOtQG/Mfuc4uz3q9mQ3ROr6Kv/9jdl3mLMPDc6x8uxSzolnhGP4fhJQE3j9pVz7c6MUTC6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1lNphbmauD/PQXWvKXQx8vN6mMg0wFH921wdiPQRUD9FxT6sK
+	7LTE10hNI/rp7/1VEesfpWV9v//LbekWC3vTjzS56H0Pe4IxfDOkzW8FpEZc/SI=
+X-Google-Smtp-Source: AGHT+IHuyUq1UUmMuugzWM9dizwtSx980ga2l3e7y/czQZiHAAwI07TLQlpmSXq4sS8NK5sD/k8LjQ==
+X-Received: by 2002:adf:f884:0:b0:37c:cc96:d1cd with SMTP id ffacd0b85a97d-37d0e79c51emr6205443f8f.34.1728298674219;
+        Mon, 07 Oct 2024 03:57:54 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:efc3:b0c0:f886:97ea? ([2001:67c:2fbc:1:efc3:b0c0:f886:97ea])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e89624sm70917915e9.12.2024.10.07.03.57.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 03:57:53 -0700 (PDT)
+Message-ID: <76edb6d9-5b17-499e-ad0f-c0eee3cd547c@openvpn.net>
+Date: Mon, 7 Oct 2024 12:57:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <40555604c3f4be43bf72e72d5409eaece4be9320.camel@coelho.fi>
-In-Reply-To: <40555604c3f4be43bf72e72d5409eaece4be9320.camel@coelho.fi>
-From: =?UTF-8?Q?Marek_Ma=C5=9Blanka?= <mmaslanka@google.com>
-Date: Mon, 7 Oct 2024 12:57:06 +0200
-Message-ID: <CAGcaFA1zqcqRNNydCZwn1pXUrjgSwvpLcVrf-ecFub2CABLiUw@mail.gmail.com>
-Subject: Re: Regression in PMC code in 6.12-rc1
-To: Luca Coelho <luca@coelho.fi>
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com, 
-	daniel.lezcano@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 03/24] ovpn: add basic netlink support
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, sd@queasysnail.net, ryazanov.s.a@gmail.com
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
+ <CAD4GDZyZruh+gbA+=Wu_2aSOnaF8R6eDRU0=EE0qnWe-bTi2-Q@mail.gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <CAD4GDZyZruh+gbA+=Wu_2aSOnaF8R6eDRU0=EE0qnWe-bTi2-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Luca,
+On 04/10/2024 18:13, Donald Hunter wrote:
+> On Wed, 2 Oct 2024 at 10:03, Antonio Quartulli <antonio@openvpn.net> wrote:
+>>
+>> +definitions:
+>> +  -
+>> +    type: const
+>> +    name: nonce-tail-size
+>> +    value: 8
+>> +  -
+>> +    type: enum
+>> +    name: cipher-alg
+>> +    value-start: 0
+> 
+> value-start defaults to 0 for enum so this is unnecessary. Same for
+> the following enum definitions.
 
-Thanks for the report.
+ACK
 
-Seems that the tick_freeze function in the kernel/time/tick-common.c
-is helding the spinlock so the pmc_core_acpi_pm_timer_suspend_resume
-shouldn't try to take the mutex lock. I'll look for the solution.
+> 
+>> +    entries: [ none, aes-gcm, chacha20-poly1305 ]
+>> +  -
+>> +    type: enum
+>> +    name: del-peer-reason
+>> +    value-start: 0
+>> +    entries: [ teardown, userspace, expired, transport-error, transport-disconnect ]
+>> +  -
+>> +    type: enum
+>> +    name: key-slot
+>> +    value-start: 0
+>> +    entries: [ primary, secondary ]
+>> +  -
+>> +    type: enum
+>> +    name: mode
+>> +    value-start: 0
+>> +    entries: [ p2p, mp ]
+>> +
+> 
+> [...]
+> 
+>> +operations:
+>> +  list:
+>> +    -
+>> +      name: dev-new
+>> +      attribute-set: ovpn
+>> +      flags: [ admin-perm ]
+>> +      doc: Create a new interface of type ovpn
+>> +      do:
+>> +        request:
+>> +          attributes:
+>> +            - ifname
+>> +            - mode
+>> +        reply:
+>> +          attributes:
+>> +            - ifname
+>> +            - ifindex
+>> +    -
+>> +      name: dev-del
+>> +      attribute-set: ovpn
+>> +      flags: [ admin-perm ]
+>> +      doc: Delete existing interface of type ovpn
+>> +      do:
+>> +        pre: ovpn-nl-pre-doit
+>> +        post: ovpn-nl-post-doit
+>> +        request:
+>> +          attributes:
+>> +            - ifindex
+> 
+> There's no dev-get do/dump op. I think there should be one for
+> diagnostics and metrics.
 
-Marek
+I am not sure how much information it can provide (as of now we only 
+have the 'mode' that is being set upon creation).
+
+In any case, I am not against implementing the op now and extend it 
+later as we see fit.
+
+> 
+>> +    -
+>> +      name: key-new
+>> +      attribute-set: ovpn
+>> +      flags: [ admin-perm ]
+>> +      doc: Add a cipher key for a specific peer
+>> +      do:
+>> +        pre: ovpn-nl-pre-doit
+>> +        post: ovpn-nl-post-doit
+>> +        request:
+>> +          attributes:
+>> +            - ifindex
+>> +            - keyconf
+>> +    -
+>> +      name: key-swap
+>> +      attribute-set: ovpn
+>> +      flags: [ admin-perm ]
+>> +      doc: Swap primary and secondary session keys for a specific peer
+>> +      do:
+>> +        pre: ovpn-nl-pre-doit
+>> +        post: ovpn-nl-post-doit
+>> +        request:
+>> +          attributes:
+>> +            - ifindex
+>> +            - keyconf
+>> +    -
+>> +      name: key-swap-ntf
+>> +      notify: key-new
+> 
+> This doesn't work because key-new doesn't have a reply. You should
+> define it with an event: block instead. You can see the build errors
+> here:
+> 
+> make -C tools/net/ynl
+
+Oh, I wasn't aware of this subfolder.
+Thanks for pointing it out!
+
+I am thinking that it may make sense to implement a key-get op to 
+extract non-sensible data about the keys (i.e. what cipher was 
+configured). This may be useful for debugging as well.
+
+At that point the key-swap-ntf can re-use the key-get as notify.
 
 
-On Mon, Oct 7, 2024 at 11:17=E2=80=AFAM Luca Coelho <luca@coelho.fi> wrote:
->
-> Hi Marek et al,
->
-> We have been facing some errors when running some of our Display CI
-> tests that seem to have been introduced by the following commit:
->
-> e86c8186d03a ("platform/x86:intel/pmc: Enable the ACPI PM Timer to be tur=
-ned off when suspended")
->
-> The errors we are getting look like this:
->
-> <4> [222.857770] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> <4> [222.857771] [ BUG: Invalid wait context ]
-> <4> [222.857772] 6.12.0-rc1-xe #1 Not tainted
-> <4> [222.857773] -----------------------------
-> <4> [222.857774] swapper/4/0 is trying to lock:
-> <4> [222.857775] ffff8881174c88c8 (&pmcdev->lock){+.+.}-{3:3}, at: pmc_co=
-re_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
-> <4> [222.857782] other info that might help us debug this:
-> <4> [222.857783] context-{4:4}
-> <4> [222.857784] 1 lock held by swapper/4/0:
-> <4> [222.857785]  #0: ffffffff83452258 (tick_freeze_lock){....}-{2:2}, at=
-: tick_freeze+0x16/0x110
-> <4> [222.857791] stack backtrace:
-> <4> [222.857793] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Not tainted 6.12.0-=
-rc1-xe #1
-> <4> [222.857794] Hardware name: Intel Corporation Alder Lake Client Platf=
-orm/AlderLake-P DDR5 RVP, BIOS RPLPFWI1.R00.4035.A00.2301200723 01/20/2023
-> <4> [222.857796] Call Trace:
-> <4> [222.857797]  <TASK>
-> <4> [222.857798]  dump_stack_lvl+0x80/0xc0
-> <4> [222.857802]  dump_stack+0x10/0x20
-> <4> [222.857805]  __lock_acquire+0x943/0x2800
-> <4> [222.857808]  ? stack_trace_save+0x4b/0x70
-> <4> [222.857812]  lock_acquire+0xc5/0x2f0
-> <4> [222.857814]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [inte=
-l_pmc_core]
-> <4> [222.857817]  __mutex_lock+0xbe/0xc70
-> <4> [222.857819]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [inte=
-l_pmc_core]
-> <4> [222.857822]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [inte=
-l_pmc_core]
-> <4> [222.857825]  mutex_lock_nested+0x1b/0x30
-> <4> [222.857827]  ? mutex_lock_nested+0x1b/0x30
-> <4> [222.857828]  pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_=
-pmc_core]
-> <4> [222.857831]  acpi_pm_suspend+0x23/0x40
-> <4> [222.857834]  clocksource_suspend+0x2b/0x50
-> <4> [222.857836]  timekeeping_suspend+0x22a/0x360
-> <4> [222.857839]  tick_freeze+0x89/0x110
-> <4> [222.857840]  enter_s2idle_proper+0x34/0x1d0
-> <4> [222.857843]  cpuidle_enter_s2idle+0xaa/0x120
-> <4> [222.857845]  ? tsc_verify_tsc_adjust+0x42/0x100
-> <4> [222.857849]  do_idle+0x221/0x250
-> <4> [222.857852]  cpu_startup_entry+0x29/0x30
-> <4> [222.857854]  start_secondary+0x12e/0x160
-> <4> [222.857856]  common_startup_64+0x13e/0x141
-> <4> [222.857859]  </TASK>
->
-> And the full logs can be found, for example, here:
->
-> https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc768f36cf676ee=
-1b014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-interruptible.h=
-tml
->
->
-> Reverting this commit seems to prevent the problem.  Do you have any
-> idea what could be causing this and, more importantly, how to fix it?
-> :)
->
-> Thanks!
->
-> --
-> Cheers,
-> Luca.
+Cheers,
+
+> 
+> CC ovpn-user.o
+> In file included from ovpn-user.c:8:
+> ovpn-user.h:1194:33: error: field ‘obj’ has incomplete type
+>   1194 |         struct ovpn_key_new_rsp obj __attribute__((aligned(8)));
+>        |                                 ^~~
+> ovpn-user.c:835:35: error: ‘ovpn_key_new_rsp_parse’ undeclared here
+> (not in a function); did you mean ‘ovpn_dev_new_rsp_parse’?
+>    835 |                 .cb             = ovpn_key_new_rsp_parse,
+>        |                                   ^~~~~~~~~~~~~~~~~~~~~~
+>        |                                   ovpn_dev_new_rsp_parse
+> make[1]: *** [Makefile:41: ovpn-user.o] Error 1
+> 
+>> +      doc: |
+>> +        Notification about key having exhausted its IV space and requiring
+>> +        renegotiation
+>> +      mcgrp: peers
+>> +    -
+>> +      name: key-del
+>> +      attribute-set: ovpn
+>> +      flags: [ admin-perm ]
+>> +      doc: Delete cipher key for a specific peer
+>> +      do:
+>> +        pre: ovpn-nl-pre-doit
+>> +        post: ovpn-nl-post-doit
+>> +        request:
+>> +          attributes:
+>> +            - ifindex
+>> +            - keyconf
+>> +
+>> +mcast-groups:
+>> +  list:
+>> +    -
+>> +      name: peers
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
