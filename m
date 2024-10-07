@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-353865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BC49933CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27F29933CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABE51F2464E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 100291C23B52
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854DC1DC1A6;
-	Mon,  7 Oct 2024 16:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079EE1DC1B8;
+	Mon,  7 Oct 2024 16:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XQQU2T1O"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X99nvTAA"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E121DC18F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3321DBB3A;
+	Mon,  7 Oct 2024 16:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319633; cv=none; b=WoI6L7rfF1JIWdz770YHEsGjh6y8mEU99agEYZolQ2aDcJvjZukPuGIJi27ql8/sR7FaiImkNvcgg9HcmNCzNF02F5NkYEUSxxFzQeCMUXS/yCVFk+xNR0HGPRWhPzdv+ShDsOHY5OiYxveaPvVzLL8aVTM1b70VhJP/PpZrPEk=
+	t=1728319683; cv=none; b=eejkXGjlTHmFOIhRpozz3NDNrvRiR6PY2a2V4lx4RmlPqO/eCTdaopoLvfba+TChbJ67gD9uW+LqIKxNnYK5fRUZwxclB1tPuv5Ylu9Tdjeu54McnYuoBrZ1dLuh3jLn7rGMyXBZidARJxFNrQkl/O8PxHYgCXP/mOEIXCS4Xew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319633; c=relaxed/simple;
-	bh=2JvOXnCE8q45yOzYM4/Se7vLDg7oF4TeQX5icNd5G/Q=;
+	s=arc-20240116; t=1728319683; c=relaxed/simple;
+	bh=m5COKRDZ0N+jZ3ruutsrz4XDt0lzrIWnyIVoN63Yr/U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QeSP873GfaQXdSap6XwLneBN6T+SmHRKX5FG1c0DSD7SIRq7/xFfcPzxc+k54StUT309Etv5yqLH85pWqwC9UQoXXBmGxkQ4zOlcU/Bh0a836NERYHj5CYmo5eQcZIfDDlYJG7e6DgE+bXlOAmvXj6N5W5Wsy0S+sXBLJlqYVVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=XQQU2T1O; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb7f5f9fb7so50277886d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:47:11 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=HyoiykBZH666tbE7agtpU/4i4576XQrC/kzxllgM4cCqrlFyaVrSoz5rlvY4Ruj7qiKGo/qT9nbos0WsdlURBVVg+jC8cqKOviMvtotgTDxXxQwfedeOVqmxctn84TC1wr/VeCmEjbtf1ZQHkNavtVFS1m/yq2MOiDt1SKv29Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X99nvTAA; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so41408655e9.3;
+        Mon, 07 Oct 2024 09:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728319630; x=1728924430; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=S9CjsSMRTcKaZhkjpOoFNmBuBgqEpMntZNfMT8VgpNk=;
-        b=XQQU2T1OZjwquxK9ZOtH5oCvZMfEgWIWHByMH41G4SK0LSrH34snMtWjyZHQuxQgu8
-         LUp+capu++xnxrhs6XvNOHxjwE0hlpVHS4MtaOx86UGYhpKmbGtY9ysKL1zfbAJPQJ/6
-         nrsblxPeUwlal26/pyIZlgRhmnv7FDRARMT5Q=
+        d=gmail.com; s=20230601; t=1728319680; x=1728924480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sjjsJvt3Ubeo2DT+hd89E6pFZ1HmYlwo+hb6vzYJIBQ=;
+        b=X99nvTAAZUawCOKLJLQa9pCvGgCEU4pSjhWGmsM1nbbuLIzZMTvdPske0bdkKMkK8c
+         7kbd4e93i4duT0xpd3O/vMy/KAD+74PtlnA88XRdnob+zfBXZtzMXcA7llwB9CeFAUJx
+         2Vyeel65Vvx7G6BDYIqipuVOrbsKhcfvQNnwfPg7WXzOlzdMTWcEyFO9i9zk7RzWGaWy
+         ulHhYwlMZiUIWFwavIV9/DHxBRzdA8DhLkmAFUq4Z1iM2BT2YJMsfqYA1tYL2sh+nf4C
+         wWK5ZVKUxLmI0UH3tDO6+x2V/5f0GASkeeyAlOnxod7PhDp+35/Uy2iq4u73t+20glRD
+         aLtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728319630; x=1728924430;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9CjsSMRTcKaZhkjpOoFNmBuBgqEpMntZNfMT8VgpNk=;
-        b=c+dCHQpKwGwBEBAK+VYLHmC82qp+fninZ3cRcRMQkiWIW78EauLbkMkVZXoA3ktGOM
-         UJCWV+0exQIIOlxAAqR4xU1QLGhMW1f0SP1pE/vRol7Lkj8CXQoyvPcMTJIjRJfynwfg
-         2vy4eNRFasdm6RRDXhiPKxceo5N/8ISUJwYIWD+vxJx76+hEkgl8sIFk8p+JhGKAJrEk
-         FvkHb1EiFctpv3HVCMIrL32uGOE/C6hYfgUm81wGP/41AwS44yiC32f0eN37MA38MKzk
-         qVlIcpz/BGDfnMaWR/6LubsG9KI3BuKAqTsWI0YFmLYXza2uz45LQ9LiCkYPlcmlfLMw
-         vNfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVakOs/l9+OCXg9RA/OqLZPMkzJaMbcvxLAiNcgPwpJlEdpeKtD5rIQwa1siGZFbpjNyjgIIX+mfHDkmLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX5s9dbXQPDDpFavwnoCKDU+URNqfxhsNCgXoB8SPQ0fZ7wmMk
-	3pZ734wwGzcWS6cw2b4gZeXI3doSDSMyS/00jOKNbr3TzpfGYg7mFaXDTxrtWA==
-X-Google-Smtp-Source: AGHT+IGkzDBDte/43eYOd/aigjOKOeHrGPpTVqz8vfZIpAXJNx38FHSgFi1MXbXtmwfxAGzq41Ah1A==
-X-Received: by 2002:a05:6214:4a87:b0:6cb:b7ea:2072 with SMTP id 6a1803df08f44-6cbb7ea20a2mr28174736d6.1.1728319630398;
-        Mon, 07 Oct 2024 09:47:10 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba475142dsm26725486d6.102.2024.10.07.09.47.07
+        d=1e100.net; s=20230601; t=1728319680; x=1728924480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sjjsJvt3Ubeo2DT+hd89E6pFZ1HmYlwo+hb6vzYJIBQ=;
+        b=u6A3dTLGEXeEqt79+kb3FXi4FoPohtAzhJ+mstrGiCLrf6Lvulz9WKFio0F0WA6Ces
+         577PToS1itsYex7R2IAyayDctUAQU1YZJRDVL/OE2sUSWF94wILh3oyyJl+Ec4Qw45ZZ
+         tdxYw/VIzYfU+TxvOd9Rd4GteM5kdIskGLr0piDApGkbLINCRbj3l2UOT9Jio/s0wtXR
+         8ntShNSKm7F7tWsXt+8+33LILgH1feLwtCJ6qQcSy11GRqWVTBj7mhPT66R5Ozv8LO8+
+         FcMzkuUvrup54CYpIExNz+SUlMmNwErlvTRiKfV+gIE1Ha4zQVlxlW8joRZiGX5gYiAJ
+         Bx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZGrkoKimRjf4gCnrnL/ryrPtHA+zR+iiKXjuVS398PK0ZebJJLl/NXSyJHXfeuX2x9nB7xHGo3+e+N9w@vger.kernel.org, AJvYcCVo9wvWV69r933mbCbi64SBNfeTYU7He0WuTBfuG3pf6tANTl7iIcSbF+ZPkKeMN77dcDey4jY0bR0=@vger.kernel.org, AJvYcCW2oCti/LutitfCpMo8eZBoAkZM81CibNEau+x0EWbKYQNHhJpUM41ty7UH/+D+XhRZXy1jc4Dy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEJ8fj8GQNQ8AaSTb0MxUqHgkVF1mPKVYM5NXKhuy0+D3JIz1y
+	NhMvFKIFD5WTxRNpQgvifCnD7GWQEwHplo5+GpYq3CEXrOtKbkuH
+X-Google-Smtp-Source: AGHT+IHbf2asevkk2K3r5PtdD0PoltYd6OeaFzL96uL9uyLu7Ao2qPR9x6OsQpZru0X9UKsb1MbUwQ==
+X-Received: by 2002:a5d:40d1:0:b0:37c:c5dc:72b with SMTP id ffacd0b85a97d-37d0e6bc8ebmr7134164f8f.1.1728319679638;
+        Mon, 07 Oct 2024 09:47:59 -0700 (PDT)
+Received: from [192.168.42.151] ([85.255.234.230])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d169733c5sm6078760f8f.110.2024.10.07.09.47.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 09:47:09 -0700 (PDT)
-Message-ID: <17593cd5-e188-4146-8e4b-c87ce48e1140@broadcom.com>
-Date: Mon, 7 Oct 2024 09:47:06 -0700
+        Mon, 07 Oct 2024 09:47:59 -0700 (PDT)
+Message-ID: <9386a9fc-a8b5-41fc-9f92-f621e56a918d@gmail.com>
+Date: Mon, 7 Oct 2024 17:48:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,118 +75,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: arm_scmi: Give SMC transport precedence over
- mailbox
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infread.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE"
- <arm-scmi@vger.kernel.org>,
- "moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE"
- <linux-arm-kernel@lists.infradead.org>, justin.chen@broadcom.com,
- opendmb@gmail.com, kapil.hali@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, Arnd Bergmann <arnd@arndb.de>
-References: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
- <ZwPeiUwT7OAgxXFl@bogus>
+Subject: Re: [PATCH net-next] net: Implement fault injection forcing skb
+ reallocation
+To: Breno Leitao <leitao@debian.org>, Akinobu Mita <akinobu.mita@gmail.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, Jonathan Corbet <corbet@lwn.net>, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mina Almasry <almasrymina@google.com>, Willem de Bruijn
+ <willemb@google.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+References: <20241002113316.2527669-1-leitao@debian.org>
+ <CAC5umyjkmkY4111CG_ODK6s=rcxT_HHAQisOiwRp5de0KJkzBA@mail.gmail.com>
+ <20241007-flat-steel-cuscus-9bffda@leitao>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <ZwPeiUwT7OAgxXFl@bogus>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241007-flat-steel-cuscus-9bffda@leitao>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/7/24 06:13, Sudeep Holla wrote:
-> On Sat, Oct 05, 2024 at 09:33:17PM -0700, Florian Fainelli wrote:
->> Broadcom STB platforms have for historical reasons included both
->> "arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
->> string.
+On 10/7/24 17:20, Breno Leitao wrote:
+> On Sat, Oct 05, 2024 at 01:38:59PM +0900, Akinobu Mita wrote:
+>> 2024年10月2日(水) 20:37 Breno Leitao <leitao@debian.org>:
+>>>
+>>> Introduce a fault injection mechanism to force skb reallocation. The
+>>> primary goal is to catch bugs related to pointer invalidation after
+>>> potential skb reallocation.
+>>>
+>>> The fault injection mechanism aims to identify scenarios where callers
+>>> retain pointers to various headers in the skb but fail to reload these
+>>> pointers after calling a function that may reallocate the data. This
+>>> type of bug can lead to memory corruption or crashes if the old,
+>>> now-invalid pointers are used.
+>>>
+>>> By forcing reallocation through fault injection, we can stress-test code
+>>> paths and ensure proper pointer management after potential skb
+>>> reallocations.
+>>>
+>>> Add a hook for fault injection in the following functions:
+>>>
+>>>   * pskb_trim_rcsum()
+>>>   * pskb_may_pull_reason()
+>>>   * pskb_trim()
+>>>
+>>> As the other fault injection mechanism, protect it under a debug Kconfig
+>>> called CONFIG_FAIL_SKB_FORCE_REALLOC.
+>>>
+>>> This patch was *heavily* inspired by Jakub's proposal from:
+>>> https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
+>>>
+>>> CC: Akinobu Mita <akinobu.mita@gmail.com>
+>>> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+>>> Signed-off-by: Breno Leitao <leitao@debian.org>
 >>
+>> This new addition seems sensible.  It might be more useful to have a filter
+>> that allows you to specify things like protocol family.
 > 
-> I assume in the same order.
+> I think it might make more sense to be network interface specific. For
+> instance, only fault inject in interface `ethx`.
 
-That is correct, in that exact order indeed.
+Wasn't there some error injection infra that allows to optionally
+run bpf? That would cover the filtering problem. ALLOW_ERROR_INJECTION,
+maybe?
 
-> 
->> After the commit cited in the Fixes tag and with a kernel
->> configuration that enables both the SCMI and the Mailbox transports, we
-> 
-> ^^^^^ s/SCMI/SMC ?
-
-Yes, this should read "SMC" here.
-
-> 
->> would probe the mailbox transport, but fail to complete since we would
->> not have a mailbox driver available.
->>
-> 
-> I always assumed the node compatible match happens from the more specific
-> compatible(on the left) to the more generic ones(on the right) from the
-> compatible property list. Looks like that was a wrong assumption then ?
-
-This is the correct assumption, and this worked very well, and we were 
-utilizing that as long as all of the transports where "sub" entities 
-within the common and single arm_scmi platform device.
-
-When breaking up the transports into individual platform drivers, now 
-each one is responsible for matching, and if they are all built-into the 
-kernel, they are matching in the order in which they have been linked 
-into the kernel.
-
-> 
->> By keeping the SMC transport objects linked first, we can let the
->> platform driver, match the compatible string and probe successfully with
->> no adverse effects on platforms using the mailbox transport.
->>
-> 
-> I don't have strong objection to the patch itself, happy to get it merged.
-> Just curious if my understanding of the issue is correct. I think Cristian
-> has more detailed query, so just responding to that will suffice.
-
-Sounds good, thanks.
-
-> 
->> Fixes: b53515fa177c ("firmware: arm_scmi: Make MBOX transport a standalone driver")
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> Change-Id: I8e348e3e0deabdc5c1d596929d7f9134793f346e
-> 
-> Spurious from internal gerrit repo ?
-
-Indeed, will post v2 with the typo you highlighted and that remove, and 
-any additional explanation Cristian deems necessary to add, thanks!
 -- 
-Florian
+Pavel Begunkov
 
