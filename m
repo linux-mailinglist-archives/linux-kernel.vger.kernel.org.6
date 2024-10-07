@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-353782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5542899329C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:10:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A499932BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783AD1C2353E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:10:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23073B23DFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389ED1DA619;
-	Mon,  7 Oct 2024 16:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97871DA624;
+	Mon,  7 Oct 2024 16:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DR+Wiog+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kt65sKHc"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17921D54E9;
-	Mon,  7 Oct 2024 16:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71781D54D7;
+	Mon,  7 Oct 2024 16:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728317402; cv=none; b=ttgXOK5PldnxVZxY26gdIEe+KDN+dyCuOXLFu9Aof6D484HCsVUpMX8FKk7JzhuIfY1X931QfeoKGjvM9pJEMnM8NnEJuVEKbnjYeai0L+YsorCLUPoFw/jm3NXeCLXJLjmL7+fU5PIh95dXItVYi/abKDRUsbMa+NcgWfTnGQQ=
+	t=1728317438; cv=none; b=dXuZgX1ny8li82jvLuFxYd5IyEX1f7m3zMfATvI4okhGM33R1PakMQsrsTVlki5FsHe1li2HgMNgiZMgKbdoNxnnVtQWqwPkstAPwOcdr46cLuISaKnqm+h0nv4e0nhppxo64vHt9zZtOBWROfrw4ObcJTAQd9es1H+ybbsLss8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728317402; c=relaxed/simple;
-	bh=0ckgttVVxx/A8mJwmIbK5+m1JqwAMDJpayDNo47JfVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QKBIYIESDx0e78H1bTYyXpQgY13MJ6PvaWtyU+7VD/V53uasLl7VrjwKNpxpTCYU7lC1PJp1FhaGW/TFPbYl5lyMDFru/eDBUMk1g0KBW9d0Mz3U6Fx7Qt2Vr7TPe4xvyO7rQUpBzJvcnqRnn4/buSYpetIrzEmbl/A+TZbSPs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DR+Wiog+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728317400; x=1759853400;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0ckgttVVxx/A8mJwmIbK5+m1JqwAMDJpayDNo47JfVE=;
-  b=DR+Wiog+brY8A0QDw8cHlOGiB1sqqVTAjsgaVb1meMr9VS1c/c+MMm81
-   6PIO/sAbATmotUnxLayBpk6MRoDumkKQhwnfxmsEzHBVwYzugeIAK/4Ox
-   UHjokML+pvgs5/ax1szWKCJEy+/JTFsNzkZc0C9DIh1C6erD+Ae4GcZkS
-   Hx9QKZnyoIc3GBiGen13S8bVQLp7GqIECWpT4Jh3fKCYmVMgi1WgTeb74
-   uml5YXo3lRXUox9Y4iuNJwgx+DYb83FYMiDXg7B2Zn5yneJTgb9pO6+xh
-   7tyb88LEajMQ2SCCStod2Z//TPspPqckJ6hIkiDoq6dy5E24zWifOhrCp
-   w==;
-X-CSE-ConnectionGUID: XrcpnJ7pRxO4TTKbvj3dcA==
-X-CSE-MsgGUID: YL6Gef0lSgKtEJttw7n+/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27601949"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27601949"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:10:00 -0700
-X-CSE-ConnectionGUID: wdpEStqeSjSYOgDBfzvrQA==
-X-CSE-MsgGUID: WKnje6DdSwyOpBOrQ8e+BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="75478775"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:09:55 -0700
-Message-ID: <51b6cee1-d23f-475e-bfe0-979e96e687c6@intel.com>
-Date: Mon, 7 Oct 2024 19:09:48 +0300
+	s=arc-20240116; t=1728317438; c=relaxed/simple;
+	bh=dZFriqqonSGieUklU8eoPtZ6xRVTolHPrBwinGrdWhA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I3DWowijgVFzG7PzHzIeR8N/g2k57k5WRRm0Pt4gmjRcX7H0a2scLl2jgBLoLd+X4sVL3JpPaZqynxQD72yeVhKmao73I8FuwtiNU51bVtaKp3AT1Kka/rvpHd1k2IEMbMetBn76SkAqAgmGXJtJ3zPuh4aI+1dQtidiWaaic6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kt65sKHc; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728317412; x=1728922212; i=markus.elfring@web.de;
+	bh=dZFriqqonSGieUklU8eoPtZ6xRVTolHPrBwinGrdWhA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Kt65sKHcw1HXBoI734P+S+p9+74bg+5QyTatNCMGhhKAFtqXVN1VcMk8fMCt6Kh6
+	 +2JQbYdU9t59CfaGGZ3rGybiZ6rkbr4471ztENHh/m5i8F+Om2xtQtrCMLU5bUcUP
+	 VexWtiCqgYRMqwsUHucTamu+qm8aQv9E3vAiQvvg5CjA0v2r8IhJzA9bU8ViMl0S8
+	 yeO9RYUYN449pEd5YwAwTDOwNo+mQY6fhwizURluCKhN2NUEtOYBgFNcmPCXF6peU
+	 8q2m61LiByrQUpQfy0hhgenj6WWbdPOU4GfYZS+/S/1tn3mN87YCfAjxWuCjt09PM
+	 74e/73UfeeV4P3b81A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M5QqN-1sx0pV0fYb-0033JD; Mon, 07
+ Oct 2024 18:10:12 +0200
+Message-ID: <04f4672d-bd2c-4cbb-a3d5-d891affc5c7d@web.de>
+Date: Mon, 7 Oct 2024 18:10:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,139 +56,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mmc: sdhci: Prevent stale command and data interrupt
- handling
-To: Michal Wilczynski <m.wilczynski@samsung.com>, ulf.hansson@linaro.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- m.szyprowski@samsung.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <CGME20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d@eucas1p2.samsung.com>
- <20241003161007.3485810-1-m.wilczynski@samsung.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241003161007.3485810-1-m.wilczynski@samsung.com>
+To: Boris Tonofa <b.tonofa@ideco.ru>, Petr Vaganov <p.vaganov@ideco.ru>,
+ netdev@vger.kernel.org, lvc-project@linuxtesting.org,
+ Steffen Klassert <steffen.klassert@secunet.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Antony Antony <antony.antony@secunet.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Stephan Mueller <smueller@chronox.de>
+References: <20241007091611.15755-1-p.vaganov@ideco.ru>
+Subject: Re: [PATCH ipsec v2] xfrm: fix one more kernel-infoleak in algo
+ dumping
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241007091611.15755-1-p.vaganov@ideco.ru>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:az1tGcA/LF4sEw7cW0pIX5DAgURCIRbQRUVKbHMAiIEig4pJMUs
+ h0cvjDqBCFbwGXK+gcEgGVkMsLLRuebE8lS6iYAOhBnSTPs8MJvNLn4hpoFFRgW5VUIlfGm
+ /EZ3CZkflYVOZhjHYw8m6kc7F8EkMeVkVejLB+gOH55iMNGsZTqngwN1cbpLcGaXsEg+ubA
+ tX0kSPJ/sgotIjjLkSVWA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Lba/4F49cYQ=;1M6nT37X2APZgeijD7tAKBWlfll
+ jlNDY5/bXjCwY57HmXt44aF03PEDgKROJeqHHVi5RG8/qkivqPHiQHAyNEAv9MBNloaSx46px
+ yHjSLuyoAJjcGwIIimqWW7op/+KqqJHLuDWQn9J3fgJIBJRbXXnoXLuqz/ykT+WKa4F3DfFJR
+ oAtq1rvylgle/gmn2KtSFMzh+vKs25jOutabZi/nP6+dlD8Z6PO/hyfKpLZw20x6s4LVZQMeg
+ NHbAI9gzlqFyYobtyqVTnjTFWuJdjw3rNstKHG+tsXe+DOU9ovnt1FmQXM5y0rFAu1foveMk4
+ p+ioK2Un5kFa3uHshHdrHC5u7SByxOpjs5HtDlCJ14xRe02w0FoVPSp98SP+p6lrooUpKr6Rc
+ vauvqKsmhl6R1SJWosVnhPBPjWQUopafsd2MznxlkmhUrm2l7MLCTkUNmyPLUVr2ArOzEPOw6
+ Y1kN5VaIg/vfq7Cu8lwUQH7b+XKm916hwDIlDwr3XRhMsvYmb9UkDj2vQoJCL10A+fdIKJhKz
+ uoKrRB9Bm86ZJz1xR4wlMj3fKVRlpkPsMJLc9wJc5R5M9lfZdkXaZqlcFe6teGoTzqAnOgvOY
+ sXNq+YvdFafFpHa5yOWgeyV2vLs8isOKwZ7vy4Ibu2FTBewTGAfIJX2Sl7Nt5NE/xv+QF1CMO
+ YF2V23txLiBlIxPmp6jQjQiTb7Z1w/FdfQFZ0+74UQPhCmPYgZ/UBdjwQsbnuYvetMx+4fSWL
+ nttqkQxuPhLsQ57DR6xzBGLgPU+gWuElLxXqmpyNHtlhtlzDjkFSxKP9rjq3diINe2sxE8GnV
+ CG0KaCazFtaQihJbDSL5QA1Q==
 
-On 3/10/24 19:10, Michal Wilczynski wrote:
-> While working with the T-Head 1520 LicheePi4A SoC, certain conditions
-> arose that allowed me to reproduce a race issue in the sdhci code.
-> 
-> To reproduce the bug, you need to enable the sdio1 controller in the
-> device tree file
-> `arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi` as follows:
-> 
-> &sdio1 {
-> 	bus-width = <4>;
-> 	max-frequency = <100000000>;
-> 	no-sd;
-> 	no-mmc;
-> 	broken-cd;
-> 	cap-sd-highspeed;
-> 	post-power-on-delay-ms = <50>;
-> 	status = "okay";
-> 	wakeup-source;
-> 	keep-power-in-suspend;
-> };
-> 
-> When resetting the SoC using the reset button, the following messages
-> appear in the dmesg log:
-> 
-> [    8.164898] mmc2: Got command interrupt 0x00000001 even though no
-> command operation was in progress.
-> [    8.174054] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [    8.180503] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
-> [    8.186950] mmc2: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-> [    8.193395] mmc2: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-> [    8.199841] mmc2: sdhci: Present:   0x03da0000 | Host ctl: 0x00000000
-> [    8.206287] mmc2: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-> [    8.212733] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x0000decf
-> [    8.219178] mmc2: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-> [    8.225622] mmc2: sdhci: Int enab:  0x00ff1003 | Sig enab: 0x00ff1003
-> [    8.232068] mmc2: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-> [    8.238513] mmc2: sdhci: Caps:      0x3f69c881 | Caps_1:   0x08008177
-> [    8.244959] mmc2: sdhci: Cmd:       0x00000502 | Max curr: 0x00191919
-> [    8.254115] mmc2: sdhci: Resp[0]:   0x00001009 | Resp[1]:  0x00000000
-> [    8.260561] mmc2: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-> [    8.267005] mmc2: sdhci: Host ctl2: 0x00001000
-> [    8.271453] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr:
-> 0x0000000000000000
-> [    8.278594] mmc2: sdhci: ============================================
-> 
-> I also enabled some traces to better understand the problem:
-> 
->      kworker/3:1-62      [003] .....     8.163538: mmc_request_start:
-> mmc2: start struct mmc_request[000000000d30cc0c]: cmd_opcode=5
-> cmd_arg=0x0 cmd_flags=0x2e1 cmd_retries=0 stop_opcode=0 stop_arg=0x0
-> stop_flags=0x0 stop_retries=0 sbc_opcode=0 sbc_arg=0x0 sbc_flags=0x0
-> sbc_retires=0 blocks=0 block_size=0 blk_addr=0 data_flags=0x0 tag=0
-> can_retune=0 doing_retune=0 retune_now=0 need_retune=0 hold_retune=1
-> retune_period=0
->           <idle>-0       [000] d.h2.     8.164816: sdhci_cmd_irq:
-> hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x10000
-> intmask_p=0x18000
->      irq/24-mmc2-96      [000] .....     8.164840: sdhci_thread_irq:
-> msg=
->      irq/24-mmc2-96      [000] d.h2.     8.164896: sdhci_cmd_irq:
-> hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x1
-> intmask_p=0x1
->      irq/24-mmc2-96      [000] .....     8.285142: mmc_request_done:
-> mmc2: end struct mmc_request[000000000d30cc0c]: cmd_opcode=5
-> cmd_err=-110 cmd_resp=0x0 0x0 0x0 0x0 cmd_retries=0 stop_opcode=0
-> stop_err=0 stop_resp=0x0 0x0 0x0 0x0 stop_retries=0 sbc_opcode=0
-> sbc_err=0 sbc_resp=0x0 0x0 0x0 0x0 sbc_retries=0 bytes_xfered=0
-> data_err=0 tag=0 can_retune=0 doing_retune=0 retune_now=0 need_retune=0
-> hold_retune=1 retune_period=0
-> 
-> Here's what happens: the __mmc_start_request function is called with
-> opcode 5. Since the power to the Wi-Fi card, which resides on this SDIO
-> bus, is initially off after the reset, an interrupt SDHCI_INT_TIMEOUT is
-> triggered. Immediately after that, a second interrupt SDHCI_INT_RESPONSE
-> is triggered. Depending on the exact timing, these conditions can
-> trigger the following race problem:
-> 
-> 1) The sdhci_cmd_irq top half handles the command as an error. It sets
->    host->cmd to NULL and host->pending_reset to true.
-> 2) The sdhci_thread_irq bottom half is scheduled next and executes faster
->    than the second interrupt handler for SDHCI_INT_RESPONSE. It clears
->    host->pending_reset before the SDHCI_INT_RESPONSE handler runs.
-> 3) The pending interrupt SDHCI_INT_RESPONSE handler gets called, triggering
->    a code path that prints: "mmc2: Got command interrupt 0x00000001 even
->    though no command operation was in progress."
-> 
-> To solve this issue, we need to clear pending interrupts when resetting
-> host->pending_reset. This ensures that after sdhci_threaded_irq restores
-> interrupts, there are no pending stale interrupts.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/mmc/host/sdhci.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 4b91c9e96635..b91a6076c332 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3098,6 +3098,10 @@ static bool sdhci_request_done(struct sdhci_host *host)
->  		sdhci_reset_for(host, REQUEST_ERROR);
->  
->  		host->pending_reset = false;
-> +
-> +		/* Clear any pending interrupts after reset */
-> +		sdhci_writel(host, SDHCI_INT_CMD_MASK | SDHCI_INT_DATA_MASK,
-> +			     SDHCI_INT_STATUS);
+=E2=80=A6
+> This patch fixes copying =E2=80=A6
 
-According to SDHCI spec, "Software Reset For CMD Line" clears
-"Command Complete" in "Normal Interrupt Status register", so the
-interrupt status should not need to be cleared again.
+Please reconsider such a wording approach once more.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n94
 
-Which SDHCI driver is it?
-
->  	}
->  
->  	/*
-
+Regards,
+Markus
 
