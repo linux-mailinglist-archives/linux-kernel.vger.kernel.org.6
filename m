@@ -1,103 +1,96 @@
-Return-Path: <linux-kernel+bounces-354167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3AE99389A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4025B99389C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623051F24614
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717061C23310
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B385A1DE3A6;
-	Mon,  7 Oct 2024 20:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEA918B491;
+	Mon,  7 Oct 2024 20:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CZ41CPq9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="T352ba2h"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7257681727;
-	Mon,  7 Oct 2024 20:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D5C81727
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728334477; cv=none; b=Nj1akiE9oyda1NdMsawNwlVCqSKqjRoBYIRVoqMA9LlwraILT5ZlumixI4vYke0HubYmCDtLbuHsqk1mYcy5uILKYdULqWaUS6Y1I/sGwnu3MZxwFg9wsJk4APSzjPOtenyD0hzZcv0994M2VkmPkTBipjmEiFd00mJAl8pu1oQ=
+	t=1728334561; cv=none; b=DHCxV0rKPoBi71fWvKXhyImatwxNHpbDnZoYmZ4uToT/17PS8f/ZkL03rJ8G+Y3jK6M3gcKq8YHhtfKlymID/DoG6JCStZ6fXOcG4TAhlwosNV4o1aTCltTBwmIqI9qMuW8Cspk7wSAqEaniV68I36ozjQORNF5mbFPJBqZfOGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728334477; c=relaxed/simple;
-	bh=0XSO4Z+PU1Z65iGp0SJdK6fCiescl2TV+5uAWKgSEns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dlJmzOtWAXoCBS8EK9RBKMIreGJZshNZQVcVkD9uHSajvGF2gtGCjYuOKHKzwHFmT2Y09s7/Ghv+G+90yG+hXJ8676sxpk35iEDeov+bEg8NKOndIi4OriypYR46ADDXKX7MadsCWU39Xfvl6Qiwh3ADEqQ60Xmfp3b8Q3eGvk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CZ41CPq9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728334473;
-	bh=0diJfBvGnZiHzF8VuYhPVjkRnqIVY7Xthz7bq0Lnclg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CZ41CPq9gU0G83vB2IS3/WKJPf5qHdKD6y7eggOsWfryGXjRVahZliZY481BpvvBQ
-	 yO4q03hANS6iNbuxnQW6sJmTcNRSY9ZyrE2jvhNrLXdQVeNX5S9X4w4CpZLx0bP/eF
-	 thvOcAZLHvuTPa66pG/OGLg/YpxCl3WdzXslrr/gIStfkjtdz4BcwIrVwdkTFbb+k1
-	 JLnneKADhlhR02fEZG8oksOmxJ2NM38Mv9qhdo/dVVk/y82D+WHpM4gz/bSRwwkHCr
-	 7bdaiaquThyHRnhBKvJ13Y5iXgOnetrgtHXLWxyZKmfowEOe+yzebT0x1hybPh3L5t
-	 c+iRxHm95gguA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XMrxN6YB0z4wbr;
-	Tue,  8 Oct 2024 07:54:32 +1100 (AEDT)
-Date: Tue, 8 Oct 2024 07:54:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the slimbus tree
-Message-ID: <20241008075433.78fb524d@canb.auug.org.au>
+	s=arc-20240116; t=1728334561; c=relaxed/simple;
+	bh=UHPb3s0aO8AlvsA8FlkpPnp/+BstHy9v1B+zYtBQuO0=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pPrqdB+969qdWwfhLs5SjPrldRAb5udKpICE/qSTkZp1Hi/VXcnPvnLxHjO3w/bc3FnsO71JBDUGrJI4HMyW1VBoLLAUxCvzgvFMsnA9rUlbqjPWY8kS5cg65Y11fy2ubr4Kxb4/OuCy2g5RQfJ8keb+8/tW9vqQXmUy+wY87JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=T352ba2h; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1728334551; x=1728593751;
+	bh=UHPb3s0aO8AlvsA8FlkpPnp/+BstHy9v1B+zYtBQuO0=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=T352ba2hlQh6f0u3ry+uY/ZuzT6syWPNy/1CTRzTBpMBun7oi+9jj37SaQ7O61LWd
+	 eeHL1MYvNOiQ1ttWe0J/ZSAqYavdotW8M4n8MIC6QbCAxbgaRM5J+d9aQfwP0KzEKe
+	 h7WxrAhwJisJQ19ekqYRysfUpeUMhK9e2/t0jDsj5IuTNXrOUCx85Y+XQLAUhOsMid
+	 bfSHB5mKJlF5oRHzyQzST8/JGFTuk+MW/kiQNTN+xm0vPiQMUdi0ZQW4EbXg7jBZZp
+	 rx4gvDu6gNeYmaDixk7Dr7uvRI05lA0ToOenAuE7AYFNykFfYOAEWCW9wZwmwKiwFR
+	 f8JCLEwzwRVhQ==
+Date: Mon, 07 Oct 2024 20:55:49 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
+Subject: [PATCH v1] bcachefs: use mutex_trylock in bch2_replicas_entry_validate
+Message-ID: <20241007205430.492090-3-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 20c7915fb4820f21b71d2d7da571445dcd2b1d9b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nPvsYgwuukge1zsNksgH02Q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/nPvsYgwuukge1zsNksgH02Q
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Use mutex_trylock instead of mutex_lock in bch2_replicas_entry_validate to
+prevent potential deadlock[1].
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+[1] https://syzkaller.appspot.com/bug?extid=3D4d24267b490e2b68a5fa
 
-  0eb9dda9d1db ("slimbus: messaging: use 'time_left' variable with wait_for=
-_completion_timeout()")
-  7d317b95d033 ("slimbus: qcom-ctrl: use 'time_left' variable with wait_for=
-_completion_timeout()")
-  9b6e704955fa ("slimbus: generate MODULE_ALIAS() from MODULE_DEVICE_TABLE(=
-)")
-  9f5fd5e2aebf ("slimbus: qcom-ngd-ctrl: use 'time_left' variable with wait=
-_for_completion_timeout()")
+Reported-by: syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D4d24267b490e2b68a5fa
+Fixes: 49fd90b2cc33 ("bcachefs: Fix unlocked access to c->disk_sb.sb in bch=
+2_replicas_entry_validate()")
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
+ fs/bcachefs/replicas.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
+index bcb3276747e0..d301832c5a1b 100644
+--- a/fs/bcachefs/replicas.c
++++ b/fs/bcachefs/replicas.c
+@@ -98,9 +98,10 @@ int bch2_replicas_entry_validate(struct bch_replicas_ent=
+ry_v1 *r,
+ =09=09=09=09 struct bch_fs *c,
+ =09=09=09=09 struct printbuf *err)
+ {
+-=09mutex_lock(&c->sb_lock);
++=09int acquired =3D mutex_trylock(&c->sb_lock);
+ =09int ret =3D bch2_replicas_entry_validate_locked(r, c->disk_sb.sb, err);
+-=09mutex_unlock(&c->sb_lock);
++=09if (acquired)
++=09=09mutex_unlock(&c->sb_lock);
+ =09return ret;
+ }
+=20
 --=20
-Cheers,
-Stephen Rothwell
+2.46.2
 
---Sig_/nPvsYgwuukge1zsNksgH02Q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcESokACgkQAVBC80lX
-0GzWgQf9F0HqGqMaRMKjtEBwzN2jRN2XChIWiQwx1qn4FGxDjdN9aqfgkudrTSHc
-ZQpKXu+QNa7Ygs/CMC5Xv425zuQRo/tsc89RQoQY4P62AWmv70vFSgxcZ/WgkeR3
-nrzODENkj0+4wa+jhp7VIbU/9jnXIn8/T+iNDvj3B1G+jbTX9Pq0jyo6i2suI5rI
-GUHwyO0CvqZqEsEoIgY4aHyU1UScsPP2Y15HTaUSOgBoiaOXvs4Ei9Yf5bJnu3a7
-lZtT5NLVXQBngSyJY5KipoSGREMdT0+ZoyQujFrHo0o7P8S600k7vs2uv7kQBrlh
-FlxdKS1aAgdVRVAVEYAycVKs+J9P3g==
-=QrdD
------END PGP SIGNATURE-----
-
---Sig_/nPvsYgwuukge1zsNksgH02Q--
 
