@@ -1,258 +1,328 @@
-Return-Path: <linux-kernel+bounces-353952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F3A993515
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5941993519
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D7C2820B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6417E2834BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D2D1DD527;
-	Mon,  7 Oct 2024 17:33:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5691DA639;
+	Mon,  7 Oct 2024 17:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A0OKeE20"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B66139587
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B13E192D6F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728322385; cv=none; b=XaShL3PxW13ZqudHIUN4s5Ipac9gPLxfLtZFKt5SuwrvKbQ+tWY3Z5HPqTc+AR8qhtATer12DlC8PTpDqPkhogN6mEyzMJB7V4YEhkS71ysobpBCIyyniCba9ulqLsd9kXA5d94xH2Xtoyxzp2ra1KrNblqEDTWgGG/Q/5tAnk0=
+	t=1728322421; cv=none; b=Ie1QcwFfBjpk9jU3/6ir9tgj8hwdKuVpYIxTjgoIrXi1aheVqbJOFkA/zA7FCKz4La5NchL78F6hxPdiwNEqWKR9PUOhbVbvLpaFs9EgPskcaObgSH2N0qiSRQ1aa+LogpiHnC9AGl5jYdy8t9cAHy1UH78s6nVLW9A2GDrEiWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728322385; c=relaxed/simple;
-	bh=LrLI4DG5ecUdK/ZW9VouXdNfUldCPnEqnCblguLvYj8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=H+AwWCq1VGcewfFSX9cW3K0NV58Gz5/QCzfzioD0SdPbPFwaNWtRgl+cfzWmrqfmBAok4wDpbu9aBb+qVBd5kwYjcugYJgK9LTg/j/1akeLDrrofSvmS9xmsXLXU2YIGKLYfh9bwDqldb9I7swIeLlsF4HWsQpCEAtp/kNpVQAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a19665ed40so35033585ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:33:03 -0700 (PDT)
+	s=arc-20240116; t=1728322421; c=relaxed/simple;
+	bh=tUxpw6u7cL5nSjzpXGTsgJ2xlS7vW49I+aZBTX9BAcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j69oGdDqNFkzJuoCxf/uPUg/hpLWLhNILgPFMHcxU369H1IJUHwkWpDFIPaSr8RV5VkuRdo5rve9NxBnyxrKNorFg5YKYJWXNX3ALI1nmSotTwSyc+/R3heQPJGf5QDB199DFMpubORjQb7Gyjbop1NwGl2xgYiVBQFHt9AErHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A0OKeE20; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539885dd4bcso5818198e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728322417; x=1728927217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnPjDrmeCMaKCaAWC5pFtxw0raHxBwjN+mo+qEzYwho=;
+        b=A0OKeE20hSV/qcMDRJ20cdWkmabe2SacwA/vHQT1/MpKtS7SOqJ1qpGJV8d018Y2Qi
+         08s2+zzNQUkwnWJe2Rr7M/HyF9lx4C+WM7fWxiLnRAl9wDac+W+S1O4BuyqdpNNODDHJ
+         GQtsXaqYqrhFidIWmwCADbC6/AJhZ9PQXNCkeRNH0afaqkfrt4MMACPYtCeL7a20imKj
+         QPYkuZ1lrdC/RWgNMpFXpUR9KTIMgKC4GtEUQXIMJOkCw2ntrP0Fqaoe3l5AbaURZdWu
+         Qj+rYKV3g13y49F45xXU7GN1JbpF2/cy75o6AGI/sVMUEjWCErfLQO7YTBimG9tmshYu
+         xU2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728322383; x=1728927183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=je8G6nmMXzSmkUM8wQx+ZqnZ8NRybpJUzghcC6pOUCo=;
-        b=fMAb5ouIel2g39LKcSZbkFX2+WWTxDibJFHaVZYzWZeYcrSEKlrugUkQAAqPuOxZ9l
-         h4HLkQfAItFPQ/pBrANhhmE9njTrYAv/uk0eNtkbZRLovHiDkXppElHq+2Z1N0RK7evz
-         ajGJUcwgbGDsYMnDWG3EYp3GgzHD/bBC4Qu/lElGJ46AzaVa9guez5AUw1IKq8ec2lGR
-         0V/Rx9xbX17yPMuFpChvsfnZxnCi1B3W4hRY4uwymmUowDR6Tev50ZNpkssgRP6Z9Q8m
-         YhD5trTuQtDpULgymcgk38lqiVPBVQDtUtAPVz/0xCeEtUENK/tsWaM1+fFHNv9R6XQB
-         hLsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0CaIOfwTV5JLgpPImYQ1UTR1z+Ex9diyUD+g7P+NAxvRwq9UIxyyYnzV/bP2YrkrBrn6VpOllk6SOC1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxaDRedrScyoXLneZCYkSF67sxgMfsrCXo0dm4mjbrURoOJFVC
-	yoOjAKSojtCEsNAAKLy1j4SUbsQbZzhZZ5lTKLAwCNHWzql+9bR9h9BwHt7zwikRJOeQ9S3Yw0B
-	WWGolbeteCftaOTIlMxfPDafJcTB4et4+K8DXgDB4v4HsZbZvVw/VVo0=
-X-Google-Smtp-Source: AGHT+IGeHfV4nXrsBm7UxE9v0zqClI4XnMxG79/amJQLxhKbb7yGbl6fjEOrKAO6ovkEkPPb6IkKdJxSB5Gs/mEcGO3JmFXMwXeJ
+        d=1e100.net; s=20230601; t=1728322417; x=1728927217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vnPjDrmeCMaKCaAWC5pFtxw0raHxBwjN+mo+qEzYwho=;
+        b=EsjhQB2MIk5O0cZHlvbrQjxRsoXOdRD0coFBOokgvrTcZ6n+5sQi14i75X9LE7ufts
+         Yqk6qeqWmK7e+r25BJJpcSEj/27Rfm2UH49zUgZokMOHBP2z/5fluneN4mKfLMDsTuSw
+         5xHv7ZlpRObK/1O83xSHjnyRUnGSzmPNmI6t5goiuHlBkpy1EU+M/fBkqE5viV8dvd5I
+         NHdu9waHLNS3xiI411O++If6sMEoaMtgM4zqtX6hsOi7/21zyCU2HpNDoSJoYe8GzNOF
+         h2S1UMT79mddKgPh0fUekt/3LU8LQLW/B0jWyaHPPq4nqfbi3A8OT8njY8DRidjDk/L2
+         zldA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4cDhFtvrLpRR5wNJOR/z/buTdQ7jrXI6pksDddH2r8Tr14WoGiAVxfwweOk5342CQeon0UF+oBGmg5aE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaYphWlPNVNLH4PFwvLsDmGNCUcMQlWIH6K7jw0x+pIXpjakKF
+	LaU3XHjX3zVl5jLMkHS2kuuqX9vM1ir/0w1glb1o2m8L6rCDf5f7PjyyJa8x5W1WOVAp3GkcYI5
+	Yb6gihb9m
+X-Google-Smtp-Source: AGHT+IFfLhE1ASoAnxmgdVnlkdwYTU5SKFtJPZAxmsaoWd5KH+3F7EHebkIfK0aqR3vrEWcYB1k9sA==
+X-Received: by 2002:a05:6512:b8a:b0:539:94cf:e32c with SMTP id 2adb3069b0e04-539ab88d223mr6336694e87.34.1728322417290;
+        Mon, 07 Oct 2024 10:33:37 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8147sm901762e87.84.2024.10.07.10.33.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 10:33:36 -0700 (PDT)
+Date: Mon, 7 Oct 2024 20:33:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org, 
+	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, johan@kernel.org, 
+	konradybcio@kernel.org, linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH V3 3/4] pmdomain: core: Fix debugfs node creation failure
+Message-ID: <nlmz5adfxtnhgutblddlf2nlasmd5q3jpcsziaegmfvzsbkk7d@cb6e5qslk7vl>
+References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+ <20241007060642.1978049-4-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a21:b0:3a2:763b:c83e with SMTP id
- e9e14a558f8ab-3a38af225a2mr3361275ab.5.1728322382682; Mon, 07 Oct 2024
- 10:33:02 -0700 (PDT)
-Date: Mon, 07 Oct 2024 10:33:02 -0700
-In-Reply-To: <CABBYNZ+XB+hAN7BmOQiKpdBBHXX_8JrDm3HpXJ=JKVBg8R1CGA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67041b4e.050a0220.49194.0512.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007060642.1978049-4-quic_sibis@quicinc.com>
 
-Hello,
+On Mon, Oct 07, 2024 at 11:36:41AM GMT, Sibi Sankar wrote:
+> The domain attributes returned by the perf protocol can end up
+> reporting identical names across domains, resulting in debugfs
+> node creation failure. Fix this failure by ensuring that pm domains
+> get a unique name using ida in pm_genpd_init.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Write in sco_sock_timeout
+Can we make this opt-in or opt-out? Seeing numeric suffixes next to
+well-known power domain names (e.g. those comin from RPMh or the CPU
+domains) is a bit strange. Or maybe you can limit the IDA suffix just to
+the SCMI / perf domains?
 
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_add include/linux/refcount.h:184 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_inc include/linux/refcount.h:241 [inline]
-BUG: KASAN: slab-use-after-free in refcount_inc include/linux/refcount.h:258 [inline]
-BUG: KASAN: slab-use-after-free in sock_hold include/net/sock.h:781 [inline]
-BUG: KASAN: slab-use-after-free in sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
-Write of size 4 at addr ffff8880237b3080 by task kworker/0:1/9
+> 
+> Logs: [X1E reports 'NCC' for all its scmi perf domains]
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> 
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> Fixes: 718072ceb211 ("PM: domains: create debugfs nodes when adding power domains")
+> Fix-suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-rc2-syzkaller-g8cf0b93919e1-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events sco_sock_timeout
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
- __refcount_add include/linux/refcount.h:184 [inline]
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- sock_hold include/net/sock.h:781 [inline]
- sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Just "Suggested-by: ..."
 
-Allocated by task 5742:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- sk_prot_alloc+0xe0/0x210 net/core/sock.c:2164
- sk_alloc+0x38/0x370 net/core/sock.c:2217
- bt_sock_alloc+0x3c/0x340 net/bluetooth/af_bluetooth.c:148
- sco_sock_alloc net/bluetooth/sco.c:521 [inline]
- sco_sock_create+0xbb/0x390 net/bluetooth/sco.c:552
- bt_sock_create+0x163/0x230 net/bluetooth/af_bluetooth.c:132
- __sock_create+0x492/0x920 net/socket.c:1576
- sock_create net/socket.c:1627 [inline]
- __sys_socket_create net/socket.c:1664 [inline]
- __sys_socket+0x150/0x3c0 net/socket.c:1711
- __do_sys_socket net/socket.c:1725 [inline]
- __se_sys_socket net/socket.c:1723 [inline]
- __x64_sys_socket+0x7a/0x90 net/socket.c:1723
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+> 
+> genpd names with ida appended:
+> power-domain-cpu0_0
+> power-domain-cpu1_1
+> ....
+> ebi_18
+> gfx_19
+> ...
+> NCC_56
+> NCC_57
+> NCC_58
+> 
+> genpd summary with ida appended:
+> domain                          status          children        performance
+>     /device                         runtime status                  managed by
+>     ------------------------------------------------------------------------------
+>     NCC_58                          on                                                 0
+>     NCC_57                          on                                                 0
+>     NCC_56                          on                                                 0
+>     ...
+>     gfx_19                          off-0                                              0
+>     ebi_18                          off-0                                              0
+>     ...
+>     power-domain-cpu1_1             off-0                                              0
+> 	genpd:0:cpu1                    suspended                   0           SW
+>     power-domain-cpu0_0             off-0                                              0
+> 	genpd:0:cpu0                    suspended                   0           SW
+> 
+>  drivers/pmdomain/core.c   | 40 ++++++++++++++++++++++++---------------
+>  include/linux/pm_domain.h |  1 +
+>  2 files changed, 26 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 5ede0f7eda09..631cb732bb39 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -7,6 +7,7 @@
+>  #define pr_fmt(fmt) "PM: " fmt
+>  
+>  #include <linux/delay.h>
+> +#include <linux/idr.h>
+>  #include <linux/kernel.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_device.h>
+> @@ -23,6 +24,9 @@
+>  #include <linux/cpu.h>
+>  #include <linux/debugfs.h>
+>  
+> +/* Provides a unique ID for each genpd device */
+> +static DEFINE_IDA(genpd_ida);
+> +
+>  #define GENPD_RETRY_MAX_MS	250		/* Approximate */
+>  
+>  #define GENPD_DEV_CALLBACK(genpd, type, callback, dev)		\
+> @@ -189,7 +193,7 @@ static inline bool irq_safe_dev_in_sleep_domain(struct device *dev,
+>  
+>  	if (ret)
+>  		dev_warn_once(dev, "PM domain %s will not be powered off\n",
+> -				genpd->name);
+> +			      dev_name(&genpd->dev));
+>  
+>  	return ret;
+>  }
+> @@ -274,7 +278,7 @@ static void genpd_debug_remove(struct generic_pm_domain *genpd)
+>  	if (!genpd_debugfs_dir)
+>  		return;
+>  
+> -	debugfs_lookup_and_remove(genpd->name, genpd_debugfs_dir);
+> +	debugfs_lookup_and_remove(dev_name(&genpd->dev), genpd_debugfs_dir);
+>  }
+>  
+>  static void genpd_update_accounting(struct generic_pm_domain *genpd)
+> @@ -731,7 +735,7 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+>  	genpd->states[state_idx].power_on_latency_ns = elapsed_ns;
+>  	genpd->gd->max_off_time_changed = true;
+>  	pr_debug("%s: Power-%s latency exceeded, new value %lld ns\n",
+> -		 genpd->name, "on", elapsed_ns);
+> +		 dev_name(&genpd->dev), "on", elapsed_ns);
+>  
+>  out:
+>  	raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_ON, NULL);
+> @@ -782,7 +786,7 @@ static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
+>  	genpd->states[state_idx].power_off_latency_ns = elapsed_ns;
+>  	genpd->gd->max_off_time_changed = true;
+>  	pr_debug("%s: Power-%s latency exceeded, new value %lld ns\n",
+> -		 genpd->name, "off", elapsed_ns);
+> +		 dev_name(&genpd->dev), "off", elapsed_ns);
+>  
+>  out:
+>  	raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
+> @@ -1940,7 +1944,7 @@ int dev_pm_genpd_add_notifier(struct device *dev, struct notifier_block *nb)
+>  
+>  	if (ret) {
+>  		dev_warn(dev, "failed to add notifier for PM domain %s\n",
+> -			 genpd->name);
+> +			 dev_name(&genpd->dev));
+>  		return ret;
+>  	}
+>  
+> @@ -1987,7 +1991,7 @@ int dev_pm_genpd_remove_notifier(struct device *dev)
+>  
+>  	if (ret) {
+>  		dev_warn(dev, "failed to remove notifier for PM domain %s\n",
+> -			 genpd->name);
+> +			 dev_name(&genpd->dev));
+>  		return ret;
+>  	}
+>  
+> @@ -2013,7 +2017,7 @@ static int genpd_add_subdomain(struct generic_pm_domain *genpd,
+>  	 */
+>  	if (!genpd_is_irq_safe(genpd) && genpd_is_irq_safe(subdomain)) {
+>  		WARN(1, "Parent %s of subdomain %s must be IRQ safe\n",
+> -				genpd->name, subdomain->name);
+> +		     dev_name(&genpd->dev), subdomain->name);
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -2088,7 +2092,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+>  
+>  	if (!list_empty(&subdomain->parent_links) || subdomain->device_count) {
+>  		pr_warn("%s: unable to remove subdomain %s\n",
+> -			genpd->name, subdomain->name);
+> +			dev_name(&genpd->dev), subdomain->name);
+>  		ret = -EBUSY;
+>  		goto out;
+>  	}
+> @@ -2264,8 +2268,13 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = ida_alloc(&genpd_ida, GFP_KERNEL);
+> +	if (ret < 0)
+> +		return ret;
+> +	genpd->device_id = ret;
+> +
+>  	device_initialize(&genpd->dev);
+> -	dev_set_name(&genpd->dev, "%s", genpd->name);
+> +	dev_set_name(&genpd->dev, "%s_%u", genpd->name, genpd->device_id);
+>  
+>  	mutex_lock(&gpd_list_lock);
+>  	list_add(&genpd->gpd_list_node, &gpd_list);
+> @@ -2287,13 +2296,13 @@ static int genpd_remove(struct generic_pm_domain *genpd)
+>  
+>  	if (genpd->has_provider) {
+>  		genpd_unlock(genpd);
+> -		pr_err("Provider present, unable to remove %s\n", genpd->name);
+> +		pr_err("Provider present, unable to remove %s\n", dev_name(&genpd->dev));
+>  		return -EBUSY;
+>  	}
+>  
+>  	if (!list_empty(&genpd->parent_links) || genpd->device_count) {
+>  		genpd_unlock(genpd);
+> -		pr_err("%s: unable to remove %s\n", __func__, genpd->name);
+> +		pr_err("%s: unable to remove %s\n", __func__, dev_name(&genpd->dev));
+>  		return -EBUSY;
+>  	}
+>  
+> @@ -2307,9 +2316,10 @@ static int genpd_remove(struct generic_pm_domain *genpd)
+>  	genpd_unlock(genpd);
+>  	genpd_debug_remove(genpd);
+>  	cancel_work_sync(&genpd->power_off_work);
+> +	ida_free(&genpd_ida, genpd->device_id);
+>  	genpd_free_data(genpd);
+>  
+> -	pr_debug("%s: removed %s\n", __func__, genpd->name);
+> +	pr_debug("%s: removed %s\n", __func__, dev_name(&genpd->dev));
+>  
+>  	return 0;
+>  }
+> @@ -3272,12 +3282,12 @@ static int genpd_summary_one(struct seq_file *s,
+>  	else
+>  		snprintf(state, sizeof(state), "%s",
+>  			 status_lookup[genpd->status]);
+> -	seq_printf(s, "%-30s  %-30s  %u", genpd->name, state, genpd->performance_state);
+> +	seq_printf(s, "%-30s  %-30s  %u", dev_name(&genpd->dev), state, genpd->performance_state);
+>  
+>  	/*
+>  	 * Modifications on the list require holding locks on both
+>  	 * parent and child, so we are safe.
+> -	 * Also genpd->name is immutable.
+> +	 * Also the device name is immutable.
+>  	 */
+>  	list_for_each_entry(link, &genpd->parent_links, parent_node) {
+>  		if (list_is_first(&link->parent_node, &genpd->parent_links))
+> @@ -3502,7 +3512,7 @@ static void genpd_debug_add(struct generic_pm_domain *genpd)
+>  	if (!genpd_debugfs_dir)
+>  		return;
+>  
+> -	d = debugfs_create_dir(genpd->name, genpd_debugfs_dir);
+> +	d = debugfs_create_dir(dev_name(&genpd->dev), genpd_debugfs_dir);
+>  
+>  	debugfs_create_file("current_state", 0444,
+>  			    d, genpd, &status_fops);
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index b637ec14025f..738df5296ec7 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -163,6 +163,7 @@ struct generic_pm_domain {
+>  	atomic_t sd_count;	/* Number of subdomains with power "on" */
+>  	enum gpd_status status;	/* Current state of the domain */
+>  	unsigned int device_count;	/* Number of devices */
+> +	unsigned int device_id;		/* unique device id */
+>  	unsigned int suspended_count;	/* System suspend device counter */
+>  	unsigned int prepared_count;	/* Suspend counter of prepared devices */
+>  	unsigned int performance_state;	/* Aggregated max performance state */
+> -- 
+> 2.34.1
+> 
 
-Freed by task 5743:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- sk_prot_free net/core/sock.c:2200 [inline]
- __sk_destruct+0x479/0x5f0 net/core/sock.c:2292
- sco_sock_release+0x25e/0x320 net/bluetooth/sco.c:1280
- __sock_release net/socket.c:658 [inline]
- sock_close+0xbe/0x240 net/socket.c:1426
- __fput+0x241/0x880 fs/file_table.c:431
- task_work_run+0x251/0x310 kernel/task_work.c:228
- get_signal+0x15e8/0x1740 kernel/signal.c:2690
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880237b3000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 128 bytes inside of
- freed 2048-byte region [ffff8880237b3000, ffff8880237b3800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880237b5000 pfn:0x237b0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000240 ffff888015442000 ffffea00008c6a10 ffffea0001f13610
-raw: ffff8880237b5000 0000000000080005 00000001f5000000 0000000000000000
-head: 00fff00000000240 ffff888015442000 ffffea00008c6a10 ffffea0001f13610
-head: ffff8880237b5000 0000000000080005 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea00008dec01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4550, tgid 4550 (udevd), ts 62011136939, free_ts 61932137647
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- sk_prot_alloc+0xe0/0x210 net/core/sock.c:2164
- sk_alloc+0x38/0x370 net/core/sock.c:2217
- __netlink_create+0x65/0x260 net/netlink/af_netlink.c:646
- netlink_create+0x3ab/0x560 net/netlink/af_netlink.c:704
- __sock_create+0x492/0x920 net/socket.c:1576
- sock_create net/socket.c:1627 [inline]
- __sys_socket_create net/socket.c:1664 [inline]
- __sys_socket+0x150/0x3c0 net/socket.c:1711
- __do_sys_socket net/socket.c:1725 [inline]
- __se_sys_socket net/socket.c:1723 [inline]
- __x64_sys_socket+0x7a/0x90 net/socket.c:1723
-page last free pid 4539 tgid 4539 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4186
- __alloc_skb+0x1c3/0x440 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1322 [inline]
- alloc_skb_with_frags+0xc3/0x820 net/core/skbuff.c:6612
- sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2883
- unix_dgram_sendmsg+0x6d3/0x1f80 net/unix/af_unix.c:2027
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x223/0x270 net/socket.c:744
- __sys_sendto+0x39b/0x4f0 net/socket.c:2209
- __do_sys_sendto net/socket.c:2221 [inline]
- __se_sys_sendto net/socket.c:2217 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2217
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-
-Memory state around the buggy address:
- ffff8880237b2f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880237b3000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880237b3080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff8880237b3100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880237b3180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         8cf0b939 Linux 6.12-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e7db80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a5119ec8290b5433
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=150b2707980000
-
+-- 
+With best wishes
+Dmitry
 
