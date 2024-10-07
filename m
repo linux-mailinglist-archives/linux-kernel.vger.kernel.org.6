@@ -1,179 +1,118 @@
-Return-Path: <linux-kernel+bounces-352995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA68199270C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6FC99270F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7675C1F234B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC861F23854
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3318BC3B;
-	Mon,  7 Oct 2024 08:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14AF18BC24;
+	Mon,  7 Oct 2024 08:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="ZNWgu8Dr"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfGrxmxu"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7173B189BAA;
-	Mon,  7 Oct 2024 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D6A18BB83
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290018; cv=none; b=rNeP58LjuRi3/Eb8IRrycYtKgq0RFYReao7C7FqOuSEQmcC7KdFVpCa3sTQdwRF2nOJ1NH7bHMyf2xvtEbW4swx/by4JLnN9vV59lIqAeRTu4VUbgXGpJVEKqH2EFITax72N4YlCCLolb4acA+H3RD973IFgxuaE8mycnpmJsKk=
+	t=1728290032; cv=none; b=n8SjgAx6fKX7A9SQ5A6U7vnbrZASJwpZZ8C7A8ezWDLZAJ3BQwrRsWw/lUhxBPFEnhD8gJOdBsh3wUW4qUw1nQssxCviOl3fE9p0GCUauYfaRB9s/XAmIlABmIs2gQ8fKsYYldZnQHtr1n8Ih936ageT4zGhsEbqe7jMGW8WTOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290018; c=relaxed/simple;
-	bh=LLYlGS766hCR/P7B0kmypyyrTWhsQVvkYC1p9s86LCM=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=ucLr4pSX2guXp/5/6w6pOnBx+v9q8yrmSu9ucNuQlz3azdp6CRZPHplrfOWjNxA1eWCRwBqbP8W70ntETQRxg5qCLVigB66h1BCSbTiBuHbeZau38e+H+CfTe/xEt5kp0817xIXzRRdfXjTgWp5BET7RYCf+mFavTLWl1tCywrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=ZNWgu8Dr; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1728289985; x=1728894785; i=frank-w@public-files.de;
-	bh=A2fZLF7avs5DMWOiIq0KHN70cPnOtcv4SASIDsj8Bss=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZNWgu8DrAe/eKpJcC/I90IMyOuylpe8velQNLGn6gPt7kHRWfqimqZF2nWRmMhht
-	 cers30UCLltSbGOKHcL/ohELzk1jrrSnq12CSbeZTiRVtV1kGQcPpDqyIAmQknu55
-	 MwnM9ZUL4h5KjXp3wiEHEWMIg1cwuDwP+ogKuYuJrGQmg4FoO6DNcuiUmvtoES5i1
-	 0FhYlribWvfLqEOn5Rmh7VgaNVauwtRVpEqxiWi0CGIGKlVFQXzmpr39G5RTl4bVD
-	 +WwvMZ/BjW8RuTntoP8MIRC0YkDdWvuDeyYnAhO3FtkquPZPkcsPmSdX/qUphuRKx
-	 W3UBnLS/vdPum/7m1w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.153.101] ([217.61.153.101]) by web-mail.gmx.net
- (3c-app-gmx-bap03.server.lan [172.19.172.73]) (via HTTP); Mon, 7 Oct 2024
- 10:33:05 +0200
+	s=arc-20240116; t=1728290032; c=relaxed/simple;
+	bh=1bNqtOd4P3rGBCTkswQjFbo8yOERRIeBEeFDQkr7xiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=It8jzW5L9yrVCeznMj92lI+YCh2zWep0HtG1z9k4vP62lpLsi1NYaf2M8cVZVQcxuDvORR3tOmMNeZfIFM+91ZnGG3KfmZNKQl3GMYuHzgMXV9Zo4CLKjwrXdZuPyJCv3vlONqvTPH6IxFJYIT6XtydU6p/XJqg5l66F5xjZKYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfGrxmxu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so55408255e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728290029; x=1728894829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+xD54rM+kPh81dLT8oIMtcHrdo64L3uxtIe9qc+nTM=;
+        b=RfGrxmxu/DDu38cXJjeSOO3sm0ehaUB+kJVSlmKhwGTB9JdsHw2q8gZJlmqgbUeX6U
+         9vB846dWVQOBg3DE45dArjue5mx8m4frDcQewEdq/tYBn0V/qWLk+BqTzFj0ljiuz3yH
+         aA8TjgwJhNClzLgACbOhvf+XaTbqiFQrclIb+muO1ujD7ELk0lKX9LZXaJpua+k7FvR7
+         IdnYdVAzdX3P/ELVgU5PuG9UdlbrWhe1p6kXghrdhMp955D6PqJhtvTyTTcOE6AujKxT
+         W79D+vilS9m6wm8zBzn81x8LEv8ucdTnYqL5iuW7jvWLho4HjkvwDCQXD/kqgMfkroq1
+         YknQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728290029; x=1728894829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o+xD54rM+kPh81dLT8oIMtcHrdo64L3uxtIe9qc+nTM=;
+        b=iMfqmJ081jbf1r87y79p6ZJSnlpNop5Nul5Bg9KHkAQPq8+4tmoWL1s2jDSAQeuYh+
+         2dFS2oi5NJW18M4gHV4zkRQnfr/RNvLIny3MwCOodPEi1zCsvg7V5oJI+h2AGihPs0MP
+         MXbPQDnh9ZHiUJwO253swu0pR9rRYd8ij0HgfMhS/LhYABWo5npzhvNn54zZHvAkqxI4
+         e1Mg1uyAlAGV86VkF4+8XQ7K7V+a0NTcy9co6ilpMiAgwMZaKqD+uQZDh8cMC1jHJTvp
+         9bkW7+L0fBnW7rGr1YWzufH0oRquKbexPIP3h10fC9t+1ks68Jfl9rJJFv4XdcpMUL2L
+         c4ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMM+9RBuL45NVvinohZQdXuvmSxhALbGVRYdMf4YJReCZFLOTn4aqtLrisO41vKwv0PuUkf6bwogCF38E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMCTOeioI53Tgcrr8VmhkZX/t8gAGmgc2RDudcU9k+kah+z6f6
+	M0gboqPEnEHIEGoAdR40WDKU5QtltpXyxdjmzLlyWyuE7RacxBra
+X-Google-Smtp-Source: AGHT+IFfT2Pk+wZUyr4+w0J8iZ0WLy21BhP1EjzY0+8RqUItMDej63U+RU4AUkHhoGNI1Q8P87ESEQ==
+X-Received: by 2002:a05:600c:4f81:b0:42f:6878:a683 with SMTP id 5b1f17b1804b1-42f85ae94e9mr121651355e9.22.1728290028831;
+        Mon, 07 Oct 2024 01:33:48 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89bfb494sm68702575e9.21.2024.10.07.01.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:33:48 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/ioperm: Use atomic64_inc_return() in ksys_ioperm()
+Date: Mon,  7 Oct 2024 10:33:31 +0200
+Message-ID: <20241007083345.47215-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-6fcf3e00-393c-48ee-9aae-26057be08645-1728289985089@3c-app-gmx-bap03>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <linux@fw-web.de>, Chaotian Jing
- <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-Subject: Aw: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 7 Oct 2024 10:33:05 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-2-linux@fw-web.de>
- <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:Ngq4NbOlruE7F2nvSl8B/hBNQ0cqZUCijyM1oY0+exKRh5yziWcQFPujSTI76d8tuiNlN
- ePhetGWdhfwlPwuroZR+LeQ52I6zrO+BaFlRauwM/LGrHf97qDEYvi1vbIsbDCtHoz4y+GEbJ96y
- NdAf1bdyUr2PA4xUWNua7cFJA77ZCXImJ3vBuVzOyHgVvGvPX9ElX1FmANCS+1CjuH3oo7LdJTuy
- Aa4kyqqTVb/FFJJ5DVKmSJVoHHfGqUXJbNSS0qMvEi6jaTmKYLUyzcFziPhevpHOdRBJu0fpb76K
- 3c=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ReyKzSXbLaU=;4XGj64i7glxekjhy0Bn5tOpJD2m
- W5QpJJfhz+SgNilocL4rJDFuPMmtYrkXEhlgHsqy6f49qbDSzDOY/uO0LY0wTeH/zDKf9YtB4
- eBntgQuH0TIQD5QiYd5DMLNX1fPD4b4Df//xF3XPNjT9+kt/k51Do2C+QrFAeIxZDnj/iN8VT
- X3Yy/gTwT+2LDU6I98Oi8YJLitliJOtsxsWVvsedCk6fEEc28Rn5VELQ4gMiBsc/N8ofBndBo
- t7x2duAYQyY+IPIpyV75Mx1r0pCLuE9i0bmlwyW2l+dZjF8hoLfbUY4tqwRfn0sJIL5Mx5QCb
- fibzPsaWP1ZvN/B83gI7La/50xAYxtngVW3HhvXr51ucmJDxAponFrPJPHN5iFE5a812kjH3T
- 3c3tgxbaBis70rTnhCb7MoPv+uwB+VxVuHiSnHk4rVdzvogY0/aIpx5Gttp5Vv/b82bmj6Ile
- qzhQRAZjdNfReL+xe4rArgEyCC239pKINT9WhkUqX2YeKBoiKFEwTkOU1XcAW1LLn8cndTo26
- N8BsGp8sGRaE5tDIMra1hUQ8qC/nHSfAd9oW7ZMgEUuAGs87uKTYiXUH/pgQf3owtdLFYy491
- ucThy4yU8vYfWZTpJ48v5hl2Ephh5tJ+1EWkVIWF4k8CcVRCAyoKP8IModnEUpjwWqHffDmIk
- V4/KzGXLsyap2j3YY16lFV9TzG1nZz9h85/uLfNy5A==
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi
+Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+to use optimized implementation and ease register pressure around
+the primitive for targets that implement optimized variant.
 
-> Gesendet: Montag, 07. Oktober 2024 um 10:00 Uhr
-> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.c=
-om>
-> Betreff: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
->
-> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
-> > From: Frank Wunderlich <frank-w@public-files.de>
-> >
-> > Add binding definitions for mmc on MT7988 SoC.
-> >
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> > ---
-> > v2:
-> > - fixed minItems to 4
-> > ---
-> >   .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++=
-++
-> >   1 file changed, 24 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Docum=
-entation/devicetree/bindings/mmc/mtk-sd.yaml
-> > index c532ec92d2d9..7380f72ea189 100644
-> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > @@ -21,6 +21,7 @@ properties:
-> >             - mediatek,mt7620-mmc
-> >             - mediatek,mt7622-mmc
-> >             - mediatek,mt7986-mmc
-> > +          - mediatek,mt7988-mmc
-> >             - mediatek,mt8135-mmc
-> >             - mediatek,mt8173-mmc
-> >             - mediatek,mt8183-mmc
-> > @@ -263,6 +264,29 @@ allOf:
-> >               - const: bus_clk
-> >               - const: sys_cg
-> >
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - mediatek,mt7988-mmc
->
-> Are you really sure that you can't reuse the MT7986 compatible?
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/kernel/ioport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-have not found a way to reuse mt7986 binding because clock-config is diffe=
-rent...
-from driver view we can use the mt7986 compatible, but from binding view i=
-t is different.
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index e2fab3ceb09f..6290dd120f5e 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -144,7 +144,7 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
+ 	 * Update the sequence number to force a TSS update on return to
+ 	 * user mode.
+ 	 */
+-	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
++	iobm->sequence = atomic64_inc_return(&io_bitmap_sequence);
+ 
+ 	return 0;
+ }
+-- 
+2.46.2
 
-regards Frank
-
-> Cheers,
-> Angelo
->
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          minItems: 4
-> > +          items:
-> > +            - description: source clock
-> > +            - description: HCLK which used for host
-> > +            - description: Advanced eXtensible Interface
-> > +            - description: Advanced High-performance Bus clock
-> > +        clock-names:
-> > +          minItems: 3
-> > +          items:
-> > +            - const: source
-> > +            - const: hclk
-> > +            - const: axi_cg
-> > +            - const: ahb_cg
-> > +
-> >     - if:
-> >         properties:
-> >           compatible:
->
->
->
 
