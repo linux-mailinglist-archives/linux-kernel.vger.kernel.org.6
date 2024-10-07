@@ -1,119 +1,265 @@
-Return-Path: <linux-kernel+bounces-352749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959B19923BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD169923B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5562816F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5DFB22319
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EE5136358;
-	Mon,  7 Oct 2024 04:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A2A12DD8A;
+	Mon,  7 Oct 2024 04:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="f7PKCYpE"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Noh/W3hs"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2AE39AF4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899A62AD05
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728276763; cv=none; b=RQ+bZ1QRhNNgguFHthALBPSfPDs/WNmdqVAYmeJquR+BQpb8Ri3LssxWJUyZrzkVkt3En8zk/LC54of6JiYlqsPx92T4M64uo2YVZ623Yf4Eb3BuX7g4/bxc2g8ek7HRYJ1Uy8NpnCxt78qmHGmnYswZM3Ty2la7Pm+fs/JLdJU=
+	t=1728276560; cv=none; b=K7CDcm69EVzt+xoDdFSaWNBvJxp103m4SkIMP4+AF8kzi7mohAdffb2o5zkjJKRIHWkV+PVhQ65NTa55mWI3cvm12RnD2/v3ziok5bbJ000HUqfPmekPB+IJPCcqkbwOupSv64TES6WJD6H5D+jaOA1QePJDdsYV7tyFw0ZeeHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728276763; c=relaxed/simple;
-	bh=Pe51Lg/PsZLWAqG9WRRKbxZ4v4+EdZ8UaY5o4W06xTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TClxJTQlEXbpUo2xTlIFCskODnu4WYFFtwkZxSZdpt628Rcf7nTCp6zEhZWVwIWHu5NwmmLIVL6VimJ3RLaUfxwrL0g73+s8HYbV4a3JKJG7AlqiaeSn0BzdG5AGYMzZm1gacC8/hoILxAw6YAGM1h3RNfIdKWdUtyjVNRxXaHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=f7PKCYpE; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4582c4aa2c2so30621021cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 21:52:39 -0700 (PDT)
+	s=arc-20240116; t=1728276560; c=relaxed/simple;
+	bh=YjJnmeoGLUWn93YXI251yPcpCm+hOrjEje2qbPjB1kk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P/1MGjaKCIyTf7dM6sdPeT7qjMCi5tjT6bBo4XYPr6zajYHQ/QGq6JvjnRavMNQXY+wCzMNWp7IR5RNkIOz9thH6EtU4U3g50h77uhNMp44dNxwGlF9ACQsdq5913vSZ/NU7JDe6e0WzUyvrIKxPHaPy514xPa5/928+WAp6tnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Noh/W3hs; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fac9eaeafcso40375161fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 21:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728276759; x=1728881559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0JH+eeGvKfz71oS0W6AeXi5f58Oy8T9dmTdRTdFrBnI=;
-        b=f7PKCYpEyASYIm9Zx+2bSByq6wqn8r12rCjhHOb503a9RR7oTvEhPCgd9XrZ60DNdW
-         +jxhl9mtpI6ONwPRk6yjUrG1G4s7Tdvc0HnpRfPtFwgWBOSA23eZuXHwnRvZTrkQWIJj
-         i3U8OxSkCSAjgsUsp5BvaCpNGnQTGM5Tf9baUcYhc8bwYOhvl/KEzYJ0h1KzfHCb+iCF
-         A41ROm9rqwDxTaKU+WHRjjaKiq6NQ16kDhveIb+i4RDk/CiB/bKPdnjXj4uDhLw8VYqp
-         S+f6+hby1hSaLzvG4Z5x3JC5t2mehY5NzQSOe3Ky61aYPrX2+SLEM+zxLo+sFNtITZep
-         kH8A==
+        d=gmail.com; s=20230601; t=1728276557; x=1728881357; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lvwQPOid1i1r42ZkZnh/p8pKa/FUX1d5F+Gn+3bK3Q=;
+        b=Noh/W3hsIArWz9unx335mMVIr+ztTUKgCl/ZM9Kol7YxmC4CMAsNHvYIXYOaEjw1LB
+         L9DRxp38FK4yP5V03BGsPIGZwlmsH+ReuILzD4C94FKQnkXbObWMoU50Y0toJnhEFAaG
+         jsv2UR84ZpZulboI0LIGEB7Q6sHlR/GmZCvu3IJVniIhXm6117jPXAj7W3oVJYXf0Srl
+         E7oSfF0f+n0aCujiXA5h3CMtd9c2jjkmNYoJJZez4rvQwf9UmPu7p8kc5vVfR24WgUn3
+         e57UCZIqIN15SAv6JH/FcPb5sHN2S4bJfRnnrKT4o97Yw50cmKIHcmR/AtTjD+7hCkuB
+         J91A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728276759; x=1728881559;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0JH+eeGvKfz71oS0W6AeXi5f58Oy8T9dmTdRTdFrBnI=;
-        b=Si6jrAxe+xGv8XfzZvK8loANWIf52+Ak+LJ/5hq0kystHMBgCudHS2d2kOnSZpav0x
-         GOOrgRF3PyDQ9C5Wimz53uRGJdcn+InS+6GZM/xXc8QPPTvz/XWRqfmSsiDd0liviVh0
-         fCuh9CPn4ADNpFM8QntavrvyjQh/78fLNzwyNUGBmYoXtosneLHX2MpK43tiGiNq1PON
-         FcIxMj/xa1uHWUIUDgnW3oNBc/MePqWkBjQDlxq+y/rI9jkkbcPw5ALpFw1wtldbclxH
-         tsM36kOpKMQ5eILnL73xK1wWL0RY0XzoUWc4iulpfqUohhf5xTkl32VmJqbLA0xqBmAe
-         KTaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgjCh+7eOhMN03A/P8QZT5SKzumZqsP8fUYFeZf/Z+bhs2VhXQpPjNhe83YzWLlR/bf/ePajKnaNDAHRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNxnfAXqdbpNkFXyDP9S0k7hER8R8N33CRdOWG3waZuoq3dIzU
-	mnp6su+Q+Gy1GR7SzG7aJUjvkG28NJ0PWbA2rt9J5m86Tcb8sBRuixtDGt3TdSk=
-X-Google-Smtp-Source: AGHT+IH/9bsZq7uHy78secXuJvI/6P0sWacsBbySahkLVEBVoPJhgQSm4YakQO1cbX3fBAenHpNq8g==
-X-Received: by 2002:a05:622a:450:b0:45d:5d31:89f0 with SMTP id d75a77b69052e-45d9ba2f03dmr192178031cf.3.1728276759124;
-        Sun, 06 Oct 2024 21:52:39 -0700 (PDT)
-Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da764043esm22666351cf.88.2024.10.06.21.52.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 21:52:38 -0700 (PDT)
-From: Jonathan Marek <jonathan@marek.ca>
-To: linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Arun Kumar Neelakantam <quic_aneela@quicinc.com>,
-	linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for CMD_OPEN name length
-Date: Mon,  7 Oct 2024 00:47:22 -0400
-Message-ID: <20241007044723.25347-1-jonathan@marek.ca>
-X-Mailer: git-send-email 2.45.1
+        d=1e100.net; s=20230601; t=1728276557; x=1728881357;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1lvwQPOid1i1r42ZkZnh/p8pKa/FUX1d5F+Gn+3bK3Q=;
+        b=DI4+TIPD3ZeHuGgbGzbaarXcy/H2CglC57j1DD3+Gjqqoqilp79TCpGcagrFj1Dsga
+         nQNpxPf5RCHpep2ohLJA9gmowVsM4dcMppUqkyol0o2iipG0xc05YDVvUe8t4HLVFRFw
+         gkDdE9qDKh2G2ZZxsTM3g2UD6ZykhBW2NgZlezdz/NOnMZ+7H/k0TRO+NTAayTpw9u+H
+         GVo01MLBw/qBzZcvaT+C1Xo14g+K7gmYoc/fmLYCp2R0TbzqMq280MvdjGHNXFZ9d2G/
+         2jYGcl9+UdwBIp17iTezfP/ac5nuGZm0/r6+YZWdg6CzMK0dBJH3ZELpyKalmBxtE/Kl
+         MfTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1wjLW2xChD8VXqGwFgir4f6gYIQwwyYxNXXwRyNmA4lc1KGVF0Uqfx3fYO6STCc7fdIhAPp75Gd3fNlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWEds6RrLbaLT/17wqRFUM1xiiwPn2v436RK3/WfZ93vquksmy
+	1uW3fAnNQfH8HS200ibj3+Rtcqus2aBCtjeMEUK1rf5hIF/KiaJgI361PvmouiFu1ZLnjvX5OQw
+	u2ZYBjTOvdbOfDnvFAyjdQbp5Fwo=
+X-Google-Smtp-Source: AGHT+IEqYdkAsBK40ts4UhEMsF1yFermt8J6Dvxy5IFPcLo+Hv58lpgoIpYRR++uyhCFnESMlrPik/53JXVKb3ATJUg=
+X-Received: by 2002:a05:6512:4019:b0:52e:9e70:d068 with SMTP id
+ 2adb3069b0e04-539ab85b365mr4201855e87.4.1728276556297; Sun, 06 Oct 2024
+ 21:49:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241003060650.18454-1-wuhoipok@gmail.com> <d2704a2b-ceb2-4919-81d3-f6ff58a734fe@xenosoft.de>
+ <c868e394-b1ad-4f30-b27b-c779e3458c42@csgroup.eu>
+In-Reply-To: <c868e394-b1ad-4f30-b27b-c779e3458c42@csgroup.eu>
+From: Hoi Pok Wu <wuhoipok@gmail.com>
+Date: Mon, 7 Oct 2024 12:49:04 +0800
+Message-ID: <CANyH0kDWaS8mavzuUeH4CPHBN9kBQ3hcCGjWA8U0UU2_y=5Gnw@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: add late_register for connector
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "R.T.Dickinson" <rtd2@xtra.co.nz>, 
+	mad skateman <madskateman@gmail.com>, hypexed@yahoo.com.au, 
+	Christian Zigotzky <info@xenosoft.de>, Darren Stevens <darren@stevens-zone.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The name len field of the CMD_OPEN packet is only 16-bits and the upper
-16-bits of "param2" are a different field, which can be nonzero in certain
-situations, and CMD_OPEN packets can be unexpectedly dropped because of
-this.
+Thank you. I am looking at the problem now.
 
-Fix this by masking out the upper 16 bits of param2.
-
-(the commit in this Fixes tag is not where the original code was introduced
-but it should be far back enough not to matter)
-
-Fixes: 835764ddd9af ("rpmsg: glink: Move the common glink protocol implementation to glink_native.c")
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 0b2f290069080..e4933b823238c 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1204,7 +1204,7 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
- 			ret = qcom_glink_rx_open_ack(glink, param1);
- 			break;
- 		case GLINK_CMD_OPEN:
--			ret = qcom_glink_rx_defer(glink, param2);
-+			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
- 			break;
- 		case GLINK_CMD_TX_DATA:
- 		case GLINK_CMD_TX_DATA_CONT:
--- 
-2.45.1
-
+On Mon, Oct 7, 2024 at 1:37=E2=80=AFAM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+>
+>
+> Le 06/10/2024 =C3=A0 18:56, Christian Zigotzky a =C3=A9crit :
+> > On 03 October 2024 at 08:06 am, Wu Hoi Pok wrote:
+> >> This is a fix patch not tested yet,
+> >> for a bug I introduce in previous rework of radeon driver.
+> >> The bug is a null dereference in 'aux.dev', which is the
+> >> 'device' not registered, resulting in kernel panic. By having
+> >> 'late_register', the connector should be registered after
+> >> 'drm_dev_register' automatically.
+> >>
+> >> Please help testing thank you.
+> > Hello Wu Hoi Pok,
+> >
+> > Thanks a lot for your patch. Unfortunately there is a new issue after
+> > patching the RC1. Could you please fix the following issue?
+> >
+> > Thanks,
+> > Christian
+> >
+> > ---
+> >
+> > Linux fienix 6.12.0-rc1-2-powerpc64-smp #1 SMP Fri Oct  4 08:55:45 CEST
+> > 2024 ppc64 GNU/Linux
+> >
+> > [   29.167145] systemd[1]: Sent message type=3Dsignal sender=3Dn/a
+> > destination=3Dn/a
+> > path=3D/org/freedesktop/systemd1/unit/NetworkManager_2eservice
+> > interface=3Dorg.freedesktop.DBus.Properties member=3DPropertiesChanged
+> > cookie=3D103 reply_cookie=3D0 signature=3Dsa{sv}as error-name=3Dn/a
+> > error-message=3Dn/a
+> > [   29.542140] systemd-journald[1301]: Successfully sent stream file
+> > descriptor to service manager.
+> > [   29.561863] BUG: Kernel NULL pointer dereference on read at 0x000000=
+00
+> > [   29.567156] Faulting instruction address: 0xc000000000c973c0
+> > [   29.571574] cpu 0x1: Vector: 300 (Data Access) at [c000000006f97640]
+> > [   29.576637]     pc: c000000000c973c0: .drm_gem_object_free+0x20/0x70
+> > [   29.581708]     lr: c000000000d28dd8: .radeon_bo_unref+0x58/0x90
+> > [   29.586428]     sp: c000000006f978e0
+> > [   29.588695]    msr: 9000000000009032
+> > [   29.590962]    dar: 0
+> > [   29.591925]  dsisr: 40000000
+> > [   29.593496]   current =3D 0xc0000000085b1f00
+> > [   29.596286]   paca    =3D 0xc00000003ffff680     irqmask: 0x03
+> > irq_happened: 0x01
+> > [   29.602119]     pid   =3D 1524, comm =3D Xorg.wrap
+> > [   29.605257] Linux version 6.12.0-rc1-2-powerpc64-smp
+> > (geeko@buildhost) (powerpc64-suse-linux-gcc (SUSE Linux) 7.5.0, GNU ld
+> > (GNU Binutils; devel:gcc / SLE-15) 2.43.1.20240828-150300.536) #1 SMP
+> > Fri Oct  4 08:55:45 CEST 2024
+> > [   29.623892] enter ? for help
+> > [   29.625487] [c000000006f97960] c000000000d28dd8
+> > .radeon_bo_unref+0x58/0x90
+> > [   29.631083] [c000000006f979e0] c000000000e287b0
+> > .radeon_vm_fini+0x260/0x330
+> > [   29.636765] [c000000006f97aa0] c000000000d07c94
+> > .radeon_driver_postclose_kms+0x1a4/0x1f0
+> > [   29.643579] [c000000006f97b30] c000000000c9374c
+> > .drm_file_free+0x28c/0x300
+> > [   29.649174] [c000000006f97be0] c000000000c93900 .drm_release+0x90/0x=
+170
+> > [   29.654508] [c000000006f97c70] c000000000304790 .__fput+0x120/0x3b0
+> > [   29.659495] [c000000006f97d10] c0000000002fe0fc .__se_sys_close+0x4c=
+/0xc0
+> > [   29.665004] [c000000006f97d90] c000000000025bac
+> > .system_call_exception+0x22c/0x260
+> > [   29.671295] [c000000006f97e10] c00000000000b554
+> > system_call_common+0xf4/0x258
+> > [   29.677164] --- Exception: c00 (System Call) at 00000000006b2b48
+> > [   29.681876] SP (fff4b3d0) is in userspace
+> > [   29.684577] 1:mon>  <no input ...>
+> > [   31.666727] Oops: Kernel access of bad area, sig: 11 [#1]
+> > [   31.670829] BE PAGE_SIZE=3D4K MMU=3DHash SMP NR_CPUS=3D2 A-EON Amiga=
+one X1000
+> > [   31.676144] Modules linked in: snd_hda_codec_idt
+> > snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel snd_intel_dspcfg
+> > snd_hda_codec snd_hda_core dm_mod
+> > [   31.688703] CPU: 1 UID: 0 PID: 1524 Comm: Xorg.wrap Not tainted
+> > 6.12.0-rc1-2-powerpc64-smp #1
+> > [   31.695932] Hardware name: pasemi,nemo PA6T 0x900102 A-EON Amigaone =
+X1000
+> > [   31.701417] NIP:  c000000000c973c0 LR: c000000000d28dd8 CTR:
+> > c000000000d07af0
+> > [   31.707250] REGS: c000000006f97640 TRAP: 0300   Not tainted
+> > (6.12.0-rc1-2-powerpc64-smp)
+> > [   31.714128] MSR:  9000000000009032 <SF,HV,EE,ME,IR,DR,RI> CR:
+> > 28002222  XER: 20000000
+> > [   31.720773] DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0
+> >                 GPR00: c000000000d28dd8 c000000006f978e0
+> > c00000000207a800 c0000000085f5468
+> >                 GPR04: 0000000000000b9b 0000000000000b9a
+> > 0000000179779000 c0000000086a4b00
+> >                 GPR08: 0000000000000000 0000000000000000
+> > 0000000000000001 0000000000000000
+> >                 GPR12: 0000000048002202 c00000003ffff680
+> > 0000000000000000 0000000000000000
+> >                 GPR16: 00000000006e3318 0000000000000001
+> > 00000000006e289c 0000000000000063
+> >                 GPR20: 00000000c04064a0 00000000007f0088
+> > 00000000fff4c734 00000000007d165c
+> >                 GPR24: 00000000007d1668 c000000024b6a220
+> > c000000003588000 c000000024b6a200
+> >                 GPR28: c000000003b3cc00 c000000024b6a248
+> > c000000002d48820 c0000000085f5468
+> > [   31.778903] NIP [c000000000c973c0] .drm_gem_object_free+0x20/0x70
+> > [   31.783701] LR [c000000000d28dd8] .radeon_bo_unref+0x58/0x90
+> > [   31.788062] Call Trace:
+> > [   31.789199] [c000000006f978e0] [c000000006f97990] 0xc000000006f97990
+> > (unreliable)
+> > [   31.795388] [c000000006f97960] [c000000000d28dd8]
+> > .radeon_bo_unref+0x58/0x90
+> > [   31.801142] [c000000006f979e0] [c000000000e287b0]
+> > .radeon_vm_fini+0x260/0x330
+> > [   31.806982] [c000000006f97aa0] [c000000000d07c94]
+> > .radeon_driver_postclose_kms+0x1a4/0x1f0
+> > [   31.813954] [c000000006f97b30] [c000000000c9374c]
+> > .drm_file_free+0x28c/0x300
+> > [   31.819707] [c000000006f97be0] [c000000000c93900] .drm_release+0x90/=
+0x170
+> > [   31.825197] [c000000006f97c70] [c000000000304790] .__fput+0x120/0x3b=
+0
+> > [   31.830342] [c000000006f97d10] [c0000000002fe0fc]
+> > .__se_sys_close+0x4c/0xc0
+> > [   31.836010] [c000000006f97d90] [c000000000025bac]
+> > .system_call_exception+0x22c/0x260
+> > [   31.842460] [c000000006f97e10] [c00000000000b554]
+> > system_call_common+0xf4/0x258
+> > [   31.848476] --- interrupt: c00 at 0x6b2b48
+> > [   31.851267] NIP:  00000000006b2b48 LR: 00000000006b2b20 CTR:
+> > 0000000000000000
+> > [   31.857101] REGS: c000000006f97e80 TRAP: 0c00   Not tainted
+> > (6.12.0-rc1-2-powerpc64-smp)
+> > [   31.863978] MSR:  100000000200f032 <HV,VEC,EE,PR,FP,ME,IR,DR,RI>  CR=
+:
+> > 28002400  XER: 00000000
+> > [   31.871235] IRQMASK: 0
+> >                 GPR00: 0000000000000006 00000000fff4b3d0
+> > 00000000f7b7f3a0 0000000000000003
+> >                 GPR04: 0000000000000000 0000000000000000
+> > 0000000000000000 0000000000000000
+> >                 GPR08: 0000000000000000 0000000000000000
+> > 0000000000000000 0000000000000000
+> >                 GPR12: 0000000000000000 00000000007efff4
+> > 0000000000000000 0000000000000000
+> >                 GPR16: 00000000006e3318 0000000000000001
+> > 00000000006e289c 0000000000000063
+> >                 GPR20: 00000000c04064a0 00000000007f0088
+> > 00000000fff4c734 00000000007d165c
+> >                 GPR24: 00000000007d1668 00000000fff4b400
+> > 0000000000000001 0000000000000001
+> >                 GPR28: 00000000fff4b46c 0000000000000000
+> > 00000000007bfff4 0000000000000003
+> > [   31.926053] NIP [00000000006b2b48] 0x6b2b48
+> > [   31.928930] LR [00000000006b2b20] 0x6b2b20
+> > [   31.931720] --- interrupt: c00
+> > [   31.933466] Code: ebe1fff8 7c0803a6 4e800020 60000000 7c0802a6
+> > fbe1fff8 7c7f1b78 f8010010 f821ff81 60000000 60000000 e93f0140
+> > <e9290000> 7d2a0074 794ad182 0b0a0000
+> > [   31.946913] ---[ end trace 0000000000000000 ]---
+> >
+> >
+>
+> That's a NULL pointer dereference in drm_gem_object_free().
+>
+> Trying to read obj->funcs->free while obj->funcs is NULL.
+>
+> Christophe
 
