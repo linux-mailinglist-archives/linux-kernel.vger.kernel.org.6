@@ -1,127 +1,204 @@
-Return-Path: <linux-kernel+bounces-353194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9ED992A24
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:21:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3DB992A26
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C02F1F2112F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EED01C22943
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B11D1D1319;
-	Mon,  7 Oct 2024 11:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJWyXhgT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0437C2AD05;
-	Mon,  7 Oct 2024 11:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900491D1319;
+	Mon,  7 Oct 2024 11:22:38 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7282AD05;
+	Mon,  7 Oct 2024 11:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300071; cv=none; b=A4w7whvDejq5SrLxx+WlsSNBC+ZPgD2vDqOkP3oJSlIBZSNY9/ul3kJpJJ8HsAQlof7etAYT9XDqUkBbcGcEyXcV99y2i1HPpQIgztHeKVES9DLUzragOThNoOgpf33+FmSK6j5m+6WP65AJ8iNdxDn2K6PjjqXXTczopOunbvo=
+	t=1728300158; cv=none; b=iu71aUDRSHWNU3rTkV5gkrAkC/QG8Lya43JtDTLa5ttftw2HZpRBhgHw2XXmWuPRvAq4tpz3e8U5KSvK7Bnm595cXH5eyGSR3/sau5i6X4lk3iBPxSo/upkB2+NdxrLlho80MX73covm8nMY8JfE3MYkTYgh3/ky7wSTRtI+QWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300071; c=relaxed/simple;
-	bh=AZ3y3WY/Ut/fXbhJ00IA0h+oVk/0xqW5HzRE9HId71I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SQcH1w1+eJ2rearEWdqXUYHn8WUaUjDz/NxsEkIE7glSs40AtQNu1ylRn8bykbJDDEssRS2aXBTMzEVgKctM171PbZouC+2/ZlKfhVbG3offTR4K697YsrePsST/tbbeWC/zSYGWyxzI0Q3bDsH0p4f7CeOTLOsOy236GKY99xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJWyXhgT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B28C4CEC6;
-	Mon,  7 Oct 2024 11:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728300070;
-	bh=AZ3y3WY/Ut/fXbhJ00IA0h+oVk/0xqW5HzRE9HId71I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nJWyXhgT4yEM6bx93lshwU8ITuCdLDnD5v/Tt3+XFuP90lWgd171cxSUYNKu47YDq
-	 yagNF57Px/12TToqShFO45Z/gx5u65Nahh+uT2gvLEwZcusx5a/DJyiFLNMhZbhGA8
-	 knFBezVVo43QBfdfs5yQ0Y1QBgJGHTQjcAr0cP9fc1V9ydLrcnMMX3VyvpGVRfrCbz
-	 7TblurOS+R+OThCO9aO43i7FCk06ILiAAq1+NEWZg1kjKzgMc6YWGIfYe4R7uTpwnr
-	 Sf76RPilgNrTGjE5/894c/xkMNVVzdZe3VCs9O+SmLH9k+M4hBv6uuL6FgqKbMtO7z
-	 7Y2gRI65U7R9A==
-Message-ID: <f41d3eb3-a7b5-478d-93b7-671e1662e952@kernel.org>
-Date: Mon, 7 Oct 2024 13:21:01 +0200
+	s=arc-20240116; t=1728300158; c=relaxed/simple;
+	bh=LDHlrlKj5yPaGcKdiJTL6ZWD5QwcgLJoLpx7mv9CL6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GeekjuschuI8CDBrX9xaquxS5GCUBJtqt2gLt820rPCWxvCJXBoKBy6tVbG8Fk3Sc+8SL0grhS3jMozESWSabdrFn+tZrvWj2eU3UZYxevBRvORaBPjKueZexCz7s66G2WWvMATbDX8nGk3pMAU0rruU8vLcmk9cpjI9fyeJSHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 497BLx4c010150;
+	Mon, 7 Oct 2024 06:21:59 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 497BLw3Y010149;
+	Mon, 7 Oct 2024 06:21:58 -0500
+Date: Mon, 7 Oct 2024 06:21:58 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+Message-ID: <20241007112158.GA10114@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com> <20241004184019.GA16388@wind.enjellic.com> <CAHC9VhS0aeDB2GzxJPHN8_LDk59gT_RuRKwb26K+3SzX7SQ=3g@mail.gmail.com> <20241005023357.GA20577@wind.enjellic.com> <CAHC9VhSoPK7zMQjUNiHG23Je-iSmxOSdRFvp1ikqCeCxkS9zWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: bridge: sil,sii9022: Add
- bus-width
-To: Wadim Egorov <w.egorov@phytec.de>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, bbrezillon@kernel.org, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, upstream@lists.phytec.de
-References: <20241007085213.2918982-1-w.egorov@phytec.de>
- <20241007085213.2918982-2-w.egorov@phytec.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241007085213.2918982-2-w.egorov@phytec.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSoPK7zMQjUNiHG23Je-iSmxOSdRFvp1ikqCeCxkS9zWw@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 07 Oct 2024 06:22:00 -0500 (CDT)
 
-On 07/10/2024 10:52, Wadim Egorov wrote:
-> The SI9022 HDMI transmitter can be configured with a bus-width of 16,
-> 18, or 24 bits. Introduce a bus-width property to the input endpoint,
-> specifying the number of parallel RGB input bits connected to the
-> transmitter.
+On Sat, Oct 05, 2024 at 12:21:31PM -0400, Paul Moore wrote:
+
+Good morning, I hope the week is starting well for everyone.
+
+> On Fri, Oct 4, 2024 at 10:34???PM Dr. Greg <greg@enjellic.com> wrote:
+> > On Fri, Oct 04, 2024 at 02:58:57PM -0400, Paul Moore wrote:
+> > > On Fri, Oct 4, 2024 at 2:40???PM Dr. Greg <greg@enjellic.com> wrote:
+> > > > On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
+> > > > > On 10/2/24 03:38, Dr. Greg wrote:
+> > > > > >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> > > > > >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > ...
+> > >
+> > > > The third problem to be addressed, and you acknowledge it above, is
+> > > > that there needs to be a flexible pathway for security innovation on
+> > > > Linux that doesn't require broad based consensus and yet doesn't
+> > > > imperil the kernel.
+> >
+> > > The new LSM guidelines are documented at the URL below (and
+> > > available in the README.md file of any cloned LSM tree), the
+> > > document is also linked from the MAINTAINERS file:
+> > >
+> > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-guidelines
+> > >
+> > > The guidelines were developed last summer on the LSM mailing list
+> > > with input and edits from a number of LSM developers.
+> > >
+> > > https://lore.kernel.org/linux-security-module/CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com
+> >
+> > We are intimately familiar with those documents.
+> >
+> > Our reference was to the need for a technical solution, not political
+> > medicaments.
+
+> Seeing that document as a purely political solution to the challenge
+> of gaining acceptance for a new LSM is a telling perspective, and not
+> an accurate one as far as I'm concerned.  The document spells out a
+> number of things that new LSMs should strive to satisfy if they want
+> to be included in the upstream Linux kernel; it's intended as guidance
+> both for the development of new LSMs as well as their review.
 > 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> ---
+> If those guidelines are too restrictive or otherwise stifling, you are
+> always welcome to suggest changes on the LSM list; that is how the doc
+> was established and that is how we'll keep it current and resonable.
+> 
+> However, if you find yourself objecting to the guidelines simply
+> because they are trying your patience, or you find that the technical
+> reviews driven by those guidelines are incorrect, but are unable to
+> properly respond in a way that satisfies the reviewer, then the
+> upstream Linux kernel may not be the best place for your LSM.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The document is an embodiment of a political process, let me take a
+swing at defining what it is:
 
-Best regards,
-Krzysztof
+It is a collaboratively developed instrument for establishing
+normative guidelines and practices, among a diverse group of
+individuals with varying goals and objectives, who desire to cooperate
+to create an environment that supports the resolution of conflicts in
+the pursuit of individual objectives while maintaining a common good.
 
+I think we have all been around long enough to understand that Linux
+kernel development and distribution is a study in technical politics,
+probably more so than ever.
+
+You don't have to take my word for it.  Our Quixote team is fortunate
+enough to have as a member, a valued consigliere, who hangs both a J.D
+and a Ph.D. off the end of her name.  The latter in political science
+whose 600+ page dissertation studied, among other issues, the role of
+mediation in a legal system.
+
+She was influenced by a top constitutional scholar, and as we all
+know, the US constitution was a document designed to mediate a
+political process in the pursuit of the common good.
+
+We could get an opinion from her, if you want to take on her hourly
+rates.  I'm pretty confident she would conclude that this is a
+political process and the ANN document is an instrument for mediating
+that process.
+
+For the record, we have no issues with the document.  It is a bit
+light on rights of participants in the process and requirements for
+leadership, but that is a subject for another day and perhaps the
+kernel community at large.
+
+Interestingly enough, and relevant to these conversations, is that
+Tetsuo has consistently called out the 'patent' requirements of the
+document as problematic.  Once again, a subject for another
+conversation.
+
+Citing the document in response to our suggestion that there needs to
+be a flexible pathway for security innovation, that doesn't require
+consensus, misses the point we were making.
+
+As the TOMOYO incident points out, requiring the need to have kernel
+resident code to implement a security architecture that samples LSM
+events is problematic and will probably become more as time goes on.
+
+From a commercial perspective, the Linux distributors are being forced
+into code signing due to security issues.  As this incident has
+demonstrated, the effect of that is to limit choice in security
+solutions to what the distributions feel they can or want to support.
+
+From a technical perspective, history has clearly demonstrated that
+security engineers have varying and unique ideas on how security
+should be implemented, much to the long stated consternation of Linus
+himself.  The LSM is a study in the fact that people cannot agree on
+how security should be implemented.
+
+The existence of the ANN document doesn't address either of these
+issues.
+
+It addresses how to participate in the process of getting a security
+implementation into the kernel proper, which this incident has clearly
+demonstrated is the problematic requirement.
+
+We will ultimately never 'fix' this problem because it is a political
+problem, given that distributions either want to limit choice for
+business purposes or are being forced into it by the current threat
+environment.
+
+So the path forward to address this problem, the best that we can hope
+for, is to develop an architecture that minimizes the need for
+consensus on how to implement a security architecture.
+
+Tetsuo has placed one idea on the table, we will see where that goes
+and how long it ultimately takes.
+
+As I've stated before, we saw this coming about four years ago and
+TSEM was designed to provide an architecture that minimizes the need
+for consensus on how to do security.
+
+We will litigate elsewhere the current state of issues we have
+experienced with that.
+
+> paul-moore.com
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
