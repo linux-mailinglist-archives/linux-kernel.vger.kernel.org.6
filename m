@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-353276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F89992B7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADA8992B78
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B111C236F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728291F24992
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C4D1D2B02;
-	Mon,  7 Oct 2024 12:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lUf62wZa"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BF21D26FE;
-	Mon,  7 Oct 2024 12:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9015E1D2B0D;
+	Mon,  7 Oct 2024 12:19:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E084F1D2785;
+	Mon,  7 Oct 2024 12:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303566; cv=none; b=WFYG+VP2TLHbNsDGRMNBB+geaSXcJsAMK+NnhK2AIjo/6Iaz6XnK+PUv9e2QMZzhN/ut788Lmu+jMTQFqvagcCMOv7MnLWGucfPItV+u7WCs/aGLQq0HHMqj8L8eLAmUTWm6dzNA4FF4bpZfelDXfBt7XlOzqRH94iDq0VimmQI=
+	t=1728303540; cv=none; b=aaHIk+ONeYWRpzuGtgyKkmAyEymULymF2S3iyF8xlU1C6JPZQGeg5odPZ/SINc4PZjcyZxEqL6wHH8cT/gqc5doEq9diROu8tcNIHF1tgtqAlOR2aVmjcnZFChmaDQdoSlXU6Ty0QTLv0cMm7hnhIcGDGjWOuU6cD7As2NYQK6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303566; c=relaxed/simple;
-	bh=shVT950uDJWSwE4LubJ+eT48En49Cd3esGWXKZXocl4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YJm7iBf7X8fobfVQrl4qblf3Gm/g8BZKMz1cL1XbG/xCk1pyErmyFvma7ydAA7ZYFwMPgoJuq8QAu0GtNQfapg4W7+So2jYHyIBL7g741P60mTU0qoCJe7ZZjHND4LPiL9PQmNtVi1wsBGGKxZQeD2W8ZSylDGw21rAAcQ4GxqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lUf62wZa; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 50D8E20002;
-	Mon,  7 Oct 2024 12:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728303556;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=o58zTIA9rwsmTRMvOE90N9ILQSMy9IJu6Imt2m2o+zI=;
-	b=lUf62wZarKfcfW1n+J9O+Fdh/fYiYYSmjdr09ej7yfWWIQxpISv+gZJ/ruddLtvJqAg3Vu
-	Z308opoIvrUsw8UQpHsLzaa8TKNSsTIZrOyuJjo+B7NOeYYtSN3eTNz9m+mxTWthZIEeEw
-	v6CVoZmsilR+bF39pYR62F6yQf2ToPGA/1c+3bGkfc0Y/CUqThEUNUFVBLz5oP5JG6iQIG
-	oa7hH3txXUZrdNJea6fh4cIXZrchfHa2Xdnx3gGyxKObsnny6aP+eYDC8gLcbcMs+7UHwR
-	8KPfvI+4mg3PkNFURuOncQkuYKa/5sHDw40hSd5G9wPXxl9p9wlR5jA4YlD3Rw==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Subject: [PATCH ethtool-next v2 0/2] Add support for new features in C33
- PSE
-Date: Mon, 07 Oct 2024 14:18:48 +0200
-Message-Id: <20241007-feature_poe_power_cap-v2-0-cbd1aa1064df@bootlin.com>
+	s=arc-20240116; t=1728303540; c=relaxed/simple;
+	bh=vLRitNJ6zjZCUn26GL4bl2eMS/vRbiQ74Bgfh2LI/ZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JVte0tmmTCOvm5u9M/CzCpBQLI9Ahuzapw24WNOBBZ2plHvFjyswKyP21KEPe8U15tLhTJwyi1Mwk4GyLPVzPQ73sMaYOWpFB49Rz7/DtQjd2/w0TwDkjUYA5+/3d/cRK8K9ZKRj5fPEezpQlg+D4WQ09KNq3b6WQB+1AdH81zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD03C1007;
+	Mon,  7 Oct 2024 05:19:27 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EC0163F640;
+	Mon,  7 Oct 2024 05:18:56 -0700 (PDT)
+From: Mark Rutland <mark.rutland@arm.com>
+To: stable@vger.kernel.org
+Cc: anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	james.morse@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org
+Subject: [PATCH 5.4 1/3] arm64: Add Cortex-715 CPU part definition
+Date: Mon,  7 Oct 2024 13:18:48 +0100
+Message-Id: <20241007121850.548687-2-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241007121850.548687-1-mark.rutland@arm.com>
+References: <20241007121850.548687-1-mark.rutland@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAKjRA2cC/3WNQQ6DIBREr2L+ujSIVkJXvUdjjMq3klg+AWptj
- HcvZd/FLCYz82aHgN5ggGuxg8fVBEM2GXEqYJx7+0BmdPIguKi55IpN2MeXx87RT2/03dg7dmk
- GrWSjtagkpK3zOJktc++AcY5EC7O4RWhTOpsQyX/y6VrmTuarUvzhryXjrFYKK62VarS8DURxM
- fY80hPa4zi+5aNMVsoAAAA=
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
-Cc: Kyle Swenson <kyle.swenson@est.tech>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-Sasl: kory.maincent@bootlin.com
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
 
-This series adds support for several new features to the C33 PSE commands:
-- Get the Class negotiated between the Powered Device and the PSE
-- Get Extended state and substate
-- Get the Actual power
-- Configure the power limit
-- Get the Power limit ranges available
+[ Upstream commit 07e39e60bbf0ccd5f895568e1afca032193705c0 ]
 
-It also updates the manual accordingly.
+Add the CPU Partnumbers for the new Arm designs.
 
-Example:
-$ ethtool --set-pse eth1 c33-pse-avail-pw-limit 18000
-$ ethtool --show-pse eth1
-PSE attributes for eth1:
-Clause 33 PSE Admin State: enabled
-Clause 33 PSE Power Detection Status: disabled
-Clause 33 PSE Extended State: Group of mr_mps_valid states
-Clause 33 PSE Extended Substate: Port is not connected
-Clause 33 PSE Available Power Limit: 18000
-Clause 33 PSE Power Limit Ranges:
-        range:
-                min 15000
-                max 18100
-        range:
-                min 30000
-                max 38000
-        range:
-                min 60000
-                max 65000
-        range:
-                min 90000
-                max 97500
-
-This series requisites the c33 PSE documentation support patch sent
-mainline:
-https://lore.kernel.org/r/20240911-fix_missing_doc-v2-1-e2eade6886b9@bootlin.com
-
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Link: https://lore.kernel.org/r/20221116140915.356601-2-anshuman.khandual@arm.com
+Signed-off-by: Will Deacon <will@kernel.org>
+[ Mark: Trivial backport ]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 ---
-Changes in v2:
-- Add missing c33-pse-avail-pw-limit help usage.
-- Remove patch 2 which gets merged.
-- Link to v1: https://lore.kernel.org/r/20240912-feature_poe_power_cap-v1-0-499e3dd996d7@bootlin.com
+ arch/arm64/include/asm/cputype.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
----
-Kory Maincent (2):
-      ethtool: pse-pd: Expand C33 PSE with several new features
-      ethtool.8: Add documentation for new C33 PSE features
-
- ethtool.8.in     |  36 ++++++++
- ethtool.c        |   1 +
- netlink/pse-pd.c | 275 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 312 insertions(+)
----
-base-commit: 96aad731275fb4e48e01da697882241e6a0cc198
-change-id: 20240709-feature_poe_power_cap-56bd976dd237
-
-Best regards,
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index 18b5267ff48e1..cf5636e5c6c8b 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -77,6 +77,7 @@
+ #define ARM_CPU_PART_CORTEX_A78		0xD41
+ #define ARM_CPU_PART_CORTEX_X1		0xD44
+ #define ARM_CPU_PART_CORTEX_A710	0xD47
++#define ARM_CPU_PART_CORTEX_A715	0xD4D
+ #define ARM_CPU_PART_CORTEX_X2		0xD48
+ #define ARM_CPU_PART_NEOVERSE_N2	0xD49
+ #define ARM_CPU_PART_CORTEX_A78C	0xD4B
+@@ -126,6 +127,7 @@
+ #define MIDR_CORTEX_A78	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78)
+ #define MIDR_CORTEX_X1	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X1)
+ #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
++#define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
+ #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
+ #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
+ #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
 -- 
-Köry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+2.30.2
 
 
