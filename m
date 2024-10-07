@@ -1,184 +1,294 @@
-Return-Path: <linux-kernel+bounces-352764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF0A9923DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E479923E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59532826DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:24:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914672825D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDCC139587;
-	Mon,  7 Oct 2024 05:24:23 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4570C13B787;
+	Mon,  7 Oct 2024 05:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="f7vqi/SZ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA7E17740
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551A423AB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728278663; cv=none; b=kXn47kinKzZbvk2Lm9Mn2I5XofWyK3FRM133IJs6BZhkovIAH6tFrT1Kh+8NHPh0NBr992oTpUl4NlnuU/a17XieOWMWUenPClAPRN5TejCDdRrmBssypY7b1eXD+3etD8sDiG++6FBJGFHxEq/YCXbRy6Rn3clfV65gVno4Gpg=
+	t=1728279385; cv=none; b=DvZzpsJ5WcFinTnc6iYQ/JpfeDljWsb0Yyjz8tK4PkLXY8p0PxDtrDInE1h+DlZYN4ynG+yu7AywH5GKKhWeAEi+B7nGgVRpANiGiKGHWqxwYeYFVJR0vuWK2pCU00fR1U7RA3PMNoP3k+/RaRrm17hBnkphlRJcIgS7Ajg43f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728278663; c=relaxed/simple;
-	bh=BfXqHwKacYlyfKlsyU5jxlqJhyB67gpoXh95UTrlHNM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VNRjm+cFFjpA4ickkzwxR0ZRmdF6vyuoXy1tJc2w+7AHojC8u6C+GGfoYZT3g/1CdNGz0+vrSBuWeyEyqn6BzfYGGGyvPFopITTvqZVDr4zqxgbrgIq9PYRtdTCIAN/2YMp+69m3OckcwWcgNJKGewWN/Ad8wv5LFKo45GmnUiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19665ed40so30580965ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:24:21 -0700 (PDT)
+	s=arc-20240116; t=1728279385; c=relaxed/simple;
+	bh=KRPdGFwAaLkfIeM+qmukKMdUHAF5E5Hwn30K03RYcFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nf2v4qOPrk5nv1SuZBEMsGcFNUB0/8w/zXciuN4hpmIqAr3wg2LgQMcjK6MWOQ3vni5SOURP5gunbSAa1LWeZchaYBjOTKdAUedsgg0DMeEHJP4W0HaulGKC0WUAMo8i4FTJU9SBmCREz6ArW+MXtGd0MLu4Cy9/Q5/GSDmmcYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=f7vqi/SZ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so8925706a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1728279381; x=1728884181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
+        b=f7vqi/SZ8G7RzEJ4lKWlRLJk0OVeA6OXIk+KvaQEkC3uS0ZeRwpQR3SCCQHMQfZ9om
+         Ib7WJz6LK0MAOz/M52iGv1Unu9fKbZ+YJzLHkmD/LCcWcTtxTw6sDJ4kJ0pU8QLNCrKD
+         /gEZjm4LRmkHyI+Lo1XLmkfQctry5UMjnGFdpmLJTDRAG+fwKyuRZX6nP2uWXfzUepLc
+         rBB3gcZq45+xG+QzpPrNLWZAxbjwtCxnSOnjmDElrsgFvRYL+SPcurbS/bFuzRV7ohJY
+         s4eZTv0Az2DO+8fWkV1+b8g0Rk9jS44opQTOBvhwPgYEj3Y6/IMhHkWPvkrEl2miWRP9
+         hnxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728278661; x=1728883461;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/AIRQPHTgvdZ7jAuuFNBy85i0UfMXrmiIvbDH4nGzBI=;
-        b=aQ940BvWhBgW+/9/tyxZvM5MJLKCKX7aCJJ6tEMGfecoUrztlmpcRb0zz9DIdii14D
-         9PooG11XrLKMk9uQ0TEbG2Fp2o8xEBfS9iJL11zIzLikob95X9wjXHdiSAB6S83PKJ4C
-         k27UnMP0Zu6zyGX5EAPTFEDpHrXmStziEdmIXUlbFofNfXt/pjMeXxGc9QOJk2Sh+iz+
-         YRWPZ0kTWXS8kAqEYafkLj+CGM7fUF9nQkjZ8nMuUpob5ngbFgJEojuwZ5Lzkp3dfcw4
-         OSAI4fjByHg0qURsh3PGhUrbDeqs5djuW4BQD5ZC09PSMaTrSs6XEF+IEN20rqgQF9xY
-         xY0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtzvhWTJzX47dg4MMAAHIBWK8yB73HuwweFtNrIKNs30ia/c37J0HQ9rCijAAceivXYfqXSDJQRIYIce0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8mf72kuU/6Bo5hVX4TnGngYb5XjG9+iKGwnw86ePQ2X4K3uXc
-	gCZgR5fQLGzdOpX4NqJP+AQ9LhULmvOx4XJvhTOOHI4QotaG5t8XbuFoXsu8l3oZ2qfrTIt2PeT
-	z8WyPG+/0+dXHxc8zt1mtAdI61jAfRgSmHkrxO22eR0iN8SPjTFqr4HQ=
-X-Google-Smtp-Source: AGHT+IF247V/nCJeF+xQvJQ+DDdGbioA32XPXJjCoMMHg41yI54GWh5WH0vmKJqok4i79rtevGel8jfCW0kQQzzUuKXf/PEH5nEK
+        d=1e100.net; s=20230601; t=1728279381; x=1728884181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
+        b=k8OynlJfj6pKV3W4qJ1k89YuZ3s9dNelfykrq8AhHV56Rd2QDbPQgvnC/AQP6Pys9l
+         k5f0DFEkb7eLvEdiGz9fR3y5sJ6FAuk5qUg5Znv2+kHVOClDjJHqKv3ZAbQHsLpkOx8P
+         rq43srPzJtAWx8GnoEwekCHCJOOlzgbMDMaDejbBub8bn7phWxUcpYkjzyNEOTTz/cqd
+         t2m4NENlMniLw9gePEKGfxTTzNTVfHy/HtOHHLqQL/pLG0pbTH7F9m2SRtC8ig1HPOob
+         hhf+MqspON1LssO0sR6kZWUWjmUVUSM0ON40QOSnhC/3YgImDoLrQyJ5pAtND1PwqK4/
+         d3OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURzFvPGoJPoBy98UxfdOaVYZU6jhBgWAyEhZf1BnJR70M/x4/0LflVcStvMyJLZMIwRnfV+3Q4KIj6Rpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb+7onRD2UAjuTZGga8C2+mIwZluzBZFo1MqJ2ZT0GkERxwFWH
+	hVf7sLrhN0ZOmkUk7OTNRkv7MCkhojbCsQrqN0aC8h5cbH+PjC1h1p+2iYglD9skl/cLktoYFvY
+	rrRF6P57ptuX1PFEgkg5VnrTuT9OW96wJFalsbQ==
+X-Google-Smtp-Source: AGHT+IFmB9y6/+kQL6KjsmY8/EdfpVKJMGg25s2uWIbdIaizpuU4BwX+luKVWgAn+4aggb52o4zBWQfQLDFbETfCjoI=
+X-Received: by 2002:a05:6402:34c5:b0:5c8:9f3e:5efc with SMTP id
+ 4fb4d7f45d1cf-5c8c0a0f606mr15771857a12.6.1728279380643; Sun, 06 Oct 2024
+ 22:36:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aad:b0:3a0:8e7c:b4ae with SMTP id
- e9e14a558f8ab-3a375c3b6f5mr74743345ab.2.1728278661144; Sun, 06 Oct 2024
- 22:24:21 -0700 (PDT)
-Date: Sun, 06 Oct 2024 22:24:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67037085.050a0220.49194.04fa.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING in acquire_reference_state
-From: syzbot <syzbot+b2f95ad40a2119295cc1@syzkaller.appspotmail.com>
-To: 42.hyeyoo@gmail.com, akpm@linux-foundation.org, andrii@kernel.org, 
-	ast@kernel.org, bpf@vger.kernel.org, cl@linux.com, daniel@iogearbox.net, 
-	eddyz87@gmail.com, feng.tang@intel.com, haoluo@google.com, 
-	iamjoonsoo.kim@lge.com, john.fastabend@gmail.com, jolsa@kernel.org, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	martin.lau@linux.dev, penberg@kernel.org, rientjes@google.com, 
-	roman.gushchin@linux.dev, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, yonghong.song@linux.dev
+References: <20241006152849.247152-1-yizhou.tang@shopee.com>
+ <20241006152849.247152-4-yizhou.tang@shopee.com> <20241006163013.GN21853@frogsfrogsfrogs>
+In-Reply-To: <20241006163013.GN21853@frogsfrogsfrogs>
+From: Tang Yizhou <yizhou.tang@shopee.com>
+Date: Mon, 7 Oct 2024 13:36:09 +0800
+Message-ID: <CACuPKxkceb0zARj-B_ZuYbSH70rZHwgrJzjhjxpKFf53C9GNRg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with
+ the writeback code
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: jack@suse.cz, hch@infradead.org, willy@infradead.org, 
+	akpm@linux-foundation.org, chandan.babu@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Oct 7, 2024 at 12:30=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Sun, Oct 06, 2024 at 11:28:49PM +0800, Tang Yizhou wrote:
+> > From: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
+> > device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
+> > writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
+> > xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() app=
+ear
+> > outdated.
+> >
+> > In addition, Christoph mentioned that the xfs iomap process should be
+> > similar to writeback, so xfs_max_map_length() was written following the
+> > logic of writeback_chunk_size().
+> >
+> > v2: Thanks for Christoph's advice. Resync with the writeback code.
+> >
+> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> > ---
+> >  fs/fs-writeback.c         |  5 ----
+> >  fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
+> >  include/linux/writeback.h |  5 ++++
+> >  3 files changed, 37 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > index d8bec3c1bb1f..31c72e207e1b 100644
+> > --- a/fs/fs-writeback.c
+> > +++ b/fs/fs-writeback.c
+> > @@ -31,11 +31,6 @@
+> >  #include <linux/memcontrol.h>
+> >  #include "internal.h"
+> >
+> > -/*
+> > - * 4MB minimal write chunk size
+> > - */
+> > -#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
+> > -
+> >  /*
+> >   * Passed into wb_writeback(), essentially a subset of writeback_contr=
+ol
+> >   */
+> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > index 1e11f48814c0..80f759fa9534 100644
+> > --- a/fs/xfs/xfs_iomap.c
+> > +++ b/fs/xfs/xfs_iomap.c
+> > @@ -4,6 +4,8 @@
+> >   * Copyright (c) 2016-2018 Christoph Hellwig.
+> >   * All Rights Reserved.
+> >   */
+> > +#include <linux/writeback.h>
+> > +
+> >  #include "xfs.h"
+> >  #include "xfs_fs.h"
+> >  #include "xfs_shared.h"
+> > @@ -744,6 +746,34 @@ xfs_ilock_for_iomap(
+> >       return 0;
+> >  }
+> >
+> > +/*
+> > + * We cap the maximum length we map to a sane size to keep the chunks
+> > + * of work done where somewhat symmetric with the work writeback does.
+> > + * This is a completely arbitrary number pulled out of thin air as a
+> > + * best guess for initial testing.
+> > + *
+> > + * Following the logic of writeback_chunk_size(), the length will be
+> > + * rounded to the nearest 4MB boundary.
+> > + *
+> > + * Note that the values needs to be less than 32-bits wide until the
+> > + * lower level functions are updated.
+> > + */
+> > +static loff_t
+> > +xfs_max_map_length(struct inode *inode, loff_t length)
+> > +{
+> > +     struct bdi_writeback *wb;
+> > +     long pages;
+> > +
+> > +     spin_lock(&inode->i_lock);
+>
+> Why's it necessary to hold a spinlock?  AFAICT writeback_chunk_size
+> doesn't hold it.
+>
 
-syzbot found the following issue on:
+Since the caller of writeback_chunk_size(), writeback_sb_inodes(), already =
+holds
+wb->list_lock. According to the function comments of inode_to_wb(),
+holding either
+inode->i_lock or the associated wb's list_lock is acceptable.
 
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1113e307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2f95ad40a2119295cc1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bc33d0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11772b9f980000
+> > +     wb =3D inode_to_wb(wb);
+>
+> Hmm, it looks like you're trying to cap writes based on storage device
+> bandwidth instead of a static limit.  That could be nifty, but does this
+> work for a file on the realtime device?  Or any device that isn't the
+> super_block s_bdi?
+>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
+I'm not very sure. Considering that the implementation of
+writeback_chunk_size() in
+the writeback path has remained unchanged for many years, I believe
+its logic works
+well in various scenarios.
 
-The issue was bisected to:
+> > +     pages =3D min(wb->avg_write_bandwidth / 2,
+> > +                 global_wb_domain.dirty_limit / DIRTY_SCOPE);
+> > +     spin_unlock(&inode->i_lock);
+> > +     pages =3D round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_P=
+AGES);
+> > +
+> > +     return min_t(loff_t, length, pages * PAGE_SIZE);
+> > +}
+>
+> There's nothing in here that's xfs-specific, shouldn't this be a
+> fs-writeback.c function for any other filesystem that might want to cap
+> the size of a write?
+>
 
-commit d0a38fad51cc70ab3dd3c59b54d8079ac19220b9
-Author: Feng Tang <feng.tang@intel.com>
-Date:   Wed Sep 11 06:45:34 2024 +0000
+These logics are indeed not xfs-specific. However, I checked the
+related implementations
+in ext4 and btrfs, and it seems that these file systems do not require
+similar logic to cap
+the size. If we move the implementation of this function to
+fs-writeback.c, the only user
+would still be xfs.
 
-    mm/slub: Improve redzone check and zeroing for krealloc()
+Additionally, there are some differences in the implementation details
+between this function
+and writeback_chunk_size(), so it doesn't seem convenient to reuse the code=
+.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15191307980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17191307980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13191307980000
+Yi
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b2f95ad40a2119295cc1@syzkaller.appspotmail.com
-Fixes: d0a38fad51cc ("mm/slub: Improve redzone check and zeroing for krealloc()")
-
-------------[ cut here ]------------
-virt_to_cache: Object is not a Slab page!
-WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 virt_to_cache mm/slub.c:4655 [inline]
-WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 __do_krealloc mm/slub.c:4753 [inline]
-WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 krealloc_noprof+0x1b3/0x2e0 mm/slub.c:4838
-Modules linked in:
-CPU: 0 UID: 0 PID: 5236 Comm: syz-executor185 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:virt_to_cache mm/slub.c:4655 [inline]
-RIP: 0010:__do_krealloc mm/slub.c:4753 [inline]
-RIP: 0010:krealloc_noprof+0x1b3/0x2e0 mm/slub.c:4838
-Code: 45 31 ff 45 31 f6 45 31 ed e9 21 ff ff ff c6 05 4e 2a 14 0e 01 90 48 c7 c7 24 f2 0b 8e 48 c7 c6 44 f2 0b 8e e8 3e 19 63 ff 90 <0f> 0b 90 90 e9 d9 fe ff ff f3 0f 1e fa 41 8b 45 08 f7 d0 a8 88 0f
-RSP: 0018:ffffc900039ce958 EFLAGS: 00010246
-RAX: d5f86d2e4537eb00 RBX: 0000000000000000 RCX: ffff88802bd81e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880276c0000 R08: ffffffff8155d412 R09: 1ffff110170c519a
-R10: dffffc0000000000 R11: ffffed10170c519b R12: 0000000000004000
-R13: 00000000000002ac R14: 0000000000000cc0 R15: 00000000000002ac
-FS:  000055555e044380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005564fc7f1000 CR3: 0000000079940000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- realloc_array kernel/bpf/verifier.c:1247 [inline]
- resize_reference_state kernel/bpf/verifier.c:1287 [inline]
- acquire_reference_state+0x136/0x460 kernel/bpf/verifier.c:1334
- check_helper_call+0x65cc/0x7660 kernel/bpf/verifier.c:10897
- do_check+0x9954/0xfe40 kernel/bpf/verifier.c:18529
- do_check_common+0x14bd/0x1dd0 kernel/bpf/verifier.c:21618
- do_check_main kernel/bpf/verifier.c:21709 [inline]
- bpf_check+0x18a25/0x1e320 kernel/bpf/verifier.c:22421
- bpf_prog_load+0x1667/0x20f0 kernel/bpf/syscall.c:2846
- __sys_bpf+0x4ee/0x810 kernel/bpf/syscall.c:5634
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f922052d669
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc58143c38 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007ffc58143e08 RCX: 00007f922052d669
-RDX: 0000000000000090 RSI: 0000000020000840 RDI: 0000000000000005
-RBP: 00007f92205a0610 R08: 00007ffc58143e08 R09: 00007ffc58143e08
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffc58143df8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> --D
+>
+> > +
+> >  /*
+> >   * Check that the imap we are going to return to the caller spans the =
+entire
+> >   * range that the caller requested for the IO.
+> > @@ -878,16 +908,7 @@ xfs_direct_write_iomap_begin(
+> >       if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
+> >               goto out_unlock;
+> >
+> > -     /*
+> > -      * We cap the maximum length we map to a sane size  to keep the c=
+hunks
+> > -      * of work done where somewhat symmetric with the work writeback =
+does.
+> > -      * This is a completely arbitrary number pulled out of thin air a=
+s a
+> > -      * best guess for initial testing.
+> > -      *
+> > -      * Note that the values needs to be less than 32-bits wide until =
+the
+> > -      * lower level functions are updated.
+> > -      */
+> > -     length =3D min_t(loff_t, length, 1024 * PAGE_SIZE);
+> > +     length =3D xfs_max_map_length(inode, length);
+> >       end_fsb =3D xfs_iomap_end_fsb(mp, offset, length);
+> >
+> >       if (offset + length > XFS_ISIZE(ip))
+> > @@ -1096,16 +1117,7 @@ xfs_buffered_write_iomap_begin(
+> >               allocfork =3D XFS_COW_FORK;
+> >               end_fsb =3D imap.br_startoff + imap.br_blockcount;
+> >       } else {
+> > -             /*
+> > -              * We cap the maximum length we map here to MAX_WRITEBACK=
+_PAGES
+> > -              * pages to keep the chunks of work done where somewhat
+> > -              * symmetric with the work writeback does.  This is a com=
+pletely
+> > -              * arbitrary number pulled out of thin air.
+> > -              *
+> > -              * Note that the values needs to be less than 32-bits wid=
+e until
+> > -              * the lower level functions are updated.
+> > -              */
+> > -             count =3D min_t(loff_t, count, 1024 * PAGE_SIZE);
+> > +             count =3D xfs_max_map_length(inode, count);
+> >               end_fsb =3D xfs_iomap_end_fsb(mp, offset, count);
+> >
+> >               if (xfs_is_always_cow_inode(ip))
+> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> > index d6db822e4bb3..657bc4dd22d0 100644
+> > --- a/include/linux/writeback.h
+> > +++ b/include/linux/writeback.h
+> > @@ -17,6 +17,11 @@ struct bio;
+> >
+> >  DECLARE_PER_CPU(int, dirty_throttle_leaks);
+> >
+> > +/*
+> > + * 4MB minimal write chunk size
+> > + */
+> > +#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
+> > +
+> >  /*
+> >   * The global dirty threshold is normally equal to the global dirty li=
+mit,
+> >   * except when the system suddenly allocates a lot of anonymous memory=
+ and
+> > --
+> > 2.25.1
+> >
+> >
 
