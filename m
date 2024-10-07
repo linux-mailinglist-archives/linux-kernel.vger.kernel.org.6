@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-354284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11864993B3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364FD993B3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC795282D21
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34B7283C9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF0918C00D;
-	Mon,  7 Oct 2024 23:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9989191F8C;
+	Mon,  7 Oct 2024 23:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aZ8fMSAM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CuZVWghx"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F64217BB1A
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 23:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A411917BB1A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 23:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728344011; cv=none; b=u0IPB7E7eRUwiD55rO0rXTxeuCcsXsbkqkfFcOQA0hZvtu8QMYtDW7OU0Op1dHDN0iGZfJAPwvjb/uIKe7fpg9lkupf182SbikLmUHFEAKGP6CMSKjw4w4+6WSWxg4QCeAZ0WH1rGes1Iv4ZsXzATNH8aJqNN9oTy1ZthwB8iaE=
+	t=1728344052; cv=none; b=s5z/wkqx+PlVpq9rnywG2uuTQ/TK9CoYMjs8dXLgWFz6VQdTTh3ZyzVm9rhA2nR7s4J0ioasdQ8YI/3HYRr9xWdFQFRW+wMiSjpgQSc94TRnSEVKS0j0FkCofU2sEfm7bSLomY2pi0SeHnt2hkWA4U2lWYntuOWoB19LVCjuHqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728344011; c=relaxed/simple;
-	bh=MrDTR2RWvkLILCduhS7Qm7of3YNeohC1Y4ELsDjirfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jaJv0XfVwaWoVdZXPFUngCwVzxq4lwCbtPpNiWsjbAyHcRlqXy59jbyWNMWoXwCl1ynYmuSpR5MmNFWqcdHH4npktGuHC1G/rADYtbF4dcJdGodP6bo5aPcHvkPRg2Z4bSb2F94WUI1ZZmJuuTNH2wH4wrIbSoD8NWvb49qgf9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aZ8fMSAM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728344009;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUAx6nXlr893COLcXh7JrWdAKfzazyJiQwKWV+hUdVA=;
-	b=aZ8fMSAMHldM4i9J0+gRu+6h1y0EzhkR+Un5jspOdSNcErAg73ui2VnUwD6yL419FtwzjA
-	J8O7nLuls83DwyBYTMvYW52AcD52MDJZL+Rd0CqrBobL13huvJEWxYr0/P94XgP2+m873x
-	YmjUPiowI7DQdMg5Co8fCYK9RqZygk8=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-464-7b2C8P1OO8e9CAwGuS4hLQ-1; Mon, 07 Oct 2024 19:33:28 -0400
-X-MC-Unique: 7b2C8P1OO8e9CAwGuS4hLQ-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e18a72bf94so6675669a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 16:33:28 -0700 (PDT)
+	s=arc-20240116; t=1728344052; c=relaxed/simple;
+	bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hakcqn+KxkXBI2Sj/OTbf1QIteKeLPsvaGWdkK/Y0SeAj2CNEO4n1tEPNVB8NeOSvp7vDCx2BArF+stHs18SeyXUNNEc6jD3pVwyjFyK6pMw9FRqxuZfoE0ZGDuf49z8oIKMFZ1IqmsRuHyi7HLeujQ6ckJ9h6HzA+FKQIAFOXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CuZVWghx; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so107805e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 16:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728344049; x=1728948849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
+        b=CuZVWghxLC/z9FWdKa4DXebixUXU35dd0kGSjmtEg/jMMOK2nQZs/Y+fGOJ6nbaqpD
+         aLKzhakr7m/XJvCLWMy2gqYrpRIn+tpsx243yyHuSkaAWh++xS6R/DrBa5AMu3s2zD4l
+         /z3d1STBfKxzqrOgYoCr9351CPiHRfmVnjWIrCQyjM7CO6SWPJu7WCJWVWu2LkjV+zmq
+         GlvzKQc/mJkQErd6H9lO+Djb16q5/LrzxAw79dwQ5zJrH38SzLQYpOsSnUaJq/GxPMe2
+         SMe+BR6rfXOA9y038HKdBw0TOOXT+yD/rSv+zrZInbff02fO4yWmFqEYGO/8x/rfTHYd
+         /gdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728344007; x=1728948807;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUAx6nXlr893COLcXh7JrWdAKfzazyJiQwKWV+hUdVA=;
-        b=iQ2BKZ0PpSbCctEK8F3OWEDawcRNLJZYyqmXj+pK85OfmYV+m+qVjDutAV4PmKsSvB
-         jm+pdqu+B1TJoTptMWulkF7ZGDAZCtzb72Jz86pgMED84dunkN7ykVLgriL+lgtfUAr4
-         7cBhaBWfvc1RZwYmeYUxutKTC/PwZMHoMWFV1+nBQOxuoYAU4CEzmLs06pMQsKYfW/ar
-         vAOkpRvNXfX/3SEQizqpI3D/FVd6ahKL+tCGrdDACNAnPv0A5e26c2s18FHN1/GiHF4s
-         QjWiEuoeMtlxAOK6fY9y587EMzk8wwww5tujMrzQmnQmeKoiBqyaEP89uW9UkA1s63eH
-         Y1Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIPvpvf5D7q7Rplcy+EGQPRvZnkuMgzKqu+cSlT6CasTTN7guq0qJPiEj0C8vtdwOlVd3YdCfekivfEgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUaKn8jXksAUwTemIIKEhsQuoB20ZeVTSsq4odcwfLAHhT9TFO
-	hoP5t3dhrC10jNO/cmDcDpNm/ThdkhJmLH5ioYyaCzk1puAs9qkV1S3bLNWjeqO2U53+6GJ4hHG
-	ZBNv5YN95VDeGG3ondtwsaUNYAVJGhHpzY+5RD8/ZqlvlR93aUSKBL/LEhNBS1A==
-X-Received: by 2002:a17:90b:302:b0:2d8:d098:4f31 with SMTP id 98e67ed59e1d1-2e1e626c06amr14188682a91.17.1728344007105;
-        Mon, 07 Oct 2024 16:33:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3uOhYexO703NofjJ/K1+V6Z0EqfLIjrytFm7WskmOCohACxWBRCDtgqXpyOZ0bCoE9smNBQ==
-X-Received: by 2002:a17:90b:302:b0:2d8:d098:4f31 with SMTP id 98e67ed59e1d1-2e1e626c06amr14188663a91.17.1728344006795;
-        Mon, 07 Oct 2024 16:33:26 -0700 (PDT)
-Received: from [192.168.68.54] ([103.210.27.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85d93b1sm7767761a91.25.2024.10.07.16.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 16:33:26 -0700 (PDT)
-Message-ID: <07d1c00d-fcdc-4121-a766-2eb0c149bb8d@redhat.com>
-Date: Tue, 8 Oct 2024 09:33:17 +1000
+        d=1e100.net; s=20230601; t=1728344049; x=1728948849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=31i13373D7hjydGNkXUzyHoWoEZHSJM+HBCGF/6GeLg=;
+        b=gnmRBJMetO2tPCXtsef6SFDM56/5AO3XrD+T7QOTWsLjF5Dm7+pzHK9ZpPIC1XIRlS
+         oS5X2Aw0HHB5GFmTbEVviJmijIP2ENrYQPEcdVsqC+uruJQ4gimSj8wP+yFnkmv6K9k5
+         OlCCLCiETWY2ZUBQyW9WFgGPrnrxdCCJ2r4oq4UbRtPhMmaWYP/4BPQLC+vgsimCqbW8
+         5u8eVxKLMcgqQRxqqANwLePTecXbXg7jCDLenjGOfspbXxpujwoawBSgEZzolyfUsw68
+         qVV3oXTa8I3DTbYPlHd1ZDpEa2Er51LEAgooFECchSMU30Ml0aCL1qa+BgPrwkhza1Q8
+         BeYw==
+X-Forwarded-Encrypted: i=1; AJvYcCV68b+8kI4eS+86s2aboZ/ACP/tvwXBP2O2vCimmrqmA8EWHfSiTGs0ByekcPI6vJQwuFo8ZRC0Ip0+Q+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYtZt/XFbv59k+Kmp4LANjF2Gkc9V/ZXOgAxF95y70OrtC0s/Z
+	hWPWBnJvmy+jhPHJ5zQYuk9oqYXL2boQqv7AzZUjZcSJ1DI/lwXwC7+emXpQkPmAqKfD8v7AB7a
+	7hAnMvNQ9aV1HZ2xixrWzjiVOLINyzYDlLfGc
+X-Google-Smtp-Source: AGHT+IGIt7Fwqy3Pp7BHopSoM+TcDYPhYnnQ4DFKz14Gm8T6iB9xp1mSDJ2OSyz3D9vFqJOGu81NMdE2fTX+gXKnSJ8=
+X-Received: by 2002:a05:600c:5010:b0:428:e6eb:1340 with SMTP id
+ 5b1f17b1804b1-42fcdcddf49mr2008895e9.4.1728344048449; Mon, 07 Oct 2024
+ 16:34:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/11] arm64: realm: Query IPA size from the RMM
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-4-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241004144307.66199-4-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu> <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+ <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com> <dcfwznpfogbtbsiwbtj56fa3dxnba4aptkcq5a5buwnkma76nc@rjon67szaahh>
+In-Reply-To: <dcfwznpfogbtbsiwbtj56fa3dxnba4aptkcq5a5buwnkma76nc@rjon67szaahh>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 8 Oct 2024 01:33:31 +0200
+Message-ID: <CAG48ez3S-COLHLR37LA_XyPxMQLCYpT+H68heA3yfBxKpyhuLg@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/5/24 12:42 AM, Steven Price wrote:
-> The top bit of the configured IPA size is used as an attribute to
-> control whether the address is protected or shared. Query the
-> configuration from the RMM to assertain which bit this is.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->   * Make PROT_NS_SHARED check is_realm_world() to reduce impact on
->     non-CCA systems.
-> Changes since v2:
->   * Drop unneeded extra brackets from PROT_NS_SHARED.
->   * Drop the explicit alignment from 'config' as struct realm_config now
->     specifies the alignment.
-> ---
->   arch/arm64/include/asm/pgtable-prot.h | 4 ++++
->   arch/arm64/include/asm/rsi.h          | 2 +-
->   arch/arm64/kernel/rsi.c               | 8 ++++++++
->   3 files changed, 13 insertions(+), 1 deletion(-)
-> 
+On Sun, Oct 6, 2024 at 9:29=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> On Sun, Oct 06, 2024 at 12:04:45PM GMT, Linus Torvalds wrote:
+> > But build and boot testing? All those random configs, all those odd
+> > architectures, and all those odd compilers *do* affect build testing.
+> > So you as a filesystem maintainer should *not* generally strive to do
+> > your own basic build test, but very much participate in the generic
+> > build test that is being done by various bots (not just on linux-next,
+> > but things like the 0day bot on various patch series posted to the
+> > list etc).
+> >
+> > End result: one size does not fit all. But I get unhappy when I see
+> > some subsystem that doesn't seem to participate in what I consider the
+> > absolute bare minimum.
+>
+> So the big issue for me has been that with the -next/0day pipeline, I
+> have no visibility into when it finishes; which means it has to go onto
+> my mental stack of things to watch for and becomes yet another thing to
+> pipeline, and the more I have to pipeline the more I lose track of
+> things.
 
-[...]
-
-> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-> index e4c01796c618..acba065eb00e 100644
-> --- a/arch/arm64/include/asm/rsi.h
-> +++ b/arch/arm64/include/asm/rsi.h
-> @@ -27,7 +27,7 @@ static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t end,
->   
->   	while (start != end) {
->   		ret = rsi_set_addr_range_state(start, end, state, flags, &top);
-> -		if (WARN_ON(ret || top < start || top > end))
-> +		if (ret || top < start || top > end)
->   			return -EINVAL;
->   		start = top;
->   	}
-
-I think the changes belong to PATCH[02/11] :)
-
-Thanks,
-Gavin
-
+FWIW, my understanding is that linux-next is not just infrastructure
+for CI bots. For example, there is also tooling based on -next that
+doesn't have such a thing as "done with processing" - my understanding
+is that syzkaller (https://syzkaller.appspot.com/upstream) has
+instances that fuzz linux-next
+("ci-upstream-linux-next-kasan-gce-root").
 
