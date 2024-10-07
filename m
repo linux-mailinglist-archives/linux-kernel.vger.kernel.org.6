@@ -1,177 +1,202 @@
-Return-Path: <linux-kernel+bounces-354175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30B99938B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:02:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D861D9938BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BAE5285685
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBD02856AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC451DBB13;
-	Mon,  7 Oct 2024 21:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D4D1DE4D8;
+	Mon,  7 Oct 2024 21:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fYguzmED"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xVDaz+5C"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A6E18B49F;
-	Mon,  7 Oct 2024 21:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DFC18BC2C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728334948; cv=none; b=k7z9c1EpM0LGUL5JgRyvq1V5QKXjHCry8Nm7ZShPXbTGfCJHNaPclMmlwL81ehqqaoW4/YQ86j2L+8dFm9IVJEPGwecxVuHx9ymK9fEURJuyRYPsVuoNpcHLNeo3NTpuewxDgqhsMExNVXDVcO7d8cNAOA3lST1HPYmNtaN2j3s=
+	t=1728335081; cv=none; b=Hkkx+umxctD+WmX6QzlbPmNqXP1IUtA1NJK5lkVPO8BAgsNqNBflcDhRBIkT7W55u3yb5l+IT6Ho4EWEhNtHqJU5rTBVBTKSIyrjWeh63S39Y0y37GwCJnsg0Kul2EGTkDSSSFTgw9j5qj2mQlnc41dXILd2+3nPuN5LSWgK9fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728334948; c=relaxed/simple;
-	bh=x3iuxUGYBDJdguLGcVfIWHEDbyDluY+QhQw5KcVjS8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MzJ/OfoadeQ/VBNFYhO+QTOBFXwHrClf3RX2OIeEw7uVKjf31ePbyejZF27/1vJ50T+qlrqaHuGw8IOvOGvAfubkfKoPvX5PGRcY7i/hTaaoaRyyDGtifiqrZ1bYiu5VFSt7JUCQllkKNoz4Z+93iOPi6YWKsXgI5nlroyfRb8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fYguzmED; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=BgNI02FwVrxZc6jGpuXhD1WQZMR+xKms3qEKTvvbgPI=; b=fYguzmEDJMAEpZXc
-	epo/SqqAE0lf+i8TPMHCyXP4ZAal2idJszUIhA9Sh4mXLdxmEummVgj0dJlB5If20r/kNz2G02Uhw
-	FN8mXNychtC5TpoCAQ1GMs8V8e9pZYwukOyfmdzrkt7bA2V924ZjV2C5bYCJeISCHKG4tOneit3Nw
-	BC54Hcvp3bOev7QuZu9NU8+g+lF+eB7xOtgLxgXUwZ3/LYgnSf8QrvqWm1CYVjyqHdBhIr8/KTIyh
-	izwaRV3aux2pD81dPWJtuBUkicecYVKuqBnLogXJ3nwzzVhxS3fyIPU8YKqyu7KPyBmmbqaKnlJSQ
-	xnsMOkLGL0QafM+cNA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxurv-009ZIn-2l;
-	Mon, 07 Oct 2024 21:02:15 +0000
-From: linux@treblig.org
-To: sfrench@samba.org,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] cifs: Remove pre-historic unused CIFSSMBCopy
-Date: Mon,  7 Oct 2024 22:02:14 +0100
-Message-ID: <20241007210214.102568-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728335081; c=relaxed/simple;
+	bh=NKDyhS0TvyGHTJKH2DIC4CYN0AS6n4xo0A1mHp0OkVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kx53+dEJ7gEhkodOb7nnpoMJ7RFaG9nGacnHAS69/rb5O/4vl5xvQfITu8LYfl1SljV4vv7MAVphl0chVjOHQVP2IOBeW0RRZAnXk4Ptw/w9e4esxbVI2KauWonWkGbIOMYUfKSVhhijclRzHKM9DtbetM0IgKLiVO8x3noGkZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xVDaz+5C; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 7 Oct 2024 17:04:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728335077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4JN3SbSbj+rvaT5IMOon+k8de/Yh9jaTHIk3VT4ZedU=;
+	b=xVDaz+5C79bnf5xaHrrAE5CYVyS/BmJumRPM0BtdrMyDAGYAyZjq4HYPM7AdF3LeNUcisI
+	wdDPm1BeTmjA7LdHUrSaAWBviilbmb/VlPrgdKMmy2hx5ZiKwk4ZqtZc8rp/JPdfFpfgPF
+	692yCZ+rGpOmXEP5oDlHrGVdAUZFCjk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
+Subject: Re: [PATCH v1] bcachefs: use mutex_trylock in
+ bch2_replicas_entry_validate
+Message-ID: <d6ydx3ogfkeo6vj4ntyojlupno5luna6meujk4qpag3fr5yv7d@3oertneyrl3w>
+References: <20241007205430.492090-3-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007205430.492090-3-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Oct 07, 2024 at 08:55:49PM GMT, Piotr Zalewski wrote:
+> Use mutex_trylock instead of mutex_lock in bch2_replicas_entry_validate to
+> prevent potential deadlock[1].
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=4d24267b490e2b68a5fa
 
-CIFSSMBCopy() is unused, remove it.
+No good, skipping locking is not the right way to fix this.
 
-It seems to have been that way pre-git; looking in a historic
-archive, I think it landed around May 2004 in Linus'
-BKrev: 40ab7591J_OgkpHW-qhzZukvAUAw9g
-and was unused back then.
+I fixed this with the below patch - we've got a different way of
+checking if a device exists when the filesystem is online.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- fs/smb/client/cifsproto.h |  7 -----
- fs/smb/client/cifssmb.c   | 63 ---------------------------------------
- 2 files changed, 70 deletions(-)
+From bf4baaa087e2be0279991f1dbf9acaa7a4c9148c Mon Sep 17 00:00:00 2001
+From: Kent Overstreet <kent.overstreet@linux.dev>
+Date: Sat, 5 Oct 2024 17:37:02 -0400
+Subject: [PATCH] bcachefs: Fix lockdep splat in bch2_accounting_read
 
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index 1d3470bca45e..8235b5a0aa2b 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -549,13 +549,6 @@ extern int generate_smb311signingkey(struct cifs_ses *ses,
- 				     struct TCP_Server_Info *server);
- 
- #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
--extern int CIFSSMBCopy(unsigned int xid,
--			struct cifs_tcon *source_tcon,
--			const char *fromName,
--			const __u16 target_tid,
--			const char *toName, const int flags,
--			const struct nls_table *nls_codepage,
--			int remap_special_chars);
- extern ssize_t CIFSSMBQAllEAs(const unsigned int xid, struct cifs_tcon *tcon,
- 			const unsigned char *searchName,
- 			const unsigned char *ea_name, char *EAData,
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index c6f15dbe860a..ca50ac652e02 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -2339,69 +2339,6 @@ int CIFSSMBRenameOpenFile(const unsigned int xid, struct cifs_tcon *pTcon,
- 	return rc;
+We can't take sb_lock while holding mark_lock, so split out
+replicas_entry_validate() and replicas_entry_sb_validate() -
+replicas_entry_validate() now uses the normal online device interface.
+
+00039 ========= TEST   set_option
+00039
+00039 WATCHDOG 30
+00040 bcachefs (vdb): starting version 1.12: rebalance_work_acct_fix opts=errors=panic
+00040 bcachefs (vdb): initializing new filesystem
+00040 bcachefs (vdb): going read-write
+00040 bcachefs (vdb): marking superblocks
+00040 bcachefs (vdb): initializing freespace
+00040 bcachefs (vdb): done initializing freespace
+00040 bcachefs (vdb): reading snapshots table
+00040 bcachefs (vdb): reading snapshots done
+00040 bcachefs (vdb): done starting filesystem
+00040 zstd
+00041 bcachefs (vdb): shutting down
+00041 bcachefs (vdb): going read-only
+00041 bcachefs (vdb): finished waiting for writes to stop
+00041 bcachefs (vdb): flushing journal and stopping allocators, journal seq 3
+00041 bcachefs (vdb): flushing journal and stopping allocators complete, journal seq 11
+00041 bcachefs (vdb): shutdown complete, journal seq 12
+00041 bcachefs (vdb): marking filesystem clean
+00041 bcachefs (vdb): shutdown complete
+00041 Setting option on offline fs
+00041 bch2_write_super(): fatal error : attempting to write superblock that wasn't version downgraded (1.12: (unknown version) > 1.10: disk_accounting_v3)
+00041 fatal error - emergency read only
+00041 bch2_write_super(): fatal error : attempting to write superblock that wasn't version downgraded (1.12: (unknown version) > 1.10: disk_accounting_v3)
+00042 bcachefs (vdb): starting version 1.12: rebalance_work_acct_fix opts=errors=panic,compression=zstd
+00042 bcachefs (vdb): recovering from clean shutdown, journal seq 12
+00042 bcachefs (vdb): accounting_read...
+00042
+00042 ======================================================
+00042 WARNING: possible circular locking dependency detected
+00042 6.12.0-rc1-ktest-g805e938a8502 #6807 Not tainted
+00042 ------------------------------------------------------
+00042 mount.bcachefs/665 is trying to acquire lock:
+00045 ffffff80cc280908 (&c->sb_lock){+.+.}-{3:3}, at: bch2_replicas_entry_validate (fs/bcachefs/replicas.c:102)
+00045
+00045 but task is already holding lock:
+00048 ffffff80cc284870 (&c->mark_lock){++++}-{0:0}, at: bch2_accounting_read (fs/bcachefs/disk_accounting.c:670 (discriminator 1))
+00048
+00048 which lock already depends on the new lock.
+00048
+00048
+00048 the existing dependency chain (in reverse order) is:
+00048
+00048 -> #1 (&c->mark_lock){++++}-{0:0}:
+00049 percpu_down_write (kernel/locking/percpu-rwsem.c:232)
+00052 bch2_sb_replicas_to_cpu_replicas (fs/bcachefs/replicas.c:583)
+00055 bch2_sb_to_fs (fs/bcachefs/super-io.c:614)
+00057 bch2_fs_open (fs/bcachefs/super.c:828 fs/bcachefs/super.c:2050)
+00060 bch2_fs_get_tree (fs/bcachefs/fs.c:2067)
+00062 vfs_get_tree (fs/super.c:1801)
+00064 path_mount (fs/namespace.c:3507 fs/namespace.c:3834)
+00066 __arm64_sys_mount (fs/namespace.c:3847 fs/namespace.c:4055 fs/namespace.c:4032 fs/namespace.c:4032)
+00067 invoke_syscall.constprop.0 (arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
+00068 do_el0_svc (include/linux/thread_info.h:127 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2) arch/arm64/kernel/syscall.c:151 (discriminator 2))
+00069 el0_svc (arch/arm64/include/asm/irqflags.h:82 arch/arm64/include/asm/irqflags.h:123 arch/arm64/include/asm/irqflags.h:136 arch/arm64/kernel/entry-common.c:165 arch/arm64/kernel/entry-common.c:178 arch/arm64/kernel/entry-common.c:713)
+00069 ========= FAILED TIMEOUT set_option in 30s
+
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+
+diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
+index bcb3276747e0..797da1032318 100644
+--- a/fs/bcachefs/replicas.c
++++ b/fs/bcachefs/replicas.c
+@@ -66,9 +66,9 @@ void bch2_replicas_entry_to_text(struct printbuf *out,
+ 	prt_printf(out, "]");
  }
  
--int
--CIFSSMBCopy(const unsigned int xid, struct cifs_tcon *tcon,
--	    const char *fromName, const __u16 target_tid, const char *toName,
--	    const int flags, const struct nls_table *nls_codepage, int remap)
--{
--	int rc = 0;
--	COPY_REQ *pSMB = NULL;
--	COPY_RSP *pSMBr = NULL;
--	int bytes_returned;
--	int name_len, name_len2;
--	__u16 count;
--
--	cifs_dbg(FYI, "In CIFSSMBCopy\n");
--copyRetry:
--	rc = smb_init(SMB_COM_COPY, 1, tcon, (void **) &pSMB,
--			(void **) &pSMBr);
--	if (rc)
--		return rc;
--
--	pSMB->BufferFormat = 0x04;
--	pSMB->Tid2 = target_tid;
--
--	pSMB->Flags = cpu_to_le16(flags & COPY_TREE);
--
--	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
--		name_len = cifsConvertToUTF16((__le16 *) pSMB->OldFileName,
--					      fromName, PATH_MAX, nls_codepage,
--					      remap);
--		name_len++;     /* trailing null */
--		name_len *= 2;
--		pSMB->OldFileName[name_len] = 0x04;     /* pad */
--		/* protocol requires ASCII signature byte on Unicode string */
--		pSMB->OldFileName[name_len + 1] = 0x00;
--		name_len2 =
--		    cifsConvertToUTF16((__le16 *)&pSMB->OldFileName[name_len+2],
--				       toName, PATH_MAX, nls_codepage, remap);
--		name_len2 += 1 /* trailing null */  + 1 /* Signature word */ ;
--		name_len2 *= 2; /* convert to bytes */
--	} else {
--		name_len = copy_path_name(pSMB->OldFileName, fromName);
--		pSMB->OldFileName[name_len] = 0x04;  /* 2nd buffer format */
--		name_len2 = copy_path_name(pSMB->OldFileName+name_len+1, toName);
--		name_len2++;    /* signature byte */
--	}
--
--	count = 1 /* 1st signature byte */  + name_len + name_len2;
--	inc_rfc1001_len(pSMB, count);
--	pSMB->ByteCount = cpu_to_le16(count);
--
--	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
--		(struct smb_hdr *) pSMBr, &bytes_returned, 0);
--	if (rc) {
--		cifs_dbg(FYI, "Send error in copy = %d with %d files copied\n",
--			 rc, le16_to_cpu(pSMBr->CopyCount));
--	}
--	cifs_buf_release(pSMB);
--
--	if (rc == -EAGAIN)
--		goto copyRetry;
--
--	return rc;
--}
--
- int
- CIFSUnixCreateSymLink(const unsigned int xid, struct cifs_tcon *tcon,
- 		      const char *fromName, const char *toName,
--- 
-2.46.2
-
+-static int bch2_replicas_entry_validate_locked(struct bch_replicas_entry_v1 *r,
+-					       struct bch_sb *sb,
+-					       struct printbuf *err)
++static int bch2_replicas_entry_sb_validate(struct bch_replicas_entry_v1 *r,
++					   struct bch_sb *sb,
++					   struct printbuf *err)
+ {
+ 	if (!r->nr_devs) {
+ 		prt_printf(err, "no devices in entry ");
+@@ -98,10 +98,28 @@ int bch2_replicas_entry_validate(struct bch_replicas_entry_v1 *r,
+ 				 struct bch_fs *c,
+ 				 struct printbuf *err)
+ {
+-	mutex_lock(&c->sb_lock);
+-	int ret = bch2_replicas_entry_validate_locked(r, c->disk_sb.sb, err);
+-	mutex_unlock(&c->sb_lock);
+-	return ret;
++	if (!r->nr_devs) {
++		prt_printf(err, "no devices in entry ");
++		goto bad;
++	}
++
++	if (r->nr_required > 1 &&
++	    r->nr_required >= r->nr_devs) {
++		prt_printf(err, "bad nr_required in entry ");
++		goto bad;
++	}
++
++	for (unsigned i = 0; i < r->nr_devs; i++)
++		if (r->devs[i] != BCH_SB_MEMBER_INVALID &&
++		    !bch2_dev_exists(c, r->devs[i])) {
++			prt_printf(err, "invalid device %u in entry ", r->devs[i]);
++			goto bad;
++		}
++
++	return 0;
++bad:
++	bch2_replicas_entry_to_text(err, r);
++	return -BCH_ERR_invalid_replicas_entry;
+ }
+ 
+ void bch2_cpu_replicas_to_text(struct printbuf *out,
+@@ -686,7 +704,7 @@ static int bch2_cpu_replicas_validate(struct bch_replicas_cpu *cpu_r,
+ 		struct bch_replicas_entry_v1 *e =
+ 			cpu_replicas_entry(cpu_r, i);
+ 
+-		int ret = bch2_replicas_entry_validate_locked(e, sb, err);
++		int ret = bch2_replicas_entry_sb_validate(e, sb, err);
+ 		if (ret)
+ 			return ret;
+ 
 
