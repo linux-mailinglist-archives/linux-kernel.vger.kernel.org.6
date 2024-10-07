@@ -1,253 +1,115 @@
-Return-Path: <linux-kernel+bounces-352982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4579926D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:20:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476189926D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0853282D08
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603031C2231A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045FB18A95D;
-	Mon,  7 Oct 2024 08:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D4D18A93F;
+	Mon,  7 Oct 2024 08:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="on0X8S+1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TJQo5A8W"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE24188703;
-	Mon,  7 Oct 2024 08:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB3917C203
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728289194; cv=none; b=lfS0OEjVSR3E08V8IDJpm9NkFwnQCbJ4krrOy4F/RVso1H05tDeGu2QwdGQBy0rvQdqSuh/yYv9ZDLMtcP8Tphao0eP3zvzYfM0WTPUi/7qPmH3LTColLAC6uJ74+o9364+3cM81mNk5jo6mvKQ6DEVb7UQWCpv+h2FfKVaLfUM=
+	t=1728289438; cv=none; b=URBmBs9IlPbCG4qCj5fuOypgW8ISGv4XivOHL+47wcuumGxxnvWQFlj/LW2JOTpS8LW1nsMKEuewWIPxq2wYOY6h12kW2J7lCkyW7N78N9lad9m6navw12AeqAvJaftRzydq2+5nanp4qzthEY3fKCpxG0hnayKF5ws2j9d1v7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728289194; c=relaxed/simple;
-	bh=p7fnPdg9GXFJITuQrseQDNuIaX+4R+NIr2XuOdnxTOg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=q0twgBG8Xhd5W905Fz4W+nwrhBaYyirCB7Z0LEQZG6ayAJNzgNDsWD7N43fTF11FyYte77Q5QPPEugPtZnD9c/Hk3gwGFcjvTjBRvVOa5DkHENRh6aFTzXnQefzwm07iozSSfwkNRUsqS64V343adgpOUEBGpqAEp2OJsP3BDhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=on0X8S+1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0EBC4CEC6;
-	Mon,  7 Oct 2024 08:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728289193;
-	bh=p7fnPdg9GXFJITuQrseQDNuIaX+4R+NIr2XuOdnxTOg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=on0X8S+1tuhId3VGYt/LSW/vWZbtRu4Y0aAQW8QemIGTVE/BdqBPjbVf5qr/sVgrV
-	 qEdd2OyD6z9TcgrMmY+8Oh7g2d+1vNz1XqHjtvgqVMrJRT93O3sfn4SRuiX7MeZIyN
-	 oB4RDp1mbFMnnskliJcMyp9o6WSW/8hvbpVcvMg31JDfURhR0DNt9+x/2tK/+KbI48
-	 1blKwBDXXHuRTLpJc03VfTGnPuqY6j34ToTWoxjjhHN1tP5wKC95lPFzGiYf6Yydjm
-	 zr+iik+uEgMQJDBUkplHIdEc4ElZ8TzU9C7pGLb16/zTWSZbzxehCxXdDKA2+A1d91
-	 DEzwPUTTfYNqw==
-Date: Mon, 7 Oct 2024 17:19:42 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
- <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, Will
- Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, Mike Leach
- <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren
- <guoren@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nick
- Terrell <terrelln@fb.com>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>,
- Daniel Bristot de Oliveira <bristot@kernel.org>, Daniel Wagner
- <dwagner@suse.de>, Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Kajol Jain <kjain@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Bibo
- Mao <maobibo@loongson.cn>, Anup Patel <anup@brainfault.org>, Atish Patra
- <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>,
- Oliver Upton <oliver.upton@linux.dev>, "Steinar H. Gunderson"
- <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Chen Pei
- <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, Yury Norov
- <yury.norov@gmail.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 19/31] perf arm64: Remove dwarf-regs.c
-Message-Id: <20241007171942.e96d5c520e065bbe4cf8ae5f@kernel.org>
-In-Reply-To: <20241005195541.380070-20-irogers@google.com>
-References: <20241005195541.380070-1-irogers@google.com>
-	<20241005195541.380070-20-irogers@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728289438; c=relaxed/simple;
+	bh=g6RCu1HPOdp+YNNhSy/NIRS3ty3JnWxsqEJFX7nVfJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JvA4gw0+tLZdtYsx4/6XVdE6mDy2MubIgRgn71fhDM1bwZa6BwAH4WXdjJh1Gp/TMi/O6h5w3V6lSPluA6Yp6/+xRjVzUvtHWCn63b1jEZrifyuMpfXBPY7pm2EZIUoWc/rT7sUKuf58p1B7iN8VKaO352Vz9UoLGitTvyvd2+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TJQo5A8W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974Sk4H026816;
+	Mon, 7 Oct 2024 08:23:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Giv9AOZbCwyuNEU4YbLYmA
+	MQQIpAN/aBdZN4G9IB2yI=; b=TJQo5A8WFbckeHgLME2evA89VrH8WCHwE1Tdli
+	jTOc1W7QC/SlV/4JTFmODtodbNfBs1u6z5EHAyjvU19siFer2g6sqXvPV3QGycD2
+	k+Lh1UfqGi7pfG1pzxEhE03agDRSn6k7uAs9XZy/Z3UjgEYSf5FLz/0sOSRqwQre
+	brYKmFZXWBBEqruPwOJ7vEIBzBjc+yDvIeQyqFTxogbhWAXHGRmF6i6mF3OR+8A2
+	D2mWXcK3NgdfaFU8MxsW9Lre/lvwvHwpUv3qcbV6dvYfOX3/tzo7X7mNT7b3i0eZ
+	WpDSRfbnL4Vy/i3MCnw41k7B5yaG9uPunz6/pbKlQFmZ1Gvw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xq9ueb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 08:23:47 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4978NkvN017097
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 08:23:46 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 7 Oct 2024 01:23:40 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <krzysztof.kozlowski@linaro.org>,
+        "Mohammad
+ Rafi Shaik" <quic_mohs@quicinc.com>
+Subject: [RESEND v1] arm64: defconfig: enable WCD937x driver as module
+Date: Mon, 7 Oct 2024 13:53:12 +0530
+Message-ID: <20241007082312.2136358-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zFa-k8R4OQTAgjfwemJ5WvO2CJ77ZtXT
+X-Proofpoint-GUID: zFa-k8R4OQTAgjfwemJ5WvO2CJ77ZtXT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=595
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070058
 
-On Sat,  5 Oct 2024 12:55:29 -0700
-Ian Rogers <irogers@google.com> wrote:
+Enable the Qualcomm WCD937x codec driver as module as
+is now used on the QCM6490 platform.
 
-> The file just provides the function get_arch_regstr, however, if in
-> the only caller get_dwarf_regstr EM_HOST is used for the EM_NONE case
-> the function can never be called. So remove as dead code. Tidy up the
-> EM_NONE cases for arm64 in dwarf-regs.c.
+Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Reviewed-by: Rohit Kumar <quic_rohkumar@quicinc.com>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-OK, this seems just a redundant information in 
-tools/perf/arch/arm64/include/dwarf-regs-table.h (there is alredy
-register number -> name mapping table.)
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/arch/arm64/util/Build        |  1 -
->  tools/perf/arch/arm64/util/dwarf-regs.c | 80 -------------------------
->  tools/perf/util/dwarf-regs.c            |  4 +-
->  tools/perf/util/include/dwarf-regs.h    |  2 +-
->  4 files changed, 3 insertions(+), 84 deletions(-)
->  delete mode 100644 tools/perf/arch/arm64/util/dwarf-regs.c
-> 
-> diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-> index 4387a6d6a6c3..a74521b79eaa 100644
-> --- a/tools/perf/arch/arm64/util/Build
-> +++ b/tools/perf/arch/arm64/util/Build
-> @@ -4,7 +4,6 @@ perf-util-y += perf_regs.o
->  perf-util-y += tsc.o
->  perf-util-y += pmu.o
->  perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
-> -perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
->  perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
->  perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
->  
-> diff --git a/tools/perf/arch/arm64/util/dwarf-regs.c b/tools/perf/arch/arm64/util/dwarf-regs.c
-> deleted file mode 100644
-> index 343a62fa4199..000000000000
-> --- a/tools/perf/arch/arm64/util/dwarf-regs.c
-> +++ /dev/null
-> @@ -1,80 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * Mapping of DWARF debug register numbers into register names.
-> - *
-> - * Copyright (C) 2010 Will Deacon, ARM Ltd.
-> - */
-> -
-> -#include <errno.h>
-> -#include <stddef.h>
-> -#include <string.h>
-> -#include <dwarf-regs.h>
-> -#include <linux/stringify.h>
-> -
-> -struct regs_dwarfnum {
-> -	const char *name;
-> -	unsigned int dwarfnum;
-> -};
-> -
-> -#define REG_DWARFNUM_NAME(r, num) {.name = r, .dwarfnum = num}
-> -#define GPR_DWARFNUM_NAME(num) \
-> -	{.name = __stringify(%x##num), .dwarfnum = num}
-> -#define REG_DWARFNUM_END {.name = NULL, .dwarfnum = 0}
-> -
-> -/*
-> - * Reference:
-> - * http://infocenter.arm.com/help/topic/com.arm.doc.ihi0057b/IHI0057B_aadwarf64.pdf
-> - */
-> -static const struct regs_dwarfnum regdwarfnum_table[] = {
-> -	GPR_DWARFNUM_NAME(0),
-> -	GPR_DWARFNUM_NAME(1),
-> -	GPR_DWARFNUM_NAME(2),
-> -	GPR_DWARFNUM_NAME(3),
-> -	GPR_DWARFNUM_NAME(4),
-> -	GPR_DWARFNUM_NAME(5),
-> -	GPR_DWARFNUM_NAME(6),
-> -	GPR_DWARFNUM_NAME(7),
-> -	GPR_DWARFNUM_NAME(8),
-> -	GPR_DWARFNUM_NAME(9),
-> -	GPR_DWARFNUM_NAME(10),
-> -	GPR_DWARFNUM_NAME(11),
-> -	GPR_DWARFNUM_NAME(12),
-> -	GPR_DWARFNUM_NAME(13),
-> -	GPR_DWARFNUM_NAME(14),
-> -	GPR_DWARFNUM_NAME(15),
-> -	GPR_DWARFNUM_NAME(16),
-> -	GPR_DWARFNUM_NAME(17),
-> -	GPR_DWARFNUM_NAME(18),
-> -	GPR_DWARFNUM_NAME(19),
-> -	GPR_DWARFNUM_NAME(20),
-> -	GPR_DWARFNUM_NAME(21),
-> -	GPR_DWARFNUM_NAME(22),
-> -	GPR_DWARFNUM_NAME(23),
-> -	GPR_DWARFNUM_NAME(24),
-> -	GPR_DWARFNUM_NAME(25),
-> -	GPR_DWARFNUM_NAME(26),
-> -	GPR_DWARFNUM_NAME(27),
-> -	GPR_DWARFNUM_NAME(28),
-> -	GPR_DWARFNUM_NAME(29),
-> -	REG_DWARFNUM_NAME("%lr", 30),
-> -	REG_DWARFNUM_NAME("%sp", 31),
-> -	REG_DWARFNUM_END,
-> -};
-> -
-> -/**
-> - * get_arch_regstr() - lookup register name from it's DWARF register number
-> - * @n:	the DWARF register number
-> - *
-> - * get_arch_regstr() returns the name of the register in struct
-> - * regdwarfnum_table from it's DWARF register number. If the register is not
-> - * found in the table, this returns NULL;
-> - */
-> -const char *get_arch_regstr(unsigned int n)
-> -{
-> -	const struct regs_dwarfnum *roff;
-> -
-> -	for (roff = regdwarfnum_table; roff->name != NULL; roff++)
-> -		if (roff->dwarfnum == n)
-> -			return roff->name;
-> -	return NULL;
-> -}
-> diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
-> index eac99a246737..18e916c8e993 100644
-> --- a/tools/perf/util/dwarf-regs.c
-> +++ b/tools/perf/util/dwarf-regs.c
-> @@ -32,14 +32,14 @@
->  const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
->  			     unsigned int flags __maybe_unused)
->  {
-> -#if EM_HOST == EM_X86_64 || EM_HOST == EM_386
-> +#if EM_HOST == EM_X86_64 || EM_HOST == EM_386 || EM_HOST == EM_AARCH64
->  	if (machine == EM_NONE) {
->  		/* Generic arch - use host arch */
->  		machine = EM_HOST;
->  	}
->  #endif
->  	switch (machine) {
-> -#if EM_HOST != EM_X86_64 && EM_HOST != EM_386
-> +#if EM_HOST != EM_X86_64 && EM_HOST != EM_386 && EM_HOST != EM_AARCH64
->  	case EM_NONE:	/* Generic arch - use host arch */
->  		return get_arch_regstr(n);
->  #endif
-> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
-> index 062623aefd5a..e640657f69c8 100644
-> --- a/tools/perf/util/include/dwarf-regs.h
-> +++ b/tools/perf/util/include/dwarf-regs.h
-> @@ -79,7 +79,7 @@
->  #define DWARF_REG_FB  0xd3affb /* random number */
->  
->  #ifdef HAVE_LIBDW_SUPPORT
-> -#if !defined(__x86_64__) && !defined(__i386__)
-> +#if !defined(__x86_64__) && !defined(__i386__) && !defined(__aarch64__)
->  const char *get_arch_regstr(unsigned int n);
->  #endif
->  
-> -- 
-> 2.47.0.rc0.187.ge670bccf7e-goog
-> 
-
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5fdbfea7a5b2..c4746e3412f8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1036,6 +1036,8 @@ CONFIG_SND_SOC_TLV320AIC32X4_I2C=m
+ CONFIG_SND_SOC_TLV320AIC3X_I2C=m
+ CONFIG_SND_SOC_WCD9335=m
+ CONFIG_SND_SOC_WCD934X=m
++CONFIG_SND_SOC_WCD937X=m
++CONFIG_SND_SOC_WCD937X_SDW=m
+ CONFIG_SND_SOC_WCD939X=m
+ CONFIG_SND_SOC_WCD939X_SDW=m
+ CONFIG_SND_SOC_WM8524=m
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.25.1
+
 
