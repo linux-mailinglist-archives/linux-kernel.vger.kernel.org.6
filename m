@@ -1,202 +1,211 @@
-Return-Path: <linux-kernel+bounces-354238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03847993A90
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC08F993A95
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A6B1C23DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642621F229B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D65A18E036;
-	Mon,  7 Oct 2024 22:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D53218F2FA;
+	Mon,  7 Oct 2024 22:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PxM3Q9gr"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pATyhyPH"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650118BC19
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 22:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728341485; cv=fail; b=jYfqXxV053Vl8TlJ4q7W7IVR8QH63MHDAPTFq1Ulsn/PhUuCzzbjh3+ppED9hRn9UzNhLU5eH0TunFhGkEMKbFDiFX/wCSgOGhyIzfo6vRfiEi7FhC8HRT4vkFNwAhSJPa/HdIvUxk5uDpsJTa4pjsGh+SVNccKx9OjAvQpCsZc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728341485; c=relaxed/simple;
-	bh=GuJN8FwTQUrKRfsHPXAjCOq1dwsjcrrLmdOdAd15bEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PE+3nh3l2pPF6QjCJdaAi00zNkb+Q71drHZpawMZdLZ7w6uHiBHrHJCj9MmNrYTMUXxKHDl0grsUwaJDNbaPdKD+zqZ6v6+wrb8UqK6ywLKBwZ0s5nfbjB4tSni6axQskCP+hDCi9NltGAbHFHQPtM9X1UEHLxHhzd8in3Kt3Lg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PxM3Q9gr; arc=fail smtp.client-ip=40.107.244.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dx3Ba+v9w0ktesM2G5xFkbuSsXYvdqCxt7DbrWkUXqhP0deW/ZkU08vranCXs2n321taqEslBU5vcb1vySoHB//BMOhflfo/otZA/xjFnoymOU4MPjdafg/GPfikALhqUCaEFYP43yNsyekXBN+SMNfC2NvrX+18sVK/973f5UinF0DlfwovNRv4oyDikGrfFB7ISDYJtCliocwutfP1ARNKIunxCNoocaNOgv0QPEqjW0Ser9WFOTcCkUryAowyhM/xZI/ifrUhOyHoE4SlzI52L7EQA5g2eqFPoqASdVid/DYdbs2boWPAFWhzOEdJg9Kou62JTFZMYgnw3Hx1bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GuJN8FwTQUrKRfsHPXAjCOq1dwsjcrrLmdOdAd15bEI=;
- b=rGKgwOyLieeT26stKHOKYR4SuthBRYU4SclE7Ixp9vYg7oE/G+tM5qeoWUqbtb55ZGNQ7KtuDNliqKC87DFVLJOWNLsJZE4WqoVCru6OMFf7dt+F0W5I8OdMhns2A2U8g3Kyudp02eW3/80LkfnaI2+Lh/uyeLnTx5bAe2GGos1SnEmMr0en/5l922QgPPqZeIL1Tv+CQhy1vR8rkBqaDqd9/pCEBRMu1wW9jRnKe0L6FT/17/Asl4fiBX0ICkKS88Bwe+0DLQS7+iO0xdSsEJZl7e3pknbW0XCxhwLQxyhr+VW3lWtAJX6+HJc3sEFs/fMwuHNTuSKypJu7rfIJtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GuJN8FwTQUrKRfsHPXAjCOq1dwsjcrrLmdOdAd15bEI=;
- b=PxM3Q9grRiT/LaPCA3T6sbxWR3/6dvOHJ3aR32RCgLHDIY+G0akB489rC9+MPGa0Al67FXrCroQbfESvBRxmbs5O8Gsx6wfnH9128P01MUgUNIrYQcooI2f71ju7SPtQWgST7TehRWSndPlKGpZ2DYTGoV6Ob/E65OY5af8+QB8=
-Received: from PH8PR15CA0001.namprd15.prod.outlook.com (2603:10b6:510:2d2::13)
- by LV8PR12MB9205.namprd12.prod.outlook.com (2603:10b6:408:191::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Mon, 7 Oct
- 2024 22:51:20 +0000
-Received: from MWH0EPF000A6732.namprd04.prod.outlook.com
- (2603:10b6:510:2d2:cafe::6d) by PH8PR15CA0001.outlook.office365.com
- (2603:10b6:510:2d2::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23 via Frontend
- Transport; Mon, 7 Oct 2024 22:51:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000A6732.mail.protection.outlook.com (10.167.249.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Mon, 7 Oct 2024 22:51:19 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Oct
- 2024 17:51:18 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Oct
- 2024 17:51:18 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 7 Oct 2024 17:51:17 -0500
-Message-ID: <4d295041-fa3d-58e5-9fa7-c835f7435bb9@amd.com>
-Date: Mon, 7 Oct 2024 15:51:17 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1219218E02E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 22:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728341758; cv=none; b=BrwiV7C5Dm+GS8r+TLqSfJQDDXRwg9ISrZv2NWvbKZLBZ3bsTOeARwRfgE/XBGTUn18vVsLPPpK4F+XJv08MhcY2evxZGVfwXk8WRtV43p1CCni7cfxXUutc+QCEbH36VMDJ8173H6WmTufDZXI2Mdo/YIp7xSF3ZZJunLgc684=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728341758; c=relaxed/simple;
+	bh=n52Zcjng97SR7V16E/kiNd9Ad8nOMx616zmfBspy7bA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HvNG9B0yjIx5iFkaRAcJZBT/XKskY52rkN+3HB/1hAQS26xxrSiH5lEqmKwX/l12GKInxw13Gv87pEZrC7CtSVLZn/87IhMBOUYhU7XaQuoi02p33iHK34a817nXPI7TCDPzol09Fg3dbm5ITa+oRjrFDVDGOe4Kx2H8yezSmr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pATyhyPH; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cbe8ec7dbso40315e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 15:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728341753; x=1728946553; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRtn8t3j7whUUfZUQGOBh9/Ux+u7T3Ja2jMsVhYhxY8=;
+        b=pATyhyPHQjzg3yku1X15YfmZyNPV6AkTw+j1p5hQOmMmoLYQ39lVOUVWGlmL6VIlRT
+         Gtjfr5DW0wpPr7I750RUZhkXvGXU9UvjbI0G/43Vuu5OaBNQMoJbVWEYj1LmCnnv9qc7
+         BB8rb6UzQkpEoXSOlP1HHM1ISwzcW+UE30xURitbChlKnVJVt4s8eV8LTv2Ua5lRws+t
+         qG369PTQiAC/usQXgkxHR6r/T4yua0psVnqYP0pWQ8mIkqmfmzOMZBmCgJBuS47BPJSY
+         vhfCSLcp7jMrGw213ynHk1O4L0zlUPoIVj+5tl2rsW2zxZ4x+3q6eKkEEfNHE51HI8P7
+         0KIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728341753; x=1728946553;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KRtn8t3j7whUUfZUQGOBh9/Ux+u7T3Ja2jMsVhYhxY8=;
+        b=dti/ymNG2e/UpYN2b5kjKSOVrv8b7Y/SEEznaLmzd2icAWLB69bxgto/Pkai7XfsSe
+         frqgxN5l9u425tE6cTpeYMLnCs8cxaQBUUQfQ9e8L4xg3SgFmalhXPVcBRcFxUQ2gn6r
+         +oZk4qO/Su+bJYml4IjY8uj9JdD3rLc57t8KbE62igYUMAb+jGS/nvSKkr/vtGLTL+W9
+         5p14MQ3QCsdwHK+xhkAHEHkbZtjZoirOZnV3uwLeq0fpVbYRGdILA+5M6rCtADklQC1b
+         6yJGl3+iiwy/Pzj7+M/Flbu0k8sWScdFrY0p0agFZvhh6sGzu80j+RMin33TP4GWk76P
+         yxuw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2UqrYN2/ZlckbUCT5hN1hD8QYfzS5zj4Bg1Hl4+b4DL9u7wN+55ghqv3M79vQNnYCnadrAlt7brga9dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlFhYZsk/MS+9Nj+SOkn1SR8jxEYWtJm4NgZr3/VW3jkJCDLyZ
+	BZpG8QvX0PlI6cJLPAAKBEG9R46mKVZYsDBi30kWl0pt2kggbWN2SDZT9UDacw==
+X-Google-Smtp-Source: AGHT+IHlDvzelBdkA5qpz8fIAQDStRDvKx0t6Pxm0mdU1tfYyX8BXXl+49Z6jy3NewrGS1ig5GLLNg==
+X-Received: by 2002:a05:600c:c8a:b0:42c:9e35:cde6 with SMTP id 5b1f17b1804b1-42fc83dfc65mr1881355e9.2.1728341752879;
+        Mon, 07 Oct 2024 15:55:52 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:39d2:ccab:c4ec:585b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920be2sm6645143f8f.60.2024.10.07.15.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 15:55:52 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Tue, 08 Oct 2024 00:55:39 +0200
+Subject: [PATCH] mm: Enforce a minimal stack gap even against inaccessible
+ VMAs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3 07/11] accel/amdxdna: Add command execution
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-8-lizhi.hou@amd.com>
- <8549424d-bd22-8308-c661-c2ef13cdc441@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <8549424d-bd22-8308-c661-c2ef13cdc441@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6732:EE_|LV8PR12MB9205:EE_
-X-MS-Office365-Filtering-Correlation-Id: 220710ef-0709-45aa-2465-08dce7228f57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXhvU2dBWk9XRW1pWDBURVptNGR0bzlpMkVXYWhiYkd0VGdlMVMzY1diRS9J?=
- =?utf-8?B?NnlMY0ZNcU9Hdm1jZXpua1lnakM2RWR2RzFrY1NTZnRJT2YyY3QweFdnb0FV?=
- =?utf-8?B?L3VudkNxdnp1NFM0dk5aam55ek9jRVFGSjNPMVk3N2ViVzQra3ViQ3dGV2NH?=
- =?utf-8?B?bVc5N2U4bWZXWWs5RzFPbHdFOUptWTRUMWlHRlhTeFkwa3Z5SkVnVmQwRGpa?=
- =?utf-8?B?ZlJWQ3hDd3RDTW5oTWNTZ1Z1NXBzK0h1L1Frb3pSMDJFVEdGMHIzVXl5TnVI?=
- =?utf-8?B?d3QrT2YyNnhuWWJ0UUF4T0k2VU5wVTI3V0kvNW1VV0YvWXZZRkZmekIyRCsz?=
- =?utf-8?B?SEc3Q3ZmbEVHQ051ZWkzVnlzVHNheGRHbWlCa1prYmt4YnVvYTYxVnh5Ly9k?=
- =?utf-8?B?aFhCTXF2dDJaaUZkRUtjRnJUdWNkQXZkbGFrY01ZR0JwU28rQmVPZ1o4YTV0?=
- =?utf-8?B?Y3NqcU9UdmtSRlRWRXlNbGRNOEJTTjV5Vmg2MTVSV3FkY3NCSHJaWDJqQ2ZV?=
- =?utf-8?B?QXlWdHRrOUhHSVhvdGNMOHJDUFJMSjA0K2VqZEowTlArZlFRNFEwUEpULzlt?=
- =?utf-8?B?ckJJUkFQMVRkSmI4UUFFcGdlWERqSE4zNVZOeDZHem5iWEQrM0xvbnVKaXR5?=
- =?utf-8?B?NGhITGR2Z09GV3RwaHkzS0QwTlQ1anF4aWg5L1BVSnJDZ2NvSktqUjhZVWdZ?=
- =?utf-8?B?SVNHUzI3RUhWRGxoOG1OOENUVDZ1MHI3aXdGcnlTbHlqbGN1b2lHMXQvdlli?=
- =?utf-8?B?SHdNQzc0VUhoTkRNV056Nmt3bGJIZ3lveGdzck9zM2VsUnlFUkUxUXdIWU1p?=
- =?utf-8?B?Zy9LNDlyZThpUUFLMm83dUpSaXNuenphaG84SXdlVGVYL3M1cEJKbkdRcVlx?=
- =?utf-8?B?Nkx4UWxxUFRaTElSMmRaeW9QNGEwV1pxTlIwbGZ3QlBlVWJRaWN4cno2QmhC?=
- =?utf-8?B?TDBDMnBxSXFwOU44bjVHb2YvaXpqNXcycGlWZGtvSHIyY1FnOHJ5djVaSEt2?=
- =?utf-8?B?L2l4bVhFQmxxYTBPaDBRSzFTOVE2Q2psR3MrTmYxVjZBWGdydWRrek1MZHAz?=
- =?utf-8?B?ZzBrSy8vWmo5WkxaRFJsRzIrZ2c3WWF2cU5JVzMwTlc4a3JwcWVRUThDVzVT?=
- =?utf-8?B?ZkRzZjBpckpKYWEvYlg2M3VwTm9HYkltV1Z6RTlZL1d1bjEyS05jbU1sSWJj?=
- =?utf-8?B?YUhQSXVnNHMya2FrN1F2SjMvY0pGWk8rcFlYUHExMUxESktpYUozMDk2TlBF?=
- =?utf-8?B?SGd6V1FHRlBHalBTaFJML1lMMWZsZlFMSGllWjFWL1hQZmNYUVVwbWpCdi84?=
- =?utf-8?B?b09PbmpOczNISStjK2k3WC9ldEZNdHZxZ1F4QXZHNFI0UGxKVWVtZ1p5MXJ0?=
- =?utf-8?B?YlU0TzRYclFxSThxcFdvN084N1U3WmNQUm5Yb0xQSkc0ODlhM25iaTUwTnds?=
- =?utf-8?B?VDN4Z2ZGaGR1VUwrYXY1Smg3ME5YYTBxK3U1RFJUYS9wQjJqNnpMcldzTTVv?=
- =?utf-8?B?T3QvMkpxbDhsc2h2OWxKV0VsU2NqRVEydGVJTTF0N0w5RmQyVGNDdWNxVGtN?=
- =?utf-8?B?VWUrcXVkOGg3RVFjcVJLUVVkSFB5VFQ3b05lVTBrZFE3VnJFdEFXbHFQSldK?=
- =?utf-8?B?YmRLOS9obWJ4SlMzUkt4ZnVZZTVRUzQwYmR4NTE2ekhrWFJNN3hhckxFc1F0?=
- =?utf-8?B?UlYwNW5BbTRLbTV6cFlBRUhQVHE5RE5qcDI1WFNvQlE4aEo1NFExSm8vZzgy?=
- =?utf-8?B?cCtINU1JVDFpcXEvK2g1QUxIWGZpR0tSZlo2Z0lINGhRZm1WL1dtai81c2Zy?=
- =?utf-8?Q?4Z777vo1w0c5cNnz6sLQai2lIwPY2Hm0AIWBY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 22:51:19.7649
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 220710ef-0709-45aa-2465-08dce7228f57
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6732.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9205
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241008-stack-gap-inaccessible-v1-1-848d4d891f21@google.com>
+X-B4-Tracking: v=1; b=H4sIAOpmBGcC/x3MSwqAMAwA0atI1gZaFfxcRVy0MWpQqjQignh3i
+ 8u3mHlAOQordNkDkS9R2UOCzTOgxYWZUcZkKExRWWMa1NPRirM7UIIjYlXxGyPVpW2neqy89ZD
+ iI/Ik9z/uh/f9ABdgS85oAAAA
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Hugh Dickins <hughd@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+ Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>, 
+ Vlastimil Babka <vbabka@suse.cz>, Ben Hutchings <ben@decadent.org.uk>, 
+ Willy Tarreau <w@1wt.eu>, Rik van Riel <riel@redhat.com>, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728341748; l=4473;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=n52Zcjng97SR7V16E/kiNd9Ad8nOMx616zmfBspy7bA=;
+ b=ekJkZXJWcbs+tPc806Tv4AxKiW8KTdjWR/I4EIwAEUjpjvC2nP+AnDfJ8Dy2Pq8BjY1IDootY
+ Zikmp+VX8bACCd1mpHA6Vhzri5fZQbYZoX/vJBWVsJMyEcS0TCMOPEX
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
+As explained in the comment block this change adds, we can't tell what
+userspace's intent is when the stack grows towards an inaccessible VMA.
 
-On 10/4/24 11:01, Jeffrey Hugo wrote:
-> On 9/11/2024 12:06 PM, Lizhi Hou wrote:
->> +enum amdxdna_cmd_type {
->> +    AMDXDNA_CMD_SUBMIT_EXEC_BUF = 0,
->> +    AMDXDNA_CMD_SUBMIT_DEPENDENCY,
->> +    AMDXDNA_CMD_SUBMIT_SIGNAL,
->> +};
->> +
->> +/**
->> + * struct amdxdna_drm_exec_cmd - Execute command.
->> + * @ext: MBZ.
->> + * @ext_flags: MBZ.
->
-> I see a check for ext_flags, but not ext
+I have a (highly contrived) C testcase for 32-bit x86 userspace with glibc
+that mixes malloc(), pthread creation, and recursion in just the right way
+such that the main stack overflows into malloc() arena memory.
+(Let me know if you want me to share that.)
 
-I will add the check.
+I don't know of any specific scenario where this is actually exploitable,
+but it seems like it could be a security problem for sufficiently unlucky
+userspace.
 
+I believe we should ensure that, as long as code is compiled with something
+like -fstack-check, a stack overflow in it can never cause the main stack
+to overflow into adjacent heap memory.
 
-Thanks,
+My fix effectively reverts the behavior for !vma_is_accessible() VMAs to
+the behavior before commit 1be7107fbe18 ("mm: larger stack guard gap,
+between vmas"), so I think it should be a fairly safe change even in
+case A.
 
-Lizhi
+Fixes: 561b5e0709e4 ("mm/mmap.c: do not blow on PROT_NONE MAP_FIXED holes in the stack")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+I have tested that Libreoffice still launches after this change, though
+I don't know if that means anything.
 
->
->> + * @hwctx: Hardware context handle.
->> + * @type: One of command type in enum amdxdna_cmd_type.
->> + * @cmd_handles: Array of command handles or the command handle itself
->> + *               in case of just one.
->> + * @args: Array of arguments for all command handles.
->> + * @cmd_count: Number of command handles in the cmd_handles array.
->> + * @arg_count: Number of arguments in the args array.
->> + * @seq: Returned sequence number for this command.
->> + */
->> +struct amdxdna_drm_exec_cmd {
->> +    __u64 ext;
->> +    __u64 ext_flags;
->> +    __u32 hwctx;
->> +    __u32 type;
->> +    __u64 cmd_handles;
->> +    __u64 args;
->> +    __u32 cmd_count;
->> +    __u32 arg_count;
->> +    __u64 seq;
->> +};
+Note that I haven't tested the growsup code.
+---
+ mm/mmap.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 46 insertions(+), 7 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dd4b35a25aeb..971bfd6c1cea 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1064,10 +1064,12 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
+ 		gap_addr = TASK_SIZE;
+ 
+ 	next = find_vma_intersection(mm, vma->vm_end, gap_addr);
+-	if (next && vma_is_accessible(next)) {
+-		if (!(next->vm_flags & VM_GROWSUP))
++	if (next && !(next->vm_flags & VM_GROWSUP)) {
++		/* see comments in expand_downwards() */
++		if (vma_is_accessible(prev))
++			return -ENOMEM;
++		if (address == next->vm_start)
+ 			return -ENOMEM;
+-		/* Check that both stack segments have the same anon_vma? */
+ 	}
+ 
+ 	if (next)
+@@ -1155,10 +1157,47 @@ int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+ 	/* Enforce stack_guard_gap */
+ 	prev = vma_prev(&vmi);
+ 	/* Check that both stack segments have the same anon_vma? */
+-	if (prev) {
+-		if (!(prev->vm_flags & VM_GROWSDOWN) &&
+-		    vma_is_accessible(prev) &&
+-		    (address - prev->vm_end < stack_guard_gap))
++	if (prev && !(prev->vm_flags & VM_GROWSDOWN) &&
++	    (address - prev->vm_end < stack_guard_gap)) {
++		/*
++		 * If the previous VMA is accessible, this is the normal case
++		 * where the main stack is growing down towards some unrelated
++		 * VMA. Enforce the full stack guard gap.
++		 */
++		if (vma_is_accessible(prev))
++			return -ENOMEM;
++
++		/*
++		 * If the previous VMA is not accessible, we have a problem:
++		 * We can't tell what userspace's intent is.
++		 *
++		 * Case A:
++		 * Maybe userspace wants to use the previous VMA as a
++		 * "guard region" at the bottom of the main stack, in which case
++		 * userspace wants us to grow the stack until it is adjacent to
++		 * the guard region. Apparently some Java runtime environments
++		 * and Rust do that?
++		 * That is kind of ugly, and in that case userspace really ought
++		 * to ensure that the stack is fully expanded immediately, but
++		 * we have to handle this case.
++		 *
++		 * Case B:
++		 * But maybe the previous VMA is entirely unrelated to the stack
++		 * and is only *temporarily* PROT_NONE. For example, glibc
++		 * malloc arenas create a big PROT_NONE region and then
++		 * progressively mark parts of it as writable.
++		 * In that case, we must not let the stack become adjacent to
++		 * the previous VMA. Otherwise, after the region later becomes
++		 * writable, a stack overflow will cause the stack to grow into
++		 * the previous VMA, and we won't have any stack gap to protect
++		 * against this.
++		 *
++		 * As an ugly tradeoff, enforce a single-page gap.
++		 * A single page will hopefully be small enough to not be
++		 * noticed in case A, while providing the same level of
++		 * protection in case B that normal userspace threads get.
++		 */
++		if (address == prev->vm_end)
+ 			return -ENOMEM;
+ 	}
+ 
+
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241008-stack-gap-inaccessible-c7319f7d4b1b
+-- 
+Jann Horn <jannh@google.com>
+
 
