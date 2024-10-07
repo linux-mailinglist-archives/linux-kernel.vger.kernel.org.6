@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-353302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72D4992BDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:35:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5DB992C35
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8069C2812EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:35:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FCBE1C224E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6430D1D278C;
-	Mon,  7 Oct 2024 12:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C34D1D31B6;
+	Mon,  7 Oct 2024 12:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="qgSi7B4R"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DTCrIOnA"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226EF1E519
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FA31D2785;
+	Mon,  7 Oct 2024 12:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728304548; cv=none; b=Vb3LhIXhmjj2Kl1VOqf4k6joi7slQze1zOZPrb0cA6PVVVnd+yykGq2s12W3ln2WcfRvbSDjEQIAmNHCiUyicuXC/d65NizuFM5nhWBDzFoYa82s4LHBmW6gFyFuIYK8fVAMAcrs7OTaaZHAOM2o17bnkqCsKrQ3K4gV7hPI+Vs=
+	t=1728304881; cv=none; b=QWaio821UNZYQ2SIqZ0Jut2hRMQTNlQq3UDY1vlNCbaxG1ZaoMifWdtHV+JeWw1ue2lZPcwzHMm2/gpOR2mQA4SJ5Ox0Xys8qc+AGLmUm34QBn32G1kUWKdTkhXSyS8QD+E3n8d19zWgQRwSxt10cbGJWVa6GaPcNTtBtUTVdTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728304548; c=relaxed/simple;
-	bh=w1umpy6jXToZDVxKpGcGFXq9OzBf72ZHi2mnV8uEt0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YtqxsQ+Oyy26GOW+v1GgHx1npbM+jncf+3YrZihZLS7EdNTkX26XmpAuYrHcD4vqRUunWErAU2qNkFBfTr9Qb5e1ci3GJC5VT+Br9WvaK5xSxCvBbdRPQODbYXkiERqWRAG433dXzINDvjdKc0dC0IiwaFCJnhfHeMf2q1yX4C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=qgSi7B4R; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53995380bb3so5154496e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1728304545; x=1728909345; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=w1umpy6jXToZDVxKpGcGFXq9OzBf72ZHi2mnV8uEt0c=;
-        b=qgSi7B4R5AlJ1ef/aGPAh3oIbzd/cZND23E+6H/xC5KehXodV0dGmwg96ZLBpD3Eqn
-         SF6Wz97z7r1NtW3+xSrSqIGC19rqcIDrng8+gOMY/xGZbuMMGu4DOl8UlLgyoB+yBR8Y
-         vufW72vJGXNaNV1HG782GFVa0UL0qqxDJiD60=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728304545; x=1728909345;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w1umpy6jXToZDVxKpGcGFXq9OzBf72ZHi2mnV8uEt0c=;
-        b=IPnaiHgVasWrFzbVy4wOn5FXCxg2FD7upV9WRrkRjkVP6da4EqyDm0Fbj3LFNOEZrm
-         x7aEHyq9UFCA2yg/ZM4Aof842nIzk9dpUFk/HpTZq53SQiDj48WgbfZ9ncpLOaBvzg+E
-         0nwTZlLLpnwiyXTAf36ENltj/jTyHNIsTg9fehzgxwvkkEQ70VlGAEaeZWHWJUCG4cza
-         wIi9lU94E86sXv4CiCYRlfK9Cg6Xk0i8ylUSqU8SUw4IXBxl+Il1g0KdjC0MvqkBxKBg
-         MzQzbto7oQZonIaXZc7ZNQjpRCq0hdk+gC2s9JVYADQTabJpNuhbZV1pm844BBvboboU
-         2VKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU31RfvZ+myNVcajVYEQ8QX4ziHszxcahQymz461PzI7+ldyYhiLezX/okXCDkC5DvytZxrWwwgf3G4T2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmmwOtEJJlyBKe5sdmiYZU7bvaP3RIWJW+PbJ5bl945J2KTxaK
-	hK7CiqIi/TYatLIRAeQRGJoSuGaqHGnwZ0wtTLI3CS73QNHrShgbOiVVN+N5PATDnfS7EcW2SnX
-	gIWzffPRudo5oESmeCA3Uq0oiRs+PAEv35Y6BsA==
-X-Google-Smtp-Source: AGHT+IFN/63kduzVL0hs+1/wL01jUFIDJcPBzbtC5mFPviEkspucyY5LG6IIVBxMd3LfgP+Bkr2TWZ3QZJTtg0gkRuw=
-X-Received: by 2002:a05:6512:104b:b0:533:901:e441 with SMTP id
- 2adb3069b0e04-539ab85c04dmr5508241e87.10.1728304545111; Mon, 07 Oct 2024
- 05:35:45 -0700 (PDT)
+	s=arc-20240116; t=1728304881; c=relaxed/simple;
+	bh=PVq36IESnKw/X3bf3UpaGBcKE2tXoKWFgdQEXARI4bI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fkU47ylPGD7xV28efi6WQpdMFbyxF4qFn83v1tRi6sUjakswrBDOcqBvDB+foh0Mtp1pjCUyTaLPrWBCjkrTJYR4GfxqNQUfcNFSfrC2JJlWpuq6EpKNSDGKfhCfAx7jTNITgpJM44fUnWGeVNW4c7KheWQJtebrU9IxEAId1i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DTCrIOnA; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BPTlL022185;
+	Mon, 7 Oct 2024 14:40:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	o5R6EmDj13EYvGXoR7n55gK22/+2Cz7sf7mbsQlwMfU=; b=DTCrIOnAgidUQ5DS
+	Fbo49eAV/6/eiy3ChBOXqHakNLQ2oH//W2BrmDUYJCzHzLhRYAPtvVKUPONhDfE2
+	rL8nmEHrNoBspUv3f9PdA4is4M3yOI+dDBH9AUhQ/sRxUqml3uYoIKXqc6NA/zbv
+	mNK8m7FDHGHtLYcpmn+RJ23FC8silVme9YB3QtPIa5g6em/PMM+1U5Ru42hLy3QN
+	AT5u23H6bZArnJY47P0Qy77gKdx4bf+yGfIERe0ZgLuP7clhnnR2BwQHm6JPlVuP
+	ddyOIlO/xHPvyUK65XDiF2Aub6bka2DUBDwD3OPazNvqe6nT+0NVnEIdkXXsdAfi
+	d10gkQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423gdmdvbn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 14:40:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0566F4009A;
+	Mon,  7 Oct 2024 14:39:28 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 041E72764E1;
+	Mon,  7 Oct 2024 14:37:11 +0200 (CEST)
+Received: from [10.130.72.241] (10.130.72.241) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 14:37:10 +0200
+Message-ID: <c00e8977-ee68-489f-89b1-5ba78bb238df@foss.st.com>
+Date: Mon, 7 Oct 2024 14:36:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <efc65503-15fd-4f8d-a6c4-b3bacb7481cb@linux.alibaba.com> <20240827115252.3481395-1-yangyun50@huawei.com>
-In-Reply-To: <20240827115252.3481395-1-yangyun50@huawei.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 7 Oct 2024 14:35:33 +0200
-Message-ID: <CAJfpegvTm-qniu8OOY2Riy-0xFg2=wy3ROOcrLkQ2hcZCzKgMw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-To: yangyun <yangyun50@huawei.com>
-Cc: jefflexu@linux.alibaba.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lixiaokeng@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: vgxy61: Fix an error handling path in
+ vgxy61_detect()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Sylvain Petinot
+	<sylvain.petinot@foss.st.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Julien Massot
+	<julien.massot@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-media@vger.kernel.org>
+References: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 27 Aug 2024 at 13:53, yangyun <yangyun50@huawei.com> wrote:
->
-> On Tue, Aug 27, 2024 at 04:30:04PM +0800, Jingbo Xu wrote:
+Hi Christophe,
 
-> > When the size of the user requested IO is greater than max_read and
-> > max_pages constraint, it's split into multiple requests and these split
-> > requests can not be sent to the fuse server until the previous split
-> > request *completes* (since fuse_simple_request()), even when the user
-> > request is submitted from async IO e.g. io-uring.
->
-> The same use case. Your explanation is more explicit.
+Thank you for your patch.
 
-Applied, thanks.
+On 10/3/24 19:53, Christophe JAILLET wrote:
+> If cci_read() fails, 'st' is set to 0 in cci_read(), so we return success,
+> instead of the expected error code.
+> 
+> Fix it and return the expected error.
+> 
+> Fixes: 9a6d7f2ba2b9 ("media: i2c: st-vgxy61: Convert to CCI register access helpers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Miklos
+Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+
+> ---
+>  drivers/media/i2c/vgxy61.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+> index 30378e962016..8034e21051be 100644
+> --- a/drivers/media/i2c/vgxy61.c
+> +++ b/drivers/media/i2c/vgxy61.c
+> @@ -1617,7 +1617,7 @@ static int vgxy61_detect(struct vgxy61_dev *sensor)
+>  
+>  	ret = cci_read(sensor->regmap, VGXY61_REG_NVM, &st, NULL);
+>  	if (ret < 0)
+> -		return st;
+> +		return ret;
+>  	if (st != VGXY61_NVM_OK)
+>  		dev_warn(&client->dev, "Bad nvm state got %u\n", (u8)st);
+>  
+
+-- 
+Regards,
+
+Benjamin
 
