@@ -1,122 +1,175 @@
-Return-Path: <linux-kernel+bounces-353900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90D5993418
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2929899341C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE241F22F55
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AB8281C13
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767801DC756;
-	Mon,  7 Oct 2024 16:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1AE1DC06F;
+	Mon,  7 Oct 2024 16:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jf/5GY9/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NifajxMl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE481DC071;
-	Mon,  7 Oct 2024 16:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471231DC079
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319917; cv=none; b=pcgZdVTMk+EIdF+B2qD6s/Rz7L+W9bsDkCveV68/GKR9uWNJMLVGqh56i6wuxE4JhkitwhAgrGeoA+kpHUwcoijbcbtYwB6/bz8ooJZmBrumDDkNkTEWDrsUedE2QGAjPNETmLH0fsS1OWhIeFA6wZIAS62WzodZvEahzYHrjjI=
+	t=1728319936; cv=none; b=gBO0bGqBiIkgDqs5rNMCD0uoijkLfxL9etAkJJpAM9047z2lW8FDMsAZi6y/97I6DPy0whRfh9V9/zmhSrKTliBnTaQgb+NKjiYsyoUSRwxGr1ShR/6VRU6/OX/dVOpkFy0rlFgnHpQHhBEwABDXOF59W0tkuT6oYJeGV+CfHcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319917; c=relaxed/simple;
-	bh=mQ692TNlccdh3ekLUIq5Y+tz2OVkv0kzgv7FGWTnYH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=apIPFFiQl7m7qG/+Y+fRozG2lFRdcV+8HfJ6QHt+fUZP3DQ4qcpGxu0qXC7R1ITc86cOpE+Y1WJ1dVqiaouR3bxms6l/UI86wPkaCHYTxWYfMAPdBa8Wb5nShDszMk+wHoaL1kGDI52hZKk5mVI550vLiHsppx2NB04kAlrB1SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jf/5GY9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74304C4AF09;
-	Mon,  7 Oct 2024 16:51:57 +0000 (UTC)
+	s=arc-20240116; t=1728319936; c=relaxed/simple;
+	bh=McFR8CfgpnxksNQs6KtKlTa460EvJpbtOvh/Sm4lYCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDQNiubaOdI1RQxeTTsMFti2I/GBBHWyvmQVzKfgVZnvxhcdGlFYFh2LpBTaiQWTnlK+E9wO6giXgjDFETUMlFJ9J/zymmDr7ku0qFS8co5B7VUQq9VcDa6pS6j5LjUz8JNca3DzQvDGzrrl6eSZuynnUzFlxNskHuCeFXvqktI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NifajxMl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96671C4CEC6;
+	Mon,  7 Oct 2024 16:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728319917;
-	bh=mQ692TNlccdh3ekLUIq5Y+tz2OVkv0kzgv7FGWTnYH8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jf/5GY9/+s9+S/fNqb6a9j4iizFNkCCIFLgf0GS1WuymVUkh6OqgLRuOPyb1sga88
-	 ksuposVNbs+QCJ6FQn2JLB0OvqumFQijkGIPrUCYVNiG4byQk2mqO5OrcUAQbJMqnd
-	 U23+OSc+zBnnVMaTQUTYKPalZwLKTiufDGxgS5tPKvLkxLeUe8Zm2rv4suoVYi7tDj
-	 43ovlqLX06AGJhn3FunQfxRIAZTOHoImAbytxffp+Q3SQYa5RODHGBDoBrC1nZGn+l
-	 4rwJux+Ap6V8/is9wMOZn1Tu8kh+51Sjrb2bD+SiRGRD2DGxpUWQfukTgr0UeXYgwj
-	 x+Oif5/pv9uJg==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e06b72f3e7so2161148b6e.0;
-        Mon, 07 Oct 2024 09:51:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7BbmIlI7rFJrFB+PsZpYzlMj6Zt6ohJWtahD9iSBAkAeWbh2DVrTWKsa5azRmKP+qxvTUfg574SzW@vger.kernel.org, AJvYcCW4vd213RJsPQMcQB8wI7qHt6/p4uCUSVxD12cTiUyXFCe/F03lp8djh2fWxK6JmwdeDsK1IAJ6jC080jEA@vger.kernel.org, AJvYcCWmKNVZOxqX0iH3+OlRPM3gVFduTMWYkK95S9UOMT19l14P3iZSGI0uperHQ2LZTzkxTGO6Fqea47M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTZMy7+an7/wfRbOtmqD8Xzo71W1lVffmTWLNoMRTFrMMSy5HF
-	YWIKx2UNWKPAYT2/IaQDI/82FhXpbTqM1lJo2NLp/wKBGkvwoqumXu8/2A2hSpmFXuN5qdwz89G
-	Z3CjnLcRA5qbzyZd+8fGnxZxnbIE=
-X-Google-Smtp-Source: AGHT+IFiOIOqw/qc4ZTHJxfoSzE6KMoRDbdjxV+x8/xIF8IxxUPacNXZKL7rCHi5nnkzXzSbE7rIDVx1ilQP30xw0C0=
-X-Received: by 2002:a05:6808:228d:b0:3df:a2f:4ad3 with SMTP id
- 5614622812f47-3e3db5cc315mr123616b6e.11.1728319916851; Mon, 07 Oct 2024
- 09:51:56 -0700 (PDT)
+	s=k20201202; t=1728319935;
+	bh=McFR8CfgpnxksNQs6KtKlTa460EvJpbtOvh/Sm4lYCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NifajxMl/qi1VfPGNZIfvKjpMmnl/IP6NF0mW1lU1NZ6arMQBQa0/v5j8DrHXzqlN
+	 1Sj1SQT5wxP1GchJLtpPjHJSjA0Ku4s5UQYfS+ATfbYSxXNKUB81ug2/VG1fo0b4ji
+	 eS/Ltc2/h42GFAInxqkLWG0Rjcuy6hdHE6Z0LjuiI7YoXZzLYFWIWEsvJcXVuXCFun
+	 ZN4TcZESCB4LV5HTfHKWFnoQaZZnpycy9bkn5WugOlN0FU0kcyu+OHmkvLJgwQH9yr
+	 Lkz/fOcK6NxmZ2e5bi0lcOZj8BdLSn9SzDOyocEdD+SoIAqOvorErYzdVcISuhhqNK
+	 Dyow4yn2yFu9A==
+Date: Mon, 7 Oct 2024 16:52:14 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] f2fs: use per-log target_bitmap to improve lookup
+ performace of ssr allocation
+Message-ID: <ZwQRvmVoDr_O6vLH@google.com>
+References: <20240411082354.1691820-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005-power-supply-no-wakeup-source-v1-0-1d62bf9bcb1d@weissschuh.net>
- <20241005-power-supply-no-wakeup-source-v1-2-1d62bf9bcb1d@weissschuh.net>
-In-Reply-To: <20241005-power-supply-no-wakeup-source-v1-2-1d62bf9bcb1d@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Oct 2024 18:51:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j=P9orUe9k0bsUfxE0YA8stsbAi=k+ge4_XBeuHVnyrw@mail.gmail.com>
-Message-ID: <CAJZ5v0j=P9orUe9k0bsUfxE0YA8stsbAi=k+ge4_XBeuHVnyrw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] ACPI: battery: Register power supply with power_supply_register()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Sebastian Reichel <sre@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	=?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	chrome-platform@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240411082354.1691820-1-chao@kernel.org>
 
-On Sat, Oct 5, 2024 at 12:05=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> power_supply_register_no_ws() is going to be removed.
-> Switch to the general registration API.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+Hi Chao,
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@inte;.com>
+This introduces another bitmap increasing memory footprint. Do we know how
+much performance benefit with this?
 
-and I'm assuming this to be handled along with the rest of the series.
-
+On 04/11, Chao Yu wrote:
+> After commit 899fee36fac0 ("f2fs: fix to avoid data corruption by
+> forbidding SSR overwrite"), valid block bitmap of current openned
+> segment is fixed, let's introduce a per-log bitmap instead of temp
+> bitmap to avoid unnecessary calculation overhead whenever allocating
+> free slot w/ SSR allocator.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > ---
->  drivers/acpi/battery.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index 65fa3444367a13ac83644444076a11f08152c382..9a3a475f8ad334bb365e6a027=
-3084034b8baa3bd 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -853,6 +853,7 @@ static int sysfs_add_battery(struct acpi_battery *bat=
-tery)
->         struct power_supply_config psy_cfg =3D {
->                 .drv_data =3D battery,
->                 .attr_grp =3D acpi_battery_groups,
-> +               .no_wakeup_source =3D true,
->         };
->         bool full_cap_broken =3D false;
->
-> @@ -888,7 +889,7 @@ static int sysfs_add_battery(struct acpi_battery *bat=
-tery)
->         battery->bat_desc.type =3D POWER_SUPPLY_TYPE_BATTERY;
->         battery->bat_desc.get_property =3D acpi_battery_get_property;
->
-> -       battery->bat =3D power_supply_register_no_ws(&battery->device->de=
-v,
-> +       battery->bat =3D power_supply_register(&battery->device->dev,
->                                 &battery->bat_desc, &psy_cfg);
->
->         if (IS_ERR(battery->bat)) {
->
-> --
-> 2.46.2
->
+> v2:
+> - rebase to last dev-test branch.
+>  fs/f2fs/segment.c | 30 ++++++++++++++++++++++--------
+>  fs/f2fs/segment.h |  1 +
+>  2 files changed, 23 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 6474b7338e81..af716925db19 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2840,31 +2840,39 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
+>  	return 0;
+>  }
+>  
+> -static int __next_free_blkoff(struct f2fs_sb_info *sbi,
+> -					int segno, block_t start)
+> +static void __get_segment_bitmap(struct f2fs_sb_info *sbi,
+> +					unsigned long *target_map,
+> +					int segno)
+>  {
+>  	struct seg_entry *se = get_seg_entry(sbi, segno);
+>  	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+> -	unsigned long *target_map = SIT_I(sbi)->tmp_map;
+>  	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+>  	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+>  	int i;
+>  
+>  	for (i = 0; i < entries; i++)
+>  		target_map[i] = ckpt_map[i] | cur_map[i];
+> +}
+> +
+> +static int __next_free_blkoff(struct f2fs_sb_info *sbi, unsigned long *bitmap,
+> +					int segno, block_t start)
+> +{
+> +	__get_segment_bitmap(sbi, bitmap, segno);
+>  
+> -	return __find_rev_next_zero_bit(target_map, BLKS_PER_SEG(sbi), start);
+> +	return __find_rev_next_zero_bit(bitmap, BLKS_PER_SEG(sbi), start);
+>  }
+>  
+>  static int f2fs_find_next_ssr_block(struct f2fs_sb_info *sbi,
+> -		struct curseg_info *seg)
+> +					struct curseg_info *seg)
+>  {
+> -	return __next_free_blkoff(sbi, seg->segno, seg->next_blkoff + 1);
+> +	return __find_rev_next_zero_bit(seg->target_map,
+> +				BLKS_PER_SEG(sbi), seg->next_blkoff + 1);
+>  }
+>  
+>  bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
+>  {
+> -	return __next_free_blkoff(sbi, segno, 0) < BLKS_PER_SEG(sbi);
+> +	return __next_free_blkoff(sbi, SIT_I(sbi)->tmp_map, segno, 0) <
+> +							BLKS_PER_SEG(sbi);
+>  }
+>  
+>  /*
+> @@ -2890,7 +2898,8 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
+>  
+>  	reset_curseg(sbi, type, 1);
+>  	curseg->alloc_type = SSR;
+> -	curseg->next_blkoff = __next_free_blkoff(sbi, curseg->segno, 0);
+> +	curseg->next_blkoff = __next_free_blkoff(sbi, curseg->target_map,
+> +							curseg->segno, 0);
+>  
+>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
+>  	if (IS_ERR(sum_page)) {
+> @@ -4635,6 +4644,10 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+>  				sizeof(struct f2fs_journal), GFP_KERNEL);
+>  		if (!array[i].journal)
+>  			return -ENOMEM;
+> +		array[i].target_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
+> +								GFP_KERNEL);
+> +		if (!array[i].target_map)
+> +			return -ENOMEM;
+>  		if (i < NR_PERSISTENT_LOG)
+>  			array[i].seg_type = CURSEG_HOT_DATA + i;
+>  		else if (i == CURSEG_COLD_DATA_PINNED)
+> @@ -5453,6 +5466,7 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+>  	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+>  		kfree(array[i].sum_blk);
+>  		kfree(array[i].journal);
+> +		kfree(array[i].target_map);
+>  	}
+>  	kfree(array);
+>  }
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index e1c0f418aa11..10f3e44f036f 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -292,6 +292,7 @@ struct curseg_info {
+>  	struct f2fs_summary_block *sum_blk;	/* cached summary block */
+>  	struct rw_semaphore journal_rwsem;	/* protect journal area */
+>  	struct f2fs_journal *journal;		/* cached journal info */
+> +	unsigned long *target_map;		/* bitmap for SSR allocator */
+>  	unsigned char alloc_type;		/* current allocation type */
+>  	unsigned short seg_type;		/* segment type like CURSEG_XXX_TYPE */
+>  	unsigned int segno;			/* current segment number */
+> -- 
+> 2.40.1
 
