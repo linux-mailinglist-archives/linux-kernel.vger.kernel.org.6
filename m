@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-354077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF89993772
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:35:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D73993776
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC88282A50
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:35:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D6EB22925
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D753A1DE3B0;
-	Mon,  7 Oct 2024 19:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916E1DE3AF;
+	Mon,  7 Oct 2024 19:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="BIlVF+0g"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJQMn+7s"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2421D1DE2B0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 19:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA91DDC11;
+	Mon,  7 Oct 2024 19:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329709; cv=none; b=ss2HFnzR6hYCA6fT04jjmv6P/YISm/UzrOMJup3eBmqCFhCZzNtNhvewBmNJiNM5yRLq2di00pSN4mWHgFfvIPYNtxHpNKHTPOJe2TZJF+ntRRIfl4gJAgVYRzWImRwkWJsTKuriSJ2EcZcPyCxRVmdc+AoMgRPgY5c+qgiYGEM=
+	t=1728329750; cv=none; b=NBcyT8sNl+sEJf/ykyjLc3EjUD+cxwl5eXSOY6oaRMzJpRnKhCp9FJe/fHath7npE/1VlRagHH5r/A6uhZb0dOOrUXiaj4CbB2twd5kOFLGHQHJkduN3Sy/O69AoYAAItgxZVf0HRVc1TDKcg+0a4Lai9oijt56MATvQItjKSzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329709; c=relaxed/simple;
-	bh=wu0J703KOgthSaTZabA2Myy4JS7UkFiX2jdDBfTCYtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1Kj04jQYdNQaLVYh0ngooGsc46LiqjQw1whtE9Sw6z2cZkRBmQ82WPoRTdVV0rF7Zugu/bKaKhE9WzgoDIjbTxtInSkfqsH5+/nWrbwY8PeoC1iKoBSG5247XHbCTm0d8AJW7aPM4bqigmDVvX8AAIyPOo87Y9n9gpXgSLo3sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=BIlVF+0g; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C4E112C02E1;
-	Tue,  8 Oct 2024 08:35:03 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728329703;
-	bh=N3QCXddpP5MFDFrwV9sa5i+xlIBGtMBo289HWjhpDwg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BIlVF+0g/VYhqkDvNCwX3SaKrqhV9nWcM7Be6GtcV8UskCl5fqRO6WC+Phu/HF5Qh
-	 ojYlhA0eLDLXTm0tyjVhN6H9n1dpNMNBKarRAFnqyJINYpIIHACN4TCWmTjmTd4Q7l
-	 PNwB/36VdUS1jNv12jRp4vfED0sVWrDI+1yX34QSPNYHJlR/U6NrwR2JTxNHwv9wnM
-	 5B8aUBF0EIYh7QQYHWl3Ym370btFIo1phNXinVXKmSR/fB/D4HPOyJIzwaM872kwIC
-	 EKlRK+Za5ZK/b1Mma346V5dkZfQwZey4wai6vUFZxofWFXR49ilzl3ErwxuBweMZmm
-	 rbPSJiyCBLmoQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670437e70000>; Tue, 08 Oct 2024 08:35:03 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 97AB513ED7B;
-	Tue,  8 Oct 2024 08:35:03 +1300 (NZDT)
-Message-ID: <a39e9fc8-b580-4324-8ba0-63a1a51685e9@alliedtelesis.co.nz>
-Date: Tue, 8 Oct 2024 08:35:03 +1300
+	s=arc-20240116; t=1728329750; c=relaxed/simple;
+	bh=kWFLwWrcIf/mtTgEjy31aroiIFL3jKyoADoPkk0mT5Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSWLlVZKy8YajsKRBaWuyz8BMG9qvRwvj8IPFyvcbavykoGSygD493fp3YkiNjjvP7kmrIMzNfwiL9lKjkXhmVDcRa4I9mjinW6jo/E+o25izYFdthAxmn28CJEUJzv9jcYyudKQGx0Xdifpj/BxIt047Ku3Yu+11iotHm4Kn+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJQMn+7s; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cafda818aso50046535e9.2;
+        Mon, 07 Oct 2024 12:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728329748; x=1728934548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0bheIRjcH4v7VE2ENqH0F2Pl1AX1kVV8vBl4CU3cvNQ=;
+        b=iJQMn+7sbZWHGNasF32v5G8xGK95GeyfzEGwcbEi4401cJNcS1P/a+eTI5Sejw5ZhH
+         JsOZS+U7wY/ELsbAdOIPvUqXygXSu01R3y4xDFYti9QO2onRgudRrYf4q0aLimAbCxMu
+         KJqwOZMHV545+nSOTfIjiT5YsQSD0E/ZCrxeIOyr71cs6Pm5D8TMCvBo3goOMKN8grIs
+         i9Jx8Z5NpWk0jt+0sRtsa3x2aHMyEPNV44T3jW93918K9LUi7cHOQiVCcRadWVWqWEuj
+         rUfGETMKhJn5ipFnRIFbCKjfGhikC5WpCUykovhytq1/8t9HwoulNHdYt5t4H0gboDxw
+         NrAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728329748; x=1728934548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0bheIRjcH4v7VE2ENqH0F2Pl1AX1kVV8vBl4CU3cvNQ=;
+        b=qq443VxbgZjqMmWj0K3LIAfGaa1GqycqRwn6B9wptVyj4VuiJVsVUWCQ1MkwlP1mfT
+         aH5jhTMt3rXSguXgu3O9iDStNPmBCXLVNmSlqAquJaKgUfN0uelV+GEfnt9Vp//5AtsC
+         LAjHWaLEK2MJ+bT0Vd2xS9c1vbJfYmfgcK8mvtcRhj9AQPgmRFjbuVuqgJ2BvULuAnP6
+         WLViEL279om/NCz0MLkVhZtUSwciUaF1BBIHrzcjeOJpQfGb6eivC5n3FwoYBt8bFI1b
+         C+VFw/uyOp9DHFHyba5nWdPNBJuzFasnJdC67MPIyaFN9OgrtZ9kYL7BvK5KcOPgDVjK
+         h3FA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHr67Spa6g0bgvP5uiYX03ctdjj2KxAqBZe2GcBIGXlDhZR5T8cm6c1VjUmYetdRT6jiKjTwrtEvVlVMGu@vger.kernel.org, AJvYcCXpLyb8ZZQsssczFU4FBQeQL0yQIFMmUZH2IvUTXXH/vjDdvayY2e+DBnxXIirtkteRYyeI8X8UHJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo3vIkdoXx9XPCcJHeq30qIhvbvTTc5w9rkx3/fQv2uS/b6U3I
+	9fxkuETK76vvLbaK81/u34xcjYR6KKUhHF+M8WzPFK3OiyvTpVB2
+X-Google-Smtp-Source: AGHT+IG6upGYaHHo24Hk2+tzgPUF/utiefOnGhp8zXryEhAE3VO+BitbA5i/WjhrVNeW9Ub0kQJzQA==
+X-Received: by 2002:a05:600c:1d20:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42f85aef0c8mr93954645e9.30.1728329747225;
+        Mon, 07 Oct 2024 12:35:47 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:b658:eac0:bb05:9042])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89eaabd0sm84397095e9.24.2024.10.07.12.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 12:35:46 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Mon, 7 Oct 2024 21:35:44 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, dan.carpenter@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] pressure: bmp280: Improve pushing of data to
+ buffer
+Message-ID: <20241007193544.GA64797@vamoiridPC>
+References: <20240930202353.38203-1-vassilisamir@gmail.com>
+ <20241006150517.00dada74@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 3/3] spi: spi-mem: Add Realtek SPI-NAND controller
-To: Mark Brown <broonie@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
- <20241006233347.333586-4-chris.packham@alliedtelesis.co.nz>
- <ZwPzav6dFQdXSnjx@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <ZwPzav6dFQdXSnjx@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=670437e7 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=L-1965lpuaw6YQIIu8wA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006150517.00dada74@jic23-huawei>
 
+On Sun, Oct 06, 2024 at 03:05:17PM +0100, Jonathan Cameron wrote:
+> On Mon, 30 Sep 2024 22:23:51 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Changes in v3:
+> > 
+> > [PATCH v3 1/2]:
+> > 	- Remove fixes tag
+> > 
+> > [PATCH v3 2/2]:
+> > 	- Use internal s32 *chans variable to better visualize what is
+> > 	  taking place in the data->sensor_data.
+> > 	- Use proper size/alignment to the data->sensor_data.
+> > 
+> > P.S. After this patchseries is applied, I will rebase this [1] and resend it.
+> > 
+> > [1]: https://lore.kernel.org/linux-iio/20240914002900.45158-1-vassilisamir@gmail.com/
+> Applied to the togreg branch of iio.git and pushed out as testing for all the normal
+> boring reasons.
+> 
+> Thanks,
+> Jonathan
+> 
 
-On 8/10/24 03:42, Mark Brown wrote:
-> On Mon, Oct 07, 2024 at 12:33:47PM +1300, Chris Packham wrote:
->
->> +REALTEK SPI-NAND
->> +M:	Chris Pacham <chris.packham@alliedtelesis.co.nz>
-> Pacham?
-Darn, that'll teach me for hurriedly going through the checkpatch warnings.
->
->> +static int rtl_snand_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
->> +{
->> +	return 0;
->> +}
->> +
-> If the framework doesn't already support this callback being missing we
-> should probably make it so.
-The framework handles this being missing. This is just left over from 
-the initial stub I created when I started. Will remove in v2.
->
-> Otherwise this looks good.
+Hi Jonathan, thanks a lot!
+
+Cheers,
+Vasilis
+
+> > 
+> > ---
+> > v2: https://lore.kernel.org/linux-iio/20240929112511.100292-1-vassilisamir@gmail.com/
+> > v1: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com/
+> > 
+> > Vasileios Amoiridis (2):
+> >   iio: pressure: bmp280: Use unsigned type for raw values
+> >   iio: pressure: bmp280: Use char instead of s32 for data buffer
+> > 
+> >  drivers/iio/pressure/bmp280-core.c | 69 +++++++++++++++++++-----------
+> >  drivers/iio/pressure/bmp280.h      |  4 +-
+> >  2 files changed, 46 insertions(+), 27 deletions(-)
+> > 
+> 
 
