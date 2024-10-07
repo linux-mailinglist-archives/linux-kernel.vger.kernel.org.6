@@ -1,209 +1,143 @@
-Return-Path: <linux-kernel+bounces-353570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80711992F92
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D49992F89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3823E2831E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A537B202F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF601D61A5;
-	Mon,  7 Oct 2024 14:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF01D5CD1;
+	Mon,  7 Oct 2024 14:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hiqPuw5M"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zRHX1B2D"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B11D47BD;
-	Mon,  7 Oct 2024 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39577F50F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311974; cv=none; b=ixPSmMLyLuCjkMHtegezdQzdfH+mRKrqi7sMbnhFNAwiNurT6HnvvtRdHGeQD024kFZWLiwzDAqi17K6qukWCY9RC1BGS08bhiat+f6f2XOKiMPoquj4s6ut7mrKbs1BFveW0iBee+pxk0gixjBCc0xR+1mYy4RWdAvj8Q9Tttg=
+	t=1728311915; cv=none; b=NizR6u56eEjdJO/t3gh6UvEo2B135Q5hgDWjI6+SuWhTgFkmx06htZbEJ1Ghukc/9zv6oQzR3ZTLz5NhweKJ17xkN1C6RAd/6x6onBOkOmqfsFGO/XxPvLtZuFOQ+4DGNl7KtVz1sv1SYfsVudWnoZh2JVeJoijR2RByYatkU3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311974; c=relaxed/simple;
-	bh=so8+PFP40cxP5c7KplFeXeV+kA3v4pE5SsNcauIXn2o=;
+	s=arc-20240116; t=1728311915; c=relaxed/simple;
+	bh=NorN5g77MRFOGCV3RAcQIbEBQCvwltowLG85qpRMvo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmmcpDsRdKdLr2Lvyu5s5xtg4jpa/8iZxnGki86C5m0IsAJHAmR4HZbHCnPBI8yoWIEQvKj64skJnUeRq/2ZtYpZUK8H5/v3dXD618UqFdIb/3lLpkrmzQ8wGXuf5RaVX2hwNhEnJFjvPbrqA1v5Ug2C86ugcJwotNxVL6m3SVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hiqPuw5M; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4581d15c3e3so42257051cf.0;
-        Mon, 07 Oct 2024 07:39:33 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHMWD1MMBMRfIS2Je246YfVAtPr9iThC0aumj/veMsi6VQDtUpW4R5Xm9hM0gvZ2uB1Q+zZswht7T1oJG9qmwz3aO2Tty/sf1nBAvjovmTMIlnTCRmQmwMXkAw51Dsm/6JnFXfE6lK/PjACx00qBFmRQt4/XbNp3CsngFOrT9OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zRHX1B2D; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so39088745e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:38:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728311972; x=1728916772; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2NUlWjL9y/WZi8efC7Jo1TiWi8UslGryubu+8tPTWY=;
-        b=hiqPuw5MgWUJVjdeEZHC/76/CPpD63MZZy50y6gsrji+r+1QJZKNTJTvFZhv2LEvD/
-         OgHOA/mP3W/fnQLLgIXNHYSKDWWH8yO9XyrcWnLBHvNUcSkxFhMVGjtRzo2OqD02rr9+
-         G7EpyMzpkzy79jTCZeu49/bFaivEtZ7lZ2AdgxbfOPO/rmLD45IKcAmFgJ4fsojbUbNP
-         /MbrHLgJGBUjmJtyjE9yxDPKSWRYjIHkIyp8P6+Oj2TiXUUH/4Y1DTai0kD2BpIONbx8
-         OHAo4ucGTNP8lTpYGUjf8qIysGJMWCRBIgIVYKAvcFW6wbD9S+i5FaUjODWRefKCySso
-         aOcw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728311910; x=1728916710; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIZjUi4+ZJvfUpBU9pJXCtXeXIdn9Bs3Tlg34HIba6w=;
+        b=zRHX1B2DtD9L5VuH0Ib+FSf2GtNVHmRcQaHBj56r8PgxE1R1pBmNdfFJscF3cakR8A
+         an1gm0lCq5mf/DwKhHHSIz8Ihkj3PqgN7ztHIfDJ7DJiGw3VCKp/hE8o8RF6+xQ8nHCr
+         ohykQcDnutWzqHeMKoqwp4Rg6QRDtCsJ4dynJcwRTTIac+G8blWViZT/2zq6mSyfPkGu
+         4FMPNCn48fTY2i+wvVarRYQyyb6zsETXEzR+NM45lrLGdc8t2ZGdzHiXWf0X6otAzJFP
+         9q/PX48Z6XR/PcjblPIJiuUO1wqzTdKduhkfVge8kKd061KsV5HbuObVLdbh7nVSUVbs
+         01AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728311972; x=1728916772;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L2NUlWjL9y/WZi8efC7Jo1TiWi8UslGryubu+8tPTWY=;
-        b=oRSK168AGw4ppYQJF13lysVJQVV2mFgjSBJikPMLS2dYJAI9vfXJPhcJAqhEM8GHpD
-         Vc3bHLqw1/OGca8dh+BPqecNKwqfbiT+L+uOizJodn/l8V3KN98WFedr473yrDYivIeM
-         TTRM0Eccot0fOZThgaWadJ5iak8NINBRHXpdXzD9qb9e+zMwLV9nymCYkfXfdrZk5Arb
-         hPnrIr8a6TNGPiT6nXtZlruEneX/KM7lWkv0SUmxU0kn08oNdlusNF1yWV60ie2uoH0X
-         ZveTEhj1KhDll2Th4VueKe1SPC32m2IiAn+GaCUOC+4s5fuGxQsj/XRCSNs7QeZl/0lz
-         8CKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqwIIt5L0kLpufMe3ix8RVgyfKwXdB+qSOQP66jhthS6mHjeskYuAw2Q+Czxw5eklN4lEL+u9EQYnXKiLP2YA=@vger.kernel.org, AJvYcCV04bHfuGeX2HAh1aDhA6hRufI5gandQCucsK67taGPSylj3UleaBMMmCPAEbW62l6AINUYT/QOQt3KF1Q=@vger.kernel.org, AJvYcCXVq1qP13vwZmrX97Gk6JxKv3JTi27wWUqsyLDt+YYrsWvvnALGkgA7X4YyBwtEMH1PDL4NqQTv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIgqi2OrIU/4b6sItb0TOPSsTevEh3epyE3HCUc7z/H2tJn1Z2
-	N7/LjOUpuVfKdDNSRUzc+Oqw7n3fWE5BpVe4MF/jO85CTARfUYXP
-X-Google-Smtp-Source: AGHT+IEvnrBmO0gL56giaA4K7aDMcaigRPYt1ZcAc0Hv3Vnvd3pPB0800aGBBfyYeAUJOEzcIEdWGw==
-X-Received: by 2002:ac8:7f0a:0:b0:45b:f451:ad25 with SMTP id d75a77b69052e-45d9baed4cemr183013091cf.48.1728311972264;
-        Mon, 07 Oct 2024 07:39:32 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45daea175e4sm20348911cf.3.2024.10.07.07.39.31
+        d=1e100.net; s=20230601; t=1728311910; x=1728916710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIZjUi4+ZJvfUpBU9pJXCtXeXIdn9Bs3Tlg34HIba6w=;
+        b=Cg/WRHOhDba3NgpSRIZBdtEUr6+MLJ4roScnMa7sOwwyWc+3smhnchiBurAyvagp1l
+         /ux4kEhxYNgeeboYms+ScKiLgWiZNRA1GPz4nKALCzUFqiSe49zIYHzcy7pOTr5qcq/G
+         igtrmV7l7kuIvm9UbUIny1pp4PYd33Hc97CddLoZkoE4khxtvk34+k8JzOh/Qn/0hY+p
+         rCOGdtboWf2uXy9R03dr0fN1Y/67ewf9av6euhidO7N5N0Pwh+xCqrik7L2Nckt0Bz0J
+         QdC5c9ZdpbItko5HG+hirPRPdlORhyxeKZKSdIIv7C84n83Gmi1eqRhYB4WM5TH/f1/o
+         hMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsYEYHwg6fR82pO3SI+ZgupMWpw6SFFQpm/FwyieC3nH/xY+6rvbUqxoT3gkD37G4wyYtGnSSXh79Ka/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg1ChCmT2c9NIAz1pRxeTz2o3YucltMCctLMbqiPlrUprUQ68T
+	zhsF66DKK9GlB6eNoXzfXiibqurZorZKOWbhrOW+sFuz8HiEc5W9Pgq7wuKrKN0=
+X-Google-Smtp-Source: AGHT+IGfZvYFYOO0yH3239TeRsJPqii0ekScAJEHHk+kwZ6ayGnYWFsKdJeGmpeFVzV11y5uKBs5Cg==
+X-Received: by 2002:a05:600c:5103:b0:42f:8e2e:c00a with SMTP id 5b1f17b1804b1-42f8e8adaacmr40665965e9.2.1728311910164;
+        Mon, 07 Oct 2024 07:38:30 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b1d672sm95080335e9.28.2024.10.07.07.38.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:39:31 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5AE67120006B;
-	Mon,  7 Oct 2024 10:39:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 07 Oct 2024 10:39:31 -0400
-X-ME-Sender: <xms:o_IDZ8co8cyq1p4oAuno9zIobACwlbI48IN3xuv3Hu_Db0yRmggwqQ>
-    <xme:o_IDZ-NCu14s5_mPIIcp5gmgKVy4NIA9TlMLPYG2VUQUWlpXBYweNPvUxK_11CzJb
-    UitzJ0PBDXcSOg52w>
-X-ME-Received: <xmr:o_IDZ9jEdw7ZtfTqgk0GTGCoWL9Eoy-_9EE13jWhLh7--RsbM0yTfjaQEFeUAQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
-    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepfhhu
-    jhhithgrrdhtohhmohhnohhrihesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtug
-    gvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdq
-    lhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhkhgrlhhlfi
-    gvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghh
-    rdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:o_IDZx9M3M947n7V3dVE3XeXcT6IMqO0bjDc94WqJUT_dIdCgRYLaA>
-    <xmx:o_IDZ4sHCLg3eEifRmmEwwhMJMJqbBILgptOIiA2hihF7n2OnOYQ0w>
-    <xmx:o_IDZ4G0PJFemnTl7Htsj0SWs6sgZ-UtRfcqaHPzTTCIUGNyjpVKCA>
-    <xmx:o_IDZ3NSjhgyo8_Hf05GEEWJMQKE5KOIA7q2k1H7TAq-P4qByxp4zg>
-    <xmx:o_IDZ9M5YReu2yf4KoJ3z6nwp-4myZqeexyFEAlt5qm77mPS6hV2kBbx>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Oct 2024 10:39:30 -0400 (EDT)
-Date: Mon, 7 Oct 2024 07:38:12 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <ZwPyVHH2UbVeJBs5@boqun-archlinux>
-References: <20241005122531.20298-6-fujita.tomonori@gmail.com>
- <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
- <ZwG8H7u3ddYH6gRx@boqun-archlinux>
- <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
- <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
- <CAH5fLgigW6STtMBxBRTvTtGqPkSSk+EjjphpHXAwXDuCDDfVRw@mail.gmail.com>
- <ZwPuDE16YBS4PKkx@boqun-archlinux>
+        Mon, 07 Oct 2024 07:38:28 -0700 (PDT)
+Date: Mon, 7 Oct 2024 16:38:26 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Armin Wolf <W_Armin@gmx.de>, Guenter Roeck <linux@roeck-us.net>, 
+	Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: Error "ee1004 3-0050: probe with driver ee1004 failed with error
+ -5" since 6.11
+Message-ID: <znkp6x44lnrvn4c7xnb43kiwfmyp3ovsnzi37xgaw3eyvgcm6z@pfxbrniec7jf>
+References: <D4G7XD1WU5GY.D22KFST6MHIT@cknow.org>
+ <2024092616-showing-fragrance-f70a@gregkh>
+ <D4H312REVAZ3.3JWUT4NMWDA7C@cknow.org>
+ <sr6p4lwnlznee73t4jof537dcwdl6m6vxriwk3pk4dnlxyaih4@6wv52esrfpyq>
+ <D4HPXGCB5GGE.1KQFZR61CHMVF@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n5ahkixglsqj3dn7"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwPuDE16YBS4PKkx@boqun-archlinux>
+In-Reply-To: <D4HPXGCB5GGE.1KQFZR61CHMVF@cknow.org>
 
-On Mon, Oct 07, 2024 at 07:19:56AM -0700, Boqun Feng wrote:
-> On Mon, Oct 07, 2024 at 04:16:46PM +0200, Alice Ryhl wrote:
-> > On Mon, Oct 7, 2024 at 4:14 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > >
-> > > On Mon, Oct 07, 2024 at 04:08:48PM +0200, Alice Ryhl wrote:
-> > > > On Mon, Oct 7, 2024 at 3:48 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > >
-> > > > > On Mon, Oct 07, 2024 at 05:28:28AM -0700, Boqun Feng wrote:
-> > > > > > On Sun, Oct 06, 2024 at 04:45:21PM +0200, Andrew Lunn wrote:
-> > > > > > However, this is actually a special case: currently we want to use klint
-> > > > > > [1] to detect all context mis-matches at compile time. So the above rule
-> > > > > > extends for kernel: any type-checked *and klint-checked* code that only
-> > > > > > calls safe Rust functions cannot be unsafe. I.e. we add additional
-> > > > > > compile time checking for unsafe code. So if might_sleep() has the
-> > > > > > proper klint annotation, and we actually enable klint for kernel code,
-> > > > > > then we can make it safe (along with preemption disable functions being
-> > > > > > safe).
-> > > > > >
-> > > > > > > where you use a sleeping function in atomic context. Depending on why
-> > > > > > > you are in atomic context, it might appear to work, until it does not
-> > > > > > > actually work, and bad things happen. So it is not might_sleep() which
-> > > > > > > is unsafe, it is the Rust code calling it.
-> > > > > >
-> > > > > > The whole point of unsafe functions is that calling it may result into
-> > > > > > unsafe code, so that's why all extern "C" functions are unsafe, so are
-> > > > > > might_sleep() (without klint in the picture).
-> > > > >
-> > > > > There is a psychological part to this. might_sleep() is a good debug
-> > > > > tool, which costs very little in normal builds, but finds logic bugs
-> > > > > when enabled in debug builds. What we don't want is Rust developers
-> > > > > not scattering it though their code because it adds unsafe code, and
-> > > > > the aim is not to have any unsafe code.
-> > > >
-> > > > We can add a safe wrapper for it:
-> > > >
-> > > > pub fn might_sleep() {
-> > > >     // SAFETY: Always safe to call.
-> > > >     unsafe { bindings::might_sleep() };
-> > >
-> > > It's not always safe to call, because might_sleep() has a
-> > > might_resched() and in preempt=voluntary kernel, that's a
-> > > cond_resched(), which may eventually call __schedule() and report a
-> > > quiescent state of RCU. This could means an unexpected early grace
-> > > period, and that means a potential use-afer-free.
-> > 
-> > Atomicity violations are intended to be caught by klint. If you want
-> 
-> Yes, I already mentioned this to Andrew previously.
-> 
-> > to change that decision, you'll have to add unsafe to all functions
-> > that sleep including Mutex::lock, CondVar::wait, and many others.
-> 
-> No, I'm not trying to change that decision, just to make it clear that
-> we can mark might_sleep() as safe because of the decision, not because
-> it's really safe even without klint...
-> 
 
-Anyway, I think Tomo needs to call __might_sleep() instead of
-might_sleep(), and __might_sleep() seems a pure debug function (not
-involved with schedule at all). So the wrapper of __might_sleep() can be
-perfectly safe.
+--n5ahkixglsqj3dn7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Boqun
+Hello Diederik,
 
-> Regards,
-> Boqun
-> 
-> > 
-> > Alice
+On Sat, Sep 28, 2024 at 08:54:12AM +0200, Diederik de Haas wrote:
+> On Fri Sep 27, 2024 at 11:59 PM CEST, Uwe Kleine-K=F6nig wrote:
+> > [ extensive description on what to do when git bisect results
+> >   in a merge commit as 'first bad commit' ]
+>=20
+> This is awesome, thank you very much :)
+
+Were you able to understand that, or did you just bookmark it for the
+next time? If you still have questions, don't hesitate to ask.
+=20
+> I haven't made up my mind yet whether I'll apply it to this specific
+> issue. It doesn't cause any actual problems (AFAICT) and most
+> importantly, it seems to be fixed in 6.12(-rc1) already.
+> And the 6.11 kernel is only a 'temporary' one which I don't care (much)
+> about, while it is fixed in the kernel I do care about (6.12).
+
+It might be beneficial to find the commit between 6.11 and 6.12-rc1
+that's fixing the issue. That would allow to backport the fix to 6.11.x.
+
+(No need for a complicated procedure as I described, just bisect between
+6.11 and 6.12-rc1 (maybe with "new" and "old" instead of "bad" and
+"good" for less confusion)).
+
+Best regards
+Uwe
+
+--n5ahkixglsqj3dn7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcD8mAACgkQj4D7WH0S
+/k6Tfgf/bFhoj8Bbvjo5WlXhKCAx6wEEDdbtAy5N0LtxIag1UyJcKtVEaD1Ib5GS
+fzrKeFDnvTkAsnAEO/4SDRs/SWmVVvhZxGo3+AtewuoF9JeqJcLKGApSyJRU6zjW
+lZc2EIqRtbNdkXUGLGv9aSSGT9G3w88bVaJml0lUhl0klo5p8UHo8ynrGO0YNqQl
+pDW/yo16RbTrHcQURrsN+LoyMJsJF2lcwK2bW3TNrGwkJSt3DBCT+p6E3kMIytsd
+zfzsOzU3YYJpctBITQKxR84hhtKxwSpSm6YMEaM0TeTNSZ276TtrRgvJ82msB1MF
+P1WJfIQ8z2u0Od4IXdd7DGW8V0PGOw==
+=rQ8i
+-----END PGP SIGNATURE-----
+
+--n5ahkixglsqj3dn7--
 
