@@ -1,128 +1,172 @@
-Return-Path: <linux-kernel+bounces-354202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD84A993979
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:43:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E981899397A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7672D284553
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0470283FFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A5718C928;
-	Mon,  7 Oct 2024 21:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2118C902;
+	Mon,  7 Oct 2024 21:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zv8Zb1Dk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sYfXRG9P"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CFB18C353;
-	Mon,  7 Oct 2024 21:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013518C34C;
+	Mon,  7 Oct 2024 21:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728337404; cv=none; b=KUqx9qLsxr1UBVPEoj4EPJz1dWEHlAi3m8nX4AHd00ORSVR9M8m+ZorhmcnaHbmPQZqbpsFdVffIJJv0N6cE0HcbWEt7uWUvcL2jVWJjIvHRm51HkIsBb/2vji0+R2PJiD6TX/GmgjxUj4lPv8PCHqy79RY/nFCs6Hz3zUScc8o=
+	t=1728337433; cv=none; b=AVCJKVNywieIHE01JiEiJgTEuFyOSfVnKI4TBBqPfmz+LjKiD8P/a3yLg3kH6JPXRnPlLo1Zjvzmu6HcBgP8gIVmeSwQGkHV31oz4idDwX2gHGCInw8aW+WID8t+wcUkV+sqlk8JGiu2pEtHR8p9FD/jIm155Leca64r/l3iLt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728337404; c=relaxed/simple;
-	bh=dk7MXR8ygYKqpEaSGxCglxcsK0GdIRoQgY2dSaCNdOI=;
-	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
-	 MIME-Version:Content-Type; b=kKFQNM9rzhaC0A6O/3mkd50VGFfonR5418Q/iH3ztw23pis1e7n1WLe+1okWocORk094jaupj0hFxk+2em303PH2yvmPLKx9/WAog25gwsbx5BbhT6RqVXnIscA1Vo9iE4eKoU1dBPFYaGFTlHaz1+uMw4UrfZGtUSC8N4bUGLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zv8Zb1Dk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497ErML0026919;
-	Mon, 7 Oct 2024 21:43:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yVDSPx6cXwuYsEAcMa9+AEfdYg+qCvtyRFW1/8tXxvM=; b=Zv8Zb1DkaBBBIYdm
-	RikhO7uR3sdkGPaatmJTBk2cvMaaTAa/WFtFIx4sLSbqxwkdGOItep+ukY6fb6bm
-	WSLEy9zYsoOVSuLvwLhsRvdCg1ZJ3UbJVBBcxk4eyyh0E0E+hHVcuL58awAFj6R8
-	y+5DC7D2/0Qe/vNYzxRHz7URg1NelQvM6/Qp5N930UisYGx9Ijl8e+nZvzNcEt/M
-	n0sAysWJ+rbUACSV4Vmd5j/A2d/RVe6+x5FMPXArNkTFoit+FxEkKSSr66N/x9p0
-	TgqyjJe1lgf3Crkox3dQOrvD+SkotHKrfp0qys2AE9Eh7G6vzW2+mz146/jBIG3g
-	MFAkMQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xq9wcy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 21:43:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497LhDFa030138
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 21:43:13 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 14:43:12 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Kees Cook <kees@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>,
-        Baochen Qiang <quic_bqiang@quicinc.com>,
-        Arnd Bergmann
-	<arnd@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>,
-        Rameshkumar Sundaram
-	<quic_ramess@quicinc.com>,
-        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-In-Reply-To: <20241004095420.637091-1-arnd@kernel.org>
-References: <20241004095420.637091-1-arnd@kernel.org>
-Subject: Re: [PATCH] wifi: ath12k: fix one more memcpy size error
-Message-ID: <172833739297.2581613.4397682908224722962.b4-ty@quicinc.com>
-Date: Mon, 7 Oct 2024 14:43:12 -0700
+	s=arc-20240116; t=1728337433; c=relaxed/simple;
+	bh=11RYSo9lIEQFwo795OO9UqtSp6Ic4GVVOLJGQg8N7Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDnUe4hzR2GpQ7YwNnUpCyGSfafqua3XIcwHjxiwdfD/qw+HDvBWi8n/CjsqVLiAE6cWJlIslcIdfS5K42ekE5nWbpAEjCzjF7Fu9K03Q/xZSlqI0P6WbelSaZsy6Az1Dv7ZLcvgSmRXSXUl2IFjz9wExV7DDENaTKrK0Onp+eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sYfXRG9P; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 94DC755;
+	Mon,  7 Oct 2024 23:42:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728337332;
+	bh=11RYSo9lIEQFwo795OO9UqtSp6Ic4GVVOLJGQg8N7Pc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sYfXRG9Pai9BrtWZND6EBV9jZjIujTn2zwNbYXepz6wb4WT5mWIJz/46+CtWXvjX+
+	 8eTJ0Ioh9kvZGl+teFXOsQTwmOieOgpUc8oYaE6w25P4U8xBTtDUw9vYkNOy5xSRl6
+	 bqCs5O/PljjVdZH3CmVehWaJghxGsG0i6ClxcYF8=
+Date: Tue, 8 Oct 2024 00:43:43 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "G.N. Zhou (OSS)" <guoniu.zhou@oss.nxp.com>
+Cc: "rmfrfs@gmail.com" <rmfrfs@gmail.com>,
+	"martink@posteo.de" <martink@posteo.de>,
+	"kernel@puri.sm" <kernel@puri.sm>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] media: imx8mq-mipi-csi2: Simplify power management
+ handling
+Message-ID: <20241007214343.GB30699@pendragon.ideasonboard.com>
+References: <20240929134354.20735-1-laurent.pinchart@ideasonboard.com>
+ <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+ <20240930072151.GC31662@pendragon.ideasonboard.com>
+ <AS8PR04MB9080AF5E451A74FA0C0B03C0FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xv8KleO3pv__tTsy16lyVkRdlU1eV_Cx
-X-Proofpoint-GUID: xv8KleO3pv__tTsy16lyVkRdlU1eV_Cx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=684
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070149
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB9080AF5E451A74FA0C0B03C0FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
 
+Hi Guo,
 
-On Fri, 04 Oct 2024 09:54:13 +0000, Arnd Bergmann wrote:
-> A previous patch addressed a fortified-memcpy warning on older compilers,
-> but there is still a warning on gcc-14 in some configurations:
+On Mon, Sep 30, 2024 at 07:51:45AM +0000, G.N. Zhou (OSS) wrote:
+> On Monday, September 30, 2024 3:22 PM, Laurent Pinchart wrote:
+> > On Mon, Sep 30, 2024 at 07:08:09AM +0000, G.N. Zhou (OSS) wrote:
+> > > On Sunday, September 29, 2024 9:44 PM, Laurent Pinchart wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > This small patch series is a reaction to "[PATCH] media: nxp:
+> > > > imx8mq-mipi-csi2: Fix CSI clocks always enabled issue" ([1]).
+> > > > Instead of making the PM handling more complex, I think it can be greatly simplified.
+> > > >
+> > > > I have only compile-tested the patches. Guoniu, could you give this a try ?
+> > >
+> > > After applying the patches and test both on iMX8ULP.
+> > >
+> > > For iMX8ULP, it will cause kernel dump when access CSI registers and
+> > > system hang during do suspend/resume while streaming Need to add
+> > > system suspend/resume handlers and call
+> > > pm_runtime_force_suspend/resume in the handlers.
+> > >
+> > > I tried to debug this issue and found pm runtime callback won't be
+> > > called when system resume. The state of power domain won't enabled.
+> > 
+> > Thank you for testing.
+> > 
+> > I wonder if this could be caused by the CSI bridge being resumed from system
+> > sleep before the CSI-2 receiver. Could you check if that's the case ? If so, does the
+> > following change fix the issue ?
 > 
-> In file included from include/linux/string.h:390,
->                  from drivers/net/wireless/ath/ath12k/wow.c:7:
-> drivers/net/wireless/ath/ath12k/wow.c: In function 'ath12k_wow_convert_8023_to_80211.isra':
-> include/linux/fortify-string.h:114:33: error: '__builtin_memcpy' accessing 18446744073709551610 or more bytes at offsets 0 and 0 overlaps 9223372036854775797 bytes at offset -9223372036854775803 [-Werror=restrict]
-> include/linux/fortify-string.h:679:26: note: in expansion of macro '__fortify_memcpy_chk'
->   679 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> drivers/net/wireless/ath/ath12k/wow.c:199:25: note: in expansion of macro 'memcpy'
->   199 |                         memcpy(pat + a3_ofs - pkt_ofs,
->       |                         ^~~~~~
+> I tested on iMX8ULP which don't use CSI bridge but ISI, not iMX8MQ. In ISI driver, I notice that
+> it already handler the device relationship when subdev bound like bellow:
 > 
-> [...]
+> link = device_link_add(isi->dev, sd->dev, DL_FLAG_STATELESS);
+> if (!link) {
+>         dev_err(isi->dev,
+>                 "Failed to create device link to source %s\n", sd->name);
+>         return -EINVAL;
+> }
 
-Applied, thanks!
+Ah yes indeed with the ISI it should already be handled.
 
-[1/1] wifi: ath12k: fix one more memcpy size error
-      commit: 19c23eb61fa4c802e6e0aaf74d6f7dcbe99f0ba3
+I can't test this on hardware now as I'm travelling. Is the system hang
+happening at suspend or resume time ? What is the order of the
+suspend/resume handlers calls for the imx8-isi driver and the
+imx8mq-mipi-csi2 driver ?
 
-Best regards,
+> For iMX8MQ, I'm trying to enable it, but meet some problems, so can't
+> give you the results in short time.
+> 
+> > diff --git a/drivers/media/platform/nxp/imx7-media-csi.c
+> > b/drivers/media/platform/nxp/imx7-media-csi.c
+> > index 9566ff738818..c66b0621e395 100644
+> > --- a/drivers/media/platform/nxp/imx7-media-csi.c
+> > +++ b/drivers/media/platform/nxp/imx7-media-csi.c
+> > @@ -2057,9 +2057,22 @@ static int imx7_csi_notify_bound(struct
+> > v4l2_async_notifier *notifier,  {
+> >  	struct imx7_csi *csi = imx7_csi_notifier_to_dev(notifier);
+> >  	struct media_pad *sink = &csi->sd.entity.pads[IMX7_CSI_PAD_SINK];
+> > +	struct device_link *link;
+> > 
+> >  	csi->src_sd = sd;
+> > 
+> > +	/*
+> > +	 * Enforce suspend/resume ordering between the source (supplier) and
+> > +	 * the CSI (consumer). The source will be suspended before and resume
+> > +	 * after the CSI.
+> > +	 */
+> > +	link = device_link_add(csi->dev, sd->dev, DL_FLAG_STATELESS);
+> > +	if (!link) {
+> > +		dev_err(csi->dev,
+> > +			"Failed to create device link to source %s\n", sd->name);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> >  	return v4l2_create_fwnode_links_to_pad(sd, sink, MEDIA_LNK_FL_ENABLED |
+> >  					       MEDIA_LNK_FL_IMMUTABLE);
+> >  }
+> > 
+> > > > [1] https://lore.kernel.org/r/20240929101635.1648234-1-guoniu.zhou@oss.nxp.com
+> > > >
+> > > > Laurent Pinchart (3):
+> > > >   media: imx8mq-mipi-csi2: Drop stream stop/restart at suspend/resume time
+> > > >   media: imx8mq-mipi-csi2: Drop ST_SUSPENDED guard
+> > > >   media: imx8mq-mipi-csi2: Drop system suspend/resume handlers
+> > > >
+> > > >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 113 ++----------------
+> > > >  1 file changed, 10 insertions(+), 103 deletions(-)
+> > > >
+> > > >
+> > > > base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+
 -- 
-Jeff Johnson <quic_jjohnson@quicinc.com>
+Regards,
 
+Laurent Pinchart
 
