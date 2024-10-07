@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-353578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19506992FB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C881A992FB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7599DB23D81
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064111C22CE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D41D5AAE;
-	Mon,  7 Oct 2024 14:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1A51D356F;
+	Mon,  7 Oct 2024 14:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oXxJmJiR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G97OKwST"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJgyKYyi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E5E5338D;
-	Mon,  7 Oct 2024 14:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DD21E49E;
+	Mon,  7 Oct 2024 14:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312304; cv=none; b=QFnMOPsN1KbBh5k6BBI1VUDPLK+n+ps1q5UEIlcrhdLwWa4C58VV4TR+jmZd/CEiZ8rQ46bDKPdnzSAYbC1Lvd5oRUKhequV89q2I3jkUpaS5EMWJAnTak2a+frbLIW+/AwbyZYz4AiMFMWI3X94jAOpv/vGSqv/ktOu2uBhtj8=
+	t=1728312334; cv=none; b=G/jsy8qcw2LZd84uUQ9dC08TWNwll4Lg0N1+NFk8AHMthDJe8ORBs+OcgbybPmQaPUQtmmVSXjHC4nc9URXYYa5IoDNBONfd4au5dPexb+KkDCujkPxCUunh5sv6GK5JXACyK7SkrsnhG8/K4InfL55bti7YvIXYm2t2xVZo2EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312304; c=relaxed/simple;
-	bh=lbnJukntG02dcf7EuR6nWqoAY3hzdHD1hrinEGTqGLY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TKSn9c4qxYgLpJSlyjaRdJRZ6tKAWymOQBC1eCJ98jp1phy2QuAyMqjr138tsTYzy6x3PlmT0n5wpxkbse7R00uFiQwyEbaoSiYpPLOrfAIGYFxIvw9FlCSeyRAMRzwyVPVEHYjChFfRpR09/w1CMqs/S5ANXSvXn5pfgGEShX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oXxJmJiR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G97OKwST; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1FCE111401D4;
-	Mon,  7 Oct 2024 10:45:00 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 07 Oct 2024 10:45:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1728312300;
-	 x=1728398700; bh=l1kyynLwByX6gsVVKHoBp6mrYazE+l1bCV6P0buJGv0=; b=
-	oXxJmJiR7i8datKAd3ODSy3DFD9PGRgwMyoGsJe+5rJ1zWHDd2VF1PgVBDx2gpfn
-	geE6mAQhw94O5Qv8s7E9W6JTCEV7PpYdKUlc/XsDnQuvK+seotckBcOOEWVu621N
-	bb9gcmVsHSWXHD+hGLR59L4tq8Do45MjdxPXKBmjf+vvrBVe0sSLGcZ0kRyT56qf
-	PfGFq6ULYgVZBUQbgmCJu7Rj6ED7aGuaVB/QvRXBtbiFqkz72hwbmq1V2WR7IMBo
-	Iix3cN4mFPNmjW8LoHrV+sQteztepRGaDaoiH1B4pffLztnb6R63XOWj+ao8A6hN
-	LcWWXuvL2bMNUhw0K9i61g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728312300; x=
-	1728398700; bh=l1kyynLwByX6gsVVKHoBp6mrYazE+l1bCV6P0buJGv0=; b=G
-	97OKwSTjYgRXvlsADh6ojVqJ8x4YOtIZU3TH1ykSo9YMsjDTBTu5VfuVUwzkoYgC
-	0LP2endsPsgfKZXK+8yWaRPkwz4xAxmOqOjdHOst7UhCkfl29cfFUB1jK9Dq6i5o
-	wSdqmO0j6E/b2iYYbqjAhXh/5M5KSQMUxPIDWlvGr0qMixyuZeY6hQxJgcKLwyVQ
-	TGAD8Z/QMFxN1FWlfQJ4PIaIAtC9DgU5jhuvKglqjvoUi3dSz2SV7rnyTwvQBw7z
-	TSJGT2gxRBLUO1szxWmHS8GRK0yJ4xj6DU2Dy8CR5/ayxtyfTgLlqAsDIS/NOqr0
-	hY5TNzTrWiEPagiDQs2rQ==
-X-ME-Sender: <xms:6_MDZ6LZDG4-mJohWk5MaAonCv80iB4qDEFHe_mK3Jrgwky9m_1ZNg>
-    <xme:6_MDZyJSTsz2wT72qmgge_QIaAoTsZST6y5X_asDDeM8Mb3Jl8pINHaWd1giPpj2i
-    UYgj4I_WzdaqiRlsNs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepudevudffkeehueehjefggeeitdeivdffkefhuddv
-    veethfefjefflefhvdetfeegnecuffhomhgrihhnpegrkhgrrdhmshenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdr
-    uggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    gurghvihgurdhlrghighhhthesrggtuhhlrggsrdgtohhmpdhrtghpthhtohepmhgrrhhi
-    uhhsrdgtrhhishhtvggrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6_MDZ6vc24XznZ3vNSFSwLLB5yBN3wSNxL_4X9mGJHPmbqFPeUOgDg>
-    <xmx:6_MDZ_YCZoOs6Rvv_Hwm-9_h-ap8u-2DCtqt8NXxLvyqzMY76y1DFQ>
-    <xmx:6_MDZxYLJORp4BzzViiEX2k2GVXdzhlVieMIRx_VzDr22gLxSZlxPg>
-    <xmx:6_MDZ7AYfVL2BK_WFNWVyEti0rH2vGxtwqnymyVsnKIZA1KGOXT4Iw>
-    <xmx:7PMDZ1HkjRvdiNCdKZheNhYJ81HvC1bTgXhEfhhfQx83vmWX5HK9o5Cm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D76472220071; Mon,  7 Oct 2024 10:44:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728312334; c=relaxed/simple;
+	bh=3FB+fM1SR/GBiOLKvg963NUMpjWXq1ClTwQgLNpRUjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdE7DWhTm/RKXjfpzEyc9ARgtNldzQkM15atN07IMUaYhdEGaECrL3VOlnDIhGzx6NfH7HeHe+tr5/9JtOM7RgXVxQiUDiCMqFjAv/JONXeLGVo38u/yOf7/MFjuLxXPFOPtx0eS6XLMA7tJuuVngFPxrjFwDn2o8HJMv8dEC+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJgyKYyi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8EBCC4CEC6;
+	Mon,  7 Oct 2024 14:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728312333;
+	bh=3FB+fM1SR/GBiOLKvg963NUMpjWXq1ClTwQgLNpRUjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SJgyKYyi6E6PdkP2KFIApIt1zGeY44HkEypv1U0uHgtenil12+iN0S09ZXgJZRCKE
+	 pggRteEFcZ5N39BBicIygOlg7ulAJZXGCQzY0nDlsCB3FKK+RojoMO49mRq/ZXgpzv
+	 Qv55RWc0k00hQjSORbrH0W+Ry/bvL+T19NW4Ntpuw6mv7CApwGtz4T9t1NVheik3I8
+	 rD/chLiY4YSiDJuEEpBBTxFMbdlJmweWoxgjHw6rj7fA+/l0FREY78hgDdaLI/5QkF
+	 DHmUaiBg4J2+Y4GBc3ceYC1PMCqkbWvJaVQL7qcHPgueLjZIhOYAH1rLdyJi+vlgHx
+	 kUc95jN2jT22A==
+Date: Mon, 7 Oct 2024 15:45:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org,
+	oleg@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+	mark.rutland@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+	aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sj@kernel.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org
+Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
+Message-ID: <ZwPz-MXhbJMY6-ZU@finisterre.sirena.org.uk>
+References: <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
+ <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
+ <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
+ <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
+ <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
+ <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
+ <03c5b10d-b81c-4074-9c27-8ffc8c7fc84a@arm.com>
+ <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
+ <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+ <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 07 Oct 2024 14:44:37 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: Marius.Cristea@microchip.com, "David Laight" <David.Laight@aculab.com>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <758e1d68-3a27-4d64-8c45-da829ed5904a@app.fastmail.com>
-In-Reply-To: <04222aeb7a9c35ec080222168bace72a3788c90a.camel@microchip.com>
-References: <20240927083543.80275-1-marius.cristea@microchip.com>
- <207733c7c25e4e09b0774eb21322e7e5@AcuMS.aculab.com>
- <04222aeb7a9c35ec080222168bace72a3788c90a.camel@microchip.com>
-Subject: Re: [PATCH v1] asm-generic: introduce be56 unaligned accessors
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zI1WmKFLB9+n5Rbe"
+Content-Disposition: inline
+In-Reply-To: <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
+X-Cookie: Editing is a rewording activity.
 
-On Mon, Oct 7, 2024, at 14:40, Marius.Cristea@microchip.com wrote:
-> On Sun, 2024-09-29 at 21:16 +0000, David Laight wrote:
->> [You don't often get email from david.laight@aculab.com. Learn why
->> this is important at https://aka.ms/LearnAboutSenderIdentification=C2=
-=A0]
->>=20
->> EXTERNAL EMAIL: Do not click links or open attachments unless you
->> know the content is safe
->>=20
->> From: marius.cristea@microchip.com
->> > Sent: 27 September 2024 09:36
->> >=20
->> > The PAC194X, IIO driver, is using some unaligned 56 bit registers.
->> > Provide some helper accessors in preparation for the new driver.
->>=20
->> Someone please shoot the hardware engineer ;-)
->>=20
->> Do separate unaligned access of the first 4 bytes and last four
->> bytes.
->> It can't matter if the middle byte is accessed twice.
->>=20
->> Or, for reads read 8 bytes from 'p & ~1ul' and then fixup
->> the value.
->>=20
->
-> Do you recommend me to drop this patch?
->
-> I know that there are some "workarounds", but those didn't "looks"
-> nice. I was using that function locally and I got a suggestion from the
-> IIO subsystem maintainer to move it into the kernel in order for others
-> to used it.
 
-My feeling is that this is too specific to one driver, I don't
-expect it to be shared much. I also suspect that most 56-bit
-integers in data structures are actually always part of a naturally
-aligned 64-bit word. If that is the case here, the driver can
-probably better access it as a normal 64-bit number and mask
-out the upper 56 bits using the include/linux/bitfield.h helpers.
+--zI1WmKFLB9+n5Rbe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-        Arnd
+On Mon, Oct 07, 2024 at 10:07:24AM +0530, Dev Jain wrote:
+> On 9/16/24 09:28, Dev Jain wrote:
+
+> > Gentle ping, adding all x86 maintainers and the x86 list, in case they
+> > missed.
+
+> Gentle ping
+
+Given that this was posted prior to the merge window you should probably
+resend it at this point.
+
+--zI1WmKFLB9+n5Rbe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcD8/gACgkQJNaLcl1U
+h9Ddrgf/ecjm5cqThpdVO55ZcWo1Tl68da7MT8BBf2KnrlBHpFW2DgVjvVt5//Rw
+UcXrkPb/CFPPs8buUCeMSuj23bgcT0557mL45gETXpkZ+favSEItVl7ypm7Ty5zE
+HjOpfdvAvmYwBiqAbM2lNQBCMe6VnIuKR/czVd5Ir+VG7M+D/xn875ZdPB+/J04q
+I87Hl7jhVvh0UeniDGNtHUSMefM1Wn9HIMhiiGbA6IlrarG1hQGtPYwlpfnP8Daq
+9hNSO29t/CJ7XvWQOaZE9Rvd+VzBqVKvSmRNGF3x/rAGpkYVioJELxznPlAEVnp7
+qcD0nYKoX370q1qULPMpJzySnGXhnQ==
+=3dxY
+-----END PGP SIGNATURE-----
+
+--zI1WmKFLB9+n5Rbe--
 
