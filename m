@@ -1,139 +1,134 @@
-Return-Path: <linux-kernel+bounces-353331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC958992C58
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7682D992C60
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A17B1C2297E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3FD1F23C83
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82821D415D;
-	Mon,  7 Oct 2024 12:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651AB1D2B25;
+	Mon,  7 Oct 2024 12:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dl443a54"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XS3xWXlD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF891D3183
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3AC1BB6B8;
+	Mon,  7 Oct 2024 12:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728305235; cv=none; b=iNxgU20bdO7qs3Dt9+nGVt3k8Gfm0BJljpvdppIPjp0FbaEmP4FZ2We3kGZXtA/wNE3hTe3MqVxHem7HGVlYa1Zr77IByDglKPMKT46EkcJLLePClDY3LUrlT6PTdNqNCOhBHAlFG+y95QBSBMPswQ9qPgZi1LMRuq1T18+eQ6I=
+	t=1728305335; cv=none; b=m/8fD/To49r9ClfzA1O9c7eB3zNTINL25qdisd+4tw2LAetdLTZNLD8ZxVgi8NwovKCShQz3pNfkyxf8KuWf1RvCYxc15v7zocLJCLg9ncyXmDG58UleUPLODklWF+gQY+OnOF+OTBuHP6DkUmmaffSe0l15EwUdqraES+Ag8TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728305235; c=relaxed/simple;
-	bh=jo6zA17WYEVKD4kAqrD5bI/uK/hqU/C2jgKYXrjvDXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4Vn2KIbcSCFA1vhdmDJQu47yoFwe17rkvSci46fr1ppF5BXSzvH+VdbFuYFjPgCcGaB6cJCtufArKUDAtYxXp7UgKIXWQ+vZon01eVzDkwulsnEbiq/7eyBON3+X9pOp2+1Q6g7CaHy7DHOxpPzm2kxFjqCEQS8Zeh81B+hORw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dl443a54; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6db836c6bd7so40092357b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728305231; x=1728910031; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCFd3AswX/UvsHDjGk8fmcWJKuiqqQyLNfZu18RpBKc=;
-        b=dl443a54a0VaC4qwaIDne7ufYge0BK6G6DjDTACR6ZyR40oJpVBnQk0FVnC05L9qkB
-         lpGH8K1T92tCZ1mnQmfFPlIybdYCQOM+RGg+9pyiqL51qBUDxOJ64H196UVcA2YxgknA
-         TybBNuK3rD3KUD5ltU6pItFrBxi1eHVL/SNgMuveGP3w1i3XM4Z8oCcSQn8KE6HYc2tz
-         UsmGb+difN4H6wAvvW/DoO3BcUmrw7vqFDJzhQ3nOmr/WQZwnpLkBMkIh6w+VdRqvWiJ
-         zlMVrf7E1kjXcWUXweGAh3uYZDr47J+xIcz2WIt5Yylkwmzt6/bOzPtC+huJCEOHYjt1
-         rVqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728305231; x=1728910031;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OCFd3AswX/UvsHDjGk8fmcWJKuiqqQyLNfZu18RpBKc=;
-        b=BXegw42utQtxlgwZg1oSzsR44y5OAIUIBXARbagzQ24zcc6xWQWVsVVMujqLqMS2nj
-         OPt/tn4ulXY0n398jYmwtKaEWW2IVZ+MEBtdDnoaqeNunpG7cP6m7bh80FNu14vwW4oy
-         EA+i+vPnAEsZADSCxYOjJ/6XdS2OpU9MGKdTj1M2c2vTMm7sXqJ7PPlmRk2b3yfq+l0V
-         qkXP9WC2mkZGq3HwkatbEc8zMCcDnfTwgdkuRiJ7E+Dq1brPgYMeaJ2g3mS15WrVLryU
-         2rqHURSILKYiI60GuvbDORppEfCqpa2jdOURimS2h7ng4J7h2Yi41C/mptoJRmrihc65
-         9LHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkdzD7Y6jrduMdzWBiGvSIvuyUjtj6kND5+R8SV9gbvbROKzY/2YTekH3YQnYmO1SSKAHXzis48uyZCOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8Ufw0EZxJmzQ/tiqGZHTzg4YS6hJ0AL5UR4NuLsmpdW2FDKWY
-	GmqzaDnQiuCkHx1tfFOlDWH0lVWP1QKQI5aKHWZGB1l/Tout2ejZ8nRIjr/gA54uVvrSMX9XCun
-	kSjQFMFsBOMon+eqLmlhAWiwLKGmfQnczy20OHw==
-X-Google-Smtp-Source: AGHT+IHcN86fNTn9NJS9sEdYsHveChw5c5a4u8Q17Bg6k1OV8AmiweKXXUKwE6aCQZaVkcm5WHu+zP0RnPEZbICAVoo=
-X-Received: by 2002:a05:690c:6609:b0:6d1:41:5b35 with SMTP id
- 00721157ae682-6e2c6ff649amr82400577b3.13.1728305230862; Mon, 07 Oct 2024
- 05:47:10 -0700 (PDT)
+	s=arc-20240116; t=1728305335; c=relaxed/simple;
+	bh=XWgabam3fhc3PvpjHHnnru1mmimtxFrWT467mkfuww0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqDr3G8mAdijQibrGSab4TuiN4ezcvtV8RAgR5WXAaO7i6milAHYNpizfLFbccGtggcvoO70BLxLeg4KUfLGpDGFzGch2DAyBxeFPwx40cjQQsUWc5e2L86c7YFDFXSuwO4fCd01Ld3tBgEWsWOWL0OeeNZlG7qn7hHjbSXwGMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XS3xWXlD; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728305335; x=1759841335;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XWgabam3fhc3PvpjHHnnru1mmimtxFrWT467mkfuww0=;
+  b=XS3xWXlDE9ZlxLVMeGD7SEIq+Kqd1lIUIZXM0S995f4n9RxjZRiSLFdp
+   MGxtkUo/qX1yqTOacf2lSD8uaQ/buL15eWzzBrnxt8VbeBRMIMchIpW7k
+   /3rSYQ5LzGsbAp+kh79d4XVwOO3HhqBeaMu3fKPxHAE7M5tFFWnBeT2EH
+   GPu75DMSHpoF0UQWsJTmHGfgZKkACsSF75C6tBe6CN3agjheZCzmmvKmM
+   pg0KV1PTW/RqcdcvH9ZsAfg0kjEljAqP8hPL4gjLFNB4r3Bw0x83cVWT3
+   ULkL2SrYAzY+KiMUzw4ty7lUNFKhbeXyyM7hlcTSW453iOSDUBV/SfyFl
+   w==;
+X-CSE-ConnectionGUID: rnGGckzESDWIRRiffUPziQ==
+X-CSE-MsgGUID: E6/UXZ0LTMujkUF3fMLS5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="31152294"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="31152294"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 05:48:54 -0700
+X-CSE-ConnectionGUID: bP6fMKj0RnyrWoAmPTX4GQ==
+X-CSE-MsgGUID: rdegqp39TlWWvVoSaAoULg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="80055132"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Oct 2024 05:48:50 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxnAO-0004z2-0K;
+	Mon, 07 Oct 2024 12:48:48 +0000
+Date: Mon, 7 Oct 2024 20:48:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Yang <danielyangkang@gmail.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, danielyangkang@gmail.com,
+	syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] resolve gtp possible deadlock warning
+Message-ID: <202410072002.hT2D7135-lkp@intel.com>
+References: <20241005045411.118720-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-fp5-ufs-therm-v1-1-1d2d8c1f08b5@fairphone.com>
- <fshhw6lknar4z36rc2sjjcgkiixpp7hak7gq3j373mjvbokax3@7s7kmzlmtjal> <D4PE64JTYDCL.3MC81CYK49TI0@fairphone.com>
-In-Reply-To: <D4PE64JTYDCL.3MC81CYK49TI0@fairphone.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 7 Oct 2024 14:46:59 +0200
-Message-ID: <CAA8EJpoYpiuVkD3ohoVhd9VXvCxpHPPfXfY0YqrQhABUc3WPdw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-fairphone-fp5: Add thermistor
- for UFS/RAM
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005045411.118720-1-danielyangkang@gmail.com>
 
-On Mon, 7 Oct 2024 at 09:22, Luca Weiss <luca.weiss@fairphone.com> wrote:
->
-> On Sun Oct 6, 2024 at 10:26 PM CEST, Dmitry Baryshkov wrote:
-> > On Wed, Oct 02, 2024 at 03:01:08PM GMT, Luca Weiss wrote:
-> > > Configure the ADC and thermal zone for the thermistor next to the
-> > > UFS+RAM chip which is connected to GPIO_12 of PM7250B. It is used to
-> > > measure the temperature of that area of the PCB.
-> > >
-> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 40 ++++++++++++++++++++++
-> > >  1 file changed, 40 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > index 8ab30c01712e0b7c0cc1b403e0fe01650315b9e2..fdc62f1b1c5a398abaa71818fdf2858fdc445d28 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > @@ -207,6 +207,20 @@ active-config0 {
-> > >                     };
-> > >             };
-> > >
-> > > +           mem-thermal {
-> > > +                   polling-delay-passive = <0>;
-> > > +
-> > > +                   thermal-sensors = <&pm7250b_adc_tm 2>;
-> > > +
-> > > +                   trips {
-> > > +                           active-config0 {
-> > > +                                   temperature = <125000>;
-> > > +                                   hysteresis = <1000>;
-> > > +                                   type = "passive";
-> >
-> > Is it really just "passive"? Especially with no cooling devices it
-> > sounds more like "critical". LGTM otherwise.
->
-> Hi Dmitry,
->
-> To be clear, I'm adding the thermal zones now as a first step so that
-> that they are declared and that they show up in /sys.
->
-> This is for sure not the complete thermal configuration. Most other
-> thermal zones in this dts also currently have 125 degC "passive" trip
-> point, which I'd hope the device would never ever reach.
+Hi Daniel,
 
-Sounds sane.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.12-rc2 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Yang/resolve-gtp-possible-deadlock-warning/20241005-125510
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241005045411.118720-1-danielyangkang%40gmail.com
+patch subject: [PATCH v2] resolve gtp possible deadlock warning
+config: x86_64-buildonly-randconfig-005-20241007 (https://download.01.org/0day-ci/archive/20241007/202410072002.hT2D7135-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410072002.hT2D7135-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410072002.hT2D7135-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> net/smc/af_smc.c:22:9: warning: 'pr_fmt' macro redefined [-Wmacro-redefined]
+      22 | #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+         |         ^
+   include/linux/printk.h:380:9: note: previous definition is here
+     380 | #define pr_fmt(fmt) fmt
+         |         ^
+   1 warning generated.
+
+
+vim +/pr_fmt +22 net/smc/af_smc.c
+
+ac7138746e1413 Ursula Braun 2017-01-09 @22  #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+ac7138746e1413 Ursula Braun 2017-01-09  23  
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
