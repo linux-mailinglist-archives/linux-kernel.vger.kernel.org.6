@@ -1,107 +1,153 @@
-Return-Path: <linux-kernel+bounces-353518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004B2992EEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B00992EF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8351F247F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685521C2341D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B4D1D798C;
-	Mon,  7 Oct 2024 14:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A021D61B6;
+	Mon,  7 Oct 2024 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MtgWjhaE"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="dvdygJV4"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930DC1D6DDF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F21D5CE7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310882; cv=none; b=IqY24TiprmKzn+qclt3cqu9sDNpoK5LKMAYR+8FvJo5Tyo+YXN7Oy1+DMb/S3DRSn+bENHuDUg/zl4YrKZgXk9U7dlSTkl+EJyHti/UhCE6mpkt//zw/jvs7Odsq+So5LkVx8YrNfX70QgyJW7qiz6TgeikZEbaGmi7dXHq0v7o=
+	t=1728310968; cv=none; b=D7lmo9ECGAJwlTJH0UMqjky2WnNndMqvKy23Tfjw+4zm2+cR9Y0cw1Xa+nTaeV7RTHGsduxp6LvYVybfNT8BZJe65nGwPBm+MTkCyMqQcrJWr/rXdTmG8+0NBvRk+YpN1esr7elPo067B6ao3fZesSs5aijpsDFCSiq7lAPeIkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310882; c=relaxed/simple;
-	bh=UfsJfKuIY3PfTumtoxik1Ea0qW7eIN7BDbe4vNZ5QTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tv5X4Jgga9HmWo9on+YdNtyv/HhsezTSH6IqoJ5QONMP1IwlNYo64XmEzoaUUcG+16App2NHssVZnqY6+TwGlr63eCKzDchiYG8Si7qjGb8UhVzVXEEF8ChSOuiMObiXJn6/IwkjAFV/Rf/c4UPY9uP4pAWZ8cdmTxYy572ZaAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MtgWjhaE; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8323b555ae2so187681739f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728310880; x=1728915680; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VC79KI09BOMVnLp6M0LTx88kNLWiyUtWHxQNIXByZpQ=;
-        b=MtgWjhaERUwLDazYZf9528GmKtNqaM74AtUHFvKZ39vdbncKWTGJ0AFR2VDIdKxoVh
-         RnodvXuezB7aszBDqAGrlgflE9RhdSc0WEqSjhya5a1MZKrNJC9dWmyFVhU7OaScDFuz
-         2PFc8KTjaZSa+oCVrs1tbrKJL1jyUJ//241BFvY6tGu/pAuYm4ZBE6JqR97J8JYUn2F7
-         0WMABHEDTPaz1m6PeGAeGxDdRgqsUhFG2wE6L7HtP6euDwOou/wQM4YTUGFEL+azeKBD
-         jLR5IyM/QYDf/4q4O0Kb+Nz8xRDu2U2Tq+PEtP27ihypBmWPXrtPCoBkQnh3o1ZOQH4W
-         g3oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310880; x=1728915680;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VC79KI09BOMVnLp6M0LTx88kNLWiyUtWHxQNIXByZpQ=;
-        b=nd0C7ViDihaVOk+E+f3MmkodHPL5a2Sev4uh9B2FHqfHTCB3qujsn5tnCOmJvlWGMv
-         f11PydTSVuhOCaHtc7LvMl64WUEbCSqxJrUQW6HYqa1iaXcoX2eUAGd4Inw0TNzB3Q9A
-         7ONi/7DbY+8Gf83jjycjmDROts3rjbkwoBzZJiywPS3f7Gl+PqTRNTAp0gqpzECY4ZYD
-         3Luq5ClSqY6AkVAKEc9NaUrJnBcC1OAXcXuna3TDQY33kmrTe0x7sZdtDYst9/zweRYc
-         dZR0j5uqZDJHWxq4pukY4kDQGIuLni9ZYVXGC5H0SZWQROjisPjmy7bCNWyRNPDOl2wW
-         Zj5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWMkhCV5gKuamC8oi/idEBH+eT8FekXtD+Fjiz637RxqWryiU+R/XwLvIvfUqewYjiZdPNL1+79gaE3hWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxjnH/snOkKh5ePbAmA+BtAvs0rTHFkRJuNSMloyJBgWiaFBsf
-	VCGfHrleC4ZpDkZGw0WaxviTwI2k0Ksnl8fuJTXvRwAPbhmAbQyfgH448peyHtw=
-X-Google-Smtp-Source: AGHT+IGEdNw9YxcVJEbUjcPKtzj9rWUNLLjJTyJuMad09+Ov0EAZ2JIxxAkjp223AAfsDuP15ylO7Q==
-X-Received: by 2002:a05:6602:6010:b0:82a:4490:692a with SMTP id ca18e2360f4ac-834f7cb0918mr1196787639f.7.1728310879744;
-        Mon, 07 Oct 2024 07:21:19 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db6eb569cfsm1182684173.67.2024.10.07.07.21.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:21:19 -0700 (PDT)
-Message-ID: <5995b8d7-a94a-4c5d-8bf6-e19998c0ac72@kernel.dk>
-Date: Mon, 7 Oct 2024 08:21:18 -0600
+	s=arc-20240116; t=1728310968; c=relaxed/simple;
+	bh=ZepIFIYOT5MYbLRNei1KddhAuU1eTVAmQSB/Udp0DSk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gPYIS6EHQ+w0VwrZf01ALxgmYnvWSeQ5TD5nyrOCpkQk5qHGlpZkBCH+d+528AURcwQQBQzMCJOLag+JurqqKIspxVdw5xpnYJyFCP7Cx7oaAeV5RhFTQGF0KSooAYR1kxUCBl/bni/4CXNK0Kci9c+bW/ybiV38svocTs1YHdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=dvdygJV4; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10] block, bfq: remove useless checking in
- bfq_put_queue()
-To: George Rurikov <g.ryurikov@securitycode.ru>, stable@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- Yu Kuai <yukuai3@huawei.com>, Jan Kara <jack@suse.cz>
-References: <20241007140709.1762881-1-g.ryurikov@securitycode.ru>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241007140709.1762881-1-g.ryurikov@securitycode.ru>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1728310963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=APN3Rf1CHc5QKBHwClsLIHA5EOjpyOHZWT2nCBIU7ZI=;
+	b=dvdygJV4R8u3j7v2JrQ3vQApLXeDKapTyGuAv+buKi9WSph4x6JkFTQ1nJo9N6+oRwCI4n
+	ait7Y4J96tHR8j63wl8+kx5TcN9OzQnL0i+Uv67Vyb2X2+6mx2VDn/o1ges9nilHiA7F/o
+	i9OF0nQCHF8aBy+QH3Bnsjhxcy3Bw6kDOFsFvOciVFwAXWmIitilXsn7+pZwK+ObsgtcMp
+	A5Pqs/LRVcZucKCWffwPssZ6Q8pIZRk48I1CbiYpP2gaFz7TNvzS0350KS+qLHpQywmyhf
+	R0ZEZS2uJUzFqV1yr+omsLgfKvo5UoOTfx1gQGW4xEIZ+nxSxWRGtKW5SKJB0w==
+Content-Type: multipart/signed;
+ boundary=51cba31023c492486e1820f7b7082cd7fad1f9f03d93a5c097c580e3c009;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Mon, 07 Oct 2024 16:22:32 +0200
+Message-Id: <D4PN3MEAFIFU.1BAJ732GCUCTR@cknow.org>
+Cc: "Dragan Simic" <dsimic@manjaro.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Fix wakeup prop names on brcm
+ BT nodes
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>
+References: <20241007105657.6203-2-didi.debian@cknow.org>
+ <20241007105657.6203-5-didi.debian@cknow.org> <6096052.lOV4Wx5bFT@diego>
+In-Reply-To: <6096052.lOV4Wx5bFT@diego>
+X-Migadu-Flow: FLOW_OUT
+
+--51cba31023c492486e1820f7b7082cd7fad1f9f03d93a5c097c580e3c009
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 10/7/24 8:07 AM, George Rurikov wrote:
-> From: George Ryurikov <g.ryurikov@securitycode.ru>
-> 
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> commit 1e3cc2125d7cc7d492b2e6e52d09c1e17ba573c3
-> 
-> 'bfqq->bfqd' is ensured to set in bfq_init_queue(), and it will never
-> change afterwards.
+Hi,
 
-No point pushing this to stable, so no from here.
+On Mon Oct 7, 2024 at 4:06 PM CEST, Heiko St=C3=BCbner wrote:
+> Am Montag, 7. Oktober 2024, 12:28:18 CEST schrieb Diederik de Haas:
+> > The "brcm,bluetooth.yaml" binding has 'device-wakeup-gpios' and
+> > 'host-wakeup-gpios' property names.
+> > Fix the ones where '*-wake-gpios' was used.
+> >=20
+> > Note that the "realtek,bluetooth.yaml" binding does use the
+> > '*-wake-gpios' property names.
+> >=20
+> > Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+>
+> parts of the commit conflict with a previous one from me ;-) [0]
+>
+>
+> [0] https://lore.kernel.org/linux-arm-kernel/20240930210112.1993625-7-hei=
+ko@sntech.de/T/#m59bdb72d6c22f85fe79716761fedaea2a2e1c73e
 
--- 
-Jens Axboe
+Haha, I actually did base my changes on one of your patch submissions
+("rk3328 cru dt-binding conversion"), but that's the 'wrong' one ;-)
 
+Will drop the rk3566-box-demo.dts one in v2.
+
+Cheers,
+  Diederik
+
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3566-box-demo.dts  | 4 ++--
+> >  arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi | 4 ++--
+> >  2 files changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3566-box-demo.dts b/arch/ar=
+m64/boot/dts/rockchip/rk3566-box-demo.dts
+> > index 0c18406e4c59..16fd98698db3 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3566-box-demo.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3566-box-demo.dts
+> > @@ -450,8 +450,8 @@ bluetooth {
+> >  		compatible =3D "brcm,bcm43438-bt";
+> >  		clocks =3D <&pmucru CLK_RTC_32K>;
+> >  		clock-names =3D "ext_clock";
+> > -		device-wake-gpios =3D <&gpio2 RK_PC1 GPIO_ACTIVE_HIGH>;
+> > -		host-wake-gpios =3D <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
+> > +		device-wakeup-gpios =3D <&gpio2 RK_PC1 GPIO_ACTIVE_HIGH>;
+> > +		host-wakeup-gpios =3D <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
+> >  		shutdown-gpios =3D <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
+> >  		pinctrl-names =3D "default";
+> >  		pinctrl-0 =3D <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi b/arch/a=
+rm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> > index de4c082dce07..7381bb751852 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> > @@ -684,8 +684,8 @@ bluetooth {
+> >  		compatible =3D "brcm,bcm43438-bt";
+> >  		clocks =3D <&rk817 1>;
+> >  		clock-names =3D "lpo";
+> > -		device-wake-gpios =3D <&gpio0 RK_PC2 GPIO_ACTIVE_HIGH>;
+> > -		host-wake-gpios =3D <&gpio0 RK_PC3 GPIO_ACTIVE_HIGH>;
+> > +		device-wakeup-gpios =3D <&gpio0 RK_PC2 GPIO_ACTIVE_HIGH>;
+> > +		host-wakeup-gpios =3D <&gpio0 RK_PC3 GPIO_ACTIVE_HIGH>;
+> >  		reset-gpios =3D <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
+> >  		pinctrl-0 =3D <&bt_enable_h>, <&bt_host_wake_l>, <&bt_wake_h>;
+> >  		pinctrl-names =3D "default";
+> >=20
+
+
+--51cba31023c492486e1820f7b7082cd7fad1f9f03d93a5c097c580e3c009
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwPurAAKCRDXblvOeH7b
+bixPAQCfSDhz9tB5IlL/XoL37u8HLNi6YjiJx+tRTf4u0PzktwD/W+7lNx2K9Jr2
+LYR4hUu5xwelo4J1/sYXCF9EbsR8JQY=
+=Nmgp
+-----END PGP SIGNATURE-----
+
+--51cba31023c492486e1820f7b7082cd7fad1f9f03d93a5c097c580e3c009--
 
