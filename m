@@ -1,126 +1,77 @@
-Return-Path: <linux-kernel+bounces-353558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D812E992F6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F42992F73
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8964D1F2322C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF3E1C212E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047861D9591;
-	Mon,  7 Oct 2024 14:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Jbc9WKPy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA51D9A4C;
+	Mon,  7 Oct 2024 14:31:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5F1D416B;
-	Mon,  7 Oct 2024 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573551D9678
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311457; cv=none; b=kQ8DEL931PjMn57dOBtt1UTrii8L1kVAuCNmImA1F8/Cancc9ll/ZHHZBzBR1HaTCjb25ELGMzAol+Nz2gV6QV6yHeR6REa2z3nirABAZ+g2DTdLvhiwGb0Q3v7U85wBXu/CjUYbrC2nww3TQD6dJWFnTTGEN09Sg7XkoQGU/WI=
+	t=1728311461; cv=none; b=fj1zLkQFpzbufb2H5TpmfCeaRtoRvWFyqVQCAFp+NGLwzAZDWoBculWg9eGzbAYXgNYNCNaOD11vPZ/IWelmhtPIoldG2CBN7gLEA99T+aDfB0smo8RE1xWieGjVfpVaEqXrI+TVBD051VwDARKJJHxy5/qeXHr9OjT5A7JpLJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311457; c=relaxed/simple;
-	bh=bqNnpLGSI8ObeGs4CLpY9ivgJb2h8lo/nKnIR/o6eW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/NJVdVTczCSVSK2gQiC4N7ILKz0shnGF/0PWyU+WhjHXNqfnjpq8f+RZPn4kF4FKu8NWVYcOo6A1XEayBIaVkHLljBt80lvoSMS8LLLGuLdu7Te1wqLby0CE27sr7dPVQNFYLXg+jTTX9iiZqdolFu30YI4CUw0P3AQKfK4ank=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Jbc9WKPy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ECF2040E0198;
-	Mon,  7 Oct 2024 14:30:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4YkEZfVcnZj2; Mon,  7 Oct 2024 14:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728311440; bh=iszCQnjQ8pE33VOc40q9Nefpswx6WyKznXbi97JB8FY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jbc9WKPyCjxe9DEy9ApzeqjDe8lJosJuGoQI/02RCy/JBxL3edIAq2fju8l8tz572
-	 fo6b/rJar65VaP03zYLsCAxg9xpNTPfVzZKKfMQuykG3qhNh6TMvGX8/JWTIggRQRF
-	 nccYVmaiB23kFW0P0cKuFqP/37f3OpUxpE3Bwixywg61EXtz39P6DyC6zZInfM/y3m
-	 zikwew7zVRmAM89tV0lQUz5XUnxNxH3lplawuvzPhJxZPdMh+kqoMoesit3Ns9EFxq
-	 b2bfyvL9uYmlXrVsI5vVUZIjQqtDSq7MFxEqZ7fvUN6yAH4PQvJ/sZ6a/1DbgmEkhw
-	 rwJK9bvYQ6k9og4OkqNaY6vB0DlM0p9LncTLrR/illPctiD1itsgC1UTSkbkjB8Uoe
-	 mrOk2roSsLEgIjhKWIfmYcfKUJIJle1Zu/Khuwa147XePHKuUl+QjlgQRKotlKczMO
-	 DZ9J4H/qVnln7yYkpRRQYn8dUKG7hii+eE3cVhCjU1ZN6t2NX8650aRtBMQgmGgkE+
-	 w1IEvD23ZoqB8U28+L4cVp3domYhQaHFt4iGh0jHQjhWZirBHeaMpilCmC7IVDjhEW
-	 yqKPrBhmd742NccrTb0LHmZwtfm+r2bJzszC+zfrSMdyJz43ow+7T30tO91C4oTzjz
-	 o6b5BM1sz32j5rMYVrrkf6xw=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8A65440E0169;
-	Mon,  7 Oct 2024 14:30:25 +0000 (UTC)
-Date: Mon, 7 Oct 2024 16:30:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jim Mattson <jmattson@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Kai Huang <kai.huang@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Venkatesh Srinivas <venkateshs@chromium.org>
-Subject: Re: [PATCH v4 1/3] x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
-Message-ID: <20241007143019.GAZwPwe286itXE2Wj2@fat_crate.local>
-References: <20240913173242.3271406-1-jmattson@google.com>
- <20240913173242.3271406-2-jmattson@google.com>
+	s=arc-20240116; t=1728311461; c=relaxed/simple;
+	bh=Nd9+R+kP6/ZMEZeCsskVjMGZ4XQKjXVqgxsSyXWh8k8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y0Gt2uca4q1vCGN6rEChIQul0PWj+QEu8kq9sXE8gljPRwnGikblJywCcwIkv+FeVPkyLBj8V5GK1xc0yA6VUFXZsFfX8HaKdaJCurxXKnqZdTFciBSlRAvkwlsDQiH7XB/EXTVxCpA6QUVXO4wFQqEojNzdh6uZ0BWwI7vBGOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1sxol7-000153-L8; Mon, 07 Oct 2024 16:30:49 +0200
+Message-ID: <13350842-4d40-480a-b33d-3f223fca6c63@pengutronix.de>
+Date: Mon, 7 Oct 2024 16:30:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913173242.3271406-2-jmattson@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] improve multicast join group performance
+To: "David S. Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Madalin Bucur <madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de
+References: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
+Content-Language: en-US
+From: Jonas Rebmann <jre@pengutronix.de>
+In-Reply-To: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2024 at 10:32:27AM -0700, Jim Mattson wrote:
-> AMD's initial implementation of IBPB did not clear the return address
-> predictor. Beginning with Zen4, AMD's IBPB *does* clear the return
-> address predictor. This behavior is enumerated by
-> CPUID.80000008H:EBX.IBPB_RET[bit 30].
-> 
-> Define X86_FEATURE_AMD_IBPB_RET for use in KVM_GET_SUPPORTED_CPUID,
-> when determining cross-vendor capabilities.
-> 
-> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
-> Signed-off-by: Jim Mattson <jmattson@google.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index cabd6b58e8ec..a222a24677d7 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -215,7 +215,7 @@
->  #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* Disable Speculative Store Bypass. */
->  #define X86_FEATURE_LS_CFG_SSBD		( 7*32+24)  /* AMD SSBD implementation via LS_CFG MSR */
->  #define X86_FEATURE_IBRS		( 7*32+25) /* "ibrs" Indirect Branch Restricted Speculation */
-> -#define X86_FEATURE_IBPB		( 7*32+26) /* "ibpb" Indirect Branch Prediction Barrier without RSB flush */
+On 07/10/2024 16.17, Jonas Rebmann wrote:
+> This series seeks to improve performance on updating igmp group
+> memberships such as with IP_ADD_MEMBERSHIP or MCAST_JOIN_SOURCE_GROUP.
 
-I see upstream
+Sorry, I forgot: This should have been tagged for net-next. Will be 
+fixed in v2.
 
-#define X86_FEATURE_IBPB		( 7*32+26) /* "ibpb" Indirect Branch Prediction Barrier */
-
-Where does "without RSB flush" come from?
+Regards,
+Jonas
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Pengutronix e.K.                           | Jonas Rebmann               |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
