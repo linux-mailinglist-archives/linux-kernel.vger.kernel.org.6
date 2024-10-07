@@ -1,162 +1,169 @@
-Return-Path: <linux-kernel+bounces-352851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE85992538
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:59:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CFB99253C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C76F1C221A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038321F21751
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA5616630A;
-	Mon,  7 Oct 2024 06:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2506175D46;
+	Mon,  7 Oct 2024 06:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HIj1CRWe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="a504at3T"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8088D15B130;
-	Mon,  7 Oct 2024 06:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F1714CB;
+	Mon,  7 Oct 2024 06:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284386; cv=none; b=UHhx0mD6FyAG8xWSslt53Qqsdn6Sv2SbDaK3e1YY4aocVY+H9rd2uSYPmk8sjDsWxA2kzMIrvphmG/2kaFIfFHM7lYRLJaqaLy2Nnj9Efqbyc/FP/8lEVI3QCB9tXIAGOmPAH+lT6s0znV7C3Wy4tomsf4HBgZm62mpC6QAxyis=
+	t=1728284392; cv=none; b=kVkynzt+PZ0x+ZNFv0I7+kchFZnjVOsmmrS9OMnzPs1qkAlEAzV3nTGn8V3vaDVcrFRwDCT+C+s32wLU5jgJH0u2cj7Z9ZcSD6EzQDxuBi5WHZyHUfJCDouyuPDZbFxjM70rivxL2JfklVRv+strauXFUseXr/4HMCnvYz2is5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284386; c=relaxed/simple;
-	bh=mtX51qEZRca3UuKZBd7V1kFyKvJf+7FHpPMVwKJgUm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tKVVx9SzhOkeIfG4/NYdgq7xX2BKID3m8W0UXnkB/6FGWMDvay4B7UPustsUhqirt5tcZNIRAi3gyQFYWM/izfjl9h/F0qut8lIJUBOrVlNn+cWL+f1xmDyOTz0N9Ii5ybbSlcgSg3DUgn9c8hxj9da9uH+j4vVgh1ODDVkR15o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HIj1CRWe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TJFp020645;
-	Mon, 7 Oct 2024 06:59:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uHfp8aMiuPWPdqDad8TMm0fShawjKs0JZ4jq/Zt1nw4=; b=HIj1CRWeFhsiSGKS
-	mdGDNVKn8c/zrxxaXwfXakNqZJaucCypmfOg2sPOSnqH1FGmmqjA3XScpwxTy2fU
-	2YDU48AuQYoNAdVX1rYpifAVnpj/L6izSjOosiTVD2xfagEEzCOIV07TzsvP+wr0
-	OC8sZmLSjfDebNZG8lNCjAAl2wT6W4sqyVVqeUy0t/jrdWACLiOmlWWmxPIq2F6s
-	0SXE+g9pay0CZUOJjEJfYR7kV5oOuu8fPFwLtSKLm7qvCcHME5G45nlv2VSdEg7B
-	Vb0SBS4q6JpOhK2cR59ops7cZnDZwNg6S1P2WZ594N+EbP7C3Ss4IDQTji/YNm3e
-	7J+gww==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsnk8gs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 06:59:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4976xVCC024335
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 06:59:31 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 6 Oct 2024
- 23:59:27 -0700
-Message-ID: <831a7a48-2fed-c84c-dee5-8e74735309fb@quicinc.com>
-Date: Mon, 7 Oct 2024 12:29:24 +0530
+	s=arc-20240116; t=1728284392; c=relaxed/simple;
+	bh=gqiufrWug7lbmYvdLgLnFpex4w5a+2itgAUwMlOrmt0=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=UyfWW8bYrxlaFWZyLB46Y6wFLKm0mMLzsHdjUvCztvsYeCKq1zKT5CrME/qGIkCWP+V+moTrj9jxRWMhc5otRFLKdb5ykcQsw4ZxokmwlOXfj6iYzJQvyFhpMJsdj6aMv7nu/NirPqoa21meXkqn3p5ulyunfA89Dj/8gHTN6/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=a504at3T; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1728284364; x=1728889164; i=frank-w@public-files.de;
+	bh=R0AGuj5yIrzDKc34jGDi7Sop1ytF0WoQFQCgEomR2do=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=a504at3T4RFK9vS1K5OsHuRPpDQ3D09FXnEbT2tAP8XH8Hzm+O8ljIuQUaltyRFz
+	 GxXIbwB9AJFWK2ehw86IQBlXi0XHwIbKl+E5cJQGsjC5qWgtg99Hv8mrjpZ/et6/Z
+	 qq+aGAwkACQ+5lwX6bJSr84aIAJW7+Q1GOpjciEY6nho8y8c8Nt5VEaCGtabLg/k7
+	 OBLj9bHjVhL1gg8UD31We4jvPacu9x53m+XUB2aOaoc2FCVe2T4Pzfq40+RlpZRLh
+	 1psQ8Eul0d35DS3B14bwoE6Ue3xfytpk3PSV7scZMpttyDkWmq1afZCGB8xCnITir
+	 jAOF62e5bLO1lzw6lg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.153.101] ([217.61.153.101]) by web-mail.gmx.net
+ (3c-app-gmx-bap03.server.lan [172.19.172.73]) (via HTTP); Mon, 7 Oct 2024
+ 08:59:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] cfg80211: Remove unused cfg80211_background_cac_abort
-Content-Language: en-US
-To: <linux@treblig.org>, <johannes@sipsolutions.net>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <linux-wireless@vger.kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241006225303.121445-1-linux@treblig.org>
- <20241006225303.121445-2-linux@treblig.org>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20241006225303.121445-2-linux@treblig.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3NxW-YabmgSM8csPwjp9T4DLcbwg3mCj
-X-Proofpoint-ORIG-GUID: 3NxW-YabmgSM8csPwjp9T4DLcbwg3mCj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1011 malwarescore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070048
+Message-ID: <trinity-57600902-afb6-42f3-8cf5-54a07710f979-1728284364104@3c-app-gmx-bap03>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Frank Wunderlich <linux@fw-web.de>, Chaotian Jing
+ <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
+ ansuelsmth@gmail.com
+Subject: Aw: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 7 Oct 2024 08:59:24 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <p7lqqhet6ahmvieh5xaws6ugsnasmuw6k4oajkmfcctuhrs4dn@quvrkmyof5ss>
+References: <20241006153447.41377-1-linux@fw-web.de>
+ <20241006153447.41377-2-linux@fw-web.de>
+ <p7lqqhet6ahmvieh5xaws6ugsnasmuw6k4oajkmfcctuhrs4dn@quvrkmyof5ss>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:NJAHfrORCcCOW2WN7H4bEoinSF2FWIRros/25USaRXG8LWD+9GYkr8WuevawXQ3d+J4U3
+ Vr2C+PSULryIEv5iClhfCZN+53sAfZc+AL/mrTFcusc+1juiHHrgXf2vX3X1CkuSpBvSzTFgIfsQ
+ BH6/dRvkxdPuW3Dypod9GtfKpOfdWR78bsu2Diu/HBwsJB2tYb+QrkMaNpDk25uddO8CdSxfiZhg
+ ccbiMYchPo4zoNk5bTkMjuQ/IUOgbRVoxpTqDYF/zZORH4XmZkMDww7yaqVWTX3Uy70TxR1ljSE3
+ /w=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zD0Pvuez3Bs=;Po0PEr/OdsOQdAkD0FLE28bTugq
+ Xpu/NvntrZGibvMH6upFmsHmHqwxchB/+RSy4RD9dA5LiJOi5OzvTPMMlrhgx47eLAnqk+/M/
+ 3sMDLKZUY5MI5Ab5VGZSUZZ1oEqo2Iu5opMvGCyuLjhxBtYIRui3iZoiEN/9q8/UTnC58vuPj
+ /9Jrligsv6r2F0cNWWomgpaErws9JutZjvhLpIdir7nP3ORYlMqCVnYnvSVBWkNQusLrfoT6G
+ DZ3zUafDXhbLV9sIj4N4cxmOQJmtKM5GEXXkJx5hIU80HG3RDmm//oARnkwnzwgbDaUvWCASf
+ kKSgx4xPZyg+xKw4cg4BQkDIoJQ5r3fBQY5LH+In1t/5s5npWmrdraZXvrT9xEV/aGe6Jl7VQ
+ rWIK7UCSfsIHYwIx4LkDLLpSD4NXRXJF8w1uYKvcJ2/zuk5xmBstMYbG9+C3KDloGb5uDYm/S
+ ggLg+OfKtdf6jlJJUUCAXjDvd2vq1dPJ++Pck695F01WtTXyToUJ8d7FuKaieqIxPFs46C822
+ pvUo7sAFUP0gTaPhBl8t1Apz1EY5bx/Tk2KIe8OaM8Fby+oCF73s5eXr7SV0oWdg7nj+O+lph
+ v5sX98c9muDq6kPRg8q5pTMUKTvGdnck1hLp6cE2WNvNNcbYBlxKz8jfQUb34A2MxG9i3pva/
+ EAdpp5xRoGP2U7rnqqwEZZTyQsB/xSzSRv/XdbB2oQ==
+Content-Transfer-Encoding: quoted-printable
 
+> Gesendet: Montag, 07. Oktober 2024 um 07:55 Uhr
+> Von: "Krzysztof Kozlowski" <krzk@kernel.org>
+> An: "Frank Wunderlich" <linux@fw-web.de>
+> Betreff: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+>
+> On Sun, Oct 06, 2024 at 05:34:45PM +0200, Frank Wunderlich wrote:
+> > From: Frank Wunderlich <frank-w@public-files.de>
+> >
+> > Add binding definitions for mmc on MT7988 SoC.
+> >
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> > v2:
+> > - fixed minItems to 4
+> > ---
+> >  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 ++++++++++++++++++=
++
+> >  1 file changed, 24 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Docum=
+entation/devicetree/bindings/mmc/mtk-sd.yaml
+> > index c532ec92d2d9..7380f72ea189 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > @@ -21,6 +21,7 @@ properties:
+> >            - mediatek,mt7620-mmc
+> >            - mediatek,mt7622-mmc
+> >            - mediatek,mt7986-mmc
+> > +          - mediatek,mt7988-mmc
+> >            - mediatek,mt8135-mmc
+> >            - mediatek,mt8173-mmc
+> >            - mediatek,mt8183-mmc
+> > @@ -263,6 +264,29 @@ allOf:
+> >              - const: bus_clk
+> >              - const: sys_cg
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - mediatek,mt7988-mmc
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 4
+>
+> Drop
+>
+> > +          items:
+> > +            - description: source clock
+> > +            - description: HCLK which used for host
+> > +            - description: Advanced eXtensible Interface
+> > +            - description: Advanced High-performance Bus clock
+> > +        clock-names:
+> > +          minItems: 3
+>
+> This is still wrong... anyway, drop.
 
+arg, sorry again...i should triple-check all before resending.
 
-On 10/7/2024 4:23 AM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> cfg80211_background_cac_abort() is unused.
-> It got renamed from cfg80211_offchan_cac_abort by commit
-> a95bfb876fa8 ("cfg80211: rename offchannel_chain structs to background_chain to avoid confusion with ETSI standard")
-> 
-> and that was originally added in commit
-> 1507b1531981 ("cfg80211: move offchan_cac_event to a dedicated work")
-> but never used.
-> 
-> To me it looks like the queue is still used (I see a queue_work
-> in __cfg80211_radar_event), so I think it's just the wrapper that's
-> unused.
-> 
-> Remove cfg80211_background_cac_abort.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->   include/net/cfg80211.h | 9 ---------
->   net/wireless/mlme.c    | 8 --------
->   2 files changed, 17 deletions(-)
-> 
-> diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-> index 69ec1eb41a09..fd843a519329 100644
-> --- a/include/net/cfg80211.h
-> +++ b/include/net/cfg80211.h
-> @@ -8752,15 +8752,6 @@ void cfg80211_cac_event(struct net_device *netdev,
->   			enum nl80211_radar_event event, gfp_t gfp,
->   			unsigned int link_id);
->   
-> -/**
-> - * cfg80211_background_cac_abort - Channel Availability Check offchan abort event
-> - * @wiphy: the wiphy
-> - *
-> - * This function is called by the driver when a Channel Availability Check
-> - * (CAC) is aborted by a offchannel dedicated chain.
-> - */
-> -void cfg80211_background_cac_abort(struct wiphy *wiphy);
-> -
->   /**
->    * cfg80211_gtk_rekey_notify - notify userspace about driver rekeying
->    * @dev: network device
-> diff --git a/net/wireless/mlme.c b/net/wireless/mlme.c
-> index 4dac81854721..8ec236bbbc7c 100644
-> --- a/net/wireless/mlme.c
-> +++ b/net/wireless/mlme.c
-> @@ -1226,14 +1226,6 @@ void cfg80211_background_cac_abort_wk(struct work_struct *work)
->   				      NL80211_RADAR_CAC_ABORTED);
->   }
->   
-> -void cfg80211_background_cac_abort(struct wiphy *wiphy)
-> -{
-> -	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
-> -
-> -	queue_work(cfg80211_wq, &rdev->background_cac_abort_wk);
-> -}
-> -EXPORT_SYMBOL(cfg80211_background_cac_abort);
-> -
+but dropping means the global 2 is used (making axi+ahb optional), or am i=
+ wrong? afaik "minItems: 4" is right here
 
-We have an internal WIP ath driver implementation for background radar feature
-calling this function to notify the background CAC abort state. There is definitely
-real use case for this function.
+> Best regards,
+> Krzysztof
+>
 
-Vasanth
+regards Frank
 
