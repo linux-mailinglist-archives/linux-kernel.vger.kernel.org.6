@@ -1,210 +1,116 @@
-Return-Path: <linux-kernel+bounces-354154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3447299386E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:40:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F59993876
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7ADD284E8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:40:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65194B2220D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CA91DE4FA;
-	Mon,  7 Oct 2024 20:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A761DE898;
+	Mon,  7 Oct 2024 20:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K1egh3ae"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MuEtJFG8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F78C81727;
-	Mon,  7 Oct 2024 20:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C02081727;
+	Mon,  7 Oct 2024 20:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728333644; cv=none; b=JD7Q1RmB+CZ2nTcOG1xsU90kLwU8WfxAQuKTEjBEYdNFEFdm+dtMiNHv4Gf/+6VbAwdjKHwZei4B9qtw1RvZfcSejPo6gCJJpYXZIvbDAkQuPyD8M5b1DLAj67/PZbBJHa13w2Sb/NTgyLa57/Ova+Kd/D/VqZiAO9Nmn9mLE9s=
+	t=1728333835; cv=none; b=N26Ai19jI8O4/dkj4GPSBduhKnrmBaOOG3jafBBzNXwBXvspf7EEBQ3RiNoaMSV6AKsaLtCYfdsJAHICSp6IBDw9YXIaLo3u26G5Z7xHtz/Ez8x/9scjWOKw47hZWOCC1vNxGaQVAG3ZJ0O7xjR0C6YioorZUlkxsaHm7agKELk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728333644; c=relaxed/simple;
-	bh=FLCwmZ/Hn/iyF5AwvBG6cLSb/FnSNdu7VYbYWE8S6oI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TGaHHg//t8vAsFSANvJ5DIQr1BkMhaZ2ctaHqJsK1vMs9vsEj/bydJMrTkTx3VVxZ0CS5kwN0dNUo0uVnOXCmDlbv+BodCkUdtTN72DrCAtj+NXcTRyQF8+9A8DDunUhye8Ys4C+iPJ9n54r09PZfjVzON/i7KSTezJpRMXv1H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K1egh3ae; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497KdOU0017237;
-	Mon, 7 Oct 2024 20:40:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XPSKTPCTTPqJMs0Azumv01NrakAMCZY5uO45cD8tIxg=; b=K1egh3aeU6PtPU+m
-	XLYKMuUmzd+IErNoTmhq7TbHc19M7Z9Co/6FrMB1UI89o6cFClSKctVOojU2JzKi
-	61V/GHFtrJTOPTuUBizJRlBYtrjVuURo2V3rAj79vtU4emhfzwQJzGGHFKyTXg6l
-	2TNBGWLCDNU3aDXaB7q1XAvhHnWa69vVAQmdKMGNN9DZiJfzoKSlIVg6XjURln8j
-	uCLpOPbdkfMGs2OBjyxcRTWPxsXJONuoN7zgV6A4KCNCSl41NH6YaJ588FQaCVAw
-	B8KUTu6ICPt/12jk8sGnLdgXA4SJHpb9/8zfe36fpiFGps2KnQyjs4IpuFCE9or4
-	NBi/7w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaerg1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 20:40:37 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497Ke7mo013908
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 20:40:07 GMT
-Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 13:40:05 -0700
-Message-ID: <87f778cf-0e1e-4505-a0e8-7434316a9537@quicinc.com>
-Date: Tue, 8 Oct 2024 02:10:02 +0530
+	s=arc-20240116; t=1728333835; c=relaxed/simple;
+	bh=iD6K7rerHt+BmbV3rXcVuFLHnGOchmZqRMEFAw2pqY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YIB8sQIXsunia5KIpAoqoe6W5r3cv/G4Wqsj+Yojad0o9lm5MidcNuQSIVvhiL8+zUySx/666FGbEND7zPNRY+0ccuY7z7UbYk/16yYe96z5F3nsempODPjIBuERgBG2wWt2X/Dssx3LvSR6FfIlPxqmG/x4YOvyb+09I2tBLXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MuEtJFG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84766C4CEC6;
+	Mon,  7 Oct 2024 20:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728333834;
+	bh=iD6K7rerHt+BmbV3rXcVuFLHnGOchmZqRMEFAw2pqY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MuEtJFG8fnFYhq3I+Bk4unZGxAo+9VluXYLaHsTku/5Y2bn+P8Uo2Uz5FJkDINdKf
+	 U21kcX3lz/UivCFWutBxUACSaFTSzIYdRx38uvHehBwhSKz+gbiFNEq+fOLnG0vSOd
+	 c9I2I1czOiqX0LgL+0ur3IYS/t0122jK8xKSsaQPL9G0Jo+edye2uDHz6ob97DtUxq
+	 SFjB2c0BLddatYpjraaOwwJWQcRpwUAS9Ck6IFRJ9wgw14wROgJkmOPPpLPfbaP0Gv
+	 UJTU7WJ6Chq9T2EFFCRkbKqFDkbysasznOl6ueM8zt3NSsh5D7UmCX6IzleL4QtlD5
+	 e4ci1Krujly3A==
+Date: Mon, 7 Oct 2024 15:43:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
+	galshalom@nvidia.com, leonro@nvidia.com, jgg@nvidia.com,
+	treding@nvidia.com, jonathanh@nvidia.com, mmoshrefjava@nvidia.com,
+	shahafs@nvidia.com, vsethi@nvidia.com, sdonthineni@nvidia.com,
+	jan@nvidia.com, tdave@nvidia.com, linux-doc@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4] PCI: Extend ACS configurability
+Message-ID: <20241007204352.GA449721@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Qingqing Zhou <quic_qqzhou@quicinc.com>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
- <mgdj5xvqby3ftnnhma7dxvxskavx4p2pkzyorg4z3cza5xkimr@sqe4k2szwfbq>
-Content-Language: en-US
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-In-Reply-To: <mgdj5xvqby3ftnnhma7dxvxskavx4p2pkzyorg4z3cza5xkimr@sqe4k2szwfbq>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: x23qsIMJTBjEfkr5cq9gLwJnm7sWz66e
-X-Proofpoint-GUID: x23qsIMJTBjEfkr5cq9gLwJnm7sWz66e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
 
+On Wed, Sep 25, 2024 at 07:06:41AM +0200, Jiri Slaby wrote:
+> On 25. 06. 24, 17:31, Vidya Sagar wrote:
+> > PCIe ACS settings control the level of isolation and the possible P2P
+> > paths between devices. With greater isolation the kernel will create
+> > smaller iommu_groups and with less isolation there is more HW that
+> > can achieve P2P transfers. From a virtualization perspective all
+> > devices in the same iommu_group must be assigned to the same VM as
+> > they lack security isolation.
+> > 
+> > There is no way for the kernel to automatically know the correct
+> > ACS settings for any given system and workload. Existing command line
+> > options (ex:- disable_acs_redir) allow only for large scale change,
+> > disabling all isolation, but this is not sufficient for more complex cases.
+> > 
+> > Add a kernel command-line option 'config_acs' to directly control all the
+> > ACS bits for specific devices, which allows the operator to setup the
+> > right level of isolation to achieve the desired P2P configuration.
+> > The definition is future proof, when new ACS bits are added to the spec
+> > the open syntax can be extended.
+> > 
+> > ACS needs to be setup early in the kernel boot as the ACS settings
+> > effect how iommu_groups are formed. iommu_group formation is a one
+> > time event during initial device discovery, changing ACS bits after
+> > kernel boot can result in an inaccurate view of the iommu_groups
+> > compared to the current isolation configuration.
+> > 
+> > ACS applies to PCIe Downstream Ports and multi-function devices.
+> > The default ACS settings are strict and deny any direct traffic
+> > between two functions. This results in the smallest iommu_group the
+> > HW can support. Frequently these values result in slow or
+> > non-working P2PDMA.
+> > 
+> > ACS offers a range of security choices controlling how traffic is
+> > allowed to go directly between two devices. Some popular choices:
+> >    - Full prevention
+> >    - Translated requests can be direct, with various options
+> >    - Asymmetric direct traffic, A can reach B but not the reverse
+> >    - All traffic can be direct
+> > Along with some other less common ones for special topologies.
+> > 
+> > The intention is that this option would be used with expert knowledge
+> > of the HW capability and workload to achieve the desired
+> > configuration.
+> 
+> Hi,
+> 
+> this breaks ACS on some platforms (in 6.11). See:
+> https://bugzilla.suse.com/show_bug.cgi?id=1229019
 
-On 10/7/2024 7:10 AM, Bjorn Andersson wrote:
-> On Sat, Oct 05, 2024 at 07:31:49PM GMT, Kuldeep Singh wrote:
-> 
-> Please shorten the subject a bit, perhaps:
-> "firmware: qcom: scm: Improve unsupported SHM bridge detection"
-> 
->> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
->>
->> Currently for enabling shm bridge, QTEE will return 0 and put error 4 into
-> 
-> s/for/when/
-
-Ack.
-
-> 
->> result[0] to qcom_scm for unsupported platform, tzmem will consider this
->> as an unknown error not the unsupported case on the platform.
->>
->> Error log:
->> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
->> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
->>
->> Change the function call qcom_scm_shm_bridge_enable() to remap this
->> result[0] into the unsupported error and then tzmem can consider this as
->> unsupported case instead of reporting an error.
->>
-> 
-> Sounds like we want a Fixes tag here.
-
-Ack.
-
-> 
->> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
->> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
->> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
->> ---
->>  drivers/firmware/qcom/qcom_scm.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
->> index 10986cb11ec0..620313359042 100644
->> --- a/drivers/firmware/qcom/qcom_scm.c
->> +++ b/drivers/firmware/qcom/qcom_scm.c
->> @@ -111,6 +111,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
->>  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
->>  };
->>  
->> +enum qcom_scm_shm_bridge_result {
->> +	SHMBRIDGE_RESULT_NOTSUPP	= 4,
->> +};
-> 
-> This is not an enumeration, but a fixed defined constant. Please use
-> #define.
-
-Ack.
-
->> +
->>  #define QSEECOM_MAX_APP_NAME_SIZE		64
->>  
->>  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
->> @@ -1361,6 +1365,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
->>  
->>  int qcom_scm_shm_bridge_enable(void)
->>  {
->> +	int ret;
->> +
->>  	struct qcom_scm_desc desc = {
->>  		.svc = QCOM_SCM_SVC_MP,
->>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
->> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
->>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
->>  		return -EOPNOTSUPP;
->>  
->> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
->> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
->> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
->> +		return -EOPNOTSUPP;
->> +
->> +	return ret ?: res.result[0];
-> 
-> I'd prefer, with the additional check, that you'd structure it like this:
-> 
-> 	if (ret)
-> 		return ret;
-> 
-> 	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> 		return -EOPNOTSUPP;
-> 
-> 	return res.result[0];
-
-Sure, above looks more cleaner. Will update in next rev.
-
-> 
-> That way we deal with SCM-call errors first, otherwise we inspect and
-> act on the returned data.
-> 
-> That said, the return value of this function, if non-zero, will trickle
-> back to and be returned from qcom_scm_probe(), where Linux expects to
-> see a valid error code. Are there any other result[0] values we should
-> handle, which would allow us to end this function with "return 0"?
-
-As qcom_scm_shm_bridge_enable() is an shm enablement call, need to handle
-supported(or unsupported) scenario appropriately and other errors can be
-propagated to qcom_tzmem/qcom_scm_probe.
-
-Please note, other return values(related to access control) from QTEE are
-failures and do not require conversion to Linux error codes.
-
--- 
-Regards
-Kuldeep
+#regzbot introduced: 47c8846a ("PCI: Extend ACS configurability")
+#regzbot link: https://bugzilla.suse.com/show_bug.cgi?id=1229019
 
