@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-354078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D73993776
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F1299377B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D6EB22925
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46A61C23849
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916E1DE3AF;
-	Mon,  7 Oct 2024 19:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883931DE3C8;
+	Mon,  7 Oct 2024 19:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJQMn+7s"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e4ZT6AZP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA91DDC11;
-	Mon,  7 Oct 2024 19:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00EB1DE3B0;
+	Mon,  7 Oct 2024 19:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329750; cv=none; b=NBcyT8sNl+sEJf/ykyjLc3EjUD+cxwl5eXSOY6oaRMzJpRnKhCp9FJe/fHath7npE/1VlRagHH5r/A6uhZb0dOOrUXiaj4CbB2twd5kOFLGHQHJkduN3Sy/O69AoYAAItgxZVf0HRVc1TDKcg+0a4Lai9oijt56MATvQItjKSzc=
+	t=1728329765; cv=none; b=rZ5RWQSOFp19DvVStFe6vr3NoylCAkbYiRwy/PITB4JIJq6Yo7rv9E1sA2UwDJUrKH3Ufj1F2rEHDfoOJfwRu5w+ZO5EdveMDS3QDgR7QdCq2+jIunz5RMVpTacD5gjoqjMLaigPbwoJIZXh8jZl5+IYvH6wB4jeZZHUqkbGBMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329750; c=relaxed/simple;
-	bh=kWFLwWrcIf/mtTgEjy31aroiIFL3jKyoADoPkk0mT5Q=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSWLlVZKy8YajsKRBaWuyz8BMG9qvRwvj8IPFyvcbavykoGSygD493fp3YkiNjjvP7kmrIMzNfwiL9lKjkXhmVDcRa4I9mjinW6jo/E+o25izYFdthAxmn28CJEUJzv9jcYyudKQGx0Xdifpj/BxIt047Ku3Yu+11iotHm4Kn+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJQMn+7s; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cafda818aso50046535e9.2;
-        Mon, 07 Oct 2024 12:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728329748; x=1728934548; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0bheIRjcH4v7VE2ENqH0F2Pl1AX1kVV8vBl4CU3cvNQ=;
-        b=iJQMn+7sbZWHGNasF32v5G8xGK95GeyfzEGwcbEi4401cJNcS1P/a+eTI5Sejw5ZhH
-         JsOZS+U7wY/ELsbAdOIPvUqXygXSu01R3y4xDFYti9QO2onRgudRrYf4q0aLimAbCxMu
-         KJqwOZMHV545+nSOTfIjiT5YsQSD0E/ZCrxeIOyr71cs6Pm5D8TMCvBo3goOMKN8grIs
-         i9Jx8Z5NpWk0jt+0sRtsa3x2aHMyEPNV44T3jW93918K9LUi7cHOQiVCcRadWVWqWEuj
-         rUfGETMKhJn5ipFnRIFbCKjfGhikC5WpCUykovhytq1/8t9HwoulNHdYt5t4H0gboDxw
-         NrAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728329748; x=1728934548;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0bheIRjcH4v7VE2ENqH0F2Pl1AX1kVV8vBl4CU3cvNQ=;
-        b=qq443VxbgZjqMmWj0K3LIAfGaa1GqycqRwn6B9wptVyj4VuiJVsVUWCQ1MkwlP1mfT
-         aH5jhTMt3rXSguXgu3O9iDStNPmBCXLVNmSlqAquJaKgUfN0uelV+GEfnt9Vp//5AtsC
-         LAjHWaLEK2MJ+bT0Vd2xS9c1vbJfYmfgcK8mvtcRhj9AQPgmRFjbuVuqgJ2BvULuAnP6
-         WLViEL279om/NCz0MLkVhZtUSwciUaF1BBIHrzcjeOJpQfGb6eivC5n3FwoYBt8bFI1b
-         C+VFw/uyOp9DHFHyba5nWdPNBJuzFasnJdC67MPIyaFN9OgrtZ9kYL7BvK5KcOPgDVjK
-         h3FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHr67Spa6g0bgvP5uiYX03ctdjj2KxAqBZe2GcBIGXlDhZR5T8cm6c1VjUmYetdRT6jiKjTwrtEvVlVMGu@vger.kernel.org, AJvYcCXpLyb8ZZQsssczFU4FBQeQL0yQIFMmUZH2IvUTXXH/vjDdvayY2e+DBnxXIirtkteRYyeI8X8UHJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo3vIkdoXx9XPCcJHeq30qIhvbvTTc5w9rkx3/fQv2uS/b6U3I
-	9fxkuETK76vvLbaK81/u34xcjYR6KKUhHF+M8WzPFK3OiyvTpVB2
-X-Google-Smtp-Source: AGHT+IG6upGYaHHo24Hk2+tzgPUF/utiefOnGhp8zXryEhAE3VO+BitbA5i/WjhrVNeW9Ub0kQJzQA==
-X-Received: by 2002:a05:600c:1d20:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42f85aef0c8mr93954645e9.30.1728329747225;
-        Mon, 07 Oct 2024 12:35:47 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:b658:eac0:bb05:9042])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89eaabd0sm84397095e9.24.2024.10.07.12.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 12:35:46 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Mon, 7 Oct 2024 21:35:44 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, dan.carpenter@linaro.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] pressure: bmp280: Improve pushing of data to
- buffer
-Message-ID: <20241007193544.GA64797@vamoiridPC>
-References: <20240930202353.38203-1-vassilisamir@gmail.com>
- <20241006150517.00dada74@jic23-huawei>
+	s=arc-20240116; t=1728329765; c=relaxed/simple;
+	bh=Xsgc5Pdw+KK67mn4AZN9ETwiLbrQZLAUVL7JeM3gwxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f7wIDn+2DFeWSmTRVfe1TI4MRdIbiAdrGUE6TB7Y/ZbN4DGZ9yBpDOHZKjtbqpU5PKyaI81743ULSMlcrkvcXcRWk6IaILYFZ0Z6IxbZms45yUj1xtWIJoCaYgr3EinvSZHVPuoWwAGEvYIXJesER+ZmpyAMvv9eeyuOasK114k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e4ZT6AZP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497F81Le032294;
+	Mon, 7 Oct 2024 19:35:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wpog1ABLB2x8/aZCselyEutmW3wSs/BapgUEkqGBFQo=; b=e4ZT6AZPIzHDHarR
+	bGIv0FVpnyIAcZ8FBuKggQygvBhq+pSOq2bPQ4BQjq949lCQ4/4js3EySK4HEyNy
+	fVHSIdPrOvmvvnbjEa9+H6sfFUf5Afl/mmxuetg8u4UR7TKRPY7gLW2nfuBUUd3i
+	NoCu82l+LHwYw38OKOcPG/Krof/y9ccKiDzUi8nKkl6CfH0YxfNPYoVrzGZX+WeI
+	bwG5xohmIybjcQYo4Le4Hm9ayb3BdWusD/AlNRswieE9/Ge32hyd93/9T9QHZcpy
+	gjC1Ngn0ryTQ8AQuNZviaqgdTyvCwtSkiQA52Q2BRe5C/56s8z+2GMkSg7CTbjfj
+	b7ynuQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv8d5am-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 19:35:58 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497JZvrp020809
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 19:35:57 GMT
+Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 12:35:55 -0700
+Message-ID: <5b4510dc-bc41-4fd4-b06b-75a3f0c25309@quicinc.com>
+Date: Tue, 8 Oct 2024 01:05:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006150517.00dada74@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] qcom_tzmem: Enhance Error Handling for shmbridge
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <CACMJSesUCVXu8qdFgp88KL9KZxL80ki0UE09f5ciEbe23NvamA@mail.gmail.com>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <CACMJSesUCVXu8qdFgp88KL9KZxL80ki0UE09f5ciEbe23NvamA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -ixQMf7AWZZwAuuiBK6Ywie2orgJMNI_
+X-Proofpoint-GUID: -ixQMf7AWZZwAuuiBK6Ywie2orgJMNI_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=603 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410070135
 
-On Sun, Oct 06, 2024 at 03:05:17PM +0100, Jonathan Cameron wrote:
-> On Mon, 30 Sep 2024 22:23:51 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Changes in v3:
-> > 
-> > [PATCH v3 1/2]:
-> > 	- Remove fixes tag
-> > 
-> > [PATCH v3 2/2]:
-> > 	- Use internal s32 *chans variable to better visualize what is
-> > 	  taking place in the data->sensor_data.
-> > 	- Use proper size/alignment to the data->sensor_data.
-> > 
-> > P.S. After this patchseries is applied, I will rebase this [1] and resend it.
-> > 
-> > [1]: https://lore.kernel.org/linux-iio/20240914002900.45158-1-vassilisamir@gmail.com/
-> Applied to the togreg branch of iio.git and pushed out as testing for all the normal
-> boring reasons.
-> 
-> Thanks,
-> Jonathan
-> 
 
-Hi Jonathan, thanks a lot!
-
-Cheers,
-Vasilis
-
-> > 
-> > ---
-> > v2: https://lore.kernel.org/linux-iio/20240929112511.100292-1-vassilisamir@gmail.com/
-> > v1: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com/
-> > 
-> > Vasileios Amoiridis (2):
-> >   iio: pressure: bmp280: Use unsigned type for raw values
-> >   iio: pressure: bmp280: Use char instead of s32 for data buffer
-> > 
-> >  drivers/iio/pressure/bmp280-core.c | 69 +++++++++++++++++++-----------
-> >  drivers/iio/pressure/bmp280.h      |  4 +-
-> >  2 files changed, 46 insertions(+), 27 deletions(-)
-> > 
+On 10/7/2024 7:55 PM, Bartosz Golaszewski wrote:
+> On Sat, 5 Oct 2024 at 16:02, Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
+>>
+>> This patchset addresses the tzmem driver probe failure caused by
+>> incorrect error handling. The qcom_scm_shm_bridge_enable() SCM call
+>> captures SCM success/failure in a0 and E_NOT_SUPPORTED in a1.
+>>
+>> Previously, qcom_scm returned values based solely on a0, without
+>> capturing not_supported scenario. This patchset corrects that behavior.
+>>
 > 
+> Ah, I guess this may be the reason for the SHM bridge enablement to
+> seemingly work on certain platforms and then lead to crashes when we
+> actually try to use it?
+
+This patchset corrects the behavior for handling unsupported SHM bridge scenarios.
+If the SHM bridge is supported and enabled for a target, any subsequent failures
+should be investigated to understand what went wrong.
+I am willing to put effort in that case.
+
+-- 
+Regards
+Kuldeep
 
