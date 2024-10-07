@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-353014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF4B992747
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5419992748
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16A41C22A66
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2C01F23A2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5823618C92D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBB118C930;
 	Mon,  7 Oct 2024 08:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h/gz3C67"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZH2WuKN/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C0218C010
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1CA18C320
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290392; cv=none; b=ai2cKD4L9RGM15322Kba4oNOJ72/sjer7dbmDoMNW49Gl9kdySNOZLqZi9Linf0jhhrAp6HHXtwLJR8kbQIEMCH0qyLBQlqKxXn5TvsE+c3zV8Rg0X+/bQ6cOCGPZQ/m9ZJRz4qK4wFfkAg6blhkvBDtmd4OKt28lpFNBAAASFE=
+	t=1728290392; cv=none; b=rs33M+m3YAJOn8hlE5366DKxmqYrmVBRxbYcqSc/B1Fw6dgc/jn3Cfl3HzNK3BzCKxOAVc24tIptsadXFQraHDdmtC//HoDmMV0gkIrBi0GYYJI1DL48t9Z7Grbs6Gupje0855SrzzfiPZdU9YKFXy1kF6vi9T4LBTnAl4GVNWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728290392; c=relaxed/simple;
-	bh=Cpxk5Im5ngM99DexiGUWT69kPu1oQ83W2z1L0o3ev80=;
+	bh=Ut2lcSavUtGyPeqZkUohdMVHJn/A1rbJ5pE/G3PfoOw=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=oByTpxws/EZcnEyv0bOKsi4GDqIPB8/dPz+fHJ9a42GD8oPaAAvauzo6sjvOtHQZID0ZSIzAEEmhuPI06Lemy3KeomPHqv8ciIS+nnIkThZBpQApg+UrgYgMliXLW4rXSc5kXp5hKFfETfrGAkckrjc75fvk77YawMVsS+cYVc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h/gz3C67; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=ZmQYBiS0nCOFNKPzFNLo8eUpspU5RtXfOiRkVN20jDeI0ZWJgX52Pp0mUSk3IMOSZOrZRuPQWSXC72MO1V906qCjDOp+ft6RXioiAaB9wBdzsTh++cH91vBBKRUv06BW//7GOExkbxDwEumweflrLkO0xahkY0CUs+on6dmVRpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZH2WuKN/; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=W/DmNCV4/IlgXq8PShr2+w7xcmnCVM2NAjS4XwHJ5yY=; b=h/gz3C67iG1+2hhXyG5P6wooM3
-	tZgPorNyghsZzmWQ1gAmsBgprmyKkcmyKwREh65nP3LXJ8cYkrkPvSKXSocFgWheAIur6DBSIrRkr
-	gOGWfqiDoxeu0pozIjE6b/VqkQ8mdWPUhAo2LyQxFzxsfYMu3mdvdbR+0GQIk/pS02kPcY6l93D0H
-	UP3h07b7P51pw336tUL+RJPnehFes2X3lrKgTmpmSQN+o8kjdfw2spp7fPR+6g8PAxPG9dQfSuMu/
-	B1TM/vvr5T97m6KdUELkL6TuQKLOjg4YIOVGwCWVe4n/g4yP7ZgQBJoFvcXIJ/YXV1MlEEX5pCv0h
-	lzV4tRHA==;
+	bh=s1RO5cKcyIN6ns8T+miEdu09ZPebYXBl3XbyqJEzmio=; b=ZH2WuKN/frKoinsqLIBeS52WDO
+	MFH/l1IUEv09O0ADoyHUx0u5+TAGUMEw1yUgXOvYl8NLJ1IjZMG8cvFaVC+Xzr4SETZY+Aquxovnp
+	k20byD9WsPnl9I4aXZAHhCp+sCRQDgRtdR+gyQY8z2pAIL9GhFSQcHweNYtLifuKYiBcBmhVL7Rj+
+	anb+G0PiztAdZ0RGykHtSzaZv8W4KORMHsFM6gEQ1NsvghVkEa9xWyHKmAAukkQKeP347ou+x7W+J
+	3qG3dezjJBjq01eyqoAP9k8aRgX3cBDrZPOffL/iWCjMt+IS6p521tf04RxRkjjaphxkO8DvZn3cV
+	M6wKe5sQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxjHN-0000000H0Wg-1PkR;
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxjHN-00000004OLz-3KaS;
 	Mon, 07 Oct 2024 08:39:46 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id E0A3B300ABE; Mon,  7 Oct 2024 10:39:44 +0200 (CEST)
-Message-Id: <20241007083844.013379820@infradead.org>
+	id E4C5C30221D; Mon,  7 Oct 2024 10:39:44 +0200 (CEST)
+Message-Id: <20241007083844.119369498@infradead.org>
 User-Agent: quilt/0.65
-Date: Mon, 07 Oct 2024 10:32:11 +0200
+Date: Mon, 07 Oct 2024 10:32:12 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: bp@alien8.de,
  david.kaplan@amd.com,
@@ -56,7 +56,7 @@ To: bp@alien8.de,
 Cc: linux-kernel@vger.kernel.org,
  peterz@infradead.org,
  x86@kernel.org
-Subject: [RFC][PATCH 1/2] x86: Provide assembly __bug_table helpers
+Subject: [RFC][PATCH 2/2] x86: Clean up default rethunk warning
 References: <20241007083210.043925135@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,84 +66,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Rework the __bug_table helpers such that usage from assembly becomes
-possible.
+Replace the funny __warn_thunk thing with a more regular
+WARN_ON_ONCE(), and simplify the ifdeffery.
+
+Notably this avoids RET from having recursive RETs (once from the
+thunk and once from the C function) -- recursive RET makes my head
+hurt for no good reason.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/bug.h |   50 ++++++++++++++++++---------------------------
- 1 file changed, 21 insertions(+), 29 deletions(-)
+ arch/x86/entry/entry.S               |    3 ---
+ arch/x86/include/asm/nospec-branch.h |    2 --
+ arch/x86/kernel/cpu/bugs.c           |    5 -----
+ arch/x86/lib/retpoline.S             |   20 ++++++++++++--------
+ 4 files changed, 12 insertions(+), 18 deletions(-)
 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -28,46 +28,38 @@
- #ifdef CONFIG_GENERIC_BUG
+--- a/arch/x86/entry/entry.S
++++ b/arch/x86/entry/entry.S
+@@ -10,8 +10,6 @@
+ #include <asm/segment.h>
+ #include <asm/cache.h>
  
- #ifdef CONFIG_X86_32
--# define __BUG_REL(val)	".long " __stringify(val)
-+#define ASM_BUG_REL(val)	.long val
- #else
--# define __BUG_REL(val)	".long " __stringify(val) " - ."
-+#define ASM_BUG_REL(val)	.long val - .
+-#include "calling.h"
+-
+ .pushsection .noinstr.text, "ax"
+ 
+ SYM_FUNC_START(entry_ibpb)
+@@ -45,4 +43,3 @@ EXPORT_SYMBOL_GPL(mds_verw_sel);
+ 
+ .popsection
+ 
+-THUNK warn_thunk_thunk, __warn_thunk
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -387,8 +387,6 @@ extern void clear_bhb_loop(void);
+ 
+ extern void (*x86_return_thunk)(void);
+ 
+-extern void __warn_thunk(void);
+-
+ #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
+ extern void call_depth_return_thunk(void);
+ 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -3025,8 +3025,3 @@ ssize_t cpu_show_reg_file_data_sampling(
+ 	return cpu_show_common(dev, attr, buf, X86_BUG_RFDS);
+ }
  #endif
+-
+-void __warn_thunk(void)
+-{
+-	WARN_ONCE(1, "Unpatched return thunk in use. This should not happen!\n");
+-}
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -12,9 +12,14 @@
+ #include <asm/percpu.h>
+ #include <asm/frame.h>
+ #include <asm/nops.h>
++#include <asm/bug.h>
  
- #ifdef CONFIG_DEBUG_BUGVERBOSE
-+#define ASM_BUGTABLE_VERBOSE(file, line)				\
-+	ASM_BUG_REL(file) ;						\
-+	.word line
-+#define ASM_BUGTABLE_VERBOSE_SIZE	6
-+#else
-+#define ASM_BUGTABLE_VERBOSE(file, line)
-+#define ASM_BUGTABLE_VERBOSE_SIZE	0
+-	.section .text..__x86.indirect_thunk
++#define WARN_ONCE							\
++	1: ALTERNATIVE "", "ud2", X86_FEATURE_ALWAYS ;			\
++	ASM_BUGTABLE_FLAGS(1b, 0, 0, BUGFLAG_WARNING | BUGFLAG_ONCE) ;	\
++	REACHABLE
+ 
++	.section .text..__x86.indirect_thunk
+ 
+ .macro POLINE reg
+ 	ANNOTATE_INTRA_FUNCTION_CALL
+@@ -382,16 +387,15 @@ SYM_FUNC_END(call_depth_return_thunk)
+ SYM_CODE_START(__x86_return_thunk)
+ 	UNWIND_HINT_FUNC
+ 	ANNOTATE_NOENDBR
+-#if defined(CONFIG_MITIGATION_UNRET_ENTRY) || \
+-    defined(CONFIG_MITIGATION_SRSO) || \
+-    defined(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)
+-	ALTERNATIVE __stringify(ANNOTATE_UNRET_SAFE; ret), \
+-		   "jmp warn_thunk_thunk", X86_FEATURE_ALWAYS
+-#else
++
++#ifdef CONFIG_X86_64
++	WARN_ONCE
 +#endif
++
+ 	ANNOTATE_UNRET_SAFE
+ 	ret
+-#endif
+ 	int3
++
+ SYM_CODE_END(__x86_return_thunk)
+ EXPORT_SYMBOL(__x86_return_thunk)
  
--#define _BUG_FLAGS(ins, flags, extra)					\
--do {									\
--	asm_inline volatile("1:\t" ins "\n"				\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection\n"					\
--		     extra						\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
--} while (0)
--
--#else /* !CONFIG_DEBUG_BUGVERBOSE */
-+#define ASM_BUGTABLE_FLAGS(at, file, line, flags)			\
-+	.pushsection __bug_table, "aw" ;				\
-+	123:	ASM_BUG_REL(at) ;					\
-+	ASM_BUGTABLE_VERBOSE(file, line) ;				\
-+	.word	flags ;							\
-+	.org 123b + 6 + ASM_BUGTABLE_VERBOSE_SIZE ;			\
-+	.popsection
- 
- #define _BUG_FLAGS(ins, flags, extra)					\
- do {									\
- 	asm_inline volatile("1:\t" ins "\n"				\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection\n"					\
--		     extra						\
--		     : : "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
-+	    __stringify(ASM_BUGTABLE_FLAGS(1b, %c0, %c1, %c2)) "\n"	\
-+			    extra					\
-+		     : : "i" (__FILE__), "i" (__LINE__),		\
-+			 "i" (flags));					\
- } while (0)
- 
--#endif /* CONFIG_DEBUG_BUGVERBOSE */
--
- #else
- 
- #define _BUG_FLAGS(ins, flags, extra)  asm volatile(ins)
 
 
 
