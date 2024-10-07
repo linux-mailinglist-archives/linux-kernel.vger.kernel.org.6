@@ -1,197 +1,171 @@
-Return-Path: <linux-kernel+bounces-353608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A4993040
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E33993042
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F931C223E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5AB22696
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA2F1D7E38;
-	Mon,  7 Oct 2024 14:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Hko1MCZ/"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896FC1D7E21;
+	Mon,  7 Oct 2024 14:59:40 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12A61D54CD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B276A1E49E;
+	Mon,  7 Oct 2024 14:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313132; cv=none; b=Foa41r1r3Prqv6lubNZ9wPHwZr2ENtZOXBVBk7oYihXxl9Kw50D2k2S91Rf9cfZM/o/BfBPUhF70aSdX2JVgfrbt6qotJN/0ejZ2vgG86hPPHGBJXTYTNOI/N+uVZj9RIyV/907wtBECagUsvh8UE+FWcPXH2qrm1UaBTSZ/O+8=
+	t=1728313180; cv=none; b=V/4K3c1i4AqZXbL6v3GpQLewV8j7ktyAK8/wl8FYipNd4QIOrvTm3xbe2k3B7dVjo9PMW1nWxkD3iX4JSDesUiNPnubZdjONifqezoYse0F2CXQrVOqslZpjWvgHeLpKa0Jnudq1KwVeiZsLIawN9ZStlH3x4O9eUVqIf6DNjMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313132; c=relaxed/simple;
-	bh=QBsQhjUyUz1tCiHen3Lowcz+ZZiBnQZMx/wX5smwJVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdhtMRuMur8IC7dRqA7i1eX1HLMtIViTYKJM4gHNMchZxTDSDfCg1YPVmKJl82zV0mVO2cfp1Rm0yXQ5gA3i6xZhSyTpWQRJU/nhL1dLi5bLQlRTYHbGufYk/hDQDamdN0qp5royKAYN2hBnBvt5HUfWpwn6RoAzTnWJ4jdISv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Hko1MCZ/; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7ae491dacaeso546603885a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1728313130; x=1728917930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKkXYRf3CazOv0yTJuEZUWEXywOPV0BtkaPCj1lqhQI=;
-        b=Hko1MCZ//HE39ANamy3pyJhHUMnNwQTupHMwZjneBzA6QQ2J/Emnaaxkl9KjSbjBx0
-         FJAjXlQJ2tIv1IZylirfAXaEGJGuKE5x0xZIhOudSky9+ONNxFHEb+WyYwGPUnyNzrmE
-         F7YsITBu7uziHEQ4tg6tPbZ1nVMwro1LBGUHb4PVlLtzvimd/ur+SwQONPCR7xf8qg3p
-         ooUx2rV56R+EXJ4zhHrTFjj27IdSEu1SG3RrY59q9OutnJlDpNCQD9fHxKdr02mPnmXx
-         NmJ52WwLzZWONHyQEr1dgdPLbwlYPt1lqFmw2Vf4xQFYWCiZ3CfSAFzBEJMLZhGDkkJq
-         fh2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313130; x=1728917930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kKkXYRf3CazOv0yTJuEZUWEXywOPV0BtkaPCj1lqhQI=;
-        b=nzgrTaE/gEAkDjkIi+yxn91i7phYEjhxupq9jlVs3q+qWihPpu4AEBmjnz/SaPsMMc
-         glnKVhy1qWnKQ577f7XtGb2PKUaqcegPSQPAGsUHuJdjK1CF74IZR/XZSkbvsC/OcRcW
-         3RjONalBWxZxVVUg34ULsY3NlWurSCBSB4RfVzvTynpoW29BteDyO+GoNGnuhekmr0NL
-         46+MVudU8Y9Q92rIAPWhi187IdNCSY0I5+jDV7VqXRTdPrR0lgr0O2dJjlsc3k+t/Rn/
-         iX3tiTib4oStQywtXryQtjLPiB6+2OxaDdMrC07yqIsiceEMqA+vA7YXpMlvYNuW1IPy
-         36mA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEm4ljP5XenVU61Q7QhQvrTk8HOALE8GwjQGtO0buIo16B0TTQ+C9DUIz7jqJO0dKotp82X/EcGyPvmw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+zUzhqsPm6GPJwH2A4Bvv62UEp1ffYb2brFmWQwWPth7phISX
-	RFi4xIOaybLM8M3AT/5BngJWIYN8H2wvQY4nq2xwu4JpW9ZRz8FiaqttBt4cyEE=
-X-Google-Smtp-Source: AGHT+IHsLuu+g/YCiRe1EnQsVxFfrwZ3QXsTNYIeeeF4z1PpU/nBB4QTE1vrQPg0iOfC0ehh2vgNow==
-X-Received: by 2002:a05:6214:5889:b0:6c7:c645:f0fb with SMTP id 6a1803df08f44-6cb9a3096aemr206595996d6.18.1728313129677;
-        Mon, 07 Oct 2024 07:58:49 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4751520sm26304086d6.83.2024.10.07.07.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:58:49 -0700 (PDT)
-Date: Mon, 7 Oct 2024 10:58:47 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <20241007145847.GA1898642@perftesting>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+	s=arc-20240116; t=1728313180; c=relaxed/simple;
+	bh=GVIqygVc5ZBokPnIZpVsJ5SY5rgNzhEdxcEXbU/6Hjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EkSwUkRoMmTNrNRfZmeWRXzchfISB7leP+MywEm4TrXDPPGr1bPZpJG3zv9uRMstwmyoxh57urw6ZNo8FohU8jkZdpnH1YiBRiT9dT8HV34MvGjYD2t+DWEj/p4UKqD25MCHVh5EoPIRTB+4T3G49kkc25PfRsFKNc/VX2DEezE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XMhcj368vz9v7Hk;
+	Mon,  7 Oct 2024 22:39:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id D44F8140934;
+	Mon,  7 Oct 2024 22:59:25 +0800 (CST)
+Received: from [10.45.154.49] (unknown [10.45.154.49])
+	by APP1 (Coremail) with SMTP id LxC2BwBn+C899wNnLeJjAg--.43995S2;
+	Mon, 07 Oct 2024 15:59:25 +0100 (CET)
+Message-ID: <b86aac93-d1f7-4716-9283-4a8367b20e48@huaweicloud.com>
+Date: Mon, 7 Oct 2024 16:59:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: David Laight <David.Laight@ACULAB.COM>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ 'Alan Stern' <stern@rowland.harvard.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ "maged.michael@gmail.com" <maged.michael@gmail.com>,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
+References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+ <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+ <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
+ <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
+ <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
+ <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
+ <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+ <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
+ <6ae2461a-e509-4c4d-8959-ae17eb214419@huaweicloud.com>
+ <43788527053542e78001820857445e4d@AcuMS.aculab.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <43788527053542e78001820857445e4d@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwBn+C899wNnLeJjAg--.43995S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4fKr47tFyfGryfKr15urg_yoW8Cr1kpF
+	W5WanIya1kXrWakF1vq3WUZF90yayftFWUCrn5Kry8Z3s8XFn7AFWayryYya4DCr1fG34j
+	vr4jv3sxAF90qFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Sat, Oct 05, 2024 at 06:54:19PM -0400, Kent Overstreet wrote:
-> On Sat, Oct 05, 2024 at 03:34:56PM GMT, Linus Torvalds wrote:
-> > On Sat, 5 Oct 2024 at 11:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > >
-> > > Several more filesystems repaired, thank you to the users who have been
-> > > providing testing. The snapshots + unlinked fixes on top of this are
-> > > posted here:
-> > 
-> > I'm getting really fed up here Kent.
-> > 
-> > These have commit times from last night. Which makes me wonder how
-> > much testing they got.
+
+
+Am 10/7/2024 um 3:18 PM schrieb David Laight:
+> From: Jonas Oberhauser
+>> Sent: 07 October 2024 12:55
+>>
+>> Am 10/3/2024 um 3:23 PM schrieb Mathieu Desnoyers:
+>>> What _does_ work however are the following two approaches:
+>>>
+>>> 1) Perform the equality check on the original variables, creating
+>>> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
+>>> rest of their use, therefore making sure the pointer dereference
+>>> are not derived from versions of the variables which were compared
+>>> with another pointer. (as suggested by Boqun)
+>>
+>> This should not be guaranteed to work, because right after the
+>> comparison the compiler can do b=a, then it doesn't matter how much you
+>> hide afterwards.
+>>
+>> However it might work if you escape the addresses of a and b first, in
+>> which case the compiler will not do b=a anymore, but it might force the
+>> compiler to put a and b on the stack, which has some performance impact.
 > 
-> The /commit/ dates are from last night, because I polish up commit
-> messages and reorder until the last might (I always push smaller fixes
-> up front and fixes that are likely to need rework to the back).
-> 
-> The vast majority of those fixes are all ~2 weeks old.
-> 
-> > And before you start whining - again - about how you are fixing bugs,
-> > let me remind you about the build failures you had on big-endian
-> > machines because your patches had gotten ZERO testing outside your
-> > tree.
-> 
-> No, there simply aren't that many people running big endian. I have
-> users building and running my trees on a daily basis. If I push
-> something broken before I go to bed I have bug reports waiting for me
-> _the next morning_ when I wake up.
-> 
-> > That was just last week, and I'm getting the strong feeling that
-> > absolutely nothing was learnt from the experience.
-> > 
-> > I have pulled this, but I searched for a couple of the commit messages
-> > on the lists, and found *nothing* (ok, I found your pull request,
-> > which obviously mentioned the first line of the commit messages).
-> > 
-> > I'm seriously thinking about just stopping pulling from you, because I
-> > simply don't see you improving on your model. If you want to have an
-> > experimental tree, you can damn well have one outside the mainline
-> > kernel. I've told you before, and nothing seems to really make you
-> > understand.
-> 
-> At this point, it's honestly debatable whether the experimental label
-> should apply. I'm getting bug reports that talk about production use and
-> working on metadata dumps where the superblock indicates the filesystem
-> has been in continuous use for years.
-> 
-> And many, many people talking about how even at this relatively early
-> point it doesn't fall over like btrfs does.
+> Nope, as pointed out last week, the compiler can move the 'a == b'
+> check to before the OPTIMISER_HID_VAR() and then use the same register
+> for both of them.
 > 
 
-I tend to ignore these kind of emails, it's been a decade and weirdly the file
-system development community likes to use btrfs as a punching bag.  I honestly
-don't care what anybody else thinks, but I've gotten feedback from others in the
-community that they wish I'd say something when somebody says things so patently
-false.  So I'm going to respond exactly once to this, and it'll be me satisfying
-my quota for this kind of thing for the rest of the year.
+Since the addresses of a and b have escaped, I don't think it can still 
+put them into the same register (or memory location).
 
-Btrfs is used by default in the desktop spin of Fedora, openSuse, and maybe some
-others.  Our development community is actively plugged into those places, we
-drop everything to help when issues arise there.  Btrfs is the foundation of the
-Meta fleet.  We rely on its capabilities and, most importantly of all, its
-stability for our infrastructure.
+Other threads could be temporarily modifying (inside the escape code) or 
+concurrently reading (after the escape code) the two variables 
+independently.
 
-Is it perfect?  Absolutely not.  You will never hear me say that.  I have often,
-and publicly, said that Meta also uses XFS in our database workloads, because it
-simply is just better than Btrfs at that.
+Something in the direction of
 
-Yes, XFS is better at Btrfs at some things.  I'm not afraid to admit that,
-because my personal worth is not tied to the software projects I'm involved in.
-Dave Chinner, Darrick Wong, Christoph Hellwig, Eric Sandeen, and many others have
-done a fantastic job with XFS.  I have a lot of respect for them and the work
-they've done.  I've learned a lot from them.
+a = ...;
+...
+b = ...;
 
-Ext4 is better at Btrfs in a lot of those same things.  Ted T'so, Andreas
-Dilger, Jan Kara, and many others have done a fantastic job with ext4.
+escape(&a);
+escape(&b);
+if (a == b) {
+    OPTIMIZER_HIDE_VAR(b);
+    *b;
+}
 
-I have learned a lot from all of these developers, all of these file systems,
-and many others in this community.
 
-Bcachefs is doing new and interesting things.  There are many things that I see
-you do that I wish we had the foresight to know were going to be a problem with
-Btrfs and done it differently.  You, along with the wider file system community,
-have a lot of the same ideals, same practices, and same desire to do your
-absolute best work.  That is an admirable trait, one that we all share.
+Here doing b=a after a==b would (from the point of view of compiler) 
+potentially introduce a data race.
 
-But dragging other people and their projects down is not the sort of behavior
-that I think should have a place in this community.  This is not the kind of
-community I want to exist in.  You are not the only person who does this, but
-you are the most vocal and constant example of it.  Just like I tell my kids,
-just because somebody else is doing something wrong doesn't mean you get to do
-it too.
+As I pointed out earlier, the compiler might be able to prove that it is 
+a benign data race though and theoretically still do b=a. But if you 
+declare b as volatile on top...
 
-We can improve our own projects, we can collaborate, and we can support
-each others work.  Christian and I tag-teamed the mount namespace work.  Amir
-and I tag-teamed the Fanotify HSM work.  Those two projects are the most fun and
-rewarding experiences I've had in the last few years.  This work is way more fun
-when we can work together, and the relationships I've built in this community
-through this collaboration around solving problems are my most cherished
-professional relationships.
+Anyways, the ptr_eq way is much more obvious.
 
-Or we can keep doing this, randomly throwing mud at each other, pissing each
-other off, making ourselves into unhireable pariahs.  I've made my decision, and
-honestly I think it's better.
+   jonas
 
-But what the fuck do I know, I work on btrfs.  Thanks,
-
-Josef
 
