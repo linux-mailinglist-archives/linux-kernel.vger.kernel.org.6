@@ -1,116 +1,210 @@
-Return-Path: <linux-kernel+bounces-354151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3813993869
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3447299386E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE301F22C33
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7ADD284E8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED3A1DE88F;
-	Mon,  7 Oct 2024 20:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CA91DE4FA;
+	Mon,  7 Oct 2024 20:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5bGq9Ak"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K1egh3ae"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5381D31A0;
-	Mon,  7 Oct 2024 20:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F78C81727;
+	Mon,  7 Oct 2024 20:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728333568; cv=none; b=PKWnaxsKgZo3UdjsHFHIPS9vx1iGtnOoA8qLtoyyHI6cUaZ4iEPld53CNjk0KuzGnLzbWeQW+/lO/YFgMtRC746ToLLPA2zLZyqDai4fOfvRebSg0mS+sK9bmP9ftwgCC7/zrmZceQ7q2+hFowOcOrjH+J7rLWOzMDbRlG8NoPA=
+	t=1728333644; cv=none; b=JD7Q1RmB+CZ2nTcOG1xsU90kLwU8WfxAQuKTEjBEYdNFEFdm+dtMiNHv4Gf/+6VbAwdjKHwZei4B9qtw1RvZfcSejPo6gCJJpYXZIvbDAkQuPyD8M5b1DLAj67/PZbBJHa13w2Sb/NTgyLa57/Ova+Kd/D/VqZiAO9Nmn9mLE9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728333568; c=relaxed/simple;
-	bh=5TT17y3RjAcT06/ywoplkLucZ8ruotI+ZhLh6wB2mxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tnAVs/ujODqoIZCRdsgu42s65nHqkigJ7LtfJfCIVLLM8Ki2XYPbIT5oSC0bkIVrqS80WJ2urnGuhsMsz9qVXTPy0sZrYRA7Kac8K+YwdqZfqUe4GV84dygjWlqBcX7bDO0bmTC8uvGELUiSRo65FQ4QcVkHX9nqYN9FhObnNaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5bGq9Ak; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e0c7eaf159so3786939a91.1;
-        Mon, 07 Oct 2024 13:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728333566; x=1728938366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+WTgadYP/jr9gAydYiukIu6hRrw9XfPtLwLH3kbWpw=;
-        b=m5bGq9AkI1mAfo/jI+0w6fyS2M+oWQj0DiToNzbzqDqNetqOyad6vW+JEoCAz1el3W
-         HcvmKk8uui2HMY2RLGLZ33RqKoQruAgD3f54dFYzPooiySCI5axaYRDVky6wbL7TNUja
-         lDHoIC72yHYMwvzHXOewVd4gCJHeOHnfzg+NElygsvY7sxkyyB03Imh3g6g2RIpeAE84
-         cQetsiZAQZkOrRKBskpb+8y/h5+aWb9mXjiw0w8daslAhWzmPuoeMj6KBgLWjSwxFjW0
-         lynAlr/qhg7b0yGZxfvkHIoAPUFEZrWFBLSY4Rap3TG5Bh5uxbJlsCX6jnSQYytnXlGK
-         YI+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728333566; x=1728938366;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J+WTgadYP/jr9gAydYiukIu6hRrw9XfPtLwLH3kbWpw=;
-        b=CGHgCOIlsjs2hBwOe+gDCFx7qh3rg0VJUpfc1u3ZF3s+jMR/tQpDt10cjDzIVbj9fO
-         iPlg4iBhZQqf3vP5IykNSSzNjLUPM0mCvfO2kVHNriDRREDqZ/vSwxO1fLTQc/hmazQw
-         pvsFKJlYbLwWdNiELHu38s/HCEWH/i4IAEv563qemHkWaNxWLRDn2jPs1gQL1Wce/Sar
-         RfYTWfDQG2ACqtmr/k9FFGcZiSAyKiCMI89FfEJPEyTVPIUxtcnG8IPrfRpzbpYeclsX
-         XgFTAsRz0DAHp95FVDXMY97pw4ovrGc3Jb/FRoO8XVGR9dYnhXCTOm58qVBY6a1kBnYe
-         k/NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/wyXbD9tVIsbie/rpUuh2sVtEgBb91cmcy6KHd/7t74RuszPZOhUKplp6Su6d3nMIp0TbyGCayO8C+5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWsknHn+XgbS/8ndlTvk3eKXTgNLt/bVYQb4JoNkrqSXG3YMnM
-	tFrrwqHhVvqF8KS2R7ekCirruQbHkZFokWKAMdvZIlU7meVh7a0wK2kSIw==
-X-Google-Smtp-Source: AGHT+IEdPceQvCoPhguVFHp2GuqFzM7wgm3in8NUX6mhioQSetBuRqjEeqW+AKeJo3i1U9aRmSPpLw==
-X-Received: by 2002:a17:90a:fd87:b0:2da:6812:c1bd with SMTP id 98e67ed59e1d1-2e1e621f1e7mr14095494a91.15.1728333566480;
-        Mon, 07 Oct 2024 13:39:26 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e281aee517sm84544a91.0.2024.10.07.13.39.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 13:39:26 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com,
-	horms@kernel.org,
-	sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: [PATCH net] net: ibm: emac: mal: add dcr_unmap to _remove
-Date: Mon,  7 Oct 2024 13:39:23 -0700
-Message-ID: <20241007203923.15544-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728333644; c=relaxed/simple;
+	bh=FLCwmZ/Hn/iyF5AwvBG6cLSb/FnSNdu7VYbYWE8S6oI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TGaHHg//t8vAsFSANvJ5DIQr1BkMhaZ2ctaHqJsK1vMs9vsEj/bydJMrTkTx3VVxZ0CS5kwN0dNUo0uVnOXCmDlbv+BodCkUdtTN72DrCAtj+NXcTRyQF8+9A8DDunUhye8Ys4C+iPJ9n54r09PZfjVzON/i7KSTezJpRMXv1H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K1egh3ae; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497KdOU0017237;
+	Mon, 7 Oct 2024 20:40:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XPSKTPCTTPqJMs0Azumv01NrakAMCZY5uO45cD8tIxg=; b=K1egh3aeU6PtPU+m
+	XLYKMuUmzd+IErNoTmhq7TbHc19M7Z9Co/6FrMB1UI89o6cFClSKctVOojU2JzKi
+	61V/GHFtrJTOPTuUBizJRlBYtrjVuURo2V3rAj79vtU4emhfzwQJzGGHFKyTXg6l
+	2TNBGWLCDNU3aDXaB7q1XAvhHnWa69vVAQmdKMGNN9DZiJfzoKSlIVg6XjURln8j
+	uCLpOPbdkfMGs2OBjyxcRTWPxsXJONuoN7zgV6A4KCNCSl41NH6YaJ588FQaCVAw
+	B8KUTu6ICPt/12jk8sGnLdgXA4SJHpb9/8zfe36fpiFGps2KnQyjs4IpuFCE9or4
+	NBi/7w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaerg1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 20:40:37 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497Ke7mo013908
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 20:40:07 GMT
+Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 13:40:05 -0700
+Message-ID: <87f778cf-0e1e-4505-a0e8-7434316a9537@quicinc.com>
+Date: Tue, 8 Oct 2024 02:10:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
+ unsupported SHM bridge enabling
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Qingqing Zhou <quic_qqzhou@quicinc.com>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
+ <mgdj5xvqby3ftnnhma7dxvxskavx4p2pkzyorg4z3cza5xkimr@sqe4k2szwfbq>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <mgdj5xvqby3ftnnhma7dxvxskavx4p2pkzyorg4z3cza5xkimr@sqe4k2szwfbq>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: x23qsIMJTBjEfkr5cq9gLwJnm7sWz66e
+X-Proofpoint-GUID: x23qsIMJTBjEfkr5cq9gLwJnm7sWz66e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070142
 
-It's done in probe so it should be done in remove.
 
-Fixes: 1ff0fcfcb1a6 ("ibm_newemac: Fix new MAL feature handling")
+On 10/7/2024 7:10 AM, Bjorn Andersson wrote:
+> On Sat, Oct 05, 2024 at 07:31:49PM GMT, Kuldeep Singh wrote:
+> 
+> Please shorten the subject a bit, perhaps:
+> "firmware: qcom: scm: Improve unsupported SHM bridge detection"
+> 
+>> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+>>
+>> Currently for enabling shm bridge, QTEE will return 0 and put error 4 into
+> 
+> s/for/when/
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/emac/mal.c | 2 ++
- 1 file changed, 2 insertions(+)
+Ack.
 
-diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
-index 1e1860ddc363..b1a32070f03a 100644
---- a/drivers/net/ethernet/ibm/emac/mal.c
-+++ b/drivers/net/ethernet/ibm/emac/mal.c
-@@ -715,6 +715,8 @@ static void mal_remove(struct platform_device *ofdev)
- 
- 	free_netdev(mal->dummy_dev);
- 
-+	dcr_unmap(mal->dcr_host, 0x100);
-+
- 	dma_free_coherent(&ofdev->dev,
- 			  sizeof(struct mal_descriptor) *
- 				  (NUM_TX_BUFF * mal->num_tx_chans +
+> 
+>> result[0] to qcom_scm for unsupported platform, tzmem will consider this
+>> as an unknown error not the unsupported case on the platform.
+>>
+>> Error log:
+>> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
+>> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
+>>
+>> Change the function call qcom_scm_shm_bridge_enable() to remap this
+>> result[0] into the unsupported error and then tzmem can consider this as
+>> unsupported case instead of reporting an error.
+>>
+> 
+> Sounds like we want a Fixes tag here.
+
+Ack.
+
+> 
+>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+>> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+>> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+>> ---
+>>  drivers/firmware/qcom/qcom_scm.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+>> index 10986cb11ec0..620313359042 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.c
+>> +++ b/drivers/firmware/qcom/qcom_scm.c
+>> @@ -111,6 +111,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
+>>  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
+>>  };
+>>  
+>> +enum qcom_scm_shm_bridge_result {
+>> +	SHMBRIDGE_RESULT_NOTSUPP	= 4,
+>> +};
+> 
+> This is not an enumeration, but a fixed defined constant. Please use
+> #define.
+
+Ack.
+
+>> +
+>>  #define QSEECOM_MAX_APP_NAME_SIZE		64
+>>  
+>>  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
+>> @@ -1361,6 +1365,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
+>>  
+>>  int qcom_scm_shm_bridge_enable(void)
+>>  {
+>> +	int ret;
+>> +
+>>  	struct qcom_scm_desc desc = {
+>>  		.svc = QCOM_SCM_SVC_MP,
+>>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
+>> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
+>>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
+>>  		return -EOPNOTSUPP;
+>>  
+>> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
+>> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	return ret ?: res.result[0];
+> 
+> I'd prefer, with the additional check, that you'd structure it like this:
+> 
+> 	if (ret)
+> 		return ret;
+> 
+> 	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+> 		return -EOPNOTSUPP;
+> 
+> 	return res.result[0];
+
+Sure, above looks more cleaner. Will update in next rev.
+
+> 
+> That way we deal with SCM-call errors first, otherwise we inspect and
+> act on the returned data.
+> 
+> That said, the return value of this function, if non-zero, will trickle
+> back to and be returned from qcom_scm_probe(), where Linux expects to
+> see a valid error code. Are there any other result[0] values we should
+> handle, which would allow us to end this function with "return 0"?
+
+As qcom_scm_shm_bridge_enable() is an shm enablement call, need to handle
+supported(or unsupported) scenario appropriately and other errors can be
+propagated to qcom_tzmem/qcom_scm_probe.
+
+Please note, other return values(related to access control) from QTEE are
+failures and do not require conversion to Linux error codes.
+
 -- 
-2.46.2
-
+Regards
+Kuldeep
 
