@@ -1,157 +1,112 @@
-Return-Path: <linux-kernel+bounces-353660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B6C9930E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:15:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75141993100
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CA1280FCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03BA1B27DC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643A71D7E58;
-	Mon,  7 Oct 2024 15:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A0A1D86F0;
+	Mon,  7 Oct 2024 15:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbB3Igva"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="d89FzbBb"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF765338D;
-	Mon,  7 Oct 2024 15:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1E01D7E3D;
+	Mon,  7 Oct 2024 15:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728314117; cv=none; b=b+ARTTIxGLlkQzCVr/1QmCLolFsEy1naMYS0MRO6atohvLKrMl3VaP4E/jGe4t8dXT2xfFnBZZDymRxWvSEwLGRbGUo7GQRZ9pQ8kVsxvZ3c9vxeM1xR8CQ1dHS97MukKLGETdrgcvx6YjEdnwUgxJ5seMqwgQ4MiAPtDdlLA5o=
+	t=1728314548; cv=none; b=uc2q7t+jhXgw6GeGY7jHu9zXO6MNa8Vv1FLjuYyNaDvsJX7KyWV7dOUaRSaXkiyXBfyhXfuNI6KecMt3BYDjMPYccpqVRaG7uQ16lL2/Zx/b/R6ujzVbdU5muT8Z7ows5gwlT+n+dN9TaBmwGx6hE9fmWNpLBhi/9+4Nb2WFx5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728314117; c=relaxed/simple;
-	bh=gunTeazw+ZrkxkOgLjuxsBZi3IH0C+YwzRH8GZ2kJxs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Br4KwzR3rdTSyKmb6gm1D/a1yIwhZVip9/wVaHGUIyA4aPL3i4GAbZT2mV5jVSQ77lOnLIW1Jm3ZvihOTtMwreueFJJy9KsiYXsa1FpD/Q5Vt4sdmWZU7n959D4IgJ6M2JlOA2nH+G/0PbM32zF55mxwVYC1UPR3r+LSQM6V+5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbB3Igva; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99415adecaso307637466b.0;
-        Mon, 07 Oct 2024 08:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728314114; x=1728918914; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PN07q14I0ERr6DSt1fbUdHvm12enYACHqhoLOwef/JQ=;
-        b=cbB3Igva2WQ7uE7PEFKGjejUc46YT2BOh91hAWH3WrNolyF1dDQYLoHG0e2xF0is7M
-         qB8a9BrOE5od4su5HLQTkhJf49JFlwCJOiEb2Pj8DntgfQGTzTk8Qj3ybKS8aD5Blutn
-         vbVPwdRAazlZ+v+lOkj/UDRNBr3iJFmj3t75RqOJmybBYIKd/+Fwq2QmDBl+nuBrzV1a
-         my8SQRubMH2u/OJcRhzUIa1liMAOWM9WabFw254YnjZ59KKEXu0nj9ZRUJONyYCSkRLT
-         hc67NUvsaJ+f5U0oAYaCBZ2yYF0ZLvwJw7UoWhDkdlSN3rYn+AE62q4KHa7TMS6g3ZOl
-         hJ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728314114; x=1728918914;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PN07q14I0ERr6DSt1fbUdHvm12enYACHqhoLOwef/JQ=;
-        b=GUVHplkKaMY6Ox7TgK7lt0k7A2GG8OOljyxSS9ICCHO/OCD37UVMxiKlgQQoTAL/hO
-         rBY/k2DOAvh3yvM9kGDZH2vlBCjXkeu4Jlqe8/j+8XQHq8Av1KL2PGajOTezfUoUR0z7
-         zLKIVI75N2hOPb9K4gq770zc7gO9KIk8vxlRYPbwk+VgFCd9XwU1niX3HIZEdZggQOFU
-         QBlpE1OsJpswrTShBeNhw0spwKFrxirMXrPHxwUn7Hw9PYLUxRdLGnEd7o8TX6vGSdk4
-         aWRBBupjJI9sb5EDgVH7qWSMEgo3AbQx4CjWy1aKvxoARl5KoAIJS1gMY7MGzcE6BjnS
-         it4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUGjbCPmuJvG4tEK+hvvCd9HGsi2OFm2GBHhaouiD7QgHpp/Y5NDo7iU/dMQbH/Vonuo2FX12r4k/0=@vger.kernel.org, AJvYcCVHb6TIRAPYI9Qiw49T81Pyj+hoLas747MfZ1eNRDiRPUcQl/aa83ZqgYsK3YMh4Ln2YsxLmf39MPRePj8=@vger.kernel.org, AJvYcCViSVKgvFI4G79ntIZZBz6lTewCa3meGYM/YOIvVvMwYNDvGsnfPwlcrhVCFvSHZ4i83iAfjpv4GK/KvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUrjg2rQtfwih1uzIA4Wno47+KOca35jqftMYc5cLe875c51LC
-	/W7iZvzEQULfqaPy3uePrY2t80ykHV3alEiW+Rr7tH1Ixr1fu5s2oLCV4wzc
-X-Google-Smtp-Source: AGHT+IEkPYPI+5UiY0ODqposUxSq+duU2m4ZE0vN/XilFUXU5SaI4dF8VsvgVyvujSmlc0AzpSmEpA==
-X-Received: by 2002:a17:907:36c8:b0:a8d:43c5:9a16 with SMTP id a640c23a62f3a-a991cede585mr1334495166b.6.1728314114235;
-        Mon, 07 Oct 2024 08:15:14 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993ddeddadsm328187566b.198.2024.10.07.08.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 08:15:14 -0700 (PDT)
-Message-ID: <8a5f6f12c2cb6989cef1d09957fc0f6f7a512b26.camel@gmail.com>
-Subject: Re: [PATCH v2 5/7] iio: inkern: copy/release available info from
- producer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Matteo Martelli <matteomartelli3@gmail.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Alisa-Dariana Roman
- <alisa.roman@analog.com>,  Christian Eggers <ceggers@arri.de>, Peter Rosin
- <peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel
- <sre@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Mon, 07 Oct 2024 17:15:13 +0200
-In-Reply-To: <20241007-iio-read-avail-release-v2-5-245002d5869e@gmail.com>
-References: <20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com>
-	 <20241007-iio-read-avail-release-v2-5-245002d5869e@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728314548; c=relaxed/simple;
+	bh=w9esKvick1sXqivIeHi8vwVXTGtU9/c7XGFvYxLd1b8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nUCDOUjLm8WXOLn0g/2foRd3xq+jdR3Xw4F11MqpLm5bUIzmcZjiuubXGrJCQrwP+XeruliB0KXCDm/uJmfP2WZBbwiKuPf8liVc0qXqUVUbTNrQ7StC7u4IgeslGAZ+wMwUe58879/araUjL/vvvPTr3d4keK+alVvYZ6i99aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=d89FzbBb; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 5F48A2FC0055;
+	Mon,  7 Oct 2024 17:15:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1728314160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RiPkAJvBhWX0YTmJpruugly5PxL9Y5Uh4+q/2ANr8Xc=;
+	b=d89FzbBbvgeVCOT/2CGXsE5Jevi8jCLK17KB0tRE13LXXmIrpy+P4jrRUtaLFRqwyThY2H
+	VwVuDZJOXYRCTISIaeYrBY3u2McZ+cF37ILhg5AmLKD89pkLJE/jSVuOIZ5Rw29nBP6Er1
+	GYPK6dwClvN2n47RFsTQ2OYiHD9MWiQ=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <86936252-f3b6-46c2-9244-ce0cfebf3c42@tuxedocomputers.com>
+Date: Mon, 7 Oct 2024 17:15:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-On Mon, 2024-10-07 at 10:37 +0200, Matteo Martelli wrote:
-> Consumers need to call the read_avail_release_resource after reading the
-> available info. To call the release with info_exists locked, copy the
-> available info from the producer and immediately call its release
-> callback. With this change, users of iio_read_avail_channel_raw() and
-> iio_read_avail_channel_attribute() must free the copied avail info after
-> calling them.
->=20
-> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> ---
-> =C2=A0drivers/iio/inkern.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 64 +++++++++++++++++++++++++++++++++-----------
-> =C2=A0include/linux/iio/consumer.h |=C2=A0 4 +--
-> =C2=A02 files changed, 50 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index
-> 7f325b3ed08fae6674245312cf8f57bb151006c0..cc65ef79451e5aa2cea447e168007a4=
-47ffc0d91
-> 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -760,9 +760,25 @@ static int iio_channel_read_avail(struct iio_channel=
- *chan,
-> =C2=A0	if (!iio_channel_has_available(chan->channel, info))
-> =C2=A0		return -EINVAL;
-> =C2=A0
-> -	if (iio_info->read_avail)
-> -		return iio_info->read_avail(chan->indio_dev, chan->channel,
-> -					=C2=A0=C2=A0=C2=A0 vals, type, length, info);
-> +	if (iio_info->read_avail) {
-> +		const int *vals_tmp;
-> +		int ret;
-> +
-> +		ret =3D iio_info->read_avail(chan->indio_dev, chan->channel,
-> +					=C2=A0=C2=A0 &vals_tmp, type, length, info);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		*vals =3D kmemdup_array(vals_tmp, *length, sizeof(int), GFP_KERNEL);
-> +		if (!*vals)
-> +			return -ENOMEM;
-> +
-
-Not a big deal but I would likely prefer to avoid yet another copy. If I'm
-understanding things correctly, I would rather create an inkern wrapper API=
- like=20
-iio_channel_read_avail_release_resource() - maybe something with a smaller =
-name :).
-Hence, the lifetime of the data would be only controlled by the producer of=
- it. It
-would also produce a smaller diff (I think). I just find it a bit confusing=
- that we
-duplicate the data in here and the producer also duplicates it on the ->rea=
-d_avail()
-call. Another advantage I see is that often the available data is indeed co=
-nst in
-which case no kmemdup_array() is needed at all.
-
-- Nuno S=C3=A1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO
+To: Lee Jones <lee@kernel.org>
+Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, hdegoede@redhat.com,
+ jelle@vdwaa.nl, jikos@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
+ pavel@ucw.cz, cs@tuxedo.de
+References: <20240927124152.139099-1-wse@tuxedocomputers.com>
+ <20241002125243.GC7504@google.com>
+ <4bfc188c-0873-490f-bfef-119c7fa74be5@tuxedocomputers.com>
+ <20241003075927.GI7504@google.com>
+ <8874c084-20b2-44d8-9a0d-67aedad4b456@tuxedocomputers.com>
+ <20241007125813.GA17897@google.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <20241007125813.GA17897@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+Am 07.10.24 um 14:58 schrieb Lee Jones:
+> On Fri, 04 Oct 2024, Werner Sembach wrote:
+>
+>> Am 03.10.24 um 09:59 schrieb Lee Jones:
+>>> On Wed, 02 Oct 2024, Werner Sembach wrote:
+>>>
+>>>> Hi,
+>>>>
+>>>> Am 02.10.24 um 14:52 schrieb Lee Jones:
+>>>>> On Fri, 27 Sep 2024, Werner Sembach wrote:
+>>>>>
+>>>>>> Hi,
+>>>>>> first revision integrating Armins feedback.
+>>>>>>
+>>>>>> Stuff I did not yet change and did not comment on previously:
+>>>>>> - Still have to ask Christoffer why the mutex is required
+>>>>>> - Still using acpi_size instad of size_t in the util functions, because the value is put directly into a struct using acpi_size
+>>>>>> - Error messages for __wmi_method_acpi_object_out still in that method because they reference method internal variables
+>>>>>>
+>>>>>> Let me know if my reasoning is flawed
+>>>>> Use `git format-patch`'s --annotate and --compose next time please.
+>>>>>
+>>>> I did but --compose does not automatically insert the subject line, that's
+>>>> why i copied it but forgot to change it to 0/1
+>>>>
+>>>> Sorry for the flawed subject line
+>>> And the missing diff-stat?
+>>>
+>> Also not automatically created by git send-email --compose. is there a flag
+>> I'm not aware of?
+> As above.  I use "--annotate --compose".  See if that works.
+>
+nope, the cover letter has no change summary with these options
 
