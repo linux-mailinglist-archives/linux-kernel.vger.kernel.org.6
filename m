@@ -1,124 +1,173 @@
-Return-Path: <linux-kernel+bounces-354012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF12993644
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC89993645
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA07CB21255
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 135B0283096
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2066C1DDC3A;
-	Mon,  7 Oct 2024 18:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20B81D5CD1;
+	Mon,  7 Oct 2024 18:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDQdnImx"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ+9+fNa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395141D4348;
-	Mon,  7 Oct 2024 18:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2CF1D7E3E;
+	Mon,  7 Oct 2024 18:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728326009; cv=none; b=Conp5wYF2FV5Jklaav8vvHyhrOaSB54HFkQg4cD8+ENRaAUPeeOOfgCd11RwlphQzWNMv9uIjkJokjlTdqzCQEycpViFbz60U6jHgAtj4I9pZ2PDnh575YqQW81ZM2jlsmY/y9CuwuwxiGy1atPx2BYZiCoRTyvV+Ex9tCZcmTw=
+	t=1728326039; cv=none; b=rqopzaC8AI6jZxhWTpWTCXoyYT9wlys8NRBjIPd5j5lU0duIiVchZP73cd0JByqZOEChbpekoiz1C/qZHJIvExF7LPAbk1uI0fnATC+FGpeEI9XPsvkp8d7uUNgeVytcCAbqKGRJUZe2ptwjxnK4vCyo//YlIuXEn3Wh6xE68V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728326009; c=relaxed/simple;
-	bh=ZliK8otf4DPyN2MADeJuJzws3KQCKgf8pzmFtxSBbEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wwn3g+kcY1PxHylSq3+PTZOi25Rp3TtvT0K7xtOIx8NCHH10VS9KNQp75r+gIrWLq8ZwcpLp+mq4lEl1/MGwKNjzLURyExoukshH8fUsBWPWh1B2PQI2I9zbEfLGFSw96WlRthk7+gcV5HtOSRFyzm0ifoNjXEGlzrggB0DL6S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDQdnImx; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71de92fdf13so246557b3a.0;
-        Mon, 07 Oct 2024 11:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728326007; x=1728930807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4abmxiPmNVi3cKnPW7CiBWGlypLWQgwpQa1s7rzLXg=;
-        b=LDQdnImxmHhegquYi6Lj742GqetJTYG9tPhEMAndaRlCrakN6O6KVp1ZM35awRfQFR
-         vjuYh1hlqE8VMqUKTOkGAA1F/F3+TrAa2Yb0ZKoCNwdUfhAr1xwd+16zNH4Gyp7OYySr
-         DejqvH55EfjW8+XSxHLoiLEMgMZ0f5rucCKJ1o9IRXEigtj1peqH6MyYNHGqv3u8CoXn
-         FLeiYnfSaUnFwhp+h3BAvkSm2ut3G+4BDfNHi5SbOgkT7pBXYb3unpUYzMP3TSqy4MvD
-         PTUIVq3jJLK/I/r7h3khg/2xeSffnmvBGo9u47LrkMZss8ANgCFlqqWyQlarf5UKeEmM
-         C+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728326007; x=1728930807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J4abmxiPmNVi3cKnPW7CiBWGlypLWQgwpQa1s7rzLXg=;
-        b=Zl7or6WK+Zo8K8lWKBi/dxFa/dB45KNcSI3fqpgf5YaGvjP5h3AqKxWr32Py96lEfS
-         4QC7hDKbI9dBqUWLQZZ5M1DvbDZfDaC00d/HhdktcfKpVmgm+Ruw7Ws3aUMLHyKrdUVE
-         irydzpeaSFQtszm5RsAu2L3k+LEDwB2FrL0QYWg/NbhCVIQ6ZT7LueqfdxzDWLhgZWua
-         iefcflmTBbdw28ia5etEjqJyWiIKbcmyNIoY2Rx5Vu+atR1aGMUJhLtUql/4vs9GxQO8
-         6OAlBxkmkn1f0cb/Yca/LNx2S444wxtNORDg88e/UHY0YJuDJ+7+45nudr5TiBixFFmV
-         8kPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEJ7Go2ko4kaEtSzIrNMIeG0Y3/2cpBdIVpJmci7V9Rt0x9Y6BrMMwp7lZsEIi2ABJ6G5neFmU4Alv@vger.kernel.org, AJvYcCWLFdYspH76YYhfT14HRbRo+QfjFjcNN99w/p2MZHwmEeT2B0EFy3Pej+JC80Oa7iYtW+R3p8iDjXfAobpd@vger.kernel.org, AJvYcCX4TVpDcMTZwAzOtOAse548YLoLXDwX35aCQw/6Mk4q5u2abVJn9BBGVpQKFKlej7Gk0O8pfwXPl2EwpwnB@vger.kernel.org, AJvYcCX85gKUjJEIeosL1Lc7Hb2S4cw4gBK9P/C3N+XPLG00bJy5U5WP1hb1chuyCvmGN2LAvVcjIo5xIInC@vger.kernel.org, AJvYcCXYt3j2N2bZL9B4BDSV5Qk+3wfJZaKhOVVlnadQ89pLgdbSFVtlknD4n2jSigY44NqE0tM8gdxyla+I@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC2BWjzjE6HS2Kw8yD+/zBR8qTJldTP+tLkW6wJOoC2IDQtTal
-	qLdTJO8kqw9KAMx4rq3m1EU9jwtiLuyVXaRiXEThFmJIlvXsugqfupH+IoIfwe8pwUbgA7lRxrS
-	O4u5biQXEimB+XumUNZ3rqCcPQBc=
-X-Google-Smtp-Source: AGHT+IF+C2pJlkVmDRVo4PXcJTPJZ4U4RBrw9yaJ3O78ja9hmVpWEH3Lmebudm9Idsdk19oGIrpS46PjWjdiP2NSuEE=
-X-Received: by 2002:a05:6a00:3e16:b0:71e:59d:36a3 with SMTP id
- d2e1a72fcca58-71e059d36edmr2264095b3a.5.1728326007506; Mon, 07 Oct 2024
- 11:33:27 -0700 (PDT)
+	s=arc-20240116; t=1728326039; c=relaxed/simple;
+	bh=JWCtP8+ONZZ8jKaQa5JVkWMfLqF4aHvVyvY+2UjhF8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WbUoZJ3n9e2cuYQjkOSgmJgYAxhcvOg6u0q6+BUH9lafHxM1Msuq1yo2e4GKh+L6TT0onJFk3ko5io5RHJh7MeNjBC8QxXytRUrfj2TKjyxMiQjij/f6G4tLFIYtLKXiH5XwPh6evomqwqyfjVIDKxM/EwDDEn8TiIz4O9ZEcSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ+9+fNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA09C4CEC6;
+	Mon,  7 Oct 2024 18:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728326038;
+	bh=JWCtP8+ONZZ8jKaQa5JVkWMfLqF4aHvVyvY+2UjhF8M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TQ+9+fNan8lhlwR84JQOt0Os1qE6dNy+jKooSfJfppQSS4QMpl8HeXXrHOL26kL79
+	 tQu/kSSyQYnYyBKFmk+kIvAu8I3V+qfPnwbxcTNXPrDhteIl/G8ZcdaUbigoRnPnKg
+	 vBlOv9abzvcgH+/lroFNOykl8eo7vkDaq6osgVPuadTOknYaf2ekEHoOf8U6pbTbuU
+	 35LRUZXSdKax/+8amBWCsawnbykcnmnGRJCkRQCsX5+ENUrFxxfy84A8Qv7Cm9VpQt
+	 obCCmDWXoMq7uNAqZ5ZqSTT5v4Z8jYjpB2A0ATUj2lpK0UtD60C8CO1YoojoCemsvb
+	 HoDiy0zQmcZIA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: [PATCH v2] tracepoints: Use new static branch API
+Date: Mon,  7 Oct 2024 11:33:45 -0700
+Message-ID: <c4de1761253ae9758fb954e96e07f895f5b9015f.1728325964.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002233409.2857999-1-xur@google.com> <20241002233409.2857999-2-xur@google.com>
- <20241003154143.GW5594@noisy.programming.kicks-ass.net> <202410041106.6C1BC9BDA@keescook>
- <87setapq4s.fsf@trenco.lwn.net> <CAF1bQ=S7HfvXw+hczmQrSYcBf_DHsZo2k59JSL8T_9J9HitHuQ@mail.gmail.com>
-In-Reply-To: <CAF1bQ=S7HfvXw+hczmQrSYcBf_DHsZo2k59JSL8T_9J9HitHuQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 7 Oct 2024 20:33:14 +0200
-Message-ID: <CANiq72m7dkcy=0+ut=rM6Heo4tQSNyUrejBDWCvtwGQVVvLhWw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
-To: Rong Xu <xur@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, David Li <davidxl@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, 
-	Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	Jann Horn <jannh@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-arch@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
-	workflows@vger.kernel.org, x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>, 
-	Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 7, 2024 at 8:04=E2=80=AFPM Rong Xu <xur@google.com> wrote:
->
-> I removed the "code-block" directives from the rst files,
-> and used "::" suggested by Jonathan. The rst files themselves are now
+The old static key API is deprecated.  Switch to the new one.
 
-I think it was Mike.
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+v2: fix CONFIG_HIST_TRIGGERS build failure
 
-> (1) The text that was previously in code-block no longer indents. It alig=
-ns
->       with the preceding text, regardless of how many spaces I add.
+ include/linux/tracepoint-defs.h  | 4 ++--
+ include/linux/tracepoint.h       | 8 ++++----
+ kernel/trace/trace_events_hist.c | 2 +-
+ kernel/tracepoint.c              | 4 ++--
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-Did you try with a tab? At least in Doc/rust/ all those three ways
-(i.e. `::`, `.. code-block::` and a single `:` for indented non-code)
-seem to work fine, e.g. the following document uses all of them:
+diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+index 4dc4955f0fbf..60a6e8314d4c 100644
+--- a/include/linux/tracepoint-defs.h
++++ b/include/linux/tracepoint-defs.h
+@@ -31,7 +31,7 @@ struct tracepoint_func {
+ 
+ struct tracepoint {
+ 	const char *name;		/* Tracepoint name */
+-	struct static_key key;
++	struct static_key_false key;
+ 	struct static_call_key *static_call_key;
+ 	void *static_call_tramp;
+ 	void *iterator;
+@@ -83,7 +83,7 @@ struct bpf_raw_event_map {
+ 
+ #ifdef CONFIG_TRACEPOINTS
+ # define tracepoint_enabled(tp) \
+-	static_key_false(&(__tracepoint_##tp).key)
++	static_branch_unlikely(&(__tracepoint_##tp).key)
+ #else
+ # define tracepoint_enabled(tracepoint) false
+ #endif
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 93a9f3070b48..2a29334bbc02 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -248,7 +248,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
+ 	static inline void trace_##name##_rcuidle(proto)		\
+ 	{								\
+-		if (static_key_false(&__tracepoint_##name.key))		\
++		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+ 				TP_CONDITION(cond), 1);			\
+@@ -274,7 +274,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	extern struct tracepoint __tracepoint_##name;			\
+ 	static inline void trace_##name(proto)				\
+ 	{								\
+-		if (static_key_false(&__tracepoint_##name.key))		\
++		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+ 				TP_CONDITION(cond), 0);			\
+@@ -311,7 +311,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	static inline bool						\
+ 	trace_##name##_enabled(void)					\
+ 	{								\
+-		return static_key_false(&__tracepoint_##name.key);	\
++		return static_branch_unlikely(&__tracepoint_##name.key);\
+ 	}
+ 
+ /*
+@@ -328,7 +328,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	struct tracepoint __tracepoint_##_name	__used			\
+ 	__section("__tracepoints") = {					\
+ 		.name = __tpstrtab_##_name,				\
+-		.key = STATIC_KEY_INIT_FALSE,				\
++		.key = STATIC_KEY_FALSE_INIT,				\
+ 		.static_call_key = &STATIC_CALL_KEY(tp_func_##_name),	\
+ 		.static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
+ 		.iterator = &__traceiter_##_name,			\
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 5f9119eb7c67..cc2924ad32a3 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -822,7 +822,7 @@ static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+ {
+ 	struct tracepoint *tp = event->tp;
+ 
+-	if (unlikely(atomic_read(&tp->key.enabled) > 0)) {
++	if (unlikely(static_key_enabled(&tp->key))) {
+ 		struct tracepoint_func *probe_func_ptr;
+ 		synth_probe_func_t probe_func;
+ 		void *__data;
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8879da16ef4d..1e3de77ea6b3 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -358,7 +358,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+ 		tracepoint_update_call(tp, tp_funcs);
+ 		/* Both iterator and static call handle NULL tp->funcs */
+ 		rcu_assign_pointer(tp->funcs, tp_funcs);
+-		static_key_enable(&tp->key);
++		static_branch_enable(&tp->key);
+ 		break;
+ 	case TP_FUNC_2:		/* 1->2 */
+ 		/* Set iterator static call */
+@@ -414,7 +414,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
+ 		if (tp->unregfunc && static_key_enabled(&tp->key))
+ 			tp->unregfunc();
+ 
+-		static_key_disable(&tp->key);
++		static_branch_disable(&tp->key);
+ 		/* Set iterator static call */
+ 		tracepoint_update_call(tp, tp_funcs);
+ 		/* Both iterator and static call handle NULL tp->funcs */
+-- 
+2.46.0
 
-    https://docs.kernel.org/rust/coding-guidelines.html
-
-I hope that helps!
-
-Cheers,
-Miguel
 
