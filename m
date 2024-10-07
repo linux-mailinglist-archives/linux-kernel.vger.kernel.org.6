@@ -1,220 +1,223 @@
-Return-Path: <linux-kernel+bounces-353898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCEF99340C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:56:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBDB993427
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DFF28265B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:56:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971C5B237F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A721DC1A6;
-	Mon,  7 Oct 2024 16:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714201DC725;
+	Mon,  7 Oct 2024 16:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZLLF2hBO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pKRVkm8D"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hvsJOJ6E"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A02D1DE896
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9B51DC040
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319825; cv=none; b=SJN21N2PepUBzGXOfwJVYE5fKnuSHfAbmuIQ8AKshXU/RbPYSoau4sCkHvLSPORlpSiZN+cGdIHOzy/CHBrSzodK9Xix9XwANJa1P8i7aQFi9bQCSoFwJWvTdOQaUGKM50WS3eairDvmoAN7yzZr9BnOU0YbozLlKUjlPtobOZ0=
+	t=1728319882; cv=none; b=KltcCcviH1EPWK+1TlgibCkSE0fDzYDPL8LfPrmWZGBoKD0cwJrJrwgEIDQPcepuO9y/DEgWy6r7tSpczAOzXFYMLtqSKIOHGR7F2+101yo5Cr8T3P9/3plEa+migHjwssceEKbsdW8Kvktzie/5xfrK9t0pYqr47VnHy1YxfGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319825; c=relaxed/simple;
-	bh=279xa8mpg28AxbvwJ5VJI0fKKgnKuyWo7R6bGg0y0mo=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=IY+/ga2YBL/UqgpwXh80muqtk7uxFOZdFPDqtVqPINS4EHCbljujvEoX/I1pyAyKOC60UXgxOsmY1JKjWW8/0LzMoTcBJY+P14QaFCQwqoZJLaNyWC9eyYcYntpfias5Cw6GgL2U62/Ut3iUUmhSdzTxb2ihry7SMoXlw8W6abg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZLLF2hBO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pKRVkm8D; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241007164914.499184215@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728319822;
+	s=arc-20240116; t=1728319882; c=relaxed/simple;
+	bh=uJKVVbnpPdVU5dbEIsKt8mYPh1IhVs6NNbTa0IGyKGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0VsA270nEhMImsdhL7F/JfPozPKgCZ2pbLr/fIL1boH/xW9J088b8lFfypbeDwrA2U2GVVDzFuIRVNECNAqP7ZZyh19NjCwECNb3jYWNYjyFa5t2l8cji9N/O8uuAr3VcwuwUSS4KfSiV4CBkPtkwthVPCQim70G8Mf31tquZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hvsJOJ6E; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 62C81E0006;
+	Mon,  7 Oct 2024 16:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728319878;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=U+tLkJdJzX5oBPcMxYGnMu9J72CXO1tkPlg0+hp5+mc=;
-	b=ZLLF2hBORDZNgqB6RGuan1NNhc9PPs1VCx2W8udEzRhxGg3bNFVKw6efNVpPaIEvWDItID
-	TL7gHlj5ZeR/oWD3vAMA4y0xAO+nOMzv/uRZjWunyPn2td8xAv0zzU8wGpyqEZ2cOU59FW
-	0oniecanWP9fsdripRvouZqyTEiAi9VEhkH9yr2Sl+A6L9713cOirfQwq1ywCar/rZV3Rj
-	GO3UWZfnnQkXjNbQlYPy2Y/6wvGTlGYkCoAjIKSOD9Md2PV7qlgx8fNTIrwOT5GJdN6cSw
-	d4T+C09Bl5kqfvvYideBPHeoU1dG4N1TNkJtfO8JUbQqaWjeHcD8xgW0Ozn9bQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728319822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=U+tLkJdJzX5oBPcMxYGnMu9J72CXO1tkPlg0+hp5+mc=;
-	b=pKRVkm8DBGXSlBWiDWmRwtEdt6hNdOmO+WR2gziTKtO5OjoNxHTO/e8uxPPH7DqrmpjdZx
-	wZO5BVDoMCxvqkDQ==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Zhen Lei <thunder.leizhen@huawei.com>,
- Waiman Long <longman@redhat.com>
-Subject: [patch 25/25] debugobjects: Track object usage to avoid premature
- freeing of objects
-References: <20241007163507.647617031@linutronix.de>
+	 in-reply-to:in-reply-to:references:references;
+	bh=rRZMTR1n/c5WTha8acx2XuOAYRFLJCXcobXPAU05IwM=;
+	b=hvsJOJ6EE7PFjP9GabrrJ0wgvzPInnhglw+nh/p+QObBGGFDXpE6riy8SnHUQ62h/ZkJ8J
+	Og1zSCK6QfGbE0S/D4zxkYUGmN2SKX7mRRFtAsyc8juD3b93dq8FjsYNMdWQt7yq1gSSh0
+	GA30FDbxOuf2pxzvFZcEspTpL2Ay01nZt3Ek3ksk/VZYlP7SpMqSX+8y0L/zysT89l/Ed+
+	MmG1LfvqX1vU2b9EDdb1dXxNwcAKZsXOEJcrbxBatUAyoTxOjXO5NIOCkV3KtFL9D8Hr/R
+	2/fzAlSuZPfkB4ZdrDn2rKE5WlvUVFkbvFg4JQjGMjH5MD6JX3xNvvS1TBaxKw==
+Date: Mon, 7 Oct 2024 18:51:16 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Paz Zcharya <pazz@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Paz Zcharya <pazz@google.com>,
+	David Airlie <airlied@gmail.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/vkms: Add support for ABGR8888 pixel format
+Message-ID: <ZwQRhKHZuK4AgWuy@fedora>
+Mail-Followup-To: Paz Zcharya <pazz@chromium.org>,
+	LKML <linux-kernel@vger.kernel.org>, Paz Zcharya <pazz@google.com>,
+	David Airlie <airlied@gmail.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org
+References: <20241007142814.4037157-1-pazz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon,  7 Oct 2024 18:50:21 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007142814.4037157-1-pazz@google.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-The freelist is freed at a constant rate independent of the actual usage
-requirements. That's bad in scenarios where usage comes in bursts. The end
-of a burst puts the object on the free list and freeing proceeds even when
-the next burst which requires objects started again.
+On 07/10/24 - 14:27, Paz Zcharya wrote:
+> Add support for pixel format ABGR8888, which is the default format
+> on Android devices. This will allow us to use VKMS as the default
+> display driver in Android Emulator (Cuttlefish) and increase VKMS
+> adoption.
 
-Keep track of the usage with a exponentially wheighted moving average and
-take that into account in the worker function which frees objects from the
-free list.
+Hi Paz,
 
-This further reduces the kmem_cache allocation/free rate for a full kernel
-compile:
+Thank you for your contribution!
 
-   	    kmem_cache_alloc()	kmem_cache_free()
-Baseline:   225k		245k
-Usage:	    170k		117k
+I am very happy to see new users for VKMS, and I will be glad to add new 
+formats to VKMS!
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- lib/debugobjects.c |   62 ++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 57 insertions(+), 5 deletions(-)
+However, as you can see [1], there is a significant rework of the VKMS 
+formats and composition that should be merged soon.
 
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -13,6 +13,7 @@
- #include <linux/hash.h>
- #include <linux/kmemleak.h>
- #include <linux/sched.h>
-+#include <linux/sched/loadavg.h>
- #include <linux/sched/task_stack.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-@@ -86,6 +87,7 @@ static struct obj_pool pool_to_free = {
- 
- static HLIST_HEAD(pool_boot);
- 
-+static unsigned long		avg_usage;
- static bool			obj_freeing;
- 
- static int __data_racy			debug_objects_maxchain __read_mostly;
-@@ -382,11 +384,28 @@ static bool kmem_alloc_batch(struct hlis
- 	return true;
- }
- 
-+static bool pool_can_fill(struct obj_pool *dst, struct obj_pool *src)
-+{
-+	unsigned int cnt = pool_count(dst);
-+
-+	if (cnt >= dst->min_cnt)
-+		return true;
-+
-+	return READ_ONCE(src->cnt) >= cnt - dst->min_cnt;
-+}
-+
- static void fill_pool(void)
- {
- 	static atomic_t cpus_allocating;
- 
- 	/*
-+	 * If the free pool has enough capacity, then don't try allocating
-+	 * unless the global pool has reached the cricital level.
-+	 */
-+	if (!pool_must_refill(&pool_global) && pool_can_fill(&pool_global, &pool_to_free))
-+		return;
-+
-+	/*
- 	 * Avoid allocation and lock contention when:
- 	 *   - One other CPU is already allocating
- 	 *   - the global pool has not reached the critical level yet
-@@ -427,11 +446,31 @@ static struct debug_obj *lookup_object(v
- 	return NULL;
- }
- 
-+static void calc_usage(void)
-+{
-+	static DEFINE_RAW_SPINLOCK(avg_lock);
-+	static unsigned long avg_period;
-+	unsigned long cur, now = jiffies;
-+
-+	if (!time_after_eq(now, READ_ONCE(avg_period)))
-+		return;
-+
-+	if (!raw_spin_trylock(&avg_lock))
-+		return;
-+
-+	WRITE_ONCE(avg_period, now + msecs_to_jiffies(10));
-+	cur = READ_ONCE(pool_global.stats.cur_used) * ODEBUG_FREE_WORK_MAX;
-+	WRITE_ONCE(avg_usage, calc_load(avg_usage, EXP_5, cur));
-+	raw_spin_unlock(&avg_lock);
-+}
-+
- static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
- 				      const struct debug_obj_descr *descr)
- {
- 	struct debug_obj *obj;
- 
-+	calc_usage();
-+
- 	if (static_branch_likely(&obj_cache_enabled))
- 		obj = pcpu_alloc();
- 	else
-@@ -450,14 +489,26 @@ static struct debug_obj *alloc_object(vo
- /* workqueue function to free objects. */
- static void free_obj_work(struct work_struct *work)
- {
--	bool free = true;
-+	static unsigned long last_use_avg;
-+	unsigned long cur_used, last_used, delta;
-+	unsigned int max_free = 0;
- 
- 	WRITE_ONCE(obj_freeing, false);
- 
-+	/* Rate limit freeing based on current use average */
-+	cur_used = READ_ONCE(avg_usage);
-+	last_used = last_use_avg;
-+	last_use_avg = cur_used;
-+
- 	if (!pool_count(&pool_to_free))
- 		return;
- 
--	for (unsigned int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
-+	if (cur_used <= last_used) {
-+		delta = (last_used - cur_used) / ODEBUG_FREE_WORK_MAX;
-+		max_free = min(delta, ODEBUG_FREE_WORK_MAX);
-+	}
-+
-+	for (int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
- 		HLIST_HEAD(tofree);
- 
- 		/* Acquire and drop the lock for each batch */
-@@ -468,9 +519,10 @@ static void free_obj_work(struct work_st
- 			/* Refill the global pool if possible */
- 			if (pool_move_batch(&pool_global, &pool_to_free)) {
- 				/* Don't free as there seems to be demand */
--				free = false;
--			} else if (free) {
-+				max_free = 0;
-+			} else if (max_free) {
- 				pool_pop_batch(&tofree, &pool_to_free);
-+				max_free--;
- 			} else {
- 				return;
- 			}
-@@ -1110,7 +1162,7 @@ static int debug_stats_show(struct seq_f
- 	for_each_possible_cpu(cpu)
- 		pcp_free += per_cpu(pool_pcpu.cnt, cpu);
- 
--	pool_used = data_race(pool_global.stats.cur_used);
-+	pool_used = READ_ONCE(pool_global.stats.cur_used);
- 	pcp_free = min(pool_used, pcp_free);
- 	pool_used -= pcp_free;
- 
+This series introduces two key improvements: performance enhancements and 
+YUV support. These changes involve substantial modifications to the 
+vkms_format.c file, which may conflict with your work.
 
+Additionally, I wrote a few patches [2] and [3] a few months ago to 
+practice with VKMS, and they did not receive any comments, so I believe I 
+will be able to merge them quickly after [1].
+
+In [2], I added many new formats: ABGR, BGRA, RGBA, XBGR, RGBX, BGRX, 
+BGR565, P010, P012, P016. 
+Would you mind testing this version to see if it meets your needs?
+
+In [3], I did similar work for writeback, but it is not as complete, so I 
+need to add a patch, almost identical to your code:
+
+	static void argb_u16_to_ABGR8888(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
+		[...]
+
+Added:	WRITE_LINE(XBGR8888_write_line, argb_u16_to_XBGR8888)
+
+I need to send a v2 of [3] anyway because of conflicts, do you mind if I 
+take your argb_u16_to_ABGR8888 to integrate it (with your signed-off-by 
+obviously)?
+
+In any case, if you have time to test, or even better review [1], [2] or 
+[3], it could be amazing!
+
+Thank you,
+Louis Chauvet
+
+[1]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
+[2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
+[3]:https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
+
+> Signed-off-by: Paz Zcharya <pazz@chromium.org>
+> ---
+> 
+>  drivers/gpu/drm/vkms/vkms_formats.c   | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_plane.c     |  1 +
+>  drivers/gpu/drm/vkms/vkms_writeback.c |  1 +
+>  3 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 040b7f113a3b..9e9d7290388e 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -73,6 +73,14 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
+>  	out_pixel->b = (u16)src_pixels[0] * 257;
+>  }
+>  
+> +static void ABGR8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+> +{
+> +	out_pixel->a = (u16)src_pixels[3] * 257;
+> +	out_pixel->b = (u16)src_pixels[2] * 257;
+> +	out_pixel->g = (u16)src_pixels[1] * 257;
+> +	out_pixel->r = (u16)src_pixels[0] * 257;
+> +}
+> +
+>  static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>  {
+>  	__le16 *pixels = (__force __le16 *)src_pixels;
+> @@ -176,6 +184,14 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
+>  	dst_pixels[0] = DIV_ROUND_CLOSEST(in_pixel->b, 257);
+>  }
+>  
+> +static void argb_u16_to_ABGR8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+> +{
+> +	dst_pixels[3] = DIV_ROUND_CLOSEST(in_pixel->a, 257);
+> +	dst_pixels[2] = DIV_ROUND_CLOSEST(in_pixel->b, 257);
+> +	dst_pixels[1] = DIV_ROUND_CLOSEST(in_pixel->g, 257);
+> +	dst_pixels[0] = DIV_ROUND_CLOSEST(in_pixel->r, 257);
+> +}
+> +
+>  static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  {
+>  	__le16 *pixels = (__force __le16 *)dst_pixels;
+> @@ -234,6 +250,8 @@ void *get_pixel_conversion_function(u32 format)
+>  		return &ARGB8888_to_argb_u16;
+>  	case DRM_FORMAT_XRGB8888:
+>  		return &XRGB8888_to_argb_u16;
+> +	case DRM_FORMAT_ABGR8888:
+> +		return &ABGR8888_to_argb_u16;
+>  	case DRM_FORMAT_ARGB16161616:
+>  		return &ARGB16161616_to_argb_u16;
+>  	case DRM_FORMAT_XRGB16161616:
+> @@ -252,6 +270,8 @@ void *get_pixel_write_function(u32 format)
+>  		return &argb_u16_to_ARGB8888;
+>  	case DRM_FORMAT_XRGB8888:
+>  		return &argb_u16_to_XRGB8888;
+> +	case DRM_FORMAT_ABGR8888:
+> +		return &argb_u16_to_ABGR8888;
+>  	case DRM_FORMAT_ARGB16161616:
+>  		return &argb_u16_to_ARGB16161616;
+>  	case DRM_FORMAT_XRGB16161616:
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index e5c625ab8e3e..8efd585fc34c 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -15,6 +15,7 @@
+>  static const u32 vkms_formats[] = {
+>  	DRM_FORMAT_ARGB8888,
+>  	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ABGR8888,
+>  	DRM_FORMAT_XRGB16161616,
+>  	DRM_FORMAT_ARGB16161616,
+>  	DRM_FORMAT_RGB565
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index bc724cbd5e3a..04cb9c58e7ad 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -17,6 +17,7 @@
+>  static const u32 vkms_wb_formats[] = {
+>  	DRM_FORMAT_ARGB8888,
+>  	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ABGR8888,
+>  	DRM_FORMAT_XRGB16161616,
+>  	DRM_FORMAT_ARGB16161616,
+>  	DRM_FORMAT_RGB565
+> -- 
+> 2.47.0.rc0.187.ge670bccf7e-goog
+> 
 
