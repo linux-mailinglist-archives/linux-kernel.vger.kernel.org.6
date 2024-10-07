@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-353366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9ECF992CE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:16:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34ADF992CF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D0B1C22AFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:16:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF940B22F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB971D358D;
-	Mon,  7 Oct 2024 13:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AB01D4354;
+	Mon,  7 Oct 2024 13:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XsYWyrPL"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="y660Vn8T"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C395E1D2796
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFD8320B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307006; cv=none; b=SxTMd16SdZlR/WMTbiO6XA1VflzLfs3gVJshxOwNp6UUa511QH+nX4Ko+HmI9CXkI5YS2vREskzT5NATKt1pNXU5BYTlDg7y7mmemti2inEyyGIkYaQwkravn4x++93U/cRxq4Vhue3tF20WaAcssmYDZsV2Yszs/Badp7Ck0fU=
+	t=1728307013; cv=none; b=deWswxoQMq0qlRBKYEyT7i5nZqLm6ZmowgG5y1qSSdP+zItSDqncyneTooqLSYCpTMeD7WfuDMpN3KcktEYhPb9+tvnMFpzuD0xsP39O2jAW+liwyMPhtw9OxSdwPXiJjlQvgKFlFE0JYgUo5cIhJtr5DHmgKHI21tSYD0Ss3yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307006; c=relaxed/simple;
-	bh=c5zDZczpwoMhRCZTtD9TIprKTL2qFUSJSp44forXD64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlJl518w4GkFz1ev07itibWpaVKNRnvWnA6A8dNzu9CwhOJrg5c969IPAJgOfWbio34gAoPgceBu7E3dyBXkUlz89cZjZcvE/9KiC6OfoOHMmBE4UU94YYJVHGey7zfEid91XZSnLEg70twtbwm6sZnTWusJwnf+EdRbbEnysmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XsYWyrPL; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fadc95ccfcso47227651fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:16:44 -0700 (PDT)
+	s=arc-20240116; t=1728307013; c=relaxed/simple;
+	bh=OcYuo83U2iRwCpYhaFW8wDpfY57aiwrGoCMgI1DeJwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gfgx9i9ev0RcQ5zAe/jAeQuIsssey2Qv5i86NIwrGAlIGqxejaQLVwd1AXrDptkZsDXvZFcxjVDNdfKVSyFW5xgo6G9hVEYlT3qBXG679iPBworMvHUbb7px0zFD2v4tNyWnTLPyDwkEONHSWff4raoSSbti83Q+JGMyYf+Mv9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=y660Vn8T; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso27570845e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728307003; x=1728911803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
-        b=XsYWyrPLB/p0aPFooLUEtc502zzKNuzHHLlWwRFYySERoH9B4VacYJFPm2CPi11PYz
-         RAowKOf7d+pQ76NorSvFjMj1qt0BCLntyFWfJWHJKPrEzxax9vSFkFTNlRiCbX9RoXKn
-         emTPYtd6bYsFNb+XpBv7koqh+Y0sa4aqmZrVkT+4zggJJ2YHXXsgf7vUHHoYnRphh5A6
-         rLzgASx0PEBsLk8JRdSCFxNfGKirBp+CObYCMQWSwPYddvGMpmEdgEi+kQoNDyZqwXca
-         5fg7iKCJW9lkY5F3SJr2au21W7HtVU+kUAnzcgUbC+u3EcbA3zHwLn0mBUHZAHugAsXe
-         XG0A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728307010; x=1728911810; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2xJ2YFkWfoe18Mjx4VFZ0GmwDt9WkCYa7a9JNvVutAI=;
+        b=y660Vn8TF1N8RN7VNvfYjsefWwuMFay3yXawBOTqUWFEx0Id6hTU12M2AJIOqzx/TO
+         +4pzycIJTYb5ETYUhp+kRQGokwjcNO9f6XuN0J4NZPnuSTwLFAq1GTbUJ0dniyG/jENF
+         w+LRvARU6OF+GgtxI1XGAglQK+Q57pbpmsM0UKD1rElspWWr/zk960ENodyUwcYkeoC3
+         WW+qNuzn4WQ8JA/HpCmDBZekH/cxZCVVBI5f4optbo7zF21UBznwZa5aOJNnftCUKZvt
+         w1giQ/9HzwdZIYRnULgxZDd1NV6shyTGZYH7EanvWg2JkkF9U3qLewhiwtOXwO7BxLTV
+         wPTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307003; x=1728911803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
-        b=Su0F1+cPshneLlgz8dNx3aKxlpC33SFJtjcRoovZG8UcYv8wXamFZzyVRSvUOXO2wv
-         RPg4laArxPoPhaBpWEWtsHr3FyTDORZJ5ZCnuw8rwNNFA3dESARo1oqE/swoJdgb3SOu
-         A8fwuW/jC+0F6hmErtXcIxGD4j3oDj7MJWJUE3Swq+O/WO3OTDzxtZPMpFQurg8cTrwk
-         XLxQqXSRbu03adH5MrH8SpaSQcatTxak8LuO4EIDT8ZX/+5yk9Lyp3W+VyWINIM3OVcR
-         VEN1q/QILnIjaN7MxBTtsWUM45Yfxi8zRlnQ9PopQjSJ027zA/sKGXeHN2AyWG6iYir8
-         h2LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6f9GQFmybvrFI1GmGMezRBlHWj44vWogmL/AatHeiM8cUgWSNbNtYaWHx9DczkKo1dlANXcto0Hk+X1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWRCGZNMrpt0gjerKaN03RpvCtDyylLR2SVj7ZkbaYks3wdVzQ
-	iEDT1uWhTdxaxwIkSlFZYht8GJeJzsA4YiJ+p+VAwRlmKYddG8ycuhihCnfoJEg=
-X-Google-Smtp-Source: AGHT+IGZ1mDDEjhcmG+T6pvJMY5EAIlF8UJwKfOkVTjp4MAKBG18DAhtjPcfQoU7T5moxF77LIIMQQ==
-X-Received: by 2002:a05:651c:556:b0:2fa:d58d:dcf3 with SMTP id 38308e7fff4ca-2faf3d9d58emr49272581fa.33.1728307002704;
-        Mon, 07 Oct 2024 06:16:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b24867sm8453081fa.73.2024.10.07.06.16.40
+        d=1e100.net; s=20230601; t=1728307010; x=1728911810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2xJ2YFkWfoe18Mjx4VFZ0GmwDt9WkCYa7a9JNvVutAI=;
+        b=DzihJXUOWffzUk5bUd+oDZ6e1J9zz7dQuJNWOWTUeeZ/gs+280z0oFu8pDp47E8lQM
+         HIaK6nRD2HZE2ibUiR3SXcIMzEZzUetxrZjdQR2RojTVHthZtFviLABxJCNzTHiWRf8C
+         ZSb/1TUplU2AVbPI3x13Z9QYY9P+VEZJySPOffobXfd+vVvPHAAWx5fR4g97MNWATkGe
+         L0aOwBE00V9VPON5+659x+KbJjE8tLYRS8FjNRaOysVTAN3op7TiVacZtf2hfuPiChuQ
+         Zinoyb50JUcKdYulTl+4uHxBo1K7KNO6/ilUqMN71oEiiZQg2LbTvZm6aIRJ4nSiRTAm
+         rlzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlSoZsTxsNF2zgYsTHY11SgyO9IUb/dbvcbQtbjCAWVKjqcUM3T0o3mV2h/VvWJqj0YcYEopAejxzhih0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwve1QeqCFATK5AnJmzeyS/ksF1jJL0UMBtsMfR+cws2ggm4Z3
+	CcyPYn1GDQRvRZS6Q82eL1f2YN3+F/je/4GrbPEXk4kCXcmyP4aFYjst6ELkR7U=
+X-Google-Smtp-Source: AGHT+IFCxIu22KVn102zI/v0p4tBA3WyzTx0G+ILqzEftEQiZFlR0gzu/jBnsdN6zjbqWia8kun3jQ==
+X-Received: by 2002:a7b:c5c3:0:b0:426:64c1:8388 with SMTP id 5b1f17b1804b1-42f892fd471mr57225385e9.17.1728307009843;
+        Mon, 07 Oct 2024 06:16:49 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b1d672sm92484155e9.28.2024.10.07.06.16.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:16:41 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:16:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Arun Kumar Neelakantam <quic_aneela@quicinc.com>, 
-	"open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
- CMD_OPEN name length
-Message-ID: <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
-References: <20241007044723.25347-1-jonathan@marek.ca>
+        Mon, 07 Oct 2024 06:16:47 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] wifi: brcmfmac: of: use devm_clk_get_optional_enabled_with_rate()
+Date: Mon,  7 Oct 2024 15:16:39 +0200
+Message-ID: <20241007131639.98358-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007044723.25347-1-jonathan@marek.ca>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
-> The name len field of the CMD_OPEN packet is only 16-bits and the upper
-> 16-bits of "param2" are a different field, which can be nonzero in certain
-> situations, and CMD_OPEN packets can be unexpectedly dropped because of
-> this.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Any idea about the upper 16 bits? Should we care about that data too?
+Fold the separate clk_set_rate() call into the clock getter.
 
-> 
-> Fix this by masking out the upper 16 bits of param2.
-> 
-> (the commit in this Fixes tag is not where the original code was introduced
-> but it should be far back enough not to matter)
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Let's be more precise:
-
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-
-> 
-> Fixes: 835764ddd9af ("rpmsg: glink: Move the common glink protocol implementation to glink_native.c")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 0b2f290069080..e4933b823238c 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1204,7 +1204,7 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
->  			ret = qcom_glink_rx_open_ack(glink, param1);
->  			break;
->  		case GLINK_CMD_OPEN:
-> -			ret = qcom_glink_rx_defer(glink, param2);
-> +			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
->  			break;
->  		case GLINK_CMD_TX_DATA:
->  		case GLINK_CMD_TX_DATA_CONT:
-> -- 
-> 2.45.1
-> 
-
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+index b90e23bb9366..ae98e371dbfd 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+@@ -116,12 +116,11 @@ int brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ 		of_node_put(root);
+ 	}
+ 
+-	clk = devm_clk_get_optional_enabled(dev, "lpo");
++	clk = devm_clk_get_optional_enabled_with_rate(dev, "lpo", 32768);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+ 	brcmf_dbg(INFO, "%s LPO clock\n", clk ? "enable" : "no");
+-	clk_set_rate(clk, 32768);
+ 
+ 	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+ 		return 0;
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
