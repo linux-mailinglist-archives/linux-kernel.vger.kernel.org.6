@@ -1,162 +1,120 @@
-Return-Path: <linux-kernel+bounces-353198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5DE992A3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE699992A3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92AEEB2295F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98DAC281F53
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502E314AD17;
-	Mon,  7 Oct 2024 11:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+VYGleb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6221D1F40;
+	Mon,  7 Oct 2024 11:31:21 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950E2101C4;
-	Mon,  7 Oct 2024 11:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0C9101C4;
+	Mon,  7 Oct 2024 11:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300615; cv=none; b=Wb/Qm5uk9b7i00J6zSkVe1lAvSt2H06eUNaRJBHKZt1qSgIhXRUDpQfEW54hXGOFhwZHHxE6jMHat081UgveBzxOgTk3fbwarYjEXvwq9VDHgf69rvyOdhOBIp5+49DgApAyuHVRSVai1QOPvtJeHAKqf/sIJFZro6xJxlFIH/c=
+	t=1728300681; cv=none; b=Xu6Tll7q8LvyX2VDP5F78ZrjC9d/WBnc/O0xW5G5rU10BW+GaLVJVihV2vTny64V87wJVYhEVe1QmukQDOlFSG1ipjnFBtbEKuV0gghqy4Bj0QvSBM7nDvQ4kSuiPuC/o699wgIygdv/XpSqOwj0gz6N0GMT9V+KgKUWu/a3aWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300615; c=relaxed/simple;
-	bh=Rz4+xwYlnejseHEd/Mnd7CZL6xZvLaDMPzooI0qTgmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o892fXTdrPLrIZAoof5y1edjVkTzV+OTiBHchDRiaRlbmHc2Rh+wI8F7YUYrs6ictShqsnKSNN0Df9egpS8k9RtziNZmyMZ2X4gFn0bpOsutKbegoFeP9YM5DH8xLRu8oy2if6j6cCDcd0PInBexVBLQ90NVkrfdjlL0N6OLEqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+VYGleb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D307C4CEC6;
-	Mon,  7 Oct 2024 11:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728300615;
-	bh=Rz4+xwYlnejseHEd/Mnd7CZL6xZvLaDMPzooI0qTgmY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f+VYGlebZh0izT4/wpS/jAuaUTaxn4XJzdQWFUUUjyyAoKYN8Dqalm10RaSmeJZWW
-	 7DgfSR9zCvSx+tgGzWfO15tA7COUMo5s2dhPCPnZ+7BAlMsH5btJN6OasQpA9PXa1M
-	 ET+aqUEQWR8+5UolWB756Aw1oEPrN1Mn1YdEE+XkaEq8yhbPELGohjioLJvbfyQtBI
-	 iTed0U7xAlSpvAM7Z/yAaxa+xdRdQOmV22GNyDerGFbbNfMxSXDH4Y9Wh2khSoKUIQ
-	 Zd2fuQBRZ66QaavW8BYx10oBSI5cKQI0c4CjbyfJE7vCDiA8QqZWG1i38FYcGQsjdO
-	 WQIptI9bu5MsA==
-Message-ID: <e6709979-e69e-4b55-be9f-c1353dd8ffc7@kernel.org>
-Date: Mon, 7 Oct 2024 13:30:08 +0200
+	s=arc-20240116; t=1728300681; c=relaxed/simple;
+	bh=7tFqPXIR8Oj7mN8Mv3E1ReRdWth6sARj/sqyo2PSm6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pfxri3hzE1l0Qsmnzb7CbOEE8ZR2HTbe5iMOWcBp07Ox43/PObLO4sXCNr1QZGctQaoEa5Ve2vjM0LDMGhK0QQEmC2HmTZBIlTR3ybyC4jz4z+nTfkWWKszWw2DTAAe+V6+zbRUoPwlIf1HvLGFA5JOD4DWB12aCpmSZWBeWIls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sxlx9-000000002KX-3SEU;
+	Mon, 07 Oct 2024 11:31:03 +0000
+Date: Mon, 7 Oct 2024 12:30:53 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: leds: add 'active-high'
+ property
+Message-ID: <ZwPGbUWImzlbEqb-@makrotopia.org>
+References: <e91ca84ac836fc40c94c52733f8fc607bcbed64c.1728145095.git.daniel@makrotopia.org>
+ <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
+ <ZwKK4xMlqq3TyDyt@makrotopia.org>
+ <6d3hvesqhslk7jaszo44orbaqabl7go6duzpu4beye44sa6lpn@b3c56bp6x3ce>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: [PATCH v2 2/2] mmc: mtk-sd: add support for mt7988
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Frank Wunderlich <frank-w@public-files.de>
-Cc: Frank Wunderlich <linux@fw-web.de>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-3-linux@fw-web.de>
- <89e54baa-0f05-47d7-8d81-68862f822c59@collabora.com>
- <trinity-2ac8c3fe-ad19-424b-ab4f-da84c42c4ae1-1728290266613@3c-app-gmx-bap03>
- <272309da-24ff-49cd-9e4b-287054218cbc@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <272309da-24ff-49cd-9e4b-287054218cbc@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d3hvesqhslk7jaszo44orbaqabl7go6duzpu4beye44sa6lpn@b3c56bp6x3ce>
 
-On 07/10/2024 12:14, AngeloGioacchino Del Regno wrote:
-> Il 07/10/24 10:37, Frank Wunderlich ha scritto:
->> Hi
->>
->>> Gesendet: Montag, 07. Oktober 2024 um 09:58 Uhr
->>> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
->>> Betreff: Re: [PATCH v2 2/2] mmc: mtk-sd: add support for mt7988
->>>
->>> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
->>>> From: Frank Wunderlich <frank-w@public-files.de>
->>>>
->>>> Add support for mmc on MT7988 SoC.
->>>>
->>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> There's no need to add yet one more duplicate mtk_mmc_compatible platform
->>> data, nor one more compatible string to this driver, as this is exactly
->>> the same as mt7986.
->>>
->>> Please reuse the MT7986 compatible; in DT you'll have:
->>>
->>> compatible = "mediatek,mt7988-mmc", "mediatek,mt7986-mmc";
->>
->> as explained in binding, the clock config is completely different (except first 2 also required by driver - 3-7 are optional there). mt7988 uses axi and ahb clocks.
->>
->> but i could of course use the mt7988 compatible with mt7986 compat data...but looked dirty to me so just copied the block (to allow later changes if needed).
->>
+On Mon, Oct 07, 2024 at 08:38:27AM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Oct 06, 2024 at 02:04:35PM +0100, Daniel Golle wrote:
+> > On Sun, Oct 06, 2024 at 02:44:44PM +0200, Krzysztof Kozlowski wrote:
+> > > I think this should be just string enum, see marvell,marvell10g.yaml
+> > 
+> > I found the vendor-specific 'marvell,polarity' property in
+> > https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231214201442.660447-5-tobias@waldekranz.com/
+> > 
+> > However, I can't find that file in any Linux tree.
+> > 
+> > Looking at the suggested patch on patchwork, I got a few questions on
+> > how to deal with the situation as of today:
+> > 
+> > So should the existing support for the 'active-low' and
+> > 'inactive-high-impedance' properties be replaced by that string enum?
+> > Or should the string property be interpreted in addition to the
+> > bools defined in leds/common.yaml?
+> > 
+> > Should the string property be defined for each PHY or should we move
+> > it into a common file?
+> > 
+> > If so, should that common file also be leds/common.yaml or should we
+> > create a new file only for PHY LEDs instead?
+> > 
+> > Sorry for being confused, I don't mind going down what ever path to have
+> > LED polarity configurable properly in DT.
 > 
-> In case there will be any changes required *later*, you can always add new platform
-> data for the MT7988 compatible, as it's just only a code change and nothing else.
+> Let's ignore my idea.
 > 
-> For now, since they're the same, just reuse mt7986_compat.
+> However I still wonder whether your choice for lack of properties is
+> appropriate. Lack of properties as "bootloader default" means it can
+> change. Why would anyone prefer to keep bootloader default? The wiring
+> is fixed - it's never "we design PCB based on bootloader, so with new
+> bootloader we will change PCB"?
 > 
-> Reusing is way better than duplicating - here and everywhere else - especially when
-> this implies a 100% duplication.
+> And if you meant bootstrapping through some hardwired configuration,
+> then again it is known and defined.
 
-If you use same match data, then entire change should be dropped because
-it is redundant. Instead express compatibility in the bindings and use
-fallback.
+I agree, and my original intention was to just always apply polarity
+settings and force people to correctly declare them in DT.
+However, that would break DT compatibility on devices not making use
+of those properties and relying only on strapping or bootloader
+defaults. See also RFC discussed here:
 
-Best regards,
-Krzysztof
-
+https://patchwork.kernel.org/project/netdevbpf/patch/473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org/
 
