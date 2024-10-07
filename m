@@ -1,147 +1,207 @@
-Return-Path: <linux-kernel+bounces-353635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58544993091
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D1B9930B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A41D1C20953
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCD11C23388
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD31D959B;
-	Mon,  7 Oct 2024 15:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFD61D958F;
+	Mon,  7 Oct 2024 15:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iM8HrNUf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="rWkyGSYF"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC0B1EB25;
-	Mon,  7 Oct 2024 15:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411A11D90D3;
+	Mon,  7 Oct 2024 15:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313518; cv=none; b=XQb15nt5R5+7xIVlnNsUWLc5m04orSxvpljW9wu7XDBKJUBys/Etv1MThDiH/tSah2LsAU+c+cNQ3d75wGNcvnsTpDvfUJqZ/VogB3SthfNvIGC6vCD8llbWTqbxiDd1O9Eicx1yCkVL6zaHrOXkX0A+SHedm3IMWvpyS/B4FmU=
+	t=1728313623; cv=none; b=BIKPmbCDIAIJDlHak693IcJdq+yxhb8dtbQjo7SIiTwydRPUGDOI70BnIKH58JK13h8Dz3/7nMGTjwWuFGUlSPK1tzfG4N/aL6KtTdqhAVb+DlD5ufZIhuollKs8O7VEZw97rASfCHnrBxJVEQ/wcgAXFxpAIN4tajQ9Lq3YNhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313518; c=relaxed/simple;
-	bh=JRtx5eRJkXG38uPw/npJdWEVbk79L2ljNlxvw5Jbrto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNfkd2jMq8jLxzyZTjcJGXh8WIVrURkrTOoI4N2nzFKW3Qi8R7jTARsASJZvxwIDdbqGSIErf3/srgjsDzLY3F+tF1vapSM2GlHGVE/QszAgCU33rUzDWCnJ5nB8c7SvGRqR90Ey5D/0BUj5+/vzB+usTpbS/kk3jngjGbD/mdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iM8HrNUf; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728313518; x=1759849518;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JRtx5eRJkXG38uPw/npJdWEVbk79L2ljNlxvw5Jbrto=;
-  b=iM8HrNUfzAJTiZic/iFr5CQvhsroNwn99OLTP+w5qiWnXyTvgyvpGTwL
-   NWyAwACVR5JmgLOO6h4YidCO6xxOkOhV6dfB2hfA7MOZQWOvwhEdyowrP
-   +UHsLQmKVMcizl2RTFzlbUsvjL8w8hOpK7RTlEismFB2OjES6W+c/ySxv
-   r8YTOZRRmO5KjKychlMBFPzQJbieUTYzethtxtt8VEZbvFCqtX9xtA1UN
-   MibNOmlJ493/jr9vG/tZi3gU/ZKFYSDeoWDBvSbj41D8t0bOoflWIupb4
-   xZVNuy3SL2AdClnulpJa9fVNnGWKtOX+x17sr4G6tazo5x9BNhFOgMq1K
-   g==;
-X-CSE-ConnectionGUID: eqUbaYReQ2mMary9kcK1fQ==
-X-CSE-MsgGUID: h25eV7fGSNSwC0vrEyx4ew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="50001316"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="50001316"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 08:05:16 -0700
-X-CSE-ConnectionGUID: ZAw+Mk0YRgq2jIUgeYmqbA==
-X-CSE-MsgGUID: IoaAwrPFTbq17UYMK81ItQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="98822607"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Oct 2024 08:04:57 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxpI6-00058i-2w;
-	Mon, 07 Oct 2024 15:04:54 +0000
-Date: Mon, 7 Oct 2024 23:04:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	rickard.andersson@axis.com, kernel@axis.com,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>
-Subject: Re: [PATCH v2 2/2] iio: light: Add support for TI OPT4060 color
- sensor
-Message-ID: <202410072240.s3wGb17S-lkp@intel.com>
-References: <20241005165119.3549472-3-perdaniel.olsson@axis.com>
+	s=arc-20240116; t=1728313623; c=relaxed/simple;
+	bh=r1rEb4BcGluwlHstvi+nWxFz5xLpAXRmZnsaTQauCkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJ7cl9r9MWv0Ly0tbjyPIyN+CnyJtPqcqhki4ftsXiixcRI9Eo998Ori6ce2YJIqQnchVrH6T/UW7uV5POSGFUUvurGmZmR8ndAovynqY/zNYDFpoB5NVRmzO+tNC6+J6624crUPp7X9v+YG8yVtShjxvUWpy9VPovZo+o41/lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=rWkyGSYF; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728313619;
+	bh=r1rEb4BcGluwlHstvi+nWxFz5xLpAXRmZnsaTQauCkY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rWkyGSYF70MdtnVehW6FBtpNIYFy9k6IVdj66SP1lBOuIi9NBlqdoHQocQgzbC6zO
+	 odM4YO9SgTV6A9OilOfrlU20IND6EiyIFW4EZjAujSZLpbGjEVcsOvzxweckFFODFL
+	 kmnTFec/qoPH/yia06SSkpKrNEUj+UTuCFfizRRycoYFcRW1Kx2tHCrMupweo6bnQ/
+	 mWxnppFiwX+pYJs+vR0HQbnT8DRzVPjGtbQXbjNTZzit6gXlFpBzVcAw66Zlenb/r1
+	 jMKOw2k+Dp9BEsLf8ajwfr5eeSST9uFXtQO1i+TT4xTI611VcYFuk+qVoG2qmpLAtZ
+	 P4a/D2KjwXnBQ==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XMjDL45V4z3rf;
+	Mon,  7 Oct 2024 11:06:58 -0400 (EDT)
+Message-ID: <f5c749d3-e3ec-4463-9dc2-690b9b719315@efficios.com>
+Date: Mon, 7 Oct 2024 11:05:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005165119.3549472-3-perdaniel.olsson@axis.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 4/4] sched+mm: Use hazard pointers to track lazy
+ active mm existence
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, Nicholas Piggin
+ <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, maged.michael@gmail.com,
+ rcu@vger.kernel.org, lkmm@lists.linux.dev
+References: <202410072229.18756716-oliver.sang@intel.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <202410072229.18756716-oliver.sang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Per-Daniel,
+On 2024-10-07 16:50, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "BUG:using_smp_processor_id()in_preemptible" on:
+> 
+> commit: efef4da3b19cadf4beb45079a05643a77821de79 ("[RFC PATCH v2 4/4] sched+mm: Use hazard pointers to track lazy active mm existence")
+> url: https://github.com/intel-lab-lkp/linux/commits/Mathieu-Desnoyers/compiler-h-Introduce-ptr_eq-to-preserve-address-dependency/20241005-023027
+> base: https://git.kernel.org/cgit/linux/kernel/git/powerpc/linux.git next
+> patch link: https://lore.kernel.org/all/20241004182734.1761555-5-mathieu.desnoyers@efficios.com/
+> patch subject: [RFC PATCH v2 4/4] sched+mm: Use hazard pointers to track lazy active mm existence
+> 
 
-kernel test robot noticed the following build warnings:
+This should do the trick:
 
-[auto build test WARNING on 0c559323bbaabee7346c12e74b497e283aaafef5]
+-       WRITE_ONCE(this_cpu_ptr(hp_domain_sched_lazy_mm.percpu_slots)->addr, NULL);
++       this_cpu_write(hp_domain_sched_lazy_mm.percpu_slots->addr, NULL);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Per-Daniel-Olsson/dt-bindings-iio-light-Document-TI-OPT4060-RGBW-sensor/20241006-005244
-base:   0c559323bbaabee7346c12e74b497e283aaafef5
-patch link:    https://lore.kernel.org/r/20241005165119.3549472-3-perdaniel.olsson%40axis.com
-patch subject: [PATCH v2 2/2] iio: light: Add support for TI OPT4060 color sensor
-config: csky-randconfig-r122-20241007 (https://download.01.org/0day-ci/archive/20241007/202410072240.s3wGb17S-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241007/202410072240.s3wGb17S-lkp@intel.com/reproduce)
+I'll update the patch for the next round.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410072240.s3wGb17S-lkp@intel.com/
+Thanks,
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/light/opt4060.c:963:9: sparse: sparse: dereference of noderef expression
->> drivers/iio/light/opt4060.c:963:9: sparse: sparse: dereference of noderef expression
->> drivers/iio/light/opt4060.c:963:9: sparse: sparse: dereference of noderef expression
+Mathieu
 
-vim +963 drivers/iio/light/opt4060.c
 
-   951	
-   952	static irqreturn_t opt4060_trigger_handler(int irq, void *p)
-   953	{
-   954		struct iio_poll_func *pf = p;
-   955		struct iio_dev *idev = pf->indio_dev;
-   956		struct opt4060_chip *chip = iio_priv(idev);
-   957		struct opt4060_buffer raw;
-   958		int ret, chan;
-   959		int i = 0;
-   960	
-   961		memset(&raw, 0, sizeof(raw));
-   962	
- > 963		for_each_set_bit(chan, idev->active_scan_mask, idev->masklength) {
-   964			ret = opt4060_read_raw_value(chip,
-   965						     opt4060_channels[chan].address,
-   966						     &raw.chan[i++]);
-   967			if (ret) {
-   968				dev_err(chip->dev, "Reading raw channel data failed\n");
-   969				goto err_read;
-   970			}
-   971		}
-   972	
-   973		iio_push_to_buffers_with_timestamp(idev, &raw, pf->timestamp);
-   974	err_read:
-   975		iio_trigger_notify_done(idev->trig);
-   976		return IRQ_HANDLED;
-   977	}
-   978	
+> in testcase: boot
+> 
+> compiler: gcc-12
+> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> +--------------------------------------------+------------+------------+
+> |                                            | 75b478bf10 | efef4da3b1 |
+> +--------------------------------------------+------------+------------+
+> | BUG:using_smp_processor_id()in_preemptible | 0          | 12         |
+> +--------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202410072229.18756716-oliver.sang@intel.com
+> 
+> 
+> [    6.336856][   T48] BUG: using smp_processor_id() in preemptible [00000000] code: kworker/u10:1/48
+> [ 6.338102][ T48] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [    6.338809][   T48] CPU: 0 UID: 0 PID: 48 Comm: kworker/u10:1 Not tainted 6.12.0-rc1-00004-gefef4da3b19c #5
+> [    6.339929][   T48] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [    6.341119][   T48] Call Trace:
+> [ 6.341504][ T48] dump_stack_lvl (lib/dump_stack.c:123)
+> [ 6.342057][ T48] dump_stack (lib/dump_stack.c:130)
+> [ 6.342065][ T48] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 lib/smp_processor_id.c:53)
+> [ 6.342065][ T48] debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [ 6.342065][ T48] exec_mmap (include/linux/sched/mm.h:91 fs/exec.c:1017)
+> [ 6.342065][ T48] ? would_dump (fs/exec.c:1409)
+> [ 6.342065][ T48] begin_new_exec (fs/exec.c:1280)
+> [ 6.342065][ T48] ? load_elf_phdrs (fs/binfmt_elf.c:534)
+> [ 6.342065][ T48] load_elf_binary (fs/binfmt_elf.c:996)
+> [ 6.342065][ T48] ? get_lock_stats (kernel/locking/lockdep.c:339)
+> [ 6.342065][ T48] ? search_binary_handler (fs/exec.c:1752)
+> [ 6.342065][ T48] search_binary_handler (fs/exec.c:1752)
+> [ 6.342065][ T48] exec_binprm (fs/exec.c:1795)
+> [ 6.342065][ T48] bprm_execve (fs/exec.c:1846 fs/exec.c:1821)
+> [ 6.342065][ T48] kernel_execve (fs/exec.c:2012)
+> [ 6.342065][ T48] call_usermodehelper_exec_async (kernel/umh.c:110)
+> [ 6.342065][ T48] ? umh_complete (kernel/umh.c:65)
+> [ 6.342065][ T48] ret_from_fork (arch/x86/kernel/process.c:153)
+> [ 6.342065][ T48] ? umh_complete (kernel/umh.c:65)
+> [ 6.342065][ T48] ret_from_fork_asm (arch/x86/entry/entry_32.S:737)
+> [ 6.342065][ T48] entry_INT80_32 (arch/x86/entry/entry_32.S:944)
+> [    6.352140][    T1] ppdev: user-space parallel port driver
+> [    6.353841][    T1] HSI/SSI char device loaded
+> [    6.354238][    T1] e1000: Intel(R) PRO/1000 Network Driver
+> [    6.354673][    T1] e1000: Copyright (c) 1999-2006 Intel Corporation.
+> [    6.650009][    T1] ACPI: _SB_.LNKC: Enabled at IRQ 11
+> [    6.968868][    T1] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:12:34:56
+> [    6.969500][    T1] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+> [    6.970506][   T49] BUG: using smp_processor_id() in preemptible [00000000] code: kworker/u10:1/49
+> [ 6.971191][ T49] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [    6.971650][   T49] CPU: 0 UID: 0 PID: 49 Comm: kworker/u10:1 Not tainted 6.12.0-rc1-00004-gefef4da3b19c #5
+> [    6.972365][   T49] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [    6.973115][   T49] Call Trace:
+> [ 6.973356][ T49] dump_stack_lvl (lib/dump_stack.c:123)
+> [ 6.973686][ T49] dump_stack (lib/dump_stack.c:130)
+> [ 6.973983][ T49] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 lib/smp_processor_id.c:53)
+> [ 6.974328][ T49] debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [ 6.974328][ T49] exec_mmap (include/linux/sched/mm.h:91 fs/exec.c:1017)
+> [ 6.974328][ T49] ? would_dump (fs/exec.c:1409)
+> [ 6.974328][ T49] begin_new_exec (fs/exec.c:1280)
+> [ 6.974328][ T49] ? load_elf_phdrs (fs/binfmt_elf.c:534)
+> [ 6.974328][ T49] load_elf_binary (fs/binfmt_elf.c:996)
+> [ 6.974328][ T49] ? get_lock_stats (kernel/locking/lockdep.c:339)
+> [ 6.974328][ T49] ? search_binary_handler (fs/exec.c:1752)
+> [ 6.974328][ T49] search_binary_handler (fs/exec.c:1752)
+> [ 6.974328][ T49] exec_binprm (fs/exec.c:1795)
+> [ 6.974328][ T49] bprm_execve (fs/exec.c:1846 fs/exec.c:1821)
+> [ 6.974328][ T49] kernel_execve (fs/exec.c:2012)
+> [ 6.974328][ T49] call_usermodehelper_exec_async (kernel/umh.c:110)
+> [ 6.974328][ T49] ? umh_complete (kernel/umh.c:65)
+> [ 6.974328][ T49] ret_from_fork (arch/x86/kernel/process.c:153)
+> [ 6.974328][ T49] ? umh_complete (kernel/umh.c:65)
+> [ 6.974328][ T49] ret_from_fork_asm (arch/x86/entry/entry_32.S:737)
+> [ 6.974328][ T49] entry_INT80_32 (arch/x86/entry/entry_32.S:944)
+> 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20241007/202410072229.18756716-oliver.sang@intel.com
+> 
+> 
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
