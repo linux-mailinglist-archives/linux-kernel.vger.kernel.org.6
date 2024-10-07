@@ -1,175 +1,147 @@
-Return-Path: <linux-kernel+bounces-353577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F59992FAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:44:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19506992FB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58ABB1F22B19
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7599DB23D81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEE91D5CD4;
-	Mon,  7 Oct 2024 14:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D41D5AAE;
+	Mon,  7 Oct 2024 14:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mKTGP/QU"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oXxJmJiR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G97OKwST"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102F2F50F;
-	Mon,  7 Oct 2024 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E5E5338D;
+	Mon,  7 Oct 2024 14:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312250; cv=none; b=VrLvbDBocnNsNzqAkluKSWHvis8VBQVCAKy6dhVppG2oEtTp0t5W+kZbRM2wCkBOQGjBIzFzdoQN8vvVE39x+RlsZijKkEDEzc8GQzvEFD5Rsp0cN/ImyL9lfPyznEmiEGG1XhSfxFJM/Is1xLF4QTBkshSD9nTLzOpFL0y4SeE=
+	t=1728312304; cv=none; b=QFnMOPsN1KbBh5k6BBI1VUDPLK+n+ps1q5UEIlcrhdLwWa4C58VV4TR+jmZd/CEiZ8rQ46bDKPdnzSAYbC1Lvd5oRUKhequV89q2I3jkUpaS5EMWJAnTak2a+frbLIW+/AwbyZYz4AiMFMWI3X94jAOpv/vGSqv/ktOu2uBhtj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312250; c=relaxed/simple;
-	bh=hJr2IgfYFhne+wA1CA0eg5DnBljAelBtCJ5TB5h5fA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQVu5MMHKa6dpU0k2vDZ55LLA44FKkp5RJRi1IzZTkJoagnuXhHV4yHBCXuznUTcuy02wdnJsuRhNgOuC/8qi/Fj2h7UIGySLYuM6ArmEcheeMV++9mbvJPKyFtKsG80LUQMivECN3gmQ3rWBf4aA90xUavIBBp/2AcTCBpeom0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mKTGP/QU; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 51B4749E;
-	Mon,  7 Oct 2024 16:42:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728312150;
-	bh=hJr2IgfYFhne+wA1CA0eg5DnBljAelBtCJ5TB5h5fA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKTGP/QUArCdXvdhYcwZu929Ymfv5EL6WABy5T6Sn1FczZMv1iuviM0AMIrMbheu+
-	 Kt6gsl+G6vvLAS1TvMmRgG676RSPMPIw8xN09PEyEO9LvRHkH0GBgO6paQ3dxa0ylo
-	 g5xA9h39syRmrpzoCEDikwmNfhBtYj69lqbuQqS4=
-Date: Mon, 7 Oct 2024 17:44:01 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Stop stream during unregister
-Message-ID: <20241007144401.GE6403@pendragon.ideasonboard.com>
-References: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
- <80f800c8-46e0-47bb-8a7b-1566e5eed91a@xs4all.nl>
+	s=arc-20240116; t=1728312304; c=relaxed/simple;
+	bh=lbnJukntG02dcf7EuR6nWqoAY3hzdHD1hrinEGTqGLY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TKSn9c4qxYgLpJSlyjaRdJRZ6tKAWymOQBC1eCJ98jp1phy2QuAyMqjr138tsTYzy6x3PlmT0n5wpxkbse7R00uFiQwyEbaoSiYpPLOrfAIGYFxIvw9FlCSeyRAMRzwyVPVEHYjChFfRpR09/w1CMqs/S5ANXSvXn5pfgGEShX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oXxJmJiR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G97OKwST; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1FCE111401D4;
+	Mon,  7 Oct 2024 10:45:00 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 07 Oct 2024 10:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728312300;
+	 x=1728398700; bh=l1kyynLwByX6gsVVKHoBp6mrYazE+l1bCV6P0buJGv0=; b=
+	oXxJmJiR7i8datKAd3ODSy3DFD9PGRgwMyoGsJe+5rJ1zWHDd2VF1PgVBDx2gpfn
+	geE6mAQhw94O5Qv8s7E9W6JTCEV7PpYdKUlc/XsDnQuvK+seotckBcOOEWVu621N
+	bb9gcmVsHSWXHD+hGLR59L4tq8Do45MjdxPXKBmjf+vvrBVe0sSLGcZ0kRyT56qf
+	PfGFq6ULYgVZBUQbgmCJu7Rj6ED7aGuaVB/QvRXBtbiFqkz72hwbmq1V2WR7IMBo
+	Iix3cN4mFPNmjW8LoHrV+sQteztepRGaDaoiH1B4pffLztnb6R63XOWj+ao8A6hN
+	LcWWXuvL2bMNUhw0K9i61g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728312300; x=
+	1728398700; bh=l1kyynLwByX6gsVVKHoBp6mrYazE+l1bCV6P0buJGv0=; b=G
+	97OKwSTjYgRXvlsADh6ojVqJ8x4YOtIZU3TH1ykSo9YMsjDTBTu5VfuVUwzkoYgC
+	0LP2endsPsgfKZXK+8yWaRPkwz4xAxmOqOjdHOst7UhCkfl29cfFUB1jK9Dq6i5o
+	wSdqmO0j6E/b2iYYbqjAhXh/5M5KSQMUxPIDWlvGr0qMixyuZeY6hQxJgcKLwyVQ
+	TGAD8Z/QMFxN1FWlfQJ4PIaIAtC9DgU5jhuvKglqjvoUi3dSz2SV7rnyTwvQBw7z
+	TSJGT2gxRBLUO1szxWmHS8GRK0yJ4xj6DU2Dy8CR5/ayxtyfTgLlqAsDIS/NOqr0
+	hY5TNzTrWiEPagiDQs2rQ==
+X-ME-Sender: <xms:6_MDZ6LZDG4-mJohWk5MaAonCv80iB4qDEFHe_mK3Jrgwky9m_1ZNg>
+    <xme:6_MDZyJSTsz2wT72qmgge_QIaAoTsZST6y5X_asDDeM8Mb3Jl8pINHaWd1giPpj2i
+    UYgj4I_WzdaqiRlsNs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepudevudffkeehueehjefggeeitdeivdffkefhuddv
+    veethfefjefflefhvdetfeegnecuffhomhgrihhnpegrkhgrrdhmshenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdr
+    uggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    gurghvihgurdhlrghighhhthesrggtuhhlrggsrdgtohhmpdhrtghpthhtohepmhgrrhhi
+    uhhsrdgtrhhishhtvggrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:6_MDZ6vc24XznZ3vNSFSwLLB5yBN3wSNxL_4X9mGJHPmbqFPeUOgDg>
+    <xmx:6_MDZ_YCZoOs6Rvv_Hwm-9_h-ap8u-2DCtqt8NXxLvyqzMY76y1DFQ>
+    <xmx:6_MDZxYLJORp4BzzViiEX2k2GVXdzhlVieMIRx_VzDr22gLxSZlxPg>
+    <xmx:6_MDZ7AYfVL2BK_WFNWVyEti0rH2vGxtwqnymyVsnKIZA1KGOXT4Iw>
+    <xmx:7PMDZ1HkjRvdiNCdKZheNhYJ81HvC1bTgXhEfhhfQx83vmWX5HK9o5Cm>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D76472220071; Mon,  7 Oct 2024 10:44:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Mon, 07 Oct 2024 14:44:37 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: Marius.Cristea@microchip.com, "David Laight" <David.Laight@aculab.com>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Message-Id: <758e1d68-3a27-4d64-8c45-da829ed5904a@app.fastmail.com>
+In-Reply-To: <04222aeb7a9c35ec080222168bace72a3788c90a.camel@microchip.com>
+References: <20240927083543.80275-1-marius.cristea@microchip.com>
+ <207733c7c25e4e09b0774eb21322e7e5@AcuMS.aculab.com>
+ <04222aeb7a9c35ec080222168bace72a3788c90a.camel@microchip.com>
+Subject: Re: [PATCH v1] asm-generic: introduce be56 unaligned accessors
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <80f800c8-46e0-47bb-8a7b-1566e5eed91a@xs4all.nl>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Mon, Oct 7, 2024, at 14:40, Marius.Cristea@microchip.com wrote:
+> On Sun, 2024-09-29 at 21:16 +0000, David Laight wrote:
+>> [You don't often get email from david.laight@aculab.com. Learn why
+>> this is important at https://aka.ms/LearnAboutSenderIdentification=C2=
+=A0]
+>>=20
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you
+>> know the content is safe
+>>=20
+>> From: marius.cristea@microchip.com
+>> > Sent: 27 September 2024 09:36
+>> >=20
+>> > The PAC194X, IIO driver, is using some unaligned 56 bit registers.
+>> > Provide some helper accessors in preparation for the new driver.
+>>=20
+>> Someone please shoot the hardware engineer ;-)
+>>=20
+>> Do separate unaligned access of the first 4 bytes and last four
+>> bytes.
+>> It can't matter if the middle byte is accessed twice.
+>>=20
+>> Or, for reads read 8 bytes from 'p & ~1ul' and then fixup
+>> the value.
+>>=20
+>
+> Do you recommend me to drop this patch?
+>
+> I know that there are some "workarounds", but those didn't "looks"
+> nice. I was using that function locally and I got a suggestion from the
+> IIO subsystem maintainer to move it into the kernel in order for others
+> to used it.
 
-On Mon, Oct 07, 2024 at 09:46:47AM +0200, Hans Verkuil wrote:
-> Hi Laurent,
-> 
-> Just a reminder: I have extensively reviewed this patch here:
-> 
-> https://lore.kernel.org/linux-media/f4c49ccf-9dc9-475a-8fc9-4ef4c85a729a@xs4all.nl/
-> 
-> and here (specifically checking for mmap() races):
-> 
-> https://lore.kernel.org/linux-media/1a10530f-b4bb-4244-84ff-1f2365ae9b23@xs4all.nl/
-> 
-> To the best of my ability I believe this patch is correct.
-> 
-> Unless you have any additional concerns I plan to take this patch as a fix for
-> v6.12 on Monday next week.
+My feeling is that this is too specific to one driver, I don't
+expect it to be shared much. I also suspect that most 56-bit
+integers in data structures are actually always part of a naturally
+aligned 64-bit word. If that is the case here, the driver can
+probably better access it as a normal 64-bit number and mask
+out the upper 56 bits using the include/linux/bitfield.h helpers.
 
-I thought we had an agreement that I could submit an alternative fix for
-v6.12. Can you therefore delay merging this patch until v6.12-rc6 ?
-
-> Alternatively, you can make a PR for 6.12 with this patch that I can pull from.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> On 26/09/2024 07:59, Ricardo Ribalda wrote:
-> > uvc_unregister_video() can be called asynchronously from
-> > uvc_disconnect(). If the device is still streaming when that happens, a
-> > plethora of race conditions can occur.
-> > 
-> > Make sure that the device has stopped streaming before exiting this
-> > function.
-> > 
-> > If the user still holds handles to the driver's file descriptors, any
-> > ioctl will return -ENODEV from the v4l2 core.
-> > 
-> > This change makes uvc more consistent with the rest of the v4l2 drivers
-> > using the vb2_fop_* and vb2_ioctl_* helpers.
-> > 
-> > Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> > Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> > This patch was part of the series:
-> > https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
-> > 
-> > Moved out from it to ease the review.
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
-> >  1 file changed, 31 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index f0febdc08c2d..bee150b852e4 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
-> >  	struct uvc_streaming *stream;
-> >  
-> >  	list_for_each_entry(stream, &dev->streams, list) {
-> > +		/* Nothing to do here, continue. */
-> >  		if (!video_is_registered(&stream->vdev))
-> >  			continue;
-> >  
-> > +		/*
-> > +		 * For stream->vdev we follow the same logic as:
-> > +		 * vb2_video_unregister_device().
-> > +		 */
-> > +
-> > +		/* 1. Take a reference to vdev */
-> > +		get_device(&stream->vdev.dev);
-> > +
-> > +		/* 2. Ensure that no new ioctls can be called. */
-> >  		video_unregister_device(&stream->vdev);
-> > -		video_unregister_device(&stream->meta.vdev);
-> > +
-> > +		/* 3. Wait for old ioctls to finish. */
-> > +		mutex_lock(&stream->mutex);
-> > +
-> > +		/* 4. Stop streaming. */
-> > +		uvc_queue_release(&stream->queue);
-> > +
-> > +		mutex_unlock(&stream->mutex);
-> > +
-> > +		put_device(&stream->vdev.dev);
-> > +
-> > +		/*
-> > +		 * For stream->meta.vdev we can directly call:
-> > +		 * vb2_video_unregister_device().
-> > +		 */
-> > +		vb2_video_unregister_device(&stream->meta.vdev);
-> > +
-> > +		/*
-> > +		 * Now both vdevs are not streaming and all the ioctls will
-> > +		 * return -ENODEV.
-> > +		 */
-> >  
-> >  		uvc_debugfs_cleanup_stream(stream);
-> >  	}
-> > 
-> > ---
-> > base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
-> > change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
-> > 
-> > Best regards,
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+        Arnd
 
