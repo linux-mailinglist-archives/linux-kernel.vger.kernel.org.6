@@ -1,211 +1,89 @@
-Return-Path: <linux-kernel+bounces-354239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC08F993A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9229C993A98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642621F229B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:56:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F7EB23295
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D53218F2FA;
-	Mon,  7 Oct 2024 22:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD70A18F2FA;
+	Mon,  7 Oct 2024 22:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pATyhyPH"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUA6Isu5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1219218E02E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 22:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1D18BC19;
+	Mon,  7 Oct 2024 22:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728341758; cv=none; b=BrwiV7C5Dm+GS8r+TLqSfJQDDXRwg9ISrZv2NWvbKZLBZ3bsTOeARwRfgE/XBGTUn18vVsLPPpK4F+XJv08MhcY2evxZGVfwXk8WRtV43p1CCni7cfxXUutc+QCEbH36VMDJ8173H6WmTufDZXI2Mdo/YIp7xSF3ZZJunLgc684=
+	t=1728341792; cv=none; b=di9Ej303Eq1lQkO6FyD934ngqUGANPMQH7IXfpU8QdICqiObrIVJxqEpXwJaov58EKdgnYWcyKG4jR+dG5oGKOtzDfewe04jkOmn2Iq3gSEXalPgrvTEMc6lQiaZDzVyBSMrRanMYNKubjb1OPa6/NP+v+AOx4WtH5MBRu/jh28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728341758; c=relaxed/simple;
-	bh=n52Zcjng97SR7V16E/kiNd9Ad8nOMx616zmfBspy7bA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HvNG9B0yjIx5iFkaRAcJZBT/XKskY52rkN+3HB/1hAQS26xxrSiH5lEqmKwX/l12GKInxw13Gv87pEZrC7CtSVLZn/87IhMBOUYhU7XaQuoi02p33iHK34a817nXPI7TCDPzol09Fg3dbm5ITa+oRjrFDVDGOe4Kx2H8yezSmr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pATyhyPH; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cbe8ec7dbso40315e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 15:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728341753; x=1728946553; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRtn8t3j7whUUfZUQGOBh9/Ux+u7T3Ja2jMsVhYhxY8=;
-        b=pATyhyPHQjzg3yku1X15YfmZyNPV6AkTw+j1p5hQOmMmoLYQ39lVOUVWGlmL6VIlRT
-         Gtjfr5DW0wpPr7I750RUZhkXvGXU9UvjbI0G/43Vuu5OaBNQMoJbVWEYj1LmCnnv9qc7
-         BB8rb6UzQkpEoXSOlP1HHM1ISwzcW+UE30xURitbChlKnVJVt4s8eV8LTv2Ua5lRws+t
-         qG369PTQiAC/usQXgkxHR6r/T4yua0psVnqYP0pWQ8mIkqmfmzOMZBmCgJBuS47BPJSY
-         vhfCSLcp7jMrGw213ynHk1O4L0zlUPoIVj+5tl2rsW2zxZ4x+3q6eKkEEfNHE51HI8P7
-         0KIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728341753; x=1728946553;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KRtn8t3j7whUUfZUQGOBh9/Ux+u7T3Ja2jMsVhYhxY8=;
-        b=dti/ymNG2e/UpYN2b5kjKSOVrv8b7Y/SEEznaLmzd2icAWLB69bxgto/Pkai7XfsSe
-         frqgxN5l9u425tE6cTpeYMLnCs8cxaQBUUQfQ9e8L4xg3SgFmalhXPVcBRcFxUQ2gn6r
-         +oZk4qO/Su+bJYml4IjY8uj9JdD3rLc57t8KbE62igYUMAb+jGS/nvSKkr/vtGLTL+W9
-         5p14MQ3QCsdwHK+xhkAHEHkbZtjZoirOZnV3uwLeq0fpVbYRGdILA+5M6rCtADklQC1b
-         6yJGl3+iiwy/Pzj7+M/Flbu0k8sWScdFrY0p0agFZvhh6sGzu80j+RMin33TP4GWk76P
-         yxuw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2UqrYN2/ZlckbUCT5hN1hD8QYfzS5zj4Bg1Hl4+b4DL9u7wN+55ghqv3M79vQNnYCnadrAlt7brga9dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlFhYZsk/MS+9Nj+SOkn1SR8jxEYWtJm4NgZr3/VW3jkJCDLyZ
-	BZpG8QvX0PlI6cJLPAAKBEG9R46mKVZYsDBi30kWl0pt2kggbWN2SDZT9UDacw==
-X-Google-Smtp-Source: AGHT+IHlDvzelBdkA5qpz8fIAQDStRDvKx0t6Pxm0mdU1tfYyX8BXXl+49Z6jy3NewrGS1ig5GLLNg==
-X-Received: by 2002:a05:600c:c8a:b0:42c:9e35:cde6 with SMTP id 5b1f17b1804b1-42fc83dfc65mr1881355e9.2.1728341752879;
-        Mon, 07 Oct 2024 15:55:52 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:39d2:ccab:c4ec:585b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920be2sm6645143f8f.60.2024.10.07.15.55.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 15:55:52 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 08 Oct 2024 00:55:39 +0200
-Subject: [PATCH] mm: Enforce a minimal stack gap even against inaccessible
- VMAs
+	s=arc-20240116; t=1728341792; c=relaxed/simple;
+	bh=dKKV1EM0s4QgYvbpKmp0EseNPd4WeO/Tfh2tbg7FeGw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=tgCth+MMgYefybs89FN3wBCnzZWBtYdRCSg9s1vf+pPIghDD9TmUwcsVbLeFw9LPtkw6CWoYVpv3uEaNCu3zP0krigotUAz7H7OvMouCcm1m36d+ZQQp7sqCY/I7PXgdrsHl4o7391HyV95DNxIQ5XueOcmZliq9yaVE3RA8M0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUA6Isu5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D9DC4CEC6;
+	Mon,  7 Oct 2024 22:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728341791;
+	bh=dKKV1EM0s4QgYvbpKmp0EseNPd4WeO/Tfh2tbg7FeGw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=tUA6Isu5M+NsZH06dRE55DWXOfj8wFYag1NkXGKdvv9d/tSoKdGwwvjmNjFxtW03q
+	 yDf8gxvdhUOOXUb/RzSJYPSpHXU+31OsNHtGDpu8XuinkD5AQVJKlGNWp8chtuJpnB
+	 KZMTBmF+O9xTn7e5nV00YkSEzZrVpEn6jIjsOhcbJ48YUN4XZwOOSBtOqZboJ5xMs0
+	 sJv1YjpZ2FFVssVbXwtcJ1t2LaA1qTA8iBPZdSaH6eLrezOzG0/9l6B5WiRF+IjCbC
+	 qulqa6W7A71HbGIz3QoVQAL6XGN39OQR/RnVkdozjAf8MhAuNsvGi5JCDvaNufwwh3
+	 t0v4RDvjmOlyA==
+Message-ID: <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-stack-gap-inaccessible-v1-1-848d4d891f21@google.com>
-X-B4-Tracking: v=1; b=H4sIAOpmBGcC/x3MSwqAMAwA0atI1gZaFfxcRVy0MWpQqjQignh3i
- 8u3mHlAOQordNkDkS9R2UOCzTOgxYWZUcZkKExRWWMa1NPRirM7UIIjYlXxGyPVpW2neqy89ZD
- iI/Ik9z/uh/f9ABdgS85oAAAA
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Hugh Dickins <hughd@google.com>, Oleg Nesterov <oleg@redhat.com>, 
- Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>, 
- Vlastimil Babka <vbabka@suse.cz>, Ben Hutchings <ben@decadent.org.uk>, 
- Willy Tarreau <w@1wt.eu>, Rik van Riel <riel@redhat.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728341748; l=4473;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=n52Zcjng97SR7V16E/kiNd9Ad8nOMx616zmfBspy7bA=;
- b=ekJkZXJWcbs+tPc806Tv4AxKiW8KTdjWR/I4EIwAEUjpjvC2nP+AnDfJ8Dy2Pq8BjY1IDootY
- Zikmp+VX8bACCd1mpHA6Vhzri5fZQbYZoX/vJBWVsJMyEcS0TCMOPEX
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+References: <20240917132201.17513-1-adiupina@astralinux.ru> <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org> <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+To: Alexandra Diupina <adiupina@astralinux.ru>, Andrew Lunn <andrew@lunn.ch>
+Date: Mon, 07 Oct 2024 15:56:29 -0700
+User-Agent: alot/0.10
 
-As explained in the comment block this change adds, we can't tell what
-userspace's intent is when the stack grows towards an inaccessible VMA.
+Quoting Alexandra Diupina (2024-09-24 06:14:44)
+> >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mveb=
+u/armada-37xx-periph.c
+> >> index 8701a58a5804..b32c6d4d7ee5 100644
+> >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(s=
+truct clk_hw *hw,
+> >>          div =3D get_div(double_div->reg1, double_div->shift1);
+> >>          div *=3D get_div(double_div->reg2, double_div->shift2);
+> >>  =20
+> >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> >> +       if (!div) {
+> >> +               pr_err("Can't recalculate the rate of clock %s\n", hw-=
+>init->name);
+> > hw->init is set to NULL after registration (see clk_register() code). If
+> > div is 0 what does the hardware do?
+>=20
+> Thanks for noticing the error. Yes, hw->init is set to zero,
+> I will replace that code with clk_hw_get_name(hw).
+> If the value of div is 0, should I return 0 as stated in the
+> comment for .recalc_rate (in struct clk_ops) or should I
+> return parent_rate as in some other similar rate recalculation
+> functions (in some other drivers)?
 
-I have a (highly contrived) C testcase for 32-bit x86 userspace with glibc
-that mixes malloc(), pthread creation, and recursion in just the right way
-such that the main stack overflows into malloc() arena memory.
-(Let me know if you want me to share that.)
-
-I don't know of any specific scenario where this is actually exploitable,
-but it seems like it could be a security problem for sufficiently unlucky
-userspace.
-
-I believe we should ensure that, as long as code is compiled with something
-like -fstack-check, a stack overflow in it can never cause the main stack
-to overflow into adjacent heap memory.
-
-My fix effectively reverts the behavior for !vma_is_accessible() VMAs to
-the behavior before commit 1be7107fbe18 ("mm: larger stack guard gap,
-between vmas"), so I think it should be a fairly safe change even in
-case A.
-
-Fixes: 561b5e0709e4 ("mm/mmap.c: do not blow on PROT_NONE MAP_FIXED holes in the stack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
-I have tested that Libreoffice still launches after this change, though
-I don't know if that means anything.
-
-Note that I haven't tested the growsup code.
----
- mm/mmap.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 46 insertions(+), 7 deletions(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index dd4b35a25aeb..971bfd6c1cea 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1064,10 +1064,12 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
- 		gap_addr = TASK_SIZE;
- 
- 	next = find_vma_intersection(mm, vma->vm_end, gap_addr);
--	if (next && vma_is_accessible(next)) {
--		if (!(next->vm_flags & VM_GROWSUP))
-+	if (next && !(next->vm_flags & VM_GROWSUP)) {
-+		/* see comments in expand_downwards() */
-+		if (vma_is_accessible(prev))
-+			return -ENOMEM;
-+		if (address == next->vm_start)
- 			return -ENOMEM;
--		/* Check that both stack segments have the same anon_vma? */
- 	}
- 
- 	if (next)
-@@ -1155,10 +1157,47 @@ int expand_downwards(struct vm_area_struct *vma, unsigned long address)
- 	/* Enforce stack_guard_gap */
- 	prev = vma_prev(&vmi);
- 	/* Check that both stack segments have the same anon_vma? */
--	if (prev) {
--		if (!(prev->vm_flags & VM_GROWSDOWN) &&
--		    vma_is_accessible(prev) &&
--		    (address - prev->vm_end < stack_guard_gap))
-+	if (prev && !(prev->vm_flags & VM_GROWSDOWN) &&
-+	    (address - prev->vm_end < stack_guard_gap)) {
-+		/*
-+		 * If the previous VMA is accessible, this is the normal case
-+		 * where the main stack is growing down towards some unrelated
-+		 * VMA. Enforce the full stack guard gap.
-+		 */
-+		if (vma_is_accessible(prev))
-+			return -ENOMEM;
-+
-+		/*
-+		 * If the previous VMA is not accessible, we have a problem:
-+		 * We can't tell what userspace's intent is.
-+		 *
-+		 * Case A:
-+		 * Maybe userspace wants to use the previous VMA as a
-+		 * "guard region" at the bottom of the main stack, in which case
-+		 * userspace wants us to grow the stack until it is adjacent to
-+		 * the guard region. Apparently some Java runtime environments
-+		 * and Rust do that?
-+		 * That is kind of ugly, and in that case userspace really ought
-+		 * to ensure that the stack is fully expanded immediately, but
-+		 * we have to handle this case.
-+		 *
-+		 * Case B:
-+		 * But maybe the previous VMA is entirely unrelated to the stack
-+		 * and is only *temporarily* PROT_NONE. For example, glibc
-+		 * malloc arenas create a big PROT_NONE region and then
-+		 * progressively mark parts of it as writable.
-+		 * In that case, we must not let the stack become adjacent to
-+		 * the previous VMA. Otherwise, after the region later becomes
-+		 * writable, a stack overflow will cause the stack to grow into
-+		 * the previous VMA, and we won't have any stack gap to protect
-+		 * against this.
-+		 *
-+		 * As an ugly tradeoff, enforce a single-page gap.
-+		 * A single page will hopefully be small enough to not be
-+		 * noticed in case A, while providing the same level of
-+		 * protection in case B that normal userspace threads get.
-+		 */
-+		if (address == prev->vm_end)
- 			return -ENOMEM;
- 	}
- 
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241008-stack-gap-inaccessible-c7319f7d4b1b
--- 
-Jann Horn <jannh@google.com>
-
+It depends on what the hardware does. Does the hardware pass on the
+parent rate if the divider is zero? If so, then return parent_rate. Or
+does it turn off completely? If so, return zero.
 
