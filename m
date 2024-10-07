@@ -1,69 +1,80 @@
-Return-Path: <linux-kernel+bounces-353037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8247599278F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3920C992791
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293CF1F215FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72561F22EB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E47918C341;
-	Mon,  7 Oct 2024 08:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E618418C013;
+	Mon,  7 Oct 2024 08:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="JcBNGQ4E"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BghIaYr0"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E319B18C038
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB3618BBB4;
+	Mon,  7 Oct 2024 08:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291157; cv=none; b=lfpcQgGLw9B1KNIJTKS75kxgckFRypCumeSEWW/COCr8ceuuHASQ03qj3p7Rsz1C6vwlmFuKEwVv/J+MZx6CzY+a9FIVxmPw/3MAzeKhOgHw+snEs5or5Hh6EOFEL2hewAnJPIMZE7rFH0PyQwsH864JeRJNCJmsJIMZtkZYyx8=
+	t=1728291190; cv=none; b=kJ8aMReskSkPX0QwdeOOgKUBamySi1+Yw/Fa9wINwwFQuWoPscIpwJEd3XpNdhxpBkMhbclUDTD/wrVjqTd582g/kxQxjtQQB4Znmq83HBneX3mffyh9icY4EF/pCSX4T3pHGdf9YnVHQBWCLRqxsWo1p1u9p4QW1UInv3IAI3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291157; c=relaxed/simple;
-	bh=qfX2mnxYzZwssLTi9cs/IUEE0ltOc7Ron8lKo7nhlE4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cIFe2weBwGDek98fphuCjsbu81jZRIQSxzNcJ5VDNBAnBqLu0bNXC8daoe1ZPZFBoXN6yVTQZ6tF/pKZF6IDPHM7edXglFe61kSnNV8iAFZ+QkzfyGv7xr2IkuZ+NY4H8/HvIPFDZk/piNqN3qrrs51bVzpfIOdZuk/HKcmTiOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=JcBNGQ4E; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1728291142; x=1730883142;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qfX2mnxYzZwssLTi9cs/IUEE0ltOc7Ron8lKo7nhlE4=;
-	b=JcBNGQ4Ewp1MmoWvHDphoeP69//P0Nl21U2IAuWKiG6ktloufWjCahD4UhxLv4XJ
-	/fjPnXRS8sgVpusL82O8/LhBy1UTaG8zY4cqVt70Y9u0qN+vCuwNVHv+Gx6/YqMJ
-	UPa7x0mzUKR13tVEuGIsXGeGErdqTQqqt+RvS7W9rSw=;
-X-AuditID: ac14000a-4577e70000004e2a-f7-6703a14655d5
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 84.A0.20010.641A3076; Mon,  7 Oct 2024 10:52:22 +0200 (CEST)
-Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 7 Oct 2024
- 10:52:22 +0200
-From: Wadim Egorov <w.egorov@phytec.de>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>
-CC: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<bbrezillon@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
-	<robh@kernel.org>, <upstream@lists.phytec.de>
-Subject: [PATCH v2 2/2] drm/bridge: sii902x: Set input bus format based on bus-width
-Date: Mon, 7 Oct 2024 10:52:13 +0200
-Message-ID: <20241007085213.2918982-3-w.egorov@phytec.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241007085213.2918982-1-w.egorov@phytec.de>
-References: <20241007085213.2918982-1-w.egorov@phytec.de>
+	s=arc-20240116; t=1728291190; c=relaxed/simple;
+	bh=Dt8anasy0laNKdHF0W5V+tqgv3LYZ9v/t1hjF/BjQgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fAE0h3kACBZJM5lNo4L2fGcH39xgWf03JeSX0+tBvN/HYzNZqSgcPbTMGptCo8uIVyye5DR+ykcV/h1zDUkNv4d5bZJHxRTXJykFfWzAfhjiT/fm4usvlZB3FkrIvmdbSdBM6L9flJiYW0o90Fzgp5p+gXx2cTCkfvr3UMU39XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BghIaYr0; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42e5e758093so35356305e9.1;
+        Mon, 07 Oct 2024 01:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728291187; x=1728895987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9e53axX5+JQ6EBke6BbptR+qC5MfqAfQKE74IO6eBWA=;
+        b=BghIaYr0OezwccUoXy8n9iqvo8zZrhncpwdEF9xsV4yZoLoqj4OOeyrmTShWNc+bE8
+         V79EIql6D3c3plsdl9cBlMmX1aMUeqqOsfQcZUTSW5jpGIYGj27gCJ479Bx/jPr+8SHa
+         PpBu3mk6NaO7OwTnZDq490B0PHvvUAkvEHkpsaXBFTJYJVQhLHUf7pD2dEOB55VoijeY
+         HfzbOdO1cPzHiajUavgNskX4HNMc81rl8hGKmyJ5NVJ99JxGMI6KZ5triP/9CCVpJQtr
+         UR9jwy6HE+dC7dm9T0C6HOqU7w/CGiyI/4D16Hwv6TnqKw0uFaIq5ECEI1mSdE9ehAnj
+         05Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728291187; x=1728895987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9e53axX5+JQ6EBke6BbptR+qC5MfqAfQKE74IO6eBWA=;
+        b=PEru1w1kGNYCx/iXyEflKgptfCoAmHpJ/0oLYT7XwNu0q0mmj7ShD+yfVeyAFwbE1J
+         zT2O2psxn2UDoHutTqrhjitIfHUqaK89Yc4BtajozVMw7VP2LE00r7ryaRCUp1qO8y1S
+         QZ0OPs7e3Uc+czUm7yCRcwuYyvstsGORwDLL10YFQcePfBUzL4K5QawFvCmOJBE4Qa0c
+         MRM801g6h/jsiWQ5xSyP/tnslxjZDpTAcjcvyYN1UYLuiF2J3U4RWl+OS7jFz1SJJZmI
+         tOKs77RoVEyfBjhNN24kjOhj+5PvFeAsFa0wZBO8W0UraAaO5ZQbU75O34kgb9epgvK0
+         pEEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwTGZ69SHBfqm5d1yE6dAOeSBj527zZdL4zSbz6pu6l+gAStoKHl0x6khABTcCnnR5cTUljW8sYYrxFUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGV+zxN5f3kkzlxhJ2Vjn9kKYdtgvBDiugLlDXZ8QXaITTFTBX
+	J5N2yTguIQWfqeT9OBxBBEqVvA1p2ZimfV/054vBGGpiqbb9GwWvrgCjBPa7h6w=
+X-Google-Smtp-Source: AGHT+IEOCqzTwmrbjB1VBZ0KaELcwYeEQJz8mgwHyCVQIEqwxF3yAa9d9z05gmbVhoYy8tqATTLd9Q==
+X-Received: by 2002:a05:600c:524c:b0:42c:bae0:f065 with SMTP id 5b1f17b1804b1-42f85aa32famr80686945e9.5.1728291186493;
+        Mon, 07 Oct 2024 01:53:06 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed9d4bsm68244295e9.42.2024.10.07.01.53.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:53:06 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
+Date: Mon,  7 Oct 2024 10:52:37 +0200
+Message-ID: <20241007085303.48312-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,97 +82,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsWyRpKBR9dtIXO6wZYPEhYnri9isri/+DOL
-	xeqW6YwWa/aeY7KYf+Qcq8WVr+/ZLJ7PX8docfLNVRaLl7PusVl0TlzCbnF51xw2i4Uft7JY
-	tHUuY7V4v/MWo8WkeTdZLf7v2cFuMfvdfnaLLW8mslp0v1N3EPbY+20Bi8fOWXfZPWZ3zGT1
-	WLznJZPHplWdbB4nJlxi8rhzbQ+bx7yTgR73u48zefR3t7B6bD5d7fF5k1wATxSXTUpqTmZZ
-	apG+XQJXRs/HR8wF74Uqnu6xaGDcwN/FyMkhIWAi8eXkfRYQW0hgCZPEjb2RXYxcQPYjRon2
-	J0+ZQRJsAuoSdzZ8YwWxRQT8JG592ccOUsQssIlZ4vPr3WAJYYEQicU/TgHZHBwsAioSJ7ea
-	goR5BSwlTnU8ZYJYJi8x89J3dhCbU8BKYvr9KcwQiy0lvp/dxgRRLyhxcuYTsIOYgeqbt85m
-	hrAlJA6+eAFVLy/x4tJyFpiZ0869ZoawQyWObFrNNIFRaBaSUbOQjJqFZNQCRuZVjEK5mcnZ
-	qUWZ2XoFGZUlqcl6KambGEFRLMLAtYOxb47HIUYmDsZDjBIczEoivBFrGNOFeFMSK6tSi/Lj
-	i0pzUosPMUpzsCiJ867uCE4VEkhPLEnNTk0tSC2CyTJxcEo1MPpX2C/cvDGoW2fW6vqsb1Wa
-	905P3fPIr6u8++6Cyp99PCFSb90+fRA+tPuF0PrvU6t//l0TnFrI85V3vmX2i42vXr9ffu7n
-	wm1tqbNKi7SYTHUdJ+5ee8HKcMsV7a0bHJ38lzxJVoiR7q+z7bj74oVHk2HLzovecxe7c86Q
-	O/pprulZk8aDQtuVWIozEg21mIuKEwFdqLjL0AIAAA==
 
-Introduce a bus-width property to define the number of parallel RGB
-input pins connected to the transmitter. The input bus formats are updated
-accordingly. If the property is not specified, default to 24-bit bus-width.
+Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+to use optimized implementation and ease register pressure around
+the primitive for targets that implement optimized variant.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
 ---
-v2:
-  - Use bus-width instead of data-lines as suggested by Krzysztof
-  - Handle default case separately as an error case
----
- drivers/gpu/drm/bridge/sii902x.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 7f91b0db161e..3b9e4e1dec45 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -180,6 +180,8 @@ struct sii902x {
- 	struct gpio_desc *reset_gpio;
- 	struct i2c_mux_core *i2cmux;
- 	bool sink_is_hdmi;
-+	u32 bus_width;
-+
- 	/*
- 	 * Mutex protects audio and video functions from interfering
- 	 * each other, by keeping their i2c command sequences atomic.
-@@ -477,6 +479,8 @@ static u32 *sii902x_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
- 						     u32 output_fmt,
- 						     unsigned int *num_input_fmts)
- {
-+
-+	struct sii902x *sii902x = bridge_to_sii902x(bridge);
- 	u32 *input_fmts;
- 
- 	*num_input_fmts = 0;
-@@ -485,7 +489,20 @@ static u32 *sii902x_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
- 	if (!input_fmts)
- 		return NULL;
- 
--	input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-+	switch (sii902x->bus_width) {
-+	case 16:
-+		input_fmts[0] = MEDIA_BUS_FMT_RGB565_1X16;
-+		break;
-+	case 18:
-+		input_fmts[0] = MEDIA_BUS_FMT_RGB666_1X18;
-+		break;
-+	case 24:
-+		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-+		break;
-+	default:
-+		return NULL;
-+	}
-+
- 	*num_input_fmts = 1;
- 
- 	return input_fmts;
-@@ -1167,6 +1184,15 @@ static int sii902x_probe(struct i2c_client *client)
- 		return PTR_ERR(sii902x->reset_gpio);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 93c377816d75..9a3c251d033d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3901,7 +3901,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
  	}
- 
-+	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
-+	if (endpoint) {
-+		ret = of_property_read_u32(endpoint, "bus-width", &sii902x->bus_width);
-+		if (ret) {
-+			dev_dbg(dev, "Could not get bus-width, defaulting to 24-bit bus-width\n");
-+			sii902x->bus_width = 24;
-+		}
-+	}
-+
- 	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
- 	if (endpoint) {
- 		struct device_node *remote = of_graph_get_remote_port_parent(endpoint);
+ 	new_ns->ns.ops = &mntns_operations;
+ 	if (!anon)
+-		new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
++		new_ns->seq = atomic64_inc_return(&mnt_ns_seq);
+ 	refcount_set(&new_ns->ns.count, 1);
+ 	refcount_set(&new_ns->passive, 1);
+ 	new_ns->mounts = RB_ROOT;
 -- 
-2.34.1
+2.46.2
 
 
