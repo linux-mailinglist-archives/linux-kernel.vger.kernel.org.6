@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-353234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5275C992AE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7FF992AF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF8B8B22977
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 139A2B246FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443CC1D26E1;
-	Mon,  7 Oct 2024 11:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FB31D2F42;
+	Mon,  7 Oct 2024 12:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+dofVDJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ChZHRuEW"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966811BA285;
-	Mon,  7 Oct 2024 11:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632C71D2B0C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728302330; cv=none; b=ojwhOp13Fv+2v9pIxfCUTwgSw61PvTIfkFNOHkx73iZXpd+3B/F7iORUWTPqUsbS9P96uMdpZsyPQul3T8cgTmK9rom/IcF8owAklayragt79q0H04dqmP2BKHu7bB3T+bHTJuOAayTW545BgZl639aCVIoiYVr7MtwMCXiIKho=
+	t=1728302491; cv=none; b=l0nLiO/ImDN2llIypL2ZhyrnrhhaUdOWDxmWFeAdh7BqaE8x26EjMx0DKOGSKNnqlztblJcSSAnIRUBwdbTXFsRBVqYzsuCiGXeMK2AhktE2r+KNAzPvpMnr2ozTBXwwjOL05wJrB1mcYveW743mSyOpRIC1Jyve85x6XX03NNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728302330; c=relaxed/simple;
-	bh=khvvmbcNdVwUvYoWcpDpONWz7SgWhxezuf85x6iBfXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PhPfO0EQhVxz44ZOg016dK/FymGvOWnJ2jlqumJV4rpgiCnYF5fKrB9/MHasJZDGO9S6spkL/l/Pe1mnlEwPuZ/Hc/otm9pMtpL+m2EjIggEiEtX+/7Y64Pb2DS6Sgud60hggmtbN67CJ4GkWGROcAH/6kOErfoUMS6vtdtteFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+dofVDJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D1DC4CEC6;
-	Mon,  7 Oct 2024 11:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728302330;
-	bh=khvvmbcNdVwUvYoWcpDpONWz7SgWhxezuf85x6iBfXo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T+dofVDJZfONJwuk8iBRC3FhzN90jQzdePvN33DKpVREsWB/VlaocZbLKeRjBNOiI
-	 FeSAiYTyTo5pTw9UhtukYpUQRYTqaGDDSnSggqo+lmokr2oM/kLlrCF+RGN3YXlunu
-	 RLqTmUBbeRjzhFETMJ9h2JfdlOLeoFeFS5oLghVngQexPIZXLmTMiJ8NSzD2BJ72U+
-	 KTW8Ypmmxg6W9F5ysR9d6Yfz1I0Jn7BGB4ikV42jjIte3LKk4QIu53wDkTauuL1pAh
-	 pkah0qO1jYn1sJ+mQ8PVQTrtCzDIhko/qds2XPxX1u+2OLdtBhv4dm/iy/EPwpgJR3
-	 FlD+tDtETeLgQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve Hjonnevag <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v5] rust: add PidNamespace
-Date: Mon,  7 Oct 2024 13:58:23 +0200
-Message-ID: <20241007-notaufnahme-missrede-c81272cb0d24@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241002-brauner-rust-pid_namespace-v5-1-a90e70d44fde@kernel.org>
-References: <20241002-brauner-rust-pid_namespace-v5-1-a90e70d44fde@kernel.org>
+	s=arc-20240116; t=1728302491; c=relaxed/simple;
+	bh=+nrchSnda+tewARAeBp+e+62j0pRo6BPJQZGj4VGHxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=srbaFTFVLaTif4aLEPgocDoHOXg1jzvQQS+JDFo2JFTOVr8t/rPQRMz3hsjvzGm33IT4Y+YeI6awahKw0AwK7nqRi505RG+MUqkCQl/iaBI04PloYzfc2/NxzkLxEnHwz6Dyj4rySP4hK+gQeHgA4nIVav1i5GZ46S8noHqfn4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ChZHRuEW; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728302486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C/duGT/1qYBpA4YmUlEsjP4bzlbLx1ZiXrnJ50OERHU=;
+	b=ChZHRuEWs0Bn0d+ueXJKxMewbDl99g+kMOjEOorRrFK9DhEg5QMJV/134zqJfIlNlK2bq1
+	X1OMJhE3uy9VSSq6VpDaCaHV10xgWJqVQ11lZh6RwOX18aIgrDeRJPPzGHbZOhrlHf9Spo
+	Jx9PfyCT1cChdw9we4exjmjkF7zLb24=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] scsi: fnic: Use vzalloc() instead of vmalloc() and memset(0)
+Date: Mon,  7 Oct 2024 13:58:45 +0200
+Message-ID: <20241007115840.2239-6-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1351; i=brauner@kernel.org; h=from:subject:message-id; bh=khvvmbcNdVwUvYoWcpDpONWz7SgWhxezuf85x6iBfXo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQzn/lQbOZnxyVV8vy/lKng89MHjS3ljJXjlG49Tkn68 WT1g+43HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxVWZkOG7Dv0bD4+zir5I1 S17VVhx8ZjtP2VFfcCNHXvykfc/nmjH8r/Fb65PvePHTfpat2b+Mq5Kf1CSUz72vcvGET1wps6Y cKwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 02 Oct 2024 13:38:10 +0200, Christian Brauner wrote:
-> The lifetime of `PidNamespace` is bound to `Task` and `struct pid`.
-> 
-> The `PidNamespace` of a `Task` doesn't ever change once the `Task` is
-> alive. A `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd, CLONE_NEWPID)`
-> will not have an effect on the calling `Task`'s pid namespace. It will
-> only effect the pid namespace of children created by the calling `Task`.
-> This invariant guarantees that after having acquired a reference to a
-> `Task`'s pid namespace it will remain unchanged.
-> 
-> [...]
+Use vzalloc() instead of vmalloc() followed by memset(0) to simplify the
+functions fnic_trace_buf_init() and fnic_fc_trace_init().
 
-Applied to the vfs.rust.pid_namespace branch of the vfs/vfs.git tree.
-Patches in the vfs.rust.pid_namespace branch should appear in linux-next soon.
+Compile-tested only.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/scsi/fnic/fnic_trace.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index aaa4ea02fb7c..06fcd4d45415 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -485,7 +485,7 @@ int fnic_trace_buf_init(void)
+ 	}
+ 
+ 	fnic_trace_entries.page_offset =
+-		vmalloc(array_size(fnic_max_trace_entries,
++		vzalloc(array_size(fnic_max_trace_entries,
+ 				   sizeof(unsigned long)));
+ 	if (!fnic_trace_entries.page_offset) {
+ 		printk(KERN_ERR PFX "Failed to allocate memory for"
+@@ -497,8 +497,6 @@ int fnic_trace_buf_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_trace_buf_init;
+ 	}
+-	memset((void *)fnic_trace_entries.page_offset, 0,
+-		  (fnic_max_trace_entries * sizeof(unsigned long)));
+ 	fnic_trace_entries.wr_idx = fnic_trace_entries.rd_idx = 0;
+ 	fnic_buf_head = fnic_trace_buf_p;
+ 
+@@ -559,7 +557,7 @@ int fnic_fc_trace_init(void)
+ 	fc_trace_max_entries = (fnic_fc_trace_max_pages * PAGE_SIZE)/
+ 				FC_TRC_SIZE_BYTES;
+ 	fnic_fc_ctlr_trace_buf_p =
+-		(unsigned long)vmalloc(array_size(PAGE_SIZE,
++		(unsigned long)vzalloc(array_size(PAGE_SIZE,
+ 						  fnic_fc_trace_max_pages));
+ 	if (!fnic_fc_ctlr_trace_buf_p) {
+ 		pr_err("fnic: Failed to allocate memory for "
+@@ -568,12 +566,9 @@ int fnic_fc_trace_init(void)
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
+ 
+-	memset((void *)fnic_fc_ctlr_trace_buf_p, 0,
+-			fnic_fc_trace_max_pages * PAGE_SIZE);
+-
+ 	/* Allocate memory for page offset */
+ 	fc_trace_entries.page_offset =
+-		vmalloc(array_size(fc_trace_max_entries,
++		vzalloc(array_size(fc_trace_max_entries,
+ 				   sizeof(unsigned long)));
+ 	if (!fc_trace_entries.page_offset) {
+ 		pr_err("fnic:Failed to allocate memory for page_offset\n");
+@@ -585,8 +580,6 @@ int fnic_fc_trace_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
+-	memset((void *)fc_trace_entries.page_offset, 0,
+-	       (fc_trace_max_entries * sizeof(unsigned long)));
+ 
+ 	fc_trace_entries.rd_idx = fc_trace_entries.wr_idx = 0;
+ 	fc_trace_buf_head = fnic_fc_ctlr_trace_buf_p;
+-- 
+2.46.2
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.rust.pid_namespace
-
-[1/1] rust: add PidNamespace
-      https://git.kernel.org/vfs/vfs/c/2012326b5976
 
