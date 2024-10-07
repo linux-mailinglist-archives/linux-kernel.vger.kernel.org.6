@@ -1,99 +1,125 @@
-Return-Path: <linux-kernel+bounces-353960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C71993530
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C61993535
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF001C2351F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BD5A1C235BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A751DDA00;
-	Mon,  7 Oct 2024 17:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D421DDA0B;
+	Mon,  7 Oct 2024 17:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igoMOqCW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLTK1Ieg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041E1DD9D3;
-	Mon,  7 Oct 2024 17:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918AC1D6DCE;
+	Mon,  7 Oct 2024 17:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728322751; cv=none; b=HzSsg5h45NBWsqWpyt1AfveyONZY4piRzmVYW0n2ZQSBy8afEYED34EIAhdcm7jndnwfRU/InASl83HflLlW8mtBbS4PlR9SPAr/FDd3mzrrfMHgcfybrHCaZ0Q9LXPOxh0/LoA0VozYjf5bNfEjiqv54xdHyrIvG2ES4hRJhsw=
+	t=1728322868; cv=none; b=HkB9xBgTObAEypHzm/d9+9nF5hp1pARNVy175df15XbpzvHBFvif/wp5GofCP9JgAT/DeB0Q3ybt9pl13TKCliogJRrY7CyrPuOUmy4foUZk66/4tmzkINttI3DnMXbIoNTm5Nc7A+hVJkenzkl79FRCQc2n6sYJm/qmbt2V2tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728322751; c=relaxed/simple;
-	bh=UsQTWTTmOUQvjLn0FXOgtma+hJGzYMhIV5HoTnQzEbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFGfL08B0UC38SXPCa4H34Pil9+E/2Stgw0bWYoj1Cbyvjx7YG9cUYZW4Jp5bPvaa4gyiy8vtnhmmGFR+SMrPazczOpHYuByjnkvkIOL1Pt46jLWCePNoHkqe01Uq4RXmTUJuFqrlnITnZPSGYGvO+4I2lubnd33cL7yglYsbhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igoMOqCW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9FFC4CEC6;
-	Mon,  7 Oct 2024 17:39:10 +0000 (UTC)
+	s=arc-20240116; t=1728322868; c=relaxed/simple;
+	bh=dSfnVQ4JAFzyMREkoETp/HHuCtLwsJ6pu0JR7N/AEkE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=HcgdDAz2zW1mv1fo57BDhhnuNgMZA6FvWLn9XgUuaKUCW6bq89LWAxcpm6WB3v1O9zXELwMpOBdDZNagkbffjEWSRo2AOvT5mRGYWyAeWIabPb7Kh2Ffka7CI4If5p+uvsDIi93DMaB6W0bQXPRPOr9WM+jbNfUnPGuDgf7ZGZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLTK1Ieg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305FAC4CEC6;
+	Mon,  7 Oct 2024 17:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728322751;
-	bh=UsQTWTTmOUQvjLn0FXOgtma+hJGzYMhIV5HoTnQzEbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=igoMOqCWu8ODxIM6O5oGy1iKBlCzoqE7xugmBWoDpYn+GQiQGhK/gEUrp0r5lHWTh
-	 qGgDzwbjzvaadZWTWutNbts0Z5EW200Fzp+EALxQDCH123A/S/mBeZKOtT7onn4wG1
-	 UWimbEf9pXf7x8wYo12dCyfp0IIyVACrf3WtJzkvlKMMmHMIZLOn+P338OuuK9jLWW
-	 GSBkEbXN4+sLkWplUSjD8hB3sWwnbvpoPW517Iz5mrBTnjWedCBw76TVVVWQcgY4QU
-	 nmBC1j7DetG1lz6IpbXHPAt8UW99/gm4Ft2zPsMcJ36OG4AQo5t/hxBlQhldmCVCpX
-	 VpqgNTJnMN3rQ==
-Date: Mon, 7 Oct 2024 10:39:09 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Wardenjohn <zhangwarden@gmail.com>
-Cc: mbenes@suse.cz, jikos@kernel.org, pmladek@suse.com,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: livepatch: add test case of stack_order sysfs
- interface
-Message-ID: <20241007173909.klwdxcui6slmod2a@treble>
-References: <20241007141139.49171-1-zhangwarden@gmail.com>
+	s=k20201202; t=1728322868;
+	bh=dSfnVQ4JAFzyMREkoETp/HHuCtLwsJ6pu0JR7N/AEkE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=DLTK1IegbE8t4wKnvUOyjU5hb4agfrbk0pyT1qftq/wQXpAAQmYCjc2rGmVnP6CnP
+	 fXwIa1faXxF1m7bFIR4nNpHucuhZFhTxLVc8UCgH9egC6QEHqlMnZz4CDxi7T6y+zF
+	 D2nky0edGQ6AL8TDYv5Yto3buBASpIv9xSR+wr+wtvzO9ycB4WCuZhYFIb0xQmxer7
+	 hDpvXSFYBhvY2z8XKIdGv7jPoPIrd0M6pXDJ2RkT8n1t7qhY7/8aiEDimGKjfQSpWN
+	 1HcyGipecqHQOfrLy2hM5efXiksLTvgUfAOGa/LOdsrM/cv2Et8ekf2XVbLdgDFgOA
+	 h9C9FX8MvQmpg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Johannes Berg <johannes@sipsolutions.net>,  Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>,
+  linux-kernel@vger.kernel.org,  linux-wireless@vger.kernel.org,
+  netdev@vger.kernel.org
+Subject: Re: [PATCH RFC net 1/2] MAINTAINERS: consistently exclude wireless
+ files from NETWORKING [GENERAL]
+References: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
+	<20241004-maint-net-hdrs-v1-1-41fd555aacc5@kernel.org>
+	<87setb7us5.fsf@kernel.org> <20241007141305.GD32733@kernel.org>
+Date: Mon, 07 Oct 2024 20:41:04 +0300
+In-Reply-To: <20241007141305.GD32733@kernel.org> (Simon Horman's message of
+	"Mon, 7 Oct 2024 15:13:05 +0100")
+Message-ID: <87ed4r4xqn.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007141139.49171-1-zhangwarden@gmail.com>
+Content-Type: text/plain
 
-On Mon, Oct 07, 2024 at 10:11:39PM +0800, Wardenjohn wrote:
-> Add test case of stack_order sysfs interface of livepatch.
-> 
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
-> ---
->  .../testing/selftests/livepatch/test-sysfs.sh | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh b/tools/testing/selftests/livepatch/test-sysfs.sh
-> index 05a14f5a7bfb..81776749a4e3 100755
-> --- a/tools/testing/selftests/livepatch/test-sysfs.sh
-> +++ b/tools/testing/selftests/livepatch/test-sysfs.sh
-> @@ -19,6 +19,7 @@ check_sysfs_rights "$MOD_LIVEPATCH" "enabled" "-rw-r--r--"
->  check_sysfs_value  "$MOD_LIVEPATCH" "enabled" "1"
->  check_sysfs_rights "$MOD_LIVEPATCH" "force" "--w-------"
->  check_sysfs_rights "$MOD_LIVEPATCH" "replace" "-r--r--r--"
-> +check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
->  check_sysfs_rights "$MOD_LIVEPATCH" "transition" "-r--r--r--"
->  check_sysfs_value  "$MOD_LIVEPATCH" "transition" "0"
->  check_sysfs_rights "$MOD_LIVEPATCH" "vmlinux/patched" "-r--r--r--"
-> @@ -131,4 +132,27 @@ livepatch: '$MOD_LIVEPATCH': completing unpatching transition
->  livepatch: '$MOD_LIVEPATCH': unpatching complete
->  % rmmod $MOD_LIVEPATCH"
->  
-> +start_test "sysfs test stack_order read"
-> +
-> +load_lp $MOD_LIVEPATCH
-> +
-> +check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
-> +check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
+Simon Horman <horms@kernel.org> writes:
 
-At the very least this should load more than one module so it can verify
-the stack orders match the load order.
+> On Fri, Oct 04, 2024 at 06:27:38PM +0300, Kalle Valo wrote:
+>
+>> Simon Horman <horms@kernel.org> writes:
+>> 
+>> > We already exclude wireless drivers from the netdev@ traffic, to
+>> > delegate it to linux-wireless@, and avoid overwhelming netdev@.
+>> >
+>> > Many of the following wireless-related sections MAINTAINERS
+>> > are already not included in the NETWORKING [GENERAL] section.
+>> > For consistency, exclude those that are.
+>> >
+>> > * 802.11 (including CFG80211/NL80211)
+>> > * MAC80211
+>> > * RFKILL
+>> >
+>> > Signed-off-by: Simon Horman <horms@kernel.org>
+>> > ---
+>> >  MAINTAINERS | 11 +++++++++++
+>> >  1 file changed, 11 insertions(+)
+>> >
+>> > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > index c27f3190737f..ea3ea2c0d3fa 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -16197,8 +16197,19 @@ F:	lib/random32.c
+>> >  F:	net/
+>> >  F:	tools/net/
+>> >  F:	tools/testing/selftests/net/
+>> > +X:	Documentation/networking/mac80211-injection.rst
+>> > +X:	Documentation/networking/mac80211_hwsim/
+>> > +X:	Documentation/networking/regulatory.rst
+>> > +X:	include/net/cfg80211.h
+>> > +X:	include/net/ieee80211_radiotap.h
+>> > +X:	include/net/iw_handler.h
+>> > +X:	include/net/mac80211.h
+>> > +X:	include/net/wext.h
+>> 
+>> Should we add also lib80211.h?
+>
+> Thanks, I missed that one. Perhaps it should have:
+>
+> * An F: entry in the MAC80211
+> * An X: entry in the NETWORKING [GENERAL]
+>
+> If so, perhaps I can just add that to a v2 of this patch.
+> Let me know what you think.
+
+Like Johannes said, the cfg80211 entry is more approriate but otherwise
+sounds like a good plan, thanks!
 
 -- 
-Josh
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
