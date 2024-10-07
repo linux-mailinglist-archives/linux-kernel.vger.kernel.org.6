@@ -1,140 +1,197 @@
-Return-Path: <linux-kernel+bounces-353139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC37D99294C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:35:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CF299295C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F411F21427
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24770283798
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813751CCEE6;
-	Mon,  7 Oct 2024 10:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B341C8FD4;
+	Mon,  7 Oct 2024 10:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CuasdO7U"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k9Wg0OXq"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB781C7612
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0715C1C0DED
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297288; cv=none; b=ZaFG+Vo7pxjrVSb+HguG5RS772+Jy8kymZ46zys//Af0TJQjd25GhBEkTGvfJrtotJtZ+BSHdChVrnd1inZsWZHorLcbyc8SqdO2elIxpC2JSxAmKQSvniFUYHTlpN63wprKC7mRwt9G0NgZkGzQF3S5J/Cq3iAjlhD0NyfMEQA=
+	t=1728297529; cv=none; b=g14i8bLtjLYL4JsjnEe7tQGY4I5R7ojuQGAeq9qGJUjcoNvzsqacz21ZnUj5ig5fuR8mW4bfuVLdgbTnDEMuDB22VK94jSvlvYnUNrGTu2sklV6GwP8KMs8VoCBLZRQB0r6b/jokjpXDOlUs/mfibS7pklqoZoRwHPjup/Govm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297288; c=relaxed/simple;
-	bh=SlaDyFesZTgQKQBDcA7YzZjmZ0V26ueX++PITxWWe6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=baOs40D1DfZcQTRKXJV9WCKRdrwa6EW8WqT8wpHhXhpeFjDni+IkUR4srtV05/noqT7/9icDgWpMyrqyNB25a02XyfIvjCawGXckkodSNnwhAFyT1EO8FS3fPmJQ3mDdq/j56lM4mstly7WPr6JAqq2clS751e7UKKuXtdL9IYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CuasdO7U; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37cc9aeb01dso2917900f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728297285; x=1728902085; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+V+P9/krCI5PRnaWkpVBM3gsH3UMygBswIg4oiT5dmQ=;
-        b=CuasdO7UcA/kgbt5/6/rmx3vng5YYobiQvi8WnGPdtfsH2yGkwtqHhNOwqn+shiIti
-         QQbj9NYl02DmJLRoFVnF8mddVSEJle6LOvIDaZSZymNQTADh9wd8PAr42BYCPWYAlXZw
-         at4uNVNkPfH7vtwN3ynjBwTMexafi14JusGRkCzKMsn3UniFEQnNZfHqWQE6blCz5ofA
-         qpL93FpT0fo5bbmLmKDxsc13fBmakrcu+uqbL5xf3AFTXWXHbPnxJ4GstmW2xaNQV8B7
-         xJGYbW9rya2UfAySUzdfSxK9WwBG1VVW90luwiNzB15UvHTbf9Hnqd6qJNWBKPkDSClB
-         aXYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728297285; x=1728902085;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+V+P9/krCI5PRnaWkpVBM3gsH3UMygBswIg4oiT5dmQ=;
-        b=EFerVOFv2ttbHww3oykxmP3vky6nMRphmcMVHjBbY3m5nrKX7/4L4RYkaL02tMiie4
-         65FTsBoEPiFREzZMb8rPRAfUvH83VFSLtpwMcuO3sVxi4ChMEE+ZZOZ0hcEputO1eGcy
-         O8+CF1hv0IEY3lklNjHfgzVTIKDtVydKy7v3DLv+uPYTl+2xczxLhajf7WyURlsr18nS
-         CDmlHFstmLrg+CXFZsyzpjHQSnV/npEVlADCqjVCJ6VVlvZM/9DN5MV+pXNAtTFxcpx9
-         AlghgdXPoNrMw3iO+mGLgNdEOUFIFU2hww1Ssa3aC1U3nX0eEPTYXLJzjWNed8ZatJc8
-         jgxg==
-X-Gm-Message-State: AOJu0Yy23w4z2DE5B5t0W9ZQZ+0HQS1JcArfxojBgYOS/Ub/VxVeZH5g
-	mEubfcTLqIkpaDF8y+t6XxqLi7i+OF/e9BP2IZWzFkfW1JONgwhRS49hNJ5BgJM=
-X-Google-Smtp-Source: AGHT+IG/u/VAP2bgAPDTl8iKAoB4INOf9h+ecMtARiYm1MEkHNdb3d3Ak/A841OAWDa1qYCK09ojcw==
-X-Received: by 2002:a05:6000:ec7:b0:37c:cfeb:e612 with SMTP id ffacd0b85a97d-37d0e6caf25mr6882490f8f.1.1728297285391;
-        Mon, 07 Oct 2024 03:34:45 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16973c2asm5423555f8f.111.2024.10.07.03.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 03:34:44 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Keerthy <j-keerthy@ti.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 2/2] gpio: davinci: use generic device properties
-Date: Mon,  7 Oct 2024 12:34:40 +0200
-Message-ID: <20241007103440.38416-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241007103440.38416-1-brgl@bgdev.pl>
-References: <20241007103440.38416-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1728297529; c=relaxed/simple;
+	bh=GNU+vrwJgJNb1iZtPYojM0bx3LyUZWj4S4Y7c6YgARs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=gOlcPD4U9lUfZZchMoch5ZPzOeXMEqVuPFZhmuzn9JgkUksa1pXTOihTbfBtxvouzBd/ic8MKYbIOmqDq3us0yv1sE1Bp37AG6its01EsBHpqNXw+hmR7+jslkDRkEt8g6a5YXvaBmkRCq/bgEqyj9U+1IegVlUi+5YD0lbGnyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k9Wg0OXq; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241007103842epoutp01d1b8c054a3399af15cf1656ccb5b697f~8JXCztd1l2491324913epoutp01M
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:38:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241007103842epoutp01d1b8c054a3399af15cf1656ccb5b697f~8JXCztd1l2491324913epoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728297523;
+	bh=v4/6u8K6sBjv48Tz30keWOypL8e77IpeF76bvG6qJhw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=k9Wg0OXqCP3sVRAOSwx74caTaKUmDFvyMi1+NTl+vsfdVbRZCnfnwYYsN5OrdIHgc
+	 XupN795ziRabCiin7kcq/dTsbqwb9A925ww/r/ONJs2jd2oTP2SWXRLbwOxr8pZLOe
+	 6cMEfwLhQGyHG+pcJuR2R0CzPnLB6k+VvdQBhtJg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241007103841epcas1p192eba855b1fdf30ac5dd56839d95dee0~8JXB0mbjK2252022520epcas1p1A;
+	Mon,  7 Oct 2024 10:38:41 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.136]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XMbGm4QcHz4x9Px; Mon,  7 Oct
+	2024 10:38:40 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	14.55.09406.03AB3076; Mon,  7 Oct 2024 19:38:40 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241007103839epcas1p2aa0d26f8948bf8aba33d8f11e6c8f4e6~8JW-7A5MQ2238222382epcas1p2P;
+	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241007103839epsmtrp11dbf16769e7621ea484f409e8216e997~8JW-6O-400549005490epsmtrp1K;
+	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
+X-AuditID: b6c32a35-83fff700000024be-79-6703ba309025
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6C.90.18937.F2AB3076; Mon,  7 Oct 2024 19:38:39 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241007103839epsmtip15d1d23795062623ef1c5a345df50be94~8JW-nso660375003750epsmtip1Q;
+	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
+From: =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
+	<inki.dae@samsung.com>
+To: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
+	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+	"'David Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
+	"'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Maarten Lankhorst'"
+	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
+	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Rob Herring'"
+	<robh@kernel.org>, "'Conor Dooley'" <conor@kernel.org>
+Cc: <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+In-Reply-To: <20240919-exynosdrm-decon-v1-3-6c5861c1cb04@disroot.org>
+Subject: RE: [PATCH 3/6] drm/exynos: exynos7_drm_decon: fix ideal_clk by
+ converting it to Hz
+Date: Mon, 7 Oct 2024 19:38:39 +0900
+Message-ID: <000001db18a5$125e9320$371bb960$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFhWZRKEoYF0bFiO1qJqvKMjjKGhgJZvOb/AnBb7xizSEWWUA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta1AbZRT1y242CxrZBMRvGC24RWdgCmQbSBcHkKkVt9oqiJXqD+kO7IRn
+	ErMBaTvSBwxTUg1S6pQCpaGlgNFBCjQ8BGqhQhGB0gfBTqtBxRGbtGiKw0PFhMXKv3PuPXfO
+	Pd8DR+R2LADP1Bg4vYbNITFv1DoQEh6m6EbUCsfXT9FXbGdEtL3WitGffmLB6NOXx8T0jfn7
+	GP3XP+MYPT7eIqFHDzskdOtPk2L6encNRleO94nout8voHRJaYOYXunplNDV9y5K6MqKWYxu
+	d5SL42XMcHObiOn904wyXVV3JEyrpRRjaoeTmB+ODomYtvoDjKndApi2kf2Mq3VDovc72TEZ
+	HJvO6YM4TZo2PVOjjiVfTU59MTVKpaDCqGh6CxmkYXO5WHLbjsSwhMwcdxwyKJ/NyXOXElme
+	JyPiYvTaPAMXlKHlDbEkp0vP0UXpwnk2l8/TqMM1nOF5SqHYHOUW7snOmPh+BugGfAp6RrIP
+	gkqpEXjhkIiE1ppjIiPwxuVEJ4AnyiaBQP4A8P7ygughMV72yISRFodrrdEF4LRVaMiJWQBH
+	zcEejBFqOGu8jnpEfsQJFD4YGUI8BCHaAbzzox3zqLyIl6C92Ip4sC/xLjy6Mi3xYJQIhi3O
+	YtSDpUQ0nLw2JRGwDA6f/Hm1jhCBsMNZgwgrBcHFmQaxEeBut62wr1csSPxgdWnJqi8kVnD4
+	5TnHWoRtcLB7RixgX/jbULtEwAFwtqxEIgxUAHjb1oQKpBLAgUUbEFRKePFchcjjhhAh8Ivu
+	CMHtcXhv/sPVJSAhhUdK5IKahIMTU2uTEF6tL8cECQNN9oSPwTNV65JVrUtWtS5C1f9eZoBa
+	gD+n43PVHE/pqIe3nabNbQWrTz00qhOUO+fC+4EIB/0A4gjpJ939OVDLpens3n2cXpuqz8vh
+	+H4Q5T7rciTgiTSt+69oDKlUZLQiUrVZGUlTKop8UvrtjXxOTqhZA5fNcTpO/9+cCPcKOChS
+	XZufq2haWpqjSm+az+9d1PT+nXJIeguGnupQbV/u8Qk5fang/UHLo5fqX5kmZ+7KXb6umK1l
+	jrv4vg+6Gvb0+IxWDrxXtKnbFXEmc+N25Gnl1cDcX276J5omzm/Z/cLJ+NuumMHJvre5QGp0
+	yXug+ILC+ZoR9ztuarXcMkxYawOdPh8RR4qCZUkbXXFfYb+2kFmNhc1ioulYb51pOcHEwsVC
+	NHL/6/l1Y43HxzYl22ZevvJcyqlgWapMXadMMmPBb20o6+yT1T6YQBbGk7I65qsP+D/m4ufe
+	nM0q+qZop5/yLB839dnhCNuuN+KbDy2eLbV/t/xs466VpIWORwrFKQXJJMpnsFQooufZfwGz
+	VFBMcwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsWy7bCSnK7+LuZ0g9en9C1OXF/EZPFg3jY2
+	i5VTV7FZzD9yjtXiytf3bBZ//p1nszh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLBZ+3Mpi
+	0da5jNXi/54d7Baz3+1nt5gx+SWbxZY3E1kdBD1OrtvM5LH32wIWj52z7rJ7bFrVyeYx72Sg
+	x/3u40wem5fUe/RtWcXosfl0tcfnTXIBXFFcNimpOZllqUX6dglcGRfvPWUsOMxfsed0dgPj
+	DN4uRk4OCQETiQ1vPjN1MXJxCAlsZ5RoabnJ3sXIAZSQkNiylQPCFJY4fLgYpFxI4DmjxKlu
+	ZZAwm0CqxOvVdSCdIgLzWSSeTtrGBuIwC+xglDjatJUZYuZ5Rok9Dz4yg3RzCrhKPGjZBmYL
+	C8RI/L06HcxmEVCR2PC2hQXE5hWwlLh26QY7hC0ocXLmE7A4s4C2xNObT6FseYntb+cwQzyg
+	IPHz6TJWkItEBJwk9u1lhSgRkZjd2cY8gVF4FpJJs5BMmoVk0iwkLQsYWVYxiqYWFOem5yYX
+	GOoVJ+YWl+al6yXn525iBEe0VtAOxmXr/+odYmTiYDzEKMHBrCTCG7GGMV2INyWxsiq1KD++
+	qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qByTlYikfm+0wX4wtxfn69E/JW
+	/TZdVsEWOPO+6dvbPf0e5a2HWUQPVOi45Lw7HGrQc4Ol2thKiev6yrvpN2qkDi56urow+MD9
+	H5Wytj1JLzxm+l08fsmE08UocberAK9O+MK++eyCrvc7dB+dWmsxy+PUyYM7HUJXLhV6xnYu
+	QjW8L0jz2/ldwue8Ajf5fJ+bfb71hbnw1FZPNasP+V+TDp+aqdkmYlwV9ebviRfB7R0Nf2Yx
+	L/t2SF9q4/+1jQv3vE3Ldprlr2lt9aE2Lntaje9pvhOTqr5xPQwTv6+u4nKnevulcjanPxtu
+	3E/PnV/fUqIuVpPtfslJWtfzckfx12Vbn6YturQoydlBJOSzEktxRqKhFnNRcSIADIPioVcD
+	AAA=
+X-CMS-MailID: 20241007103839epcas1p2aa0d26f8948bf8aba33d8f11e6c8f4e6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240919151145epcas1p3b3a76512b87498e976db249906a4f5bc
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+	<CGME20240919151145epcas1p3b3a76512b87498e976db249906a4f5bc@epcas1p3.samsung.com>
+	<20240919-exynosdrm-decon-v1-3-6c5861c1cb04@disroot.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-OF-specific routines should not be used unless necessary. Generic device
-properties are preferred so switch to using them in the driver code.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-davinci.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> -----Original Message-----
+> From: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Sent: Friday, September 20, 2024 12:11 AM
+> To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
+> <sw0312.kim@samsung.com>; Kyungmin Park <kyungmin.park@samsung.com>; David
+> Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Krzysztof
+> Kozlowski <krzk@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>;
+> Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; Rob Herring
+> <robh@kernel.org>; Conor Dooley <conor@kernel.org>
+> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; Kaustabh Chakraborty <kauschluss@disroot.org>
+> Subject: [PATCH 3/6] drm/exynos: exynos7_drm_decon: fix ideal_clk by
+> converting it to Hz
+> 
+> The clkdiv values are incorrect as ideal_clk is in kHz and the clock
+> rate of vclk is in Hz. Multiply 1000 to ideal_clk to bring it to Hz.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> index 2c4ee87ae6ec..4e4ced50ff15 100644
+> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> @@ -137,7 +137,7 @@ static void decon_ctx_remove(struct decon_context *ctx)
+>  static u32 decon_calc_clkdiv(struct decon_context *ctx,
+>  		const struct drm_display_mode *mode)
+>  {
+> -	unsigned long ideal_clk = mode->clock;
+> +	unsigned long ideal_clk = mode->clock * 1000;
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 1da1d7c7ac2d..8c033e8cf3c9 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -15,7 +15,6 @@
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
-@@ -159,14 +158,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	unsigned int ngpio, nbank, nirq, gpio_unbanked;
- 	struct davinci_gpio_controller *chips;
- 	struct device *dev = &pdev->dev;
--	struct device_node *dn = dev_of_node(dev);
- 
- 	/*
- 	 * The gpio banks conceptually expose a segmented bitmap,
- 	 * and "ngpio" is one more than the largest zero-based
- 	 * bit index that's valid.
- 	 */
--	ret = of_property_read_u32(dn, "ti,ngpio", &ngpio);
-+	ret = device_property_read_u32(dev, "ti,ngpio", &ngpio);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to get the number of GPIOs\n");
- 	if (ngpio == 0)
-@@ -177,8 +175,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	 * interrupts is equal to number of gpios else all are banked so
- 	 * number of interrupts is equal to number of banks(each with 16 gpios)
- 	 */
--	ret = of_property_read_u32(dn, "ti,davinci-gpio-unbanked",
--				   &gpio_unbanked);
-+	ret = device_property_read_u32(dev, "ti,davinci-gpio-unbanked",
-+				       &gpio_unbanked);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to get the unbanked GPIOs property\n");
- 
--- 
-2.43.0
+Right. ideal_clk should be fixed with Hz.
+
+Thanks,
+Inki Dae
+
+>  	u32 clkdiv;
+> 
+>  	/* Find the clock divider value that gets us closest to ideal_clk
+> */
+> 
+> --
+> 2.46.1
+
 
 
