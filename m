@@ -1,96 +1,182 @@
-Return-Path: <linux-kernel+bounces-353597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91A299301E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D4B993024
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6881F2139C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9FD28A029
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5690E1D6DB9;
-	Mon,  7 Oct 2024 14:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464231D8DFB;
+	Mon,  7 Oct 2024 14:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FVNAV2X4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b="BF2prAz3"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4431D54D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981CE1D79A5;
+	Mon,  7 Oct 2024 14:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312851; cv=none; b=A/nt3dHM6EhvXFJFoAeJow8Krufs4lcyTp6l6y9WZq/eI2NogyuAVA8+ufjXdHaQZMxUaVc5Kql9JlXSW5H1KG5+FKSgACD8woixTQREWOHfRuu26yIj4HDPFP6gpoOrtEIdDlprSRIFS0Q0+qMS4TnScyI45lr4/GjnYbNsTNk=
+	t=1728312885; cv=none; b=W6TCGf7tRSxRO5jhLM3+dofeU7sY1qJpnPsHZf/+au5I5/bKF0Lov/Z1UPgB/Rbfm2W280bAPV94JJ2zzc6GaBJ2xcXPengKaZOMXY5+2sqra7qagTO6QFVG9xcFROwElOd2tlGBBcI0ikm6R+fVeH8PBpnImL6xhqJPttAHNHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312851; c=relaxed/simple;
-	bh=9/Ra/jDDnLa5AUszXp1dUHjFKSxU6y6Jqx381bWuyDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktCBa7C424hk4+dDfTyG0PNkzmHyu0n4zipgjgpTm9464ZlwSMOROK/XSq/fVscVQ97bXGoDh+Q3fqnSQ150G4tHN3lzxF+IdhLYDA1Of4cN+MhrXLM8L0rMxP8BgJd5ChfLgzK3tRyECElbbFg4v7oX6MVQufIUweR8gZL6G40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FVNAV2X4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728312848;
-	bh=9/Ra/jDDnLa5AUszXp1dUHjFKSxU6y6Jqx381bWuyDE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FVNAV2X4utwp+8hiBgmNYD1A3OTPIU65XCMGxEyHZ1AV7sdeDtBxGOTqTS5CKlAhL
-	 P+GQaixTJqVnWh3JfR0hZvE18Bl5O9Em/W1fix/bnNaIM2ARm9caHXvEX/fBSPrgAt
-	 RBvtBhOOas0vaD5J9Yk4cYlqAxgrnjQTi1/80RXmDK7qXcLlnV6jlJURkFyNInaUnC
-	 IU6sHuz/WNEyWMoBAa7whXIzQbjGM0IcMZ5g2DkVO8QvU4ZsA//kR/A1o0YprNulhr
-	 Lin2tHzmOFYMHGusSIFl0ugj0QRrckzbHqSdGM/b9XqBd6CdyEZZTgOpUDZuNnC67U
-	 hqBqv26xkzTww==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 88E5217E35FF;
-	Mon,  7 Oct 2024 16:54:07 +0200 (CEST)
-Message-ID: <381fcbfa-edfb-46c8-8ee2-1386af2ba4c4@collabora.com>
-Date: Mon, 7 Oct 2024 16:54:07 +0200
+	s=arc-20240116; t=1728312885; c=relaxed/simple;
+	bh=Iqo8ngZeODghVeUiw2dCz+wYnflCSXSkcVxpoW7h7/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vi15NAY5q5AKcEsCpBu7zccUEp0h6DXSAp2JH7FBEIfXvPLUDznkVZqR3JRZIZlHT3wbOU9Uvnqwl4cKH5gYS/AcvritCnJuBiNuaT73zTMjwCDqopxjIpQz7iCX8KWyo5ahIww5haRRTmyqxKsr3EVive+ASvjJCB8DOqiouv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr; spf=pass smtp.mailfrom=gmx.fr; dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b=BF2prAz3; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.fr;
+	s=s31663417; t=1728312854; x=1728917654; i=benoit.monin@gmx.fr;
+	bh=5CJ3PojilP9pzTP1lBI15/fEZnSMxZWJzIh/6VHIbiw=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:Content-Type:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BF2prAz3Kc2ABilUFHCaa7kPUmPxI7YXJQ3i8P+ARVgB4s+iEZr4V8M9xIJmCt92
+	 ORgEQb8LLe81w2z8h1EEK7yiL6hCsTebf/nsb7M81iv3Ayo4c59UfRSyp6ZPYiLzT
+	 F7SQcGO7TgvoptyKdjf9VO+ytumffEunrw1a153Gzp+Yk6qnOyRhlyYJwcXiJ5h+a
+	 CibTkiZA8SUhCh4/X5jY7C0Av+5rDmLGfviz269gfCsSuuGJ1byM4oN75F9H2tGAx
+	 8bGo46Obq7lKgnRZgPANa/QzyaVz1RgJ0Py/aSD2xnd6jLDv82+Ycsc2eEgYiYSt0
+	 Q8bL+SRxxs0e+QqgAw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from pianobar.pianonet ([176.145.30.241]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N6bjy-1u4JYW1QZa-012GRi; Mon, 07
+ Oct 2024 16:54:14 +0200
+From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@gmx.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH net-next] net: skip offload for NETIF_F_IPV6_CSUM if ipv6 header
+ contains extension
+Date: Mon, 07 Oct 2024 16:54:12 +0200
+Message-ID: <7056440.9J7NaK4W3v@benoit.monin>
+In-Reply-To: <670326ed8220a_135479294d1@willemb.c.googlers.com.notmuch>
+References:
+ <0dc0c2af98e96b1df20bd36aeaed4eb4e27d507e.1728056028.git.benoit.monin@gmx.fr>
+ <670326ed8220a_135479294d1@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: mediatek: pwrap: add pwrap driver for MT8188 SoC
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Chris-qj chen <chris-qj.chen@mediatek.com>,
- MediaTek Chromebook Upstream
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20241007024350.7878-1-macpaul.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241007024350.7878-1-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Provags-ID: V03:K1:sxe0lufCzZrl31HztvVECRrNs0/1q9l2gDX+sqVQ3gnzuA4mRJl
+ hYRkpxVJQ5s96ZCoX1GHHaDzUTeNFqqbm2/+hLKwkk2/mv3UnyHJZZE1QqJJyfa5AgtcfmT
+ 16LFFuOChxZW/pNs5bzU0F9tDKtdQDKNd9zxBnDH2SnnFqcI4SBVDcSpGPhBcVgnjWHMoRC
+ NsazlLT3idjpQxTDLtaMw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mnytWOTI3LY=;Dwas4gEcZSCt+t8SqMatF64rYcJ
+ jFc5zDFVixNDN472LFGcQlSFtEb0gtsU5olju1J5u4Hr5TRJGifoC5pszAQMrOyYHR/k79aHq
+ ggUjns8gmGoTRuxLwMkKHc4c3WKgktnGxEty7JQ7KSmvzdSWu5kBlF05Zj4rQ7A7EUuCjeVCF
+ pg61laObjFGKAkJltc0CSTybJTY5Q996gozvxeSkRtjMoalc8NlareZyiG8njZy7tJrZS7apm
+ 66zJRhCBgr8R/QOH27/Rc460fiPPP/vob11gPfWhotBkjXFa8wWrHeB/IQPxbswOUi0PMFKNz
+ ij5GVPX3vul3vLB5iNvQo1tfTTK1TexSEuzhHjSa1oKECh9mrfcnsJecwSeaxuzVJAbKJk77d
+ kbd1NUi5yHWUmCH370ZZU1wxr6u5BCt/0q2T7E2vL0d5PcRhsdQdz2Y1YVocgGOwdW4OqOm4S
+ g1i9Adoa4EyWxS2HtTB20TKpzQ+QN83hw1f8C2g8pudocVn9Ew0RKPUNQ+m5dxKKBkDx1cQpT
+ uuCEtjIkOa86Ap9djBKUcY64QKZi4sDsIpgEGGYSEBlDuAg9UppWrtgGRd9nESKnGTR7tOUfy
+ K0kDRp5z14MnVoWwRou87dDENBCD9i1eOrPkpEy6hOl+DOPWMh/aWLxg8MOCxk77zoxQK4F1N
+ H8TvjgNswPh5RmVKr8k+9uhH35vqSXFN9hL7BTYDFwq7jdOJvI8c7eVCB1tZIDKoFCyVLSnX6
+ 8bmlTPqh0A6cXb0SkIvcFPArRkeuAgm1DXVmrHhdeznurWGh2b3BlgDh6YjiMN+/mFtiFcDoF
+ 3pVkIW/cbnOluJnmBJWAOkeA==
 
-Il 07/10/24 04:43, Macpaul Lin ha scritto:
-> MT8188 are highly integrated SoC and use PMIC_MT6359 for
-> power management. This patch adds pwrap master driver to
-> access PMIC_MT6359.
-> 
-> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+07/10/2024 Willem de Bruijn wrote :
+> Beno=C3=AEt Monin wrote:
+> > Devices with NETIF_F_IP_CSUM capability can checksum TCP and UDP over
+> > IPv4 with an IP header that may contains options; whereas devices with
+> > NETIF_F_IPV6_CSUM capability can only checksum TCP and UDP over IPv6 if
+> > the IP header does not contains extension.
+>=20
+> Are both these statements universally true across devices?
+>=20
+> I can believe for NETIF_F_IP_CSUM that this is the definition, and
+> that devices that cannot handle options must fix it up indivually in
+> ndo_features_check.
+>=20
+> And same for NETIF_F_IPV6_CSUM with extension headers.
+>=20
+> But it would be good to see where this is asserted in the code, or
+> examples of drivers that have to perform such actions.
+>=20
+I was referring to the documentation in skbuff.h that describes=20
+NETIF_F_IP_CSUM and NETIF_F_IPV6_CSUM.
 
-Actually, MT8188 and MT8195's pwrap registers and code flow are exactly the same:
-since they are, we don't need this commit (or we don't need it right now!), and
-we can just update the binding so that we can declare...
+=46or NETIF_F_IPV6_CSUM, at least fsl_dpa and r8169 expect=20
+ipv6_hdr(skb)->nexthdr to be IPPROTO_{TCP,UDP} to compute the correct=20
+checksum for IPv6.
 
-compatible = "mediatek,mt8188-pwrap", "mediatek,mt8195-pwrap", "syscon";
+I posted more details about the problem I am trying to fix with this=20
+patch in the following thread:=20
+https://lore.kernel.org/netdev/26548921.1r3eYUQgxm@benoit.monin/T/#u
 
-...hence this driver doesn't get any commit :-)
+> > Enforce that in skb_csum_hwoffload_help by checking the network header
+> > length in the case where the IP header version is 6. We cannot simply
+> > rely on the network header length since the IPv4 header can from 20 to
+> > 60 bytes whereas the IPv6 header must be 40 bytes. So we check the
+> > version field which is common to IPv4 and IPv6 headers.
+> >=20
+> > This fixes checksumming errors seen with ip6_tunnel and fou6
+> > encapsulation, for example with GRE-in-UDP over IPv6:
+> > * fou6 adds a UDP header with a partial checksum if the inner packet
+> > does not contains a valid checksum.
+>=20
+> Where in the code is this conditional on the inner packet csum?
+>=20
+This is done by udp6_set_csum, which called by fou6_build_udp.
 
-Cheers,
-Angelo
+> > * ip6_tunnel adds an IPv6 header with a destination option extension
+> > header if encap_limit is non-zero (the default value is 4).
+>=20
+>=20
+> If this is a fix, we'll need to target net and best effort find a
+> suitable fixes tag.
+> =20
+I guess the particular problem I have found is present since the merge=20
+of fou6 in 4.7, but it might not be the only code path to create an=20
+IPv6 packet with an extension header and a partial checksum.
+
+> > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
+> > ---
+> >  net/core/dev.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index ea5fbcd133ae..199831d86ec1 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -3639,6 +3639,9 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+> >  		return 0;
+> >=20
+> >  	if (features & (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)) {
+> > +		if (ip_hdr(skb)->version =3D=3D 6 &&
+> > +		    skb_network_header_len(skb) !=3D sizeof(struct ipv6hdr))
+> > +			goto sw_checksum;
+> >  		switch (skb->csum_offset) {
+> >  		case offsetof(struct tcphdr, check):
+> >  		case offsetof(struct udphdr, check):
+> > @@ -3646,6 +3649,7 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+> >  		}
+> >  	}
+> >=20
+> > +sw_checksum:
+> >  	return skb_checksum_help(skb);
+> >  }
+> >  EXPORT_SYMBOL(skb_csum_hwoffload_help);
+>=20
+
+=2D-=20
+Beno=C3=AEt
+
 
 
