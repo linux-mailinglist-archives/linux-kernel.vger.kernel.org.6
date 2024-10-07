@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-353732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9D79931E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF6C9931EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F774284B05
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988741C22CAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B2D1DA314;
-	Mon,  7 Oct 2024 15:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3817D1DA614;
+	Mon,  7 Oct 2024 15:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFJjcDjJ"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k601a1in"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF311D9323;
-	Mon,  7 Oct 2024 15:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E11D95BA;
+	Mon,  7 Oct 2024 15:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728315971; cv=none; b=WhyzvqrWjJUo4iWj7SMyQ6yZhIGxcrqBOEwPovm8Mm7+TGFPQqx5pOJ+UNmyddpNNcL1Jxso9eY54GIP8r5gl9euBSoSJaE1YuZQLhHhX1vsxe2yoLNFpMw6qQPRVTonSSJWfYJxC51wd2+lZt+9zBIIkQoGmqAPoKZ6lK7CO3k=
+	t=1728315995; cv=none; b=btVNsoJtBa7rmRkPnhCc079fg42rCGZ+IcbbQG+Ip5V+FuxKfpU9qLISJntowEkb4WO63Zcv94zimtKxugmM1MLUMEgQKi08dnj7mDILWZYdVPbjiXH5PSSufq5S10QmmuXy+cP4WeOZlJO/ZCNqI1sFhTzOBhImeS+LFiJn5iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728315971; c=relaxed/simple;
-	bh=IPz+aGl2hpLhDFrX5GfJESiSDX1f4cE9gll6GUH7TJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YlA6v6UukloKWGf0MO4saVwsrQ7zfJcev5qiqw/f+hWBhbqTNPAzZYN0CzLXKGzbLfACwChLtS+BYHVAfv5bpVZ0Z3+Gax9DXKi1NCB+Y7y02OwUDzQvb90Wh5t7AjLwvoS5at6r9Ay2/qC7bRVgVSA2dPms5qJOItRj+w5HY2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFJjcDjJ; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cc9aeb01dso3162060f8f.2;
-        Mon, 07 Oct 2024 08:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728315968; x=1728920768; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6dprjm0PLZjMBeHgDbl3Q6+Sj+1Lh0wF19FbiiI9Hs=;
-        b=OFJjcDjJSg7zcYMMaOZXiQxxWNFtOXMKsVXvzkwLk8LavbSlP7jt57ezv4mpSf8mlr
-         J5QyhRdjg4tkHYbL9EvqqDSog9oJPyyyKILFg7t+fXDUSHtcv5RhDRD7qSKiyO2UTS6n
-         ol9UV6GUa/nEcNH34RUJyjVqgHeu/UAE8r6BkP0iAloSi7PZvxND51g9Naw2kVbqVjKR
-         TO6BW7+AyPrIVSL2QTOTHYarf6PboU1rhVvZMgvsmIpw1M5M1grNG0HbkN3VCgfAEHUm
-         8QpNJChhBCTgZQJRLk9vMx7KkcktvRbu9yXYPLqU/1tkTOBa6AMidu0GcRZMAmrA1TjG
-         EA3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728315968; x=1728920768;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6dprjm0PLZjMBeHgDbl3Q6+Sj+1Lh0wF19FbiiI9Hs=;
-        b=wbcL0v9hchiMGFVF6+PJDbtzeIBZNlWIhM/hAUOgIVqANpA2MHlR0yPkx+T5zciOWB
-         fJlspNFhn3/r64kEqOT7VAgnBNcdVskLs0QQzco2L0R5Z6t8P3gifm8k0D5swPXPb21B
-         IHWfo5vPDjboJ8W59mMflqiUymPNLny7TZ1FKWdCEs00AthpcJouKtp38hNmQ8fi8j0p
-         aLyQ/3CWYEo3WMvy1TaWc1jUaWQqrx05LRJPgOR/hwHQJbsKOAa9bboPDqvsP+mbh5z+
-         zxKd8BF8FRl27V1P97OANhS3OsdZ3xdu/lIGcUkmFHJN/A9CMxY5FKahnpwmdDanJw8j
-         b8ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUj8DDC7pd3Wx3/+OpbcQv0nXGTMMrhncK3F90uW87/umX0bdPbqFer+xbbSL2+XuHwuSCTfIokXEOJy0wS@vger.kernel.org, AJvYcCWyefNgs1FAUV7vNiiBovlTfUR3Tl2cmKl2tzdvXXc3NCII7nDxCMiRSFdqprRpfP8XxTwDOvL+Xus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGOqtKi8VnmOU9i3VQRABAvbV1kcsOJv+GL3YIZiKlWI3o2VwQ
-	dfZ0FK+88pi/O5r92XexkEV2oLqdh56G44YG6aeTO0lupcW4NFFu
-X-Google-Smtp-Source: AGHT+IF+8sfGIn0BZv8JEm8l7fv06gDZuaryeZmXzbmOn6DC8csfkugDv/BvinOfUhgQEn85h8XL9g==
-X-Received: by 2002:a5d:63cc:0:b0:374:c31e:9721 with SMTP id ffacd0b85a97d-37d0e7d40aemr7238976f8f.42.1728315968206;
-        Mon, 07 Oct 2024 08:46:08 -0700 (PDT)
-Received: from redaops ([146.70.124.157])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e89b42sm77975205e9.13.2024.10.07.08.46.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 08:46:07 -0700 (PDT)
-Date: Mon, 7 Oct 2024 18:46:05 +0300
-From: Tudor Gheorghiu <tudor.reda@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Nam Cao <namcao@linutronix.de>, Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Subject: Re: [PATCH] staging: iio: frequency: rename macros
-Message-ID: <ZwQCPY7tmMg7ciVZ@redaops>
-References: <20241001202430.15874-2-tudor.reda@gmail.com>
- <20241001225426.wUBOFdMi@linutronix.de>
- <Zvy0qyQJP1S17SFv@redaops>
- <20241006122712.2cff065c@jic23-huawei>
+	s=arc-20240116; t=1728315995; c=relaxed/simple;
+	bh=pJyM3vKd+1wtEQVXEtJy+8R+UUj+RCJPn+31MBo9MUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oulks8ygsinUNfxeDsnJV7sezsR0+bxnEGXlLU6C2bv6p0nvxmVj3rOhjN7TK4w1i1lukxiXVfKh+kjouu+ywTajq5thlqis/S+GdftWb4toWDQFdFluux5lh4pTsyjPGld4JUFhO+b6DOGJkWeP8J9LL1jPGUEJYKF1UYgzP8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k601a1in; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F830C4CEC7;
+	Mon,  7 Oct 2024 15:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728315995;
+	bh=pJyM3vKd+1wtEQVXEtJy+8R+UUj+RCJPn+31MBo9MUM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=k601a1inC2MEhWmWposbEH1MqiBGUjZZhJFRXh7nj+nS9NcsKAqvQeuCnUF7vLnYk
+	 i/OwMSdn5zwU0nySdz6t+gCpIxw8oRvzL2D/qk+o/2goY4+hIwL53ZjO29vrSHWwb4
+	 QF56OSJV/QuqHzlT7Kr13s9m8CfcPOszvJQ7Rx+w3qEijNkd7eFJOuyZE/kZhqbQLR
+	 1j4C7DdFgSp77KAGFu3yayAoL3WQRUJTEUtGyVI29WaB7nsw/O7QGPWpVahmqbRsev
+	 K9zps2mVnTXw52MuOHql56L6U49FJmNtMLU65ErFO49nnOG/T4JHnIXnpWxnuejJuR
+	 WA71Lbl0kZh9w==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-712422564aaso2697378a34.0;
+        Mon, 07 Oct 2024 08:46:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOQ0dyLcW6VPgLRBNS7998K1Bogc7P6P/sD9AXbFC3bF+bAxuoKgMVpOR77bN/FnoNmkWA57z4UfU=@vger.kernel.org, AJvYcCXinJgjoLye4cWXLyNW2dS4aXwFT+FlHVkNMu4hi3XyJX9s+GoRyF6lDH+iD6wV4NBc8iLwJNbq4Sx7kQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAcg3DLMypKcT7g4mIONhzPdu9vQrihmZ7o+W3smAyU5Ua0Zwb
+	HTrk066KyFN4pKVtpJ7ZOuPEJP/vqoK5n7UMRnQ9ZG8jGwIYztE77IBk4ZUH1JGBZ1Y7oZQxZ85
+	Ei/6rqJQcZZSNd/o2/L+dNmZ5QO4=
+X-Google-Smtp-Source: AGHT+IF4P5Dpy4e2qcOZY01OHsdvc/SJQMXdDJvMpYopTQOtlHoLdcVlToff/Q1t75jastspcNbr2ipvqQmYGo2nmHY=
+X-Received: by 2002:a05:6808:4482:b0:3e3:af13:e90 with SMTP id
+ 5614622812f47-3e3db597ffemr31282b6e.3.1728315994327; Mon, 07 Oct 2024
+ 08:46:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006122712.2cff065c@jic23-huawei>
+References: <20241003083952.3186-1-Dhananjay.Ugwekar@amd.com>
+ <20241003083952.3186-2-Dhananjay.Ugwekar@amd.com> <CAJZ5v0hoiPo6Q=K=q-EoCNsunr0zLGPJgK39LwnjsSr=btmjOw@mail.gmail.com>
+ <ac6aab6d-51d8-47e8-8508-8cc52aba227b@amd.com>
+In-Reply-To: <ac6aab6d-51d8-47e8-8508-8cc52aba227b@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 7 Oct 2024 17:46:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iKOQkAUuZaHf1Zcm5sO6xD-dYkeTg8nyC3EuMmY0qDqQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iKOQkAUuZaHf1Zcm5sO6xD-dYkeTg8nyC3EuMmY0qDqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] cpufreq: Add a callback to update the min_freq_req
+ from drivers
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: gautham.shenoy@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com, 
+	ray.huang@amd.com, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 06, 2024 at 12:27:12PM +0100, Jonathan Cameron wrote:
+Hi,
 
-> 
-> Hmm. If you really want to clean this up, then these macros shouldn't
-> exist at all.  They are legacy of ancient IIO code style and some slightly
-> ropey code even then (which is why it's in staging!)
-> 
-> Right option is to use the read_raw callbacks in conjunction with the
-> info_mask_* bitmaps that indicate which attributes the IIO core should create.
-> There are some corners in here such as PHASESYMBOL for which we've
-> never fixed on an ABI and that might need custom attributes, but even
-> then these macros probably wouldn't be involved.
-> 
+On Mon, Oct 7, 2024 at 6:40=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
+>
+> Hello Rafael,
+>
+> On 10/4/2024 11:47 PM, Rafael J. Wysocki wrote:
+> > On Thu, Oct 3, 2024 at 10:44=E2=80=AFAM Dhananjay Ugwekar
+> > <Dhananjay.Ugwekar@amd.com> wrote:
+> >>
+> >> Currently, there is no proper way to update the initial lower frequenc=
+y
+> >> limit from cpufreq drivers.
+> >
+> > Why do you want to do it?
+>
+> We want to set the initial lower frequency limit at a more efficient leve=
+l
+> (lowest_nonlinear_freq) than the lowest frequency, which helps save power=
+ in
+> some idle scenarios, and also improves benchmark results in some scenario=
+s.
+> At the same time, we want to allow the user to set the lower limit back t=
+o
+> the inefficient lowest frequency.
 
-Hi Jonathan!
-Thank you so much for your input!
+So you want the default value of scaling_min_freq to be greater than
+the total floor.
 
-I understand, so this is not as simple as just renaming the macros,
-there is actually a lot more to modify in order to make this driver up
-to date with modern standards. I will leave this for the original driver
-developers.
+I have to say that I'm not particularly fond of this approach because
+it is adding a new meaning to scaling_min_freq: Setting it below the
+default would not cause the driver to use inefficient frequencies
+which user space may not be aware of.  Moreover, it would tell the
+driver how far it could go with that.
 
-> So I'd don't mind 'fixing' checkpatch or the code, but I'd
-> rather we fixed the drivers up properly.
-
-As for this, it is somewhat unrelated to the actual driver (I didn't
-even consider this initially). That is why I submitted a different patch:
-
-https://lore.kernel.org/all/20241002133418.7924-2-tudor.reda@gmail.com/
-
-Thanks again,
-Tudor
+IMV it would be bettwr to have a separate interface for this kind of tuning=
+.
 
