@@ -1,294 +1,106 @@
-Return-Path: <linux-kernel+bounces-352766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E479923E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:36:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF889923E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914672825D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDE21F22A50
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4570C13B787;
-	Mon,  7 Oct 2024 05:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9969C13B787;
+	Mon,  7 Oct 2024 05:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="f7vqi/SZ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiQkSGt/"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551A423AB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D03F23AB;
+	Mon,  7 Oct 2024 05:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728279385; cv=none; b=DvZzpsJ5WcFinTnc6iYQ/JpfeDljWsb0Yyjz8tK4PkLXY8p0PxDtrDInE1h+DlZYN4ynG+yu7AywH5GKKhWeAEi+B7nGgVRpANiGiKGHWqxwYeYFVJR0vuWK2pCU00fR1U7RA3PMNoP3k+/RaRrm17hBnkphlRJcIgS7Ajg43f4=
+	t=1728279435; cv=none; b=qkJC72xfBaxgs4AbaNVpwtUEPrDIs6+JECVPcllHzTC+DY9Hjh7x0XiX+G1nGSlBlSfj+pXZas4+KacDFat6psnCL2TdgwpD2Ee/dk1yonXPfI58IwpFiy2halPgevyrX1K/S4pHEhDFgnpwD9eTnQHo+7Oz1tCFrlq5lgKq0PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728279385; c=relaxed/simple;
-	bh=KRPdGFwAaLkfIeM+qmukKMdUHAF5E5Hwn30K03RYcFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nf2v4qOPrk5nv1SuZBEMsGcFNUB0/8w/zXciuN4hpmIqAr3wg2LgQMcjK6MWOQ3vni5SOURP5gunbSAa1LWeZchaYBjOTKdAUedsgg0DMeEHJP4W0HaulGKC0WUAMo8i4FTJU9SBmCREz6ArW+MXtGd0MLu4Cy9/Q5/GSDmmcYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=f7vqi/SZ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so8925706a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:36:22 -0700 (PDT)
+	s=arc-20240116; t=1728279435; c=relaxed/simple;
+	bh=JCadmrC3h0MujzKXcT8U0aRt9DPEEGzc5jwPr2ZooF8=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=S5xhQTGGWEjFUtCN6fQYoKfpXfdUtixbKZ2Rn7VFEWAIFzB32qstH1/cw/6z3M1hN58hiDDQE7I3Gq2QyUC+xKdQZpib2X0KfxN3XwRMk81l7seEMMk78AaPPqaG5RzGgfQ5DFiZdsBz9izy3Fm+sNoqpu3fy4Z1t2btifzO9ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiQkSGt/; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b90984971so41798905ad.3;
+        Sun, 06 Oct 2024 22:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1728279381; x=1728884181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
-        b=f7vqi/SZ8G7RzEJ4lKWlRLJk0OVeA6OXIk+KvaQEkC3uS0ZeRwpQR3SCCQHMQfZ9om
-         Ib7WJz6LK0MAOz/M52iGv1Unu9fKbZ+YJzLHkmD/LCcWcTtxTw6sDJ4kJ0pU8QLNCrKD
-         /gEZjm4LRmkHyI+Lo1XLmkfQctry5UMjnGFdpmLJTDRAG+fwKyuRZX6nP2uWXfzUepLc
-         rBB3gcZq45+xG+QzpPrNLWZAxbjwtCxnSOnjmDElrsgFvRYL+SPcurbS/bFuzRV7ohJY
-         s4eZTv0Az2DO+8fWkV1+b8g0Rk9jS44opQTOBvhwPgYEj3Y6/IMhHkWPvkrEl2miWRP9
-         hnxw==
+        d=gmail.com; s=20230601; t=1728279432; x=1728884232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cF9L8ZHjqNNLKF2lJh0mQWJpMrn9fQAJhxqakMnEFAI=;
+        b=JiQkSGt/F5Oeo5CIeVL8Qw9o5y69W1zWDs+AvVd6fGO+9Xvoi9IEfpN9LmHcHD+OZM
+         vANIWOcAuOq7L3DwThrS16pnLhAeCu0vA5E4nAgZH1uN7tqvm3lT6SrmwsKMZK0EgP7y
+         lbqIn+ersa7EuNVng193bc4/FVzZs3hanaxAtH16qdCJRKGn+8/2WfN0KWFg8jbPqjbr
+         auowu0H3XDKG4FjoqOpAbHNmsAcJDaqcdakKlpGvuM7nMAGMoDapQeQIEkfVoFC0TRDT
+         ILGTgBMuEnncqgNit2lqu0xg8aYZamxxG3G6mH204FvZPiecd6DK7n14ER0qqQ159LuP
+         N/qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728279381; x=1728884181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmuRDQ+789Dxrdbe7Plu2amgbdeY0UDHzLyD3KlOvB4=;
-        b=k8OynlJfj6pKV3W4qJ1k89YuZ3s9dNelfykrq8AhHV56Rd2QDbPQgvnC/AQP6Pys9l
-         k5f0DFEkb7eLvEdiGz9fR3y5sJ6FAuk5qUg5Znv2+kHVOClDjJHqKv3ZAbQHsLpkOx8P
-         rq43srPzJtAWx8GnoEwekCHCJOOlzgbMDMaDejbBub8bn7phWxUcpYkjzyNEOTTz/cqd
-         t2m4NENlMniLw9gePEKGfxTTzNTVfHy/HtOHHLqQL/pLG0pbTH7F9m2SRtC8ig1HPOob
-         hhf+MqspON1LssO0sR6kZWUWjmUVUSM0ON40QOSnhC/3YgImDoLrQyJ5pAtND1PwqK4/
-         d3OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURzFvPGoJPoBy98UxfdOaVYZU6jhBgWAyEhZf1BnJR70M/x4/0LflVcStvMyJLZMIwRnfV+3Q4KIj6Rpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb+7onRD2UAjuTZGga8C2+mIwZluzBZFo1MqJ2ZT0GkERxwFWH
-	hVf7sLrhN0ZOmkUk7OTNRkv7MCkhojbCsQrqN0aC8h5cbH+PjC1h1p+2iYglD9skl/cLktoYFvY
-	rrRF6P57ptuX1PFEgkg5VnrTuT9OW96wJFalsbQ==
-X-Google-Smtp-Source: AGHT+IFmB9y6/+kQL6KjsmY8/EdfpVKJMGg25s2uWIbdIaizpuU4BwX+luKVWgAn+4aggb52o4zBWQfQLDFbETfCjoI=
-X-Received: by 2002:a05:6402:34c5:b0:5c8:9f3e:5efc with SMTP id
- 4fb4d7f45d1cf-5c8c0a0f606mr15771857a12.6.1728279380643; Sun, 06 Oct 2024
- 22:36:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728279432; x=1728884232;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cF9L8ZHjqNNLKF2lJh0mQWJpMrn9fQAJhxqakMnEFAI=;
+        b=jeX0vgDgp/rRMS5Clm3Ypir153+zeHe59foP2EzJLP2o27MhcW8fA6xrDDcWqXb5vq
+         ZsKlNoMP/HOuF5Id+Ky5MbNAwK3C2sJZTN17WaARxxNX0DHzK/5vwmpEURO+lAJzm30C
+         3PmKqP4WNKEdi9Bo3MMXe+YJRpjyPtyjutSEomEXVNeaqR8ivYGmTrShkrnBJMJd36l2
+         SDccGLyedk4OcJBnZt6HYjZ4dXzZaf+/6JHQG+LE3vHy7HqbKH30XUZbqY7obIci3z14
+         Ror8XZSU1o7mAbQg7L1E6MT40/tq3UJoK+HHLqf1PY6Wha7r/ZY4sQpQu45Y8M+1ISHu
+         5lYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwbJYLnTmY/PR1PE5D2a5eUU4KTw74zKeKBDdovQo4N90AAIrzw4EmwoWSBEajUt1pKNFy5Vc0WVwjhP9vCo0=@vger.kernel.org, AJvYcCVeg/WawCNYI0ueVL5jI94QqC3Co4x1J/QcBKKQgVI4NNAhzrPZTeIndH9zfW0QFk73bBOjsySEfOmHljw=@vger.kernel.org, AJvYcCXq+hnDdk9XDNcpanXOc8c08PDawJn+LAaLMckUvtBOoJfGUT1HmeCG17OPAkxxYqMPNArPDUz4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqzxGyfY/4K+zijlRfklgW0wmEfqNcESMFW8M7yHdF7jH7HXU1
+	x6CVh0qFqBLxioHTBBTm0xX45FmNIcyY/ByAc4p+qyGJN5AcNCnd
+X-Google-Smtp-Source: AGHT+IFV3bfcM3/+6NJSr4u/aMHjiq8zXz5plHNqa6mGpBlqdEH6TUKOc5eNKUGE5sjlVkCXrY5w7w==
+X-Received: by 2002:a17:902:c941:b0:20b:937e:ca34 with SMTP id d9443c01a7336-20bfe05d555mr113149585ad.34.1728279432506;
+        Sun, 06 Oct 2024 22:37:12 -0700 (PDT)
+Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c1393175csm32539055ad.140.2024.10.06.22.37.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 22:37:12 -0700 (PDT)
+Date: Mon, 07 Oct 2024 14:37:07 +0900 (JST)
+Message-Id: <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
+To: finn@kloenk.dev
+Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
+ PartialOrd for Ktime
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+	<20241005122531.20298-2-fujita.tomonori@gmail.com>
+	<3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241006152849.247152-1-yizhou.tang@shopee.com>
- <20241006152849.247152-4-yizhou.tang@shopee.com> <20241006163013.GN21853@frogsfrogsfrogs>
-In-Reply-To: <20241006163013.GN21853@frogsfrogsfrogs>
-From: Tang Yizhou <yizhou.tang@shopee.com>
-Date: Mon, 7 Oct 2024 13:36:09 +0800
-Message-ID: <CACuPKxkceb0zARj-B_ZuYbSH70rZHwgrJzjhjxpKFf53C9GNRg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with
- the writeback code
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: jack@suse.cz, hch@infradead.org, willy@infradead.org, 
-	akpm@linux-foundation.org, chandan.babu@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 7, 2024 at 12:30=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Sun, Oct 06, 2024 at 11:28:49PM +0800, Tang Yizhou wrote:
-> > From: Tang Yizhou <yizhou.tang@shopee.com>
-> >
-> > Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
-> > device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
-> > writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
-> > xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() app=
-ear
-> > outdated.
-> >
-> > In addition, Christoph mentioned that the xfs iomap process should be
-> > similar to writeback, so xfs_max_map_length() was written following the
-> > logic of writeback_chunk_size().
-> >
-> > v2: Thanks for Christoph's advice. Resync with the writeback code.
-> >
-> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> > ---
-> >  fs/fs-writeback.c         |  5 ----
-> >  fs/xfs/xfs_iomap.c        | 52 ++++++++++++++++++++++++---------------
-> >  include/linux/writeback.h |  5 ++++
-> >  3 files changed, 37 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index d8bec3c1bb1f..31c72e207e1b 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -31,11 +31,6 @@
-> >  #include <linux/memcontrol.h>
-> >  #include "internal.h"
-> >
-> > -/*
-> > - * 4MB minimal write chunk size
-> > - */
-> > -#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
-> > -
-> >  /*
-> >   * Passed into wb_writeback(), essentially a subset of writeback_contr=
-ol
-> >   */
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 1e11f48814c0..80f759fa9534 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -4,6 +4,8 @@
-> >   * Copyright (c) 2016-2018 Christoph Hellwig.
-> >   * All Rights Reserved.
-> >   */
-> > +#include <linux/writeback.h>
-> > +
-> >  #include "xfs.h"
-> >  #include "xfs_fs.h"
-> >  #include "xfs_shared.h"
-> > @@ -744,6 +746,34 @@ xfs_ilock_for_iomap(
-> >       return 0;
-> >  }
-> >
-> > +/*
-> > + * We cap the maximum length we map to a sane size to keep the chunks
-> > + * of work done where somewhat symmetric with the work writeback does.
-> > + * This is a completely arbitrary number pulled out of thin air as a
-> > + * best guess for initial testing.
-> > + *
-> > + * Following the logic of writeback_chunk_size(), the length will be
-> > + * rounded to the nearest 4MB boundary.
-> > + *
-> > + * Note that the values needs to be less than 32-bits wide until the
-> > + * lower level functions are updated.
-> > + */
-> > +static loff_t
-> > +xfs_max_map_length(struct inode *inode, loff_t length)
-> > +{
-> > +     struct bdi_writeback *wb;
-> > +     long pages;
-> > +
-> > +     spin_lock(&inode->i_lock);
->
-> Why's it necessary to hold a spinlock?  AFAICT writeback_chunk_size
-> doesn't hold it.
->
+On Sun, 06 Oct 2024 12:28:59 +0200
+Fiona Behrens <finn@kloenk.dev> wrote:
 
-Since the caller of writeback_chunk_size(), writeback_sb_inodes(), already =
-holds
-wb->list_lock. According to the function comments of inode_to_wb(),
-holding either
-inode->i_lock or the associated wb's list_lock is acceptable.
+>> Implement PartialEq and PartialOrd trait for Ktime by using C's
+>> ktime_compare function so two Ktime instances can be compared to
+>> determine whether a timeout is met or not.
+> 
+> Why is this only PartialEq/PartialOrd? Could we either document why or implement Eq/Ord as well?
 
-> > +     wb =3D inode_to_wb(wb);
->
-> Hmm, it looks like you're trying to cap writes based on storage device
-> bandwidth instead of a static limit.  That could be nifty, but does this
-> work for a file on the realtime device?  Or any device that isn't the
-> super_block s_bdi?
->
-
-I'm not very sure. Considering that the implementation of
-writeback_chunk_size() in
-the writeback path has remained unchanged for many years, I believe
-its logic works
-well in various scenarios.
-
-> > +     pages =3D min(wb->avg_write_bandwidth / 2,
-> > +                 global_wb_domain.dirty_limit / DIRTY_SCOPE);
-> > +     spin_unlock(&inode->i_lock);
-> > +     pages =3D round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_P=
-AGES);
-> > +
-> > +     return min_t(loff_t, length, pages * PAGE_SIZE);
-> > +}
->
-> There's nothing in here that's xfs-specific, shouldn't this be a
-> fs-writeback.c function for any other filesystem that might want to cap
-> the size of a write?
->
-
-These logics are indeed not xfs-specific. However, I checked the
-related implementations
-in ext4 and btrfs, and it seems that these file systems do not require
-similar logic to cap
-the size. If we move the implementation of this function to
-fs-writeback.c, the only user
-would still be xfs.
-
-Additionally, there are some differences in the implementation details
-between this function
-and writeback_chunk_size(), so it doesn't seem convenient to reuse the code=
-.
-
-Yi
-
-> --D
->
-> > +
-> >  /*
-> >   * Check that the imap we are going to return to the caller spans the =
-entire
-> >   * range that the caller requested for the IO.
-> > @@ -878,16 +908,7 @@ xfs_direct_write_iomap_begin(
-> >       if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
-> >               goto out_unlock;
-> >
-> > -     /*
-> > -      * We cap the maximum length we map to a sane size  to keep the c=
-hunks
-> > -      * of work done where somewhat symmetric with the work writeback =
-does.
-> > -      * This is a completely arbitrary number pulled out of thin air a=
-s a
-> > -      * best guess for initial testing.
-> > -      *
-> > -      * Note that the values needs to be less than 32-bits wide until =
-the
-> > -      * lower level functions are updated.
-> > -      */
-> > -     length =3D min_t(loff_t, length, 1024 * PAGE_SIZE);
-> > +     length =3D xfs_max_map_length(inode, length);
-> >       end_fsb =3D xfs_iomap_end_fsb(mp, offset, length);
-> >
-> >       if (offset + length > XFS_ISIZE(ip))
-> > @@ -1096,16 +1117,7 @@ xfs_buffered_write_iomap_begin(
-> >               allocfork =3D XFS_COW_FORK;
-> >               end_fsb =3D imap.br_startoff + imap.br_blockcount;
-> >       } else {
-> > -             /*
-> > -              * We cap the maximum length we map here to MAX_WRITEBACK=
-_PAGES
-> > -              * pages to keep the chunks of work done where somewhat
-> > -              * symmetric with the work writeback does.  This is a com=
-pletely
-> > -              * arbitrary number pulled out of thin air.
-> > -              *
-> > -              * Note that the values needs to be less than 32-bits wid=
-e until
-> > -              * the lower level functions are updated.
-> > -              */
-> > -             count =3D min_t(loff_t, count, 1024 * PAGE_SIZE);
-> > +             count =3D xfs_max_map_length(inode, count);
-> >               end_fsb =3D xfs_iomap_end_fsb(mp, offset, count);
-> >
-> >               if (xfs_is_always_cow_inode(ip))
-> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> > index d6db822e4bb3..657bc4dd22d0 100644
-> > --- a/include/linux/writeback.h
-> > +++ b/include/linux/writeback.h
-> > @@ -17,6 +17,11 @@ struct bio;
-> >
-> >  DECLARE_PER_CPU(int, dirty_throttle_leaks);
-> >
-> > +/*
-> > + * 4MB minimal write chunk size
-> > + */
-> > +#define MIN_WRITEBACK_PAGES  (4096UL >> (PAGE_SHIFT - 10))
-> > +
-> >  /*
-> >   * The global dirty threshold is normally equal to the global dirty li=
-mit,
-> >   * except when the system suddenly allocates a lot of anonymous memory=
- and
-> > --
-> > 2.25.1
-> >
-> >
+Because what we need to do is comparing two Ktime instances so we
+don't need them?
 
