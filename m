@@ -1,146 +1,196 @@
-Return-Path: <linux-kernel+bounces-353018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1105699274F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4069928E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE681C222FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEAD1C22F1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DF518BC3A;
-	Mon,  7 Oct 2024 08:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fed6/b/K"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3381B4F12;
+	Mon,  7 Oct 2024 10:12:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CEC18BB9F;
-	Mon,  7 Oct 2024 08:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E3E1B07D4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290466; cv=none; b=Fl1Y+AcYgeqa8cBpITWxlZfAZyg8uQ4JAURk/EklMVVD9XRppp3opiV9jflmqHFz3ELODLrpOfXUqxEEKODc2ndXDPIMVTP+IrIZy/YVj6TlikQujBpCAlQNVuXToJRSZfbKzu6xBhtNKzpcwmnkaM5jUjuT+5iklDY8Zd6PSfo=
+	t=1728295974; cv=none; b=nTJBBXn7PoybIQoNb5FfhgtNYopFeQsS9rZ7axAWQnjdS3bM1JoEyZq7ID8ttlpL1G5ZI5cGhWXoAazWdZ6TwrLzp9QHeUlVMoAWX2UjPKymRe/1Vf8kRfCiZ5DSMMWp7Ilxf+GVmDDA9pUy/p8gHlZ44hifl5omCWfvv/r1VIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290466; c=relaxed/simple;
-	bh=rO640+Mrda36Yh11GK+zbotVsVqA477VU0HUG4/w32E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V9cOHXbtnr9p/6MQCyPKlQdFl9Bkjlb1dZDMU3Y4V/KV8rgGIxsTE003Cbf1HmewXrpPXUDX7U+/aCtLWeO9lpaNjk4e47565llurqZhjKFQTaDwbRaue57t7N6MNpEqU7IcZlNkmoWQDCpmsC5yUmmlLXCr4fGimUQwsF/8NFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fed6/b/K; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 88D366000A;
-	Mon,  7 Oct 2024 08:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728290462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YjJjYm1U3UwrwhBRK0WKJKYtopNlAlvdyEXIDZdRFuA=;
-	b=fed6/b/KZ0zpimBoYUijOJX9VPpnoYkEZ57MkJ/kMDZNwhhVGTZEPANMcaTtOEAhqxZcYz
-	8tUdLHAnwFv388rIZPsol5y3n9j+y/IIQhtDS5h/88sNzG8XQAgjIw4IUEJeL3aOxc1ndq
-	XF+DNiuSHkF5slxT/PQd85PzpKHbHdHRpENj8hUXA7jySvrUd9dDsmxKfS6mEHdc+egYFm
-	v0k3ch38XWLzDwTKJ2jBg+Jiho7jI+0m8xKL7NBoDG/Kjv8iTkDfvdit2imfOAU5vxMWAQ
-	ps8aPLWtEplIULhASHEz7DIdam+1ZNHRFI2nlS4oeOsknbB0KexGAmTxXf6fEQ==
-Date: Mon, 7 Oct 2024 12:37:51 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
- get and set phy configuration
-Message-ID: <20241007123751.3df87430@device-21.home>
-In-Reply-To: <ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
-References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
-	<20241004161601.2932901-8-maxime.chevallier@bootlin.com>
-	<4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
-	<ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728295974; c=relaxed/simple;
+	bh=JiJrznpSLxGeFWgz2rn3TN7jJ8Ia4TPKcjjNFxUvJfg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CkM448slIJv58uikt04Hs4Kn4hbeXFSA7UZXTtyWjy3B8RlY3+2WDLGbeFwcKjGTaWFKA+Bi5JAT4oO4aez6crYPN/ergHzy5saT9hi9qK+nQoMAQEgSeObwNKS+4WvmnuRzrWGitM3ggxeAFgYb4JG66nQSPDJdktHebPM0tr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sxkjK-0006J2-5b; Mon, 07 Oct 2024 12:12:42 +0200
+Message-ID: <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] drm/etnaviv: Track GPU VA size separately
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 07 Oct 2024 12:12:41 +0200
+In-Reply-To: <20241004194207.1013744-2-sui.jingfeng@linux.dev>
+References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
+	 <20241004194207.1013744-2-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello Andrew, Russell,
+Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
+> Etnaviv assumes that GPU page size is 4KiB, yet on some systems, the CPU
+> page size is 16KiB. The size of etnaviv buffer objects will be aligned
+> to CPU page size on kernel side, however, userspace still assumes the
+> page size is 4KiB and doing allocation with 4KiB page as unit. This
+> results in userspace allocated GPU virtual address range collision and
+> therefore unable to be inserted to the specified hole exactly.
+>=20
+> The root cause is that kernel side BO takes up bigger address space than
+> userspace assumes when the size of it is not CPU page size aligned. To
+> Preserve GPU VA continuous as much as possible, track the size that
+> userspace/GPU think of it is.
+>=20
+> Yes, we still need to overallocate to suit the CPU, but there is no need
+> to waste GPU VA space anymore.
+>=20
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.h | 1 +
+>  drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 8 ++++----
+>  3 files changed, 10 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index 5c0c9d4e3be1..943fc20093e6 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -543,7 +543,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_=
+object_funcs =3D {
+>  	.vm_ops =3D &vm_ops,
+>  };
+> =20
+> -static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
+> +static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 fl=
+ags,
+>  	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
+>  {
+>  	struct etnaviv_gem_object *etnaviv_obj;
+> @@ -570,6 +570,7 @@ static int etnaviv_gem_new_impl(struct drm_device *de=
+v, u32 flags,
+>  	if (!etnaviv_obj)
+>  		return -ENOMEM;
+> =20
+> +	etnaviv_obj->user_size =3D size;
+>  	etnaviv_obj->flags =3D flags;
+>  	etnaviv_obj->ops =3D ops;
+> =20
+> @@ -588,11 +589,12 @@ int etnaviv_gem_new_handle(struct drm_device *dev, =
+struct drm_file *file,
+>  {
+>  	struct etnaviv_drm_private *priv =3D dev->dev_private;
+>  	struct drm_gem_object *obj =3D NULL;
+> +	unsigned int user_size =3D size;
 
-On Fri, 4 Oct 2024 20:02:05 +0100
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+This still needs to be be aligned to 4K. Userspace may request
+unaligned buffer sizes and we don't want to risk any confusion about
+which part is visible to the GPU, so better make sure this size is
+aligned to the GPU page size.
 
-[...]
+Also, that more personal preference, but I would call this gpu_size or
+something like that, to avoid any confusion with the user_size in
+etnaviv_cmdbuf, where user_size doesn't denote the GPU visible size.
 
-> > This seems overly simplistic to me. Don't you need to iterate over all
-> > the other PHYs attached to this MAC and ensure they are isolated? Only
-> > one can be unisolated at once.
-> > 
-> > It is also not clear to me how this is going to work from a MAC
-> > perspective. Does the MAC call phy_connect() multiple times? How does
-> > ndev->phydev work? Who is responsible for the initial configuration,
-> > such that all but one PHY is isolated?
-> > 
-> > I assume you have a real board that needs this. So i think we need to
-> > see a bit more of the complete solution, including the MAC changes and
-> > the device tree for the board, so we can see the big picture.  
-> 
-> Also what the ethernet driver looks like too!
-> 
-> One way around the ndev->phydev problem, assuming that we decide that
-> isolate is a good idea, would be to isolate the current PHY, disconnect
-> it from the net_device, connect the new PHY, and then clear the isolate
-> on the new PHY. Essentially, ndev->phydev becomes the currently-active
-> PHY.
+Regards,
+Lucas
 
-It seems I am missing details in my cover and the overall work I'm
-trying to achieve.
-
-This series focuses on isolating the PHY in the case where only one
-PHY is attached to the MAC. I have followup work to support multi-PHY
-interfaces. I will do my best to send the RFC this week so that you can
-take a look. I'm definitely not saying the current code supports that.
-
-To tell you some details, it indeed works as Russell says, I
-detach/re-attach the PHYs, ndev->phydev is the "currently active" PHY.
-
-I'm using a new dedicated "struct phy_mux" for that, which has :
-
- - Parent ops (that would be filled either by the MAC, or by phylink,
-in the same spirit as phylink can be an sfp_upstream), which manages
-PHY attach / detach to the netdev, but also the state-machine or the
-currently inactive PHY.
-
- - multiplexer ops, that implement the switching logic, if any (drive a
-GPIO, write a register, this is in the case of real multiplexers like
-we have on some of the Turris Omnia boards, which the phy_mux framework
-would support)
-
- - child ops, that would be hooks to activate/deactivate a PHY itself
-(isoalte/unisolate, power-up/power-down).
-
-I'll send the RFC ASAP, I still have a few rough edges that I will
-mention in the cover.
-
-> However, I still want to hear whether multiple PHYs can be on the same
-> MII bus from a functional electrical perspective.
-
-Yup, I have that hardware.
-
-Thanks,
-
-Maxime
+>  	int ret;
+> =20
+>  	size =3D PAGE_ALIGN(size);
+> =20
+> -	ret =3D etnaviv_gem_new_impl(dev, flags, &etnaviv_gem_shmem_ops, &obj);
+> +	ret =3D etnaviv_gem_new_impl(dev, user_size, flags, &etnaviv_gem_shmem_=
+ops, &obj);
+>  	if (ret)
+>  		goto fail;
+> =20
+> @@ -627,7 +629,7 @@ int etnaviv_gem_new_private(struct drm_device *dev, s=
+ize_t size, u32 flags,
+>  	struct drm_gem_object *obj;
+>  	int ret;
+> =20
+> -	ret =3D etnaviv_gem_new_impl(dev, flags, ops, &obj);
+> +	ret =3D etnaviv_gem_new_impl(dev, size, flags, ops, &obj);
+>  	if (ret)
+>  		return ret;
+> =20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.h
+> index a42d260cac2c..c6e27b9abb0c 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+> @@ -36,6 +36,7 @@ struct etnaviv_gem_object {
+>  	const struct etnaviv_gem_ops *ops;
+>  	struct mutex lock;
+> =20
+> +	u32 user_size;
+>  	u32 flags;
+> =20
+>  	struct list_head gem_node;
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etna=
+viv/etnaviv_mmu.c
+> index 1661d589bf3e..6fbc62772d85 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+> @@ -281,6 +281,7 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_contex=
+t *context,
+>  {
+>  	struct sg_table *sgt =3D etnaviv_obj->sgt;
+>  	struct drm_mm_node *node;
+> +	unsigned int user_size;
+>  	int ret;
+> =20
+>  	lockdep_assert_held(&etnaviv_obj->lock);
+> @@ -303,13 +304,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_cont=
+ext *context,
+>  	}
+> =20
+>  	node =3D &mapping->vram_node;
+> +	user_size =3D etnaviv_obj->user_size;
+> =20
+>  	if (va)
+> -		ret =3D etnaviv_iommu_insert_exact(context, node,
+> -						 etnaviv_obj->base.size, va);
+> +		ret =3D etnaviv_iommu_insert_exact(context, node, user_size, va);
+>  	else
+> -		ret =3D etnaviv_iommu_find_iova(context, node,
+> -					      etnaviv_obj->base.size);
+> +		ret =3D etnaviv_iommu_find_iova(context, node, user_size);
+>  	if (ret < 0)
+>  		goto unlock;
+> =20
 
 
