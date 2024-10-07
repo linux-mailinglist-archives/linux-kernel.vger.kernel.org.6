@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-352975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C749926B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:11:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD149926BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE8E1F2355F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48361C20869
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421EA189B99;
-	Mon,  7 Oct 2024 08:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B10189B91;
+	Mon,  7 Oct 2024 08:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOqnrMh3"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3NP2d2e"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5E8187332;
-	Mon,  7 Oct 2024 08:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDA7125BA;
+	Mon,  7 Oct 2024 08:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288686; cv=none; b=YWO00qWZPKXnrzZnifaR+WO5TPvFxQlbxA2T/RpQhKRiao0RBOUn5TWIPn56T6KXzUIjukbeffr1tpxXCjRlafWjNCPj37CHO97oD0/jweUrS7f90+dymrXvG33lple9L00erN1jcrPS4I3rX5P7tLNkep0AYxAsuhpvV6iVgBI=
+	t=1728288760; cv=none; b=YvZzzx3XP06xF242HRbtmzvHjI9fNBvlM0tMvxiZj74S9rPV05NPobsN5Yq5EYPhWUc/JQV5fM81Si4eGpVL+i8jQ7OY5nB5mS/JvQ86rcLYbGQYcQDEu2AY2LP+IUH6DsZBgpVyLLuJbrz2r0n5hO+t15ljfWdfVUZFEU5Khxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288686; c=relaxed/simple;
-	bh=3sqmMeubWK8c+VIiH5OXyMZqgtPt8xlcut+1tWOMtZ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DEc5PQShSkTW9PZ6pyYGer66DrLLvja7lkdB5yGbxV39HFhmnKsrdjZWcnuSy2SAhU0GMa/WvzJcGl37NryZN3H9vG8wBtzf/K4JaFE8JxVmxj21Vv4iHoeSnzTRoK9TExDmdGsYPWiyXYris1bB8q9mJrM/0Tqa57sIpyYF+MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOqnrMh3; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1728288760; c=relaxed/simple;
+	bh=DQVwkoRIgL8UJm8NCB27MRhflsVRuGICAaTNssZviZ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g4EW40h+CZFyf4sW75b2cKq3H9FtztgrwjDDfP/ZCZmtsHiMdOIxfo2Kxu//AiGjL8suPXRJNkEw0XMW8nOF+1odW+mJAJcjFRUfbph4Ok3sfUtf2btDUZTX93M7ThBAQfQxi0/hXjfCZVWw/y/c+tcyR/Yl0vEIFPH7CdK4g8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3NP2d2e; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c8784e3bc8so5743224a12.1;
-        Mon, 07 Oct 2024 01:11:24 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c89f3f28b6so5964200a12.2;
+        Mon, 07 Oct 2024 01:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728288683; x=1728893483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=geqeaUFO7KX1Ee2XSQkPu7NYB2zlplkOMmq6CUE7T/s=;
-        b=eOqnrMh3hVNvJne0KZUlNtsYrUVg+K+1KrK0t4dcv2hvPs48BUAmNXg3lQJoDxvRaw
-         8VSVQQiYoKuJjPCFj5Q3rIVwWMYbXPJxrtgte8Bcn2iToNBB6spPLMiuvP1zg0A7dVB4
-         +DLlz/g8ai50l0TXYYcbhIsPC4wBkI07ZmanIB0gBXbpSvSr0qFgjuwD8gsHPv777Avm
-         uypzzOfr1wzH0+c9LsCSJhRIVUKxKOL8oOIlo7aqtfV6wnM5GKyi64cBGz07q4gRhNtI
-         ns1gLUGUQ1BM83fwD5khmPCE4G3X58CFVnErLpEjh4r/zPWWtFBKjxLZYKcT8pyuOn80
-         Ozsg==
+        d=gmail.com; s=20230601; t=1728288757; x=1728893557; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bP7+WnRgKS8Y9xY8Z0wXxP8X7E8K6aXgN1VH5WOGnLs=;
+        b=A3NP2d2e79Qy/IiMBFUImdwof9y6MxpJAMpEXjN6RcGMVxIO5Yi9jXmSgxsxhYpYh8
+         TDz/Gt1mIa85IMpV3INPG2RuRtqoGXBZnDlMSUj3J9WtfcOtNKGggCCshUZu8iqDsrYk
+         OQOvjWoA6ZVF1F+IzkX/DK/EcdoXrhh5ZTVZUocoHIo4NaHpn8Zoqc063fDAuT3SVFB3
+         UFLfO6o7FghQ4YtpvarFU/tvAC5ouhHqjkMeSl6L0MT4xlzFTTdD4PJMWupoPsbkk4qS
+         UyD7uAjN+qqLoPVjMpB1QCDZFnK/Gp72jkwC6EjWvc4gyH1fT2z+vQOvzXCMDqmyKHs6
+         KdFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728288683; x=1728893483;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728288757; x=1728893557;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=geqeaUFO7KX1Ee2XSQkPu7NYB2zlplkOMmq6CUE7T/s=;
-        b=Zi+jdCKlNvHBZI5qr3+/LcZtRIIFOpME1WbCBtoaxxQzRtUkeDbgSGLaIryPek3h4d
-         Olxrg79xAvC6ZCR+/4vg9YKasMj4qXlNS2z/WLM24HSrUURTjgTg5yjfh+gfsyZ2mcLi
-         6wq5qE1bIZVwlumREixtAGRlVw4D4Gvxmb1nou4UX4Dt+KvqY7SJ9uu88NpfeBsiX6D2
-         weIPeRSZ2utzwDiG2VjXQEkimwsJU5DQBCpH7t778H54o48QBUgmPGsXStGUfBBDn6d4
-         a+FwsMVbSL4etXMxI/fG1SwEoUeo48Wk8YfogPhi6XeePW91u7LpXpgi1XjDHt5tVXSJ
-         qaUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLNsmelSX2v8IUASQU7KwdB2btCkDIM3tO8kNsg9p1JZ8OH/Kau/0K/xFaLhQJbNXgGhcxfA4QTAsgmq5LCQ==@vger.kernel.org, AJvYcCWZdLl7G4JWaJCpPw16NIL+Op/4OMNKyZGr9O2ydIphPYg01SfeoJbAzqjS3DJ1ouNbUWYs/WoEAsRoVakS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdjL7BPuxvzCTvlz20WKSzmni3Q95m2brxCbF6+5pyNekDgv5L
-	Kze7poxx6hPkMkFIWnoqeYSm2jyqYUQFfjPJTkRFyYFvLHbsBosG
-X-Google-Smtp-Source: AGHT+IGzM8UejuTiQAumZPmn6GXZ43ToodEeHdSc4nLatypqtcMe2yCCCq1OxC0Qazaw0HgsP53T6A==
-X-Received: by 2002:a17:907:3f96:b0:a99:4262:cc16 with SMTP id a640c23a62f3a-a994262cce4mr658311166b.27.1728288682713;
-        Mon, 07 Oct 2024 01:11:22 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9935ee4594sm324632166b.189.2024.10.07.01.11.22
+        bh=bP7+WnRgKS8Y9xY8Z0wXxP8X7E8K6aXgN1VH5WOGnLs=;
+        b=XnTdLritn6d4csEOMApiT4mMmIBR8HZGjNRJNG59bq3Xceeplz3URjtIaHtTZ2de6C
+         nF1sAg70QLK74JpjmIPsWg1dLHoTZ1675O/QlZwaQWSZZQX7W/QlxnziJQaJo+e6rDPO
+         P/Pcr6PknWtkx11NgEChSzMUc831aXyVjHsxuAN4oZAxX186A9gJULirjhRLyDlQejmC
+         UvJxBhFKhoq8p7HkSN1Q0gTWCf/O5bMGVPyKdG+35yA90yrQsPu3Q6W4gG7NYwvHd4z2
+         Zy02bsvG1K+Sdh+u4umaXy5KF1okkyqBFGgQiCL35jlDNvWC3EzUK7MckKpOicTGrmBK
+         TJRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjmkOjophMx4wKJt7XI6slhH0iBq4IxXn5Qk/4eUSya4HQ5wOqwhZ9G1A6IpnBcpjh6wm+umIt@vger.kernel.org, AJvYcCX6fE0LGjTB7ly7bUOZrbfZfUN5y5PPEXvElaJiY1rOawDem5MIrekUb2nW524hdEj1TRjAMlp4T8iYGwE=@vger.kernel.org, AJvYcCXiItGVIK7D8sOAPIR0glEY+ZzQ7qOJQVAJgjyFCBNIQA7PFyQs3GegEjsib1IvPIkSUUkkT5gqL3rp12c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQF8QT4B2gKVLp1bipb2eNVI6bin0AD2xXMyn0TrGUA9KqIVl
+	4EB0B/i/lrtbptZI11U4VbQHqOnbjCKaRWZPxR5B5iqo09GBadSu
+X-Google-Smtp-Source: AGHT+IEykYxqXoYAhLTiaAatQMKb3ZNjmkzBVWNHk/YhG+9R7BMikzWwvtQyBjYx7/diRhDrQmslhw==
+X-Received: by 2002:a17:907:3e13:b0:a99:3ed0:58ad with SMTP id a640c23a62f3a-a993ed0b560mr698403966b.64.1728288757385;
+        Mon, 07 Oct 2024 01:12:37 -0700 (PDT)
+Received: from [127.0.1.1] (83-215-114-114.dyn.cablelink.at. [83.215.114.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994d5745e2sm173661866b.23.2024.10.07.01.12.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 01:11:22 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Subject: [PATCH][next] bcachefs: remove superfluous ; after statements
-Date: Mon,  7 Oct 2024 09:11:21 +0100
-Message-Id: <20241007081121.1166346-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Mon, 07 Oct 2024 01:12:37 -0700 (PDT)
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Mon, 07 Oct 2024 10:12:30 +0200
+Subject: [PATCH] Revert "ASoC: tegra: machine: Handle component name
+ prefix"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,64 +75,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
+X-B4-Tracking: v=1; b=H4sIAO2XA2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNz3ZLU9KJE3ZTEglzd1DRLM8skizRzM6NEJaCGgqLUtMwKsGHRsbW
+ 1AI4oEGZcAAAA
+X-Change-ID: 20241007-tegra-dapm-ef969b8f762a
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-There are a several statements with two following semicolons, replace
-these with just one semicolon.
+From: Benjamin Bara <benjamin.bara@skidata.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This reverts commit f82eb06a40c86c9a82537e956de401d497203d3a.
+
+Tegra is adding the DAPM of the respective widgets directly to the card
+and therefore the DAPM has no component. Without the component, the
+precondition for snd_soc_dapm_to_component() fails, which results in
+undefined behavior. Use the old implementation, as we cannot have a
+prefix without component.
+
+Cc: stable@vger.kernel.org # v6.7+
+Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 ---
- fs/bcachefs/btree_update.c | 2 +-
- fs/bcachefs/ec.c           | 2 +-
- fs/bcachefs/super.c        | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Original Link:
+https://lore.kernel.org/all/20231023095428.166563-18-krzysztof.kozlowski@linaro.org/
+---
+ sound/soc/tegra/tegra_asoc_machine.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/fs/bcachefs/btree_update.c b/fs/bcachefs/btree_update.c
-index 514df618548e..39fc7778f15f 100644
---- a/fs/bcachefs/btree_update.c
-+++ b/fs/bcachefs/btree_update.c
-@@ -144,7 +144,7 @@ int __bch2_insert_snapshot_whiteouts(struct btree_trans *trans,
- 	       !(ret = bkey_err(old_k)) &&
- 	       bkey_eq(old_pos, old_k.k->p)) {
- 		struct bpos whiteout_pos =
--			SPOS(new_pos.inode, new_pos.offset, old_k.k->p.snapshot);;
-+			SPOS(new_pos.inode, new_pos.offset, old_k.k->p.snapshot);
+diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+index 775ce433fdbfdbcff4d09d078dbb0e65c0b15b60..bc16f805f52c41d6cb983380ee0ac40944531e52 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.c
++++ b/sound/soc/tegra/tegra_asoc_machine.c
+@@ -81,23 +81,19 @@ static int tegra_machine_event(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_dapm_context *dapm = w->dapm;
+ 	struct tegra_machine *machine = snd_soc_card_get_drvdata(dapm->card);
  
- 		if (!bch2_snapshot_is_ancestor(c, old_k.k->p.snapshot, old_pos.snapshot) ||
- 		    snapshot_list_has_ancestor(c, &s, old_k.k->p.snapshot))
-diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-index 1587c6e1866a..f4fc4f08a2de 100644
---- a/fs/bcachefs/ec.c
-+++ b/fs/bcachefs/ec.c
-@@ -900,7 +900,7 @@ int bch2_ec_read_extent(struct btree_trans *trans, struct bch_read_bio *rbio,
- 	bch2_bkey_val_to_text(&msgbuf, c, orig_k);
- 	bch_err_ratelimited(c,
- 			    "error doing reconstruct read: %s\n  %s", msg, msgbuf.buf);
--	printbuf_exit(&msgbuf);;
-+	printbuf_exit(&msgbuf);
- 	ret = -BCH_ERR_stripe_reconstruct;
- 	goto out;
- }
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index 873e4be7e1dc..32cc7a4bfa25 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -1120,12 +1120,12 @@ static int bch2_dev_in_fs(struct bch_sb_handle *fs,
+-	if (!snd_soc_dapm_widget_name_cmp(w, "Int Spk") ||
+-	    !snd_soc_dapm_widget_name_cmp(w, "Speakers"))
++	if (!strcmp(w->name, "Int Spk") || !strcmp(w->name, "Speakers"))
+ 		gpiod_set_value_cansleep(machine->gpiod_spkr_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
  
- 		prt_bdevname(&buf, fs->bdev);
- 		prt_char(&buf, ' ');
--		bch2_prt_datetime(&buf, le64_to_cpu(fs->sb->write_time));;
-+		bch2_prt_datetime(&buf, le64_to_cpu(fs->sb->write_time));
- 		prt_newline(&buf);
+-	if (!snd_soc_dapm_widget_name_cmp(w, "Mic Jack") ||
+-	    !snd_soc_dapm_widget_name_cmp(w, "Headset Mic"))
++	if (!strcmp(w->name, "Mic Jack") || !strcmp(w->name, "Headset Mic"))
+ 		gpiod_set_value_cansleep(machine->gpiod_ext_mic_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
  
- 		prt_bdevname(&buf, sb->bdev);
- 		prt_char(&buf, ' ');
--		bch2_prt_datetime(&buf, le64_to_cpu(sb->sb->write_time));;
-+		bch2_prt_datetime(&buf, le64_to_cpu(sb->sb->write_time));
- 		prt_newline(&buf);
+-	if (!snd_soc_dapm_widget_name_cmp(w, "Int Mic") ||
+-	    !snd_soc_dapm_widget_name_cmp(w, "Internal Mic 2"))
++	if (!strcmp(w->name, "Int Mic") || !strcmp(w->name, "Internal Mic 2"))
+ 		gpiod_set_value_cansleep(machine->gpiod_int_mic_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
  
- 		if (!opts->no_splitbrain_check)
+-	if (!snd_soc_dapm_widget_name_cmp(w, "Headphone") ||
+-	    !snd_soc_dapm_widget_name_cmp(w, "Headphone Jack"))
++	if (!strcmp(w->name, "Headphone") || !strcmp(w->name, "Headphone Jack"))
+ 		gpiod_set_value_cansleep(machine->gpiod_hp_mute,
+ 					 !SND_SOC_DAPM_EVENT_ON(event));
+ 
+
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241007-tegra-dapm-ef969b8f762a
+
+Best regards,
 -- 
-2.39.5
+Benjamin Bara <benjamin.bara@skidata.com>
 
 
