@@ -1,225 +1,177 @@
-Return-Path: <linux-kernel+bounces-353475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F61992E52
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:08:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C91992E4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 435EAB229DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0421F23278
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F801D54E7;
-	Mon,  7 Oct 2024 14:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884071D54C5;
+	Mon,  7 Oct 2024 14:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1vQxPZd"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ARgvV7Rs"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CB61C2DAE;
-	Mon,  7 Oct 2024 14:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310068; cv=none; b=jEdD2WzuWoxag724OTomeU2PHtJUiXRveUr1dxD4H7uptd8CGXjaGybGJiDcDwlxYfSccyqTYQmxpbSu6NR70We/qwysjpK2J16A8bviD9AvMZcBlFpiqt9N/LByQUdVefSqUnnXxY7jU7lnBLOAsSOqK9f7kDxrb88rIXWKXFA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310068; c=relaxed/simple;
-	bh=0948W7zjnRwlUXjoRbFmDrfT0HX3FVVObqbgE+MF5p4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7IG2cjm4kdy3YQ7QznxGe/JzbWuu/zs7q7BPmaMdXcyk1ubpUepUkorGuiKTdKLWpWd7IXVJPyvoATCALgw/DhWWj39fqvky0gKDK9KBYS9lW+b0LLnCchzCfm0fWh8Q8dZUh4kxvjuIjMBL44yTizGCavQcRoTm/iQ7jUgp+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1vQxPZd; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4582760b79cso20813841cf.2;
-        Mon, 07 Oct 2024 07:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728310066; x=1728914866; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jNHiYOcXwPXdyGbmdnES8zS1AwkSRtDTdeiEf4FuqYQ=;
-        b=i1vQxPZdUvuhYoLN9+eVdg1t63QDmht2Y5lUVnH6dNf4CoZY5lhAjYQ0g1agC34ALW
-         4cPYmH4CNsOrCNrNAmnFONyst0mmtG0pNpjrAKjedmCBV2u4J8atX2IUBCJ6Gmx1xVDZ
-         cpuxlVvrl/YFObpcku3inEWb+XRe6TCPGm7uzuH5QQ6GELwAAEnoM8wxarEXKH/E21/2
-         xbuCQ3bhWWnda/fsVzN12Blb/A0yD0syhcrOxfErOq565do6s6LI8AHB+2+TgJ/QkZyo
-         JBPhAHxjsEUqmU2Rd7pxkdeoxhan4Dt/NbkRibYxiDI+ms4ltrOi+296riZy+Mm9H32K
-         Tmdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310066; x=1728914866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNHiYOcXwPXdyGbmdnES8zS1AwkSRtDTdeiEf4FuqYQ=;
-        b=pTi7+sl4gziZa/64WdXdzw54+D9iUiP/I7b6oqA/Aey+I8w/4mc0x1ezlyc1x6628j
-         CFs0CiZMhOwaeSsd4wrQaSFXhc5/Xz/wewJegO7446lKc46IBMtfBm7Pasj6yh6rsdT2
-         UQD5L49sl3swzl6zvZKDDLjwWsC45XRi7gqAwzdqB+nvYcH6clGlCtzuTNWefrbczjBA
-         S6Sl71Wz48+C8YZ5JOBZcLx7tCQj15GzDLzJtsxu1hwEAa75zcwyqmKSE6dgAYdobPZ+
-         rK7JtDG6xyJnvrWJUu8jbH3+mSbLLCQq4Ue+3WiQDFtayDndJgf24TgcIHNcj1N60Kqr
-         V6iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZBApOAth8CeeFxW8i3Z2k5pyXjasUwJST9FQ5Vg1kuaekYyHSPzK3qMrdAIX9SN2EKWddkEj4Xtdr9ns=@vger.kernel.org, AJvYcCUkWRw254lE7RS+jQ5gDDw/flpbVtq/5t5crE4QVQ7kcDcbjO+02homVDoP65DODzGpUAb6ckHa@vger.kernel.org, AJvYcCVFBD9Lvpmziy1fagoF31HOQIHy/5Nx/DU8o+AkkEeYYPrEgT4a3cHo4zXYLxGMMynCuz/M3DoDKmv3ZCFxpc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziFKZhx7N7R6x0D2gdW3PIj5+XkA+arhq7thkgbtvXd8U+TSdK
-	NhBZBy0Sf09x7Cz+b2bH0pX9TxN3NdcOrjEKzOmj20QWkPBdfD+9
-X-Google-Smtp-Source: AGHT+IEaQKoPog7diPp7yN6N8AKS36H35OJETpZTKMZ/Pc3VrlvxzxqS82rqrRSfuYRgDxYKvFOS0A==
-X-Received: by 2002:a05:6214:3384:b0:6c5:17cf:d9fc with SMTP id 6a1803df08f44-6cb9a5300fcmr183625326d6.46.1728310065875;
-        Mon, 07 Oct 2024 07:07:45 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4751920sm26041906d6.98.2024.10.07.07.07.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:07:45 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 1F72C120006E;
-	Mon,  7 Oct 2024 10:07:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 07 Oct 2024 10:07:45 -0400
-X-ME-Sender: <xms:MesDZxwDoiGuYrpqBL7SDSKTKPKwT4fR6yVrrHDGMT-6KJgbwaNYgw>
-    <xme:MesDZxSXjE75K1bvQbiydvJ6O01f8Qm98NqLj364OWlBnjSEcBQpq-0h3cUw5HkZj
-    OOjsS-qcv76n8IVjw>
-X-ME-Received: <xmr:MesDZ7WjaFcwRrzC8o-MA_qXoAwmVGiQ7b_VFdR9xXdcYK3eTpIG5Vx7noCUNg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtph
-    htthhopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhush
-    htqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhrohhssh
-    esuhhmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epghgrrhihsehgrghrhihguhhordhnvght
-X-ME-Proxy: <xmx:MesDZzi-YWAAP4COWeMfUgXMlbpZLnSLe5TbZo48ZngzHI-sDq32ug>
-    <xmx:MesDZzASaAL8bIgKE1UjUgZQ7VaGHebrhrIwU8k6PbKVOshug38koQ>
-    <xmx:MesDZ8J6zWtid3dOTmwvtLXoQd6zVkPbF16Ba-in7rAOsBAgAuZkUw>
-    <xmx:MesDZyAiPVxFYZHkd8iFGH7W1uTAJdY8u6MmR6tUfxUlFP_g-EpzYg>
-    <xmx:MesDZ3wU4XCN_-7lqgtoLYNbAE2t6g8mifCyuUaxTxG1n5KGLEEkYQ6R>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Oct 2024 10:07:44 -0400 (EDT)
-Date: Mon, 7 Oct 2024 07:06:26 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <ZwPq4pdvcz9ADNTM@boqun-archlinux>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-6-fujita.tomonori@gmail.com>
- <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
- <ZwG8H7u3ddYH6gRx@boqun-archlinux>
- <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
- <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1191D279B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728310012; cv=fail; b=rmyYHFC0+0ltXYrijHy/Fu4UzN4hNvKAJJ6fDXhOlrOyAsHhIhMfdrYxDXsE/penQN05p5vOG0lxXRnaTgV2tCvrJ9XY6YQE97gxVVOeXXLNHqSqJbarN3wMsy/7PJyDu7Iu3cxqBEE1/6ddddS2RgJgPs17tLwqoKSg6xhFt8g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728310012; c=relaxed/simple;
+	bh=BFgywF5ioSawPGR0MBiawJsPVzJ5c824zg5H/fs7mMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZYq43tj2E0Q6G5UooAo3vjtCtKy4aqzwtZ84Z7bQEETVQqPheWrETnKjCHCeaZyAXjpjg9zmWHx++/zGet3W0B2iwi9l3IY8LGyViiw1+Ys9o5wwUVYusZkRAhAWBtvqjOZHJsvcZ9dKcLZN8XPUR+fMq9uMoVULwiWE47u2nTg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ARgvV7Rs; arc=fail smtp.client-ip=40.107.94.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G5azJbztk3EIAvJdHTEiSprJr0k1165nkHNZhm55PtUij687FyDIxh/mJwGNMfofEqHC/Qfx2psEHbwHYXkb5+mBjqVTMgfHtrHs6L+FwAKVquS+wQ9D96TqEjqVUZdPgE7uGP/thv45hjayMI7Me+3fX5jYCmXFsrcGkaWlfjw5cVcywsCz5bDj66msKohJXsNbyiIcYUwwoIrSqqruz5HfRBX7EicmmAzIXgF1V5CNKX8PiRo89z3IhNBfHBsy3al6qdmd18Ni4aAoXPEul/oMmKmrwEokIYht0Y2EHRuZ5vRuz+fNcYaZCPOkTCydFe3JHJrV0UZuHDeI7jz73Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fGpGDVeANLjo2n4ypCptKhewR7bet7JJfAXrB/bC+6M=;
+ b=FLqpqbfUeONJvZuN7KrvzhhOwwFUeHEdHB4HV8GNLsJ/bqgDuXMIuEifhJOBJRVETMs+ej4s3VWkuheD1BfKKNNP5Umn2Mu+POCSx6EV8Hf/H+BWilLYwfZkSEZZQrxd1km6haSKjeDg3gAr2sWltZ2szFk2m4/STD0eBtRsNJpRSTXFGOFD++gAGCDGlYf8lf8iScItxIXbWADQXNwmxm2HT6CZmfVM9PljJ2iYd8gjS1tN0fBXaDOBcfyI/aHff9ATE4VX5YrG/o4NeD22qr7CiZlPJNfO3VsD4sT6IE594XUmfnzv+52Z3M6rUVJhPU6JJPZq06zOfeRElJ9CXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGpGDVeANLjo2n4ypCptKhewR7bet7JJfAXrB/bC+6M=;
+ b=ARgvV7RsZMddK+DScQlHSts6KetZd655QA9V+LuA77DuuxgwLGapnPT0Ry6ap64Ot6TvRFnnqN0/2gGxHxil3yHE568E58vZgUFOaU4nsQfcO56OKZF9gka9g6cohHIbxAeSRUAao0NjMnfG2pXvsQ3LWSsgnRY9o8QQXe1xJwZLVRn7fUdYJe4uSxF4rSLiKBfX4Jf/Y5V8bZ8WjpCa6JXGjJYe9Q5+3x+T3ItLApcquXI0Qa9ftb9bbAUwYEA2sNL61/AN+QVA9g2NzZlbUNru0KrUGNPGtkr2Q2JufIdU3faoeuS39SYzmcNKVvP5a786Mzk9p17BUIJD4lAx+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DM3PR12MB9286.namprd12.prod.outlook.com (2603:10b6:8:1ae::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Mon, 7 Oct
+ 2024 14:06:45 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 14:06:43 +0000
+Date: Mon, 7 Oct 2024 11:06:42 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH v5 2/6] iommu/amd: Introduce helper function to update
+ 256-bit DTE
+Message-ID: <20241007140642.GP1365916@nvidia.com>
+References: <20241007041353.4756-1-suravee.suthikulpanit@amd.com>
+ <20241007041353.4756-3-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007041353.4756-3-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: BLAPR05CA0002.namprd05.prod.outlook.com
+ (2603:10b6:208:36e::12) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM3PR12MB9286:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1777e40-daf0-4d27-99b3-08dce6d9459d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g7UAIoR99p9hnXIi5/BA5RhO0qG6/6xj6NphjEyPCmYAgUR9+2bYhqX9pKzm?=
+ =?us-ascii?Q?qMjUM1q8Pu/uxKV1sS1qUcmsVTY3KKK9FJQgiBNxK64q0L28HgcLtq5/AmcY?=
+ =?us-ascii?Q?CzV7w7q7acrVagPvKOlikKhZwm4ljVqXp0QcheJgyElVMMsX2MJ00PiaVMRc?=
+ =?us-ascii?Q?Jtr8ScNAoVTUttbz3dOhZIH2QaB7hudoD17FfxSEpkRfoflDdxjAM9K2Qn0A?=
+ =?us-ascii?Q?0r/d/oWDRPJsYEZgSbtVacBV2MAiDB/lAg4rY1wJiWgN1Gcjj4yiN/Rm+qRo?=
+ =?us-ascii?Q?mcKJJikEd293tMXQE8BvBFqI8uuQit5smaFTmZZWKUwLkinPqF8DKiptPk1e?=
+ =?us-ascii?Q?6Dh7fFjsvNOWmiAwwp8jYpSn0UCazlifXaFxcwK43Bwz0pEIBxw2WWVStNeb?=
+ =?us-ascii?Q?j/yFFefenXuxW4iBe70GOb4uGdo0LkfkjsZhhEVFIxpM90eAHVynWpOrxmqb?=
+ =?us-ascii?Q?JTA6qdVcdym0jqYqUHq6sSsR+Gd6ICF6NRz3BPuoAO0gyxoMHTCtviy1f8pc?=
+ =?us-ascii?Q?VOUo5/TH2IMMV74+y69zmdSAn3gNIptdMo/z3gy1bnzhCOGSX6YjPa0Lu+sN?=
+ =?us-ascii?Q?IHEF0jIm0hymCJXfz8wXKKetvcqbgwTAf/ARb+zf8azugx+it7YiuW6251fz?=
+ =?us-ascii?Q?Mkte+8cB/Nv5n2WIuo7KhoB3/vhKjUJO30/AWtFg2LdtUGYafouMBq6jFFVN?=
+ =?us-ascii?Q?TqnZ9VFWMlevRsFbZ1+XPjhoJyUrRxZg/tWFvlfzZY4uDk3pW6rs+9v06UBm?=
+ =?us-ascii?Q?/9DfwLj7YAwgA9ObXcdQyuuQI5ndZJOgVbu7nTPTaJerQjg3lt/AVzFnj42q?=
+ =?us-ascii?Q?jXDAGUGBSBigw2ThBe8zNwb3lTf3JYSgrN8HLbLhwmYmcuESgMjdVdUucSUL?=
+ =?us-ascii?Q?WJxgEkFOIDsAbjY3Cze3MmjlhVLxJFrC5M+RwCcUOZaDVyt4ao8/dpAPl/Hm?=
+ =?us-ascii?Q?eQaAI3wzpCAF/1HKaAQd2ZFiIJkMc83irfhd0/YcxlY7ruGTDkWCuc+xNP1D?=
+ =?us-ascii?Q?ocL1cs0Nm5pNeJuSJTS94Rt6G9SSYVuAiZkft98KsM/+GiRAURj31WDUd3c3?=
+ =?us-ascii?Q?NZw3kD17H/D6H2dQVAzdLHLvIkjB65BEgsaaImXEQH/fHiX3jnIUPSRrgrjK?=
+ =?us-ascii?Q?ujchWSICM3nYAViqhVyNL5R2FW1nUeljtDBmD9yiUFgGAPWgIfhHjZQ+2zbb?=
+ =?us-ascii?Q?Wox0Ra6oi6mpxhjyfwyRWaoUvKIoQYEqWEqjPwMhFUyDlfU78CD0ZOaFPKL8?=
+ =?us-ascii?Q?7oU/+HCC0201MHtqjatj0yNQUl5Rti7igfWKzRljEg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0vabw2mMzT6o0zBCh/ahnhGwaJDxIRIueD8WnhkBk5BzGexLNr4xSKflkHY2?=
+ =?us-ascii?Q?L0AvcsQFpk5dAECdIeuONu0Lg2xARtGU0TJrGQfNwlr/ehr8ILa60WPr47jm?=
+ =?us-ascii?Q?A+QVlpfMNSF7ou5myNQbvl1dqlIvpthAukJzuFUbdI8jT2gcCxyvgIv3IkSm?=
+ =?us-ascii?Q?o4z8O3G/R8wBx4Wl/xpK57GmkUZcTcmstUy+89MOzyXzDX7QDz9JBWO3/+tO?=
+ =?us-ascii?Q?Yyu17eKZI7SdShFlS40CRx/nYKMXrnHsNJ31TJbm8wUu0+zCJDNdVTW0KhVy?=
+ =?us-ascii?Q?Uy5bWKNvc9yfVz+MvAKDaTZyCzA/ZrmUkwv9ymbs30m4qnSswxk+Pu41UqB8?=
+ =?us-ascii?Q?vZG7DwGYfF/8d9poAwMNeS4TcaIpEIS99GnHHbUkQeVhT+2GZUBXt+azJs9I?=
+ =?us-ascii?Q?0LaWKsH7b1MVCKl9umwsQZi452BR+gUs0z4VIDD81E+/mhQfZQ007w9LjUfX?=
+ =?us-ascii?Q?CKo4q+xkMAV3QFjVCuJvN7obpjqBZ9abkyZjwDj8PIK33r6IAXprwgmA/UtA?=
+ =?us-ascii?Q?bCXROMl2Z/H/oVDapNbfCRrCouJzkODTawn/9kJDDzV0BHAdb5j6jeGlcGYV?=
+ =?us-ascii?Q?vZjhKtQKhE+AmFznUksFnHDX8iei/Em7LMpJ9Fn9hcrvhdlijKFUb0XR92tm?=
+ =?us-ascii?Q?gyL6K9TF6RsfsZGeTbPy00K760TIm4fnHqS39HSS30ReLhYBEgDz7pPYWITa?=
+ =?us-ascii?Q?t+fBN8fPHUZiZFn2qr6u8ahVej5fqdMd9fMh2mmdm9nybjFag+st5z0Z4rN5?=
+ =?us-ascii?Q?teYMoDe3vYblm06vj/eJRmxBoDSSlaScb4Dd2HjX41Fs8wQ8cWx3I/3HkvZW?=
+ =?us-ascii?Q?bpQdVmIUA8HfCtDFO0aHOOtjy6CBqEXHH1DWOHczOQPzoGoXCJImUd5/WRVL?=
+ =?us-ascii?Q?gtedykmwTdb3HXVG1liPBmFk4/EwvYprK/eQRkZ1xX+Ie0zQU1Y+4FIdCsr5?=
+ =?us-ascii?Q?cMFznMAa38et/vHnHQ8Ih899HDh7xfKMeMwwAHCdkEHWtZkEOAhZVGJkFZ7u?=
+ =?us-ascii?Q?JdDU83EG9Dtm39pQ2Jd7otyVGigjIW5RdMVU3DgSW0vCj9Zb042y6TpTD8nj?=
+ =?us-ascii?Q?+NrCvQBRHep8jh4nWoHRkKXmrMUKNsnE/BwUBn+Ex726cF5/BLkGhPquyrJ+?=
+ =?us-ascii?Q?cHkT/rYN38D3c9EPZi5v3OobvvExOl1hOp/F86gDVUD61zTfRHOo3G4vf5n/?=
+ =?us-ascii?Q?pLtXwjs6k2WfTnumrDWAU8KTovA+BzDE96BUY3dhLgH/9lwsU/pP30cELUS7?=
+ =?us-ascii?Q?3Sj2JeB+4cqa+w1Pawmp9ww5QXSdzkkACos7vwdadfiHEFiNpXDTwMfSvT74?=
+ =?us-ascii?Q?KU3rSa1hxA7S4Hre4R1Ge9e5P4bGQ4NPSXs6QgwlqBZMHpV2hd+YdzGUbqxY?=
+ =?us-ascii?Q?1kgqNRlfxL6N2d5VR9Y4C9feeBQztwNTCkSruM7TDPv6zg2uc2sW+1Oi58IK?=
+ =?us-ascii?Q?q6uFOBS2uzZTA0yNQG/WPEpYMTjYF1HDWS25t/eZqn8kLWlFORH7JmUMKrbT?=
+ =?us-ascii?Q?ZlW2UrMDJi0X2rrIid4d5079ed+lsY/TH5rNqJwijhvgf/F6shhWisizlqoT?=
+ =?us-ascii?Q?TWDomM+2iIxFxariUBg=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1777e40-daf0-4d27-99b3-08dce6d9459d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 14:06:43.1196
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rkw9vCpvBB115oEStBIR9DDUqZLzXbNwFewcA0awzvMKNI+gKtneFke7+uj9r+Lb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9286
 
-On Mon, Oct 07, 2024 at 03:48:09PM +0200, Andrew Lunn wrote:
-> On Mon, Oct 07, 2024 at 05:28:28AM -0700, Boqun Feng wrote:
-> > On Sun, Oct 06, 2024 at 04:45:21PM +0200, Andrew Lunn wrote:
-> > [...]
-> > > > > > +    if sleep {
-> > > > > > +        // SAFETY: FFI call.
-> > > > > > +        unsafe { bindings::might_sleep() }
-> > > > > > +    }
-> > > > > 
-> > > > > What is actually unsafe about might_sleep()? It is a void foo(void)
-> > > > 
-> > > > Every extern "C" function is by default unsafe, because C doesn't have
-> > > > the concept of safe/unsafe. If you want to avoid unsafe, you could
-> > > > introduce a Rust's might_sleep() which calls into
-> > > > `bindings::might_sleep()`:
-> > > > 
-> > > > 	pub fn might_sleep() {
-> > > > 	    // SAFETY: ??
-> > > > 	    unsafe { bindings::might_sleep() }
-> > > > 	}
-> > > > 
-> > > > however, if you call a might_sleep() in a preemption disabled context
-> > > > when CONFIG_DEBUG_ATOMIC_SLEEP=n and PREEMPT=VOLUNTERY, it could means
-> > > > an unexpected RCU quiescent state, which results an early RCU grace
-> > > > period, and that may mean a use-after-free. So it's not that safe as you
-> > > > may expected.
-> > > 
-> > > If you call might_sleep() in a preemption disabled context you code is
-> > > already unsafe, since that is the whole point of it, to find bugs
-> > 
-> > Well, in Rust, the rule is: any type-checked (compiled successfully)
-> > code that only calls safe Rust functions cannot be unsafe. So the fact
-> > that calling might_sleep() in a preemption disabled context is unsafe
-> > means that something has to be unsafe.
-> > 
-> > This eventually can turn into a "blaming game" in the design space: we
-> > can either design the preemption disable function as unsafe or the
-> > might_sleep() function as unsafe. But one of them has to be unsafe
-> > function, otherwise we are breaking the safe code guarantee.
-> 
-> Just keep in mind, it could of been C which put you into atomic
-> context before calling into Rust. An interrupt handler would be a good
-> example, and i'm sure there are others.
-> 
+On Mon, Oct 07, 2024 at 04:13:49AM +0000, Suravee Suthikulpanit wrote:
+> +static void write_dte_upper128(struct dev_table_entry *ptr, struct dev_table_entry *new)
+> +{
+> +	struct dev_table_entry old = {};
+> +
+> +	do {
+> +		old.data128[1] = ptr->data128[1];
+> +		new->data[2] &= ~DTE_DATA2_INTR_MASK;
+> +		new->data[2] |= old.data[2] & (DTE_DATA2_INTR_MASK | DTE_DATA2_RESV_MASK);
 
-That's why the klint approach is preferred right now. Without klint, and
-if we don't want to mark might_sleep() as unsafe, we probably need to
-mark the registration of an interrupt handler unsafe, and the safety
-requirement would be "making sure the handler doesn't call schedule()".
+Why preserve the reserved bits? Shouldn't they be reserved by forced
+to 0? Should have a comment explaining this
 
-> > However, this is actually a special case: currently we want to use klint
-> > [1] to detect all context mis-matches at compile time. So the above rule
-> > extends for kernel: any type-checked *and klint-checked* code that only
-> > calls safe Rust functions cannot be unsafe. I.e. we add additional
-> > compile time checking for unsafe code. So if might_sleep() has the
-> > proper klint annotation, and we actually enable klint for kernel code,
-> > then we can make it safe (along with preemption disable functions being
-> > safe).
-> > 
-> > > where you use a sleeping function in atomic context. Depending on why
-> > > you are in atomic context, it might appear to work, until it does not
-> > > actually work, and bad things happen. So it is not might_sleep() which
-> > > is unsafe, it is the Rust code calling it.
-> > 
-> > The whole point of unsafe functions is that calling it may result into
-> > unsafe code, so that's why all extern "C" functions are unsafe, so are
-> > might_sleep() (without klint in the picture).
-> 
-> There is a psychological part to this. might_sleep() is a good debug
-> tool, which costs very little in normal builds, but finds logic bugs
-> when enabled in debug builds. What we don't want is Rust developers
-> not scattering it though their code because it adds unsafe code, and
-> the aim is not to have any unsafe code.
-> 
+> +static void iommu_flush_dte_sync(struct amd_iommu *iommu, u16 devid)
+> +{
 
-Sure, but my point is these need to be put together into a proper
-design. For example, spin_lock() is currently exposed into Rust as a
-safe API lock(), so the following code is unsafe:
+You might consider re-ordering to avoid the function forward
+declaration.
 
-	let g = lock1.lock(); // lock1 is a spinlock
-	might_sleep();
-	drop(g);
+Looks fine otherwise
 
-without the klint rule, if we want to mark might_sleep() as safe, then
-we need to mark lock() as unsafe, otherwise, it's an unsafe code block
-constructed by pure safe functions. However, compared to might_sleep(),
-I think we would like keep lock() as safe since it is used more widely.
-
-Regards,
-Boqun
-
-> 	Andrew
+Jason
 
