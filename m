@@ -1,145 +1,341 @@
-Return-Path: <linux-kernel+bounces-353847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7295E99339F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:40:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6847D9933A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8AB287A40
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D413DB24D92
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F851DC048;
-	Mon,  7 Oct 2024 16:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B96B1DC07D;
+	Mon,  7 Oct 2024 16:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="d9QaOaVA"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVzcgTg9"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AFB1D9334
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15221DC07A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319154; cv=none; b=nLynNsMYKFSDe6gvIvSYedZDMNyk9lzZCqZinQ1CC5DAfA+6c+1C9zWLjq5cchwjaByU6m0X9j6FBZ687O4c2M6Q00sQluAFxHm9qh/TzKXf6TYlIUa7KPxcQkzZd/ImeBIrQl8mlM0qcgYkIs1RPP2peTghKKENxPM1qBjnOUM=
+	t=1728319165; cv=none; b=CSZZqUzdIIAkFmdwTzPRSqTjn+BpxmDr0ESDHNomGYaOrLmDcXKHGVHzqeyMEIWQTiWpi2seZzH4fiKW7Arj0Bs/9KiHRwg8nkv5+STKK+ObwHdTPI+QfrLRi/TKlW864lBvBBPlMiQzETE9sTJItuggPpVHSjMQ0ckoReeZShE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319154; c=relaxed/simple;
-	bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
+	s=arc-20240116; t=1728319165; c=relaxed/simple;
+	bh=k8zzjg8616L9kEaUjboC3QlDXStoYzpRHm2hTWiAnOE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jr10at+jLFeCMuc0esUR3KCExq11FATXRrj//5vlw7X3fjKR054SQgjhNlYDBqwJr8U0TlAlQtn/SUkTDAJyHUy0SMNVGTZtkueGuLufXvgGNDhIzAERJo2KDlePklyr1BOpkFn6jFkQxEp1iZ2R4Y4xbljpDt4BLcI/ID3kT18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=d9QaOaVA; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso4178434276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:39:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=PtQVXsaSX9xVH/zdL6sB9rS2oNClus1ZZLqjYT39a9pve4fJsAUaA02KQW6KfW72VE+hhIl5mgcL1TO5eRzdabNqdHjClVnUvY0MRNAZb/2aiM+kZfwbw03obw8vMLr4vHk5XdcXk7QPclDUDvirx/DJD7buVSSAs+xqjtrcVr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVzcgTg9; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e137183587so3843582a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:39:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1728319151; x=1728923951; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728319163; x=1728923963; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
-        b=d9QaOaVADhSatQfXRAd8EuYxI9qSPj2mnRamsUAXChIG8UUX3nZR9dtyfRULq9+Qws
-         Cuf+ET+0h1+UKjggjD4N5C3aWjdDgwXTqbyDoNQLXJ+bmBMhkhmViS1Fmw8TCoHhAzuW
-         ouuP4ms5+aEKC61hhfr/KlvvfsFkpjnL5G5i8WcOkB68mCZaWKJqFejta04/U3iQuSkv
-         cY4z/yZ5fctyKljVH2cyopYumvB7ipggBDEsFpbu+VgXsbA2ANdfiPAP2U62/yEyseOm
-         oKiW4dLeAf3veduY9zojZAvFugIgjgCWhCr0IC3V7wAc5ol4UccFOOBRLi1xom8naqDF
-         C6nA==
+        bh=FUDaESdKcTjbzgTEEb2kxRASOhSf+1wOD10vFCwZ3X8=;
+        b=KVzcgTg9ifVA5PK/lHMbXQoQH8CuGMkuf9gsLjVojhw/NyRdun+h/X6T0SvqjbLGww
+         iLz3oDm6pb9mT3w8nvFdN9yLrTIhjx08fGOuNjR5S+EnEkXjFAkdMXjW521753cgPQHT
+         lGzOXWmOcRREGe6C3qx7wIamcm55y+trIR7Ldnxw1BQjf6BBD8yXEDUVrq0624QDZMfV
+         XXcI44p6gn1INJfdKh3zSqaVbxTDO4UdSmZZUeLTc3KP/lSGM1fSP53ZYHhZut6rrasw
+         QHVKx4Y9U5bhMQj106pPVz1nLU098irQGyIOhurHaqptOWshdcjKN9uBdaTVzE2jIJMT
+         zyRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728319151; x=1728923951;
+        d=1e100.net; s=20230601; t=1728319163; x=1728923963;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
-        b=M4KFhlYBiKEC3b9+e/yJGxQ4ec9yH3P7LNvhZC41/ogKEO7qVLbRep+RfUHn+HxIZT
-         qpOMPYUnrFPwIKsIldvue4cevAoZJ6WAGlvVgS+GGuRJ/GTNoj1gAEOpFlLG60Y77w2e
-         3t2j3G9S+L80n1DIS6k327vV2GAp5K/3HhmG0F9SUyJ6NZHX7TpukWJ75Vjm8ghQ5sHF
-         FrwOpOOUBvS85zNpQbpKI4xqiOrSFDotfsyEoSPCEK8AojqFpqz2O//tJiEwJUVAQ7RU
-         NVMHxPEBWC4RoS//AWnCLMkKeRkomQWep3ln7MqVwpOEV0Vyt2iXkYDXHbS1bNwWxRY0
-         wzhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVtz+KoM6DV4+Qn+oKurYkHOKvvUO/4npSELl/h8JZhnEBLq4uGXUzrjRayzdOt0R4vK+8hhXRJSIoIkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzceqE7dAu54J+15UPaUg90yqmNa5oYMpGjwN5Fl3uKJbtSCRE3
-	lDGlTvSAkwa1rPvvcJldltxP6Xor6eIaW7s8TGdi02lbKtY62UlKXres8gvvudksDp6cAADkU5H
-	9RA0d/uTT3tLhHbZ4zTuhuuU/GJNxHHr2qvPJmA==
-X-Google-Smtp-Source: AGHT+IGVHfa0Imx231sJnOBuoe92zkuhYXnw1oVdVHbQtk8cEuUjipp2aWJ66W3Pqtgo5AbrAyW9cZWVR4KX9tMqDjk=
-X-Received: by 2002:a05:6902:704:b0:e28:eab7:b647 with SMTP id
- 3f1490d57ef6-e28eab7b8bemr111736276.11.1728319151351; Mon, 07 Oct 2024
- 09:39:11 -0700 (PDT)
+        bh=FUDaESdKcTjbzgTEEb2kxRASOhSf+1wOD10vFCwZ3X8=;
+        b=AjL+6gC35MCKa8s8YgD2Sg1kmEbAARDyLuvrcIDykJx7guQpw/+RmQWTLnnInpVJ+t
+         XBJoyBJl6SJf9qBvFFpLzu/L05HhC6f3NNeGHo+rmOOZvOyOYrw+8DiZi5+aODUXALiy
+         ShPrCQKd1Bm+5WJH51qWpUGw5NbnAivaBop8b9zgVM1K35GMKNDTaZbdGRNKo3whONaL
+         cLexEOPwsSVN53HMO8e86fp64PIn/Of6/GytUnUBuo6HvP35B7O19bqSIMM5mL3B58R6
+         +WiAN+9kNSI/NJQ+D6jb3rYZcUGramZgxxWXVap6dvo1+vIVG1STBiyJWK6I9/mDyY2V
+         sXgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOxaj49d9scyw+4EBCyZLOC/F2J9uZqkTLiylKPcJAyOhmiyXmolRMUax7d0OeIHg6wnPun9ylNM1oHKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIbCUFYEwnjcfHALTwZqOKflWPDPB/PJk2H/duVq27woXAEghS
+	FV2yE/iecDyZy35czv5Bwu4oJhyoxNshRvdlJ0UIQh9ka9ccQbI90ETcCcz65c3mFyNSf5c/rlg
+	RkO06JMAPZebYOqo/xjCydznNFFZJJQ==
+X-Google-Smtp-Source: AGHT+IFoOv05+uLQBpeyZhCJYVwV45LUaMgwVUO5Ra5f7vyqsMngLfWZlF5H5XGHfHcmZw0xc89lyrWV1GnMV/tFyTE=
+X-Received: by 2002:a17:90b:4c0f:b0:2d8:27c1:1d4a with SMTP id
+ 98e67ed59e1d1-2e1e62a412bmr14532838a91.24.1728319162746; Mon, 07 Oct 2024
+ 09:39:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004213235.3353398-1-tharvey@gateworks.com> <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
-In-Reply-To: <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Mon, 7 Oct 2024 09:38:59 -0700
-Message-ID: <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
-Subject: Re: [PATCH] net: phy: disable eee due to errata on various KSZ switches
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Robert Hancock <robert.hancock@calian.com>, 
-	Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>, 
-	Tristram Ha <tristram.ha@microchip.com>, Lukasz Majewski <lukma@denx.de>
+References: <20240914112816.520224-1-aford173@gmail.com> <20240914112816.520224-2-aford173@gmail.com>
+In-Reply-To: <20240914112816.520224-2-aford173@gmail.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 7 Oct 2024 11:39:11 -0500
+Message-ID: <CAHCN7xLk6TwQppL2baH9izZqMzOEUCc9zCdYu=DDS-tbwT0Prg@mail.gmail.com>
+Subject: Re: [PATCH V8 1/5] phy: freescale: fsl-samsung-hdmi: Replace register
+ defines with macro
+To: linux-phy@lists.infradead.org
+Cc: dominique.martinet@atmark-techno.com, linux-imx@nxp.com, 
+	festevam@gmail.com, frieder.schrempf@kontron.de, aford@beaconembedded.com, 
+	Sandor.yu@nxp.com, neil.armstrong@linaro.org, 
+	Marco Felsch <m.felsch@pengutronix.de>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Lucas Stach <l.stach@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 5, 2024 at 9:46=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+On Sat, Sep 14, 2024 at 6:28=E2=80=AFAM Adam Ford <aford173@gmail.com> wrot=
+e:
 >
-> On Fri, Oct 04, 2024 at 02:32:35PM -0700, Tim Harvey wrote:
-> > The well-known errata regarding EEE not being functional on various KSZ
-> > switches has been refactored a few times. Recently the refactoring has
-> > excluded several switches that the errata should also apply to.
+> There are 47 registers defined as PHY_REG_xx were xx goes from 00 to
+> 47.  Simplify this by replacing them all with a macro which is passed
+> the register number to return the proper register offset.
 >
-> Does the commit message say why?
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Reviewed-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+
+Gentile nudge on this series.  RC2 is out, and  I was hoping this
+might be merged to linux-next soon.
+
+thanks
+
+adam
+
+> ---
+> V7:  No change
+> V6:  No change
+> ---
+>  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 133 ++++++-------------
+>  1 file changed, 43 insertions(+), 90 deletions(-)
 >
-> Does this need a Fixes: tag?
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/f=
+reescale/phy-fsl-samsung-hdmi.c
+> index 9048cdc760c2..acea7008aefc 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -14,76 +14,29 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
 >
-
-Hi Andrew,
-
-Good question. I couldn't really figure out what fixes tag would be
-appropriate as this code has changed a few times and broken in strange
-ways. Here's a history as best I can tell:
-
-The original workaround for the errata was applied with a register
-write to manually disable the EEE feature in MMD 7:60 which was being
-applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
-
-Then came commit ("26dd2974c5b5 net: phy: micrel: Move KSZ9477 errata
-fixes to PHY driver") and commit ("6068e6d7ba50 net: dsa: microchip:
-remove KSZ9477 PHY errata handling") which moved the errata from the
-switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
-however that PHY code was dead code because an entry was never added
-for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE. So even if we add a
-'Fixes: 6068e6d7ba50' it would not be fixed.
-
-This was apparently realized much later and commit ("54a4e5c16382 net:
-phy: micrel: add Microchip KSZ 9477 to the device table") added the
-PHY_ID_KSZ9477 to the PHY driver. I believe the code was proper at
-this point.
-
-Later commit ("6149db4997f5 net: phy: micrel: fix KSZ9477 PHY issues
-after suspend/resume") breaks this again for all but KSZ9897 by only
-applying the errata for that PHY ID.
-
-The most recent time this was affected was with commit ("08c6d8bae48c
-net: phy: Provide Module 4 KSZ9477 errata (DS80000754C)") which
-removes the blatant register write to MMD 7:60 and replaces it by
-setting phydev->eee_broken_modes =3D -1 so that the generic phy-c45 code
-disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID)
-so its still broken at this point for the other switches that have
-this errata.
-
-So at this point, the only commit that my patch would apply over is
-the most recent 08c6d8bae48c but that wouldn't fix any of the previous
-issues and it would be unclear what switch was broken at what point in
-time.
-
-Best Regards,
-
-Tim
+> -#define PHY_REG_00             0x00
+> -#define PHY_REG_01             0x04
+> -#define PHY_REG_02             0x08
+> -#define PHY_REG_08             0x20
+> -#define PHY_REG_09             0x24
+> -#define PHY_REG_10             0x28
+> -#define PHY_REG_11             0x2c
+> -
+> -#define PHY_REG_12             0x30
+> -#define  REG12_CK_DIV_MASK     GENMASK(5, 4)
+> -
+> -#define PHY_REG_13             0x34
+> -#define  REG13_TG_CODE_LOW_MASK        GENMASK(7, 0)
+> -
+> -#define PHY_REG_14             0x38
+> -#define  REG14_TOL_MASK                GENMASK(7, 4)
+> -#define  REG14_RP_CODE_MASK    GENMASK(3, 1)
+> -#define  REG14_TG_CODE_HIGH_MASK       GENMASK(0, 0)
+> -
+> -#define PHY_REG_15             0x3c
+> -#define PHY_REG_16             0x40
+> -#define PHY_REG_17             0x44
+> -#define PHY_REG_18             0x48
+> -#define PHY_REG_19             0x4c
+> -#define PHY_REG_20             0x50
+> -
+> -#define PHY_REG_21             0x54
+> -#define  REG21_SEL_TX_CK_INV   BIT(7)
+> -#define  REG21_PMS_S_MASK      GENMASK(3, 0)
+> -
+> -#define PHY_REG_22             0x58
+> -#define PHY_REG_23             0x5c
+> -#define PHY_REG_24             0x60
+> -#define PHY_REG_25             0x64
+> -#define PHY_REG_26             0x68
+> -#define PHY_REG_27             0x6c
+> -#define PHY_REG_28             0x70
+> -#define PHY_REG_29             0x74
+> -#define PHY_REG_30             0x78
+> -#define PHY_REG_31             0x7c
+> -#define PHY_REG_32             0x80
+> +#define PHY_REG(reg)           (reg * 4)
+>
+> +#define REG12_CK_DIV_MASK      GENMASK(5, 4)
+> +
+> +#define REG13_TG_CODE_LOW_MASK GENMASK(7, 0)
+> +
+> +#define REG14_TOL_MASK         GENMASK(7, 4)
+> +#define REG14_RP_CODE_MASK     GENMASK(3, 1)
+> +#define REG14_TG_CODE_HIGH_MASK        GENMASK(0, 0)
+> +
+> +#define REG21_SEL_TX_CK_INV    BIT(7)
+> +#define REG21_PMS_S_MASK       GENMASK(3, 0)
+>  /*
+>   * REG33 does not match the ref manual. According to Sandor Yu from NXP,
+>   * "There is a doc issue on the i.MX8MP latest RM"
+>   * REG33 is being used per guidance from Sandor
+>   */
+> +#define REG33_MODE_SET_DONE    BIT(7)
+> +#define REG33_FIX_DA           BIT(1)
+>
+> -#define PHY_REG_33             0x84
+> -#define  REG33_MODE_SET_DONE   BIT(7)
+> -#define  REG33_FIX_DA          BIT(1)
+> -
+> -#define PHY_REG_34             0x88
+> -#define  REG34_PHY_READY       BIT(7)
+> -#define  REG34_PLL_LOCK                BIT(6)
+> -#define  REG34_PHY_CLK_READY   BIT(5)
+> -
+> -#define PHY_REG_35             0x8c
+> -#define PHY_REG_36             0x90
+> -#define PHY_REG_37             0x94
+> -#define PHY_REG_38             0x98
+> -#define PHY_REG_39             0x9c
+> -#define PHY_REG_40             0xa0
+> -#define PHY_REG_41             0xa4
+> -#define PHY_REG_42             0xa8
+> -#define PHY_REG_43             0xac
+> -#define PHY_REG_44             0xb0
+> -#define PHY_REG_45             0xb4
+> -#define PHY_REG_46             0xb8
+> -#define PHY_REG_47             0xbc
+> +#define REG34_PHY_READY        BIT(7)
+> +#define REG34_PLL_LOCK         BIT(6)
+> +#define REG34_PHY_CLK_READY    BIT(5)
+>
+>  #define PHY_PLL_DIV_REGS_NUM 6
+>
+> @@ -369,29 +322,29 @@ struct reg_settings {
+>  };
+>
+>  static const struct reg_settings common_phy_cfg[] =3D {
+> -       { PHY_REG_00, 0x00 }, { PHY_REG_01, 0xd1 },
+> -       { PHY_REG_08, 0x4f }, { PHY_REG_09, 0x30 },
+> -       { PHY_REG_10, 0x33 }, { PHY_REG_11, 0x65 },
+> +       { PHY_REG(0), 0x00 }, { PHY_REG(1), 0xd1 },
+> +       { PHY_REG(8), 0x4f }, { PHY_REG(9), 0x30 },
+> +       { PHY_REG(10), 0x33 }, { PHY_REG(11), 0x65 },
+>         /* REG12 pixclk specific */
+>         /* REG13 pixclk specific */
+>         /* REG14 pixclk specific */
+> -       { PHY_REG_15, 0x80 }, { PHY_REG_16, 0x6c },
+> -       { PHY_REG_17, 0xf2 }, { PHY_REG_18, 0x67 },
+> -       { PHY_REG_19, 0x00 }, { PHY_REG_20, 0x10 },
+> +       { PHY_REG(15), 0x80 }, { PHY_REG(16), 0x6c },
+> +       { PHY_REG(17), 0xf2 }, { PHY_REG(18), 0x67 },
+> +       { PHY_REG(19), 0x00 }, { PHY_REG(20), 0x10 },
+>         /* REG21 pixclk specific */
+> -       { PHY_REG_22, 0x30 }, { PHY_REG_23, 0x32 },
+> -       { PHY_REG_24, 0x60 }, { PHY_REG_25, 0x8f },
+> -       { PHY_REG_26, 0x00 }, { PHY_REG_27, 0x00 },
+> -       { PHY_REG_28, 0x08 }, { PHY_REG_29, 0x00 },
+> -       { PHY_REG_30, 0x00 }, { PHY_REG_31, 0x00 },
+> -       { PHY_REG_32, 0x00 }, { PHY_REG_33, 0x80 },
+> -       { PHY_REG_34, 0x00 }, { PHY_REG_35, 0x00 },
+> -       { PHY_REG_36, 0x00 }, { PHY_REG_37, 0x00 },
+> -       { PHY_REG_38, 0x00 }, { PHY_REG_39, 0x00 },
+> -       { PHY_REG_40, 0x00 }, { PHY_REG_41, 0xe0 },
+> -       { PHY_REG_42, 0x83 }, { PHY_REG_43, 0x0f },
+> -       { PHY_REG_44, 0x3E }, { PHY_REG_45, 0xf8 },
+> -       { PHY_REG_46, 0x00 }, { PHY_REG_47, 0x00 }
+> +       { PHY_REG(22), 0x30 }, { PHY_REG(23), 0x32 },
+> +       { PHY_REG(24), 0x60 }, { PHY_REG(25), 0x8f },
+> +       { PHY_REG(26), 0x00 }, { PHY_REG(27), 0x00 },
+> +       { PHY_REG(28), 0x08 }, { PHY_REG(29), 0x00 },
+> +       { PHY_REG(30), 0x00 }, { PHY_REG(31), 0x00 },
+> +       { PHY_REG(32), 0x00 }, { PHY_REG(33), 0x80 },
+> +       { PHY_REG(34), 0x00 }, { PHY_REG(35), 0x00 },
+> +       { PHY_REG(36), 0x00 }, { PHY_REG(37), 0x00 },
+> +       { PHY_REG(38), 0x00 }, { PHY_REG(39), 0x00 },
+> +       { PHY_REG(40), 0x00 }, { PHY_REG(41), 0xe0 },
+> +       { PHY_REG(42), 0x83 }, { PHY_REG(43), 0x0f },
+> +       { PHY_REG(44), 0x3E }, { PHY_REG(45), 0xf8 },
+> +       { PHY_REG(46), 0x00 }, { PHY_REG(47), 0x00 }
+>  };
+>
+>  struct fsl_samsung_hdmi_phy {
+> @@ -442,7 +395,7 @@ fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_sams=
+ung_hdmi_phy *phy,
+>         }
+>
+>         writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
+> -              phy->regs + PHY_REG_21);
+> +              phy->regs + PHY_REG(21));
+>  }
+>
+>  static void
+> @@ -469,7 +422,7 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fs=
+l_samsung_hdmi_phy *phy,
+>                 break;
+>         }
+>
+> -       writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY=
+_REG_12);
+> +       writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY=
+_REG(12));
+>
+>         /*
+>          * Calculation for the frequency lock detector target code (fld_t=
+g_code)
+> @@ -489,11 +442,11 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct =
+fsl_samsung_hdmi_phy *phy,
+>
+>         /* FLD_TOL and FLD_RP_CODE taken from downstream driver */
+>         writeb(FIELD_PREP(REG13_TG_CODE_LOW_MASK, fld_tg_code),
+> -              phy->regs + PHY_REG_13);
+> +              phy->regs + PHY_REG(13));
+>         writeb(FIELD_PREP(REG14_TOL_MASK, 2) |
+>                FIELD_PREP(REG14_RP_CODE_MASK, 2) |
+>                FIELD_PREP(REG14_TG_CODE_HIGH_MASK, fld_tg_code >> 8),
+> -              phy->regs + PHY_REG_14);
+> +              phy->regs + PHY_REG(14));
+>  }
+>
+>  static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *p=
+hy,
+> @@ -503,7 +456,7 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_=
+samsung_hdmi_phy *phy,
+>         u8 val;
+>
+>         /* HDMI PHY init */
+> -       writeb(REG33_FIX_DA, phy->regs + PHY_REG_33);
+> +       writeb(REG33_FIX_DA, phy->regs + PHY_REG(33));
+>
+>         /* common PHY registers */
+>         for (i =3D 0; i < ARRAY_SIZE(common_phy_cfg); i++)
+> @@ -511,14 +464,14 @@ static int fsl_samsung_hdmi_phy_configure(struct fs=
+l_samsung_hdmi_phy *phy,
+>
+>         /* set individual PLL registers PHY_REG2 ... PHY_REG7 */
+>         for (i =3D 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+> -               writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG_02 + i *=
+ 4);
+> +               writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i *=
+ 4);
+>
+>         fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
+>         fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
+>
+> -       writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG_33=
+);
+> +       writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33=
+));
+>
+> -       ret =3D readb_poll_timeout(phy->regs + PHY_REG_34, val,
+> +       ret =3D readb_poll_timeout(phy->regs + PHY_REG(34), val,
+>                                  val & REG34_PLL_LOCK, 50, 20000);
+>         if (ret)
+>                 dev_err(phy->dev, "PLL failed to lock\n");
+> --
+> 2.43.0
+>
 
