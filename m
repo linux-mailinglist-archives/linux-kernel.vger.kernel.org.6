@@ -1,187 +1,112 @@
-Return-Path: <linux-kernel+bounces-353031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E35992777
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D839699277A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41271F23C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C324283BF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92FC18BBA6;
-	Mon,  7 Oct 2024 08:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EF218BBA6;
+	Mon,  7 Oct 2024 08:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WDEX098M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeQiyGLR"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB714154454
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F97433CB;
+	Mon,  7 Oct 2024 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290892; cv=none; b=kXHsBeNHIkaqop/H3ZiU+HSOGTsgwb+3kQORfUi/UE+UtjdxhpaEjJIPo1lzI1+gErx79O8Udfvy1Ny62SUcSzTxQ3+/2TQjvEr/rZTwxjc3eI2PQ+vIzykoWViczEO9fRp3TB3kfBlO37RM6B6Znj3AVxc8ouBNpZr3qAHCREw=
+	t=1728290917; cv=none; b=Lq5conUG/cmz6Gy7ZdJs6USRbNQuzxtCLsGMCNoHIWEpQEWMG8GZRRd0zaepswfNtW41NoDMCPyWpLV6f6OKnRUnc8Tdw05upoDLO6vWtFcmBVJFolhXqMfqDdPGfNNB3IlQVlYDnghNrqHgHLNu9zUNttIxEO+k1nurOS8oeok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290892; c=relaxed/simple;
-	bh=6Ryk55P/ZxwhvTmz2rvcNGmMVLmsXPwyEfGUDmZigHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNCM1EmLh7o/5/7uvn3yFAGa5vq1KkgIclgOCBoA8hzaNHqPAPfUUceSQwpAetVdBq1thIkm0HK7QdPynTR8ObAy/flz8pVrVgVPs3U7Jt52UbzsNzAYpCFe5arXxEemQntGTNRKIuJ/8VGh4YwSx3RmtVZEZ1yLlpdDFc10u2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WDEX098M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728290889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ye3b3jDj+gVu6tf7ycFgsi/ORu7X0wqxMcaQMdkv+o4=;
-	b=WDEX098M6CSQKh/XO3NjyKACoy26JyzNDjhbPKfX1R2gs47jOcV0YYD6bzqCDmCmoWPbG1
-	9QYeY5coxn0UQEOrMrsa743MxNMAF4xywn5/CJEyVjAQ1pbhs+eSuIG02KmOqKkuAhazMq
-	mlwjvzxfyqw/82xYJU2hVNDnaVSx0lQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-eEcgRhgkNlKh-hxqd4TsRw-1; Mon, 07 Oct 2024 04:48:08 -0400
-X-MC-Unique: eEcgRhgkNlKh-hxqd4TsRw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37ccc96d3e6so1530147f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:48:07 -0700 (PDT)
+	s=arc-20240116; t=1728290917; c=relaxed/simple;
+	bh=XTjPCcxgpc67s08ZRgzSbVu+e5R7WN8CkxWYyLpGNXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwaDHa8KzvaboN4CYVd7l/UPFtl6E5OizkdBzPysTxHIN/i76UcI7Af8nnceijjDtvIMA01Yb2c1RO9bH6UmlNxZ6DzTH666S2UDchNZAcGVv2U8zpWL/2G/E+f+ElnLwJ3cxujTYmneogsGsaoQiYiUeCnQuI8DkI4h+sIl500=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeQiyGLR; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cca239886so2492680f8f.2;
+        Mon, 07 Oct 2024 01:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728290913; x=1728895713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sw3uyAY13ehdme5WfQjVEpYa1xK552qbPUcgYHurxy8=;
+        b=GeQiyGLR875IE07d+DX0tWybo2sNkA2hJnmgc5SBZgmPDP97Yukg2xpwNQ1q61YmBI
+         jMZyqMjczP/TOs/V3fKpFx7mcLO4hQFXGOR+N2DciaMtda3wD4YjlApw8wYkxVrhuri2
+         eAg5lwZPjqlOYtf3IkBowYkihq70Ui5W4bmkrDyrxpFCPFZ3SQBsv9cwq/9KqTHW4U0A
+         hrqtSIxvNZJQjRX5GY0peDj9F099pC4SSxUa0PyS5kmz7kpyxAWiRaaYb/9EBH1NCjFo
+         MLQbVrNHnRlvH1vZGN2YPp/sjb3T8E2XOoPdQOULo2OGom1AlZ3VaO/we6yjoIvzY5Kr
+         lsnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728290887; x=1728895687;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ye3b3jDj+gVu6tf7ycFgsi/ORu7X0wqxMcaQMdkv+o4=;
-        b=jLxMa9SkDp68I/0hbtLJSU5f/vG3yv0vImJ5O5L1jUiVuJJpgNa+CVhdi4a/Askoab
-         GQ7PgzEsE4MMvKudGUmiuysOhIo+xYLGf6mwp2KxGLKLi8hYm0KY5DKlr3JwVBM2Ts9Z
-         s8aUs4eVtlQYLnahzknOmsooo3C1CQw8yp2UzDyAcp6C1jP5v2eM8hsUl/MTI/nEuD57
-         WKbgR0LoYoru54FLW/LmjS9PeRLy/maYKlIw/ZG2iD4+pnsXnTQZtyzlTT/r9Sxj91Po
-         qqPMJ/gcQSaEN1dzqB2QqI0ld5dwJCYP2KnUmIPwU+55U4ofwCmJ23ZanCc+glctLKN8
-         xu2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYxKvFNZG21kB3HOS+U217YaL/8GeU5W8O7vWB66O6e2+qyalaKUvqwAuxT7gu1+UlpAjuG8UVo3U2ICc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykHWngzCWpNf67RRxERqJ4cNmmeLCKP5Z1hBV0T9VlFjd475eq
-	fsZiIlBOlgZKYoVNvLuggI/dQ+sDyuxQZmSkZPEoqJBqJC/Snz11nYoLfcxz7/Aj8C217y+3ANW
-	N/pUVvOaxkIJ+Op/Cw6I6KNaxUytYp7wfua8jvixkHY53FTUkFZvLUxaGUDhslQ==
-X-Received: by 2002:a5d:6d4f:0:b0:371:8dbf:8c1b with SMTP id ffacd0b85a97d-37d0e79149fmr4991496f8f.34.1728290886806;
-        Mon, 07 Oct 2024 01:48:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeZ/w3D+q+nMdjdIGuUJr/i0qPxXp9GNxuINQsc/xoiQ71kZjMwPf5lmhFEeKdWC8FO8B6XA==
-X-Received: by 2002:a5d:6d4f:0:b0:371:8dbf:8c1b with SMTP id ffacd0b85a97d-37d0e79149fmr4991478f8f.34.1728290886425;
-        Mon, 07 Oct 2024 01:48:06 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c725:8700:77c7:bde:9446:8d34? (p200300cbc725870077c70bde94468d34.dip0.t-ipconnect.de. [2003:cb:c725:8700:77c7:bde:9446:8d34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16970520sm5190945f8f.96.2024.10.07.01.48.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 01:48:05 -0700 (PDT)
-Message-ID: <2c392f07-1363-4306-a1cc-ac89decdd7bc@redhat.com>
-Date: Mon, 7 Oct 2024 10:48:04 +0200
+        d=1e100.net; s=20230601; t=1728290913; x=1728895713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sw3uyAY13ehdme5WfQjVEpYa1xK552qbPUcgYHurxy8=;
+        b=dPAykghIsGugNv6VflPW5rkXgLuXeKSY6X9Vl/ozBwBhTlmKNA9C59JtUKm66n2dPc
+         +HPsPkEt501neojB2ApZRVlEzMlAnrnKKhk2mqiqkJqdFwRFn++TsbdQLUsrtszdYnjz
+         H9IyVCJ/dYisbKlYdaHLP86PCQSB8rBd0pVjhbbpRJU3eAeg7ohSytO0U9OTNWyY4BJT
+         F2dLIWZn9H1UHPqG7NkMURqGcPuyB6XN3sT5WmyjvA0DXNnTH5nZrbrzYOdDYdalJM6H
+         BOKYeWyD82Fmq+KRRDc3kq31OGx5TXg0hpcHT+T10GC5xYH8DDvmQAgYwicwzrk1BSIA
+         jVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS1tBx12u6YyyI8BS3eVYmMFGVxTJCKdh4P5L/7NyGpcets53kxvXpKnLJCqUPPsxJBgT8W+6Rah4CrFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIPKDBFh8bXjTz+iwq8ZcbU2JA/Am4MJnPek0rKzpXSfFV18Kt
+	7Zz3YPh9oHBMTlOF8yBXBr19hrUS9GB25IWLZSkfNHIVrreclXSWxlPf9/QbkZE=
+X-Google-Smtp-Source: AGHT+IEegzbWgtgFULnrDNHJbTvSTTiC7KXTJtSYf5p/to9bXMzF5sJLj339zWnsytk/+SfshOU3Nw==
+X-Received: by 2002:a5d:4c52:0:b0:374:ca43:cda5 with SMTP id ffacd0b85a97d-37d0e4dff9fmr5624801f8f.0.1728290913515;
+        Mon, 07 Oct 2024 01:48:33 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f24fsm5218176f8f.1.2024.10.07.01.48.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:48:33 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>
+Subject: [PATCH] md/raid5-ppl: Use atomic64_inc_return() in ppl_new_iounit()
+Date: Mon,  7 Oct 2024 10:48:04 +0200
+Message-ID: <20241007084831.48067-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
-To: Dave Hansen <dave.hansen@intel.com>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, akpm@linux-foundation.org,
- willy@infradead.org, markhemm@googlemail.com, viro@zeniv.linux.org.uk,
- khalid@kernel.org
-Cc: andreyknvl@gmail.com, luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
- ebiederm@xmission.com, catalin.marinas@arm.com, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org,
- rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com,
- pcc@google.com, neilb@suse.de, maz@kernel.org,
- David Rientjes <rientjes@google.com>
-References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
- <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 02.10.24 19:35, Dave Hansen wrote:
-> We were just chatting about this on David Rientjes's MM alignment call.
-> I thought I'd try to give a little brain
-> 
-> Let's start by thinking about KVM and secondary MMUs.  KVM has a primary
-> mm: the QEMU (or whatever) process mm.  The virtualization (EPT/NPT)
-> tables get entries that effectively mirror the primary mm page tables
-> and constitute a secondary MMU.  If the primary page tables change,
-> mmu_notifiers ensure that the changes get reflected into the
-> virtualization tables and also that the virtualization paging structure
-> caches are flushed.
-> 
-> msharefs is doing something very similar.  But, in the msharefs case,
-> the secondary MMUs are actually normal CPU MMUs.  The page tables are
-> normal old page tables and the caches are the normal old TLB.  That's
-> what makes it so confusing: we have lots of infrastructure for dealing
-> with that "stuff" (CPU page tables and TLB), but msharefs has
-> short-circuited the infrastructure and it doesn't work any more.
-> 
-> Basically, I think it makes a lot of sense to check what KVM (or another
-> mmu_notifier user) is doing and make sure that msharefs is following its
-> lead.  For instance, KVM _should_ have the exact same "page free"
-> flushing issue where it gets the MMU notifier call but the page may
-> still be in the secondary MMU.  I _think_ KVM fixes it with an extra
-> page refcount that it takes when it first walks the primary page tables.
+Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+to use optimized implementation and ease register pressure around
+the primitive for targets that implement optimized variant.
 
-Forgot to comment on this (brain still recovering ...).
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/raid5-ppl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-KVM only grabs a temporary reference, and drops that reference once the 
-secondary MMU PTE was updated (present PTE installed). The notifiers on 
-primary MMU changes (e.g., unmap) take care of any TLB invalidation 
-before the primary MMU let's go of the page and the refcount is dropped.
-
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index a70cbec12ed0..37c4da5311ca 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -258,7 +258,7 @@ static struct ppl_io_unit *ppl_new_iounit(struct ppl_log *log,
+ 	memset(pplhdr->reserved, 0xff, PPL_HDR_RESERVED);
+ 	pplhdr->signature = cpu_to_le32(ppl_conf->signature);
+ 
+-	io->seq = atomic64_add_return(1, &ppl_conf->seq);
++	io->seq = atomic64_inc_return(&ppl_conf->seq);
+ 	pplhdr->generation = cpu_to_le64(io->seq);
+ 
+ 	return io;
 -- 
-Cheers,
-
-David / dhildenb
+2.46.2
 
 
