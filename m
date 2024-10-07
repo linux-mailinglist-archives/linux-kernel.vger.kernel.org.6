@@ -1,92 +1,74 @@
-Return-Path: <linux-kernel+bounces-353646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2372A9930BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:10:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9404F9930C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA608B24CD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E252B26B79
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024511D90BE;
-	Mon,  7 Oct 2024 15:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB371D934C;
+	Mon,  7 Oct 2024 15:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DL6TvRqT"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g8apA/uM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158011D4152
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDB61D9346;
+	Mon,  7 Oct 2024 15:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313759; cv=none; b=kTse2kxl2QY+5nHS/Zo3mp6PfnfmrmGpcSO474pVgquOWulTK2MNYOKAnZsbbMOtm6LqMlVaDkBjYWNSgPosDklgFOWXPq8pgvgPDNWiaXbBWeWhgF9Ia+9fCNJNymNfWsHyLKpBa59IHz+JJHuigSw5n4gdL+E+7UzTPrzJyGI=
+	t=1728313765; cv=none; b=OtbOAukycw4HrkevwK485NQ5OGfoQBZa+tck57QF8VBXCdsMAClga7DcZwUFgIYzbccUaOA+K2lb29z6sEIrY83vVAd5HCpiqjG0qnoC04qmz7Ya0nRQEuR+3+a/EUJywfCVZaVZesTVYBSkb3BrVelFZZtbsFEzNxW01Tw/u7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313759; c=relaxed/simple;
-	bh=ZkPECxgEeA2guXCbGft7A0EbWEevf+c0gjJj9QsLsfY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cz+rJYP529dtXanzwQQceoEIVBWJwtgh9VP1LVoh1vh3T0xJ+aqmHapTb3r+qEgpqn+OVWJklrFm/tMT5xTc3Dnu4oGeMVl5EFdM0zSq4S0nUxMEjQPjCEfO7b+ZqJLa/1/+6iPgp5bW0990lHjk4Ju71axvG0UHIqxBVDOnd/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DL6TvRqT; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71dec1cf48fso2506737b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728313757; x=1728918557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/+GSwCeOWRm/l1+CfEkkyplSY7a0N5EITYY7LFjoig=;
-        b=DL6TvRqTaz0Jx0h89wqItnb4iMzDudSJhNKOifEuEmTooJJUjt7SDOxE3W1jM7u17v
-         VchIf3/R+l5+Tp8epzf0bc7mYnZgz1ZZcCYGfG/rlpbB1xMqyz3B0zcj4m+PmFt0KRQx
-         NCcp6FQLeSN/BdOJ81sOlawSDtwaD8ZDTl9aYDw6ryoa3s7ediDq8YxO4muXXA6xrRzq
-         BYYcsjan8S5sPDK751WusZbvaujSIqqbkFEuLfo3LIomank1jzG+eGYeMUeLCxxkhTJ5
-         kEAgO8VhOp8i94h4s/6ALG3Irtj9CaB1pqjMjU8wTUtlFkmrMgx64jgfRkqlPoHlXu6W
-         QFjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313757; x=1728918557;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/+GSwCeOWRm/l1+CfEkkyplSY7a0N5EITYY7LFjoig=;
-        b=iBGsrLzrGoaw4mJVfgW0NmHVURBjkZrqVP7asMCoxBxjdf5Wi93J+e1dnuSxtFSCey
-         EbzAoSYb0lZ688XQogiltpPNrhSGB288gDRwIDh/Ll6TKAz9F7JC9pR5nXtN1lnVnPsp
-         ypY9UvlggKr6XVrxBmuJa1lSvBsVG+4SoMNpNYqyS6XI9EcnmHf1SOAZcLKabMX0MuH5
-         jEV4IF5SvtSfR2z/3LBXt32Ti+uok1Ncmo2uEMwjv5dNyhm64RDHrDF2gmCAdeU9pozC
-         KjCCSkobIRotfbcuOnBY1x3D6RVIVELzvjTPPRqRqKnFCbTFt1h6RHXSrX84+fzNjrJR
-         QTkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuSxfN9X38mYynsWc/aJkG/sjfzRVr0kY0VTPzEPi2+StAX02tc0Mx7Zc80H8dNidBPAXwO/6XuSNasUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbvsh9FOObza65pbCVk66GiyhfqgkrD1tA+AMc+a76kbUpeBEu
-	zQZhfyn0JPvswdntGuvrROfLGdm0QUZYKV09z5d6fkQEl5c7TK18
-X-Google-Smtp-Source: AGHT+IFyaIcmre3vkQABIM8yyNZlEuDS9Fnfn9Gk+ufQWVciOVuxyxkAe1vCDGKPdT/UvjtIoXMFog==
-X-Received: by 2002:a05:6a20:6f07:b0:1d3:2976:144 with SMTP id adf61e73a8af0-1d6dfafc08cmr16632114637.44.1728313757227;
-        Mon, 07 Oct 2024 08:09:17 -0700 (PDT)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:ffb9:ea:f539:1909])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c3411asm5011809a12.68.2024.10.07.08.09.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 08:09:16 -0700 (PDT)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: Sam Ravnborg <sam@ravnborg.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	Advait Dhamorikar <advaitdhamorikar@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <error27@gmail.com>
-Subject: [PATCH v2] drm/atmel_hlcdc: Fix uninitialized variable
-Date: Mon,  7 Oct 2024 20:39:04 +0530
-Message-Id: <20241007150904.9840-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728313765; c=relaxed/simple;
+	bh=BKbork5gBqIloe0Od1Y/sxmZlNndoLFGO0UTT9ogkmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYVnT87TFpTmmqheocNxBsfIh/dBi30vly+SrUQjC4fuHBzcBCH3EfOwc4Bzi2HtSv9x36XD7O+hRA9nT2SHRWn0fpNjNUQtCbsNfO6LkqoDEU5bhysldTsPY9qfYHv0Dcv1jQd/6k00KORfGuTQn7FWPfrfkzRqYp3Uq+NcQUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g8apA/uM; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728313764; x=1759849764;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BKbork5gBqIloe0Od1Y/sxmZlNndoLFGO0UTT9ogkmY=;
+  b=g8apA/uMkzQsPloPfPeC9UYHxnX4TqxyoFouPAtPHV112cka6pCi2+4+
+   qpdQgnQ7KquDd8lygW/h16qr7LS+GzhjiMmcFKRQ92Htto2rOtph38m0f
+   rBvWy6OOfpXOJ1vjxlyZ+Ta484Q7xxhrS3UBvQvQG1efOhbenPT/oa6zw
+   luWU0RT7LlWdI36hHLPlUXHLv7ZBZw8vZCbFSBqFptEhMhxmZLD3RgTQS
+   p5nJdURIjCtAxw9v/dO2l0+p/eDIX6nXS+xQpOOtuB0Dh3rXChA1hNdHs
+   Nxx9ujFDStzRN9Ae1fFi+kubhCKO4Su2NHbCoEHiI3ZSVG1Q/1I/0NB61
+   w==;
+X-CSE-ConnectionGUID: tg4+znCkQGeI6OzOiHXz5g==
+X-CSE-MsgGUID: 7DPfw7emTUeTQa1ydxAqfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27279181"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27279181"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 08:09:23 -0700
+X-CSE-ConnectionGUID: b2QRy3IWSiuZ6sE6fzhTTg==
+X-CSE-MsgGUID: ax4fOGwGSuKVHByXMlJoEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="112968484"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 07 Oct 2024 08:09:14 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8DD9C301; Mon, 07 Oct 2024 18:09:13 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Viresh Kumar <vireshk@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v1 1/1] dmaengine: dw: Switch to LATE_SIMPLE_DEV_PM_OPS()
+Date: Mon,  7 Oct 2024 18:09:12 +0300
+Message-ID: <20241007150912.2183805-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,34 +77,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-atmel_hlcdc_plane_update_buffers: may use an uninitialized
-sr variable when the if condition remains unsatisfied.
-The variable may contain an arbitrary value left from earlier computations.
+SET_LATE_SYSTEM_SLEEP_PM_OPS is deprecated, replace it with
+LATE_SYSTEM_SLEEP_PM_OPS() and use pm_sleep_ptr() for setting
+the driver's pm routines. We can now remove the ifdeffery
+in the suspend and resume functions.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Closes: https://lore.kernel.org/r/202409240320.MZPgi3Up-lkp@intel.com/
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-v1->v2: add reported by and closes labels
+ drivers/dma/dw/pci.c      | 8 ++------
+ drivers/dma/dw/platform.c | 8 ++------
+ 2 files changed, 4 insertions(+), 12 deletions(-)
 
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 4a7ba0918eca..4150c4d0b4f2 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -559,7 +559,7 @@ static void atmel_hlcdc_plane_update_buffers(struct atmel_hlcdc_plane *plane,
- 	const struct atmel_hlcdc_layer_desc *desc = plane->layer.desc;
- 	struct atmel_hlcdc_dc *dc = plane->base.dev->dev_private;
- 	struct drm_framebuffer *fb = state->base.fb;
--	u32 sr;
-+	u32 sr = 0;
- 	int i;
+diff --git a/drivers/dma/dw/pci.c b/drivers/dma/dw/pci.c
+index e8a0eb81726a..a3aae3d1c093 100644
+--- a/drivers/dma/dw/pci.c
++++ b/drivers/dma/dw/pci.c
+@@ -76,8 +76,6 @@ static void dw_pci_remove(struct pci_dev *pdev)
+ 		dev_warn(&pdev->dev, "can't remove device properly: %d\n", ret);
+ }
  
- 	if (!dc->desc->is_xlcdc)
+-#ifdef CONFIG_PM_SLEEP
+-
+ static int dw_pci_suspend_late(struct device *dev)
+ {
+ 	struct dw_dma_chip_pdata *data = dev_get_drvdata(dev);
+@@ -94,10 +92,8 @@ static int dw_pci_resume_early(struct device *dev)
+ 	return do_dw_dma_enable(chip);
+ };
+ 
+-#endif /* CONFIG_PM_SLEEP */
+-
+ static const struct dev_pm_ops dw_pci_dev_pm_ops = {
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(dw_pci_suspend_late, dw_pci_resume_early)
++	LATE_SYSTEM_SLEEP_PM_OPS(dw_pci_suspend_late, dw_pci_resume_early)
+ };
+ 
+ static const struct pci_device_id dw_pci_id_table[] = {
+@@ -136,7 +132,7 @@ static struct pci_driver dw_pci_driver = {
+ 	.probe		= dw_pci_probe,
+ 	.remove		= dw_pci_remove,
+ 	.driver	= {
+-		.pm	= &dw_pci_dev_pm_ops,
++		.pm	= pm_sleep_ptr(&dw_pci_dev_pm_ops),
+ 	},
+ };
+ 
+diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
+index 47c58ad468cb..bf86c34285f3 100644
+--- a/drivers/dma/dw/platform.c
++++ b/drivers/dma/dw/platform.c
+@@ -157,8 +157,6 @@ static const struct acpi_device_id dw_dma_acpi_id_table[] = {
+ MODULE_DEVICE_TABLE(acpi, dw_dma_acpi_id_table);
+ #endif
+ 
+-#ifdef CONFIG_PM_SLEEP
+-
+ static int dw_suspend_late(struct device *dev)
+ {
+ 	struct dw_dma_chip_pdata *data = dev_get_drvdata(dev);
+@@ -183,10 +181,8 @@ static int dw_resume_early(struct device *dev)
+ 	return do_dw_dma_enable(chip);
+ }
+ 
+-#endif /* CONFIG_PM_SLEEP */
+-
+ static const struct dev_pm_ops dw_dev_pm_ops = {
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(dw_suspend_late, dw_resume_early)
++	LATE_SYSTEM_SLEEP_PM_OPS(dw_suspend_late, dw_resume_early)
+ };
+ 
+ static struct platform_driver dw_driver = {
+@@ -195,7 +191,7 @@ static struct platform_driver dw_driver = {
+ 	.shutdown       = dw_shutdown,
+ 	.driver = {
+ 		.name	= DRV_NAME,
+-		.pm	= &dw_dev_pm_ops,
++		.pm	= pm_sleep_ptr(&dw_dev_pm_ops),
+ 		.of_match_table = of_match_ptr(dw_dma_of_id_table),
+ 		.acpi_match_table = ACPI_PTR(dw_dma_acpi_id_table),
+ 	},
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
