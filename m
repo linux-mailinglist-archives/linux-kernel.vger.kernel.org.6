@@ -1,178 +1,103 @@
-Return-Path: <linux-kernel+bounces-353200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F507992A40
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73BD992A48
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410511C229E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8FF1F23229
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5171D175F;
-	Mon,  7 Oct 2024 11:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61A1D26FE;
+	Mon,  7 Oct 2024 11:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="DnhDtAE1"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="SntZXmet"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93486101C4;
-	Mon,  7 Oct 2024 11:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300688; cv=pass; b=Fdk2uajCCDfPOubpZxMnsrLIowhgZFByFu3oLsk2MjZLmQihcIVpW89DOUZQXBejJEdbQyAtvBF+QNT4zNLpOyLqDQWMSxpdoAS5q37VNpx7oEPmbsHryvlg0doapZ1y64LS1BnON9GFpxtFn8E2UfvSnb9i8Cyctpis8JL9Tps=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300688; c=relaxed/simple;
-	bh=zB6cHrIxf8MAti/jSyoDypswPusO31FpIcIhlwrhIzY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aHS/HUnnDkKDKJ3YFegFOWW4WqKSE0Ja0EaFD+/nXiK9aq3r6ECpnwJQ5GyLwfTplsXdh0IGgAur3NR+8mb1Ic8wvgWtqIvhdstwC5+zCN99vVZtwTO/hztmbTtfRFS7KAW1h95xf61hWT9FElGTebYmKG6P9kpopw0+jsQKuKE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=DnhDtAE1; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1728300673; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OpPE9fAAnOFuLxarIZG8HMCPijywuOof1PxDeoPioRi//9dAuaSNfgHCRKvd4DhhtQ1iqDnTCPP9gn2+b+TpvyNfBx73u6TVdXVEcaGUt8hqocx+0EoY/EZYZUTQk8+OFYOlPS9QcDGke79fzEgzzOwAfzYMAJetFSrZA7allaY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1728300673; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9onN0rTwv0VDbke7yVsL14uwCLFnY8cP6ctLDOhwCTs=; 
-	b=lm+VbNGUBLSUigrWCBl3aICzGSejqX1d8gk5I14F3246aw5CbRb+EAdztLzKUD0/WL+9XSp9nqHFPiBczIOjz3HP8hyKjIOzjxsvzJY12XpXcSHhMyIKr8v0HH2v8tdT7H5FTltnU/3i8nk9JHE3mba5D4LXJqv4jFbhqlcFr6E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728300673;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=9onN0rTwv0VDbke7yVsL14uwCLFnY8cP6ctLDOhwCTs=;
-	b=DnhDtAE1dKIFov3oPuoZ2ubL3IOmlklo/ppKKWMXJMe11jWW6sQWe8PB26UGXlaf
-	7tKEivakd6o6h3rPq9PrlFzXzbUOt1x/AaPuvGBHHIhJEP8VT5dSK4iPH5Li78ZFCTf
-	a/6ol31BsT+ubNn0UzGvWdFzXudLmtrF61K00Cuo=
-Received: by mx.zohomail.com with SMTPS id 1728300670434664.2188885986342;
-	Mon, 7 Oct 2024 04:31:10 -0700 (PDT)
-Message-ID: <697607de-5a01-4581-93a9-f4895f8a5739@collabora.com>
-Date: Mon, 7 Oct 2024 16:31:03 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1007018C010;
+	Mon,  7 Oct 2024 11:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728300828; cv=none; b=O/4RcHg7+uMit+UJTzCOHt71XcsipkDYHqS9dIBk2tMti/5vSD8IJrUfqe++xZrIka7+oWXn3wo+KXGptyXOCuu+l4X14ylIN+cjyv8EKmQLYk6YrQ2u8a3uYJmDc7EbNngXqs4qz7aemYozveywO1im3uOzc1heCXyU1MPRai4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728300828; c=relaxed/simple;
+	bh=xKf4y0Jr8/LqYaeSglDR5RFuVmUMwn39i4VfwuxQRZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eHeQfB/pOcofbi04JAsNkIquKJtLBWvXkdyON78PuyEON3wwlSuIKs5cII3KeAy0sdBiSAta6wK4cFEzhPFv486Lw/P9Y1sBIQ0x1b3NZftJdI+51EpUd5OdFpaLWO/wJlYLxNUq0aDbdreTzfkt2M425XMnlVla10R45fC+8jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=SntZXmet; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728300809; x=1728905609; i=wahrenst@gmx.net;
+	bh=h/dH6z1VSRHTq33+ShAFdkC4Q0hfIyeIUwjhK6BYJN8=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SntZXmetWJJFI1gneNJSm225h7wAvrkhxgrowViO0hkmbtK9LSsf63OPVSDkXGZj
+	 AkQ0KWMDtro4QQTAzW4yARD6b5LA/wbEEk/kWKp5XvS+zBtAWATPZG23aGBLOnbZW
+	 C0QflFpQZpLZar78sjIWav+FhtRupP+Bdb6jLUm98LFr7Bm137jYGkkaVpf4xTWIY
+	 BQhDWjh3Sedb058z4AvmiovuTwaZZbOfYW3ZlrLJLXXGWOyIxFRO9AlwQDLP904rl
+	 FJCidBbllWBuJ7eMC25Ti4Np/9mLgp1a8HHgiOmQsrGBnjxLqoW2lgc6CwBaVsRhs
+	 3SLl0ZkHW8746UOLnw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MQMyZ-1tJRc00zI1-00PuCA; Mon, 07
+ Oct 2024 13:33:29 +0200
+From: Stefan Wahren <wahrenst@gmx.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Heimpold <mhei@heimpold.de>,
+	Christoph Fritz <chf.fritz@googlemail.com>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 0/2 net-next] qca_spi: Improvements to QCA7000 sync
+Date: Mon,  7 Oct 2024 13:33:10 +0200
+Message-Id: <20241007113312.38728-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, akpm@linux-foundation.org, peterx@redhat.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: remove the newlines, which are added for unknown
- reasons and interfere with bug analysis
-To: Jeongjun Park <aha310510@gmail.com>, Greg KH <gregkh@linuxfoundation.org>
-References: <20241007065307.4158-1-aha310510@gmail.com>
- <2024100748-exhume-overgrown-bf0d@gregkh>
- <CAO9qdTFwaK36EKV1c8gLCgBG+BR5JmC6=PGk2a6YdHVrH9NukQ@mail.gmail.com>
- <2024100700-animal-upriver-fb7c@gregkh>
- <CAO9qdTGSaJZ0oTmWqRouU45ur3drQVxRaH8aaBB99DXAoA40_A@mail.gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <CAO9qdTGSaJZ0oTmWqRouU45ur3drQVxRaH8aaBB99DXAoA40_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nnbAoTjReWKIET9yrsv0bAR7IB+3jf4JyOtXcWTzVO5MD2UzcBY
+ XCNdiog6P3gVZr/QCsnH08jLFOmI2QcwS5rraJGAErXrMG1NOBpSPFbL6ObR6QGuWudUrxc
+ NWf1M0juGeuwxkJwKoB3I30PZgK1wZAHWOf3d5w6VUFqCyyQ1KZFSKnT27jj2EECS8JwjCn
+ /DIyYM9OWoa3T8f9Adp9Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oLtj2MWjjK4=;F5gKXbh33g3xyWh3K7gjvQqIHm9
+ n0TBByumIVvk8jUWfIEOjEQK76lDSygTkxdTcQgzulMOuPp/WipttxbGr6rDB5kN7C1tkTN82
+ 67SCBKb5fGZKk3qZ23Mabt30sCSYXUCjM/mF6lZupwTE2c+c8XBbDWqrsT5VJP2Tz6fC3oNLB
+ ZExyaSqlZGbCJpjMR8vifH3Fm2F8vAIy1y5pRdMLt4zLhQSf5Svkp2q8HQlHm5vEVufsvOx+K
+ YSW7CuTWErbPOK7DAah+r2JmJ7HnLWbjsoIQ2al7NaUcd75d2S0qshIEz02BDOLAKdcmOH1Gh
+ FRIgPZfCPsxrLV4KIkxVV94N3GPr/Er6QJNhmXV7AoP4WjCBXZenOJEWYKdZcNLZCohi9cCqC
+ ucPRCIb9ycuQU3zYz3nH9XcV3PEWbsL6NcCPJM93lm9jK02E9rFwH+qNvkrMKcUHozzUmwbTx
+ dys9woDApqrIhO+tZWLV3ILAYy1PnF5M+FHQtvNz8WKPe9rakOa9KuSBk/boO977k8kmuIbYf
+ 4a/uUYpnk2sYjf58EAk8PJg1lLJegxHtcSJahJAbL8rubsIFLwKG8CaQEbn9j0Hf+AcdDiXXc
+ SQVvSBmsqcfQxiN5zIaIbkCLWoAt9CLXWN65tgxhrkkMu27RFgY4lUXUMsoM4fqwaAWw5qIDh
+ iC2HIuAaMrdZyhifl6daPqvyEhbkKPsKr3MVVDjvWgJFJIYSYsEoOkl2O7WDGoXy0Mak7r+0c
+ B3Kw+QYPYXyXW7l+FrIfhkDGOtLAGfNV2RoOqS4e9rJbv+nQRKRVXT0ufIqIlIQZ7NBu6aso1
+ a1HP9U5iUm6HSdj4Lw1uQTMA==
 
-On 10/7/24 4:24 PM, Jeongjun Park wrote:
-> Greg KH <gregkh@linuxfoundation.org> wrote:
->>
->> On Mon, Oct 07, 2024 at 05:57:18PM +0900, Jeongjun Park wrote:
->>> Greg KH <gregkh@linuxfoundation.org> wrote:
->>>>
->>>> On Mon, Oct 07, 2024 at 03:53:07PM +0900, Jeongjun Park wrote:
->>>>> Looking at the source code links for mm/memory.c in the sample reports
->>>>> in the syzbot report links [1].
->>>>>
->>>>> it looks like the line numbers are designated as lines that have been
->>>>> increased by 1. This may seem like a problem with syzkaller or the
->>>>> addr2line program that assigns the line numbers, but there is no problem
->>>>> with either of them.
->>>>>
->>>>> In the previous commit d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC"),
->>>>> when modifying mm/memory.c, an unknown line break is added to the very first
->>>>> line of the file. However, the git.kernel.org site displays the source code
->>>>> with the added line break removed, so even though addr2line has assigned
->>>>> the correct line number, it looks like the line number has increased by 1.
->>>>>
->>>>> This may seem like a trivial thing, but I think it would be appropriate
->>>>> to remove all the newline characters added to the upstream and stable
->>>>> versions, as they are not only incorrect in terms of code style but also
->>>>> hinder bug analysis.
->>>>>
->>>>> [1]
->>>>>
->>>>> https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
->>>>> https://syzkaller.appspot.com/bug?extid=fa43f1b63e3aa6f66329
->>>>> https://syzkaller.appspot.com/bug?extid=890a1df7294175947697
->>>>>
->>>>> Fixes: d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC")
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>>>> ---
->>>>>  mm/memory.c | 1 -
->>>>>  1 file changed, 1 deletion(-)
->>>>>
->>>>> diff --git a/mm/memory.c b/mm/memory.c
->>>>> index 2366578015ad..7dffe8749014 100644
->>>>> --- a/mm/memory.c
->>>>> +++ b/mm/memory.c
->>>>> @@ -1,4 +1,3 @@
->>>>> -
->>>>
->>>> This sounds like you have broken tools that can not handle an empty line
->>>> in a file.
->>>>
->>>> Why not fix those?
->>>
->>> As I mentioned above, there is no problem with addr2line's ability to parse
->>> the code line that called the function in the calltrace of the crash report.
->>>
->>> However, when the source code of mm/memory.c is printed on the screen on the
->>> git.kernel.org site, the line break character that exists in the first line
->>> of the file is deleted and printed, so as a result, all code lines in the
->>> mm/memory.c file are located at line numbers that are -1 less than the
->>> actual line.
->>>
->>> You can understand it easily if you compare the source code of mm/memory.c
->>> on github and git.kernel.org.
->>>
->>> https://github.com/torvalds/linux/blob/master/mm/memory.c
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/memory.c
->>>
->>> Since I cannot modify the source code printing function of the git.kernel.org
->>> site, the best solution I can suggest is to remove the unnecessary line break
->>> character that exists in all versions.
->>
->> I would recommend fixing the git.kernel.org code, it is all open source
->> and can be fixed up, as odds are other projects/repos would like to have
->> it fixed as well.
->>
-> 
-> Oh, I just realized that this website is open source and written in C.
-> 
-> This seems to be the correct git repository, so I'll commit here.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/cgit.git
-Get latest tag from
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/
-instead.
+This series contains patches which improve the QCA7000 sync behavior.
 
-https://kernelnewbies.org/FirstKernelPatch could be helpful in
-understanding some missing details.
+Stefan Wahren (2):
+  qca_spi: Count unexpected WRBUF_SPC_AVA after reset
+  qca_spi: Improve reset mechanism
 
-> 
-> Regards,
-> Jeongjun Park
-> 
->> thanks,
->>
->> greg k-h
+ drivers/net/ethernet/qualcomm/qca_debug.c |  4 +--
+ drivers/net/ethernet/qualcomm/qca_spi.c   | 30 ++++++++++++++---------
+ drivers/net/ethernet/qualcomm/qca_spi.h   |  2 +-
+ 3 files changed, 21 insertions(+), 15 deletions(-)
 
--- 
-BR,
-Muhammad Usama Anjum
+=2D-
+2.34.1
 
 
