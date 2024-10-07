@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-353493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE88F992E85
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F285992E88
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78ABCB21A89
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7331F23696
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DC41D79B1;
-	Mon,  7 Oct 2024 14:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E364C1D5AAE;
+	Mon,  7 Oct 2024 14:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhoohsx4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJbZC9m6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDB61D6199;
-	Mon,  7 Oct 2024 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DED41D363A;
+	Mon,  7 Oct 2024 14:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310311; cv=none; b=qpudSNwqNahwx/XF53IHiqpfqXHhlPCP1Hj32bhZ1zDLHEVmnY8B9oPkTMHOjheJnUMDoFJlWV4dU6FkEF2lbZn4vyYjslcZjS6ThkSw2r1DagFRpOrFys7TifGzJZd6EO4sJUccfbwO9Ugm2jvP3sxbUZR/JU6slLMzg9IJHcA=
+	t=1728310380; cv=none; b=Q44xERFMvOpB4ZvyK+DIICZpzFFeImUkVdgJC3WemaZsloK+/7wlWcabXwvB6o7TC33nZrHnTM80DgpXzM5ycuo8Prb/MJ1F5kbx2zOQ9qy9uXDmuf+AXCFAmWGRHTfF9ZY/CuiJocp42pncWxI4yuKPaIFOMqli7S3nFkYU7T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310311; c=relaxed/simple;
-	bh=eejfsxRus9CZwZggt+RZsEBvsrBQQP3CP8F4bYU2aXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJ71Q9l1T5pfCRUcBeXKpdVgxPZ5hJIK1oLoxwERKIcSQd0ZhJh/yiAHKFv/5ac/RjM7ugA5ESi1dTT/+4fuE3S7TBzAy92Azv7UkoZRzPoDpai6ITfbkFiXaCb1EoX4qmoy695wp6hbEa4cU6BBBuXJnrZFfr5MFL7GoFnSBlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhoohsx4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20bb39d97d1so37740125ad.2;
-        Mon, 07 Oct 2024 07:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728310309; x=1728915109; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RKR3q2SKM1ngNEIOlb7PrdpNEzp4DiGKIdiJrGREDA4=;
-        b=Uhoohsx4crvEK5RZI/fkssV/pd/pTJfp4wrq5/HdDFb25KhZBiVuPDqbpVysrv2dYa
-         +2fyFpxv8E0X7FCp4N6rNprHooPCGV1CNeB9mTxmEn5YgcFpYLbG0mUXx/EviGALPuhg
-         r/bkQsjAeHTRUa3YngMgLf8Pun9GzzY50GinayPuiyQi+DGpISgEM2u3VG0y3GhUx7yu
-         EALoClUYHma18bDXPWyf5fhIqsdCBaYxXFLAd6SXHUnvOLkaLTnfeUtAaocO31czjYbM
-         HJoiN8SCTyu+BWXpJRPGD5LVGJ0pnhkVQTtq3JvHZ0Aq5fRVWX9BUmVDyBXc2sOjP5Z/
-         9qcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310309; x=1728915109;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RKR3q2SKM1ngNEIOlb7PrdpNEzp4DiGKIdiJrGREDA4=;
-        b=iqAu3+pJ6eDwSysCJQfQzknWPw9p2ZXV97E2+3YsVTlukyphTrWiVMhcF+5itwGYqi
-         i0NO3Ag3c16PZTNJbze/9kziCTi6KYBWdpJNTyTzeYBcDaLrtUVjGUjXJ8meR4HFwWvZ
-         LlJ4cWxXZKdIM1TzEHlNbYYJNRJHJkjU8STZPjkdiQue7GZYoAouK2F57VG/pwE5lCQ0
-         9OHa23yu0LguQ21hUaYAWdsra3MShW2jBh4fEADYuaR+DQIdgjKRjiO9d4mUQxwotJEf
-         tV/csyiF9xFR+wiuwNsv4Mx1vcG1iMk/VF+TE0FuL8axM89liZQIG0lXajbJhf9iqzI6
-         AGlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNXsJJAyHaWy5mBEXyqMXocZfdCMY49oZS3tVH52EEafeUy9dNlRn7huezYsKL8lxQX/PMC1Sa2VOOJz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa43BxST5fMf+PHrYQJZTprV515AZDbVqumkutS1rbI6EFIERO
-	FqjRBI38RiJrtYDm9wLvo4IgwW1tWWr0WG278lfF2sMBDizMFk+6
-X-Google-Smtp-Source: AGHT+IG0K9MBi9CkbCM8lt/ZPaifrzZFJf9HMlkG7E09vaQ3ea4nLLMhsJ4hlzt0MTSgpTMUXpB8Cg==
-X-Received: by 2002:a17:902:f788:b0:20b:8ed8:9c74 with SMTP id d9443c01a7336-20bff1cb9d3mr181970195ad.49.1728310308781;
-        Mon, 07 Oct 2024 07:11:48 -0700 (PDT)
-Received: from B-M149MD6R-0150.lan ([2409:8a55:2e52:c0f1:4d08:3cf4:6043:d1e7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139a6492sm39921265ad.308.2024.10.07.07.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:11:48 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH] selftests: livepatch: add test case of stack_order sysfs interface
-Date: Mon,  7 Oct 2024 22:11:39 +0800
-Message-Id: <20241007141139.49171-1-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
+	s=arc-20240116; t=1728310380; c=relaxed/simple;
+	bh=bAcQDD+8QQ8WCDszEzop3lIKjgTMQY4AjD6eofNySgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jw+NVfCeRe5ym547c/VurtYJEwlqDZar0sJaIEFalLFYrbz7Rnvht1CpQ0j4RlF2Ln9pJ7P6x3GZJfOxo6Ac5ZKGI+/SIvC1qysb3svn45zgtI5K84ZsxXtznppqUv6aXnHn7NTNdVtlaCN9g+WkGLGFpKo7mLdCc5puXwgAK4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJbZC9m6; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728310379; x=1759846379;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bAcQDD+8QQ8WCDszEzop3lIKjgTMQY4AjD6eofNySgk=;
+  b=kJbZC9m6n21z767tm0Ix24r0p4yrLU7UahcMs7tm/Jblu5mFfYKVeJ3o
+   wfiFG3mvHSNH+65Ah43y34xyYPJU6hS7eBuL054CWNndBu1Qo4XNJ7s8Y
+   Y9eFmUkuoAmZIbAF4NmQMdK3EJjoHWZapYE36LeLAwj5cfS78WRNsRymO
+   5cIL4OBO2Sqh/RklY4r3iiRwNklzkYrzrj3YpdSrIXN+3Bk8eKUgL3MeF
+   sriU55S7a8e2UDPJzPV78wFzcudMXcz6xdiiqTQa3sOiox07Jr7tuNEzp
+   Syp+onZw8RPOq6HQOP+0nw2RUZjdmRUe9W9vaWROKywJvRFJtNcajW5u+
+   g==;
+X-CSE-ConnectionGUID: 8RGFhfexSBO+GCjVR/Tohg==
+X-CSE-MsgGUID: D0h5lTiUQB6YyJAPfF4oew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27629741"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27629741"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:12:58 -0700
+X-CSE-ConnectionGUID: uCD1Sb3ASam3hRd5L6XWYQ==
+X-CSE-MsgGUID: OhhnmWqtRYqYbudghm2VCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="75844023"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:12:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sxoTj-00000000Esa-0jwK;
+	Mon, 07 Oct 2024 17:12:51 +0300
+Date: Mon, 7 Oct 2024 17:12:50 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	Philip Li <philip.li@intel.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <ZwPsYqkLF0eWUb9e@smile.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add test case of stack_order sysfs interface of livepatch.
+On Fri, Sep 06, 2024 at 09:07:41AM +0800, Huang, Ying wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+> >> Huang, Ying wrote:
+> >> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
----
- .../testing/selftests/livepatch/test-sysfs.sh | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+[..]
 
-diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh b/tools/testing/selftests/livepatch/test-sysfs.sh
-index 05a14f5a7bfb..81776749a4e3 100755
---- a/tools/testing/selftests/livepatch/test-sysfs.sh
-+++ b/tools/testing/selftests/livepatch/test-sysfs.sh
-@@ -19,6 +19,7 @@ check_sysfs_rights "$MOD_LIVEPATCH" "enabled" "-rw-r--r--"
- check_sysfs_value  "$MOD_LIVEPATCH" "enabled" "1"
- check_sysfs_rights "$MOD_LIVEPATCH" "force" "--w-------"
- check_sysfs_rights "$MOD_LIVEPATCH" "replace" "-r--r--r--"
-+check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
- check_sysfs_rights "$MOD_LIVEPATCH" "transition" "-r--r--r--"
- check_sysfs_value  "$MOD_LIVEPATCH" "transition" "0"
- check_sysfs_rights "$MOD_LIVEPATCH" "vmlinux/patched" "-r--r--r--"
-@@ -131,4 +132,27 @@ livepatch: '$MOD_LIVEPATCH': completing unpatching transition
- livepatch: '$MOD_LIVEPATCH': unpatching complete
- % rmmod $MOD_LIVEPATCH"
- 
-+start_test "sysfs test stack_order read"
-+
-+load_lp $MOD_LIVEPATCH
-+
-+check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
-+check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
-+
-+disable_lp $MOD_LIVEPATCH
-+unload_lp $MOD_LIVEPATCH
-+
-+check_result "% insmod test_modules/$MOD_LIVEPATCH.ko replace=0
-+livepatch: enabling patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH': starting patching transition
-+livepatch: '$MOD_LIVEPATCH': completing patching transition
-+livepatch: '$MOD_LIVEPATCH': patching complete
-+% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
-+livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': unpatching complete
-+% rmmod $MOD_LIVEPATCH"
-+
- exit 0
+> >> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+> >> > > message.
+> >> > 
+> >> > Emm... It appears that it's a common practice to include "Cc" in the
+> >> > commit log.
+> >> 
+> >> Yes, just ignore this feedback, it goes against common practice. Cc list
+> >> as is looks sane to me.
+> >
+> > It seems nobody can give technical arguments why it's better than just keeping
+> > them outside of the commit message. Mantra "common practice" nowadays is
+> > questionable.
+> 
+> Cc list is used by 0day test robot to notify relevant developers and
+> maintainers in addition to the author when reporting regressions.  That
+> is helpful information.
+
+I'm not objecting Cc email tags, I'm objecting having them in the commit messages!
+Can you explain, how useful they are when they are placed as part of commit message
+bodies?
+
 -- 
-2.18.2
+With Best Regards,
+Andy Shevchenko
+
 
 
