@@ -1,90 +1,114 @@
-Return-Path: <linux-kernel+bounces-353085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1572799283A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D430199283E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD709282E5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EB51F23709
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296E819939D;
-	Mon,  7 Oct 2024 09:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8419199948;
+	Mon,  7 Oct 2024 09:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VZs6YaKm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rX6f/0U8"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9BA2E40B;
-	Mon,  7 Oct 2024 09:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B58518F2F2;
+	Mon,  7 Oct 2024 09:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728293661; cv=none; b=Iw60ElapPAt0RSIUXRW2w6hmGZWINrYyDEkGwcxRy/qm/4SeapDCiuH2t3FXANMQ/m2b3W5QuWCXCERN2C8JlIoRfJFSmBiNvSXKX0ZY3oKiJAcODaq4nIvpD83+oturRVPT7e5OMIkMGZ6wctUPzGdOkMr/GJdpJPEzzpp5it8=
+	t=1728293691; cv=none; b=SRxA3ghkioz2pO3YwnRfef+JBMnVAkhcJHBxQIEMAiLqXmhNcnZhxhehMDvtzHHrqYWjGZJKpwza+LHmYNxIp5Ck8l54Z5w4jzhhfDYFc3rJKhckS+/PAbmPeRgPx7x7kZWdbMCUrBeA5mA+IGoabPjugtgOlItmUQ641hW1r20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728293661; c=relaxed/simple;
-	bh=GuPfV/vXqb2cHRU/NeF6mb3tHrOWmpj52q13dgEt54I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CltuxuntmHuEnS4YESV+C1Hj3JOvwV/R68h/i5Bvp9iigBRwZYOCAd5UiD4E+CspU5nYOB0x7EfkWWGN1aKhbCMX9tZ1MLQOYPUO0n9xC2STbJKsKh0dQ9iAmPZKY33G/3lSNcrvRa/w7hTv+7JIbeTAvABCjTENsSCs7Rh/zh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VZs6YaKm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Sfur5fGnyWwqacVG3Sr0Z2vYX9JtTG0oq4cSkSmug0g=; b=VZs6YaKmASQmFSY/FwbBVigTOo
-	TV3VoilDlIkEPFobhcC4QKq+Nvk+81p/jOdCsCKIC0yr4lx+iX4POsQbIo1jHPkDJ8cNH5+9lAik8
-	PLzWq1OlSfK46rj2yI6XMKTEc+OogaFKmLWWYS1hway4W7FvNk4f/iAUaEkwTI/nTNgf4T3rV2+ym
-	lvI6Jf5uXPDABMylE9vaysuvRSlIofoxHelYkAsKMTgG94oWowMg/HRs3tdDVNxwxkDfVYBuldNOF
-	2553EQd/1DXjpBdXaGX1uL2QRs9ByqUNOXE7lqm2xNvpieFgymp/13DsVKl7NZW+5Zg7d93GBwTQ+
-	WDzakfjA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxk85-00000004Oi1-43fs;
-	Mon, 07 Oct 2024 09:34:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 15A6C30088D; Mon,  7 Oct 2024 11:34:13 +0200 (CEST)
-Date: Mon, 7 Oct 2024 11:34:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <20241007093412.GA4879@noisy.programming.kicks-ass.net>
-References: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
- <20241003084743.GC33184@noisy.programming.kicks-ass.net>
- <20241003092707.GD33184@noisy.programming.kicks-ass.net>
- <20241003122824.GE33184@noisy.programming.kicks-ass.net>
- <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
- <20241003142240.GU5594@noisy.programming.kicks-ass.net>
- <7b14822a-ee98-4e46-9828-1e41b1ce76f3@paulmck-laptop>
- <20241003185037.GA5594@noisy.programming.kicks-ass.net>
- <20241004133532.GH33184@noisy.programming.kicks-ass.net>
- <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
+	s=arc-20240116; t=1728293691; c=relaxed/simple;
+	bh=E8AFC3vJAjHzrpqVDLoldFXTK/U5srUyH05spTlfP1w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DXo1jy6UyKFZd9jp0/mHEP8X2MzgISUkqzqC7mSxmzIsqir9zIIdAKkN+21sM6NuFcedhmqUrquD5nHrw3nc8Ft3x/LhGcWjfs43z1sMus6bs6fc2Oqv+tchgtMMeOYxH6r3Mt1pfvw4xp4FBt4PugkpcME6rNCusEYT6N/bIKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rX6f/0U8; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728293655; x=1728898455; i=markus.elfring@web.de;
+	bh=E8AFC3vJAjHzrpqVDLoldFXTK/U5srUyH05spTlfP1w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rX6f/0U8f5wtmtxWrZmbLaBUzcCAsjuUakwZA9Nvdf+pYNhTqKiWDWaMbcmxHtcG
+	 RbqoXJbP18hyUwpsjJRBud/wwf8s0HyUSpJQUV7969GxZ2iE1gu5tZCw2laj+ujog
+	 Ubp7/87d5tzGMRSC1ZGAfyitE15IJ2LvIP1Zp2mkzcOslqyfClNfJUgI9+b2fOF+v
+	 la03gsOvjqbT8HqO4gfrb9Z4MEE8RZ54s3cYDnxvBiuoaWNvUtwP8KVUoRxDOIZGX
+	 6j9TCohZ0BeinzHxpKoCdgjNhKPe2bxJ/ejeVL4zENE3QbJOHzhjKZUOghjMIeuln
+	 PYOYJao80vNRTzLg+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MA4fI-1t89CX08ja-009AV3; Mon, 07
+ Oct 2024 11:34:15 +0200
+Message-ID: <4e1d50de-8e00-47a3-94e0-5ee9c5df8755@web.de>
+Date: Mon, 7 Oct 2024 11:34:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+ Mehdi Djait <mehdi.djait@bootlin.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <20241007013036.3104877-1-lanzano.alex@gmail.com>
+Subject: Re: [PATCH v9 0/2] Add driver for Sharp Memory LCD
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241007013036.3104877-1-lanzano.alex@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rR2t7Wp2hZRiAb/yvZ9QgARwGiDDwzquxtShZ89SpcJPiec4qQB
+ 6bLSocXYLUlNWmFEpjB+t2lsProJxaVXkFnIipZELFqgz03WEDRwcu1awSTO12RQb+2JDDR
+ G2lyvui1h9Aih3uiJWr5lvTsPH8ak29feabOGUhquhqKWumeIFsXU6nrgzhXqiM7EoXi9eL
+ GkhHbba2YZyjdjkyhI4hg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:teEmP1NgyxY=;NTXvpEe1d0ucl3ou6FBsiGiNXEM
+ wfsWbKpcr/5esT4j1RcosJawt4OhCv676VkbSL7veI4uf4d3pKD8MSoxBv2MWwllsySiNXX0V
+ 9tmBU5+lBm9fMKuvyUzGYsKjbYfY7I1i53ZjApx15089wDAHt8h6dibZzMSZh7TY3ZBLZdMrF
+ UDXvpbdRGRt4zZB8rPFiFTxSyRtSiY8L5WB5/Y4uoHAr4jVRmW73DFmOBvVRjpQyFluoxPDhM
+ co26t19Sv02s7P+rxWsFjlg9gyvsYmx33xN1zDwKwfA6O7+F3aWXo7XUcabebPhZXx9d8puee
+ D5vD02NcecHtuFYFYC1EXGq2/1iVSTwkTU9Au5XdED6uv5KzzXmgNRWpuuIMt7WDXxZp7qL91
+ qmlnNhpEugaGfYWNw8ILX96oRE+zFzaGjJEh2rwoyUwkHfmFWvc8QKbVZmpYLNqTwlK1fVpQr
+ jn2n45ECm/LkwtAGDALqzBtdPaSCrCu1LFScy2XplHWBSEr9hepadI9KzF49sfLa+pS6ngxuE
+ djEX34HmG6HtFjnG4VK5CTAqyS9bKKzNvO2jfmrvTHGI9GewXtwPMbqMJIpThwqGGsBwyRB0l
+ 46JtYDEkKssML1SBO78zbf+kkUOUDDba5giFfH3hCs6hgGymmSrkq3HjWKP/tKLvalm9c1/t4
+ 9mj8xM6XJLj0CcM/JZ1blQQBRoeDsGWIEv4mIefNro1JA2x8zSGpzM44htdWUfoDzcC+zS/Yv
+ sNtDJrGTJKv/QhTjDezjU33hcNo4NbpAD2g1iFjihwcXJazA25bn8dpeLLq5k9uyvAiJI8H04
+ YfFYOSzAMdKjrVLQkgfva+3Q==
 
-On Sun, Oct 06, 2024 at 01:44:53PM -0700, Paul E. McKenney wrote:
+> This patch series add support for the monochrome Sharp Memory LCD panels=
+.
+=E2=80=A6
+> ---
+> Changes in v9:
+=E2=80=A6
 
-> > I've given it 200*20m and the worst I got was one dl-server double
-> > enqueue. I'll go stare at that I suppose.
-> 
-> With your patch, I got 24 failures out of 100 TREE03 runs of 18 hours
-> each.  The failures were different, though, mostly involving boost
-> failures in which RCU priority boosting didn't actually result in the
-> low-priority readers getting boosted.  An ftrace/event-trace dump of
-> such a situation is shown below.
+Would you like to benefit from the application of scope-based resource man=
+agement
+(also for this software component)?
 
-Urgh, WTF and more of that. Let me go ponder things.
-
-Thanks for testing.
+Regards,
+Markus
 
