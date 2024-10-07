@@ -1,98 +1,152 @@
-Return-Path: <linux-kernel+bounces-353416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BC9992D79
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:36:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40502992D7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0119283F02
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3810B232AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E581D61A5;
-	Mon,  7 Oct 2024 13:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B5A1D415D;
+	Mon,  7 Oct 2024 13:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="z4ZAl78g"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YHDQhAmz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JBkwBIcq"
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C721D4320;
-	Mon,  7 Oct 2024 13:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEDB1D4159;
+	Mon,  7 Oct 2024 13:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728308014; cv=none; b=ptgJm1Vmp/J0fCiodlbkmepYPl657oybJmyITwqgNq0eDMOTT1vRUJ++q7ojD18eFqmcFXtV64TzKpCkXU10Su/xrD/byYUqWAxmOomsq+Rv549Ad3X4P2BZJM+FTTQvlEAM1Pj/gjsN4ETVq4Njl6KsO7cFFR4X1H4pwOCKv2w=
+	t=1728308041; cv=none; b=YudPmVal+kyBViQBUsEnjUa/z6oUY+u+dWg49QICz78gtoUT/4xbcVGA+YPoGankxcQGjDA1eg5irfcayRpZgD4SBfJC/iRffkPtSD2ZCKdMaEPusgb2PeCelhHCIGzvYu/a/sJhFk+LxnZ/V+pfxtidftppOCvBgQs30AiIHDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728308014; c=relaxed/simple;
-	bh=7XkLgux/mmCu9ej4L4xrAIwzwCX0qoF6a8unFDU24y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAGx1fpE4E/ICXzYVPYg3IjBxWCQ5xmme8cOhKfrNtu9jBVydvMhu46/qQBrIxbMGx6MiwFXjOY7WpDVgAmBB3OtuPgora0nUP196Lv8dQyVlM2nogJucvT+kkcAor5xO1mR3r5nLMWcBesLh2dW+39uyxvx+t9O33XwiVsWU9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=z4ZAl78g; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=N7keAL0fN5A2rYpWEAF2Fn6KYKz3K/xUhGpXZg4dQPQ=; b=z4ZAl78gmvqFkrfOwsGR6N+iQY
-	gtma2Lmls+AwCm8F1c6rG/YnpMcXrBLsZHRQ+01cxUZFG7eO9daAeH3COy/t6HrsCzGTLY7QpLS9Q
-	OEjnbhn+yfLMn4hLP8OgQ6lzFk+qNHbiJYbRPUOUj/p1YSYuokZKL1vTvliUBpcIbDdU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sxnrN-009GXE-VL; Mon, 07 Oct 2024 15:33:13 +0200
-Date: Mon, 7 Oct 2024 15:33:13 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
-	tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/6] rust: time: Introduce Delta type
-Message-ID: <54924687-4634-4a41-9f0f-f052ac34e1bf@lunn.ch>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-3-fujita.tomonori@gmail.com>
- <3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
- <20241007.150148.1812176549368696434.fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1728308041; c=relaxed/simple;
+	bh=5IT89C5Z4Q1RiqreCJfy/hqsNpJb/KeSkB1u9wGbwi8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bYZu2blJPmW3nxd1qm0Ez9hzmza+N6d1I0dsr/c0R8mVpg6Two1kA9VGfAejOx0wOsc9wEejjCWjGUJ2n9j/ZiFPS58Xs9sk+aGRzjpSUz+7TurDwj/bIxtJLfmpEVO9/SuLROkDU266l4eG5FZ2pviGirxVc35i//wtZG5IS6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YHDQhAmz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JBkwBIcq; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailflow.phl.internal (Postfix) with ESMTP id A2F0020035A;
+	Mon,  7 Oct 2024 09:33:57 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 07 Oct 2024 09:33:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728308037;
+	 x=1728315237; bh=K4c7rwEkHHs7JNOKsZBJCFJ86mbVpg4BE5CRtZ2UsCQ=; b=
+	YHDQhAmzydIOpgSHcA3YX0bmb8syVBfcIexSwhZNHqVXfNqJQAAEONGAzq55GI7p
+	11R3aiC6t3bTHYkuwCRHP8uQNKlivqk1VlRSfr+LyAupIOCTld72Lz2xRAgJwy6g
+	v0+HxuUy4H9fd/3GFspxk+vtiE9AQq9lxb5uGrJkvyWX/MUlE08uRIoBEOjpNDMs
+	kyxpKiDkTmbHYAz64QA+PdrQo9yknVgsa2R7VGm4F9vw5IW+l9kOLUsY2EHtz3D6
+	Tc4gIZd/o5le3GeLm9o6eRM5eCP8T6vKwVthZBPzY6YCn2MsjHJHZdoHrjaKS6ho
+	6oVxa7NzWaEavQiMc77pPw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728308037; x=
+	1728315237; bh=K4c7rwEkHHs7JNOKsZBJCFJ86mbVpg4BE5CRtZ2UsCQ=; b=J
+	BkwBIcqSWTLRYBYgCse0kmNIG0FalO2AoyqyWQlelRAffPOG5VukkG0bhsa0xWqI
+	TueRSYf0SzV/OStG+nWoxmGlyElfc09kw1Ereb93gkykZefc2vER0XdnyCrESkrQ
+	5eFstOGTbfu5qY1mcHIhlatNVHAAXZVXkTRQ0ohc+0SJASdxpjLDwPopxB5/KM/6
+	XFMcLd4FsccvlOg/10ruCm7YrzoKxvOTmu04G8jNJrOVr7xc4jFNxMCbd3AduiJx
+	RjhyQWIChWToyQq1FcS8XkaoWAWuUf3yA4hMpXelWxZh99NibmdvviiCzP8ZgTRE
+	m87OApOVJKR5y9V+mg9PQ==
+X-ME-Sender: <xms:ROMDZ2uhzN6iUlqUhyXgRzGdbkYhwsnC4IkYuifqhiHCNMinKjElnQ>
+    <xme:ROMDZ7f4wJbjZIYRpZ_zseQcOm9roVh8jslwmBLju73undd42jdBBXWys0eHSF6zR
+    kUPGSMLcTbp2aAkuRg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeek
+    keelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
+    nhgusgdruggvpdhnsggprhgtphhtthhopedvledpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlhhivggu
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepphgrthhrihhkrdhrrdhjrghkohgsshhsohhnsehgmhgrihhl
+    rdgtohhmpdhrtghpthhtohepmhgrrhgtvghlsehhohhlthhmrghnnhdrohhrghdprhgtph
+    htthhopehluhgtrghsrdguvghmrghrtghhihesihhnthgvlhdrtghomhdprhgtphhtthho
+    pehrohgurhhighhordhvihhvihesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhnug
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghl
+    rdhorhhg
+X-ME-Proxy: <xmx:ROMDZxyosoEJgK0h0mYtt9W4kbfEv2X46qXcZB-2HLhzVVD24kQ77Q>
+    <xmx:ROMDZxMozkL7hpKXIZSPf__oKocXC8ZuETUVXgc7DgfmMw5DTwU2xg>
+    <xmx:ROMDZ2_mj1FR00fok_BZPG6amC8ZVGoa9--w6heHTT5fRrNSay8ijQ>
+    <xmx:ROMDZ5VzhzRK_RqqQ_UXW6Wg8vTthGqsypD5csOvJMsv8UElFxut3w>
+    <xmx:ReMDZ4Ez-gpcLv6QqQ8ntic7pnvCNRVE7_8UAFdm54iPfSDSKMyerq4i>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A32892220072; Mon,  7 Oct 2024 09:33:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007.150148.1812176549368696434.fujita.tomonori@gmail.com>
+Date: Mon, 07 Oct 2024 13:33:36 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Brian Cain" <bcain@quicinc.com>, "Marcel Holtmann" <marcel@holtmann.org>,
+ "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+ "Patrik Jakobsson" <patrik.r.jakobsson@gmail.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Dave Airlie" <airlied@redhat.com>,
+ "Gerd Hoffmann" <kraxel@redhat.com>,
+ "Lucas De Marchi" <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "Heiko Carstens" <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Message-Id: <724b9809-49b9-49a4-be4e-0c464c29a1f0@app.fastmail.com>
+In-Reply-To: <20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com>
+References: <20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com>
+Subject: Re: [PATCH v6 0/5] treewide: Remove I/O port accessors for HAS_IOPORT=n
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-> I thought that from_secs(u16) gives long enough duration but
-> how about the following APIs?
-> 
-> pub fn from_nanos(nanos: u64)
-> pub fn from_micros(micros: u32)
-> pub fn from_millis(millis: u16) 
-> 
-> You can create the maximum via from_nanos. from_micros and from_millis
-> don't cause wrapping.
+On Mon, Oct 7, 2024, at 11:40, Niklas Schnelle wrote:
+> Hi All,
+>
+> This is a follow up in my long running effort of making inb()/outb() and
+> similar I/O port accessors compile-time optional. After initially
+> sending this as a treewide series with the latest revision at[0]
+> we switched to per subsystem series. Now though as we're left with only
+> 5 patches left I'm going back to a single series with Arnd planning
+> to take this via the the asm-generic tree.
+>
+> This series may also be viewed for your convenience on my git.kernel.org
+> tree[1] under the b4/has_ioport branch. As for compile-time vs runtime
+> see Linus' reply to my first attempt[2].
 
-When i talked about transitive types, i was meaning that to_nanos(),
-to_micros(), to_millis() should have the same type as from_nanos(),
-to_micros(), and to_millis().
+This all looks good to me and I'd like to merge it all in the
+asm-generic tree in the next few days, assuming nobody has any
+further objections.
 
-It is clear these APIs cause discard. millis is a lot less accurate
-than nanos. Which is fine, the names make that obvious. But what about
-the range? Are there values i can create using from_nanos() which i
-cannot then use to_millis() on because it overflows the u16? And i
-guess the overflow point is different to to_micros()? This API feels
-inconsistent to me. This is why i suggested u64 is used
-everywhere. And we avoid the range issues, by artificially clamping to
-something which can be represented in all forms, so we have a uniform
-behaviour.
+If something breaks, we can fix it with a patch on top.
 
-But i have little experience of dealing with time in the kernel. I
-don't know what the real issues are here, what developers have been
-getting wrong for the last 30 years etc.
+I have a few more patches make it possible to build arm64 kernels
+without CONFIG_HAS_IOPORT, but we don't need them as part of your
+series and can merge them through driver trees independently.
 
-	Andrew
+     Arnd
 
