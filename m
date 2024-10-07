@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-354068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3868F993745
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A4299374B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2EF1F23E05
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D7D284C09
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DE81DE2C7;
-	Mon,  7 Oct 2024 19:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEAE1DE2AE;
+	Mon,  7 Oct 2024 19:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxJFGzSe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D0Jdte3a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQzvb2Qs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF7713B797;
-	Mon,  7 Oct 2024 19:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9035D13B797;
+	Mon,  7 Oct 2024 19:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329076; cv=none; b=pXXwvlWxdogrTgeMDdLuMe+JmMd3jAbFTN1onRo2pLuOst7AIi0guzdqJueVsl39nMu5ZE2ezB323izMBvtaNoDGhlb0EdWKgJBybJcGA53gxsDnO07NaqggYMX/IEl0CJO5NTJbIefd30b9zYiop3FtTzE7RO7yWJJqirp0dfo=
+	t=1728329152; cv=none; b=qRsiCnaJ8eX2XxBgrPwBzrdnNBRY8Xwr0WFxxtmU6sYmHt0beExqQbgAS9sjQ4yZ7GlAHaidxsyj0H1hnaM1e6Tc0iIk59C0vw8MST4Fr+ue7gQSYqgwA1uFTk9QH14Dnyxa7oEQSFvIcfZftY/eSCLfhMirkYuMxU04i7Jp6uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329076; c=relaxed/simple;
-	bh=MJyteUBXzR7rkYONl8zAQVKdleok4P6vuQ1Z0LCohv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocUDb10uRZT55jfLuxy8dnTEd8iueS7DLtdVp75/MYVW/3tHZrwsGMKGzYDF/e45US6pXxfuQlYljbVS6dhpWKcC28igCE3nUkvjwGk1FjhBdFwGuOiC1VgrEyxd5vX/sgCPga0zNYkhqxTeNMtjgyRgP/4S8WyXaeD3e8dfLkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxJFGzSe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D36C4CEC6;
-	Mon,  7 Oct 2024 19:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728329076;
-	bh=MJyteUBXzR7rkYONl8zAQVKdleok4P6vuQ1Z0LCohv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UxJFGzSeq55JlqKAuiQRKTXuZxh6yPGQ0Sz6c4VxEhqQCUZsuo1FrJBLZ5aFvu3k4
-	 AAfcjRrPqEBrTTUyIE+yE1xBu+V9TGckEopicJQXNthMTU7WJH4RemFIsZoWAD5aKE
-	 NQ9YsclEX2zayMF1ji4E2WmnMi4it+UqMBQIHWUICamBa/REQCekbxIlFfbOqIMByR
-	 Tk8XhRHmk7qE1NtZhnoQaRb3y8b6FaACflXi9o0TyjNFDqmCESd6LFEsfDenPgnhKD
-	 La8DljEE1S23CfaMBgo2RfVeESrgz+aOpsHuq7nG+DFq0CWVB5G+OeP2Ej/fCiefq3
-	 j+f3abeWb25Gw==
-Date: Mon, 7 Oct 2024 12:24:33 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	eranian@google.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	santosh.shukla@amd.com, ananth.narayan@amd.com,
-	sandipan.das@amd.com
-Subject: Re: [PATCH 5/8] perf/amd/ibs: Don't allow freq mode event creation
- through ->config interface
-Message-ID: <ZwQ1cRhRuE3kunjK@google.com>
-References: <20241007034810.754-1-ravi.bangoria@amd.com>
- <20241007034810.754-6-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1728329152; c=relaxed/simple;
+	bh=c8btmeMjYsYPwLqpJH85iJIWtaCIkCZf+plIlI3EOQ4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tIv7ZxPu3KU1kmXsV+fqE2kzjuO8J+k5wkOzL4J6oBXafI/Gn9uDl9+fksEDRGghH4PBu4h+jLdHLWgGSNo0+tzye04+fFg0uHrcjr1WrH+v9BRgPgrrXbp+ou1xvlPgiSOew/AxFNDxIXkRJL0sogylnmk7cSPI25X6qCpf4yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D0Jdte3a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQzvb2Qs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 07 Oct 2024 19:25:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728329141;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hfd22iVVDzMgiBCZz6Mh/Yyew0iF3xO2ZcDQHuJPhaU=;
+	b=D0Jdte3atUuYrp39Tu/KZjAJLTH7krWaDugwCcee4ExrtRGR8py5pHoNElQ3iNRZqudRX3
+	uvsaRedeoy+HJPPnYG1qHh38gDg7WyQ6LOwIMQ2lhp3TstBH3Uwm0HeIVLf9v2iMaBysW4
+	xgKUZjGfcIXLsg5/y5JSXhKh4af/aBCgFKrzPvi5Mx9jgifZbuMrZtSp/H8903CQhQ2d3F
+	ok4tVPTDL5Bwa0LSV3TwmY9u9aYcA3reYN7LZf+kmBlsrqBFsfRjIQlB0VC8J/J0ZLjDfh
+	rrath9o1BLFpCHANaKfXcIHcnVexmMlVw2JvpWLwFJpz6fOFa3xseua1LHaaTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728329141;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hfd22iVVDzMgiBCZz6Mh/Yyew0iF3xO2ZcDQHuJPhaU=;
+	b=LQzvb2QsOsvrTBRGDMh85geiRhQZrHWHTyXK6BYJt4uA28E9ep2iq7fxarOlmNd3HeXBqP
+	CJ8JpkLExdfsLIAg==
+From: "tip-bot2 for Richard Gong" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/amd_nb: Add new PCI ID for AMD family 1Ah model 20h
+Cc: Richard Gong <richard.gong@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Yazen Ghannam <yazen.ghannam@amd.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240913162903.649519-1-richard.gong@amd.com>
+References: <20240913162903.649519-1-richard.gong@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007034810.754-6-ravi.bangoria@amd.com>
+Message-ID: <172832914079.1442.3300358639052918176.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 03:48:07AM +0000, Ravi Bangoria wrote:
-> Most perf_event_attr->config bits directly maps to IBS_{FETCH|OP}_CTL
-> MSR. Since the sample period is programmed in these control registers,
-> IBS PMU driver allows opening an IBS event by setting sample period
-> value directly in perf_event_attr->config instead of using explicit
-> perf_event_attr->sample_period interface.
-> 
-> However, this logic is not applicable for freq mode events since the
-> semantics of control register fields are applicable only to fixed
-> sample period whereas the freq mode event adjusts sample period after
-> each and every sample. Currently, IBS driver (unintentionally) allows
-> creating freq mode event via ->config interface, which is semantically
-> wrong as well as detrimental because it can be misused to bypass
-> perf_event_max_sample_rate checks.
-> 
-> Don't allow freq mode event creation through perf_event_attr->config
-> interface.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Sounds reasonable.  I agree the freq mode should use the standard
-interface using attr->sample_freq.  But I'm not sure if the behaivor is
-defined when attr->freq is set and attr->sample_freq is 0.  Maybe this
-should be handled in the generic code.
+Commit-ID:     f8bc84b6096f1ffa67252f0f88d86e77f6bbe348
+Gitweb:        https://git.kernel.org/tip/f8bc84b6096f1ffa67252f0f88d86e77f6bbe348
+Author:        Richard Gong <richard.gong@amd.com>
+AuthorDate:    Fri, 13 Sep 2024 11:29:03 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 07 Oct 2024 21:04:28 +02:00
 
-Thanks,
-Namhyung
+x86/amd_nb: Add new PCI ID for AMD family 1Ah model 20h
 
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  arch/x86/events/amd/ibs.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-> index 152f9116af1e..368ed839b612 100644
-> --- a/arch/x86/events/amd/ibs.c
-> +++ b/arch/x86/events/amd/ibs.c
-> @@ -302,6 +302,9 @@ static int perf_ibs_init(struct perf_event *event)
->  	} else {
->  		u64 period = 0;
->  
-> +		if (event->attr.freq)
-> +			return -EINVAL;
-> +
->  		if (perf_ibs == &perf_ibs_op) {
->  			period = (config & IBS_OP_MAX_CNT) << 4;
->  			if (ibs_caps & IBS_CAPS_OPCNTEXT)
-> -- 
-> 2.46.2
-> 
+Add new PCI ID for Device 18h and Function 4.
+
+Signed-off-by: Richard Gong <richard.gong@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Link: https://lore.kernel.org/r/20240913162903.649519-1-richard.gong@amd.com
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/kernel/amd_nb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index dc5d321..9fe9972 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -44,6 +44,7 @@
+ #define PCI_DEVICE_ID_AMD_19H_M70H_DF_F4	0x14f4
+ #define PCI_DEVICE_ID_AMD_19H_M78H_DF_F4	0x12fc
+ #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F4	0x12c4
++#define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F4	0x16fc
+ #define PCI_DEVICE_ID_AMD_1AH_M60H_DF_F4	0x124c
+ #define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F4	0x12bc
+ #define PCI_DEVICE_ID_AMD_MI200_DF_F4		0x14d4
+@@ -127,6 +128,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F4) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M60H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M70H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_DF_F4) },
 
