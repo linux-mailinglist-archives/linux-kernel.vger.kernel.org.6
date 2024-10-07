@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-353820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B984C99332A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F865993335
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5FC281BC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273441F23D34
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEF11D2711;
-	Mon,  7 Oct 2024 16:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E03D1DB54B;
+	Mon,  7 Oct 2024 16:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prkcmbst"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbgKcnUn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4551DA62C;
-	Mon,  7 Oct 2024 16:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676221DA62C;
+	Mon,  7 Oct 2024 16:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318421; cv=none; b=L2SCAuhbM6mJfc7iRDL2Yz7moJmaTrTzTeypMRxdSxjTreGdfxxLMKMLnFvDt9HElZAJ+7x0l6oIv9yVPdIXzDfS7ev5YEFVxnNqYAyHwHkQMfljoZEc99xqK75G4Nok8xf8unh964Oh/pGSL+n2wPzheNTlWhIob7sWEbiIczc=
+	t=1728318472; cv=none; b=Uymt7fvO+mtmYtAmBxf/i8KPTQ5x6GYLeKKkF9wVGEw0qDfSBVHUWInZPqZRyE1ODEjWgy2Ly3IWO212KYoAsXRj8oq5H5dW9yKCe7B2d4/tQK4Qzecr30rpUrj+G7qTZnyyvdZv2xkDN/IHF3f++kzP2DxF9IjrEFHO8NjOtHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318421; c=relaxed/simple;
-	bh=E51cAw039sGKO+0n/PcKNXG85+KvGPhgm7rZPbowDhU=;
+	s=arc-20240116; t=1728318472; c=relaxed/simple;
+	bh=x1oW3n5t/b/A2xKX8m3gu11wJ95kYfjdEVRLVlS5QSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+wzwdsMJKo5aew/S/iZuziI7/qmpuNZfq5K+koKjgrRcKiFXbmnVtbRwoHVra/OTQ4nr2LrWG7CLIamwk6Q+h+/Nt6GO2mC6+7YZx50YhS1gc5kNmDIfKUSdKA9WwhKstd1Pp4uifNQ78/ViPA1/I9eFYtH0RT2EzAKolxbMvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prkcmbst; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC26C4CEC6;
-	Mon,  7 Oct 2024 16:26:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/CsTXY3vodpiQkVWys3Qld8IXPOMg4TXqyJcskAhlB1an5zKNa8Og973SfF89KnHqoSCNb3PzUHDbNR13zI5kRWU8XX79NrWbInhGbZgL0/hB5ABnLudgIymxzsak7Rbh2n37PNO8LOknVzpXgNgZEvlwIhdkNUjhDL7kevi9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbgKcnUn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5458EC4CEC6;
+	Mon,  7 Oct 2024 16:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728318420;
-	bh=E51cAw039sGKO+0n/PcKNXG85+KvGPhgm7rZPbowDhU=;
+	s=k20201202; t=1728318471;
+	bh=x1oW3n5t/b/A2xKX8m3gu11wJ95kYfjdEVRLVlS5QSw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=prkcmbst67g+qeppLZY5cSVTDa3n32T/+3uU7wIq06HUNtdZFyrXgklHYcK5XIjsB
-	 L1RDbZZHtA+yh5o5XbvvoYxgq931+zMKcIWrBDT5Ug4yEupCoZW7lcJqNizCnHcTqj
-	 fAkpw+0aRZgjk6c25adVWYjyWVE2c4IWFHSG9VMHOXLH6D8jDWYeM6PDyFV+TJUIsA
-	 0HLYXd0snULKB5HaW14eiMVwpD8NuTgXQ5SNNbsuLixgBKkllSFlbcHZLwyZzqwBnE
-	 xgFvVXlkeSQZLmH53i7KOloLnV0ssdyUm6UV4ybHgx+9mbsnCUQYZTrJatT6jds/ca
-	 at+j8gKEIudHg==
-Date: Mon, 7 Oct 2024 16:26:58 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	iommu@lists.linux.dev, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	virtualization@lists.linux.dev, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	catalin.marinas@arm.com, will@kernel.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, arnd@arndb.de,
-	sgarzare@redhat.com, jinankjain@linux.microsoft.com,
-	muminulrussell@gmail.com, skinsburskii@linux.microsoft.com,
-	mukeshrathor@microsoft.com
-Subject: Re: [PATCH 0/5] Add new headers for Hyper-V Dom0
-Message-ID: <ZwQL0v-VE4q3iXAt@liuwe-devbox-debian-v2>
-References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+	b=RbgKcnUnSFcRGlJ2vo+Z+PJk+mif54xbmJEmk3uVpQR9NUY7fImgKI8VvfYxkeHy1
+	 iaJ5q16l5+PnYHR0+ZvtdRK3gE2v0SBQWPetWRsYWovrildMOGZK2nz1NEMFa6rcI7
+	 33kgosgwEW424iwoC42WYUjgvF6OVviW5YGwZ61bKFmLlojv9KcjIt0jji/2mhSbij
+	 /tv5fPzeNdoZl3EFbwLdWM0FmKv8L9DNmWUwmVYbfws8waZXZAlNxnNE8Nl3BfFWqr
+	 lPe+GCYmDjuld0XCNLRK+H8nyc2UqRc9VwIofrCFMz9ciQG/BqjK9RsJQwjFHhtcoV
+	 UfqNJpDmi09RA==
+Date: Mon, 7 Oct 2024 17:27:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH v2] selftests: sched_ext: Add sched_ext as proper
+ selftest target
+Message-ID: <ZwQL1RkyCwNxyqVE@finisterre.sirena.org.uk>
+References: <20241007073133.989166-1-bjorn@kernel.org>
+ <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
+ <87r08rnbra.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5SqJr+ARYPJxKn7Z"
 Content-Disposition: inline
-In-Reply-To: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <87r08rnbra.fsf@all.your.base.are.belong.to.us>
+X-Cookie: Editing is a rewording activity.
 
-On Thu, Oct 03, 2024 at 12:50:59PM -0700, Nuno Das Neves wrote:
-> To support Hyper-V Dom0 (aka Linux as root partition), many new
-> definitions are required.
-> 
-> The plan going forward is to directly import headers from
-> Hyper-V. This is a more maintainable way to import definitions
-> rather than via the TLFS doc. This patch series introduces
-> new headers (hvhdk.h, hvgdk.h, etc, see patch #3) directly
-> derived from Hyper-V code.
-> 
-> This patch series replaces hyperv-tlfs.h with hvhdk.h, but only
-> in Microsoft-maintained Hyper-V code where they are needed. This
-> leaves the existing hyperv-tlfs.h in use elsewhere - notably for
-> Hyper-V enlightenments on KVM guests.
 
-It goes without saying that we need to make sure KVM still builds
-correctly after this series. Please make sure to test that. Thanks.
+--5SqJr+ARYPJxKn7Z
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Wei.
+On Mon, Oct 07, 2024 at 06:00:57PM +0200, Bj=F6rn T=F6pel wrote:
+> Mark Brown <broonie@kernel.org> writes:
+
+> > When building for arm64 with this applied on top of mainline or -next
+> > I'm seeing:
+
+> Thanks for taking it for a spin!
+
+> >    make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -C tools/testin=
+g/selftests TARGETS=3Dsched_ext SKIP_TARGETS=3D"
+
+Oh, and for arm64 as previously noted the sched_ext config fragment
+odesn't DTRT, merge_config.sh says:
+
+Value requested for CONFIG_SCHED_DEBUG not in final .config
+Requested value:  CONFIG_SCHED_DEBUG=3Dy
+Actual value:    =20
+
+Value requested for CONFIG_SCHED_CLASS_EXT not in final .config
+Requested value:  CONFIG_SCHED_CLASS_EXT=3Dy
+Actual value:    =20
+
+Value requested for CONFIG_EXT_GROUP_SCHED not in final .config
+Requested value:  CONFIG_EXT_GROUP_SCHED=3Dy
+Actual value:    =20
+
+Value requested for CONFIG_DEBUG_INFO not in final .config
+Requested value:  CONFIG_DEBUG_INFO=3Dy
+Actual value:    =20
+
+Value requested for CONFIG_DEBUG_INFO_BTF not in final .config
+Requested value:  CONFIG_DEBUG_INFO_BTF=3Dy
+Actual value:    =20
+
+--5SqJr+ARYPJxKn7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcEC9QACgkQJNaLcl1U
+h9C3xAf6AwFHej9Yp+45Zx7N58Nweo6FPmkTT+Jshlja6vZYMeVf82rFI2+n5p3w
+8bTCQ/Nf9OgyFrbJF9lDXUVCNAWh7/VnQvhvnINGTmNKLhsjQpWdCcTcHsuVR+Lt
+g14lxMDvrqzE5t9UowfeB1CtFQDPyGzItMwFmZkXGmY+MBRUDTuw9Men4cTafqCr
+025RguRmgBO6cbNhDkxEdbC41ZUbnNwGt/pV0P75EZxHqyjuUkFj3ajGEeXcJAP6
+TpVIWd/2YR9RTAZMVLm0uth7Zi7zlmqxn4bKu19QYiKj6YQKQKjrZWaOWjxYA0UG
+jLrjYvwY89ZEwnRNtI/ESEaqjJm+Vw==
+=So6V
+-----END PGP SIGNATURE-----
+
+--5SqJr+ARYPJxKn7Z--
 
