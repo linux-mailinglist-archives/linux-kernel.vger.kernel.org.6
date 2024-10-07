@@ -1,163 +1,112 @@
-Return-Path: <linux-kernel+bounces-354072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1C7993753
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F0E993784
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8664282E6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F16281615
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD39E1DE3AA;
-	Mon,  7 Oct 2024 19:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EF11DE3DB;
+	Mon,  7 Oct 2024 19:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gE44st9e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="NVFTG0m9"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339E1DE2D0;
-	Mon,  7 Oct 2024 19:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3881DE2D4;
+	Mon,  7 Oct 2024 19:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329422; cv=none; b=sxbYuCQtDjJRmDtjA9Ca3ofdSKeZuGPYJRZtaiRDU25MnXZLeBYcOg6gSHIh/dO31ULCLUhv+Rjn6abJR9/wlAwQwyB+Wql28NIDmOovoYqKd3OLrPk0G9lI2svLNZkkFFTuXlXkh4YUPuIBjlKz63jY4a/20549BsIPrMFPPis=
+	t=1728329867; cv=none; b=QE0D2PMUs25SM+kYQATl3Vui5urChI68o/wwxjRPFJYaOpcvTxnq+mw8Ip6bY2O63SvpbNwESR/2MjpuGsSUb5y6H0vEXi0zrpngsbdwZDog8SkdF34Gn/+XzGK/2JpQ76oAby6fE/emKMeky2wpjpnBHsarJPbvWGFAgF364PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329422; c=relaxed/simple;
-	bh=ZdksU2UK/9o4uz78W+rwA8yZ/N8Pqbt78nI+dJedfHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVo2roq9zSMPXDxSz1VBJhaqVmJ+5swrd6YUZ0OapgP+xTn9/8YbcTHxmZoFj7X+LlP7KJUX93GQTZLb5fTmumXVzt3NYSPz5zr40XOLPSBhjVmEMLAhlXAUvmLKQyIT1QzGJVTGhhTmDo7a7Jz/tKkL+MoPLey/yciEauEThzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gE44st9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5ADC4CEC6;
-	Mon,  7 Oct 2024 19:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728329421;
-	bh=ZdksU2UK/9o4uz78W+rwA8yZ/N8Pqbt78nI+dJedfHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gE44st9eejAqrmZbz6dQPoXOWo8IpoXACrvKLaOXncSfV3See04z78JTFqywzoing
-	 stdUlhKTPoJE6dftIFRZOdgjmn2oUkOP3hyjQZ+YX0CybJvSOzQD2CBiBKBUKw2YU1
-	 LUuozY4SSLxrqaR8O0xkLbvxjltw+HfoOpnwK5rYbugCKgTUqmboTdD7MtFPEZaDfZ
-	 EreOe5MMxWv8PxIjz0iQYHpSrHASAkZ1Hp589jMoZsVv+8wtpVtB0PaOhd5YTP78Qp
-	 QLoUwH4qGYcYydcA5sSWW8/VgJ/ZW+buCKX0M09+lfE3D9BvtTiHdtfW8kG3Uyk8p4
-	 wxc5PnAVum/eA==
-Date: Mon, 7 Oct 2024 12:30:19 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	eranian@google.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	santosh.shukla@amd.com, ananth.narayan@amd.com,
-	sandipan.das@amd.com
-Subject: Re: [PATCH 6/8] perf/amd/ibs: Add pmu specific minimum period
-Message-ID: <ZwQ2yzLm2yyaYOcJ@google.com>
-References: <20241007034810.754-1-ravi.bangoria@amd.com>
- <20241007034810.754-7-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1728329867; c=relaxed/simple;
+	bh=kHsBNLoYlJPJt2nU3a6Sy6UGrnQko1NVbxWaEggv5J0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HFYR1LVyFpCeG1sWuKS+V0IVqvFLmwY7N4omUzVooFrBolnzYx6Wc9o4NExcCh24j9W3B1LYpjRZdIsDLwqyta2TNK7o1MU6t2qUn/pwJqM2d0QnSU22HkBviG/zP5ZhNHxaGNDWo0BoRgN9JHe2laaKAZqcc/niPMjFP0FjHHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=NVFTG0m9; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 387B1100008;
+	Mon,  7 Oct 2024 22:32:11 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 387B1100008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1728329531;
+	bh=auwqfHEF7ME53k772fd+EeQA9nJK3Tgrnfl5jkgQXW0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=NVFTG0m9hBCOZnwq8gKbYdo1TmDaRc2Ili1m4JOv54oqKfpKsmSP+BtgmuN3SddSQ
+	 GSfbbcAj2EAiJx/9UYfY5YMc7a/lwJJqjDEfkXblhzyQshQXxBqdUL8GBHswPzsFlz
+	 siSqY7Q060gxXQzFbdPWoNtnYLsXw7ZhUqT87lKtQirSp6xF7G/HiKLJw6U3NVI7En
+	 so6cypLtcb3irbJfzb75a6DCN2QVCAau1u+gtTXMFU33vkP53EisecAh7f927gQCF3
+	 ri9U7DqT+xHxvTLyDCbT6NP2deyuwI5RHs18/CScD4WssBZ5aN0Wt6zM8jxtCO8IHw
+	 Edt//fXB8DcDQ==
+Received: from smtp.sberdevices.ru (unknown [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  7 Oct 2024 22:32:11 +0300 (MSK)
+From: George Stark <gnstark@salutedevices.com>
+To: <u.kleine-koenig@pengutronix.de>, <neil.armstrong@linaro.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
+Subject: [PATCH 0/3] pwm: meson: Support constant and polarity bits
+Date: Mon, 7 Oct 2024 22:32:00 +0300
+Message-ID: <20241007193203.1753326-1-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007034810.754-7-ravi.bangoria@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188277 [Oct 07 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/07 17:50:00 #26714324
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Mon, Oct 07, 2024 at 03:48:08AM +0000, Ravi Bangoria wrote:
-> 0x10 is the minimum sample period for IBS Fetch and 0x90 for IBS Op.
-> Current IBS pmu driver uses 0x10 for both the pmus, which is incorrect.
-> Fix it by adding pmu specific minimum period values in struct perf_ibs.
-> 
-> Also, bail out opening a 'sample period mode' event if the user requested
-> sample period is less than pmu supported minimum value. For a 'freq mode'
-> event, start calibrating sample period from pmu specific minimum period.
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  arch/x86/events/amd/ibs.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-> index 368ed839b612..e7522ba45a7e 100644
-> --- a/arch/x86/events/amd/ibs.c
-> +++ b/arch/x86/events/amd/ibs.c
-> @@ -83,6 +83,7 @@ struct perf_ibs {
->  	u64				cnt_mask;
->  	u64				enable_mask;
->  	u64				valid_mask;
-> +	u16				min_period;
->  	u64				max_period;
->  	unsigned long			offset_mask[1];
->  	int				offset_max;
-> @@ -295,10 +296,14 @@ static int perf_ibs_init(struct perf_event *event)
->  			/* raw max_cnt may not be set */
->  			return -EINVAL;
->  
-> -		/* Silently mask off lower nibble. IBS hw mandates it. */
-> -		hwc->sample_period &= ~0x0FULL;
-> -		if (!hwc->sample_period)
-> -			hwc->sample_period = 0x10;
-> +		if (event->attr.freq) {
-> +			hwc->sample_period = perf_ibs->min_period;
-> +		} else {
-> +			/* Silently mask off lower nibble. IBS hw mandates it. */
-> +			hwc->sample_period &= ~0x0FULL;
-> +			if (hwc->sample_period < perf_ibs->min_period)
-> +				return -EINVAL;
+This patch series add suppot for amlogic's newer PWM IPs hardware features:
+constant and polarity bits.
 
-Maybe it needs to check perf_ibs->max_period as well.
+Using polarity bit for inverting output signal allows to identify inversion
+in .get_state() callback which can only rely on data read from registers.
 
-Thanks,
-Namhyung
+Using constant bit allows to have steady output level when duty sycle is zero or
+equal to period. Without this bit there will always be single-clock spikes on output.
 
-> +		}
->  	} else {
->  		u64 period = 0;
->  
-> @@ -316,10 +321,10 @@ static int perf_ibs_init(struct perf_event *event)
->  		config &= ~perf_ibs->cnt_mask;
->  		event->attr.sample_period = period;
->  		hwc->sample_period = period;
-> -	}
->  
-> -	if (!hwc->sample_period)
-> -		return -EINVAL;
-> +		if (hwc->sample_period < perf_ibs->min_period)
-> +			return -EINVAL;
-> +	}
->  
->  	/*
->  	 * If we modify hwc->sample_period, we also need to update
-> @@ -340,7 +345,8 @@ static int perf_ibs_set_period(struct perf_ibs *perf_ibs,
->  	int overflow;
->  
->  	/* ignore lower 4 bits in min count: */
-> -	overflow = perf_event_set_period(hwc, 1<<4, perf_ibs->max_period, period);
-> +	overflow = perf_event_set_period(hwc, perf_ibs->min_period,
-> +					 perf_ibs->max_period, period);
->  	local64_set(&hwc->prev_count, 0);
->  
->  	return overflow;
-> @@ -677,6 +683,7 @@ static struct perf_ibs perf_ibs_fetch = {
->  	.cnt_mask		= IBS_FETCH_MAX_CNT,
->  	.enable_mask		= IBS_FETCH_ENABLE,
->  	.valid_mask		= IBS_FETCH_VAL,
-> +	.min_period		= 0x10,
->  	.max_period		= IBS_FETCH_MAX_CNT << 4,
->  	.offset_mask		= { MSR_AMD64_IBSFETCH_REG_MASK },
->  	.offset_max		= MSR_AMD64_IBSFETCH_REG_COUNT,
-> @@ -702,6 +709,7 @@ static struct perf_ibs perf_ibs_op = {
->  				  IBS_OP_CUR_CNT_RAND,
->  	.enable_mask		= IBS_OP_ENABLE,
->  	.valid_mask		= IBS_OP_VAL,
-> +	.min_period		= 0x90,
->  	.max_period		= IBS_OP_MAX_CNT << 4,
->  	.offset_mask		= { MSR_AMD64_IBSOP_REG_MASK },
->  	.offset_max		= MSR_AMD64_IBSOP_REG_COUNT,
-> -- 
-> 2.46.2
-> 
+Those bits are supported in axg, g12 and newer SoC familes like s4, a1 etc.
+Tested on g12, a1.
+
+George Stark (3):
+  pwm: meson: Support constant and polarity bits
+  pwm: meson: Use separate chip data struct for g12a-ee-pwm
+  pwm: meson: Enable constant and polarity features for g12, axg, s4
+
+ drivers/pwm/pwm-meson.c | 94 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 87 insertions(+), 7 deletions(-)
+
+--
+2.25.1
+
 
