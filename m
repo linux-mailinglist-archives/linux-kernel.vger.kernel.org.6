@@ -1,130 +1,196 @@
-Return-Path: <linux-kernel+bounces-353598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8F199301F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3E3993018
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC681F230B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0F61C22639
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60261D88DF;
-	Mon,  7 Oct 2024 14:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1124A1D86E6;
+	Mon,  7 Oct 2024 14:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VVbZsMaT"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jbMOo6xN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A87A1DA26;
-	Mon,  7 Oct 2024 14:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779AC1D86DF;
+	Mon,  7 Oct 2024 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312853; cv=none; b=hOocJ4yOlq7FSY3lSpQkZt75kJzBpvPAe/43cg+0nOw97Iv9llgo3Q01pShneylo/fdmhqzONDVWErFlowqsXDI65aK/9SzSnoy3iA3CtXdgYu3Yf7HhtWKNoy+WJz5CxdsUjVeehJKlGc271D4swWurfoRIQqO3zNtckmp1tR4=
+	t=1728312775; cv=none; b=J4wmYjn14bImZqvBcFaPoJ0SHFBzTA/IehSbk9NLIFIp9luZIqcmzzqQz6xVtIl0KkQuUU4DhW5zGtS5VJShYxlHIg0fRwyUayesENtztdVr4OmHyS768xw8g475yx+j2W0+HXWuAxdmLoQDvHN9Lmvis1NQwOnXqfSDEvV14uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312853; c=relaxed/simple;
-	bh=sihbyG/v8McdrExFlMF4l5W4opSu7i5ut7iK0mpnEh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ek3Z9MxGOur2utUXPR7uYCeHQPZP1cdvPezlFyD6VmsPfLWVEXN1VzHT4lQ7/cDu3l6SCCImHn4CjjfOIsY+Z4d2jwICaQHiVMoxtovrulCOYT8OxyimfER5oBznZdOIsRf6LcHEHoSqUKdszfMW/mbwlGSB6vowkj9d8MdWwXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VVbZsMaT; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728312850;
-	bh=sihbyG/v8McdrExFlMF4l5W4opSu7i5ut7iK0mpnEh8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VVbZsMaTm+kJ+mJ61HRGRpZ1hTwl6/ALHHgD0lC47SzwRONtiKJDP/owbxPIJ+I1t
-	 GYhhI0in/OnM8yY6y+4C4JufX3rNF6tnmGUFxS34BeyhyE4zscpqNdh/LogWI9pG70
-	 j7L26qV3xBABIsUZOHvjrGFRO/NKwbYhUdT9Bg8wzlnGYm4eq7ZMhreaqgZ1t9JqhX
-	 E6ucijPLbq5BlRs+yPP4gInxeIHHwJgDBxfmhI4Kk346JdqkkhEI72IFYXlFwpZ3eZ
-	 e9hEEOIF9AqQSTpznimryYAmopYOU4GA1EUTF/ZNC0QBOGBsCgbfUz45hQ6ici00a3
-	 dnk+p+fdadBCQ==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XMhxZ2Smtz3DX;
-	Mon,  7 Oct 2024 10:54:10 -0400 (EDT)
-Message-ID: <cd41b389-6374-4f84-996c-0fe778962a47@efficios.com>
-Date: Mon, 7 Oct 2024 10:52:12 -0400
+	s=arc-20240116; t=1728312775; c=relaxed/simple;
+	bh=9hKpqziJxa4+VFx9y7LlHv123VXPkisB4w9bgqeMg3M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHAg/qsSvla9/HxF/ANPeH6QjVsouMcTyJxDOnguOvs2QI5HJkmBNJkZ3tmmJXAuzFtvmCUi3qU0cmaDyM5DH/ir7/z1xIgyaCwuLZx3ySTNDfoIAEWrnBc8NNwpdoeu6eSQL9aB1ebdhZzCjxWc/sjhCCy8u3bW3UQbZErVw6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jbMOo6xN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497ESDev003776;
+	Mon, 7 Oct 2024 14:52:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=w3RCWRUtIw9sk36ygunIIsCE
+	4n8HIqRfSejgHw5bmik=; b=jbMOo6xN5JyHlRNN2E9f41MD0bry9G6ZSR2LpM4C
+	N0DHKBmxW4W6ac0Wy5M505mGHJE0JZwT0AVh6tXHNCILVWHFkf+QNUQLpv6bujec
+	raETbPNiM/yEeLsVI+32FFfFAbWLeOn06J+z3OuFRpM1yU8HrtMF0dyKBBqUJq1C
+	JkAtu2HiCmVonWOhdr1HLUaNWmHd6VpEdJ0H6HskgdxFvEGObpzyqYS8Bokmhgi4
+	3ohoquymZc4y57gZR8ba3vrH8pornN6sOo3Hm5Ws3efdYVsdpyLtbd3m3K0wb1TR
+	APfcgB1Uz+hflhO5k4rAwl2CtM2Xf4GF5HrEUbYgSSNorA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv6vg5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 14:52:48 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497EqlGB022016
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 14:52:47 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 7 Oct 2024 07:52:43 -0700
+Date: Mon, 7 Oct 2024 20:22:39 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <neil.armstrong@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+Message-ID: <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+ <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/4] hp: Implement Hazard Pointers
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
- Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <20241002010205.1341915-4-mathieu.desnoyers@efficios.com>
- <Zv3kP477pGeOxuu9@boqun-archlinux>
- <bb890ea6-742f-40b7-ad3d-aa28f658fa3d@efficios.com>
- <ZwPmc_CXW15ilRaK@boqun-archlinux>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ZwPmc_CXW15ilRaK@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kUnJDXfb6e4K6UzRSZRfCSUHeGXLGqoY
+X-Proofpoint-GUID: kUnJDXfb6e4K6UzRSZRfCSUHeGXLGqoY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070105
 
-On 2024-10-07 15:47, Boqun Feng wrote:
-> On Thu, Oct 03, 2024 at 09:30:53AM -0400, Mathieu Desnoyers wrote:
-> [...]
->>>> +	/*
->>>> +	 * Use RCU dereference without lockdep checks, because
->>>> +	 * lockdep is not aware of HP guarantees.
->>>> +	 */
->>>> +	addr2 = rcu_access_pointer(*addr_p);	/* Load A */
->>>
->>> Why rcu_access_pointer() instead of READ_ONCE()? Because you want to
->>> mark the head of address dependency?
->>
->> Yes, the intent here is to mark the address dependency and provide
->> a publication guarantee similar to RCU pairing rcu_assign_pointer
->> and rcu_dereference. Do you see any reason why READ_ONCE() would
->> suffice here ?
+On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
+> On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > translation for remote processors is managed by QHEE and if the same SoC
+> > run under KVM, remoteproc carveout and devmem region should be IOMMU
+> > mapped from Linux PAS driver before remoteproc is brought up and
+> > unmapped once it is tear down and apart from this, SHM bridge also need
+> > to set up to enable memory protection on both remoteproc meta data
+> > memory as well as for the carveout region.
+> > 
+> > Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> > hypervisors.
+> > 
+> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > ---
+> >   drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+> >   1 file changed, 40 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > index ac339145e072..13bd13f1b989 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > @@ -122,6 +122,7 @@ struct qcom_adsp {
+> >   	struct qcom_devmem_table *devmem;
+> >   	struct qcom_tzmem_area *tzmem;
+> > +	unsigned long sid;
+> >   };
+> >   static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+> > @@ -310,9 +311,21 @@ static int adsp_start(struct rproc *rproc)
+> >   	if (ret)
+> >   		return ret;
+> > +	ret = qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, true, true, adsp->sid);
+> > +	if (ret) {
+> > +		dev_err(adsp->dev, "iommu mapping failed, ret: %d\n", ret);
+> > +		goto disable_irqs;
+> > +	}
+> > +
+> > +	ret = qcom_map_devmem(rproc, adsp->devmem, true, adsp->sid);
+> > +	if (ret) {
+> > +		dev_err(adsp->dev, "devmem iommu mapping failed, ret: %d\n", ret);
+> > +		goto unmap_carveout;
+> > +	}
+> > +
+> >   	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+> >   	if (ret < 0)
+> > -		goto disable_irqs;
+> > +		goto unmap_devmem;
+> >   	ret = clk_prepare_enable(adsp->xo);
+> >   	if (ret)
+> > @@ -400,6 +413,10 @@ static int adsp_start(struct rproc *rproc)
+> >   	clk_disable_unprepare(adsp->xo);
+> >   disable_proxy_pds:
+> >   	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+> > +unmap_devmem:
+> > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> > +unmap_carveout:
+> > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> >   disable_irqs:
+> >   	qcom_q6v5_unprepare(&adsp->q6v5);
+> > @@ -445,6 +462,9 @@ static int adsp_stop(struct rproc *rproc)
+> >   			dev_err(adsp->dev, "failed to shutdown dtb: %d\n", ret);
+> >   	}
+> > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> > +
+> >   	handover = qcom_q6v5_unprepare(&adsp->q6v5);
+> >   	if (handover)
+> >   		qcom_pas_handover(&adsp->q6v5);
+> > @@ -844,6 +864,25 @@ static int adsp_probe(struct platform_device *pdev)
+> >   	}
+> >   	platform_set_drvdata(pdev, adsp);
+> > +	if (of_property_present(pdev->dev.of_node, "iommus")) {
+> > +		struct of_phandle_args args;
+> > +
+> > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +
+> > +		rproc->has_iommu = true;
+> > +		adsp->sid = args.args[0];
+> > +		of_node_put(args.np);
+> > +		ret = adsp_devmem_init(adsp);
+> > +		if (ret)
+> > +			return ret;
 > 
-> READ_ONCE() also provides address dependencies. See the "DEPENDENCY
-> RELATIONS: data, addr, and ctrl" section in
-> tools/memory-model/Documentation/explanantion.txt.
+> Why don't you get this table from the firmware like presumably QHEE does ?
 
-Fair point, so let's use READ_ONCE() then.
+Well, AFAIK, QHEE(EL2) has this information statically present and does
+not get it from anywhere., but will confirm this twice..
 
-Thanks,
-
-Mathieu
-
-> 
-> Regards,
-> Boqun
-> 
->>
->> Thanks,
->>
->> Mathieu
->>
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+-Mukesh
 
