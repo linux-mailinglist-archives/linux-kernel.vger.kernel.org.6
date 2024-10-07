@@ -1,141 +1,110 @@
-Return-Path: <linux-kernel+bounces-353388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731B4992D2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08AE992D2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1622AB2433F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D36E1F23535
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8CD1D3560;
-	Mon,  7 Oct 2024 13:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760D81D356F;
+	Mon,  7 Oct 2024 13:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QCABMyHc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjrLWIKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659741D3564
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA581D2B35;
+	Mon,  7 Oct 2024 13:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307437; cv=none; b=YqUJKacv5bvDo3SOyCGqoR7ZAHIGoVIasAfxM6AlppebiqnyYbrZ9nswl3RCdoqc2iRFMY1ZZ/3D+WIftJDRhBkaCaqYbYtrV3JuJtM9MSu9F2/LRGylpQ+sCx/41U5+bpj/hCWMPeM5pT5VAYOlRf99Qh5M1Gx9s++7E0gWxTM=
+	t=1728307490; cv=none; b=t2G1FTkQpo6+ok+/l6kT4OHjhsiyKqGEZYtGMwOit3DGq4zqx1yBQXEZaKCTywf/Rm/5Jhr83x6bV76qSKD4zFbY/xB52gj5ePpkHad+H9j95pfxxQzuZCNbgcJCTg3zwzV3nMYd404TPfZfeUnTcB+ad+sjNp1HJKp9S/Gr4jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307437; c=relaxed/simple;
-	bh=l7PB8vmPFt0UC3cWpvhdxRfD+zy17/mAKmQGCajEi9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NYezwpPwmeKwFBwJZE28LTNEc7VyQ5tui/JYs7aA7cZmzh/xoZEO2owfAIdr+KQnpWPuPhb8ulyReSDqDx1xdlaUo6LnNx2ppVhgFYBi3bZZYWIJOiorL4JifkfRu7kTg/NW2iuelr07URAPywXMi2yMInhNVicODoU8mVzxg8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QCABMyHc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728307432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oss3ICSNrAKdOFGCKeG0o3dAFNOBHVsvSmNPB5Fkn9w=;
-	b=QCABMyHcoXXvM7zd0aLO90RoHxEUJ47luk9ufxnZJGzgg4noqeBwUoNDayXj0bX0yVNSWQ
-	Av7APqtE8Ifs6Hw0iWy9/9HfKWFXRF9Z+OVh/+4a0nK2bs3rC9FNHVIPANavx5yLkpecZ3
-	tXs0G0Ferh6nm8KMPMysTBhEIs0w5wI=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-261-fwxigLokN0eK35tm9o_CNQ-1; Mon, 07 Oct 2024 09:23:51 -0400
-X-MC-Unique: fwxigLokN0eK35tm9o_CNQ-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a9b6181a99so1123563685a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:23:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307430; x=1728912230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oss3ICSNrAKdOFGCKeG0o3dAFNOBHVsvSmNPB5Fkn9w=;
-        b=WM8hxwSLFvh7tzKSa2DLnbItX4gOSw7zHtsy2sE66MMlE5oKnSvAXusvTQWTDlz9jk
-         M0SI9zeK55sjGjV7/AYOMfr0FsZqCU6KJ3R0iAwDNl7S6EEiwMTaoTlVGFRRBCUdhRbe
-         oGfRuQ66YTxZS2UqhLUu9ZIo6pyrJ3hRPRMrt21gbTV0596L5u+bXaRzrhvZFdqw6Acu
-         u4Gs+SSe03c+lfw7v9EI01kW8nVFwLk+jGQUhKKhoqudB1ztxq5IswOzRspCfSIIgl7W
-         AETJrbRCqv+K0oTzQaJCXRiuLPAxYKd0u6LXkp+FDZmV7py7RR2yRBakFC0EYnZLAhZx
-         Yh6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFAGGSQpjwkj/x7yI5FKKjyKH9c+wubrA9kl9jj9qYXuFiGSmy3K2MWYOSqoz6dgqEI9b5DnDjZ5YrREs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4jh8ba77jFRB6q4pvCftuQlncdGQSV8HKGgw80cCkuQhQRqRX
-	Jda6hX7VopP25/gs55fa9MQBdKGRALxzKqyDEw9KnYx9mdHqfDL1sgI1QbkVrxjyY7XaEtrvrHM
-	JEyavf5GSjOVoei6w5bWLXaucOeU3jss8TLh12D+AfeHRknpWMXe/Pk7eBrpODQ==
-X-Received: by 2002:a05:6214:2d4a:b0:6c1:8663:e8f0 with SMTP id 6a1803df08f44-6cb9a438d1emr180438126d6.28.1728307430599;
-        Mon, 07 Oct 2024 06:23:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOwuVLJDMVviv8FvhVYRSLdM+vw/6uHZ/RtpIv7gJwA0MDjLHNEEhXPwvBiBNetWVJSwIfsg==
-X-Received: by 2002:a05:6214:2d4a:b0:6c1:8663:e8f0 with SMTP id 6a1803df08f44-6cb9a438d1emr180437856d6.28.1728307430224;
-        Mon, 07 Oct 2024 06:23:50 -0700 (PDT)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46e267bsm25698446d6.46.2024.10.07.06.23.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:23:49 -0700 (PDT)
-Date: Mon, 7 Oct 2024 09:23:47 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: manas18244@iiitd.ac.in, Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3] Fixes: null pointer dereference in
- pfnmap_lockdep_assert
-Message-ID: <ZwPg4znfu2yn2Qqw@x1n>
-References: <20241004-fix-null-deref-v3-1-f9459b1cc95f@iiitd.ac.in>
- <ZwAHFtAmMq9BNuGv@casper.infradead.org>
+	s=arc-20240116; t=1728307490; c=relaxed/simple;
+	bh=kOcohVWj9jo2graehXJSHjJ51Txxdp1oLXu2XXgJ5ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uaT2DCHTp0li37eECw20M+kPYjcEafMw7Ni4LWWOL+Ndj4T788GpIaZ4BfFKFnceKxDY+XL0DEUw8u+ltBNm0pl1RbCd073uBpUaGtaf0RiF4sIbOweD7Ht6OhO8YEX+Z2xl5G4bU8g2PS0o/32rLwgizjE3eupD4MkFAPQYe6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjrLWIKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDD0C4CEC6;
+	Mon,  7 Oct 2024 13:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728307490;
+	bh=kOcohVWj9jo2graehXJSHjJ51Txxdp1oLXu2XXgJ5ws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YjrLWIKpoLu5xL5iVGelS5WGWR01oSpsuocA3gv0d44nv3iw30SWVauWJDuGdgWll
+	 92s+0pRfoKcqD/frKb6Si4EbjwhPRbzJu8OepoLDNzYqU+YwY4gKDUGsZeBv8I8lXT
+	 B8J/FOtYrb/qGCmbacKaGUyLwsNbMpjRSBul/1UmUOUThvV7G7exQt8SUFWEW/ecN9
+	 odt+M6fyNls7nU0TJxuJqsxGKGXGA90dS9GCYRn5Fuxe1qiZPvJPT369BaBl9scpc5
+	 YctOIAfa+pxRvlg5a9Ct/Mz/QXmaKOWWWGoRS571XqP+6CUtjj0s8UOZ+2R62sX9BK
+	 NEYQXnhXSuKNQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+Date: Mon,  7 Oct 2024 13:23:57 +0000
+Message-Id: <20241007132441.2732215-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZwAHFtAmMq9BNuGv@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04, 2024 at 04:17:42PM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 07:15:48PM +0530, Manas via B4 Relay wrote:
-> > +++ b/mm/memory.c
-> > @@ -6346,10 +6346,10 @@ static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
-> >  static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
-> >  {
-> >  #ifdef CONFIG_LOCKDEP
-> > -	struct address_space *mapping = vma->vm_file->f_mapping;
-> > +	struct address_space *mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
-> 
-> Overly long and complex line.  Much simpler to write:
-> 
-> 	struct address_space *mapping = NULL;
-> 
-> 	if (vma->vm_file)
-> 		mapping = vma->vm_file->f_mapping;
-> 
-> >  	if (mapping)
-> > -		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
-> > +		lockdep_assert(lockdep_is_held(&mapping->i_mmap_rwsem) ||
-> >  			       lockdep_is_held(&vma->vm_mm->mmap_lock));
-> >  	else
-> >  		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
-> 
-> This one should have been lockdep_assert_held(&vma->vm_mm->mmap_lock).
-> 
-> I'm not sure that the previous one is correct.  The
-> lockdep_assert_held() macro is pretty careful about checking
-> LOCK_STATE_NOT_HELD to avoid the LOCK_STATE_UNKNOWN possibility.
-> But I'll leave that for Peter to fix.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Indeed..
+The k3-m4 remoteproc driver was merged with incorrect dependencies.
+Despite multiple people trying to fix this, the version 6.12-rc2
+remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+when the driver is built-in.
 
-Then looks like we could have quite a few other places in Linux that can
-have used this wrong.. when the assert wants to check against either of the
-two locks (one mutex or rcu read lock, for example) is held.
+arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
 
-I'll send a patch after this one lands.
+Fix the dependency again to make it work in all configurations.
+The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+dependencies. The link failure can be avoided with a simple 'depends
+do, so turn that into the same 'depends' to ensure we get no circular
+on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+we use elsehwere. On the other hand, building for OMAP2PLUS makes
+no sense since the hardware only exists on K3.
 
-Thanks,
+Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 955e4e38477e..62f8548fb46a 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+ 
+ config TI_K3_M4_REMOTEPROC
+ 	tristate "TI K3 M4 remoteproc support"
+-	depends on ARCH_OMAP2PLUS || ARCH_K3
+-	select MAILBOX
+-	select OMAP2PLUS_MBOX
++	depends on ARCH_K3 || COMPILE_TEST
++	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
++	depends on OMAP2PLUS_MBOX
+ 	help
+ 	  Say m here to support TI's M4 remote processor subsystems
+ 	  on various TI K3 family of SoCs through the remote processor
 -- 
-Peter Xu
+2.39.2
 
 
