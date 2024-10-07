@@ -1,271 +1,118 @@
-Return-Path: <linux-kernel+bounces-353258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AC9992B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A049992B4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FEC284CA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FDC283E2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F541D2226;
-	Mon,  7 Oct 2024 12:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EB61D278B;
+	Mon,  7 Oct 2024 12:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lhTXB80a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+83ssanX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lhTXB80a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+83ssanX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oiZ0Beg4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CrDJK1M0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8737E1D1F70
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110061D14EF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303312; cv=none; b=tfF6aixhGaOPnop4WJxVJftSLHRzslfHnIC3BcwFTzX8CtQqCXQSZQ5s/FifMxxZK/T9TPmUkxKmnX/t8NWKg8+QirfWxeWD/X1TJ2kcs2VwQ6rMO0kqaZcuX40ticJeHEySJ4CwZoh1NUFIcVoZBKwpE0pTEKxbilcjbw+A/JI=
+	t=1728303319; cv=none; b=euUiJhw4KiCMZzeRf8tIyjfV3tHbRokrZCTuSsEr1KShnT42u/NZT9KDFJast9mG0GAmURUtNnExTsJR16vRXO4x4H6NGIsdH8/xYAn1tmjxn4yuQKQEoaqVNj60/Zs+hBjV9+26UturUNl1PEcPLUVK4fMnki+qxduvZN0Bkks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303312; c=relaxed/simple;
-	bh=+/xJ8Z6HrYWjc7E8zIU87JxlrwnrD3aL5KY6Ii+yuqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h2pNGWio1q4Xe5YmOHYo9/3u+lmE0GG7GjMnbdOET5NGlCwKXXIk26+ltDULhHwItHr2Us/OhycxgYHfQqKRBx9dp2t7ccEoBBjZ0v/DxrSP+eVYpOnBvYNF8uatKYw+A95g4kUwKJ1Eoelra0JoA258ihJkAfhnrhXbQxnCF/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lhTXB80a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+83ssanX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lhTXB80a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+83ssanX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 72C1321B71;
-	Mon,  7 Oct 2024 12:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728303308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1728303319; c=relaxed/simple;
+	bh=9iVYFEq1ykxjFt9FNfnm2ItAHCxT85pRANw5sv3iG/0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rFEPh9dyY4sZa0PsvGqE8a56mxTkfV6VEFOQojAA+6OxiRCyKYZdzarDkDtMbhoHHdAqsqzXVzQEUfL0iS7NGBnIYdQBbnGXpJ/9rdrk8MmYZg4g7pniy47RHKYM7n10q7KhTEMqccxuNHQ42umw+/kA2n0cFggzFTDGPGuYdaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oiZ0Beg4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CrDJK1M0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728303315;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=u2ouv1GShtv7jkf/iHriBRHJG0IgJ+grVNYQ8hpVznw=;
-	b=lhTXB80alR9VCihHgs2B6QQPX4Z5rqoCcxpMZ7rnSScjnN250O6p+4ddEAgEYw3+GWXfZe
-	Fjr8jMLtizpkCH+iUJKudjia12/+QfbVr9MMG8WlmB+iS1smlROphNOdtNwtDxS9Tn9NpW
-	hvJoWJD2nW598iqhUDWWhUTTOFTjCkM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728303308;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=Khy/Vpb3Cpqoid98/sKAjjeRZJEkCQjeQ965viyeid8=;
+	b=oiZ0Beg44ouJADTmTIfa1EhUMQXX+7SvIT33gvQNKTqoLvu5WEMGO075qqyZgjlgcUZp8f
+	zkiJ4JIP0VyxUa6lztIS0ssGHCcxzbzRTZPbatZPvT5tChurHCu98oSgKO67BApgIX9sT8
+	EfZdBW4YIg6yq+BvlP8kofCkBYOiJQG/MzR5jtzFrR3aJautYSHQIV7F/57uYr8Mex4wmJ
+	KOPHO4jtJ4Be852tsblyHMXcqe/FT3vbfualPOLA8kA8smgzbLS8VHmNCS4IsmB8SRiyyD
+	Z/lCDwiWGiVU3GFLvN1EODApFYp1k8EnAC9DfrUgHaAhbti9YgPx4ywRNENZHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728303315;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=u2ouv1GShtv7jkf/iHriBRHJG0IgJ+grVNYQ8hpVznw=;
-	b=+83ssanXsYqqgSdiFHh+eFHz0Bviyv7SFUXvw6ZrHZkoMZT9qgobu1KjrB+iY7rQ48Z56e
-	p3/KWZPg4KeMVfDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lhTXB80a;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+83ssanX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728303308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u2ouv1GShtv7jkf/iHriBRHJG0IgJ+grVNYQ8hpVznw=;
-	b=lhTXB80alR9VCihHgs2B6QQPX4Z5rqoCcxpMZ7rnSScjnN250O6p+4ddEAgEYw3+GWXfZe
-	Fjr8jMLtizpkCH+iUJKudjia12/+QfbVr9MMG8WlmB+iS1smlROphNOdtNwtDxS9Tn9NpW
-	hvJoWJD2nW598iqhUDWWhUTTOFTjCkM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728303308;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u2ouv1GShtv7jkf/iHriBRHJG0IgJ+grVNYQ8hpVznw=;
-	b=+83ssanXsYqqgSdiFHh+eFHz0Bviyv7SFUXvw6ZrHZkoMZT9qgobu1KjrB+iY7rQ48Z56e
-	p3/KWZPg4KeMVfDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CEE513786;
-	Mon,  7 Oct 2024 12:15:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 09eoFczQA2feTAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 07 Oct 2024 12:15:08 +0000
-Message-ID: <1cd350d3-a450-4804-aabe-0e5b4accffa4@suse.cz>
-Date: Mon, 7 Oct 2024 14:15:08 +0200
+	bh=Khy/Vpb3Cpqoid98/sKAjjeRZJEkCQjeQ965viyeid8=;
+	b=CrDJK1M0Bmd/nvjoSSlu9+8j+gxZt0IP91jMPzDTdIeRhLFyInKL/WJbjCGJzkk+IaoLmF
+	KROOAzCkRmw//WAg==
+To: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>,
+ Chunyu Hu <chuhu@redhat.com>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2] locking/rtmutex: Always use trylock in
+ rt_mutex_trylock()
+In-Reply-To: <20241002190108.1115386-1-longman@redhat.com>
+References: <20241002190108.1115386-1-longman@redhat.com>
+Date: Mon, 07 Oct 2024 14:15:14 +0200
+Message-ID: <87y130t8h9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 hotfix 6.12 2/2] maple_tree: add regression test for
- spanning store bug
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>,
- Bert Karwatzki <spasswolf@web.de>,
- Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
- maple-tree@lists.infradead.org
-References: <cover.1728223996.git.lorenzo.stoakes@oracle.com>
- <12af588c6b3338bf6a73cd2d95943a83a44c3b42.1728223996.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <12af588c6b3338bf6a73cd2d95943a83a44c3b42.1728223996.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 72C1321B71
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,kvack.org,vger.kernel.org,oracle.com,web.de,gmail.com,lists.infradead.org];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
+On Wed, Oct 02 2024 at 15:01, Waiman Long wrote:
+> One reason to use a trylock is to avoid a ABBA deadlock in case we need
+> to use a locking sequence that is not in the expected locking order. That
+> requires the use of trylock all the ways in the abnormal locking
+> sequence. Unfortunately, this is not the case for rt_mutex_trylock() as
+> it uses a raw_spin_lock_irqsave() to acquire the lock->wait_lock.
+>
+> There are just a few rt_mutex_trylock() call sites in the stock kernel.
+> For PREEMPT_RT kernel, however, all the spin_trylock() calls become
+> rt_mutex_trylock(). There are a few hundreds of them. So it will be a lot
+> easier to trigger a circular locking lockdep splat like the following.
+>
+> [   63.695668] -> #0 (&lock->wait_lock){-...}-{2:2}:
+> [   63.695674]        check_prev_add+0x1bd/0x1310
+> [   63.695678]        validate_chain+0x6cf/0x7c0
+> [   63.695682]        __lock_acquire+0x879/0xf40
+> [   63.695686]        lock_acquire.part.0+0xfa/0x2d0
+> [   63.695690]        _raw_spin_lock_irqsave+0x46/0x90
+> [   63.695695]        rt_mutex_slowtrylock+0x3f/0xb0
+> [   63.695699]        rt_spin_trylock+0x13/0xc0
+> [   63.695702]        rmqueue_pcplist+0x5b/0x180
+> [   63.695705]        rmqueue+0xb01/0x1040
+>      :
+> [   63.695840] other info that might help us debug this:
+> [   63.695840]
+> [   63.695842] Chain exists of:
+> [   63.695842]   &lock->wait_lock --> &p->pi_lock --> &rq->__lock
+> [   63.695842]
+> [   63.695850]  Possible unsafe locking scenario:
+> [   63.695850]
+> [   63.695851]        CPU0                    CPU1
+> [   63.695852]        ----                    ----
+> [   63.695854]   lock(&rq->__lock);
+> [   63.695857]                                lock(&p->pi_lock);
+> [   63.695861]                                lock(&rq->__lock);
+> [   63.695864]   lock(&lock->wait_lock);
+> [   63.695868]
+> [   63.695868]  *** DEADLOCK ***
+>
+> Fix it by using raw_spin_trylock_irqsave() instead.
+>
+> Fixes: 23f78d4a03c5 ("[PATCH] pi-futex: rt mutex core")
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-
-On 10/6/24 4:31 PM, Lorenzo Stoakes wrote:
-> Add a regression test to assert that, when performing a spanning store
-> which consumes the entirety of the rightmost right leaf node does not
-> result in maple tree corruption when doing so.
-> 
-> This achieves this by building a test tree of 3 levels and establishing a
-> store which ultimately results in a spanned store of this nature.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  tools/testing/radix-tree/maple.c | 84 ++++++++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
-> 
-> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-> index 1873ddbe16cc..5fde09999be4 100644
-> --- a/tools/testing/radix-tree/maple.c
-> +++ b/tools/testing/radix-tree/maple.c
-> @@ -36406,9 +36406,93 @@ void farmer_tests(void)
->  	check_nomem(&tree);
->  }
-> 
-> +static unsigned long get_last_index(struct ma_state *mas)
-> +{
-> +	struct maple_node *node = mas_mn(mas);
-> +	enum maple_type mt = mte_node_type(mas->node);
-> +	unsigned long *pivots = ma_pivots(node, mt);
-> +	unsigned long last_index = mas_data_end(mas);
-> +
-> +	BUG_ON(last_index == 0);
-> +
-> +	return pivots[last_index - 1] + 1;
-> +}
-> +
-> +/*
-> + * Assert that we handle spanning stores that consume the entirety of the right
-> + * leaf node correctly.
-> + */
-> +static void test_spanning_store_regression(void)
-> +{
-> +	unsigned long from = 0, to = 0;
-> +	DEFINE_MTREE(tree);
-> +	MA_STATE(mas, &tree, 0, 0);
-> +
-> +	/*
-> +	 * Build a 3-level tree. We require a parent node below the root node
-> +	 * and 2 leaf nodes under it, so we can span the entirety of the right
-> +	 * hand node.
-> +	 */
-> +	build_full_tree(&tree, 0, 3);
-> +
-> +	/* Descend into position at depth 2. */
-> +	mas_reset(&mas);
-> +	mas_start(&mas);
-> +	mas_descend(&mas);
-> +	mas_descend(&mas);
-> +
-> +	/*
-> +	 * We need to establish a tree like the below.
-> +	 *
-> +	 * Then we can try a store in [from, to] which results in a spanned
-> +	 * store across nodes B and C, with the maple state at the time of the
-> +	 * write being such that only the subtree at A and below is considered.
-> +	 *
-> +	 * Height
-> +	 *  0                              Root Node
-> +	 *                                  /      \
-> +	 *                    pivot = to   /        \ pivot = ULONG_MAX
-> +	 *                                /          \
-> +	 *   1                       A [-----]       ...
-> +	 *                              /   \
-> +	 *                pivot = from /     \ pivot = to
-> +	 *                            /       \
-> +	 *   2 (LEAVES)          B [-----]  [-----] C
-> +	 *                                       ^--- Last pivot to.
-> +	 */
-> +	while (true) {
-> +		unsigned long tmp = get_last_index(&mas);
-> +
-> +		if (mas_next_sibling(&mas)) {
-> +			from = tmp;
-> +			to = mas.max;
-> +		} else {
-> +			break;
-> +		}
-> +	}
-> +
-> +	BUG_ON(from == 0 && to == 0);
-> +
-> +	/* Perform the store. */
-> +	mas_set_range(&mas, from, to);
-> +	mas_store_gfp(&mas, xa_mk_value(0xdead), GFP_KERNEL);
-> +
-> +	/* If the regression occurs, the validation will fail. */
-> +	mt_validate(&tree);
-> +
-> +	/* Cleanup. */
-> +	__mt_destroy(&tree);
-> +}
-> +
-> +static void regression_tests(void)
-> +{
-> +	test_spanning_store_regression();
-> +}
-> +
->  void maple_tree_tests(void)
->  {
->  #if !defined(BENCH)
-> +	regression_tests();
->  	farmer_tests();
->  #endif
->  	maple_tree_seed();
-> --
-> 2.46.2
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
