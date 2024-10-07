@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-353184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CB29929FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F32992A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B792281D56
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63B61F23271
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D121D1E60;
-	Mon,  7 Oct 2024 11:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193911D14EC;
+	Mon,  7 Oct 2024 11:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PJno7Z3y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l0CW2jiy"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pJ9Ugfhj"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0297415D5C1;
-	Mon,  7 Oct 2024 11:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49541D0F63
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299233; cv=none; b=mg5MmERwmBDmjcPMmvmfHk+2LwQ1Mk5cijCbuDutAkudjgvjWYMPnfOBnEJDoyh/GAZ2DwRBW7PBVakjvWWVc3L5YWmvOr+hk79LFlF5sPGeuKKCkeDHtamWhzXQ0oL78oMWLP8FuLGqOTd8TcLyvv0hBwVWIHQ331akTyo1JaA=
+	t=1728299431; cv=none; b=WMrIFOY8VCu4Zq4+3wuj1c0N8LIlDnjnh96ippuL5G/JpUubELvOysQY3HG/1mbBc/BmLaxE5ErTFLyACkeoKZqJxjskhj1/y/m4ZMBCn4Ar2JmsP5GHacXfd/NrY6vBSrI+8/w4Ujs7CYdsGdAnzG1Wf7nhnstd8qY0IJFoqa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299233; c=relaxed/simple;
-	bh=AS2rWejTqgWwgGHKJdZPlVVbXELfLdISXsY49qCakVg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NozfHjI3d6FZG42RSv8pZQUvsnbFZSYdFZuzAYrPSjoM2O8fQpWIDgMFvD9BS5IIfA1BzK+E8NdnmlNQ4oJvP+YhSPXEOOssyemgs2Cwrj7Z4v5MOQrboXGlnz7wfnFDkRF1wl9Nb4PwTe1RjZ9y1DK+kiN4asOCLgcbZIdFIjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PJno7Z3y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l0CW2jiy; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id EA5F513802B9;
-	Mon,  7 Oct 2024 07:07:10 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 07 Oct 2024 07:07:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1728299230;
-	 x=1728385630; bh=ni3WIyeThbcVPqHPIH7k38Z//qYq+R+HBGbjR7fgWb0=; b=
-	PJno7Z3y4c9x6rcLNdIJGTEeESilPp4NVk0zxvb40R9pBYEwS7cZ18uw9F04PHtd
-	MbnE9X2Tj61oyajwmHXVyV7uMBMmYmES10SF82Krvv9yH5eI3chfn1KkB0PiyKqE
-	g1RnuVgQCAodSaOYO0hqNP7X0MUIAlBzY5HHnETmgtFR5vnkamXXa6AQzQOWm43Z
-	+amsps2sO63pMn6ZKbBLhHCLnAKGBif5q01HYVmbS3XYcU08CmrK89xJCufCgc5Y
-	rGdq+RmUoVBLaj3mS0efxSMH8a0q0ZgrQi5avWU+90XAFLsvDnOimok5F9ajkdhf
-	83JfeCLsREwqOy4wkbltCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728299230; x=
-	1728385630; bh=ni3WIyeThbcVPqHPIH7k38Z//qYq+R+HBGbjR7fgWb0=; b=l
-	0CW2jiyG9Nb5apqBr6QTLrvZApy7Fg2CNbZqWrAKeNQAOdrjC0aP7FOdeUZ4HfyT
-	lD5b1QKcTZELxNoxj6PH+pvDQz6b5x4fmJyLXmr3MB1yxiFtJTV48ISfL1E6CxLN
-	zFQd0bRvpMnNfsnWTvKFitQ9FASAjz7k222voJzJCnmuJVZijOTZ1cNmHsPWGAVL
-	8cgDpiwBHv7IqVx3yeAw/mQjAeUrNLcTjsYU/j8eSsOyao7NBh4hU1tz4+9FJbxq
-	Tn5JjhPxiq9pAevFWnbf9hIaMVSur+fbSQBf9RDLyGjwzI2UTmEAfkHK62Dfqipc
-	/wtV1yY5HfK4jpfCLny8Q==
-X-ME-Sender: <xms:3cADZ3JvJQ82KCTwczV3Spf4MNe8APw90EdIg_UldcgTJxhqd0bh2Q>
-    <xme:3cADZ7L7HvbqXc79agm2pniqmpREtsLB5T8E96lC0th0oEi3gPlPEoU65xWdZPlg6
-    czdLc8eLk8_iiwVWRE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgfeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghp
-    thhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtph
-    htthhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdp
-    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnph
-    highhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgu
-    mhhishdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:3cADZ_tuy_yKfecMmWDLnM-MNJS5mpq_8tqEPugWJLYDfQcnjOXsfg>
-    <xmx:3cADZwYvm6ZqCnmJEN4YsVt4LjTDpcotldd5XMVCGLMOi5ZItMhTEQ>
-    <xmx:3cADZ-YtHia2ComIyHQ8tOl7P0YNMgego9OlI8cSM_lvppQcn9mdXg>
-    <xmx:3cADZ0DLBJ2rdDF8KpMrlXPW8CL0S4YMQo2QWsP03_NgZQkMrX--tA>
-    <xmx:3sADZ2O_1Bn7VrNf_6HihsweqDARBU6PwyT_cbRugRo00aWaolixcmZa>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2FA272220071; Mon,  7 Oct 2024 07:07:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728299431; c=relaxed/simple;
+	bh=IEogS7qBcDkIxH/lDa0FbA0H02Lh473WsQ2JuEKUmU4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=kIHJbrUL0uOA52Z3yo0KieIrGUsxG0i9K+Xmm6hHGEvE4QfKtT5RIlvAv295fLSg8mKcAnAbcFczl2LW09xT5TAmeRolrK5oX7rqlNW19gF2rEv8V6VzGkOp4iB91RItyNrRimwaNfjlgTAfL8EkJJKgKoQzpFcz049MSWT0UdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pJ9Ugfhj; arc=none smtp.client-ip=43.163.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728299401; bh=sI7g+cXO6Bskawnkt36EGxrET2f84T1y5C8hHcCBfok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=pJ9UgfhjaUq6wdmXK6lnL7U/N4DFvmLoVSzcc48mAKdr4k5NSDQHKkewezGPgeG00
+	 I7pKbHJdWwlVCM+qxHKa8HynCANcHHKHS8K2KsjaQ9P/lbnUolp63++x/3D8kapB3E
+	 VTi53O8eUajQnuucGlKjdAQrEXaYc566GXa+exkM=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszgpua4-0.qq.com (NewEsmtp) with SMTP
+	id 27B35876; Mon, 07 Oct 2024 19:09:59 +0800
+X-QQ-mid: xmsmtpt1728299399t6j71migv
+Message-ID: <tencent_EE134FDF8DFFA5E18D84121FDDE5DDB41907@qq.com>
+X-QQ-XMAILINFO: MyIXMys/8kCtYudmUXYSJ7u8+QYzXlmuDhVI3C+surwzAA+C28q9tBvOvoYoDI
+	 4T2h8VEVr28UlMwqpNE5WlISBSzHPAIpKlE48bzO0Ww2XF3qWtUjiLCxV7WKNJP4bYYZksyM1e6G
+	 BIAi8iIhk4qCh+iOjjDJqtFOl57Z24WyxdUP9iIn51M07ZG6IFAkel4Dj3QO86GZbqeMFcJjFk44
+	 oQkke1zWqT8/voUmlNdMBAqB6QFV8qksG9DzLKqOQdhxSJW5D4IKIw0/aHkJvOCUM9OCxNcEHUzV
+	 QYcxEA13TXzcxXaa2Ll/KJczcgFmhwAy329oqoUEBJs9o/RCB3UKw+LqEvVS+nIQzOuZmxLZUl/w
+	 Eajg6J3BbWU6jWXk2lI86EmQgmwi7FEHlMcNSC2e3zPzKQLyi1czcbCa6Lou6DsdzkxMbC8G21ct
+	 dPRyOljlA9TFMyJ28wzpblKQW7GKefnJ5+XnZWZ4nSM37hoV5ZgLZMe7uc+dO1RxaQjS7BIX18kz
+	 lBw/BnSPGUd3gnqK3W6a4JMlffv3jUXaGUoM4IoMASJjvrm44+iEG1QFV47HZU/zQKuVIA7O8Uuh
+	 auiu1OsHdZrIVGx7w93qcAI6A5qW71zOCjwM/YlZuGNuWVrrNT7xfrCwnl8JjVh7kiHBgIPHLp3M
+	 F+rauaxIZLvsBey8KmJGcPszYdrr/Os3uqWyhXoHo7GzTt8H2Fv+q/FlGjy2HvXj8OUHreUPKfXG
+	 dZ5f8xijwoQGyX8bu8/FfWSoPXunvLKEJGbZbJeozro1dOwpMsM3uRCuafovBWTmQuo+nYH3it7Q
+	 9QMI0DsD/j1JdDJlOyw/XrpJLIC4Lc3KF1kuA1aJH4lD5moo/W4ZJ9KWTatHtdZWFaGQBgJWMLWa
+	 eZlUKr88jYzdvIaui53AMxuI4N3h4xYkrLBVZ1CA8tLqvsO2LtwXiaoOqxyNNW6/aagQHvvlqr
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] ntfs3: Fix WARNING in ntfs_extend_initialized_size
+Date: Mon,  7 Oct 2024 19:10:00 +0800
+X-OQ-MSGID: <20241007110959.3380145-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <6701c108.050a0220.49194.04ca.GAE@google.com>
+References: <6701c108.050a0220.49194.04ca.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 07 Oct 2024 11:06:47 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
-Message-Id: <140c4244-1bb2-404c-8372-1e68963eeea5@app.fastmail.com>
-In-Reply-To: <850cdc2a-a336-4dab-bc7a-d9bcae3fb3cf@arm.com>
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
- <20241003152910.3287259-3-vincenzo.frascino@arm.com>
- <423e571b-3ef6-4e80-ba81-bf42589a4ba8@app.fastmail.com>
- <850cdc2a-a336-4dab-bc7a-d9bcae3fb3cf@arm.com>
-Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 7, 2024, at 11:01, Vincenzo Frascino wrote:
-> On 04/10/2024 14:13, Arnd Bergmann wrote:
+Syzbot reported a WARNING in ntfs_extend_initialized_size.
+The data type of in->i_valid and to is u64 in ntfs_file_mmap().
+If their values are greater than LLONG_MAX, overflow will occur because
+the data types of the parameters valid and new_valid corresponding to
+the function ntfs_extend_initialized_size() are loff_t.
 
->
-> It seemed harmless from the tests I did. But adding an '&&
-> defined(CONFIG_32BIT)' makes it logically correct. I will add a comment as well
-> in the next version.
+Before calling ntfs_extend_initialized_size() in the ntfs_file_mmap(),
+the "ni->i_valid < to" has been determined, so the same WARN_ON determination
+is not required in ntfs_extend_initialized_size(). 
+Just execute the ntfs_extend_initialized_size() in ntfs_extend() to make
+a WARN_ON check.
 
-To clarify: this has to be "!defined(CONFIG_64BIT)", as most
-32-bit architectures don't define the CONFIG_32BIT symbol
-(but all 64-bit ones define CONFIG_64BIT).
+Reported-and-tested-by: syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e37dd1dfc814b10caa55
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Arnd
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 6202895a4542..c42454a62314 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -178,7 +178,6 @@ static int ntfs_extend_initialized_size(struct file *file,
+ 	}
+ 
+ 	WARN_ON(is_compressed(ni));
+-	WARN_ON(valid >= new_valid);
+ 
+ 	for (;;) {
+ 		u32 zerofrom, len;
+@@ -400,6 +399,7 @@ static int ntfs_extend(struct inode *inode, loff_t pos, size_t count,
+ 	}
+ 
+ 	if (extend_init && !is_compressed(ni)) {
++		WARN_ON(ni->valid >= pos);
+ 		err = ntfs_extend_initialized_size(file, ni, ni->i_valid, pos);
+ 		if (err)
+ 			goto out;
+-- 
+2.43.0
+
 
