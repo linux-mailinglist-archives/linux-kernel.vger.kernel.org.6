@@ -1,273 +1,268 @@
-Return-Path: <linux-kernel+bounces-354086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE9B993792
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D7C993797
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2304328344B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E311B283ED7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF91DE2B6;
-	Mon,  7 Oct 2024 19:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E001DE3B7;
+	Mon,  7 Oct 2024 19:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fYtdG1vy"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rq3+tAg5";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="E2iWvNU7"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9858C1DE2C6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 19:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728330333; cv=none; b=RTjBdFuST55m14EI7Qx2FM2GW3KNHZpw+IFCCpSMITA4yuhEaQw2rlm5UIJfQ/WyldrwtjqdkP+VR3QJBxxoCtRCh3TynfjXlpqREYjaib9O0YgPKxga31Xy/Z3WzaZTJZbiQAl0s7nUsBmMB30j5b4SEyw8Qm6YGc+ofUN1s7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728330333; c=relaxed/simple;
-	bh=sd0aljgsaALafyniTMZ4sWCjd/ZVf8X3lzbQiOrrN5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=puO39Fh61wqUk0weajWmrn0PoRNapClQKYIUbuMnzT2i+BVh6Olop5sUlMtzCK3IS+Os9enENRBeqKG1P4PNCYdGeJFVobY5bSSiYCAFjxSXcocprA8urL1RVe+hl++2nLYsRE1IyEvuMnM+97A0a2fz/ywtjeNZXdlEMupaYs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fYtdG1vy; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71dea49e808so2746558b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 12:45:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1313698F;
+	Mon,  7 Oct 2024 19:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728330454; cv=fail; b=C8rssj/4HFgt33UIwNBGdFa4fAyfyRJn/vjGcCKBXgcizx49cE10cbJH6NDePol44jBU/MbArlpLZ/hBkwszuET+dYd7immORuFJZqNMxoEgzgjkVlMsfME9HBFyhpq/MykgDUyvh7AsAVKePTucmJ+VpLJdQw7wUeGH/o1vJIM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728330454; c=relaxed/simple;
+	bh=rf8ajkfspBt8sD/yJXrwFawe3/6rl7UVabk3tY1vJ0U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=U0M36AlGhrePGM3W7p6SsuhEYVJBm7wLtLBZp/wMAh84sRo+jNud0TDphVoVLvTGxUnfj2P9bFLNI45IcWDZxFn54V/f+d9O6YLzZ468w6EbhekzWcx/KSyZqRwp2lAlTw04/wma15Cojcph8N8s4NPFyHwX4lDijRAjnweD4FI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Rq3+tAg5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=E2iWvNU7; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497JfdxO032630;
+	Mon, 7 Oct 2024 19:46:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=SIRDZP3izk3vXTqmYDfkmIShmUGJnD4Baw3hxUHnpQg=; b=
+	Rq3+tAg5T9qxYEBIUsTZ9cKC59o3eAOdj60PKav7uFOJgcKNbXnF78+HV0XW6DnI
+	7Bv5Nddxn3VypjewLFRrLz3EGcTEExvTRiUvdB0guYTFcTglTDi9AurbTDcBIJgy
+	LKBWrsRHSonSaLiMIBckTI+6WtnxReVJNvOJFA7nr6dnmwdQCDBXsQfuOreHJSY9
+	p8m4MmDs7O2a3nRXj3z94bWdQuyWa9xuv3lCQBFyWZ6ULzQ7rENFvwGRDqTrcHYY
+	DEVf7PnqMpAvSdtgdhf3AFGXhFhuEHbr3EU2SjPodOuI+YIHIQgBazEXHDZQYTa4
+	yz+m37Q5sUKnJPEU6oV20w==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42306ec7p7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 07 Oct 2024 19:46:59 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 497IpehE001207;
+	Mon, 7 Oct 2024 19:46:58 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2045.outbound.protection.outlook.com [104.47.51.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw69339-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 07 Oct 2024 19:46:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WaIC/LCL0+NwR/PxsiodfOeXtnBjhyi+ABdzqnpydO4J3PPCWU9hh6q6ufN5ZtOlgvu8oratxXYmuqbAVlKQVjew6n04O/ZfegSR/4QQjHw7f+y6zAhYkqTKYsy2+79wHujGGNb36OTfVwxG6a5MjYbheR39Ythv0P2y+qz5vZFU5Qq0pjBU6fNUUA+LqeC/lkd3XWyJYA+ZPOk8o6rA0lmGoS3mujDxLSxorX0x4PB14DdgjRrH8D7Pw8TKtOn2WwfHoynsifQ0bGSPtPIIyhGA2rW8iZ5WjTuTLZ+JaU0Um+AgEWLWQ4wSvr5RB7xD+FcACCOf4tjUaQPIWEtXfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SIRDZP3izk3vXTqmYDfkmIShmUGJnD4Baw3hxUHnpQg=;
+ b=GEjS0QcCJuBJVgW3fNngVXOxGmatYA1ZppOzuolXu8KaEkdy3NCiZ2gvCGPjtHUHKRTLmimlbp0B9+9x6Ouoc34qBmHyXSu7TXOzgLqT/ihLa77MBEJuvKYa1UF11vXt0w+KoMXaZIaOBH7nAuyUCjsO14uSLswEDGcyAshweGbY5TdUF6wnyI/II2OzKUZulzw2g/1XD1yURtA55f2DGp5s81FtUiV6Xf02MQmfHrCA/PlOeYB1B9ZRJScR06Iqs6PBovAH9mijq6pCJZnRSOAquV/aD771MgdjnuhI9EIy1Hba2x1Mj9WEheC0txt5aRdoMMxOXTnwGetJcPvr7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728330329; x=1728935129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9RAFxs3FuDQybYi4PjaJjTbRO950dbl8DCm6Tr00teg=;
-        b=fYtdG1vyp/99hwyAdq7J1cQoM5dUNFL2P/W0ygdfqJ7dCGJO8GmVUm3NZ6lzJ/8gOj
-         6oSm1h3cKF6UelLU/oeNAd4nKgX1NfEyKcYLeqxQ2U1yMbir/XtJbHn1e8oHZo8Q7Gy9
-         nzk2vyp0OHKHmYDikKSo1c3imKLgMKp8U5AHXu3uLPfpy3H3Ayj9vBDsJtEdiWgQMk3E
-         BCAh+vcDftRilQ+F7nL71eor9wzqEcnwYn5fhcgeZ7FC/aqv757F03LAeNy8O1Ir7TbF
-         JIBA6Hzg1JtcBbDILxQfPPa2efZ1oQYwga7pqVhsW1gVnHNjQgDV9RJW9Lc3YIaDlT+z
-         aWrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728330329; x=1728935129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9RAFxs3FuDQybYi4PjaJjTbRO950dbl8DCm6Tr00teg=;
-        b=WxUG4XVrXw3mR9ythq1/N60qwutbZarnh1nnsyO5tyk6FG4iC0DJfkogH0HjrOHUx9
-         akYcd9ZpH2xODEXvZlk61wvJa2v+BbZpTEZ3KXLS7Qn8PvbFYY4sPXv4+wduKCAiUogB
-         WDUL/JDF71d+XFChJ0crGmndr6/9zzTjXXx8vDMTUmf9EWWbudgZ+i16XWGKD8MLfD2u
-         keHXK64Rdrq2ZD5aoyEkmE7GgJrsYyMH4oLpKWkMaP96G3F5B/5CUGdOCFartkTyW2Xz
-         TFnawkVY3L5f/e482f3NsGR3RV2OF1m58MjMjkbyraAS6uQWGIpSw7oFnM0eAYSUTje9
-         R/gA==
-X-Gm-Message-State: AOJu0YxVSVJNv0lgDz21PFmJJTw+2+Oo2EjcnvkZ4/itrgkaKf/4otaC
-	alTacVhcwBwU8rk4kbHx3nUm+0dAyELR1311y7AnlbGoKsg7Tgb3uAVSCfFPVg==
-X-Google-Smtp-Source: AGHT+IE+8305zjEby0xUHVDvQfeWsVamXB80fifa4YnEGSry9kBCCv/Q5DTuthbwK2fIiDc8iCIxBg==
-X-Received: by 2002:a05:6a00:1819:b0:70d:14d1:1bb7 with SMTP id d2e1a72fcca58-71df183dd06mr15074639b3a.28.1728330328510;
-        Mon, 07 Oct 2024 12:45:28 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:8fc0:b8ec:3cbf:9187? ([2a00:79e0:2e14:7:8fc0:b8ec:3cbf:9187])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0ccd084sm4771943b3a.51.2024.10.07.12.45.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 12:45:28 -0700 (PDT)
-Message-ID: <5e1a6c31-2e7e-414f-b585-87df483d6a7a@google.com>
-Date: Mon, 7 Oct 2024 12:45:26 -0700
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SIRDZP3izk3vXTqmYDfkmIShmUGJnD4Baw3hxUHnpQg=;
+ b=E2iWvNU74DymUHGo40VV1R+ZVY74/490ok85jJOmFHjFKVr884s4ZY+hfkv/g8CywAXo5gigoE/WkqW7LpsYRUzPEK2SnWvLILsyo7xR2ScioKtmjNptMnxHJmrtfR5LXDcpcpMII/mUMF0ci5bemEmDtF3E5e2pB0xMf+i9TNY=
+Received: from SJ2PR10MB7653.namprd10.prod.outlook.com (2603:10b6:a03:542::22)
+ by BN0PR10MB5077.namprd10.prod.outlook.com (2603:10b6:408:12e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
+ 2024 19:46:55 +0000
+Received: from SJ2PR10MB7653.namprd10.prod.outlook.com
+ ([fe80::47d7:5812:ea42:38bb]) by SJ2PR10MB7653.namprd10.prod.outlook.com
+ ([fe80::47d7:5812:ea42:38bb%5]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 19:46:55 +0000
+Message-ID: <843ee8cf-bd9a-45c4-b136-79a11a4396de@oracle.com>
+Date: Mon, 7 Oct 2024 12:46:52 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
+To: David Hildenbrand <david@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com,
+        viro@zeniv.linux.org.uk, khalid@kernel.org, andreyknvl@gmail.com,
+        dave.hansen@intel.com, luto@kernel.org, brauner@kernel.org,
+        arnd@arndb.de, ebiederm@xmission.com, catalin.marinas@arm.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhiramat@kernel.org, rostedt@goodmis.org,
+        vasily.averin@linux.dev, xhao@linux.alibaba.com, pcc@google.com,
+        neilb@suse.de, maz@kernel.org
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <nst3wauaphvvnkseuatqknxfhtu5ewf7zqmoskim5kt52wf2mi@sasls2f6r22i>
+ <d56b1326-74e3-4782-a5c7-0451f08cf10b@oracle.com>
+ <d080442f-be33-474b-9c4a-bdb57d14cd2c@redhat.com>
+Content-Language: en-US
+From: Anthony Yznaga <anthony.yznaga@oracle.com>
+In-Reply-To: <d080442f-be33-474b-9c4a-bdb57d14cd2c@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0337.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::12) To SJ2PR10MB7653.namprd10.prod.outlook.com
+ (2603:10b6:a03:542::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
- values
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com,
- Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240911000715.554184-1-amitsd@google.com>
- <20240911000715.554184-2-amitsd@google.com>
- <ae520641-38a4-405e-89d0-e0921dfc7cff@linaro.org>
- <2dab1111-49fd-43b7-8624-2d61b3d546b1@google.com>
- <ce64e869-4a52-4da3-b95e-d60a0247006a@linaro.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <ce64e869-4a52-4da3-b95e-d60a0247006a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR10MB7653:EE_|BN0PR10MB5077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a6ef270-fc1e-41bb-9122-08dce708cc6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?em9RSVdsa01pblZrZVB3Mno4QjVLM3lkNlZYdVRHcUJVZ3JEMUxhTU80emRr?=
+ =?utf-8?B?QU4xb25hR1k2M3c5QXo2TCt1TXVad21hbmF5cFJtQzNRcnF0V3pGNnlaU0lQ?=
+ =?utf-8?B?WmxJQ3ptaC9PZ2g2Y0VUN3RpTktxZGJzVTI4bURGK0t2Q2txWm1uQTM5Q1ZD?=
+ =?utf-8?B?d0pyRWRUdWhEb0lTdTdacW9PZUsvMFF0RjFqM2dHQXlhSXdUTGpXK0FUNEhp?=
+ =?utf-8?B?dVM1NEt6eFpTNFNaeUd3QWRCL3NsVmdYYmE5UHE4eDNnR0FlNGlIVGlTYmUw?=
+ =?utf-8?B?WVUyTlFKajM4OTJtZ1BFRVpqWGtCeVdPb1E2bkZqenAva1VySy9oaHo0d3hC?=
+ =?utf-8?B?cGRGRUdaMTNiWjJnc28xV2VCRGVNTGFDSGkrbDhMSkJEdEhnRTBXSkw0WVJU?=
+ =?utf-8?B?VGgvTzdhTUlodENTTTd5MWxkWjdLTXN0aXBoKzg2ZjRZNjcwL3BEbmhzSWhs?=
+ =?utf-8?B?em5FMllYUHZZWVBDYjhtaGtIb3FPTnU5VEs4VnBUdy9zUlJjeHlOczZNcit2?=
+ =?utf-8?B?YkdUL1BWeUdIUkVnTE01anZLNTlod3J5Znp1b243SEFvWjZWNUVMMGlKVHBN?=
+ =?utf-8?B?OFc1TVZwWkRFN3FKSG1vTzNnMGtmajZnZCtCY1JrNXVQNEYxdkNoSWMwZytK?=
+ =?utf-8?B?Y29WTENpOS96MGl3ckpoRWx6dEdGais0UTVLMWtjT2xrT1RHNHVxbmVMK0Va?=
+ =?utf-8?B?OVdKNUR3a1V5a2VWZCtuNHhkb05UcWxxUzlGNEdKMkxteW9VeVVkN2tQYTVz?=
+ =?utf-8?B?NFBidUxsQUVwQnJETXhXMnNFMWw1dFBpTThBNkZIdHRRZHNLb3NCemN1RXda?=
+ =?utf-8?B?VXlwOUM3K21ZSHNtWlVmSjJGUjBibTNIai9CUTh0REorSVhzaFdHZWJDY0Fj?=
+ =?utf-8?B?alZtTk1rVy80bDdFTFhxSkloWFpSNzlXc1gvU0l2UmtyWXdaUFdkcnNDUkw1?=
+ =?utf-8?B?bkYzWjVMNlhnL2VNYjhPcUxkS1RNank2Uys5VWdSazIwTkpjemtzNk1KTXAx?=
+ =?utf-8?B?VDJzZ2RnMmU5TW9QNTNnSXRzTWZqbFE1bHFOdk5aOWkyWi92L25UNnQ4dklK?=
+ =?utf-8?B?elcvaTV3ZzNkY3UwSEg3Zmw3Vzh5QUNpeklzWXZMKzM3UlUxaEVoSlY0c0NC?=
+ =?utf-8?B?WXBKWTFsQTZZRkVFdGFNRDhWU3AvUjJLdHBNd3JZbFNvcUVpQTRPNlVLdWRa?=
+ =?utf-8?B?UGUwRUsxVjNwSGtNMkV6UDFDb05QQ04zZ3NiZXpEYlVwSnFVNG1IN0NGdzAv?=
+ =?utf-8?B?bENZckhXMitxZWo1RWVFM25vTy9aYmd2MHh0RytISjNzVnRKYkRHeCt2TDdu?=
+ =?utf-8?B?YjUvN1hWMXVqQ29KaHE5U3RRanRiSWRiQlYrMzd1dHdUN2FBWlVoTmlaRXdK?=
+ =?utf-8?B?ZXdxdmNiN05DMkFOMHdQV01IM21OVFFMby9xQmtPVE9iTWVBaUlRQjdNQ1J6?=
+ =?utf-8?B?VkRmWmtoWmd2cmJTeEVzRllWTDV6dmM1ejBSOVU4NE5hdVlDOHovRk1ad1By?=
+ =?utf-8?B?QzlXQ0ltWFRVckVKSk5vcUg4ZlBpNzZnZlhucUVTclhDZ3B1cy91dSszVlRT?=
+ =?utf-8?B?Y3VEQTdyQWVxcElVcGs0WTV4NUg5V2tVbzhzUnRnRjh6c2FrTWpQZmhaYmdZ?=
+ =?utf-8?B?MEMyWlF1K3dHaFIrVjRnN3M5SnZuSDUzRWpmTWI1d2FPNlVTSWRTOVBtSnox?=
+ =?utf-8?B?cExtVk1ueDdtTngzenlMRVc0SkcrckZqd3hwODRiUURkOURpWkhaQTFnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR10MB7653.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RG5iTWZvUk1veFVXYXN0MzdDTFcwbWl6YmdGL2VqTFNaNXhSSWVhZHUyVGFG?=
+ =?utf-8?B?d2N3NFNkUnpTQ2M5eEhpcTlOc2RxVzljZEp3eVNqbW5CYzlEVnI4TXFiVzZ0?=
+ =?utf-8?B?R0NiTXl2eEQxK1Q0UHRoYWd4WXhLVVBPMXJ5SXhqdnFhR2FEOFJPU0diK3pi?=
+ =?utf-8?B?eUU0cXBZRUVFTlZMSU5HRWRqcWNFQlJrTU9xdEQyMzhuRHZJVnVEWEc4VGxy?=
+ =?utf-8?B?Um14VGdGdEh1NWsrU1ZEQ1JXbWY2SzN4MlJXUHdTMzVjcGN1Qnp6Rk1iRTdm?=
+ =?utf-8?B?SStpOXRYRGxPQlpkNVgzcHJlOVFTY285aFlIQS9XN1E0SDJBakpKQzBKVkFw?=
+ =?utf-8?B?bXplSXRNcWt0WU1NdHBBRFBjWHZsNTlGdXljSGNCa1cwQ3Zra0NuRnNjamtS?=
+ =?utf-8?B?M1ZRQURLTVRWUXo2OE04Ym1JMUQ5Z29PL3d2dmw3MGhSdjZESWsvMlpVazk1?=
+ =?utf-8?B?cHRYS3lUUVY1L0lPbW5xeFVwdVpNRnhRUkptMGt2SnBZQTNZKy9mU3pINFVi?=
+ =?utf-8?B?OWpYZVVLeTE0dWFRRFlRSk9naXVrYWVZNTJCZG00TG94Tkg5a2JUTm1lL2ZZ?=
+ =?utf-8?B?OVdkRUgzNCt5bXo5Uk01L3lJNFlNWHVaS2ZDQTB0MDZ4a1NiSXFocUxrSFAw?=
+ =?utf-8?B?ek9wenZ6UmZlb2syeXlkMkIyQk9YOU0zbFBza0tmejNxYzNVMkxCdG9aTm1Z?=
+ =?utf-8?B?Z210cEFFSHpTcGR6M1hLRUVjTWRZbmFRMjNKWDVERVZTNDd2TmRXWTZVZzl5?=
+ =?utf-8?B?WmlKUnVmamI5aTlXNGV0TGdzZVVxc3JocExWdDBDUEZCL1ZBZVNoR29MTTh3?=
+ =?utf-8?B?ZUYyeFJBZmRJbi9jNXo1eEpLcWQ1VDNmN1F3UlROdkN1cWJHM2ZnL3RhK2Uv?=
+ =?utf-8?B?MGlGL1RhSUhXbCs5Z3djSWpjTXRWMXRoU210aG1ucENmTFZpdzBoaEx1NkRv?=
+ =?utf-8?B?MmF1cmtZN1ZiWDRnYTlHMmhlcDEvdVBvNWJlS3diLzU0RFdEZkdWcGFTUGk0?=
+ =?utf-8?B?b3haM1U3SlVkbk9Nc25pdFBadEZiQ3JXcEh2OGZkeTlvc2tpMmVEaWhZdUpJ?=
+ =?utf-8?B?a3FSUWJHd3lDaTZHenJqeG5tYXlJcmd1dnF0WHlxOEdyMWh1NWw1WThwa3J2?=
+ =?utf-8?B?ZDJTenVXaXdaK0NpaGNiMEdQa0s3L3pMKzRGNTJaMXd5NG5UZE5KMGZaTjcx?=
+ =?utf-8?B?dS9wUG1YSnJOUDZlM0tGNUpJbWIxazlrcDZVQnNUeWphc1dHTVVDODlMNnZW?=
+ =?utf-8?B?TnBnekhWM2NzK2EzOVRoQUgxWjBpRURKYWFpS0lhL3MrNVkvN1FXNm5JRmFR?=
+ =?utf-8?B?cytHU2x6Y2VpejhYdG9WMGd5eGRBRXE1WEZ2RnVTR0hLNlVydFVWeTFDZXRt?=
+ =?utf-8?B?S3lWSkVPYXJiWVlRd1FmcjB5eWhnY2hOWktuTXczSFRBbkFZS3VqT1MrSEZr?=
+ =?utf-8?B?bXZpTVhXUlo5V1R1dEo3YjAwdEZva2RoeU1BOTNFbmxwN2FjSjJvTTJZQ0pp?=
+ =?utf-8?B?RUdyRktSTmRCUzcyRmYyZlRsdkRVbGZiNXFXZHRVQlRvTDVyL0JVd2Jwb1JT?=
+ =?utf-8?B?Z0QwQUFjNHlVbks1MVdtcHc1ZVBCb2dITG14QVZjU0RKeC9XR1RCOUk2emZs?=
+ =?utf-8?B?TS8xSUxhR2NaQU9mMlVUOHNTOWpwUEhqT3RPVzhqS0F2N2ZGWE1rcER6NS9v?=
+ =?utf-8?B?cDQzaHJDUGZ6cFhJN3NURUhBSWVpVDhTc2FMZGkwNEVrL3pmYzlwaXZ3dFNO?=
+ =?utf-8?B?MVBEWE9aaVRTdFU0TXdUL3dqdUg0YkkrcVgvQVZ3WGo2UStDZDRubFRMRmRF?=
+ =?utf-8?B?dkwrTWx1WnNLR1NsRmpJOGlENFVnUURyOFdHam1zcWJVWGM0cEQ4TGVzU0Jk?=
+ =?utf-8?B?d0dOOVNtTVpmR09WMmJkbXl0dmxlNW5hT2tTcjZCb3M0d1Q1VllFTzZIZ29l?=
+ =?utf-8?B?RjhjbjVRN0NXMGRORXUxcG5vcnNzT1Y1OXcxYlVkYXFKeGcvNDFyY0lyamhK?=
+ =?utf-8?B?VGlpRGZGQ1F1K0orYklXTjR6dEdmZzg4eFhzRjFjWWtUSlVLL01lSHNWc1cx?=
+ =?utf-8?B?UERja0NQZkNWQTg5L05WazZvb2VON1BLMFZhWHNFaS9IT0Z5UHZ3c3loa3B4?=
+ =?utf-8?B?V3FRSXFZZDlGQkFoZ1pEYXNxamF0b3VSVHR6eklDNUh4Zm9PR0VVUE1aV2ZF?=
+ =?utf-8?B?dFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4Ppq+N+UWxgRa3+61hbNeEJaAhVL/Dh50Xqg6obKOLuyMEflocQIthy/C7ck7020LP/fUuzfr2fZy/c7LH3P1mOIXGnDnltUrNxYfcbmHcfnjGvL4CN0mYI/pNq2+GEuorsUJ00kZf+xHmnaAoLuLcEmFLBrvV7pWCw8eSm/3zYMQhg/uolKgcva18RQaiGDn3QaN/yng8mkstR32+Uf3S//d6YVPN5Oo6yV0V4fjW1n3QWg+0N4d/RpM+4az34NT/JjHM/MLsiiAQmllernRorwiGYzg9eVYvIL27bUL/lsdfQCKY/nEsUvchkRKabIp4i6iEK4b8hHX6mfOsyK5ZcbjWOr2rYIfQazukJKQ2XrGGTjNgtzkdynTVNf39dmQD3kloSfkygRF+JyGf4Z3ykxJ6HZKYSsGlAhCl8eqxmHyvxT9IWRZ4PntNG+eHZbSPw4N9hJzAf86cOK/ZBePYOVYaeqo6FsRyuyOTlcbj6pVjzQamlr9zSuhsy/DG3SUM37H6Si/jwFf4yMxtZdJ0UAtcN3LZVAA8unJ/rtLAMLH2AU6atEe0pe7+w+0YrWdcPsU47zIiKrtJu5e0dP/N+vYhzfGyySnMwzTVX9wD4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a6ef270-fc1e-41bb-9122-08dce708cc6b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR10MB7653.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 19:46:55.5910
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HXCWQknt/q78zXNsSX83GGBWptIqIFHy9gqohM5F6VRxPLRhX0KKkUPPEuaeYNWQL1gVMC1q7csgb1sQBa2gBf+lX/84a/KflEUsUQeq//U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5077
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-07_12,2024-10-07_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=991 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410070136
+X-Proofpoint-GUID: uqgO3ruKJctyx0Ovo1zXrhz_meIcGAYJ
+X-Proofpoint-ORIG-GUID: uqgO3ruKJctyx0Ovo1zXrhz_meIcGAYJ
 
-Hi Krzysztof,
 
-On 9/27/24 12:48 AM, Krzysztof Kozlowski wrote:
-> On 17/09/2024 03:59, Amit Sunil Dhamne wrote:
->> Hi Krzysztof,
+On 10/7/24 12:41 PM, David Hildenbrand wrote:
+> On 07.10.24 21:23, Anthony Yznaga wrote:
 >>
->> Thanks for the review!
+>> On 10/7/24 2:01 AM, Kirill A. Shutemov wrote:
+>>> On Tue, Sep 03, 2024 at 04:22:31PM -0700, Anthony Yznaga wrote:
+>>>> This patch series implements a mechanism that allows userspace
+>>>> processes to opt into sharing PTEs. It adds a new in-memory
+>>>> filesystem - msharefs. A file created on msharefs represents a
+>>>> shared region where all processes mapping that region will map
+>>>> objects within it with shared PTEs. When the file is created,
+>>>> a new host mm struct is created to hold the shared page tables
+>>>> and vmas for objects later mapped into the shared region. This
+>>>> host mm struct is associated with the file and not with a task.
+>>> Taskless mm_struct can be problematic. Like, we don't have access to 
+>>> it's
+>>> counters because it is not represented in /proc. For instance, 
+>>> there's no
+>>> way to check its smaps.
 >>
->> On 9/16/24 9:05 AM, Krzysztof Kozlowski wrote:
->>> On 11/09/2024 02:07, Amit Sunil Dhamne wrote:
->>>> This commit adds a new property "pd-timers" to enable setting of
->>>> platform/board specific pd timer values for timers that have a range of
->>>> acceptable values.
->>>>
->>>> Cc: Badhri Jagan Sridharan <badhri@google.com>
->>>> Cc: linux-usb@vger.kernel.org
->>>> Cc: devicetree@vger.kernel.org
->>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>> Please work on mainline, not ancient tree. You cannot get my CC address
->>> like that from mainline.
->> I was working off gregkh's tree on usb-next branch as that's suggested
->> for USB development.
+>> Definitely needs exposure in /proc. One of the things I'm looking into
+>> is the feasibility of showing the mappings in maps/smaps/etc..
 >>
 >>
->>> It's not possible. So either you don't develop
->>> on mainline or you don't use get_maintainers.pl/b4/patman.
 >>>
->> The above branch and even the tree on Linus' master branch has you
->> listed as a maintainer
->> (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n17181).
->> I guess that's why the get_maintainers script probably returned your
->> email id when I ran it. Please let me know if I missed something :).
-> You really just skimmed over my email... I know how maintainers work.
+>>> Also, I *think* it is immune to oom-killer because oom-killer looks 
+>>> for a
+>>> victim task, not mm.
+>>> I hope it is not an intended feature :P
+>>
+>> oom-killer would have to kill all sharers of an mshare region before the
+>> mshare region itself could be freed, but I'm not sure that oom-killer
+>> would be the one to free the region. An mshare region is essentially a
+>> shared memory object not unlike a tmpfs or hugetlb file. I think some
+>> higher level intelligence would have to be involved to release it if
+>> appropriate when under oom conditions.
 >
-> So I REPEAT: You cannot get this email address you Cced. Point me to the
-> line in your tree having such email. The one here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n17181
 >
-> does not have it.
-Sorry I misunderstood. Will fix it henceforth in subsequent work.
->>
->>>> ---
->>>>    .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
->>>>    include/dt-bindings/usb/pd.h                  |  8 +++++++
->>>>    2 files changed, 31 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> index fb216ce68bb3..9be4ed12f13c 100644
->>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> @@ -253,6 +253,16 @@ properties:
->>>>    
->>>>        additionalProperties: false
->>>>    
->>>> +  pd-timers:
->>>> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
->>>> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
->>> timer of what? OS behavior?
->> In the context of USB Type C Power Delivery (PD), timers are run on the
->> typec protocol driver
->> (usb/typec/tcpm/tcpm.c).
->> These are used to keep track of min/max or range of time required to
->> enter a PD state with the
->> goal of a successful USB typec capabilities negotiation.  Eg., the timer
->> PD_TIMER_SINK_WAIT_CAP (referred to as SinkWaitCapTimer in spec)would be
->> responsible to keep track of whether a power source sent us (as sink) PD
->> source capabilities pkts within 600ms (say), if yes, then we would
->> transition to the next state or do a state machine reset. USB PD 3.1
->> spec refers to these elements as timers and therefore referred to as
->> such here.
->>
->>
->>>> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
->>>> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
->>>> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
->>> Do not describe what DT is. We all know what DT properties allow.
->>> Instead describe how this relates to hardware or boards.
->>>
->>> All this is wrongly wrapped. See Coding style (and I am not telling you
->>> the value on purpose, so you will read the coding style) .
->>
->> Ack. Thanks for pointing it out, I will fix both the above in the next
->> revision.
->>
->>
->>>> +      to assign specific values based on the platform. If these values are not explicitly defined,
->>>> +      TCPM will use a valid default value for such timers.
->>> And what is the default?
->> Defaults are given in (include/linux/usb/pd.h). But I guess I should
->> have probably mentioned
->> that here.
->>
->>
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->>> I guess you want matrix here.
->> Yes, I should have. Though, I will be re-implementing this such that
->> each timer is represented
->> as a separate property based on Rob and Dmitry's suggestion in
->> https://lore.kernel.org/lkml/20240916163328.GA394032-robh@kernel.org/ .
->>
->>>> +
->>>>    dependencies:
->>>>      sink-vdos-v1: [ sink-vdos ]
->>>>      sink-vdos: [ sink-vdos-v1 ]
->>>> @@ -478,3 +488,16 @@ examples:
->>>>                };
->>>>            };
->>>>        };
->>>> +
->>>> +  # USB-C connector with PD timers
->>>> +  - |
->>>> +    #include <dt-bindings/usb/pd.h>
->>>> +    usb {
->>>> +        connector {
->>>> +            compatible = "usb-c-connector";
->>>> +            label = "USB-C";
->>>> +            pd-timers =
->>>> +                <PD_TIMER_SINK_WAIT_CAP 600>,
->>>> +                <PD_TIMER_CC_DEBOUNCE 170>;
->>> Incorporate it into existing example.
->>>
->> Ack.
->>
->>
->>>> +        };
->>>> +    };
->>>> diff --git a/include/dt-bindings/usb/pd.h b/include/dt-bindings/usb/pd.h
->>>> index e6526b138174..6c58c30f3f39 100644
->>>> --- a/include/dt-bindings/usb/pd.h
->>>> +++ b/include/dt-bindings/usb/pd.h
->>>> @@ -465,4 +465,12 @@
->>>>    	 | ((vbm) & 0x3) << 15 | (curr) << 14 | ((vbi) & 0x3f) << 7	\
->>>>    	 | ((gi) & 0x3f) << 1 | (ct))
->>>>    
->>>> +/* PD Timer definitions */
->>>> +/* tTypeCSinkWaitCap (Table 6-68 Time Values, USB PD3.1 Spec) */
->>> Please expand this a bit, so we won't have to reach to external sources.
->> Ack.
->>
->> I will incorporate all of your review comments.
->>
->> Since you are no longer maintaining the
->> "OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" component, please let
-> Who said that? You CC wrong emails because either you work on ancient
-> tree or you do not use tools like get_maintainers.pl or b4. You cannot
-> get this email from proper process. It is not physically possible
-> because that email is nowhere mentioned.
+> I thought we discussed that at LSF/MM last year and the conclusion was 
+> that a process is needed (OOM kill, cgroup handling, ...), and it must 
+> remain running. Once it stops running, we can force-unmap all pages etc.
 >
->> me know
->> if you'd still like to be CC'ed in the subsequent revisions.
->
-> Damn, just use standard tools. You are not supposed to invent maintainers.
->
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
->
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> </form letter>
->
-> Best regards,
-> Krzysztof
+> Did you look at the summary/(recording if available) of that, or am I 
+> remembering things wrongly or was there actually such a discussion?
 
-Thanks for the tips! I will make sure to follow these henceforth.
+You're likely right. I'll review the discussion.
 
-Regards,
 
-Amit
+Anthony
 
+
+>
+> I know, it's problematic that this feature switched owners, ...
 
