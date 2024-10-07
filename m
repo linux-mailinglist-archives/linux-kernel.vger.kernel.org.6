@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-354098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C32C9937C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:58:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00BF9937C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FC31C2341F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89931C23518
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EBC1DE3D6;
-	Mon,  7 Oct 2024 19:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C834F1DE4C1;
+	Mon,  7 Oct 2024 19:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="E5WrB3yD"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFHd2I5v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFDE1DE2B5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 19:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF551DE2B5;
+	Mon,  7 Oct 2024 19:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331094; cv=none; b=rNOTSxyAabPUc12LODPFU8QkDewGU7OOfvswUGE92dHKdfA0f46INcnh13dZdBvwDK21dt1IELpI3TPVKcaRuWP0Sb1dEx0PmkGenyyZBSr7DypguFS/p8Og7S/3LCHaYVycKDOLuSHASko5KnEkv463sx+C1nH3EIh45ndI/BU=
+	t=1728331106; cv=none; b=YHi6GQqUhH8/xXXJeiA0uawKqh1+H0Dhq2KB4XZACkFM3vGIMmnijkxsDhH5cSyrOysJkvzKHhkj+SI6F4JJwR4oS6at/zdcENvq89f3wTGR15owcy4IXMGS/1dSgHt+cpXRTd+8dsU3bplMU7VI+IlRSTvRC2Mq0OaehMctCw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331094; c=relaxed/simple;
-	bh=Q/bYb1pMVMLVPVMVex2XR6Tq1r1mlNFkMhJ8glv5J2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YP3HgCbpbYRlt0FZUTo0efyE72IQb9dVdRLjUppQX0Te/oL4KRCX6oCJRWKHmK4waIuU+kM2+EHCqlSFCJuXT5gWFxcVvZi3WvGJ+FXSbNcwk3nVzXdLACBnnnO7V4ehmoPLDNKbCJsZOy/7QTkjiWYP0nm4JKyl4YF0pYdc7Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=E5WrB3yD; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0C4DB2C02B3;
-	Tue,  8 Oct 2024 08:58:09 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728331089;
-	bh=/39mV6iejhOw7NJUKNi2sJ5/2LRJSI5O8+WLMW5fWWU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E5WrB3yDoqeymGmaWmocm9AvIREPaktV5L1pcGcfQCJLEjsFHIVx14nwLmkCr+wOr
-	 QUQGmIU/nJiU7FL0JaJgtuToP9qkfTFuO1Xm+un4PVqSfPiIoywgcbLcoPXV05OdCx
-	 HHF7JcIEW2Io4Cn3xexlTu213hwrohv4NEXZSSvXE/AeVj8p+3v/uO8QGTmz4Oz7Gj
-	 3rBwhFOgkM2AKQ9Cui53UyWLgJCqZ2AHSdJIT2VREdw/MuuwBhiYAwlZGhTrZdr5rx
-	 FuZobVSJw/y81kWSAX8Fsb59bUUxpWuQt98NcJliRL9rHDceMO0fD5W3d7Gw7c+IN+
-	 5E0KjQ+fapoyA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67043d500000>; Tue, 08 Oct 2024 08:58:08 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id D5B3513ED7B;
-	Tue,  8 Oct 2024 08:58:08 +1300 (NZDT)
-Message-ID: <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
-Date: Tue, 8 Oct 2024 08:58:08 +1300
+	s=arc-20240116; t=1728331106; c=relaxed/simple;
+	bh=jwOtX6r++WHZfnmg4IDHl8MDobeXzZie00SaaYI+nvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqUR693hl+mvlpsq+knT/4b1mc1gCxbrmXAn2pk8UG+L18Sg2urJmDyiGG/kSkfgnOEWFLQrop7nTRrbS222WrFMshPr4mftq//jjmSNtXCdq4xB9N7xV8XkQWAd3XCFkBgUzMjqazQm7iRd2rwnjvcASOebo3YlwZcOknU3vNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFHd2I5v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B81C4CEC6;
+	Mon,  7 Oct 2024 19:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728331105;
+	bh=jwOtX6r++WHZfnmg4IDHl8MDobeXzZie00SaaYI+nvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WFHd2I5v9oyhBk6X701IKJE9K2+pCm8O3PXbH7/KPCARtxeQvkd0kN43TGsmA2TVM
+	 f2f9brH2ct0GI3bFc38XjWgIUn07Y9X24IXVQmSqtcLCo3FZ13ZCHp2envrM1C9Y6b
+	 JbPk6QehjXs6FwnjWrA63o5XoDSf0hM+NwZATILeBpMB9DGccNd2V8xZ+rQoZ1U8ps
+	 i7guyJfpR5InQeQv3t0kb4gaCH9it+pwOGoQ6EGsxQqc6/ON29zp53hro5JuEkWesh
+	 Y3mmu0e80D7RYagj7mlB6/+2mAAq7xQyhUZQT4WhxBhx8eARZTeqSbptzt9yVwcly3
+	 7p88L6cHQKkmQ==
+Date: Mon, 7 Oct 2024 14:58:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: controller: move properties
+ common with slot out to mmc-controller-common
+Message-ID: <20241007195825.GA2296490-robh@kernel.org>
+References: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-0-ad4eb22c2a8d@linaro.org>
+ <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-1-ad4eb22c2a8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
- <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
- <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=67043d50 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=gEfo2CItAAAA:8 a=3Y26vnuh6TdEGk8GsFAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-1-ad4eb22c2a8d@linaro.org>
 
+On Mon, Oct 07, 2024 at 04:03:37PM +0200, Neil Armstrong wrote:
+> Move the common MMC "slot" properties because they are shared by the
+> single-slot or multi-slot controllers, and will help defining a simple
+> mmc-slot bindings document with proper slot properties and nodename.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/mmc/mmc-controller-common.yaml        | 357 +++++++++++++++++++++
+>  .../devicetree/bindings/mmc/mmc-controller.yaml    | 344 +-------------------
+>  2 files changed, 360 insertions(+), 341 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+> new file mode 100644
+> index 000000000000..e02d3cbcc271
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+> @@ -0,0 +1,357 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/mmc-controller-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MMC Controller & Slots Common Properties
+> +
+> +maintainers:
+> +  - Ulf Hansson <ulf.hansson@linaro.org>
+> +
+> +description: |
 
-On 7/10/24 19:40, Krzysztof Kozlowski wrote:
-> On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
->> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
->> controller supports
->>   * Serial/Dual/Quad data with
->>   * PIO and DMA data read/write operation
->>   * Configurable flash access timing
->>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->> ---
->>   .../bindings/spi/realtek,rtl9300-snand.yaml   | 58 +++++++++++++++++++
->>   1 file changed, 58 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->> new file mode 100644
->> index 000000000000..c66aea24cb35
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->> @@ -0,0 +1,58 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/spi/realtek,rtl9300-snand.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
->> +
->> +maintainers:
->> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
->> +
->> +description:
->> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It supports
->> +  typical SPI-NAND page cache operations in single, dual or quad IO mode.
->> +
->> +properties:
->> +  compatible:
->> +    items:
-> Why 9300 cannot be alone? What does 9300 mean even? Wildcards and family
-> models are not allowed in general.
+Don't need '|'.
 
-The main thing about the RTL9300 is that that is what all the Realtek 
-documents use to refer to these chips and the specific numbers are akin 
-to the manufacturing part number that you'd actually order (maybe that's 
-a bit of a stretch).
+> +  These properties are common to multiple MMC host controllers and the
+> +  possible slots or ports for multi-slot controllers.
+> +
+> +properties:
+> +  "#address-cells":
+> +    const: 1
+> +    description: |
 
-The SoC/CPU block probably does exist as a separate silicon die that 
-they connect to the different switch blocks in the chips that they sell 
-but I don't think you can get "just" the SoC. There is every chance that 
-we'll see that same SoC/CPU block pop up in new chips (I see references 
-to a RTL9302D in some documents). I'd like to be able to support these 
-chips using "rtl9300" but if that's violating the wildcard rule I can 
-drop it.
+Ditto.
 
->> +      - enum:
->> +          - realtek,rtl9301-snand
->> +          - realtek,rtl9302b-snand
->> +          - realtek,rtl9302c-snand
->> +          - realtek,rtl9303-snand
->> +      - const: realtek,rtl9300-snand
->> +
->> +  reg:
->> +    items:
->> +      - description: SPI NAND controller registers address and size
-> Also: why no clocks? Binding is supposed to be complete. If it cannot,
-> you should explain it in the commit msg.
-
-I didn't add it because I had no need for it in my driver. But as you've 
-said previously the binding shouldn't care what the driver does.
-
-I do have the clocking info from the datasheets. I'll add it in v2.
-
-> Best regards,
-> Krzysztof
->
->
+> +      The cell is the slot ID if a function subnode is used.
 
