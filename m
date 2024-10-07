@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-352813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3689F992461
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:27:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4FE992463
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0FFDB22359
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:27:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6B41C21F70
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08633146013;
-	Mon,  7 Oct 2024 06:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780EC146013;
+	Mon,  7 Oct 2024 06:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za6B2cmi"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnXfJXfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781842077;
-	Mon,  7 Oct 2024 06:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F6E42077;
+	Mon,  7 Oct 2024 06:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728282452; cv=none; b=T7eGl/bcFecG8PbbVaT+1cwDpYCWgnw7upfXyGbmEYoTe82Z9VajqfG7dun13UeEwWAptGlMe0z5Yorvh2BLfNh4Zq7yh3qYRGsiJOjkJ+yeF18A+sAqfKnsphgGSzvj/jQnYzS18m9DKfbbvjuwOai19eJ7MlLt9yE/SRBRKP4=
+	t=1728282491; cv=none; b=aJDCx/tvMhd9x5AI0vcmcGZWJTtTz3vqx0jfFWQVqB6GXj9s0/x/Ji47pP40GF3pcbLa7pfuvc/Cx26AV/o994oQmFVoUPkOeKddAOXoyVf5ukop7LbNQMEFrOCQFVoJC92Oclc9WLk/Gt1sMnTI6ml0zPMFFMwnnvZJz+OavWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728282452; c=relaxed/simple;
-	bh=dez3qDZTCR7aj0lyd+8859UYCldz7p/KR65EToBPfFs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BNq2vbmIsfGj2H0hle0nW6jKU+donTg5TkkDNR5dTpZ4/BPFBuwfldowL0vCXraJ5Tbi6P40h/HbjC73CYIaPpjUKb7mWr5EAWbudTHs7ZjNQ/xirl9lML1ti7I5pBUdnfr9fQEHGxpR6xDsaVJd2YtxTZ7EkpgcEc9ziNiIFTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Za6B2cmi; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso41056455e9.0;
-        Sun, 06 Oct 2024 23:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728282449; x=1728887249; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3ljP640KoG3Wu+LMoLRmzVfghnukxnk+FpxQaSkZ3Ns=;
-        b=Za6B2cmiJ6aByhjrcX94MwyrUpwJlR+pOrk5dUROemf3WUgWgpwcjFfQ8/7MGSr6co
-         Lnf2D6KIOORQni2Z7o0rKK0/RVn5fJLOLzjBRvS0NfGFiwgLjG75P0z5gesqrJAChPZT
-         TjFVCMXlumrhKnKvrRH30bg4s5PDii976wZN8GuduWoeVFkpx6qpjCh44XlSuptlDLYd
-         PK2XiQp1yHZvJ0V+syrWgXm6DZVQU8PxMeyx4d1jTFpxfZ/nOBvqZtYqAck6IjSJ9xeE
-         pEn8H05iueSQfqFVP78pwD+OR++7bsdbF/8DyV5oH/JOmqDnbgR99TWvu3BE4+keHqE3
-         9ELg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728282449; x=1728887249;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ljP640KoG3Wu+LMoLRmzVfghnukxnk+FpxQaSkZ3Ns=;
-        b=JnrHxLQmVE+4J8NIKYksMEGjrqEe0sJJ9FtkwaNq/Mu9jFpscd4u3ZXT008Gzox9Qt
-         6q4SQHELzxuCaeNo1FdInhCt1oDEWB2ta/hS3MobjyakRDphntE9uldAUmWvId0+q1S1
-         Qhd3/vfOBNVZEWha0rWocRRFR9U0P7tsxlaZIiPHrCsyihalHVVFRVKpSguYh71yaNuo
-         ySuTbTxsnA5Jhhq/O1l/TWbQinMzVwhcuLEHOudCwbJBS2Dt0I3mtmAm/R27+nE7/knr
-         EmFDwDm8P7QWDyj3eSZIpKwBIqXy4DGiZTXQqMJaDG/XbiMnj5t8E/al9HgzmZhkDTvk
-         tUfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwiPVSfFZPnXRAtBDMswe0k/OQL723WFVUCwSHx3Kv+Da5NOIU7vm9h4TmlUNSf+5tyv1ymTaMupAJKw==@vger.kernel.org, AJvYcCV1EoDr0o/QrljuEbVEnni8i1044ui6dYfazJZo2iI/mFeRtPQz2Fro2wjBP25xTbBOrlOwPpdfzEsnbyxj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7SjLmVSRPXytG8us1hbQkbiJII7ujh75XyrK11XmdpnXWGZLQ
-	0QyKspJkDKTkJ/3LmlMoj+2+XK5vpLTWJFRy2ob1+v/X9pNJm/eAN2JC53Ey
-X-Google-Smtp-Source: AGHT+IEJuaZzmFUqMGyp1nNOAu+2KlDOEmzixod+fsMzI+qUmA9SsCWoKQPzrceyuBdhATO/hsz4Ig==
-X-Received: by 2002:a05:600c:3ba9:b0:42c:ba83:3f0e with SMTP id 5b1f17b1804b1-42f85a6d73amr73294305e9.7.1728282448958;
-        Sun, 06 Oct 2024 23:27:28 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a20393sm82128795e9.12.2024.10.06.23.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 23:27:28 -0700 (PDT)
-Message-ID: <6cd859e9f307c9358d81e5d8d7856496d8c69b6b.camel@gmail.com>
-Subject: Re: [PATCH] Input: adp5588-keys - do not try to disable interrupt 0
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Michael Hennerich
-	 <michael.hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>
-Cc: Utsav Agarwal <utsav.agarwal@analog.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 07 Oct 2024 08:27:28 +0200
-In-Reply-To: <Zv_2jEMYSWDw2gKs@google.com>
-References: <Zv_2jEMYSWDw2gKs@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728282491; c=relaxed/simple;
+	bh=lJ4huQ20De27ax3+Y1wQiALnCQFPZG0PD8Xv1Wfasgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3NsvMW0J4LnMu8PGf8+mT3f3En1Jyi7qQRanQVxGO6ekkBt21hgBO+y1AfRu4OpQ+FL5ILatLo6QZAQL/GER8vS/iNXBY6G1TFZkkhjB/Sm7da/94rygld82Ksg+g+bxEGOcO+b9bLTW/1/TXmGiBUYPXq4tBrNcKrPexnudV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnXfJXfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF98C4CEC6;
+	Mon,  7 Oct 2024 06:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728282491;
+	bh=lJ4huQ20De27ax3+Y1wQiALnCQFPZG0PD8Xv1Wfasgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tnXfJXfp3RbVsqldQaJi4bpsx6Y3wjpb2Hm3xon9CJQrwcGa7KifO5LESKRawT3U6
+	 QzNFLTMmSh5SXHywU0LnyQzEgGPgK1sgki4bG+1FvLnZ7XAB6p3N34zofqm9dG4onT
+	 N5eA2UBLOpglmpXEvNe5+2fG/AjegDhen8KFoP102x8inL3TpGHEUxkExrN7NyZF5v
+	 gw1oVJpTiu3TFm4D1qErICKhlBeLr20h1wxBdas9XjDHRrzsiCbDjzjuAx1WWi+I0a
+	 VkIg1XhX5qrpVAW6B1IdNu+44nVna4WE/NExuXPErYIcrZpciiBm/FnumScard0cXk
+	 +WIFPj7TkEZjA==
+Date: Mon, 7 Oct 2024 11:58:07 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: kishon@kernel.org, krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com, tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org, kernel-team@android.com,
+	willmcvicker@google.com, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] phy: Add UFS phy hibernate modes
+Message-ID: <ZwN/d8l7Mk6x2GHP@vaman>
+References: <20241002201555.3332138-1-peter.griffin@linaro.org>
+ <20241002201555.3332138-2-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002201555.3332138-2-peter.griffin@linaro.org>
 
-On Fri, 2024-10-04 at 07:07 -0700, Dmitry Torokhov wrote:
-> Commit dc748812fca0 ("Input: adp5588-keys - add support for pure gpio")
-> made having interrupt line optional for the device, however it neglected
-> to update suspend and resume handlers that try to disable interrupts
-> for the duration of suspend.
->=20
-> Fix this by checking if interrupt number assigned to the i2c device is
-> not 0 before trying to disable or reenable it.
->=20
-> Fixes: dc748812fca0 ("Input: adp5588-keys - add support for pure gpio")
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Hi Peter,
+
+On 02-10-24, 21:15, Peter Griffin wrote:
+> Some UFS phys need to write hibernation specific values
+> when entering and exiting hibernate state.
+> 
+> Add two new UFS phy modes to the phy framework so that this
+> is possible. One such platform that requires this is Pixel 6
+> which uses the gs101 SoC.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
+>  include/linux/phy/phy.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 03cd5bae92d3..1874e55e2bb9 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -42,7 +42,9 @@ enum phy_mode {
+>  	PHY_MODE_MIPI_DPHY,
+>  	PHY_MODE_SATA,
+>  	PHY_MODE_LVDS,
+> -	PHY_MODE_DP
+> +	PHY_MODE_DP,
+> +	PHY_MODE_UFS_HIBERN8_ENTER,
+> +	PHY_MODE_UFS_HIBERN8_EXIT,
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+I am not sure I like this. why should this be the model? Phy drivers
+should listen to pm events and handle this in pm_suspend/resume calls,
+why do we need this special mode here...
+Also, this is not a "mode" for phy
 
-> =C2=A0drivers/input/keyboard/adp5588-keys.c | 6 ++++--
-> =C2=A01 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/input/keyboard/adp5588-keys.c
-> b/drivers/input/keyboard/adp5588-keys.c
-> index d25d63a807f2..dc734974ce06 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -822,7 +822,8 @@ static int adp5588_suspend(struct device *dev)
-> =C2=A0{
-> =C2=A0	struct i2c_client *client =3D to_i2c_client(dev);
-> =C2=A0
-> -	disable_irq(client->irq);
-> +	if (client->irq)
-> +		disable_irq(client->irq);
-> =C2=A0
-> =C2=A0	return 0;
-> =C2=A0}
-> @@ -831,7 +832,8 @@ static int adp5588_resume(struct device *dev)
-> =C2=A0{
-> =C2=A0	struct i2c_client *client =3D to_i2c_client(dev);
-> =C2=A0
-> -	enable_irq(client->irq);
-> +	if (client->irq)
-> +		enable_irq(client->irq);
-> =C2=A0
-> =C2=A0	return 0;
-> =C2=A0}
-> --=20
-> 2.47.0.rc0.187.ge670bccf7e-goog
->=20
->=20
-
+-- 
+~Vinod
 
