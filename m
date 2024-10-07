@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-353016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A751992749
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C770399274D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB28028420F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:41:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F12B23434
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F043C18DF6A;
-	Mon,  7 Oct 2024 08:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E34D1925A7;
+	Mon,  7 Oct 2024 08:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="pgs0mvBR"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsPJPInj"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAC618C010;
-	Mon,  7 Oct 2024 08:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B745E18DF89;
+	Mon,  7 Oct 2024 08:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290400; cv=none; b=tgZAQAr8Vi7rcQ3D5Bqj0D/BNCgfAw0N4ijdu3NOCgpKgvubfAYdypOrPX0O6lCkcuSbYyMYMfcelBPzgAKlVX6/yuGqOJGwxikf9kMSHadZgtzoD1PTZpcz2+y5PFT9wFmfBgPpbx9xxn5aaPpco0ZVtWwWB9PG6syhjqpOrSU=
+	t=1728290403; cv=none; b=MUTyQWtWUmyiEGR+D0pnfCocNZ7XZdGuHGw8NzFd2RWR8fOe/cbV2L21nm/LwrjUan+T7TqaXTHTQi7bNPAST6odSexW2J//MRH/4tpLsb32C41kEJsCkPdvOJTEibEDitZHwLH5cSJfKaoJ0/rq4ipccmHOeyceZP7BSmU14HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290400; c=relaxed/simple;
-	bh=EBAjgvul+ZTB8DVmIuz8Y4+ZgX34R4lHsqOrjUlZgKc=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lk2KUlFugWTNpvYw0sLWaUXiHMdYTL49EE5WiJMTlpHeVBgRutUsKqAdRo8tgC4H/ZPY3qjOD0lxLwqobVlQCyeF09wzZYQ1wsB3euiPGkFKwJtpuh39FS8E94ZiTMC+05UcexEwkESizUqk0ly0+IiK8ygPV1+ZmoyVx9A0VYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=pgs0mvBR; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1728290403; c=relaxed/simple;
+	bh=y5FEYFFIHvE+OCqQMvhFVSYMsNN+3wvjZzozee6pIVM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fEB/0PBlcp43oB2IInIHd1id5IDG9zAxV584K389aB6g1rvJiY8OEF66mjdGSO2qGSzqCw5GEhQ+eVzlI8utV4pn4ntuWsoGPFswx22EYVc1L88PwabymNA1B0wsdME+aRlC3IdjEDT+C3nScfpGK84UewoAcYUKeBuoG2u7F2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsPJPInj; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so55262525e9.3;
+        Mon, 07 Oct 2024 01:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1728290399; x=1759826399;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=EBAjgvul+ZTB8DVmIuz8Y4+ZgX34R4lHsqOrjUlZgKc=;
-  b=pgs0mvBRtoSefTKT6YxJle5Od7eAzfxgNc2/86ucYbNtnbR6s3WGxA3/
-   wMjz76Ajd+R6ctNZKrcngsJbQ3LX8MdmmQHMBQk+qEU3nWYBduiPVwgws
-   QoLHU/qioxsv/nPwS83vLs4Kqdwq+h03OWxrgSpiWM3ET5TnpNfyhmnP5
-   M=;
-X-IronPort-AV: E=Sophos;i="6.11,183,1725321600"; 
-   d="scan'208";a="237253782"
-Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
-Thread-Topic: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 08:39:56 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:29908]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.11.190:2525] with esmtp (Farcaster)
- id 40ed856a-621f-402f-880b-1aefd5a3859d; Mon, 7 Oct 2024 08:39:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 40ed856a-621f-402f-880b-1aefd5a3859d
-Received: from EX19D004EUC002.ant.amazon.com (10.252.51.225) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 7 Oct 2024 08:39:54 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC002.ant.amazon.com (10.252.51.225) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 7 Oct 2024 08:39:54 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Mon, 7 Oct 2024 08:39:54 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "kw@linux.com" <kw@linux.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "madvenka@linux.microsoft.com"
-	<madvenka@linux.microsoft.com>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "Saenz Julienne, Nicolas"
-	<nsaenz@amazon.es>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>, "dwmw2@infradead.org"
-	<dwmw2@infradead.org>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "Graf (AWS), Alexander" <graf@amazon.de>,
-	"will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>
-Thread-Index: AQHbCCwuWjwUDEQNSEmjPqzUeT3bK7Jz6OkAgAcvr4A=
-Date: Mon, 7 Oct 2024 08:39:53 +0000
-Message-ID: <d6328467adc9b7512f6dd88a6f8f843b8efdc154.camel@amazon.com>
-References: <20240916113102.710522-1-jgowans@amazon.com>
-	 <20240916113102.710522-6-jgowans@amazon.com>
-	 <20241002185520.GL1369530@ziepe.ca>
-In-Reply-To: <20241002185520.GL1369530@ziepe.ca>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <212419BEF6508A4BAF19C4A337C1FD5D@amazon.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1728290400; x=1728895200; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AFCpSUURl8cQGnuaR/LZg2Sq4sT3YOyDevEk6aZ+0CI=;
+        b=WsPJPInj94jRm8zaXDyit0n+YpcHvikft/MnuQ+N0gxOsJfrN52Li/Bu8DUQrg3s+x
+         O7JIKmbl+TJAOI0b15pUc+hfHHI8hJdNfG7uFnwpIuNxDRyfV104ZgqPuAA8AofDi+32
+         NPu9VkX9/6uiTdP6X+hSqDK1J9LNYNBUVCxSNNB6bUXwPMcY65cm+GsxL1NvLGVgdpFV
+         M/N/Wh/kGi3JGNfTh2pXkBdwWGY2M7FajIlNp6H3XFKyyMcPXKGd7CemsePxRJnglKrr
+         9cA+2rcBZBPEdS5hBYDQ222fnt1cLIsVERhWxUsCbUyYQNg4gvhss2V13lsegW+z8S3z
+         jOBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728290400; x=1728895200;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AFCpSUURl8cQGnuaR/LZg2Sq4sT3YOyDevEk6aZ+0CI=;
+        b=ausv7O7J65h2b/c72noGsWgORpH597adbR1/mskKDuvq9/tJxSxiqdjfjt143Mm4xa
+         XEOgQgXz7hLtfGRWY9F/zkEMZMNj1aiKpqoP3G4wh/13L+fI8fvhwOHFsgpf1ixfPGZu
+         LYTozT7wVnMFSXWl8rJIbLfUSdn03xCWSzD61vG4HNfmRTtpQmLoCzFheSxDww9YAFZ7
+         wv7MiZX4idWPNpKE54L4WmlU3l+w0bN9tFcf5FG7lTjqWPxZ4uLmNBnRe1CNDRVy5AYZ
+         8K0ENZ8+WEumP9gZFKb7ZLhnizaHdh824KXWF/X1vNzc6UZftN/LPfbS2ddC4Uh7G088
+         6nng==
+X-Forwarded-Encrypted: i=1; AJvYcCUQhp9X6V1AKZJRvR51bcZnA97XkWwvzRt+WQMCxRJuAZNPyLGZCbR6wx2MQjwPDNw+d7IBk5EPiAMxLmny@vger.kernel.org, AJvYcCVGUkhsUDrTZLVuDwTf/bTr9UN5rh7+1cCHJZfKU1nh0Plc2bInFRNaxK/S5kU0yfZaMWVtPRsi/xEDv+K+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3TE01yXDWlKyMtkgolKVTHDfdS/U30NI1JR6neD2D0G4W7MR
+	Ky6IgEPIOCd1H9cyig1ho14aNI2duz3Bjj87uvYZIhbbg6pL6Ob6
+X-Google-Smtp-Source: AGHT+IGInGtJqWnW05u2AHMjH5TDu4j93+BNuAKPDAEQaiDwPqjyMx/0P5X8FBMsNuQEOSIz8eNzLA==
+X-Received: by 2002:a05:600c:4686:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-42f85ae942cmr106177525e9.23.1728290399888;
+        Mon, 07 Oct 2024 01:39:59 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e39aebsm68386985e9.0.2024.10.07.01.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:39:59 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 7 Oct 2024 10:39:58 +0200
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
+	mattbobrowski@google.com
+Subject: Re: [PATCH bpf-next 1/2] fs/xattr: bpf: Introduce security.bpf xattr
+ name prefix
+Message-ID: <ZwOeXj9GGt7RdqsQ@krava>
+References: <20241002214637.3625277-1-song@kernel.org>
+ <20241002214637.3625277-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002214637.3625277-2-song@kernel.org>
 
-T24gV2VkLCAyMDI0LTEwLTAyIGF0IDE1OjU1IC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
-DQo+IE9uIE1vbiwgU2VwIDE2LCAyMDI0IGF0IDAxOjMwOjU0UE0gKzAyMDAsIEphbWVzIEdvd2Fu
-cyB3cm90ZToNCj4gPiBOb3cgYWN0dWFsbHkgaW1wbGVtZW50aW5nIHRoZSBzZXJpYWxpc2UgY2Fs
-bGJhY2sgZm9yIGlvbW11ZmQuDQo+ID4gT24gS0hPIGFjdGl2YXRlLCBpdGVyYXRlIHRocm91Z2gg
-YWxsIHBlcnNpc3RlZCBkb21haW5zIGFuZCB3cml0ZSB0aGVpcg0KPiA+IG1ldGFkYXRhIHRvIHRo
-ZSBkZXZpY2UgdHJlZSBmb3JtYXQuIEZvciBub3cganVzdCBhIGZldyBmaWVsZHMgYXJlDQo+ID4g
-c2VyaWFsaXNlZCB0byBkZW1vbnN0cmF0ZSB0aGUgY29uY2VwdC4gVG8gYWN0dWFsbHkgbWFrZSB0
-aGlzIHVzZWZ1bCBhDQo+ID4gbG90IG1vcmUgZmllbGQgYW5kIHJlbGF0ZWQgb2JqZWN0cyB3aWxs
-IG5lZWQgdG8gYmUgc2VyaWFsaXNlZCB0b28uDQo+IA0KPiBCdXQgaXNuJ3QgdGhhdCBhIHJhdGhl
-ciBkaWZmaWN1bHQgcHJvYmxlbT8gVGhlICJhIGxvdCBtb3JlIGZpZWxkcyINCj4gaW5jbHVkZSB0
-aGluZ3MgbGlrZSBwb2ludGVycyB0byB0aGUgbW0gc3RydWN0LCB0aGUgdXNlcl9zdHJ1Y3QgYW5k
-DQo+IHRhc2tfc3RydWN0LCB0aGVuIGFsbCB0aGUgcGlubmluZyBhY2NvdW50aW5nIGFzIHdlbGwu
-DQo+IA0KPiBDb21pbmcgd29yayBleHRlbmRzIHRoaXMgdG8gbWVtZmRzIGFuZCBtb3JlIGlzIGNv
-bWluZy4gSSB3b3VsZCBleHBlY3QNCj4gdGhpcyBLSE8gc3R1ZmYgdG8gdXNlIHRoZSBtZW1mZC1s
-aWtlIHBhdGggdG8gYWNjZXNzIHRoZSBwaHlzaWNhbCBWTQ0KPiBtZW1vcnkgdG9vLg0KPiANCj4g
-SSB0aGluayBleHBlY3RpbmcgdG8gc2VyaWFsaXplIGFuZCByZXN0b3JlIGV2ZXJ5dGhpbmcgbGlr
-ZSB0aGlzIGlzDQo+IHByb2JhYmx5IG11Y2ggdG9vIGNvbXBsaWNhdGVkLg0KDQpPbiByZWZsZWN0
-aW9uIEkgdGhpbmsgeW91J3JlIHJpZ2h0IC0gdGhpcyB3aWxsIGJlIGNvbXBsZXggYm90aCBmcm9t
-IGENCmRldmVsb3BtZW50IGFuZCBhIG1haW50ZW5hbmNlIHBlcnNwZWN0aXZlLCB0cnlpbmcgdG8g
-bWFrZSBzdXJlIHdlDQpzZXJpYWxpc2UgYWxsIHRoZSBuZWNlc3Nhcnkgc3RhdGUgYW5kIHJlY29u
-c3RydWN0IGl0IGNvcnJlY3RseS4gRXZlbg0KbW9yZSBjb21wbGV4IHdoZW4gc3RydWN0cyBhcmUg
-cmVmYWN0b3JlZC9jaGFuZ2VkIGFjcm9zcyBrZXJuZWwgdmVyc2lvbnMuDQpBbiBpbXBvcnRhbnQg
-cmVxdWlyZW1lbnQgb2YgdGhpcyBmdW5jdGlvbmFsaXR5IGlzIHRoZSBhYmlsaXR5IHRvIGtleGVj
-DQpiZXR3ZWVuIGRpZmZlcmVudCBrZXJuZWwgdmVyc2lvbnMgaW5jbHVkaW5nIGdvaW5nIGJhY2sg
-dG8gYW4gb2xkZXINCmtlcm5lbCB2ZXJzaW9uIGluIHRoZSBjYXNlIG9mIGEgcm9sbGJhY2suDQoN
-ClNvLCBsZXQncyBsb29rIGF0IG90aGVyIG9wdGlvbnM6DQoNCj4gDQo+IElmIHlvdSBjb3VsZCBq
-dXN0IHJldGFpbiBhIHNtYWxsIHBvcnRpb24gYW5kIHRoZW4gZGlyZWN0bHkgcmVjb25zdHJ1Y3QN
-Cj4gdGhlIG1pc3NpbmcgcGFydHMgaXQgc2VlbXMgbGlrZSBpdCB3b3VsZCBiZSBtb3JlIG1haW50
-YWluYWJsZS4NCg0KSSB0aGluayB3ZSBoYXZlIHR3byBvdGhlciBwb3NzaWJsZSBhcHByb2FjaGVz
-IGhlcmU6DQoNCjEuIFdoYXQgdGhpcyBSRkMgaXMgc2tldGNoaW5nIG91dCwgc2VyaWFsaXNpbmcg
-ZmllbGRzIGZyb20gdGhlIHN0cnVjdHMNCmFuZCBzZXR0aW5nIHRob3NlIGZpZWxkcyBhZ2FpbiBv
-biBkZXNlcmlhbGlzZS4gQXMgeW91IHBvaW50IG91dCB0aGlzDQp3aWxsIGJlIGNvbXBsaWNhdGVk
-Lg0KDQoyLiBHZXQgdXNlcnNwYWNlIHRvIGRvIHRoZSB3b3JrOiB1c2Vyc3BhY2UgbmVlZHMgdG8g
-cmUtZG8gdGhlIGlvY3Rscw0KYWZ0ZXIga2V4ZWMgdG8gcmVjb25zdHJ1Y3QgdGhlIG9iamVjdHMu
-IE15IG1haW4gaXNzdWUgd2l0aCB0aGlzIGFwcHJvYWNoDQppcyB0aGF0IHRoZSBrZXJuZWwgbmVl
-ZHMgdG8gZG8gc29tZSBzb3J0IG9mIHRydXN0IGJ1dCB2ZXJpZnkgYXBwcm9hY2ggdG8NCmVuc3Vy
-ZSB0aGF0IHVzZXJzcGFjZSBjb25zdHJ1Y3RzIGV2ZXJ5dGhpbmcgdGhlIHNhbWUgd2F5IGFmdGVy
-IGtleGVjIGFzDQppdCB3YXMgYmVmb3JlIGtleGVjLiBXZSBkb24ndCB3YW50IHRvIGVuZCB1cCBp
-biBhIHN0YXRlIHdoZXJlIHRoZQ0KaW9tbXVmZCBvYmplY3RzIGRvbid0IG1hdGNoIHRoZSBwZXJz
-aXN0ZWQgcGFnZSB0YWJsZXMuDQoNCjMuIFNlcmlhbGlzZSBhbmQgcmVwbHkgdGhlIGlvY3Rscy4g
-SW9jdGwgQVBJcyBhbmQgcGF5bG9hZHMgc2hvdWxkDQoobXVzdD8pIGJlIHN0YWJsZSBhY3Jvc3Mg
-a2VybmVsIHZlcnNpb25zLiBJZiBJT01NVUZEIHJlY29yZHMgdGhlIGlvY3Rscw0KZXhlY3V0ZWQg
-YnkgdXNlcnNwYWNlIHRoZW4gaXQgY291bGQgcmVwbGF5IHRoZW0gYXMgcGFydCBvZiBkZXNlcmlh
-bGlzZQ0KYW5kIGdpdmUgdXNlcnNwYWNlIGEgaGFuZGxlIHRvIHRoZSByZXN1bHRpbmcgb2JqZWN0
-cyBhZnRlciBrZXhlYy4gVGhpcw0Kd2F5IHdlIGFyZSBndWFyYW50ZWVkIGNvbnNpc3RlbnQgaW9t
-bXVmZCAvIElPQVMgb2JqZWN0cy4gQnkgImNvbnNpc3RlbnQiDQpJIG1lYW4gdGhleSBhcmUgdGhl
-IHNhbWUgYXMgYmVmb3JlIGtleGVjIGFuZCBtYXRjaCB0aGUgcGVyc2lzdGVkIHBhZ2UNCnRhYmxl
-cy4gQnkgaGF2aW5nIHRoZSBrZXJuZWwgZG8gdGhpcyBpdCBtZWFucyBpdCBkb2Vzbid0IG5lZWQg
-dG8gZGVwZW5kDQpvbiB1c2Vyc3BhY2UgZG9pbmcgdGhlIGNvcnJlY3QgdGhpbmcuDQoNCldoYXQg
-ZG8geW91IHRoaW5rIG9mIHRoaXMgM3JkIGFwcHJvYWNoPyBJIGNhbiB0cnkgdG8gc2tldGNoIGl0
-IG91dCBhbmQNCnNlbmQgYW5vdGhlciBSRkMgaWYgeW91IHRoaW5rIGl0IHNvdW5kcyByZWFzb25h
-YmxlLg0KDQo+IA0KPiBJZSAicmVjb3ZlciIgYSBIV1BUIGZyb20gYSBLSE8gb24gYSBtYW51YWxs
-eSBjcmVhdGVkIGEgSU9BUyB3aXRoIHRoZQ0KPiByaWdodCAibWVtZmQiIGZvciB0aGUgYmFja2lu
-ZyBzdG9yYWdlLiBUaGVuIHRoZSByZWNvdmVyeSBjYW4ganVzdA0KPiB2YWxpZGF0ZSB0aGF0IHRo
-aW5ncyBhcmUgY29ycmVjdCBhbmQgYWRvcHQgdGhlIGlvbW11X2RvbWFpbiBhcyB0aGUNCj4gaHdw
-dC4NCg0KVGhpcyBzb3VuZHMgbW9yZSBsaWtlIG9wdGlvbiAyIHdoZXJlIHdlIGV4cGVjdCB1c2Vy
-c3BhY2UgdG8gcmUtZHJpdmUgdGhlDQppb2N0bHMsIGJ1dCB2ZXJpZnkgdGhhdCB0aGV5IGhhdmUg
-Y29ycmVzcG9uZGluZyBwYXlsb2FkcyBhcyBiZWZvcmUga2V4ZWMNCnNvIHRoYXQgaW9tbXVmZCBv
-YmplY3RzIGFyZSBjb25zaXN0ZW50IHdpdGggcGVyc2lzdGVkIHBhZ2UgdGFibGVzLg0KSWYgdGhl
-IGtlcm5lbCBpcyBkb2luZyB2ZXJpZmljYXRpb24gd291bGRuJ3QgaXQgYmUgYmV0dGVyIGZvciB0
-aGUga2VybmVsDQp0byBkbyB0aGUgaW9jdGwgd29yayBpdHNlbGYgYW5kIGdpdmUgdGhlIHJlc3Vs
-dGluZyBvYmplY3RzIHRvIHVzZXJzcGFjZT8NCg0KPiANCj4gRXZlbnR1YWxseSB5b3UnbGwgd2Fu
-dCB0aGlzIHRvIHdvcmsgZm9yIHRoZSB2aW9tbXVzIGFzIHdlbGwsIGFuZCB0aGF0DQo+IHNlZW1z
-IGxpa2UgYSBsb3QgbW9yZSB0cmlja3kgY29tcGxleGl0eS4uDQo+IA0KPiBKYXNvbg0KDQo=
+On Wed, Oct 02, 2024 at 02:46:36PM -0700, Song Liu wrote:
+> Introduct new xattr name prefix security.bpf, and enable reading these
+> xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr(). Note that
+> "security.bpf" could be the name of the xattr or the prefix of the
+> name. For example, both "security.bpf" and "security.bpf.xxx" are
+> valid xattr name; while "security.bpfxxx" is not valid.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++++++-
+>  include/uapi/linux/xattr.h |  4 ++++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> index 3fe9f59ef867..339c4fef8f6e 100644
+> --- a/fs/bpf_fs_kfuncs.c
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -93,6 +93,23 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+>  	return len;
+>  }
+>  
+> +static bool bpf_xattr_name_allowed(const char *name__str)
+> +{
+> +	/* Allow xattr names with user. prefix */
+> +	if (!strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> +		return true;
+> +
+> +	/* Allow security.bpf. prefix or just security.bpf */
+> +	if (!strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN) &&
+> +	    (name__str[XATTR_NAME_BPF_LSM_LEN] == '\0' ||
+> +	     name__str[XATTR_NAME_BPF_LSM_LEN] == '.')) {
+> +		return true;
+> +	}
+> +
+> +	/* Disallow anything else */
+> +	return false;
+> +}
+> +
+>  /**
+>   * bpf_get_dentry_xattr - get xattr of a dentry
+>   * @dentry: dentry to get xattr from
+> @@ -117,7 +134,7 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
+
+nit, I guess the comment for bpf_get_dentry_xattr function needs to be updated
+
+ * For security reasons, only *name__str* with prefix "user." is allowed.
+
+jirka
+
+>  	if (WARN_ON(!inode))
+>  		return -EINVAL;
+>  
+> -	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> +	if (!bpf_xattr_name_allowed(name__str))
+>  		return -EPERM;
+>  
+>  	value_len = __bpf_dynptr_size(value_ptr);
+> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+> index 9463db2dfa9d..166ef2f1f1b3 100644
+> --- a/include/uapi/linux/xattr.h
+> +++ b/include/uapi/linux/xattr.h
+> @@ -76,6 +76,10 @@
+>  #define XATTR_CAPS_SUFFIX "capability"
+>  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
+>  
+> +#define XATTR_BPF_LSM_SUFFIX "bpf"
+> +#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
+> +#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
+> +
+>  #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
+>  #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
+>  #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
+> -- 
+> 2.43.5
+> 
+> 
 
