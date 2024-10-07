@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-353190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCDC992A17
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:14:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B70992A1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD481F2347A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CEB1C225DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB161BA285;
-	Mon,  7 Oct 2024 11:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2941D175F;
+	Mon,  7 Oct 2024 11:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rnyl5vec"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwqiPHBl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8E418BB91;
-	Mon,  7 Oct 2024 11:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31CE18BBB2;
+	Mon,  7 Oct 2024 11:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299687; cv=none; b=ppJXVkPUQNCEZ0zqUbweG2QZ4Mne6HCKgXHEbMLEKXVALISV7yPNCtTmKtHCQvJ2mJdRTrdYPQa3CFYX4szSWXK6kENZ6USJcnRhDoDanMIUmAqeZdkemlrLFpyT4lJOqs2EeKd48ivoGZ+wJ6IPrNp1USrxxolbZ/1QtmTxriU=
+	t=1728299976; cv=none; b=p89ldqyRQCZhVb+a/KwmcpmE66rXo6nqwbnlTPgNnqt4k1fzMQotfEplLhi+Ex1T6GcuaFryvphrDCUQ5PR/W+ELy+kaIpWuxzxisjnMm/9UmY27r/+M0aub19eiGk4lA/eO8wHqUbqtSXm7XG3k2ubNvTEzZmHVKRbVmv8dEiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299687; c=relaxed/simple;
-	bh=t89V9ZIf+7EC7oAwDnLC96q96etjRCywu8RGQ/ZjT0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YolnMTf/eLuWuCL8JSQi5bImNmIxAk5f9Oo5N+MfFeTzjCdDrVw0+8nYuF0wZe+QDttyBdSyavS5zPjOISocyV7lzz03WPkfnVJco1Y/btI2GXMIWhixboeJ9qwvoFsCgv0+GgFqnT6nbt3KVhEBIAyzGqt5dQqowQJUcN51s10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rnyl5vec; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b95359440so35562495ad.0;
-        Mon, 07 Oct 2024 04:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728299685; x=1728904485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBgdKVkwRlU+zQtQRnhA3xxf+pC+TcZmWUow2x5/NV0=;
-        b=Rnyl5vecmdsje3A86nKl+A/gv3jiKdGJJQ6JoYCLDWyiOgVrhbbMO9cb8NWLYkIQ9Q
-         xSFDqLJVzCnzeb3dV/dus7SF7PRE2TMjwAoPRQQK49sWTCfCYjUt7YNB3u+S1ebNrG84
-         RBq1DXbpCH3H5u/pUGruRF/dB1iQncARl3z8XHxdpAaF+4KYcxHsVxuf57B9ILfPLMDI
-         f84A0mlFv3qakUAAN+iurQ+MjA+O+c7L3q6TN9v4MJksg+4RR9QxH2xtOdxWF+PnlhUT
-         PfyitjEPQhoCzYG92/9kQgwIeGFOBr1+xQbofKA1XFGZLNxMLa2BRjwcMVQ3z1FOVWLe
-         bbww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728299685; x=1728904485;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBgdKVkwRlU+zQtQRnhA3xxf+pC+TcZmWUow2x5/NV0=;
-        b=qAuHqOFKtJYn8UaaRAGcRqWe6q/bUOyUSZroyIiuyBVOyAS80w27K/C24Xswl1ysfr
-         r/5vbe9D9JQCKuHBlAQVmWvbS8lKP9Wq9BVFII08vd10my+xgnCj7RQuyt8FZ5pt9cSA
-         HpkLaX3qEHa2QhuGHNEc3G0br7zJeNrE7QAERAnQxJoF/GZAuxRg8oafxTTURGLwuRMD
-         s9QNHuaUAhGqITlLC9Sh/uZpX3Z+3+KaO3+aTlKvY5+hNRjK5TqEGkDodcVf8l5Nke8a
-         Pa4/r/H17SsAMknlutGRxJD6ZYVpwIsr1FI9CCD203xDD6gjQixvZcoiAqmjm7Oi9Br8
-         +U2A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Wec/qn6iFKytAJtfMCcuySmB28TnIrUpNjZ70hiCLVxS+Ntyw+1v8OBsXDPPurootcKOazwZEmFyLyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7yRStEFB8zkSPMyfU3Y6zhNfQ1F1lcPysynZRoKNDV3Nvy5j0
-	Brtc77tUHYKV32Aa0MLWm7YKSaG2n+IgLOEx0kpsUudZ8NX5ujP8
-X-Google-Smtp-Source: AGHT+IHUEw8puB2+YlhAA+4KIyDpWwk8Yf6kgV8F/vPUiA8oY+I7hsx/GNkMDDfeYAOj1koUkXK1Fg==
-X-Received: by 2002:a17:902:cf08:b0:20b:bf5a:e0 with SMTP id d9443c01a7336-20bff073a1bmr129799515ad.55.1728299684873;
-        Mon, 07 Oct 2024 04:14:44 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4040:d83:9ed5:69f6:9499:16b2:23e5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13968e35sm37711165ad.235.2024.10.07.04.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 04:14:44 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: surajsonawane0215@gmail.com,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@infradead.org
-Subject: [PATCH V2] block: Fix elevator_get_default() to check for null q->tag_set
-Date: Mon,  7 Oct 2024 16:44:16 +0530
-Message-Id: <20241007111416.13814-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241004123922.35834-1-surajsonawane0215@gmail.com>
-References: <20241004123922.35834-1-surajsonawane0215@gmail.com>
+	s=arc-20240116; t=1728299976; c=relaxed/simple;
+	bh=H7HFbdmfpLnACdEpvqjRNyd7qDDx8lOaxpdXXTZzVVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIavI/z2nDNTs/8CMBRKzG7wKQmOER/nagmXLno0d5/1Bh57ft7xWS8J9ToNF8ZV5FVdnnSgj63+Uhz0gAJITvocOa4k3yqKP6gDJ8ziukA4geIAjwNAq6LEWOHtqDre1NVy6emZR/r3+0JZYPFpSzgZkJrXXuuhbqME629ifkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwqiPHBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DF5C4CEC6;
+	Mon,  7 Oct 2024 11:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728299976;
+	bh=H7HFbdmfpLnACdEpvqjRNyd7qDDx8lOaxpdXXTZzVVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RwqiPHBlt9pOlT7HGr1tMP8O0N9W926x64cRkQ2Nr+xM/HXjkyAKfCUmp60iqIJGr
+	 ZDwldHNL9cVzEktT/OP4Ea91xKS+F3L+pulIjYhi0BcikhyUdUSVPoFrUExhJxbnSi
+	 EtwpVeubFr2lji3qD+hLwVuqyztoQTTe9Whn4lP8489+6hksfjKcKSQgTo6lKwiff7
+	 R63gXK/R9azYdLZiocgttMQZBo6nB02vVo4xNNSMqJr4dVj2S1pRJgZ29IIpXyC9nH
+	 ZCMb/8f//UmUMvcxh/r5gXsgCW76xzUDHxbabwBFiPiSxi/UmVZhl7O8InhFnX+sJ+
+	 rwF6uyNkG22tA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sxlm1-000000007dd-3eC2;
+	Mon, 07 Oct 2024 13:19:34 +0200
+Date: Mon, 7 Oct 2024 13:19:33 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Switch PCIe 6a to 4 lanes
+ mode
+Message-ID: <ZwPDxd9JJbgDeJTi@hovoldconsulting.com>
+References: <20241004-x1e80100-dts-fixes-pcie6a-v2-1-3af9ff7a5a71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-x1e80100-dts-fixes-pcie6a-v2-1-3af9ff7a5a71@linaro.org>
 
-Fix error "block/elevator.c:569 elevator_get_default() error:
-we previously assumed 'q->tag_set' could be null (see line 565)".
-Since 'q->tag_set' cannot be NULL for blk-mq queues,
-remove the unnecessary check in both `elevator_get_default`
-and `elv_support_iosched`. This simplifies the logic and
-ensures correct assumptions about 'q->tag_set' in blk-mq queues.
+On Fri, Oct 04, 2024 at 12:06:33PM +0300, Abel Vesa wrote:
+> The PCIe 6a controller and PHY can be configured in 4-lanes mode or
+> 2-lanes mode. For 4-lanes mode, it fetches the lanes provided by PCIe 6b.
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
-V1 -> V2:
-- Remove unnecessary `q->tag_set` check in `elv_support_iosched` function.
-- Remove `q->tag_set` check because blk-mq queues always have a valid tag set.
+nit: I still think you should use "uses" over "fetches" here.
 
- block/elevator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> For 2-lanes mode, PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2
+> lanes. Configure it in 4-lane mode and then each board can configure it
+> depending on the design. 
 
-diff --git a/block/elevator.c b/block/elevator.c
-index 4122026b1..60497e3b2 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -551,7 +551,7 @@ EXPORT_SYMBOL_GPL(elv_unregister);
- static inline bool elv_support_iosched(struct request_queue *q)
- {
- 	if (!queue_is_mq(q) ||
--	    (q->tag_set && (q->tag_set->flags & BLK_MQ_F_NO_SCHED)))
-+	    (q->tag_set->flags & BLK_MQ_F_NO_SCHED))
- 		return false;
- 	return true;
- }
-@@ -562,7 +562,7 @@ static inline bool elv_support_iosched(struct request_queue *q)
-  */
- static struct elevator_type *elevator_get_default(struct request_queue *q)
- {
--	if (q->tag_set && q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
-+	if (q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
- 		return NULL;
- 
- 	if (q->nr_hw_queues != 1 &&
--- 
-2.34.1
+To avoid confusion you could avoid the word "configure" here. pcie6a is
+a four-lane controller (and PHY) that can also be used in used in
+two-lane mode, depending on how the system is configured and this can be
+read out through a TCSR register (e.g. the PHY driver adapts
+accordingly).
 
+So you should perhaps rather say that you are fixing the description and
+compatible of pcie6a, which *is* a 4-lane controller, that can also be
+used in 2-lane mode. Or similar.
+
+We also discussed this here:
+
+	https://lore.kernel.org/lkml/ZtG2dUVkdwBpBbix@hovoldconsulting.com/
+
+> Both the QCP and CRD boards, currently upstream,
+> use PCIe 6a for NVMe in 4-lane mode. Mark the controller as 4-lane as
+> well.
+
+> This is the last change needed in order to support NVMe with Gen4
+> 4-lanes on all existing X Elite boards.
+
+I'd skip comments like this, or put them in the cover letter, or just
+rephrase as "This will enable 4-lane NVMe on...".
+
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Changes in v2:
+> - Re-worded the commit message according to Johan's suggestions
+> - Dropped the clocks changes.
+> - Dropped the fixes tag as this relies on the Gen4 4-lanes stability
+>   patchset which has been only merged in 6.12, so backporting this patch
+>   would break NVMe support for all platforms.
+> - Link to v1: https://lore.kernel.org/r/20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org
+
+Patch itself looks good.
+
+Johan
 
