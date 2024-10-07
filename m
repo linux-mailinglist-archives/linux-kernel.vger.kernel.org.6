@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-353240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6B3992B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C148992B26
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B3C283F09
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8251F23756
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436E41D223B;
-	Mon,  7 Oct 2024 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DAB1D2223;
+	Mon,  7 Oct 2024 12:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4lxLnTA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cd1pGCY2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cQZugCeo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B271D1E65;
-	Mon,  7 Oct 2024 12:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9276418B483
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728302859; cv=none; b=RMh/ISO0V/3aSp9Ji4x6cpEla2TfPboBhGR0Ta1zWG6VaVSdoysRL+Ew0Yc22F9n54KwWnx193sBva7HM16z5hdnxA7/f4X6PePSvrSov9Z8AZPwHbawqn78Hc3ou/G2R46XA44pdg4utwUygNVDH4frhSfOdy0mkSwlM+XsZW0=
+	t=1728303094; cv=none; b=BaOV+l7XjZx7386d4ZhOQGzfm1903to+87sdIlTVIDW6k1RsdGthxXtqREcLPouvoy1ahOfnW2tOp7bXtf+AYiSEiPsMGboGcNSxKfZWArMMwRtvrTt8kfY7x896bI0m9kcrvQVVqbZkakpmtcNBK0t7CjSAlbUR1fayScIQB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728302859; c=relaxed/simple;
-	bh=jJtK3/1jT6FQ4smG4wOvY5N7/OUFqcmBnVKtNz/UvoY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CKessvWltBZeO1todrs5YFhXUB2hwOY3KaF47pDU4+WMoX0tVxq17sPz52JizllAee3sVBv88CqBV/j3BQ0YmtW5HuftYFMIia9GvaVgJ/S3GSysQqD53sQotgr2JpD8klkXIc8tVXD8uOsrtm/8WRq/dUGanttfF8dRw9qgK1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4lxLnTA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53993564cb1so4724394e87.2;
-        Mon, 07 Oct 2024 05:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728302856; x=1728907656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJtK3/1jT6FQ4smG4wOvY5N7/OUFqcmBnVKtNz/UvoY=;
-        b=E4lxLnTA1YIqudarQ2yAmxUnpC107mXJ5GjXjE534MEpEVHCXG18iCV6/7CeYXxU3D
-         J5TU2tDlI8d1s7a14B4XL79+qmvapPs+nywtemvx6PGm3UnoVcbZXjOVnf2sV/JFz6Ok
-         xiVp5ml9QZoaTYYneRzG2RODQzxMmER4mkcSzrwwwMdI2kvricik9V9gZKi5VCpPTAxu
-         YSgqzSPE7AOfHUEPzH4MWqs8qRkLCIC4mLZIqxrHqlPMlQ8o6wDvZDxCQCJKfCxg1KSy
-         /HPzN42pM5o1M1CleKUE6+lDmFAxq215j85CUHpKkNJTJPnDrHrGpd4vlWvUgsBsgCBw
-         BHSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728302856; x=1728907656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jJtK3/1jT6FQ4smG4wOvY5N7/OUFqcmBnVKtNz/UvoY=;
-        b=R0BBl3wc6iFq6k1bfwilq00FoJriWp+LyKt7n1ZQbkLgD5HLV/Jr/rq0B1tbY4zlzp
-         9rF1jFuuHIiBvSO6Ig+GtuNossy8rwXyydq12h6q7jZA6UhuIB4hiASH7t75Eq3LTilh
-         VyBOt3m46ljI9PPnmf8NXYSwpLxHWdsUwdyb9gPfUNnv6GIbzAwcRMTIoMnunITuxvzc
-         Tr/SPYkpubyknoHQNkGc8izwsYu0ICRrD54LbhD/VWUSgyFdoKnvVin/vtNO+ThrPqgN
-         kcYmRnC+XjvAwHQXWgaiZMyCrxOh9xr31oRV7jVkAgJrVVG+Sms5RJPUk5TvJT9MNzUa
-         u57g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHqha4YYvoLx1zaCerkoL+r98YfAyymeRv4eWUIIJHpGV6AvZNVTzquxtgE0CQmOJdOaVEuB+tUwhE@vger.kernel.org, AJvYcCVc+htPwOrXd+1jVWR+G4A5usGitYwJU0Le2eMBoXWEzh5jnSa9jYezia2NJeDrnxhwnxX8Q+prrzQUMbzf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5aEuuO23ki6tk9GuL8WCH33myoKN7apA8jW8ObMZCUGS3O1/I
-	tR7dxru/UXVLAryLWNvHLZIRxNPr4HzuUxrjyHFLoKgTsFSThtkX0rW002W4pF9vo1x4fKIvnJx
-	3femUDrBrPO35Rjs6WAVjz+Aui7w=
-X-Google-Smtp-Source: AGHT+IHv2V9vub5HIh9lhXIcbry1CPZSpVF/bne5Y3kiIxmSAE1tBTwFr3QA6iadU2EJq70+P647NMtgXwX8zocTlKY=
-X-Received: by 2002:a05:6512:159a:b0:52c:d626:77aa with SMTP id
- 2adb3069b0e04-539ab8c4e45mr5287290e87.58.1728302856091; Mon, 07 Oct 2024
- 05:07:36 -0700 (PDT)
+	s=arc-20240116; t=1728303094; c=relaxed/simple;
+	bh=Zn/Wpnj3cwhJhWqS4LkHHMLONniIADYAf1ITLlgSsVs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kgzHtMLgQvzojxphDqmND7S3qah2gBPD2etDjsAy1o7YYBtuXq8gowjiT4jqDWT+zZiXonEn2UYpDrYftPmqCd5zOV0RBwtEdSxSXFYKjTslif9GCPJ8tAjU2x236Hx5gK0/nIDc7dC0PPZKP5YFwHDy9yTTHdPavmd/OT4On3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cd1pGCY2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cQZugCeo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728303090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lTRX2E/caJSxKYAG5qhU4BSqcKSEG/mvB3eZdZUAjNw=;
+	b=Cd1pGCY2rRH4/r3JCYid6w5CYbQAiFtE7m/HhTJfHR1BvvIl/ztvV8ArnIGcamYSMoU8u+
+	E1wDMkp6CXlrZxw/ByTLaC4dkJB+DG/oeecF4XYBHqhxa8ARWDPVj+Br3jq23HOCjA/FfG
+	wUokjGCM65RoFBExrKWUCvGRJhvu4I6cB0Kocu/BZsX5HVTWjITNCBeRnQcY1e5lpa9KnK
+	vRDEJOnrwgfKo79MC2r0DyaBUDE9Pw96R9mJ6VGlxDVAcG+xjQQV9hz+L1qDLxgnm76eDi
+	DPJkn4SIq2GJay1e1m0C1noFheryNHhOEktNqekoAfIsylOFIGDRoiWET4dKSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728303090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lTRX2E/caJSxKYAG5qhU4BSqcKSEG/mvB3eZdZUAjNw=;
+	b=cQZugCeoyWlmXCJm8AkTUnsx6nT4BsMGMCvlJvo2rTWpUIN3rqnm7NXKvoPOP3EHFhhIRU
+	0N6+pMbDhRhiTaAA==
+To: Bart Van Assche <bvanassche@acm.org>, David Laight
+ <David.Laight@ACULAB.COM>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
+ <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Clemens Ladisch <clemens@ladisch.de>
+Subject: Re: [PATCH 07/21] hpet: Switch to number_of_interrupts()
+In-Reply-To: <cb045717-5eb8-456f-aa50-667e9f8aabfd@acm.org>
+References: <20240930181600.1684198-1-bvanassche@acm.org>
+ <20240930181600.1684198-8-bvanassche@acm.org>
+ <b315cbe2e1264d98b57ce57fe5f66a23@AcuMS.aculab.com>
+ <cb045717-5eb8-456f-aa50-667e9f8aabfd@acm.org>
+Date: Mon, 07 Oct 2024 14:11:30 +0200
+Message-ID: <874j5oun7x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZwOc4o2i-Wzp5QIV@mail.google.com>
-In-Reply-To: <ZwOc4o2i-Wzp5QIV@mail.google.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 7 Oct 2024 09:07:24 -0300
-Message-ID: <CAOMZO5CXm+d_2uXE+37SU8x0i-oU2ynj2PSfKF5WRAJxcGhqYw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: imx27: Fix redefinition of 'PC' in imx27 driver
-To: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-Cc: aisheng.dong@nxp.com, shawnguo@kernel.org, ping.bai@nxp.com, 
-	kernel@pengutronix.de, linus.walleij@linaro.org, Sascha@mail.google.com, 
-	Hauer@mail.google.com, s.hauer@pengutronix.de, linux-gpio@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Paulo,
-
-Thanks for your patch.
-
-On Mon, Oct 7, 2024 at 5:33=E2=80=AFAM Paulo Miguel Almeida
-<paulo.miguel.almeida.rodenas@gmail.com> wrote:
+On Sun, Oct 06 2024 at 17:45, Bart Van Assche wrote:
+> On 10/6/24 10:13 AM, David Laight wrote:
+>> From: Bart Van Assche
+>>> Sent: 30 September 2024 19:16
+>>> --- a/drivers/char/hpet.c
+>>> +++ b/drivers/char/hpet.c
+>>> @@ -195,7 +195,7 @@ static void hpet_timer_set_irq(struct hpet_dev *devp)
+>>>   		v &= ~0xffff;
+>>>
+>>>   	for_each_set_bit(irq, &v, HPET_MAX_IRQ) {
+>>> -		if (irq >= nr_irqs) {
+>>> +		if (irq >= number_of_interrupts()) {
+>>>   			irq = HPET_MAX_IRQ;
+>>>   			break;
+>>>   		}
+>> 
+>> This is horrid.
+>> You've replaced the read of a global variable (which, in some cases the
+>> compiler might be able to pull outside the loop) with a real function
+>> call in every loop iteration.
+>> 
+>> With all the mitigations for cpu speculative execution 'issues' you
+>> pretty much don't want trivial function calls.
+>> 
+>> If you are worried about locals shadowing globals just change one of the names.
 >
-> The `PC` macro in `drivers/pinctrl/freescale/pinctrl-imx27.c` is
-> clashing with an existing `PC` macro defined in
-> `arch/mips/include/uapi/asm/ptrace.h`. This leads to a compilation
-> error when building for MIPS architecture.
->
-> Rename those to use a more specific prefix (`MX27_`) to avoid
-> conflicts with other platform definitions.
->
-> Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.c=
-om>
+> Since HPET_MAX_IRQ == 32 and since the lower 16 bits of 'v' are cleared
+> on modern systems, would it be such a big deal if number_of_interrupts()
+> is called 16 times?
 
-Linus Walleij has already submitted a fix for this problem:
-https://lore.kernel.org/linux-gpio/CAOMZO5DqwcM1U8FtybUHbHYZjLi-5BO6nGfifHX=
-guKtcEY4DrA@mail.gmail.com/T/#t
+No. The context is open() which is a slow path operation.
+
+> Since number_of_interrupts() has been marked as __pure, and since the
+> kernel is built with -O2, do you agree that this should be sufficient to
+> let the compiler CSE optimization step move function calls like the
+> above from inside a loop out of the loop?
+
+It could do so.
+
+Thanks,
+
+        tglx
 
