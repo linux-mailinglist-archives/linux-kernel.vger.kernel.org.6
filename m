@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-353367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466C8992CED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:17:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9ECF992CE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6FC2854D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:17:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D0B1C22AFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F5D1D4326;
-	Mon,  7 Oct 2024 13:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB971D358D;
+	Mon,  7 Oct 2024 13:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DxLrCZaH"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XsYWyrPL"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5AC1D4152;
-	Mon,  7 Oct 2024 13:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C395E1D2796
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307012; cv=none; b=gpzgwfebuSyaiZ36zCGW5/NvtV7jYss9ee0OEXhx4e9O61GpCNxnwceYO86D+R/Ndj13jJ8nQvqySez6eUU0HmQSfqYNX2ZA8afTJLegJRHac5s8PVejHOaQo9JvxxpWFYzAkxvUIVTT6OwRmqfpnyjjLtS00w3474oexjr6q28=
+	t=1728307006; cv=none; b=SxTMd16SdZlR/WMTbiO6XA1VflzLfs3gVJshxOwNp6UUa511QH+nX4Ko+HmI9CXkI5YS2vREskzT5NATKt1pNXU5BYTlDg7y7mmemti2inEyyGIkYaQwkravn4x++93U/cRxq4Vhue3tF20WaAcssmYDZsV2Yszs/Badp7Ck0fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307012; c=relaxed/simple;
-	bh=FNqFbT+e3g5173pqoULGRwQfOV5dySeZGQTKTolzwsg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SSXYK0yuOtBtNZjALjD7Imo340++cfzZgM57yrarki+6PfPFu17sazke6jnHPQlBX09plguMYP3EMXPtnKL5wcngfAx+Y2xTBxcvdsBzX1kAcDdvvGVyBYsR7fr41Wamu51Aai5LymZ/+vpWNr0eaKCO00uRAIaZwQ5jt/DWEFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DxLrCZaH; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728306989; x=1728911789; i=markus.elfring@web.de;
-	bh=mQy4pPjNTV885xcZQDMYohl8lP4cbtjvUxvu3rApYuA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=DxLrCZaHDeGLYEOiK8c2Vk30Mb4LR41XlVeZPpFEZNEm2BQyq/N64dm11+A5gPwm
-	 ILaBAZbKjUvPDj64PYZScrz/AXWHAAmiTefvgvro69jQxDNx+a2IW5RvIASdjkEYQ
-	 9k9JJ/nZpJcveaDSUQSrCQDSZ5X5j9W/f2aZvYCJUS3O1QpWP0H4j17wG6gsXMltR
-	 nxYW3ZzHfEypI2PfEXvI+dUnInU/7797UKTBlOrmvpenTnW3QlMgLNskyGO9ZAROK
-	 z/G1CP5tDWZ7rF3GqGkL1ucBy6WNNHom5QGtvThYaVFEVPGpN81RGMgtOzdbWGcld
-	 pLpQ10E6xgv/zFsBAQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQPdr-1tJR5Y1CwT-00QCqm; Mon, 07
- Oct 2024 15:16:29 +0200
-Message-ID: <9be6b874-0c4d-4100-887f-0aa693985715@web.de>
-Date: Mon, 7 Oct 2024 15:16:27 +0200
+	s=arc-20240116; t=1728307006; c=relaxed/simple;
+	bh=c5zDZczpwoMhRCZTtD9TIprKTL2qFUSJSp44forXD64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlJl518w4GkFz1ev07itibWpaVKNRnvWnA6A8dNzu9CwhOJrg5c969IPAJgOfWbio34gAoPgceBu7E3dyBXkUlz89cZjZcvE/9KiC6OfoOHMmBE4UU94YYJVHGey7zfEid91XZSnLEg70twtbwm6sZnTWusJwnf+EdRbbEnysmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XsYWyrPL; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fadc95ccfcso47227651fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728307003; x=1728911803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
+        b=XsYWyrPLB/p0aPFooLUEtc502zzKNuzHHLlWwRFYySERoH9B4VacYJFPm2CPi11PYz
+         RAowKOf7d+pQ76NorSvFjMj1qt0BCLntyFWfJWHJKPrEzxax9vSFkFTNlRiCbX9RoXKn
+         emTPYtd6bYsFNb+XpBv7koqh+Y0sa4aqmZrVkT+4zggJJ2YHXXsgf7vUHHoYnRphh5A6
+         rLzgASx0PEBsLk8JRdSCFxNfGKirBp+CObYCMQWSwPYddvGMpmEdgEi+kQoNDyZqwXca
+         5fg7iKCJW9lkY5F3SJr2au21W7HtVU+kUAnzcgUbC+u3EcbA3zHwLn0mBUHZAHugAsXe
+         XG0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728307003; x=1728911803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
+        b=Su0F1+cPshneLlgz8dNx3aKxlpC33SFJtjcRoovZG8UcYv8wXamFZzyVRSvUOXO2wv
+         RPg4laArxPoPhaBpWEWtsHr3FyTDORZJ5ZCnuw8rwNNFA3dESARo1oqE/swoJdgb3SOu
+         A8fwuW/jC+0F6hmErtXcIxGD4j3oDj7MJWJUE3Swq+O/WO3OTDzxtZPMpFQurg8cTrwk
+         XLxQqXSRbu03adH5MrH8SpaSQcatTxak8LuO4EIDT8ZX/+5yk9Lyp3W+VyWINIM3OVcR
+         VEN1q/QILnIjaN7MxBTtsWUM45Yfxi8zRlnQ9PopQjSJ027zA/sKGXeHN2AyWG6iYir8
+         h2LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6f9GQFmybvrFI1GmGMezRBlHWj44vWogmL/AatHeiM8cUgWSNbNtYaWHx9DczkKo1dlANXcto0Hk+X1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWRCGZNMrpt0gjerKaN03RpvCtDyylLR2SVj7ZkbaYks3wdVzQ
+	iEDT1uWhTdxaxwIkSlFZYht8GJeJzsA4YiJ+p+VAwRlmKYddG8ycuhihCnfoJEg=
+X-Google-Smtp-Source: AGHT+IGZ1mDDEjhcmG+T6pvJMY5EAIlF8UJwKfOkVTjp4MAKBG18DAhtjPcfQoU7T5moxF77LIIMQQ==
+X-Received: by 2002:a05:651c:556:b0:2fa:d58d:dcf3 with SMTP id 38308e7fff4ca-2faf3d9d58emr49272581fa.33.1728307002704;
+        Mon, 07 Oct 2024 06:16:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b24867sm8453081fa.73.2024.10.07.06.16.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 06:16:41 -0700 (PDT)
+Date: Mon, 7 Oct 2024 16:16:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+	Arun Kumar Neelakantam <quic_aneela@quicinc.com>, 
+	"open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
+ CMD_OPEN name length
+Message-ID: <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
+References: <20241007044723.25347-1-jonathan@marek.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rohit kumar <quic_rohkumar@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Chenyuan Yang <chenyuan0y@gmail.com>, Zijie Zhao <zzjas98@gmail.com>
-References: <20241006205737.8829-1-zichenxie0106@gmail.com>
-Subject: Re: [PATCH v3] ASoC: qcom: Fix NULL Dereference in
- asoc_qcom_lpass_cpu_platform_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241006205737.8829-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WzU7w3XWp2SXhsmOcZlwNr9fvxw31LHhoiTmrXcKpjBjfriuBTH
- 5DdRFP+RsFEHaM5xcmf4Gi9u/S9FSD1+MgOY8Ed6IQYUMMhIHuCeeKirIcvboDzOB8v8IdP
- nrqKGMVB6z6jT9WFby3ak1nYQ579QC2d/4ogrHjn5B0Z6ve3FEI2OJTlW5zZfpQ7keBjUD2
- /HcSsvvEUJGC9Mbe/gX7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y2fzS37A3z4=;s4W91ovM4BXEgiIKlmPKd8AZ6cI
- e0qes1dg4h+z2fEe8D1jWmbzYEEgzUMQBYVmuHyo2+g18qqnBzdVL/VINWQAcHvIYiiTIGAR7
- YHB+VFjC0ULlXE5lwB+ry0wfBcpZBs7b5GGtNc6hTIttu5ml4E5OvYdkEhpWpZratfvOgBDAC
- edTGLcynkIzLF2HQQfSNew5A8cduGpHFb2SZSQfwLnzgBf8OVHqViD2YTVphYCseq2zcxg9dl
- eUCMFE2gg72hvz8NNdsDAAldFhAyxXO5EhRMHvnnIiFMq2VNeDJ6vrbZjjdQxV06BgmF9pUBk
- DTCYdiFxt8PzfwT48LBTcmlkFveEGaSm0SWSdqwY3uf8SSnki0sdpV4CAIYb3urkwLPyLw5ML
- Vd3an7N9zngKJnncoXYh6EL9yUX6xcPxxpGPKNtU8wFmU43C66B2HGrs/4F8ZlD8TYwsHfiBv
- oOV04fq1uZJl+HSLNyoBaYIxLvU+koRPCfu4TW+oN/xhOzDGXYKRB85mb8CvFNV064YA8XlZq
- XxrdohwVRVW1BAD/GR51P/xKK9enRixRpWkTkFJYQAqRDr/cU1XDGsaSsFRhkZ3uCUYiTiFdj
- 20Rh1iOOXvQqjtvqNCRO8GkXmx5W8wPhF6XtzFecw9MPBAYCVlcvqeJibox3MAPvFSRTMSvx0
- c4HOJwweQRLEYUTm3YUFW9j4DMRDMUk3JfUt2ghoP/mgL3B39jsDG2hwT6BpulLkWrh/yRlol
- 5PT+xn3iq/dL+xjFIX911fLkipiwqffhySHcxAdfUYQytkFF+s4DA8RaIxRNwEn4F+0FyFq32
- KxXS3g9/8TLWiJ2Nl78beDGA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007044723.25347-1-jonathan@marek.ca>
 
-> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could
+On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
+> The name len field of the CMD_OPEN packet is only 16-bits and the upper
+> 16-bits of "param2" are a different field, which can be nonzero in certain
+> situations, and CMD_OPEN packets can be unexpectedly dropped because of
+> this.
 
-                   call?
+Any idea about the upper 16 bits? Should we care about that data too?
 
+> 
+> Fix this by masking out the upper 16 bits of param2.
+> 
+> (the commit in this Fixes tag is not where the original code was introduced
+> but it should be far back enough not to matter)
 
-> possibly return NULL pointer. NULL Pointer Dereference may be
+Let's be more precise:
 
-Can the term =E2=80=9Cnull pointer dereference=E2=80=9D be applied for
-the final commit message (including the summary phrase)?
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
 
+> 
+> Fixes: 835764ddd9af ("rpmsg: glink: Move the common glink protocol implementation to glink_native.c")
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>  drivers/rpmsg/qcom_glink_native.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 0b2f290069080..e4933b823238c 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1204,7 +1204,7 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
+>  			ret = qcom_glink_rx_open_ack(glink, param1);
+>  			break;
+>  		case GLINK_CMD_OPEN:
+> -			ret = qcom_glink_rx_defer(glink, param2);
+> +			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
+>  			break;
+>  		case GLINK_CMD_TX_DATA:
+>  		case GLINK_CMD_TX_DATA_CONT:
+> -- 
+> 2.45.1
+> 
 
-> triggerred without addtional check.
-
-  triggered?         additional?
-
-
-Regards,
-Markus
+-- 
+With best wishes
+Dmitry
 
