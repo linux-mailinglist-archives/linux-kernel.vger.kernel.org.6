@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-353274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8D5992B79
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986F4992B82
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBCF1285E25
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D8E1F24B53
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37E21D2F4E;
-	Mon,  7 Oct 2024 12:19:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086E11D2B1B;
-	Mon,  7 Oct 2024 12:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486381D2B2C;
+	Mon,  7 Oct 2024 12:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rz397/jq"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B6B1D2780;
+	Mon,  7 Oct 2024 12:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303542; cv=none; b=PldYkmoCubpnAxuH5j+1d2sC/CKIChNXMyL3zPqzV4XfEa328QaPzNkmZ8uYAwjWFAllUqWVN7U9gwjLJYRnyaZ0VqiPsJ0ZqkkQ59ekvfz0qAC22oQ/SE6gH6YVcqil9LHrHnxGgN78NiM43XF6jTEtnMQ2SwogAt+iSdPwQ3I=
+	t=1728303567; cv=none; b=UWvKcEEbR7MksdQ9Zo6RiuREl/+LJDZfwq6uEglJ4K/7MFSbLiuYmaTB4mgvbzfFySfBfd2jttDXwQz9Au073RfNgjIpVXmzwy8NJv22UJQW8V2T+7SMHJragENe07HnebyCCqJAEfO3xvAIs8LELBvm0ChauZw0Pi66qqlX4Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303542; c=relaxed/simple;
-	bh=B9QGh3WMJeBsOhC0pcXXIqY/cxryyLAeh9ggRnBFcLs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ow1TzsglWa/SeJVUYyp1HfPDE5s9XtePUoy7mbduI/aRbl8N0CBGZvc1ViO1EcltSaQgcmK9Gi1tDiOq3YmPj53RC6p63V2pPy8ayM4y1zfB2lziJ/2ferUVIPJJ5m+zZBv21ChL481RJhp+icQuv5PxrK/yV0eKDbQV19D5FMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01319FEC;
-	Mon,  7 Oct 2024 05:19:30 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0C6273F640;
-	Mon,  7 Oct 2024 05:18:58 -0700 (PDT)
-From: Mark Rutland <mark.rutland@arm.com>
-To: stable@vger.kernel.org
-Cc: anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	james.morse@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org
-Subject: [PATCH 5.4 2/3] arm64: cputype: Add Neoverse-N3 definitions
-Date: Mon,  7 Oct 2024 13:18:49 +0100
-Message-Id: <20241007121850.548687-3-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241007121850.548687-1-mark.rutland@arm.com>
-References: <20241007121850.548687-1-mark.rutland@arm.com>
+	s=arc-20240116; t=1728303567; c=relaxed/simple;
+	bh=XVB7UJJCr/qf0hPwflV9ZKUcwosiuI4w7GG7pLjN4kg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Y8wyFe667bYL2Fq2RvgJvwBryiuYIeBX3GGk0sZws1Xp0bvT868tyWElTlQ08pIUaEoEH9bJ469Sw0P6CmMMbduI+B0gS1ZJxuKu9xZ2GReOp+wg8B0GCGkEBwTMfR182DfI7GMTmqRpK4ctFVIulTUK/SU2sn9Vb/BT20S9Ym4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rz397/jq; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6896020005;
+	Mon,  7 Oct 2024 12:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728303557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pg580Ry3VlAsGHyS5CkIwdwzGTxEmOyviaHGBYrll7U=;
+	b=Rz397/jqnTAX2f3W9lIe5fqhET3C/f0si4x4DYwKOQwJbigCR+dSvf5JQWnrNejcNwvBTQ
+	FrgHfZSHvnCtl9FydhqGEMlpUQ2A28DBj+/1iz5ClI18JswkDp3g9AITBVkpIstTvOmd9B
+	3QuZDxNSOeaMZGbhcsk+iDFW7qdbHFlfKZ+NiG2+b6FZG3rW8wZIbd5qrOtzSeL2yhHFzk
+	9kX5szIgfwZ8FFCJwb09U+Fn6K1Pw3FlJwLdAvJYwsEfkNDs4NRhXSLhOaEx+FFps5qjhi
+	3L9k8jbN4uRfAw2JXuKgsd0bZh8XZgJzojxXvyEDhr24T5T/QSxcMbdn86Tqnw==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Mon, 07 Oct 2024 14:18:50 +0200
+Subject: [PATCH ethtool-next v2 2/2] ethtool.8: Add documentation for new
+ C33 PSE features
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241007-feature_poe_power_cap-v2-2-cbd1aa1064df@bootlin.com>
+References: <20241007-feature_poe_power_cap-v2-0-cbd1aa1064df@bootlin.com>
+In-Reply-To: <20241007-feature_poe_power_cap-v2-0-cbd1aa1064df@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Kyle Swenson <kyle.swenson@est.tech>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-Sasl: kory.maincent@bootlin.com
 
-[ Upstream commit 924725707d80bc2588cefafef76ff3f164d299bc ]
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Add cputype definitions for Neoverse-N3. These will be used for errata
-detection in subsequent patches.
+Add documentation to described the newly C33 PSE features supported.
 
-These values can be found in Table A-261 ("MIDR_EL1 bit descriptions")
-in issue 02 of the Neoverse-N3 TRM, which can be found at:
-
-  https://developer.arm.com/documentation/107997/0000/?lang=en
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20240930111705.3352047-2-mark.rutland@arm.com
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-[ Mark: trivial backport ]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
- arch/arm64/include/asm/cputype.h | 2 ++
- 1 file changed, 2 insertions(+)
+ ethtool.8.in | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index cf5636e5c6c8b..bd2c9057fba9c 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -89,6 +89,7 @@
- #define ARM_CPU_PART_NEOVERSE_V3	0xD84
- #define ARM_CPU_PART_CORTEX_X925	0xD85
- #define ARM_CPU_PART_CORTEX_A725	0xD87
-+#define ARM_CPU_PART_NEOVERSE_N3	0xD8E
+diff --git a/ethtool.8.in b/ethtool.8.in
+index 151e520..1bd524d 100644
+--- a/ethtool.8.in
++++ b/ethtool.8.in
+@@ -545,6 +545,7 @@ ethtool \- query or control network driver and hardware settings
+ .BR enable | disable ]
+ .RB [ c33\-pse\-admin\-control
+ .BR enable | disable ]
++.BN c33\-pse\-avail\-pw\-limit N
+ .HP
+ .B ethtool \-\-flash\-module\-firmware
+ .I devname
+@@ -1815,6 +1816,36 @@ status depend on internal PSE state machine and automatic PD classification
+ support. It corresponds to IEEE 802.3-2022 30.9.1.1.5
+ (aPSEPowerDetectionStatus) with potential values being
+ .B disabled, searching, delivering power, test, fault, other fault
++.TP
++.B c33-pse-extended-state
++This attribute indicates the Extended state of the c33 PSE. The extended
++state correlated with the c33 PSE Extended Substate allows to have more
++detail on the c33 PSE current error state.
++It corresponds to IEEE 802.3-2022 33.2.4.4 Variables.
++.TP
++.B c33-pse-extended-substate
++This attribute indicates the Extended substate of the c33 PSE. Correlated
++with the c33 PSE Extended state value, it allows to have more detail on the
++c33 PSE current error state.
++.TP
++.B c33-pse-power-class
++This attribute identifies the power class of the c33 PSE. It depends on
++the class negotiated between the PSE and the PD. It corresponds to
++IEEE 802.3-2022 30.9.1.1.8 (aPSEPowerClassification).
++.TP
++.B c33-pse-actual-power
++This attribute identifies the actual power drawn by the c33 PSE. It
++corresponds to ``IEEE 802.3-2022`` 30.9.1.1.23 (aPSEActualPower). Actual
++power is reported in mW.
++.TP
++.B c33-pse-available-power-limit
++This attribute identifies the configured c33 PSE power limit in mW.
++.TP
++.B c33-pse-power-limit-ranges
++This attribute specifies the allowed power limit ranges in mW for
++configuring the c33-pse-avail-pw-limit parameter. It defines the valid
++power levels that can be assigned to the c33 PSE in compliance with the
++c33 standard.
  
- #define APM_CPU_PART_POTENZA		0x000
+ .RE
+ .TP
+@@ -1829,6 +1860,11 @@ This parameter manages PoDL PSE Admin operations in accordance with the IEEE
+ .A2 c33-pse-admin-control \ enable disable
+ This parameter manages c33 PSE Admin operations in accordance with the IEEE
+ 802.3-2022 30.9.1.2.1 (acPSEAdminControl) specification.
++.TP
++.B c33-pse-avail-pw-limit \ N
++This parameter manages c33 PSE Available Power Limit in mW, in accordance
++with the IEEE 802.3-2022 33.2.4.4 Variables (pse_available_power)
++specification.
  
-@@ -139,6 +140,7 @@
- #define MIDR_NEOVERSE_V3 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V3)
- #define MIDR_CORTEX_X925 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X925)
- #define MIDR_CORTEX_A725 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A725)
-+#define MIDR_NEOVERSE_N3 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N3)
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+ .RE
+ .TP
+
 -- 
-2.30.2
+2.34.1
 
 
