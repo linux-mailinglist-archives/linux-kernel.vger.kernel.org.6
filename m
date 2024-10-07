@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-353065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ED49927E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831AA9927E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EEA91C2258B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471F02833DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA818DF6E;
-	Mon,  7 Oct 2024 09:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BA818E036;
+	Mon,  7 Oct 2024 09:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kirljLBc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UEPMYj8U";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Iw/bEKIx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E6C18CC0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166F618C326;
 	Mon,  7 Oct 2024 09:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728292496; cv=none; b=W+7abUObp3FI1colrF4/IKFiqinDw2R0jUh9+7TTgYG64jwuNqZ7ucNo2UDoQqNhzfOTLrDMgHin+aSlkmDfBlLMLaJ7+ELHEVZUcqPCpJsEc+JO2b5KETC7PA/Zzthgq2oHF1YAzsnLlEaQSXvPCrG0lSAFUp6DnCAHTDyHnVg=
+	t=1728292497; cv=none; b=OHq8qguVxUHFr0R5CDqUI9l7/4Rn4YW1aS0lR23F1k3hJtps6CTxsXIPg0xZQPFow+pDlh6UIUC9hRbGTa9dEeFDNTK8SyD+LejlZ7/LWTAcV+V61fBfkR+9yfdWxBwPLI4gurmCOU32VTwW9YbMB7U0MoqBoEyp2TCUG85r4AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728292496; c=relaxed/simple;
-	bh=orHHvBCFGutCM41vFPHAljUU7OO3BD272KMLX4hir6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oJLpvroxWeCWvEEXxuuggj+FRR51nsoyY18EeOb70f7wTz5riDGXfouMpXKwh0F6QJKc7ExljJRjqSkLWhBufEncpTORsa9fa1joVyPgnN1oGzElxLc6zOFUwpsP58Z3+6Jcw6rDdDyE9oJl/jw0qRMj4DSu3vqEpMDRZcLPh60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kirljLBc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974SrKR021306;
-	Mon, 7 Oct 2024 09:14:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Tq7aRWIkV3GEwCHN8H9VtzFR3yhqTAAhfgZQXGGZXDg=; b=kirljLBcD/WhYrAk
-	hUACXAj87D6pt5QkYgcK5lHxzwWneF+5lXsMk36Q4a1rt6VlzK5nXipAKFTI/hBN
-	lc2uAO0SF17xq1t5cOg6R2g2cIV9rfI5f7FDiaHmYJkAq3T8bV2v14j8g448J1oi
-	lPONG/BTHOzfOqJd3TgozyVKcxAO1VqTC3Gud2aqT0t3hugfyTRj/ivjcL0+E5TB
-	r8COJAUXK1Xz3+Ipy1YUDDx+uMkEv03lKyaEfWEmLRACbq4RhMEj13UQjk339e+Y
-	AJeaXFI4ZQqwRumjww7I05h1Nne7Nd4m0uYiUYAnUz6dYhf67WiJHWcZufNCsFaG
-	eKCW2Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xr5kjym-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 09:14:51 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4979EpWD020836
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 09:14:51 GMT
-Received: from [10.216.15.15] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 02:14:47 -0700
-Message-ID: <38e3730f-7fb2-4ea6-b55a-f6501e43d799@quicinc.com>
-Date: Mon, 7 Oct 2024 14:44:44 +0530
+	s=arc-20240116; t=1728292497; c=relaxed/simple;
+	bh=W3hDRAYPSXIkW9gYM4sT+DAxCx8yaov54LZrcMTrwuA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cII+N/CDlixDs+y1k6akClsbhgjDqIHYKUGBthSdU6Ze0hkWe6TY3oDuivUkyXAt9c/oxV7FfN//xxZNBzEPNI8a4MlrHsPjK82WFn71et3xMJYvOtclkRelwmGHEajJSGjBGQPCGIqQEFB8RkX6e2Soz3XvnLZmdbjJrDkPkM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UEPMYj8U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Iw/bEKIx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728292493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILhejzyvsn9kCBk/pLYqb1pHNvOKTywyx34p8dgeWWo=;
+	b=UEPMYj8U8PeoCIDMxrM9YIBlbJQ+LGt6Dear3XCNWOJgJRS4o0gI6rFb3omUQaDXQQ8lso
+	kpm7AddJjyESCchyMLoQ1o73X/uZT0RP1jATKDV2oxTsxLe6Ie7xTbTQQXiqzIJe7ZRgCB
+	yT+SwYjDjet6m4HUguyyoZZdrQqHJRNqcamJVWl+bZhbVdqdoG0P90OmKpgoyHg//W46q8
+	qY/yP2Em0u7/PF0kATyuhaCIwYegxhYhFdXAF0WtYp9BhhTI1dLoQQQ5KNi+AH+IVmtGXX
+	LI00PUuZJKagKRvs9DX3vNhPzQQff7495ylcC87kfiXp/z68Z8yP2TozEfeYUw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728292493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILhejzyvsn9kCBk/pLYqb1pHNvOKTywyx34p8dgeWWo=;
+	b=Iw/bEKIxzy+PzeYK32U1OyNVFCDn4052LD0tJJ8oC4ZYEtIyChQCVP+FOasBkjg7C/SNDO
+	mfEDG6GggTG4F5CQ==
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "moderated list:INTEL ETHERNET DRIVERS"
+ <intel-wired-lan@lists.osuosl.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 2/2] igc: Link queues to NAPI instances
+In-Reply-To: <20241003233850.199495-3-jdamato@fastly.com>
+References: <20241003233850.199495-1-jdamato@fastly.com>
+ <20241003233850.199495-3-jdamato@fastly.com>
+Date: Mon, 07 Oct 2024 11:14:51 +0200
+Message-ID: <87msjg46lw.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2] arm64: dts: qcom: sa8775p: Populate additional
- UART DT nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
-        <quic_anupkulk@quicinc.com>
-References: <20240930085533.17119-1-quic_vdadhani@quicinc.com>
- <uk3zgyee62vrkcwtujkuw754wacvullmsjnimlqhmmbjit24rm@sqcrmbn7ngsg>
- <1fd4b0db-f9c1-44db-9aec-45f3aa269e19@quicinc.com>
- <B12D1E5C-76DC-4B71-B1E4-39F83B1FFFC5@linaro.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <B12D1E5C-76DC-4B71-B1E4-39F83B1FFFC5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CbreTk-CW7pcV-7JH3TJ-a-v8fCFPLCF
-X-Proofpoint-ORIG-GUID: CbreTk-CW7pcV-7JH3TJ-a-v8fCFPLCF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- clxscore=1015 mlxlogscore=885 priorityscore=1501 impostorscore=0
- adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070064
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+Hi Joe,
 
-On 10/7/2024 1:03 PM, Dmitry Baryshkov wrote:
-> On October 7, 2024 9:06:52 AM GMT+03:00, Viken Dadhaniya <quic_vdadhani@quicinc.com> wrote:
->>
->>
->> On 10/7/2024 2:26 AM, Dmitry Baryshkov wrote:
->>> On Mon, Sep 30, 2024 at 02:25:33PM GMT, Viken Dadhaniya wrote:
->>>> Currently, UART configuration is populated for few
->>>> SEs(Serial engine) only in sa8775p DTSI file.
->>>>
->>>> Populate UART configurations of remaining SEs for sa8775p soc.
->>>
->>> I think this is a long standing tradition of adding UART configuration
->>> only to those nodes that actually will be used for UART on one or
->>> another device. Is this the case for all these UART nodes?
->>
->> Recently, we have begun adding all possible UART configurations, similar to what we’ve done with I2C and SPI.
->> We will continue this approach for future targets.
-> 
-> 
-> Please describe why it is done, not what is being done by the patch. In other words, why do you need all uarts in this case.
+On Thu Oct 03 2024, Joe Damato wrote:
+> Link queues to NAPI instances via netdev-genl API so that users can
+> query this information with netlink:
+>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                          --dump queue-get --json=3D'{"ifindex": 2}'
+>
+> [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
+>  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
+>  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
+>  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
+>  {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
+>  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
+>  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
+>  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+>
+> Since igc uses only combined queues, you'll note that the same NAPI ID
+> is present for both rx and tx queues at the same index, for example
+> index 0:
+>
+> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
+> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  drivers/net/ethernet/intel/igc/igc_main.c | 30 ++++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethe=
+rnet/intel/igc/igc_main.c
+> index 7964bbedb16c..b3bd5bf29fa7 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -4955,6 +4955,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
+>  void igc_up(struct igc_adapter *adapter)
+>  {
+>  	struct igc_hw *hw =3D &adapter->hw;
+> +	struct napi_struct *napi;
+>  	int i =3D 0;
+>=20=20
+>  	/* hardware has been reset, we need to reload some things */
+> @@ -4962,8 +4963,17 @@ void igc_up(struct igc_adapter *adapter)
+>=20=20
+>  	clear_bit(__IGC_DOWN, &adapter->state);
+>=20=20
+> -	for (i =3D 0; i < adapter->num_q_vectors; i++)
+> -		napi_enable(&adapter->q_vector[i]->napi);
+> +	for (i =3D 0; i < adapter->num_q_vectors; i++) {
+> +		napi =3D &adapter->q_vector[i]->napi;
+> +		napi_enable(napi);
+> +		/* igc only supports combined queues, so link each NAPI to both
+> +		 * TX and RX
+> +		 */
 
-Sure, Updated commit log in v3.
+igc has IGC_FLAG_QUEUE_PAIRS. For example there may be 2 queues
+configured, but 4 vectors active (and 4 IRQs). Is your patch working
+with that?  Can be tested easily with `ethtool -L <inf> combined 2` or
+by booting with only 2 CPUs.
 
-> 
-> 
->>
->>>
->>>>
->>>> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>>> ---
->>>> v1 -> v2:
->>>>
->>>> - Modifed commit log as requested by Krzysztof.
->>>> - Added co-developed-by tag.
->>>>
->>>> v1 Link: https://lore.kernel.org/linux-arm-msm/98e7dc28-4413-4247-bad1-98b529f6d62d@kernel.org/T/
->>>> ---
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/sa8775p.dtsi | 231 ++++++++++++++++++++++++++
->>>>    1 file changed, 231 insertions(+)
->>>>
->>>
-> 
-> 
+Thanks,
+Kurt
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmcDposTHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzgkVmD/9qaFbTuNtod2nGZcKugdGzZE7UPryI
+vjNn7+3IRXDCkRsCXqZpU+Ay4i78xFdFH3z4C8r1YK8Idl7xWvNYbSHicN1/dFea
+zCGVkCyDr2cG/Nen2ty1+BaMyY3xVkmPKsO3/i5bTwJ8iLHr1RI20SQl7AlDdj4w
+ZzrtmH28A12Vt6zf+Jw3cKHCCzP+V44Qkd6yeYL8W7Tqyu4nefLnmkGC4pL1aAKm
+5Hck67WdesDYi3QmzVfB8WcUbtG/SIAheYz80rIA+1YGgxXJ163slMis458w2gxQ
+t3vqFLHAxcDVq39DUhJOqFA6821BGUGzebA/2nq7vjnti8JA9lIn6hbzTj2Ficwi
+AezoP1W6G1vyMlha7q4+AKcHfY0L6CelU5fF1PVkCFcld4HEMM5CmZ6yeOKHCQ8s
+P5ylfIJJPO1l8GrKJrtuY8bshBz4yHv8aKoepydkO/VgFnfQ+x/orzcYrAYSBOoC
+8VkQdadBeoD8qCvttQv1GbDUM+3My1exs3k0lB836+bYfz29Yi+Rj3KKuzPPzw5D
+44ic3S0Qv84pydQBNxiXH0/Nmc+GhZRfIURSV1BwLqluwImh4xaC89W+4ltypwhL
+gA/V3nipKhx2nzx3NAsAhm8sk+17B11j1Ba5G+lmLv8JG4Bv+GirXVlmraiYruhK
+LfqS6xN2o9s2GQ==
+=LMbF
+-----END PGP SIGNATURE-----
+--=-=-=--
 
