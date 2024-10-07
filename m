@@ -1,150 +1,125 @@
-Return-Path: <linux-kernel+bounces-353863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99E79933C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:47:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0658E9933C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF78D1C23B4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:47:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 822B1B25946
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0681DCB2E;
-	Mon,  7 Oct 2024 16:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5ED1DC077;
+	Mon,  7 Oct 2024 16:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VQ43bJmw"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qp1twiEx"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BB41DC75C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CC21D4345;
+	Mon,  7 Oct 2024 16:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319594; cv=none; b=ZpfDMoGKlxGIZpyUpGfK309zJPgHa4S71ySWjbKT1Pqb9cHEwYEaJQ9XOe1D32fns2UoO9UtQ9vKyh5f16KGkYpG6fRVlnYCfpeWgRGZLNyTTaC4pAeB/vDiY3B8irsyd5xHDh9sm9CJh+2gvXvxqS7+J3MpFRIg+CEQp192q4U=
+	t=1728319617; cv=none; b=eyITlV3drUiEQHehCgIGsLYfqnsrNc6anTtTpRezGfEZjnF1ZIcaOw8RgGzwolbIW7npk0Qc7K9DMABhtgTWkll9lHR5Cy5x9dXOfS6rkS0gveapPQ09iuA0PUjTH8f+ywtK7AEQUpVxdoEb+BZB4NH3UJb93I6ZdO06MOA0Bdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319594; c=relaxed/simple;
-	bh=y8C70ewoTgGfHL96TQe4gJLZQgBlDJaqpUWN8xMc2SM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RRMiEqMHXF75D2gy5i5rv4ov1vzQRtKqkcU916H4w5iMIoPEX1SxPVXAohE55HYfmognhVpI1HurpE9yiTjlulX8zPuSi5SzTrQj8t5ku8YHacoGnA35pZEEhO1N8bCLtfvWX0CT4ZC3UXAvhyKDOOVqwoQJaZ1UYYkJ1KWqaJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VQ43bJmw; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 80DA04000E;
-	Mon,  7 Oct 2024 16:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728319590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xUqVo+rsIarUdQ9nThu6rtZixqT2ecV/BMOIPH+GeZk=;
-	b=VQ43bJmw9T0aDcfHRC638iVpqfF9uGkwF1M0ImSukWgJvlAi25kbsoRV+//0eqwO4RonjN
-	gUD41nqGtZCBCIzxzhX1OLg8HlPfjurY8+C+/aAIT8wtQe7xhI3rIrHK8eWpDKXE+ZhVt7
-	CZF47EorieU6Qc5Jik2AqffI4DjHMAohQrybnXlJgxvOcBzz5fbPGwW5x8jAMYoD8zfPes
-	vXRHiAKaIbZxgLzpgsbNqIqHp/asTX5URqzwXzC2k4Lx/lUiOEvqqrw6Dcjy/kz6V7bjfM
-	meVCxpOar1xcFZM3lX59nPBDmm6dsAaGxH+DnfEDScSOnPMPuifzA3CCNXetUQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Mon, 07 Oct 2024 18:46:13 +0200
-Subject: [PATCH RESEND v2 8/8] drm/vkms: Add P01* formats
+	s=arc-20240116; t=1728319617; c=relaxed/simple;
+	bh=v6/USJgPTXQ3pYhiGAZg9RF+9zeybeo9ggj+sDXuiUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jkNCUwmQ/9OaGw3fUT1Xd3QtKNV9MiZDp+hgizDtC2TP2sz0pjAZ9/gU1u1EYXLZ5qcuiklCCF4rlilJMyhjhmYRlS7wVvdAmD8i7TkAoJ1gx8Mgt1B7X56AgM56Wbf3oOTbXyV+J6rS7iBTswJG+pLTpojlP4oyQXZRh4ghrYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qp1twiEx; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71df67c6881so1843841b3a.3;
+        Mon, 07 Oct 2024 09:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728319615; x=1728924415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x474kzK8YR4kJtZQLEiCdd924M+GSa8g7xKps8ToXwY=;
+        b=Qp1twiEx2mvpqyj9lk5UFgcsCJ8CDXsuKJ8gNC8V75OgUkYD1oOiixgx0IBY1GrGDt
+         0MekL+aCz2S1BoIlUhXOeWGUfB7BS1e+L1HvsIoR8RBoyn7GOhJDZ90BsIO8BPsgtI3g
+         kpGNUO6uU1h+11s83UpIFwNF8n3IE9A8cBtkRWoJ3EJlNzl8bA7gnylif4endZqC41mc
+         R8tEHy7suJL3Pdcaqye09l16m7bdE7VQoRKHElopn1tkGEKuYMBd8wErBOeZx9sYP/Hc
+         /I5D2N/ibupmiHNz0M1UP+ieiqXg17YdkmzBtSBeNLOs3wdxqmbxW2vvg7FLl/8JP10x
+         7ksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728319615; x=1728924415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x474kzK8YR4kJtZQLEiCdd924M+GSa8g7xKps8ToXwY=;
+        b=IfGT6azGKW8vmZvjgemfKpbUjJ0ImUExxBw93eifB24jgP1E/oUR2AFNVudJwEo+70
+         I4XllxEd4rRtQHZk7BLOznxDD7r3aBo0ZyU/pHz+1NHJw/qEPwfWB/xldcLiQvDVm+pX
+         nd5j+apmW209kZFQUQWXi9OCR7T4RamsqrElY6NCeuxqzuFi0EhWBTpyfDMDe+8JeT7j
+         12cpN0X0GT6oLzf43ZXsbeL87jfgMUg66M7dxrj9ET4ThDghXrsfp08bJvoemcn1qRjI
+         fuxGC1clp7Zvh9u1Dsfl4zNfoxoNFNqLjLZjb44loWq2wUGunqls2CkCfZaM4VQxJIpB
+         uvBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDXCfHhAv5jnYTJJHCp2wlNe6ZMcnmv6CnHfvm4vlOW9KnjqrEP1hsVAkX3gXHWuZwA/Ujjjj11J922GZF@vger.kernel.org, AJvYcCVsIwP4LqooKw1/4mCUgBPUYnkI9AEudlMUT63a1axt3vN85ZuPSuJUVNPCunxWkFBGKjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywun5z140iFC+yFZL8ZEzISkLM3UhuyALrk/vn1/hsUzpJ4eE5T
+	vKfOHxQJOZZbt0eItg0WryhygU0oWxsJx3TZp55BXIcK9Qs5Ab2o
+X-Google-Smtp-Source: AGHT+IF9R8rki+DMzj2a1TSHbHN7YFw7JEdxr94Rd7L6dc0LOsAEap8bxlgWCWM2KSWPbZwFDWHbiA==
+X-Received: by 2002:a05:6a00:854:b0:71e:695:41ee with SMTP id d2e1a72fcca58-71e06954699mr4611858b3a.5.1728319614971;
+        Mon, 07 Oct 2024 09:46:54 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:d13b:ab1f:73a7:7b60])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d4633csm4583732b3a.126.2024.10.07.09.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 09:46:54 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: martin.lau@linux.dev
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH] libbpf: Fix integer overflow issue
+Date: Tue,  8 Oct 2024 00:46:48 +0800
+Message-ID: <20241007164648.20926-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241007-b4-new-color-formats-v2-8-d47da50d4674@bootlin.com>
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
-In-Reply-To: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>, 
- 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1885;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=y8C70ewoTgGfHL96TQe4gJLZQgBlDJaqpUWN8xMc2SM=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnBBBdO3f55XEK9pnuYa/9GHdQXPRaM2/n6xGoY
- w5U4c8bFGWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZwQQXQAKCRAgrS7GWxAs
- 4kmjD/4t1rVvULWoAs9Df8w8312noBCoUn3740HZi9Db+/+PZcT7UcwaGQZgoHtV5Ti2z20Q98w
- xcGrlUDYrkQA6eB6+pK0DlhPtHpKq2ufLkZc4CGr2689us1KzjK8dcTy1BGdZo2EsUv4OQ+at0s
- lgz1KhAhcZ7al0sYIdG/JUR/rLt/S5DmWFlrkilTk+XyC1UKQIGLlutrcMYm9xAzdLA3DXUCNBd
- 7GfNJ97UFjL11NjxQ67Y46bTqkiLj8dwqp5TlPlmBmoWh4J3UVIllHVPYj6qC5JiNQr5QEz62cl
- W7mbeVGSpZg6vEPmR97nGvMXsFYIZ1UQsSnh7n2wH+14PjSSJdv0MDcSm1oc8/hJeiykKRV9E4V
- QVLNLHNX2nkX2EOPuE26N7A36cTi9gtcNAra/8OyXCxyLrPeMAj7giw3Rf885Lf0yisRpPxw665
- 4qnVkFEo/WeXojKUwhFrvgbXzjjmelHOnfmLccEUwRqjQT+KmXC+ilk3jg8i0/o+RIUtuvExLkA
- MqPWZbtWo5m8wQXQN28urIVmG7SVRnBFuq16/oPVIZJrewDTDzcsGhejYkGnVbMsc0D2XgRL0gX
- E0ehXiIi7VpoI9fLM0ahFWXlEk7BK5txA11KuGFGaVom6jo3nKZ2ITJvkQKmMgiMbOs+nRpsB5H
- +et8tHpH1AoJfag==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-The formats NV 12/16/24/21/61/42 were already supported.
-Add support for:
-- P010
-- P012
-- P016
+Fix integer overflow issue discovered by coverity scan, where
+"bpf_program_fd()" might return a value less than zero. Assignment of
+"prog_fd" to "kern_data" will result in integer overflow in that case.
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Do a pre-check after the program fd is returned, if it's negative we
+should ignore this program and move on, or maybe add some error handling
+mechanism here.
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 ---
- drivers/gpu/drm/vkms/vkms_formats.c | 7 ++++++-
- drivers/gpu/drm/vkms/vkms_plane.c   | 3 +++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ tools/lib/bpf/libbpf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 1cc52320475d..d77718d8e01d 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -535,7 +535,8 @@ static void function_name(const struct vkms_plane_state *plane, int x_start,			\
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index a3be6f8fac09..95fb5e48e79e 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -8458,6 +8458,9 @@ static void bpf_map_prepare_vdata(const struct bpf_map *map)
+ 			continue;
  
- READ_LINE_YUV_SEMIPLANAR(YUV888_semiplanar_read_line, y, uv, u8, u8, argb_u16_from_yuv161616,
- 			 y[0] * 257, uv[0] * 257, uv[1] * 257)
--
-+READ_LINE_YUV_SEMIPLANAR(YUV161616_semiplanar_read_line, y, uv, u16, u16, argb_u16_from_yuv161616,
-+			 y[0], uv[0], uv[1])
- /*
-  * This callback can be used for YUV format where each color component is
-  * stored in a different plane (often called planar formats). It will
-@@ -728,6 +729,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
- 	case DRM_FORMAT_NV61:
- 	case DRM_FORMAT_NV42:
- 		return &YUV888_semiplanar_read_line;
-+	case DRM_FORMAT_P010:
-+	case DRM_FORMAT_P012:
-+	case DRM_FORMAT_P016:
-+		return &YUV161616_semiplanar_read_line;
- 	case DRM_FORMAT_YUV420:
- 	case DRM_FORMAT_YUV422:
- 	case DRM_FORMAT_YUV444:
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 0fa589abc53a..03716616f819 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -41,6 +41,9 @@ static const u32 vkms_formats[] = {
- 	DRM_FORMAT_YVU420,
- 	DRM_FORMAT_YVU422,
- 	DRM_FORMAT_YVU444,
-+	DRM_FORMAT_P010,
-+	DRM_FORMAT_P012,
-+	DRM_FORMAT_P016,
- 	DRM_FORMAT_R1,
- 	DRM_FORMAT_R2,
- 	DRM_FORMAT_R4,
-
+ 		prog_fd = bpf_program__fd(prog);
++		if (prog_fd < 0)
++			continue;
++
+ 		kern_data = st_ops->kern_vdata + st_ops->kern_func_off[i];
+ 		*(unsigned long *)kern_data = prog_fd;
+ 	}
 -- 
-2.46.2
+2.43.0
 
 
