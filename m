@@ -1,369 +1,162 @@
-Return-Path: <linux-kernel+bounces-353045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381279927A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:55:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7489927A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41344B243C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:55:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3EE28150C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3438918C32A;
-	Mon,  7 Oct 2024 08:54:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7ED18C036;
-	Mon,  7 Oct 2024 08:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F69E18BC3B;
+	Mon,  7 Oct 2024 08:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="y5JfrriS"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422D2136354;
+	Mon,  7 Oct 2024 08:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291293; cv=none; b=LpwM8UAAz5IQackbXLoCWilrjOafB5WL8LyS800CiB0QFYdHEMcM5c0YqVf72lpIUPeDz4iCY2b2yKp4Qem8WJnIctz+HJ1d5YNTXZ2pKhGWbpbtEWgtkORw7FVkwQNN7jP0L95BYlq/cSt9DH4iyG3nkR6cjP+wbe+1RbPn4cg=
+	t=1728291402; cv=none; b=o8BC3o9xKyc1wS30NxfLIo+4SuqgIAwtHHKSrtruL/K9/qycIu1cwoNhs3rAEwQDpg8722McLwrHkiMRN+ESvr2gaJg9x5XzCs9aGVnCweJTvAVzjYmXq3xC1qbsleib1toYV4iJ6HU21pgPcbVYBAFpmf8VoMaqdK2frDFwDhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291293; c=relaxed/simple;
-	bh=6LtsjONwqSUoFU6nmabpi05B/akMm3Nqxl7GdD5Mrzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVK4rM9zRwRdGAv3jWQYeYvFXpR9cVLcHDtKO9yamCCJq5/GPwtiKObsMKAva5664/EOPp62KqZryCJvS0VBR9eoI+5J9lXHD9PxCm9i8XMVZcSlMm6PLVv5ynA0eskYf2yOuqvswGT0aJobwKvtoxYA4+qcz5tGO1ido/dXhQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2610AFEC;
-	Mon,  7 Oct 2024 01:55:20 -0700 (PDT)
-Received: from [192.168.4.86] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5ED43F64C;
-	Mon,  7 Oct 2024 01:54:47 -0700 (PDT)
-Message-ID: <9b728a01-159a-4908-9dcf-2906e24f5e2e@arm.com>
-Date: Mon, 7 Oct 2024 09:54:46 +0100
+	s=arc-20240116; t=1728291402; c=relaxed/simple;
+	bh=zdL2OcUuWCghfLpMOEvzNQUziLhVJFXLB5fd3Zh4+vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9PFN4pIsut4eaMR21Y0t9LYzFkpL9EQ6eNE++aoARGSRUxWM5eFjugPX4qxOp3K/VjcbtZ0M3cmzCKPv2v6xydK6c4+44l29ihtSi3U57qOWb34y9z/T07BG9qlDbAmU+x/ULDy0nCz/w4UoBBSS2AN+u8AWaw0U8pthqCB0JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=y5JfrriS; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZhAwQv8M5oa7k3C/vYB3Gden64SJwRJoj/egCMnNt54=; b=y5JfrriST8SoZsDWw+xk7OWUZo
+	2/E4A40U4RSLMuLIJXLjADhPkH3qP3c1IGXaEkDL6LMo/QLT14HvP3zbSeOneza00aoGAKp9uTVhy
+	zf6VkutzcyRB07qJVlPdXg2Jl3+yq84tFkGlOxPWlUP2lMK6q9Y/qN1v60HwUgCoU9m5wv0U2mErt
+	GjJWtwMGyFyErSk0+1cZE6kphHiviwR5TwtlNkQ17mPBxUHcP/h2SXVoP6GANAyoHwrrl8jSc3rod
+	d0I/vU/VNvS0w0+77454vxm2Gda2pPGhFDf0kMcM/R9lJ2n4JLogOJXSN+Ws/Z6PLbSlDYbnVnokX
+	ik06eL8A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33786)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sxjXV-0005Qd-34;
+	Mon, 07 Oct 2024 09:56:25 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sxjXR-00045U-2M;
+	Mon, 07 Oct 2024 09:56:21 +0100
+Date: Mon, 7 Oct 2024 09:56:21 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Mohammed Anees <pvmohammedanees2003@gmail.com>, davem@davemloft.net,
+	edumazet@google.com, f.fainelli@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	olteanv@gmail.com, pabeni@redhat.com
+Subject: Re: [PATCH] net: dsa: Fix conditional handling of Wake-on-Lan
+ configuration in dsa_user_set_wol
+Message-ID: <ZwOiNQSNJ7CzqbO1@shell.armlinux.org.uk>
+References: <0d151801-f27c-4f53-9fb1-ce459a861b82@lunn.ch>
+ <20241006161032.14393-1-pvmohammedanees2003@gmail.com>
+ <32b408a4-8b2d-4425-9757-0f8cbfddf21c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/43] arm64: RME: Add SMC definitions for calling the
- RMM
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-6-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241004152804.72508-6-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32b408a4-8b2d-4425-9757-0f8cbfddf21c@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Steven
-
-On 04/10/2024 16:27, Steven Price wrote:
-> The RMM (Realm Management Monitor) provides functionality that can be
-> accessed by SMC calls from the host.
+On Sun, Oct 06, 2024 at 09:57:26PM +0200, Andrew Lunn wrote:
+> On Sun, Oct 06, 2024 at 09:40:32PM +0530, Mohammed Anees wrote:
+> > Considering the insight you've provided, I've written the code below
+> > 
+> > static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
+> > {
+> > 	struct dsa_port *dp = dsa_user_to_port(dev);
+> > 	struct dsa_switch *ds = dp->ds;
+> > 	int ret;
+> > 
+> > 	ret = phylink_ethtool_set_wol(dp->pl, w);
+> > 
+> > 	if (ret != -EOPNOTSUPP)
+> > 		return ret;
+> > 
+> > 	if (ds->ops->set_wol)
+> > 		ret = ds->ops->set_wol(ds, dp->index, w);
+> > 		if (ret != -EOPNOTSUPP)
+> > 			return ret;
 > 
-> The SMC definitions are based on DEN0137[1] version 1.0-rel0
+> This can be simplified to just:
 > 
-> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->   * Update to point to final released RMM spec.
->   * Minor rearrangements.
-> Changes since v3:
->   * Update to match RMM spec v1.0-rel0-rc1.
-> Changes since v2:
->   * Fix specification link.
->   * Rename rec_entry->rec_enter to match spec.
->   * Fix size of pmu_ovf_status to match spec.
-> ---
->   arch/arm64/include/asm/rmi_smc.h | 255 +++++++++++++++++++++++++++++++
->   1 file changed, 255 insertions(+)
->   create mode 100644 arch/arm64/include/asm/rmi_smc.h
-> 
-> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-> new file mode 100644
-> index 000000000000..0fde2e06d275
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rmi_smc.h
-> @@ -0,0 +1,255 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023-2024 ARM Ltd.
-> + *
-> + * The values and structures in this file are from the Realm Management Monitor
-> + * specification (DEN0137) version 1.0-rel0:
-> + * https://developer.arm.com/documentation/den0137/1-0rel0/
-> + */
-> +
-> +#ifndef __ASM_RME_SMC_H
-> +#define __ASM_RME_SMC_H
-> +
-> +#include <linux/arm-smccc.h>
-> +
-> +#define SMC_RxI_CALL(func)				\
-> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
-> +			   ARM_SMCCC_SMC_64,		\
-> +			   ARM_SMCCC_OWNER_STANDARD,	\
-> +			   (func))
-> +
-> +#define SMC_RMI_DATA_CREATE		SMC_RxI_CALL(0x0153)
-> +#define SMC_RMI_DATA_CREATE_UNKNOWN	SMC_RxI_CALL(0x0154)
-> +#define SMC_RMI_DATA_DESTROY		SMC_RxI_CALL(0x0155)
-> +#define SMC_RMI_FEATURES		SMC_RxI_CALL(0x0165)
-> +#define SMC_RMI_GRANULE_DELEGATE	SMC_RxI_CALL(0x0151)
-> +#define SMC_RMI_GRANULE_UNDELEGATE	SMC_RxI_CALL(0x0152)
-> +#define SMC_RMI_PSCI_COMPLETE		SMC_RxI_CALL(0x0164)
-> +#define SMC_RMI_REALM_ACTIVATE		SMC_RxI_CALL(0x0157)
-> +#define SMC_RMI_REALM_CREATE		SMC_RxI_CALL(0x0158)
-> +#define SMC_RMI_REALM_DESTROY		SMC_RxI_CALL(0x0159)
-> +#define SMC_RMI_REC_AUX_COUNT		SMC_RxI_CALL(0x0167)
-> +#define SMC_RMI_REC_CREATE		SMC_RxI_CALL(0x015a)
-> +#define SMC_RMI_REC_DESTROY		SMC_RxI_CALL(0x015b)
-> +#define SMC_RMI_REC_ENTER		SMC_RxI_CALL(0x015c)
-> +#define SMC_RMI_RTT_CREATE		SMC_RxI_CALL(0x015d)
-> +#define SMC_RMI_RTT_DESTROY		SMC_RxI_CALL(0x015e)
-> +#define SMC_RMI_RTT_FOLD		SMC_RxI_CALL(0x0166)
-> +#define SMC_RMI_RTT_INIT_RIPAS		SMC_RxI_CALL(0x0168)
-> +#define SMC_RMI_RTT_MAP_UNPROTECTED	SMC_RxI_CALL(0x015f)
-> +#define SMC_RMI_RTT_READ_ENTRY		SMC_RxI_CALL(0x0161)
-> +#define SMC_RMI_RTT_SET_RIPAS		SMC_RxI_CALL(0x0169)
-> +#define SMC_RMI_RTT_UNMAP_UNPROTECTED	SMC_RxI_CALL(0x0162)
-> +#define SMC_RMI_VERSION			SMC_RxI_CALL(0x0150)
-> +
-> +#define RMI_ABI_MAJOR_VERSION	1
-> +#define RMI_ABI_MINOR_VERSION	0
-> +
-> +#define RMI_ABI_VERSION_GET_MAJOR(version) ((version) >> 16)
-> +#define RMI_ABI_VERSION_GET_MINOR(version) ((version) & 0xFFFF)
-> +#define RMI_ABI_VERSION(major, minor)      (((major) << 16) | (minor))
-> +
-> +#define RMI_UNASSIGNED			0
-> +#define RMI_ASSIGNED			1
-> +#define RMI_TABLE			2
-> +
-> +#define RMI_RETURN_STATUS(ret)		((ret) & 0xFF)
-> +#define RMI_RETURN_INDEX(ret)		(((ret) >> 8) & 0xFF)
-> +
-> +#define RMI_SUCCESS		0
-> +#define RMI_ERROR_INPUT		1
-> +#define RMI_ERROR_REALM		2
-> +#define RMI_ERROR_REC		3
-> +#define RMI_ERROR_RTT		4
-> +
-> +enum rmi_ripas {
-> +	RMI_EMPTY = 0,
-> +	RMI_RAM = 1,
-> +	RMI_DESTROYED = 2,
-> +};
-> +
-> +#define RMI_NO_MEASURE_CONTENT	0
-> +#define RMI_MEASURE_CONTENT	1
-> +
-> +#define RMI_FEATURE_REGISTER_0_S2SZ		GENMASK(7, 0)
-> +#define RMI_FEATURE_REGISTER_0_LPA2		BIT(8)
-> +#define RMI_FEATURE_REGISTER_0_SVE_EN		BIT(9)
-> +#define RMI_FEATURE_REGISTER_0_SVE_VL		GENMASK(13, 10)
-> +#define RMI_FEATURE_REGISTER_0_NUM_BPS		GENMASK(19, 14)
-> +#define RMI_FEATURE_REGISTER_0_NUM_WPS		GENMASK(25, 20)
-> +#define RMI_FEATURE_REGISTER_0_PMU_EN		BIT(26)
-> +#define RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS	GENMASK(31, 27)
-> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_256	BIT(32)
-> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_512	BIT(33)
-> +#define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
-> +#define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
-> +
-> +#define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
-> +#define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
-> +#define RMI_REALM_PARAM_FLAG_PMU		BIT(2)
-> +
-> +/*
-> + * Note many of these fields are smaller than u64 but all fields have u64
-> + * alignment, so use u64 to ensure correct alignment.
-> + */
-> +struct realm_params {
-> +	union { /* 0x0 */
-> +		struct {
-> +			u64 flags;
-> +			u64 s2sz;
-> +			u64 sve_vl;
-> +			u64 num_bps;
-> +			u64 num_wps;
-> +			u64 pmu_num_ctrs;
-> +			u64 hash_algo;
-> +		};
-> +		u8 padding1[0x400];
-> +	};
-> +	union { /* 0x400 */
-> +		u8 rpv[64];
-> +		u8 padding2[0x400];
-> +	};
-> +	union { /* 0x800 */
-> +		struct {
-> +			u64 vmid;
-> +			u64 rtt_base;
-> +			s64 rtt_level_start;
-> +			u64 rtt_num_start;
-> +		};
-> +		u8 padding3[0x800];
-> +	};
-> +};
-> +
-> +/*
-> + * The number of GPRs (starting from X0) that are
-> + * configured by the host when a REC is created.
-> + */
-> +#define REC_CREATE_NR_GPRS		8
-> +
-> +#define REC_PARAMS_FLAG_RUNNABLE	BIT_ULL(0)
-> +
-> +#define REC_PARAMS_AUX_GRANULES		16
-> +
-> +struct rec_params {
-> +	union { /* 0x0 */
-> +		u64 flags;
-> +		u8 padding1[0x100];
-> +	};
-> +	union { /* 0x100 */
-> +		u64 mpidr;
-> +		u8 padding2[0x100];
-> +	};
-> +	union { /* 0x200 */
-> +		u64 pc;
-> +		u8 padding3[0x100];
-> +	};
-> +	union { /* 0x300 */
-> +		u64 gprs[REC_CREATE_NR_GPRS];
-> +		u8 padding4[0x500];
-> +	};
-> +	union { /* 0x800 */
-> +		struct {
-> +			u64 num_rec_aux;
-> +			u64 aux[REC_PARAMS_AUX_GRANULES];
-> +		};
-> +		u8 padding5[0x800];
-> +	};
-> +};
-> +
-> +#define REC_ENTER_EMULATED_MMIO		BIT(0)
-> +#define REC_ENTER_INJECT_SEA		BIT(1)
-> +#define REC_ENTER_TRAP_WFI		BIT(2)
-> +#define REC_ENTER_TRAP_WFE		BIT(3)
-> +#define REC_ENTER_RIPAS_RESPONSE	BIT(4)
-> +
-> +#define REC_RUN_GPRS			31
-> +#define REC_GIC_NUM_LRS			16
+> > 	if (ds->ops->set_wol)
+> > 		return ds->ops->set_wol(ds, dp->index, w);
+> > 
+> > 	return -EOPNOTSUPP;
+> > }
 
-minor nit:
-Should we rename this to REC_MAX_GIC_NUM_LRS ? The RMM could
-support lesser number of LRs as indicated in the FEATURE Register 0
-and we need to take that into consideration for VGIC support. Otherwise 
-we may loose LRs on restore path. More on that on the VGIC change.
+I don't think the above is correct. While the simplification is, the
+overall logic is not.
 
-Suzuki
+Let's go back to what Andrew said in his previous reply:
 
+"So userspace could say pumbagsf, with the PHY supporting pmub and the
+MAC supporting agsf, and the two need to cooperate."
 
+The above does not do this. Let's go back further:
 
+        phylink_ethtool_set_wol(dp->pl, w);
 
+        if (ds->ops->set_wol)
+                ret = ds->ops->set_wol(ds, dp->index, w);
 
+The original code _does_ do this, allowing the PHY and MAC to set
+their modes, although the return code is not correct.
 
-> +
-> +struct rec_enter {
-> +	union { /* 0x000 */
-> +		u64 flags;
-> +		u8 padding0[0x200];
-> +	};
-> +	union { /* 0x200 */
-> +		u64 gprs[REC_RUN_GPRS];
-> +		u8 padding2[0x100];
-> +	};
-> +	union { /* 0x300 */
-> +		struct {
-> +			u64 gicv3_hcr;
-> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
-> +		};
-> +		u8 padding3[0x100];
-> +	};
-> +	u8 padding4[0x400];
-> +};
-> +
-> +#define RMI_EXIT_SYNC			0x00
-> +#define RMI_EXIT_IRQ			0x01
-> +#define RMI_EXIT_FIQ			0x02
-> +#define RMI_EXIT_PSCI			0x03
-> +#define RMI_EXIT_RIPAS_CHANGE		0x04
-> +#define RMI_EXIT_HOST_CALL		0x05
-> +#define RMI_EXIT_SERROR			0x06
-> +
-> +struct rec_exit {
-> +	union { /* 0x000 */
-> +		u8 exit_reason;
-> +		u8 padding0[0x100];
-> +	};
-> +	union { /* 0x100 */
-> +		struct {
-> +			u64 esr;
-> +			u64 far;
-> +			u64 hpfar;
-> +		};
-> +		u8 padding1[0x100];
-> +	};
-> +	union { /* 0x200 */
-> +		u64 gprs[REC_RUN_GPRS];
-> +		u8 padding2[0x100];
-> +	};
-> +	union { /* 0x300 */
-> +		struct {
-> +			u64 gicv3_hcr;
-> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
-> +			u64 gicv3_misr;
-> +			u64 gicv3_vmcr;
-> +		};
-> +		u8 padding3[0x100];
-> +	};
-> +	union { /* 0x400 */
-> +		struct {
-> +			u64 cntp_ctl;
-> +			u64 cntp_cval;
-> +			u64 cntv_ctl;
-> +			u64 cntv_cval;
-> +		};
-> +		u8 padding4[0x100];
-> +	};
-> +	union { /* 0x500 */
-> +		struct {
-> +			u64 ripas_base;
-> +			u64 ripas_top;
-> +			u64 ripas_value;
-> +		};
-> +		u8 padding5[0x100];
-> +	};
-> +	union { /* 0x600 */
-> +		u16 imm;
-> +		u8 padding6[0x100];
-> +	};
-> +	union { /* 0x700 */
-> +		struct {
-> +			u8 pmu_ovf_status;
-> +		};
-> +		u8 padding7[0x100];
-> +	};
-> +};
-> +
-> +struct rec_run {
-> +	struct rec_enter enter;
-> +	struct rec_exit exit;
-> +};
-> +
-> +#endif
+I notice V2 of the patch has been posted - in my opinion prematurely
+because there's clearly the discussion on the first version has not
+reached a conclusion yet.
 
+What I would propose is the following:
+
+	int phy_ret, mac_ret;
+
+	phy_ret = phylink_ethtool_set_wol(dp->pl, w);
+	if (phy_ret != 0 && phy_ret != -EOPNOTSUPP)
+		return phy_ret;
+
+	if (ds->ops->set_wol)
+		mac_ret = ds->ops->set_wol(ds, dp->index, w);
+	else
+		mac_ret = -EOPNOTSUPP;
+
+	if (mac_ret != 0 && mac_ret != -EOPNOTSUPP)
+		return mac_ret;
+
+	/* Combine the two return codes. If either returned zero,
+	 * then we have been successful.
+	 */
+	if (phy_ret == 0 || mac_ret == 0)
+		return 0;
+	
+	return -EOPNOTSUPP;
+
+Which I think is the closest one can get to - there is the possibility
+for phylink_ethtool_set_wol() to have modified the WoL state, but
+ds->ops->set_wol() to fail with an error code, causing this to return
+failure, but I don't see that as being avoidable without yet more
+complexity.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
