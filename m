@@ -1,172 +1,112 @@
-Return-Path: <linux-kernel+bounces-354203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E981899397A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DD899397E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0470283FFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BF51C230AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2118C902;
-	Mon,  7 Oct 2024 21:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9454718C908;
+	Mon,  7 Oct 2024 21:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sYfXRG9P"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Syq8Pbjt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013518C34C;
-	Mon,  7 Oct 2024 21:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D5C18C03A;
+	Mon,  7 Oct 2024 21:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728337433; cv=none; b=AVCJKVNywieIHE01JiEiJgTEuFyOSfVnKI4TBBqPfmz+LjKiD8P/a3yLg3kH6JPXRnPlLo1Zjvzmu6HcBgP8gIVmeSwQGkHV31oz4idDwX2gHGCInw8aW+WID8t+wcUkV+sqlk8JGiu2pEtHR8p9FD/jIm155Leca64r/l3iLt8=
+	t=1728337461; cv=none; b=OuKBNO+CMkx+5+g5qIeX6CtcWgqbH137z0rpZvEsqRife5bkCI0GyuBFmFlqHDGsX3s2etzhV03QVjXhiM6rjPYvSq5rigPt9THaLCHeQgP0N1hhuiyw9shbap40PobvD8lvB5PP+rC8/mfzunuSB4/vt95c6BUlF9pGJUsjr28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728337433; c=relaxed/simple;
-	bh=11RYSo9lIEQFwo795OO9UqtSp6Ic4GVVOLJGQg8N7Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDnUe4hzR2GpQ7YwNnUpCyGSfafqua3XIcwHjxiwdfD/qw+HDvBWi8n/CjsqVLiAE6cWJlIslcIdfS5K42ekE5nWbpAEjCzjF7Fu9K03Q/xZSlqI0P6WbelSaZsy6Az1Dv7ZLcvgSmRXSXUl2IFjz9wExV7DDENaTKrK0Onp+eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sYfXRG9P; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 94DC755;
-	Mon,  7 Oct 2024 23:42:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728337332;
-	bh=11RYSo9lIEQFwo795OO9UqtSp6Ic4GVVOLJGQg8N7Pc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYfXRG9Pai9BrtWZND6EBV9jZjIujTn2zwNbYXepz6wb4WT5mWIJz/46+CtWXvjX+
-	 8eTJ0Ioh9kvZGl+teFXOsQTwmOieOgpUc8oYaE6w25P4U8xBTtDUw9vYkNOy5xSRl6
-	 bqCs5O/PljjVdZH3CmVehWaJghxGsG0i6ClxcYF8=
-Date: Tue, 8 Oct 2024 00:43:43 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "G.N. Zhou (OSS)" <guoniu.zhou@oss.nxp.com>
-Cc: "rmfrfs@gmail.com" <rmfrfs@gmail.com>,
-	"martink@posteo.de" <martink@posteo.de>,
-	"kernel@puri.sm" <kernel@puri.sm>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] media: imx8mq-mipi-csi2: Simplify power management
- handling
-Message-ID: <20241007214343.GB30699@pendragon.ideasonboard.com>
-References: <20240929134354.20735-1-laurent.pinchart@ideasonboard.com>
- <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
- <20240930072151.GC31662@pendragon.ideasonboard.com>
- <AS8PR04MB9080AF5E451A74FA0C0B03C0FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1728337461; c=relaxed/simple;
+	bh=SSGYF4xheaCEM3eFQW6XDhQ+RluuReYD8rH3Q6Rs114=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=orIh+tNgfg+zckgrrZqSVSoun4VzGHPDpPcqYnHnP6BIMFvcQ3YIq0LowohQj+rPr907WNIqq9j7mjcqk8NwedlBpou5Xggxqlq3e1rst5YtiaHYbo8C5eZWj/BkiBPyxMjhJKD59gf+tcOe3Rn8nVYUlu91LlewTUw2plaV4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Syq8Pbjt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728337456; x=1759873456;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SSGYF4xheaCEM3eFQW6XDhQ+RluuReYD8rH3Q6Rs114=;
+  b=Syq8Pbjtg5CRl92x333aL5pTv/PYoYwEjJ+EbsqFS1shZVPMjLyoIcum
+   1nr3GuD9AAJMdijHGN2zY3wbRqSTw3nIzUX2pDgybW82droim7roseP0U
+   NMU+OW6R5jvXvD+UYBmjw5mGmu4dxq1ndsZ8BGi8ZF6Niip96DJWuK/DU
+   jN+G1wjByq0HtDGsMN3nbxYBWay1Y+IbKbPDFySzt5Q/rxM8Q4XVb6fak
+   B9GnLvl0ovg3x42CuTuOfDmX+YqxECP4IExevSdsze5KDhp7G5RWTJQKv
+   sfanIfQoShVkLRxPUOWMVoclZ4nVd30yHUkEcbyguE507MUDIysbwcVAZ
+   Q==;
+X-CSE-ConnectionGUID: +hgdsMTpTiu4UnF2UBjE1w==
+X-CSE-MsgGUID: CJeZfg/gTB6tBXhvvLdiaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27675551"
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="27675551"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 14:44:16 -0700
+X-CSE-ConnectionGUID: WCqZG9RUT22pMpTPiWMZ9Q==
+X-CSE-MsgGUID: ODrwzj+6QFuEGQHRgKUb/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="75449453"
+Received: from anguy11-upstream.jf.intel.com ([10.166.9.133])
+  by orviesa010.jf.intel.com with ESMTP; 07 Oct 2024 14:44:16 -0700
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	przemyslaw.kitszel@intel.com,
+	larysa.zaremba@intel.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH iwl-next] ice: Unbind the workqueue
+Date: Mon,  7 Oct 2024 14:44:07 -0700
+Message-ID: <20241007214408.501013-1-anthony.l.nguyen@intel.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB9080AF5E451A74FA0C0B03C0FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Guo,
+From: Frederic Weisbecker <frederic@kernel.org>
 
-On Mon, Sep 30, 2024 at 07:51:45AM +0000, G.N. Zhou (OSS) wrote:
-> On Monday, September 30, 2024 3:22 PM, Laurent Pinchart wrote:
-> > On Mon, Sep 30, 2024 at 07:08:09AM +0000, G.N. Zhou (OSS) wrote:
-> > > On Sunday, September 29, 2024 9:44 PM, Laurent Pinchart wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > This small patch series is a reaction to "[PATCH] media: nxp:
-> > > > imx8mq-mipi-csi2: Fix CSI clocks always enabled issue" ([1]).
-> > > > Instead of making the PM handling more complex, I think it can be greatly simplified.
-> > > >
-> > > > I have only compile-tested the patches. Guoniu, could you give this a try ?
-> > >
-> > > After applying the patches and test both on iMX8ULP.
-> > >
-> > > For iMX8ULP, it will cause kernel dump when access CSI registers and
-> > > system hang during do suspend/resume while streaming Need to add
-> > > system suspend/resume handlers and call
-> > > pm_runtime_force_suspend/resume in the handlers.
-> > >
-> > > I tried to debug this issue and found pm runtime callback won't be
-> > > called when system resume. The state of power domain won't enabled.
-> > 
-> > Thank you for testing.
-> > 
-> > I wonder if this could be caused by the CSI bridge being resumed from system
-> > sleep before the CSI-2 receiver. Could you check if that's the case ? If so, does the
-> > following change fix the issue ?
-> 
-> I tested on iMX8ULP which don't use CSI bridge but ISI, not iMX8MQ. In ISI driver, I notice that
-> it already handler the device relationship when subdev bound like bellow:
-> 
-> link = device_link_add(isi->dev, sd->dev, DL_FLAG_STATELESS);
-> if (!link) {
->         dev_err(isi->dev,
->                 "Failed to create device link to source %s\n", sd->name);
->         return -EINVAL;
-> }
+The ice workqueue doesn't seem to rely on any CPU locality and should
+therefore be able to run on any CPU. In practice this is already
+happening through the unbound ice_service_timer that may fire anywhere
+and queue the workqueue accordingly to any CPU.
 
-Ah yes indeed with the ISI it should already be handled.
+Make this official so that the ice workqueue is only ever queued to
+housekeeping CPUs on nohz_full.
 
-I can't test this on hardware now as I'm travelling. Is the system hang
-happening at suspend or resume time ? What is the order of the
-suspend/resume handlers calls for the imx8-isi driver and the
-imx8mq-mipi-csi2 driver ?
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+Resend of: https://lore.kernel.org/all/20240922222420.18009-1-frederic@kernel.org/
+- Added IWL and netdev lists
 
-> For iMX8MQ, I'm trying to enable it, but meet some problems, so can't
-> give you the results in short time.
-> 
-> > diff --git a/drivers/media/platform/nxp/imx7-media-csi.c
-> > b/drivers/media/platform/nxp/imx7-media-csi.c
-> > index 9566ff738818..c66b0621e395 100644
-> > --- a/drivers/media/platform/nxp/imx7-media-csi.c
-> > +++ b/drivers/media/platform/nxp/imx7-media-csi.c
-> > @@ -2057,9 +2057,22 @@ static int imx7_csi_notify_bound(struct
-> > v4l2_async_notifier *notifier,  {
-> >  	struct imx7_csi *csi = imx7_csi_notifier_to_dev(notifier);
-> >  	struct media_pad *sink = &csi->sd.entity.pads[IMX7_CSI_PAD_SINK];
-> > +	struct device_link *link;
-> > 
-> >  	csi->src_sd = sd;
-> > 
-> > +	/*
-> > +	 * Enforce suspend/resume ordering between the source (supplier) and
-> > +	 * the CSI (consumer). The source will be suspended before and resume
-> > +	 * after the CSI.
-> > +	 */
-> > +	link = device_link_add(csi->dev, sd->dev, DL_FLAG_STATELESS);
-> > +	if (!link) {
-> > +		dev_err(csi->dev,
-> > +			"Failed to create device link to source %s\n", sd->name);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> >  	return v4l2_create_fwnode_links_to_pad(sd, sink, MEDIA_LNK_FL_ENABLED |
-> >  					       MEDIA_LNK_FL_IMMUTABLE);
-> >  }
-> > 
-> > > > [1] https://lore.kernel.org/r/20240929101635.1648234-1-guoniu.zhou@oss.nxp.com
-> > > >
-> > > > Laurent Pinchart (3):
-> > > >   media: imx8mq-mipi-csi2: Drop stream stop/restart at suspend/resume time
-> > > >   media: imx8mq-mipi-csi2: Drop ST_SUSPENDED guard
-> > > >   media: imx8mq-mipi-csi2: Drop system suspend/resume handlers
-> > > >
-> > > >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 113 ++----------------
-> > > >  1 file changed, 10 insertions(+), 103 deletions(-)
-> > > >
-> > > >
-> > > > base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+ drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 179631921611..b819e7f9d97d 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -5904,7 +5904,7 @@ static int __init ice_module_init(void)
+ 
+ 	ice_adv_lnk_speed_maps_init();
+ 
+-	ice_wq = alloc_workqueue("%s", 0, 0, KBUILD_MODNAME);
++	ice_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, KBUILD_MODNAME);
+ 	if (!ice_wq) {
+ 		pr_err("Failed to create workqueue\n");
+ 		return status;
 -- 
-Regards,
+2.42.0
 
-Laurent Pinchart
 
