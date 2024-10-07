@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-353687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC24999312A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265EA99312C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977D5283909
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A111F22EAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6814A1DA628;
-	Mon,  7 Oct 2024 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0DD1DB352;
+	Mon,  7 Oct 2024 15:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XjMfyHtV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vjr1vMs/"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hx/ZbCaa";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vRX0wUyY"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC891DA2FD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0656A1DA619
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728314939; cv=fail; b=o3CAg/Rvm/Ydy/jxm1FUXJiE06h/MWrEEpsEPoEoqqdKNq4bEqIYRP2C31vrOJ2r+Mvfmg15NwHmHGVDGDYPNwWwBX2DffqnNoNsdWhVb6luQjYfNgDMauRWo5igv0LCQkWmswGKkfWTTMJXOcQbKTZ1twn/Q7/+9JLO18xLfX8=
+	t=1728314940; cv=fail; b=afiddbD8gHXoruqGwZgBCh6C5TRWa98EV+mF/x77g8LIvevd4wQRCACmDchLAtY9n85dU6132wmIJjIWpYevt8Q7m1FI1MCbbjBCeUv0B0SNDOi6BaTZAS2jweXfEKPfBedKjHVJ7syiMq9TkNGe5/GYfKenWPDg8FTMvtwJNJA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728314939; c=relaxed/simple;
-	bh=dQO71A03xjb9RmQZ41ffcGU9h+eyOa4UYmvpcwwO3GA=;
+	s=arc-20240116; t=1728314940; c=relaxed/simple;
+	bh=xNti0fBEL/AV+OlKK2kJLk3esEdlO7+gTKnwoQouxQA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cWExHlubUybTZYKFkqFXQR9QHfh5SFHcTAnEDxZ92rR4kyOuYKuraYUsB4meu+neYLXwl3uEKFL+ccs7+JEgnHjG+rieeP/cHdkwQyffqEJ1pJjTY1VTSekASXvL754U92O0PUqxUCP6+35w91TQLRzvgtI9A/Ld+jlgGa1YBZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XjMfyHtV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vjr1vMs/; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Type:MIME-Version; b=KyVX4YVrfSvAweUwQOIqqDmgGzHW7SfrFtuLojSXTXXd3VGUHBk7C+SLi66f+j03BaVfptOYSXA31KcBxqqww8e87wWX+ik4VORxqqpJjNwZuQ2DDpDTkV6bGiMy050q+UcmOhlSg0x3RhfKwKQXBgHORH4wKynysnf+l98ZlMo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hx/ZbCaa; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vRX0wUyY; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497FMeQU022959;
-	Mon, 7 Oct 2024 15:28:44 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497FMemE022952;
+	Mon, 7 Oct 2024 15:28:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=rd7vhnBx68OHI7ZCyh6cut1kXuztgkGjhBexOUnTYcM=; b=
-	XjMfyHtVFph7hPMlOVR7ROzYQQ9Th1eWHQwg6X8M31oCgsZBaG2ygRCSRAdyNRoe
-	NYc2urMthjQ7qaXdDVLGe0ljaI+A6nwRFJm/Do3WoVcsQAh7WPELhmfuUpMnVS2W
-	6L/xaiLaZiiJmYvjJGlcMAPXL0eQsYHu1uO76mVlV6nT+M8rPcJDPV7W7/WB/cKG
-	cguiTxjYhGe6kxROUgrLqJ3Jc5qQrL9jgE6xvE0FrIsFwkOeAJdrUw6U926o1Wk9
-	Slsp4bxewLpQ0lADxHC9KKFSIxbuyVfqD9gynV8g9bUH2HzqYmmQi+1o9Z210zTe
-	JN2JNUD1U/USagyp+j+RkQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42303ybpf9-1
+	corp-2023-11-20; bh=7A482o+x7brxhc1TRdgH9QdPrxF7DFUUes+N+8w9TI4=; b=
+	hx/ZbCaa1Zp4H2lYsfIEhF3NOQsQJ0nrk0uC/dsMyQpdEfiu1Yz7ew42j0ul13gP
+	D/oXAhubkEOCnf+45Pqszr6Gcc7dFF7Se/aBIGSXMFOUA7yVhhi1sDkktPNYOIGh
+	ZKcD70qlpshylddspbxay9kZvYawnQYpoaWCvHKA25GnBt4KmTR4mVB92eJEpE/C
+	2WCxOuBGtWjLKx3mt3HQeOo95Bya5Jl8FeNz7S3iVb4IwBLNVSiPlI/4z1782dk5
+	v43Rrmuf7qdWWD4xF/1ae2lp164RI5tfsFGY/rumuboK2OkBQDKCB2cQX74dpR9u
+	3DcB5btA8SZ8suhSK47mWg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42303ybpff-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Oct 2024 15:28:44 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 497FBGBC024065;
-	Mon, 7 Oct 2024 15:28:43 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwc76vm-1
+	Mon, 07 Oct 2024 15:28:46 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 497FOjc1011736;
+	Mon, 7 Oct 2024 15:28:45 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw5xa26-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Oct 2024 15:28:43 +0000
+	Mon, 07 Oct 2024 15:28:45 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aLlRUhBpYcINZGwG57pKqUqSIqRqohm8rXwMs7xW2MPv34IXKhBsL3Lo4wiQwSLGH6IZNGuXNS3RqQnX5RHFIqw0TKD7G4640WwX6OAGE7LlI15+ArqpKr3Dj/m+epwGDkgXl3sJAF38ArjI+HGOL3c58iQKuheh7EGwfLOB4/eBNRRi9gtglK3CWD6u7ms56BWE3+BxdFrugoulKPeZdc4U7+MmaiL0DC4nVPSv2Na0sY44YMzLnl3dbJbSP03HO2UpKAPuPnt1zcEVQazG4oF1g1o0imkWKD3Idwf/3ucRbzRPxa3qW7BfR84zhkrvS4LQau8U0JA1qgoj0mGzqw==
+ b=l8JiTZNFb9ROckTGwFSk7DN8yNUPE8t6ubUuGAZFXOqb+CPuP0WWSw2+SoNYVC7GaSzhHqjrD/0Zdyfv5sg1XknQgrMu02pckYaVtflM8NUeoCGxbbcsd7cvddpvnTXxpLBmTpX4fFuLY7dv82WSa6QhvJhX0nB4Pvt0mtdHLfXuT5/Dy2e2Um29By+xrTzwirZaNGr3o/V+D+mv6Mi5cNMUHood9Z9+2HtPkNr22Wm1+mDZbj+zrEG9kOBAn4Ijvm+iOrusbrElvR+XV+1UeG6mQU85uDxcgf2l1Jd8P8b0nmpMpSoVby1qSXhV51TxhqYOxm1Wmv8ZbM4/HRzaiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rd7vhnBx68OHI7ZCyh6cut1kXuztgkGjhBexOUnTYcM=;
- b=E+6dxqry+YbnVato77+6X9bvxguCET3dxyk4ZwUVc8Xvs62x6UU8pHL5/VHqNQGtPMrrIWG9allkPZMKBbjlUkcnBroyfKO1JY3ygRf3M86mh9k10WI0oaiQGfrWgNj9Goa8PIUEN0dwAQRFJpcFrSEZkHcKT+48tu7y9FBBCYcxBelJ95sil1d6j3Vfp35iR1bqkLprO56CJVSAj2jE+MrOpLLg4Ag6V4KDmKhaqARZhNdK1/4ODLsHFgG9tnhTxwZwXqlJ/1r1edN+6SERkZbsceKS4LvMjnQ9kCc6GTVwIFrRFu8zaIsMO3AaWDKZEtcqSHaNU8B7kmXpM7LYbA==
+ bh=7A482o+x7brxhc1TRdgH9QdPrxF7DFUUes+N+8w9TI4=;
+ b=ifzN5sgQgk01DfaXyFmNwAJMSjcBnRuPYqMMPiqMS32uVxJUJQepLT3tNX2nhCIuMQDS6P9et9ALT/1WkMA5O+LaqmN4f6rVomr1QMXcH1QUxPFRX2dRz26swaarR3zCzVFoUNCb8kuJKJuVzd8U7AFhNubnjR8VP3E4Wjafz6BL/0EeKlx/PXSS5t+ZGYTgUXEjNJVjPe8V4UGIFlKmmF9Hhk0eycbVbYhcmgMkrGwkLEupRbR/LSRdRzOPePuMPV+2LnNux7gHAJWmGCxhtwWHIYdS+ATnC7eBRG8BSePWLLlF+xAaxpVH8NmNyW31ohJdCv3p4Lgb4Skbas/Mtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rd7vhnBx68OHI7ZCyh6cut1kXuztgkGjhBexOUnTYcM=;
- b=vjr1vMs/mHSnUNcXiWPgsIKPKOE5+ypMxRAmp4X3CakyCvbNvXXVwJGcPrkicixhzHR2x9b3i2sZ2v6tLA2Hs+8dE62N93qSwUy3U9CSmSYbJr9iPz3y9B43PjUbtkoPDmWEN5jFPUOEZdKCts+v9L0Hrq66r0NxHaQ4dm5F3yg=
+ bh=7A482o+x7brxhc1TRdgH9QdPrxF7DFUUes+N+8w9TI4=;
+ b=vRX0wUyY1Ko9TA7QkAtUclEPSS+Zki3lLkCbz0oGOjy7PZpeAPManC/tVTd6Sy/ZYC6TIU7U7PsPE6slM15fwWpzsd7o5Iole5/AeP85TwrqcrpQJecW6FFSeBDAagVWwDk3oyah+QetlGW4OdWz3pFK6hkJtPWyub7ygpYTF+M=
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
  by SA1PR10MB6640.namprd10.prod.outlook.com (2603:10b6:806:2b6::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Mon, 7 Oct
- 2024 15:28:40 +0000
+ 2024 15:28:43 +0000
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
- 15:28:40 +0000
+ 15:28:43 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
         "Liam R . Howlett" <Liam.Howlett@oracle.com>
@@ -88,16 +88,16 @@ Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
         Bert Karwatzki <spasswolf@web.de>,
         Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
         maple-tree@lists.infradead.org
-Subject: [PATCH hotfix 6.12 v3 1/2] maple_tree: correct tree corruption on spanning store
-Date: Mon,  7 Oct 2024 16:28:32 +0100
-Message-ID: <48b349a2a0f7c76e18772712d0997a5e12ab0a3b.1728314403.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH hotfix 6.12 v3 2/2] maple_tree: add regression test for spanning store bug
+Date: Mon,  7 Oct 2024 16:28:33 +0100
+Message-ID: <30cdc101a700d16e03ba2f9aa5d83f2efa894168.1728314403.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <cover.1728314402.git.lorenzo.stoakes@oracle.com>
 References: <cover.1728314402.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0568.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:276::18) To SJ0PR10MB5613.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0482.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13a::7) To SJ0PR10MB5613.namprd10.prod.outlook.com
  (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -107,280 +107,200 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SA1PR10MB6640:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1dfdda3-9fed-467e-8daa-08dce6e4b893
+X-MS-Office365-Filtering-Correlation-Id: 475c713b-fff5-404b-67e9-08dce6e4ba3a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Nx3vgUimRQ0UwJ0PtE5bLAQk9Uw3f7/VOukSu00Q+Z8ZhW+lciPjwQIc0FSR?=
- =?us-ascii?Q?v9NdXei1Q69z6XNfTa7OpH4rYf2g4D7RxSbsBD4ohbFb1xOAj0CTPTvONA+t?=
- =?us-ascii?Q?t0c/wzjb90ot+uEMBgY04zOJVR8wOgANgdLbCg5IH9bFlg4NGlGRcy5m/Wp+?=
- =?us-ascii?Q?6Ex20gaWepCYeEpGStDPjep5ATaLx6NYtpAAunP/deYBCpFi5ueHqBAovQbm?=
- =?us-ascii?Q?8IEXwt/yN3RegO06IZ5ytcubIS2FadUH5guJxf8SSF9WWFzoZ6PI+qPkCC0g?=
- =?us-ascii?Q?ERE87pAcwgGjkKoDpSf0RIlrE0musKUJnxqsLwhBJLENtCVgvYP/SkE8HLED?=
- =?us-ascii?Q?lZt0zdeOTHe1ODFBQ/TNTLPQSYdPk+eSgoLEd3vfFOPHVLmN1yzmdNT4NICg?=
- =?us-ascii?Q?hbKkA/pmoVyCgAaAdqNXerWFzzO/LE2/tJc/TtKhvtKVtNuPZMhs5R1F810h?=
- =?us-ascii?Q?QwToGRoDRgG/qVZA7BUuEnb3m0eU4e6Itw4AzTvgYaJOYp/ZVA5gaSmaDhVK?=
- =?us-ascii?Q?yyV4sbjxOVSbpcobd/Se3bMiRkkKvEF3RqoMNK+v68p+3aChZ5Ug9QcI05+A?=
- =?us-ascii?Q?iXZdzrc+o5w/zCH2nWus/+Pv/JfWeAwB3wgWc67gYxHWZd4f/RE+uxRJDkw4?=
- =?us-ascii?Q?DHi5TLKJ5fKfmSp6XdyFxZc99NXNZ2iqrbEcOpQYOpZWcmsKFHgWkFrV7+R+?=
- =?us-ascii?Q?0IRj7pHQq5t2uMHi0aQE1wjyzKA9kUwnzOpk1NYYHVq2hQot2WM8L5OduFi5?=
- =?us-ascii?Q?rlTM1eMYUmo2XvnSmeUMhKzfDL/tgVQbi7njhRXSeN0DMUwL0WdJJzK19j44?=
- =?us-ascii?Q?UuDDNWd/MKLroPsVi3ArLKVfoTq2zpnDzovB+7f8DygKz2BYPkpToR4QCI11?=
- =?us-ascii?Q?M84BXKWDgec1Kz2E7GzCScDe4btLL7HDy2vIOt31ErctRCVfjo/Xh0p4Y4Xa?=
- =?us-ascii?Q?/vBYFLYMPQc8U75gLAhmVOhy6g0HAkrQSVVYiH5NmUjAGH+LbwZm/3Y2X+x4?=
- =?us-ascii?Q?2/78DmwXTiwrFPTCvXn4xeW2rah8dv0bMPIvc+sNzmQdjEfxkV9uGpDKJIP5?=
- =?us-ascii?Q?hiChQw9XlM3O5I9mxljn5SH8taR6KQJXLuclG4k+l8bP20b31VY7cnTlbnu6?=
- =?us-ascii?Q?Pg5NEPGPsqToN2Z+HXPt6AFuJTflkpZFY1CeKHL3mQGtAHwuBlTSvux5OmqL?=
- =?us-ascii?Q?B8Zl0dGsXQlV23+IKlDBIzXV4nGtULZ/JIvKY3jU3RrqYiTiYab5ZVpo16w?=
- =?us-ascii?Q?=3D?=
+	=?us-ascii?Q?7xGocnQM3F2sa9WqpLfMpYamxogfyRLl2kHZ3a4r+fmrs0xb2JztTaygUTpN?=
+ =?us-ascii?Q?9FqzKFHMLzoYboyGmMU9/PNB3yNLdF8FDEqtYKTttFKQfIWi8508cmCDzzv7?=
+ =?us-ascii?Q?ZcCDdA/gW71msj2BJjF/Dr7kO5+0Ota+KIgkhfYwrgUgI/6bxho80WRYvdQ2?=
+ =?us-ascii?Q?6zOCNYeWTGUGXje2OjQ+aIB1LMURN3v0kjuMqMSUg3W9PBIUfM0tRNpnjfb6?=
+ =?us-ascii?Q?AeFXaO76HKyACmBYQOJ6tT9TZGDPfhdYYEteAjXquntlwk/zQqQPP/4jEiUq?=
+ =?us-ascii?Q?CWkAvdkfmdmgEpOdBs0vZOhmQiHqKO0Ur1BrNUSsxHS/4Ll3z1M6imCon5yj?=
+ =?us-ascii?Q?DCSZCa9rO+YPi4ENwUJCHLcereGONOCPtbVnquW+EBvC1h4tJH7z3ycuvMgQ?=
+ =?us-ascii?Q?r2vUUR0J5HUIrbg+UD/uXFUzfZgknxCval47hXkHt8ORVnDjfxoNqhOakbCg?=
+ =?us-ascii?Q?kGv+5xllMPv00XYvO3Rs4Gc2xRXFiObPSYIAP47YvP7HEuDEKdQWBkmV4geF?=
+ =?us-ascii?Q?tRmstl9TiVkacRUXdJungyLmYKdC0tKJQY+J34FSRG0GA6jvjBp9WgQESlCX?=
+ =?us-ascii?Q?aIYsavldunyNyPjhaRmTVZfUsPaLqO8gZ4+58yBsFJcYch8jyU7Oj8ICFeDG?=
+ =?us-ascii?Q?P+yZCVu0RHzXOxrGlqueBndHmCZK1sK0X6zYXugpsYzjwCU3QoDtvku24BVW?=
+ =?us-ascii?Q?S4uiiATqFM0YUGqVInrzlb3iMRbX9Psq5uQdwbIYox2bnn1qS8vmiPPNGXaO?=
+ =?us-ascii?Q?DmX8oeq+9JipkuDQ0CEgYEo/2sfnIihl1A79C0k2CvwQh1waScgoSQdMXFBt?=
+ =?us-ascii?Q?JtHJLLb6ndrUDJVTlA1DJRlVgDohFXkCk+Msg9Z7goIFhQTTtDq229VF+9+f?=
+ =?us-ascii?Q?kTiFaUsivBO4BWZfNdl5siEndAkofG84oPap1UPBL4YUmGosTqDvDfvyh2nF?=
+ =?us-ascii?Q?mPAD9yHQ1p+lBIwwdBaITXihTzXLa6zzPy4ZssxwiDVd8VLC7oDuxBUIT636?=
+ =?us-ascii?Q?9pBHtKPegM9NmMFp/wdbxSvDzrDflx7lhewuTmbO66lrUL0fnL13mwspOPkl?=
+ =?us-ascii?Q?4+7tpNfIL8bJN+FjjRc+Nm2Wnw3v8eQWln973y3gv0X0GOM2tpH0A2EnQ2R9?=
+ =?us-ascii?Q?uWqsU03LbA5fckxq8TQaev6w7Ttc7+oKyW8j3EX87dlZnVvCfTL0r4ctz/Er?=
+ =?us-ascii?Q?b1e0q7e0ChRy62I1fKM10HKW4yj7mNeODIN88CibozUfoCdVZtEV6xEjTCKe?=
+ =?us-ascii?Q?4oJylC+vRBpjchUFNsWEKAmkue9VRerey+38o1UUfw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gC1Eg2AUyX860ip8QTKTubsgeG5zcOMDighP+jQQZPKqiJXGpCRzi8PN/1Uy?=
- =?us-ascii?Q?kZL7HWcYVkAMTR4UJ6H+Yuy9VIADBRYok1CtdChZhtNaufuJZgg4665CrJwL?=
- =?us-ascii?Q?CGCq99mJrJ9KZPQBrSEXSrgqzlrVGF06UVbX25dhs3VVWdbxyeUZi+1fRJ4Z?=
- =?us-ascii?Q?oaOXU+GXKmq3htxdndLVzdcNr0NIT0lm56EUoCp4R0Opwo6xY+37DW1QbZCt?=
- =?us-ascii?Q?56shS9mNXF2eFrkkSsh4zh8WH7fwQEv4v2CXPGLlHA8aU4+2E4r1/tKMMVXi?=
- =?us-ascii?Q?IbZlei6RxWlPK1Wng0pFK1sMuNPLBWtWsEq4gDWHzFKalXi4bclb4kVC7VWS?=
- =?us-ascii?Q?xXE6H0OYPDplrWjXCdtzIPbrfL2mkXI8F6PiVPU4GVu9n4UAMBdOsLTxBKS+?=
- =?us-ascii?Q?s1ZfhEuC4LR0wWUcBcOa3Z0IqqhnYqNkt656sudWv6Meme0WORRS+FX8v2CD?=
- =?us-ascii?Q?acbj2NrI0ggXhXnOy/fuxuLvbStmSMU2tvip1K3YcBbFM07Zu5+Fv1xYOFh0?=
- =?us-ascii?Q?teVlVtZ1G3QFW7t49293wkxiMB/Jv9zF71EZzXg3NKoMGtN7fhFY6E43/ikc?=
- =?us-ascii?Q?iNxloi6k93iQslZTbUTqicrd1PiIV/yf9u3S/GTDNEHGxaa5FvIJQK0/C9BB?=
- =?us-ascii?Q?Sbi71zYY5CcOe78byuVqg5Rm7GaNx9Wx8blcB83gKG5TkUzf8L6cMOeAKLtx?=
- =?us-ascii?Q?UCYl1iCj6yTkdJTrF7lFi6PBsVfvZdrGeLU1XB0oaPouBOvsgU7QVShrQKjg?=
- =?us-ascii?Q?4ff9V9BYfx/2sUEPw5MztUZP4uAvCmSBlb4mZMEEuxti+YBGPWCbuUtXQ1ji?=
- =?us-ascii?Q?bkvh7k5QTfJUMDTla3IS/iYSUg04p3v1w5whqBZMCqlw5waz9sY786kavnCC?=
- =?us-ascii?Q?aWuxg9BU18TAjiKuXZARfduCnzEqc3/kJqfkGrgg5mmnJMAsJC/oPVLJRhGA?=
- =?us-ascii?Q?JBysD9MkeUmHddrBelu1fzX2EOGDiTaxh4dmTUHQTJDa3znv2PkZ9lG7GjqO?=
- =?us-ascii?Q?JT/S1ewbpm0wNnMRtwXSsMgB4qaVWGGBOtcrL83TOvlL1kYSc8ekRgBjCJ9B?=
- =?us-ascii?Q?wZgOeQpKvlqt5RizP8dtFD10RzuFFNJaLrdTXhC84yxQhL3cvZJdrgWV/2Lj?=
- =?us-ascii?Q?UKHa7G2HlDPMbfjIKuMafUdnqm0KUm32V+caAvJPW/a6jYo8VMHW95FL9GcO?=
- =?us-ascii?Q?Exk51a3vA4IefwCt9o4VUMAWsDiB+luhdYmJ8QM46yOlLv6w8DzseKxkvuSb?=
- =?us-ascii?Q?VHHJ2bqGALAg2hU6j55Rc6VIxITbAtSGLZ/edhAnXnQAPv2GKf3pGUEkOWZ6?=
- =?us-ascii?Q?kTzT44+JeAp0kGN7PMwRPCRCfrVeGKUtylrhLMTGq7aTi+Jrh2FXJ6tz8sW+?=
- =?us-ascii?Q?4vlafKe/xWqPcDTqcZJn9yH5ppyHkLPdHSVmlF38Bn0VwQnIHN3m9Var9nAG?=
- =?us-ascii?Q?0mQD9/B7N+Hn7N/BGlY7FO9kQY1CcEvcZOuWzplMTnzKf4XWqbAAN4HRbcbT?=
- =?us-ascii?Q?3rCyEyMtEisNRqtHQuDmME2ouK5uebUdVlvvqYknJe+L+ct8WL8wV+JbFUVv?=
- =?us-ascii?Q?KX3Aj53Lc3UIJVkKLi27lb+f7YjRJIfMuI5D0ELF+L8LXLJvI1hBfqfDBdx7?=
- =?us-ascii?Q?lQ=3D=3D?=
+	=?us-ascii?Q?oTsBsZRMtYko7IBg/t/o6DOnGCBIdxgZrWvWT4twnFaVGdVvBwDQAmMP4Z3K?=
+ =?us-ascii?Q?2a1qGoyWrHt3CpXyhYfwCUUQIairZkho2XoacXnDgdsQBmn1+3vgpCg543Y6?=
+ =?us-ascii?Q?U34SfojXZyLdAhpCIr3fkKXVSXr+AqCuZKCMwhvqkviwJ7tBGhAo9rCtfG7i?=
+ =?us-ascii?Q?21EIVos2PyP4+5bok8RcdR0O9LcWfi2OmWf5FsM6WmN9a6oFTFIF710fUBmb?=
+ =?us-ascii?Q?CkmrpMGuEBMWoOaLwsHWR7mEQcTirjigCJ8VbnwMCEtx3QIPvh7rZ1PWXy6v?=
+ =?us-ascii?Q?+y/VCdSfon3p+V4QC46UWSoYjy8Af7CpmMomOrLYe/K0h7p41b3TSljQ7V8l?=
+ =?us-ascii?Q?t7PzxL0wvUPkijCc/m7WMc2noytfYojYCl9z7vewvmMJ5ta4/j1BB31+6H6N?=
+ =?us-ascii?Q?8Cqszhzh2fBuAWL4c7jDOAx8+eXMVDPaRgk/gzKWliX8x7trV7+FFqk39ICD?=
+ =?us-ascii?Q?FgxRIl8b8NPCIc3nIrSMVWb0Le7/drxNe9stqeP8uH9JsZQ8eF3W5bTivbS8?=
+ =?us-ascii?Q?zhEjr4zYLisJZSIf0/7j84iFqMMBBDLatoFzLwQR57vGpK09F0wne2r14EgQ?=
+ =?us-ascii?Q?6Noohjp/0YLNTX8P2+fbHQmhISymyjDOY0CBYXxIl9xN6wZyBkgWHukEtghw?=
+ =?us-ascii?Q?uYhDsDMtsEwwhHGSMj+eFvfWUqZEfbjAqW95Aj8yeCgGCFq+mX7LSbp/d/8V?=
+ =?us-ascii?Q?bow0IqfiP8XnhwRa+Z7sGb8kGYpXe5S1sdQtAcYUnGPNTcF1zVkH3b48KQ4q?=
+ =?us-ascii?Q?GmTQ5mcfkZYnnRQ+wZ11uHn83uuprc8Z0BqmJXbcy45/y7gkWLcgllSgEImB?=
+ =?us-ascii?Q?FJMqbxgVYtZehUlBdrkp5HO+T5IUQkLH9LMhLRx0zPSU4KStkwUmiFDVfEK6?=
+ =?us-ascii?Q?cG2vwL2+vFbw2yN9e+E614EQTZZtGB52zJ2Op9lgCfJ1zl+zUZYEflgx31gR?=
+ =?us-ascii?Q?rTtEtr0424mnMwQvT0bwadAhkeSDF4ILvjef7Z53WMCGXocndcAVOFBb5gW1?=
+ =?us-ascii?Q?VEzP0KaYvlp0I36cLD7dgiUEmlcrekNW0mtRhQlNLZ1Z1BGfjSWW14hBwNqr?=
+ =?us-ascii?Q?zL71CrJPaYFyazmag6BC1mDRcx8aoUFEYzlvrMKgTdS2cXKTkOgG249zb1+u?=
+ =?us-ascii?Q?OO/fpCViW2J2BrNA79STzKaKiefaw8k8linM/ivOq3Hzcy5vjXPD5LKtEjOI?=
+ =?us-ascii?Q?jyfrTc9Yy/AqmgfbEc/8ndH/re39s/MjYKcUkZ9vYmAxlIBtCkLOTci8bStf?=
+ =?us-ascii?Q?I2DJmYOTMjTZVlC/8oDUvk/ATzA/tFVa732cdk9ssWjPTnTGoaZHhO5XtVdL?=
+ =?us-ascii?Q?FLp6Yz7conuSmP4Z8/PCFMQtvli0K2lKkpGTwewNNHI32RNswNZhYtetATXd?=
+ =?us-ascii?Q?LUtscTyYwUgFtc3TmpM1z3jYM9ThEGIIYZdfoAYM9lCePBz8WBWGiERIU0Ed?=
+ =?us-ascii?Q?m8pf0v0HnmL6Xy4REt4vv8xq66lxzQIYQIad9l6SMSOMpb7VqxJt7wvkOOUC?=
+ =?us-ascii?Q?qTSiILAkGERQCvuMRvIItgtrzn0N+d7K91YXHJ9Lw/hXJoYv0d9GANT3Txl4?=
+ =?us-ascii?Q?gQ13pqSUidpzPlQEaeC5Luh9HmQu87Pw6d7rncU4pDeHCPEZpPT6SAYhV99v?=
+ =?us-ascii?Q?zg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4ljaOeBqSHeSh8cCDGUyo1qgHbeDFwFd4g/AP4MtcZdGYCNYHDT3svZcU17cshi1qnwaGGhLmhK9gi5QTBFkLVoVnFVGh7D2WlrL9yPMY8/hLSm2Iek1hoIY8kuITn5wCsuqlm7qTszJOTPOxqae0Dz7Gt9q1a/yU5sNl9Bi96+d37TfWGs33h1W6kBbh1h2M7vK74KZJQds8BUgO6CzRAPrKVkzJOm7EKQQ7j0zNjp5XTsfHscXV37h+qPx355elxYf1QyKRi85BQ3tiOryPTbUCTHDJVkbJsE71yd9GzowkWHmYnvSKQeG7fqTeHdc7uR55YwuYBWBv4QsQTg3mCZgQxphszPY1fdZdd2vaWyaNlos2G/1tNmba9si1VWwE41VD+D0GbwXlxqbHzsEuUbQPktIByym4eYYzFgo6BEtLtWuOpPBzBNTobgNsXGPEwQMha+Mq+45J0V2jk1e3zmdFIdoXZmrbrnCNcmUiouwPHOdv0sNA1YzpM87E+XAKqIPOwuASs8pZIILEySjR5Ongn8ttnEA1XscQal/NCt0+Bdo761CRy8FA6au3IrZTEbCZDXr7t7ys1gQENC7RHKbCUTIOb+IlUCeljy9QD4=
+	6ypyaQ8mWFMKVATdJTs7pNbBfl5o+nHowv/OmumRmIv5RtyMxDtbMr17s0FGYiUJuob22/jLiYijrfQj1FmGEDHF5STmhksb9wlLpD+KSED98kK9kUTcVBztXHmcY2lxfi+5qyWFXUc6HqkSFGAFwPsTscVt32d1QJrhXapQLDhd5U4nEgIU5/bGCTSmDrFSLQiMn0ONE6jIC1VwnXQfFWPcMJknPj1mlu/MbS1l85te2ZGXQ3nyuErKZHH9lf6FySQ7qb4eOMi5nVoWIKBAbn1f2gnvnB9NdH1W4WmFn7NcPeBcBBa7DaTvvgBCuaGOTR2v1Jk2pWTV2lpq3xhcVe6hbCzfhoIBCZ38Ai4qCF7YRLl9Q4uc+60l8JDtcMDHgUVtjiJSf2iNgwn8gF5os5WbzulK/m594aAy3egTtZihSrlFy3/su6CfLgonp+f0p/oHqeAIp6aKAzSsqJIQVnOKaqpMwVr91uTR77wWx7sX5Uv1/WHaic2XTqNUqv8YLhS/JnIiuYNmPB4JqGN4rGGAfy+GSb/42+Ej/gtVuxWCImRxNJOCrD1eh6ogGDjxex/aJU22Jl6e8R6yDZdaN6GxHD4xmOu/ZcNWidj/1OA=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1dfdda3-9fed-467e-8daa-08dce6e4b893
+X-MS-Exchange-CrossTenant-Network-Message-Id: 475c713b-fff5-404b-67e9-08dce6e4ba3a
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 15:28:40.5722
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 15:28:43.1901
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ER43AKrjUVDjiJjfleL032+M+ynJUxG/Hgzyw4k4Jh61G02lsUfdThA5yX2nFBdvPJxD7pDhKXUrtbHM5faeT/jszX3XQid8Y8P5l2843/8=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 28cMlZgLeZMDgvhUwahKAEu85C9YQ9ZYH2+CGhDLETvtHyf9Tnr+5Yw5mx4uGoNNTlSPZyCUMeZgsZo11fwNLChnXAtcmo043RWPkuo42U0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6640
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-07_08,2024-10-07_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410070109
-X-Proofpoint-ORIG-GUID: nkOZ6EkFTmTiL_PURJBvwPsFvef_0LTT
-X-Proofpoint-GUID: nkOZ6EkFTmTiL_PURJBvwPsFvef_0LTT
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410070109
+X-Proofpoint-ORIG-GUID: oeXUXm8UExhEsL5CosgpITKbYz_zeLTu
+X-Proofpoint-GUID: oeXUXm8UExhEsL5CosgpITKbYz_zeLTu
 
-There has been a subtle bug present in the maple tree implementation from
-its inception.
+Add a regression test to assert that, when performing a spanning store
+which consumes the entirety of the rightmost right leaf node does not
+result in maple tree corruption when doing so.
 
-This arises from how stores are performed - when a store occurs, it will
-overwrite overlapping ranges and adjust the tree as necessary to
-accommodate this.
+This achieves this by building a test tree of 3 levels and establishing a
+store which ultimately results in a spanned store of this nature.
 
-A range may always ultimately span two leaf nodes. In this instance we walk
-the two leaf nodes, determine which elements are not overwritten to the
-left and to the right of the start and end of the ranges respectively and
-then rebalance the tree to contain these entries and the newly inserted
-one.
-
-This kind of store is dubbed a 'spanning store' and is implemented by
-mas_wr_spanning_store().
-
-In order to reach this stage, mas_store_gfp() invokes mas_wr_preallocate(),
-mas_wr_store_type() and mas_wr_walk() in turn to walk the tree and update
-the object (mas) to traverse to the location where the write should be
-performed, determining its store type.
-
-When a spanning store is required, this function returns false stopping at
-the parent node which contains the target range, and mas_wr_store_type()
-marks the mas->store_type as wr_spanning_store to denote this fact.
-
-When we go to perform the store in mas_wr_spanning_store(), we first
-determine the elements AFTER the END of the range we wish to store (that
-is, to the right of the entry to be inserted) - we do this by walking to
-the NEXT pivot in the tree (i.e. r_mas.last + 1), starting at the node we
-have just determined contains the range over which we intend to write.
-
-We then turn our attention to the entries to the left of the entry we are
-inserting, whose state is represented by l_mas, and copy these into a 'big
-node', which is a special node which contains enough slots to contain two
-leaf node's worth of data.
-
-We then copy the entry we wish to store immediately after this - the copy
-and the insertion of the new entry is performed by mas_store_b_node().
-
-After this we copy the elements to the right of the end of the range which
-we are inserting, if we have not exceeded the length of the node
-(i.e. r_mas.offset <= r_mas.end).
-
-Herein lies the bug - under very specific circumstances, this logic can
-break and corrupt the maple tree.
-
-Consider the following tree:
-
-Height
-  0                             Root Node
-                                 /      \
-                 pivot = 0xffff /        \ pivot = ULONG_MAX
-                               /          \
-  1                       A [-----]       ...
-                             /   \
-             pivot = 0x4fff /     \ pivot = 0xffff
-                           /       \
-  2 (LEAVES)          B [-----]  [-----] C
-                                      ^--- Last pivot 0xffff.
-
-Now imagine we wish to store an entry in the range [0x4000, 0xffff] (note
-that all ranges expressed in maple tree code are inclusive):
-
-1. mas_store_gfp() descends the tree, finds node A at <=0xffff, then
-   determines that this is a spanning store across nodes B and C. The mas
-   state is set such that the current node from which we traverse further
-   is node A.
-
-2. In mas_wr_spanning_store() we try to find elements to the right of pivot
-   0xffff by searching for an index of 0x10000:
-
-    - mas_wr_walk_index() invokes mas_wr_walk_descend() and
-      mas_wr_node_walk() in turn.
-
-        - mas_wr_node_walk() loops over entries in node A until EITHER it
-          finds an entry whose pivot equals or exceeds 0x10000 OR it
-          reaches the final entry.
-
-        - Since no entry has a pivot equal to or exceeding 0x10000, pivot
-          0xffff is selected, leading to node C.
-
-    - mas_wr_walk_traverse() resets the mas state to traverse node C. We
-      loop around and invoke mas_wr_walk_descend() and mas_wr_node_walk()
-      in turn once again.
-
-         - Again, we reach the last entry in node C, which has a pivot of
-           0xffff.
-
-3. We then copy the elements to the left of 0x4000 in node B to the big
-   node via mas_store_b_node(), and insert the new [0x4000, 0xffff] entry
-   too.
-
-4. We determine whether we have any entries to copy from the right of the
-   end of the range via - and with r_mas set up at the entry at pivot
-   0xffff, r_mas.offset <= r_mas.end, and then we DUPLICATE the entry at
-   pivot 0xffff.
-
-5. BUG! The maple tree is corrupted with a duplicate entry.
-
-This requires a very specific set of circumstances - we must be spanning
-the last element in a leaf node, which is the last element in the parent
-node.
-
-spanning store across two leaf nodes with a range that ends at that shared
-pivot.
-
-A potential solution to this problem would simply be to reset the walk each
-time we traverse r_mas, however given the rarity of this situation it seems
-that would be rather inefficient.
-
-Instead, this patch detects if the right hand node is populated, i.e. has
-anything we need to copy.
-
-We do so by only copying elements from the right of the entry being inserted
-when the maximum value present exceeds the last, rather than basing this on
-offset position.
-
-The patch also updates some comments and eliminates the unused bool return
-value in mas_wr_walk_index().
-
-The work performed in commit f8d112a4e657 ("mm/mmap: avoid zeroing vma tree
-in mmap_region()") seems to have made the probability of this event much
-more likely, which is the point at which reports started to be submitted
-concerning this bug.
-
-The motivation for this change arose from Bert Karwatzki's report of
-encountering mm instability after the release of kernel v6.12-rc1 which,
-after the use of CONFIG_DEBUG_VM_MAPLE_TREE and similar configuration
-options, was identified as maple tree corruption.
-
-After Bert very generously provided his time and ability to reproduce this
-event consistently, I was able to finally identify that the issue discussed
-in this commit message was occurring for him.
-
-Reported-and-tested-by: Bert Karwatzki <spasswolf@web.de>
-Closes: https://lore.kernel.org/all/20241001023402.3374-1-spasswolf@web.de/
-Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Closes: https://lore.kernel.org/all/CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7iF+XFRu1h7-+Dg@mail.gmail.com/
-Fixes: 54a611b60590 ("Maple Tree: add new data structure")
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- lib/maple_tree.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ tools/testing/radix-tree/maple.c | 84 ++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 20990ecba2dd..2fe59c534328 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2196,6 +2196,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
-
- /*
-  * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
-+ *                      If @mas->index cannot be found within the containing
-+ *                      node, we traverse to the last entry in the node.
-  * @wr_mas: The maple write state
-  *
-  * Uses mas_slot_locked() and does not need to worry about dead nodes.
-@@ -3532,7 +3534,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
- 	return true;
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index 1873ddbe16cc..5fde09999be4 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -36406,9 +36406,93 @@ void farmer_tests(void)
+ 	check_nomem(&tree);
  }
 
--static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
-+static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
++static unsigned long get_last_index(struct ma_state *mas)
++{
++	struct maple_node *node = mas_mn(mas);
++	enum maple_type mt = mte_node_type(mas->node);
++	unsigned long *pivots = ma_pivots(node, mt);
++	unsigned long last_index = mas_data_end(mas);
++
++	BUG_ON(last_index == 0);
++
++	return pivots[last_index - 1] + 1;
++}
++
++/*
++ * Assert that we handle spanning stores that consume the entirety of the right
++ * leaf node correctly.
++ */
++static void test_spanning_store_regression(void)
++{
++	unsigned long from = 0, to = 0;
++	DEFINE_MTREE(tree);
++	MA_STATE(mas, &tree, 0, 0);
++
++	/*
++	 * Build a 3-level tree. We require a parent node below the root node
++	 * and 2 leaf nodes under it, so we can span the entirety of the right
++	 * hand node.
++	 */
++	build_full_tree(&tree, 0, 3);
++
++	/* Descend into position at depth 2. */
++	mas_reset(&mas);
++	mas_start(&mas);
++	mas_descend(&mas);
++	mas_descend(&mas);
++
++	/*
++	 * We need to establish a tree like the below.
++	 *
++	 * Then we can try a store in [from, to] which results in a spanned
++	 * store across nodes B and C, with the maple state at the time of the
++	 * write being such that only the subtree at A and below is considered.
++	 *
++	 * Height
++	 *  0                              Root Node
++	 *                                  /      \
++	 *                    pivot = to   /        \ pivot = ULONG_MAX
++	 *                                /          \
++	 *   1                       A [-----]       ...
++	 *                              /   \
++	 *                pivot = from /     \ pivot = to
++	 *                            /       \
++	 *   2 (LEAVES)          B [-----]  [-----] C
++	 *                                       ^--- Last pivot to.
++	 */
++	while (true) {
++		unsigned long tmp = get_last_index(&mas);
++
++		if (mas_next_sibling(&mas)) {
++			from = tmp;
++			to = mas.max;
++		} else {
++			break;
++		}
++	}
++
++	BUG_ON(from == 0 && to == 0);
++
++	/* Perform the store. */
++	mas_set_range(&mas, from, to);
++	mas_store_gfp(&mas, xa_mk_value(0xdead), GFP_KERNEL);
++
++	/* If the regression occurs, the validation will fail. */
++	mt_validate(&tree);
++
++	/* Cleanup. */
++	__mt_destroy(&tree);
++}
++
++static void regression_tests(void)
++{
++	test_spanning_store_regression();
++}
++
+ void maple_tree_tests(void)
  {
- 	struct ma_state *mas = wr_mas->mas;
-
-@@ -3541,11 +3543,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
- 		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
- 						  mas->offset);
- 		if (ma_is_leaf(wr_mas->type))
--			return true;
-+			return;
- 		mas_wr_walk_traverse(wr_mas);
--
- 	}
--	return true;
- }
- /*
-  * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
-@@ -3765,8 +3765,8 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
- 	memset(&b_node, 0, sizeof(struct maple_big_node));
- 	/* Copy l_mas and store the value in b_node. */
- 	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
--	/* Copy r_mas into b_node. */
--	if (r_mas.offset <= r_mas.end)
-+	/* Copy r_mas into b_node if there is anything to copy. */
-+	if (r_mas.max > r_mas.last)
- 		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
- 			   &b_node, b_node.b_end + 1);
- 	else
+ #if !defined(BENCH)
++	regression_tests();
+ 	farmer_tests();
+ #endif
+ 	maple_tree_seed();
 --
 2.46.2
 
