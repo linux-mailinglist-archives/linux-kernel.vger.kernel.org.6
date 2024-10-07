@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-353192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5007992A1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19815992A21
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3C728370A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A18283A74
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCF61D1E65;
-	Mon,  7 Oct 2024 11:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTb0kfP2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FD1199948;
-	Mon,  7 Oct 2024 11:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EFE1D14EC;
+	Mon,  7 Oct 2024 11:20:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39732AD05;
+	Mon,  7 Oct 2024 11:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300009; cv=none; b=N9PuVLesEpHErOYtVdx6cCc0tTdGqXgLfFjo+pmzRweleov7ZRNn62NU3RZeonSX71nW7gBswRJAhVy4X01yn/5XO3rA7s3pfpakFZcGB39ew8XiNQna/R/PsiUUGoW8Uwy56esi6f46DIMTVug432EUG5pE9roaGRVs9eyUOLs=
+	t=1728300030; cv=none; b=cK89TbJZZnBlfEXLbRL7T+tOkHUxnlLaeuI5ihNuYsrsL68nVL+OOuJZLUDIAclvfURpisK2SJIYx4FaJ8Udr6ZJX1n57a29Z4U9S56zMrK8uZbSnFARU7kHkl088KT0Ya3j+iEOuj31Fr3gKxo7TwlMNrZhJNXq8bauhdIjBPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300009; c=relaxed/simple;
-	bh=kjZDC/Kf1R8Y03yq633O0mQsv2RP9MmyoADslJ4TRDM=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=NP4wiA7guo/bhuIEuqs/GHE6zl5pBzFokme7pPtzTTFXsDwcWhM9CBXdJBDiZ+6HVY8yi3rYu3c968m1E3LVoknG+Y82VQuyMXd65eNrAHJXpHhBmyYWBxd/HlQMQHZWoMKkHNBXv+knhS63jz69KBheyHObq4bXUvpJXOauFpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTb0kfP2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0AAC4CEC6;
-	Mon,  7 Oct 2024 11:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728300008;
-	bh=kjZDC/Kf1R8Y03yq633O0mQsv2RP9MmyoADslJ4TRDM=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=UTb0kfP2cZ50KyEzL6MbnlEGQMSxWdgRZXx3YVT4AYuDXqJTYgK1UGRiXZtCdI3wV
-	 tQHaXq378mHySKMPInmAuJTO/Nd/ROZXvmFR3ZGXYIfKoE0TGdQVq44aYmBnXiVQ6l
-	 8lozIGsz4IqXSIydL+MxwqxLCF4w9CU2hQYcT2fG2bo9z+ECPmJG4yQE4OfIF2Y6xY
-	 mLAL/Q5GxEfm/4J1YreFnwIBXGIsxyPmRLUDwDZBhJsgdfvu5L/IvjnoYJgdXRLYmT
-	 lniHH0hMfSKORjPFwkZSiRPUw/Q+I7Fi0bJrp8hKKycKz6XKRptABWWu4hBKHvXbQM
-	 nKu2iFGkkMxLA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>,  Jakub Kicinski <kuba@kernel.org>,
-  Kees Cook <kees@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Baochen
- Qiang <quic_bqiang@quicinc.com>,  Arnd Bergmann <arnd@arndb.de>,
-  Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-  linux-wireless@vger.kernel.org,  ath12k@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wifi: ath12k: fix one more memcpy size error
-References: <20241004095420.637091-1-arnd@kernel.org>
-Date: Mon, 07 Oct 2024 14:20:04 +0300
-In-Reply-To: <20241004095420.637091-1-arnd@kernel.org> (Arnd Bergmann's
-	message of "Fri, 4 Oct 2024 09:54:13 +0000")
-Message-ID: <875xq45fdn.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1728300030; c=relaxed/simple;
+	bh=FMCXiC1Srhg1bB0cgpwSeqZNLhP8oeIzUvfacDYF2qI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3WG0WRllKi4Kh1CK+UHjFW5qadb4gEWessB+R3avXJyM4EVeyxJ3dVBXVZrROuECln5DYih+W6m/FOSapfhlZnmTsFKylUU1mUEvHEDN14SWoGGC9tFQHON2KCmsUU1JGnLzSpX+PnXa2PVbWaSyhG7WF9kg4X3u4QJE9bb+C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8279FEC;
+	Mon,  7 Oct 2024 04:20:56 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 102613F640;
+	Mon,  7 Oct 2024 04:20:24 -0700 (PDT)
+Message-ID: <6d79c86d-601b-46b9-a06e-6ab78b6d3e8a@arm.com>
+Date: Mon, 7 Oct 2024 12:20:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
+To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
+ <20241003152910.3287259-3-vincenzo.frascino@arm.com>
+ <423e571b-3ef6-4e80-ba81-bf42589a4ba8@app.fastmail.com>
+ <850cdc2a-a336-4dab-bc7a-d9bcae3fb3cf@arm.com>
+ <140c4244-1bb2-404c-8372-1e68963eeea5@app.fastmail.com>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <140c4244-1bb2-404c-8372-1e68963eeea5@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Arnd Bergmann <arnd@kernel.org> writes:
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> A previous patch addressed a fortified-memcpy warning on older compilers,
-> but there is still a warning on gcc-14 in some configurations:
->
-> In file included from include/linux/string.h:390,
->                  from drivers/net/wireless/ath/ath12k/wow.c:7:
-> drivers/net/wireless/ath/ath12k/wow.c: In function 'ath12k_wow_convert_8023_to_80211.isra':
-> include/linux/fortify-string.h:114:33: error: '__builtin_memcpy' accessing 18446744073709551610 or more bytes at offsets 0 and 0 overlaps 9223372036854775797 bytes at offset -9223372036854775803 [-Werror=restrict]
-> include/linux/fortify-string.h:679:26: note: in expansion of macro '__fortify_memcpy_chk'
->   679 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> drivers/net/wireless/ath/ath12k/wow.c:199:25: note: in expansion of macro 'memcpy'
->   199 |                         memcpy(pat + a3_ofs - pkt_ofs,
->       |                         ^~~~~~
->
-> Address this the same way as the other two, using size_add().
->
-> Fixes: b49991d83bba ("wifi: ath12k: fix build vs old compiler")
-> Fixes: 4a3c212eee0e ("wifi: ath12k: add basic WoW functionalities")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Kalle Valo <kvalo@kernel.org>
+On 07/10/2024 12:06, Arnd Bergmann wrote:
+> On Mon, Oct 7, 2024, at 11:01, Vincenzo Frascino wrote:
+>> On 04/10/2024 14:13, Arnd Bergmann wrote:
+> 
+>>
+>> It seemed harmless from the tests I did. But adding an '&&
+>> defined(CONFIG_32BIT)' makes it logically correct. I will add a comment as well
+>> in the next version.
+> 
+> To clarify: this has to be "!defined(CONFIG_64BIT)", as most
+> 32-bit architectures don't define the CONFIG_32BIT symbol
+> (but all 64-bit ones define CONFIG_64BIT).
+> 
+
+You are right, it seemed that every 32-bit architectures with a
+64-bit phys_addr_t had CONFIG_32BIT but this is not the case.
+
+>     Arnd
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Regards,
+Vincenzo
 
