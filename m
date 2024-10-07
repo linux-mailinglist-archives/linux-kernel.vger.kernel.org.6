@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-353179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0559929DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:03:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE3F9929E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96C92819BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBAB1C228EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8459A1D1752;
-	Mon,  7 Oct 2024 11:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A081D1E60;
+	Mon,  7 Oct 2024 11:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5ex0h/S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2qJJhDO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12733FBA5;
-	Mon,  7 Oct 2024 11:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB42B198E81;
+	Mon,  7 Oct 2024 11:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299003; cv=none; b=R3Plm3u2B9ebTBjnsS+ka+/4HyaJGLRzUODqD9roS26SujHbfwQQDW8QLkWQ/z29nl+sIjj9/ORZVQYvXOqqpuwDkzD37+2+KPhl2JwNSXk16+xdlk0BezcJsahiZSEfnqwV+/1hZ/2L+apy+4NvXxQHhvPY1fpyk+tcFPeuPGQ=
+	t=1728299050; cv=none; b=VFj6iSkRgmezUIQZ71B4tHgkdsRIkChYtRZD/nMGey+GDz1ApxcjvVLveanfwdmEBqICBZ9WbFKtUrAX4pS/bSo29YKbwrCDceU0qr5n/dABWtifoZ/+ZNNADjAoC94blgDyNtOaC20sZmK3FhpyYRk+I3bgsdf4yL8pQTaARWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299003; c=relaxed/simple;
-	bh=2u2DFRbt1hKFfNauzyFdAYtgKax2eIyjJm1fsO/pedQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DCl/vZdItIB/06v2nOvI/MnVsws2G7yScewbXcNSXqm2NyVuJLkI7KpC9gUe4agc1VomXXMmXArGNrMJs14Dp72U9dtzLbZdbCbSUHkeQymshRm0hesKoHK58eHtKsHhJPhBsOvHB4VEec6MJ96P5uSiOCnG4zPhQMkVWuxOm6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5ex0h/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3722C4CEC6;
-	Mon,  7 Oct 2024 11:03:14 +0000 (UTC)
+	s=arc-20240116; t=1728299050; c=relaxed/simple;
+	bh=ujW0TeRwS+eeSWMWIG8idJke6McWZ08+eTH56YXvu4I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=M/DDgYH+ZU+WV+oT3K7/6LhrPh5WXYWCdWGIqqxtKx2cEtDdfFMCO0WSb5Y3g8hV3gOMbpWUPSd/QXRHWPP5XtETmIZlIPANkvaJC5ggrToRIOv6K5qFLWeSJYTVfXt4ryIdBwGaXdi8yam7bDSPAJSssOTKxACRjOzqhX54ESE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2qJJhDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDBAC4CEC6;
+	Mon,  7 Oct 2024 11:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728299003;
-	bh=2u2DFRbt1hKFfNauzyFdAYtgKax2eIyjJm1fsO/pedQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=j5ex0h/SLifF7m53VoC8A7NA/Y/jsd3Rhck3HrQKrDqFojcDvQ33oK9d5fOZmeB5Z
-	 cjRtXiGgCuo9YH/6vWGY03A6JVlPYfsaZvJtOastOfjPSI7l0eER3P5sBbYwz0zGSy
-	 24NJCKny50oLe+/o7PFJdXbkVotFmb++dGStUMe4VxFbV4DDPvcNPd/czIYiXjeWQB
-	 8eQCr/BeBvNJaRutdad2YYbu+vvP4E2qk1qlZL76xGpcVxTJEiKfqIdSYs4Khn6KJP
-	 w0W05ghE5HsAp1MqlcTigj99z3SnBmCYoC624YfCx5KBMy1gXPz7Zyo6qeqmWK9Af6
-	 3sVESXxCIacOQ==
-Message-ID: <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
-Date: Mon, 7 Oct 2024 13:03:11 +0200
+	s=k20201202; t=1728299049;
+	bh=ujW0TeRwS+eeSWMWIG8idJke6McWZ08+eTH56YXvu4I=;
+	h=Date:Subject:From:To:References:In-Reply-To:From;
+	b=h2qJJhDOgF7h7+MbFX2RKhB/8tstZUNs59ts1Sq8wHDsQNSiLDhufVJJN06qoWvjc
+	 d2BC35+W+Z8wolgBeIVwEQMfndcZGQizj/y0ZEEs6HsRpmSz4OqARQjW/Gi2f3wOrB
+	 Mpm/Dx+Y8qgKMy0nwdXnSmg8QvKzbHJ6IbvzLl7yYZXHN930m9y8TvaXw9zBLp1N5y
+	 uDvjjUzpTKkcNN3YYgBwabQB6dOToPah9RDwpRVIhHwQwbopVyGdC65V4MneAdTCQL
+	 O+KmzsPBGdfynw3FO9C8sSMsd5wBXwzmEcx6dGpBKS/0xuHOH7x53fEtTml4UFcbZ+
+	 wBZQhyy2Df+bg==
+Message-ID: <5dfa5989-563d-43f2-8391-5b6b03c5ae29@kernel.org>
+Date: Mon, 7 Oct 2024 13:03:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,6 +51,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIIHYxIDAxLzEwXSBkdC1iaW5kaW5nOiBt?=
  =?UTF-8?Q?fd=3A_aspeed=2Cast2x00-scu=3A_Add_binding_for_ASPEED_AST2700_SCU?=
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kevin Chen <kevin_chen@aspeedtech.com>, "robh@kernel.org"
  <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
  "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
@@ -81,7 +82,7 @@ References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
  <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
  <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
  <PSAPR06MB494964BEE33B160EE5E2159289802@PSAPR06MB4949.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -126,32 +127,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <PSAPR06MB494964BEE33B160EE5E2159289802@PSAPR06MB4949.apcprd06.prod.outlook.com>
+In-Reply-To: <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2024 07:50, Kevin Chen wrote:
-> Hi Krzk,
-> 
-> I will speperate clock part in the v3 patch into Ryan's clock series.
-> 
->> Missing commit msg.
+On 07/10/2024 13:03, Krzysztof Kozlowski wrote:
+> On 15/08/2024 07:50, Kevin Chen wrote:
+>> Hi Krzk,
 >>
->> Please use subject prefixes matching the subsystem. You can get them for
->> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->> your patch is touching. For bindings, the preferred subjects are
->> explained here:
->> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+>> I will speperate clock part in the v3 patch into Ryan's clock series.
 >>
->> A nit, subject: drop second/last, redundant "bindings for". The
->> "dt-bindings" prefix is already stating that these are bindings.
->> See also:
->> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> Agree, already fixed in another commit in Ryan's series.
-> [1/4] dt-bindings: mfd: aspeed: support fo
+>>> Missing commit msg.
+>>>
+>>> Please use subject prefixes matching the subsystem. You can get them for
+>>> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+>>> your patch is touching. For bindings, the preferred subjects are
+>>> explained here:
+>>> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+>>>
+>>> A nit, subject: drop second/last, redundant "bindings for". The
+>>> "dt-bindings" prefix is already stating that these are bindings.
+>>> See also:
+>>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>> Agree, already fixed in another commit in Ryan's series.
+>> [1/4] dt-bindings: mfd: aspeed: support fo
+> 
+> Just to make it clear: you responded after 2.5 months. This patchset is
+> neither in my mailbox nor in my brain.
 
-Just to make it clear: you responded after 2.5 months. This patchset is
-neither in my mailbox nor in my brain.
+Uh, this was supposed to be replied to your recent emails.
 
 Best regards,
 Krzysztof
