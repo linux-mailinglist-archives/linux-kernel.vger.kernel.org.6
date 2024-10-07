@@ -1,209 +1,128 @@
-Return-Path: <linux-kernel+bounces-353068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD599927EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B0B992889
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3021C2258B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D86D1F23E9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED98018CC0A;
-	Mon,  7 Oct 2024 09:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gKvHaltE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2580F1A3BD6;
+	Mon,  7 Oct 2024 09:56:52 +0000 (UTC)
+Received: from coelho.fi (coelho.fi [88.99.146.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96D1231CA9;
-	Mon,  7 Oct 2024 09:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF661B4F33
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 09:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.146.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728292600; cv=none; b=ZN6ksL2bERoTt3ARmyfJWrosKbycyjV45GfW+YgLbjRD5sG7a/YgmKX5A7eWiHxJ1oz+GEKZU1lTzbrjc61/ykr2nJwytItUtUSWxY6k/7eCuet9GsuYGcUaifyBu2cd98d0rzwZ+rCmc7WzkahwLqSzeVF/zruLmenui08PdCY=
+	t=1728295011; cv=none; b=dtgVOXPxXfuQtZJLuP/Z8Ko+WkGpyd63PUOfOf9SEKrHt0CW6NgxlACohHuVTADuGtjLhxq8uw8GsDLu4VxBbVH73WWkLAtXZAYqgZX7oSM1d/SLHF3drd8gwewA5CiCx1PEo9NuxrenjDdSZhHqTvhqO+An5lieSule4xuU8xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728292600; c=relaxed/simple;
-	bh=YHoTprxdP0+daJj8yvPMUEEhFKpS9JjWg/OEw4mPUNk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IVKLsNocHSJKybdb5jOWod9b697veMbI71bbL2VNRI4KY7d2r7V2g7qTJ1UKYF8s0sSy4glLaOTEKWpjUT6FmosduidKLcSD0Bj03QWX5p8SOLZV+8fNgdLGJPmVZqwXmuoCCATxE3Vaz9dxe1amXFt8RcQ7d3LFIYYr22oSWKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gKvHaltE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974Sppv019025;
-	Mon, 7 Oct 2024 09:16:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=x27etQNEHnfLHGBL8UDVEFViQ8il40EdXTo
-	FzqGNF9E=; b=gKvHaltEca3SI7thTQGR4AWkimW9b0G3YEle8PBvxLkz/wVQufz
-	jXMQ2Jyb6Rn10e34UT0ZodUKZOQ7bxttoBjWthZ83h7PP8BSzP4k+zyVx6Yb9yNy
-	V+Dancl2IPM+QTlSK1ti7QeJ40UeHnRdbqAyZ3Qsi1T//GHnAdtWSni26trLsfpC
-	bnshUYxA/Fc2jvfm3rUrb96fUDnS6bg57JGrEggLbtRWxejgyQUCNG9rMVMQt+qu
-	fZTAjopRLdR+5BBwuxiqQZmmW3lKqUsZWbmfR89QoNqkcIngFX6gNwWVwraEBBaB
-	Jb8kG7h+g9q8cbGs0W6J71VSz3ZmsvWZXdg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsn3m01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 09:16:28 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4979GPcU030548;
-	Mon, 7 Oct 2024 09:16:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 422xhkns04-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 09:16:25 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4979GPAG030542;
-	Mon, 7 Oct 2024 09:16:25 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.96.82])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4979GOSO030538
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 09:16:25 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2370923)
-	id 5C9C456A; Mon,  7 Oct 2024 14:46:24 +0530 (+0530)
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-To: mhi@lists.linux.dev
-Cc: quic_qianyu@quicinc.com, manivannan.sadhasivam@linaro.org,
-        quic_vbadigan@quicinc.com, quic_krichai@quicinc.com,
-        quic_skananth@quicinc.com, quic_mrana@quicinc.com,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>,
-        Slark Xiao <slark_xiao@163.com>, Mank Wang <mank.wang@netprisma.us>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Fabio Porcedda <fabio.porcedda@gmail.com>,
-        linux-arm-msm@vger.kernel.org (open list:MHI BUS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] bus: mhi: host: pci_generic: Add support for QDU100 device
-Date: Mon,  7 Oct 2024 14:46:20 +0530
-Message-Id: <20241007091622.3497928-1-quic_vpernami@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728295011; c=relaxed/simple;
+	bh=YmEqY53txHcRZ4HognLxqtNWrbpyB7cRGAn2wCZLIrg=;
+	h=Message-ID:From:To:Cc:Date:Content-Type:MIME-Version:Subject; b=gG04n3P53Wltlkg5fHrgT/SmHc3G9dnuNbMDVBqFOGfogMjELaeyn3VaPkVYY/nANQcQfzX+OEZb/SOoiWUy/Kmybdr4k2oDZ1zTUAnarjDrSQoFR2UXXWao6gopSuVCZ9s6KlLpe/k4bcqlL7JtcuP7FUainjd5r8M3VHgSnDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coelho.fi; spf=pass smtp.mailfrom=coelho.fi; arc=none smtp.client-ip=88.99.146.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coelho.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelho.fi
+Received: from 91-155-255-253.elisa-laajakaista.fi ([91.155.255.253] helo=[192.168.100.137])
+	by coelho.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97)
+	(envelope-from <luca@coelho.fi>)
+	id 1sxjs3-00000000IgQ-2xD8;
+	Mon, 07 Oct 2024 12:17:43 +0300
+Message-ID: <40555604c3f4be43bf72e72d5409eaece4be9320.camel@coelho.fi>
+From: Luca Coelho <luca@coelho.fi>
+To: linux-kernel@vger.kernel.org, mmaslanka@google.com
+Cc: hdegoede@redhat.com, daniel.lezcano@linaro.org
+Date: Mon, 07 Oct 2024 12:17:38 +0300
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: db4kjahMSgN9_UjH8yZP-j8Mqpqg72f1
-X-Proofpoint-GUID: db4kjahMSgN9_UjH8yZP-j8Mqpqg72f1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410070065
+X-Spam-Level: 
+Subject: Regression in PMC code in 6.12-rc1
 
-Add MHI controller configuration for QDU100 device
+Hi Marek et al,
 
-The Qualcomm X100 5G RAN Accelerator Card is designed to
-enhance Open vRAN servers by offloading CPUs from intensive
-5G baseband functions.
+We have been facing some errors when running some of our Display CI
+tests that seem to have been introduced by the following commit:
 
-Currently IP_SW1/2 channel support is not present in
-mhi_net driver, will be supporting them in future.
+e86c8186d03a ("platform/x86:intel/pmc: Enable the ACPI PM Timer to be turne=
+d off when suspended")
 
-Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
+The errors we are getting look like this:
 
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+<4> [222.857770] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+<4> [222.857771] [ BUG: Invalid wait context ]
+<4> [222.857772] 6.12.0-rc1-xe #1 Not tainted
+<4> [222.857773] -----------------------------
+<4> [222.857774] swapper/4/0 is trying to lock:
+<4> [222.857775] ffff8881174c88c8 (&pmcdev->lock){+.+.}-{3:3}, at: pmc_core=
+_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
+<4> [222.857782] other info that might help us debug this:
+<4> [222.857783] context-{4:4}
+<4> [222.857784] 1 lock held by swapper/4/0:
+<4> [222.857785]  #0: ffffffff83452258 (tick_freeze_lock){....}-{2:2}, at: =
+tick_freeze+0x16/0x110
+<4> [222.857791] stack backtrace:
+<4> [222.857793] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Not tainted 6.12.0-rc=
+1-xe #1
+<4> [222.857794] Hardware name: Intel Corporation Alder Lake Client Platfor=
+m/AlderLake-P DDR5 RVP, BIOS RPLPFWI1.R00.4035.A00.2301200723 01/20/2023
+<4> [222.857796] Call Trace:
+<4> [222.857797]  <TASK>
+<4> [222.857798]  dump_stack_lvl+0x80/0xc0
+<4> [222.857802]  dump_stack+0x10/0x20
+<4> [222.857805]  __lock_acquire+0x943/0x2800
+<4> [222.857808]  ? stack_trace_save+0x4b/0x70
+<4> [222.857812]  lock_acquire+0xc5/0x2f0
+<4> [222.857814]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_=
+pmc_core]
+<4> [222.857817]  __mutex_lock+0xbe/0xc70
+<4> [222.857819]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_=
+pmc_core]
+<4> [222.857822]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_=
+pmc_core]
+<4> [222.857825]  mutex_lock_nested+0x1b/0x30
+<4> [222.857827]  ? mutex_lock_nested+0x1b/0x30
+<4> [222.857828]  pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pm=
+c_core]
+<4> [222.857831]  acpi_pm_suspend+0x23/0x40
+<4> [222.857834]  clocksource_suspend+0x2b/0x50
+<4> [222.857836]  timekeeping_suspend+0x22a/0x360
+<4> [222.857839]  tick_freeze+0x89/0x110
+<4> [222.857840]  enter_s2idle_proper+0x34/0x1d0
+<4> [222.857843]  cpuidle_enter_s2idle+0xaa/0x120
+<4> [222.857845]  ? tsc_verify_tsc_adjust+0x42/0x100
+<4> [222.857849]  do_idle+0x221/0x250
+<4> [222.857852]  cpu_startup_entry+0x29/0x30
+<4> [222.857854]  start_secondary+0x12e/0x160
+<4> [222.857856]  common_startup_64+0x13e/0x141
+<4> [222.857859]  </TASK>
 
----
-changs from V2:
-- updated commit text.
+And the full logs can be found, for example, here:=20
 
-changes from V1:
-- Changing naming convention from modem_qcom_qdu100*
-  to mhi_qcom_qdu100*.
-- Updated commit text.
-- Fixed and corrected by passing mhi_pci_dev_info struct
-  instead of mhi_controller_config.
----
- drivers/bus/mhi/host/pci_generic.c | 60 ++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc768f36cf676ee1b=
+014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-interruptible.htm=
+l
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 9938bb034c1c..b9b7dd8d9411 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -245,6 +245,63 @@ struct mhi_pci_dev_info {
- 		.channel = ch_num,		\
- 	}
- 
-+static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-+	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-+	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-+	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
-+	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
-+	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
-+	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
-+};
-+
-+static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-+	/* first ring is control+data ring */
-+	MHI_EVENT_CONFIG_CTRL(0, 64),
-+	/* SAHARA dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-+	/* Software channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-+	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-+	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-+	/* Software IP channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-+};
-+
-+static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-+	.max_channels = 128,
-+	.timeout_ms = 120000,
-+	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-+	.ch_cfg = mhi_qcom_qdu100_channels,
-+	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-+	.event_cfg = mhi_qcom_qdu100_events,
-+};
-+
-+static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-+	.name = "qcom-lassen",
-+	.fw = "qcom/lassen/xbl_s.melf",
-+	.edl = "qcom/lassen/edl.mbn",
-+	.edl_trigger = true,
-+	.config = &mhi_qcom_qdu100_config,
-+	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-+	.dma_data_width = 32,
-+	.sideband_wake = false,
-+};
-+
- static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
- 	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
- 	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-@@ -822,6 +879,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* NETPRISMA FCUN69 (SDX6X) */
- 	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
- 		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-+	/* QDU100, x100-DU */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-+		.driver_data = (kernel_ulong_t)&mhi_qcom_qdu100_info },
- 	{  }
- };
- MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
--- 
-2.34.1
 
+Reverting this commit seems to prevent the problem.  Do you have any
+idea what could be causing this and, more importantly, how to fix it?
+:)
+
+Thanks!
+
+--
+Cheers,
+Luca.
 
