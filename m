@@ -1,262 +1,134 @@
-Return-Path: <linux-kernel+bounces-353160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A593D992984
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D2D992981
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F64F284794
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7206A284AF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584181D14EC;
-	Mon,  7 Oct 2024 10:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7C31D14FA;
+	Mon,  7 Oct 2024 10:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y96zapP3"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ot3Oyera"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077181C878E;
-	Mon,  7 Oct 2024 10:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504CB1C0DED;
+	Mon,  7 Oct 2024 10:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298146; cv=none; b=tdbXMMJBvmwkNjIS8MQG4GHeAjW8/7gTr/8RhO/PK+xUs7LXKZwYaof56PxXosR9wKUweKR06giXKkDG6O+nryFfr8ZW+DoxYaqi8cxhDx/Xjw71/gV3LgzRHR+I0K6JQOZxYWCD0Rviq3MrsEv2fT84dSGQ71vK6itnBrIRll4=
+	t=1728298129; cv=none; b=DR96841MhE1UQM/t7nFa4d8jt11LYPx+AKRPJWg9SLee4WPyUCubrjqkhOwXQErFHdb/7d4uKP24PmokL9+RP8Mjo5z+DfzgSim7TE4mafibz1HoyDZVwoMSWJkrpRdegTNUqOnNbNXpXQyh1jvmSULLlc45AXui8fgYS5Sd4To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298146; c=relaxed/simple;
-	bh=GiVGZEa2IQeWE2UVxCtpQJDbRZFjZHoVO6B1KXrrr2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Se7U/UpM7/teOTVzp4kodm8kE/y2I0eNBSFYS6hAlOVqnSP3KgjIV+RB1a348d0rTvNPSp6Zrzj72hzf4zGW6PffIs3zHt6JkF6No/3mmvcJ+CW6SNE3UVz+/v5UUZz/kJ7nAZfA5FjvUp73H5Qhib3JG/q9so1aoi80WEC9KlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y96zapP3; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50c9fb5751cso585354e0c.0;
-        Mon, 07 Oct 2024 03:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728298144; x=1728902944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
-        b=Y96zapP3Grm7qt4BHnk5U4h7Hrt2p+r4tHDIpAYwQioLMsHC6uR1HHC3A7pAQiUGzd
-         xE/Ekofc19SF7c0rseOdzLwuraIzT4oAG3eyO5ygFEzmzTy+FzY3TX0kjoRTHfE3xUkF
-         S8EPpY2/RsBcmarW8N2VeEWnVIspkwo7xJS0AzlREy1Z77SS+F+2WVGO/r49FURv7621
-         XRm1XgSLLir74E9PAq/0tDsoIkFoUA2UZiUplEhKG7TI7Hm35E+VE8eeWuQvysh1xHEo
-         UvnXm6TI0k4abofv7RN/f60VRDIx7FJO0SMTLaJnijGpLIoFlJiNeer6YnwR+JP/lxIx
-         Qtvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728298144; x=1728902944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
-        b=tjMAYrAW28gKZiQjg01NWy240sEgU5dGICW87CGV290AecL1A99NXz+bYlw7LnlczY
-         uoEEn0imTuWOv/X0yD7pLgZgVD2JPlEP/kGFEifTrHA4TgCuywzb6jacqorVmjWUsCqk
-         DyO/Q6NZ5uZbjpiMdIUF8BqXxbkYg16lTKGoqk7n+D4l+gu5hpRcNWX0pRnlwNgZDDyE
-         xz+L8VWAU88mHprWXwFDAeUvu3HUHppksWdmsfes3moq149K2ix1Bn0FDPLZlamAvlm+
-         4svoXr/Q24O9RfrxMmXKnMMH6HAfDOlpscF4C8urNKdJlf8fQPzRkks+H6NPTu4mt74f
-         9ktA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh0hw8xu6x98osPREtOImR7k9fY+hLP+GNDEvKB/LjMS0mVaY6h8YGCLZ0QETdV+dVjuLB86Tkf1BGo/E=@vger.kernel.org, AJvYcCVw0j7+SR9pkvrwYR/q+jP2og6zYTsu0qwR2Z8KJYH/xz9r4JStJPwHlIRGCnhXd6vm7iEKDW9qZQwxKAqze8U8TyA=@vger.kernel.org, AJvYcCWSRDgq4si2z7ic4vHfwXie6BGI9xoL6YTKQgqsXKf57p9sttVn8k07phy1WofjZYMM8dotaNS6trSxVmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqkZNe6qBx80nlw9id3W4fAa+4Ko5r9Pdwcq4fuX58jxoJ/QjA
-	5cO+pB4p2C0SnizZmNB2M39eSP46dniAhIJbtVxOyV9AklWEbpXz1+qw85EgFgNcJhzNEEswZ4p
-	8n89uQmew4t1jRycLE9pu6fEL6zI=
-X-Google-Smtp-Source: AGHT+IHehaPUBSxW//F/OgBrXY4lNPZ//6JPmW1b2lYfQQBZIG9PFAOF9kmMe64JteLU4XtQdwAZmR8wIXWjXJTsyJs=
-X-Received: by 2002:a05:6122:1816:b0:50a:7044:7b2a with SMTP id
- 71dfb90a1353d-50c8548f7admr8089516e0c.4.1728298143714; Mon, 07 Oct 2024
- 03:49:03 -0700 (PDT)
+	s=arc-20240116; t=1728298129; c=relaxed/simple;
+	bh=vwM0zjvaCCFJLUAY4zeVRqAIuO8bEQ2ZCRcsH0zR27U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VuyUMQ7QOoVmRzeyPo+LQo1+r+58a1wj1/SlPhLv1wpIyPFqnhH2j3H7wnhkrJ0vMFExxSehPOQS0ZGufD45oGAbf1EzNW4ii7yebkL4ib4ZETlXYNHSn45NzxSldKIxSBBrZYMB22zp2wAOL1bW8Oe5A2cToGT2VvpUZRtK5WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ot3Oyera; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TGCv027186;
+	Mon, 7 Oct 2024 10:48:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SPb2h5C/LN8iIyIZ9iZimV/GnBTz0QmsKdLYLIXB3N8=; b=ot3Oyera8B7FRwGe
+	/xtu8UNIXbvbT4s8P9x0WPCmdiofELHHEtTgg39EWU78osSU/m59i/9MrHJdHpjW
+	78PNFwLkRzSWXpXJg6mOwVCVjTTlmmMynw+TdeBoqXK+ScYUz+BdrYAK8kvdslPq
+	TJ010Eqvl4NjpWIPOpfn7ScoNul+rSsmQOkiWjMc18MD7ERkgq4ydcnfQBJAwpGW
+	p9GtscFMNdmLB4MuQXVnUzqEKmGrvxw/cTg/y91CRaz8lZPcJd6vyk8MZXdMwEDG
+	coiSmTeh2XHvj0Q4xlW8GwtYFvrFIyHuNDVkH8NPrSnY/t6F2nmxV20/myHFygnL
+	JV/ynQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xq9us38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 10:48:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497Ami0x026541
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 10:48:44 GMT
+Received: from [10.204.67.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 03:48:40 -0700
+Message-ID: <1eefc48d-2bb2-4ab4-84bd-6778a8833d1d@quicinc.com>
+Date: Mon, 7 Oct 2024 16:18:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003145112.GE5468@pendragon.ideasonboard.com>
-In-Reply-To: <20241003145112.GE5468@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 7 Oct 2024 11:48:37 +0100
-Message-ID: <CA+V-a8teWvx++_dFFT_H156VVHwgKKcdGB71i9MBs0mDAdmvVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/17] media: rzg2l-cru: video: Implement
- .link_validate() callback
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: add DisplayPort device node
+Content-Language: en-US
+To: Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_riteshk@quicinc.com>, <quic_vproddut@quicinc.com>,
+        <quic_abhinavk@quicinc.com>
+References: <20240916091344.27607-1-quic_mukhopad@quicinc.com>
+ <ivbohyezb57mcqgfnjot3j2olgj4kvyoq2fjstgugscagsmlg7@vav3cbokzg7q>
+ <f2d3d18f-f671-4616-a722-2e41c8e50939@kernel.org>
+From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+In-Reply-To: <f2d3d18f-f671-4616-a722-2e41c8e50939@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fQ0PufC1o-FNZNgZgf4bvLXM29rPCdJf
+X-Proofpoint-GUID: fQ0PufC1o-FNZNgZgf4bvLXM29rPCdJf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=717
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070076
 
-Hi Laurent,
 
-Thank you for the review.
+On 9/17/2024 5:05 AM, Konrad Dybcio wrote:
+> On 16.09.2024 4:01 PM, Dmitry Baryshkov wrote:
+>> On Mon, Sep 16, 2024 at 02:43:44PM GMT, Soutrik Mukhopadhyay wrote:
+>>> Add device tree node for the DisplayPort controller
+>>> and eDP PHY found on the Qualcomm SA8775P SoC.
+>> Not quite. You are also enabling it for the RIDE platforms, not just the
+>> SA8775p SoC.
+> (the patches should be split into soc and board parts)
+>
+> [...]
 
-On Thu, Oct 3, 2024 at 3:51=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Tue, Oct 01, 2024 at 03:09:15PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Implement the `.link_validate()` callback for the video node and move t=
-he
-> > format checking into this function. This change allows the removal of
-> > `rzg2l_cru_mc_validate_format()`.
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - New patch
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 99 ++++++++++---------
-> >  1 file changed, 55 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index ceb9012c9d70..c6c82b9b130a 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buff=
-er *vb)
-> >       spin_unlock_irqrestore(&cru->qlock, flags);
-> >  }
-> >
-> > -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
-> > -                                     struct v4l2_subdev *sd,
-> > -                                     struct media_pad *pad)
-> > -{
-> > -     struct v4l2_subdev_format fmt =3D {
-> > -             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > -     };
-> > -
-> > -     fmt.pad =3D pad->index;
-> > -     if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
-> > -             return -EPIPE;
-> > -
-> > -     switch (fmt.format.code) {
-> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     switch (fmt.format.field) {
-> > -     case V4L2_FIELD_TOP:
-> > -     case V4L2_FIELD_BOTTOM:
-> > -     case V4L2_FIELD_NONE:
-> > -     case V4L2_FIELD_INTERLACED_TB:
-> > -     case V4L2_FIELD_INTERLACED_BT:
-> > -     case V4L2_FIELD_INTERLACED:
-> > -     case V4L2_FIELD_SEQ_TB:
-> > -     case V4L2_FIELD_SEQ_BT:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     if (fmt.format.width !=3D cru->format.width ||
-> > -         fmt.format.height !=3D cru->format.height)
-> > -             return -EPIPE;
-> > -
-> > -     return 0;
-> > -}
-> > -
-> >  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
-> >                                   int slot, dma_addr_t addr)
-> >  {
-> > @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_d=
-ev *cru, int on)
-> >               return stream_off_ret;
-> >       }
-> >
-> > -     ret =3D rzg2l_cru_mc_validate_format(cru, sd, pad);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> >       pipe =3D media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
-> >       ret =3D video_device_pipeline_start(&cru->vdev, pipe);
-> >       if (ret)
-> > @@ -995,6 +951,60 @@ static const struct v4l2_file_operations rzg2l_cru=
-_fops =3D {
-> >       .read           =3D vb2_fop_read,
-> >  };
-> >
-> > +/* -------------------------------------------------------------------=
-----------
-> > + * Media entity operations
-> > + */
-> > +
-> > +static int rzg2l_cru_video_link_validate(struct media_link *link)
-> > +{
-> > +     struct v4l2_subdev_format fmt =3D {
-> > +             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > +     };
-> > +     struct v4l2_subdev *subdev;
-> > +     struct media_entity *entity;
-> > +     struct rzg2l_cru_dev *cru;
-> > +     struct media_pad *remote;
-> > +     int ret;
-> > +
-> > +     entity =3D link->sink->entity;
-> > +     remote =3D link->source;
-> > +
-> > +     subdev =3D media_entity_to_v4l2_subdev(remote->entity);
-> > +     fmt.pad =3D remote->index;
-> > +     ret =3D v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-> > +     if (ret < 0)
-> > +             return ret =3D=3D -ENOIOCTLCMD ? -EINVAL : ret;
-> > +
-> > +     if (!rzg2l_cru_ip_code_to_fmt(fmt.format.code))
-> > +             return -EPIPE;
->
-> Here you should check that the format on the subdev matches the format
-> on the video device.
->
-OK, I'll use the return value from rzg2l_cru_ip_code_to_fmt() and
-match it with the video device node.
 
-> > +
-> > +     switch (fmt.format.field) {
-> > +     case V4L2_FIELD_TOP:
-> > +     case V4L2_FIELD_BOTTOM:
-> > +     case V4L2_FIELD_NONE:
-> > +     case V4L2_FIELD_INTERLACED_TB:
-> > +     case V4L2_FIELD_INTERLACED_BT:
-> > +     case V4L2_FIELD_INTERLACED:
-> > +     case V4L2_FIELD_SEQ_TB:
-> > +     case V4L2_FIELD_SEQ_BT:
-> > +             break;
-> > +     default:
-> > +             return -EPIPE;
-> > +     }
->
-> Instead of checking the field here, shouldn't it be forced to a valid
-> value in the subdev .set_fmt() function ? The link validation handler is
-> responsible for validating that the configuration of the two sides of
-> the link (IP subdev and video device) match. The driver shouldn't allow
-> setting formats that can't be supported.
->
-Agreed, this is already taken care of in .set_fmt(), so I'll drop this
-check here.
+Sure, we will be splitting the board and the soc parts into different 
+patches
 
-> What you should check here is that the field of the subdev and the
-> field of the video device match.
->
-OK, I'll add a check for this.
+in the next version.
 
-> > +
-> > +     cru =3D container_of(media_entity_to_video_device(entity),
->
-> You can drop the local entity variable and write
->
-OK.
 
-Cheers,
-Prabhakar
+>
+>>> +				ports {
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +
+>>> +					port@0 {
+>>> +						reg = <0>;
+>>> +						dpu_intf0_out: endpoint {
+> Please add a newline between the last property and the subnode
+>
+> Konrad
+
+
+Sure, we will update this in the next version.
+
+
 
