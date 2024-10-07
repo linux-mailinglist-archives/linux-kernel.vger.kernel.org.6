@@ -1,140 +1,80 @@
-Return-Path: <linux-kernel+bounces-353436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E8D992DD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF57E992DD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C4EB2109B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D531F21534
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562071D45EA;
-	Mon,  7 Oct 2024 13:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYOQYw+9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B366D17B4E9
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6931D4600;
+	Mon,  7 Oct 2024 13:51:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D1B17B4E9;
+	Mon,  7 Oct 2024 13:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309086; cv=none; b=Orxddwbg9ETGISBcSXwLJ/1l7H3SoX03/L9jGQd3tmtkUaA4RJ0micBiOkcrjHCmJXTXz2foxRx0gx9nHoKCFiHbFFB3NXvpI95XZjqyoqLE/oHUtmfp0Mi4B8n7LOL9Bv9neJcxm6ODM+mzeKfcKH+u5EoeyZVIGzdpi1VzSSs=
+	t=1728309099; cv=none; b=qDo87AACu9JqZ+m24EPK25I65CUQ8g1hGSuTOV6xnK+7VRNmynvIFTSRyQ0yKFCpQGMLciTYh+uJXiyRwcsaHAgabY00DCV5kEnf9Y0NeabAc89kvvD7NpsmPfSVcbyrPGOKVUx6TDuLlbUXB6tXbGEbT8O3pL+KegQmX7M7ZP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309086; c=relaxed/simple;
-	bh=Af38W6K14UukOEOgx0/mvgFmNDN3th5anBo4M2ARqD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSuiZ23g4pO7xQmJ/u2FsRTXtGDtwHNkAlwcZvrWQX/wDzQvdCjNTZkQFzbAPPqJc4F0Qfyr50EUSRiY+lxcug5yQiIrdc73cCfIioGmGCEHBdar+Hpiy+inNEhQQsmH2hpbAQcN3dZJuU0YfBCDIe/Ni+xX/UYg2/79g82fETM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYOQYw+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5106AC4CEC6;
-	Mon,  7 Oct 2024 13:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728309086;
-	bh=Af38W6K14UukOEOgx0/mvgFmNDN3th5anBo4M2ARqD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYOQYw+9XtOkvTunR9e38VIVowN1HzmEpxK9oazjAOIT8u+nZpZOeZd+BHJW9NAZZ
-	 ffuG0u9XKF8lbBICED9/x6YC4Vpt7/zlQaTJpWBEq4uiiUuyRvhLn+N9LOgaeMeDP/
-	 VXnhsALO+3r57KtWSGLtebuB3nuDOcoQbPC2lUAJqOYkC8TqVnCO98oZmRwXNeWiis
-	 vPSMS0ca1LAPd3KcwpVQgX9PK4PJSTuBtp6z4hcsFc0Gm6/8w4lfAC1ay6sduoqTN/
-	 hn61yCmMmifgqJSeoy1ey1MJ1Zk6CWZZnqKf2unlTW0P2ur/TT2gozgx1sMC2US0/c
-	 9IjSzIHTFuYAQ==
-Date: Mon, 7 Oct 2024 15:51:19 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Yonatan Maman <ymaman@nvidia.com>
-Cc: nouveau@lists.freedesktop.org, Gal Shalom <GalShalom@nvidia.com>,
-	kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] nouveau/dmem: Fix memory leak in `migrate_to_ram`
- upon copy error
-Message-ID: <ZwPnV2OPJhOUcsU0@pollux>
-References: <20240923135449.356244-1-Ymaman@Nvidia.com>
- <20240923135449.356244-3-Ymaman@Nvidia.com>
- <ZvqJgMVBs2kAWguk@pollux>
- <f9fa14c1-f487-4ad9-9bc9-7c1db6de1ae6@nvidia.com>
+	s=arc-20240116; t=1728309099; c=relaxed/simple;
+	bh=YW1TLeRgf3X5WEfXbhRqUOfyZiKkWMAtBU8XW+ig4+A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Imjpc1z9Le/JA5UQ4SOKd+PMp9fnQp5cNEvYiQvB9riDlps2gJjQ3GnS4iYtZtFVxCph9m5kwCsqjV5z7lp5VmWJolF+NeoOWOSJo2iXBAsnBd9PQh2olOJbN6f4blBAl3Rl2uq1kwFAsr7xZ6b1KC/5m2JaErfV/9bwr3i2US0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7358DFEC;
+	Mon,  7 Oct 2024 06:52:06 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E16103F64C;
+	Mon,  7 Oct 2024 06:51:35 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Dave.Martin@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH] tracing: Consider the NULL character when validating the event length
+Date: Mon,  7 Oct 2024 14:51:26 +0100
+Message-Id: <20241007135126.873234-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f9fa14c1-f487-4ad9-9bc9-7c1db6de1ae6@nvidia.com>
 
-On Mon, Oct 07, 2024 at 03:28:22PM +0300, Yonatan Maman wrote:
-> 
-> 
-> On 30/09/2024 14:20, Danilo Krummrich wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Mon, Sep 23, 2024 at 01:54:58PM +0000, Yonatan Maman wrote:
-> > > A copy push command might fail, causing `migrate_to_ram` to return a
-> > > dirty HIGH_USER page to the user.
-> > > 
-> > > This exposes a security vulnerability in the nouveau driver. To prevent
-> > > memory leaks in `migrate_to_ram` upon a copy error, allocate a zero
-> > > page for the destination page.
-> > 
-> > So, you refer to the case where this function fails in nouveau_dmem_copy_one()?
-> > 
-> > If so, can you please explain why adding __GFP_ZERO to alloc_page_vma() helps
-> > with that?
-> > 
-> 
-> The nouveau_dmem_copy_one function ensures that the copy push command is
-> sent to the device firmware but does not track whether it was executed
-> successfully.
-> 
-> In the case of a copy error (e.g., firmware or hardware error), the command
-> will be sent in the firmware channel, and nouveau_dmem_copy_one might
-> succeed, as well as the migrate_to_ram function. Thus, a dirty page could be
-> returned to the user.
-> 
-> It’s important to note that we attempted to use nouveau_fence_wait status to
-> handle migration errors, but it does not catch all error types.
-> 
-> To avoid this vulnerability, we allocate a zero page. So that, in case of an
-> error, a non-dirty (zero) page will be returned to the user.
+strlen() returns a string length excluding the null byte. This commit
+adds 1 to account for the NULL terminating character when checking if an
+event string is within the maximum length.
 
-I see, I got confused by calling this a 'memory leak'.
+Fixes: dec65d79fd26 ("tracing/probe: Check event name length correctly")
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ kernel/trace/trace_probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please add this description in the commit message and avoid the term 'memory
-leak' in this context.
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 39877c80d6cb..376ba56c3680 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -276,7 +276,7 @@ int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
+ 		}
+ 		trace_probe_log_err(offset, NO_EVENT_NAME);
+ 		return -EINVAL;
+-	} else if (len > MAX_EVENT_NAME_LEN) {
++	} else if (len + 1 > MAX_EVENT_NAME_LEN) {
+ 		trace_probe_log_err(offset, EVENT_TOO_LONG);
+ 		return -EINVAL;
+ 	}
+-- 
+2.34.1
 
-> 
-> > > 
-> > > Signed-off-by: Yonatan Maman <Ymaman@Nvidia.com>
-> > > Signed-off-by: Gal Shalom <GalShalom@Nvidia.com>
-> > 
-> > Since this is a bug, please also add a 'Fixes' tag, CC stable and add a
-> > 'Co-developed-by' tag if appropriate.
-> 
-> sure, thanks, I will add, and push it as V2 patch-series.
-> > 
-> > > ---
-> > >   drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> > > index 6fb65b01d778..097bd3af0719 100644
-> > > --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> > > +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> > > @@ -193,7 +193,7 @@ static vm_fault_t nouveau_dmem_migrate_to_ram(struct vm_fault *vmf)
-> > >        if (!spage || !(src & MIGRATE_PFN_MIGRATE))
-> > >                goto done;
-> > > 
-> > > -     dpage = alloc_page_vma(GFP_HIGHUSER, vmf->vma, vmf->address);
-> > > +     dpage = alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO, vmf->vma, vmf->address);
-> > >        if (!dpage)
-> > >                goto done;
-> > > 
-> > > --
-> > > 2.34.1
-> > > 
-> 
 
