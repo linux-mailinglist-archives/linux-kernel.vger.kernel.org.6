@@ -1,97 +1,137 @@
-Return-Path: <linux-kernel+bounces-353223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9406F992A9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:49:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B0B992AA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5062838DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:49:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 046CFB237E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B091D1F76;
-	Mon,  7 Oct 2024 11:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4421D223C;
+	Mon,  7 Oct 2024 11:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxKpbxMD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uQgzd2Xn"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1511D0F78;
-	Mon,  7 Oct 2024 11:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E091C9B77
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728301732; cv=none; b=JX2Gzpo/uQiqoWyvN+igkBal30tf8mwles44mma1lWkzrlVO80ulfEz7ZVmomickyroGkyZIhHDsCrpWg89pcV3YKVEPQVJ+B7bi6hGj6RMxPydezR3j8WagQwvLERUpvHcfL9R+xik4evvqicOaRMwMNosh4A8D2Eq1j2FpyCw=
+	t=1728301764; cv=none; b=XTC3Cg/yFrBCSuHvsxuoFQhBBOarmQXqmzv3bhsiGfK+FYm6kGRf7JgVAspayfv7HStAp3ON/bZXMlevyyoCpuh/eJJZ6TegWSiOLM3tkGRpRGKKIZWiB70VibLaDzUq9N8DV8F0qxJ+ar8YwZ87zTEkaL5YPX7AM7ikthQtkZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728301732; c=relaxed/simple;
-	bh=kbc4xmfeNAfmBlWlHAJaCe/u2AgE7q7Q3kDpNlK08bA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U+07mlcwunh+mm+ESE/wlv1a7zmevVBLfbOgra5qGKpFyCGjO0PPYFWiaoaWzK28nowE6WrhCTPbtsW4FtlFabWl7k0tvS6+QUoZIbgFljOjv+OkCFtl6+98hX4MCLUJyANjajNJFYqaf72FKELekLzNwcWYnSIWttkiu9/ivV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxKpbxMD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F142C4CEC6;
-	Mon,  7 Oct 2024 11:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728301731;
-	bh=kbc4xmfeNAfmBlWlHAJaCe/u2AgE7q7Q3kDpNlK08bA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oxKpbxMDJbiODH7UoCcd4X3j37d15s6MHNSxk+RBdoLqwklaofqnvd6FSkNyuDRuP
-	 3GyyDz4IErGrK2ZzrvWoHfKc0D7iRjnqJj9BCPbuKeWbhnKTh7jXJTwH1HjbsHQdli
-	 bzQhbJ0xmsDYqBXeeQ/MskSAGTI8HaY8FkUXa9E3S3fTGXGm4QbM+e5MRZvXA7c3Ke
-	 BnDOyEt+l4zqLHnn8aDY8gl2lvQmE9docZ2Y5dy9rQ+KuEgJ2zpnbjJpQL0r+rO6Cw
-	 rIr0v6PK5a5nxw1ehzNMZQMR0mazqAYBwY2bm4S/Fh4jhiH2qPXrJetSXL9DMiluxT
-	 TlmkAHDtWZSPA==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: In readahead, put the folio refs as soon extracted
-Date: Mon,  7 Oct 2024 13:48:46 +0200
-Message-ID: <20241007-eifrig-zinsniveau-7b31e4c4a4ab@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <3771538.1728052438@warthog.procyon.org.uk>
-References: <3771538.1728052438@warthog.procyon.org.uk>
+	s=arc-20240116; t=1728301764; c=relaxed/simple;
+	bh=3HpEuDlKwvLMsJm5pK5n4l/IzWqXEfzLiU8zqrPKi4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hw/UDhRVfRnof20Sbuk91543/8jr3Kd4hkiARgNn0rv4Ttm8pERUCl2kTY2c3Yg9yomNd5BT0iJ9Em+CqyuTmSMa8aWrsi9PW3aAGAqq++k3bQ8sKqHqLS8xZ+LaRSDNCev+4IZ09VDW9DR7T6SxmbiXGC4caSOyN5JPKPkxHNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uQgzd2Xn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so44715315e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 04:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728301761; x=1728906561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1LvSfzkrrq1edO65ZqABisdNdPzmZ+rbdqRIfcFP+q4=;
+        b=uQgzd2Xn+2BHY1NkMLan5yce1rV5dcMlCjyavgie+aQEJ5h/EnNsUjP3YsGm7gOot4
+         4gvkZvSgCYzg8WiBtf03cjMy2WSbZ4O9gLfWopW3TRrDX5lC1MzVQZvt+C+VWhX8zbvP
+         kdiYZ/aDaOjxnjQmC0bml5gok53Xiy4vogvN5fiEea4M6xwmMKHolbGOU8jxNbm2Gi7b
+         rdxzL3qjyUBZMq5wFD/CWGkGNIskRQG7n54I1nUOpqKnUScUwhMBOTO1VqZByVH+CUWQ
+         eHGv5uu6zt7rlEx4/b5dSQPuK6MPcKS63vmmuhJq2Liwj4g/zztps9W2QAslJQ6NWxdD
+         8v7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728301761; x=1728906561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1LvSfzkrrq1edO65ZqABisdNdPzmZ+rbdqRIfcFP+q4=;
+        b=tb547lWzzh9OuG4XOSf/gb5+b1tfHe1zfh5qb/6VIByJ5osWw//PbsDSM+qhyXZ0N9
+         GhlUB6Dh4FOtKhxCRyQF+tacd1uTLCSNZThPUtRE2pBAr/JAyPa2gZikC2emaVeeVVVS
+         0m3SeGfJi3pFetCF5iFepzky2pFn6Z7h+q6W+hh+TEhKC1WoERzYU5Sh2YguGsTkHi+p
+         urzUA7VEEd6j8VUAluiobONjn8oSRTewbvZ2M4WBFMaZnukJYBBNVi+IBiHs6EPNOmdN
+         rJD/Ya69xZcfRxFOQHrtbG4eFSpkDY2DTCnnmVkA+vn/GKkhziZ882rERywWBQIa0mQ8
+         anPg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9eg9+LNtG73Jc2VSaOPblzZSOCGwZvEAEuGJrPpWKap1PmWtTn4Qd/y+GWM2+a2YOGf+Pg14DwSrOd9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxowHjBZPbWCinFZZ9xSbeVuzBukr3ZNFPzsGE6/5xeax6MSYgt
+	aDhMLAaJcDS/h9OLcOjLkinCNSc9ARdCPHkbxfGZddsN+PrGfIv7nYdaoxiwIB2HpiRUIQazRP+
+	/
+X-Google-Smtp-Source: AGHT+IHf9LR6ONgc+274pvmiS4LyQDk910hcJu4EDlErL63s34vj95abPuZqXzebRsqQn2xLWBrS2w==
+X-Received: by 2002:a5d:64e7:0:b0:37c:cd8a:50e3 with SMTP id ffacd0b85a97d-37d0e6eee41mr8463433f8f.13.1728301761130;
+        Mon, 07 Oct 2024 04:49:21 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920549sm5548261f8f.54.2024.10.07.04.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 04:49:20 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 1/2] mmc: davinci: order includes alphabetically
+Date: Mon,  7 Oct 2024 13:49:17 +0200
+Message-ID: <20241007114918.52066-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1311; i=brauner@kernel.org; h=from:subject:message-id; bh=kbc4xmfeNAfmBlWlHAJaCe/u2AgE7q7Q3kDpNlK08bA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQzn5r34bC/ncwk9j0bbnic1/j5Sbyfjy+EKYDhYENH1 IqOMtZbHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMJWcDwh9fIcNuTD/2lmdzB cf/n+O44qXpC9/rH+IXRPM9UxO98UWX4H1CztLvXW+R1zt263wpTHhy1KDt8tFe0QfyvpPtCx6k WPAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 04 Oct 2024 15:33:58 +0100, David Howells wrote:
-> netfslib currently defers dropping the ref on the folios it obtains during
-> readahead to after it has started I/O on the basis that we can do it whilst
-> we wait for the I/O to complete, but this runs the risk of the I/O
-> collection racing with this in future.
-> 
-> Furthermore, Matthew Wilcox strongly suggests that the refs should be
-> dropped immediately, as readahead_folio() does (netfslib is using
-> __readahead_batch() which doesn't drop the refs).
-> 
-> [...]
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+For better readability, put all header inclusions in alphabetical order.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/mmc/host/davinci_mmc.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index 7ed533758dbe..fe7712532e84 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -7,24 +7,23 @@
+  * Copyright (C) 2009 David Brownell
+  */
+ 
+-#include <linux/module.h>
+-#include <linux/ioport.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
+-#include <linux/err.h>
+ #include <linux/cpufreq.h>
+-#include <linux/mmc/host.h>
+-#include <linux/io.h>
+-#include <linux/irq.h>
+ #include <linux/delay.h>
+-#include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+-#include <linux/mmc/mmc.h>
+-#include <linux/of.h>
+-#include <linux/mmc/slot-gpio.h>
++#include <linux/dmaengine.h>
++#include <linux/err.h>
+ #include <linux/interrupt.h>
+-
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/irq.h>
++#include <linux/mmc/host.h>
++#include <linux/mmc/mmc.h>
++#include <linux/mmc/slot-gpio.h>
++#include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_data/mmc-davinci.h>
++#include <linux/platform_device.h>
+ 
+ /*
+  * Register Definitions
+-- 
+2.43.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: In readahead, put the folio refs as soon extracted
-      https://git.kernel.org/vfs/vfs/c/796a4049640b
 
