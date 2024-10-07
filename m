@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-353723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8538E9931C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1770F9931C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1439E280E03
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45431F2305A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DF61D9A41;
-	Mon,  7 Oct 2024 15:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C6F1D9679;
+	Mon,  7 Oct 2024 15:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMHBplOO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WgL9y4oP"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F6B1D95B3;
-	Mon,  7 Oct 2024 15:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1691D7E26
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728315910; cv=none; b=QWJOMOnWu7Rqs5WsIrgv4eQ2zODbnrdtuF0vhhmlx7lHCDl5Y/2ebBVu0IdKFDiEMpzyvhZo+00HCibXtSd2DLao6PZSF+CpXj1VgskKWimbPiQtj/SUvZEvCE4sjvaF2HYtnSOZ7CGBHqB+a6FKXER5E4M5Ywm38DH9zm9m+Bc=
+	t=1728315948; cv=none; b=iFQ1VQk4Wlxb96IV0H8JhQmHIqx22XF8dOhebaClxL+aYS9TRyUx4wh0NtGGNo4EkNizVP2/ZMsYz7HvHulRLvCuh0487X7aRbE6C6EImHz1081xYZcT67pCwOL606GPrH0QYmo+RU75zBrVHLxtjNs4uLOPd10vQbZYttvIUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728315910; c=relaxed/simple;
-	bh=pdY49v+4fS4cdD0PwxaqWdkKTtbiEkF5VlMpD72D/o8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dytEJyS+jQyA5CU1g+cpjkOOv2BeRLT8wJutNs5qrJB1wnbsCjtelVzhYvECwzbctSwIh9PruDfEfA8QAe5szjoU4LikXikKnPD2HOoh9saVznoYzUpcoHoXoeX5weCgRQI9omwrJg1C+0zt/6o1N+h6xrEA4if6EqVFje9HWYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMHBplOO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7DCC4CEC6;
-	Mon,  7 Oct 2024 15:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728315909;
-	bh=pdY49v+4fS4cdD0PwxaqWdkKTtbiEkF5VlMpD72D/o8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EMHBplOOQSyDsy88RYdl6IgDj9tJMiCzOV1iM77Kf8V6UQ0S6PDXRN8kr2Tz4s66k
-	 4sygnQwabHDnVePga89lmOi23kh2gK2m/cBVtVDn/dQJhSPnDw7UQHeYxR+52eM8uY
-	 cd4BdwyKxWhCfV7s0CQaIIZq2V994PjNbQRxDHO+Y3waJJFGMQFnDFjHx6c/9MwcU0
-	 Et2x8h2ye8axf0sYxF8RNTXkTEAH42el4Nz7XVkZvUh9cIUbLF7fLpsuAN3S3Krrsi
-	 QIR6GuVsoUmtMKe3OV0i/CFhLEHyBpTV7oMjEpxIgk6IMyJu0yNASXM3pZZJufjhb8
-	 oGD8DUxx3VEhA==
-Date: Mon, 7 Oct 2024 16:45:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lennart Franzen <lennart@lfdomain.com>,
-	Alexandru Tachici <alexandru.tachici@analog.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error
- handling path in adin1110_read_fifo()
-Message-ID: <20241007154505.GG32733@kernel.org>
-References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
- <20241004113735.GF1310185@kernel.org>
- <2669052d-752f-416a-9d5e-a03848f30904@wanadoo.fr>
+	s=arc-20240116; t=1728315948; c=relaxed/simple;
+	bh=adjIKONqQldQq+nYfRFYqYIa4peg7k+DD94EtLL12aY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gvqL/T6oR8/KvT2asGtL7IQPF2KYGdvD19sLJJe2UAE4P2cdKmnEwj9s8oX6sITgUYO5xeOYw2ewhEOJGj0Yrae0myegV/uwdSapA6guNQ6KrmDxdt7R73J+nuhiccYjg/r0uYtK1AqEdFA2ZKjMHWS/S8vyqL9ym1PUEusetyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WgL9y4oP; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d1eda8c7cso916566f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728315944; x=1728920744; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IebLd9pybc2nbLozfLLDXz3gBz/LDqnDpQAr15l89v0=;
+        b=WgL9y4oPhVU5CU2XRqENuOYDGZx91sIqy10aYAOdQfDY3RAKMGiNU7Z+r6hAaNpaWT
+         bgTQQ6g4+JFyn/2PngLEMpYbJA2HBdleUsuHshZC8PnbBETWjvKic5YWoxOrz07E6lWi
+         OUJTh9Ho6JniWBR948uP3g90DuziHpXZqqyhBHFGZqJQWiFnnKqfrAsNbsP1HYHaHlBN
+         q/31zIW+++dp9XHheuFEhqRrSrEOD8LEwDjF9gGyFbmWVsiz1LWsl7IiUJ7AW/dVUUbS
+         kS+ac37+K/SRbw+dhucBbKnF3KIm0r7HwlG8bEnBdmadJoqxZwGbCGuBmZW6aYtPujun
+         d3nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728315944; x=1728920744;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IebLd9pybc2nbLozfLLDXz3gBz/LDqnDpQAr15l89v0=;
+        b=ug764RrKBlPs4mDxrFQsmJHJAokFLAbSSfO4bdAMxsjMc+hLj6DIxAI7PLLboSXAj1
+         SbxNTHtM4rNfnRV6iDKJmNNg6XJok0Qg9y5ujDFP1+19o0LmUHIt3r2eIELIs62X3MqI
+         XXj3G3EqOK2Z3d8aLD4iwPKjj7+VbMQkmd+BZ616wuN2/qrp8VGYIuJtyQR1WGvrF2u8
+         9kIOYrFto2tZpEzm2fhqdexjRVH3RIBX+0lCPKsVExGuB+XKuhXovbHHpdHbNTGtAjuR
+         0HI3drBCV/T5zW8Qq6Zac4aI014ivDoksc5+pQE3KUSazKkvox5ORd7HQ42edVZXhmIZ
+         OQbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZy11qC8doBmLJ+5logpgtR69XmjsUqM0gWQQSMLhdiJDRlC9FeGG9ZpXjH1dPez7b7wNVTj604S35+Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztOY+2xF0iiqBzdIH6YgCfcxTQ0lsJimNy5E66/wVb8tNj7Zky
+	UjJFbDFXKNd0bMuxtnkmKAgP0+uU0sXjYzau6Pl0g87lAD6wkf34eW+rsYxQECU=
+X-Google-Smtp-Source: AGHT+IG4xZiJ9Dxrm/XmWrYjYFc2ltp0HZl/BJIa/shgIDu3Ewcr2gbsH0yy3XGYqB+hqg8efWUjYA==
+X-Received: by 2002:adf:f306:0:b0:37c:d526:9bb0 with SMTP id ffacd0b85a97d-37d0e76575dmr6868032f8f.35.1728315944069;
+        Mon, 07 Oct 2024 08:45:44 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f9384f648sm17645555e9.20.2024.10.07.08.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 08:45:43 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH 0/6] iio: adc: ad7380: fix several supplies issues
+Date: Mon, 07 Oct 2024 17:45:43 +0200
+Message-Id: <20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2669052d-752f-416a-9d5e-a03848f30904@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACcCBGcC/x2MQQqAIBAAvxJ7bkGzMvpKdJDcaiFKlCIQ/97Sc
+ RhmMiSKTAnGKkOkhxNfp4CuK1h2d26E7IWhUU2rlWrReWsGhSu/mO4QDonR9NaavlvWwTmQMkQ
+ S/1+nuZQPlvh6lGUAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On Fri, Oct 04, 2024 at 03:15:39PM +0200, Christophe JAILLET wrote:
-> Le 04/10/2024 à 13:37, Simon Horman a écrit :
-> > On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
-> > > If 'frame_size' is too small or if 'round_len' is an error code, it is
-> > > likely that an error code should be returned to the caller.
-> > > 
-> > > Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
-> > > 'success' is returned.
-> > 
-> > Hi Christophe,
-> > 
-> > I think we can say "'ret' will be 0".
-> 
-> Agreed.
-> 
-> 	ret = adin1110_read_reg()
-> 	--> spi_sync_transfer()
-> 	--> spi_sync()
-> 
-> which explicitly documents "zero on success, else a negative error code."
-> 
-> > At least that is what my brief investigation tells me.
-> > 
-> > > 
-> > > Return -EINVAL instead.
-> > 
-> 
-> If the patch is considered as correct, can you confirm that -EINVAL is the
-> correct error code to use? If not, which one would be preferred?
+Hello,
 
--EINVAL seems reasonable to me.
+This series tries to fix several issues found on the ad7380 driver about
+supplies:
 
-> > Please include some information on how this was found and tested.
-> > e.g.
-> > 
-> > Found by inspection / Found using widget-ng.
-> 
-> I would say: found by luck! :)
-> 
-> The explanation below will be of no help in the commit message and won't be
-> added. I just give you all the gory details because you asked for it ;-)
-> 
-> (and after reading bellow, you can call me crazy!)
+- vcc and vlogic are required, but are not retrieved and enabled in the
+probe function
+- ad7380-4 is the only device from the family that does not have internal
+reference and uses REFIN instead of REFIO for external reference.
 
-:)
+driver, bindings, and doc are fixed accordingly
+
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Julien Stephan (6):
+      dt-bindings: iio: adc: ad7380: remove voltage reference for supplies
+      dt-bindings: iio: adc: ad7380: fix ad7380-4 reference supply
+      iio: adc: ad7380: use devm_regulator_get_enable_read_voltage()
+      iio: adc: ad7380: add missing supplies
+      iio: adc: ad7380: fix supplies for ad7380-4
+      docs: iio: ad7380: fix supply for ad7380-4
+
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    |  32 +++--
+ Documentation/iio/ad7380.rst                       |  13 +-
+ drivers/iio/adc/ad7380.c                           | 136 ++++++++++++---------
+ 3 files changed, 110 insertions(+), 71 deletions(-)
+---
+base-commit: 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
+change-id: 20241004-ad7380-fix-supplies-3677365cf8aa
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
+
 
