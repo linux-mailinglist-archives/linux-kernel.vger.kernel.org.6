@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-353024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E54992760
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78FF99275B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812611F210D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0FF7280F92
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38A418BC0E;
-	Mon,  7 Oct 2024 08:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pm47ObGS"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952F318BC24;
+	Mon,  7 Oct 2024 08:44:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B118BB99
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6976849C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290662; cv=none; b=APoHi49n/ob6ZY59QlLmSbTPQ9Lp4XlWoghU/CIKwgTVWC321nQh2Uzg/d2U/OzrWUbFr6NHraPn2Ws4jHsLQUzN5QY1MYY7XTd6WVNHPOl0S0Bhtv51vsdV7NeaTU09Xxq5kCAaialEUFgs0Sgf3/atWmm+lteZZwpdnAdLZqE=
+	t=1728290659; cv=none; b=iaOycxPJHYNszPH2jehVagyTX9Xryp4vSIwvtrA5IZhVqm0K2Gfx60EM+ixb6DwOeoYedfgP8qoOhc0StyUuLI4N+p48cIgcGgPKv9YL4G0IfFvIK3FRCLOee1xiANa6+hZJ69bCzlxIuRJ4WLTeil8+ZLx+D8y/vTKlck43/es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290662; c=relaxed/simple;
-	bh=mKRi/Ji2Fh1sjMKYDaFTsQoiTO1y9q7Tkh+RFrSPlx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eWHIpGh/591dl+6MaTNUpZW/ErKOu5I+5XQgkww5wYiASCd+vhtQrtWko7urcPizRdRU6Uk+38YgG5QW1a7lzRaHdiu3zhP1K2RUxoTg1YM8wsZ8jYdK7gn8MWEKPxvGvS1WB7Z5/10XO0A+OxakS2ReRPS5zVQS7JFhe4YETO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pm47ObGS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cae102702so31994975e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728290657; x=1728895457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3LHi3FSgqeToo0bAXx9OkGGmGc4N8ZNIJ0FVCvSLrAE=;
-        b=Pm47ObGS1MvwaVKhIMeWpLmH5wPVOgekxLiQPhmOMpiCrTUzowQI94k6HMuR6JmiqF
-         5dy132on76cdJqAjvB4ug7vV1girBvOnP+/BsRMfEzlHESx5lzV+ilCNJOjVSb+IeYZC
-         ddIvoikvPfqN9f9Ax6Kiah4PIdVYaOA6p6kQqKDfcusZfq2TQnl6HvEX9SEjnA36ZnXJ
-         JbZl/X1hlo5EKfOaC5nXGAVFcy49lc3NoaeybCcBcLmtjF/MHKXEcVQOMQyKVsgAjAT7
-         oPGMrJo5NfxJx3UUS7+AsyRPf20F6h5NKuEaxQbVFKQMGtJq+7s1nftEluthXR+hve13
-         e+kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728290657; x=1728895457;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3LHi3FSgqeToo0bAXx9OkGGmGc4N8ZNIJ0FVCvSLrAE=;
-        b=oGYsFGjWukm9FrppKQNeW9sko8zFYCOXSCd2ODQV3HEfhENfsqyElBnu2W0O06UTFz
-         W1sM9oBLhT6OZQNafqLH09lY+Tm1fPlmJ89Fe5cf9jrBRBwUlyNRnrflcgxNO1RMngMp
-         JOMI7AF2+Jhiq92Fm7MUTNuluXxClKOI56KiOtNeMp+IRlwDYUgzoBCbQcFBLyKzjfoI
-         empb3p81g5KQXzIgjpiTLDWVlKYRP00hmD9QrlJGEIneq8ujFkzy3XDUKXODTDlETm8y
-         qR2qU9SyO7zV/Fvu+eDjgVxpZ/xh+C7ppYDcmf0sGYQn7rcjc20qQKKOCTZYIIXsNMwN
-         cnOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpGB34Lv+XfMtac8Sshaw2iQTsv9nqOSaQuryGEdHkPbyfiNNHaJeVkjU4ICtHHK1ERwkFmrYLRe+iDvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylxnkjBcFUjuBHNGnofV82JbkpJnkQTfTorr668jd2CJ5Id6hm
-	RGKVezqejkMG4PajPO4phOppU+apgQXqQfJm6G896gsrTLZepY7HFuR4z4Ic2Ms=
-X-Google-Smtp-Source: AGHT+IGPW8AlxiTySRc6I/+8scs6PQYUwE3ih2A5K7OfKFBkNDD6AHxmZ1xsS/wmALuniaK6EpqCcA==
-X-Received: by 2002:a05:6000:1046:b0:37c:d4a4:3c2 with SMTP id ffacd0b85a97d-37d0eb0be52mr5063548f8f.49.1728290657279;
-        Mon, 07 Oct 2024 01:44:17 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695ebe8sm5196528f8f.79.2024.10.07.01.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 01:44:16 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH] iommu/amd: Use atomic64_inc_return() in iommu.c
-Date: Mon,  7 Oct 2024 10:43:31 +0200
-Message-ID: <20241007084356.47799-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728290659; c=relaxed/simple;
+	bh=ny759ZsE+GykhYiOWEKMypSj4JCeUDq1tVV4LUkkils=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LIxZPTE52ni+9onc2njlYUvYfIG6D0wnB/K/fJDDlqm0emB/jEYN0n22uqHNGqlo7wIOjFatavyVaxkKIEtiA+RdSY4iy76GZ9KDqI7axhVFX9T8mcuC5nbkHUppHf2JAZJLokBD+hObmyCtL7usZL2hyaSgSLiiqwK9ewFG0Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sxjLV-0000hz-NP; Mon, 07 Oct 2024 10:44:01 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sxjLT-0005S8-Hz; Mon, 07 Oct 2024 10:43:59 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sxjLT-000Bl4-1Z;
+	Mon, 07 Oct 2024 10:43:59 +0200
+Message-ID: <64c560c483f09d90c788eb949890d00f3b94cc87.camel@pengutronix.de>
+Subject: Re: [PATCH v6 RESET 2/3] PCI: rockchip: Simplify reset control
+ handling by using reset_control_bulk*() function
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Anand Moon <linux.amoon@gmail.com>, Shawn Lin
+ <shawn.lin@rock-chips.com>,  Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, "open
+ list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, "open list:PCIE
+ DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>,  "moderated
+ list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, open
+ list <linux-kernel@vger.kernel.org>
+Date: Mon, 07 Oct 2024 10:43:59 +0200
+In-Reply-To: <20241006182445.3713-3-linux.amoon@gmail.com>
+References: <20241006182445.3713-1-linux.amoon@gmail.com>
+	 <20241006182445.3713-3-linux.amoon@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-to use optimized implementation and ease register pressure around
-the primitive for targets that implement optimized variant.
+On So, 2024-10-06 at 23:54 +0530, Anand Moon wrote:
+> Refactor the reset control handling in the Rockchip PCIe driver,
+> introducing a more robust and efficient method for assert and
+> deassert reset controller using reset_control_bulk*() API. Using the
+> reset_control_bulk APIs, the reset handling for the core clocks reset
+> unit becomes much simpler.
+>=20
+> Spilt the reset controller in two groups as pre the RK3399 TRM.
+> After power up, the software driver should de-assert the reset of PCIe PH=
+Y,
+> then wait the PLL locked by polling the status, if PLL
+> has locked, then can de-assert the rest reset simultaneously
+> driver need to De-assert the reset pins simultionaly.
+>=20
+>   PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N.
+>=20
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> V6: Add reason for the split of the RESET pins.
+> v5: Fix the De-assert reset core as per the TRM
+>     De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
+>     simultaneously.
+> v4: use dev_err_probe in error path.
+> v3: Fix typo in commit message, dropped reported by.
+> v2: Fix compilation error reported by Intel test robot
+>     fixed checkpatch warning
+> ---
+>  drivers/pci/controller/pcie-rockchip.c | 151 +++++--------------------
+>  drivers/pci/controller/pcie-rockchip.h |  26 +++--
+>  2 files changed, 49 insertions(+), 128 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/control=
+ler/pcie-rockchip.c
+> index 2777ef0cb599..87daa3288a01 100644
+> --- a/drivers/pci/controller/pcie-rockchip.c
+> +++ b/drivers/pci/controller/pcie-rockchip.c
+[...]
+> @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rock=
+chip)
+>  	if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
+>  		rockchip->link_gen =3D 2;
+> =20
+> -	rockchip->core_rst =3D devm_reset_control_get_exclusive(dev, "core");
+> -	rockchip->mgmt_rst =3D devm_reset_control_get_exclusive(dev, "mgmt");
+> -	rockchip->mgmt_sticky_rst =3D devm_reset_control_get_exclusive(dev,
+> -	rockchip->pipe_rst =3D devm_reset_control_get_exclusive(dev, "pipe");
+> -	rockchip->pm_rst =3D devm_reset_control_get_exclusive(dev, "pm");
+> +	err =3D devm_reset_control_bulk_get_optional_exclusive(dev,
+[...]
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/amd/iommu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 8364cd6fa47d..074effba7fbe 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1230,7 +1230,7 @@ static int iommu_completion_wait(struct amd_iommu *iommu)
- 	if (!iommu->need_sync)
- 		return 0;
- 
--	data = atomic64_add_return(1, &iommu->cmd_sem_val);
-+	data = atomic64_inc_return(&iommu->cmd_sem_val);
- 	build_completion_wait(&cmd, iommu, data);
- 
- 	raw_spin_lock_irqsave(&iommu->lock, flags);
-@@ -2890,7 +2890,7 @@ static void iommu_flush_irt_and_complete(struct amd_iommu *iommu, u16 devid)
- 		return;
- 
- 	build_inv_irt(&cmd, devid);
--	data = atomic64_add_return(1, &iommu->cmd_sem_val);
-+	data = atomic64_inc_return(&iommu->cmd_sem_val);
- 	build_completion_wait(&cmd2, iommu, data);
- 
- 	raw_spin_lock_irqsave(&iommu->lock, flags);
--- 
-2.46.2
+Why are the reset controls optional now? The commit message doesn't
+mention this change.
 
+regards
+Philipp
 
