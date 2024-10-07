@@ -1,265 +1,128 @@
-Return-Path: <linux-kernel+bounces-352748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD169923B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:49:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150199923BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5DFB22319
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:49:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8060BB22414
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A2A12DD8A;
-	Mon,  7 Oct 2024 04:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46742AD05;
+	Mon,  7 Oct 2024 04:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Noh/W3hs"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VJLWc1hf"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899A62AD05
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5A94204D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728276560; cv=none; b=K7CDcm69EVzt+xoDdFSaWNBvJxp103m4SkIMP4+AF8kzi7mohAdffb2o5zkjJKRIHWkV+PVhQ65NTa55mWI3cvm12RnD2/v3ziok5bbJ000HUqfPmekPB+IJPCcqkbwOupSv64TES6WJD6H5D+jaOA1QePJDdsYV7tyFw0ZeeHU=
+	t=1728276934; cv=none; b=EmEubcVobq79RcmKftjSwthCGf34snfMWAhpQ4IR4ih0WgIJ1tqCevAkvuW2eaKqa1OvconLR4TNv8RqxJxmTx/ZOk5w9nVS4O1wJwytZmjCmAfBkQ3NT9gYbybaZwR9sgSnFNg0EgCGmg98EOx0nNcI/PQfZ+A9t5crSttDJbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728276560; c=relaxed/simple;
-	bh=YjJnmeoGLUWn93YXI251yPcpCm+hOrjEje2qbPjB1kk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P/1MGjaKCIyTf7dM6sdPeT7qjMCi5tjT6bBo4XYPr6zajYHQ/QGq6JvjnRavMNQXY+wCzMNWp7IR5RNkIOz9thH6EtU4U3g50h77uhNMp44dNxwGlF9ACQsdq5913vSZ/NU7JDe6e0WzUyvrIKxPHaPy514xPa5/928+WAp6tnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Noh/W3hs; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fac9eaeafcso40375161fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 21:49:18 -0700 (PDT)
+	s=arc-20240116; t=1728276934; c=relaxed/simple;
+	bh=Y2bda3mGfiwGlrzgQPpEpMIie5Ls/ev+55m5OE+yNF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcQmk+z9DwPBweYqiqnYE8xETqrfYeyNz+f4EMOW5v25IMNiVDYO98QHq3qcXd6OI7t2HH3GqAkKlQ3vea66T5THVHjdC3OTtMN+uBuc8Zaa4V/xb9gZ+BqctpQH/IBXshIXDtf3XsjuV/JtCJUvJNo2d7i5ha3rGxiR79ldo0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VJLWc1hf; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398b2f43b9so4663071e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 21:55:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728276557; x=1728881357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1lvwQPOid1i1r42ZkZnh/p8pKa/FUX1d5F+Gn+3bK3Q=;
-        b=Noh/W3hsIArWz9unx335mMVIr+ztTUKgCl/ZM9Kol7YxmC4CMAsNHvYIXYOaEjw1LB
-         L9DRxp38FK4yP5V03BGsPIGZwlmsH+ReuILzD4C94FKQnkXbObWMoU50Y0toJnhEFAaG
-         jsv2UR84ZpZulboI0LIGEB7Q6sHlR/GmZCvu3IJVniIhXm6117jPXAj7W3oVJYXf0Srl
-         E7oSfF0f+n0aCujiXA5h3CMtd9c2jjkmNYoJJZez4rvQwf9UmPu7p8kc5vVfR24WgUn3
-         e57UCZIqIN15SAv6JH/FcPb5sHN2S4bJfRnnrKT4o97Yw50cmKIHcmR/AtTjD+7hCkuB
-         J91A==
+        d=linaro.org; s=google; t=1728276929; x=1728881729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6xcwrBoXuHmz7DbARIgYbfXwaKZHrTi0jMKEdF4o40=;
+        b=VJLWc1hfsmjBxsO0V14wicVv3UxLtIZNwxetwIBLFIZcb4HS5HzzZPFuhd4nqF2OHY
+         Ctk/8ERi0/diPo4Br1S5cNbStpEXPfPQyKspW3FRGe86acHAirPwxYz6X8DWeKVePkoi
+         OGOm/r2JCFbPW43XeJUC8OP6F7TJ5l1PjBYodpAQGrYNdhUPBO3X+qoygTiUaiTk3l9j
+         we1dpRQqb/ZduyeZ87nwfQhmyid2+9ZSvbWq9x/cTRV0TDbZaGuvHkROSmDuw6J0C5eL
+         6vwN6eG8IYmBIC6TZUFnOpl3uf69BXqphLhaJ5NW1BKVQvt9v0UuF+HuhHFmN6VofHPr
+         Cdmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728276557; x=1728881357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1lvwQPOid1i1r42ZkZnh/p8pKa/FUX1d5F+Gn+3bK3Q=;
-        b=DI4+TIPD3ZeHuGgbGzbaarXcy/H2CglC57j1DD3+Gjqqoqilp79TCpGcagrFj1Dsga
-         nQNpxPf5RCHpep2ohLJA9gmowVsM4dcMppUqkyol0o2iipG0xc05YDVvUe8t4HLVFRFw
-         gkDdE9qDKh2G2ZZxsTM3g2UD6ZykhBW2NgZlezdz/NOnMZ+7H/k0TRO+NTAayTpw9u+H
-         GVo01MLBw/qBzZcvaT+C1Xo14g+K7gmYoc/fmLYCp2R0TbzqMq280MvdjGHNXFZ9d2G/
-         2jYGcl9+UdwBIp17iTezfP/ac5nuGZm0/r6+YZWdg6CzMK0dBJH3ZELpyKalmBxtE/Kl
-         MfTg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1wjLW2xChD8VXqGwFgir4f6gYIQwwyYxNXXwRyNmA4lc1KGVF0Uqfx3fYO6STCc7fdIhAPp75Gd3fNlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWEds6RrLbaLT/17wqRFUM1xiiwPn2v436RK3/WfZ93vquksmy
-	1uW3fAnNQfH8HS200ibj3+Rtcqus2aBCtjeMEUK1rf5hIF/KiaJgI361PvmouiFu1ZLnjvX5OQw
-	u2ZYBjTOvdbOfDnvFAyjdQbp5Fwo=
-X-Google-Smtp-Source: AGHT+IEqYdkAsBK40ts4UhEMsF1yFermt8J6Dvxy5IFPcLo+Hv58lpgoIpYRR++uyhCFnESMlrPik/53JXVKb3ATJUg=
-X-Received: by 2002:a05:6512:4019:b0:52e:9e70:d068 with SMTP id
- 2adb3069b0e04-539ab85b365mr4201855e87.4.1728276556297; Sun, 06 Oct 2024
- 21:49:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728276929; x=1728881729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/6xcwrBoXuHmz7DbARIgYbfXwaKZHrTi0jMKEdF4o40=;
+        b=dQAr5oPcAU62r7L1BOnpwmLu5omdAwE6Mv1FJc2PuKO+yrkgSgpG17n2fX7LaYefzo
+         bAWP9xhTDYi83vqwovScgo1jVAnIsHiJUgvY7Te22NlQXt8uOZeQB9Epf+SN5FUGeBOR
+         lYXqJgFd5/P77COene+BgYYqlx4wzt9AqqUM/B/Rsf9owglDCUrn4MvNed4d282kB7kB
+         s1aLU1DFjOeKeJTHSX06saFpxLSDKPMqIoeFkbFyNxzqfsRqD6NIjoDl8lwl5PCbvlhF
+         oQVcP3mYju/rVqQGjMyiZGGKIOOgWO1hu20besVPAfiBhjCdn4l9Qpvn8umRakFCOkwD
+         8r9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1eB5CWvI+jWyLORZMLZDwkSJE2jp9JscbG9PNKM8QANGnzkmatmjJCFOwiwAGDuItQT2ox51Jhj5SgmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys5dBfWsY5TI1wLe07xW/pPkNoandctlA12dZprjVvFsVGT4TH
+	Ib5j5cTJzff/vSSUkNXvBxPjKujlDZw3fVqaSUu1CQeboLW2EE/1crpU7CEYZU4=
+X-Google-Smtp-Source: AGHT+IGXMAuGqMtBvrWsmOq7ynzzo7ewDWrA4vrd6ryejLcyARqvVHqB/yG3diLj17MPbt7U0IKkfA==
+X-Received: by 2002:a05:6512:b90:b0:539:93e8:7ed8 with SMTP id 2adb3069b0e04-539a626a412mr4461045e87.15.1728276929284;
+        Sun, 06 Oct 2024 21:55:29 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d168sm705946e87.142.2024.10.06.21.55.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 21:55:28 -0700 (PDT)
+Date: Mon, 7 Oct 2024 07:55:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jianhua Lu <lujianhua000@gmail.com>, Kalle Valo <kvalo@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ath11k@lists.infradead.org
+Subject: Re: [PATCH 2/3]  arm64: dts: qcom: sm8250-xiaomi-elish: Add wifi node
+Message-ID: <nxkw7osy3cpd2ts7jeidknd6mgt4wfjaf5pzabzy54aiza5mij@dpbznolilbnf>
+References: <20240929112908.99612-1-lujianhua000@gmail.com>
+ <20240929112908.99612-2-lujianhua000@gmail.com>
+ <p75ivby5ajlmnvebqkn3mq7t5xh6awewjwkwpa5rjiqv2ijijl@aqemqgxveu55>
+ <ZwNODSqKNJmkY-l2@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003060650.18454-1-wuhoipok@gmail.com> <d2704a2b-ceb2-4919-81d3-f6ff58a734fe@xenosoft.de>
- <c868e394-b1ad-4f30-b27b-c779e3458c42@csgroup.eu>
-In-Reply-To: <c868e394-b1ad-4f30-b27b-c779e3458c42@csgroup.eu>
-From: Hoi Pok Wu <wuhoipok@gmail.com>
-Date: Mon, 7 Oct 2024 12:49:04 +0800
-Message-ID: <CANyH0kDWaS8mavzuUeH4CPHBN9kBQ3hcCGjWA8U0UU2_y=5Gnw@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: add late_register for connector
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "R.T.Dickinson" <rtd2@xtra.co.nz>, 
-	mad skateman <madskateman@gmail.com>, hypexed@yahoo.com.au, 
-	Christian Zigotzky <info@xenosoft.de>, Darren Stevens <darren@stevens-zone.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwNODSqKNJmkY-l2@localhost.localdomain>
 
-Thank you. I am looking at the problem now.
+On Mon, Oct 07, 2024 at 10:57:17AM GMT, Jianhua Lu wrote:
+> On Mon, Oct 07, 2024 at 12:02:34AM +0300, Dmitry Baryshkov wrote:
+> > On Sun, Sep 29, 2024 at 07:29:07PM GMT, Jianhua Lu wrote:
+> > > Add wifi node and this wifi module is connected to pice port.
+> > 
+> > Could you please add ath11k probe messages to the log? We might need to
+> > add an additional node with the calibration variant.
+> > 
+> Hi, Dmitry. Do you mean that I should add ath11k probe message to the commit message?
+> The following is ath11k probe message:
+> [   10.285469] ath11k_pci 0000:01:00.0: Adding to iommu group 12
+> [   10.285637] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x60400000-0x604fffff 64bit]: assigned
+> [   10.285699] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+> [   10.286003] ath11k_pci 0000:01:00.0: MSI vectors: 32
+> [   10.286023] ath11k_pci 0000:01:00.0: qca6390 hw2.0
+> [   10.652407] ath11k_pci 0000:01:00.0: chip_id 0x0 chip_family 0xb board_id 0xff soc_id 0xffffffff
+> [   10.652429] ath11k_pci 0000:01:00.0: fw_version 0x10121492 fw_build_timestamp 2021-11-04 11:23 fw_build_id
+> 
+> I'm not sure if it's necessary to add calibration variant because wifi
+> works normally on this board without adding calibration variant.
 
-On Mon, Oct 7, 2024 at 1:37=E2=80=AFAM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->
->
-> Le 06/10/2024 =C3=A0 18:56, Christian Zigotzky a =C3=A9crit :
-> > On 03 October 2024 at 08:06 am, Wu Hoi Pok wrote:
-> >> This is a fix patch not tested yet,
-> >> for a bug I introduce in previous rework of radeon driver.
-> >> The bug is a null dereference in 'aux.dev', which is the
-> >> 'device' not registered, resulting in kernel panic. By having
-> >> 'late_register', the connector should be registered after
-> >> 'drm_dev_register' automatically.
-> >>
-> >> Please help testing thank you.
-> > Hello Wu Hoi Pok,
-> >
-> > Thanks a lot for your patch. Unfortunately there is a new issue after
-> > patching the RC1. Could you please fix the following issue?
-> >
-> > Thanks,
-> > Christian
-> >
-> > ---
-> >
-> > Linux fienix 6.12.0-rc1-2-powerpc64-smp #1 SMP Fri Oct  4 08:55:45 CEST
-> > 2024 ppc64 GNU/Linux
-> >
-> > [   29.167145] systemd[1]: Sent message type=3Dsignal sender=3Dn/a
-> > destination=3Dn/a
-> > path=3D/org/freedesktop/systemd1/unit/NetworkManager_2eservice
-> > interface=3Dorg.freedesktop.DBus.Properties member=3DPropertiesChanged
-> > cookie=3D103 reply_cookie=3D0 signature=3Dsa{sv}as error-name=3Dn/a
-> > error-message=3Dn/a
-> > [   29.542140] systemd-journald[1301]: Successfully sent stream file
-> > descriptor to service manager.
-> > [   29.561863] BUG: Kernel NULL pointer dereference on read at 0x000000=
-00
-> > [   29.567156] Faulting instruction address: 0xc000000000c973c0
-> > [   29.571574] cpu 0x1: Vector: 300 (Data Access) at [c000000006f97640]
-> > [   29.576637]     pc: c000000000c973c0: .drm_gem_object_free+0x20/0x70
-> > [   29.581708]     lr: c000000000d28dd8: .radeon_bo_unref+0x58/0x90
-> > [   29.586428]     sp: c000000006f978e0
-> > [   29.588695]    msr: 9000000000009032
-> > [   29.590962]    dar: 0
-> > [   29.591925]  dsisr: 40000000
-> > [   29.593496]   current =3D 0xc0000000085b1f00
-> > [   29.596286]   paca    =3D 0xc00000003ffff680     irqmask: 0x03
-> > irq_happened: 0x01
-> > [   29.602119]     pid   =3D 1524, comm =3D Xorg.wrap
-> > [   29.605257] Linux version 6.12.0-rc1-2-powerpc64-smp
-> > (geeko@buildhost) (powerpc64-suse-linux-gcc (SUSE Linux) 7.5.0, GNU ld
-> > (GNU Binutils; devel:gcc / SLE-15) 2.43.1.20240828-150300.536) #1 SMP
-> > Fri Oct  4 08:55:45 CEST 2024
-> > [   29.623892] enter ? for help
-> > [   29.625487] [c000000006f97960] c000000000d28dd8
-> > .radeon_bo_unref+0x58/0x90
-> > [   29.631083] [c000000006f979e0] c000000000e287b0
-> > .radeon_vm_fini+0x260/0x330
-> > [   29.636765] [c000000006f97aa0] c000000000d07c94
-> > .radeon_driver_postclose_kms+0x1a4/0x1f0
-> > [   29.643579] [c000000006f97b30] c000000000c9374c
-> > .drm_file_free+0x28c/0x300
-> > [   29.649174] [c000000006f97be0] c000000000c93900 .drm_release+0x90/0x=
-170
-> > [   29.654508] [c000000006f97c70] c000000000304790 .__fput+0x120/0x3b0
-> > [   29.659495] [c000000006f97d10] c0000000002fe0fc .__se_sys_close+0x4c=
-/0xc0
-> > [   29.665004] [c000000006f97d90] c000000000025bac
-> > .system_call_exception+0x22c/0x260
-> > [   29.671295] [c000000006f97e10] c00000000000b554
-> > system_call_common+0xf4/0x258
-> > [   29.677164] --- Exception: c00 (System Call) at 00000000006b2b48
-> > [   29.681876] SP (fff4b3d0) is in userspace
-> > [   29.684577] 1:mon>  <no input ...>
-> > [   31.666727] Oops: Kernel access of bad area, sig: 11 [#1]
-> > [   31.670829] BE PAGE_SIZE=3D4K MMU=3DHash SMP NR_CPUS=3D2 A-EON Amiga=
-one X1000
-> > [   31.676144] Modules linked in: snd_hda_codec_idt
-> > snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel snd_intel_dspcfg
-> > snd_hda_codec snd_hda_core dm_mod
-> > [   31.688703] CPU: 1 UID: 0 PID: 1524 Comm: Xorg.wrap Not tainted
-> > 6.12.0-rc1-2-powerpc64-smp #1
-> > [   31.695932] Hardware name: pasemi,nemo PA6T 0x900102 A-EON Amigaone =
-X1000
-> > [   31.701417] NIP:  c000000000c973c0 LR: c000000000d28dd8 CTR:
-> > c000000000d07af0
-> > [   31.707250] REGS: c000000006f97640 TRAP: 0300   Not tainted
-> > (6.12.0-rc1-2-powerpc64-smp)
-> > [   31.714128] MSR:  9000000000009032 <SF,HV,EE,ME,IR,DR,RI> CR:
-> > 28002222  XER: 20000000
-> > [   31.720773] DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0
-> >                 GPR00: c000000000d28dd8 c000000006f978e0
-> > c00000000207a800 c0000000085f5468
-> >                 GPR04: 0000000000000b9b 0000000000000b9a
-> > 0000000179779000 c0000000086a4b00
-> >                 GPR08: 0000000000000000 0000000000000000
-> > 0000000000000001 0000000000000000
-> >                 GPR12: 0000000048002202 c00000003ffff680
-> > 0000000000000000 0000000000000000
-> >                 GPR16: 00000000006e3318 0000000000000001
-> > 00000000006e289c 0000000000000063
-> >                 GPR20: 00000000c04064a0 00000000007f0088
-> > 00000000fff4c734 00000000007d165c
-> >                 GPR24: 00000000007d1668 c000000024b6a220
-> > c000000003588000 c000000024b6a200
-> >                 GPR28: c000000003b3cc00 c000000024b6a248
-> > c000000002d48820 c0000000085f5468
-> > [   31.778903] NIP [c000000000c973c0] .drm_gem_object_free+0x20/0x70
-> > [   31.783701] LR [c000000000d28dd8] .radeon_bo_unref+0x58/0x90
-> > [   31.788062] Call Trace:
-> > [   31.789199] [c000000006f978e0] [c000000006f97990] 0xc000000006f97990
-> > (unreliable)
-> > [   31.795388] [c000000006f97960] [c000000000d28dd8]
-> > .radeon_bo_unref+0x58/0x90
-> > [   31.801142] [c000000006f979e0] [c000000000e287b0]
-> > .radeon_vm_fini+0x260/0x330
-> > [   31.806982] [c000000006f97aa0] [c000000000d07c94]
-> > .radeon_driver_postclose_kms+0x1a4/0x1f0
-> > [   31.813954] [c000000006f97b30] [c000000000c9374c]
-> > .drm_file_free+0x28c/0x300
-> > [   31.819707] [c000000006f97be0] [c000000000c93900] .drm_release+0x90/=
-0x170
-> > [   31.825197] [c000000006f97c70] [c000000000304790] .__fput+0x120/0x3b=
-0
-> > [   31.830342] [c000000006f97d10] [c0000000002fe0fc]
-> > .__se_sys_close+0x4c/0xc0
-> > [   31.836010] [c000000006f97d90] [c000000000025bac]
-> > .system_call_exception+0x22c/0x260
-> > [   31.842460] [c000000006f97e10] [c00000000000b554]
-> > system_call_common+0xf4/0x258
-> > [   31.848476] --- interrupt: c00 at 0x6b2b48
-> > [   31.851267] NIP:  00000000006b2b48 LR: 00000000006b2b20 CTR:
-> > 0000000000000000
-> > [   31.857101] REGS: c000000006f97e80 TRAP: 0c00   Not tainted
-> > (6.12.0-rc1-2-powerpc64-smp)
-> > [   31.863978] MSR:  100000000200f032 <HV,VEC,EE,PR,FP,ME,IR,DR,RI>  CR=
-:
-> > 28002400  XER: 00000000
-> > [   31.871235] IRQMASK: 0
-> >                 GPR00: 0000000000000006 00000000fff4b3d0
-> > 00000000f7b7f3a0 0000000000000003
-> >                 GPR04: 0000000000000000 0000000000000000
-> > 0000000000000000 0000000000000000
-> >                 GPR08: 0000000000000000 0000000000000000
-> > 0000000000000000 0000000000000000
-> >                 GPR12: 0000000000000000 00000000007efff4
-> > 0000000000000000 0000000000000000
-> >                 GPR16: 00000000006e3318 0000000000000001
-> > 00000000006e289c 0000000000000063
-> >                 GPR20: 00000000c04064a0 00000000007f0088
-> > 00000000fff4c734 00000000007d165c
-> >                 GPR24: 00000000007d1668 00000000fff4b400
-> > 0000000000000001 0000000000000001
-> >                 GPR28: 00000000fff4b46c 0000000000000000
-> > 00000000007bfff4 0000000000000003
-> > [   31.926053] NIP [00000000006b2b48] 0x6b2b48
-> > [   31.928930] LR [00000000006b2b20] 0x6b2b20
-> > [   31.931720] --- interrupt: c00
-> > [   31.933466] Code: ebe1fff8 7c0803a6 4e800020 60000000 7c0802a6
-> > fbe1fff8 7c7f1b78 f8010010 f821ff81 60000000 60000000 e93f0140
-> > <e9290000> 7d2a0074 794ad182 0b0a0000
-> > [   31.946913] ---[ end trace 0000000000000000 ]---
-> >
-> >
->
-> That's a NULL pointer dereference in drm_gem_object_free().
->
-> Trying to read obj->funcs->free while obj->funcs is NULL.
->
-> Christophe
+Added ath11k ML and corresponding maintainers to cc. Please cc them in
+future revisions of this patchset. If you were to send the next
+iteration of the series, please include the quoted log into the commit
+message.
+
+The board_id 0xff most likely requires calibration variant. Please
+consider adding one and submitting board.elf following the process
+specified at [1].
+
+[1] https://wireless.wiki.kernel.org/en/users/drivers/ath10k/boardfiles
+
+-- 
+With best wishes
+Dmitry
 
