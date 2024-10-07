@@ -1,214 +1,142 @@
-Return-Path: <linux-kernel+bounces-353903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CA2993437
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8028499343B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994041F23432
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427E0281816
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA451DD876;
-	Mon,  7 Oct 2024 16:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B421DC1BC;
+	Mon,  7 Oct 2024 16:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JmlRPiRT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kS7fqN6s"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E451DC1AF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7B31DBB20;
+	Mon,  7 Oct 2024 16:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320229; cv=none; b=hy9lI0aqcFE0cHN6etVeFLvPdB1qeWgbOXYr4l50Hgb/zZXrrK5FYPlqSgHIAmTGzkV/k/jW6rLAnS65ucfuJNIbXSCjdTnIDPGw90vs/nzGSZVdz39xpHRtgev7hH/x4kBWU8we9olD34Yen8ofmIMeUyrl0Ix3iADHUIy336k=
+	t=1728320260; cv=none; b=E1ikmxO2fubrzUt4SB4vDLGqvloW9vpy+Iw0saDoskWjelQ4xjMPh1l1RuJH6+3UQsn9VMh39gzGSoIodHRjZsnrVQtXIkBcPSjm8hiJlDJawBUf0QZCocUbpBauyWLR5zayLJ9OByV9tzB3cqWG3BLppvDX0jNFsFALQEPYZoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320229; c=relaxed/simple;
-	bh=lyzSMcWFnmspFtIMnp4dk0axPSL7aDSUZtWn+g8V1ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJUU8a8PVaYpha5At3k+EmGdUhnfTvK4EoU6nxyG+L233tzGiA34ULkQxpU1v2t1lM0bDARoZSErBOGLEv9UDHeAjb/6MNnkZu0bDVIikr0tmZEUG5YSBJZt1Ryre/Jdi/eWg4PFJFDIho/69qPR0xPY/axc9Nky5YnK686dYiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JmlRPiRT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728320228; x=1759856228;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lyzSMcWFnmspFtIMnp4dk0axPSL7aDSUZtWn+g8V1ls=;
-  b=JmlRPiRT5QkY+g9rXcvwIdW5feTjWws1JZKyhn6Xr+h6fQ/MNZUA6aX4
-   HQP1AVrk7Wykov18fhHB7U+nARIlojC2/UgmQFX+lYwtmwskAWiD3Ql4H
-   2rjpAYqGDBXy7q8IMnDTT7mJ35i/EcdaG4krxP/BtkeuX5mxQWWw3fcne
-   uSl6Wneb9hJuhszxsaGCv0LGP6MX15HFEaz/YYv1YewxqLTxcTLhNGIO5
-   R8v9GvSg7bFGEVXaBKeOJlkXOMvqE2GNHYY1ZLDFQXflOyeZIUHsguvb1
-   8vmBbiOIRJamB6MNjckWbdKtLi1gWqiB79lZefa8Xb+nnNcZBjR3qbNJV
-   Q==;
-X-CSE-ConnectionGUID: ts4Zm/PzRz2Y+R+Ym4gUoQ==
-X-CSE-MsgGUID: JOITlZxIQcKp7/N9tfRZ5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27613386"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27613386"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:57:07 -0700
-X-CSE-ConnectionGUID: bl1VizmAQha2wrmxsA7g9g==
-X-CSE-MsgGUID: mC2By01zSIa6ZeshtbMeiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="75790394"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:57:07 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Christian Ludloff <ludloff@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	andrew.cooper3@citrix.com,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH] x86/cpu: Fix #define name for Intel CPU model 0x5A
-Date: Mon,  7 Oct 2024 09:57:01 -0700
-Message-ID: <20241007165701.19693-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728320260; c=relaxed/simple;
+	bh=yfRyAB3xOijwlnoxe03nZjku5m28Im9Zs4j9KZ2Qrlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4hluBCPmE2yG4sNjr5PCX8PpoDUW4qf8q2idRjxcvWGLtajlMgLbPdM3NmBmO6exBu55RYtEtMW671K2cOmf1UinI3B7bGaV3Yq/iUqC2xBC+WYcEuDP24EC8Cpyn1vOS6n0iDmN3CHLrefmTQhwjna7ltHONdZEKCl7wvO/nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kS7fqN6s; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=/4zb+CNZ65QQblVRwLbBOPKFpFZ76Z32xRQ86mlA65E=; b=kS
+	7fqN6sXpvUD+U/5isc3RbmM6m4z+3wojtCKq6xcyBVUS8REsHl3SP5ohIZl0qsVQWuvVDpm1Otr9H
+	KJGG9ivz05dcvTEf4C1oTvaQQthi15BW7E3cqi7UZjgUCrLFOOj0w9dwTBsYCTjfHnsYinb0mHBXw
+	2w1aRVV4r9DFb3U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sxr33-009I0o-Sx; Mon, 07 Oct 2024 18:57:29 +0200
+Date: Mon, 7 Oct 2024 18:57:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Robert Hancock <robert.hancock@calian.com>,
+	Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>,
+	Tristram Ha <tristram.ha@microchip.com>,
+	Lukasz Majewski <lukma@denx.de>
+Subject: Re: [PATCH] net: phy: disable eee due to errata on various KSZ
+ switches
+Message-ID: <ad44d06a-4d30-4696-bace-1a78a8bcfca6@lunn.ch>
+References: <20241004213235.3353398-1-tharvey@gateworks.com>
+ <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
+ <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
 
-This CPU was mistakenly given the name INTEL_ATOM_AIRMONT_MID. But it
-uses a Silvermont core, not Airmont.
+On Mon, Oct 07, 2024 at 09:38:59AM -0700, Tim Harvey wrote:
+> On Sat, Oct 5, 2024 at 9:46 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > On Fri, Oct 04, 2024 at 02:32:35PM -0700, Tim Harvey wrote:
+> > > The well-known errata regarding EEE not being functional on various KSZ
+> > > switches has been refactored a few times. Recently the refactoring has
+> > > excluded several switches that the errata should also apply to.
+> >
+> > Does the commit message say why?
+> >
+> > Does this need a Fixes: tag?
+> >
+> 
+> Hi Andrew,
+> 
+> Good question. I couldn't really figure out what fixes tag would be
+> appropriate as this code has changed a few times and broken in strange
+> ways. Here's a history as best I can tell:
+> 
+> The original workaround for the errata was applied with a register
+> write to manually disable the EEE feature in MMD 7:60 which was being
+> applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
+> 
+> Then came commit ("26dd2974c5b5 net: phy: micrel: Move KSZ9477 errata
+> fixes to PHY driver") and commit ("6068e6d7ba50 net: dsa: microchip:
+> remove KSZ9477 PHY errata handling") which moved the errata from the
+> switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
+> however that PHY code was dead code because an entry was never added
+> for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE. So even if we add a
+> 'Fixes: 6068e6d7ba50' it would not be fixed.
+> 
+> This was apparently realized much later and commit ("54a4e5c16382 net:
+> phy: micrel: add Microchip KSZ 9477 to the device table") added the
+> PHY_ID_KSZ9477 to the PHY driver. I believe the code was proper at
+> this point.
+> 
+> Later commit ("6149db4997f5 net: phy: micrel: fix KSZ9477 PHY issues
+> after suspend/resume") breaks this again for all but KSZ9897 by only
+> applying the errata for that PHY ID.
+> 
+> The most recent time this was affected was with commit ("08c6d8bae48c
+> net: phy: Provide Module 4 KSZ9477 errata (DS80000754C)") which
+> removes the blatant register write to MMD 7:60 and replaces it by
+> setting phydev->eee_broken_modes = -1 so that the generic phy-c45 code
+> disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID)
+> so its still broken at this point for the other switches that have
+> this errata.
+> 
+> So at this point, the only commit that my patch would apply over is
+> the most recent 08c6d8bae48c but that wouldn't fix any of the previous
+> issues and it would be unclear what switch was broken at what point in
+> time.
 
-Change #define name to INTEL_ATOM_SILVERMONT_MID2
+O.K, so its a mess :-(
 
-Reported-by: Christian Ludloff <ludloff@gmail.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
-I'm open to other suggestions for the new #define name.
+Lets look at this from a different direction. Which stable kernels do
+you actually care about? Is 6.6 enough for you? Do you need 6.1? 4.19?
 
- .../staging/media/atomisp/include/linux/atomisp_platform.h    | 4 ++--
- arch/x86/include/asm/intel-family.h                           | 2 +-
- arch/x86/events/intel/core.c                                  | 2 +-
- arch/x86/kernel/cpu/common.c                                  | 2 +-
- arch/x86/kernel/tsc_msr.c                                     | 2 +-
- drivers/powercap/intel_rapl_common.c                          | 2 +-
- drivers/thermal/intel/intel_tcc.c                             | 2 +-
- tools/power/x86/turbostat/turbostat.c                         | 2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
+You should use a Fixed tag which goes back far enough for you. The
+patch itself might not apply that far back, but once you get it merged
+and backported as far as it does go, you can submit ported versions
+for older kernel, referencing the original fix commit hash number.
 
-diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-index 064449fd51af..fe69c7a44cc0 100644
---- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-+++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-@@ -183,10 +183,10 @@ void atomisp_unregister_subdev(struct v4l2_subdev *subdev);
- #define IS_BYT	__IS_SOC(INTEL_ATOM_SILVERMONT)
- #define IS_CHT	__IS_SOC(INTEL_ATOM_AIRMONT)
- #define IS_MRFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID)
--#define IS_MOFD	__IS_SOC(INTEL_ATOM_AIRMONT_MID)
-+#define IS_MOFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID2)
- 
- /* Both CHT and MOFD come with ISP2401 */
- #define IS_ISP2401 __IS_SOCS(INTEL_ATOM_AIRMONT, \
--			     INTEL_ATOM_AIRMONT_MID)
-+			     INTEL_ATOM_SILVERMONT_MID2)
- 
- #endif /* ATOMISP_PLATFORM_H_ */
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 1a42f829667a..b9f4b87a55d2 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -149,9 +149,9 @@
- #define INTEL_ATOM_SILVERMONT		IFM(6, 0x37) /* Bay Trail, Valleyview */
- #define INTEL_ATOM_SILVERMONT_D		IFM(6, 0x4D) /* Avaton, Rangely */
- #define INTEL_ATOM_SILVERMONT_MID	IFM(6, 0x4A) /* Merriefield */
-+#define INTEL_ATOM_SILVERMONT_MID2	IFM(6, 0x5A) /* Anniedale */
- 
- #define INTEL_ATOM_AIRMONT		IFM(6, 0x4C) /* Cherry Trail, Braswell */
--#define INTEL_ATOM_AIRMONT_MID		IFM(6, 0x5A) /* Moorefield */
- #define INTEL_ATOM_AIRMONT_NP		IFM(6, 0x75) /* Lightning Mountain */
- 
- #define INTEL_ATOM_GOLDMONT		IFM(6, 0x5C) /* Apollo Lake */
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index d879478db3f5..3e4ee59f20a1 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -6526,7 +6526,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_ATOM_SILVERMONT_D:
- 	case INTEL_ATOM_SILVERMONT_MID:
- 	case INTEL_ATOM_AIRMONT:
--	case INTEL_ATOM_AIRMONT_MID:
-+	case INTEL_ATOM_SILVERMONT_MID2:
- 		memcpy(hw_cache_event_ids, slm_hw_cache_event_ids,
- 			sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, slm_hw_cache_extra_regs,
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 07a34d723505..63168b89b9c4 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1165,7 +1165,7 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- 
- 	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
- 
--	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
-+	VULNWL_INTEL(INTEL_ATOM_SILVERMONT_MID2,NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
- 	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
- 
- 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
-diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
-index deeb02825670..48e6cc1cb017 100644
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -152,7 +152,7 @@ static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,	&freq_desc_byt),
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID,	&freq_desc_tng),
- 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	&freq_desc_cht),
--	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,	&freq_desc_ann),
-+	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,	&freq_desc_ann),
- 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_NP,	&freq_desc_lgm),
- 	{}
- };
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index 5e793b80fd6b..61934c70e30d 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -1273,7 +1273,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,	&rapl_defaults_byt),
- 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	&rapl_defaults_cht),
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID, &rapl_defaults_tng),
--	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,	&rapl_defaults_ann),
-+	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,&rapl_defaults_ann),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&rapl_defaults_core),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&rapl_defaults_core),
-diff --git a/drivers/thermal/intel/intel_tcc.c b/drivers/thermal/intel/intel_tcc.c
-index c86654f28aa5..0329bc0bba55 100644
---- a/drivers/thermal/intel/intel_tcc.c
-+++ b/drivers/thermal/intel/intel_tcc.c
-@@ -106,7 +106,7 @@ static const struct x86_cpu_id intel_tcc_cpu_ids[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_D,		&temp_broadwell),
- 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID,	&temp_broadwell),
- 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,		&temp_broadwell),
--	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,		&temp_broadwell),
-+	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,	&temp_broadwell),
- 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_NP,		&temp_broadwell),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,		&temp_goldmont),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,		&temp_goldmont),
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 089220aaa5c9..eea7dbd2802a 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -1027,7 +1027,7 @@ static const struct platform_data turbostat_pdata[] = {
- 	 * Missing support for
- 	 * INTEL_ICELAKE
- 	 * INTEL_ATOM_SILVERMONT_MID
--	 * INTEL_ATOM_AIRMONT_MID
-+	 * INTEL_ATOM_SILVERMONT_MID2
- 	 * INTEL_ATOM_AIRMONT_NP
- 	 */
- 	{ 0, NULL },
--- 
-2.46.2
+	Andrew
+
 
 
