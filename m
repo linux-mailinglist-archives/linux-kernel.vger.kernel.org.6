@@ -1,340 +1,229 @@
-Return-Path: <linux-kernel+bounces-353216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42989992A8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:43:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D42992A90
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8DDA1F2379C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:43:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245FBB23950
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7908F1D3199;
-	Mon,  7 Oct 2024 11:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA581D2232;
+	Mon,  7 Oct 2024 11:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K+AlNO7c"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4lTXEaF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C451D26F5;
-	Mon,  7 Oct 2024 11:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF915199235;
+	Mon,  7 Oct 2024 11:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728301343; cv=none; b=pORX6su8w39enJGDquI+7HqDLxGFmdnEVZH2H01VRa/8TLWBGsooes7iO8EpyxXVvOGzf4fFwWOoy5OvUHftXk5Y0PBxcBe1exqfqI+Ybpx5CPL13+D7hG3zZUHFyI+o114kdNBC4HWe1rY4TLuV65jEeFuU/dtwTELPw+yerhk=
+	t=1728301483; cv=none; b=QzwtzfPyIZ+LTt/6Pg1Xde8erCnLkYFmekTiupyAGN/SQ9ur0pZSCHx3/u1S2iwNf3r5ysLstl2y+JbjnNT7pzSgzpNwhfs17fRskRXjrdaaWUly0JHsRVSzoYHVzpm6FSvHkjuzNtAX99Cozn54sg8axf/L7uGa9OZFycOHKIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728301343; c=relaxed/simple;
-	bh=j7KaGUsyaLEUfGtXkukiFzIvWKJHDMnnZRqJknyuK2M=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=rRsLT8ZvqxswQHHzNaVsiakEaVsw7pvK3ZZB2IYLp487I4tGboCwHccvJJh0KZHh60v3zoDHZY4UhKWr5zm4eIg7wzk2H2nWJABFyxkSOtmsRnU8QimiSLrKPsaX6eY0NS6H0RtD0glR+MshEPnWLJdh0DrNS3nq8Cj0mok/6vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K+AlNO7c; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BIk3o008189;
-	Mon, 7 Oct 2024 11:42:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:date:subject:content-type:message-id:references:in-reply-to:to
-	:cc:content-transfer-encoding:mime-version; s=pp1; bh=gJGd5/wr8D
-	cxtqBm0AFwiAsWUR/rh1W6zfn73uIs31M=; b=K+AlNO7cbdwHVbdionf/rWw588
-	ipSe3iouyKqeW95TBg/lCAAtLUxcTibLOfg/XNTWtH96eLfuPYTTFJV1M0pkZCBf
-	Qf9UERYT/5pA4VBqSZ7mz5TOmshaMQ8/1z9m0q52VVp6PD91gbO9DwgtCTOy6L0v
-	/ePVkW3gtEyG/Xb5x0xobIw9ByKUCfgPw7iIGYzhIYPZDkROzwRbiLqGs/Of6o2h
-	Z2RVBCdSgZNow65PHj7ZxxPR8+jgGQBz3h5TZFvIP2zVgLMXpB9itnTRyyvvCPYK
-	XZ3U3gMwGfjw0URih/IVmaI+X316LdFK5kgc6H5Fc1vCUr5neO7iuLDwvD2g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424enc864w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 11:42:04 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 497Bg3eD010573;
-	Mon, 7 Oct 2024 11:42:03 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424enc864q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 11:42:03 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49795uir022867;
-	Mon, 7 Oct 2024 11:42:02 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0nyct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 11:42:02 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 497Bg1vP15794806
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Oct 2024 11:42:01 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2D38358056;
-	Mon,  7 Oct 2024 11:42:01 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 07ABC58045;
-	Mon,  7 Oct 2024 11:41:56 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  7 Oct 2024 11:41:55 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Mon, 07 Oct 2024 13:40:23 +0200
-Subject: [PATCH v6 5/5] asm-generic/io.h: Remove I/O port accessors for
- HAS_IOPORT=n
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20241007-b4-has_ioport-v6-5-03f7240da6e5@linux.ibm.com>
-References: <20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com>
-In-Reply-To: <20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com>
-To: Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-        intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
-        linux-arch@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>,
-        Arnd Bergmann <arnd@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5763;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=j7KaGUsyaLEUfGtXkukiFzIvWKJHDMnnZRqJknyuK2M=;
- b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNKZTzy6djb8auy3/GyTk2tYOGfmrsy8m6IWv2rW2y2yB
- 7lfhYeIdpSyMIhxMciKKbIs6nL2W1cwxXRPUH8HzBxWJpAhDFycAjCR210M/92KbRlbty85NXPN
- xFRFv5O7/6lYH1mS1NOqerv76gqFL3mMDHO+d4bu/Lp1T8emlAvXvzns3ubs+UdNwvHzs6Jptw/
- 6PeMAAA==
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RNvYtpLSwiVG1NoQ25vYY0xX4cawI8en
-X-Proofpoint-GUID: lsqrlwZBfXREZJQh0f2T0p_3xB0hkfcT
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1728301483; c=relaxed/simple;
+	bh=BdagRc9kDm8QW5L4yx71h6tv7jwW8Ojd8Q3cbF5c6CU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gs31NWBukt6brdmIguYCBhObZgSQpMofGflXlt4J0TBYIPRjcfpAUjsf0GbJklWZmp75kvSVWcq4f7rbSCg7LVnXJTNrrTTfS3vytIWu88iSritNedfZXnqbSUqYSGv515+meTE/WVvIIOJf+CvTnvQ40J6QAiaFm0EuoYlHdEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4lTXEaF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27D7C4CEC6;
+	Mon,  7 Oct 2024 11:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728301482;
+	bh=BdagRc9kDm8QW5L4yx71h6tv7jwW8Ojd8Q3cbF5c6CU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p4lTXEaFcv2P0OnXd5GZOTtWQLLF+wfcvWE0on94SJrz+Sn2Yzoc05REKGvvsLA+2
+	 U6jk9UL9xpE0OTLvMPvpOmMgOAHGGAwwo6GL4GqK8UlMOiSbZ1lxYomsaXLqiJCic0
+	 rRUKVHX+ua1Fz1HIn7rryFLRP/+jnCJ7YfKrEMrl7OJQjJo/eLdG5pr5xjb4XFygur
+	 gk3o0GNq8o4aukr0tIt+k/nSrBF+dUOVtc/GHSwelRzSplndQgqnUyklBsH65EQSmm
+	 jIb1QJ0yg4HpclchjPUmDrXyD6rbf1vVIHX3Tnyh/fSvRGIufkvDHRLI4FhaBHGuM4
+	 uWWLQVAcrZAxA==
+Message-ID: <5e6bb315-7896-4e63-86aa-1a219b7a7fb3@kernel.org>
+Date: Mon, 7 Oct 2024 14:44:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-07_02,2024-10-07_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 suspectscore=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070081
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: core: Fix system suspend on TI AM62 platforms
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Dhruva Gole <d-gole@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
+ "msp@baylibre.com" <msp@baylibre.com>, "srk@ti.com" <srk@ti.com>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20241001-am62-lpm-usb-v1-1-9916b71165f7@kernel.org>
+ <20241005010355.zyb54bbqjmpdjnce@synopsys.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241005010355.zyb54bbqjmpdjnce@synopsys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-With all subsystems and drivers either declaring their dependence on
-HAS_IOPORT or fencing I/O port specific code sections we can finally
-make inb()/outb() and friends compile-time dependent on HAS_IOPORT as
-suggested by Linus in the linked mail. The main benefit of this is that
-on platforms such as s390 which have no meaningful way of implementing
-inb()/outb() their use without the proper HAS_IOPORT dependency will
-result in easy to catch and fix compile-time errors instead of compiling
-code that can never work.
+Hi,
 
-Link: https://lore.kernel.org/lkml/CAHk-=wg80je=K7madF4e7WrRNp37e3qh6y10Svhdc7O8SZ_-8g@mail.gmail.com/
-Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
- include/asm-generic/io.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+On 05/10/2024 04:04, Thinh Nguyen wrote:
+> Hi,
+> 
+> On Tue, Oct 01, 2024, Roger Quadros wrote:
+>> Since commit 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init"),
+>> system suspend is broken on AM62 TI platforms.
+>>
+>> Before that commit, both DWC3_GUSB3PIPECTL_SUSPHY and DWC3_GUSB2PHYCFG_SUSPHY
+>> bits (hence forth called 2 SUSPHY bits) were being set during core
+>> initialization and even during core re-initialization after a system
+>> suspend/resume.
+>>
+>> These bits are required to be set for system suspend/resume to work correctly
+>> on AM62 platforms.
+>>
+>> Since that commit, the 2 SUSPHY bits are not set for DEVICE/OTG mode if gadget
+>> driver is not loaded and started.
+>> For Host mode, the 2 SUSPHY bits are set before the first system suspend but
+>> get cleared at system resume during core re-init and are never set again.
+>>
+>> This patch resovles these two issues by ensuring the 2 SUSPHY bits are set
+>> before system suspend and restored to the original state during system resume.
+>>
+>> Cc: stable@vger.kernel.org # v6.9+
+>> Fixes: 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init")
+>> Link: https://urldefense.com/v3/__https://lore.kernel.org/all/1519dbe7-73b6-4afc-bfe3-23f4f75d772f@kernel.org/__;!!A4F2R9G_pg!ahChm4MaKd6VGYqbnM4X1_pY_jqavYDv5HvPFbmicKuhvFsBwlEFi1xO5itGuHmfjbRuUSzReJISf5-1gXpr$ 
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> ---
+>>  drivers/usb/dwc3/core.c | 16 ++++++++++++++++
+>>  drivers/usb/dwc3/core.h |  2 ++
+>>  2 files changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>> index 9eb085f359ce..1233922d4d54 100644
+>> --- a/drivers/usb/dwc3/core.c
+>> +++ b/drivers/usb/dwc3/core.c
+>> @@ -2336,6 +2336,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+>>  	u32 reg;
+>>  	int i;
+>>  
+>> +	dwc->susphy_state = !!(dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
+>> +			    DWC3_GUSB2PHYCFG_SUSPHY);
+>> +
+>>  	switch (dwc->current_dr_role) {
+>>  	case DWC3_GCTL_PRTCAP_DEVICE:
+>>  		if (pm_runtime_suspended(dwc->dev))
+>> @@ -2387,6 +2390,11 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+>>  		break;
+>>  	}
+>>  
+>> +	if (!PMSG_IS_AUTO(msg)) {
+>> +		if (!dwc->susphy_state)
+>> +			dwc3_enable_susphy(dwc, true);
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -2454,6 +2462,14 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+>>  		break;
+>>  	}
+>>  
+>> +	if (!PMSG_IS_AUTO(msg)) {
+>> +		/* dwc3_core_init_for_resume() disables SUSPHY so just handle
+>> +		 * the enable case
+>> +		 */
+> 
+> Can we note that this is a particular behavior needed for AM62 here?
+> And can we use this comment style:
+> 
+> /*
+>  * xxxxx
+>  * xxxxx
+>  */
 
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index 80de699bf6af4b7b77f582c0469c43e978f67a43..1027be6a62bcbcd5f6797e0fa42035208d0ca79f 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -540,6 +540,7 @@ static inline void writesq(volatile void __iomem *addr, const void *buffer,
- 
- #if !defined(inb) && !defined(_inb)
- #define _inb _inb
-+#ifdef CONFIG_HAS_IOPORT
- static inline u8 _inb(unsigned long addr)
- {
- 	u8 val;
-@@ -549,10 +550,15 @@ static inline u8 _inb(unsigned long addr)
- 	__io_par(val);
- 	return val;
- }
-+#else
-+u8 _inb(unsigned long addr)
-+	__compiletime_error("inb()) requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #if !defined(inw) && !defined(_inw)
- #define _inw _inw
-+#ifdef CONFIG_HAS_IOPORT
- static inline u16 _inw(unsigned long addr)
- {
- 	u16 val;
-@@ -562,10 +568,15 @@ static inline u16 _inw(unsigned long addr)
- 	__io_par(val);
- 	return val;
- }
-+#else
-+u16 _inw(unsigned long addr)
-+	__compiletime_error("inw() requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #if !defined(inl) && !defined(_inl)
- #define _inl _inl
-+#ifdef CONFIG_HAS_IOPORT
- static inline u32 _inl(unsigned long addr)
- {
- 	u32 val;
-@@ -575,36 +586,55 @@ static inline u32 _inl(unsigned long addr)
- 	__io_par(val);
- 	return val;
- }
-+#else
-+u32 _inl(unsigned long addr)
-+	__compiletime_error("inl() requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #if !defined(outb) && !defined(_outb)
- #define _outb _outb
-+#ifdef CONFIG_HAS_IOPORT
- static inline void _outb(u8 value, unsigned long addr)
- {
- 	__io_pbw();
- 	__raw_writeb(value, PCI_IOBASE + addr);
- 	__io_paw();
- }
-+#else
-+void _outb(u8 value, unsigned long addr)
-+	__compiletime_error("outb() requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #if !defined(outw) && !defined(_outw)
- #define _outw _outw
-+#ifdef CONFIG_HAS_IOPORT
- static inline void _outw(u16 value, unsigned long addr)
- {
- 	__io_pbw();
- 	__raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
- 	__io_paw();
- }
-+#else
-+void _outw(u16 value, unsigned long addr)
-+	__compiletime_error("outw() requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #if !defined(outl) && !defined(_outl)
- #define _outl _outl
-+#ifdef CONFIG_HAS_IOPORT
- static inline void _outl(u32 value, unsigned long addr)
- {
- 	__io_pbw();
- 	__raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
- 	__io_paw();
- }
-+#else
-+void _outl(u32 value, unsigned long addr)
-+	__compiletime_error("outl() requires CONFIG_HAS_IOPORT");
-+#endif
- #endif
- 
- #include <linux/logic_pio.h>
-@@ -688,53 +718,83 @@ static inline void outl_p(u32 value, unsigned long addr)
- 
- #ifndef insb
- #define insb insb
-+#ifdef CONFIG_HAS_IOPORT
- static inline void insb(unsigned long addr, void *buffer, unsigned int count)
- {
- 	readsb(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void insb(unsigned long addr, void *buffer, unsigned int count)
-+	__compiletime_error("insb() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef insw
- #define insw insw
-+#ifdef CONFIG_HAS_IOPORT
- static inline void insw(unsigned long addr, void *buffer, unsigned int count)
- {
- 	readsw(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void insw(unsigned long addr, void *buffer, unsigned int count)
-+	__compiletime_error("insw() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef insl
- #define insl insl
-+#ifdef CONFIG_HAS_IOPORT
- static inline void insl(unsigned long addr, void *buffer, unsigned int count)
- {
- 	readsl(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void insl(unsigned long addr, void *buffer, unsigned int count)
-+	__compiletime_error("insl() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef outsb
- #define outsb outsb
-+#ifdef CONFIG_HAS_IOPORT
- static inline void outsb(unsigned long addr, const void *buffer,
- 			 unsigned int count)
- {
- 	writesb(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void outsb(unsigned long addr, const void *buffer, unsigned int count)
-+	__compiletime_error("outsb() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef outsw
- #define outsw outsw
-+#ifdef CONFIG_HAS_IOPORT
- static inline void outsw(unsigned long addr, const void *buffer,
- 			 unsigned int count)
- {
- 	writesw(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void outsw(unsigned long addr, const void *buffer, unsigned int count)
-+	__compiletime_error("outsw() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef outsl
- #define outsl outsl
-+#ifdef CONFIG_HAS_IOPORT
- static inline void outsl(unsigned long addr, const void *buffer,
- 			 unsigned int count)
- {
- 	writesl(PCI_IOBASE + addr, buffer, count);
- }
-+#else
-+void outsl(unsigned long addr, const void *buffer, unsigned int count)
-+	__compiletime_error("outsl() requires HAS_IOPORT");
-+#endif
- #endif
- 
- #ifndef insb_p
+OK.
+
+> 
+> 
+>> +		if (dwc->susphy_state)
+> 
+> Shouldn't we check for if (!dwc->susphy_state) and clear the susphy
+> bits?
+
+In that case it would have already been cleared so no need to check
+and clear again.
+
+> 
+>> +			dwc3_enable_susphy(dwc, true);
+> 
+> The dwc3_enable_susphy() set and clear both GUSB3PIPECTL_SUSPHY and
+> GUSB2PHYCFG_SUSPHY, perhaps we should split that function out so we can
+> only need to set for GUSB2PHYCFG_SUSPHY since you only track for that.
+
+As  dwc3_enable_susphy() sets and clears both GUSB3PIPECTL_SUSPHY and
+GUSB2PHYCFG_SUSPHY together it doesn't really help to track both
+separately, but just complicates things.
+
+> 
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+>> index c71240e8f7c7..b2ed5aba4c72 100644
+>> --- a/drivers/usb/dwc3/core.h
+>> +++ b/drivers/usb/dwc3/core.h
+>> @@ -1150,6 +1150,7 @@ struct dwc3_scratchpad_array {
+>>   * @sys_wakeup: set if the device may do system wakeup.
+>>   * @wakeup_configured: set if the device is configured for remote wakeup.
+>>   * @suspended: set to track suspend event due to U3/L2.
+>> + * @susphy_state: state of DWC3_GUSB2PHYCFG_SUSPHY before PM suspend.
+>>   * @imod_interval: set the interrupt moderation interval in 250ns
+>>   *			increments or 0 to disable.
+>>   * @max_cfg_eps: current max number of IN eps used across all USB configs.
+>> @@ -1382,6 +1383,7 @@ struct dwc3 {
+>>  	unsigned		sys_wakeup:1;
+>>  	unsigned		wakeup_configured:1;
+>>  	unsigned		suspended:1;
+>> +	unsigned		susphy_state:1;
+>>  
+>>  	u16			imod_interval;
+>>  
+>>
+>> ---
+>> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+>> change-id: 20240923-am62-lpm-usb-f420917bd707
+>>
+>> Best regards,
+>> -- 
+>> Roger Quadros <rogerq@kernel.org>
+>>
+> 
+> <rant/>
+> While reviewing your change, I see that we misuse the
+> dis_u2_susphy_quirk to make this property a conditional thing during
+> suspend and resume for certain platform. That bugs me because we can't
+> easily change it without the reported hardware to test.
+> </rant>
+
+No it is not conditional. if dis_u2_susphy_quirk or dis_u3_susphy_quirk
+is set then we never enable the respective U2/U3 SUSPHY bit.
+
+> 
+> Thanks for the patch!
+> 
+> BR,
+> Thinh
 
 -- 
-2.43.0
-
+cheers,
+-roger
 
