@@ -1,153 +1,83 @@
-Return-Path: <linux-kernel+bounces-352770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD089923EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:42:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BD99923EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5150F282CB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8136AB222FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F7F143744;
-	Mon,  7 Oct 2024 05:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C04F136672;
+	Mon,  7 Oct 2024 05:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fVWIMxIQ"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3OAFCiyk"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A6813B797;
-	Mon,  7 Oct 2024 05:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EE923AB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728279721; cv=none; b=mf5yx7afa+KoxffibooqC39hZnbiJdPnXVxix+B6Vy0y3Jb3pHhFBKQLSl0YX9bN+Ch25c3HvR/4yAgTTm7guHLlRBdX1MonLGje66DHhAuIuBiqfy9pmZ/lXBonddhBpyFTB2DCmp1dsssWtkTqk72GdVkqpOxGxCrNSDo+SNY=
+	t=1728279713; cv=none; b=fLw+Rc3cNxhzLnhqaN3AYSDodCuWL9+63BVsyQ/7oraeJAmwvo0HYbG00XBA+k7g7l5Ec7pvNjt7xkoip2rSYbhd2bR6MI9qyT8g6sgAwqOMHq+uumQVrsYVwNrjCdygqxCJUFNBciD1lGMWOWyLI3rfOLszeOfarwIXCnzqvEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728279721; c=relaxed/simple;
-	bh=P5WpJSFMhe/LxeegZADuRdkunnCVSBG6Td4FAA9WJcQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LoFDGBfNIyIRvIc07v647nMJjLXaCu5oZuI/7QOV7Q1ZaTrhKWWpG3a+/YwYHkbHcsopD4J1/3gHWh/FAq0A1sMf9vC6eRxdXdrZ+78zc1LlV6rf98Oavf+3aW7CaDr/BwCFTd0MMxxBpcabuMpIJ9NEj7i0YdNnHitEAartc0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fVWIMxIQ; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4975fS7K119825;
-	Mon, 7 Oct 2024 00:41:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728279688;
-	bh=nP6DdgH29tvlsuXDNcF1Ajyp5JiV1/oAb/SSYPduwc0=;
-	h=From:To:CC:Subject:Date;
-	b=fVWIMxIQlb3CsUZwKYUQXe3OXGlrYg7j7xoUCNI3kbx9a7k6H6SZCeTDBEWBu2b6H
-	 4/dywVxIxjh43oCaCfFVXl6ZanJlh/M7n5S1NsH6f9szhfIT+XpNyuXfzhI8ZRhpuV
-	 o3Nyx5mv0UvGeb8q4pdaHcGWbHVpWEg2Wlrm1f4k=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4975fS5o013121
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Oct 2024 00:41:28 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Oct 2024 00:41:28 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Oct 2024 00:41:27 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4975fSr5082390;
-	Mon, 7 Oct 2024 00:41:28 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4975fR05013265;
-	Mon, 7 Oct 2024 00:41:27 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: <robh@kernel.org>, <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>,
-        <andrew@lunn.ch>, <pabeni@redhat.com>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v2] net: ti: icssg-prueth: Fix race condition for VLAN table access
-Date: Mon, 7 Oct 2024 11:11:24 +0530
-Message-ID: <20241007054124.832792-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728279713; c=relaxed/simple;
+	bh=9nmx/iFyRZMUC5VGupQxMufehse6TbfVu4vhQKy87Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va9uWK0X+Hyq1h2lrvLHdIFJF+pHiOGtDKFFElVfeMxfsZAEOlHuCdQ4K4DvZNm9qTrk28AT3rBfRYs6L9TiOMmGgKVhDkhfnKjt+cGoDosV0fLbtYEd51Ed6MnVaps9AyeEoRfQHq7Onymah5fewPP8rwGsQG1wvUc6tysF3q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3OAFCiyk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9nmx/iFyRZMUC5VGupQxMufehse6TbfVu4vhQKy87Io=; b=3OAFCiykpp7nOYl+dB6bg3qa2D
+	rAgzBQies5yIhomIwywv6y5EgdTVG4c8iXFr0I5IE6LAfByuoXiFUHxLpMs2qFkq8hm4LitvIiL4/
+	1Io5dbBht02Mej5+4M5Dahd2LPkvJ6RSNsW68JY5l7PgnlkHPq0IREJZOCt9Ej7GqKNY/e5ZfDSnw
+	86K3qWadPoIy5O4FYOYdrSJz1Q2eGlwLfNA+9bz6/nKVLF2D9zLi4kItAthMqzXEVJziLql4GXuId
+	7VO23DLWl8WjyWJf9yig0r6ezENlTnl2k4TUF52IxKiowDtKgcm7CrUeNu/XURlsnOwOWuDSip4Es
+	Nvp3n6zw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxgV5-00000001KBz-43dM;
+	Mon, 07 Oct 2024 05:41:43 +0000
+Date: Sun, 6 Oct 2024 22:41:43 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Vladimir Kondratiev <Vladimir.Kondratiev@mobileye.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH v1] riscv: make ZONE_DMA32 optional
+Message-ID: <ZwN0l0Y_oUfDX8jl@infradead.org>
+References: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
+ <e8f6ed93-d47c-4c07-963c-8f16f498abed@ghiti.fr>
+ <VI1PR09MB2333FEC324AA0B3E5F1D7F98947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
+ <VI1PR09MB233370D7BD8553E7891EF46F947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR09MB233370D7BD8553E7891EF46F947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The VLAN table is a shared memory between the two ports/slices
-in a ICSSG cluster and this may lead to race condition when the
-common code paths for both ports are executed in different CPUs.
+On Sun, Oct 06, 2024 at 10:55:39AM +0000, Vladimir Kondratiev wrote:
+> It is not necessary any RISCV platform has ZONE_DMA32.
+> Platforms that not support ZONE_DMA32 should set
+> CONFIG_NONPORTABLE because lack of ZONE_DMA32
+> makes such platform non-portable indeed
 
-Fix the race condition access by locking the shared memory access
-
-Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-v1 - v2:
-*) Fixed kdoc and checkpatch warning by moving kdoc inline for vtbl_lock
-as suggested by Jakub Kicinski <kuba@kernel.org>
-
-v1 https://lore.kernel.org/all/20241003105940.533921-1-danishanwar@ti.com/
-
- drivers/net/ethernet/ti/icssg/icssg_config.c | 2 ++
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 1 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 2 ++
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index 72ace151d8e9..5d2491c2943a 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -735,6 +735,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
- 	u8 fid_c1;
- 
- 	tbl = prueth->vlan_tbl;
-+	spin_lock(&prueth->vtbl_lock);
- 	fid_c1 = tbl[vid].fid_c1;
- 
- 	/* FID_C1: bit0..2 port membership mask,
-@@ -750,6 +751,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
- 	}
- 
- 	tbl[vid].fid_c1 = fid_c1;
-+	spin_unlock(&prueth->vtbl_lock);
- }
- EXPORT_SYMBOL_GPL(icssg_vtbl_modify);
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 5fd9902ab181..5c20ceb164df 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1442,6 +1442,7 @@ static int prueth_probe(struct platform_device *pdev)
- 		icss_iep_init_fw(prueth->iep1);
- 	}
- 
-+	spin_lock_init(&prueth->vtbl_lock);
- 	/* setup netdev interfaces */
- 	if (eth0_node) {
- 		ret = prueth_netdev_init(prueth, eth0_node);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index bba6da2e6bd8..8722bb4a268a 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -296,6 +296,8 @@ struct prueth {
- 	bool is_switchmode_supported;
- 	unsigned char switch_id[MAX_PHYS_ITEM_ID_LEN];
- 	int default_vlan;
-+	/** @vtbl_lock: Lock for vtbl in shared memory */
-+	spinlock_t vtbl_lock;
- };
- 
- struct emac_tx_ts_response {
-
-base-commit: 9234a2549cb6ac038bec36cc7c084218e9575513
--- 
-2.34.1
+Well, this doesn't get any more true by just irgnoring the previous
+discussion and just reposting :(
 
 
