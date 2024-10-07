@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-353391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A965992D30
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E4E992D32
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2F4286D5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBE51F23869
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB261D3644;
-	Mon,  7 Oct 2024 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D331D3596;
+	Mon,  7 Oct 2024 13:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UxRIvQzf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="UvBTY361"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C801D356F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A1614AD17;
+	Mon,  7 Oct 2024 13:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307509; cv=none; b=SWOH0BuxglcnSiw6OUHM6cRr14sfiUFRHuAE+1uWMwak/TSiBpJgqMZG5Kr/a45r5vre3MKr+sOTg0KG+XGyPM/4n/pQbZklIYd3VwCM0Uuk65wAfQp0Fx+e5Qw9haFAcniHHrjfFEz6f+7x8K92lYCAPr2B1lz2NuzzwKAisqY=
+	t=1728307566; cv=none; b=Pi3cT6BkBBPkgOBxdPvOB/iI6h34tKjeiWZjkVLKT7jietHSXEj7jU+/AHL8rVOre4i9Gs9tsfpvclWjgwSIh5DKV3Q+aH/qmu7v2qqClhKhsSr8CCwteLjou/BdtGR3DTmpdBdkmdt+8LfttGMiuJvxitoqh2QI6pSaONAuwbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307509; c=relaxed/simple;
-	bh=MJHXFEEryb9PS6FSgv6RX77Wi4ZIfLZ/Nlz5tH2i/gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ+rQvjmmcWnoiqeCBS/PycOVXJwbiFhiAFK6n6QZrmYo+osVCVPmPWeJQKnYRVY9Lf17yuN0EZo6JDzDK7gfB0XTLryH0G1wrHL1mAux2IAQ6HJPDpafrSyCj6IjGu0Z02A0EQzlWVWu8cDLoTcbJBcwm1TMYz74OFp00LYlNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UxRIvQzf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728307506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7to6M2v9YExVH8dgi44dQHmA/lbYoY7UdTto26LHN/Y=;
-	b=UxRIvQzfZPUJWTQzdNdp9+NVoIyfdgDgbgPuOV18keX4k/sLG1VcSFZuU7vCc0m2qqPded
-	YJgIL+aQi+Djegilr6uJ8N4iGW0Jf2WuzF0qk4UQA5g6xk/NMQS0PyUtaGVyftEp4o7lhm
-	GvsFZxV9CG3tl+rXLmdsS/O6xH0TDdg=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-trzY_FWFNfW7QsHAGhxs0w-1; Mon, 07 Oct 2024 09:25:04 -0400
-X-MC-Unique: trzY_FWFNfW7QsHAGhxs0w-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a9a7eed5b2so886275585a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:25:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307504; x=1728912304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7to6M2v9YExVH8dgi44dQHmA/lbYoY7UdTto26LHN/Y=;
-        b=ZkymM+ePUfRCIlk3gBD2GUnNxfNtd9y+OKn/L46I9fTjC51N9ES59usNB5zvFJCzcS
-         g8m8eRb5b25z8AeA6KTyP7TUZIPSzKP0cmCv9BQlv9+MOlYHd4J82egzZQpUq2hBKMix
-         c7IACCCTzk7ld5VuOO5tLhA3by0d3eGnr4LKWmj4sag8lAtaQuHcaspS1E8D1y0J7R8i
-         Md+gX8MV3xuiMM9VqrYbEbwde7Ymaw0kwmr+whvdMb1/s8d71bGBfGP5Y3AgOyUFR9ky
-         hHxdiV++YQEjNwFtuojqCwlequ4WiJibW1iWs8mgWHE3gaqF1tEtnJP0pldafVyiz0wy
-         uO5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTISh70/XmF55UsuwPGxVpgF7ebXWPvpjJlMhNcQdwTAO5XvkIOnz7S1c5es5GtAELgSYREIZI/jL1iDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5AmfNvnONpjCzvdrZGQ3Sh3SC3xvur3TYEVQwXdD2csWs9+U9
-	R93s+atyUmN1GB/X+hqoDZkoWI8kWiXsg77cmjmzoJUEJZ/wq9K5E8mgGEmrL1w/Ssn1OMqEfFr
-	lxJ0spkrFx4Ljhv3vDWJ6sgyteznC3H7eihJFpIwe1b5blSEFhQtmyj3yNrFB+g==
-X-Received: by 2002:a05:620a:17a3:b0:7a9:b3db:bf32 with SMTP id af79cd13be357-7ae6fbaf5b8mr2022680485a.33.1728307504326;
-        Mon, 07 Oct 2024 06:25:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2ducyhmpTjSWJfEoqkJOyEPWQFKMshZVUqEAw2VCWtyvS7W8ZtImZ5cjaMzHZ9T4dK5+nGg==
-X-Received: by 2002:a05:620a:17a3:b0:7a9:b3db:bf32 with SMTP id af79cd13be357-7ae6fbaf5b8mr2022677085a.33.1728307504005;
-        Mon, 07 Oct 2024 06:25:04 -0700 (PDT)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75637909sm255127285a.68.2024.10.07.06.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:25:02 -0700 (PDT)
-Date: Mon, 7 Oct 2024 09:25:00 -0400
-From: Peter Xu <peterx@redhat.com>
-To: manas18244@iiitd.ac.in
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup Sharma <anupnewsmail@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] Fixes: null pointer dereference in
- pfnmap_lockdep_assert
-Message-ID: <ZwPhLFIk4gvhn10d@x1n>
-References: <20241004-fix-null-deref-v4-1-d0a8ec01ac85@iiitd.ac.in>
+	s=arc-20240116; t=1728307566; c=relaxed/simple;
+	bh=SWGia2W6otTjRDYJY/4ZhIgn9kTOF13TuoNCyPr53Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uTlkrtESGjgvm74ej/1vIG7N67XaFRJdCheEY10BZydNSepFyDlR1euFJv5JtweITKMj87JS4SJitzPs8ypiKGeelZYbfhK7gliGLKgOi06cNch4hP/Q2IGY5qkzLJ/Re4ihAFDCSvcysAEg2bblRTjVlR4v0wKicXr8mXIxcRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=UvBTY361; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1DDA321E5E;
+	Mon,  7 Oct 2024 15:26:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728307560;
+	bh=yJxiIO6CxXoreOtLTDOkCzkK9VuyDNTnsMOel1WnYkw=; h=From:To:Subject;
+	b=UvBTY3618qIkW3NC6jNLnkqniX9pKnlNXIQNRfWdkLYJ05OsJndeGJK/hm6D2BRCf
+	 st2AQDMMK9u/4mDB4kwqI6iTrSdP6fsSAmbq9e0qrvMpjzk/n7WSJ4wknGs3mGEtvx
+	 jxKq5F8Q7qefoZB3XM4MhnVxIgQaLIm0Z+7SaW08Red1DZiAPSAuIAtm9hKSG+v8a/
+	 gWQ9hbj3TX0Yoz+KdG6Omx5sCKFNDIKUBwq4uqUiWNx9f0NgzUpf6+5DY3AiFKdDHd
+	 Sx3SCtJ2t4gh7bpO/DvC1F8ZrrlIeHFbY3FKHpdpoD6sm4D2014rZ1A9OBC5QdE/WI
+	 cl9n23mSXjMtQ==
+Date: Mon, 7 Oct 2024 15:25:55 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: regressions@lists.linux.dev, Adam Ford <aford173@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
+Subject: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
+Message-ID: <20241007132555.GA53279@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004-fix-null-deref-v4-1-d0a8ec01ac85@iiitd.ac.in>
 
-On Fri, Oct 04, 2024 at 11:12:16PM +0530, Manas via B4 Relay wrote:
-> From: Manas <manas18244@iiitd.ac.in>
-> 
-> syzbot has pointed to a possible null pointer dereference in
-> pfnmap_lockdep_assert. vm_file member of vm_area_struct is being
-> dereferenced without any checks.
-> 
-> This fix assigns mapping only if vm_file is not NULL.
-> 
-> Reported-by: syzbot+093d096417e7038a689b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
-> ---
-> This bug[1] triggers a general protection fault in follow_pfnmap_start
-> function. An assertion pfnmap_lockdep_assert inside this function
-> dereferences vm_file member of vm_area_struct. And panic gets triggered
-> when vm_file is NULL.
-> 
-> This patch assigns mapping only if vm_file is not NULL.
-> 
-> [1] https://syzkaller.appspot.com/bug?extid=093d096417e7038a689b
-> 
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+Hello,
+it seems that an old regression is back on v6.12, reproduced on -rc2
+(not sure about rc1).
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
 
--- 
-Peter Xu
+Is it now back?
+
+[    4.012850] SError Interrupt on CPU2, code 0x00000000bf000002 -- SError
+[    4.012862] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not tainted 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
+[    4.012869] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
+[    4.012872] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    4.012877] pc : clk_imx8mp_audiomix_runtime_resume+0x38/0x48
+[    4.012891] lr : pm_generic_runtime_resume+0x2c/0x44
+[    4.012897] sp : ffff8000821cb740
+[    4.012899] x29: ffff8000821cb740 x28: ffff8000793c48d8 x27: ffff8000793c48c0
+[    4.012908] x26: ffff0000c0ec90f4 x25: 0000000000000000 x24: 0000000000000000
+[    4.012916] x23: 0000000000000000 x22: ffff0000c1bef180 x21: 0000000000000000
+[    4.012923] x20: ffff0000c0a73000 x19: ffff0000c0ecbc10 x18: ffffffffffffffff
+[    4.012930] x17: 3030303064623033 x16: 2f7375622e303030 x15: 756e285472656c6c
+[    4.012937] x14: ffff800081267458 x13: 6d692c6c73664361 x12: 0000000000000000
+[    4.012944] x11: 00353333333d4d55 x10: ffff8000818020ae x9 : 0000000000000008
+[    4.012951] x8 : 0000000000000008 x7 : 0000000000000000 x6 : ffff0000c5bf2080
+[    4.012958] x5 : ffff800081f10000 x4 : ffff800080c182e8 x3 : ffff0000c0ee7088
+[    4.012965] x2 : 0000000000000000 x1 : 0000000000000004 x0 : ffff800081f10300
+[    4.012973] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    4.012976] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not tainted 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
+[    4.012982] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
+[    4.012985] Call trace:
+[    4.012988]  dump_backtrace+0xd0/0x120
+[    4.012998]  show_stack+0x18/0x24
+[    4.013005]  dump_stack_lvl+0x60/0x80
+[    4.013013]  dump_stack+0x18/0x24
+[    4.013019]  panic+0x168/0x350
+[    4.013025]  add_taint+0x0/0xbc
+[    4.013029]  arm64_serror_panic+0x64/0x70
+[    4.013034]  do_serror+0x3c/0x70
+[    4.013039]  el1h_64_error_handler+0x30/0x54
+[    4.013046]  el1h_64_error+0x64/0x68
+[    4.013050]  clk_imx8mp_audiomix_runtime_resume+0x38/0x48
+[    4.013059]  __genpd_runtime_resume+0x30/0x80
+[    4.013066]  genpd_runtime_resume+0x114/0x29c
+[    4.013073]  __rpm_callback+0x48/0x1e0
+[    4.013079]  rpm_callback+0x68/0x80
+[    4.013084]  rpm_resume+0x3bc/0x6a0
+[    4.013089]  __pm_runtime_resume+0x50/0x9c
+[    4.013095]  pm_runtime_get_suppliers+0x60/0x8c
+[    4.013101]  __driver_probe_device+0x4c/0x14c
+[    4.013108]  driver_probe_device+0x3c/0x120
+[    4.013114]  __driver_attach+0xc4/0x200
+[    4.013119]  bus_for_each_dev+0x7c/0xe0
+[    4.013125]  driver_attach+0x24/0x30
+[    4.013130]  bus_add_driver+0x110/0x240
+[    4.013135]  driver_register+0x68/0x124
+[    4.013142]  __platform_driver_register+0x24/0x30
+[    4.013149]  sdma_driver_init+0x20/0x1000 [imx_sdma]
+[    4.013163]  do_one_initcall+0x60/0x1e0
+[    4.013168]  do_init_module+0x5c/0x21c
+[    4.013175]  load_module+0x1a98/0x205c
+[    4.013181]  init_module_from_file+0x88/0xd4
+[    4.013187]  __arm64_sys_finit_module+0x258/0x350
+[    4.013194]  invoke_syscall.constprop.0+0x50/0xe0
+[    4.013202]  do_el0_svc+0xa8/0xe0
+[    4.013208]  el0_svc+0x3c/0x140
+[    4.013215]  el0t_64_sync_handler+0x120/0x12c
+[    4.013222]  el0t_64_sync+0x190/0x194
+[    4.013228] SMP: stopping secondary CPUs
+[    4.013237] Kernel Offset: disabled
+[    4.013239] CPU features: 0x00,00000000,00200000,4200420b
+[    4.013243] Memory Limit: none
+[    4.316721] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
+
+
+Francesco
 
 
