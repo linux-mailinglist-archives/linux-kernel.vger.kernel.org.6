@@ -1,356 +1,86 @@
-Return-Path: <linux-kernel+bounces-354145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD6E99384D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:32:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343B999383E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B0E2852C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9A01F22476
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89E21DED75;
-	Mon,  7 Oct 2024 20:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="fkmvTWw0"
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6791DE8B6;
-	Mon,  7 Oct 2024 20:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728333075; cv=none; b=pjL1flkoaaK6gagtU9ba9ApsZsHrxaJpFCIuJ9j5n2gy0BzgtdPalNE4LRmvCv7bMKLJ3THJo85QmrVlB6ttAXt8E6J6vqXFLXcfTieN0K6xKPD/lVu2TLBqMbdNnG9UKJvGtQc1tpKO50TpSYiSd+QnHP1wpKlsmsfxBOKkZ1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728333075; c=relaxed/simple;
-	bh=X2AYz492IGwzeV/lL9o4hdoM82zMb6McD+iCKqSflNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oYFDGKo6Dn84PVOLahE8OZGHXu9DffU6UH1ZLYg/JBYdYKX3ZlLKTKOdIXWWhpHCplU8rJX1bp5C6LYVBbi/uEV5/EmFEB3YygInF0Ff5N3raX5EEHXjdcZeY6mYlcnS63duU4+aOoJ1nVwxJW0qONlV1+tUz4Dyx94NU6qKqLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=fkmvTWw0; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout4.routing.net (Postfix) with ESMTP id C31891008F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74951DD546;
 	Mon,  7 Oct 2024 20:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1728333064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vNCopJmZccHmcVKLfF7eeviRLCI1O70ul3xqsxNplgQ=;
-	b=fkmvTWw0Tqml9jlFCBPs/tt7W0mJhH858GsaqFU5up4VSyClxVciW3SAJWvf2WgHVyvKXb
-	MNx2v2m5V4NwucLZCsC612FVZjp8zcXDwvr7s/HwjTBqVYSAOie3rs+WB4LSRxgTJuk+p6
-	V26xcWup+zJxeAiB8Qx/Iac/0iW5laM=
-Received: from frank-u24.. (fttx-pool-157.180.226.56.bambit.de [157.180.226.56])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id A14A3360200;
-	Mon,  7 Oct 2024 20:31:03 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	daniel@makrotopia.org,
-	john@phrozen.org,
-	ansuelsmth@gmail.com,
-	eladwf@gmail.com
-Subject: [PATCH v3 4/4] arm64: dts: mediatek: mt7988: add pinctrl support
-Date: Mon,  7 Oct 2024 22:30:45 +0200
-Message-ID: <20241007203053.72862-5-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241007203053.72862-1-linux@fw-web.de>
-References: <20241007203053.72862-1-linux@fw-web.de>
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB52320F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728333064; cv=none; b=T7oaflSDrSISszsW52HPiRhuIoX3kdlodiyoP8B4Ra8N3JvO73FMJPmo8ou3pEDnedSiMiU0PIzuL33Uzmn+Q69qIwzqjHYVvdbL4UPinwqIdsEKAvcmt5yFqPezjqA35vNlO8gnvP10dcoZxUNLHgA5PtzAaQYc3xK1nyT44NI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728333064; c=relaxed/simple;
+	bh=aOsETMLErRCS/BfHmNp4mfHluNGXQGuBul2dSh08/LQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GxH/rcnDDJ0BLz35pc4gIkDY6imWQB3bPLWU5hqmNpbV6eeAPNb+prqrdeZcNyVOEOeJgEaFLuuYRh9ZycmcwqvyWmRqkd9gGTSQUFMe6uCA9a6xDljPuKEdsLekf1V3HLDewZTjwdK6dTeWUIySW66pMNNndQ1+tt387Gbvwvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3496b480dso43723715ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:31:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728333062; x=1728937862;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEYORwWNcL1Omn7+Gt0+HjIWbRyypA7wNNgoLRuOSRs=;
+        b=Jvoz2o9/atz62JhFMNfnML2jHZJjuBoLsxPAmoeGdGGEjTvwgnFzLynCSHVqAnIwFb
+         Dx1kClsGfubrPANDQvvHt+3lSi6IrdhZ7SndNk0uSF2jCe37XknSVgwhx1QOi5d1tkpV
+         jl6OMfmn02NU+eIJ5cblLdwIROXhs8HnBWEzNVcECYJluTcppuBKSgOMaoOFqgsWmU6G
+         aToznZzkyj8wZeeSuMg11yOm2ShHYBk3eMF/fthFSkOJYBWMM+9WmsZJpGPUC5KQt6nK
+         RmvMNjLZ7oY54ZDUcgwtFPWqIZ3PDUYH/V/Jn+fAFdpU5LuX4njxBt/0R9bRsJKOzoPH
+         /MBA==
+X-Gm-Message-State: AOJu0Yydn3bRP+opq4bYBQrPyjV1q8CFHDQwwK7oOXvTz9kC85125XU5
+	GPbuyrxEUIcjcqmfmxZmne0uJ4mXdSsEXmVcKnr8Zuwxx5mEN+0GrZQeu2cCcDVax4d5yLYElEn
+	CdZdnpo5CBxlq8cRuT3WV5SzVgYJh/8xzixQLpV581wdKzggdxwaEmVY=
+X-Google-Smtp-Source: AGHT+IGY7Gw+d2y52bEgFWcK/ri8aemP99C/CUsLHvoM9H+duuHDYe721yjmsw53NRFWsBsPfWdX6lkpVv970+6z0SA93lf8/F0e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: e8a13637-5923-4367-a551-4a61df33c51d
+X-Received: by 2002:a05:6e02:12cc:b0:3a3:4b10:65a4 with SMTP id
+ e9e14a558f8ab-3a37599ab3dmr111567275ab.9.1728333062045; Mon, 07 Oct 2024
+ 13:31:02 -0700 (PDT)
+Date: Mon, 07 Oct 2024 13:31:02 -0700
+In-Reply-To: <kQXi06MMqFpJHpnTUVuy1lTREJ1DVh1obmiDutmzESdyf1fd2z6pgLfGa32VsBMugcR38-G11y_XLb7M2f6IDWu6OJhnKsp-taulKl3c2sU=@proton.me>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67044506.050a0220.49194.0519.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] possible deadlock in bch2_replicas_entry_validate
+From: syzbot <syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pz010001011111@proton.me, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Hello,
 
-Add mt7988a pinctrl node.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-v2:
-- fix wrong alignment of reg values
----
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++++
- 1 file changed, 241 insertions(+)
+Reported-by: syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
+Tested-by: syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index c9649b815276..7e15934efe0b 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/clock/mediatek,mt7988-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/pinctrl/mt65xx.h>
- 
- / {
- 	compatible = "mediatek,mt7988a";
-@@ -105,6 +106,246 @@ clock-controller@1001e000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		pio: pinctrl@1001f000 {
-+			compatible = "mediatek,mt7988-pinctrl";
-+			reg = <0 0x1001f000 0 0x1000>,
-+			      <0 0x11c10000 0 0x1000>,
-+			      <0 0x11d00000 0 0x1000>,
-+			      <0 0x11d20000 0 0x1000>,
-+			      <0 0x11e00000 0 0x1000>,
-+			      <0 0x11f00000 0 0x1000>,
-+			      <0 0x1000b000 0 0x1000>;
-+			reg-names = "gpio", "iocfg_tr",
-+				    "iocfg_br", "iocfg_rb",
-+				    "iocfg_lb", "iocfg_tl", "eint";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pio 0 0 84>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&gic>;
-+			#interrupt-cells = <2>;
-+
-+			mdio0_pins: mdio0-pins {
-+				mux {
-+					function = "eth";
-+					groups = "mdc_mdio0";
-+				};
-+
-+				conf {
-+					pins = "SMI_0_MDC", "SMI_0_MDIO";
-+					drive-strength = <MTK_DRIVE_8mA>;
-+				};
-+			};
-+
-+			i2c0_pins: i2c0-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c0_1";
-+				};
-+			};
-+
-+			i2c1_pins: i2c1-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c1_0";
-+				};
-+			};
-+
-+			i2c1_sfp_pins: i2c1-sfp-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c1_sfp";
-+				};
-+			};
-+
-+			i2c2_0_pins: i2c2-g0-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c2_0";
-+				};
-+			};
-+
-+			i2c2_1_pins: i2c2-g1-pins {
-+				mux {
-+					function = "i2c";
-+					groups = "i2c2_1";
-+				};
-+			};
-+
-+			gbe0_led0_pins: gbe0-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe0_led0";
-+				};
-+			};
-+
-+			gbe1_led0_pins: gbe1-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe1_led0";
-+				};
-+			};
-+
-+			gbe2_led0_pins: gbe2-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe2_led0";
-+				};
-+			};
-+
-+			gbe3_led0_pins: gbe3-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe3_led0";
-+				};
-+			};
-+
-+			gbe0_led1_pins: gbe0-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe0_led1";
-+				};
-+			};
-+
-+			gbe1_led1_pins: gbe1-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe1_led1";
-+				};
-+			};
-+
-+			gbe2_led1_pins: gbe2-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe2_led1";
-+				};
-+			};
-+
-+			gbe3_led1_pins: gbe3-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "gbe3_led1";
-+				};
-+			};
-+
-+			i2p5gbe_led0_pins: 2p5gbe-led0-pins {
-+				mux {
-+					function = "led";
-+					groups = "2p5gbe_led0";
-+				};
-+			};
-+
-+			i2p5gbe_led1_pins: 2p5gbe-led1-pins {
-+				mux {
-+					function = "led";
-+					groups = "2p5gbe_led1";
-+				};
-+			};
-+
-+			mmc0_pins_emmc_45: mmc0-emmc-45-pins {
-+				mux {
-+					function = "flash";
-+					groups = "emmc_45";
-+				};
-+			};
-+
-+			mmc0_pins_emmc_51: mmc0-emmc-51-pins {
-+				mux {
-+					function = "flash";
-+					groups = "emmc_51";
-+				};
-+			};
-+
-+			mmc0_pins_sdcard: mmc0-sdcard-pins {
-+				mux {
-+					function = "flash";
-+					groups = "sdcard";
-+				};
-+			};
-+
-+			uart0_pins: uart0-pins {
-+				mux {
-+					function = "uart";
-+					groups =  "uart0";
-+				};
-+			};
-+
-+			snfi_pins: snfi-pins {
-+				mux {
-+					function = "flash";
-+					groups = "snfi";
-+				};
-+			};
-+
-+			spi0_pins: spi0-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi0";
-+				};
-+			};
-+
-+			spi0_flash_pins: spi0-flash-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi0", "spi0_wp_hold";
-+				};
-+			};
-+
-+			spi1_pins: spi1-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi1";
-+				};
-+			};
-+
-+			spi2_pins: spi2-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi2";
-+				};
-+			};
-+
-+			spi2_flash_pins: spi2-flash-pins {
-+				mux {
-+					function = "spi";
-+					groups = "spi2", "spi2_wp_hold";
-+				};
-+			};
-+
-+			pcie0_pins: pcie0-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0",
-+						 "pcie_wake_n0_0";
-+				};
-+			};
-+
-+			pcie1_pins: pcie1-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_1_pereset", "pcie_clk_req_n1",
-+						 "pcie_wake_n1_0";
-+				};
-+			};
-+
-+			pcie2_pins: pcie2-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_0_pereset", "pcie_clk_req_n2_0",
-+						 "pcie_wake_n2_0";
-+				};
-+			};
-+
-+			pcie3_pins: pcie3-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_1_pereset", "pcie_clk_req_n3",
-+						 "pcie_wake_n3_0";
-+				};
-+			};
-+		};
-+
- 		pwm@10048000 {
- 			compatible = "mediatek,mt7988-pwm";
- 			reg = <0 0x10048000 0 0x1000>;
--- 
-2.43.0
+Tested on:
 
+commit:         87d6aab2 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173ca707980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d24267b490e2b68a5fa
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=170ca707980000
+
+Note: testing is done by a robot and is best-effort only.
 
