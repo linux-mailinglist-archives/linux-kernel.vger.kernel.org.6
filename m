@@ -1,169 +1,198 @@
-Return-Path: <linux-kernel+bounces-352852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CFB99253C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:00:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C1B99253F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038321F21751
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE23281F3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2506175D46;
-	Mon,  7 Oct 2024 06:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224C013792B;
+	Mon,  7 Oct 2024 07:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="a504at3T"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zolx/uh4"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F1714CB;
-	Mon,  7 Oct 2024 06:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BD28248D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284392; cv=none; b=kVkynzt+PZ0x+ZNFv0I7+kchFZnjVOsmmrS9OMnzPs1qkAlEAzV3nTGn8V3vaDVcrFRwDCT+C+s32wLU5jgJH0u2cj7Z9ZcSD6EzQDxuBi5WHZyHUfJCDouyuPDZbFxjM70rivxL2JfklVRv+strauXFUseXr/4HMCnvYz2is5M=
+	t=1728284417; cv=none; b=R+BBe2kxVJdIlQ6XGt2yRqKvTxxvSiyN6fPdCVWWONuiniqGSdfB4pkP+7PsZOAdLvqOC95IMdYRMmRUt56Brr6iid+cj3WopBbBoFWNH3D6towEutG69yJ1fPBVoRJx3+hguAt2r2/SJf0al6UoUvmcpoBc/TpVm4KNth/aMfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284392; c=relaxed/simple;
-	bh=gqiufrWug7lbmYvdLgLnFpex4w5a+2itgAUwMlOrmt0=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=UyfWW8bYrxlaFWZyLB46Y6wFLKm0mMLzsHdjUvCztvsYeCKq1zKT5CrME/qGIkCWP+V+moTrj9jxRWMhc5otRFLKdb5ykcQsw4ZxokmwlOXfj6iYzJQvyFhpMJsdj6aMv7nu/NirPqoa21meXkqn3p5ulyunfA89Dj/8gHTN6/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=a504at3T; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1728284364; x=1728889164; i=frank-w@public-files.de;
-	bh=R0AGuj5yIrzDKc34jGDi7Sop1ytF0WoQFQCgEomR2do=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=a504at3T4RFK9vS1K5OsHuRPpDQ3D09FXnEbT2tAP8XH8Hzm+O8ljIuQUaltyRFz
-	 GxXIbwB9AJFWK2ehw86IQBlXi0XHwIbKl+E5cJQGsjC5qWgtg99Hv8mrjpZ/et6/Z
-	 qq+aGAwkACQ+5lwX6bJSr84aIAJW7+Q1GOpjciEY6nho8y8c8Nt5VEaCGtabLg/k7
-	 OBLj9bHjVhL1gg8UD31We4jvPacu9x53m+XUB2aOaoc2FCVe2T4Pzfq40+RlpZRLh
-	 1psQ8Eul0d35DS3B14bwoE6Ue3xfytpk3PSV7scZMpttyDkWmq1afZCGB8xCnITir
-	 jAOF62e5bLO1lzw6lg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.153.101] ([217.61.153.101]) by web-mail.gmx.net
- (3c-app-gmx-bap03.server.lan [172.19.172.73]) (via HTTP); Mon, 7 Oct 2024
- 08:59:24 +0200
+	s=arc-20240116; t=1728284417; c=relaxed/simple;
+	bh=zATgE7lGXDAfHPAXx2wVXLiJYbpqKrNzx/5xyMndI9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jyEu34+pAP3zfi0ZnHhF8R5xlgKtmH+ZOSOlC3awE/YYGj+8+W23tTAaAQkLIdN+k0tB8Ta8W5+Rcg3aa2nQlID+KdQPB2smSieTVp7bAwCNR/ymdYdEnoEdWanQPYydpnbSWFhisKQtuoknD/SCA9iw9AW0Ny6Yl68abDURE8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zolx/uh4; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-84e96669774so1161601241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 00:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728284414; x=1728889214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SCLqDqcDPlkIv6TQ0OP2914TguL03CqjRYbcPbKcDc0=;
+        b=zolx/uh4sLXaKuJgpnOpjOY/E6w9w/Fo3BaJWkc9NKbl1T6N01iswf6BiP/PY9GwCU
+         WfsN7Z+cCyJ5JBeffsEPFTJS+kD5d7XecYpHsvqNONpEISFCV2Cxq90S9bBK7LHYr6z5
+         OTsLsZpyIb3zoPhILtlfLFrVrBXhDLfrIZThH65R37RyOGTiSlZYjrSyi3Fptp3JKQ4A
+         ONnE06dgyY2/OS5xnu3a8alIB9ziigEdEpGEeldZ33Vg2PSfj5prUWBo79auSLN3mc6O
+         IfrQemRKHy4ay3daRNoaxR+oFhmLr5l7edXucGmo1MDfjGYUm/dCThVqPQ8F/TZVZmG8
+         hI0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728284414; x=1728889214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SCLqDqcDPlkIv6TQ0OP2914TguL03CqjRYbcPbKcDc0=;
+        b=gUE2+sZaj5AzYRJwaOoSMn5PZ3rfqkNlLur4qeXrHGzuWqFtoefptB3wMO0yFJ4XGK
+         A/y1+cwEjOrQJE6+FDe8RrRRoyPeNAVXSz7DGwK1vFRsg3mstwJIFrSTnfVCo6Wueo3G
+         c7d8g9rNRaBF/uAU7M+P+NYP5IculECM1NdXo5e6frVQsPiB9PDmVqM18CKmHjmDf3y7
+         8dzf1lrApRuEUjdBYHlSsQPtSENaAakPzGUpeoawpSVJnw4dfSz+5dU2UK1SuZNAsD7l
+         VYcaI1TerEuveBGRHw1NQHsVcg8Wemq7J/N7qcGQmZ2Gea2pyXtHdKpkA2gFWQVvzP/W
+         IzXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWX57ZMBin3JU86Lhs2Jwx00/tOyuACmuYBwUnyfn9k7Ll1DL9IL6ejhBeqLdwT2rbsf1tuQ9fUuKqcEtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGEcmF3EHlkX51QQik/2Se9IOHV1kTZH7CdIIZf6QUKJcXQbZ0
+	tVvUYil+0i21DJjKGf1iftDQtiOuu/ac1XY/M3nt1Xz/XdW7SLvT0jBartrKLooDE9QCQJRe8ef
+	vAPZdHJZ3oWNzlafN8y2CqNjhU9bSAi9d2SSfuA==
+X-Google-Smtp-Source: AGHT+IE94jRfwflznC7KODv2WkD1x23XTJ3wMsge83I47cZId79v2Pt+RgapF1ABmVYunsRuAp+VH6dyXb4vh/y7M30=
+X-Received: by 2002:a05:6102:441b:b0:4a3:cc5b:448f with SMTP id
+ ada2fe7eead31-4a405748ddbmr5781557137.4.1728284414377; Mon, 07 Oct 2024
+ 00:00:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-57600902-afb6-42f3-8cf5-54a07710f979-1728284364104@3c-app-gmx-bap03>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank Wunderlich <linux@fw-web.de>, Chaotian Jing
- <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-Subject: Aw: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 7 Oct 2024 08:59:24 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <p7lqqhet6ahmvieh5xaws6ugsnasmuw6k4oajkmfcctuhrs4dn@quvrkmyof5ss>
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-2-linux@fw-web.de>
- <p7lqqhet6ahmvieh5xaws6ugsnasmuw6k4oajkmfcctuhrs4dn@quvrkmyof5ss>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:NJAHfrORCcCOW2WN7H4bEoinSF2FWIRros/25USaRXG8LWD+9GYkr8WuevawXQ3d+J4U3
- Vr2C+PSULryIEv5iClhfCZN+53sAfZc+AL/mrTFcusc+1juiHHrgXf2vX3X1CkuSpBvSzTFgIfsQ
- BH6/dRvkxdPuW3Dypod9GtfKpOfdWR78bsu2Diu/HBwsJB2tYb+QrkMaNpDk25uddO8CdSxfiZhg
- ccbiMYchPo4zoNk5bTkMjuQ/IUOgbRVoxpTqDYF/zZORH4XmZkMDww7yaqVWTX3Uy70TxR1ljSE3
- /w=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zD0Pvuez3Bs=;Po0PEr/OdsOQdAkD0FLE28bTugq
- Xpu/NvntrZGibvMH6upFmsHmHqwxchB/+RSy4RD9dA5LiJOi5OzvTPMMlrhgx47eLAnqk+/M/
- 3sMDLKZUY5MI5Ab5VGZSUZZ1oEqo2Iu5opMvGCyuLjhxBtYIRui3iZoiEN/9q8/UTnC58vuPj
- /9Jrligsv6r2F0cNWWomgpaErws9JutZjvhLpIdir7nP3ORYlMqCVnYnvSVBWkNQusLrfoT6G
- DZ3zUafDXhbLV9sIj4N4cxmOQJmtKM5GEXXkJx5hIU80HG3RDmm//oARnkwnzwgbDaUvWCASf
- kKSgx4xPZyg+xKw4cg4BQkDIoJQ5r3fBQY5LH+In1t/5s5npWmrdraZXvrT9xEV/aGe6Jl7VQ
- rWIK7UCSfsIHYwIx4LkDLLpSD4NXRXJF8w1uYKvcJ2/zuk5xmBstMYbG9+C3KDloGb5uDYm/S
- ggLg+OfKtdf6jlJJUUCAXjDvd2vq1dPJ++Pck695F01WtTXyToUJ8d7FuKaieqIxPFs46C822
- pvUo7sAFUP0gTaPhBl8t1Apz1EY5bx/Tk2KIe8OaM8Fby+oCF73s5eXr7SV0oWdg7nj+O+lph
- v5sX98c9muDq6kPRg8q5pTMUKTvGdnck1hLp6cE2WNvNNcbYBlxKz8jfQUb34A2MxG9i3pva/
- EAdpp5xRoGP2U7rnqqwEZZTyQsB/xSzSRv/XdbB2oQ==
+References: <20240919130444.2100447-1-aardelean@baylibre.com>
+ <20240919130444.2100447-9-aardelean@baylibre.com> <CA+GgBR_kKYOgPUHM5-LUAZboy6nab1tLvC4TFtzpqkjP+5A8wg@mail.gmail.com>
+ <047034ae-135b-4ce9-a407-9b2a00841324@baylibre.com> <20241001194114.16e0ffa5@jic23-huawei>
+ <CA+GgBR_HTwNT6WKdweuuTZ_t+ZmMXrMkYNK+b3pp4f2MmTWzGw@mail.gmail.com>
+ <20241004145430.000012f4@Huawei.com> <20241006115643.7b1fd461@jic23-huawei>
+In-Reply-To: <20241006115643.7b1fd461@jic23-huawei>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Mon, 7 Oct 2024 10:00:03 +0300
+Message-ID: <CA+GgBR9qGfZ2z8+t6kZEfZQOT_Qf7yFrtzNqztGPJt1wsM-eZw@mail.gmail.com>
+Subject: Re: [PATCH v7 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Lechner <dlechner@baylibre.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> Gesendet: Montag, 07. Oktober 2024 um 07:55 Uhr
-> Von: "Krzysztof Kozlowski" <krzk@kernel.org>
-> An: "Frank Wunderlich" <linux@fw-web.de>
-> Betreff: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+On Sun, Oct 6, 2024 at 1:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
 >
-> On Sun, Oct 06, 2024 at 05:34:45PM +0200, Frank Wunderlich wrote:
-> > From: Frank Wunderlich <frank-w@public-files.de>
+> On Fri, 4 Oct 2024 14:54:30 +0100
+> Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+>
+> > On Wed, 2 Oct 2024 09:12:09 +0300
+> > Alexandru Ardelean <aardelean@baylibre.com> wrote:
 > >
-> > Add binding definitions for mmc on MT7988 SoC.
+> > > On Tue, Oct 1, 2024 at 9:41=E2=80=AFPM Jonathan Cameron <jic23@kernel=
+.org> wrote:
+> > > >
+> > > > On Tue, 1 Oct 2024 08:42:23 -0500
+> > > > David Lechner <dlechner@baylibre.com> wrote:
+> > > >
+> > > > > On 10/1/24 3:26 AM, Alexandru Ardelean wrote:
+> > > > > > On Thu, Sep 19, 2024 at 4:05=E2=80=AFPM Alexandru Ardelean
+> > > > > > <aardelean@baylibre.com> wrote:
+> > > > > >>
+> > > > >
+> > > > > ...
+> > > > >
+> > > > > >> @@ -153,7 +349,19 @@ static int ad7606_scan_direct(struct iio_=
+dev *indio_dev, unsigned int ch,
+> > > > > >>         if (ret)
+> > > > > >>                 goto error_ret;
+> > > > > >>
+> > > > > >> -       *val =3D sign_extend32(st->data[ch], 15);
+> > > > > >> +       chan =3D &indio_dev->channels[ch + 1];
+> > > > > >> +       if (chan->scan_type.sign =3D=3D 'u') {
+> > > > > >> +               if (storagebits > 16)
+> > > > > >> +                       *val =3D st->data.buf32[ch];
+> > > > > >> +               else
+> > > > > >> +                       *val =3D st->data.buf16[ch];
+> > > > > >> +               return 0;
+> > > > > >
+> > > > > > Arrggh...
+> > > > > > I messed up here.
+> > > > > > Guillaume found a bug here, where this should be "goto error_re=
+t" or
+> > > > > > do an "if ()  {} else {}"
+> > > > > > How should we do it here?
+> > > > if / else. Goto an error label when it's not an error would be horr=
+ible!
+> > > > > >
+> > > > > > Do we send a fix-patch or send a new series?
+> > > > > >
+> > > > >
+> > > > > Since this patch is already applied, just follow up with another
+> > > > > patch with a Fixes: tag.
+> > > >
+> > > > I sometimes tweak these sort of things if I haven't pushed out
+> > > > as togreg yet (or they are really bad!) but in this case I'm not
+> > > > 100% sure what the comment is, so I'll just apply a fix on top.
+> > > >
+> > > > So David is entirely correct in general but by luck of timing
+> > > > this time I'll tweak it.
+> > > >
+> > > > Please check the result in iio.git/testing
+> > > > I'll hold off pushing that out as togreg until at least end of
+> > > > tomorrow.  One more day o
+> > >
+> > > The "return 0" needs to be removed in the driver.
+> > >
+> > >         if (chan->scan_type.sign =3D=3D 'u') {
+> > >                 if (storagebits > 16)
+> > >                         *val =3D st->data.buf32[ch];
+> > >                 else
+> > >                         *val =3D st->data.buf16[ch];
+> > > -                return 0;
+> > Doh!.   Just goes to show why I shouldn't just edit these things.
+> > Stupid mistake.  I'll fix when on right machine.
+> hopefully now done
+
+Looks good now.
+Apologies for the slow reply.
+
+Thanks
+Alex
+
+>
+> J
 > >
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> > ---
-> > v2:
-> > - fixed minItems to 4
-> > ---
-> >  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 ++++++++++++++++++=
-+
-> >  1 file changed, 24 insertions(+)
+> > Jonathan
 > >
-> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Docum=
-entation/devicetree/bindings/mmc/mtk-sd.yaml
-> > index c532ec92d2d9..7380f72ea189 100644
-> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > @@ -21,6 +21,7 @@ properties:
-> >            - mediatek,mt7620-mmc
-> >            - mediatek,mt7622-mmc
-> >            - mediatek,mt7986-mmc
-> > +          - mediatek,mt7988-mmc
-> >            - mediatek,mt8135-mmc
-> >            - mediatek,mt8173-mmc
-> >            - mediatek,mt8183-mmc
-> > @@ -263,6 +264,29 @@ allOf:
-> >              - const: bus_clk
-> >              - const: sys_cg
+> > >         } else {
+> > >                 if (storagebits > 16)
+> > >                         *val =3D sign_extend32(st->data.buf32[ch], 17=
+);
+> > >                 else
+> > >                         *val =3D sign_extend32(st->data.buf16[ch], 15=
+);
+> > >         }
+> > >
+> > >
+> > >
+> > > >
+> > > > Jonathan
+> > > >
+> > > >
+> > > > >
+> > > > >
+> > > > >
+> > > >
+> > >
 > >
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - mediatek,mt7988-mmc
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          minItems: 4
 >
-> Drop
->
-> > +          items:
-> > +            - description: source clock
-> > +            - description: HCLK which used for host
-> > +            - description: Advanced eXtensible Interface
-> > +            - description: Advanced High-performance Bus clock
-> > +        clock-names:
-> > +          minItems: 3
->
-> This is still wrong... anyway, drop.
-
-arg, sorry again...i should triple-check all before resending.
-
-but dropping means the global 2 is used (making axi+ahb optional), or am i=
- wrong? afaik "minItems: 4" is right here
-
-> Best regards,
-> Krzysztof
->
-
-regards Frank
 
