@@ -1,122 +1,85 @@
-Return-Path: <linux-kernel+bounces-353737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9BC9931F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016069931F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258F92841F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B1A1C229C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE67C1D95A3;
-	Mon,  7 Oct 2024 15:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0511D9678;
+	Mon,  7 Oct 2024 15:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lq8JGo6I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWRuCFBF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F7F1D47AC;
-	Mon,  7 Oct 2024 15:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDA91D9340
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316101; cv=none; b=jl8lnyXL6JIT73t7QU30tTrMSJfcGsimsAGIt/pDrtkXlRZG12/YZx8nPEOYg6i6+VORcDODu3+I7RpCKqlxwdDVZqTxlYE8XYX73b7cqp9mQFqGyLy5FrbJKji7I5taV56SMqh3jzFFdrjoQpt9Yq+7UNSRlkLzR/KrwaqaYCI=
+	t=1728316133; cv=none; b=Aa0aGBkRWdAkE+OsNXJalzxaM63HNXumwd4QL0PCKylUsvPD7SgDtNVREGlewDjEBNH/Hd6RP5EYRVkzjm96w5jUO1ZRI7lnUQVJYvRtckeCAswjgNMHtUzd2lRZsxtB0TJOqDBbpFbiFFOhGugFaC6JyCrNL2RnH7xafRJPzR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316101; c=relaxed/simple;
-	bh=BvIRqePvItPKQGZhVGBArWVNWRnqTWrk0hpOKpr1jUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJW2jhyHsDaaZxaYdX506UvRijvZiCaxCk8duAiHtUWmNphi8wdCk7xhLB20OcmfQ801zVwALA5UQrBtRc3Z1kBMamfIXTrO5f/B5ghS9AR5yQFwzMjGR5myV0pcxbNA2KOgZi3ef2194CuJOy096Kq/dVQCn+h/NnFQis9GBk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lq8JGo6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B521C4CEC6;
-	Mon,  7 Oct 2024 15:48:20 +0000 (UTC)
+	s=arc-20240116; t=1728316133; c=relaxed/simple;
+	bh=Gh9ajqPoQnJUuZc9tYe+iYr+Iu41onmPi9i3M1+Dq14=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OjV9oIfnm33mzIUDmzRqIe9a7jWfNYLfRW3G0px8evaUp4OlrovZGZHzlozm1Hx66LBvMHE4cw9klhZ3DIcNZ2iNcSUxP3WcAFRG4EIqEy7txy12sP6Bn/4cfRj1g58zXUBmrP7hj9hN+0/J3IIGViIFb6WblIJ697Oty0F1euM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWRuCFBF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B153EC4CEC6;
+	Mon,  7 Oct 2024 15:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728316100;
-	bh=BvIRqePvItPKQGZhVGBArWVNWRnqTWrk0hpOKpr1jUQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lq8JGo6I34izVAMuIGTCyZaBxer8WOFKJ5RkU1140IXVvojo14xjkuhEkBnhJEvir
-	 LCBLS6EXoE//yC9Fo8Oy5Diuk2xnfOekGOuoAMC7m9h0k/m6lFhSQBz24Dd4Q4nW/g
-	 Hz0s2Z8bfDvJAn6akt18hy8aGwihE0R8X3BxvS1TcQO1YQjfe4iJ9jr0I4QG3hm8ET
-	 57u8L2xDED5kieUk6L5w2ckJH8biMswir6MKtjLxWmGuiUv/VejutfyNsTXNo1wM71
-	 i5uUT5xhuQvugS+EdNdJoSjT3qvBSLxwa6lNlJKhFusjRqsamqxgjUqnNzIsHoBR1A
-	 SVykrhrphCQLg==
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e0402a98caso2434407b6e.3;
-        Mon, 07 Oct 2024 08:48:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3yJf2F4PyLVHu9D/wRSSryYsUYR5MoEcE7cSO4QTqaraLzub/WqEGtcDwsh/1Sits6jgNTL4Yh6EHjjM=@vger.kernel.org, AJvYcCVTZ+KXS2YUXLqmuMyLTOkg1r1iV+miv4IAmx89Hvi/Kn0iYo3ZrKfpUpF1GlnyKqCGEsWiSJF9PXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx917Ilj2pQhKgQr3yw3YRFsQIRfPkqmgOdPIsfiVCpY55Hjns1
-	UF9c7aQVqZM0EV5T4HdzTACm16krFMv1XVmu4WAe/WscRQxi5rgeAgpfd3ujUIMOrlH4sEA7bD5
-	6IpCfLQPibnEjyREXjzi+ikGdcoc=
-X-Google-Smtp-Source: AGHT+IG+Bjoy4hnIn6zCDrUD56RsM9Z4KXhwAYcNCR00YhzmEW+RLrYEitFcYuXJCvryOOd2OU3Fe40KVtmwvxZILmI=
-X-Received: by 2002:a05:6808:128a:b0:3df:54d:7b4a with SMTP id
- 5614622812f47-3e3c188d5afmr9184413b6e.46.1728316099978; Mon, 07 Oct 2024
- 08:48:19 -0700 (PDT)
+	s=k20201202; t=1728316132;
+	bh=Gh9ajqPoQnJUuZc9tYe+iYr+Iu41onmPi9i3M1+Dq14=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=lWRuCFBFXN9I3S+L6FNYC5leJICEIhmOVccppeA4OaRo/cDp1ilMmnYTntzorhEIX
+	 NNcY0o2pqpyPOSooPqhsis7a28Yl5pTLChwfRpYy+8IBfcSWRQMeqidP3ecyzf8Fmi
+	 Ca69yzkvRzExzM0iPGRoQ9waVpJLbJQPxp8Z4tsUl0Kkkk8Z3alhA4TzHJR5phh83N
+	 5in/M1bhDSMhrlwoA0XnyCDOO3+iv6m/gfnbc0FR6R4lju01Js/HM8EYJTtU2CCtSl
+	 9KnYq/2TGp6ZLNCexGiXmbpOfwTQtfEy4rnAXSHJqevQhxulj42zSkxl/V8uMAwmnj
+	 6NJSJyLGZcXQQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Josua Mayer <josua@solid-run.com>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240704-mvebu-utmi-phy-v1-1-9d3c8eea46e5@solid-run.com>
+References: <20240704-mvebu-utmi-phy-v1-1-9d3c8eea46e5@solid-run.com>
+Subject: Re: [PATCH] phy: mvebu-cp110-utmi: support swapping d+/d- lanes by
+ dts property
+Message-Id: <172831613135.134526.5113681936204889250.b4-ty@kernel.org>
+Date: Mon, 07 Oct 2024 21:18:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003083952.3186-1-Dhananjay.Ugwekar@amd.com>
- <20241003083952.3186-2-Dhananjay.Ugwekar@amd.com> <CAJZ5v0hoiPo6Q=K=q-EoCNsunr0zLGPJgK39LwnjsSr=btmjOw@mail.gmail.com>
- <ac6aab6d-51d8-47e8-8508-8cc52aba227b@amd.com> <CAJZ5v0iKOQkAUuZaHf1Zcm5sO6xD-dYkeTg8nyC3EuMmY0qDqQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iKOQkAUuZaHf1Zcm5sO6xD-dYkeTg8nyC3EuMmY0qDqQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Oct 2024 17:48:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j46anSdQBnsqojcyn2RGKG259ahd92n380wUSAtRFDxg@mail.gmail.com>
-Message-ID: <CAJZ5v0j46anSdQBnsqojcyn2RGKG259ahd92n380wUSAtRFDxg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] cpufreq: Add a callback to update the min_freq_req
- from drivers
-To: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Cc: gautham.shenoy@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com, 
-	ray.huang@amd.com, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, Oct 7, 2024 at 5:46=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> Hi,
->
-> On Mon, Oct 7, 2024 at 6:40=E2=80=AFAM Dhananjay Ugwekar
-> <Dhananjay.Ugwekar@amd.com> wrote:
-> >
-> > Hello Rafael,
-> >
-> > On 10/4/2024 11:47 PM, Rafael J. Wysocki wrote:
-> > > On Thu, Oct 3, 2024 at 10:44=E2=80=AFAM Dhananjay Ugwekar
-> > > <Dhananjay.Ugwekar@amd.com> wrote:
-> > >>
-> > >> Currently, there is no proper way to update the initial lower freque=
-ncy
-> > >> limit from cpufreq drivers.
-> > >
-> > > Why do you want to do it?
-> >
-> > We want to set the initial lower frequency limit at a more efficient le=
-vel
-> > (lowest_nonlinear_freq) than the lowest frequency, which helps save pow=
-er in
-> > some idle scenarios, and also improves benchmark results in some scenar=
-ios.
-> > At the same time, we want to allow the user to set the lower limit back=
- to
-> > the inefficient lowest frequency.
->
-> So you want the default value of scaling_min_freq to be greater than
-> the total floor.
->
-> I have to say that I'm not particularly fond of this approach because
-> it is adding a new meaning to scaling_min_freq: Setting it below the
-> default would not cause the driver to use inefficient frequencies
 
-s/not/now/ (sorry)
+On Thu, 04 Jul 2024 16:57:43 +0200, Josua Mayer wrote:
+> CP11x UTMI PHY supports swapping D+/D- signals via digital control
+> register 1.
+> 
+> Add support for the "swap-dx-lanes" device-tree property, which lists
+> the port-ids that should swap D+ and D-.
+> The property is evaluated in probe and applied before power-on
+> during mvebu_cp110_utmi_port_setup.
+> 
+> [...]
 
-I should have double checked this before sending.
+Applied, thanks!
 
-> which user space may not be aware of.  Moreover, it would tell the
-> driver how far it could go with that.
->
-> IMV it would be bettwr to have a separate interface for this kind of tuni=
-ng.
+[1/1] phy: mvebu-cp110-utmi: support swapping d+/d- lanes by dts property
+      commit: d6c496f05e98c6d25ac73f23fd0075913620de56
+
+Best regards,
+-- 
+~Vinod
+
+
 
