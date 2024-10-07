@@ -1,241 +1,215 @@
-Return-Path: <linux-kernel+bounces-353188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAC3992A11
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:13:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2766992A14
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEA2282C9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:13:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264491F22E3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3491D1E71;
-	Mon,  7 Oct 2024 11:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E891D1E89;
+	Mon,  7 Oct 2024 11:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXGTxGb6"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+SotpmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3462AD05;
-	Mon,  7 Oct 2024 11:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629A12AD05;
+	Mon,  7 Oct 2024 11:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299574; cv=none; b=gUif8pHDoEcmLl+u5a/vx/2pscmm8YHjqGcOWLCbclfRrOw0xCdY+ZzulmnSd7Xq3IW8Z6HZjN1Uj8xZ0FU6auWkfaRL9HaoQp96NsCrSH56coLcul7uwi+xLXM8urj3xRNu6USnrhlIprTtM/XzQO9u/FXA6Cj/73LM9YQj9f4=
+	t=1728299602; cv=none; b=UfHd0Of623SbpJBlnwEqaWzzAGHzezIImwzIp0mi1/5McQEjPYhetmAaKoJ47Z0+ZUBsn6P5aATiP/Ospmp0WhxByE08A3jO9vd6OOuHOqqM/gI+gB81TVZHxjGaz4CE5il+Av92Hnnmut3JuErCusTd8QVrbfu/3+rJyJTg7oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299574; c=relaxed/simple;
-	bh=+0UBYzLaamVI5QhpfCQYL3WXU8nHfkUEMofM6kpbGzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r807mg6EmwrnB7W+CUWFQAsYqjPcEMgBFkomJGNzqM4/wuHYL6m2ich8skuQRf+edR+d15DG4JfXigB8AcTAX+IYxIblTg/okECMzCDJ6ycgpRrNHfQ69Yajg2yHgYQ/ygpHmdXtGUIPVV3bCjOqVhyeclxKL26MQOyE1ameiSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXGTxGb6; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9ad15d11bso373423085a.0;
-        Mon, 07 Oct 2024 04:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728299571; x=1728904371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P0Pu7w7Qofm8rf+EQz/VvkYu8KIa27zSMi6qN0yhbGo=;
-        b=jXGTxGb6/ixz58lvV9Xp77QVQo4/z05RHcUk64Exqhx9BAhQFktaWe7HBWN4j3iVic
-         +yCITAQ0p6QeUJcpVgfhvo6dyu4Spv9cvpb9cysoDK2y2nsKZvFbWqj1zYxhPVfqSsj2
-         knUQ1wp6H01sAo9K0dQSCw04NmIAq112qsUjT6BWeE/78AC8/l8HFKJpZB9/2vhOvUyl
-         i0iyBynaVqp9LJVHolAf7oDKLfaSpKRTlYpQ+9+npqTrYFYt/WddIt5IBWVhgHnNubGx
-         C14ibDuWCc+lELxjTjwfaurZAJMZhcvE1xf+3nN0ORdHCiCmzqFn3m9svRCCOW9je3V5
-         W88A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728299571; x=1728904371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P0Pu7w7Qofm8rf+EQz/VvkYu8KIa27zSMi6qN0yhbGo=;
-        b=q6OoV/e7PlpGY1XOICMR6pjrCyTi/Z/njtktyCZk//SrROacXbEWpy5h0H5t14pM5B
-         LiWPReO2FXXYUW9jwc7qnn7MwQJO/MfzNgJ5KSI6tBmu7Fh2RWq0+nTXbs9Lwrd9H4yf
-         QEOB6g1rE4B/1kvosc2RG+vOansu5Vz6CSMqmnelRTUTSqopgahGj5pm9nthbEyoMk6i
-         DaDmfVfrJS84oN9uEGDksjEhBveVZqBLgc5RzwsBmS9pV3HGazJuol810KYexomkIJRZ
-         Rk/uRZUMcT7DkhSrs4ehIBqnULU/VaOLS3iopw1JuFN5nbmO79Lea/St6NTUAs5/GNWA
-         O7TA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNBPgNEFDfBPD6ygcmoFZdd6GNw6UkdjToPWAeYI+Qb2CvxlYyickCqot1Be/bWYvd21gwuLDJEh1B4y4E@vger.kernel.org, AJvYcCUdsbjupYcmdVMHyn5Gb7SNGclvgk7bBfIPmK+s0EnjJwACEnqbvmtfbocK1MejbZK0c/hTiaoF7oZHhFiw@vger.kernel.org, AJvYcCWCQQX8PuI/bHaoT0BDSal/WY8QIDDwYehIMmltjxYzr+X2xXn8+fxB6ueRnVykQj68MO4TUfnc/Nh5QnFjcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLx2Aoj5q4fXLfUtSgNk2tXZegXRMyNGi7rcc7xCFVCvRWOaL2
-	q9Ty00HiO8f3hm06vp38jDprHe0F29RIi47+JiTBf920b3g6aN3cORVIK8r8GOLBCuhl/XXPJVB
-	2C6gDhtYgnTH5xRMMylDYkt+QXV4=
-X-Google-Smtp-Source: AGHT+IFNLQwu9WYwxkT9V/5IpXoKM/Gp5ODCQEgaSziss4Rh4GRcegimwTg7Sq8jcoV0sbHBvx0DcunvFCiyMFzaVI8=
-X-Received: by 2002:a05:620a:394b:b0:7a1:d73f:53d2 with SMTP id
- af79cd13be357-7ae6f4451d4mr1918784085a.20.1728299571575; Mon, 07 Oct 2024
- 04:12:51 -0700 (PDT)
+	s=arc-20240116; t=1728299602; c=relaxed/simple;
+	bh=lqYKdMgL/af+hqxZMZr0dRdWMk1wm+DIhNwXIm0/hnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njOSVTvphP8t/3S48NpXnryhYAk4GKrqIjW1ZyVGNvpNA3ABje0GpkeWDsohjIWFDLCr5js1NRaH30XQKKhvAJLJuqIE5mDO0S1lhZS+uZFtbi2rALDe/wAfDTjKCCwOAzu1E+9vNhVBXSRKYgy7hgBQEsEV45SoTgcCYoq4wk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+SotpmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4457C4CEC6;
+	Mon,  7 Oct 2024 11:13:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728299602;
+	bh=lqYKdMgL/af+hqxZMZr0dRdWMk1wm+DIhNwXIm0/hnA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P+SotpmY/5NmrHLUDYcjkuEZrdK1V5uqxA+bOVR/Y8JpapNCwkKHacHPbyP0DZpIo
+	 /JWzTYj9Vin+SlFHpgS9YuRZyXMs00/FTmjKToAdZBbDDyym/RrKgDgU0nBMNo4b0N
+	 QyNSe3YmLJSx9A8aaWSB55MWhRkMnsKGbb2Y2HNPTZJAd6ssr9HOWey5HfQVrXrike
+	 i6d1D3oa2TVnutA8+mKzyOpwlWj7u+ykcxkjL4TQK3Ja3mMKXYa/152RxK90aSUV20
+	 Xjthd0N7ULO4BJKUSwAKf2DpApBrCh215vPtMJX2DwUjC+JofMoaGkTzhP7WaCvchE
+	 t60SxkDN77h7Q==
+Message-ID: <52790e95-5cb8-41a3-8184-dbde917ed15d@kernel.org>
+Date: Mon, 7 Oct 2024 13:13:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com> <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com> <87h6a43gcc.fsf@intel.com> <20240925-umweht-schiffen-252e157b67f7@brauner>
- <87bk0b3jis.fsf@intel.com>
-In-Reply-To: <87bk0b3jis.fsf@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 7 Oct 2024 13:12:39 +0200
-Message-ID: <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds() operations
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988
+ SoC
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: Frank Wunderlich <linux@fw-web.de>,
+ Chaotian Jing <chaotian.jing@mediatek.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
+ ansuelsmth@gmail.com
+References: <20241006153447.41377-1-linux@fw-web.de>
+ <20241006153447.41377-2-linux@fw-web.de>
+ <p7lqqhet6ahmvieh5xaws6ugsnasmuw6k4oajkmfcctuhrs4dn@quvrkmyof5ss>
+ <trinity-57600902-afb6-42f3-8cf5-54a07710f979-1728284364104@3c-app-gmx-bap03>
+ <486a85cb-8e09-493b-93f8-6610855b5f7e@kernel.org>
+ <trinity-c35964a7-f0d4-435a-ac76-586e90c666ed-1728287815279@3c-app-gmx-bap03>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <trinity-c35964a7-f0d4-435a-ac76-586e90c666ed-1728287815279@3c-app-gmx-bap03>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 4:17=E2=80=AFPM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Christian Brauner <brauner@kernel.org> writes:
->
-> > On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
-> >> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
-> >>
-> >> > Miklos Szeredi <miklos@szeredi.hu> writes:
-> >> >
-> >> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> >> >> <vinicius.gomes@intel.com> wrote:
-> >> >>>
-> >> >>> Add a comment to these operations that cannot use the _light versi=
-on
-> >> >>> of override_creds()/revert_creds(), because during the critical
-> >> >>> section the struct cred .usage counter might be modified.
-> >> >>
-> >> >> Why is it a problem if the usage counter is modified?  Why is the
-> >> >> counter modified in each of these cases?
-> >> >>
-> >> >
-> >> > Working on getting some logs from the crash that I get when I conver=
-t
-> >> > the remaining cases to use the _light() functions.
-> >> >
-> >>
-> >> See the log below.
-> >>
-> >> > Perhaps I was wrong on my interpretation of the crash.
-> >> >
-> >>
-> >> What I am seeing is that ovl_setup_cred_for_create() has a "side
-> >> effect", it creates another set of credentials, runs the security hook=
-s
-> >> with this new credentials, and the side effect is that when it returns=
-,
-> >> by design, 'current->cred' is this new credentials (a third set of
-> >> credentials).
-> >
-> > Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
-> > overwritten. But I'm stil confused what the exact problem is as it was
-> > always clear that ovl_setup_cred_for_create() wouldn't be ported to
-> > light variants.
-> >
-> > /me looks...
-> >
-> >>
-> >> And this implies that refcounting for this is somewhat tricky, as said
-> >> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout"=
-).
-> >>
-> >> I see two ways forward:
-> >>
-> >> 1. Keep using the non _light() versions in functions that call
-> >>    ovl_setup_cred_for_create().
-> >> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
-> >>    refcount.
-> >>
-> >> I went with (1), and it still sounds to me like the best way, but I
-> >> agree that my explanation was not good enough, will add the informatio=
-n
-> >> I just learned to the commit message and to the code.
-> >>
-> >> Do you see another way forward? Or do you think that I should go with
-> >> (2)?
-> >
-> > ... ok, I understand. Say we have:
-> >
-> > ovl_create_tmpfile()
-> > /* current->cred =3D=3D ovl->creator_cred without refcount bump /*
-> > old_cred =3D ovl_override_creds_light()
-> > -> ovl_setup_cred_for_create()
-> >    /* Copy current->cred =3D=3D ovl->creator_cred */
-> >    modifiable_cred =3D prepare_creds()
-> >
-> >    /* Override current->cred =3D=3D modifiable_cred */
-> >    mounter_creds =3D override_creds(modifiable_cred)
-> >
-> >    /*
-> >     * And here's the BUG BUG BUG where we decrement the refcount on the
-> >     * constant mounter_creds.
-> >     */
-> >    put_cred(mounter_creds) // BUG BUG BUG
-> >
-> >    put_cred(modifiable_creds)
-> >
-> > So (1) is definitely the wrong option given that we can get rid of
-> > refcount decs and incs in the creation path.
-> >
-> > Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
-> > __completely untested__:
-> >
->
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index ab65e98a1def..e246e0172bb6 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry=
- *dentry, struct inode *inode,
-> >                 put_cred(override_cred);
-> >                 return err;
-> >         }
-> > -       put_cred(override_creds(override_cred));
-> > +
-> > +       /*
-> > +        * We must be called with creator creds already, otherwise we r=
-isk
-> > +        * leaking creds.
-> > +        */
-> > +       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentr=
-y->d_sb));
-> >         put_cred(override_cred);
-> >
-> >         return 0;
-> >
->
-> At first glance, looks good. Going to test it and see how it works.
-> Thank you.
->
-> For the next version of the series, my plan is to include this
-> suggestion/change and remove the guard()/scoped_guard() conversion
-> patches from the series.
->
+On 07/10/2024 09:56, Frank Wunderlich wrote:
+> Hi
+>> Gesendet: Montag, 07. Oktober 2024 um 09:04 Uhr
+>> Von: "Krzysztof Kozlowski" <krzk@kernel.org>
+>> Betreff: Re: Aw: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+>>
+>> On 07/10/2024 08:59, Frank Wunderlich wrote:
+>>>> Gesendet: Montag, 07. Oktober 2024 um 07:55 Uhr
+>>>> Von: "Krzysztof Kozlowski" <krzk@kernel.org>
+>>>> An: "Frank Wunderlich" <linux@fw-web.de>
+>>>> Betreff: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+>>>>
+>>>> On Sun, Oct 06, 2024 at 05:34:45PM +0200, Frank Wunderlich wrote:
+>>>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>>>
+>>>>> Add binding definitions for mmc on MT7988 SoC.
+>>>>>
+>>>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+>>>>> ---
+>>>>> v2:
+>>>>> - fixed minItems to 4
+>>>>> ---
+>>>>>  .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
+>>>>>  1 file changed, 24 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>>>> index c532ec92d2d9..7380f72ea189 100644
+>>>>> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>>>> @@ -21,6 +21,7 @@ properties:
+>>>>>            - mediatek,mt7620-mmc
+>>>>>            - mediatek,mt7622-mmc
+>>>>>            - mediatek,mt7986-mmc
+>>>>> +          - mediatek,mt7988-mmc
+>>>>>            - mediatek,mt8135-mmc
+>>>>>            - mediatek,mt8173-mmc
+>>>>>            - mediatek,mt8183-mmc
+>>>>> @@ -263,6 +264,29 @@ allOf:
+>>>>>              - const: bus_clk
+>>>>>              - const: sys_cg
+>>>>>
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        compatible:
+>>>>> +          contains:
+>>>>> +            enum:
+>>>>> +              - mediatek,mt7988-mmc
+>>>>> +    then:
+>>>>> +      properties:
+>>>>> +        clocks:
+>>>>> +          minItems: 4
+>>>>
+>>>> Drop
+>>
+>> Drop this line.
+>>
+>>>>
+>>>>> +          items:
+>>>>> +            - description: source clock
+>>>>> +            - description: HCLK which used for host
+>>>>> +            - description: Advanced eXtensible Interface
+>>>>> +            - description: Advanced High-performance Bus clock
+>>>>> +        clock-names:
+>>>>> +          minItems: 3
+>>>>
+>>>> This is still wrong... anyway, drop.
+>>>
+>>> arg, sorry again...i should triple-check all before resending.
+>>
+>> Drop this line.
+>>
+>>>
+>>> but dropping means the global 2 is used (making axi+ahb optional), or am i wrong? afaik "minItems: 4" is right here
+>>
+>> How minItems:4 is right here?
+> 
+> mt7988 needs all 4 clocks, tested with only first 2 (based on global minitems) and got this (similar with first 3 clocks):
+> 
+> [   10.826271] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting cmd/data/mrq
+> [   10.833485] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting mrq=(____ptrval____) cmd=18
+> [   10.842006] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting cmd=23
+> [   10.848704] mtk-msdc 11230000.mmc: msdc_track_cmd_data: cmd=18 arg=00036402; host->error=0x00000002
+> [   15.866269] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting cmd/data/mrq
+> [   15.873480] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting mrq=(____ptrval____) cmd=13
+> [   15.881998] mtk-msdc 11230000.mmc: msdc_request_timeout: aborting cmd=13
+> [   15.888694] mtk-msdc 11230000.mmc: msdc_track_cmd_data: cmd=13 arg=00010000; host->error=0x00000002
+> 
+> so minItems:4 is imho right here
 
-Vinicius,
+So the list has 5 items? Then your binding is incomplete.
 
-I have a request. Since the plan is to keep the _light() helpers around for=
- the
-time being, please make the existing helper ovl_override_creds() use the
-light version and open code the non-light versions in the few places where
-they are needed and please replace all the matching call sites of
-revert_creds() to
-a helper ovl_revert_creds() that is a wrapper for the light version.
+Best regards,
+Krzysztof
 
-Also, depending on when you intend to post your work for review,
-I have a feeling that the review of my patches is going to be done
-before your submit your patches for review, so you may want to consider
-already basing your patches on top of my development branch [2] to avoid
-conflicts later.
-
-Anyway, the parts of my patches that conflict with yours (s/real.file/realf=
-ile/)
-are not likely to change anymore.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/20241006082359.263755-1-amir73il@=
-gmail.com/
-[2] https://github.com/amir73il/linux/commits/ovl_real_file/
 
