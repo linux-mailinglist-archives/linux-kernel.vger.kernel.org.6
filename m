@@ -1,422 +1,238 @@
-Return-Path: <linux-kernel+bounces-353295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EFF992BB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:27:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48007992BBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8421283104
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85501F22664
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12851D278C;
-	Mon,  7 Oct 2024 12:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4821D26EA;
+	Mon,  7 Oct 2024 12:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjBxqF+9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ssW7Ip/R"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFD81D1F63
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728304039; cv=none; b=V3gVFRcKXx10l7OOaRZxm5oxpK8YQzQW99zwqiZ98/zwYCaf4Y/MAvB2l1UEgYa7Bh1yPvugosN+kengUth42myFvMImxj93BMUzUvsiOeoqQ2XWLoHBMW/wcKO2ye+xu4xpTT8bnQFK0Kz68HO4CHEwAKX3ceVIewQJvixhpzw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728304039; c=relaxed/simple;
-	bh=x1bhCSRMZrbkDZYDGKmJJVG+bTAzG8QmDW8aqIplGxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOIJsmBmquSNDPvq0EcVcXonsHItu1aknR9IXVDaxrAMeDi9wkqnmPmVRIaxPEjVILvPl0fhld0IJYESVUL18vf47MF5CyZts/4bepSfX+sSh1ZkamNatQxlRR48SR/clRQHD4iq+/d05dELQzURyMtZSw2kOUFALHISUWvLmRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjBxqF+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C824C4CEC6;
-	Mon,  7 Oct 2024 12:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728304037;
-	bh=x1bhCSRMZrbkDZYDGKmJJVG+bTAzG8QmDW8aqIplGxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjBxqF+9z42OuSOaxkPVw/SMtdOWgWE1stmjW/bUTBae4oHOssF2ZZv1q1PzO+H9d
-	 qAJVXdzP/AIbQh8CPrF9cQb6TYNVdz4k+lf1iP2jhKIWoI46P9nJVrCZ5TTSde9CWb
-	 hStPSTB1HZcm3ChchE4q5EDplvC2UYt41cchEou9gfseXgTlnltynxaHHv8asJnpzZ
-	 HY3qOVH1LCJ2KS7+pqTD60xB3IwRtTBp9rlsVU7QZPlaOLDuCNMLGTNY9MqXUhYBZB
-	 cpuAOWAjflLRouABNjg5Ny2OVOq8eTy38Rp5pKGJAGI7n8rFi9j/77ELuv4femXcsx
-	 MHFVLEAPTGnwA==
-Date: Mon, 7 Oct 2024 14:27:14 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: luca.boccassi@gmail.com
-Cc: linux-kernel@vger.kernel.org, christian@brauner.io, oleg@redhat.com
-Subject: Re: [PATCH v7] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241007-lustig-mietfrei-b507b1fb7f03@brauner>
-References: <20241007094438.398806-1-luca.boccassi@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24C51547D4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728304117; cv=fail; b=MnFhU39jnb3sXsu54cO/bIOe/8MvUUicyPlRH+YQ4FPhvEGQcsqzHcvUjqwQoohF+bL/Xs5uaJGiLX9r4RmTFyUI6qG/7Qf8CmoTNBheI6oSItKly6iLxyntWoVInGm1jz1pO6TzJAoTqqTcuU6hQRKdGmwvzaEPqFExWxKy/AE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728304117; c=relaxed/simple;
+	bh=J1VK+aHzqsksYICvEbzIMdwD+Sdy6VhY1oSDBMN0NXY=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RuLqmrrvKiJE9VeiatOcP1zFrE9esOXQTElQlNRSU8hdQlfWO9sQSYtUFQFnom5sjS0xdvdriz7NiOIAFcbQQpdAO22LDAe8LU8hiZ6SUe/3WrSKFwVAiRgqAAe/tolY71mQ1YA536NUHZeXQWOxhUmJ+Y9h6LlR8wmusLycNmQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ssW7Ip/R; arc=fail smtp.client-ip=40.107.94.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tmGs9bf5fZBk0C5CPdpvqReuNGYpn2dxpf1Mq7/D1X5YjjRNb0dagShO7584OIXF04/2h6hj1RZZtQbDd5w1E9tam1rLTt5mC3gbMZn7tgj0meUOmhbC6JBBLsBc3vGq5oywwHxHq25Ciirdyek7svfSYCHahBfQZDdDlnYsmvDmOEWwGSEV5mBv7bstTiV5sCNJmtThm7x+03tQguqFYUa9+dyNmlLMeIyqBV1iVepFK+JMD7bcnpYFnmtir74IlOUFm5poQytBgnFv7LAjMyKkv6vsdRuR4gNtoEKvngY8IR88SBZWc/xjdllnGlmBuHaE5kGB9u9ArvVDxgnPSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CctZH7L+yPRG4QhflR2Z+mL90lwc/GBr/Bs9VMgF1/U=;
+ b=sABCh2BZ6gbmnY/c5pbTOQcjAR47dBkIc+1l5U456InP129+vcRUZqXPybbD6r2mirtU+evZ7Ojrdjthv2cHrkCLTD+PiOcjZU7ZzuD17udf7Qe3pN/trxXLZBtNfA7uUDFTEe+T7jlQvh3Y1+aUZwETGtw3ASlvtgmn/NyJHPaCtyF6g6HbUg4WXmPbgWj0CTenhxdaJnMw4hefMRjxJXsUeNfBXg5ZbZjNDL3M0xQvilyKaQw3faNIjUImmNI3Hxu1ksh2xKJK7/9qeJRNlUS3jydgbgNEbvR3Ee/zJoHsqlCZ+WFNLF3rduQriRDFyyoLciMaf23o/2owgDNO6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CctZH7L+yPRG4QhflR2Z+mL90lwc/GBr/Bs9VMgF1/U=;
+ b=ssW7Ip/Rrp4+DDyMEQsFFRbnmgcvHgsURJTaMAMp2gSWycTVQSHtjw/1RRBxE2kvBYWBScRPp1/I6Znk6eGRsHuQ3VFilJ9/QSIKvtzyZoQLXQ775MWw910FAtAZ0HWawk4ncPpFJUMEXcqf4Jq9Z9erKevhyNZesF3Et+MEHKEDfsUg9ld1i50iVJLt3T5wiy86uFlJpfhuF79g+zW/EAemjJhLwNhBTKzkj8/z2a8R+1mHUWF0Pt/MVSciqxecwQxpxOqyO7y30BPzqBT8rlobXzFSc/Wc8w7mAG2DxY/3yvKSowvwWI039LoSWXXHwX9D4A1AdQivUhvpkCYD/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL1PR12MB5851.namprd12.prod.outlook.com (2603:10b6:208:396::13)
+ by BN5PR12MB9512.namprd12.prod.outlook.com (2603:10b6:408:2ab::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.9; Mon, 7 Oct
+ 2024 12:28:31 +0000
+Received: from BL1PR12MB5851.namprd12.prod.outlook.com
+ ([fe80::d4a:9ce3:c92e:e938]) by BL1PR12MB5851.namprd12.prod.outlook.com
+ ([fe80::d4a:9ce3:c92e:e938%6]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 12:28:31 +0000
+Message-ID: <f9fa14c1-f487-4ad9-9bc9-7c1db6de1ae6@nvidia.com>
+Date: Mon, 7 Oct 2024 15:28:22 +0300
+User-Agent: Mozilla Thunderbird
+From: Yonatan Maman <ymaman@nvidia.com>
+Subject: Re: [PATCH 2/2] nouveau/dmem: Fix memory leak in `migrate_to_ram`
+ upon copy error
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: nouveau@lists.freedesktop.org, Gal Shalom <GalShalom@nvidia.com>,
+ kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
+ daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240923135449.356244-1-Ymaman@Nvidia.com>
+ <20240923135449.356244-3-Ymaman@Nvidia.com> <ZvqJgMVBs2kAWguk@pollux>
+Content-Language: en-US
+In-Reply-To: <ZvqJgMVBs2kAWguk@pollux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0516.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13b::23) To DM4PR12MB5866.namprd12.prod.outlook.com
+ (2603:10b6:8:65::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007094438.398806-1-luca.boccassi@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5851:EE_|BN5PR12MB9512:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd3e0782-1427-4645-5dc2-08dce6cb8d5d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b0doV1Z5c2ZUSE42WU5ZTVVrSmVXSENJTldPR2h0SDQ0UFZyL01VaFdjdjdY?=
+ =?utf-8?B?T1VYUGF1ODhKUEo4cThaWnNCSTlXRnMyYnZ6TFRScjhDYU15LzhMUU1oeW54?=
+ =?utf-8?B?NFMrOWhxYmhaLzloUUFCQUFkR2tGU1pWTmVQRFJ4MC9KcXMyOWc0OHJPNVky?=
+ =?utf-8?B?SFduNXB3eElueWxXUFg5MzIzVTFhNE1yRlVrZXl4MCtpNmhSVGF5VFJPVTFH?=
+ =?utf-8?B?SHRKbmhGUXgwWkMvdFBucXQzQ3ZwTUZSazBCVGlmMnNHT2YvN21TRUxIRm5l?=
+ =?utf-8?B?S2xkeE16b01zWDhkTS9jVWhTc3ZqSVRxbTg5dk1RajRNbHVDaURwMEljeEk4?=
+ =?utf-8?B?RG9WTll0K2FaY1plSmxZR0FQdTVSQjM3QW0vZHY4MTBWbFdhQTYxM215SjlS?=
+ =?utf-8?B?ME9JSE0ySzgvZVBWUC9NSWN6RWRBQ2tqbUxMZVcwWDFsNVpGSGNVQWpJMHkv?=
+ =?utf-8?B?U3hyN1BjT0pUOWlEbEJ0VFlBUzh3YlhuL011SGYwSks0ZDRZUVlma2ZCVWI4?=
+ =?utf-8?B?UVEwdUVvbFFwRmIyek1lVWZRUmI0RVRwMGEyV2syZngvMmhMdnlwTUlBci9s?=
+ =?utf-8?B?bjJxa2VmQmNLNmRleThjalh5RldVTVZ2VGVjUzdzRStyQU1ncFJaakpQNlFL?=
+ =?utf-8?B?bFJ6WkFVQ0VPZGI1c2xNNUVZYlJJaWQveFdQWWNrcUYyRjlLd0lqOFU5YUpR?=
+ =?utf-8?B?czlxQkExdmhLeGVTQTY2U2ozYzdjQVoxVGxQb2lXbkttL0RVQ2lLNGYvVEls?=
+ =?utf-8?B?YURHbnNob0JIWUwwZHdjbUtvTjZLTkNPdmxxdjdsRE5DRit5ZTJ4T0o0czFm?=
+ =?utf-8?B?bFBneGdRVFQ4MHpKQ216NWUwdkVXT3RLRWNQTEdoVHdtaTA3Wi85bkpWak9v?=
+ =?utf-8?B?dUlQY0ZhOUROZW5wejIwblBnbTN6cUpLSlBWcW9DMEw1OFpsMUpUdkYzTFdN?=
+ =?utf-8?B?VWJjbU1aUCtNVUEwNkZLSHN1ZDRjVFduY1N4cFRnSGFYOTlOMVFMTnA2R0Qv?=
+ =?utf-8?B?Z1JKdVZqU25QYnZmK1RqUEwvRFFLRTRFc0xMTFg3NWJpRjhVTG1xWFNudmhF?=
+ =?utf-8?B?NGVIYmJGSlUyUTVIdTAwdFZCdElaZTdodGZuSWFtU0NiR2ZYYlBzK3JkTGdF?=
+ =?utf-8?B?aFRLOFVIQmdNRjQ4Tmg4R0VFTXE3eGhvenpiUGVIb0N2S1dNVVBvRFBxY1Vq?=
+ =?utf-8?B?STJET2l2cHlNUWRIMXpwVEx5Z3VOOFRxMTlEdEJUTlFlaTU0RnBWdXlEd040?=
+ =?utf-8?B?ckJSN3RETkFla3FWZTcxRGRHcHRrVS9DL2JFUFZwY3BsUHlRcEo5aUtpN0dE?=
+ =?utf-8?B?aHlseGgvdUJMRHpmR3RKVFNuWEM3MlM5YmR0MDVlbmtackorWHJyRTZRTUtv?=
+ =?utf-8?B?dDVCR1I1ZHlSK0tHdWxmRTZ0aGdXUW92VFJVZ1RzZEFManphZldXRTBucTZy?=
+ =?utf-8?B?RVJpdkhpNDBIZnZVa1dmVm9ZcGIzNHNhVTQreFQxS0YwejZ5NFB4OUJFbGRN?=
+ =?utf-8?B?UnJvb3BDeFBXdTU1ZjlncUltdjJnZnJJZm9Va0JGeXhOV1pDZnpWTUpEQ0Vn?=
+ =?utf-8?B?R1RBWjV4KzRFalI5S0FDS3Bpck50K0xnaHZ4Y2RvMHJxYXdCVC9nOE82MFo2?=
+ =?utf-8?B?a2hpM3FjVWFTQVdQWit4SDdrTWJPcktwWS9HMklpenBoQzlZc0FkMkpPL2xV?=
+ =?utf-8?B?NS8rMzd2d1o1bGR2OHJVNmtKVU5MNC9oVXU2WDkwU0o3NWVDOGoxNUpRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5851.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QnhjNWI2QVduYVdXSTBVRDRvSW40cnYvWHVwck9XZ1RZc3BhRHluQ1o1VjBz?=
+ =?utf-8?B?Q0Y3em5FL3N1UHB3Q0RRaTkxN2VubGVlYkNxbzdPQWo3NW1vV2l0VDM3MENG?=
+ =?utf-8?B?cCs5ZTVXZG5zNmZiTlVsVUFFNUdGUitFaUJEWGl3b0JHaThpRFhvd2FCZnYv?=
+ =?utf-8?B?c3VJUU5yMW9OYVJOdmxvY1pSZmV3R1R1YW5IMU1mU2QrRWxsUlBETkRRR2NM?=
+ =?utf-8?B?L09nVU80WWNSRnUvQ0xFaDVpc2tTWEVYSkVySjdvN3JyNWFGWjBlalNYTUNt?=
+ =?utf-8?B?OWk2TzlrNzlhK3VkYUt6YlhNMW5ya0h0WGZ2WUhyUXhwSUFkY2crRFgyVGRM?=
+ =?utf-8?B?YVFiNjVqS3l5ZUkzQ1B2ZWl0RkwyV2QrdEVzbTFVZU1mampDZGs1KzIxL0lo?=
+ =?utf-8?B?YXhFM2g1YTVOZ2Q1S05UVlJEL05HTEg4TTVBeVRuR1BLZzUvM1dpQnpDTTlK?=
+ =?utf-8?B?TkxaSm5iMnU4SGNVNktaNEEvekFNVXVTYjNuU0s2VXVWYkUvd3NRUDFXNDk2?=
+ =?utf-8?B?UTRKbmVXTVBIai9RbVUvWHZuUlc4VkhqTzBvSitkWXlLMVh1cXRJU21nVVk4?=
+ =?utf-8?B?RnBKMFhQeGJ5Q2JwY1plL2dzNkV4MytnemE5bkJkK2tFWXJYN3RraEpDZGlv?=
+ =?utf-8?B?V1F4ZTNja0QyUUQ2WjlTM09Ya2h1dDc1a01xbUo0dzFnS01WdGNUVzhaaDJ6?=
+ =?utf-8?B?TTBmWDhuVXRBeGRlSG1SS2hvek56d0s5aHVwZ00xWWxnUHFOM2NKTmFsbmk3?=
+ =?utf-8?B?d3F2N1REbjhnY3lBWmgweXhxNUhSdFJJR0RxUGcxdFBIcUdZYWowR290dVMw?=
+ =?utf-8?B?OW93ZUVkSXAyd0J4eTRIbFF0VWhoUjljZ2hVZ0M1dk5GVEFKakxwL0hRUjlF?=
+ =?utf-8?B?QkRUVUtYNDV4NjhOK2pkdzlGNHlxSUt5MExCQkJUbnAvdlliaitFYWRzelBx?=
+ =?utf-8?B?dnNVVEJDYlBRdHM1cU4rNTA3OTJJQlhzVjZuL0M1Rlk4R2hVR0wzVVoxcWFK?=
+ =?utf-8?B?QThhMFVyQlJIdGVlSWZneUNURVRZTWdMTGtFT290NWQ1YXErZThuY3lRWGVJ?=
+ =?utf-8?B?Mk1BWE5mdFF2RW1HWms3ZkVtK254NXVnZm5peDV5WjJCdGs3djViZ1czRFg0?=
+ =?utf-8?B?aitKblRxZDd1cTlHeWswNGlaVkh0Q2VFRlhTTzFlRzZEOEJjblh4TUxuNzFV?=
+ =?utf-8?B?NmNRTnplSjJaZ1g1cU1WZG5iTG1FQUwyM2cyL1JKSlViQzJDdGNuc2t0ZXZq?=
+ =?utf-8?B?eTVqVFo2eG1GTUlqWDBkYTFjNXZyeG5ob3RHNXo5QVlDM3FDdmh6T2tyL2dm?=
+ =?utf-8?B?Y2tFdTdlaHRpbklLSWo3QlJYMmdoNzVpYjJWK01sODNXZExnam00NFFpRHpE?=
+ =?utf-8?B?QUowUGpYMWJFZlJmdk1SbFN5dktzbWkwQ0R0eTJGdmlITjdVQTlCVU1aVVB0?=
+ =?utf-8?B?enh5eUJ6Q1Q1bGQ0QnBqTVZ4YTlUQ21KRUlla1c2bGx3cWVFNlJkNHJ4THVr?=
+ =?utf-8?B?OG44UFN3VVdlckkvY2lqZkMyUXNxcmM1cW1TcG9jemRhZVRWK2htUkk5R2xk?=
+ =?utf-8?B?eElCUk93SVBUM1Bodm9NQ2ZKVElPZUFDSWlheXZpWm4wSUhHVmlDb1VGMnIz?=
+ =?utf-8?B?L25qNEM1MnRDUEJTR0crUEhWemsrNVluVEtJMU8rcmhUcVg1eTcwMXdnODYw?=
+ =?utf-8?B?VjJBWCtQTmZCMi9LVndoZUh4STMzYW81VFhSa21QTGFzVDN2Z3dRdkdhYlpT?=
+ =?utf-8?B?SHNjRkJKSzJOMzk2eFpiTWVpekhmNjVuWkZkckdXRW9EYW1PMlNtZDl6Nm56?=
+ =?utf-8?B?U1V1RHp5YVRDNXRaUlBOeWZlRHFYbUlla0pTcUtsMTY3ODBMVVJBVU8zeUtG?=
+ =?utf-8?B?RW54bGM4YjZFYlFhb01odjJQNWJ1bjV5ZjByNjhGZVJrakJUdzl2ak1qazUr?=
+ =?utf-8?B?WmtrOEpUaWM3b0ZmcmZBMGRjYnR6YlVueVBBTVVhZUlOalVSNkdqWndycEhN?=
+ =?utf-8?B?NXZXbE44RjdudFRTWXVyRHR3YXc2NXpJakh0WTJkd2VVVWsvaTJMbStYV0w2?=
+ =?utf-8?B?ZHExOFFMQ2xuaGRyVGpBdHpFeTNmaXBPQWJZRnZqaThFZ0cvM0FUSG5TRWxO?=
+ =?utf-8?Q?b+yxoUq5v6RbWDCsiANRL/0+b?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd3e0782-1427-4645-5dc2-08dce6cb8d5d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5866.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 12:28:31.3829
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gSsnaENVQquwraiGkWxr/wdf+gAbaQU20du/542RwTP0WuWpaQyOPsd2GQIg5aIFxHYfk8uPNQp9V1bITN7i7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9512
 
-On Mon, Oct 07, 2024 at 10:43:28AM GMT, luca.boccassi@gmail.com wrote:
-> From: Luca Boccassi <luca.boccassi@gmail.com>
+
+
+On 30/09/2024 14:20, Danilo Krummrich wrote:
+> External email: Use caution opening links or attachments
 > 
-> A common pattern when using pid fds is having to get information
-> about the process, which currently requires /proc being mounted,
-> resolving the fd to a pid, and then do manual string parsing of
-> /proc/N/status and friends. This needs to be reimplemented over
-> and over in all userspace projects (e.g.: I have reimplemented
-> resolving in systemd, dbus, dbus-daemon, polkit so far), and
-> requires additional care in checking that the fd is still valid
-> after having parsed the data, to avoid races.
 > 
-> Having a programmatic API that can be used directly removes all
-> these requirements, including having /proc mounted.
+> On Mon, Sep 23, 2024 at 01:54:58PM +0000, Yonatan Maman wrote:
+>> A copy push command might fail, causing `migrate_to_ram` to return a
+>> dirty HIGH_USER page to the user.
+>>
+>> This exposes a security vulnerability in the nouveau driver. To prevent
+>> memory leaks in `migrate_to_ram` upon a copy error, allocate a zero
+>> page for the destination page.
 > 
-> As discussed at LPC24, add an ioctl with an extensible struct
-> so that more parameters can be added later if needed. Start with
-> returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> optionally.
+> So, you refer to the case where this function fails in nouveau_dmem_copy_one()?
 > 
-> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> ---
-> v7: fix RCU issue and style issue introduced by v6 found by reviewer
-
-We went from v1 to v7 over the weekend? What happened? :D
-Mostly looks good to me.
-
-> v6: use rcu_read_lock() when fetching cgroupid, use task_ppid_nr_ns() to
->     get the ppid, return ESCHR if any of pid/tgid/ppid are 0 at the end
->     of the call to avoid providing incomplete data, document what the
->     callers should expect
-> v5: check again that the task hasn't exited immediately before copying
->     the result out to userspace, to ensure we are not returning stale data
->     add an ifdef around the cgroup structs usage to fix build errors when
->     the feature is disabled
-> v4: fix arg check in pidfd_ioctl() by moving it after the new call
-> v3: switch from pid_vnr() to task_pid_vnr()
-> v2: Apply comments from Christian, apart from the one about pid namespaces
->     as I need additional hints on how to implement it.
->     Drop the security_context string as it is not the appropriate
->     metadata to give userspace these days.
+> If so, can you please explain why adding __GFP_ZERO to alloc_page_vma() helps
+> with that?
 > 
->  fs/pidfs.c                                    | 90 ++++++++++++++++++-
->  include/uapi/linux/pidfd.h                    | 31 +++++++
->  .../testing/selftests/pidfd/pidfd_open_test.c | 81 ++++++++++++++++-
->  3 files changed, 198 insertions(+), 4 deletions(-)
+
+The nouveau_dmem_copy_one function ensures that the copy push command is 
+sent to the device firmware but does not track whether it was executed 
+successfully.
+
+In the case of a copy error (e.g., firmware or hardware error), the 
+command will be sent in the firmware channel, and nouveau_dmem_copy_one 
+might succeed, as well as the migrate_to_ram function. Thus, a dirty 
+page could be returned to the user.
+
+It’s important to note that we attempted to use nouveau_fence_wait 
+status to handle migration errors, but it does not catch all error types.
+
+To avoid this vulnerability, we allocate a zero page. So that, in case 
+of an error, a non-dirty (zero) page will be returned to the user.
+
+>>
+>> Signed-off-by: Yonatan Maman <Ymaman@Nvidia.com>
+>> Signed-off-by: Gal Shalom <GalShalom@Nvidia.com>
 > 
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 80675b6bf884..729dc6091a76 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -2,6 +2,7 @@
->  #include <linux/anon_inodes.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> +#include <linux/cgroup.h>
->  #include <linux/magic.h>
->  #include <linux/mount.h>
->  #include <linux/pid.h>
-> @@ -114,6 +115,85 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
->  	return poll_flags;
->  }
->  
-> +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> +	size_t usize = _IOC_SIZE(cmd);
+> Since this is a bug, please also add a 'Fixes' tag, CC stable and add a
+> 'Co-developed-by' tag if appropriate.
 
-A general comment: The _IOC_SIZE() and similar macros are uapi and thus
-available to userspace. So userspace can figure out how large the struct
-is that the ioctl cmd uses. This doesn't necessarily reflect what the
-kernel knows if e.g., the ioctl cmd is provided by glibc. That's a
-general thing though and we do provide seamless forward- and backward
-compatibility.
-
-> +	struct pidfd_info kinfo = {};
-> +	struct user_namespace *user_ns;
-> +	const struct cred *c;
-> +	__u64 request_mask;
-> +
-> +	if (!uinfo)
-> +		return -EINVAL;
-> +	if (usize < sizeof(struct pidfd_info))
-> +		return -EINVAL; /* First version, no smaller struct possible */
-> +
-> +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-> +		return -EFAULT;
-
-Use copy_struct_from_user() here it's not strictly needed as we
-technically don't care whether userspace passes unitialized stuff as
-this is an output-only struct right now but imho it's just good hygiene.
-
-> +
-> +	c = get_task_cred(task);
-> +	if (!c)
-> +		return -ESRCH;
-> +
-> +	/* Unconditionally return identifiers and credentials, the rest only on request */
-> +
-> +	user_ns = current_user_ns();
-> +	kinfo.ruid = from_kuid_munged(user_ns, c->uid);
-> +	kinfo.rgid = from_kgid_munged(user_ns, c->gid);
-> +	kinfo.euid = from_kuid_munged(user_ns, c->euid);
-> +	kinfo.egid = from_kgid_munged(user_ns, c->egid);
-> +	kinfo.suid = from_kuid_munged(user_ns, c->suid);
-> +	kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
-> +	kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
-> +	kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
-
-Needs a put_cred() here to avoid leaking memory.
-
-> +
-> +#ifdef CONFIG_CGROUPS
-> +	if (request_mask & PIDFD_INFO_CGROUPID) {
-> +		struct cgroup *cgrp;
-> +
-> +		rcu_read_lock();
-> +		cgrp = task_cgroup(task, pids_cgrp_id);
-> +		if (!cgrp) {
-> +			rcu_read_unlock();
-> +			return -ENODEV;
-> +		}
-> +		kinfo.cgroupid = cgroup_id(cgrp);
-> +		rcu_read_unlock();
-
-You're already in a separate scope due to PIDFD_INFO_CGROUPID anyway so
-you can just use a cleanup guard (same thing as systemd's scope-based
-cleanup):
-
-		guard(rcu)();
-		cgrp = task_cgroup(task, pids_cgrp_id);
-		if (!cgrp)
-			return -ENODEV;
-		kinfo.cgroupid = cgroup_id(cgrp);
-
-> +
-> +		kinfo.result_mask |= PIDFD_INFO_CGROUPID;
-> +	}
-> +#endif
-> +
-> +	/*
-> +	 * Copy pid/tgid last, to reduce the chances the information might be
-> +	 * stale. Note that it is not possible to ensure it will be valid as the
-> +	 * task might return as soon as the copy_to_user finishes, but that's ok
-> +	 * and userspace expects that might happen and can act accordingly, so
-> +	 * this is just best-effort. What we can do however is checking that all
-> +	 * the fields are set correctly, or return ESRCH to avoid providing
-> +	 * incomplete information. */
-> +
-> +	kinfo.ppid = task_ppid_nr_ns(task, NULL);
-> +	kinfo.tgid = task_tgid_vnr(task);
-> +	kinfo.pid = task_pid_vnr(task);
-> +
-> +	if (kinfo.pid == 0 || kinfo.tgid == 0 || (kinfo.ppid == 0 && kinfo.pid != 1))
-> +		return -ESRCH;
-> +
-> +	/*
-> +	 * If userspace and the kernel have the same struct size it can just
-> +	 * be copied. If userspace provides an older struct, only the bits that
-> +	 * userspace knows about will be copied. If userspace provides a new
-> +	 * struct, only the bits that the kernel knows about will be copied and
-> +	 * the size value will be set to the size the kernel knows about.
-> +	 */
-> +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
->  static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
->  	struct task_struct *task __free(put_task) = NULL;
-> @@ -122,13 +202,17 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	struct ns_common *ns_common = NULL;
->  	struct pid_namespace *pid_ns;
->  
-> -	if (arg)
-> -		return -EINVAL;
-> -
->  	task = get_pid_task(pid, PIDTYPE_PID);
->  	if (!task)
->  		return -ESRCH;
->  
-> +	/* Extensible IOCTL that does not open namespace FDs, take a shortcut */
-> +	if (_IOC_NR(cmd) == _IOC_NR(PIDFD_GET_INFO))
-> +		return pidfd_info(task, cmd, arg);
-> +
-> +	if (arg)
-> +		return -EINVAL;
-> +
->  	scoped_guard(task_lock, task) {
->  		nsp = task->nsproxy;
->  		if (nsp)
-> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> index 565fc0629fff..24b25cd52ab3 100644
-> --- a/include/uapi/linux/pidfd.h
-> +++ b/include/uapi/linux/pidfd.h
-> @@ -16,6 +16,36 @@
->  #define PIDFD_SIGNAL_THREAD_GROUP	(1UL << 1)
->  #define PIDFD_SIGNAL_PROCESS_GROUP	(1UL << 2)
->  
-> +/* Flags for pidfd_info. */
-> +#define PIDFD_INFO_CGROUPID		(1UL << 0)
-> +
-> +struct pidfd_info {
-> +	/* Let userspace request expensive stuff explictly. */
-> +	__u64 request_mask;
-> +	/* And let the kernel indicate whether it knows about it. */
-> +	__u64 result_mask;
-> +	/*
-> +	 * The information contained in the following fields might be stale at the
-> +	 * time it is received, as the target process might have exited as soon as
-> +	 * the IOCTL was processed, and there is no way to avoid that. However, it
-> +	 * is guaranteed that if the call was successful, then the information was
-> +	 * correct and referred to the intended process at the time the work was
-> +	 * performed. */
-> +	__u64 cgroupid;
-> +	__u32 pid;
-> +	__u32 tgid;
-> +	__u32 ppid;
-> +	__u32 ruid;
-> +	__u32 rgid;
-> +	__u32 euid;
-> +	__u32 egid;
-> +	__u32 suid;
-> +	__u32 sgid;
-> +	__u32 fsuid;
-> +	__u32 fsgid;
-> +	__u32 spare0[1];
-> +};
-> +
->  #define PIDFS_IOCTL_MAGIC 0xFF
->  
->  #define PIDFD_GET_CGROUP_NAMESPACE            _IO(PIDFS_IOCTL_MAGIC, 1)
-> @@ -28,5 +58,6 @@
->  #define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
->  #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
->  #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
-> +#define PIDFD_GET_INFO                        _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
->  
->  #endif /* _UAPI_LINUX_PIDFD_H */
-> diff --git a/tools/testing/selftests/pidfd/pidfd_open_test.c b/tools/testing/selftests/pidfd/pidfd_open_test.c
-> index c62564c264b1..30c50a8ae10b 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_open_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_open_test.c
-> @@ -13,6 +13,7 @@
->  #include <stdlib.h>
->  #include <string.h>
->  #include <syscall.h>
-> +#include <sys/ioctl.h>
->  #include <sys/mount.h>
->  #include <sys/prctl.h>
->  #include <sys/wait.h>
-> @@ -21,6 +22,35 @@
->  #include "pidfd.h"
->  #include "../kselftest.h"
->  
-> +#ifndef PIDFS_IOCTL_MAGIC
-> +#define PIDFS_IOCTL_MAGIC 0xFF
-> +#endif
-> +
-> +#ifndef PIDFD_GET_INFO
-> +#define PIDFD_GET_INFO _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info)
-> +#define PIDFD_INFO_CGROUPID		(1UL << 0)
-> +
-> +struct pidfd_info {
-> +	/* Let userspace request expensive stuff explictly. */
-> +	__u64 request_mask;
-> +	/* And let the kernel indicate whether it knows about it. */
-> +	__u64 result_mask;
-> +	__u64 cgroupid;
-> +	__u32 pid;
-> +	__u32 tgid;
-> +	__u32 ppid;
-> +	__u32 ruid;
-> +	__u32 rgid;
-> +	__u32 euid;
-> +	__u32 egid;
-> +	__u32 suid;
-> +	__u32 sgid;
-> +	__u32 fsuid;
-> +	__u32 fsgid;
-> +	__u32 spare0[1];
-> +};
-> +#endif
-> +
->  static int safe_int(const char *numstr, int *converted)
->  {
->  	char *err = NULL;
-> @@ -120,10 +150,13 @@ static pid_t get_pid_from_fdinfo_file(int pidfd, const char *key, size_t keylen)
->  
->  int main(int argc, char **argv)
->  {
-> +	struct pidfd_info info = {
-> +		.request_mask = PIDFD_INFO_CGROUPID,
-> +	};
->  	int pidfd = -1, ret = 1;
->  	pid_t pid;
->  
-> -	ksft_set_plan(3);
-> +	ksft_set_plan(4);
->  
->  	pidfd = sys_pidfd_open(-1, 0);
->  	if (pidfd >= 0) {
-> @@ -153,6 +186,52 @@ int main(int argc, char **argv)
->  	pid = get_pid_from_fdinfo_file(pidfd, "Pid:", sizeof("Pid:") - 1);
->  	ksft_print_msg("pidfd %d refers to process with pid %d\n", pidfd, pid);
->  
-> +	if (ioctl(pidfd, PIDFD_GET_INFO, &info) < 0) {
-> +		ksft_print_msg("%s - failed to get info from pidfd\n", strerror(errno));
-> +		goto on_error;
-> +	}
-> +	if (info.pid != pid) {
-> +		ksft_print_msg("pid from fdinfo file %d does not match pid from ioctl %d\n",
-> +			       pid, info.pid);
-> +		goto on_error;
-> +	}
-> +	if (info.ppid != getppid()) {
-> +		ksft_print_msg("ppid %d does not match ppid from ioctl %d\n",
-> +			       pid, info.pid);
-> +		goto on_error;
-> +	}
-> +	if (info.ruid != getuid()) {
-> +		ksft_print_msg("uid %d does not match uid from ioctl %d\n",
-> +			       getuid(), info.ruid);
-> +		goto on_error;
-> +	}
-> +	if (info.rgid != getgid()) {
-> +		ksft_print_msg("gid %d does not match gid from ioctl %d\n",
-> +			       getgid(), info.rgid);
-> +		goto on_error;
-> +	}
-> +	if (info.euid != geteuid()) {
-> +		ksft_print_msg("euid %d does not match euid from ioctl %d\n",
-> +			       geteuid(), info.euid);
-> +		goto on_error;
-> +	}
-> +	if (info.egid != getegid()) {
-> +		ksft_print_msg("egid %d does not match egid from ioctl %d\n",
-> +			       getegid(), info.egid);
-> +		goto on_error;
-> +	}
-> +	if (info.suid != geteuid()) {
-> +		ksft_print_msg("suid %d does not match suid from ioctl %d\n",
-> +			       geteuid(), info.suid);
-> +		goto on_error;
-> +	}
-> +	if (info.sgid != getegid()) {
-> +		ksft_print_msg("sgid %d does not match sgid from ioctl %d\n",
-> +			       getegid(), info.sgid);
-> +		goto on_error;
-> +	}
-> +	ksft_test_result_pass("get info from pidfd test: passed\n");
-> +
->  	ret = 0;
->  
->  on_error:
+sure, thanks, I will add, and push it as V2 patch-series.
 > 
-> base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-> -- 
-> 2.45.2
-> 
+>> ---
+>>   drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+>> index 6fb65b01d778..097bd3af0719 100644
+>> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
+>> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+>> @@ -193,7 +193,7 @@ static vm_fault_t nouveau_dmem_migrate_to_ram(struct vm_fault *vmf)
+>>        if (!spage || !(src & MIGRATE_PFN_MIGRATE))
+>>                goto done;
+>>
+>> -     dpage = alloc_page_vma(GFP_HIGHUSER, vmf->vma, vmf->address);
+>> +     dpage = alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO, vmf->vma, vmf->address);
+>>        if (!dpage)
+>>                goto done;
+>>
+>> --
+>> 2.34.1
+>>
+
 
