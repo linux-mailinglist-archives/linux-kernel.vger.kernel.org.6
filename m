@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-353338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD89992C78
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:01:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28A2992C79
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF59A283076
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E52828322D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D591D318B;
-	Mon,  7 Oct 2024 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtDMSCoe"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA3C1D3582;
+	Mon,  7 Oct 2024 13:01:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C65A1534E6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0616C1D3194
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728306064; cv=none; b=grdOUJmp2iVVrRVZk88xkMSQUeSs8dC5OVzZvCHcfpIHvDWwIYyLXIpjsEigaG/+ILSd/9KGgINltohOAT762cauikqfTYhglMJvOloM9iTM9+We/5aNltZe7ZCyS5Dp/ZMWRXaLu327m3YFKRQwn0vikqRvoMwJJC6Ql6W61Ak=
+	t=1728306066; cv=none; b=HRgSQo+XrL2F8zpUc840V0KEKSmuRAKVjAgMOyi8g8R4RWsjLPnLUV/4hvbmLbN2D6zH6N7nQ5qMQ2v2gPasQ12aMLCuzWIs3sKndoHsBITO4L1UDW4b1WKQ2RXj+IROJMUi8ThjWfnmbXmmnxK5sCuVgNpa2RXaVKAE6oiR3Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728306064; c=relaxed/simple;
-	bh=XjNAq8zzNATKpcPKirHtiZswQO2jr+9q0tVuDAQqvVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E5znnoeXh09RdBVLa93BL2Vi+Px7sB7SQQ3s28EYEnmqN/Kg0xPczh/6zT6/BQqiwIfFxtVSqIs/rs7P3du/suHS6w/fDBbtrC5PyHy7BPbyF3CHm0N9yNU0KpzeLjkCZMc/6UCbRbUPL6nCB+pEr19myPOeyDybwgVhjZTFy8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtDMSCoe; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1866c8fso6290035e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728306061; x=1728910861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3ObtdSIL2l2V/JG61h4POE1nSuGmI4nUjp3Q+3TTvI=;
-        b=DtDMSCoePgEPrfIhX/tlqV4sucXk0NwfZaOeas9npFOqHYKrPrf+37GF3hHQstrwia
-         TNdib2ZZzjBnGNfQdrmY5CRwwYjdLSUmCQfn2RQNv4Uixn0+zTCbhrn03TJLuM2DUFWA
-         FOpHHUC25kH/Z3dHPm0SPoJaK66XgJIq85KHD7TIkLrHV3VBd23uDtRt6tdK1i1mIZdA
-         Ajm4qP28HihK7AfoD9BVYKmYG3oSgttDGwoHrK/V9/dX0cnziv3zTaeYPXDc2F6VR8lm
-         cNq4ylNgnihktV37DM/ZUMOy/oJ/+HcvKjTH3EChqSKkXJu280eN1Pauj2O8xjpMg/VP
-         Shgg==
+	s=arc-20240116; t=1728306066; c=relaxed/simple;
+	bh=6ZDwpQNH8ruG29ftAYSNo+XG+3ZJSTwkrpdAFbPdnf8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IGYyep3IsjVIDT+a7nv/uh9+jw8+9xxfbZGKI6uvn02I4GUafA5tCPzIyPRHSU/8y9U6Y59rHwPPbfVSbSMXPQD0EAKExB/MWAm4OLMSeFmqQdW+eiFovjnFCYPjw/LHYHVpeL7lwCTMV/+5+Tu1RxWuuT/+G9CJ3G4mK/4+V6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cda24c462so424104139f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:01:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728306061; x=1728910861;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B3ObtdSIL2l2V/JG61h4POE1nSuGmI4nUjp3Q+3TTvI=;
-        b=e0vgXT/2f7Zu/I8dNXavk8/P9MA0Vb2ctWsEPdY7Afv3vFta+lOTiqufg3HvW18pfJ
-         jIn+ohvE3yPi14x1NIKbQR1Cco+8hUKnzcFxLmLlnzdtrTo/LAZLm9JZ/puBNETEZPNc
-         DdTOr8EKpAUdnDy6XJlaWXT3rzuVmLVkoBQN3ngfR4LnxnfsEg37Uril2ZflfAQTHG+A
-         wgBa0gfHl22cZgLl3iGjrYRyzRjrvmjZlKokFIOhTFN720QX0BRyWio9M5HsfUrN7p/0
-         JQd0LppMJcX8HhcLzChlG4yES3JAmErrunt1KhH6yU0cEw2NbnGCQKcOuu4iOSfgDjC0
-         4Y1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVHXz0X7wFMn3/nBMpuOJTzF0GMBThlJYfKLYWzoremBlglrkTJAvkYhi8CL9F06TnEPF9Sg37QVS/QENg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAUOIflnB3JMUceGWxtx7lpTcNA0RZQMBidO+85v+2LsrV5yto
-	8q61jgciNSc+WZWEVm80AJFZSA1OM24G7zaB7conZkYr4SCJ1YzoKUNAUtqa1xE=
-X-Google-Smtp-Source: AGHT+IGOkOhoHT/NquWnLJBSxnIxGH/WSV5or1VIs9MefuCu6Zuwj+QM7cg4wYkVyH0xCHNFFxRQUg==
-X-Received: by 2002:a5d:598f:0:b0:378:955f:cc09 with SMTP id ffacd0b85a97d-37d0eaf37f5mr3157292f8f.11.1728306060820;
-        Mon, 07 Oct 2024 06:01:00 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a713sm5674582f8f.42.2024.10.07.06.00.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 06:00:59 -0700 (PDT)
-Message-ID: <32040b21-370f-44af-b1fe-bd625bc3fd9d@linaro.org>
-Date: Mon, 7 Oct 2024 15:00:56 +0200
+        d=1e100.net; s=20230601; t=1728306064; x=1728910864;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2b2W98oIBjEk4qhDVYV4zWMNL5u/aDLzl8zsUKuE1vk=;
+        b=wdH3pwbg/5xVe/htXEPISV6rp0p7XLZGz5zo6L/PirQJXskfmyowrETmECEKLmgPGD
+         5qw3m6Rev9zSmXiefqXadZNdGY2FbMEA0Pie5DKOquSPyQrQL57x6T3pW9lVAS38eUOY
+         hJ02CZnyFUYdX7MCLONhCZgRMzbN/i8ooyt3pTGgt8uWaV7J5QWMeDzn3t7V9YmAd3w9
+         Ar2zUq5L0FP7s0RmRyauKIBo9dCDpVtDe6NI/iFIG7SxeJpWpIPakYripPhR+1HCJdyI
+         3V6wdbsqlUoVjoxUkRRHHAGbE1yTTiPuhfG9pyKoGYCTGEgZbyejMq61MWykQCLrGeVG
+         yiuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7QUv0I5j4CZMHewRlhuEyUe3ryzb6lDDUv9fexqF/VFWOAN8cHiIJh3gXfOY5RzRu5G0EZyRAuRjns50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC9q6Hh2jhe/8wY+H42JFJgWt6FFrnp3JRyH0V5SL1uqFcvXyw
+	qk/Y+6Wf8qHDJb6vu3zxy54jOuUSx43KHApPYinSZK0W6xcFeKfcBP/LGhAIq9etKv6N9ZL65tq
+	mSIwIUSE5v7ZG+RJfX2YpUEWoxyMgTqgthiMrIno/IW9Ih78TAW+wCRQ=
+X-Google-Smtp-Source: AGHT+IES1c6ggIagGg+UIBXqrsUM9+WVC9F+mryIJZ0Jdo5NOMaY2S6vwhbvIKMxL3MgxpGJZclMcPVt0AQRKnED5528Ik1OJJp+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "ASoC: tegra: machine: Handle component name
- prefix"
-To: Benjamin Bara <bbara93@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>,
- stable@vger.kernel.org
-References: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:148c:b0:39f:5e18:239d with SMTP id
+ e9e14a558f8ab-3a375a9ac5emr92835985ab.15.1728306063968; Mon, 07 Oct 2024
+ 06:01:03 -0700 (PDT)
+Date: Mon, 07 Oct 2024 06:01:03 -0700
+In-Reply-To: <tencent_E4F3C6420991AEE0AEEB4C80A7CB06CE5206@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6703db8f.050a0220.49194.0508.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_rx_work
+From: syzbot <syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/10/2024 10:12, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
-> 
-> This reverts commit f82eb06a40c86c9a82537e956de401d497203d3a.
-> 
-> Tegra is adding the DAPM of the respective widgets directly to the card
-> and therefore the DAPM has no component. Without the component, the
-> precondition for snd_soc_dapm_to_component() fails, which results in
-> undefined behavior. Use the old implementation, as we cannot have a
-> prefix without component.
-> 
-> Cc: stable@vger.kernel.org # v6.7+
+Hello,
 
-Fixes: f82eb06a40c8 ("ASoC: tegra: machine: Handle component name prefix")
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in hci_rx_work
 
-I think Samsung speyside from the same patchset might repeat this mistake.
+=====================================================
+BUG: KMSAN: uninit-value in hci_acldata_packet net/bluetooth/hci_core.c:3796 [inline]
+BUG: KMSAN: uninit-value in hci_rx_work+0x1092/0x11f0 net/bluetooth/hci_core.c:4030
+ hci_acldata_packet net/bluetooth/hci_core.c:3796 [inline]
+ hci_rx_work+0x1092/0x11f0 net/bluetooth/hci_core.c:4030
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ bt_skb_alloc include/net/bluetooth/bluetooth.h:493 [inline]
+ vhci_get_user drivers/bluetooth/hci_vhci.c:487 [inline]
+ vhci_write+0x122/0x960 drivers/bluetooth/hci_vhci.c:608
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0xb28/0x1540 fs/read_write.c:683
+ ksys_write+0x24f/0x4c0 fs/read_write.c:736
+ __do_sys_write fs/read_write.c:748 [inline]
+ __se_sys_write fs/read_write.c:745 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:745
+ x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Best regards,
-Krzysztof
+CPU: 0 UID: 0 PID: 4561 Comm: kworker/u9:1 Tainted: G        W          6.12.0-rc2-syzkaller-g8cf0b93919e1-dirty #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: hci0 hci_rx_work
+=====================================================
+
+
+Tested on:
+
+commit:         8cf0b939 Linux 6.12-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=121adb80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
+dashboard link: https://syzkaller.appspot.com/bug?extid=6ea290ba76d8c1eb1ac2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=150fc707980000
 
 
