@@ -1,219 +1,158 @@
-Return-Path: <linux-kernel+bounces-353853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC0B9933AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E13A9933B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3191C23480
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2623E285A6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2840F1DBB19;
-	Mon,  7 Oct 2024 16:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730131DC053;
+	Mon,  7 Oct 2024 16:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXePPTq4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LX6GGkh4"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0160E1DB555
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEFD1DBB2E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319548; cv=none; b=LY5Y0QjFwaL79Vm14TSGpeveftwrbdHLM0KVIoXm1WLflEDxdh/Nx4o2pFUxJK1o8whjV3v+7qdOWzzUxUUc9drXm3Tg1XguViKNCfQGYfjppoMtjUdPR73uye1fvFWMuQ5QF/2+8buZovcj4z+RuzScNtnKFyT9ShVFWRvSZ6I=
+	t=1728319586; cv=none; b=aGX4IF5T/jjcm5yGwKCsSPOhx4gPJ+TzeyZAGjxrguUjJbBfL3lESevXzF7wEOSZaKOvUtMxl/Wc/ZdrGLQjBLkZLasEncAFwGJNJjuuP0U0VC+ERUJBI3Cff6Kjo9y63ZwQmYWlh74Ju3FEJUSYLQt+oArVxgeVGQN5sQ0Ax5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319548; c=relaxed/simple;
-	bh=/7ztko93ajz3br8UFXDL1lZr8JEVrLlN0ZTViF/M0ZE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jSa3kT+iC8AFdC+GpsJkiXZV67dOPe16Z/JIKLsIIz+Maekc1Dov0rYlqElkX+SXJ8JmNT1/QQHgcAoaZwx6Bb3EtmQoxpB67fH3wz6ETlX6AExxTQ7N8ztT51h8vLt/KCe0cRCg6xSawqVjMHIYeSusYU76kWSxUtLKPgD5+lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXePPTq4; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e08735ed9dso5985312a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728319546; x=1728924346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mnvskd1UMKG/zIpThM4lfsmOmZwPeMRMLKnKM1lSsPQ=;
-        b=xXePPTq4RR/z0SZpU8eiJGE0S884yjaFLnLU3m6V4+AYbqFG4h3JGpxyRaijtlgLCK
-         JjmhN1+6lVrBL4Wl33p6Quh/93MPHXxveGi1eW2G2lX5u0+iiXnpiyw0CfsuB7EHO3YV
-         j0IBNyGOwO4oUnMahW0LfiYR0yCF/+cMDNdRWlxGHaSWwyi6r3SoVtDly5/3Y3EzbJ/b
-         9RSPpVeCZ+sehzEnFLzzKcM+i84ndUHRKv9NRi48/WYh6n/gfrUHv+GepOb46sO6kFEZ
-         P4OKQROCEGU9MC5XfQ1m1v/HN8EB/betFLfaRm5WxyjQ47I46BIDMV0mem0wEw1ov9g6
-         053Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728319546; x=1728924346;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mnvskd1UMKG/zIpThM4lfsmOmZwPeMRMLKnKM1lSsPQ=;
-        b=ICox7fRXCqJFGuJaaIuFU33smL2Cq8OQsLKuPjhK53AxWulK/ap7JU2aeM2TzprsfQ
-         M/7liLUX2qy563cUe+Ur/BWpD+kJ2G4w2QTvhCtvIDlh2UwCnEej5H2ZW/fzJxNwKufy
-         /lXdkLMfOWUl9eRuxWWTdYR/oEZH3FLXlQEyuxBrHylcig7dIfQ1ODX955py99wFh2tS
-         IUUwQ0t87rODw/v0nCdQHhMkaRMbkPOd7lNvtQf1qKKK7keTyHhpBv7hIf6DKXgtCVh6
-         B8kaPH1Tp1RSGPYEkxtMKL1APuiCMYHg+EL5MHcSrAeHrLvQztfyrJ44/YW1SHW+7y69
-         EI5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzFbnjaXNUqjU8du9RfNxVe8PQPXg5lviuqohQxhiMFIqyY0akD6gutfH+f0xtWhT75nv4he1h6ZuzPXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5J7ZfNmZLCKgkIkCCtEwSY98hOybgiUJwIvsFmOavNR3CNqpR
-	RF75CL5FPYvW7cei+HuazZPJpDN3Lg/1TiBJEIO5AIXdOERB1U8JjbSQ0TrZlbg0x8z2aPJ5QIm
-	MNQ==
-X-Google-Smtp-Source: AGHT+IFiIQrhwfP2AODONDAi/MWD5bThgV6AEO8qEDkrjI6w861ThE+bO5hmJB1ie46Q71cAIh+U1THO8Rc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90a:7807:b0:2e1:e8d7:1947 with SMTP id
- 98e67ed59e1d1-2e1e8d719d8mr42978a91.1.1728319546131; Mon, 07 Oct 2024
- 09:45:46 -0700 (PDT)
-Date: Mon, 7 Oct 2024 09:45:44 -0700
-In-Reply-To: <7c13be04-1d18-45bd-8cfc-f5d37bd39a8e@redhat.com>
+	s=arc-20240116; t=1728319586; c=relaxed/simple;
+	bh=G6NoUnV37AMwHpKWS9b6mDPoI0P/vDZmmDA5MGx/CGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UxB5lHlXGuSlMi8HkBKVCo2+HQt3qzk4Snz4n0+JCgSWajCh034aAZzaqNYDSiVg8i00gVeuWuj0BxbwznmZc7e9CHXWe1avksfak1ImGYULFf/x06nnFUHZhSdrcvRBAwvxs4Ff4yZCuiDG/HDY6FBNClEw+VFwZHnbw3JHULE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LX6GGkh4; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 75BF340004;
+	Mon,  7 Oct 2024 16:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728319582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=68iNExvNeA0rf2jARUcLXniQceO7yvKffrTY9YRTkNM=;
+	b=LX6GGkh4hbgv7HyiuIkaOK30G50unQLlbxQtDQE3wzf4nobQ7sG1Lgn5y6ZlWjA+FJ1Ih8
+	FbCTj0Ug7G3hs8b9KL/FAL+LoYROOOT2lTmLG8thUDYRLhwqBRLXLnf8DkD55sC7rABq5I
+	znWgnRam5ZJwrI1ub0djF3zxtV7PUsbowrMqtXohx3xirsmbwTm/B7ndFhaKnTrz8tiVJ7
+	PzWFWDoesgJGZ9U3LPFrNefdVP+OUtlqgS5B1qIDBh8YKrWw5tb7l05YgilIWM+fTkFGZS
+	86wMUmIKy0zU35mb9d5wyXn4P6j6Y9BGG1Kf/bV6DX/RIGPb6SMUnbuwyGxSpA==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH RESEND v2 0/8] drm/vkms: Add support for multiple plane
+ formats
+Date: Mon, 07 Oct 2024 18:46:05 +0200
+Message-Id: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
- <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com> <8c7fbaf1-61a0-4f55-8466-1ab40464d9db@redhat.com>
- <0a1678d8-0974-4783-a6f6-da85adfa1a34@intel.com> <7c13be04-1d18-45bd-8cfc-f5d37bd39a8e@redhat.com>
-Message-ID: <ZwQQOP89Dj5gvbaP@google.com>
-Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, 
-	akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com, 
-	viro@zeniv.linux.org.uk, khalid@kernel.org, andreyknvl@gmail.com, 
-	luto@kernel.org, brauner@kernel.org, arnd@arndb.de, ebiederm@xmission.com, 
-	catalin.marinas@arm.com, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org, 
-	rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com, 
-	pcc@google.com, neilb@suse.de, maz@kernel.org, 
-	David Rientjes <rientjes@google.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE4QBGcC/3WQwU7EIBCGX6XhLMrQ2pbGmD24Vw96NB6ADi7JU
+ lZg6242++5S1KiJ3maG8H3/zIlEDBYjGaoTCTjbaP2UG35REb2R0wtSO+aecMYbVgOnqqETvlH
+ ttz5Q44OTKVJQKMa27xUHSfLXXUBjDwX7RB7Wj+v7O/Kc5xsbkw/HYpuhvBbwNbR/g2egjHaNN
+ sIg62roVsr7tLXTpfauIGf+jemh+QfDM6ZXdSOENigY/sacPyIHfN3nA6TP3EpGzBznbBqqMTj
+ qbNRXX0W2HNKyq8MYZbnTUN0sMYCxjh73cw6/aBlokKNsDer+p/Y2e8/v3XF05YABAAA=
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2848;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=G6NoUnV37AMwHpKWS9b6mDPoI0P/vDZmmDA5MGx/CGQ=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnBBBVhGQMNVHiFK/ZyaxeFywMZs/DgAgmzojK8
+ 33SZX1A1feJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZwQQVQAKCRAgrS7GWxAs
+ 4p9AD/0WTIJsdlEB9iLSnZ6K7dk7/e6BJeNSxoc4w0Ycx1Tx2yBb408LgGsD5uPUen97y+vNelf
+ bUe3sdGfTuPYQS1PFpjKT+0kFeTpalPvW14IX8vWCvg53Ui8mCRgJCFb8r3qV4YkwtGwmLMrnXL
+ bubyR9eQlMc2v8s1lFcfSZbu2DZkZP9DNp7k/8cc7LlZnDb3JyKU8/CPxDpibJoBlrG2KOItCIk
+ YOQRgR6jCFJA+Gci50tZdFkNAURAmAgR/PeUbahlauJ05vZ/HDeeV/YGoBs7nNJL2Tm49XoYPPh
+ QfzAnFQXI20jPugaizOAV4AFt1JvkYief853yxrv7S7zDWD3A8+loHuXFV8QIpbdj/2ZbFWWRjz
+ UDYEoGebM0fcmynwIdH8sZc2IvLu+X+2iTZw95Ab2sm9bu6Yj2Obk1Ed/mg6eAmNAKRyacB3Jkt
+ VzhGMWe75dnEGK4Wf5cRsHMc7fmz394rfC5NV5PHX2q31ZqOCAFA4k7KXG6ykVGst1Z72p2DY3M
+ thpLom763uNxIEwXXZkOne81VzPBK59mydDYPlN6D42dz+TYr73xqX08BM0OeH4AeYZrO+kl/F1
+ 37WIwqdZs3AJBAGB9BN9tIGO2+DDmXVG3eaCY5QfpSK1Fn+Q9w6YQ7kDFNpZ6YfDYA7dyxNfxgj
+ xHcUKKFgL30TgHA==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Mon, Oct 07, 2024, David Hildenbrand wrote:
-> On 07.10.24 17:58, Dave Hansen wrote:
-> > On 10/7/24 01:44, David Hildenbrand wrote:
-> > > On 02.10.24 19:35, Dave Hansen wrote:
-> > > > We were just chatting about this on David Rientjes's MM alignment c=
-all.
-> > >=20
-> > > Unfortunately I was not able to attend this time, my body decided it'=
-s a
-> > > good idea to stay in bed for a couple of days.
-> > >=20
-> > > > I thought I'd try to give a little brain
-> > > >=20
-> > > > Let's start by thinking about KVM and secondary MMUs.=C2=A0 KVM has=
- a primary
-> > > > mm: the QEMU (or whatever) process mm.=C2=A0 The virtualization (EP=
-T/NPT)
-> > > > tables get entries that effectively mirror the primary mm page tabl=
-es
-> > > > and constitute a secondary MMU.=C2=A0 If the primary page tables ch=
-ange,
-> > > > mmu_notifiers ensure that the changes get reflected into the
-> > > > virtualization tables and also that the virtualization paging struc=
-ture
-> > > > caches are flushed.
-> > > >=20
-> > > > msharefs is doing something very similar.=C2=A0 But, in the msharef=
-s case,
-> > > > the secondary MMUs are actually normal CPU MMUs.=C2=A0 The page tab=
-les are
-> > > > normal old page tables and the caches are the normal old TLB.=C2=A0=
- That's
-> > > > what makes it so confusing: we have lots of infrastructure for deal=
-ing
-> > > > with that "stuff" (CPU page tables and TLB), but msharefs has
-> > > > short-circuited the infrastructure and it doesn't work any more.
-> > >=20
-> > > It's quite different IMHO, to a degree that I believe they are differ=
-ent
-> > > beasts:
-> > >=20
-> > > Secondary MMUs:
-> > > * "Belongs" to same MM context and the primary MMU (process page tabl=
-es)
-> >=20
-> > I think you're speaking to the ratio here.  For each secondary MMU, I
-> > think you're saying that there's one and only one mm_struct.  Is that r=
-ight?
->=20
-> Yes, that is my understanding (at least with KVM). It's a secondary MMU
-> derived from exactly one primary MMU (MM context -> page table hierarchy)=
-.
+This series introduce a macro to generate a function to read simple
+formats. It avoid duplication of the same logic for similar formats.
 
-I don't think the ratio is what's important.  I think the important takeawa=
-y is
-that the secondary MMU is explicitly tied to the primary MMU that it is tra=
-cking.
-This is enforced in code, as the list of mmu_notifiers is stored in mm_stru=
-ct.
+PATCH 1 is the introduction of the macro and adaptation of the existing
+code to avoid duplication
+PATCH 2-6 introduce new formats with the help of this macro.
 
-The 1:1 ratio probably holds true today, e.g. for KVM, each VM is associate=
-d with
-exactly one mm_struct.  But fundamentally, nothing would prevent a secondar=
-y MMU
-that manages a so called software TLB from tracking multiple primary MMUs.
+This series must be applied on top of [1].
 
-E.g. it wouldn't be all that hard to implement in KVM (a bit crazy, but not=
- hard),
-because KVM's memslots disallow gfn aliases, i.e. each index into KVM's sec=
-ondary
-MMU would be associated with at most one VMA and thus mm_struct.
+[1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/ 
 
-Pulling Dave's earlier comment in:
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Add proper casting/type to __le16 when needed to avoid warnings with 
+  sparse
+- Change the function argb_u16_from_yuv8888 to argb_u16_from_yuv161616 to 
+  support 16 bits values.
+- Add support for P010/P012/P016 format
+- Link to v1: https://lore.kernel.org/r/20240516-b4-new-color-formats-v1-0-74cf9fe07317@bootlin.com
 
- : But the short of it is that the msharefs host mm represents a "secondary
- : MMU".  I don't think it is really that special of an MMU other than the
- : fact that it has an mm_struct.
+---
+Louis Chauvet (8):
+      drm/vkms: Create helpers macro to avoid code duplication in format  callbacks
+      drm/vkms: Add support for ARGB8888 formats
+      drm/vkms: Add support for ARGB16161616 formats
+      drm/vkms: Add support for RGB565 formats
+      drm/vkms: Add support for RGB888 formats
+      drm/vkms: Change YUV helpers to support u16 inputs for conversion
+      drm/vkms: Create helper macro for YUV formats
+      drm/vkms: Add P01* formats
 
-and David's (so. many. Davids):
+ drivers/gpu/drm/vkms/tests/vkms_format_test.c |   3 +-
+ drivers/gpu/drm/vkms/vkms_formats.c           | 320 ++++++++++++++------------
+ drivers/gpu/drm/vkms/vkms_formats.h           |   4 +-
+ drivers/gpu/drm/vkms/vkms_plane.c             |  14 ++
+ 4 files changed, 195 insertions(+), 146 deletions(-)
+---
+base-commit: 82fe69e63d2b5a5e86ea94c7361c833d3848ab69
+change-id: 20240312-b4-new-color-formats-1be9d688b21a
+prerequisite-message-id: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
+prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
+prerequisite-patch-id: d1e73379a15c5062924cf2dc8619676e13f35a13
+prerequisite-patch-id: 2eed29b53617ba76169e1af303e4899d517a3a18
+prerequisite-patch-id: 3f84c6e64b3a25510e929914e97ae2549451707c
+prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
+prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
+prerequisite-patch-id: a0639eb773bf58c2ffe76f2567a8c74b6275092c
+prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
+prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
+prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
+prerequisite-patch-id: 11ae7be077ce7022f61101d41a9ba79b98efb273
+prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
+prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
+prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
+prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
 
- : I better not think about the complexity of seconary MMUs + mshare (e.g.,
- : KVM with mshare in guest memory): MMU notifiers for all MMs must be
- : called ...
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
 
-mshare() is unique because it creates the possibly of chained "secondary" M=
-MUs.
-I.e. the fact that it has an mm_struct makes it *very* special, IMO.
-
-> > > * Maintains separate tables/PTEs, in completely separate page table
-> > >  =C2=A0 hierarchy
-> >=20
-> > This is the case for KVM and the VMX/SVM MMUs, but it's not generally
-> > true about hardware.  IOMMUs can walk x86 page tables and populate the
-> > IOTLB from the _same_ page table hierarchy as the CPU.
->=20
-> Yes, of course.
-
-Yeah, the recent rework of invalidate_range() =3D> arch_invalidate_secondar=
-y_tlbs()
-sums things up nicely:
-
-commit 1af5a8109904b7f00828e7f9f63f5695b42f8215
-Author:     Alistair Popple <apopple@nvidia.com>
-AuthorDate: Tue Jul 25 23:42:07 2023 +1000
-Commit:     Andrew Morton <akpm@linux-foundation.org>
-CommitDate: Fri Aug 18 10:12:41 2023 -0700
-
-    mmu_notifiers: rename invalidate_range notifier
-   =20
-    There are two main use cases for mmu notifiers.  One is by KVM which us=
-es
-    mmu_notifier_invalidate_range_start()/end() to manage a software TLB.
-   =20
-    The other is to manage hardware TLBs which need to use the
-    invalidate_range() callback because HW can establish new TLB entries at
-    any time.  Hence using start/end() can lead to memory corruption as the=
-se
-    callbacks happen too soon/late during page unmap.
-   =20
-    mmu notifier users should therefore either use the start()/end() callba=
-cks
-    or the invalidate_range() callbacks.  To make this usage clearer rename
-    the invalidate_range() callback to arch_invalidate_secondary_tlbs() and
-    update documention.
 
