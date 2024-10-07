@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-352763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05F79923DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 680F49923E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A751C2218A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A461C2219A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE9382485;
-	Mon,  7 Oct 2024 05:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757E5136672;
+	Mon,  7 Oct 2024 05:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cpMQn3yQ"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBDF4C91
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EkcWkra3"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39F94C91;
+	Mon,  7 Oct 2024 05:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728278495; cv=none; b=poEzeh6K8ZsRpKwqs+6CmJgUBQBTHEG/QU6HbC0/TykM8xHBvwZtQWA80sm7p5xqL0EYxoc1zJdA3VF7u/ulS/q+E+54lUieQniqHFjWvLMzERLKnvo8Op4ia8HBwYnIpx09Dyfm85lQlU+GBEgiga+CmfjCzeFG9YrWUWcsMFI=
+	t=1728278732; cv=none; b=fRvSkgQgr6eK1I+gmbvIy2eUiEWU0RVS3rL8whZ7jFa2yZZCzF9A5qXVi+KuMQHoB5vqwLvSQuKQV5b7PuDvogqvzQ/erWAaqNL6KF0gHQpKdNPGAO98KMKZMA9BYE0Ai6SRM5BZLf67en51sKVYa2pxe1vap85Miki+cVhhOr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728278495; c=relaxed/simple;
-	bh=Y3bEnslIGUKeozrhrtX84lP3gWA5Zak9pz5LWG6SWI4=;
-	h=Mime-Version:Subject:From:To:Message-ID:Date:Content-Type:
-	 References; b=oCaPD8Q1PbO6oYPAJOnFC8EfvMK39KvneKjM6CxX+71vNt561UdyYTaEwNGSN5lW3rJjy2LVi8CDDOGhJIuCkA0PI9cDNemObU1cjGF/g7rJzHFeyTPZcql9ECkY9h91ptwnyNqgO5bBk0kvPqBatX/GKz29I6WBKzyKFCqI1jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cpMQn3yQ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241007052123epoutp03a812c8ada9ebc6ef3356d2ed0bf29b8e~8FB_z0_Ql0130601306epoutp03m
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:21:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241007052123epoutp03a812c8ada9ebc6ef3356d2ed0bf29b8e~8FB_z0_Ql0130601306epoutp03m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728278483;
-	bh=XkPIRM3U4jCdaiGC4n343ikwc4gQdie3fQQ4q/mvRqQ=;
-	h=Subject:Reply-To:From:To:Date:References:From;
-	b=cpMQn3yQZNbEOsIPwpxlHj6Aar/SeHAbVzrOO791fLvXwkojSVEGSs2Ynn75zem0K
-	 rpgY5MjmAiNT/tpzaHsq/EovNGzXUBsg2Ui77dLONghgCMjMyNBuVf08IWjz93FUzO
-	 4RdOXUCmeh1wYKk6dv2CEr7oQSeCcE6hxG2szh+s=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241007052123epcas2p447dbc2e44eb1561a43a0686ad3fe3151~8FB_exGLD3151631516epcas2p4g;
-	Mon,  7 Oct 2024 05:21:23 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XMSDf32gpz4x9Q3; Mon,  7 Oct
-	2024 05:21:22 +0000 (GMT)
-X-AuditID: b6c32a4d-183ff70000004a06-ad-67036fd2976e
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C7.AA.18950.2DF63076; Mon,  7 Oct 2024 14:21:22 +0900 (KST)
+	s=arc-20240116; t=1728278732; c=relaxed/simple;
+	bh=HGWJxwIRNXsyN17Qpv93j15/elFdg1kKrAGTqGqbi0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=br00+Vis7e0vYjUyIYPRT5UZzQrzUvRfLBazkNd8mMb2PqwsWjZF8iTLuM/EYzyzeHDlxHHZ3UTzGBlWg0TFPjWZJIrrzdmcUUBXWlNCEDAPohBYq7J2y9X3ke+n7hOvRslndZ5Ll9zZLryzckAHMOFyWcdbk0klz0QOSkefofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EkcWkra3; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=324PJEeBYpJfWCK8xWbXB9A56qDSOD1jxIROj5ssz1g=;
+	b=EkcWkra3uZT2kbTGpHZYgb7udCwytAwrTEGLutzPRkZseEfRYKfbZQLg8ZU1tk
+	MeDPNHt1Hd8wjLQgHtEI22zJHaTWChvSByJ8W2l2+M2zC2ND/C440wemjEhFjjHU
+	FRI3qkCyHan9TCOK8lH3pge4yGy38GAC1Bb2uKNkDMU0c=
+Received: from localhost (unknown [39.144.4.86])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBnN4NccANnI_KQBQ--.20392S3;
+	Mon, 07 Oct 2024 13:23:41 +0800 (CST)
+Date: Mon, 7 Oct 2024 13:23:40 +0800
+From: Melon Liu <melon1335@163.com>
+To: linux@armlinux.org.uk, lecopzer.chen@mediatek.com,
+	linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] ARM/mm: Fix stack recursion caused by KASAN
+Message-ID: <ZwNwXF2MqPpHvzqW@liu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [PATCH] libf2fs: Fix calculation of usable segments for single
- zoned
-Reply-To: yonggil.song@samsung.com
-Sender: Yonggil Song <yonggil.song@samsung.com>
-From: Yonggil Song <yonggil.song@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
-	<chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Dongjin Kim <dongjin_.kim@samsung.com>,
-	Yonggil Song <yonggil.song@samsung.com>, Siwoo Jung <siu.jung@samsung.com>,
-	Daejun Park <daejun7.park@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
-Date: Mon, 07 Oct 2024 14:21:22 +0900
-X-CMS-MailID: 20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmme6lfOZ0g9fXxSxOTz3LZLHqQbjF
-	j5MmFk/Wz2K2uLTI3eLyrjlsFucnvmaymHr+CJMDh8emVZ1sHrsXfGby6NuyitHj8ya5AJao
-	bJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBuUFMoS
-	c0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQXmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ
-	D/bOZyu4xlXRd/AfWwPjA44uRk4OCQETiZa5B5i6GLk4hAT2MErsuP2bvYuRg4NXQFDi7w5h
-	kBphAX+JR/uuMYHYQgJKEtcO9LJAxPUlNi9exg5iswnoSvzdsJwdZI6IQBezxKqGm4wQC3gl
-	ZrQ/ZYGwpSW2L98KFdeQ+LGslxnCFpW4ufotO4z9/th8qBoRidZ7Z6FqBCUe/NwNFZeUWHTo
-	PBOEnS/xd8V1Ngi7RmJrQxtUXF/iWsdGsL28Ar4S86ZfYQWxWQRUJbqbFzGD/Cgh4CLxYxcn
-	SJhZQF5i+9s5YGFmAU2J9bv0ISqUJY7cYoGo4JPoOPyXHeapHfOeQC1Sk9i8aTMrhC0jceFx
-	GyNEq4fE2c9BkEALlPhxcBnjBEb5WYignYVk7SyEtQsYmVcxSqUWFOempyYbFRjq5qWWw2M0
-	OT93EyM4DWr57mB8vf6v3iFGJg7GQ4wSHMxKIrwRaxjThXhTEiurUovy44tKc1KLDzGaAv08
-	kVlKNDkfmIjzSuINTSwNTMzMDM2NTA3MlcR577XOTRESSE8sSc1OTS1ILYLpY+LglGpgMn5n
-	sl7LN0JA6ncjp4/Bhrnyin33DSf8ONeyUoDb6dqUx4vcZk2PievsL2OL3T9bJon/9t/GFaIq
-	alv6LTgOVIvq3+2NX37lmLxjUsnzPfZ6qjMO1q9jMoiN5TuWcybkSMOCnc82F+nv3HHmx8MD
-	BkxrZM4GPpPpNffaPnk6W9R+J911M111b5+Mfuotp2A5e3dR4fcDZpP2HbZ/6sV5rlxyqqO2
-	wqU3oUY5VmebfjS+uHNs59TwpTs+irVteXrG7e/ZO2xbwjUX5izva2ef6NH6oTFzRbrIko6d
-	qyWKzu4QafKI1u88VpHYKvzkh0XR+qyNp9osFv3rurFls0NMRrPnCaHeWc/zhNzu3/BerMRS
-	nJFoqMVcVJwIANoEqBEMBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303
-References: <CGME20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-CM-TRANSID:_____wBnN4NccANnI_KQBQ--.20392S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4xWFy5XFWDGr1xGF18uFg_yoW8uF1xpF
+	43Ca4rArsxXr1akrW3Xa18uF95t3WkK3WUt392gayrWrWUKr1UJF40qFWfu34UWrW8AFWa
+	yFWSya45urn7t3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joHq7UUUUU=
+X-CM-SenderInfo: ppho00irttkqqrwthudrp/xtbBhQlxIWcDZn9sZQAAso
 
-There was a bug that did not subtract the super block area when calculating
-the usable segments for a single zoned device with a conventional zone.
-This bug resulted in incorrect the overprovision and reserved area.
+When accessing the KASAN shadow area corresponding to the task stack
+which is in vmalloc space, the stack recursion would occur if the area`s
+page tables are unpopulated.
 
-	<256MiB legacy block + zoned block w/ 32MiB zone size>
-	Info: Overprovision ratio = 3.570%
-	Info: Overprovision segments = 656 (GC reserved = 560)
+Calltrace:
+ ...
+ __dabt_svc+0x4c/0x80
+ __asan_load4+0x30/0x88
+ do_translation_fault+0x2c/0x110
+ do_DataAbort+0x4c/0xec
+ __dabt_svc+0x4c/0x80
+ __asan_load4+0x30/0x88
+ do_translation_fault+0x2c/0x110
+ do_DataAbort+0x4c/0xec
+ __dabt_svc+0x4c/0x80
+ sched_setscheduler_nocheck+0x60/0x158
+ kthread+0xec/0x198
+ ret_from_fork+0x14/0x28
 
-	<8 conventional zone + 1016 sequential zone w/ 32MiB zone size>
-	Info: Overprovision ratio = 3.700%
-	Info: Overprovision segments = 676 (GC reserved = 578)
-
-This patch fixes the bug by subtracting the super block area when there is
-only one zoned device.
-
-Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
+Fixes: 565cbaad83d ("ARM: 9202/1: kasan: support CONFIG_KASAN_VMALLOC")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Melon Liu <melon1335@163.org>
 ---
- lib/libf2fs_zoned.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mm/ioremap.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 89ba5ad73a76..cc5c064b7e3e 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -555,6 +555,11 @@ uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb)
- 	}
- 	usable_segs -= (get_sb(main_blkaddr) - get_sb(segment0_blkaddr)) >>
- 						get_sb(log_blocks_per_seg);
+diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
+index 794cfea9f..f952b0b0f 100644
+--- a/arch/arm/mm/ioremap.c
++++ b/arch/arm/mm/ioremap.c
+@@ -115,16 +115,31 @@ int ioremap_page(unsigned long virt, unsigned long phys,
+ }
+ EXPORT_SYMBOL(ioremap_page);
+ 
++static inline void sync_pgds(struct mm_struct *mm, unsigned long start,
++			     unsigned long end)
++{
++	end = ALIGN(end, PGDIR_SIZE);
++	memcpy(pgd_offset(mm, start), pgd_offset_k(start),
++	       sizeof(pgd_t) * (pgd_index(end) - pgd_index(start)));
++}
 +
-+	/* single zoned device needs to remove a super block area */
-+	if (c.ndevs == 1)
-+		usable_segs -= (get_sb(segment0_blkaddr) >> get_sb(log_blocks_per_seg));
++static inline void sync_vmalloc_pgds(struct mm_struct *mm)
++{
++	sync_pgds(mm, VMALLOC_START, VMALLOC_END);
++	if (IS_ENABLED(CONFIG_KASAN_VMALLOC))
++		sync_pgds(mm, (unsigned long)kasan_mem_to_shadow(
++					(void *)VMALLOC_START),
++			      (unsigned long)kasan_mem_to_shadow(
++					(void *)VMALLOC_END));
++}
 +
- 	return usable_segs;
- #endif
- 	return get_sb(segment_count_main);
+ void __check_vmalloc_seq(struct mm_struct *mm)
+ {
+ 	int seq;
+ 
+ 	do {
+ 		seq = atomic_read(&init_mm.context.vmalloc_seq);
+-		memcpy(pgd_offset(mm, VMALLOC_START),
+-		       pgd_offset_k(VMALLOC_START),
+-		       sizeof(pgd_t) * (pgd_index(VMALLOC_END) -
+-					pgd_index(VMALLOC_START)));
++		sync_vmalloc_pgds(mm);
+ 		/*
+ 		 * Use a store-release so that other CPUs that observe the
+ 		 * counter's new value are guaranteed to see the results of the
 -- 
 2.43.0
+
 
