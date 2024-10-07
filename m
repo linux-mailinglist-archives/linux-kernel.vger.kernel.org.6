@@ -1,108 +1,135 @@
-Return-Path: <linux-kernel+bounces-353766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C071C993251
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA9D993256
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720F11F24979
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D631F24E06
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7987C1D47AC;
-	Mon,  7 Oct 2024 15:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98ABB1DA0E9;
+	Mon,  7 Oct 2024 16:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUsH9KoJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWw9gKTg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA27A1D8E07;
-	Mon,  7 Oct 2024 15:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0198A1D2B2F;
+	Mon,  7 Oct 2024 16:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316780; cv=none; b=JcYLaM2L4i51Gq3hYV9jCsvTroGoaEzcEmnDutXjS24fNhJ9yaA93qB5pPNW5x4YDPG0lG/I8EUMKdZcDcGF+beiBDRrLzf500sGnsstLPca2oBpRN/nUDHlHqaSkJNB4oDPvzyA85VlXfbhYGN1QRPiBtQM12W4ieF+9t1UoZ8=
+	t=1728316849; cv=none; b=nkrOKvYrJvslnP1hN0aCxxtu2yWPWklXxPSU1qhpZmVKdc+9LUYb1N6agfML2oMVghQuUqygBH+JSzgf404vS/6pNkb+LpKhsBJoTznh8o5mPzbgzITg2/vKyI4N9yTM9edI8ti4uvQ7OUfK2SwCcaqO9yMEjB31bdecC79v5Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316780; c=relaxed/simple;
-	bh=fhPtbJcYuo2EIiYOBX9N2FPoMgTuRpLRKCd9jzg6Vt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDt0b1nfS40+Q/qIQyBzJBj7q3zKiy8RjwFUJwI7ixT1kgtyIZoE+Bbi4iOBtstNANudxeaGSqxRGj+wNs6a9Tw2YlctRXsWlvJN7ZvNv3RK/lPYV6tb6HYXSHybAQ5roAMhhTDy8gW8p30JyY9Gz39mFy3+9ewC7j+G84X/hPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUsH9KoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30748C4CEC6;
-	Mon,  7 Oct 2024 15:59:40 +0000 (UTC)
+	s=arc-20240116; t=1728316849; c=relaxed/simple;
+	bh=PHuV8i42D3IcLa5ai+RwLXHJQ2M2sbKr33lxihFuD3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z4V+XiIW81PMst5l/0b784DKfpI7Lkv7KilRBqC6JnYlegdt23wrZYR9sSuOEP1Ck9xADDpSpish+Tfa+PwbDk+uZvlin1b4ZatbcsBbu8k7pX/gGHPRsyclB95RzJ1b+AsxQ9Kqkds/ahlmd5UpG6+2X1nNEmj1GKSiuPYS5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWw9gKTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B33C4CEC6;
+	Mon,  7 Oct 2024 16:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728316780;
-	bh=fhPtbJcYuo2EIiYOBX9N2FPoMgTuRpLRKCd9jzg6Vt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kUsH9KoJ/pcRJzTf0yiA76pFtXQToF3xoqGGBMSO/255O9nNZJx396sPE1Qn1deZc
-	 VbEIMzU76zibDubgGE9FYQOsPiKXrpR6mOEM0/z8ZrDnRI7xE1ad+UZMcc67dii7Yf
-	 fu+Ti3BrJasdXWC9/KH/aWR8juwbZy0PietEoRxpUJHCxDSxx5i8kWv24prO34EePT
-	 rQMOx5pNzv553+BV2nKmuoONMyk81DN7HbL+OWsDwSQ32WNjrdCfar/3lysObkE7Ng
-	 V7kVxHq76AYgAlJyIV4Cm01BV3+1UDRYwq3DGXY3lDRablkJqXEUIRDscEcOMIlmOH
-	 Kn5FCb6rlGxjA==
-Date: Mon, 7 Oct 2024 10:59:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
-Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: mmc-pwrseq-simple: add support for
- reset control
-Message-ID: <20241007155939.GA849826-robh@kernel.org>
-References: <20241004120740.2887776-1-catalin.popescu@leica-geosystems.com>
- <20241005182632.GA496820-robh@kernel.org>
- <92a27d06-cd37-42ff-ac48-687981d24d41@leica-geosystems.com>
+	s=k20201202; t=1728316848;
+	bh=PHuV8i42D3IcLa5ai+RwLXHJQ2M2sbKr33lxihFuD3U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tWw9gKTggu0sXA/A49DmgnIJP8c49cyXOarpEH3diPKuTNLhdwWufl1+PuP65Mwqo
+	 eVFx+kJ/hDELX6s4qDErCuqj/KZWjNTXUgza7wCMTn/UqrZoS22srj5VFQwBuzurYv
+	 ik841qJa8r3aG55RVnPLCIfTyjjL31TNbVuL3TYvWU4nOcjupJM9IcplsLtqKzuhyF
+	 zmeL31+nKM2I93q7Ui1R1PiRsHx7RZvloX4+76V5kpcV/LwwIx+5qZLuEHSSA1kzL9
+	 cyuoz0uxBIiSCWTblf6nneXVQqdy6/yEqrhG0J0IS+QINmtzA5vcSJuybXNnNz3mw8
+	 6xdYwiEPT9fOA==
+Date: Mon, 7 Oct 2024 09:00:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <Parthiban.Veerasooran@microchip.com>
+Cc: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <ramon.nordin.rodriguez@ferroamp.se>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+ <Thorsten.Kummermehr@microchip.com>
+Subject: Re: [PATCH net-next v3 2/7] net: phy: microchip_t1s: update new
+ initial settings for LAN865X Rev.B0
+Message-ID: <20241007090047.07483ee1@kernel.org>
+In-Reply-To: <2fb5dab7-f266-4304-a637-2b9eabb1184f@microchip.com>
+References: <20241001123734.1667581-1-parthiban.veerasooran@microchip.com>
+	<20241001123734.1667581-3-parthiban.veerasooran@microchip.com>
+	<20241004115006.4876eed1@kernel.org>
+	<2fb5dab7-f266-4304-a637-2b9eabb1184f@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <92a27d06-cd37-42ff-ac48-687981d24d41@leica-geosystems.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 03:32:42PM +0000, POPESCU Catalin wrote:
-> On 05/10/2024 20:26, Rob Herring wrote:
-> > [Some people who received this message don't often get email from robh@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >
-> > This email is not from Hexagon’s Office 365 instance. Please be careful while clicking links, opening attachments, or replying to this email.
-> >
-> >
-> > On Fri, Oct 04, 2024 at 02:07:39PM +0200, Catalin Popescu wrote:
-> >> Add compatible value "mmc-pwrseq-simple-reset" to support reset control
-> >> instead of gpios. Reset controls being refcounted, they allow to use
-> >> shared resets or gpios across drivers. Support of reset control is
-> >> limited to one single reset control.
-> > Can't you do this without a binding change? Just use reset controls when
-> > there is only 1 GPIO.
+On Mon, 7 Oct 2024 07:51:36 +0000 Parthiban.Veerasooran@microchip.com
+wrote:
+> On 05/10/24 12:20 am, Jakub Kicinski wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Tue, 1 Oct 2024 18:07:29 +0530 Parthiban Veerasooran wrote:  
+> >> +     cfg_results[0] = FIELD_PREP(GENMASK(15, 10), (9 + offsets[0]) & 0x3F) |
+> >> +                      FIELD_PREP(GENMASK(15, 4), (14 + offsets[0]) & 0x3F) |
+> >> +                      0x03;
+> >> +     cfg_results[1] = FIELD_PREP(GENMASK(15, 10), (40 + offsets[1]) & 0x3F);  
+> > 
+> > It's really strange to OR together FIELD_PREP()s with overlapping
+> > fields. What's going on here? 15:10 and 15:4 ranges overlap, then
+> > there is 0x3 hardcoded, with no fields size definition.  
+> This calculation has been implemented based on the logic provided in the 
+> configuration application note (AN1760) released with the product. 
+> Please refer the link [1] below for more info.
 > 
-> That's a good question. The idea was to keep in place the gpio support 
-> w/o impacting any platform using pwrseq-simple.
-
-Why would it matter? If not shared, then the behavior should be the 
-same. If shared, we want to maintain the broken behavior?
-
+> As mentioned in the AN1760 document, "it provides guidance on how to 
+> configure the LAN8650/1 internal PHY for optimal performance in 
+> 10BASE-T1S networks." Unfortunately we don't have any other information 
+> on those each and every parameters and constants used for the 
+> calculation. They are all derived by design team to bring up the device 
+> to the nominal state.
 > 
-> Also, later on when support for a list of reset gpios will be added to 
-> the reset framework, this would not work anymore...
+> It is also mentioned as, "The following parameters must be calculated 
+> from the device configuration parameters mentioned above to use for the
+> configuration of the registers."
+> 
+> uint16 cfgparam1 = (uint16) (((9 + offset1) & 0x3F) << 10) | (uint16) 
+> (((14 + offset1) & 0x3F) << 4) | 0x03
+> uint16 cfgparam2 = (uint16) (((40 + offset2) & 0x3F) << 10)
+> 
+> This is the reason why the above logic has been implemented.
 
-Why not?
+In this case the code should simply be:
 
-How an OS handles reset-gpios is up to the OS. It can evolve. The 
-binding can't evolve because it is an ABI.
+     cfg_results[0] = FIELD_PREP(GENMASK(15, 10), 9 + offsets[0]) |
+                      FIELD_PREP(GENMASK(9, 4), 14 + offsets[0]) |
 
-Also, a list is kind of broken to begin with for a "generic" binding. 
-What's the order the lines should be asserted/deasserted? What about 
-timing requirements? You don't know because every device is different. 
-This binding would not be accepted now, so extending it is questionable.
+the fields are clearly 6b each. FILED_PREP() already masks.
 
-Rob
+> > Could you clarify and preferably name as many of the constants
+> > as possible?  
+> I would like to do that but as I mentioned above there is no info on 
+> those constants in the application note.
+> > 
+> > Also why are you masking the result of the sum with 0x3f?
+> > Can the result not fit? Is that safe or should we error out?  
+> Hope the above info clarifies this as well.
+> >   
+> >> +             ret &= GENMASK(4, 0);  
+> > ?               if (ret & BIT(4))
+> > 
+> > GENMASK() is nice but naming the fields would be even nicer..
+> > What's 3:0, what's 4:4 ?  
+> As per the information provided in the application note, the offset 
+> value expected range is from -5 to 15. Offsets are stored as signed 
+> 5-bit values in the addresses 0x04 and 0x08. So 0x1F is used to mask the 
+> 5-bit value and if the 4th bit is set then the value from 27 to 31 will 
+> be considered as -ve value from -5 to -1.
+> 
+> I think adding the above comment in the above code snippet will clarify 
+> the need. What do you think?
+
+Oh yes, a comment, e.g. /* 5-bit signed value, sign extend */
+would help a lot, thanks!
 
