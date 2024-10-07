@@ -1,140 +1,129 @@
-Return-Path: <linux-kernel+bounces-353114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058569928CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F6E9928CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2143286039
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:08:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5233285D89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F239118BC09;
-	Mon,  7 Oct 2024 10:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jSn/UOxA"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45FA231CA9;
-	Mon,  7 Oct 2024 10:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94A418BBAD;
+	Mon,  7 Oct 2024 10:08:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9291E18B49E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728295690; cv=none; b=BiM8TuptTwH+1CnaBs2OvCNwlom1fKWdMbrfkX2VKv3xOP7ejKLXU+89PWeNeay3Giz1BM5iLFY/IT7fs9hgb6Y9JW6RS2VRBmbfMzYsap+r30gVprYLBlbshgP8A2H9ZBI6tiMixFtMrMR1WDuW+WqixMWsqU7dVyHf49RjqO0=
+	t=1728295723; cv=none; b=n5KGRxMSSi2F89Us8ETTs3Jset9Ps22xLQpzrTai4uTZOmDF4ZsyyXfjTpfjsIIEHNea4pHZ334lNhHs9KQrM52hbSvyueZnQnMx93cFUr1Wde2JQTCB5TeC3jfDKT6P+OEhQYuDe/m6l7CcicBsvg1MG5jjTClkxrhrQHK6h+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728295690; c=relaxed/simple;
-	bh=Nvv2QIrQSR6i2kMgLqXqzNmD2D7ghA1/2S+65g2qM64=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kJ6cauozLQPDCwq+6GAQGMRC1IKeVNqH2Qu1Tr6s9VKNOdmS3nTzoRBxRc8EQQzEcPh9RMfF0DSsaC2DPOlSvqRqIVl2fftKb1ehZWb4vZDL5WnG0sh0ByE+AH8JXp69dfFd/Yyk9a9OWBc8B2gzjwXT+P47VpDAPdHmC892gEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jSn/UOxA; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 092d0a24849411ef8b96093e013ec31c-20241007
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=xRF+WqijDSYeiE+tIaQ004Lnw2TEBFE2Gfpl2FGIHNs=;
-	b=jSn/UOxAXl5jZDKgPrOkOR3ZlvXw3+fdqrOTsctLfqcXm7fzKdbtJwZ73e8hCYKc6WqlxJ8A5B02iSvC2T3JLrmFyvGcOvBahe5DtybLb9e7621mIp0/a8bqoxSvtSuShzI+9eZvkdBBB/HSRFsOUHNqS0PemFVE/1jAKjltghY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:15f711da-35f7-4db5-b29a-d2b1cc0819d7,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:916cdf40-8751-41b2-98dd-475503d45150,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 092d0a24849411ef8b96093e013ec31c-20241007
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1443292378; Mon, 07 Oct 2024 18:08:01 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 7 Oct 2024 18:08:00 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 7 Oct 2024 18:08:00 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Jieyy Yang <jieyy.yang@mediatek.com>,
-	Jian Yang <jian.yang@mediatek.com>, Jianguo Zhang
-	<jianguo.zhang@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
- Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH] arm64: dts: mediatek: mt8390-genio-700-evk: enable pcie
-Date: Mon, 7 Oct 2024 18:07:49 +0800
-Message-ID: <20241007100749.6657-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728295723; c=relaxed/simple;
+	bh=0iKbGcK8Gu21dj7bTG5zPF2A6di+vap8fzuuwKIifK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZakKUcICw4ZSA1DG5gb9fZ8SAto+rBecUucicJjacZtxN7PQ16Y1ViQSHtus8aYhWNxfudPdaqcXj9T27GrDUb2LjK91qhW6a/4QTUBgbXoaNvGoTMK4StF+/JkX6lpYPzDl7GM+dqiZnvBmUM+jV0lY/9DLag1un8bbUT/1J5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 542A9FEC;
+	Mon,  7 Oct 2024 03:09:08 -0700 (PDT)
+Received: from [10.1.26.21] (unknown [10.1.26.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9EF03F64C;
+	Mon,  7 Oct 2024 03:08:37 -0700 (PDT)
+Message-ID: <7d19367b-a4ac-4c65-a543-9a4d614bec44@arm.com>
+Date: Mon, 7 Oct 2024 11:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: kernel/sched/core.c:1361:21: warning: 'uclamp_mutex' defined but
+ not used
+To: kernel test robot <lkp@intel.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <202410060258.bPl2ZoUo-lkp@intel.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <202410060258.bPl2ZoUo-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Enable PCIE, PCIEPHY and related Pinctrls for mt8390-genio-700-evk
-board.
+On 10/5/24 19:58, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   27cc6fdf720183dce1dbd293483ec5a9cb6b595e
+> commit: d2d6422f8bd17c6bb205133e290625a564194496 x86: Allow to enable PREEMPT_RT.
+> date:   3 weeks ago
+> config: x86_64-buildonly-randconfig-002-20241006 (https://download.01.org/0day-ci/archive/20241006/202410060258.bPl2ZoUo-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410060258.bPl2ZoUo-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410060258.bPl2ZoUo-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from include/linux/seqlock.h:19,
+>                     from include/linux/dcache.h:11,
+>                     from include/linux/fs.h:8,
+>                     from include/linux/highmem.h:5,
+>                     from kernel/sched/core.c:10:
+>>> kernel/sched/core.c:1361:21: warning: 'uclamp_mutex' defined but not used [-Wunused-variable]
+>     1361 | static DEFINE_MUTEX(uclamp_mutex);
+>          |                     ^~~~~~~~~~~~
+>    include/linux/mutex.h:101:22: note: in definition of macro 'DEFINE_MUTEX'
+>      101 |         struct mutex mutexname = __MUTEX_INITIALIZER(mutexname)
+>          |                      ^~~~~~~~~
+> 
+> 
+> vim +/uclamp_mutex +1361 kernel/sched/core.c
+> 
+> 71f8bd4600521f kernel/sched.c      Ingo Molnar     2007-07-09  1349  
+> 69842cba9ace84 kernel/sched/core.c Patrick Bellasi 2019-06-21  1350  #ifdef CONFIG_UCLAMP_TASK
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1351  /*
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1352   * Serializes updates of utilization clamp values
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1353   *
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1354   * The (slow-path) user-space triggers utilization clamp value updates which
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1355   * can require updates on (fast-path) scheduler's data structures used to
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1356   * support enqueue/dequeue operations.
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1357   * While the per-CPU rq lock protects fast-path update operations, user-space
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1358   * requests are serialized using a mutex to reduce the risk of conflicting
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1359   * updates or API abuses.
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1360   */
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22 @1361  static DEFINE_MUTEX(uclamp_mutex);
+> 2480c093130f64 kernel/sched/core.c Patrick Bellasi 2019-08-22  1362  
+> 
+> :::::: The code at line 1361 was first introduced by commit
+> :::::: 2480c093130f64ac3a410504fa8b3db1fc4b87ce sched/uclamp: Extend CPU's cgroup controller
+> 
+> :::::: TO: Patrick Bellasi <patrick.bellasi@arm.com>
+> :::::: CC: Ingo Molnar <mingo@kernel.org>
+> 
 
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- .../dts/mediatek/mt8390-genio-700-evk.dts     | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Please allow me a day to walk through the code just to double-check, but
+the obvious fixes are either letting UCLAMP_TASK depend on SYSCTL or:
 
-Changes for v1:
- - This patch depends on the pcie patch of mt8188.dtsi
-   [1] https://lore.kernel.org/all/20241004081218.55962-3-fshao@chromium.org/
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-index 3e77f59f2c74..bb68665f0b2d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-@@ -393,6 +393,16 @@ &mt6359codec {
- 	mediatek,mic-type-1 = <3>; /* DCC */
- };
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 43e453ab7e20..18d9622eac8d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1394,7 +1394,9 @@ void set_load_weight(struct task_struct *p, bool update_load)
+  * requests are serialized using a mutex to reduce the risk of conflicting
+  * updates or API abuses.
+  */
++#if defined(CONFIG_UCLAMP_TASK_GROUP) || defined(CONFIG_SYSCTL)
+ static DEFINE_MUTEX(uclamp_mutex);
++#endif
  
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_pins_default>;
-+	status = "okay";
-+};
-+
-+&pciephy {
-+	status = "okay";
-+};
-+
- &pio {
- 	audio_default_pins: audio-default-pins {
- 		pins-cmd-dat {
-@@ -758,6 +768,15 @@ pins-rst {
- 		};
- 	};
- 
-+	pcie_pins_default: pcie-default {
-+		mux {
-+			pinmux = <PINMUX_GPIO47__FUNC_I1_WAKEN>,
-+				 <PINMUX_GPIO48__FUNC_O_PERSTN>,
-+				 <PINMUX_GPIO49__FUNC_B1_CLKREQN>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	rt1715_int_pins: rt1715-int-pins {
- 		pins_cmd0_dat {
- 			pinmux = <PINMUX_GPIO12__FUNC_B_GPIO12>;
--- 
-2.45.2
+ /* Max allowed minimum utilization */
+ static unsigned int __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+
 
 
