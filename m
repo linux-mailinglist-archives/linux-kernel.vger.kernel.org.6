@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-354204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DD899397E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:44:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876F1993981
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BF51C230AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509EB2840A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9454718C908;
-	Mon,  7 Oct 2024 21:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FBE18C919;
+	Mon,  7 Oct 2024 21:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Syq8Pbjt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpppgbJX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D5C18C03A;
-	Mon,  7 Oct 2024 21:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6386F18C930;
+	Mon,  7 Oct 2024 21:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728337461; cv=none; b=OuKBNO+CMkx+5+g5qIeX6CtcWgqbH137z0rpZvEsqRife5bkCI0GyuBFmFlqHDGsX3s2etzhV03QVjXhiM6rjPYvSq5rigPt9THaLCHeQgP0N1hhuiyw9shbap40PobvD8lvB5PP+rC8/mfzunuSB4/vt95c6BUlF9pGJUsjr28=
+	t=1728337504; cv=none; b=aemp8Z53IBoLUIXaMbAnVP33FQtCwRTfZsj400WLwak/GlSBTYB1loWEbeqIVwxnqVVbQvioQIMXZEAjV5xDeyrCg1cPrY447mX9POn34NT8LwqJJiW5roXsK/lojT85GQlB/gYl661tc4iaihYvtSpr7NT4qYAE4YJnnwJwkdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728337461; c=relaxed/simple;
-	bh=SSGYF4xheaCEM3eFQW6XDhQ+RluuReYD8rH3Q6Rs114=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=orIh+tNgfg+zckgrrZqSVSoun4VzGHPDpPcqYnHnP6BIMFvcQ3YIq0LowohQj+rPr907WNIqq9j7mjcqk8NwedlBpou5Xggxqlq3e1rst5YtiaHYbo8C5eZWj/BkiBPyxMjhJKD59gf+tcOe3Rn8nVYUlu91LlewTUw2plaV4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Syq8Pbjt; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728337456; x=1759873456;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SSGYF4xheaCEM3eFQW6XDhQ+RluuReYD8rH3Q6Rs114=;
-  b=Syq8Pbjtg5CRl92x333aL5pTv/PYoYwEjJ+EbsqFS1shZVPMjLyoIcum
-   1nr3GuD9AAJMdijHGN2zY3wbRqSTw3nIzUX2pDgybW82droim7roseP0U
-   NMU+OW6R5jvXvD+UYBmjw5mGmu4dxq1ndsZ8BGi8ZF6Niip96DJWuK/DU
-   jN+G1wjByq0HtDGsMN3nbxYBWay1Y+IbKbPDFySzt5Q/rxM8Q4XVb6fak
-   B9GnLvl0ovg3x42CuTuOfDmX+YqxECP4IExevSdsze5KDhp7G5RWTJQKv
-   sfanIfQoShVkLRxPUOWMVoclZ4nVd30yHUkEcbyguE507MUDIysbwcVAZ
-   Q==;
-X-CSE-ConnectionGUID: +hgdsMTpTiu4UnF2UBjE1w==
-X-CSE-MsgGUID: CJeZfg/gTB6tBXhvvLdiaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27675551"
-X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
-   d="scan'208";a="27675551"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 14:44:16 -0700
-X-CSE-ConnectionGUID: WCqZG9RUT22pMpTPiWMZ9Q==
-X-CSE-MsgGUID: ODrwzj+6QFuEGQHRgKUb/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="75449453"
-Received: from anguy11-upstream.jf.intel.com ([10.166.9.133])
-  by orviesa010.jf.intel.com with ESMTP; 07 Oct 2024 14:44:16 -0700
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	przemyslaw.kitszel@intel.com,
-	larysa.zaremba@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH iwl-next] ice: Unbind the workqueue
-Date: Mon,  7 Oct 2024 14:44:07 -0700
-Message-ID: <20241007214408.501013-1-anthony.l.nguyen@intel.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1728337504; c=relaxed/simple;
+	bh=GRV57UWvCNyArwdO8K9Y1agFjqxbhcl7taFP+OQH5JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SFaTUfwMGmmdFrxXWeSqX7WTa3ZE2Np9EVZomKp/KOlflL4+ExqgaSs7NxjB21rU7CmJFCssnpQmkxKXyICPXdNf+jJSUcCWFGwAQ9ipkfc//wOLaOCNuulpeoZdo9VafsDR9En6p1FRmUZlM1w52ZvMMvc6ceEiW1YlVrCkRjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpppgbJX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 439F4C4CEC6;
+	Mon,  7 Oct 2024 21:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728337503;
+	bh=GRV57UWvCNyArwdO8K9Y1agFjqxbhcl7taFP+OQH5JM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tpppgbJXQjFbk1SYkjd+DEu+Zr+wAkFZiIdQEsE6Ohy6lcGVt63qgITpxhK2Yzyus
+	 uDL05cj/eaThkAocsjemdU3Ebfy1p2cOHykqF9u8HBY5SaoPK9ckGMQtr3w9tliPPN
+	 wvywOhAIy5OGXLDgt5Qn3gnPaQ4gRiyHfLdBUxdo56u4vpyNNtfVmCbVjp4MgH6RpD
+	 t7vOV4ofoujfKLZWG9eUI9XSqWd71TqeaumE29K7OBbp1zdJ3s5NjzR3RAa8evWPFN
+	 YYHJL9xw5i9sXm06fuCpkOcM2Ztmd+PHr6oa0vrCS+HfY/zmQGX8o9ISwmbzV42g/M
+	 BCldeeeIHrTnA==
+Date: Mon, 7 Oct 2024 16:45:01 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Kuldeep Singh <quic_kuldsing@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Qingqing Zhou <quic_qqzhou@quicinc.com>
+Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
+ unsupported SHM bridge enabling
+Message-ID: <zdcfrk4oxu4eq5cjzr67hunpznzv366kalih7z4htbzaelbafq@ok7rux3nqr3d>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
+ <mgdj5xvqby3ftnnhma7dxvxskavx4p2pkzyorg4z3cza5xkimr@sqe4k2szwfbq>
+ <87f778cf-0e1e-4505-a0e8-7434316a9537@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87f778cf-0e1e-4505-a0e8-7434316a9537@quicinc.com>
 
-From: Frederic Weisbecker <frederic@kernel.org>
+On Tue, Oct 08, 2024 at 02:10:02AM GMT, Kuldeep Singh wrote:
+> On 10/7/2024 7:10 AM, Bjorn Andersson wrote:
+> > On Sat, Oct 05, 2024 at 07:31:49PM GMT, Kuldeep Singh wrote:
+[..]
+> >> +
+> >>  #define QSEECOM_MAX_APP_NAME_SIZE		64
+> >>  
+> >>  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
+> >> @@ -1361,6 +1365,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
+> >>  
+> >>  int qcom_scm_shm_bridge_enable(void)
+> >>  {
+> >> +	int ret;
+> >> +
+> >>  	struct qcom_scm_desc desc = {
+> >>  		.svc = QCOM_SCM_SVC_MP,
+> >>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
+> >> @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
+> >>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
+> >>  		return -EOPNOTSUPP;
+> >>  
+> >> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
+> >> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> >> +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+> >> +		return -EOPNOTSUPP;
+> >> +
+> >> +	return ret ?: res.result[0];
+> > 
+> > I'd prefer, with the additional check, that you'd structure it like this:
+> > 
+> > 	if (ret)
+> > 		return ret;
+> > 
+> > 	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+> > 		return -EOPNOTSUPP;
+> > 
+> > 	return res.result[0];
+> 
+> Sure, above looks more cleaner. Will update in next rev.
+> 
 
-The ice workqueue doesn't seem to rely on any CPU locality and should
-therefore be able to run on any CPU. In practice this is already
-happening through the unbound ice_service_timer that may fire anywhere
-and queue the workqueue accordingly to any CPU.
+Thanks!
 
-Make this official so that the ice workqueue is only ever queued to
-housekeeping CPUs on nohz_full.
+> > 
+> > That way we deal with SCM-call errors first, otherwise we inspect and
+> > act on the returned data.
+> > 
+> > That said, the return value of this function, if non-zero, will trickle
+> > back to and be returned from qcom_scm_probe(), where Linux expects to
+> > see a valid error code. Are there any other result[0] values we should
+> > handle, which would allow us to end this function with "return 0"?
+> 
+> As qcom_scm_shm_bridge_enable() is an shm enablement call, need to handle
+> supported(or unsupported) scenario appropriately and other errors can be
+> propagated to qcom_tzmem/qcom_scm_probe.
+> 
+> Please note, other return values(related to access control) from QTEE are
+> failures and do not require conversion to Linux error codes.
+> 
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
-Resend of: https://lore.kernel.org/all/20240922222420.18009-1-frederic@kernel.org/
-- Added IWL and netdev lists
+I'm not familiar with the value space of such errors, but any value
+other than -EOPNOTSUPP and 0 returned here will propagate back and be
+the value returned to the driver core.
 
- drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It seems reasonable to ensure that the return value space makes sense to
+Linux, just in case something up the stack decides to act upon the value
+we return.
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 179631921611..b819e7f9d97d 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -5904,7 +5904,7 @@ static int __init ice_module_init(void)
- 
- 	ice_adv_lnk_speed_maps_init();
- 
--	ice_wq = alloc_workqueue("%s", 0, 0, KBUILD_MODNAME);
-+	ice_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, KBUILD_MODNAME);
- 	if (!ice_wq) {
- 		pr_err("Failed to create workqueue\n");
- 		return status;
--- 
-2.42.0
-
+Regards,
+Bjorn
 
