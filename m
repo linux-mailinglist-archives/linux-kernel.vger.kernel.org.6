@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-353374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0300992D02
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8155992D06
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5131F23668
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0B91C221BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0611D358D;
-	Mon,  7 Oct 2024 13:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247091D359E;
+	Mon,  7 Oct 2024 13:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGLPk81E"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1CIejin"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2066C320B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F711D2F7C;
+	Mon,  7 Oct 2024 13:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307151; cv=none; b=b6GCY4GxYhXaubgcchjpDnjtMQkHEwPrwkgsJQSS1Ig7X0W6tcDRLD331zyO5E+4UZBOeD/DOod9vgT3CpDPADvV2Ha09C31e2cJIZ7bNcwJQuIiaVDiJ2eRxUjt97GePtnuAjxOuCDjiN0L1PDADnuWz4WHqR6i/EMExArEY1g=
+	t=1728307195; cv=none; b=ShqjUFB0BskUQC4Z9huzQ3BAg8JF/jEJZfTV7+WRYB4LE2wgeZjLsYdAR5w9M1FM91+qdyGbQx79VEgRiswzi53aKlxedkbxJppGzfwLm09x0KbR/l49nwPHMZCujrc0hcybzKU3Fim3MpZ7GVY5SLuqi55qSo473KYJh75wt80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307151; c=relaxed/simple;
-	bh=zSSnmBKELsu8+TP1ru4kMnaPcFuUD2Iazj9ZA8DZBs8=;
+	s=arc-20240116; t=1728307195; c=relaxed/simple;
+	bh=/e2E4Nsq+0Xkd5BF5AuSOGCkhvFjFskozi3D9yL97JI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+CAfpZVvnu2urQlqOBQCkpAXoTui9H3wn8WY/TrigMDJprRMeCFyKxkeQ5LcV41KyJEXuEJ6HgBJXZcP/LOfCfa9N4xLKQ1wYV9wp/ymhivR7rDQa+J8XZ/3fSD8A+8YXPkhuwlvQTY9QT0NlNrnppr3GvEfXPJuNhPsmUHQ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGLPk81E; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398ec2f3c3so5404236e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728307148; x=1728911948; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0xLf663k7Unb9yQSVk3+yd3X5tyISjr5HvAhl1UQ5jk=;
-        b=bGLPk81E2Y0DhBdE/HvXdcfZd9jap3wHHpgLxMedujLiJEi/RtcZlDWs+uUj1l7sZ/
-         GaGP1I5YbfBS+q2iuDajtmh2wNiwklWWfZSCK4X6hsKcegyjMPmjxoIpgphqWfbhp8uA
-         47vpkU45CwrjNLkxgdmppvuqfXZEQu3VeWMGD8h3A2fA7ERM0PQeHiRxZDaiIjEKbZ7n
-         segbu40iB9akFXca8y3CuuoQOHmOvi3tCeJdWY+XXineoqTT053fUNa4Yg8RWuPQsdzD
-         rylLsejF0zg1Bk9i5FQ65Ez9xfczefT68T4v8ig7LMn41VfRyrsRWK4RVsbM6L9quk4I
-         ZVNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307148; x=1728911948;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xLf663k7Unb9yQSVk3+yd3X5tyISjr5HvAhl1UQ5jk=;
-        b=ApKSov2HlhJGWUWqm8JASxRu+CXthGoNNaH3X9q9i9JiheFEQ3riKauMVVlSyVCi1d
-         ejQ5ESvNiWFgVm9pHck1T1PTbVlHOzC9v0jjqm0ES6iRce4it59/wLjyQYKNLkZIzPNB
-         vZ9CaYz2Df9GZvvnJcrOaw0rjmnKN6MEA/g5ZtY5wggHd/5xLG51CLfHY8dOy7r6ne3R
-         YuqVh4dGx4j50DztVbpJyyeQiqcqkUU0yYEKcao3Rg7J+cUkPI5LhA2HeX7h8Xq9AU6l
-         J+0t9FtJkpwX494FNSdF8T8rzvkFWVtRfvgjdNfn8TC1UpTCk2H94D5q1ZazDMEAdNoJ
-         5ONA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0P0u6naG906a83Pr4LCcSiR/zx3Y9kw6m6EicP+CXQavGl+9r7qti1oEJa87VESgr/Ww0PnOgisOQ17o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL6t6os0bXjy6h8fI/98fV4BAeO2/CoD5J+6I3kiYFhZ4mvtiI
-	Cce/OjZd96f2b8sNcQvG7tffYNJtgZiAO1eOU+4YT0OY9sNwUkyTO/gphge6lpw=
-X-Google-Smtp-Source: AGHT+IGYvxRBROgH87NQ+TOEw0fRmb9P07SdQ3NJxECmesIK4Eck3W4jA2bZJ7wyTSLJn8CYPOwSVw==
-X-Received: by 2002:a05:6512:220d:b0:52c:df6f:a66 with SMTP id 2adb3069b0e04-539ab9f1187mr5089552e87.58.1728307148223;
-        Mon, 07 Oct 2024 06:19:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec847bsm840205e87.96.2024.10.07.06.19.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:19:07 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:19:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <linux-arm-msm@vger.kernel.org>, 
-	"open list:DRM DRIVER for Qualcomm display hardware" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] drm/msm/dsi: fix 32-bit signed integer extension
- in pclk_rate calculation
-Message-ID: <uuotcdtdnh7u6emjozmxicvdmaeztrdfa72bxl7w2elzanf3qc@2q4nip75flsx>
-References: <20241007050157.26855-1-jonathan@marek.ca>
- <20241007050157.26855-2-jonathan@marek.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdRaOzKFB8oz4CdCQxt0oICXnT3QIEALtdV87ncPTkT4rCUSkP6DCLIwJfbEjjcuklFgW8eOYyq8PHk9ClD4CH9WxeSGNv1wFHjhcIXpu3kBS7FQPsbba1JcGI49+UY/RtnJBGH93ODc/O9P2V5rOubspf74ziCXlmZlMM7a/qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1CIejin; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728307195; x=1759843195;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/e2E4Nsq+0Xkd5BF5AuSOGCkhvFjFskozi3D9yL97JI=;
+  b=Z1CIejinADd8ZpXr+BCqfl3GRVqNwH5Z2b+p66W09VT/IPbNwDImKnVD
+   0yLaKjjCd9ZRExGJL8MqFjXK5P+M20lG8rZOgduJsb7ip2tMC+0aLl66t
+   Qk0YHxgY22tDFQRWEbB7iiYDKL6WqT1mO4OE0fsEV9tuH0cgZjHYyHhNz
+   mTguJNC9SoD0ZIBwoG9JEy3BRJnIrG9MFpBOtTORJg2ocKrn6i6yZBTTt
+   628Fu5nZmcYSflISuFysd3qiCXSC032Ihf43ZgtoOISsSCuZcMmgQ3CeC
+   BnkvcLD/GOpWXcBhPpV9Vw+CQMsDH7FcGoHNj1R++3sk51cIl4YWTMFsY
+   Q==;
+X-CSE-ConnectionGUID: FWLPKi5wRyOE8iI46dVxxA==
+X-CSE-MsgGUID: pH2cOo3XTmaGvg4JZtq+JQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27265844"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27265844"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 06:19:54 -0700
+X-CSE-ConnectionGUID: fh6P6qQvQMq8c9iM7VC/xQ==
+X-CSE-MsgGUID: JSDqF9XzRSqXW0n+5D48+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="106306643"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 Oct 2024 06:19:51 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxneP-00051K-2P;
+	Mon, 07 Oct 2024 13:19:49 +0000
+Date: Mon, 7 Oct 2024 21:19:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Sebastian Reichel <sre@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH 4/4] power: supply: hwmon: move interface to private
+ header
+Message-ID: <202410072120.3jlD28CJ-lkp@intel.com>
+References: <20241005-power-supply-cleanups-v1-4-45303b2d0a4d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,28 +80,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007050157.26855-2-jonathan@marek.ca>
+In-Reply-To: <20241005-power-supply-cleanups-v1-4-45303b2d0a4d@weissschuh.net>
 
-On Mon, Oct 07, 2024 at 01:01:49AM GMT, Jonathan Marek wrote:
-> When (mode->clock * 1000) is larger than (1<<31), int to unsigned long
-> conversion will sign extend the int to 64 bits and the pclk_rate value
-> will be incorrect.
-> 
-> Fix this by making the result of the multiplication unsigned.
-> 
-> Note that above (1<<32) would still be broken and require more changes, but
-> its unlikely anyone will need that anytime soon.
-> 
-> Fixes: c4d8cfe516dc ("drm/msm/dsi: add implementation for helper functions")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Hi Thomas,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 27cc6fdf720183dce1dbd293483ec5a9cb6b595e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/power-supply-core-use-device-mutex-wrappers/20241005-181114
+base:   27cc6fdf720183dce1dbd293483ec5a9cb6b595e
+patch link:    https://lore.kernel.org/r/20241005-power-supply-cleanups-v1-4-45303b2d0a4d%40weissschuh.net
+patch subject: [PATCH 4/4] power: supply: hwmon: move interface to private header
+config: x86_64-randconfig-003-20241007 (https://download.01.org/0day-ci/archive/20241007/202410072120.3jlD28CJ-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410072120.3jlD28CJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410072120.3jlD28CJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/power/supply/power_supply_hwmon.c:12:
+>> drivers/power/supply/power_supply.h:41:20: error: redefinition of 'power_supply_update_leds'
+      41 | static inline void power_supply_update_leds(struct power_supply *psy) {}
+         |                    ^
+   drivers/power/supply/power_supply.h:41:20: note: previous definition is here
+      41 | static inline void power_supply_update_leds(struct power_supply *psy) {}
+         |                    ^
+   In file included from drivers/power/supply/power_supply_hwmon.c:12:
+>> drivers/power/supply/power_supply.h:42:19: error: redefinition of 'power_supply_create_triggers'
+      42 | static inline int power_supply_create_triggers(struct power_supply *psy)
+         |                   ^
+   drivers/power/supply/power_supply.h:42:19: note: previous definition is here
+      42 | static inline int power_supply_create_triggers(struct power_supply *psy)
+         |                   ^
+   In file included from drivers/power/supply/power_supply_hwmon.c:12:
+>> drivers/power/supply/power_supply.h:44:20: error: redefinition of 'power_supply_remove_triggers'
+      44 | static inline void power_supply_remove_triggers(struct power_supply *psy) {}
+         |                    ^
+   drivers/power/supply/power_supply.h:44:20: note: previous definition is here
+      44 | static inline void power_supply_remove_triggers(struct power_supply *psy) {}
+         |                    ^
+   3 errors generated.
+
+
+vim +/power_supply_update_leds +41 drivers/power/supply/power_supply.h
+
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  40  
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @41  static inline void power_supply_update_leds(struct power_supply *psy) {}
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @42  static inline int power_supply_create_triggers(struct power_supply *psy)
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  43  { return 0; }
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @44  static inline void power_supply_remove_triggers(struct power_supply *psy) {}
+4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  45  
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
