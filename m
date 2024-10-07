@@ -1,187 +1,286 @@
-Return-Path: <linux-kernel+bounces-352915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813D1992617
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4E099261A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903F21C2242B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833352825D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8896C17D378;
-	Mon,  7 Oct 2024 07:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D9117D378;
+	Mon,  7 Oct 2024 07:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lvt9xHIH"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLNFMf52"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2C1184532
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D732C74C08;
+	Mon,  7 Oct 2024 07:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728286240; cv=none; b=ovKsWkPuGaJWT1qpU0DiWZwTr4wj+VS3AoyYxQeCsbjNDF5IARvyRrc/XHsROAlV9nfpedzIcpYUMZTgrzlQvlebc4i3prxXJHeV5QeV0lASHxMWo8tWmxrUAc8nJLsoBa3s1j8mVJO8r59OLt3RrcGQ/efKKSzTjMnCBx03hw0=
+	t=1728286301; cv=none; b=FUxgB8wmmPgbUoC0oMDOOM8bmb8L1YqhKmkNhGFl75eu5NJLlLuIAabhV6flrmhcfc22utJCT9R5NWKefjSS6B5iN/nW0sawGIKUFeG4Pl9V1W1D1UUILESrDk4Zh0srxawNqGdwXK3Ym7L1NetwZ1dMfUgLYKbUa3OrhA45wTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728286240; c=relaxed/simple;
-	bh=hSv9F+SOhdBqzcQdaRe6qQr6JJfZaJ1QFV6pBUkSgDU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=J4mft7L9R6PURYAZt7Newtxk7zDDehHC26uKHcdzobGUbXbcJ2WBglnjbai98jc7DviXCyv98ohaPJ2WgEp/LRE2XmuEbUPnReedzqNu9lNRrbZDlq/eIgoLFNzDmxLyPqmyc10AtQ4RBrXhjfpbHbwmEXA9Rg7WNWp8bAMq8dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lvt9xHIH; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241007073036epoutp045be6d7557b3890a4608090f00f77a87c~8GyzuMUis0956709567epoutp04E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:30:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241007073036epoutp045be6d7557b3890a4608090f00f77a87c~8GyzuMUis0956709567epoutp04E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728286236;
-	bh=4rnbqJZZSntKlMlkGwspg1MG8k0aE9vHfvaiVGRlvVQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=lvt9xHIHANWGuWXYFKXOLOHKUuKgpsZMqp9kU2rbM2IMAqTBX8wDhQBNwOo6WdVhZ
-	 oVZbYD8w3ugMCNm2IPzHsAfOSg1bRaz3PonFzqIJ37yyrShNrrXAg932URhUgZNxNR
-	 ZMX7ZPsipq9n01tE66EtmwjV45UBDdYqBQkzHDUc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241007073036epcas2p10512e5b3c1c7f299b989387c7160cb75~8GyzQyme11623716237epcas2p18;
-	Mon,  7 Oct 2024 07:30:36 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XMW5l6pNDz4x9Pp; Mon,  7 Oct
-	2024 07:30:35 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1A.7A.09396.B1E83076; Mon,  7 Oct 2024 16:30:35 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241007073035epcas2p3b1154a0e2efc8a42abbae11f28c4194b~8GyygLzZO0428504285epcas2p35;
-	Mon,  7 Oct 2024 07:30:35 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241007073035epsmtrp256ce08ff17226426593c4d3d52389e24~8GyyfT4Cc0646906469epsmtrp2S;
-	Mon,  7 Oct 2024 07:30:35 +0000 (GMT)
-X-AuditID: b6c32a45-671ff700000024b4-c2-67038e1b39ba
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F9.2D.07371.B1E83076; Mon,  7 Oct 2024 16:30:35 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241007073035epsmtip2dc46f00c01a36834257bf77509131b4a~8GyyTjFGv2323423234epsmtip2o;
-	Mon,  7 Oct 2024 07:30:35 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sylwester Nawrocki'"
-	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim
- Akhtar'" <alim.akhtar@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <459e2af0-16a1-45aa-93b8-50b84b359854@kernel.org>
-Subject: RE: [PATCH v2 0/3] add clocks support for exynosauto v920 SoC
-Date: Mon, 7 Oct 2024 16:30:35 +0900
-Message-ID: <00a401db188a$cc7a1d30$656e5790$@samsung.com>
+	s=arc-20240116; t=1728286301; c=relaxed/simple;
+	bh=MQvwg8vb9dS8GngN/GkkuavJEoeBFMRsx6M3qD2yGik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DrxWzS52ziB3fOXdKoHPpRIs7hwsWmfSa3CGWvz1REBNHnIxIYB52itwzwYzyng02dOAdfOamjwiF2oaGqxE8ajCINyFY1fwp8KRYarnKi+knlRZJ1JhniMnlSP7BXrWX9MJ0Eh2o4a2NPhRGkc9RXckD8xt8cRm6qsfbhv9aK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLNFMf52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4A1C4CEC6;
+	Mon,  7 Oct 2024 07:31:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728286300;
+	bh=MQvwg8vb9dS8GngN/GkkuavJEoeBFMRsx6M3qD2yGik=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SLNFMf52qee2NT2FJBw+6q2wuOMrRwDdMT9RM/QC5e2BstAUBj1Hc6Vr72M6IG11g
+	 djun7MKPdqc0Kr/PJEVHYIoosQ/oLZkHEjjziMtAgf5dl6A3AYdR92JqT9jc9MIfH3
+	 AeVt6XCeXoMtV8pARxhMIXcCftCy82uoiZXMLtUl4qQkVWNE3po9fLfY3QR3bvJrc9
+	 J0qSd1HdIhIhDBnUoySKUfOjM6hd05YmpbnrVvs80B0EBAxZiq/JO9VTEFPsFzmmup
+	 BpqN4Xtq6M1vtmyGrphbZrfa7H3AhxPbserL89mENsKTAXKY3ZQwiJz7RdNyezNLLG
+	 2uhJB0raF5AqA==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] selftests: sched_ext: Add sched_ext as proper selftest target
+Date: Mon,  7 Oct 2024 09:31:32 +0200
+Message-ID: <20241007073133.989166-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHi+T2XatR6Fb/gkA73a6jZq5dtDgLeX3L3AXP3fjaySI5iUA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmua50H3O6wavTZhYP5m1js1iz9xyT
-	xfUvz1kt5h85x2px/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
-	XdvI4sDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0IlKCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnALzAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM3gXnGAvaeCqeT1rF2sD4h7OLkZND
-	QsBE4u6j52xdjFwcQgI7GCUWL+xmAkkICXxilFgwNRwi8Y1RYsqRfawwHY+vPmCBSOxllFj3
-	4RILRMdLRomj36pAbDYBfYnV3bfBxooI3GGSuDz9DTuIwyywjlFi88wj7CBVnAJ2ErMf/2IG
-	sYUF3CQW/j8JZrMIqEhc/dYGdAcHB6+ApcTqmdogYV4BQYmTM5+ALWMW0JZYtvA1M8RFChI/
-	ny4Du05EwEni+fVWqBoRidmdbcwgeyUEjnBIbFh3B+oFF4nX8y+xQdjCEq+Ob2GHsKUkPr/b
-	CxXPl5h8/S0TRHMDo8S1f91Q2+wlFp35yQ5yHLOApsT6XfogpoSAssSRW1B7+SQ6Dv9lhwjz
-	SnS0CUE0qkl8unIZaoiMxLETz5gnMCrNQvLZLCSfzULywSyEXQsYWVYxiqUWFOempxYbFRjC
-	Izs5P3cTIzj1arnuYJz89oPeIUYmDsZDjBIczEoivBFrGNOFeFMSK6tSi/Lji0pzUosPMZoC
-	g3ois5Rocj4w+eeVxBuaWBqYmJkZmhuZGpgrifPea52bIiSQnliSmp2aWpBaBNPHxMEp1cAk
-	pjDFW+mN2UrNYA/DkO/rFQ0+nJa+4fYta67bvbT68IOC3zpXCNjLT9vxUDtnicXZhWGXlQId
-	NWX/+X55M1Vqwe7l/Fe8tt8+ctD+y6wlm9wP1xyZ8LN+0hb1GyE6ZXf02fcwRK4ws+e5J1Ty
-	dvuljM8lMcI7NrvO3Fe9wyJKOM9i5xHm/Qs8z7+4/eO65sm1blO46gSfWMb8NXtfq5j3OFzg
-	iN/MZyplDZ8u++7kdmve772zUqbHfJ7i8Sv/brSkRz7tumKg85pPyfnxBlsz61t7bgca6h69
-	FXcwy3z5oYir137IaxxnSli063j1KvG1s8pcL2vxrfgz/4Uk32XB/NOf20WPV62Zqv3x4crV
-	y5RYijMSDbWYi4oTAVWe3bBGBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSvK50H3O6Qct3CYsH87axWazZe47J
-	4vqX56wW84+cY7U4f34Du8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1+L9nB7vF4TftrBb/
-	rm1kceD1eH+jld1j06pONo/NS+o9+rasYvT4vEkugDWKyyYlNSezLLVI3y6BK2NFRxdTwQvu
-	incP8hoYb3F2MXJySAiYSDy++oCli5GLQ0hgN6PEtUM/GCESMhIbG/6zQ9jCEvdbjrBCFD1n
-	lPi/bxETSIJNQF9idfdtNpCEiMAjJonpRz6xgzjMApsYJc7tvskG0XKYUeLb06UsIC2cAnYS
-	sx//YgaxhQXcJBb+PwlmswioSFz91gY0loODV8BSYvVMbZAwr4CgxMmZT8BamQW0JXoftjLC
-	2MsWvmaGOE9B4ufTZawgtoiAk8Tz661Q9SISszvbmCcwCs9CMmoWklGzkIyahaRlASPLKkbJ
-	1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT83E2M4EjU0tjBeG/+P71DjEwcjIcYJTiYlUR4I9Yw
-	pgvxpiRWVqUW5ccXleakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXANMn2bUdX
-	gVvI44z2fW6/dksd3ewQUvf8Q2Psy1+9fdtNmopSgpUXTb4SdcP5Rfkm1qczlC7vTrDL59lZ
-	qHTNfvG+so7nf2r5jZPcnxqcdVhUbzyXM9RZ0SU5eGFwtsnU0rtKH6d9SErcze7L2BZy9KjH
-	1hTt7VdStrikBUe9EJry0Nl98kFunVMGSxWufpPauf/COh/px+YhnMeDVO5v7rj8J1Nvtvvs
-	4vnWN/+4fuZzf+nwvX3G1NsxhyVPWcYXcKzcPc/C78DRJ5OKpub0nFQ8vHD7ov6jk24cuvPp
-	9snq1x8CJ1mnRf68o+rbe+1Opm7d9DwV5b8tQoZMHKf0G24+2zqX4UhNyYoj14UcBJVYijMS
-	DbWYi4oTAedQqIUzAwAA
-X-CMS-MailID: 20241007073035epcas2p3b1154a0e2efc8a42abbae11f28c4194b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241007071833epcas2p213100b34fd5a8192497a41e2e455947a
-References: <CGME20241007071833epcas2p213100b34fd5a8192497a41e2e455947a@epcas2p2.samsung.com>
-	<20241007071829.3042094-1-sunyeal.hong@samsung.com>
-	<459e2af0-16a1-45aa-93b8-50b84b359854@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Krzyszto,
+From: Björn Töpel <bjorn@rivosinc.com>
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Monday, October 7, 2024 4:20 PM
-> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Sylwester Nawrocki
-> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>; Alim
-> Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob Herri=
-ng
-> <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v2 0/3=5D add clocks support for exynosauto v920 So=
-C
->=20
-> On 07/10/2024 09:18, Sunyeal Hong wrote:
-> > This patchset adds the CMU block below to support exynosauto v920 SoC.
-> > - CMU_PERIC1
-> > - CMU_MISC
-> > - CMU_HSI0/1
-> >
-> > Changes in v2:
-> >  - Rebase the patch to reflect the latest fixes
->=20
-> Not much improved. Still blind rebase without addressing the issue I
-> pointed out.
->=20
-> Allow people to actually review your patches, instead of sending multiple
-> versions within 5 minutes.
->=20
-> One patchset per 24h.
->=20
-I apologize for sending you the patch version incorrectly multiple times.
-Could you elaborate a bit more on the =22unrelated change=22 part you menti=
-oned in the comment?
-I don't think I understand your exact intention.
+The sched_ext selftests is missing proper cross-compilation support, a
+proper target entry, and out-of-tree build support.
 
-Best Regards,
-sunyeal
+When building the kselftest suite, e.g.:
 
-> Best regards,
-> Krzysztof
->=20
+  make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- \
+    SKIP_TARGETS="" O=/output/foo -C tools/testing/selftests install
 
+The expectation is that the sched_ext is included, cross-built, and
+placed into /output/foo.
+
+Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
+selftest. Also, remove some variables that were unused by the
+Makefile.
+
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+v2: * Removed the duplicated LLVM prefix parsing (David)
+    * Made sure make clean didn't do a complete mess (David)
+    * Added sched_ext to default skip (Shuah)
+---
+tools/testing/selftests/Makefile           |  9 +--
+ tools/testing/selftests/sched_ext/Makefile | 80 +++++++++++-----------
+ 2 files changed, 45 insertions(+), 44 deletions(-)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index b38199965f99..363d031a16f7 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -88,6 +88,7 @@ TARGETS += rlimits
+ TARGETS += rseq
+ TARGETS += rtc
+ TARGETS += rust
++TARGETS += sched_ext
+ TARGETS += seccomp
+ TARGETS += sgx
+ TARGETS += sigaltstack
+@@ -129,10 +130,10 @@ ifeq ($(filter net/lib,$(TARGETS)),)
+ endif
+ endif
+ 
+-# User can optionally provide a TARGETS skiplist.  By default we skip
+-# BPF since it has cutting edge build time dependencies which require
+-# more effort to install.
+-SKIP_TARGETS ?= bpf
++# User can optionally provide a TARGETS skiplist. By default we skip
++# targets using BPF since it has cutting edge build time dependencies
++# which require more effort to install.
++SKIP_TARGETS ?= bpf sched_ext
+ ifneq ($(SKIP_TARGETS),)
+ 	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
+ 	override TARGETS := $(TMP)
+diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
+index 0754a2c110a1..acab9732b23e 100644
+--- a/tools/testing/selftests/sched_ext/Makefile
++++ b/tools/testing/selftests/sched_ext/Makefile
+@@ -3,24 +3,13 @@
+ include ../../../build/Build.include
+ include ../../../scripts/Makefile.arch
+ include ../../../scripts/Makefile.include
++
++TEST_GEN_PROGS := runner
++
++# override lib.mk's default rules
++OVERRIDE_TARGETS := 1
+ include ../lib.mk
+ 
+-ifneq ($(LLVM),)
+-ifneq ($(filter %/,$(LLVM)),)
+-LLVM_PREFIX := $(LLVM)
+-else ifneq ($(filter -%,$(LLVM)),)
+-LLVM_SUFFIX := $(LLVM)
+-endif
+-
+-CC := $(LLVM_PREFIX)clang$(LLVM_SUFFIX) $(CLANG_FLAGS) -fintegrated-as
+-else
+-CC := gcc
+-endif # LLVM
+-
+-ifneq ($(CROSS_COMPILE),)
+-$(error CROSS_COMPILE not supported for scx selftests)
+-endif # CROSS_COMPILE
+-
+ CURDIR := $(abspath .)
+ REPOROOT := $(abspath ../../../..)
+ TOOLSDIR := $(REPOROOT)/tools
+@@ -34,18 +23,31 @@ GENHDR := $(GENDIR)/autoconf.h
+ SCXTOOLSDIR := $(TOOLSDIR)/sched_ext
+ SCXTOOLSINCDIR := $(TOOLSDIR)/sched_ext/include
+ 
+-OUTPUT_DIR := $(CURDIR)/build
++OUTPUT_DIR := $(OUTPUT)/build
+ OBJ_DIR := $(OUTPUT_DIR)/obj
+ INCLUDE_DIR := $(OUTPUT_DIR)/include
+ BPFOBJ_DIR := $(OBJ_DIR)/libbpf
+ SCXOBJ_DIR := $(OBJ_DIR)/sched_ext
+ BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
+ LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
+-DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
+-HOST_BUILD_DIR := $(OBJ_DIR)
+-HOST_OUTPUT_DIR := $(OUTPUT_DIR)
+ 
+-VMLINUX_BTF_PATHS ?= ../../../../vmlinux					\
++ifneq ($(CROSS_COMPILE),)
++DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
++HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
++HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
++HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
++HOST_DESTDIR := $(OUTPUT_DIR)/host/
++else
++DEFAULT_BPFTOOL := $(OUTPUT_DIR)/sbin/bpftool
++HOST_OBJ_DIR := $(OBJ_DIR)/bpftool
++HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/
++HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/
++HOST_DESTDIR := $(OUTPUT_DIR)/
++endif
++
++VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
++		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
++		     ../../../../vmlinux					\
+ 		     /sys/kernel/btf/vmlinux					\
+ 		     /boot/vmlinux-$(shell uname -r)
+ VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
+@@ -80,17 +82,23 @@ IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
+ # Use '-idirafter': Don't interfere with include mechanics except where the
+ # build would have failed anyways.
+ define get_sys_includes
+-$(shell $(1) -v -E - </dev/null 2>&1 \
++$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
+ 	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
+-$(shell $(1) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
++$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
+ endef
+ 
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
++endif
++
++CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
++
+ BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
+ 	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
+ 	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
+ 	     -I$(INCLUDE_DIR) -I$(APIDIR) -I$(SCXTOOLSINCDIR)			\
+ 	     -I$(REPOROOT)/include						\
+-	     $(call get_sys_includes,$(CLANG))					\
++	     $(CLANG_SYS_INCLUDES) 						\
+ 	     -Wall -Wno-compare-distinct-pointer-types				\
+ 	     -Wno-incompatible-function-pointer-types				\
+ 	     -O2 -mcpu=v3
+@@ -98,7 +106,7 @@ BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
+ # sort removes libbpf duplicates when not cross-building
+ MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
+ 	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
+-	       $(INCLUDE_DIR) $(SCXOBJ_DIR))
++	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(SCXOBJ_DIR))
+ 
+ $(MAKE_DIRS):
+ 	$(call msg,MKDIR,,$@)
+@@ -112,14 +120,14 @@ $(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
+ 		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
+ 
+ $(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
+-		    $(LIBBPF_OUTPUT) | $(OBJ_DIR)/bpftool
++		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
+ 	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
+ 		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
+ 		    EXTRA_CFLAGS='-g -O0'					\
+-		    OUTPUT=$(OBJ_DIR)/bpftool/					\
+-		    LIBBPF_OUTPUT=$(OBJ_DIR)/libbpf/				\
+-		    LIBBPF_DESTDIR=$(OUTPUT_DIR)/				\
+-		    prefix= DESTDIR=$(OUTPUT_DIR)/ install-bin
++		    OUTPUT=$(HOST_OBJ_DIR)/					\
++		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
++		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
++		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
+ 
+ $(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
+ ifeq ($(VMLINUX_H),)
+@@ -150,9 +158,7 @@ $(INCLUDE_DIR)/%.bpf.skel.h: $(SCXOBJ_DIR)/%.bpf.o $(INCLUDE_DIR)/vmlinux.h $(BP
+ 
+ override define CLEAN
+ 	rm -rf $(OUTPUT_DIR)
+-	rm -f *.o *.bpf.o *.bpf.skel.h *.bpf.subskel.h
+ 	rm -f $(TEST_GEN_PROGS)
+-	rm -f runner
+ endef
+ 
+ # Every testcase takes all of the BPF progs are dependencies by default. This
+@@ -196,21 +202,15 @@ $(SCXOBJ_DIR)/runner.o: runner.c | $(SCXOBJ_DIR)
+ # function doesn't support using implicit rules otherwise.
+ $(testcase-targets): $(SCXOBJ_DIR)/%.o: %.c $(SCXOBJ_DIR)/runner.o $(all_test_bpfprogs) | $(SCXOBJ_DIR)
+ 	$(eval test=$(patsubst %.o,%.c,$(notdir $@)))
+-	$(CC) $(CFLAGS) -c $< -o $@ $(SCXOBJ_DIR)/runner.o
++	$(CC) $(CFLAGS) -c $< -o $@
+ 
+ $(SCXOBJ_DIR)/util.o: util.c | $(SCXOBJ_DIR)
+ 	$(CC) $(CFLAGS) -c $< -o $@
+ 
+-runner: $(SCXOBJ_DIR)/runner.o $(SCXOBJ_DIR)/util.o $(BPFOBJ) $(testcase-targets)
++$(OUTPUT)/runner: $(SCXOBJ_DIR)/runner.o $(SCXOBJ_DIR)/util.o $(BPFOBJ) $(testcase-targets)
+ 	@echo "$(testcase-targets)"
+ 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+ 
+-TEST_GEN_PROGS := runner
+-
+-all: runner
+-
+-.PHONY: all clean help
+-
+ .DEFAULT_GOAL := all
+ 
+ .DELETE_ON_ERROR:
+
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+-- 
+2.43.0
 
 
