@@ -1,108 +1,127 @@
-Return-Path: <linux-kernel+bounces-353205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0200992A4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A21992A4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAE31F230C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947FC1F23581
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D41C1D26E0;
-	Mon,  7 Oct 2024 11:36:19 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EC91D1F71;
+	Mon,  7 Oct 2024 11:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="WGV5/4QO"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA31D1F40;
-	Mon,  7 Oct 2024 11:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300979; cv=none; b=vCQL7mvMgnpedHAVVamKZmdXnki/U0ltKTEzRXlp6FVNfZ9Y5IDCuKFls7NzkrsbfxwJZinCX7yvj3T+IQ+gGtg7TgjGrCZAW+hu2UewIJpsMUC9AVNNlb/CDSXqVS7ArUfTlmV5B/+CKs1xyTYy4TSEtCeR0SoH4gjiYhxrDaA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300979; c=relaxed/simple;
-	bh=fJESMTPs+fQRs6bk8iVWf9SUl6L+IiJU7ufzITmJIQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BnLGugwAHFMKENwUUWwQHIm+nWmg5M6fRpmytaG8qR8rDfILmuWxgz4AuzlEu8Dg5eh/LIl4j4aAMkxM/Fxb5JpaehcumMvtZlYRY15BCdwyukc2wuJm3YLNwbADhDGefnfWUhWLwBN2Qg5wX6dDKLDR5CZk1qyqEJs7IBctStg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sxm26-000000002Mf-2WkX;
-	Mon, 07 Oct 2024 11:36:10 +0000
-Date: Mon, 7 Oct 2024 12:36:07 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <linux@fw-web.de>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Wenbin Mei <wenbin.mei@mediatek.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, john@phrozen.org,
-	eladwf@gmail.com, ansuelsmth@gmail.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-Message-ID: <ZwPHp9l3Fx7f2lI4@makrotopia.org>
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-2-linux@fw-web.de>
- <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843FF19993E;
+	Mon,  7 Oct 2024 11:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728301025; cv=pass; b=OjEgCo+4va+sc+WVksxKiKX88xdlkfjBrK51iepDb5AGPUVCmRTZEH0YlVBZEboz13vQ6sTVkSXH6RFj8fxYRbRo6EAdQUffvKYfU/4JNF/dImHUlqsvD/XIgvEgYSDJs8WmSqzRoaPhLU8vuQmxCyaRUh7fh+LzEz2OOPVnow8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728301025; c=relaxed/simple;
+	bh=9oVgoUrHQCZHD3KxrLypsBR9deMmB0mxWgRyZg7m9xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r4S9zi0Ix/ifY0HvCLfeArTxwmoav/zoONvDsnYq0jdDS4a8ftRowMtZM/s91nuViQcuvMWdxYWOzBsvwTN8xQux+ckJZUZn+GCTRxem+YG2844/kbFuhEaMt2hBWKOSdUJ4ED0KdjrGqWPKtOCf6g+424K/t8Op7iZiYsbpIvk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=WGV5/4QO; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728301004; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=j4I9UWJsisQisqCf+FkGQze/j2a9UgqdHL1kN+2zZzi428esWfDDwTrXmhBfk7CqnRSGcQj1uQCCwL1U0HDeamN2BAr1AG3oJycnYdXTUQxGZi00slOyHqwBhwJcPHiU7gQ1yve0LZtoERt70Z1a2OmCXCQCxjDDbpyVB8B7YYE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728301004; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AFKho57gUpxy4V1/EUaFr4abLL2qh3hunfyPaBeSLbY=; 
+	b=NcsY+0isEI3qViBRpTT4AuRDB7qruwLtRTr4BPKtQ+T1jhc8uF70ossZsH5ZVSRBstQn4PJwb96HIuw4iZgBXYwmuMWqSLpS3pPkOoYrGM9Rit7vhY3lpdGtEcioy9XUsOh/ZEjZWmWBe+FHp3kU+tHwnddnkRzRDA7fUtTgP6A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728301004;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=AFKho57gUpxy4V1/EUaFr4abLL2qh3hunfyPaBeSLbY=;
+	b=WGV5/4QOqnJQQzmDZ0VHxSvKD0Dmxz/bohQSd3ZBPKFZxiUuFUkeFzDwtXvyEs/u
+	jaPWe5BequJB9CGmNSF6SturlPtsVueZi0g7soJsHTzHtpqzdMQw0VKNu85wTQwNrzC
+	G5hc23cRV2rzSnaKEyJA/Jp7SUExNUtTatNIIVbo=
+Received: by mx.zohomail.com with SMTPS id 1728301002132977.0168082874125;
+	Mon, 7 Oct 2024 04:36:42 -0700 (PDT)
+Message-ID: <557f9a0c-be89-477b-b8ee-e0bed98c2ee2@collabora.com>
+Date: Mon, 7 Oct 2024 13:36:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] Enumerate all pixels formats
+To: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+ hverkuil-cisco@xs4all.nl
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <010201918fb76f7a-650dc960-4911-48d7-8e82-8f18243c4b71-000000@eu-west-1.amazonses.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <010201918fb76f7a-650dc960-4911-48d7-8e82-8f18243c4b71-000000@eu-west-1.amazonses.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 10:00:49AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
-> > From: Frank Wunderlich <frank-w@public-files.de>
-> > 
-> > Add binding definitions for mmc on MT7988 SoC.
-> > 
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> > ---
-> > v2:
-> > - fixed minItems to 4
-> > ---
-> >   .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
-> >   1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > index c532ec92d2d9..7380f72ea189 100644
-> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> > @@ -21,6 +21,7 @@ properties:
-> >             - mediatek,mt7620-mmc
-> >             - mediatek,mt7622-mmc
-> >             - mediatek,mt7986-mmc
-> > +          - mediatek,mt7988-mmc
-> >             - mediatek,mt8135-mmc
-> >             - mediatek,mt8173-mmc
-> >             - mediatek,mt8183-mmc
-> > @@ -263,6 +264,29 @@ allOf:
-> >               - const: bus_clk
-> >               - const: sys_cg
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - mediatek,mt7988-mmc
-> 
-> Are you really sure that you can't reuse the MT7986 compatible?
 
-In OpenWrt we are doing exactly that. The MMC controller of
-MT7988 (and MT7981) seems 100% the same as in MT7986 and hence
-works just fine with the mediatek,mt7986-mmc compatible.
+Le 26/08/2024 à 19:24, Benjamin Gaignard a écrit :
+> The goal of this series is to help userspace applications, like Gstreamer
+> or Chromium, to categorize decoders and so avoid trying to use decoder
+> that can't do the require task because it won't support the needed pixel
+> format.
+> As example, in today implementation we need to simulate 10 bit header
+> control to know if the driver support 10 bits pixel formats. With this
+> new flag it will simpler for userspace applications know if driver
+> support 10 bit pixel formats and if it is supported by userspace.
+>
+> An example of how it can be used in GStreamer to discover the
+> supported pixels formats for stateless decoders is available here:
+> https://gitlab.freedesktop.org/benjamin.gaignard1/gstreamer/-/commits/v4l2codecs_enum_all_supported_formats?ref_type=heads
+>
+> v4l2-compliance test of this flag:
+> https://gitlab.collabora.com/benjamin.gaignard/v4l-utils/-/commits/enum_all_formats_v4
+>
+> change in version 7:
+> - Rework documentation about which drivers should use the flag
+
+Hi,
+
+a gentle ping on this series
+
+Thanks,
+Benjamin
+
+>
+> change in version 6:
+> - Change flag name.
+> - Improve documentation.
+> - Improve visl driver to enumerate one more pixel format when the flag
+>    is used.
+>
+> changes in version 5:
+> - Reset the proposal to follow Hans's advices
+> - Add new flag to be used with index field.
+> - Make vicodec and visl test driver use the new flag
+> - Doing the same for Verisilicon driver.
+>   
+> Benjamin Gaignard (3):
+>    media: videodev2: Add flag to unconditionally enumerate pixel formats
+>    media: test-drivers: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
+>    media: verisilicon: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
+>
+>   .../media/v4l/vidioc-enum-fmt.rst             | 18 ++++++++++++++++-
+>   .../media/videodev2.h.rst.exceptions          |  1 +
+>   .../media/platform/verisilicon/hantro_v4l2.c  | 18 ++++++++++++-----
+>   drivers/media/test-drivers/visl/visl-video.c  | 20 +++++++++++++++++--
+>   include/uapi/linux/videodev2.h                |  3 +++
+>   5 files changed, 52 insertions(+), 8 deletions(-)
+>
 
