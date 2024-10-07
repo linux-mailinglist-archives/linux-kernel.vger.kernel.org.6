@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-353964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1AC99354B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:46:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89CA993554
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACB91C21546
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:46:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC6BB237FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090CE1DD867;
-	Mon,  7 Oct 2024 17:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978A1DD9A4;
+	Mon,  7 Oct 2024 17:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R3IlIP1V"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8JKvt1T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD38139CFA;
-	Mon,  7 Oct 2024 17:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56396156E4;
+	Mon,  7 Oct 2024 17:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728323207; cv=none; b=fLKZLvqfv86zwATfJMFquvsYMjHcbVWUGsIan41eyvn0zDUr90o6qzUU3GPfmWCXTRM+tYfr0vEIPUAUf4sPS/62RI/YzXLsO/v/HOJDp8M06wit5jpluA74W5t4TkbveUie1kMMISPvs0MGwLNWEiIi13BUpIKfT3FZ3SOVPtw=
+	t=1728323246; cv=none; b=brQrh3b+Vh9hT/VIhPbJSJeYeXq0tE3OEVnDhMkrS2dAzp1luMruhdvG0eDMYFW9xgraBFl6S8gNhRAeJPk9x68oUw2HWXePmoTNvYW3yEoxWJsvOd1P2rc+NOJy8ZVaqFdb0v8SbafddxMsDKFWsM9e4ZlsLiwjzmzC0YPwP1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728323207; c=relaxed/simple;
-	bh=ydEKflDOj5PrICcHyjRMmVQw/oFNuhMHmHCSdva7xRI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QWpfQCPvyJL9F19h8na4UeXF8O3dyb36dsp6ll2k2jZ5hUWR7xHEh0QiWWfNHU3zNbrw7PD1GwEr7COA4Bj5AfpwtKyKchC2zOrx4gRq8lHtp8pynMKZHE0d6aD7HBKLJWi3XdB5GJuo7JdDFALo3nZ48qrXD3qDVu5oOWju7Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R3IlIP1V; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1237442B38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728323205; bh=QSvvjs6UH5sL67koCBe6p+EInqHQJWIsplo9r8KQsw4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=R3IlIP1V08NXxd92HW0GBZ9/UFQjak0X8TYHrfJw/rZkDmPvDsK/JmL6MMjgXP/6l
-	 oeAtd0qNHOTJfN7ghVzAXZuM+kiuJ9kWORuhdmJuS0OQh3Gm7IEfVQvaQzIzjTcWXm
-	 /V5Ar4u1cnRff0MRh9r82/CKSVzgu/wnQgjoPLNxY3xEg5oV5yOYFpZiCkxn2tBese
-	 LtDtaMJhpHRVN6KG3UhB9oEXPA5UnbYWiknllTsLvlb9rqlhXcVK4x009zbRfUk8XN
-	 c28AqNMeY5C4UNTyqa+CAhNx5R0fr07gmpn0BDD2tydTnL+6chh91Sl2N4Wtnz4ViU
-	 +d5g10y+nVlsg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1237442B38;
-	Mon,  7 Oct 2024 17:46:45 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sergio =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,
- Bjorn Helgaas
- <bhelgaas@google.com>, Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- Ricardo.marliere@suse.com, Sergio =?utf-8?Q?Gonz=C3=A1lez?= Collado
- <sergio.collado@gmail.com>
-Subject: Re: [PATCH v4] docs/sp_SP: Add translation for scheduler/sched-bwc.rst
-In-Reply-To: <20240912171144.15398-1-sergio.collado@gmail.com>
-References: <20240912171144.15398-1-sergio.collado@gmail.com>
-Date: Mon, 07 Oct 2024 11:46:44 -0600
-Message-ID: <874j5niz5n.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728323246; c=relaxed/simple;
+	bh=ff/z/zigLFkYNhiwnWrYtLR5miZ/jrOnAhIs4aV92IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/LO1EKPap5BRbeJKHZXRr3T2HJKBqOfoh2IygYQ85oKAGIDKjx8ZgsqbMxPvkhoLTaJQJI71l4nMU7BT9RNfbesaNUTfJ0rtvi0rAMX1/ZzvdI3J0fMAgT3VzVQ/CFznIJiwGq5GjlrHs08lmwiayqdlBS+MM+lajmuyFBzgzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8JKvt1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6509C4CEC6;
+	Mon,  7 Oct 2024 17:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728323246;
+	bh=ff/z/zigLFkYNhiwnWrYtLR5miZ/jrOnAhIs4aV92IY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M8JKvt1TCSsK8vqmTbTfMJBIkfrAZS6sGeF7zk7k3iCg+TvMtbQviUpJKdObRCmD+
+	 yzKpWnDLNVTByG5YtGieRrkIYVoKno9/XmJm/1FXjbY2aVVSfikkScB2YFa80EuvIU
+	 UfSspsZABPuaLhqBRmVvPL2KVObH2u66WAczG1pny9TOf514P6gvy151lxqgqXqHOu
+	 zT8rJ+VgdgPDEL1bs67ygqE1IcafeubtrDoLgCSM5spDvXmaLLWVJ3rLxQZSvfFuV1
+	 U997c1FW2v1/DGEdgzMgqaUPWjTuzhcrm8vc8MfgYmwjB2GscVmaiGsjgZeSd+AWcg
+	 jx9jwzIuMkTUw==
+Date: Mon, 7 Oct 2024 10:47:24 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Wardenjohn <zhangwarden@gmail.com>
+Cc: mbenes@suse.cz, jikos@kernel.org, pmladek@suse.com,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/1] livepatch: Add stack_order sysfs attribute
+Message-ID: <20241007174724.dxzm3vooewzkke7l@treble>
+References: <20241007140911.49053-1-zhangwarden@gmail.com>
+ <20241007140911.49053-2-zhangwarden@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,28 +57,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20241007140911.49053-2-zhangwarden@gmail.com>
 
-Sergio Gonz=C3=A1lez Collado <sergio.collado@gmail.com> writes:
+On Mon, Oct 07, 2024 at 10:09:11PM +0800, Wardenjohn wrote:
+> +++ b/Documentation/ABI/testing/sysfs-kernel-livepatch
+> @@ -55,6 +55,15 @@ Description:
+>  		An attribute which indicates whether the patch supports
+>  		atomic-replace.
+>  
+> +What:		/sys/kernel/livepatch/<patch>/stack_order
+> +Date:		Oct 2024
+> +KernelVersion:	6.13.0
+> +Description:
+> +		This attribute specifies the sequence in which live patch module
 
-> Translate Documentation/scheduler/sched-bwc.rst into Spanish.
->
-> Signed-off-by: Sergio Gonz=C3=A1lez Collado <sergio.collado@gmail.com>
-> Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-> ---
-> v1 -> v2: initial patch
-> ---
-> v2 -> v3: failed patch
-> ---
-> v3 -> v4: corrected reviews
-> ---
->  .../translations/sp_SP/scheduler/index.rst    |   1 +
->  .../sp_SP/scheduler/sched-bwc.rst             | 287 ++++++++++++++++++
->  2 files changed, 288 insertions(+)
->  create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.=
-rst
+"module" -> "modules"
 
-Applied, thanks.
+Otherwise, looks good to me.
 
-jon
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+
+-- 
+Josh
 
