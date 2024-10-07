@@ -1,173 +1,221 @@
-Return-Path: <linux-kernel+bounces-354051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFA39936ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:57:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA819936EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49CF81C22411
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F6E28366A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961641DE2BF;
-	Mon,  7 Oct 2024 18:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D841DE2BB;
+	Mon,  7 Oct 2024 18:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B3Z/wwUF"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2062.outbound.protection.outlook.com [40.107.101.62])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RtrRTLHn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60307139587;
-	Mon,  7 Oct 2024 18:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728327454; cv=fail; b=iD71sWbAjsDcLfCFh+b+fWqeZkaLvZwq6R5S/ObBhk/CbLmWtWQAOeFtwrMsNW+UTDtGkTy6CCiO1gig/+wCKBwXqUi7JAnonmXZ+Kp949kU/c9wUhMa2fE+XseJRYf+kMMGchFlxdfMKCot3e2CFgDj7cloehvs18D1SMNddN0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728327454; c=relaxed/simple;
-	bh=XJm82kTe0MX/a16qvfutlhqgiUsYpuTtSucNaYsn/d4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rii6ZwL0V2TzT1KFENtHp69Hl/uBkfZQ4b0x50sWI+c7PAJA+cWSb9yRwZls6bOk6dX+lbz8kRAlCj7Tg2QEf1L42NbcxFeW7XuTlceKj+lDuPpFcuxm4Y9kFkrFKuQByH0yAV/1A17HmGlw5I+mmO2kjcYDU3KppV0O26FUDRc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B3Z/wwUF; arc=fail smtp.client-ip=40.107.101.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RqhKsdgXyHYYelE+jrVpy5QkmjZGzs0CbAywtaUIOoou0goS/HIRut4V+0HrkMsbojg288Nfxp3HqfYmt45bpyuRIWKe34wc/jxl/Tgws+OFqg6o0JjZxEzMfByTb/B8fo5pvljiSyL1ga7BzqEGqbsyyG6UBPNfDC7HWbM5V2G8nXQEd8/r9Pkr6HGqRvXxlCxXcfO20y8rxyMTxbZCwqJLBjBlsFqq55RtMqltQ7Z7hWGVKTon4uVHgadlf/dkQpbhXLEoZg+BjMABGAF64e+VKjMClEjdVe5ZDNNRVjUsy5wcTBYMM+Z3mB4sovRsZec388YkH2nlOCV2A9bK8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=77NNL5FgJjqyvUgWN6qLTbo3HEvrzyUZP+jQbrYU+dA=;
- b=potTSHrkruWhl9qJcyukyNYrBXKYJ/4h+R5DM2huf0emp3+TW+eMKWwdxGLukl9gKvUAvK3U9tiuJh9/q7jjggmo5difYDmuOVu4Z7QbE6HPFDtw42yh/46rRwPkjpuXDy/WH4P3k6WtgzFVWwKaBvU8wMXrCz5gXE3lidFebM552AKhlbTQ++xxlY/Xycr9qYxRd8OSXmH2OUNPjzeDHRIx+HfLDeP1akncsuEyygijkJYLGTG5zsfS6f0JkkgUt7M3H74+kgV97Y7epIfqE0VBX7Vj6sZKSEaov0Yizvk3VRqHEIQLy0JPWPp97Mifxe+6G3hh6a+S+YwDEZ+W7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=77NNL5FgJjqyvUgWN6qLTbo3HEvrzyUZP+jQbrYU+dA=;
- b=B3Z/wwUF4EceY6dTtqZhadQt/WESmfkydZs/dt243P9+menWyK4NHXN72wQB5lm0MH5dsuCkEvdn3gIURJQ0v/YelxyJlY6Viscqrv6qSivVjWw9MctnbzjPT5GhIQ5CG9Ybo9uL+UngVy0Mgik5r9IDAY2ahcd0HcBRtd8p7dlKGx6UQRzMkzazlLqTbdxCSG0n13QQwRn5gCS5bqvC5+2ZwwQ3RiLijvwHPtdYJWgMt2mdVrcfMa+l7HOFphsTKfYGdo9o9R6g8JQNfE5U05EvW2HdjVpxu6mCvtsycBBKLeO5Vv+H0wX21Q/1WI4AJLzwvdSEe4+PI4eQiqNAlA==
-Received: from SN7P222CA0003.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:124::21)
- by DS0PR12MB6415.namprd12.prod.outlook.com (2603:10b6:8:cc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Mon, 7 Oct
- 2024 18:57:30 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:806:124:cafe::cf) by SN7P222CA0003.outlook.office365.com
- (2603:10b6:806:124::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20 via Frontend
- Transport; Mon, 7 Oct 2024 18:57:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.13 via Frontend Transport; Mon, 7 Oct 2024 18:57:29 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Oct 2024
- 11:57:18 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Oct 2024
- 11:57:18 -0700
-Received: from localhost (10.127.8.13) by mail.nvidia.com (10.129.68.8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Mon, 7 Oct 2024 11:57:18 -0700
-From: Jamie Nguyen <jamien@nvidia.com>
-To: <peterhuewe@gmx.de>, <jarkko@kernel.org>, <jgg@ziepe.ca>,
-	<linux-integrity@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kyarlagadda@nvidia.com>, Jamie Nguyen <jamien@nvidia.com>, Koba Ko
-	<kobak@nvidia.com>
-Subject: [PATCH] tpm_tis_spi: Pass in ACPI handle during init
-Date: Mon, 7 Oct 2024 11:57:12 -0700
-Message-ID: <20241007185712.3584468-1-jamien@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31F31DDC2A;
+	Mon,  7 Oct 2024 18:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728327498; cv=none; b=tR2iTEWdeh/lO3T1RrSDmNbo4VfDVCWa6/EHFvSjAVyFiEwte5+2FzbQDCp7AyosLYwa3sN7hmDz6DcR3xpU1Y9aNez5MY/AdXRiUFhddQfz501tyLZVXPMNrJPZyaJ+A7UjJsq0EGI7+OyAhwQ+Naqo7pej94SHRrn0abeVUd8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728327498; c=relaxed/simple;
+	bh=4283/+FD0TmbZef6qzw4G8KMDo/sn/145NYT4V2WlHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UyZMlVs6IHOL8QNDH7sQPhSE5TkbqVeAPpItc5olBjfDXFMDQul+UQETRnMb0NaJgehlqfLIoXl+6f8oikiKElxoKguXHxlqauko11aY5VJ5BopyBZ148x5rHs32k+IsdOHxB2Nfkk4M65V0ROBJ24jWahFdId9gaOXplJTYe5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RtrRTLHn; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728327496; x=1759863496;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4283/+FD0TmbZef6qzw4G8KMDo/sn/145NYT4V2WlHA=;
+  b=RtrRTLHnuWFt827LY+FE+WCRaTrLu3vi/2UAxlk9LV+ecJ54OiezToQ1
+   zzGeWjKrdoHpTcof9v+P8L8YyJiQdnjD4Y0/5PW0TYrMpZuhlhFyIWHnW
+   +26uXGjyjTHQ+dRkwU0aZ31XqIBP6BFym/4kFDbtJwhTboCg7MTlZtCk6
+   Vcm+RuDNNrtsSeeos0nZ0f089P+sAIuJ3jL5NgBYMf8M9vrpAk7o2o/2E
+   CYIhueqZwKvbvq2HfujyWE5vWTR1a3giMrftBIqn7jgycfjNEa2XLKG7v
+   13Fqw9HEDqokTxgVLnrkwJc94rWb79CYkgq+piCnu+4G6Pjlo0B5Krxm5
+   A==;
+X-CSE-ConnectionGUID: rn2PLNHGSCqhxRTcuzPN7A==
+X-CSE-MsgGUID: jv+9GJuNSHarWc69iv1kbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27617816"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27617816"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 11:58:16 -0700
+X-CSE-ConnectionGUID: WeHWy1JJQwWFvSLbvqi37A==
+X-CSE-MsgGUID: iqafrQ87T7ew+JJWbvlv9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="80396883"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 11:58:11 -0700
+Message-ID: <ae376f35-b551-485f-b98f-1a18c506933c@intel.com>
+Date: Mon, 7 Oct 2024 21:58:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|DS0PR12MB6415:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9894854f-52e1-4c0b-cda5-08dce701e4cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h0IMNWhvjkcPLO9UfvbfA9qXBhu4kGPgt25iGkNj9xubtzuZA9ZrdgekWMki?=
- =?us-ascii?Q?1vb+5wNNGsWoSF7shDeny3QvdZLDHUfBVNeQfeiu3M0FPEUi0AQM/HzGMjfE?=
- =?us-ascii?Q?1bOkfsUSjduWAWk/H6tYb7TEnBIzy33ZavWoY+FUkO/FubBGOXzTCj4vx/89?=
- =?us-ascii?Q?VyHIb7/w/zBFDG5hvwFKlUv0Y38aHSYlqU/5yiJENtfwV8XoEyZYcb6S/nUh?=
- =?us-ascii?Q?j8t16iXr1hm5ZIwoqCyFI1HLRc2VNBEG43T7hH7ea4iUIbrW6J8im3CyTt3+?=
- =?us-ascii?Q?Tz4Pp4xhkB+GK5yyPfAz8G21l2S6z3lx9JDSVS6zXOoAPPvCFKUrpwX4Qf2P?=
- =?us-ascii?Q?BK/cWmsGES79s6lBr2kpNgPU98ZrF6XvbzFwx6NMySXom71yC/tudpbZKBSK?=
- =?us-ascii?Q?rieVx509fHbk1VUjnrF0LZHBF4Qsomc/UwMs/CoWW3yXZxtE8aMiP87hvKcT?=
- =?us-ascii?Q?eoBcLlMYfo56cyd3TiFb/96oUdjwWYacaQZzwL/oP4SGMuzSGJmY4MlWlN6a?=
- =?us-ascii?Q?eLbQJxtbB/jOoJfiIi/kakIt1o3YALDptBfS5F1p/AAke41GJ2HKbj3B/LzC?=
- =?us-ascii?Q?xhHNrOeW1GBriHdV89M78JVjwfIWYFbgZb7YKS06zABN8UbCWGP4J7kNPfK0?=
- =?us-ascii?Q?g3Qqt9p7i+DPTBe60UIptip49Cotcu/uSvtxYJEG4H89lxvkEMJsQwqz/Hlh?=
- =?us-ascii?Q?E590f53lkJh9qiroNgYSRCDyCjTUCRhX2fBBq43ADVa8HdPu3jwZD7zRZRTv?=
- =?us-ascii?Q?V+r+zCZOxc1xA+omQiP+NGq4uV3TwhifsO/jhddqeJIaj1SpmBtiJJfzetXZ?=
- =?us-ascii?Q?HPDviLsM9pF1k9QE7aNE5LdkXKIYqVHXQf9Lnbzy1EqNgIb30m19Vc9zbwLD?=
- =?us-ascii?Q?QvVHfJDpETUx/rMXhbEN+O0fW2owsJTElmVBQr/+nyG8/G75s9ocHZhB9DPb?=
- =?us-ascii?Q?NkQoRCl/zWMLfj2CaHwidyS7Wrzn8TXgtin+ipY0Ng3O473bVC2VUnAGbtE2?=
- =?us-ascii?Q?XWWJcvdMHOHmh9q2h7SsmWqI21fkHpyLfS/EcjuRMQN10sGHM9Fbo1HND2nZ?=
- =?us-ascii?Q?UugXoN7feevRw4RY7ODekU5qZ7CmZm4h8PANSuP7AZf+kgZg9BRxKGVc406M?=
- =?us-ascii?Q?ebap2HLL5Vy4I46X9cFgjZMcgYx4NoB3zPSP9wRhfHnNga2lb7HDEzdmw8ci?=
- =?us-ascii?Q?3xDg5Zf4+a/QdqeMqCW9G90jlRzLnvzekktDvr4zf/g9/XsVhd28i5YBpTl/?=
- =?us-ascii?Q?Cd43+2inw3xRJOTi3HuI7xLCkV4r3Ub2klQfKjwYz2okJxsO3yIt9kOKcM4I?=
- =?us-ascii?Q?vJKFzo3GKE9tEXGKV8FQppyHcwYmrpBbBbTmXYlOzst3F+ejWV7Pi+hMr82f?=
- =?us-ascii?Q?KvJcA+D6W1Rlrmp5pJj5CX2VZr19?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 18:57:29.8128
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9894854f-52e1-4c0b-cda5-08dce701e4cc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6415
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mmc: sdhci: Prevent stale command and data interrupt
+ handling
+To: Michal Wilczynski <m.wilczynski@samsung.com>, ulf.hansson@linaro.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ m.szyprowski@samsung.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Drew Fustini <drew@pdp7.com>
+References: <CGME20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d@eucas1p2.samsung.com>
+ <20241003161007.3485810-1-m.wilczynski@samsung.com>
+ <51b6cee1-d23f-475e-bfe0-979e96e687c6@intel.com>
+ <deeda5fb-16a6-4d89-a224-18898aba9a0b@samsung.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <deeda5fb-16a6-4d89-a224-18898aba9a0b@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When initializing through tpm_tis_spi_init(), we are always passing
-in a NULL value for the ACPI handle.  Pass in a proper handle so
-that we are able to take advantages of TPM features that may be
-described in ACPI, like the Physical Presence Interface (PPI).
+On 7/10/24 20:00, Michal Wilczynski wrote:
+> 
+> 
+> On 10/7/24 18:09, Adrian Hunter wrote:
+>> On 3/10/24 19:10, Michal Wilczynski wrote:
+>>> While working with the T-Head 1520 LicheePi4A SoC, certain conditions
+>>> arose that allowed me to reproduce a race issue in the sdhci code.
+>>>
+>>> To reproduce the bug, you need to enable the sdio1 controller in the
+>>> device tree file
+>>> `arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi` as follows:
+>>>
+>>> &sdio1 {
+>>> 	bus-width = <4>;
+>>> 	max-frequency = <100000000>;
+>>> 	no-sd;
+>>> 	no-mmc;
+>>> 	broken-cd;
+>>> 	cap-sd-highspeed;
+>>> 	post-power-on-delay-ms = <50>;
+>>> 	status = "okay";
+>>> 	wakeup-source;
+>>> 	keep-power-in-suspend;
+>>> };
+>>>
+>>> When resetting the SoC using the reset button, the following messages
+>>> appear in the dmesg log:
+>>>
+>>> [    8.164898] mmc2: Got command interrupt 0x00000001 even though no
+>>> command operation was in progress.
+>>> [    8.174054] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
+>>> [    8.180503] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+>>> [    8.186950] mmc2: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+>>> [    8.193395] mmc2: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+>>> [    8.199841] mmc2: sdhci: Present:   0x03da0000 | Host ctl: 0x00000000
+>>> [    8.206287] mmc2: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+>>> [    8.212733] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x0000decf
+>>> [    8.219178] mmc2: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+>>> [    8.225622] mmc2: sdhci: Int enab:  0x00ff1003 | Sig enab: 0x00ff1003
+>>> [    8.232068] mmc2: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+>>> [    8.238513] mmc2: sdhci: Caps:      0x3f69c881 | Caps_1:   0x08008177
+>>> [    8.244959] mmc2: sdhci: Cmd:       0x00000502 | Max curr: 0x00191919
+>>> [    8.254115] mmc2: sdhci: Resp[0]:   0x00001009 | Resp[1]:  0x00000000
+>>> [    8.260561] mmc2: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+>>> [    8.267005] mmc2: sdhci: Host ctl2: 0x00001000
+>>> [    8.271453] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr:
+>>> 0x0000000000000000
+>>> [    8.278594] mmc2: sdhci: ============================================
+>>>
+>>> I also enabled some traces to better understand the problem:
+>>>
+>>>      kworker/3:1-62      [003] .....     8.163538: mmc_request_start:
+>>> mmc2: start struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+>>> cmd_arg=0x0 cmd_flags=0x2e1 cmd_retries=0 stop_opcode=0 stop_arg=0x0
+>>> stop_flags=0x0 stop_retries=0 sbc_opcode=0 sbc_arg=0x0 sbc_flags=0x0
+>>> sbc_retires=0 blocks=0 block_size=0 blk_addr=0 data_flags=0x0 tag=0
+>>> can_retune=0 doing_retune=0 retune_now=0 need_retune=0 hold_retune=1
+>>> retune_period=0
+>>>           <idle>-0       [000] d.h2.     8.164816: sdhci_cmd_irq:
+>>> hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x10000
+>>> intmask_p=0x18000
+>>>      irq/24-mmc2-96      [000] .....     8.164840: sdhci_thread_irq:
+>>> msg=
+>>>      irq/24-mmc2-96      [000] d.h2.     8.164896: sdhci_cmd_irq:
+>>> hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x1
+>>> intmask_p=0x1
+>>>      irq/24-mmc2-96      [000] .....     8.285142: mmc_request_done:
+>>> mmc2: end struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+>>> cmd_err=-110 cmd_resp=0x0 0x0 0x0 0x0 cmd_retries=0 stop_opcode=0
+>>> stop_err=0 stop_resp=0x0 0x0 0x0 0x0 stop_retries=0 sbc_opcode=0
+>>> sbc_err=0 sbc_resp=0x0 0x0 0x0 0x0 sbc_retries=0 bytes_xfered=0
+>>> data_err=0 tag=0 can_retune=0 doing_retune=0 retune_now=0 need_retune=0
+>>> hold_retune=1 retune_period=0
+>>>
+>>> Here's what happens: the __mmc_start_request function is called with
+>>> opcode 5. Since the power to the Wi-Fi card, which resides on this SDIO
+>>> bus, is initially off after the reset, an interrupt SDHCI_INT_TIMEOUT is
+>>> triggered. Immediately after that, a second interrupt SDHCI_INT_RESPONSE
+>>> is triggered. Depending on the exact timing, these conditions can
+>>> trigger the following race problem:
+>>>
+>>> 1) The sdhci_cmd_irq top half handles the command as an error. It sets
+>>>    host->cmd to NULL and host->pending_reset to true.
+>>> 2) The sdhci_thread_irq bottom half is scheduled next and executes faster
+>>>    than the second interrupt handler for SDHCI_INT_RESPONSE. It clears
+>>>    host->pending_reset before the SDHCI_INT_RESPONSE handler runs.
+>>> 3) The pending interrupt SDHCI_INT_RESPONSE handler gets called, triggering
+>>>    a code path that prints: "mmc2: Got command interrupt 0x00000001 even
+>>>    though no command operation was in progress."
+>>>
+>>> To solve this issue, we need to clear pending interrupts when resetting
+>>> host->pending_reset. This ensures that after sdhci_threaded_irq restores
+>>> interrupts, there are no pending stale interrupts.
+>>>
+>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>>> ---
+>>>  drivers/mmc/host/sdhci.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 4b91c9e96635..b91a6076c332 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -3098,6 +3098,10 @@ static bool sdhci_request_done(struct sdhci_host *host)
+>>>  		sdhci_reset_for(host, REQUEST_ERROR);
+>>>  
+>>>  		host->pending_reset = false;
+>>> +
+>>> +		/* Clear any pending interrupts after reset */
+>>> +		sdhci_writel(host, SDHCI_INT_CMD_MASK | SDHCI_INT_DATA_MASK,
+>>> +			     SDHCI_INT_STATUS);
+>>
+>> According to SDHCI spec, "Software Reset For CMD Line" clears
+>> "Command Complete" in "Normal Interrupt Status register", so the
+>> interrupt status should not need to be cleared again.
+>>
+>> Which SDHCI driver is it?
+>>
+> 
+> Thank you for your review.
+> 
+> The driver in use is located at drivers/mmc/host/sdhci-of-dwcmshc.c,
+> and the .compatible string is thead,th1520-dwcmshc.
+> 
+> Based on the specifications, it appears that the specific hardware used in
+> the LicheePi4A SoC may not be fully compliant with the SDHCI standard.
+> Therefore, the appropriate solution might be to add additional clearing
+> code to the th1520_sdhci_reset() function.
+> 
 
-Signed-off-by: Jamie Nguyen <jamien@nvidia.com>
-Reviewed-by: Koba Ko <kobak@nvidia.com>
----
- drivers/char/tpm/tpm_tis_spi_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Seems reasonable
 
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index 61b42c83ced8..a5e2e669c3e5 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -254,7 +254,7 @@ int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy,
- 
- 	phy->spi_device = spi;
- 
--	return tpm_tis_core_init(&spi->dev, &phy->priv, irq, phy_ops, NULL);
-+	return tpm_tis_core_init(&spi->dev, &phy->priv, irq, phy_ops, ACPI_HANDLE(&spi->dev));
- }
- 
- static const struct tpm_tis_phy_ops tpm_spi_phy_ops = {
--- 
-2.34.1
 
 
