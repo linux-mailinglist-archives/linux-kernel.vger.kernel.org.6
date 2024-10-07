@@ -1,196 +1,162 @@
-Return-Path: <linux-kernel+bounces-353116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4069928E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D039928E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEAD1C22F1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0FE1F24249
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3381B4F12;
-	Mon,  7 Oct 2024 10:12:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F081B4C31;
+	Mon,  7 Oct 2024 10:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PxAJhh/N"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E3E1B07D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8491B5EDE;
+	Mon,  7 Oct 2024 10:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728295974; cv=none; b=nTJBBXn7PoybIQoNb5FfhgtNYopFeQsS9rZ7axAWQnjdS3bM1JoEyZq7ID8ttlpL1G5ZI5cGhWXoAazWdZ6TwrLzp9QHeUlVMoAWX2UjPKymRe/1Vf8kRfCiZ5DSMMWp7Ilxf+GVmDDA9pUy/p8gHlZ44hifl5omCWfvv/r1VIk=
+	t=1728295978; cv=none; b=cE2uEkW//xm/I0QPbcebg74rD7wTZZfePxinm3hlyLcaluNa1k1/qjkpPpMfDVUn0KsyC4mn0i/41gDTwbiUf18PzEWr0ThE5RhC5unr4U/ZNaKWd/tnPf/Wtag/7e01eY+u9hsuj9B90vomXFicboBJGKmuZw4m1PYZm/NqIuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728295974; c=relaxed/simple;
-	bh=JiJrznpSLxGeFWgz2rn3TN7jJ8Ia4TPKcjjNFxUvJfg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CkM448slIJv58uikt04Hs4Kn4hbeXFSA7UZXTtyWjy3B8RlY3+2WDLGbeFwcKjGTaWFKA+Bi5JAT4oO4aez6crYPN/ergHzy5saT9hi9qK+nQoMAQEgSeObwNKS+4WvmnuRzrWGitM3ggxeAFgYb4JG66nQSPDJdktHebPM0tr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1sxkjK-0006J2-5b; Mon, 07 Oct 2024 12:12:42 +0200
-Message-ID: <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
-Subject: Re: [PATCH 1/3] drm/etnaviv: Track GPU VA size separately
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 07 Oct 2024 12:12:41 +0200
-In-Reply-To: <20241004194207.1013744-2-sui.jingfeng@linux.dev>
-References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
-	 <20241004194207.1013744-2-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1728295978; c=relaxed/simple;
+	bh=uX9MuZyTAsy4ZwdDWDKwMwzG+/9sWZbBeG99JoLQaCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8106wWKIT1cGoJO8Xz29iNvtZ7UkQA/+41IYWrCqqe6p2wDfijjZH9pSoAVd5SE2aSWaAgt5nF/6o5n/p1YuYqIExPy3dfE0t1cvjQUCP5tkitzdLwooRw4X2t04kzIRQsgL/6N2bQzOLPIfRVSaoVAwIdsxtETHDmoHPDBHW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PxAJhh/N; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728295974;
+	bh=uX9MuZyTAsy4ZwdDWDKwMwzG+/9sWZbBeG99JoLQaCQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PxAJhh/NsDp5f2eWZN0zCO0G8kricMgKpRZOIklpJ5n71qrx8yvRD2KddLkcu78WN
+	 lN+f0ps82+wUHSyox5r+ms7fwCSFodTdUXT+PXdMXw19DbSqp4GciIbAbBkVNcR/jg
+	 Bk6Keb0jmXClqKx1vECROVLKPzbHu+ZaA79oyNj0ln/qseZA0e1ThQEQrR1fmpKUPY
+	 xXUDltk6Xv/ViASdbCfTrpUYvnaUKNWpQQkTJo2xpzaZ8ZKNNODjy0NGhs81+D2fcS
+	 AiIBGudyOzGzbMGwvFp7Eft9QMgOaWPsxZpSu7ehtTTJokdmrjg6pKP4DLb40zFFJd
+	 nK2hnthAAH9sQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 089E817E120E;
+	Mon,  7 Oct 2024 12:12:53 +0200 (CEST)
+Message-ID: <f072a20b-abc1-4da9-b03c-fb384601bc52@collabora.com>
+Date: Mon, 7 Oct 2024 12:12:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: Frank Wunderlich <linux@fw-web.de>,
+ Chaotian Jing <chaotian.jing@mediatek.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
+ ansuelsmth@gmail.com
+References: <20241006153447.41377-1-linux@fw-web.de>
+ <20241006153447.41377-2-linux@fw-web.de>
+ <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
+ <trinity-6fcf3e00-393c-48ee-9aae-26057be08645-1728289985089@3c-app-gmx-bap03>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <trinity-6fcf3e00-393c-48ee-9aae-26057be08645-1728289985089@3c-app-gmx-bap03>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
-> Etnaviv assumes that GPU page size is 4KiB, yet on some systems, the CPU
-> page size is 16KiB. The size of etnaviv buffer objects will be aligned
-> to CPU page size on kernel side, however, userspace still assumes the
-> page size is 4KiB and doing allocation with 4KiB page as unit. This
-> results in userspace allocated GPU virtual address range collision and
-> therefore unable to be inserted to the specified hole exactly.
->=20
-> The root cause is that kernel side BO takes up bigger address space than
-> userspace assumes when the size of it is not CPU page size aligned. To
-> Preserve GPU VA continuous as much as possible, track the size that
-> userspace/GPU think of it is.
->=20
-> Yes, we still need to overallocate to suit the CPU, but there is no need
-> to waste GPU VA space anymore.
->=20
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.h | 1 +
->  drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 8 ++++----
->  3 files changed, 10 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
-viv/etnaviv_gem.c
-> index 5c0c9d4e3be1..943fc20093e6 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -543,7 +543,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_=
-object_funcs =3D {
->  	.vm_ops =3D &vm_ops,
->  };
-> =20
-> -static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
-> +static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 fl=
-ags,
->  	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
->  {
->  	struct etnaviv_gem_object *etnaviv_obj;
-> @@ -570,6 +570,7 @@ static int etnaviv_gem_new_impl(struct drm_device *de=
-v, u32 flags,
->  	if (!etnaviv_obj)
->  		return -ENOMEM;
-> =20
-> +	etnaviv_obj->user_size =3D size;
->  	etnaviv_obj->flags =3D flags;
->  	etnaviv_obj->ops =3D ops;
-> =20
-> @@ -588,11 +589,12 @@ int etnaviv_gem_new_handle(struct drm_device *dev, =
-struct drm_file *file,
->  {
->  	struct etnaviv_drm_private *priv =3D dev->dev_private;
->  	struct drm_gem_object *obj =3D NULL;
-> +	unsigned int user_size =3D size;
+Il 07/10/24 10:33, Frank Wunderlich ha scritto:
+> Hi
+> 
+>> Gesendet: Montag, 07. Oktober 2024 um 10:00 Uhr
+>> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
+>> Betreff: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+>>
+>> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
+>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>
+>>> Add binding definitions for mmc on MT7988 SoC.
+>>>
+>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+>>> ---
+>>> v2:
+>>> - fixed minItems to 4
+>>> ---
+>>>    .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
+>>>    1 file changed, 24 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> index c532ec92d2d9..7380f72ea189 100644
+>>> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> @@ -21,6 +21,7 @@ properties:
+>>>              - mediatek,mt7620-mmc
+>>>              - mediatek,mt7622-mmc
+>>>              - mediatek,mt7986-mmc
+>>> +          - mediatek,mt7988-mmc
+>>>              - mediatek,mt8135-mmc
+>>>              - mediatek,mt8173-mmc
+>>>              - mediatek,mt8183-mmc
+>>> @@ -263,6 +264,29 @@ allOf:
+>>>                - const: bus_clk
+>>>                - const: sys_cg
+>>>
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - mediatek,mt7988-mmc
+>>
+>> Are you really sure that you can't reuse the MT7986 compatible?
+> 
+> have not found a way to reuse mt7986 binding because clock-config is different...
+> from driver view we can use the mt7986 compatible, but from binding view it is different.
+> 
 
-This still needs to be be aligned to 4K. Userspace may request
-unaligned buffer sizes and we don't want to risk any confusion about
-which part is visible to the GPU, so better make sure this size is
-aligned to the GPU page size.
+Okay, that's fair.
 
-Also, that more personal preference, but I would call this gpu_size or
-something like that, to avoid any confusion with the user_size in
-etnaviv_cmdbuf, where user_size doesn't denote the GPU visible size.
+> regards Frank
+> 
+>> Cheers,
+>> Angelo
+>>
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          minItems: 4
+>>> +          items:
+>>> +            - description: source clock
+>>> +            - description: HCLK which used for host
+>>> +            - description: Advanced eXtensible Interface
+>>> +            - description: Advanced High-performance Bus clock
+>>> +        clock-names:
+>>> +          minItems: 3
+>>> +          items:
+>>> +            - const: source
+>>> +            - const: hclk
+>>> +            - const: axi_cg
+>>> +            - const: ahb_cg
+>>> +
+>>>      - if:
+>>>          properties:
+>>>            compatible:
+>>
+>>
+>>
 
-Regards,
-Lucas
-
->  	int ret;
-> =20
->  	size =3D PAGE_ALIGN(size);
-> =20
-> -	ret =3D etnaviv_gem_new_impl(dev, flags, &etnaviv_gem_shmem_ops, &obj);
-> +	ret =3D etnaviv_gem_new_impl(dev, user_size, flags, &etnaviv_gem_shmem_=
-ops, &obj);
->  	if (ret)
->  		goto fail;
-> =20
-> @@ -627,7 +629,7 @@ int etnaviv_gem_new_private(struct drm_device *dev, s=
-ize_t size, u32 flags,
->  	struct drm_gem_object *obj;
->  	int ret;
-> =20
-> -	ret =3D etnaviv_gem_new_impl(dev, flags, ops, &obj);
-> +	ret =3D etnaviv_gem_new_impl(dev, size, flags, ops, &obj);
->  	if (ret)
->  		return ret;
-> =20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etna=
-viv/etnaviv_gem.h
-> index a42d260cac2c..c6e27b9abb0c 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> @@ -36,6 +36,7 @@ struct etnaviv_gem_object {
->  	const struct etnaviv_gem_ops *ops;
->  	struct mutex lock;
-> =20
-> +	u32 user_size;
->  	u32 flags;
-> =20
->  	struct list_head gem_node;
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etna=
-viv/etnaviv_mmu.c
-> index 1661d589bf3e..6fbc62772d85 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-> @@ -281,6 +281,7 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_contex=
-t *context,
->  {
->  	struct sg_table *sgt =3D etnaviv_obj->sgt;
->  	struct drm_mm_node *node;
-> +	unsigned int user_size;
->  	int ret;
-> =20
->  	lockdep_assert_held(&etnaviv_obj->lock);
-> @@ -303,13 +304,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_cont=
-ext *context,
->  	}
-> =20
->  	node =3D &mapping->vram_node;
-> +	user_size =3D etnaviv_obj->user_size;
-> =20
->  	if (va)
-> -		ret =3D etnaviv_iommu_insert_exact(context, node,
-> -						 etnaviv_obj->base.size, va);
-> +		ret =3D etnaviv_iommu_insert_exact(context, node, user_size, va);
->  	else
-> -		ret =3D etnaviv_iommu_find_iova(context, node,
-> -					      etnaviv_obj->base.size);
-> +		ret =3D etnaviv_iommu_find_iova(context, node, user_size);
->  	if (ret < 0)
->  		goto unlock;
-> =20
 
 
