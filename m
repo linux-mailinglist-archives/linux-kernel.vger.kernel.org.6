@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-352832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543089924FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB289924FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0405E1F230E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AF81F23156
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543D1534E6;
-	Mon,  7 Oct 2024 06:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D805E155392;
+	Mon,  7 Oct 2024 06:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pSWACBqj"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHXj7NNO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDA742077;
-	Mon,  7 Oct 2024 06:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C37C42077;
+	Mon,  7 Oct 2024 06:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728283073; cv=none; b=b17XHz4MMeAhdR/YTya06StCxHtw3GNjlpcCrBk78s17tqPuO/QMMli9Lm5su9JvIIiqJK+YW8IAX0Wb5431HKO1w4t3+8fch+28JgISnNMQoEBJKkd7a8OEzFWjZwYbERontJKBhHcsNvPXmaL4lKPDXLLXMcv8C5YRk3C8ENw=
+	t=1728283112; cv=none; b=DwQuDbOe3uywwVH8jxgKAwymmokKlcmGuVxT0hkVFbqnJHkqQZScrbMErK2VwdpRPnPrnyquMXKlr+Oi31e8/g0BuHz+iPyWBxA4qgSa2n9w5NXy+jB8RMC647DAqujElxgE/fhA1NFkrw6Fp9Kiiq1RDj34KJWBiTQwXi+jAD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728283073; c=relaxed/simple;
-	bh=g3GXP9seX/Xrl0OzEkq2gfliNxDJLE2Ij/C6kPicpNQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eF7gbUIYOhK8T63K2DPhhmdPWXjKHuGe/RFFEISU9ZPTpB+O/Z2yhHqATyaWEOGNqdjUTjKqAqh+whkcAIa+UIVkJSglvSGkDHk0FX/8otHowea8HaYwZ0zsvLnhgC9IPH3BL86nxawO8D42sSW9V24+MUS8dNQjfsTRTDbEk2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pSWACBqj; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4976Qwur025893;
-	Mon, 7 Oct 2024 06:37:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type; s=pp1; bh=Gxo1OKB3S+0RplzV70T8W45kSo
-	KYWYadm5u+4O2vvpY=; b=pSWACBqj91deO3CvxA3v6q7zSoZXnHlSm5kpZdnila
-	1rlb9NU76gttKrEUQixXwg5CfOTKBMi5LlAjidaH3ai856CydzlXcd3WMXNBMKqS
-	8CadAoV/edcuH8/s+tOZu5LSo85dxzeXdgmTGdsXxqlUgp+zvkJa2iGldkkbVyfb
-	zUQi1KPCf0trAGIvsWj2udb7yGQ7iS9OKQOhH+oBy895tIUQsf27yeiWlPHbt9Ta
-	7ulgxkJBRESzG0KKhfughjWygJBM1xSC3ywZyaIOJBCkmS+4l0Np40ICx+nMbwVn
-	bli+60/7jYWTzhjRcuO8RkpmWZ6cjEv3cv3Io5MpsWUw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424acng1a0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 06:37:38 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49751HGH022867;
-	Mon, 7 Oct 2024 06:37:37 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0mnfd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 06:37:37 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4976baPl51642628
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Oct 2024 06:37:36 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 11B4A20043;
-	Mon,  7 Oct 2024 06:37:36 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C91CF20040;
-	Mon,  7 Oct 2024 06:37:35 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  7 Oct 2024 06:37:35 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland
- <mark.rutland@arm.com>,
-        Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH 6/7] tracing: add support for function argument to graph
- tracer
-In-Reply-To: <20241004184008.151c64a7@gandalf.local.home> (Steven Rostedt's
-	message of "Fri, 4 Oct 2024 18:40:08 -0400")
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240904065908.1009086-7-svens@linux.ibm.com>
-	<20241004184008.151c64a7@gandalf.local.home>
-Date: Mon, 07 Oct 2024 08:37:35 +0200
-Message-ID: <yt9dldz0v2og.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728283112; c=relaxed/simple;
+	bh=L5jmh8zIotR73Clk8Z/8lkjelQDuJc3WVxOip6W9Cwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsGF863v0zdhXUc07fw/IWGO+vEMde1DNffa7nFwn0HOclBlhroeJJAXdvBIm8LR3Kog2e/Y8vmQ/Bz4K4RazGGQP+pQXS43gL6IPncvEKKmWFFEdisepb1L6LPS41tgGuuQYiw/T57hogRLAbyK0eQLXIAmb/AcPxADQebmDVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHXj7NNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B824BC4CEC6;
+	Mon,  7 Oct 2024 06:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728283111;
+	bh=L5jmh8zIotR73Clk8Z/8lkjelQDuJc3WVxOip6W9Cwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EHXj7NNOfSVtTwh6UntCSldeYx3GLL/TUvuYlqE2H40VjocY3qqk3xvlYn0Fps9aB
+	 ZC7BiBoCEpWdHgXBL4xYajBm/gZRfBd7jZsVaMSAiosTTCcfxqenqF4uxbZFn6KCis
+	 Gu3Gd1myYe52nF4Hk/VKnX3a0w3ofqTajKoHAxO9INdSINU/JFlckyMzhYk5o8ia/m
+	 4C8q/FSM8oBJTROvXCbx0pfdRIp1c9HFnQuIJVhWBt4hEbIGwlGUuC4rrsWDS01a4S
+	 UxHEmSX3iBmJ+uZwaQQTsxp2BxTUYhwPk8CJ0aFdrv/mLnuOZSJyQjF1lZFSpLiUM2
+	 zQ4mTuUYS9kdg==
+Date: Mon, 7 Oct 2024 08:38:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Xu Liang <lxu@maxlinear.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Robert Marko <robimarko@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: leds: add 'active-high'
+ property
+Message-ID: <6d3hvesqhslk7jaszo44orbaqabl7go6duzpu4beye44sa6lpn@b3c56bp6x3ce>
+References: <e91ca84ac836fc40c94c52733f8fc607bcbed64c.1728145095.git.daniel@makrotopia.org>
+ <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
+ <ZwKK4xMlqq3TyDyt@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4aHDxItS7uoT3n1D7BVzH9brNcC0nBxM
-X-Proofpoint-ORIG-GUID: 4aHDxItS7uoT3n1D7BVzH9brNcC0nBxM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-06_21,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- priorityscore=1501 spamscore=0 mlxlogscore=650 malwarescore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070045
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZwKK4xMlqq3TyDyt@makrotopia.org>
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+On Sun, Oct 06, 2024 at 02:04:35PM +0100, Daniel Golle wrote:
+> On Sun, Oct 06, 2024 at 02:44:44PM +0200, Krzysztof Kozlowski wrote:
+> > On Sat, Oct 05, 2024 at 05:24:20PM +0100, Daniel Golle wrote:
+> > > Other than described in commit c94d1783136 ("dt-bindings: net: phy: Make
+> > 
+> > Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> > run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+> > Some warnings can be ignored, especially from --strict run, but the code
+> > here looks like it needs a fix. Feel free to get in touch if the warning
+> > is not clear.
+> 
+> Sorry about that, I was expecting '--fix-inplace' to take care of that
+> but it didn't and I didn't notice. I will address that in a follow-up
+> patch.
+> 
+> > 
+> > > LED active-low property common") the absence of the 'active-low'
+> > > property means not to touch the polarity settings which are inherited
+> > > from reset defaults, the bootloader or bootstrap configuration.
+> > > Hence, in order to override a LED pin being active-high in case of the
+> > > default, bootloader or bootstrap setting being active-low an additional
+> > > property 'active-high' is required.
+> > > Document that property and make it mutually exclusive to the existing
+> > > 'active-low' property.
+> > > 
+> > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/leds/common.yaml | 14 ++++++++++++++
+> > >  1 file changed, 14 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+> > > index bf9a101e4d42..7c3cd7b7412e 100644
+> > > --- a/Documentation/devicetree/bindings/leds/common.yaml
+> > > +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> > > @@ -202,6 +202,12 @@ properties:
+> > >        #trigger-source-cells property in the source node.
+> > >      $ref: /schemas/types.yaml#/definitions/phandle-array
+> > >  
+> > > +  active-high:
+> > > +    type: boolean
+> > > +    description:
+> > > +      Makes LED active high. To turn the LED ON, line needs to be
+> > > +      set to high voltage instead of low.
+> > 
+> > And then we are going to get 2 more bools for other variants...
+> 
+> I don't see a problem combining 'active-high' or 'active-low' with
+> 'inactive-high-impedance' which would be the equivalent of
+> 'active-low-tristate' and 'active-high-tristate'.
 
-> On Wed,  4 Sep 2024 08:59:00 +0200
-> Sven Schnelle <svens@linux.ibm.com> wrote:
->
->> Wire up the code to print function arguments in the function graph
->> tracer. This functionality can be enabled/disabled during compile
->> time by setting CONFIG_FUNCTION_TRACE_ARGS and during runtime with
->> options/funcgraph-args.
->
-> I finally got around to looking at your patches. Do you plan on still
-> working on them? I really like this feature, and I'm willing to do the work
-> too if you have other things on your plate.
+Oh, I missed that we have already two bool properties. I thought that
+there is only active-high.
 
-Yes, working on other things, so feel free to take over.
+> 
+> > 
+> > I think this should be just string enum, see marvell,marvell10g.yaml
+> 
+> I found the vendor-specific 'marvell,polarity' property in
+> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231214201442.660447-5-tobias@waldekranz.com/
+> 
+> However, I can't find that file in any Linux tree.
+> 
+> Looking at the suggested patch on patchwork, I got a few questions on
+> how to deal with the situation as of today:
+> 
+> So should the existing support for the 'active-low' and
+> 'inactive-high-impedance' properties be replaced by that string enum?
+> Or should the string property be interpreted in addition to the
+> bools defined in leds/common.yaml?
+> 
+> Should the string property be defined for each PHY or should we move
+> it into a common file?
+> 
+> If so, should that common file also be leds/common.yaml or should we
+> create a new file only for PHY LEDs instead?
+> 
+> Sorry for being confused, I don't mind going down what ever path to have
+> LED polarity configurable properly in DT.
+
+Let's ignore my idea.
+
+However I still wonder whether your choice for lack of properties is
+appropriate. Lack of properties as "bootloader default" means it can
+change. Why would anyone prefer to keep bootloader default? The wiring
+is fixed - it's never "we design PCB based on bootloader, so with new
+bootloader we will change PCB"?
+
+And if you meant bootstrapping through some hardwired configuration,
+then again it is known and defined.
+
+Best regards,
+Krzysztof
+
 
