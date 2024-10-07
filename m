@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-352892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238D49925C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:15:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858F69925BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2EF1F21450
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A862A1C22220
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E0018BC27;
-	Mon,  7 Oct 2024 07:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EB018B48F;
+	Mon,  7 Oct 2024 07:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9PS7lhi"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCydAS/X"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF1818BB93;
-	Mon,  7 Oct 2024 07:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C38616132E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728285108; cv=none; b=ivpiJWI5TlG1aa+b7OEaQ4SuXe40cLGgqBdyJ3SzB+OJiSZL5SD5whg2t9hIboECzca1TSzwUGXrse0bgDtcmsTCGHdY7EXI12FN5bXLM1sXGnUeRCTtND8MmAYyOrXzFoKmdPU9eQ3VHHqTe7p6PYMWBwtnogGr/c8SrNQ6qSU=
+	t=1728285104; cv=none; b=B0GASjz8SN6ortDSrDpvTJBvW7542YEspOO8Fn64s2ludixIePIO9MRXcpMqcFfwjqhX3wkoSq81NMgolWik1j5kV4SwYD/EXvYOfWrVCzi8A/VdKOPaNQiCP8bGv7DABdrMrQzKa1yCQqlPU+RnZny7aVkhzwCtjV9SSFakHls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728285108; c=relaxed/simple;
-	bh=BhITKZXkpt6g27hjP/4xEZcdcdQXVKzDKSdNmijwYHQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GxhgCeYBCpbgmBrabgWoWuSR2GKbr7s5oEEwZ31pjUHa7ySs9yS1jADyBtr3X5BainiwxRlz+LEBR9KCk7HkOPPuPEI5oJPzlCHZ+VysHilqOXf3huGbwgZGW1gviGBDVYXUma0hmn+Y7xJCc0CnuyVtbUleLsQlvjNJ8SQIBu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9PS7lhi; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b3e1so5737809a12.2;
-        Mon, 07 Oct 2024 00:11:46 -0700 (PDT)
+	s=arc-20240116; t=1728285104; c=relaxed/simple;
+	bh=enGkxcbLHOdgAeivRCHbMnChr2GTtrsDDnxdLG3bC7E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=O25dCU67xW34xUHiLTy1gpnrlqJgYSzc4YyfbHDN87N8KoCyLc491XNWGasWaNP2feSVSVmzF96amIjWsPZOPDaLDA/LLjriXJaPzIpL3uEy2zedLvOX0LtuRd4sqPxIMqsL99YInwhZBuCjrl0bXJ2HQh6KMJbVgg7JkmbrMB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCydAS/X; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso2297753f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 00:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728285105; x=1728889905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hg4i6iLNPFN1cxnsx1LXLyItyf2hgwuisZOsoYDzoBE=;
-        b=E9PS7lhienuFw/2JqmL4BmuGnCe7u7HJUlan512AaS8j8ke3xswMmTETfJwcPI1Y8B
-         L1liZS1m7fY1aMbS4h/zaeDjpf5Mj8kKVoXCE+Q3uGbw0iH+D/ndOCeugIwj4ppzLufw
-         hzdGiqo6qDawhQmPCBagd/lEjjABweeTBkbhVO3jzCRR4IO5NZ4Khxyv0TGPQIO3VGkL
-         11KFz+0Ai+l/Cw3Jnj/c/Xj07eR2WJpCViR8n71SjXwh4VkmW+aViC0gi8KaRHiw5FPD
-         Ezd9qlL5o8uqmj7SjDRaYRoW4r6wrlZB9uPNO5PLC0AFQLAJjWd8ixY6B/xO8ZOBP30W
-         XkPg==
+        d=linaro.org; s=google; t=1728285102; x=1728889902; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gCK80+Zdo5NigUQbZJ/SoQaC/Axw1PHGJT5E+88+pC4=;
+        b=gCydAS/X0g3R1VU0Byf2+yQXbbCB2/71geYstqC5OrPGbikFjm/TPxHzSk/Cgaf26M
+         5ZTO7YIICt6BE82Fla3Smpi4S/uOYrwtpNUzOJji7THmqb/MxltS7UTgs2Y+YoltmFD2
+         3vyRB81BD7BKaBytdaXP3La0AxcwamwVks03YWw6WWZrJqSvPQ5ufWSMi1xd3RjG0QfU
+         SACyfWOIYh2rhs4vwRgf3HBK66WUPwsuuxn9hgPq1WxpUl5IB+1PuRuei5Ucqj7usSFM
+         NJh4gxEQLDqrvZdwCtbq5Rv5GaHHlouXeuVpGHJuJtiZXbzjqyCpaDaQEosh35dCMIY+
+         usWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728285105; x=1728889905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hg4i6iLNPFN1cxnsx1LXLyItyf2hgwuisZOsoYDzoBE=;
-        b=KH95q1KKzrlptXHbWJo1tO91wO+/blBJ/0xdMx9AbQqhQIoz+hbwAAy1DcRkmXl8VF
-         ygG+HHodmrBGAQNRbD9iIfZkjXCBf9zpE83p5xTNmcrexH0uYV6TN+mGSVOeu8UqFc9x
-         l/c5+53h6i5P86bbV0nKkupvZObeAYL/3a3TEhJaY7x7mFzJVz02pZpDOy6PfDUjihnd
-         5gGWkoWvWj/3DOi0juSqECqs/AYFgZA59cX9GzkTd25TBxi0fV+saoZTgjEpEwdmfNrV
-         YmsTqpu3Cr+nVtKQo29QXiAEf/oYdrQhr3S0G0Ne6XWRkrwgoDGsvItfH9ONc++TSEBB
-         wywQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+99Dmtul9Z9u+MxZ0nVN5LdpWdx0SbI1uPX+BN0tWMCyw/LBebDX/zHI2b1HOTWskjv53fKc9SR/K8dEw@vger.kernel.org, AJvYcCX4nCWFeFK84qaS7MmW1fzkSMv0qpX7sN4p6rRUgabfMeIlhKasMUEGG2pYwERQfwdcu8wPY+hyiFt1@vger.kernel.org, AJvYcCXve8y4x51twCh8w113bsbWEoCnmuUO2FTEdpdoVbFQ/oMBCHOptMD60nvU9+Z0ckGpPMpBm0+B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7uY8HEDX+VjfyDyZHLijNOJP+WV18TRsIoBx8gyp+0a2EH2ou
-	Tr2jbEtj01ChDb19aJrauENyfk3MxLFCGoRRcnd/Aew1sOwpdtGh
-X-Google-Smtp-Source: AGHT+IGOzQ8KyqVUc0GuwXGDXq0mWXBF4KCCJMy+L0QwpEwx29h/wn4foiNYK+spN1lugv1qyuEnoA==
-X-Received: by 2002:a05:6402:40c9:b0:5c7:2122:6b3 with SMTP id 4fb4d7f45d1cf-5c8d2dfda0cmr8181708a12.1.1728285105107;
-        Mon, 07 Oct 2024 00:11:45 -0700 (PDT)
-Received: from hthiery.kontron.local ([213.135.10.150])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05f3c06sm2819052a12.91.2024.10.07.00.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 00:11:44 -0700 (PDT)
-From: Heiko Thiery <heiko.thiery@gmail.com>
-To: "Vaibhaav Ram T . L" <vaibhaavram.tl@microchip.com>,
-	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Walle <mwalle@kernel.org>,
-	Heiko Thiery <heiko.thiery@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] misc: microchip: pci1xxxx: add support for NVMEM_DEVID_AUTO for OTP device
-Date: Mon,  7 Oct 2024 09:11:22 +0200
-Message-Id: <20241007071120.9522-2-heiko.thiery@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241007071120.9522-1-heiko.thiery@gmail.com>
-References: <20241007071120.9522-1-heiko.thiery@gmail.com>
+        d=1e100.net; s=20230601; t=1728285102; x=1728889902;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gCK80+Zdo5NigUQbZJ/SoQaC/Axw1PHGJT5E+88+pC4=;
+        b=N80cDjN+MDHoM7dfqMRZ5sPrdnRkVwHkXgVwBu3VmxRRemEu3KtNldjw8q1lXdfUvv
+         Guyuvaag5Zj6jGyzv0KER3mQ3GXbiDJhr7AeCGOaYHIvKvlNFwgJmO7Xz/7bum7uMty5
+         YX/XDvfVpYD3GKVfYilBGwgjM1infzQMRF6y2ueF+ugcoACddTlkxyYsEB0cLeE1PEqF
+         ieLfDt6pGs5F8WuHRAxUGTZ8j8mGEkfDEbT8pF6q8duy0uXrHuJKQLgdWYPMA7tE988z
+         8bNoRjLJPmCxJ5AIOtk1/vwDglu9ZeGpKEldvyQhXXPfB5VM7XQlEQKZp0EXk0WUppCa
+         379g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPd+QHWTxKZlTZna3Cp86ss1mOfa797Zui/hrtU98Ei7aqxbOyqG9ut+yRZ+pXJm8wlK6AAad1D5xDsCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZJFEaIgekde0D0NIYxhX0ODVw4sLxTyXBRiygl+zvBYiOLBrI
+	N9SlmbAaWGvyYDY5OWULvH5Iz+vGQoOhHy6jD/xPb3+7Qrvgq1DrEjFO9RFO9vA=
+X-Google-Smtp-Source: AGHT+IH8tfiHMYgj/TgOBx4ZUIl+xf+sgHiscl6mr6ZInKvVsP/MuD8J42nJA572uZUsXwcr+JPkkQ==
+X-Received: by 2002:a5d:4d52:0:b0:37c:cd0c:1539 with SMTP id ffacd0b85a97d-37d0e766a74mr5740542f8f.24.1728285101581;
+        Mon, 07 Oct 2024 00:11:41 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f0b2sm5035226f8f.9.2024.10.07.00.11.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 00:11:41 -0700 (PDT)
+Message-ID: <c32226a8-43ac-4dc7-b2ce-8ce9464c6eba@linaro.org>
+Date: Mon, 7 Oct 2024 09:11:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550 or
+ gcc-sm8650
+To: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241005144047.2226-1-jonathan@marek.ca>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241005144047.2226-1-jonathan@marek.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-By using NVMEM_DEVID_AUTO we support more than 1 device and
-automatically enumerate.
+On 05/10/2024 16:40, Jonathan Marek wrote:
+> This driver is compatible with both sm8550 and sm8650, fix the Kconfig
+> entry to reflect that.
+> 
+> Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>   drivers/clk/qcom/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index a3e2a09e2105b..4444dafa4e3df 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1230,11 +1230,11 @@ config SM_VIDEOCC_8350
+>   config SM_VIDEOCC_8550
+>   	tristate "SM8550 Video Clock Controller"
+>   	depends on ARM64 || COMPILE_TEST
+> -	select SM_GCC_8550
+> +	depends on SM_GCC_8550 || SM_GCC_8650
+>   	select QCOM_GDSC
+>   	help
+>   	  Support for the video clock controller on Qualcomm Technologies, Inc.
+> -	  SM8550 devices.
+> +	  SM8550 or SM8650 devices.
+>   	  Say Y if you want to support video devices and functionality such as
+>   	  video encode/decode.
+>   
 
-Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
----
-v2: add CC to <stable@vger.kernel.org> after receiving friendly mail
-    from patch-bot.
-
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-index d1cd4544c83c..a2ed477e0370 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-@@ -384,6 +384,7 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
- 
- 	priv->nvmem_config_otp.type = NVMEM_TYPE_OTP;
- 	priv->nvmem_config_otp.name = OTP_NAME;
-+	priv->nvmem_config_otp.id = NVMEM_DEVID_AUTO;
- 	priv->nvmem_config_otp.dev = &aux_dev->dev;
- 	priv->nvmem_config_otp.owner = THIS_MODULE;
- 	priv->nvmem_config_otp.reg_read = pci1xxxx_otp_read;
--- 
-2.39.2
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
