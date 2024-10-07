@@ -1,111 +1,214 @@
-Return-Path: <linux-kernel+bounces-353902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7481D993433
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CA2993437
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276681F2353C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994041F23432
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FF51DD55D;
-	Mon,  7 Oct 2024 16:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA451DD876;
+	Mon,  7 Oct 2024 16:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ky9T4tC9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JmlRPiRT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1511DC1AE;
-	Mon,  7 Oct 2024 16:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E451DC1AF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320222; cv=none; b=F5hCWgxsfAL4ZycH1kD7XwNvEnSQvkK2dIYI8t5J/kdTM3IJ6sKUeYD9fFtQQ+RfTr4WVWNiWeJvybWpKG6bpN8SWIsqelNmK3uoa6OL8hbGeCyJsZ7F3QF9x+K0BWpTz3c+mbixVJCcNxSqEtviQW+69QEuzfFNEfddkiyrj8Q=
+	t=1728320229; cv=none; b=hy9lI0aqcFE0cHN6etVeFLvPdB1qeWgbOXYr4l50Hgb/zZXrrK5FYPlqSgHIAmTGzkV/k/jW6rLAnS65ucfuJNIbXSCjdTnIDPGw90vs/nzGSZVdz39xpHRtgev7hH/x4kBWU8we9olD34Yen8ofmIMeUyrl0Ix3iADHUIy336k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320222; c=relaxed/simple;
-	bh=xcXKw2m89hBWIM4ZfeefRHBeTdHv9hQNK29Cj4F0q50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVGRsHx9E+mj48/vepfEnMc2rO9pWMvR+vWsNZGLDn/S6pg0GaKBhG2Q3e2knHJZjtP/PbUqziYUOa/AlRXTk0VR+u4ab4mYdAdylign/svznf6Tq1GRpYPytPfY+UfTrID1UQOgZTkSJcchX5NFPfxrBpoCLGmbwTbWN7Rdf00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ky9T4tC9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550ACC4CEC6;
-	Mon,  7 Oct 2024 16:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728320222;
-	bh=xcXKw2m89hBWIM4ZfeefRHBeTdHv9hQNK29Cj4F0q50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ky9T4tC9+D9Fzx5HOrNmvh72thajEfb5RaYm+lj3pSvO277kRmjdCitvRHq+cCT/u
-	 kEBG7Dksq8JQDbDeTmEaLpJjfC3ThrQR0sNwDMWE+ilswO8bWkOUyTKY75LOcDOJta
-	 8MSCUGYOKHvIjKkDXyyjv2Sm+uKLm+NH1HQ3B62h/iZCsISwUlngVmdh4LPBq6FWt5
-	 WL1pqqMyitjdqpvMiSMtd9euG/DJQzfoFwIlAyDW/9QTbjgxAPvciJoVu9DMaaE11Q
-	 ifjejDzki1ynkr4sThMqojZr7jYII6LATViBk5o4SOi7z/yHkRRp4UtMtB2IETvx+r
-	 RZKL4udMpy6bQ==
-Date: Mon, 7 Oct 2024 09:57:01 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 01/12] iomap: check if folio size is equal to FS block
- size
-Message-ID: <20241007165701.GB21836@frogsfrogsfrogs>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <b25b678264d02e411cb2c956207e2acd95188e4c.1728071257.git.rgoldwyn@suse.com>
- <ZwChy4jNCP6gJNJ0@casper.infradead.org>
+	s=arc-20240116; t=1728320229; c=relaxed/simple;
+	bh=lyzSMcWFnmspFtIMnp4dk0axPSL7aDSUZtWn+g8V1ls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJUU8a8PVaYpha5At3k+EmGdUhnfTvK4EoU6nxyG+L233tzGiA34ULkQxpU1v2t1lM0bDARoZSErBOGLEv9UDHeAjb/6MNnkZu0bDVIikr0tmZEUG5YSBJZt1Ryre/Jdi/eWg4PFJFDIho/69qPR0xPY/axc9Nky5YnK686dYiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JmlRPiRT; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728320228; x=1759856228;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lyzSMcWFnmspFtIMnp4dk0axPSL7aDSUZtWn+g8V1ls=;
+  b=JmlRPiRT5QkY+g9rXcvwIdW5feTjWws1JZKyhn6Xr+h6fQ/MNZUA6aX4
+   HQP1AVrk7Wykov18fhHB7U+nARIlojC2/UgmQFX+lYwtmwskAWiD3Ql4H
+   2rjpAYqGDBXy7q8IMnDTT7mJ35i/EcdaG4krxP/BtkeuX5mxQWWw3fcne
+   uSl6Wneb9hJuhszxsaGCv0LGP6MX15HFEaz/YYv1YewxqLTxcTLhNGIO5
+   R8v9GvSg7bFGEVXaBKeOJlkXOMvqE2GNHYY1ZLDFQXflOyeZIUHsguvb1
+   8vmBbiOIRJamB6MNjckWbdKtLi1gWqiB79lZefa8Xb+nnNcZBjR3qbNJV
+   Q==;
+X-CSE-ConnectionGUID: ts4Zm/PzRz2Y+R+Ym4gUoQ==
+X-CSE-MsgGUID: JOITlZxIQcKp7/N9tfRZ5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27613386"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27613386"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:57:07 -0700
+X-CSE-ConnectionGUID: bl1VizmAQha2wrmxsA7g9g==
+X-CSE-MsgGUID: mC2By01zSIa6ZeshtbMeiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="75790394"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:57:07 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Christian Ludloff <ludloff@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	andrew.cooper3@citrix.com,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH] x86/cpu: Fix #define name for Intel CPU model 0x5A
+Date: Mon,  7 Oct 2024 09:57:01 -0700
+Message-ID: <20241007165701.19693-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwChy4jNCP6gJNJ0@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 03:17:47AM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 04:04:28PM -0400, Goldwyn Rodrigues wrote:
-> > Filesystems such as BTRFS use folio->private so that they receive a
-> > callback while releasing folios. Add check if folio size is same as
-> > filesystem block size while evaluating iomap_folio_state from
-> > folio->private.
-> > 
-> > I am hoping this will be removed when all of btrfs code has moved to
-> > iomap and BTRFS uses iomap's subpage.
-> 
-> This seems like a terrible explanation for why you need this patch.
-> 
-> As I understand it, what you're really doing is saying that iomap only
-> uses folio->private for block size < folio size.  So if you add this
-> hack, iomap won't look at folio->private for block size == folio size
-> and that means that btrfs can continue to use it.
-> 
-> I don't think this is a good way to start the conversion.  I appreciate
-> that it's a long, complex procedure, and you can't do the whole
-> conversion in a single patchset.
-> 
-> Also, please stop calling this "subpage".  That's btrfs terminology,
-> it's confusing as hell, and it should be deleted from your brain.
+This CPU was mistakenly given the name INTEL_ATOM_AIRMONT_MID. But it
+uses a Silvermont core, not Airmont.
 
-I've long wondered if 'subpage' is shorthand for 'subpage blocksize'?
-If so then the term makes sense to me as a fs developer, but I can also
-see how it might not make sense to anyone from the mm side of things.
+Change #define name to INTEL_ATOM_SILVERMONT_MID2
 
-Wait, is a btrfs sector the same as what ext4/xfs call a fs block?
+Reported-by: Christian Ludloff <ludloff@gmail.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+I'm open to other suggestions for the new #define name.
 
-> But I don't understand why you need it at all.  btrfs doesn't attach
-> private data to folios unless block size < page size.  Which is precisely
-> the case that you're not using.  So it seems like you could just drop
-> this patch and everything would still work.
+ .../staging/media/atomisp/include/linux/atomisp_platform.h    | 4 ++--
+ arch/x86/include/asm/intel-family.h                           | 2 +-
+ arch/x86/events/intel/core.c                                  | 2 +-
+ arch/x86/kernel/cpu/common.c                                  | 2 +-
+ arch/x86/kernel/tsc_msr.c                                     | 2 +-
+ drivers/powercap/intel_rapl_common.c                          | 2 +-
+ drivers/thermal/intel/intel_tcc.c                             | 2 +-
+ tools/power/x86/turbostat/turbostat.c                         | 2 +-
+ 8 files changed, 9 insertions(+), 9 deletions(-)
 
-I was also wondering this.  Given that the end of struct btrfs_subpage
-is an uptodate/dirty/ordered bitmap, maybe iomap_folio_ops should grow a
-method to allocate a struct iomap_folio_state object, and then you could
-embed one in the btrfs subpage object and provide that custom allocation
-function?
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+index 064449fd51af..fe69c7a44cc0 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+@@ -183,10 +183,10 @@ void atomisp_unregister_subdev(struct v4l2_subdev *subdev);
+ #define IS_BYT	__IS_SOC(INTEL_ATOM_SILVERMONT)
+ #define IS_CHT	__IS_SOC(INTEL_ATOM_AIRMONT)
+ #define IS_MRFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID)
+-#define IS_MOFD	__IS_SOC(INTEL_ATOM_AIRMONT_MID)
++#define IS_MOFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID2)
+ 
+ /* Both CHT and MOFD come with ISP2401 */
+ #define IS_ISP2401 __IS_SOCS(INTEL_ATOM_AIRMONT, \
+-			     INTEL_ATOM_AIRMONT_MID)
++			     INTEL_ATOM_SILVERMONT_MID2)
+ 
+ #endif /* ATOMISP_PLATFORM_H_ */
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 1a42f829667a..b9f4b87a55d2 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -149,9 +149,9 @@
+ #define INTEL_ATOM_SILVERMONT		IFM(6, 0x37) /* Bay Trail, Valleyview */
+ #define INTEL_ATOM_SILVERMONT_D		IFM(6, 0x4D) /* Avaton, Rangely */
+ #define INTEL_ATOM_SILVERMONT_MID	IFM(6, 0x4A) /* Merriefield */
++#define INTEL_ATOM_SILVERMONT_MID2	IFM(6, 0x5A) /* Anniedale */
+ 
+ #define INTEL_ATOM_AIRMONT		IFM(6, 0x4C) /* Cherry Trail, Braswell */
+-#define INTEL_ATOM_AIRMONT_MID		IFM(6, 0x5A) /* Moorefield */
+ #define INTEL_ATOM_AIRMONT_NP		IFM(6, 0x75) /* Lightning Mountain */
+ 
+ #define INTEL_ATOM_GOLDMONT		IFM(6, 0x5C) /* Apollo Lake */
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index d879478db3f5..3e4ee59f20a1 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -6526,7 +6526,7 @@ __init int intel_pmu_init(void)
+ 	case INTEL_ATOM_SILVERMONT_D:
+ 	case INTEL_ATOM_SILVERMONT_MID:
+ 	case INTEL_ATOM_AIRMONT:
+-	case INTEL_ATOM_AIRMONT_MID:
++	case INTEL_ATOM_SILVERMONT_MID2:
+ 		memcpy(hw_cache_event_ids, slm_hw_cache_event_ids,
+ 			sizeof(hw_cache_event_ids));
+ 		memcpy(hw_cache_extra_regs, slm_hw_cache_extra_regs,
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 07a34d723505..63168b89b9c4 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1165,7 +1165,7 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 
+ 	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
++	VULNWL_INTEL(INTEL_ATOM_SILVERMONT_MID2,NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
+ 	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+ 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
+index deeb02825670..48e6cc1cb017 100644
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -152,7 +152,7 @@ static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,	&freq_desc_byt),
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID,	&freq_desc_tng),
+ 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	&freq_desc_cht),
+-	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,	&freq_desc_ann),
++	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,	&freq_desc_ann),
+ 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_NP,	&freq_desc_lgm),
+ 	{}
+ };
+diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+index 5e793b80fd6b..61934c70e30d 100644
+--- a/drivers/powercap/intel_rapl_common.c
++++ b/drivers/powercap/intel_rapl_common.c
+@@ -1273,7 +1273,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,	&rapl_defaults_byt),
+ 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	&rapl_defaults_cht),
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID, &rapl_defaults_tng),
+-	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,	&rapl_defaults_ann),
++	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,&rapl_defaults_ann),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&rapl_defaults_core),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&rapl_defaults_core),
+diff --git a/drivers/thermal/intel/intel_tcc.c b/drivers/thermal/intel/intel_tcc.c
+index c86654f28aa5..0329bc0bba55 100644
+--- a/drivers/thermal/intel/intel_tcc.c
++++ b/drivers/thermal/intel/intel_tcc.c
+@@ -106,7 +106,7 @@ static const struct x86_cpu_id intel_tcc_cpu_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_D,		&temp_broadwell),
+ 	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID,	&temp_broadwell),
+ 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,		&temp_broadwell),
+-	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,		&temp_broadwell),
++	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID2,	&temp_broadwell),
+ 	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_NP,		&temp_broadwell),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,		&temp_goldmont),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,		&temp_goldmont),
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 089220aaa5c9..eea7dbd2802a 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1027,7 +1027,7 @@ static const struct platform_data turbostat_pdata[] = {
+ 	 * Missing support for
+ 	 * INTEL_ICELAKE
+ 	 * INTEL_ATOM_SILVERMONT_MID
+-	 * INTEL_ATOM_AIRMONT_MID
++	 * INTEL_ATOM_SILVERMONT_MID2
+ 	 * INTEL_ATOM_AIRMONT_NP
+ 	 */
+ 	{ 0, NULL },
+-- 
+2.46.2
 
-(and yes that makes for an ugly mess of pointer math crud to have two
-VLAs inside struct btrfs_subpage, so this might be too ugly to live in
-practice)
-
---D
 
