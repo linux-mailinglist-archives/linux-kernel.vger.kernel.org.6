@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-352810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216BA99245B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:22:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F27899245D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E29C1F22BAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58656281C76
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E8D13C807;
-	Mon,  7 Oct 2024 06:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0974140E5F;
+	Mon,  7 Oct 2024 06:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VbF5A3Jz"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJ6H+DAE"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47696101E2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 06:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1CB13E898;
+	Mon,  7 Oct 2024 06:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728282134; cv=none; b=P3YoxQAed0DLMeUsMAElqTZDPJoRoKVNHg+taE01VS8Ku9yLNkasHVUazOklVSX8ooH3b3z5pAkkY6TrW0gOkA2WiognHjlYMbghdEfhRfIrQufPtwxu3Caew73dUeeBd+ec82OXnjfXFUqaDyXBWaRz7AF3BGU34nY4BBogQjE=
+	t=1728282287; cv=none; b=KanOrRU5tNunvfFJMscgQiIHUnUUuG0c7qhTOZ8v1y+9LMPAUxPZmyJzZTp90+6Dn9fclMvtvSQCY3qOEbfy+3CJj4oIzf3lamgbfuBhw7obtmUAluxAedHkJHPsbCiELzuqpbpSO8MPYle4oXJM8ZwHIdubsaUBhvIzObHzkQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728282134; c=relaxed/simple;
-	bh=S0b8AA8OoUWAO/Rkvpb6OQmPRANfSg3Vc/f6nm+NaQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIv3uT7L5ER+v98JoNWCTDPujRGEvJfZ2/Gi6M2oXQv8Qzht4TUzakJM7aNmeHnyIN/aHdCTUu3W2fXAeSYFJ0H3cxgMuXUKE6rFGHRBEWLa4DNJXxPbG7499uUgTVZ20kzaj6HAR3luFSf/SjMBfJ8whCl4SYwchQ1AVUq5Oq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VbF5A3Jz; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bgk+pgWE2jzGVBKPUQmz0/Xlcerm+872WRQL7Nno+5U=; b=VbF5A3JzfMrRqDDmRp30kH5cZ+
-	hAGQzy+E4iiiGyKEN6kxXd09RLoZYAU6vc4eHiiwoFAavwlDSFX7pSy78KPw/7qke5/lZ0v42BUnQ
-	hd3A735hh2kRpvOE0KsDvIpvXscnByqvCrw9e3wtL3D/3Qw9GAWYGmsCufOFsMavX9kSEstKarQsG
-	26GN96ODVvEztQRW6S4MUI8U3xgoJVdC1OhIdmCSW4BiOqq1VMHgU0qGnkl7EWycQtDOAWNaSHSCX
-	8F304ptq5eWi/bHDj7NHC5KJT/Dam4pzJp1MmKrFdg3bxQ914ce+2RWhnUUmXmBI/kyQjdNf2i76Z
-	RMlCxsxA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxh8F-00000001PHa-12lh;
-	Mon, 07 Oct 2024 06:22:11 +0000
-Date: Sun, 6 Oct 2024 23:22:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Vladimir Kondratiev <Vladimir.Kondratiev@mobileye.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Alexandre Ghiti <alex@ghiti.fr>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v1] riscv: make ZONE_DMA32 optional
-Message-ID: <ZwN-E279o4bUQG26@infradead.org>
-References: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
- <e8f6ed93-d47c-4c07-963c-8f16f498abed@ghiti.fr>
- <VI1PR09MB2333FEC324AA0B3E5F1D7F98947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
- <VI1PR09MB233370D7BD8553E7891EF46F947C2@VI1PR09MB2333.eurprd09.prod.outlook.com>
- <ZwN0l0Y_oUfDX8jl@infradead.org>
- <VI1PR09MB23335FF3B1274ED13F24AF06947D2@VI1PR09MB2333.eurprd09.prod.outlook.com>
+	s=arc-20240116; t=1728282287; c=relaxed/simple;
+	bh=vVx6vw6p04ZuzWeCVho/g2C+DdXaqDarfOAqlHlcMaU=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MkTaXglmZhvMwLkifOZEBOTdrs/ZfG7QuXel4YkhItZf1BI2ARQJd59cIkhBDnZYBP9VTTpBZVVzBMN/bK91E8K5jrVehr/wYzNpPLhx4ZWc+wAobbN83TTflqaRV4lwQJNnCiw2irLCNv3qAl0aHF5+FnrfIhXgjtv1hLq+wBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJ6H+DAE; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71df468496fso1541634b3a.1;
+        Sun, 06 Oct 2024 23:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728282285; x=1728887085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7rTG3xH/+Bc1tN97bVF5g+Nz5hBEmPnUqIhfBD3zpkk=;
+        b=aJ6H+DAEQdIU6AxAj7NlYciIr1bYv5qP4RPpFDQr65uMpA4gooXXykj/z6xbtUWRRR
+         jjX3YWCmYpBZIcVZ9ETgufA7DTsz5i/jj5Jch0+MHYj/ehTVj9poCn3TMqYlpNH143Qc
+         pQV9waeaB9MkTyfZbvXCj8T5NxKYTuoR9UScaV/BA4r9bJLJQUx9F+2GLGzBAPHhAEC3
+         aIv4nR+XgjA6If2+cimrBeT7WT/WQsY2p22StLlakVcax+blB6V8yd31AqFEm9A0q/zr
+         wSxvTdGW1gocOIt0LauqkeuMBRQwNhZelL8Emb7W+YJlpMzAJ3jQ7tUKkwS38JK9fR2P
+         tazQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728282285; x=1728887085;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7rTG3xH/+Bc1tN97bVF5g+Nz5hBEmPnUqIhfBD3zpkk=;
+        b=JDfpiobssJkJtJ1rFDhG3uTVotcv73ir3lQz/t4fUKfGW4E1Gf2pWhY/Jxm4mZ1LFy
+         0nCp8AO8PXJCothEwKl8qYr3xqGfNJ8GdgN5w2m2t2rVJm0aFFVwCUYjVDAofz+UNRIT
+         yvMsT0Q0EyqDyDT3RLYYqeamkguBaBqktOTC539NsKmWXcbv7zzM49RZJMe3B7SAFCdx
+         aSc99iR09orRh1ALyHdPtQ4o2V69mR21miCTJeG5yIZHLGh5u7Jng0PUb+Y9Uy1jhqR+
+         6lQyCd3XgXTOYQ+RBZxrutx4JbSzXZs7KVTQyC/EahHq7vu3lTnib5m3ggJlBRy2C1F9
+         VKHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWsBXakHvlPx1A+Tr4SN2NXNiL6ul8ZLmaT2S+UcaB8OPnKLwZ/FFUGzGczeWxjrhyQISevi7Ol6mHnGaTx1Y=@vger.kernel.org, AJvYcCXH7Vo/irnPklnce777dIS6cW2mokf0CCpcvqMY7E8A6wOyvlVipvU+7m1Jxi0ouTlzu7rotsrQycg+LHQ=@vger.kernel.org, AJvYcCXVslpT4O2o7GQfnm9UqoSJ7FAfB+ZAAiACefdixN7Tm8iSeBTfj2xxtiSIvYvAkIzr3uOOiQZ6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy26wt1dFSx7DBLYp6Vly19tl4s131+ots44dUTMUzvzv9G/hul
+	heLDc6lxvn0DCmgdYvLtxYhSCS3GbBG3tefsgNcMbyXrXo4xto9A
+X-Google-Smtp-Source: AGHT+IH/c34EHU+LsPdI6du6yf4SIYqk9lMxCoeMkVYb8PkKAc1OFlmIQ5N2gvMnR+zGznmjvy2x2Q==
+X-Received: by 2002:a05:6a00:3e06:b0:71e:c6b:3b38 with SMTP id d2e1a72fcca58-71e0c6b3e1bmr437842b3a.27.1728282285207;
+        Sun, 06 Oct 2024 23:24:45 -0700 (PDT)
+Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f680d8ddsm4211423a12.4.2024.10.06.23.24.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 23:24:44 -0700 (PDT)
+Date: Mon, 07 Oct 2024 15:24:32 +0900 (JST)
+Message-Id: <20241007.152432.1129805535833902448.fujita.tomonori@gmail.com>
+To: andrew@lunn.ch
+Cc: boqun.feng@gmail.com, fujita.tomonori@gmail.com,
+ netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+ arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
+References: <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+	<ZwG8H7u3ddYH6gRx@boqun-archlinux>
+	<e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR09MB23335FF3B1274ED13F24AF06947D2@VI1PR09MB2333.eurprd09.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 06:17:14AM +0000, Vladimir Kondratiev wrote:
-> >Well, this doesn't get any more true by just irgnoring the previous
-> >discussion and just reposting :(
+On Sun, 6 Oct 2024 16:45:21 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
+
+> On Sat, Oct 05, 2024 at 03:22:23PM -0700, Boqun Feng wrote:
+>> On Sat, Oct 05, 2024 at 08:32:01PM +0200, Andrew Lunn wrote:
+>> > > might_sleep() is called via a wrapper so the __FILE__ and __LINE__
+>> > > debug info with CONFIG_DEBUG_ATOMIC_SLEEP enabled isn't what we
+>> > > expect; the wrapper instead of the caller.
+>> > 
+>> > So not very useful. All we know is that somewhere in Rust something is
+>> > sleeping in atomic context. Is it possible to do better? Does __FILE__
+>> > and __LINE__ exist in Rust?
+>> > 
+>> 
+>> Sure, you can use: 
+>> 
+>> 	https://doc.rust-lang.org/core/macro.line.html
 > 
-> Sorry, this wasn't the intention. Perhaps I messed with the message-id, I see my "patch v1" in one mail thread together with the previous discussion, but not in the other thread.
-> 
-> Anyway, I think making ZONE_DMA32 selection depend on NONPORTABLE answers the concern
-> that was raised
+> So i guess might_sleep() needs turning into some sort of macro, calling
+> __might_sleep(__FILE__, __LINE__); might_resched();
 
-It doesn't at all.
+Yeah, I think we could do such.
 
-For one not having ZONE_DMA32 is going to break a lot of things.
-Drivers do expect 32-bit addressable memory.  And because SOC designers
-know this there usually is a way to provide it, e.g. by doing window
-translations between cpu physical and bus physical address.  Please go
-back to your data sheet or talk to the designers.
-
-And if there really is not way to provide this, the right way is just
-to stop the runtime allocation that triggered you to do this if
-ZONE_DMA32 is empty, not to add a non-portable option.
+Or we could drop the might_sleep call here? We might be able to expect
+the improvement C support in Rust in the future.
 
