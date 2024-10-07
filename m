@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-353283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF774992B8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49394992B91
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16FD1C237E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:21:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F03C1C22C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BED41D27A7;
-	Mon,  7 Oct 2024 12:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C351D26EE;
+	Mon,  7 Oct 2024 12:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bHLM+SVZ"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9ROVft7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RB/8Uwfx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31471D27A5;
-	Mon,  7 Oct 2024 12:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C441547D4;
+	Mon,  7 Oct 2024 12:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303662; cv=none; b=LhtVHy2L3S9BytasY5kPaRD+lAIRv7fiJC2dx3ICGN5GsmK/H3AS6MIHNhXpAG/HA8IYGtprLOrX3NJevjulBBoumzCpS3y7hNZB7pk/qpnCRV70gJqpoesQz9clHD0luV8VEi0joKR94OlncV6VJKdHS7igDDf1iFeE3ePirWA=
+	t=1728303733; cv=none; b=n/RP6cQ9sgsdo+BP9t8y8BIOyImALIH7hvm63y3mLLRrtQIMZ2kEFmuj8TFRAy1RAcxWmhtjMBkHFgaGQk26ZUO662SBnB7CG/a0IHXJ1+5XbcKvikChmMNcI1dDGAYMI1WJ8QS4Ru9fH0M8IHGJW5zBa58TBVh6knyk31kCEfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303662; c=relaxed/simple;
-	bh=/GmggK7t18GXzw5zOZycQRz+IDt5txZjeSYlbdPeeY4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MuChDahf4ewcfP2RgdOkonwGRs+tj12W+LQAUTlccil31wkLSS9UP3z5r1i2Gk2EBQFyshS1AwWiyms1LIXQeH1QFRXEZHasBW4OabNgdaYTOY7rmY6bN4rCyqnNTSGRFxwB7Yjwr+wQvnVdY2tt4AjXo6SVc8OJbhZb6RZ3rcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bHLM+SVZ; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728303634; x=1728908434; i=markus.elfring@web.de;
-	bh=/GmggK7t18GXzw5zOZycQRz+IDt5txZjeSYlbdPeeY4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bHLM+SVZWlGSCFlphG9GUsIP7D8znN7Rdsr4oAww3t1c/KttrgRLnXh4cN4WJt4u
-	 mEz1P95u8o5h50Ut7gRb59Es1KeIbA8w9PRWd91yiXXepiGYhHTgdXl9IG9d9YJtx
-	 GpL3c418aEO7XEVXYl8uL7g7cmL0tw49AyJ/hGQo87q0sceUY6lJcbd34d0u9FuE1
-	 YzzcB2t3R3hWK7zFnYdz7S3wNDOzl+i2MYQRQLJf63bca01kDZTC+I2lBRMT/qstw
-	 AdX8sQwBdKy+ob+YXbU1SYkfVE+F9hGnipVi+2B38F9l2anx+jsVwFfBn8/s15aIY
-	 ziZe2Qy33Djq5Oa8Yw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuF8x-1trPmp0v7t-00se2x; Mon, 07
- Oct 2024 14:20:34 +0200
-Message-ID: <78ce32f1-0037-4caf-98fd-1e73216e3778@web.de>
-Date: Mon, 7 Oct 2024 14:20:32 +0200
+	s=arc-20240116; t=1728303733; c=relaxed/simple;
+	bh=DwH7ZNkOPfhY1o/iPZ5YTjnZ1h2+xxSZzKq/l6Ymbvs=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NlXDabJYOpUnVyLAg4R17+32Mab7i0Vqm2SNLqOQPbnm1cMbwQ780ZSzORjZ6bcUlu3hEAJEdHD1pfkm4lLhjcGOEGDsG0jYncsrbFsA0I/OfEb7oiQzmA5UKIk5jwz4Zb/IOwEmz7xVwV4rlHyW3YNg+Fjo75cnAqlF5oz1bQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9ROVft7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RB/8Uwfx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728303730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzoeHZNzvuiR/fKXzHPClhkbROvPhMF1uJDrJvUyL0I=;
+	b=f9ROVft7X2UqHeEuMqP9vnD967aaQq2Hpn3gf3L9qjKB53HHvK8VDlDVXa9453m7BCDWr8
+	i77GDM0d/WB+aVm4SDo1/HxLm56/6hnE2AKXquBpeG79/KU6pi6MVy3IE2PXv+6AoEjynV
+	WWwtjj355/u/m0jqsXRFAAfgmryPBKPJiIcRBo/SVD+BTbToovhjasN++SJX4mBwUjn2dB
+	EFKYGR2eGmf0sCF5loYwFdMKjkCMktn2jhf/gEc89lYwsXPPnJbH+rgt0CVJsjAazdxoPR
+	pE0XacnaIqf1UP5xHEf7srxirl84csi1cMEZXUkdsI19vUBeZvizvYW311aWjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728303730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzoeHZNzvuiR/fKXzHPClhkbROvPhMF1uJDrJvUyL0I=;
+	b=RB/8UwfxWyU26ILZ078mrNEWbQlGyrd2sDC4Sxt6zIyar/OSkvIwraYJ7jqHwpcL+zeQOs
+	hK96gDHU1kpurIDA==
+To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, David Gow
+ <davidgow@google.com>, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com
+Subject: Re: [PATCH 3/3] debugobjects: Use hlist_cut_number() to optimize
+ performance and improve readability
+In-Reply-To: <878qvya7u6.ffs@tglx>
+References: <20240904134152.2141-1-thunder.leizhen@huawei.com>
+ <20240904134152.2141-4-thunder.leizhen@huawei.com> <87jzfkbrgf.ffs@tglx>
+ <5333927d-3f21-b7cc-8c57-6e21f1b4a3e5@huawei.com> <87bk0vbumx.ffs@tglx>
+ <85a8aa26-f135-fdde-fadf-c2b38a563805@huawei.com> <878qvya7u6.ffs@tglx>
+Date: Mon, 07 Oct 2024 14:22:10 +0200
+Message-ID: <87v7y4t85p.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ASoC: qcom: Fix NULL Dereference in
- asoc_qcom_lpass_cpu_platform_probe()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rohit kumar <quic_rohkumar@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>, stable@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang <chenyuan0y@gmail.com>,
- Zijie Zhao <zzjas98@gmail.com>
-References: <20241003152739.9650-1-zichenxie0106@gmail.com>
- <ee94b16a-baa7-471c-997e-f1bf17b074b8@web.de>
- <2024100620-decency-discuss-df6e@gregkh>
- <6d17006d-ee97-4c7c-a355-245f32fe1fc3@web.de>
- <2024100608-chomp-undiluted-c3e2@gregkh>
- <8e4fe108-cfde-40c0-83f5-c1ce60b0940f@web.de>
-Content-Language: en-GB
-In-Reply-To: <8e4fe108-cfde-40c0-83f5-c1ce60b0940f@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0/I9nLZtNHJn+8QIWefoO9WcBYmjaQQoCt5aoy4FevRamxm7P0Q
- Q9foGI8xfnQEOl8gd8qHaI4rbnwqgXDrPSvIVNBZxHpmO2S/51vo9R1PidVJ9ShIAjYGEe/
- I3y1XsZLH0yNLQpanCWT2Px+hVrkD9sQQa85Gk+gFp9Xmhsmm1G1GTBdw3jPWVwkIsmkPLo
- O6RGxdOCvKk9XmGiTLNXQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9C7O/4L1sAY=;q/IaW97ObEBUXcpA1ESM21aujM2
- aPpH6dgfr8LrKuNnoKkSuHYPMaIKQkVpFDQ/j87UpMeh1FNFOXCeR9RBnKPRPs4NZ/Fip6EXj
- 79Gks+a3lZFWS60vXOEO1ZOwugvU/Or1rbLX7A8O7lIIyJfDjfwpUHGFXNv374M8WgyaaGR6J
- 0nAyGEpiVwAJWPlc2Q36PaJB4OLFwwCt+Q6Ez9Q2Fm5ssFW7Rk70VoSIfEj77+kKacfBDO33B
- BZyi97p/a4Frs9xo4J9kupmxpbmP7ci9/pGwowMd8BbMWQ4W0vv3Qwrt6oYNqt82lhE3SVsn6
- H6eRC4hZAeCbEsSaSvylUUzcop9RWafF3C+4tiNa5Mih/TVQ82JZypApr3sNbSWuAJQcbr2p9
- rofnZQIwjUu+ET5YuGdqmM9fbf2DXfeyIOFxkL0/sDz0rRxbi/kVwPDeSbR+K2gUXFvg9eJob
- 7lj4PHRb/6Biok0jzutVZI/mGQMi9d8d8JmIrljoRB9Q+6sWde7ah8Ci9fdZCKtmQd7t1Gcvf
- Y1TCwznjPMXgev6J7br+fN48lmXMctT7OJ63GL/jxMbC9aqvJoALKxSsZk7IE28ID7mLJoWzp
- sYMfNYkiBGRMrCsk1cbPSCXs9pJHGhQCkeA2tVyVX0V/nRshIG260EjfJbNdaPcnaY1fdpcB4
- ZGgc4mPVr9j5RGetnKskUyA9ps0yaVu91Dx8g3ltsu+3FXNwc0RivmhzO5H7En1psa6Rl/FBJ
- JdePx+nHyophij3lhiA77rqHfVSb1ORcHa8172Il21JH64Tu+2KhgbOuaOBV9+LmHDJPDVFXs
- TJ0FwmNsv0RKyJly8dQz1Wbw==
+Content-Type: text/plain
 
->>> * Do you find any related advice (from other automated responses) help=
-ful?
->>
->> No.
+On Wed, Sep 11 2024 at 10:54, Thomas Gleixner wrote:
+> On Wed, Sep 11 2024 at 15:44, Leizhen wrote:
+>> 2. Member tot_cnt of struct global_pool can be deleted. We can get it
+>>    simply and quickly through (slot_idx * ODEBUG_BATCH_SIZE). Avoid
+>>    redundant maintenance.
 >
-> I wonder how this answer fits to reminders for the Linux patch review pr=
-ocess
-> (which were also automatically sent) according to your inbox filter rule=
-s.
+> Agreed.
+>
+>> 3. debug_objects_pool_min_level also needs to be adjusted accordingly,
+>>    the number of batches of the min level.
+>
+> Sure. There are certainly more problems with that code. As I said, it's
+> untested and way to big to be reviewed. I'll split it up into more
+> manageable bits and pieces.
 
-See also:
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
+I finally found some time and ended up doing it differently. I'll send
+out the patches later today.
 
-Regards,
-Markus
+Thanks,
+
+        tglx
 
