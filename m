@@ -1,176 +1,158 @@
-Return-Path: <linux-kernel+bounces-353395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D84992D3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD623992D3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2360AB20BAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80AC0282148
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3861D3560;
-	Mon,  7 Oct 2024 13:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045E41D414B;
+	Mon,  7 Oct 2024 13:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GqUsdUMs"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="cBvSzaX1"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EAE14AD17
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E04E14AD17;
+	Mon,  7 Oct 2024 13:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307696; cv=none; b=kFPDDguc6Y97cciKhpmRQy2wkXY9jjKafjw31ZAIddEI7nBQF0TLPwhjTFnIPmUTYHc8aIfI3XkK6UDtE9dXlfVURrq/g0JuHv1U/G20r5AAgXzbGgAginfRwY+yXC3lvKfL1KMTNLv/NeuaQ9O0CsL/QbtF0LB99TVQ5AeJpi4=
+	t=1728307730; cv=none; b=N0YG015a0T69QxxgXfugX9kWAjrX8GWcXs7IbvLoNkgRWnkLUtpctEGrbZT+XSgSVMrQmOd93jwRa1XeJxP2IJKGjHUDTLBZwHpCH4yDOxmlOaBgqVQGwXKPxUsq2YuyYJUpDmJaeXhTSrsgRm0ViRyjmYalB3LchN1XpUrKQpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307696; c=relaxed/simple;
-	bh=QYElmbYO2v7I2S+NnUwfzpgeBY70fC1omeo8a7+7xVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J05zPoYctn5TxiTHmVX9jtuk45yNLbNtzX0HSVXB0ZxlXkJecG/fEBO46NyjvDmEif3nWbwSNN+qbeYzPh8+JTM3so+ijQ4aqNEUNau8KNKbAXxXNM1pkXoUW2QDJeL/LflALmk5tketI7f1aKDn9C03MxwDh2A8Ig41CWDVxh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GqUsdUMs; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e251eda7f03so3460229276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728307693; x=1728912493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WoCoIIdTG3gSxbgyt39obU2mZ3O4ZMNj1i8+RtkDTBk=;
-        b=GqUsdUMsw8EoOz/g2DlquARXqX8frQoX7xTZNHiOtw1LDHSFiSKghfRnOfVSr1rPuQ
-         VrbJWsMhzFSlkyLLcQzo+pTrsb72AVZyOkKOsh7trsmZCbLgbV/2rQb2fO/grXymw5oU
-         7mwkWRqWuA6HtQxPs2CWpLewUNOeryW5xfrD3DHIsGzPSjgpHrUQrPpzemRhHXMiYsmj
-         YM9TtyfnFWDv501JvbvDYl7+zsp9hbBLXtQkT9TPoMbRpgTK9YZaMe1v6EZpDXNQkW2X
-         GPM/s31dIu7/qtG155vytoh540mcpmTtR2ivPTuRsqLlEZcQPm+rXA3ORlVTUDwWbK95
-         hFvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307693; x=1728912493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WoCoIIdTG3gSxbgyt39obU2mZ3O4ZMNj1i8+RtkDTBk=;
-        b=AhMRKgXDTsmihWI3SsiNsAYd2YYS1xFxGrf5NIQrPwE23gp/Hs92go0G2bozKiA2bO
-         BzIjGQdGH1OcrwY0OOldMg9O/15BoASA99LVEXlOpWktp2MbII2is101yb5Rnu9Alw9j
-         rQAMO+Isb3/CCH4ceZTFscENyrh2Emy5CtV0e5KhWG5eXihJR/fQmY45sRkZs6+c8JBX
-         lhU8crkymHOEGuSTBTK+xvQevhix8BQSQc5WdeKdW2Ll07JNshHlN7Cr2HlJEMXUVkfe
-         pV23iyobC3N/ulzsyg1Jp6MN6pk9Czdb1qjX3hfXfc4yh+dEBSfpuMohFrjxVL0APdMX
-         efWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbhC8d9Qw6K81Tpm591Mo3hlfDApf4PGi6/TbrVrDC42QXR0xr9Sd0AoHBQwHo4HANaERNKkp7IKPxAco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTGPvPjTkMCArZB+KUhEEsUjcwRUrYhI6iHneVaEk6RFdq3rw6
-	8i/Llz7nkWSi7e+4/sm83yQSJ0o8hKsevqda7hhf7MQkE3uRCtHEIxbtloloMwMgJOOd7g+V/WE
-	v7oS4L2xfEGNVVJEAXSB/Pcm+vl6CNK5SJ6EW3S62W5Jd10k=
-X-Google-Smtp-Source: AGHT+IHWGySCZcp9NDmU3/vV0yiG6rZxItNXPqzGEZGutNjXf9pgVysGf+iEEBM1PrJj5zM+mDLteSP5Y/qLKfThdgc=
-X-Received: by 2002:a25:7b87:0:b0:e28:c6be:4ce6 with SMTP id
- 3f1490d57ef6-e28c6be5345mr2280453276.28.1728307693621; Mon, 07 Oct 2024
- 06:28:13 -0700 (PDT)
+	s=arc-20240116; t=1728307730; c=relaxed/simple;
+	bh=2x9rsaa8iTmcG2twzW+CkXJmOpdY/1uUQPABbulSBBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJ+NYzQ3vt2KL4fHbp+PctGo/slidGpZzrYP7doWb8frbw5AqJyw/qqZOzUAJDFy/8Aj6Si2yecOjlEA7UkRvRByCJdRAcl0bzCGui+JlXFsD6ayZON5ARc/ZvtsWiW+nzjLQ/fNSlj7fMdff5/4oouN4Gyct+R56nsGqCqO2tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=cBvSzaX1; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=Du4Jp3msWdr1YHLI++k/TEgkgoTmT+soplizTMXw94k=;
+	t=1728307728; x=1728739728; b=cBvSzaX1AFDuEXuK/c3pIGf4xDxMW96f1IOrSSDOouBT/uC
+	gyD5Zrd/B1BMqJHc3KvtkzZ0GkSaHgiNMfPzHtOPVhcNFaAKWcayyaL/29cI+acQte6VI88BZq+bt
+	aaVHg8vgjS7gcDP9WYel3BYq3L37PrykfyMBnZBKISL9eoO1Qn88mgXMORCfHg0BakwN8Z8x8jmic
+	FJ+Q2GC/rjx8v4nbPZht0JBOC86nPLFULOsad9/247yk9+/gIpUheU/TBp6LVqw3mUiMxPwkHfFAL
+	V1GeUmgovCfi0xOP7ajiYDzFaDgF4YQ3S+pfna9LoePih9KX5sDNH2rbjifqTgCg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sxnmx-0006XB-M1; Mon, 07 Oct 2024 15:28:39 +0200
+Message-ID: <df3c6560-dd37-4ec2-9b7e-1ad4c3ceba07@leemhuis.info>
+Date: Mon, 7 Oct 2024 15:28:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
- <20241004184019.GA16388@wind.enjellic.com> <CAHC9VhS0aeDB2GzxJPHN8_LDk59gT_RuRKwb26K+3SzX7SQ=3g@mail.gmail.com>
- <20241005023357.GA20577@wind.enjellic.com> <CAHC9VhSoPK7zMQjUNiHG23Je-iSmxOSdRFvp1ikqCeCxkS9zWw@mail.gmail.com>
- <20241007112158.GA10114@wind.enjellic.com>
-In-Reply-To: <20241007112158.GA10114@wind.enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Oct 2024 09:28:01 -0400
-Message-ID: <CAHC9VhSvQEE8k7tGwH6LVhq1a3GyBrnCJ_g03MqtnQxEm26VwQ@mail.gmail.com>
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that support
+ self-snoop
+To: Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>,
+ Yiwei Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Josh Triplett <josh@joshtriplett.org>, Gerd Hoffmann <kraxel@redhat.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240309010929.1403984-1-seanjc@google.com>
+ <20240309010929.1403984-6-seanjc@google.com> <877cbyuzdn.fsf@redhat.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <877cbyuzdn.fsf@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1728307728;37d721fc;
+X-HE-SMSGID: 1sxnmx-0006XB-M1
 
-On Mon, Oct 7, 2024 at 7:22=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
-> On Sat, Oct 05, 2024 at 12:21:31PM -0400, Paul Moore wrote:
-> > On Fri, Oct 4, 2024 at 10:34???PM Dr. Greg <greg@enjellic.com> wrote:
-> > > On Fri, Oct 04, 2024 at 02:58:57PM -0400, Paul Moore wrote:
-> > > > On Fri, Oct 4, 2024 at 2:40???PM Dr. Greg <greg@enjellic.com> wrote=
-:
-> > > > > On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
-> > > > > > On 10/2/24 03:38, Dr. Greg wrote:
-> > > > > > >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote=
-:
-> > > > > > >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > >
-> > > > ...
-> > > >
-> > > > > The third problem to be addressed, and you acknowledge it above, =
-is
-> > > > > that there needs to be a flexible pathway for security innovation=
- on
-> > > > > Linux that doesn't require broad based consensus and yet doesn't
-> > > > > imperil the kernel.
-> > >
-> > > > The new LSM guidelines are documented at the URL below (and
-> > > > available in the README.md file of any cloned LSM tree), the
-> > > > document is also linked from the MAINTAINERS file:
-> > > >
-> > > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#n=
-ew-lsm-guidelines
-> > > >
-> > > > The guidelines were developed last summer on the LSM mailing list
-> > > > with input and edits from a number of LSM developers.
-> > > >
-> > > > https://lore.kernel.org/linux-security-module/CAHC9VhRsxARUsFcJC-5z=
-p9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com
-> > >
-> > > We are intimately familiar with those documents.
-> > >
-> > > Our reference was to the need for a technical solution, not political
-> > > medicaments.
->
-> > Seeing that document as a purely political solution to the challenge
-> > of gaining acceptance for a new LSM is a telling perspective, and not
-> > an accurate one as far as I'm concerned.  The document spells out a
-> > number of things that new LSMs should strive to satisfy if they want
-> > to be included in the upstream Linux kernel; it's intended as guidance
-> > both for the development of new LSMs as well as their review.
-> >
-> > If those guidelines are too restrictive or otherwise stifling, you are
-> > always welcome to suggest changes on the LSM list; that is how the doc
-> > was established and that is how we'll keep it current and resonable.
-> >
-> > However, if you find yourself objecting to the guidelines simply
-> > because they are trying your patience, or you find that the technical
-> > reviews driven by those guidelines are incorrect, but are unable to
-> > properly respond in a way that satisfies the reviewer, then the
-> > upstream Linux kernel may not be the best place for your LSM.
->
-> The document is an embodiment of a political process, let me take a
-> swing at defining what it is:
+On 30.08.24 11:35, Vitaly Kuznetsov wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+>> Unconditionally honor guest PAT on CPUs that support self-snoop, as
+>> Intel has confirmed that CPUs that support self-snoop always snoop caches
+>> and store buffers.  I.e. CPUs with self-snoop maintain cache coherency
+>> even in the presence of aliased memtypes, thus there is no need to trust
+>> the guest behaves and only honor PAT as a last resort, as KVM does today.
+>>
+>> Honoring guest PAT is desirable for use cases where the guest has access
+>> to non-coherent DMA _without_ bouncing through VFIO, e.g. when a virtual
+>> (mediated, for all intents and purposes) GPU is exposed to the guest, along
+>> with buffers that are consumed directly by the physical GPU, i.e. which
+>> can't be proxied by the host to ensure writes from the guest are performed
+>> with the correct memory type for the GPU.
+> 
+> Necroposting!
+> 
+> Turns out that this change broke "bochs-display" driver in QEMU even
+> when the guest is modern (don't ask me 'who the hell uses bochs for
+> modern guests', it was basically a configuration error :-). E.g:
+> [...]
 
-It's a shame that such a pedantic response failed to take note that
-the first sentence in my original comment on the doc never claimed
-there wasn't a political aspect, only that to consider it entirely, or
-"purely", political is not accurate in my opinion.
+This regression made it to the list of tracked regressions. It seems
+this thread stalled a while ago. Was this ever fixed? Does not look like
+it, but I might have missed something. Or is this a regression I should
+just ignore for one reason or another?
 
-Of course you're welcome to believe whatever you like about the
-document, its intent, etc. as that is no business of mine outside a
-mischaracterization of my own comments.  I think that's about all I've
-got to say on that issue right now.
 
-> So the path forward to address this problem, the best that we can hope
-> for, is to develop an architecture that minimizes the need for
-> consensus on how to implement a security architecture.
->
-> Tetsuo has placed one idea on the table, we will see where that goes
-> and how long it ultimately takes.
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
-I have yet to see any patches over the past year or two changing how
-LSMs are registered with the LSM framework from Tetsuo that are
-acceptable upstream.
+#regzbot poke
 
---=20
-paul-moore.com
 
