@@ -1,150 +1,229 @@
-Return-Path: <linux-kernel+bounces-354063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E587B99370C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:16:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A7D993712
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E4C284ABE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A219A1C20F6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEE01DE2AD;
-	Mon,  7 Oct 2024 19:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21131DE2B4;
+	Mon,  7 Oct 2024 19:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rV5V+8xM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gV6vMN3g"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B756013B797;
-	Mon,  7 Oct 2024 19:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CF013B797;
+	Mon,  7 Oct 2024 19:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728328597; cv=none; b=XrZ1DgiuYDwFluca0r9DH6hSk6yag4ZJygaf9T6Vgg1xFnKFUrrPmIMyGsL41SHokfTixhcrwAL9lUVik5eB/ljO0yIRrONOb8NHZRf54bwOxJkXdyx50squy7K83NoyjEZUbY428oC2P411FqC1WtpN/6yQPkB8Eje96gKNjdM=
+	t=1728328645; cv=none; b=DOYWo75dd4zMEmtPIMYfenD/oMclWj4s0Vdeyha8jEea4P7BH2gcIWgXPPjEyj77PoIdFMujIPd9v53zY7n6kaHUllo2kiE73RwZUnu/2Gws+kqbPBa8UWoGUU0LxOX8Vz+1x0e6/fOGOVHi9Y7sWL23XRi7Hl3tQWk8CwoTGC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728328597; c=relaxed/simple;
-	bh=hjgmtqWfHuUSGGNpCUvFJUzcxQ6YhsMkSL4cvOC3GLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsRpXi+db4KfThWM57lNTFcmAA3KHM8iYYJIfffMKaXSagh4z6fVuFOzEBMI9QiFfbw3emi+agqWBOe1u9jDbr9pHkknT8lC3a7pbc0Lc0h5MV2bydCEyPIX7cY55byWpwDoDtFUpygbna4GuHMBFENy3b0XAfIF+tXbRm9v6SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rV5V+8xM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C09C4CEC6;
-	Mon,  7 Oct 2024 19:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728328597;
-	bh=hjgmtqWfHuUSGGNpCUvFJUzcxQ6YhsMkSL4cvOC3GLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rV5V+8xM6cSeY9J6YsBLn+QQXTAb80unxwFqHalparDA01TttJZEtxm+S82dINaCY
-	 GUmblJVLPj+PWzxYLahkUL1rtS+57tPM1EELun7COQd/JszSN09oarjbPdpRhjw4ml
-	 bwOk2E47HsUgAruitJuCSLSjwu/Atw/+DIZ8YTewFcn/0rt4G+xQCOCt9nIlgfkDZ8
-	 Y8RMrcTOD9wKJsbdzXzmGWwYdGbD4tQMx7+ohvQPKONO8ooFPqlH4nA+A7nu/4qpW5
-	 BO3EL6CWrH52S77S+0daKtTRZzq5AUqJjXP8m3INxO3GCgLEX63RGNWGpemHpa1fdG
-	 LvkVv9NPv54LQ==
-Date: Mon, 7 Oct 2024 12:16:35 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	eranian@google.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	santosh.shukla@amd.com, ananth.narayan@amd.com,
-	sandipan.das@amd.com
-Subject: Re: [PATCH 2/8] perf/amd/ibs: Remove pointless sample period check
-Message-ID: <ZwQzk7mH-QW13PtC@google.com>
-References: <20241007034810.754-1-ravi.bangoria@amd.com>
- <20241007034810.754-3-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1728328645; c=relaxed/simple;
+	bh=07SR08Pw3mAC0nUwMsVPq5Lnr1AOVKeEnuuelVxUPHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WhMq9fNbUuGuPNRGRUn4RAKuBy2PqYJ7DFbgNkkJ84KnT3r0UbsFyZenenPinpHCrA7uAEDgINVmSOYsIc2cBjXw6Hr7S3cpDG9gexmMebLpVr5LwmUosSFb9J/mBmG3nCrl51hMqjq9kbS418eX2n5bKigWPqmY374mBDqvvaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gV6vMN3g; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497En0mi017611;
+	Mon, 7 Oct 2024 19:17:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Iv62g1Uag84fT16ECiu5fwXcu4+s3g3bBVkiBCEbb/c=; b=gV6vMN3gkoedlvik
+	rFh6WZutkkovpVDFdvuyVQcXpPJ2b36QpRb+g3+J4jLwdXZp6G6pk5yzBQKc3C5p
+	3Tz9A7gqgO/1dc5mFuMkwwaup+izIlCV3y5V5RrPo0y9s3pMw8C3Bq27qs3PvqMG
+	nGX2IOIK61MKjFHJpyLz1fecGM6TbM+xeAVMwgMq9xIgAMybvuUf7ZPoYlBSt1BL
+	j8pTASbUHkuV64b3v+QWYCndkJ9AYra+I/5Yp0QPyBmYTDaoxbh9OBm3aEiDH75m
+	2e+4uT+GWy/DrZBtIxDmdxbYnXO7ALqqy1nyRzGldRMzHxWjJR4AM992rZ47hKol
+	C2gG3Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs4d5ds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 19:17:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497JH8oG006784
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 19:17:08 GMT
+Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 12:17:06 -0700
+Message-ID: <2eb53ea6-848a-48bb-8c31-83a118bc5a73@quicinc.com>
+Date: Tue, 8 Oct 2024 00:47:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007034810.754-3-ravi.bangoria@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
+ <wzrj4vhrb4h3pe5dft7vqz2tl55txdyuciuxlysuck5isi7r4z@bs2ts3popy2t>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <wzrj4vhrb4h3pe5dft7vqz2tl55txdyuciuxlysuck5isi7r4z@bs2ts3popy2t>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YC39Kr-1BjUUKCLYKAljJ24RQMRdiy_N
+X-Proofpoint-GUID: YC39Kr-1BjUUKCLYKAljJ24RQMRdiy_N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410070132
 
-Hello,
 
-On Mon, Oct 07, 2024 at 03:48:04AM +0000, Ravi Bangoria wrote:
-> Valid perf event sample period value for IBS PMUs (Fetch and Op both)
-> is limited to multiple of 0x10. perf_ibs_init() has this check:
+On 10/7/2024 1:00 AM, Dmitry Baryshkov wrote:
+> On Sat, Oct 05, 2024 at 07:31:50PM GMT, Kuldeep Singh wrote:
+>> The qcom_tzmem driver currently has multiple exposed APIs that lack
+>> validations on input parameters. This oversight can lead to unexpected
+>> crashes due to null pointer dereference when incorrect inputs are
+>> provided.
+>>
+>> To address this issue, add required sanity for all input parameters in
+>> the exposed APIs.
 > 
->   if (!event->attr.sample_freq && hwc->sample_period & 0x0f)
->           return -EINVAL;
+> Please don't be overprotective. Inserting guarding conditions is good,
+> inserting useless guarding conditions is bad, it complicates the driver
+> and makes it harder to follow. Please validate return data rather than
+> adding extra checks to the functions.
+
+Sure, I’ll remove the redundant checks.
+Please see below for explanations.
+
+My intention here is to handle erroneous conditions gracefully to avoid system crashes, as crashes can be detrimental.
+
+>>
+>> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+>> ---
+>>  drivers/firmware/qcom/qcom_tzmem.c | 17 ++++++++++++++++-
+>>  1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+>> index 92b365178235..2f2e1f2fa9fc 100644
+>> --- a/drivers/firmware/qcom/qcom_tzmem.c
+>> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+>> @@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
+>>  
+>>  	might_sleep();
+>>  
+>> +	if (!config || !config->policy)
 > 
-> But it's broken since hwc->sample_period will always be 0 when
-> event->attr.sample_freq is 0 (irrespective of event->attr.freq value.)
+> config can not be NULL
+> Ack for config->policy check.
 
-Right, hwc->sample_period is set to event->attr.sample_period and it's
-the same as sample_freq since there are in a union.
-
-struct perf_event_attr {
-	__u32			type;
-	__u32			size;
-	__u64			config;
-	union {
-		__u64		sample_period;
-		__u64		sample_freq;
-	};
-	...
-
-perf_event_alloc() sets the hwc->sample_period and changes it only when
-both attr->freq and attr->sample_freq are not zero.
-
-> 
-> One option to fix this is to change the condition:
-> 
->   - if (!event->attr.sample_freq && hwc->sample_period & 0x0f)
->   + if (!event->attr.freq && hwc->sample_period & 0x0f)
-
-Right, I believe this is the intention.
-
-> 
-> However, that will break all userspace tools which have been using IBS
-> event with sample_period not multiple of 0x10.
-
-Correct.
+Considering a scenario where user doesn't fill config struct details and call devm_qcom_tzmem_pool_new.
+config will be null in that case.
 
 > 
-> Another option is to remove the condition altogether and mask lower
-> nibble _silently_, same as what current code is inadvertently doing.
-> I'm preferring this approach as it keeps the existing behavior.
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>>  	switch (config->policy) {
+>>  	case QCOM_TZMEM_POLICY_STATIC:
+>>  		if (!config->initial_size)
+>> @@ -316,6 +319,9 @@ devm_qcom_tzmem_pool_new(struct device *dev,
+>>  	struct qcom_tzmem_pool *pool;
+>>  	int ret;
+>>  
+>> +	if (!dev || !config)
+>> +		return ERR_PTR(-EINVAL);
+> 
+> dev can not be NULL
+> config can not be NULL
 
-Agreed.  The condition never worked and should be safe to remove.
-
-Thanks,
-Namhyung
+dev may not be always __scm->dev.
+For ex: qcom_qseecom_uefisecapp.c pass it's own dev.
+If new calling driver pass dev as null, will lead to NPD.
 
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  arch/x86/events/amd/ibs.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
+>> +
+>>  	pool = qcom_tzmem_pool_new(config);
+>>  	if (IS_ERR(pool))
+>>  		return pool;
+>> @@ -366,7 +372,7 @@ void *qcom_tzmem_alloc(struct qcom_tzmem_pool *pool, size_t size, gfp_t gfp)
+>>  	unsigned long vaddr;
+>>  	int ret;
+>>  
+>> -	if (!size)
+>> +	if (!pool || !size)
 > 
-> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-> index 347353b9eb70..6b55a8520166 100644
-> --- a/arch/x86/events/amd/ibs.c
-> +++ b/arch/x86/events/amd/ibs.c
-> @@ -294,13 +294,8 @@ static int perf_ibs_init(struct perf_event *event)
->  		if (config & perf_ibs->cnt_mask)
->  			/* raw max_cnt may not be set */
->  			return -EINVAL;
-> -		if (!event->attr.sample_freq && hwc->sample_period & 0x0f)
-> -			/*
-> -			 * lower 4 bits can not be set in ibs max cnt,
-> -			 * but allowing it in case we adjust the
-> -			 * sample period to set a frequency.
-> -			 */
-> -			return -EINVAL;
-> +
-> +		/* Silently mask off lower nibble. IBS hw mandates it. */
->  		hwc->sample_period &= ~0x0FULL;
->  		if (!hwc->sample_period)
->  			hwc->sample_period = 0x10;
-> -- 
-> 2.46.2
+> Is it really possible to pass NULL as pool? Which code path leads to
+> this event?
+
+qcom_tzmem_alloc/free need to be used once pool is already created with devm_qcom_tzmem_pool_new API.
+If pool isn't created, then calling qcom_tzmem_alloc/free will be erroneus.
+
 > 
+>>  		return NULL;
+>>  
+>>  	size = PAGE_ALIGN(size);
+>> @@ -412,6 +418,9 @@ void qcom_tzmem_free(void *vaddr)
+>>  {
+>>  	struct qcom_tzmem_chunk *chunk;
+>>  
+>> +	if (!vaddr)
+>> +		return;
+> 
+> Ack, simplifies error handling and matches existing kfree-like functions.
+> 
+>> +
+>>  	scoped_guard(spinlock_irqsave, &qcom_tzmem_chunks_lock)
+>>  		chunk = radix_tree_delete_item(&qcom_tzmem_chunks,
+>>  					       (unsigned long)vaddr, NULL);
+>> @@ -446,6 +455,9 @@ phys_addr_t qcom_tzmem_to_phys(void *vaddr)
+>>  	void __rcu **slot;
+>>  	phys_addr_t ret;
+>>  
+>> +	if (!vaddr)
+> 
+> Is it possible?
+
+Yes, A scenario where qcom_tzmem_alloc fails resulting vaddr as 0 followed by no null check.
+Now, immediately passing vaddr to qcom_tzmem_to_phys will again cause NPD.
+
+> 
+>> +		return 0;
+>> +
+>>  	guard(spinlock_irqsave)(&qcom_tzmem_chunks_lock);
+>>  
+>>  	radix_tree_for_each_slot(slot, &qcom_tzmem_chunks, &iter, 0) {
+>> @@ -466,6 +478,9 @@ EXPORT_SYMBOL_GPL(qcom_tzmem_to_phys);
+>>  
+>>  int qcom_tzmem_enable(struct device *dev)
+>>  {
+>> +	if (!dev)
+>> +		return -EINVAL;
+> 
+> Definitely not possible.
+
+Ack, by this time __scm->dev will be initialised in qcom_scm driver and cannot be null.
+If some other caller even try and qcom_tzmem_dev is already set hence, return -EBUSY.
+Will drop the check.
+
+-- 
+Regards
+Kuldeep
 
