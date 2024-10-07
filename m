@@ -1,168 +1,169 @@
-Return-Path: <linux-kernel+bounces-353298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D34992BC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:30:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00C5992BC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5988F1F22F6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:30:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E3BB254DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14391D27A4;
-	Mon,  7 Oct 2024 12:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DD41D279C;
+	Mon,  7 Oct 2024 12:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WjaDVqs7";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="/ppHk7zE"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LKTlZf+g"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6031D14FA;
-	Mon,  7 Oct 2024 12:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728304241; cv=pass; b=Jb4Rj4KBFB6qU5yvaFldwiRP601a9nRht8unvKgeDMEMWktRrIgfuSYb2pze5ddmLVhQIx3snJHX6KMwHfRHkTQTojlbsrtchByVAwK5HkkZMK72y7cfDfDQxF6Vz7HBrZg5EVyTnFeB6r9DYDmxnpYVZ19GPJpoCCcbzYgCKa8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728304241; c=relaxed/simple;
-	bh=1PWo9tctrQWE2WTrs2JbpKaiILAYSvQ0hceshNyq6uo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=N7C3skGVOlTgIh2s4qTur9tnPeO3niB0+aXQcqHi3ZrvX0fVwbo8crGg9c/bKKmAeAp5pnfB1lTRPkG2rmRHwxK4rdYS/EyHSTH+YzvA3Jzj4/Zqtbyd3D9WhxXDeSFdg6gG5lRnLrj9lpQ66//j7XMLlUpKBbgm+o4Gp/3lMLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=WjaDVqs7; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=/ppHk7zE; arc=pass smtp.client-ip=81.169.146.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1728304217; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=SsluR/XVS90n1+sgIHlpTwq1c4ITLtEEyw0KaZXVXHAfT4Avtgnoqexj7FPsqKdOz1
-    YR+GES4tsvOkdYn0Ev0DWqVGYfKumvvUaM83q6GJ36VIXtpLG6hyLoT+eYH7PHTc2gOc
-    r/73p6FvtfJQatHpQ4tS4RCHOcm0foccscEUarTsUmu7klr8lUrfDP0Ik2WBRNpriiS7
-    jocV7VCnqxLqM86FiCOcLrUi2hGRpphtPGWB9TdzqKSEEr35haD1Plwi1JhKiuosZzqs
-    DPI5pWD8EMRyDFKnzTmd1Gl2V/i2VgIcYlyEtoWWoztTs5ivKV7xlImhUi2pjAqFxTOy
-    srgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1728304217;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=375XtLOU9mHCVgSPS3tKHJvslztan0SSxd6+J7FYLms=;
-    b=q3Zn5aRTDhKPAtUZcdN/y9sgDazo3YK5iAfqYu/NEeOlWSv3ILYmr5ct0/s0utOzsP
-    y7FymXBQHRJkCdihcSh1JK88MtpzhFvqxb1p5jbtFGKyqsbUr1gCR0j+uNl6fztaQY7S
-    BX7eSDzs+nbVTHAkE0AT4j1DLx86KBCdZx5YAFjSHCAJ9Z86+OOa9AgiZ6dVWb5Qab6s
-    kbjppR7t16kLKG/sDvZ/b67oWs4SoHlQcd+DFWexfz+iEmbsS/9s0Ez/1QE2ySXlMr3P
-    NyuSjER7kajmENGZb4XViRIeQ4i/Dw3CkpL6LbU+Idjb+uTy4cOG8I3HKtDlWLitnMqH
-    v3Og==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1728304217;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=375XtLOU9mHCVgSPS3tKHJvslztan0SSxd6+J7FYLms=;
-    b=WjaDVqs7d/GM6ldq11sgTU4xUjT1SUoM9zhDZ+2JS5SEs+IFYBMEhcLrJ6xeVAhLbb
-    28GBjOiRQvtVXSgtWRnXaoRUNB2OaDXWmm65jtyyY+7lOgsfTwliyOCvyelSa91Yxenh
-    JMUbNv0usLtqYjeFfm+34s13i64YDtRRWcDbh4fvz1yPz+BY3Os/kljvqIXLZPhUkLiN
-    SSNXC3lmM+0Bt8VfaY4ftze0qU81QF34JQiEMDqoW02PYZFekr4Xc0XgZvZ6gYf8gC4Z
-    QKGlj/FZ0+l38dvStkOdQOVIy1w2Z4O2I1pQERwiDPRfqbzMw0FqwXXmsOcndqx9Q0ww
-    h6zg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1728304217;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=375XtLOU9mHCVgSPS3tKHJvslztan0SSxd6+J7FYLms=;
-    b=/ppHk7zEgJnCv2CZU6B81xPTNUqL86pXmWBUB06308ksbtt+K2xbf3ZTmLy0YRrTpl
-    Hd4C3CAUOhmYRd7YBsCA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeTgZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.7 DYNA|AUTH)
-    with ESMTPSA id Qd0dc2097CUGSMB
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Mon, 7 Oct 2024 14:30:16 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1B21C173D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728304250; cv=none; b=NW8JxdberJoV5e2dpdPNukqIamsIL2ytLKY82BSHLqJ191DYNk45k64u1bACuiZqe78asCJmouLa+X2M1qVt/MUg9rfbij8GFfr40dshSXtVJoOvBeJpHDWfa9MYm1l918ScO4ariqPSFYdhE4ChvKMG5a353036cqDahh2ODqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728304250; c=relaxed/simple;
+	bh=tKw3Dv+ep5qgy/wCHKKBNbMDkWQxFHKiRzK1Yy/LhmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BS60B+Fngx8fzqEHn4qnaczuPjgq+6SXnmfvBbQ9VTD8xC4vKwCFO4lsEixORlnHLT7ebA/OIi+zrfsKt00XCEdzUBwIATRluo06CjSgGn7Ab9JWvozsSja4WUM/JZs9HWtw5eYuDe6uRPh8/6JIK8kEj5Jqzb6ypS78UMOPrVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LKTlZf+g; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc810ce73so2310292f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728304247; x=1728909047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xcmrgt5t2c8dd5WZNO1q1kgJtgx+WDNB9aW9p8iaKAk=;
+        b=LKTlZf+goFWihB5wooFjO1+fyY+EUEvnNyNAwG8+DbZOzC0ByE5QxAxbFNirCsEjyQ
+         cgIcHtVfRvOG9bjfDAWfEVWrUlTIrAyF6brQzLSoAMMu+m7gpodrFsijjrY9Uf5OULG8
+         sDwmoVJpYJw96UVBAS2fwDaQtq2y4rprTmQmJhY6Xd/z7jxYripCSKKkZXRXdvwan5rs
+         bC98iRTQGvI0E5hEP2BsDfMQmrYsKxY0lH06RT8foVB8FiayDEr+Yd5UKo4QuTaXtQPu
+         xCUMt9K03wZUNOxNsJRw1vtDgb32EV+VuQVYtVePKIqBjpXrQn1tKXGsg2Rr6n8+IUsE
+         /kZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728304247; x=1728909047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xcmrgt5t2c8dd5WZNO1q1kgJtgx+WDNB9aW9p8iaKAk=;
+        b=LKSzZDEtQduzELzgNsFMbNX3OK1FiIWyynPcUiHLcv0/rPg8FI4HWgUgzy3cOBVI3o
+         T6XBowCNkVp6L5shCRpqeUqB08Su0Yp1mwKbNrHfOVyI435gLPcsna7WoJQxtXsxunUQ
+         f+lgGZIineJrfBCafWU5q6Yw7PqykK5SVzk/Dd44+DEwQAXSg98pBPz+E0ckWuptZJ9q
+         bBea87pnzMAfXyN4BNvTWSYUEzrzLM3zi3vOX9n5KWrLcXYVpMnbzt5HLwvpkGyAoPtk
+         k67ymJDTfwG8E0oueUyWafKsMGq1XlkDUce+/TyF16Mao39gVFA/lad10LNHgJxLQhCJ
+         yxqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPiF1/fl43/oVVLrssxjb01poqTJmQCStgyGJzgW2zHS+8vL5aKx2CgczzptoQDEHGL22kDeq9N+U7MwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUg3cwkbBo9kYEf6wgys2oUyUFJDK6i/3TuzVqkC4sItGujNxk
+	cU8Mj0VSDEf1Rl/m0ecXIdpNMbu+i+o4dOEBgPMNPPYDobltFjMdQQVWAafzJGRjzImbn62hKfl
+	Ks+8ZggCd4PEMcsRWMfn/SzwZU3KK5l8xmj0j
+X-Google-Smtp-Source: AGHT+IFBMpJdO483BxZZC9+G+ddezT0XaEDeEeegWB3jhbC1bsRQeuU2MWK1hqJE2xTnp+m2MW/1AAxNkifpUizxODc=
+X-Received: by 2002:a5d:6d4f:0:b0:371:8dbf:8c1b with SMTP id
+ ffacd0b85a97d-37d0e79149fmr5361273f8f.34.1728304246620; Mon, 07 Oct 2024
+ 05:30:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: BUG: "iommu: Retire bus ops" breaks omap-iommu and omap3isp
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20241007121543.GM1365916@nvidia.com>
-Date: Mon, 7 Oct 2024 14:30:06 +0200
-Cc: Robin Murphy <robin.murphy@arm.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Christoph Hellwig <hch@lst.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Jerry Snitselaar <jsnitsel@redhat.com>,
- Joerg Roedel <jroedel@suse.de>,
- tony Lindgren <tony@atomide.com>,
- Andreas Kemnade <andreas@kemnade.info>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-media@vger.kernel.org
+MIME-Version: 1.0
+References: <20241004155247.2210469-1-gary@garyguo.net> <20241004155247.2210469-2-gary@garyguo.net>
+ <2024100505-aftermath-glue-7e61@gregkh> <20241005143106.1196fd3a.gary@garyguo.net>
+ <20241005152605.6d7d20e1.gary@garyguo.net>
+In-Reply-To: <20241005152605.6d7d20e1.gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 7 Oct 2024 14:30:34 +0200
+Message-ID: <CAH5fLgj6SPAM0KM2pF1v0gUCJA875VvWxddTCQXu7h+t1tDjfw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
+To: Gary Guo <gary@garyguo.net>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <ED01709A-1A43-480F-A951-7367DA9748AE@goldelico.com>
-References: <A7C284A9-33A5-4E21-9B57-9C4C213CC13F@goldelico.com>
- <20241007121543.GM1365916@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-Hi Jason,
+On Sat, Oct 5, 2024 at 4:26=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Sat, 5 Oct 2024 14:31:06 +0100
+> Gary Guo <gary@garyguo.net> wrote:
+>
+> > On Sat, 5 Oct 2024 09:40:53 +0200
+> > Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > > On Fri, Oct 04, 2024 at 04:52:22PM +0100, Gary Guo wrote:
+> > > > This is a wrapping layer of `include/linux/refcount.h`. Currently o=
+nly
+> > > > the most basic operations (read/set/inc/dec/dec_and_test) are imple=
+mented,
+> > > > additional methods can be implemented when they are needed.
+> > > >
+> > > > Currently the kernel refcount has already been used in `Arc`, howev=
+er it
+> > > > calls into FFI directly.
+> > > >
+> > > > Cc: Will Deacon <will@kernel.org>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Signed-off-by: Gary Guo <gary@garyguo.net>
+> > > > ---
+> > > >  rust/helpers/refcount.c      | 15 ++++++
+> > > >  rust/kernel/sync.rs          |  2 +
+> > > >  rust/kernel/sync/refcount.rs | 94 ++++++++++++++++++++++++++++++++=
+++++
+> > > >  3 files changed, 111 insertions(+)
+> > > >  create mode 100644 rust/kernel/sync/refcount.rs
+> > > >
+> > > > diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
+> > > > index f47afc148ec3..39649443426b 100644
+> > > > --- a/rust/helpers/refcount.c
+> > > > +++ b/rust/helpers/refcount.c
+> > > > @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
+> > > >   return (refcount_t)REFCOUNT_INIT(n);
+> > > >  }
+> > > >
+> > > > +unsigned int rust_helper_refcount_read(refcount_t *r)
+> > > > +{
+> > > > + return refcount_read(r);
+> > > > +}
+> > >
+> > > Reading a refcount is almost always a wrong thing to do (it can chang=
+e
+> > > right after you read it), and I don't see any of the later patches in
+> > > this series use this call, so can you just drop this?
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > I originally introduced this thinking I can replace Andreas's atomic
+> > 2->0 operation with a read + set, but ended up couldn't do it.
+> >
+> > The refcount read is still useful to determine if the current value is
+> > 1 -- in fact, `Arc::into_unique_or_drop` could use this rather than
+> > decrementing the refcount and then incrementing it again (just doing a
+> > refcount read would be much better codegen-wise than the current
+> > behaviour). I'll probably make this change in the next version of the
+> > series.
+>
+> Actually `into_unique_or_drop` can't use this because it needs to avoid
+> running destructor when it races with other threads. The semantics for
+> that function is better reflected with `refcount_dec_not_one`, which
+> I'll introduce in v2, and I'll drop `read` in v2.
 
-> Am 07.10.2024 um 14:15 schrieb Jason Gunthorpe <jgg@nvidia.com>:
->=20
-> On Sun, Oct 06, 2024 at 09:40:00AM +0200, H. Nikolaus Schaller wrote:
->> Hi,
->>=20
->> I found that the camera on our OMAP3 based system (GTA04) stopped =
-working with v6.8-rc1.
->> There was no bug in the camera driver but the OMAP3 ISP (image signal =
-processor) emits
->>=20
->> [   14.963684] omap3isp 480bc000.isp: failed to create ARM IOMMU =
-mapping
->> [   15.010192] omap3isp 480bc000.isp: unable to attach to IOMMU
->> [   15.023376] omap3isp 480bc000.isp: isp_xclk_set_rate: cam_xclka =
-set to 24685714 Hz (div 7)
->> [   15.065399] omap3isp: probe of 480bc000.isp failed with error -12
->>=20
->> Deeper analyses lead to this patch breaking operation. It is not =
-fixed up to v6.12-rc1.
->>=20
->> What seems to happen (in 6.8-rc1 code):
->>=20
->> - omap_iommu_probe() passes &omap_iommu_ops to =
-iommu_device_register()
->> - iommu_device_register() stores the ops in iommu->ops (only)
->> - __iommu_probe_device tries to read the ops from some fw_spec but =
-not iommu->ops
->=20
-> Maybe like this?
->=20
-> @@ -1233,6 +1233,12 @@ static int omap_iommu_probe(struct =
-platform_device *pdev)
->                err =3D iommu_device_register(&obj->iommu, =
-&omap_iommu_ops, &pdev->dev);
->                if (err)
->                        goto out_sysfs;
-> +               /*
-> +                * omap has a DT reprensetation but can't use the =
-common DT
-> +                * code. Setting fwnode to NULL causes probe to be =
-called for
-> +                * every device.
-> +                */
-> +               obj->iommu.fwnode =3D NULL;
->                obj->has_iommu_driver =3D true;
->        }
+Ah, I did not know that C had a refcount_dec_not_one. Yeah, that's
+exactly what into_unique_or_drop does.
 
-I'll give it a try asap and report back.
+Though I don't know if the cmpxchg loop is really more efficient than
+just doing an infallible decrement like I do right now?
 
-BR and thanks,
-Nikolaus
-
+Alice
 
