@@ -1,106 +1,89 @@
-Return-Path: <linux-kernel+bounces-352988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3099926F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39689926FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F38A280E03
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EDA1C224CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3824E18B473;
-	Mon,  7 Oct 2024 08:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE5018BC2A;
+	Mon,  7 Oct 2024 08:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="j3hAgh86"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="U549jf6h"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5282155392;
-	Mon,  7 Oct 2024 08:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5452917C20F;
+	Mon,  7 Oct 2024 08:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728289636; cv=none; b=OPGYaKocg1Ucf/wQKgGEnUGRwg/zSVUQkNdP6zeY4uAB/dQofvOPzRT6U3N9hNNNfz6NELC7O5eOc1cA2vq9U8OQUKMUxOnmidD58L/0M/zctS/pcLRlM8ztu4f4AjKNEhxymAQEdkgbFP2R3NBo7wBI5GkG2yzhqUvsxz+EHT0=
+	t=1728289694; cv=none; b=CleEJodxVmq56FuL79uzgkAAA0Ur8vZSduxYa13MV2rUydLhXqw4WYFsXMUtBhtdxS1gbbSFMyZxSsa6ongNMuRFeBcKW7j6fN38dONcyZTBlZLsYHQ23jxSNfAWy5BW6fGDwS+ixXmJdCjiuynvkKT7+czN0Ek0Wcx8H5c5sQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728289636; c=relaxed/simple;
-	bh=/DEumeMKfYtmKeu9QKHlVKoKRxxkOKCMbAFMFiaIbP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnS1+QNtxYtrAq1KZjx/rBGa0zJzvBZL3M42CZtytxJm4dC/3WRzDfOyiwHKJL2Y+uQXVURzD4sSnFBkX8B5DLXo/f5ymcbmbRTUElheks4mr5OCeP06MKmaBT/d9eVlBafpB2lyLfIi0fAiXMTjnfAyuJcWno9zJPbzBdaK2fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=j3hAgh86; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RuyZ7+6pKeGTHQngiptrZxInMDTe3rjS9S1l0dgXSeU=; b=j3hAgh865YBLbTpZbpfzCjAs53
-	7A+n696DJR25kPKbEB5eJEGxMwMT2zK5bYihQM5CGNEdmZtf/RPdUAKrCGz19gpBYCmIUj5bvvhhH
-	8Jo7+/HFxbuHG7ONNMjuIfMClztsNBBt1N//yH1taXnIlYSlDyhrymBfvbNIwZOuSALN6aPLUCkbR
-	7RCoJOdJTxcGH1FN5PbqOcV1s9nzlHBw7PlLK94LXs3Ev8SS2/WK9v26fTHcFcTtrciO+fK9vfxzF
-	mHAfl0hGzX9F3UcNXoGiYUBKtTuZMaxjM7sS/IUFIFUmd1YjOyGTCWq4XycMTWxfvpmu82oVYNa7j
-	iq4vBFaQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sxivI-007Orm-0g;
-	Mon, 07 Oct 2024 16:27:10 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Oct 2024 16:27:09 +0800
-Date: Mon, 7 Oct 2024 16:27:09 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
- Turris Omnia
-Message-ID: <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
-References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
- <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+	s=arc-20240116; t=1728289694; c=relaxed/simple;
+	bh=1TWxU81SnlG1vGw1E5VPpYknGUgoqht2BDl/lm8VqNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QLu445ErM8h+LGff5Tm7qLPAV56BlUfVJus2HKYrtaakvg0yff/jvtwrVhGcke/hpizWmF9kWJ77E/ulGd6a5Ek1WevEVrsRY1KwunG+RJ5uxHYD6V5FY7j4B5b3zFDt3NABzZdTMFe9NEYXkmCmSP/Qy89Rk5d7cIfTieSJuIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=U549jf6h; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1728289685; bh=1TWxU81SnlG1vGw1E5VPpYknGUgoqht2BDl/lm8VqNU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=U549jf6h4tVVbd15Fyf08M3U8tZCPfMaXsfKrNwGy9fP1JC1lUKGtYn66vQ/W1ZXL
+	 ZS6Y921eAcM2jqF51wMrDeB+HJxACJemvrq8BmAY7O35XyFDSE+SS+99URjKoSZW7l
+	 y04+rbTW7zDdkQgdXZFjL9QmGBGzpD8S/pcPuq0A=
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+ arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
+ PartialOrd for Ktime
+Date: Mon, 07 Oct 2024 10:28:02 +0200
+Message-ID: <3A5036A5-EAC9-4B5D-8162-B140724CF3BF@kloenk.dev>
+In-Reply-To: <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-2-fujita.tomonori@gmail.com>
+ <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
+ <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 06, 2024 at 11:23:12AM +0200, Klaus Kudielka wrote:
+
+
+On 7 Oct 2024, at 7:37, FUJITA Tomonori wrote:
+
+> On Sun, 06 Oct 2024 12:28:59 +0200
+> Fiona Behrens <finn@kloenk.dev> wrote:
 >
-> Here we go.
+>>> Implement PartialEq and PartialOrd trait for Ktime by using C's
+>>> ktime_compare function so two Ktime instances can be compared to
+>>> determine whether a timeout is met or not.
+>>
+>> Why is this only PartialEq/PartialOrd? Could we either document why or=
+ implement Eq/Ord as well?
+>
+> Because what we need to do is comparing two Ktime instances so we
+> don't need them?
 
-Thanks!
+Eq is basically just a marker trait, so you could argue we would never ne=
+ed it. I think because those 2 traits mostly just document logic it would=
+ make sense to also implement them to not create rethinking if then there=
+ is some logic that might want it and then the question is why was it omi=
+tted.
 
-I see where the problem is.  Unfortunately this is not a regression,
-but instead we've managed to identify an existing bug.
-
-The cesa driver is buggy when you invoke it in parallel.  This
-would've previously resulted in incorrect hashes being produced,
-which would not be easily discoverable (networking users would
-simply retry if they hit this, while storage probably doesn't
-use these algorithms at all).
-
-What happened here is that the new async testing launches all
-built-in algorithm self-tests at the same time and in parallel.
-Previously self-tests of built-in algorithms were launched one-by-one
-so there is only ever one test in flight at any moment.
-
-This causes the cesa driver to be invoked in parallel, thus
-triggering the buggy code where two hash requests would be submitted
-to the hardware at the same time.
-
-So I think it's a good thing that the self-test has managed to
-discover this by itself and the result is also harmless, the buggy
-algorithms are disabled.
-
-I'll try to fix this but it's going to take some effort and I'll need
-your help as I don't have the hardware myself.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+ - Fiona
 
