@@ -1,248 +1,185 @@
-Return-Path: <linux-kernel+bounces-353511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DFE992ECE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C10992ECF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1445A1C235FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27AED2850F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E46C1D9341;
-	Mon,  7 Oct 2024 14:17:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B4A1D5CD1;
+	Mon,  7 Oct 2024 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q/kgg16o"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2078.outbound.protection.outlook.com [40.107.92.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EEA1D7992
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310654; cv=none; b=hsx7jaZaLn6cSckEDjhwdSwMw6aAEHA8nuHVH6z0lyGnMEW/ZMVFeYFE6jkAj7NgqVrgreJJLxQJ3nuGyq3+ywpkyiwauIcjq8pr2HJdV+7/PfVB3urT/2jRSuCj+nZnhMTdg8bbaEfGqeOcFoMQT6Bd86+NjNwWvLggSeLeKEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310654; c=relaxed/simple;
-	bh=sZkmrTYr8EVyASnS0JbfcOEzrJeJOvpqLS/GrMmDYJo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rx+L0y5iSgdugscvt4ZmTLBX0VSK1gDmxD50ySbLUCku1A5YlxtKPl8xijmTnrF+lmWL2L3Q3v+SUvzYes0zVYQVRj+zwPt1u2SetlYxL7QJwSODxdslMcBTcLop+Ke0AanmPleo+wZI0zj+59xu++hyMwx1biaNxcQFOE0/lck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1sxoY4-0008LN-Uu; Mon, 07 Oct 2024 16:17:20 +0200
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Mon, 07 Oct 2024 16:17:12 +0200
-Subject: [PATCH 2/2] net: dpaa: use __dev_mc_sync in dpaa_set_rx_mode()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6A1D54CD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728310683; cv=fail; b=VKVmBSXOhIgip06galZZPpAbL8dnGllONBBILOelS7Z6In/fIg2WdvPZ0C9OdugvRF1/wtoOqpq+X16+4ytiB25RAIsRLrK1bqxAGQ7ZRkjf4PKP2oBu95ATPsGBx3dsICiZA/RnqYuyNYYSULYWT4Sl3EL+D0pQxXhMQxLs/ZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728310683; c=relaxed/simple;
+	bh=Pv4q3tqbynjM8wxGDSLdkWdfrtADkUqCOwPqqEH6nJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OkiGy942QhhlIJojABAjNnKCGH6J1KmkKMwOrRj8PQ9xlmY5KD4vpN9cY1+Ix2ZqHpva+0TWSCP+TfOvP/6V40mO6ULksP3gf8F2YE5wx5Jbj/JaD8kbsoLgTgCOqTClpDBNknFkPBs8aG88K9CTpXaMLG2tYm5EO3+gjM3t6CM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q/kgg16o; arc=fail smtp.client-ip=40.107.92.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NZlA53Jf7TBFjYd1Hhws//kCgH7gEcY2lfpUWmdrzw5g9kSTrMGo6MXfQS60rYAD6U8DRPsgw51Vl+yM4t5c4GxjyT5UmOEs4fnmONc7co0kyttdjenT6PaTfBSiUgHQEpXrc/o6Dp9J1j7EJPh1YmrA9l/aTKbEoMe7izm5I5I7mxRYAo15vjlUff+Eh+ipB1sZz/huf0Ygq7rKg9Z/GAuHeW7IYD0r+plNapj4afHddsXeU4bUfj51BVAFiOC5Xx/Ls1+LDqZq3puZ49RjzO7kOjwb7E3BJ1hoMrFTsaThqIO9sqw806LAepWWOCNmZSL6LNjl88JW1c8RXxKB2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mng4UjfIxyWwNvhtloagYXSGhO9AxzCxxVq6abEiXaQ=;
+ b=jXHTd5ixQhXFfOhDBUUomvc+hJdU14jpRiMb3qnOdGUQOwB8chG3eqD52YA2iP+Pdz3G8LbYJB9f0nneAv5OULGpUIgLChzwgb8kmv0cPAh6VCw1n7PT/fjYniJpkyhqlnJLDUGPRg82X6jZxkBBCD60wgt9twwbsf4Cj/xm5b0XcEBPQZ8LQ56IvlQNDjDMUXxcgJ+GWuxdpWvsKrkQ/A4gkjRO3a1af9URM6j9+25BD1DfexEUUsgfQpAwDIe2GA8hIZj9I6WZpmaBFifGsDnePC0GM3BxZu0kMdafb0MXTzVxpg+u/1uCLBnpqopUbtXvvUNXinTvEaLVe6yj3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mng4UjfIxyWwNvhtloagYXSGhO9AxzCxxVq6abEiXaQ=;
+ b=Q/kgg16o2xIpfxjITQa97qYN/xiKemH+DjgMlV2I0tVzgarvrriRb8LM4i6O8U7eSyeN9XWuDrN1yVUuavpaEWxMwoU2boSCoiU0OINYQdSJ4BV9LPtb+m4YBR8kWW7qYR0KdYsptiIrJ4PrX28NTCsDsFmxyGh7d2zm6MpLWG1IM6MSyDe0ZKsgrif/06LMjPSifldgNuDcjvgxiahNv4CgIWfybac8OY8+zU4elROs52Fcne5swxjjZtgylfVv1y8GlSRHQhDKf9AVEd3aQ26HXLo5BbaWzOBWQw3UoaFFrWYtQ7MkIJhPNGSgBnFvksb16FjNZrSX4iSYyiNmxQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DM4PR12MB6009.namprd12.prod.outlook.com (2603:10b6:8:69::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.20; Mon, 7 Oct
+ 2024 14:17:58 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 14:17:57 +0000
+Date: Mon, 7 Oct 2024 11:17:56 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH v5 3/6] iommu/amd: Modify set_dte_entry() to use 256-bit
+ DTE helpers
+Message-ID: <20241007141756.GR1365916@nvidia.com>
+References: <20241007041353.4756-1-suravee.suthikulpanit@amd.com>
+ <20241007041353.4756-4-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007041353.4756-4-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: MN0P220CA0017.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:52e::10) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241007-igmp-speedup-v1-2-6c0a387890a5@pengutronix.de>
-References: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
-In-Reply-To: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Madalin Bucur <madalin.bucur@nxp.com>, 
- Sean Anderson <sean.anderson@seco.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM4PR12MB6009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e46b006-2b22-49d2-9804-08dce6dad7ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Fsn1eP8UEOuNIswex1xhYtzN+QjOhJtcdmFhXq9dqMu0crz90RhZzpz5+A4+?=
+ =?us-ascii?Q?ehN3uY3ty1SenjqMlFFIz0T0unQnCwoFy34oWYzzJIKOJIYUdu3tyq1Tn2IV?=
+ =?us-ascii?Q?QmyzaVN/ytIA/D00CaWxj+/pcS6do1u4Kj4cDSafNWM6N5Y/z/IWpz8drIBb?=
+ =?us-ascii?Q?wfdxvlPC+qRR2NoLokvncVYRPOTW1tmOtPYiij1miHPc5HtEb504z6tWKs+w?=
+ =?us-ascii?Q?3n+TDKvmt2th0Lu/j1L4GCj7eWQ8jrm1Q6yjJmaAtyWGzfrGh2Z8yxBpaCum?=
+ =?us-ascii?Q?+P9umv6ZCr684xZPT7IVg+6wHuy7HVMyiBccRd6pOHEmNO7itoq+2w8YhN88?=
+ =?us-ascii?Q?iRAIRZpXYNM/7S8x9WqzMxyzH077TeAHz/pggTkFFpNTF1q7/qtx0jlwXf6j?=
+ =?us-ascii?Q?xqeoifXTwVMorbxWdTUh8PJNAEbdhKby1BWEzc5iQOg/gxH2olOn6YIyLRQf?=
+ =?us-ascii?Q?4/F9m3V4ORnrJaEWG2YWoTyo8AK0W16xU2EFdzvgMFR4dHqNLbDJHZtozNiv?=
+ =?us-ascii?Q?H1sYGEtqphGHq0/Eznb+tV5oYBdClFmkrdccARpZ52Q18gG42Tl5RYkBG7GH?=
+ =?us-ascii?Q?CXLh1hgz6Qom+dRxZpOfSsz35Zau8R8M3soa+G9sibwR2smQEh41mJrCHiWd?=
+ =?us-ascii?Q?fqeyaHyNrqabiO/VsGVRbQga3Eef0EJdJRlBapMMOjYb0322S+bkUI3Tq5RJ?=
+ =?us-ascii?Q?qerSggNHMKTSrNr0lY+Pl8cKNC7uF+SpNCG5+UWFUPqqeH8cQHZaQjcbVdKd?=
+ =?us-ascii?Q?4c4ZejiRrmDHhFJ4HVo/pPPgoRowDDJT8+Jt/gidcEzzIrowJTOvxxMUbSnG?=
+ =?us-ascii?Q?26docvyYH9jW+9FAqbxRo5KfjvhQq4ikAvBJ9KKOgrNMCxp9xa9QjMyPMhYT?=
+ =?us-ascii?Q?DNsD5CP+Tr38pi0jm6Q3VTki/X/3LB4vr3r6aqW9NlpVGKUgdTdFUjSRk8Qw?=
+ =?us-ascii?Q?/3p+QOekPCG/LhNr8zlHBMiUo4PVT8B7ogcdzUu74b+NCmaoVJxGHlBY4+TQ?=
+ =?us-ascii?Q?j8McWpGN/ZlmVo7SeN7immdiyftz2/THyT2B5ghKdTUi6lg44AwwKW+7HFzt?=
+ =?us-ascii?Q?f4qWCYDddvDCOKIq4shlBWcW2gTi9V06OjzOIIndCvzZHFE87SaUN29NDjDU?=
+ =?us-ascii?Q?7HeusdUU6I1y23xJ7Tt+Fn6YJq4RHwJPcQxK8vWcWnVHpNnxWsVS+VbJKG0G?=
+ =?us-ascii?Q?qrkQCd93LamwHVhkV+D9LtoOvUeYEKb+Hq/lw9lKeTdkSPD1QROLra2EtTBw?=
+ =?us-ascii?Q?MbG88NkzHKUDj4VKB2Q6uoh0y6XoIztafGsa5pWQfA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3IN+FP1XfK+2TWfdvSV8rGWUhMAau+o1aUEBzh4ZTAlVEGRKtFh5EAohwCy/?=
+ =?us-ascii?Q?zElqMbSGSmPNpghyrgdIEgnGM0VQV900whtl93tv1imBeN+wz+Fe4UZiMoEa?=
+ =?us-ascii?Q?o4aCj30+AP0t52Q4Cr2c3QpbKVhzWQ1xgO5k3YfTiWySGdU/OE5mkeWVKxl/?=
+ =?us-ascii?Q?NqTR/UeHZbigEdB67e/j0EtKltLgst7eia/KRPhj0AwAgfjqvxHRBmyzbtjY?=
+ =?us-ascii?Q?FuJIPvv3+LAxYFYs8s59XClZwurt8CmNuI2q8bG5jQukIx9o5VFsxVeTrgA6?=
+ =?us-ascii?Q?qx/X9fiQeJyYliw+leh7io/vPbOSXBgFdOCDR+atARyPtZduAhy5c0fax11E?=
+ =?us-ascii?Q?LeuFOtl7JHATpvgfejZGVJooGA9g7mpgao4TTqeSySc/PFRWzls5jPyxbs0u?=
+ =?us-ascii?Q?EQN43NcMCQ0EYPl+vg8nXLicOy8Pq+19/W8ceymiuk88KO3x0PmCNA0T3K3Q?=
+ =?us-ascii?Q?S3NpqnS2RPKX9AycP9cl5q8OIg6wg50eK7XG/5EgzEDuFHwmEvsbmYa8luet?=
+ =?us-ascii?Q?VhFONXNIIF3tpG2AHgglV1dflVZXlZq38VFkl6eR357daYGrmABFlvIN9Zq/?=
+ =?us-ascii?Q?NdCGzWPsHJHbbwgzGoOg3vIoCSYHCQ9OJsOBhKZYJ4QYunCcPhJYBe6lFMVM?=
+ =?us-ascii?Q?9MDrFZXQtgZ4wp0zq/TF9nTtAE2Repoz/Sx3r4UCTJm3xWrzNqdhaE43/mT0?=
+ =?us-ascii?Q?V04kqrCpEoXksv4p9TBqNFp0OmloG/8IY6JtesAveFFYKulAb6iUIP0v/Bt6?=
+ =?us-ascii?Q?tS3jC23ViDcwoTykG1DUVo1wlESKf63AvCg8s7geiMx0emGvSztW2gHmxACJ?=
+ =?us-ascii?Q?SjL0v/oIC7+9F+CynhqMRyKx4n7HPYzhpU7RaHEQlpyErCQsE8ULUZ/r9tpN?=
+ =?us-ascii?Q?Gxwtn1v8ZIfbYLoykrEnc9Egny4MzK2zHGsnxmJUAO4blDtb9vbii+xtVs65?=
+ =?us-ascii?Q?3F8byZ4SpQHgtjJcXiBHMOxI79mAhx4i3TDotUM+9mH3tn899/9TIt7LfsCV?=
+ =?us-ascii?Q?ascSaxEl9bhnI2sgnr1vxPxWy3CHTgsptPzpTe29QAeVN54+Q8mzABLu6Kl0?=
+ =?us-ascii?Q?3R1JQY8FT1XEDKUWYR2tNiiuhal9XLBsUMZPgQwzA7aYlF4ERXXG0lPmlPpK?=
+ =?us-ascii?Q?kJSjHHnMzHEiBy7gbtoeDWGtSfcX96+QKshdiK3pOs24O5yFz7OUWQqLjlo2?=
+ =?us-ascii?Q?sNQdcO4IcZldrGpD73cV1MT5BFkqgEU6u6e2pW3R8Sr33ekEEiAuyOKdnI6Z?=
+ =?us-ascii?Q?9XZWlpV3aZlf10ANza+Vw8H/59f8lIVVH+BeHv36Qd+glLx74CRE6zYswXPj?=
+ =?us-ascii?Q?9fJLlsekSdF5uSulNEtSXS9OjX2rTOC+j3qBEctzBtahdOKFOcfe3Zrbh2HA?=
+ =?us-ascii?Q?C6TXFeBTecW8EF534fgYwp/K5JTH4K2pIKj2yR9VT61w9REXxWtAAYhesmiz?=
+ =?us-ascii?Q?V99Jx5B366d/JKZXY9HAs2Y3A+uK10ssSTeWLFjBC3JoC1KdGZ4VZSc/C9do?=
+ =?us-ascii?Q?N3lbz82wDF4ApAGCSEJaUnFb9sgOoyXOzgxYOOVeR4RJeY8b7RhDZF+0FgPz?=
+ =?us-ascii?Q?3bt2YNYrrfnFOo0LPyE=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e46b006-2b22-49d2-9804-08dce6dad7ca
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 14:17:57.8714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: frGpm2aG8iDGsTSIwtW+A9newjTbbf+SZbuJekEV51Q828W54f2EpA2XQwm16Qm2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6009
 
-The original driver first unregisters then re-registers all multicast
-addresses in the struct net_device_ops::ndo_set_rx_mode() callback.
+On Mon, Oct 07, 2024 at 04:13:50AM +0000, Suravee Suthikulpanit wrote:
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index deb19af48a3e..6fa2f5bb5156 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -1956,90 +1956,114 @@ int amd_iommu_clear_gcr3(struct iommu_dev_data *dev_data, ioasid_t pasid)
+>  	return ret;
+>  }
+>  
+> +static void make_clear_dte(struct amd_iommu *iommu, struct dev_table_entry *dte,
+> +			   struct dev_table_entry *new)
+> +{
+> +	new->data[0] = DTE_FLAG_V;
+> +
+> +	/* Apply erratum 63 */
+> +	if (FIELD_GET(DTE_SYSMGT_MASK, dte->data[1]) == 0x01)
+> +		new->data[0] |= BIT_ULL(DEV_ENTRY_IW);
 
-As the networking stack calls ndo_set_rx_mode() if a single multicast
-address change occurs, a significant amount of time may be used to first
-unregister and then re-register unchanged multicast addresses. This
-leads to performance issues when tracking large numbers of multicast
-addresses.
+Doesn't this need to be
 
-Replace the unregister and register loop and the hand crafted
-mc_addr_list list handling with __dev_mc_sync(), to only update entries
-which have changed.
+/* Preserve set_dev_entry_from_acpi(), including erratum 64 */
+new->data[1] |= dte->data[1] & DTE_SYSMGT_MASK;
+if (FIELD_GET(DTE_SYSMGT_MASK, dte->data[1]) == 0x01)
+   	new->data[0] |= BIT_ULL(DEV_ENTRY_IW);
 
-On profiling with an fsl_dpa NIC, this patch presented a speedup of
-around 40 when successively setting up 2000 multicast groups using
-setsockopt(), without drawbacks on smaller numbers of multicast groups.
+And this has a significant security issue, we can't set IW here
+because clear_dte must generate a blocked DTE, so TV=1,Mode=0,IW=1 is
+not an OK setting!!
 
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c   | 20 +++++++++--
- drivers/net/ethernet/freescale/fman/fman_dtsec.c |  1 -
- drivers/net/ethernet/freescale/fman/fman_memac.c |  1 -
- drivers/net/ethernet/freescale/fman/fman_tgec.c  |  1 -
- drivers/net/ethernet/freescale/fman/mac.c        | 42 ------------------------
- drivers/net/ethernet/freescale/fman/mac.h        |  2 --
- 6 files changed, 18 insertions(+), 49 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index 6b9b6d72db98c22b9c104833b3c8c675931fd1aa..ac06b01fe93401b0416cd6a654bac2cb40ce12aa 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -463,6 +463,22 @@ static int dpaa_set_mac_address(struct net_device *net_dev, void *addr)
- 	return 0;
- }
- 
-+static int dpaa_addr_sync(struct net_device *net_dev, const u8 *addr)
-+{
-+	const struct dpaa_priv *priv = netdev_priv(net_dev);
-+
-+	return priv->mac_dev->add_hash_mac_addr(priv->mac_dev->fman_mac,
-+						(enet_addr_t *)addr);
-+}
-+
-+static int dpaa_addr_unsync(struct net_device *net_dev, const u8 *addr)
-+{
-+	const struct dpaa_priv *priv = netdev_priv(net_dev);
-+
-+	return priv->mac_dev->remove_hash_mac_addr(priv->mac_dev->fman_mac,
-+						   (enet_addr_t *)addr);
-+}
-+
- static void dpaa_set_rx_mode(struct net_device *net_dev)
- {
- 	const struct dpaa_priv	*priv;
-@@ -490,9 +506,9 @@ static void dpaa_set_rx_mode(struct net_device *net_dev)
- 				  err);
- 	}
- 
--	err = priv->mac_dev->set_multi(net_dev, priv->mac_dev);
-+	err = __dev_mc_sync(net_dev, dpaa_addr_sync, dpaa_addr_unsync);
- 	if (err < 0)
--		netif_err(priv, drv, net_dev, "mac_dev->set_multi() = %d\n",
-+		netif_err(priv, drv, net_dev, "dpaa_addr_sync() = %d\n",
- 			  err);
- }
- 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-index 3088da7adf0f846744079107f7f72fea74114f4a..85617bb94959f3789d75766bce8f3e11a7b321d5 100644
---- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-@@ -1415,7 +1415,6 @@ int dtsec_initialization(struct mac_device *mac_dev,
- 	mac_dev->set_exception		= dtsec_set_exception;
- 	mac_dev->set_allmulti		= dtsec_set_allmulti;
- 	mac_dev->set_tstamp		= dtsec_set_tstamp;
--	mac_dev->set_multi		= fman_set_multi;
- 	mac_dev->enable			= dtsec_enable;
- 	mac_dev->disable		= dtsec_disable;
- 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
-index 796e6f4e583d18be6069f78af15fbedf9557378e..3925441143fac9eecc40ea45d05f36be63b16a78 100644
---- a/drivers/net/ethernet/freescale/fman/fman_memac.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
-@@ -1087,7 +1087,6 @@ int memac_initialization(struct mac_device *mac_dev,
- 	mac_dev->set_exception		= memac_set_exception;
- 	mac_dev->set_allmulti		= memac_set_allmulti;
- 	mac_dev->set_tstamp		= memac_set_tstamp;
--	mac_dev->set_multi		= fman_set_multi;
- 	mac_dev->enable			= memac_enable;
- 	mac_dev->disable		= memac_disable;
- 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-index c2261d26db5b9374a5e52bac41c25ed8831f4822..fecfca6eba03e571cfb569b8aad20dc3fa8dc1c7 100644
---- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-@@ -771,7 +771,6 @@ int tgec_initialization(struct mac_device *mac_dev,
- 	mac_dev->set_exception		= tgec_set_exception;
- 	mac_dev->set_allmulti		= tgec_set_allmulti;
- 	mac_dev->set_tstamp		= tgec_set_tstamp;
--	mac_dev->set_multi		= fman_set_multi;
- 	mac_dev->enable			= tgec_enable;
- 	mac_dev->disable		= tgec_disable;
- 
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 43f4ad29eadd495ce7f4861b3e635e22379ddc72..974d2e7e131c087ddbb41dcb906f6144a150db46 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -32,8 +32,6 @@ MODULE_DESCRIPTION("FSL FMan MAC API based driver");
- struct mac_priv_s {
- 	u8				cell_index;
- 	struct fman			*fman;
--	/* List of multicast addresses */
--	struct list_head		mc_addr_list;
- 	struct platform_device		*eth_dev;
- 	u16				speed;
- };
-@@ -57,44 +55,6 @@ static void mac_exception(struct mac_device *mac_dev,
- 		__func__, ex);
- }
- 
--int fman_set_multi(struct net_device *net_dev, struct mac_device *mac_dev)
--{
--	struct mac_priv_s	*priv;
--	struct mac_address	*old_addr, *tmp;
--	struct netdev_hw_addr	*ha;
--	int			err;
--	enet_addr_t		*addr;
--
--	priv = mac_dev->priv;
--
--	/* Clear previous address list */
--	list_for_each_entry_safe(old_addr, tmp, &priv->mc_addr_list, list) {
--		addr = (enet_addr_t *)old_addr->addr;
--		err = mac_dev->remove_hash_mac_addr(mac_dev->fman_mac, addr);
--		if (err < 0)
--			return err;
--
--		list_del(&old_addr->list);
--		kfree(old_addr);
--	}
--
--	/* Add all the addresses from the new list */
--	netdev_for_each_mc_addr(ha, net_dev) {
--		addr = (enet_addr_t *)ha->addr;
--		err = mac_dev->add_hash_mac_addr(mac_dev->fman_mac, addr);
--		if (err < 0)
--			return err;
--
--		tmp = kmalloc(sizeof(*tmp), GFP_ATOMIC);
--		if (!tmp)
--			return -ENOMEM;
--
--		ether_addr_copy(tmp->addr, ha->addr);
--		list_add(&tmp->list, &priv->mc_addr_list);
--	}
--	return 0;
--}
--
- static DEFINE_MUTEX(eth_lock);
- 
- static struct platform_device *dpaa_eth_add_device(int fman_id,
-@@ -181,8 +141,6 @@ static int mac_probe(struct platform_device *_of_dev)
- 	mac_dev->priv = priv;
- 	mac_dev->dev = dev;
- 
--	INIT_LIST_HEAD(&priv->mc_addr_list);
--
- 	/* Get the FM node */
- 	dev_node = of_get_parent(mac_node);
- 	if (!dev_node) {
-diff --git a/drivers/net/ethernet/freescale/fman/mac.h b/drivers/net/ethernet/freescale/fman/mac.h
-index fe747915cc73792b66d8bfe4339894476fc841af..be9d48aad5ef16d6826e0dc3c93b8c456cdfa925 100644
---- a/drivers/net/ethernet/freescale/fman/mac.h
-+++ b/drivers/net/ethernet/freescale/fman/mac.h
-@@ -39,8 +39,6 @@ struct mac_device {
- 	int (*change_addr)(struct fman_mac *mac_dev, const enet_addr_t *enet_addr);
- 	int (*set_allmulti)(struct fman_mac *mac_dev, bool enable);
- 	int (*set_tstamp)(struct fman_mac *mac_dev, bool enable);
--	int (*set_multi)(struct net_device *net_dev,
--			 struct mac_device *mac_dev);
- 	int (*set_exception)(struct fman_mac *mac_dev,
- 			     enum fman_mac_exceptions exception, bool enable);
- 	int (*add_hash_mac_addr)(struct fman_mac *mac_dev,
-
--- 
-2.39.5
-
+Jason
 
