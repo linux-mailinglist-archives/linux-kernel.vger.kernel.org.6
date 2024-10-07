@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-353870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872829933E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814389933E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0D9285DAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F231C23752
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9117C1DBB1D;
-	Mon,  7 Oct 2024 16:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDF41DC1B4;
+	Mon,  7 Oct 2024 16:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxidwWF5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1vEf7qlL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D3w7uJPD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39FD1DC051
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7446F1DB352
 	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319796; cv=none; b=BC/qMypmLF5HYwCP776XTMZROAV0k5SeWX8Tc9mEwQgWpPsoOqrxUH8fc2vhzXPXUH66j0lAF7F9Dqqs6SmzEMdeETWob68xI5UwBFnrTnIu5ZPf5/q5oGShqdUlDJf2phfUmbrUrQ5sxgSw7sZpRZP/tOerm9V9EcLRmo63vXc=
+	t=1728319797; cv=none; b=D32Z6aKJkm6jgNyxH4fMcl9/JLWB9D65810HiKBCIYFPGqsTlGqLLTQQkn1S3iwG2vdvYwqOanFfJgKCjsMcNW97EnvTP35udM9WfLawc7Xkly3cotjxvbNGFyNE3sLkLefLv4rMF6FFLuTtaGNKnPYZVWwhfep/IqXI6tZMVmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319796; c=relaxed/simple;
-	bh=QSEWGceGF+zqW4Mxm7quS90OIzr3oPTDd3vjuevYd9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PEmSgY7QNxX+IP/5smb8O91rrj61yYr6SXmDQ4A61F6R335HtJRlhJDvSJSQkfBZ8EMqHrRFsUMgWAyPsojkuIc5vJvE8X9boLnHKkfB+91LZIT9HO/wIUkj9hB6DxOBoViHfKDC3jFFHXQu/fGSldI3LQjsKzCYkshk2rlo2TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxidwWF5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66BB0C4CEC6;
-	Mon,  7 Oct 2024 16:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728319795;
-	bh=QSEWGceGF+zqW4Mxm7quS90OIzr3oPTDd3vjuevYd9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PxidwWF5tOsu57/gIOobA09HS9QboVYxvrlD7pq23ZIbz7SUm4c3GAlgi/yljMb8O
-	 HzJf37CDNJZIUKSBVuN0fc4Y+TyClDXdb1baExy4dU9lrMSV8sZ+09s7SB80MFKS6J
-	 woWjs9wBvCB9aHDQ16wtZpSYc+KqvlzXkwEBJxbqWQCVJSnUrZwHp0IiT5lfCyLwcT
-	 iekqIhB+8BAvz5tyU/qfsq4df43HoMVo2EWJ2gSRiu6D2KfXqu1GXFNqCJ1fmn2LC4
-	 zdrGv3fG0K6jK3Rfa59/Gp1eBTew0bnsIzmW40L3GadWjrQAsk2IIC5G7MVahPHvON
-	 OekUjVUbduvgQ==
-Date: Mon, 7 Oct 2024 16:49:53 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, xiuhong.wang@unisoc.com
-Subject: Re: [PATCH] f2fs-toos: use getpagesize() to get default blocksize in
- Android
-Message-ID: <ZwQRMe9a6oXKLCq5@google.com>
-References: <1726283507-16611-1-git-send-email-zhiguo.niu@unisoc.com>
- <CAHJ8P3+=Ft_LOWHXPDdXQnQA=BsGhDLF0KYWWD6T3KHB-TEgWg@mail.gmail.com>
+	s=arc-20240116; t=1728319797; c=relaxed/simple;
+	bh=DxyC468MIKBKRepgOYqobCuLab+7VZZ8uQul0v7O7v8=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=gBhy5amRcKX7HLuh4gO4IItH1kHrspJ+62/tw5B3F0rOySzZZSbsPoVv6l870aw9D1oMqZQHeXwEpY8LK0MeN3DIs9nayrVp+hmeEIDAFHnGRe1kJ+FL5zen5SF5egn81HJwBP7RcWHQ+5D7+bb9+QvhK2ExXqu8oqFZpT1VqGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1vEf7qlL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D3w7uJPD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20241007164913.073653668@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728319793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=mavBQBTQJ1+PBT60+7EBJrSCYznE7ddqxiJvXAlj+sw=;
+	b=1vEf7qlLAaQO9cJSVc/+ikcdrtg+Z9VGqz//7c/tt5UWgaVCm9PKuY0nZmktp8gN7D7W6p
+	Csyvo/gRgEX0D4F4EhSHK8PWzsoh6kngEN8uy94jAeq0hV+/Jz5BLfgtE9PpbMKd9n9ZOD
+	A2CDjo9zUQ1R3FcG+43FzK2fSDiyz4ufwQxSwTgfY4WSqtCoFKYBO1k9l0BoNntXYaaij8
+	zquqzVK+3zLVPUYYEDXxqIEFqiK8F0TCCv8IJOQ7S9GZQmMRqWjLCQdWRI598V8gUnAN1q
+	hl2K/WFw726tdOYqcFSgmp4Rl4cwNSVu07n5JXHdNRW3QB9MhvCi9qMCYG1SeQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728319793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=mavBQBTQJ1+PBT60+7EBJrSCYznE7ddqxiJvXAlj+sw=;
+	b=D3w7uJPDosW5AcAtJP9qG70VmjfBW1tj1Sr4dyM8dFvJyP/+DZ+FygqVEIR5T+Hr6rzQKG
+	9wf/a/scicx3I9Dw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Zhen Lei <thunder.leizhen@huawei.com>,
+ Waiman Long <longman@redhat.com>
+Subject: [patch 02/25] debugobjects: Collect newly allocated objects in a list
+ to reduce lock contention
+References: <20241007163507.647617031@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHJ8P3+=Ft_LOWHXPDdXQnQA=BsGhDLF0KYWWD6T3KHB-TEgWg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Date: Mon,  7 Oct 2024 18:49:53 +0200 (CEST)
 
-On 09/19, Zhiguo Niu wrote:
-> Hi all,
-> please ignore this patch,  we can resove this by "-b" parameter .
-> thanks!
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-Ok, thanks.
+Collect the newly allocated debug objects in a list outside the lock, so
+that the lock held time and the potential lock contention is reduced.
 
-> Zhiguo Niu <zhiguo.niu@unisoc.com> 于2024年9月14日周六 11:12写道：
-> >
-> > When 16K page/block size is enabled in Android platform,
-> > a error maybe detected in mount process in kernel if "-b"
-> > parameters is not specified in mkfs.f2fs.
-> > Just as the following check:
-> > if (le32_to_cpu(raw_super->log_blocksize) != F2FS_BLKSIZE_BITS)
-> >
-> > So use getpagesize() to get correct default blocksize.
-> >
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
-> > ---
-> >  lib/libf2fs.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> > index ecd22d4..98ee0ae 100644
-> > --- a/lib/libf2fs.c
-> > +++ b/lib/libf2fs.c
-> > @@ -685,8 +685,17 @@ void f2fs_init_configuration(void)
-> >
-> >         memset(&c, 0, sizeof(struct f2fs_configuration));
-> >         c.ndevs = 1;
-> > +#ifdef WITH_ANDROID
-> > +       c.blksize = getpagesize();
-> > +       c.blksize_bits = log_base_2(c.blksize);
-> > +       if ((1 << c.blksize_bits) != c.blksize) {
-> > +               c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
-> > +               c.blksize_bits = DEFAULT_BLKSIZE_BITS;
-> > +       }
-> > +#else
-> >         c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
-> >         c.blksize_bits = DEFAULT_BLKSIZE_BITS;
-> > +#endif
-> >         c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
-> >         c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
-> >         c.wanted_total_sectors = -1;
-> > --
-> > 1.9.1
-> >
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240911083521.2257-3-thunder.leizhen@huawei.com
+
+---
+ lib/debugobjects.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -161,23 +161,25 @@ static void fill_pool(void)
+ 		return;
+ 
+ 	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+-		struct debug_obj *new[ODEBUG_BATCH_SIZE];
++		struct debug_obj *new, *last = NULL;
++		HLIST_HEAD(head);
+ 		int cnt;
+ 
+ 		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
+-			new[cnt] = kmem_cache_zalloc(obj_cache, gfp);
+-			if (!new[cnt])
++			new = kmem_cache_zalloc(obj_cache, gfp);
++			if (!new)
+ 				break;
++			hlist_add_head(&new->node, &head);
++			if (!last)
++				last = new;
+ 		}
+ 		if (!cnt)
+ 			return;
+ 
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+-		while (cnt) {
+-			hlist_add_head(&new[--cnt]->node, &obj_pool);
+-			debug_objects_allocated++;
+-			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+-		}
++		hlist_splice_init(&head, &last->node, &obj_pool);
++		debug_objects_allocated += cnt;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + cnt);
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+ }
+
 
