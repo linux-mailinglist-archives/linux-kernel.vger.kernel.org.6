@@ -1,182 +1,93 @@
-Return-Path: <linux-kernel+bounces-353989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273569935C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672509935C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8455282421
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7BD3B20C63
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FEC1DDC19;
-	Mon,  7 Oct 2024 18:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0C71DDC15;
+	Mon,  7 Oct 2024 18:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RHCjqpo2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gonMD3Z8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645EF1D95AA;
-	Mon,  7 Oct 2024 18:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DADE1D95AA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 18:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728324732; cv=none; b=JYwh2dEWtXlH6tmZL10WuEyeDuE72IuDCfZ8XbE/j/nK0HMF31VL//wEazMJbGJ5a9+qgJmLjdbS5OMMwcCIwO4nCsnCJCaNG6iySZcxlFreZogbig07VLTRuG2atqDI5cuF2XubGWShD26RHeZGSxzxvF7zpB3CHDYEjFZYPok=
+	t=1728324748; cv=none; b=K4UacvmN8zoT+jjI96LTvdgAdVEKFVfiGvWabzgDB0Vn69cDu1osjjQZ6xLWRYOjkQ+Lh1Z1x/hCcVI7rDmiZFEigr0TIn+bd3Ppq1JNM/9OkLyRC/xWgH4oMl9gAoikNp2sbDfHeH1YpETg/odiP6gGG7lk6QeKcP9P+sEI7lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728324732; c=relaxed/simple;
-	bh=q2blQXl7VZqqv0NRkutules44p3oJage2MRbySqdbiU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwHAQhQM1gdYBTZz6yujhnCSIP5TaU6ud6tD6BmHVS6wC1qPOg2aZAYCpDlveE8vSy6es1paTcWuC26zx0O1wy5JCdClsgyably3uXZSf8tX7tgAF4vVbjW/Rd4ey3f27spa0Cm3a/TIdUSRVOqOv+1mLMOkRcYgaAtIt/XVf/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RHCjqpo2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497EbMOZ017633;
-	Mon, 7 Oct 2024 18:12:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=hi5KO7EC34wbdYJSNHHVbuNU
-	lz11GTXJosbTj9nX4vk=; b=RHCjqpo22mTtx2CwckIdKrNiG1KMMRV+WmrqNNR0
-	S3IkHXIeIv28snathxZidsoAFSMdkRRHtKL4mLPMsDlctnBh6frbVy0Drzo/4+ft
-	kC1OTWQv/ZNpXexgHlO8nGrMtsxsm1vu+I2yAhS5/DHza1F1K9VuqdWOiDqyQBlq
-	r6iEqucCnbKmhN802ySuB5PxHV27505L8UxQMuBeVP3Oe1rkTrZRSfNtZUFFxLGI
-	CYqripxXOEMaXGPPLbxFsJsCK4Rh8qefBW0Z7u0VjKTnbdsiuQQKxlIsL4ek9GA7
-	P6PMmHhpSo4/b/6iOWupzBGCBLxTXLZCX6wcv2ALC+lT9A==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs4d125-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 18:12:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497IC4Yn017846
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 18:12:04 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 7 Oct 2024 11:12:01 -0700
-Date: Mon, 7 Oct 2024 23:41:58 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Kuldeep Singh <quic_kuldsing@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Qingqing
- Zhou" <quic_qqzhou@quicinc.com>
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-Message-ID: <ZwQkbqpVzMDm7iJV@hu-mojha-hyd.qualcomm.com>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-2-quic_kuldsing@quicinc.com>
- <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
+	s=arc-20240116; t=1728324748; c=relaxed/simple;
+	bh=MVMcREqOQie9bCu+l3+EHtHOGyR8Vt6zdS95oQnMRi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lH9zK48s1fX9ennlLL4jsEABpoczD/bezeSlZFQMDxJpz8IPwqZaEHQPDY0A6W/n7aR6mBnGTq3i/Pa4MuDQ5y6CGEHlV7COfuAHWnwb1UGXPbwg9J4ENAmXG0Sgem8H3n4PqIMqAnGuLXSi5awkqm+EaUA/EE9i13MWNsGf8vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gonMD3Z8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA43C4CEC7;
+	Mon,  7 Oct 2024 18:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728324747;
+	bh=MVMcREqOQie9bCu+l3+EHtHOGyR8Vt6zdS95oQnMRi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gonMD3Z81MR5tRjnQ0yJmdqAu47JdQCbp7tEX2A21sXKlMP/BEUVUIIhtq8FtSqMx
+	 v+rzR4G4ssygEQJ9YqcBXdmQOw6weTueOk+MWD+Sv6TQVohLCiBbGQ6wntvJad2ghQ
+	 /mdKHhu1pRsMOMJk4rYFOdvZpMMUsIQezchlhaDPPYk2X+SBaD0s9ZbdHFHTtXzX2R
+	 l1cLTPzVPlKpjantP9FGyeD77s1gxCHRdcDCTlHjS1MAUjJQqHbxWAyc2A6AatXFbt
+	 Knh3eQXEiZJVxeOIMEkTdvsHZaxeq8xY+QGQGthQ9oqfHv0RGjhJhxiTuOwDYepBR3
+	 p/XtFo3K7Xh1w==
+Date: Mon, 7 Oct 2024 23:42:23 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+	Sam Edwards <cfsworks@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: (subset) [PATCH v2 0/2] phy: usb: Broadcom BCM4908 USB init fixes
+Message-ID: <ZwQkh6Vg+RgpXZdm@vaman>
+References: <20241004034131.1363813-1-CFSworks@gmail.com>
+ <172831613316.134526.5485203085922304367.b4-ty@kernel.org>
+ <d20fbf91-e7e9-4f0d-8e4a-0c5364f73bc5@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2fi7pyhpetqyhipjiihuafddggwdrh7abuvfkks5hu5qid2rfm@ibuiecrhijey>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xRXiLoY6X-Li91jJYuqXg3l1b3yDkFsk
-X-Proofpoint-GUID: xRXiLoY6X-Li91jJYuqXg3l1b3yDkFsk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410070126
+In-Reply-To: <d20fbf91-e7e9-4f0d-8e4a-0c5364f73bc5@broadcom.com>
 
-On Sun, Oct 06, 2024 at 08:35:57PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Oct 05, 2024 at 07:31:49PM GMT, Kuldeep Singh wrote:
-> > From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+On 07-10-24, 10:06, Florian Fainelli wrote:
+> On 10/7/24 08:48, Vinod Koul wrote:
 > > 
-> > Currently for enabling shm bridge, QTEE will return 0 and put error 4 into
-> > result[0] to qcom_scm for unsupported platform, tzmem will consider this
-> > as an unknown error not the unsupported case on the platform.
+> > On Thu, 03 Oct 2024 20:41:29 -0700, Sam Edwards wrote:
+> > > This is v2 of my previous patch [1] targeted at resolving a crash-on-boot on
+> > > the BCM4908 family due to a missized table.
+> > > 
+> > > Changes v1->v2:
+> > > - Florian requested this change be broken into an immediate bugfix (w/ the
+> > >    'fixes' tag) and a second patch containing the coding change aimed at
+> > >    preventing this problem from happening again
+> > > 
+> > > [...]
 > > 
-> > Error log:
-> > [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
-> > [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
+> > Applied, thanks!
 > > 
-> > Change the function call qcom_scm_shm_bridge_enable() to remap this
-> > result[0] into the unsupported error and then tzmem can consider this as
-> > unsupported case instead of reporting an error.
-> > 
-> > Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> > Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> > Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> > ---
-> >  drivers/firmware/qcom/qcom_scm.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > index 10986cb11ec0..620313359042 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -111,6 +111,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
-> >  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
-> >  };
-> >  
-> > +enum qcom_scm_shm_bridge_result {
-> > +	SHMBRIDGE_RESULT_NOTSUPP	= 4,
-> > +};
-> > +
-> >  #define QSEECOM_MAX_APP_NAME_SIZE		64
-> >  
-> >  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
-> > @@ -1361,6 +1365,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
-> >  
-> >  int qcom_scm_shm_bridge_enable(void)
-> >  {
-> > +	int ret;
-> > +
-> >  	struct qcom_scm_desc desc = {
-> >  		.svc = QCOM_SCM_SVC_MP,
-> >  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
-> > @@ -1373,7 +1379,11 @@ int qcom_scm_shm_bridge_enable(void)
-> >  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
-> >  		return -EOPNOTSUPP;
-> >  
-> > -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
-> > +	ret = qcom_scm_call(__scm->dev, &desc, &res);
-> > +	if (!ret && res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	return ret ?: res.result[0];
+> > [2/2] phy: usb: update Broadcom driver table to use designated initializers
+> >        commit: d3712b35f3c694cb932f87194caafc714109ea08
 > 
-> Could you please make it less cryptic?
-> 
-> if (ret)
-> 	return ret;
-> 
-> if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> 	return -EOPNOTSUPP;
-> 
-> return res.result[0];
+> I looked at your tree and both patches are applied in the "next" branch and
+> the first one is also in the "fixes" branch, thanks Vinod!
 
-Ack. for this.
+First one should go into fixes, whereas second on next (due to
+dependency merged fixes into next)
 
--Mukesh
-> 
-> >  }
-> >  EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
-> >  
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
+-- 
+~Vinod
 
