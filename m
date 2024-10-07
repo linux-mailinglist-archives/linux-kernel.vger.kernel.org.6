@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-353521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A07992EF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD51992E76
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913E31C23460
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D5D1F21565
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8911D7999;
-	Mon,  7 Oct 2024 14:22:51 +0000 (UTC)
-Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCF11D61AC;
+	Mon,  7 Oct 2024 14:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VNQGl7fA"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11E95338D;
-	Mon,  7 Oct 2024 14:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199121D47D2;
+	Mon,  7 Oct 2024 14:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310971; cv=none; b=OdpmkU1OG/k2+/FpxVVqzduFDGmTmwbsyGy9B0zw1Bmxv/j7y62+zYg2F36vc2New2/V/RM28qrSpBcw9Hc5jAW0QCPuTWeEFZU4d0m9S//Ncpco3ytiyAmwtM5s6/XVkIlYWbNJGouAWJuRKY7fcP7ECyVzjVDwztn6up/tx90=
+	t=1728310235; cv=none; b=dy7KshfTN3GsEkS+UPYLy15qOz/7r5JfPU5wwh0CNKGSVYVid0P/WnFZzYsSk7HFBjohAgT8YUGp8f0Aijq8hedaeEN/+VpVB/r5dqSRJ+czThum2IG0nSc6T5/ZuL1KpL7Mple9Fse5eGhJYyhxNi3Xa3woI8mo8qTb7W4yY5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310971; c=relaxed/simple;
-	bh=4jhDfpfpgCyddwDBxOgIA7K7Kk5rU/bHljeRUpcpP4s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Up9UnKR2xWgA0B5dccrOtqptYQJG1v2Y2fZ6rr5MDesmyv1/8+62QaO9ANHpnrm2JW2bzZ56t1/hXeHf/0lXlQFfY25wX87GQZ3cqOBjgi7SoeiodvAOVwgB3RXwI+vSDDWWJ4yIbLl3FyFkljwym/4ncDG1nZUaWzpDHqXuWzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
-From: George Rurikov <g.ryurikov@securitycode.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: George Ryurikov <g.ryurikov@securitycode.ru>, Paolo Valente
-	<paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Yu Kuai <yukuai3@huawei.com>, Jan Kara
-	<jack@suse.cz>
-Subject: [PATCH 5.10] block, bfq: remove useless checking in bfq_put_queue()
-Date: Mon, 7 Oct 2024 17:07:08 +0300
-Message-ID: <20241007140709.1762881-1-g.ryurikov@securitycode.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728310235; c=relaxed/simple;
+	bh=QGzOjF9PxrjI3CTGdHCkN+j0y9KtztCCivI4iFUWuT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZswFP171JbGHy2uHwiJgEq0UHYw/StEvB7cit1EVd/ufVL/itKTA2ltzXTxqGKP4vAds7doOHXSagnSLg7GQHSIS+5oL5tl6rYGAk7YL8Tz1zs9UjHCjtN40XcaKh6WM1es8CDb+zZLsMlIF34/kZGH2ABgq+8GEWek0+Y2DZ1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VNQGl7fA; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 260896000E;
+	Mon,  7 Oct 2024 14:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728310228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QM3e6qzQDy2C99cSqo9Yp5PCA7Kk8OlSQ1p1wJmlJ0I=;
+	b=VNQGl7fA6cKQkXXBFMm3vRPJoW/xthQQ5sd+4SZaP1Wxnx9rwhA7fW/jIMP55B5sOYB6m6
+	FZQ695yF4qq1jExLgOxiWIL0pSI7AtAwiHje8AQGsb7YPVlxboNHfRI+MPkBCIHcPmyzDN
+	lb+mC5pqoCjZPZih+5gIqo2UErqA0jhyBcN3Xtm4fydYMbOnqs4dUrM8kIIcScZ2JaGeDK
+	ENqZlBXL+nfiLJGiMT1qydUHCxs3z5FJNg4GyguFi/A8Z1HcJvE7t+NbtSlyeDBxxFCrAG
+	s1Y3UwBbZcgbQGlwDNt8O2ZKSuyuQkpNjjMjluYgRfE6UIwakJD2xeDFl/YgGw==
+Date: Mon, 7 Oct 2024 16:10:27 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Cc: keguang.zhang@gmail.com, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-media@vger.kernel.org, Krzysztof
+ Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v10 1/2] dt-bindings: mtd: Add Loongson-1 NAND
+ Controller
+Message-ID: <20241007161027.386e7409@xps-13>
+In-Reply-To: <20241002-loongson1-nand-v10-1-17162eff80e2@gmail.com>
+References: <20241002-loongson1-nand-v10-0-17162eff80e2@gmail.com>
+	<20241002-loongson1-nand-v10-1-17162eff80e2@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SPB-EX1.Securitycode.ru (172.16.24.91) To
- MSK-EX2.Securitycode.ru (172.17.8.92)
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: George Ryurikov <g.ryurikov@securitycode.ru>
+Hi Keguang,
 
-From: Yu Kuai <yukuai3@huawei.com>
+> +patternProperties:
+> +  "^nand@[0-3]$":
+> +    type: object
+> +    $ref: raw-nand-chip.yaml
+> +
+> +    required:
+> +      - nand-use-soft-ecc-engine
+> +      - nand-ecc-algo
 
-commit 1e3cc2125d7cc7d492b2e6e52d09c1e17ba573c3
+Actually I told you a mistake. The no-ecc-engine case should remain
+valid, so we cannot require these properties in the bindings.
 
-'bfqq->bfqd' is ensured to set in bfq_init_queue(), and it will never
-change afterwards.
+My fault, sorry about that.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20220816015631.1323948-3-yukuai1@huaweiclou=
-d.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: George Ryurikov <g.ryurikov@securitycode.ru>
----
- block/bfq-iosched.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 6687b805bab3..0031c5751d89 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -4864,9 +4864,7 @@ void bfq_put_queue(struct bfq_queue *bfqq)
-        struct hlist_node *n;
-        struct bfq_group *bfqg =3D bfqq_group(bfqq);
-
--       if (bfqq->bfqd)
--               bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p %d",
--                            bfqq, bfqq->ref);
-+       bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p %d", bfqq, bfqq->ref)=
-;
-
-        bfqq->ref--;
-        if (bfqq->ref)
-@@ -4931,7 +4929,7 @@ void bfq_put_queue(struct bfq_queue *bfqq)
-                hlist_del_init(&item->woken_list_node);
-        }
-
--       if (bfqq->bfqd && bfqq->bfqd->last_completed_rq_bfqq =3D=3D bfqq)
-+       if (bfqq->bfqd->last_completed_rq_bfqq =3D=3D bfqq)
-                bfqq->bfqd->last_completed_rq_bfqq =3D NULL;
-
-        kmem_cache_free(bfq_pool, bfqq);
---
-2.34.1
-=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
-=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
-=BE=D1=81=D1=82=D0=B8
-
-=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
-=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
-=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
-=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
-=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
-=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
-=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
-=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
-=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
-=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
-=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
- =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
-=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
-=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
-=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
-=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
-=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
-=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
-=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
-=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
-=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
+Thanks,
+Miqu=C3=A8l
 
