@@ -1,158 +1,158 @@
-Return-Path: <linux-kernel+bounces-352939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CF899265F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25092992659
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BA391C2217D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:51:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1BF1C22423
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523F318C33C;
-	Mon,  7 Oct 2024 07:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF83418785B;
+	Mon,  7 Oct 2024 07:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nq6xIRkz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="PbDB2P0i"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9tTRS0A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F718C03F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E5155392;
+	Mon,  7 Oct 2024 07:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728287406; cv=none; b=L2T3+5ourBU7SLMsEUmQaDjoEGvgJvZlrufFzqQ7DijZ1rsq992AORzUelliPqJ3YdndQpKM07/Y2W8UX0dU4QgOAR77AQOOzz76BUptBgYc/MDY+QLnfYR4P5McMaLbQMBUOV8FZBWQMRcGazGYEqvzn+Ao9hqjW13UAq4jTKs=
+	t=1728287333; cv=none; b=UNHHeURf6+Jpe7qReC93UHPfUw3bDc15KMDWHQXvVGuWpsrnMsNTU+DVy2AsE150KZQv3LlKo5GVF/KzSWPZYgGnY+5YL6F9xkD13WRS0SrOmO/5bcQG0JhBdHYDJwNdduNlGgG7/0ad5rb2qOcf4mAeL89TOPEu7JF8RFTQRlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728287406; c=relaxed/simple;
-	bh=jxkavo/tM+rYCI+t0fbmVZXkphZMNzEIWwdjBYEI5ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3cED82A5IKcJnT9P6xKJkfXRRnkyQSgoKbruXFrIei9b/ECzRv67ggfYRsvovVGF6SDidaK/dsSRflqFw3kYD3aryBeK/fZu5dMraGf+nvxvqBHdTL/8hW1oI2t0fPUr65GBxgs/zvnXL+JSf7MbYXeHZV0aes9DE44TFP6Oj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nq6xIRkz; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=PbDB2P0i reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1728287404; x=1759823404;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JHI/TzT2XeV1xxP38MEeTQKqc+rV2tkJJ3sIpKxqutY=;
-  b=nq6xIRkzIqiYaZ0oG3nCOnWukGLDRR6Q6Tw3WybSuAqdDYUmQ6moxOA/
-   KiTtukHT0RmNsRc+yTbYoqDI6OQjLVRKP4eG7XGxLg//1z06IkJ3Tm/zd
-   NqcsHaNlw30U6BdTaQdba8QGo9pgBwYHEZ7nsbM3G0GpuVH1+bYD5JHNG
-   +eTB+r0jlQgr8NgbBXAQ79S0lv9XX7xhVEaekqNdn9XZugGxHBAgloQDm
-   0Ro7t91Uq/ywefrYod92lshbqhgItGZ8GjF2mXUuiw/Z52XF9Y5hMAIsT
-   WZJKeHp+i3ZrBM9VlueigwliTACpP7BPrGZJe3iM6tfI4qh799C2NEyYl
-   Q==;
-X-CSE-ConnectionGUID: WusW+MpwS/Sju6ZJKRWpbA==
-X-CSE-MsgGUID: zVTwcZhxS2yK6den+j9hzA==
-X-IronPort-AV: E=Sophos;i="6.11,183,1725314400"; 
-   d="scan'208";a="39297584"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Oct 2024 09:49:01 +0200
-X-CheckPoint: {6703926D-1C-57F7EB54-E9270DBB}
-X-MAIL-CPID: F573D7437B6156EFD848842CE7118E67_2
-X-Control-Analysis: str=0001.0A682F1A.6703926C.0089,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15CC916BD56;
-	Mon,  7 Oct 2024 09:48:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1728287337;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=JHI/TzT2XeV1xxP38MEeTQKqc+rV2tkJJ3sIpKxqutY=;
-	b=PbDB2P0ijDZ8YaQVX+zVyIsXLMe4r2QBVnOhEz6r8wLD8+YxIx8NoAbiJTmRpCjSTXI/ZT
-	nEGs45S0EN43U9N9BeRNezZs/4lPeWuhupmPFWA1CshIL3/DV2H6J37JQUy5Lp/BvQDRtg
-	RoreOYsVHKJTnO3/k936iO8dVBOiejRZlgS2wfJZcFgwdmb2dKJI2f7hUAi+NhLkAP7Mm0
-	4Fj7GbKNipSZZ0YNy7EbEWcZ1V+UpTqD6y190OJwMz9dGv5GXi7nbgF72kDeEdc8dvuX79
-	qq4bQhLndn6f0w5vJkMo+8fPi3KC+BP2cfd+pHkFa3/kM1VVqq23xjZb0KInMQ==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux@ew.tq-group.com,
-	linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
-Date: Mon,  7 Oct 2024 09:48:08 +0200
-Message-ID: <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1728287333; c=relaxed/simple;
+	bh=6bq8jsAyAqZhsj6KABKCH5XFXJPmdB5hcbKI9TT2GN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uu6QXvaLFJD9ONfY+nEi4oSgP/J/4rAdfvTsKbuI34s1RoVUrjo5IESD5hUn9TC7jhiBw/s90vIlkicf0JmQBMH1AWvJbeDHW5zer5V2eBSGAaCyBSdP4llC85S/NJdWeyaGZVJx7sNuY6x+SHqLiopSl5JMfl4QxbHY89abBmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9tTRS0A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C9CC4CEC7;
+	Mon,  7 Oct 2024 07:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728287332;
+	bh=6bq8jsAyAqZhsj6KABKCH5XFXJPmdB5hcbKI9TT2GN4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X9tTRS0A0rDXyM+3Qu9HzSYLblsHUxybmhojiFinvOALI4qYpMVC606mJKSUyqoRH
+	 N5aAbfBsqmyNLZq5Q+hxVcie3EL4lM0ZLsfFDppQn+g1dAt467OUiix+Ve/9Yc4U0x
+	 Xa6v/CAkYioPhhYID9WXC9lOsMwF3bM1xsbjyQBIirR6QM09dwkSqgSigeG8ROV8Ds
+	 docniGo+LLKcTderyDA/0ROK0J8AIc8EUHAUa2v7uRJcNYy4MtrGkQuLf5n8dbPO3o
+	 VfCv5ZzA2iSsaAsp5Ktjm1DWSW+mJl/aBOWdG3D73jQk0SwWOCNz+8nKdmGfWZnUPX
+	 DU2xnMjITgVwg==
+Message-ID: <5d90a7a7-1477-4e8e-8e2e-a301d4c25e3d@kernel.org>
+Date: Mon, 7 Oct 2024 09:48:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] add clocks support for exynosauto v920 SoC
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>,
+ 'Conor Dooley' <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20241007071833epcas2p213100b34fd5a8192497a41e2e455947a@epcas2p2.samsung.com>
+ <20241007071829.3042094-1-sunyeal.hong@samsung.com>
+ <459e2af0-16a1-45aa-93b8-50b84b359854@kernel.org>
+ <00a401db188a$cc7a1d30$656e5790$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <00a401db188a$cc7a1d30$656e5790$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-From: Gregor Herburger <gregor.herburger@tq-group.com>
+On 07/10/2024 09:30, sunyeal.hong wrote:
+> Hello Krzyszto,
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Monday, October 7, 2024 4:20 PM
+>> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Sylwester Nawrocki
+>> <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>; Alim
+>> Akhtar <alim.akhtar@samsung.com>; Michael Turquette
+>> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob Herring
+>> <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
+>> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> kernel@vger.kernel.org
+>> Subject: Re: [PATCH v2 0/3] add clocks support for exynosauto v920 SoC
+>>
+>> On 07/10/2024 09:18, Sunyeal Hong wrote:
+>>> This patchset adds the CMU block below to support exynosauto v920 SoC.
+>>> - CMU_PERIC1
+>>> - CMU_MISC
+>>> - CMU_HSI0/1
+>>>
+>>> Changes in v2:
+>>>  - Rebase the patch to reflect the latest fixes
+>>
+>> Not much improved. Still blind rebase without addressing the issue I
+>> pointed out.
+>>
+>> Allow people to actually review your patches, instead of sending multiple
+>> versions within 5 minutes.
+>>
+>> One patchset per 24h.
+>>
+> I apologize for sending you the patch version incorrectly multiple times.
+> Could you elaborate a bit more on the "unrelated change" part you mentioned in the comment?
+> I don't think I understand your exact intention.
 
-The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-Add module parameter to allow configuring the IRQ number, similar to the
-handling of the GPIO IRQ.
+I do not see above "unrelated change" quote. Please respond inline.
 
-Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
-
-v2: improve module parameter description (was patch 4/4)
-v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
-v4: no changes
-
- drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-index e444fcd2a3e9d..057d035b71d33 100644
---- a/drivers/mfd/tqmx86.c
-+++ b/drivers/mfd/tqmx86.c
-@@ -50,6 +50,7 @@
- #define TQMX86_REG_IO_EXT_INT_9			2
- #define TQMX86_REG_IO_EXT_INT_12		3
- #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-+#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
- #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
- #define TQMX86_REG_SAUC		0x17
- 
-@@ -60,7 +61,16 @@ static uint gpio_irq;
- module_param(gpio_irq, uint, 0);
- MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
- 
--static const struct resource tqmx_i2c_soft_resources[] = {
-+static uint i2c_irq;
-+module_param(i2c_irq, uint, 0);
-+MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
-+
-+static struct resource tqmx_i2c_soft_resources[] = {
-+	/*
-+	 * Placeholder for IRQ resource - must come first to be filled in by the
-+	 * probe function.
-+	 */
-+	{},
- 	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
- };
- 
-@@ -263,6 +273,14 @@ static int tqmx86_probe(struct platform_device *pdev)
- 	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
- 
- 	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-+		if (i2c_irq) {
-+			err = tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
-+					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
-+			if (!err)
-+				/* Assumes the IRQ resource placeholder is first */
-+				tqmx_i2c_soft_resources[0] = DEFINE_RES_IRQ(i2c_irq);
-+		}
-+
- 		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
- 					   tqmx86_i2c_soft_dev,
- 					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Best regards,
+Krzysztof
 
 
