@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-353507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9951992EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147DD992EA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DBE285211
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8311C22F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8306F1D79AF;
-	Mon,  7 Oct 2024 14:17:01 +0000 (UTC)
-Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92881D4615;
+	Mon,  7 Oct 2024 14:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yA9Wv/j2"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E76F1D6DC7;
-	Mon,  7 Oct 2024 14:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD0D1D5CE7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310621; cv=none; b=frzqIBVbzlnFx/vm9VDHfIQB+x39yymmey+EVivRD+T9YmcMe6kUYw7qM9TbR912wWtETvr1BQohHt/qiZl6bvb/dDZU4mimaE1Gt+BqorbNqO2jHMDB4Y4Gxhc/2EZHIC6Ya54nd8454utUjrDx0wPTTf9uWXHPplGhuIm2uUc=
+	t=1728310597; cv=none; b=rNojRsj1HvMGM6YDEfr4e/l3Gq4jOrTQHBfugB9qVJZjg44GIta5DGD7c9adcNqrwo0zP7wMPsQMJ0Hf7BE3FP8vjxKXpay8pL9je81+DHm8+uL5eUcrNrg4dvyLCzn4fS4wHzmPs1z7ywGh7AuXRJ1pLhzz0J8SRr3qbQ5O5KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310621; c=relaxed/simple;
-	bh=8DGTH5FD1i9Kn/l1YJyaz3nBsYdk+fBaMBnPUh8SBLk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IiP1EMtow21z6kteD29JwcI0HyAQ83lj7qOPDdsuyBvUzquYoWiTv08nPk6wnl4AcYv1g120d9i3gwMXKNGDnZs1ypdkygWPIPOY8a+3suXwXhs5apacC3ydUlSGSA3sFi+zRNFDIoT/P98/D1M2/OykiC+2D9sO3eOGHH3uJWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
-From: George Rurikov <g.ryurikov@securitycode.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: George Ryurikov <g.ryurikov@securitycode.ru>, Paolo Valente
-	<paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Yu Kuai <yukuai3@huawei.com>, Jan Kara
-	<jack@suse.cz>
-Subject: [PATCH 5.10] block, bfq: remove useless checking in bfq_put_queue()
-Date: Mon, 7 Oct 2024 17:16:18 +0300
-Message-ID: <20241007141618.1766564-1-g.ryurikov@securitycode.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728310597; c=relaxed/simple;
+	bh=3elurgGVViKCPdpbSagNfEraZxYhYLBwgqU9yeOTtu4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V69SP45erTNTrOp2nQe1T3vgHINPau29xCdI6qZD1cmceVE32pOgU4yIK2bMbUPcK06ydSM2MjbMqiF2Yhq9EzZo8Zg5m62Se5OqxdIO0hOapgp4ESSVxNiks9H5R9ESJ8k16BsNagS5GkWzoUevizO32FCW35ddNShzGITBink=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yA9Wv/j2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso60333535e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728310594; x=1728915394; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/TOM7EB64+eyeu1JpKwXmL1gp84yFTLvnsIJDegP4w=;
+        b=yA9Wv/j2faKnn98s1pVwJ64StDpHKS70DrKbuOf4Ahulhn/lGbM3+I5OQ8Dvzr3m4d
+         5vij3m58PneRdDh2vlOXtsVH0d00CPVr15CtW0j5fPZaczPSPrUCcHHZd7ziyDUKNLQi
+         I4s79I0+eENLBPOqdAhUoyFQ4x1CNugcaqilkLJS/K6M8/rh0cI1WZ3dpMsQR/8C2iQU
+         4JPW9cmOn+BKzt/0KYUTVZ9mimLkPzPr3M8N0mZdml3wQC4LK8mqTtfmEMW6saH78J9D
+         eWEWG4w8tCqBemFzSOpR5Wcd9aWdEsn9Pydvc9RrT9RS/X+HckMVI0nMHTVGOYIPos/D
+         Ih7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728310594; x=1728915394;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q/TOM7EB64+eyeu1JpKwXmL1gp84yFTLvnsIJDegP4w=;
+        b=cviptVqbEGh7KLappj0eeIaFd1jLexIYLYwL80vB5tr7P7gX9z0m7jh3r1wcurcCQH
+         TRzJfCQFr592+HJdPgM60OovIk7cjOPRoodzO9c/klhYDvnOO4xx5dBSu8I1XAnIyWI3
+         KC5rDMC5q+mPv4zloIAPPOQMbbzqIdp1Skv5Nz6QDaEHDKjCAcJDcUtlY07PGj5QdmcS
+         QZpC+lfEoeqNQWbXbv93KMXBeoUq70s+JRtToeBV7PdXeG8UIrxZFYaeCh0pQJ8A07zE
+         T6OulWBafDzi0bHxamq7oRBN3NQbjCPC+nl4CLR4LDx10erN9HI7Ms/y3XB12ZQojYzc
+         7aLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvP+UnpZ2iCtGN9OlljXYAufGbZLtZe3UDGda99hNaK6xPJ5/RSOZW/7CGoPEhDy5JE+gBz6Ecn5ZOhdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTfHhMGKc/RPPu3IzrmZRMInkxL4FyGh6RYWw82HtvgjsPQNwz
+	7D4ovkxXSL7lgptCUOcxcQytSLE4RTaZ9h/KDl0Tm1ydoqGgPH1tmcNJ8PFxD2U=
+X-Google-Smtp-Source: AGHT+IG04331dVtmaVR4lXQicn5AzQqZD0RSic7wGjyhOhclkIxnftFNWZzaSmZpQMgfr7SYxPHz0A==
+X-Received: by 2002:a05:600c:4686:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-42f85ae942cmr116660645e9.23.1728310593652;
+        Mon, 07 Oct 2024 07:16:33 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a20537sm94197965e9.15.2024.10.07.07.16.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 07:16:33 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/2] dt-bindings: pinctrl:
+ amlogic,meson8-pinctrl-cbus/aobus: add reg for cbus/aobus pinctrl nodes
+Date: Mon, 07 Oct 2024 16:16:24 +0200
+Message-Id: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-meson8-pinctrl-v1-0-d3d838540033@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: MSK-EX2.Securitycode.ru (172.17.8.92) To
- MSK-EX2.Securitycode.ru (172.17.8.92)
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADntA2cC/x2NywrCMBBFf6XM2oE0Spr6K9JFTMc40DzIRBFK/
+ 93o6nDgcO8OQpVJ4DrsUOnNwjl1GU8D+KdLgZDX7qCVvoxKTdhyYY8ubjn8WONZ46tIq+Qi3jm
+ tnILggz8kGElyslg4+VY39M7qyRhn59lAPyiV/l3fvy3H8QUYcO5RjAAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=893;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=3elurgGVViKCPdpbSagNfEraZxYhYLBwgqU9yeOTtu4=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnA+0/oMpaDd6H3HnheIXgpFZlSsGTrWXBj4P4znTb
+ y1PAbreJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZwPtPwAKCRB33NvayMhJ0V6wD/
+ 0Qf9gVnJ5jjPEOqXfPvBa5NRnfVCbnAR+WdosYfIDfzPALKTNcTYEVtTUkCzFckK6VpNo4C8zPtwM7
+ PZxufPchtnPKPsfkMC6QChjBYNHIfeiIVFK9/137/JvZUp+VyMLtf2Qb45D1syrtC2+uVJFeYTXmpt
+ FZ7PtCFAo0MWv+qwnQDZ1e/foenAMxi98iFjlu5FhB/pcOdXxjQD4Hfkn1WO9Mo6cRlq/PTWpHbHxk
+ t53eW7CObQtkS6T/CfLSKAe5UPGKKojGolTT6zLennMLv370jDFvr74TCygjcmkSCuAiLy6eVwPTXS
+ y4hDd4UoCklL6BXpQbE0DRFSfpQph7gtHCqp2gz71exdkJY+xo5pEnyXXqOMpIC29PQ/jwkS6euAgd
+ vQaeJEfo7HG2uxXmkauB+vw9F2aDU/h28MhFz/8vVFGRdhIRwOr5nEeF9cz6Jb+m4tZy4WxxWEUwfD
+ 6EZxVKO0OMbvoyGqkGtpmt/N9aUSsMQNA7GU6SNMSJ+2cg3iDFXOnEfLR2KplAEitHZZ2cciP8/iRq
+ t9FAHZN+1ZLyerb7O/H1B1oLicmiTrfvZ0ru2AK93Erp3+o0U1+ZVeysRClj95h4W8EUGebik780NG
+ DENgpQ73SssgIpvlfDgdiK9Rd4RXnz3s/gw2uJ+KgIN4NUY6TXtWGgMudcSg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-From: George Ryurikov <g.ryurikov@securitycode.ru>
+While converting the Amlogic Meson pinctrl binding to dt-schema, the mandatory
+reg property for Meson8/b cbus/aobus pinctrl node was ommited, fix this to finally
+pass all bindings checks.
 
-From: Yu Kuai <yukuai3@huawei.com>
-
-commit 1e3cc2125d7cc7d492b2e6e52d09c1e17ba573c3 upstream.
-
-'bfqq->bfqd' is ensured to set in bfq_init_queue(), and it will never
-change afterwards.
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20220816015631.1323948-3-yukuai1@huaweiclou=
-d.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: George Ryurikov <g.ryurikov@securitycode.ru>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- block/bfq-iosched.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Neil Armstrong (2):
+      dt-bindings: pinctrl: amlogic,meson8-pinctrl-aobus: add reg for aobus pinctrl nodes
+      dt-bindings: pinctrl: amlogic,meson8-pinctrl-cbus: add reg for cbus pinctrl nodes
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 6687b805bab3..0031c5751d89 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -4864,9 +4864,7 @@ void bfq_put_queue(struct bfq_queue *bfqq)
-        struct hlist_node *n;
-        struct bfq_group *bfqg =3D bfqq_group(bfqq);
+ .../pinctrl/amlogic,meson8-pinctrl-aobus.yaml      | 22 +++++++++++++++++++---
+ .../pinctrl/amlogic,meson8-pinctrl-cbus.yaml       | 22 +++++++++++++++++++---
+ 2 files changed, 38 insertions(+), 6 deletions(-)
+---
+base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
+change-id: 20241007-topic-amlogic-arm32-upstream-bindings-fixes-meson8-pinctrl-ca82766a8996
 
--       if (bfqq->bfqd)
--               bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p %d",
--                            bfqq, bfqq->ref);
-+       bfq_log_bfqq(bfqq->bfqd, bfqq, "put_queue: %p %d", bfqq, bfqq->ref)=
-;
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-        bfqq->ref--;
-        if (bfqq->ref)
-@@ -4931,7 +4929,7 @@ void bfq_put_queue(struct bfq_queue *bfqq)
-                hlist_del_init(&item->woken_list_node);
-        }
-
--       if (bfqq->bfqd && bfqq->bfqd->last_completed_rq_bfqq =3D=3D bfqq)
-+       if (bfqq->bfqd->last_completed_rq_bfqq =3D=3D bfqq)
-                bfqq->bfqd->last_completed_rq_bfqq =3D NULL;
-
-        kmem_cache_free(bfq_pool, bfqq);
---
-2.34.1
-=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
-=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
-=BE=D1=81=D1=82=D0=B8
-
-=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
-=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
-=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
-=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
-=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
-=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
-=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
-=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
-=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
-=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
-=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
- =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
-=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
-=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
-=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
-=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
-=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
-=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
-=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
-=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
-=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
 
