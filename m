@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-352850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B695992535
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:58:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE85992538
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56540B2167C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:58:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C76F1C221A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ED916630A;
-	Mon,  7 Oct 2024 06:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA5616630A;
+	Mon,  7 Oct 2024 06:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnyhaoTD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HIj1CRWe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0816132A;
-	Mon,  7 Oct 2024 06:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8088D15B130;
+	Mon,  7 Oct 2024 06:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284318; cv=none; b=liilcMLrbYVvmajjahfu8JANSzL90vCiV88H9s0NJ6R0HVaUkfndg5+4jjhb0l8XTLqMcqT1gQSXkInWmaJ/fYLziFlO9apgqN/ENPM5JfU+NYDKcKLt6SQQQfY+JtW1g+Xr+vLqI15K1zghbKo7xH68+2nzn/+5G5aQCLKp1Kg=
+	t=1728284386; cv=none; b=UHhx0mD6FyAG8xWSslt53Qqsdn6Sv2SbDaK3e1YY4aocVY+H9rd2uSYPmk8sjDsWxA2kzMIrvphmG/2kaFIfFHM7lYRLJaqaLy2Nnj9Efqbyc/FP/8lEVI3QCB9tXIAGOmPAH+lT6s0znV7C3Wy4tomsf4HBgZm62mpC6QAxyis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284318; c=relaxed/simple;
-	bh=isXQOF8NNd+LF6dgeWDh48gbmjEZLy0AccRb2Pzp8vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkNZ4XsOdkVDwIn05OZQXsQG2cX4u/WHoc0Zcxog8eetOKwIhAJLseO8A5CO7qsjF4DCdQRV2SdPPQJKSnNHPgB5qgBrftSltG6N1bqftia17onYtPWxAM/cqiIuWvQbo6COHrSHh0wdNS/rpG9ygn5KwvssLY2J2FZ8NLUq6Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnyhaoTD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA21C4CECF;
-	Mon,  7 Oct 2024 06:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728284317;
-	bh=isXQOF8NNd+LF6dgeWDh48gbmjEZLy0AccRb2Pzp8vU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KnyhaoTDPps/mAFQs7sfWGgrfsptRXUg/UyQfJ+1rZm6jTq8A/DAHl17B6LjKZ8qY
-	 ooqQrchrjRWK+/g+NOVOJywkVbq/tch3J7k5XMo6ab20u/RrKqKRZHWob99SaqCOOX
-	 9ZRuOzETL8HzJ86ZmHTxhzj+wVRxEPINFR+KWRy2iWP0ndpoV9j/yVn6VxLk7jRiBA
-	 8Bx1cxqnMinnR1la5bP+ZiNfWVDt05SQXDvK5TYTgQ3T5/3c6XM/46nYaTP7AM5iFH
-	 Qc0jijNoEbVZYIYLf3N3fGxJ/H/AqwyoHQJJACTLTHP7SU8F0guQ1657GA+By+q9Np
-	 /Yy51/YTLEM6Q==
-Message-ID: <6bb599b4-141c-43a5-8b9f-4cf6ca6c3384@kernel.org>
-Date: Mon, 7 Oct 2024 08:58:28 +0200
+	s=arc-20240116; t=1728284386; c=relaxed/simple;
+	bh=mtX51qEZRca3UuKZBd7V1kFyKvJf+7FHpPMVwKJgUm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tKVVx9SzhOkeIfG4/NYdgq7xX2BKID3m8W0UXnkB/6FGWMDvay4B7UPustsUhqirt5tcZNIRAi3gyQFYWM/izfjl9h/F0qut8lIJUBOrVlNn+cWL+f1xmDyOTz0N9Ii5ybbSlcgSg3DUgn9c8hxj9da9uH+j4vVgh1ODDVkR15o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HIj1CRWe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TJFp020645;
+	Mon, 7 Oct 2024 06:59:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uHfp8aMiuPWPdqDad8TMm0fShawjKs0JZ4jq/Zt1nw4=; b=HIj1CRWeFhsiSGKS
+	mdGDNVKn8c/zrxxaXwfXakNqZJaucCypmfOg2sPOSnqH1FGmmqjA3XScpwxTy2fU
+	2YDU48AuQYoNAdVX1rYpifAVnpj/L6izSjOosiTVD2xfagEEzCOIV07TzsvP+wr0
+	OC8sZmLSjfDebNZG8lNCjAAl2wT6W4sqyVVqeUy0t/jrdWACLiOmlWWmxPIq2F6s
+	0SXE+g9pay0CZUOJjEJfYR7kV5oOuu8fPFwLtSKLm7qvCcHME5G45nlv2VSdEg7B
+	Vb0SBS4q6JpOhK2cR59ops7cZnDZwNg6S1P2WZ594N+EbP7C3Ss4IDQTji/YNm3e
+	7J+gww==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsnk8gs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 06:59:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4976xVCC024335
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 06:59:31 GMT
+Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 6 Oct 2024
+ 23:59:27 -0700
+Message-ID: <831a7a48-2fed-c84c-dee5-8e74735309fb@quicinc.com>
+Date: Mon, 7 Oct 2024 12:29:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: watchdog: aspeed: Add property for WDT
- SW reset
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz,
- wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
- DELPHINE_CHIU@wiwynn.com, BMC-SW@aspeedtech.com
-References: <20241007063408.2360874-1-chin-ting_kuo@aspeedtech.com>
- <20241007063408.2360874-2-chin-ting_kuo@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 1/2] cfg80211: Remove unused cfg80211_background_cac_abort
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241007063408.2360874-2-chin-ting_kuo@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
+To: <linux@treblig.org>, <johannes@sipsolutions.net>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <linux-wireless@vger.kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241006225303.121445-1-linux@treblig.org>
+ <20241006225303.121445-2-linux@treblig.org>
+From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+In-Reply-To: <20241006225303.121445-2-linux@treblig.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3NxW-YabmgSM8csPwjp9T4DLcbwg3mCj
+X-Proofpoint-ORIG-GUID: 3NxW-YabmgSM8csPwjp9T4DLcbwg3mCj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1011 malwarescore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070048
 
-On 07/10/2024 08:34, Chin-Ting Kuo wrote:
-> Add "aspeed,restart-sw" property to distinguish normal WDT
-> reset from system restart triggered by SW consciously.
+
+
+On 10/7/2024 4:23 AM, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+> cfg80211_background_cac_abort() is unused.
+> It got renamed from cfg80211_offchan_cac_abort by commit
+> a95bfb876fa8 ("cfg80211: rename offchannel_chain structs to background_chain to avoid confusion with ETSI standard")
+> 
+> and that was originally added in commit
+> 1507b1531981 ("cfg80211: move offchan_cac_event to a dedicated work")
+> but never used.
+> 
+> To me it looks like the queue is still used (I see a queue_work
+> in __cfg80211_radar_event), so I think it's just the wrapper that's
+> unused.
+> 
+> Remove cfg80211_background_cac_abort.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 > ---
->  .../bindings/watchdog/aspeed,ast2400-wdt.yaml         | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>   include/net/cfg80211.h | 9 ---------
+>   net/wireless/mlme.c    | 8 --------
+>   2 files changed, 17 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml b/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
-> index be78a9865584..6cc3604c295a 100644
-> --- a/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
-> @@ -95,6 +95,17 @@ properties:
->        array with the first word defined using the AST2600_WDT_RESET1_* macros,
->        and the second word defined using the AST2600_WDT_RESET2_* macros.
->  
-> +  aspeed,restart-sw:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description: >
+> diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+> index 69ec1eb41a09..fd843a519329 100644
+> --- a/include/net/cfg80211.h
+> +++ b/include/net/cfg80211.h
+> @@ -8752,15 +8752,6 @@ void cfg80211_cac_event(struct net_device *netdev,
+>   			enum nl80211_radar_event event, gfp_t gfp,
+>   			unsigned int link_id);
+>   
+> -/**
+> - * cfg80211_background_cac_abort - Channel Availability Check offchan abort event
+> - * @wiphy: the wiphy
+> - *
+> - * This function is called by the driver when a Channel Availability Check
+> - * (CAC) is aborted by a offchannel dedicated chain.
+> - */
+> -void cfg80211_background_cac_abort(struct wiphy *wiphy);
+> -
+>   /**
+>    * cfg80211_gtk_rekey_notify - notify userspace about driver rekeying
+>    * @dev: network device
+> diff --git a/net/wireless/mlme.c b/net/wireless/mlme.c
+> index 4dac81854721..8ec236bbbc7c 100644
+> --- a/net/wireless/mlme.c
+> +++ b/net/wireless/mlme.c
+> @@ -1226,14 +1226,6 @@ void cfg80211_background_cac_abort_wk(struct work_struct *work)
+>   				      NL80211_RADAR_CAC_ABORTED);
+>   }
+>   
+> -void cfg80211_background_cac_abort(struct wiphy *wiphy)
+> -{
+> -	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
+> -
+> -	queue_work(cfg80211_wq, &rdev->background_cac_abort_wk);
+> -}
+> -EXPORT_SYMBOL(cfg80211_background_cac_abort);
+> -
 
-Why >?
+We have an internal WIP ath driver implementation for background radar feature
+calling this function to notify the background CAC abort state. There is definitely
+real use case for this function.
 
-> +      Normally, ASPEED WDT reset may occur when system hangs or reboot
-> +      triggered by SW consciously. However, system doesn't know whether the
-> +      restart is triggered by SW consciously since the reset event flag is
-> +      the same as normal WDT timeout reset. With this property, SW can
-
-So DTS has this property and watchdog bites (timeout) but you will
-ignore it and claim that it was software choice?
-
-This does not make much sense to me, at least based on this explanation
-
-> +      restart the system immediately and directly without wait for WDT
-> +      timeout occurs. The reset event flag is also different from the normal
-> +      WDT reset. This property is only supported since AST2600 platform.
-
-Supported as drivers? How is this related? Or you mean hardware? Then
-property should be restricted there.
-
-Best regards,
-Krzysztof
-
+Vasanth
 
