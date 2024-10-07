@@ -1,101 +1,130 @@
-Return-Path: <linux-kernel+bounces-354164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59C9993893
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E8E993894
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73FC5B22EE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 687442850D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73C51DE4DF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E804F1DE895;
 	Mon,  7 Oct 2024 20:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0qh7x6jb"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ff6ED5ry"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA9D18B491;
-	Mon,  7 Oct 2024 20:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB0618B49C;
+	Mon,  7 Oct 2024 20:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728334414; cv=none; b=hNlwWW+r/XLdX4jNq2H8fjjkyw4tGlbXdFr4sAo9ANRy8/mm96/ZJVwXHLwZNVDx31ccxzJhljO3bnAtB4z6rcBnFxEVKQOk4m5ZiR4n6y0giwrK0qk+nSIT9KWLjd3NBpkJLi0EquSEwn1R/4HDRdnWlcx+l2MyEUgdySxZ7FY=
+	t=1728334414; cv=none; b=sUQYQPdSVQYbdClCvUKFimdSVTLBwhcSYFtuCgH1OFHcIobLiglrAHb+o7Y9bfJ2xb+dyQXgdyO0CQ9O8mfau9I9HOKfi4Uv+QNzwSOfY3SPGl9Ey+F21H8U8J1tc0yGeUllXjDJcuacw/eVa5yOI44fxZmRAjHVHuI3SvjQ0Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728334414; c=relaxed/simple;
-	bh=i4wYdm9Zi7Gk1796ITyVTFMwt/RqB84RvbVyWiJpmeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cBHk8OrKLpOG3N32hzBVsq2c+eiH3SE5RPo/Xaamtc4balXUSdbHZxBrNfn5e8kvp/VRDq6q3u+c8Du7Kfd2f3h0J5UKNFIroQen5DurCep4ChIckTa03jYQZk/MTfirbnHFhsDdclM+DBXlVxjMEDngCQnpIuTaX2RRjJ1gkZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0qh7x6jb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iqD4+nSJAWyo1MbGZ8hyUXBIlH/RF1VwEjcfbhNwmqU=; b=0qh7x6jbAmci82wqAVowcCJFMq
-	Ty4+1qsdbQJSC6LgEeLrEUGiV2I0milxavpK3pEo4EC+d+SKRTIuFha8cksUMeX/n4kUguJWcHBGU
-	LxNFSXAn1VDN2i50GOBkF063sMLdVio8LUnhFMPbhDyoKfBQpcX09zJxpP0GSLKcdQFdpW7AYe9nC
-	RUB4wUPOFQevcM4r/oF+Iu32L8zxDBDkjJxahKhcARvI7ejsDkG81Gyw4kXrzARDN4pjIqErbOWzX
-	TBhxjCJcRXgfBd9YCR8YSSynma/7BXriPhmlvFYOkof75qhR4y17QXWwWsuNxycOevAFJ0YUVJDDQ
-	ILjTECRA==;
-Received: from i5e860d18.versanet.de ([94.134.13.24] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sxujR-0006De-8J; Mon, 07 Oct 2024 22:53:29 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lee@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de
-Subject: [PATCH v2] dt-bindings: leds: Document "rc-feedback" trigger
-Date: Mon,  7 Oct 2024 22:53:15 +0200
-Message-ID: <20241007205315.2477060-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.43.0
+	bh=7hNGPA1gxfGLdlHovU/Cg7O9sFF6Mnxa2MXLc3lAbLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UGPbqdCEbsrgZ8XrzoU9MADpmIA+GBVE6UZBG6ghT8jhiOZsDNOK8EWST/iwxs+lapm4+O4yFX+0i61Xzjlf+6jS1v+PYbMQ8/1VaxRvHlnWNGHqQHQcYuBATwJFZtpeUhHk4WErNmQOr3AoNmPcF5ImBg6LQLVgFaYg0AfBcG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ff6ED5ry; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2e3e4f65dso19152667b3.3;
+        Mon, 07 Oct 2024 13:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728334412; x=1728939212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/P6Z8MoLBTNyNgoQYiG3xAVkdrjMw+AhtLOoflITm3g=;
+        b=ff6ED5ryAtkIwIN9xtXtfu5HZEuvrXXxXjVUI6tG50/suEUSMnvD4mS4ZqpM+o+68I
+         6kYtUmyBXJaRCz4pbgRcpE8PUyqPa3ycqbv+2SUsn0kN58yilEw7SEDRUy056yrvazRw
+         RagnAmf35pABOiOXPm8Lpd8Il+VZRMjws5fqRCOEPYaE9GGoAqLacHNwo665MP9Omm4S
+         toOMUGbB8jMu0iel+JWDA1v12DiP6bzu/RqvlggShwwYKWOf4xSUf6e50Kj6oUVT7vt7
+         /DgPv8/qt5f9hX8Q/zulPJquERlEBwIuRaHjnuXFXk33nMaL0qQmSYN2MLssp0T9ltT1
+         Y4Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728334412; x=1728939212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/P6Z8MoLBTNyNgoQYiG3xAVkdrjMw+AhtLOoflITm3g=;
+        b=p1K0GoH656suzDeE46lBIEupDcvJrkcOM/RcFXTTQwQ32W7HZ9rFwtrbZDPu9kQcAb
+         3g68/b7lo8oPSORJAVOJcejQTM1VqzYIt4fNpkbD3/ig45NcloB0TvKsfXMINU5LYtHZ
+         hSRxI4Ys9yPMwEUBA0SMYr0W1NyLdZA3nGYAMPOTyXa0qeFSeflNT0fwCz3L69J5yF4N
+         8w233kswjmhivw83o0j/PV3uV8exEGkGQ+I9vkLbpXQhZVcrsMfNvKA/V7vSLcVybzPn
+         0YMQkspEoETM0aKUbXOyQEN+/USC/R28SmpRdx/SvloQkX8BjEwKeXcm6m3kWHt+3WJ6
+         MtJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9PJ+5+0QPZy9/MSFWRZDn7v76+P3xwWl2yUpSz4Qg+V9SFdEBeIguaDAVo2pGEXBS9nhkeBkzM1LI@vger.kernel.org, AJvYcCWEOMy43BeJump8t77XE6DFfJyqnZjkhi2d6ofnX+KdWVxfrOrPcghVKW5kpx9frTgQ7QsK8auq4YfSVLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfvT1jcNKIiFWDzvDBShECsd+ddkwj/3ZrKqO+ao4MvVouRK3f
+	vxaZFOkEjB1XU+FPDEnn3FcOmeirYMzLCz3O55xzJHQMOLAEPQLCF5Nb42E46IvKEttWKmGr141
+	e9fpThgyD3ngvwonbc+t3lfq93Ig=
+X-Google-Smtp-Source: AGHT+IHCaS4xyO3kI9QCcDlz7//R99ll7vpl/XU4EeFOdVQn6RVYcGzpJcByVFIvXaVe08/yEAllkhGFyD+XZcJfQ+8=
+X-Received: by 2002:a05:690c:f91:b0:6e2:12e5:358b with SMTP id
+ 00721157ae682-6e2c6fdd3bemr94365737b3.4.1728334407146; Mon, 07 Oct 2024
+ 13:53:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240924223958.347475-1-kuntal.nayak@broadcom.com>
+ <2024092725-chamber-compel-10b5@gregkh> <CAA4K+2aGYuRZW6prUi53vcEYhuCf4WvGEj384E-Ut-OJEm6wkA@mail.gmail.com>
+In-Reply-To: <CAA4K+2aGYuRZW6prUi53vcEYhuCf4WvGEj384E-Ut-OJEm6wkA@mail.gmail.com>
+From: Leah Rumancik <leah.rumancik@gmail.com>
+Date: Mon, 7 Oct 2024 13:53:15 -0700
+Message-ID: <CACzhbgR+EZ-zaRxwUZRLkQ_+9kxy_nttNyu9m9EKa12-XcOogA@mail.gmail.com>
+Subject: Re: [PATCH v5.10] xfs: add bounds checking to xlog_recover_process_data
+To: Kuntal Nayak <kuntal.nayak@broadcom.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com, 
+	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com, 
+	lei lu <llfamsec@gmail.com>, Dave Chinner <dchinner@redhat.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Chandan Babu R <chandanbabu@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the "rc-feedback" trigger which is used to control LEDs by
-remote control device activity. This is an existing trigger used in
-existing DTs, document it so validation of those DTs would pass.
+Hi Kuntal!
 
-It was originally introduced into the Linux kernel in 2013 with
-commit 153a60bb0fac ("[media] rc: add feedback led trigger for rc keypresses")
+Thanks for proposing these patches. The current process for
+backporting to xfs requires that patches are tested for any
+regressions via xfstests. I believe Amir was last in charge of 5.10.y.
+I think he is still on vacation, but even once he returns, I'm not
+sure if he will be maintaining this branch any longer so it seems
+5.10.y might be left unsupported when it comes to XFS. If you'd like
+to take over for 5.10.y to keep backports flowing, we'd be happy to
+have you join our efforts :)
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-changes in v2:
-- put the entry in the correct position and comment above it (Pavel)
+- leah
 
- Documentation/devicetree/bindings/leds/common.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index bf9a101e4d42..9cd89f30fa7c 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -118,6 +118,8 @@ properties:
-             # No trigger assigned to the LED. This is the default mode
-             # if trigger is absent
-           - none
-+            # LED indicates remote control feedback
-+          - rc-feedback
-             # LED indicates camera torch state
-           - torch
-             # LED indicates USB gadget activity
--- 
-2.43.0
-
+On Mon, Oct 7, 2024 at 12:48=E2=80=AFPM Kuntal Nayak <kuntal.nayak@broadcom=
+.com> wrote:
+>
+> Thank you, Greg, for getting back to me. Following is the order for patch=
+es,
+>
+> 1. xfs: No need for inode number error injection in __xfs_dir3_data_check
+> 2. xfs: don't walk off the end of a directory data block
+> 3. xfs: add bounds checking to xlog_recover_process_data
+>
+>
+> Hello xfs-team, could you kindly assist me in reviewing the 3 patches
+> listed above for LTS v5.10?
+>
+> ------
+> Sincerely,
+> Kuntal
+>
+> On Fri, Sep 27, 2024 at 1:00=E2=80=AFAM Greg KH <gregkh@linuxfoundation.o=
+rg> wrote:
+> >
+> > On Tue, Sep 24, 2024 at 03:39:56PM -0700, Kuntal Nayak wrote:
+> > > From: lei lu <llfamsec@gmail.com>
+> > >
+> > > [ Upstream commit fb63435b7c7dc112b1ae1baea5486e0a6e27b196 ]
+> >
+> > Also, what is the ordering here?  Should I just guess?
 
