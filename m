@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-353232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D55B992ADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:55:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECE7992ADD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC8E1C2298E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2292830A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C041D1747;
-	Mon,  7 Oct 2024 11:55:24 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A11D2232;
+	Mon,  7 Oct 2024 11:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzQIEgMj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADC18A6AD;
-	Mon,  7 Oct 2024 11:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2091534E6;
+	Mon,  7 Oct 2024 11:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728302124; cv=none; b=JJpyFup09NOwwgBvBFId10Dvr7r5igVaQLRIHbh4A2kQOE5UMVUKHq1+KldjW+vsI1X9c4BuKnrSjbF/+5fS1LUg9W5Sl6W3stsMMgI/XyXRjyRgDdkrXysXsPzp7hRQD6m9GcHPq4Y9MUFloDhfnM1AgxwAIrltiYL7G9fTCEY=
+	t=1728302214; cv=none; b=jCOIqsJCCoS0JPy7Kayt64TSQ7X2tMMzZKgx+3jUfTeLw1rWoq1luDmG/opnKn2bBVS/ifWkzJBpHifQtJ71fUbKGXaarx3lNvoyqUmyVf/6lpKpQ85JESCuFRioqRf5Oxrrovq0KDHj5fOE6eoRfROMpRZOhCHjsi3T1CEM1tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728302124; c=relaxed/simple;
-	bh=00nusLTC8SWiuC+fpur6GJmcVCdh17datpoLcZt6X90=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cRj0oa+2gzDu2KHX31G0YQ4u0q/TSmVGBlvqgtEXinjP/3q7sKwFsJho6QFcCTjkZIStXkkUcOwO6vgAmt7Qw5tiiSyWBE0mI/AuUJ1s1s3yCSG98DiC/YsZnIyr+n93JL9d5USF0jW4K1y2LHVNKPBOFf4L2Ni3zLXrKjR8qpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XMcP76Tf3z9v7JM;
-	Mon,  7 Oct 2024 19:29:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 91F4C140628;
-	Mon,  7 Oct 2024 19:55:02 +0800 (CST)
-Received: from [10.45.154.49] (unknown [10.45.154.49])
-	by APP1 (Coremail) with SMTP id LxC2BwDXGjIFzANnlL5hAg--.48334S2;
-	Mon, 07 Oct 2024 12:55:01 +0100 (CET)
-Message-ID: <6ae2461a-e509-4c4d-8959-ae17eb214419@huaweicloud.com>
-Date: Mon, 7 Oct 2024 13:54:43 +0200
+	s=arc-20240116; t=1728302214; c=relaxed/simple;
+	bh=e/hYXfaMp9AxjhYF6SyFGgQP6z/DT34maWpVHJiBtBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mb+d16VORfzPT228bt+5BPhM6ry14cWpzh3sbdP5wzYDm8bL1yG3Seq1MlQdYFL+Preurs9Z4HKQJwJKUwwqPlvt9IaxeUtBrR0kxctDHTQzjCJNAuJnvo76g4uQ5MIM3mAEATCbCfyRH+6+nNKY7r7eWsUjcZY/Nk6hgloiy5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzQIEgMj; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728302212; x=1759838212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e/hYXfaMp9AxjhYF6SyFGgQP6z/DT34maWpVHJiBtBQ=;
+  b=MzQIEgMj5SmpxnjeaIgiiGRCPQfhP1qRK1QN22ShfY+awz+t2fJG+Bgk
+   mW9MXxSfVd1HsTrWn+m0Xt60EtJuvkYmR87o4645Lhx70Hvit8JNjlokP
+   jI+9RC6P5JD80UI9sE2TFllzB1hPI19Di1FpHboMp0Stam/MayJHOtCWN
+   hRv6t0Wh1UTWvS2fBNwdlVtcZXn2Kl2ptgLHmfGsmZhMaTxVwmJdmrb/S
+   u40PGy0cPy3Bp+234bS8AldzqtF6Uwj0BA1aGrw4ZRZsmFVLw0cwfJdH8
+   tz/7So0lfMyiFAodxW/a6pTMc5Ihvwy0nCb1Dd/UjM+jY80uCvMEE1uk+
+   A==;
+X-CSE-ConnectionGUID: xJxgttXeR3KkmTdpYmOxRQ==
+X-CSE-MsgGUID: vxqVLmOQTL6X37XK36ICvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11217"; a="31148596"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="31148596"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 04:56:51 -0700
+X-CSE-ConnectionGUID: bHj2Lw4wStejy5l4Gyq+AQ==
+X-CSE-MsgGUID: dIB0D4UzQgCgiz7EUB5jGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="75285451"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 07 Oct 2024 04:56:48 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxmM2-0004wy-07;
+	Mon, 07 Oct 2024 11:56:46 +0000
+Date: Mon, 7 Oct 2024 19:55:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Yang <danielyangkang@gmail.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	danielyangkang@gmail.com,
+	syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] resolve gtp possible deadlock warning
+Message-ID: <202410071937.ikrY4umF-lkp@intel.com>
+References: <20241005045411.118720-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- 'Alan Stern' <stern@rowland.harvard.edu>,
- David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- "maged.michael@gmail.com" <maged.michael@gmail.com>,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
-References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
- <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
- <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
- <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwDXGjIFzANnlL5hAg--.48334S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF17CF4xGFy7Ww4UtrWxXrb_yoWDXFg_ur
-	yFyF9rCw4rX3Wktr4YqF13Z34agFZruw1xZrWkGr4Sv345GwsxuryDXr92vw1fXF4qvFnx
-	GryxWw17A34qvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jxCz
-	tUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241005045411.118720-1-danielyangkang@gmail.com>
+
+Hi Daniel,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.12-rc2 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Yang/resolve-gtp-possible-deadlock-warning/20241005-125510
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241005045411.118720-1-danielyangkang%40gmail.com
+patch subject: [PATCH v2] resolve gtp possible deadlock warning
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241007/202410071937.ikrY4umF-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410071937.ikrY4umF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410071937.ikrY4umF-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> net/smc/af_smc.c:22:9: warning: "pr_fmt" redefined
+      22 | #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+         |         ^~~~~~
+   In file included from include/linux/kernel.h:31,
+                    from include/linux/uio.h:8,
+                    from include/linux/socket.h:8,
+                    from net/smc/af_smc.c:20:
+   include/linux/printk.h:380:9: note: this is the location of the previous definition
+     380 | #define pr_fmt(fmt) fmt
+         |         ^~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
+vim +/pr_fmt +22 net/smc/af_smc.c
 
-Am 10/3/2024 um 3:23 PM schrieb Mathieu Desnoyers:
-> What _does_ work however are the following two approaches:
-> 
-> 1) Perform the equality check on the original variables, creating
-> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
-> rest of their use, therefore making sure the pointer dereference
-> are not derived from versions of the variables which were compared
-> with another pointer. (as suggested by Boqun)
+ac7138746e1413 Ursula Braun 2017-01-09 @22  #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+ac7138746e1413 Ursula Braun 2017-01-09  23  
 
-This should not be guaranteed to work, because right after the 
-comparison the compiler can do b=a, then it doesn't matter how much you 
-hide afterwards.
-
-However it might work if you escape the addresses of a and b first, in 
-which case the compiler will not do b=a anymore, but it might force the 
-compiler to put a and b on the stack, which has some performance impact.
-
-> 
-> 2) Perform the equality check on the versions resulting of hiding
-> both variables, making sure those versions of the variables are
-> not dereferenced afterwards. (as suggested by Linus)
-> 
-
-
-jonas
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
