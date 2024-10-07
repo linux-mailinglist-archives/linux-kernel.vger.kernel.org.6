@@ -1,257 +1,119 @@
-Return-Path: <linux-kernel+bounces-353127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C168992924
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB3C992928
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB291C22CCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161EA281A00
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB491B7905;
-	Mon,  7 Oct 2024 10:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226221B9854;
+	Mon,  7 Oct 2024 10:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VZtdbv0a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xCmzBC/d"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2A51B655B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE60C1B85E7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728296703; cv=none; b=toq3jrR+Yrk+ufPPM6+lyhaeoKQewOEfRHLJM/LQT6MLA/+kFR6CMahdYgsLiQZmc1/V6ypTLtNnl4u3hiz0G6uRaNTJD59W6MoTPzvrQa92oB8WSF4hTXM5j899QIbzLkq2w2g0Q0bGCyvrdfbbP8QhRiHjWdUEB9q+E0yXB9Y=
+	t=1728296752; cv=none; b=ReRsWkVJ3zwus7HGRuqzkhLy2ojv+UzvBApRPCpUqoaTWRnv859InzrUSxH37qJv40tawxWgBbTp/krzrxavMr82OLgomAwTATMcosLgoJjJP3RqralMTFLNGV03Vdw3Qoc8DbTfDkdsY1AQNB8TfD/AHoIuS9FvRvLEnZEs9NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728296703; c=relaxed/simple;
-	bh=fkAzh6HKnTVkN9u8oxgAlrLIgYJMbNBUPxpZVbaBnho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUA1ImqOxMGnbfgyYYQ+OpTpAoCriupOGsO8AqG8cVgCjqVyX1WXXOu4NtI2WNb/Nq8zz9cZwwkaSw+OpcHOzrQUt/QnwOJ0iu2TV0rUInNNWs9dFlQe9Jb6KSK9lC+66r0knap1PmYaipFz+Ig1d+C2xu0VAuFuqYwf4gPcwxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VZtdbv0a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728296700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OqsZjaaBaUUsDXvs4mHnhWXU90gxYxc87aEmageaD9o=;
-	b=VZtdbv0aANbED2JKhq2iUBkVbHlZ6c+BY2d597QRYcxF2AE15ub40XLq3e2GRCB59zLkma
-	JJ8jZPfFtjFkM2PLZKKVBIEYyKdcqmEoVNzHj2p0PRZtQllrykhvM1l0nCw+GSmrmMCQfO
-	eLRbeKV7P3N0E22p9afMn3448y2qCYM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-465-GdH0VAH9Oryut7iuMdjDZQ-1; Mon, 07 Oct 2024 06:24:59 -0400
-X-MC-Unique: GdH0VAH9Oryut7iuMdjDZQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so37863505e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:24:59 -0700 (PDT)
+	s=arc-20240116; t=1728296752; c=relaxed/simple;
+	bh=KMvUNyTATbdVfIldS1AebWbXq6+gazugkjCVLIYZIsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e0UrtY4dJZG3YkKo5J1M4gskwz39BParvfXbumQm01XAfKva2WNi4jmK/sWr1C/MVFwhaodCByB4zmiCYpomGZIgc9BtCwybLvksSzjUR4adW3Or4IRNCkbWPorcrgyX4ZoQZbQV48nWVUNNoIwuL9tkGY02ezURhM1tmxi3ucw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xCmzBC/d; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso41480831fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728296749; x=1728901549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tq4Mh1/pERBmTxuuNnLyUAvp7YHaFtdyt/qPZp7mNMc=;
+        b=xCmzBC/diZ4CXoZCeGyPe5DFjaC6fgHtdY+ghu5yNzbyrq/dA3jfMwT1VeT6Yrwn+Q
+         AVErs/flE785iQcLeD6bhLIjt2QqLcdcir4cZSq38RqPUipn+HQ520o2PNGjMEJQf31l
+         6kr98SkQmhfd5c/+9KENbKhTJh2pAauI+hdhhVLmBfBA/RPuA6NhAz5nS674FR7gAYks
+         hHayTO5L/sPUoLSwawcCdm8jnh/lLHZgC+4UUPm4EwVr+XEpj6qWk0HZh8Kf1k1ZSWvb
+         OOC91U8IHBr9AbkmEUtI+0PIfP2qU2jBYPVD0x3V1T5H28LRgYxQfGBOd6iUU3t8IQcK
+         hn7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728296698; x=1728901498;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OqsZjaaBaUUsDXvs4mHnhWXU90gxYxc87aEmageaD9o=;
-        b=MtCND1YKrIsu19E63R/z+exXqw1cVFAfqbHsD+zKtLo2qgMN7QT5G6EvdSkkpdumaS
-         CIUDFN6sPjHo+P90msZcQkmN48cjc8Fdwi7yqgrkEHYL6EW0pEdPDGrlnITrMS8XetOi
-         ZasAWxTFig3AA4dwud0CG7Ggp0J9eqvkhNRw/ym5hIv1Hy1lSguDLXzonlxV2d8qwIE4
-         45Nrq0ac03TjB1YqKw385F8nNzImS1Arv1CuCuu8uM8yDGUD15Q0ULk11JeKO18k8t+b
-         p/pSjJXEkflScLUuhIXj5D9K+HZT4X7slGDl6SrKzeWyPRDxu0MQS4LCbcy5o39TKSgr
-         Ni5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqVGQBRNh8SOawAw/fqeEwJwnsbV2loJQAICgw/mCUFSGwRJJn9hrUDOIyYlcO7uFF6ifjmSZf1UhYBnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8CzfoYZ7KRlN0kcztgXQ0gpZJ4tfW0DfqyL1MUUBVlq3etiLh
-	GCqSi98dqwwIypAGQHPCFnTJltCFoB/dtPLcR4jBlJZT6NtXqwMMhuIV1CcSmPqqHmyWhSFNugh
-	9RzUNSPfb4bg1YRvDoZs8vsVGgwDlFBCUlchavMviLHJarw47oQC6LEaDelM4Wg==
-X-Received: by 2002:a05:600c:1e26:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42f9210c3d1mr13493545e9.12.1728296698241;
-        Mon, 07 Oct 2024 03:24:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkP+jiCh5p6yhuunhbY+WDtBNvwCLEabBxZDiquvMZ1w1+g+/pjtLs6yQ7Cn6elaAxAQq1bg==
-X-Received: by 2002:a05:600c:1e26:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42f9210c3d1mr13493285e9.12.1728296697805;
-        Mon, 07 Oct 2024 03:24:57 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c725:8700:77c7:bde:9446:8d34? (p200300cbc725870077c70bde94468d34.dip0.t-ipconnect.de. [2003:cb:c725:8700:77c7:bde:9446:8d34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b44374sm87917245e9.30.2024.10.07.03.24.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 03:24:57 -0700 (PDT)
-Message-ID: <04c4314e-7958-47bd-8281-23c3e35fc10e@redhat.com>
-Date: Mon, 7 Oct 2024 12:24:56 +0200
+        d=1e100.net; s=20230601; t=1728296749; x=1728901549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tq4Mh1/pERBmTxuuNnLyUAvp7YHaFtdyt/qPZp7mNMc=;
+        b=Nvp9gcUqugr1S92y+0Nkn3LDeWW6zHTKvkLYLtoDvhAM8SYnKOsHod0uGGZ/IkhVG9
+         JWzkIb5L7somwMyEYf3vJb1kv7nvwq8NYuG8xY6jsLli4gciW7es7Px9cv85SdZ171hb
+         4B7rb9PK6RiCedjzr4utzDojDoBSL9GU2tEY8hhZXVCxiInvti1m2X8Xm6ugTFVKHqmq
+         uMvfQ8AhsOjMQxztwIqlaF3fDhqTWfUrQk488C7h1IdaBjHvBmi20Myyu5uO8JrWrvYE
+         mv+bGyd5VjJtJjAMQERGl2pG4OWduJy+2C3d8U4p8LrakwIh8xLbrqx79jOh7wXoyiju
+         PpOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo7831IbG8gi3X2luT/QRfPEHW7OZVynIhk0HhRr0TGC1wve+6sPAp6L7mYEyJOavyZ1o/kkq5dH58UUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXDuL/i6EDCizCPNnyHZsW9iO88OcWzZUGt/AeRXBS7IKENkKG
+	bmh02RRg3PgWwjHtPModpTPhrOK9iid+kxBnbzayqqIQuYyOzvMHcKSG/Uu8O7kkYkoOakGmTep
+	ixfNU2Iszw00eqd2vYQKDmjxvtsX+bDm+DrT5jPxw7HUEMqZ7
+X-Google-Smtp-Source: AGHT+IGHK5m0lHQ9EY3lI1Ifuto3R7Qpi2V9xbBas8nUaP3hexdv7yue5PupjkQ8KMbRjRKMFmQZZ/ci60VJuVAXnXQ=
+X-Received: by 2002:a05:651c:1548:b0:2fa:cf40:7335 with SMTP id
+ 38308e7fff4ca-2faf3c28d38mr49821001fa.19.1728296748894; Mon, 07 Oct 2024
+ 03:25:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 06/10] mm/mshare: Add vm flag for shared PTEs
-To: James Houghton <jthoughton@google.com>,
- Anthony Yznaga <anthony.yznaga@oracle.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com,
- viro@zeniv.linux.org.uk, khalid@kernel.org, andreyknvl@gmail.com,
- dave.hansen@intel.com, luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
- ebiederm@xmission.com, catalin.marinas@arm.com, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org,
- rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com,
- pcc@google.com, neilb@suse.de, maz@kernel.org
-References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
- <20240903232241.43995-7-anthony.yznaga@oracle.com>
- <CADrL8HV51t44EBKFwXoT-A48miq2TT7w1yjSUFo6uc5WDN=z9A@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CADrL8HV51t44EBKFwXoT-A48miq2TT7w1yjSUFo6uc5WDN=z9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <ZwNwXF2MqPpHvzqW@liu>
+In-Reply-To: <ZwNwXF2MqPpHvzqW@liu>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 7 Oct 2024 12:25:38 +0200
+Message-ID: <CACRpkdZwmjerZSL+Qxc1_M3ywGPRJAYJCFX7_dfEknDiKtuP8w@mail.gmail.com>
+Subject: Re: [PATCH] ARM/mm: Fix stack recursion caused by KASAN
+To: Melon Liu <melon1335@163.com>
+Cc: linux@armlinux.org.uk, lecopzer.chen@mediatek.com, 
+	linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04.09.24 01:40, James Houghton wrote:
-> On Tue, Sep 3, 2024 at 4:23 PM Anthony Yznaga <anthony.yznaga@oracle.com> wrote:
->>
->> From: Khalid Aziz <khalid@kernel.org>
->>
->> Add a bit to vm_flags to indicate a vma shares PTEs with others. Add
->> a function to determine if a vma shares PTEs by checking this flag.
->> This is to be used to find the shared page table entries on page fault
->> for vmas sharing PTEs.
->>
->> Signed-off-by: Khalid Aziz <khalid@kernel.org>
->> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
->> ---
->>   include/linux/mm.h             | 7 +++++++
->>   include/trace/events/mmflags.h | 3 +++
->>   mm/internal.h                  | 5 +++++
->>   3 files changed, 15 insertions(+)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 6549d0979b28..3aa0b3322284 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -413,6 +413,13 @@ extern unsigned int kobjsize(const void *objp);
->>   #define VM_DROPPABLE           VM_NONE
->>   #endif
->>
->> +#ifdef CONFIG_64BIT
->> +#define VM_SHARED_PT_BIT       41
->> +#define VM_SHARED_PT           BIT(VM_SHARED_PT_BIT)
->> +#else
->> +#define VM_SHARED_PT           VM_NONE
->> +#endif
->> +
->>   #ifdef CONFIG_64BIT
->>   /* VM is sealed, in vm_flags */
->>   #define VM_SEALED      _BITUL(63)
->> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
->> index b63d211bd141..e1ae1e60d086 100644
->> --- a/include/trace/events/mmflags.h
->> +++ b/include/trace/events/mmflags.h
->> @@ -167,8 +167,10 @@ IF_HAVE_PG_ARCH_X(arch_3)
->>
->>   #ifdef CONFIG_64BIT
->>   # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
->> +# define IF_HAVE_VM_SHARED_PT(flag, name) {flag, name},
->>   #else
->>   # define IF_HAVE_VM_DROPPABLE(flag, name)
->> +# define IF_HAVE_VM_SHARED_PT(flag, name)
->>   #endif
->>
->>   #define __def_vmaflag_names                                            \
->> @@ -204,6 +206,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )               \
->>          {VM_HUGEPAGE,                   "hugepage"      },              \
->>          {VM_NOHUGEPAGE,                 "nohugepage"    },              \
->>   IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,     "droppable"     )               \
->> +IF_HAVE_VM_SHARED_PT(VM_SHARED_PT,     "sharedpt"      )               \
->>          {VM_MERGEABLE,                  "mergeable"     }               \
->>
->>   #define show_vma_flags(flags)                                          \
->> diff --git a/mm/internal.h b/mm/internal.h
->> index b4d86436565b..8005d5956b6e 100644
->> --- a/mm/internal.h
->> +++ b/mm/internal.h
->> @@ -1578,4 +1578,9 @@ void unlink_file_vma_batch_init(struct unlink_vma_file_batch *);
->>   void unlink_file_vma_batch_add(struct unlink_vma_file_batch *, struct vm_area_struct *);
->>   void unlink_file_vma_batch_final(struct unlink_vma_file_batch *);
->>
-> 
-> Hi Anthony,
-> 
-> I'm really excited to see this series on the mailing list again! :) I
-> won't have time to review this series in too much detail, but I hope
-> something like it gets merged eventually.
-> 
->> +static inline bool vma_is_shared(const struct vm_area_struct *vma)
->> +{
->> +       return VM_SHARED_PT && (vma->vm_flags & VM_SHARED_PT);
->> +}
-> 
-> Tiny comment - I find vma_is_shared() to be a bit of a confusing name,
-> especially given how vma_is_shared_maywrite() is defined. (Sorry if
-> this has already been discussed before.)
-> 
-> How about vma_is_shared_pt()?
+On Mon, Oct 7, 2024 at 7:25=E2=80=AFAM Melon Liu <melon1335@163.com> wrote:
 
-vma_is_mshare() ? ;)
+> When accessing the KASAN shadow area corresponding to the task stack
+> which is in vmalloc space, the stack recursion would occur if the area`s
+> page tables are unpopulated.
+>
+> Calltrace:
+>  ...
+>  __dabt_svc+0x4c/0x80
+>  __asan_load4+0x30/0x88
+>  do_translation_fault+0x2c/0x110
+>  do_DataAbort+0x4c/0xec
+>  __dabt_svc+0x4c/0x80
+>  __asan_load4+0x30/0x88
+>  do_translation_fault+0x2c/0x110
+>  do_DataAbort+0x4c/0xec
+>  __dabt_svc+0x4c/0x80
+>  sched_setscheduler_nocheck+0x60/0x158
+>  kthread+0xec/0x198
+>  ret_from_fork+0x14/0x28
+>
+> Fixes: 565cbaad83d ("ARM: 9202/1: kasan: support CONFIG_KASAN_VMALLOC")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Melon Liu <melon1335@163.org>
 
-The whole "shared PT / shared PTE" is a bit misleading IMHO and a bit 
-too dominant in the series. Yes, we're sharing PTEs/page tables, but the 
-main point is that a single mshare VMA might cover multiple different 
-VMAs (in a different process).
+Patch looks correct to me:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-I would describe mshare VMAs as being something that shares page tables 
-with another MM, BUT, also that the VMA is a container and what exactly 
-the *actual* VMAs in there are (including holes), only the owner knows.
+Can you put the patch into Russell's patch tracker after some
+time for review, if no issues are found, please?
 
-E.g., is_vm_hugetlb_page() might be *false* for an mshare VMA, but there 
-might be hugetlb folios mapped into the page tables, described by a 
-is_vm_hugetlb_page() VMA in the owner MM.
-
-So again, it's not just "sharing page tables".
-
--- 
-Cheers,
-
-David / dhildenb
-
+Yours,
+Linus Walleij
 
