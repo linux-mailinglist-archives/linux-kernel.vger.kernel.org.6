@@ -1,169 +1,220 @@
-Return-Path: <linux-kernel+bounces-353299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00C5992BC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE1E992BC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E3BB254DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECA32846B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DD41D279C;
-	Mon,  7 Oct 2024 12:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980861D1E65;
+	Mon,  7 Oct 2024 12:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LKTlZf+g"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qbRijNsg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1B21C173D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF851D26EA;
+	Mon,  7 Oct 2024 12:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728304250; cv=none; b=NW8JxdberJoV5e2dpdPNukqIamsIL2ytLKY82BSHLqJ191DYNk45k64u1bACuiZqe78asCJmouLa+X2M1qVt/MUg9rfbij8GFfr40dshSXtVJoOvBeJpHDWfa9MYm1l918ScO4ariqPSFYdhE4ChvKMG5a353036cqDahh2ODqE=
+	t=1728304273; cv=none; b=cEnu55mVaTdpdC0lstmz3qj2o5n9RfcLwfYT0Uzcvgt15kzAqmvckjcZbV7GbvsNntk4gRB4GRwueeXIsMpgUyeAmhKahYdpJ/cpUBHhck9f8uRdgxuWN3ND2Gqr6TS+eBHPMuPJyx/RuhyG4CkdMhzWEKyC1ZULR+rR/2WN/IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728304250; c=relaxed/simple;
-	bh=tKw3Dv+ep5qgy/wCHKKBNbMDkWQxFHKiRzK1Yy/LhmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BS60B+Fngx8fzqEHn4qnaczuPjgq+6SXnmfvBbQ9VTD8xC4vKwCFO4lsEixORlnHLT7ebA/OIi+zrfsKt00XCEdzUBwIATRluo06CjSgGn7Ab9JWvozsSja4WUM/JZs9HWtw5eYuDe6uRPh8/6JIK8kEj5Jqzb6ypS78UMOPrVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LKTlZf+g; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc810ce73so2310292f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728304247; x=1728909047; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xcmrgt5t2c8dd5WZNO1q1kgJtgx+WDNB9aW9p8iaKAk=;
-        b=LKTlZf+goFWihB5wooFjO1+fyY+EUEvnNyNAwG8+DbZOzC0ByE5QxAxbFNirCsEjyQ
-         cgIcHtVfRvOG9bjfDAWfEVWrUlTIrAyF6brQzLSoAMMu+m7gpodrFsijjrY9Uf5OULG8
-         sDwmoVJpYJw96UVBAS2fwDaQtq2y4rprTmQmJhY6Xd/z7jxYripCSKKkZXRXdvwan5rs
-         bC98iRTQGvI0E5hEP2BsDfMQmrYsKxY0lH06RT8foVB8FiayDEr+Yd5UKo4QuTaXtQPu
-         xCUMt9K03wZUNOxNsJRw1vtDgb32EV+VuQVYtVePKIqBjpXrQn1tKXGsg2Rr6n8+IUsE
-         /kZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728304247; x=1728909047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xcmrgt5t2c8dd5WZNO1q1kgJtgx+WDNB9aW9p8iaKAk=;
-        b=LKSzZDEtQduzELzgNsFMbNX3OK1FiIWyynPcUiHLcv0/rPg8FI4HWgUgzy3cOBVI3o
-         T6XBowCNkVp6L5shCRpqeUqB08Su0Yp1mwKbNrHfOVyI435gLPcsna7WoJQxtXsxunUQ
-         f+lgGZIineJrfBCafWU5q6Yw7PqykK5SVzk/Dd44+DEwQAXSg98pBPz+E0ckWuptZJ9q
-         bBea87pnzMAfXyN4BNvTWSYUEzrzLM3zi3vOX9n5KWrLcXYVpMnbzt5HLwvpkGyAoPtk
-         k67ymJDTfwG8E0oueUyWafKsMGq1XlkDUce+/TyF16Mao39gVFA/lad10LNHgJxLQhCJ
-         yxqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPiF1/fl43/oVVLrssxjb01poqTJmQCStgyGJzgW2zHS+8vL5aKx2CgczzptoQDEHGL22kDeq9N+U7MwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUg3cwkbBo9kYEf6wgys2oUyUFJDK6i/3TuzVqkC4sItGujNxk
-	cU8Mj0VSDEf1Rl/m0ecXIdpNMbu+i+o4dOEBgPMNPPYDobltFjMdQQVWAafzJGRjzImbn62hKfl
-	Ks+8ZggCd4PEMcsRWMfn/SzwZU3KK5l8xmj0j
-X-Google-Smtp-Source: AGHT+IFBMpJdO483BxZZC9+G+ddezT0XaEDeEeegWB3jhbC1bsRQeuU2MWK1hqJE2xTnp+m2MW/1AAxNkifpUizxODc=
-X-Received: by 2002:a5d:6d4f:0:b0:371:8dbf:8c1b with SMTP id
- ffacd0b85a97d-37d0e79149fmr5361273f8f.34.1728304246620; Mon, 07 Oct 2024
- 05:30:46 -0700 (PDT)
+	s=arc-20240116; t=1728304273; c=relaxed/simple;
+	bh=9wUq96qhcak3cnlXGxWHkWFMn4bFGMVYKm3z2MTn2i8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pbA+gsvVuRv67t+eqK1J5acqomZcudr7ZSTr0G89Ro4Vf+dmqZDfhVKKAy0Bi+yThocdWPBtVNIK+csyFODLbnKmRD8Jfw2T0/+V6PEPAxmJfrb+arMdp6YIvb5YUpG64koV97V182snTFUbpe1slP7wrR/oFh5ER1jPt6blY50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qbRijNsg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497CLN6H030926;
+	Mon, 7 Oct 2024 12:31:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=W
+	8utTWx7HwhTGjJZNK1jzsOoxc3Yj1Dzr6V2+83kobU=; b=qbRijNsgZc2ecJ0FR
+	zS3lb/F363SHCKNWJShq76VzqHaAH7GR4/FK0oIxEIpNCAS42A9/N6vrXgwl/m4d
+	V9zLbGKRIY3SbnXRCXN+dXa5Rds4Vkzr00qyIZy8Hmem0cTa2E6mjfBbPS1/DBXM
+	UyyUTjynjkLkzO2Ab6KBMvSQYSpXR93jD2Xk4yrXmfK/yRE4ZxyN60ETKDIhCm6c
+	xI/LOciVNsoMac9hdDWmGBeAuAlm3aKLvc8nnGrv0kijZZEYO2Jv2pcgH33dq04s
+	6bPwn+eA7ovQzOe4JggeJbaIHwP0w1hgotWS4zyHK76Yzz/05i0KePmFLr/rnQCU
+	t9ZEg==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424fjsr1d9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 12:31:10 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 497AXLgT013838;
+	Mon, 7 Oct 2024 12:31:09 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 423fsrxry7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 12:31:09 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 497CV6A857409920
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Oct 2024 12:31:06 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D18A2004B;
+	Mon,  7 Oct 2024 12:31:06 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF9B420040;
+	Mon,  7 Oct 2024 12:31:05 +0000 (GMT)
+Received: from [9.171.93.242] (unknown [9.171.93.242])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  7 Oct 2024 12:31:05 +0000 (GMT)
+Message-ID: <6ea3cfb4-47ab-478e-b5f0-0a02ec28b37d@linux.ibm.com>
+Date: Mon, 7 Oct 2024 14:31:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004155247.2210469-1-gary@garyguo.net> <20241004155247.2210469-2-gary@garyguo.net>
- <2024100505-aftermath-glue-7e61@gregkh> <20241005143106.1196fd3a.gary@garyguo.net>
- <20241005152605.6d7d20e1.gary@garyguo.net>
-In-Reply-To: <20241005152605.6d7d20e1.gary@garyguo.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 7 Oct 2024 14:30:34 +0200
-Message-ID: <CAH5fLgj6SPAM0KM2pF1v0gUCJA875VvWxddTCQXu7h+t1tDjfw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rust: implement `kernel::sync::Refcount`
-To: Gary Guo <gary@garyguo.net>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] s390/uv: Retrieve UV secrets support
+To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20241002160532.2425734-1-seiden@linux.ibm.com>
+ <20241002160532.2425734-3-seiden@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20241002160532.2425734-3-seiden@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: wgZ84dG3sJNVx4Hnr2_eVwbd6OnixVzk
+X-Proofpoint-GUID: wgZ84dG3sJNVx4Hnr2_eVwbd6OnixVzk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-07_03,2024-10-07_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=693 malwarescore=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070088
 
-On Sat, Oct 5, 2024 at 4:26=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
->
-> On Sat, 5 Oct 2024 14:31:06 +0100
-> Gary Guo <gary@garyguo.net> wrote:
->
-> > On Sat, 5 Oct 2024 09:40:53 +0200
-> > Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > > On Fri, Oct 04, 2024 at 04:52:22PM +0100, Gary Guo wrote:
-> > > > This is a wrapping layer of `include/linux/refcount.h`. Currently o=
-nly
-> > > > the most basic operations (read/set/inc/dec/dec_and_test) are imple=
-mented,
-> > > > additional methods can be implemented when they are needed.
-> > > >
-> > > > Currently the kernel refcount has already been used in `Arc`, howev=
-er it
-> > > > calls into FFI directly.
-> > > >
-> > > > Cc: Will Deacon <will@kernel.org>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > > Signed-off-by: Gary Guo <gary@garyguo.net>
-> > > > ---
-> > > >  rust/helpers/refcount.c      | 15 ++++++
-> > > >  rust/kernel/sync.rs          |  2 +
-> > > >  rust/kernel/sync/refcount.rs | 94 ++++++++++++++++++++++++++++++++=
-++++
-> > > >  3 files changed, 111 insertions(+)
-> > > >  create mode 100644 rust/kernel/sync/refcount.rs
-> > > >
-> > > > diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-> > > > index f47afc148ec3..39649443426b 100644
-> > > > --- a/rust/helpers/refcount.c
-> > > > +++ b/rust/helpers/refcount.c
-> > > > @@ -8,11 +8,26 @@ refcount_t rust_helper_REFCOUNT_INIT(int n)
-> > > >   return (refcount_t)REFCOUNT_INIT(n);
-> > > >  }
-> > > >
-> > > > +unsigned int rust_helper_refcount_read(refcount_t *r)
-> > > > +{
-> > > > + return refcount_read(r);
-> > > > +}
-> > >
-> > > Reading a refcount is almost always a wrong thing to do (it can chang=
-e
-> > > right after you read it), and I don't see any of the later patches in
-> > > this series use this call, so can you just drop this?
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > I originally introduced this thinking I can replace Andreas's atomic
-> > 2->0 operation with a read + set, but ended up couldn't do it.
-> >
-> > The refcount read is still useful to determine if the current value is
-> > 1 -- in fact, `Arc::into_unique_or_drop` could use this rather than
-> > decrementing the refcount and then incrementing it again (just doing a
-> > refcount read would be much better codegen-wise than the current
-> > behaviour). I'll probably make this change in the next version of the
-> > series.
->
-> Actually `into_unique_or_drop` can't use this because it needs to avoid
-> running destructor when it races with other threads. The semantics for
-> that function is better reflected with `refcount_dec_not_one`, which
-> I'll introduce in v2, and I'll drop `read` in v2.
+On 10/2/24 6:05 PM, Steffen Eiden wrote:
+> Provide a kernel API to retrieve secrets from the UV secret store.
+> Add two new functions:
+> * `uv_get_secret_metadata` - get metadata for a given secret identifier
+> * `uv_retrieve_secret` - get the secret value for the secret index
+> 
+> With those two functions one can extract the secret for a given secret
+> id, if the secret is retrievable.
+> 
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+>   arch/s390/include/asm/uv.h | 131 ++++++++++++++++++++++++++++++++++++-
+>   arch/s390/kernel/uv.c      | 127 ++++++++++++++++++++++++++++++++++-
+>   2 files changed, 256 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+> index 94ff58336e8e..aef333aaaef4 100644
+> --- a/arch/s390/include/asm/uv.h
+> +++ b/arch/s390/include/asm/uv.h
+> @@ -62,6 +62,7 @@
+>   #define UVC_CMD_ADD_SECRET		0x1031
+>   #define UVC_CMD_LIST_SECRETS		0x1033
+>   #define UVC_CMD_LOCK_SECRETS		0x1034
+> +#define UVC_CMD_RETR_SECRET		0x1035
+>   
+>   /* Bits in installed uv calls */
+>   enum uv_cmds_inst {
+> @@ -95,6 +96,7 @@ enum uv_cmds_inst {
+>   	BIT_UVC_CMD_ADD_SECRET = 29,
+>   	BIT_UVC_CMD_LIST_SECRETS = 30,
+>   	BIT_UVC_CMD_LOCK_SECRETS = 31,
+> +	BIT_UVC_CMD_RETR_SECRETS = 33,
 
-Ah, I did not know that C had a refcount_dec_not_one. Yeah, that's
-exactly what into_unique_or_drop does.
+One is SECRET and the other is SECRET_S_.
+I know that you coded this according to spec, but sometimes we need to 
+fix the spec. I've contacted the spec authors to fix it on their end if 
+possible.
 
-Though I don't know if the cmpxchg loop is really more efficient than
-just doing an infallible decrement like I do right now?
+[...]
 
-Alice
+> + * Do the actual search for `uv_get_secret_metadata`
+> + *
+> + * Context: might sleep
+> + */
+> +static int find_secret(const u8 secret_id[UV_SECRET_ID_LEN],
+> +		       struct uv_secret_list *list,
+> +		       struct uv_secret_list_item_hdr *secret)
+> +{
+> +	u16 start_idx = 0;
+> +	u16 list_rc;
+> +	int ret;
+> +
+> +	do {
+> +		uv_list_secrets((u8 *)list, start_idx, &list_rc, NULL);
+> +		if (!(list_rc == UVC_RC_EXECUTED || list_rc == UVC_RC_MORE_DATA)) {
+
+Inverting this conditional would get rid of 3 characters.
+Did you chose to implement it like this on purpose?
+
+> +			if (list_rc == UVC_RC_INV_CMD)
+> +				return -ENODEV;
+> +			else
+> +				return -EIO;
+> +		}
+> +		ret = find_secret_in_page(secret_id, list, secret);
+> +		if (ret == 0)
+> +			return ret;
+> +		start_idx = list->next_secret_idx;
+> +	} while (list_rc == UVC_RC_MORE_DATA && start_idx < list->next_secret_idx);
+> +
+> +	return -ENOENT;
+
+
 
