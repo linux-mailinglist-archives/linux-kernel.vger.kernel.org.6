@@ -1,86 +1,71 @@
-Return-Path: <linux-kernel+bounces-354300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C393993B7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E9D993B8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67281F22A07
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A641F241B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F5919308E;
-	Mon,  7 Oct 2024 23:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A817B20E3;
+	Tue,  8 Oct 2024 00:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="CXFkQmkg"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="H/5b0+dH"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1691925A5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 23:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13B101C8;
+	Tue,  8 Oct 2024 00:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345501; cv=none; b=YZ2XLbbxknjgTvE8QVss6mZ85lCsy2rEwPyZhfhUmJT4FOJwhlWwhdVAFvLiGzAToVwcuyiEdD3aPO5sOcZ4Ii4pLAzzYIGD11HDmKUhdFP/sBzwZNMzVarXo45xCO9mrkI2kf1C6AFWpG8dkTA6vvs4nyNH/wyK+3N7BLeNOnk=
+	t=1728345826; cv=none; b=s/xO66CsI5nR6786FE29ICr0uMxVf2JYqVSaUyaglwwHhM2Pk6LygwMhERQPzYQPG+fRH3mRH3cxfSzGtJuFu4fLcwWG4yk21Vy+iVTlCBXCTxe0Q4xa5EBtQJDzmR/jGmE1fAdgjqeGnPTVVdc1d1cBwMo1OYB0xU6aI8tPc6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345501; c=relaxed/simple;
-	bh=2H5IR/qIGLs8u9dBURGCbFaUfuvrnD2OVTq2XdDUbt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jy3t4peAvW6Wn28/jeN9dkzIP8mjBQoaUBDFdE/yOh4vdFSYo8LYULoWkwFc3GM3RroJNbKucY+hXZ4/EycEeK9oCuc+2VNhN0IMnLM6p+4REPQNSpIonVR3BWpVBtWaL1jkvLwmIFD+cr2Tpp4Hkcy533Ouw/XswR5rZuqMyGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=CXFkQmkg; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a9ad8a7c63so502157385a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 16:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728345498; x=1728950298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WqS3Wd6VO/CBP7azwUKnJ/dYiC5Cl3RJfl/ueyntYK8=;
-        b=CXFkQmkg5nsVt8REcT5FjeFUPHqFMHjnNpGj6aDpKJXYocOufw5+O2e/uRbHkNaLRS
-         7LyC6558gtbTurVg3C+mq8Cu1CqCpjBb6ceujC9e96yk37GwI1t3Y6W70Z3SrYR6tr3I
-         DC1NuCiNA5r7dwtTxxqiQA/URLAVDPB8p9a278943TO2I94jYWUqcYQDBGt6Y2Ebjg8C
-         eCsUPChVFIahlMD7Eri+AEsjJPd63b16Mmgud6Q9/y1yniV7LP2w+0bYO3cEX1ub7yH2
-         chTqUy6lW63Iqe2yNvcRp4y2qIglKP6067fAEtexwB0+OUIbjCJak+2yM51LN8bPrm59
-         +9AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728345498; x=1728950298;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WqS3Wd6VO/CBP7azwUKnJ/dYiC5Cl3RJfl/ueyntYK8=;
-        b=kciAE7rPZHN45/LkcTvHfpVgcLfYgSPrp2eeFewWRWtRpzBIEYKQe7nL6SB3VhvGTc
-         4XiBt4eTMoCS5T0iUS33V7hKxfBkFuL3j05aoWRsqJzQBKhbcDEpzA/ITdsDmpJ2lrM9
-         um7+7OgaYYC73esHHve5QCjkYYG0YkF8y8+qcBT4BTFExtRslM2S2BcG2pZH8a1ePg/O
-         AWaQji8tpIgIksK2Dutd0ayjUARKYM6fO8DHxlpl/dfEoXRrK+yUe8zJ5cox6xJ8NVnN
-         h4OFU1RVAkPkM/sw5Im5mJsXU43mCSW4+v0O7s83e9taDc3AOrBW7nWZpZKEoT5/3ATO
-         ndyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVz0kTKUpSIo0TTbFPWSUUE/uPk3NzXgtwUdXumtewl/3p/iuCG5Ry3Yv9KDTv36xSteXUF77ayCiwnNdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIhYQe9tiy6yvHVYGKjlPwMCl184Qnxhgwn86+pWDZhofWzbfa
-	A4xxz9DCwpEjp8brwB3FlRrqgTDRf1VmZU2tj3nQiCLVn3QVg/hlWf2wymvwoeU=
-X-Google-Smtp-Source: AGHT+IE13yA8WspYNMljzyW9GkMAtPmwobjLtcEu5tAo4EuOuiegVnRe8GiuZbDxB1gkpTFhnIWocg==
-X-Received: by 2002:a05:620a:4611:b0:7a9:a8c5:d492 with SMTP id af79cd13be357-7ae6f44ccb2mr2140783185a.34.1728345498500;
-        Mon, 07 Oct 2024 16:58:18 -0700 (PDT)
-Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7561e610sm303906985a.21.2024.10.07.16.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 16:58:18 -0700 (PDT)
-From: Jonathan Marek <jonathan@marek.ca>
-To: linux-arm-msm@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-sound@vger.kernel.org (open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ASoC: codecs: wcd938x: fix wcd938x_get_swr_port
-Date: Mon,  7 Oct 2024 19:54:09 -0400
-Message-ID: <20241007235418.2257-1-jonathan@marek.ca>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1728345826; c=relaxed/simple;
+	bh=gkroZQ+37GTyJM/uyjWAwX/F+a6aQH4+nH6JOA8RU4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kU+7GPEO5QJ0cvV62n+zl4Y91f8QYvYwdmzTOUHibOpeLOeMjtCgqi1HB+q6rkawKRkL9S/eovF0Kpn+eOYwq5vnQn/yZibwmxFmRUMi+cnDQHsSV/lFzGQApojeZgHoaLlgrnQPcVgY/Z2NBMkX5fyIQ8Ji2YpRl9gTJ2Z7BRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=H/5b0+dH; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 994ADC0000D4;
+	Mon,  7 Oct 2024 16:54:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 994ADC0000D4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1728345254;
+	bh=gkroZQ+37GTyJM/uyjWAwX/F+a6aQH4+nH6JOA8RU4c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=H/5b0+dHo8+ZbyETrM30BF6y2TFEAQtaeoRhyKRYfAtOCSeF2WLhloEy8aDO3mMYl
+	 Z0a+pUSJEnFAPaBUKHPfDLrx4NDax5r5u9UGy7AkdtNA6Tjxy8JcYCYrrUP6K2PWhI
+	 CPH1EDgHdvMFxGsn9wugIuVYTGThp5jy5rGuCfCI=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 38B0318041CAC6;
+	Mon,  7 Oct 2024 16:54:14 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-arm-kernel@lists.infreadead.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	arm-scmi@vger.kernel.org (open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
+	linux-arm-kernel@lists.infradead.org (moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
+	justin.chen@broadcom.com,
+	opendmb@gmail.com,
+	kapil.hali@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2] firmware: arm_scmi: Give SMC transport precedence over mailbox
+Date: Mon,  7 Oct 2024 16:54:13 -0700
+Message-Id: <20241007235413.507860-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,68 +74,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Controls can share the same "portidx" value (e.g. HPHL and HPHR), this
-leads to wcd938x_get_swr_port returning incorrect state. For example,
-when trying to enable both HPHL/HPHR with amixer: after enabling HPHL,
-HPHR will appear enabled and amixer skips writing to the control.
+Broadcom STB platforms have for historical reasons included both
+"arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
+string, in that order.
 
-This could be fixed by indexing with "ch_idx" instead, but lets just get
-rid of port_enable[] and check the ch_mask value of the port instead.
+After the commit cited in the Fixes tag and with a kernel configuration
+that enables both the SMC and the Mailbox transports, we would probe
+the mailbox transport, but fail to complete since we would not have a
+mailbox driver available. With each SCMI transport being a platform
+driver with its own set of compatible strings to match, rather than an
+unique platform driver entry point, we no longer match from most
+specific to least specific. There is also no simple way for the mailbox
+driver to return -ENODEV and let another platform driver attempt
+probing. This leads to a platform with no SCMI provider, therefore all
+drivers depending upon SCMI resources are put on deferred probe forever.
 
-Fixes: e8ba1e05bdc0 ("ASoC: codecs: wcd938x: add basic controls")
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+By keeping the SMC transport objects linked first, we can let the
+platform driver match the compatible string and probe successfully with
+no adverse effects on platforms using the mailbox transport.
+
+Fixes: b53515fa177c ("firmware: arm_scmi: Make MBOX transport a standalone driver")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
- sound/soc/codecs/wcd938x.c | 9 ++++++---
- sound/soc/codecs/wcd938x.h | 1 -
- 2 files changed, 6 insertions(+), 4 deletions(-)
+Changes in v2:
 
-diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-index f2a4f3262bdbc..12c991beeca52 100644
---- a/sound/soc/codecs/wcd938x.c
-+++ b/sound/soc/codecs/wcd938x.c
-@@ -1854,14 +1854,19 @@ static int wcd938x_get_swr_port(struct snd_kcontrol *kcontrol,
- 	struct wcd938x_priv *wcd938x = snd_soc_component_get_drvdata(comp);
- 	struct wcd938x_sdw_priv *wcd;
- 	struct soc_mixer_control *mixer = (struct soc_mixer_control *)kcontrol->private_value;
-+	struct sdw_port_config *port_config;
- 	int dai_id = mixer->shift;
- 	int portidx, ch_idx = mixer->reg;
- 
- 
- 	wcd = wcd938x->sdw_priv[dai_id];
- 	portidx = wcd->ch_info[ch_idx].port_num;
-+	port_config = &wcd->port_config[portidx - 1];
- 
--	ucontrol->value.integer.value[0] = wcd->port_enable[portidx];
-+	if (port_config->ch_mask & wcd->ch_info[ch_idx].ch_mask)
-+		ucontrol->value.integer.value[0] = true;
-+	else
-+		ucontrol->value.integer.value[0] = false;
- 
- 	return 0;
- }
-@@ -1887,8 +1892,6 @@ static int wcd938x_set_swr_port(struct snd_kcontrol *kcontrol,
- 	else
- 		enable = false;
- 
--	wcd->port_enable[portidx] = enable;
--
- 	wcd938x_connect_port(wcd, portidx, ch_idx, enable);
- 
- 	return 1;
-diff --git a/sound/soc/codecs/wcd938x.h b/sound/soc/codecs/wcd938x.h
-index fb6a0e4ef3377..d4f400c50115c 100644
---- a/sound/soc/codecs/wcd938x.h
-+++ b/sound/soc/codecs/wcd938x.h
-@@ -650,7 +650,6 @@ struct wcd938x_sdw_priv {
- 	struct sdw_stream_runtime *sruntime;
- 	struct sdw_port_config port_config[WCD938X_MAX_SWR_PORTS];
- 	const struct wcd938x_sdw_ch_info *ch_info;
--	bool port_enable[WCD938X_MAX_SWR_CH_IDS];
- 	int active_ports;
- 	bool is_tx;
- 	struct wcd938x_priv *wcd938x;
+- removed downstream Change-Id
+- s/SCMI/SMC in the second paragraph
+- added details about what changed and how that affects the probing
+
+ drivers/firmware/arm_scmi/transports/Makefile | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/arm_scmi/transports/Makefile b/drivers/firmware/arm_scmi/transports/Makefile
+index 362a406f08e6..3ba3d3bee151 100644
+--- a/drivers/firmware/arm_scmi/transports/Makefile
++++ b/drivers/firmware/arm_scmi/transports/Makefile
+@@ -1,8 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-scmi_transport_mailbox-objs := mailbox.o
+-obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
++# Keep before scmi_transport_mailbox.o to allow precedence
++# while matching the compatible.
+ scmi_transport_smc-objs := smc.o
+ obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
++scmi_transport_mailbox-objs := mailbox.o
++obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
+ scmi_transport_optee-objs := optee.o
+ obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += scmi_transport_optee.o
+ scmi_transport_virtio-objs := virtio.o
 -- 
-2.45.1
+2.34.1
 
 
