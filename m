@@ -1,106 +1,181 @@
-Return-Path: <linux-kernel+bounces-353365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC06992CE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:16:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D49992D1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F681C22DAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:16:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D20B237F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF1D415D;
-	Mon,  7 Oct 2024 13:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2481D4355;
+	Mon,  7 Oct 2024 13:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pYIQO231"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ByJBoNbi"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F226A1662E4;
-	Mon,  7 Oct 2024 13:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AA81D3564;
+	Mon,  7 Oct 2024 13:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728306980; cv=none; b=g1xligSH+CSLWUiBNVRMFxtgYoUDigwvLQ4JxSH7Si5DJHF1JbX3jVRExe2L1KzScsA+BJUr3yVTjhY3JJ4y74fdjgvSZXmvuFQSDnH2NNPRp2h+VedBmWhSSwDg4xz2gv3BxJOqIj9zLxKAIf46DGwMKMFLCmBTLbfd532yyZE=
+	t=1728307300; cv=none; b=ZakoPpP8w9mmUFJfTsxdhws4nREyH8hv+dxf5uTfKmru1MqFQrdm3dI/Rf8A5wUwhyZUzU7eBRBKU/Ix8IFAaXWHkCvnj4KQGrcSPOxK227goRpoo4sduNMlkl3XtsWEln4TXREHzD+z8v5fBtpukG8ThoJ3NpMnnVF7bXzHNos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728306980; c=relaxed/simple;
-	bh=h9HMAZC5cj+kkbyIeOL1U6IwbzQtt39sN9Jp0GH/HZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRGbaLksinAfJrBtKOvUKjLilmH6EhM5uGjhq7jH45wGYhQqSPRmHCdrlMkUT9pdxmMo8lv0if/HjzP6f5Xo1lFF7YOgSem9k7ZR+bpRNDeLLBJplf5+Y3qJgXJcEZFyFhx3pEMpxZEdmyLLSuQoTHsG2YhAN/jpnHcjNHbsNJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pYIQO231; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=q3PDkjJiycoFfoOfMI+sM+elP9ldxC6SsvMw4k/Rm3I=; b=pY
-	IQO2318qRssb+4bkHP126iLiSUGK4fbIOQNvRZDJTGu4YbW747bUxXqAU03TfNSgyZBOGU6PK9Jy0
-	723eOtYtz424KiszzHTJpRoPWqIUAnx3dWA+dMtyvOMeqxsM2enWbZkhSqRZKEHxVEGxB3RaG0Owv
-	bs1BVnHAyQJloj0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sxnad-009GPl-CY; Mon, 07 Oct 2024 15:15:55 +0200
-Date: Mon, 7 Oct 2024 15:15:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, finn@kloenk.dev,
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
- PartialOrd for Ktime
-Message-ID: <f31d6f3e-e53c-4ced-920a-976ac44235e9@lunn.ch>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-2-fujita.tomonori@gmail.com>
- <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
- <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
- <CAH5fLgirPLNMXnqJBuGhpuoj+s32FAS=e3MGgpoeSbkfxxjjLQ@mail.gmail.com>
+	s=arc-20240116; t=1728307300; c=relaxed/simple;
+	bh=GcZWVVTfJwzg69gOWLZ1tRV9J8qKh5Ow9YICv8S34Jk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f3RcN05hQ5w2qslw9vMfH4X0z/qkSOcOrFJhi5OzUFE7OEezo6UoQGNWY7DUdOHEzaNG5VRD+ln1Yuzy6DN7sMAvVokWgZYNCg47uC5zTrcvL2lfIDtf6fQjoG4kNJP3L1LMUwi4rFJMfmIHjvJvwugvdp+8mEZlCIZZNdT3Uz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ByJBoNbi; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BJ1Bp022075;
+	Mon, 7 Oct 2024 15:21:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=o3k75qDX65HAMePjIurSXe
+	jJkiprmtMkSEBZxXl7gk4=; b=ByJBoNbiC81vHSeEbQZuPhG4V9O/UzA4bQq2Gt
+	ip0cqGMEIkBOxFyqL37nhftYr8UvLXufHcucoM6D4m7ZVbw8lLvApR+OTobhKphe
+	uSK5Lpm0yfgo9euLscf0UhhE3ZC17PjnuabiaK6qzIknHm3UVKyVQitT4IfuMa94
+	Jq2Zg/bzsV5q7OjfLzdlXm4zyXVI6pOYR+ACiK0m8AwMJs8JrVmyfIIWgA+QRKe2
+	LqikAYoxxGSzCRzIiOboSoJfFUTCTDNpEq7k3bWPOJbz8tWCp75DTWKLTyEo670p
+	Ou17h8qpGurwHo49Hq0E2X+H9PpuIDbQafoTqVcYyXYDP23g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f10pc4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 15:21:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9559240044;
+	Mon,  7 Oct 2024 15:19:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3740B269E13;
+	Mon,  7 Oct 2024 15:16:41 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 15:16:41 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 15:16:40 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v10 0/7] Introduction of a remoteproc tee to load signed firmware
+Date: Mon, 7 Oct 2024 15:16:13 +0200
+Message-ID: <20241007131620.2090104-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgirPLNMXnqJBuGhpuoj+s32FAS=e3MGgpoeSbkfxxjjLQ@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Oct 07, 2024 at 10:41:23AM +0200, Alice Ryhl wrote:
-> On Mon, Oct 7, 2024 at 7:37 AM FUJITA Tomonori
-> <fujita.tomonori@gmail.com> wrote:
-> >
-> > On Sun, 06 Oct 2024 12:28:59 +0200
-> > Fiona Behrens <finn@kloenk.dev> wrote:
-> >
-> > >> Implement PartialEq and PartialOrd trait for Ktime by using C's
-> > >> ktime_compare function so two Ktime instances can be compared to
-> > >> determine whether a timeout is met or not.
-> > >
-> > > Why is this only PartialEq/PartialOrd? Could we either document why or implement Eq/Ord as well?
-> >
-> > Because what we need to do is comparing two Ktime instances so we
-> > don't need them?
-> 
-> When you implement PartialEq without Eq, you are telling the reader
-> that this is a weird type such as floats where there exists values
-> that are not equal to themselves. That's not the case here, so don't
-> confuse the reader by leaving out `Eq`.
- 
-This might be one of those areas where there needs to be a difference
-between C and Rust in terms of kernel rules. For C, there would need
-to be a user. Here you seem to be saying the type system needs it, for
-the type to be meaningful, even if there is no user?
+Main updates from version V9[1]:
 
-Without Eq, would the compiler complain on an == operation, saying it
-is not a valid operation? Is there a clear difference between nobody
-has implemented this yet, vs such an operation is impossible, such as
-your float example?
+- Introduce release_fw remoteproc ops to avoid direct call of
+  tee_rproc_release_fw() in remoteproc_core.c:
+  - allow to remove link between remoteproc and remoteproc_tee
+  - allow to build the remoteproc_tee as a module
 
-	Andrew
+[1] https://lore.kernel.org/linux-arm-kernel/ZuMIEp4cVrp1hWa7@p14s/T/
+
+Tested-on: commit 9852d85ec9d4 ("Linux 6.12-rc1")
+
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
+
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact. The user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (7):
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Add TEE support
+  remoteproc: core: Refactor resource table cleanup into
+    rproc_release_fw
+  remoteproc: Introduce release_fw optional operation
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
+ drivers/remoteproc/Kconfig                    |  11 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  72 ++-
+ drivers/remoteproc/remoteproc_tee.c           | 506 ++++++++++++++++++
+ drivers/remoteproc/stm32_rproc.c              | 145 +++--
+ include/linux/remoteproc.h                    |   8 +
+ include/linux/remoteproc_tee.h                | 107 ++++
+ 8 files changed, 853 insertions(+), 55 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_tee.c
+ create mode 100644 include/linux/remoteproc_tee.h
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.25.1
+
 
