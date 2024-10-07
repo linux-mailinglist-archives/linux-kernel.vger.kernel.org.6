@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-353509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823E5992ECA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8FF992ECC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481B5285209
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12510285112
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B876E1D7E5C;
-	Mon,  7 Oct 2024 14:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C485E1D88A6;
+	Mon,  7 Oct 2024 14:17:34 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCAB1D47D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E8F1D7986
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310653; cv=none; b=HjpJ5JbJV/hlMLD87/GRsKC5uymHBDu8p/kxVMVPlYbGvI/5dwB2qa04PeiVfSwK70gFuLe6jgOfA221wYxI7f2c0TqnVNFpeEtBK6AvNT/Zq6pW9eZdk0ZDbraEoGTEc1rGSAYyCUTh1GGJuS6BevfCuF3PUAn7uQehM09060c=
+	t=1728310654; cv=none; b=FU+It16PGBf/PNQ9BBgzHSy1m2xkH6hjKG4QSouYRWrO/DHkjUyXoTq/4P2UdJa1TaBvA+WPu2kyiXGM70NqLJJ1SeqBdzXOyetKecbfifIifNqOEDrqvP5yNrcwNgW8dzHAmqJCd87OWgnHwHH753Vxe9hC/C3KzkPtEtp1z3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310653; c=relaxed/simple;
-	bh=9c6RrjNGOG4XZv7JW3ZCZzhn7dUc8ULtYyQgSmm/Rk0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p79ToDzcGztmcohnmntvGtrmI8p12U8nY4evJhG41R1AFHt3PwZQCCPFgGw+RfRS9+T3Tct8gVl0/px6TAgrNbjZWY5VFtFAlNHAuED4TVPDTVyVmvzij8QID0f3V7QNHUdAbM3VDYBfspaWbftl5+Xh4magEnQfCWfGCi8hClY=
+	s=arc-20240116; t=1728310654; c=relaxed/simple;
+	bh=w85rAFZ+a9VjpaEsbec1z60WY2nfBeNCdSS5loJlCIY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=U8l5hSim6cEbVUyiLcU0letCLi1hyHLQX9ciUHrJAK6O4StWqqhQfn7yWB2QGiRNs+nzK8c7yMS0LXXxSsmes0DdYayfeSyKFcPuC0z7N2V4zFdBYE3BM9zzGsOgqsQZnGBHpriEKbx/STwomaWmJyasPS3dCooOSTudsZJxQIc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <jre@pengutronix.de>)
-	id 1sxoY4-0008LN-Rj; Mon, 07 Oct 2024 16:17:20 +0200
+	id 1sxoY4-0008LN-TF; Mon, 07 Oct 2024 16:17:20 +0200
 From: Jonas Rebmann <jre@pengutronix.de>
-Subject: [PATCH 0/2] improve multicast join group performance
-Date: Mon, 07 Oct 2024 16:17:10 +0200
-Message-Id: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
+Date: Mon, 07 Oct 2024 16:17:11 +0200
+Subject: [PATCH 1/2] net: ipv4: igmp: optimize ____ip_mc_inc_group() using
+ mc_hash
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,10 +44,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGbtA2cC/x3OUQqDMBCE4atInrs1kVJrryJ9iOuoCzWGrJWCe
- PfGPv4wH8xuFEmg5lnsJmETlSXkcJfC8OTDCJI+t6lsdXPW1iTjHEkj0H8iVewt113jHk1vMum
- 8grrkA08n2u5XZ8t1icJlwFoOCVD2b9DMXleKSMOS5jzHqWPCIN//mfZ1HD8rGxiEnAAAAA==
-X-Change-ID: 20241007-igmp-speedup-2ca0c7b9189d
+Message-Id: <20241007-igmp-speedup-v1-1-6c0a387890a5@pengutronix.de>
+References: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
+In-Reply-To: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>, 
  David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
@@ -60,52 +60,75 @@ X-SA-Exim-Mail-From: jre@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This series seeks to improve performance on updating igmp group
-memberships such as with IP_ADD_MEMBERSHIP or MCAST_JOIN_SOURCE_GROUP.
+The runtime cost of joining a single multicast group in the current
+implementation of ____ip_mc_inc_group grows linearly with the number of
+existing memberships. This is caused by the linear search for an
+existing group record in the multicast address list.
 
-Our use case was to add 2000 multicast memberships on a TQMLS1046A which
-took about 3.6 seconds for the membership additions alone. Our userspace
-reproducer tool was instrumented to log runtimes of the individual
-setsockopt invocations which clearly indicated quadratic complexity of
-setting up the membership with regard to the total number of multicast
-groups to be joined. We used perf to locate the hotspots and
-subsequently optimized the most costly sections of code.
+This linear complexity results in quadratic complexity when successively
+adding memberships, which becomes a performance bottleneck when setting
+up large numbers of multicast memberships.
 
-This series includes a patch to Linux igmp handling as well as a patch
-to the DPAA/Freescale driver. With both patches applied, our memberships can
-be set up in only about 87 miliseconds, which corresponds to a speedup
-of around 40.
+If available, use the existing multicast hash map mc_hash to quickly
+search for an existing group membership record. This leads to
+near-constant complexity on the addition of a new multicast record,
+significantly improving performance for workloads involving many
+multicast memberships.
 
-While we have acheived practically linear run-time complexity on the
-kernel side, a small quadratic factor remains in parts of the freescale
-driver code which we haven't yet optimized. We have by now payed little
-attention to the optimization potential in dropping group memberships,
-yet the dpaa patch applies to joining and leaving groups alike.
-
-Overall, this patch series brings great improvements in use cases
-involving large numbers of multicast groups, particularly when using the
-fsl_dpa driver, without noteworthy drawbacks in other scenarios.
+On profiling with a loopback device, this patch presented a speedup of
+around 6 when successively setting up 2000 multicast groups using
+setsockopt without measurable drawbacks on smaller numbers of
+multicast groups.
 
 Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
-Jonas Rebmann (2):
-      net: ipv4: igmp: optimize ____ip_mc_inc_group() using mc_hash
-      net: dpaa: use __dev_mc_sync in dpaa_set_rx_mode()
+ net/ipv4/igmp.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c   | 20 +++++++++--
- drivers/net/ethernet/freescale/fman/fman_dtsec.c |  1 -
- drivers/net/ethernet/freescale/fman/fman_memac.c |  1 -
- drivers/net/ethernet/freescale/fman/fman_tgec.c  |  1 -
- drivers/net/ethernet/freescale/fman/mac.c        | 42 ------------------------
- drivers/net/ethernet/freescale/fman/mac.h        |  2 --
- net/ipv4/igmp.c                                  | 26 ++++++++++++---
- 7 files changed, 39 insertions(+), 54 deletions(-)
----
-base-commit: 8b641b5e4c782464c8818a71b443eeef8984bf34
-change-id: 20241007-igmp-speedup-2ca0c7b9189d
+diff --git a/net/ipv4/igmp.c b/net/ipv4/igmp.c
+index 9bf09de6a2e77c32f5eed565db8fd6c14bc7ea86..6a238398acc9d5684ec3d6305ef2a74834f5a3b3 100644
+--- a/net/ipv4/igmp.c
++++ b/net/ipv4/igmp.c
+@@ -1437,16 +1437,32 @@ static void ip_mc_hash_remove(struct in_device *in_dev,
+ static void ____ip_mc_inc_group(struct in_device *in_dev, __be32 addr,
+ 				unsigned int mode, gfp_t gfp)
+ {
++	struct ip_mc_list __rcu **mc_hash;
+ 	struct ip_mc_list *im;
+ 
+ 	ASSERT_RTNL();
+ 
+-	for_each_pmc_rtnl(in_dev, im) {
+-		if (im->multiaddr == addr) {
+-			im->users++;
+-			ip_mc_add_src(in_dev, &addr, mode, 0, NULL, 0);
+-			goto out;
++	mc_hash = rtnl_dereference(in_dev->mc_hash);
++	if (mc_hash) {
++		u32 hash = hash_32((__force u32)addr, MC_HASH_SZ_LOG);
++
++		for (im = rtnl_dereference(mc_hash[hash]);
++		     im;
++		     im = rtnl_dereference(im->next_hash)) {
++			if (im->multiaddr == addr)
++				break;
+ 		}
++	} else {
++		for_each_pmc_rtnl(in_dev, im) {
++			if (im->multiaddr == addr)
++				break;
++		}
++	}
++
++	if  (im) {
++		im->users++;
++		ip_mc_add_src(in_dev, &addr, mode, 0, NULL, 0);
++		goto out;
+ 	}
+ 
+ 	im = kzalloc(sizeof(*im), gfp);
 
-Best regards,
 -- 
-Jonas Rebmann <jre@pengutronix.de>
+2.39.5
 
 
