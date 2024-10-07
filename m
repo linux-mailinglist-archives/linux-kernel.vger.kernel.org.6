@@ -1,63 +1,45 @@
-Return-Path: <linux-kernel+bounces-354177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74D39938C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14989938CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA5A1F2278D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F881284273
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5229C1DE8A3;
-	Mon,  7 Oct 2024 21:09:26 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6371DCB06;
-	Mon,  7 Oct 2024 21:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE1D1DE4D8;
+	Mon,  7 Oct 2024 21:10:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40031189BBD;
+	Mon,  7 Oct 2024 21:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728335365; cv=none; b=t7YyuMfdRYiJXQcp9AC2z+1v5s4LzwxhglPknI4Mv/mbEo2ClHS53PhRs2i/qzgz0q9YX3TVTw0EGdFVe7SqPvj3Dpo1xB9IeS0BzSFlby82UQ9nchXddySIDq3qzmrqP1CcdoSrgSwDnCd1JN1eKZeEc6bOG1EH7o0iuLiU4wc=
+	t=1728335433; cv=none; b=m/8WqiPyURVqPaseIyVoD3yEt0xWU24oo3emyMFOETN9Q1RAFTLP2MlVjfQR9A5rpYYgoxxbLS8tisAuX61M+laQqhN2BmE0MmnaONQCojptIMUas9CW1jCdxHKU2TnOrER9p3b8W862slJroRE6nJ38MgOI8RY2o8GV7xgH81M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728335365; c=relaxed/simple;
-	bh=eLspYNW3wOsgz3KGMO3599QZ8Ze+l27EzYkbHmBSdGE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PjzliIgVVBApFPF33RQJUrx4siGFBGYLfb0e1Sl3UIdnzWXpB9iOozRKNkpVq9qW0i5MZkeo3tX3UGX/HfJWWFAIF5dPD484QjdNp9rlSJPtARgaVTyAil4J9KHKOLYqUQF9b1rcxToXBiv7VmfISw1TOv4XMoZsb2jiK6HhoDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id B37EC92009C; Mon,  7 Oct 2024 23:09:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id A591592009B;
-	Mon,  7 Oct 2024 22:09:15 +0100 (BST)
-Date: Mon, 7 Oct 2024 22:09:15 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-cc: Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>, 
-    Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-    Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@redhat.com>, 
-    Gerd Hoffmann <kraxel@redhat.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-    linux-hexagon@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-    dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev, 
-    spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-    linux-serial@vger.kernel.org, linux-arch@vger.kernel.org, 
-    Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH v6 4/5] tty: serial: handle HAS_IOPORT dependencies
-In-Reply-To: <20241007-b4-has_ioport-v6-4-03f7240da6e5@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.2410072109130.30973@angie.orcam.me.uk>
-References: <20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com> <20241007-b4-has_ioport-v6-4-03f7240da6e5@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1728335433; c=relaxed/simple;
+	bh=xGN35DS+Reg5MuMSn2us7xaD9u0dVlS84VO+lKwKRig=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tSIK5rF8FJ13Z+rq/0i0dfTUQy1M8FcIOnjA/tsApdZc2qnlfjGjEVmy7MC5IUEB5tgwNyDT0nU1vLOFpq8KpRpmeEWs/jgoIzoA/D1vTZYlb95A5CkmoZ187Qt8dH1jyVgicS8HmS7Vc7FeFmcJH2Nw2wb/zQ5ccobg+EglvPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EABE3C4CEC6;
+	Mon,  7 Oct 2024 21:10:31 +0000 (UTC)
+Date: Mon, 7 Oct 2024 17:10:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jeff Xie <jeff.xie@linux.dev>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
+Subject: Re: [PATCH v3] ftrace: Get the true parent ip for function tracer
+Message-ID: <20241007171027.629bdafd@gandalf.local.home>
+In-Reply-To: <20241005101320.766c1100@rorschach.local.home>
+References: <20240910133620.19711-1-jeff.xie@linux.dev>
+	<20241005101320.766c1100@rorschach.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,115 +47,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 7 Oct 2024, Niklas Schnelle wrote:
+On Sat, 5 Oct 2024 10:13:20 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-> index 6709b6a5f3011db38acc58dc7223158fe4fcf72e..6a638feb44e443a1998980dd037748f227ec1bc8 100644
-> --- a/drivers/tty/serial/8250/8250_pci.c
-> +++ b/drivers/tty/serial/8250/8250_pci.c
-[...]
->  	iobase = pci_resource_start(dev, 0);
->  	outb(0x0, iobase + CH384_XINT_ENABLE_REG);
->  }
->  
-> -
->  static int
->  pci_sunix_setup(struct serial_private *priv,
->  		const struct pciserial_board *board,
+> The crash happened here:
 
- Gratuitous change here.
+This has been bothering me all weekend so I dug more into it.
 
-> diff --git a/drivers/tty/serial/8250/8250_pcilib.c b/drivers/tty/serial/8250/8250_pcilib.c
-> index ea906d721b2c3eac15c9e8d62cc6fa56c3ef6150..fc1882d7515b5814ff1240ffdbe1009ab908ad6b 100644
-> --- a/drivers/tty/serial/8250/8250_pcilib.c
-> +++ b/drivers/tty/serial/8250/8250_pcilib.c
-> @@ -28,6 +28,10 @@ int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port *port,
->  		port->port.membase = pcim_iomap_table(dev)[bar] + offset;
->  		port->port.regshift = regshift;
->  	} else {
-> +		if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-> +			pr_err("Serial port %lx requires I/O port support\n", port->port.iobase);
-> +			return -EINVAL;
-> +		}
->  		port->port.iotype = UPIO_PORT;
->  		port->port.iobase = pci_resource_start(dev, bar) + offset;
->  		port->port.mapbase = 0;
+The reason it was bothering me is because we use current later on, and it
+has no issue. But then I noticed the real bug!
 
- Can we please flatten this conditional and get rid of the negation, and 
-also use `pci_err' for clear identification (`port->port.iobase' may not 
-even have been set to anything meaningful if this triggers)?  I.e.:
+I was confused because the crashed instruction pointer was in the
+get_current() code. But that's not where the crash actually happened.
 
-		/* ... */
-	} else if (IS_ENABLED(CONFIG_HAS_IOPORT)) {
-		/* ... */
-	} else {
-		pci_err(dev, "serial port requires I/O port support\n");
-		return -EINVAL;
-	}
+> 
+> static __always_inline unsigned long
+> function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+> {
+>         unsigned long true_parent_ip;
+>         int idx = 0;
+> 
+>         true_parent_ip = parent_ip;
+>         if (unlikely(parent_ip == (unsigned long)&return_to_handler))
+>                 true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,  <<<----- CRASH
 
-I'd also say "port I/O" (by analogy to "memory-mapped I/O") rather than 
-"I/O port", but I can imagine it might be debatable.
+That's not the crash
 
-> +static __always_inline bool is_upf_fourport(struct uart_port *port)
-> +{
-> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT))
-> +		return false;
-> +
-> +	return port->flags & UPF_FOURPORT;
-> +}
+>                                 (unsigned long *)fregs->regs.sp);
 
- Can we perhaps avoid adding this helper and then tweaking code throughout 
-by having:
+The above is!
 
-#ifdef CONFIG_SERIAL_8250_FOURPORT
-#define UPF_FOURPORT		((__force upf_t) ASYNC_FOURPORT       /* 1  */ )
-#else
-#define UPF_FOURPORT		0
-#endif
+fregs should *NEVER* be used directly. OK, I need to make:
 
-in include/linux/serial_core.h instead?  I can see the flag is reused by 
-drivers/tty/serial/sunsu.c, but from a glance over it seems rubbish to me 
-and such a change won't hurt the driver anyway.
+struct ftrace_regs {
+	void *nothing_here[];
+};
 
-> @@ -1174,7 +1201,7 @@ static void autoconfig(struct uart_8250_port *up)
->  		 */
->  		scratch = serial_in(up, UART_IER);
->  		serial_out(up, UART_IER, 0);
-> -#ifdef __i386__
-> +#if defined(__i386__) && defined(CONFIG_HAS_IOPORT)
->  		outb(0xff, 0x080);
->  #endif
->  		/*
-> @@ -1183,7 +1210,7 @@ static void autoconfig(struct uart_8250_port *up)
->  		 */
->  		scratch2 = serial_in(up, UART_IER) & UART_IER_ALL_INTR;
->  		serial_out(up, UART_IER, UART_IER_ALL_INTR);
-> -#ifdef __i386__
-> +#if defined(__i386__) && defined(CONFIG_HAS_IOPORT)
->  		outb(0, 0x080);
->  #endif
->  		scratch3 = serial_in(up, UART_IER) & UART_IER_ALL_INTR;
+Now, to stop bugs like this.
 
- Nah, i386 does have machine OUTB instructions, it has the port I/O 
-address space in the ISA, so these two changes make no sense to me.  
+fregs is unique by architecture, and may not even be defined! That is, it
+can pass NULL for fregs. And only x86 has fregs->regs available. Other
+archs do not.
 
- Though this #ifdef should likely be converted to CONFIG_X86_32 via a 
-separate change.
+You must use the fregs helper functions, thus the above can be:
 
-> @@ -1306,12 +1333,12 @@ static void autoconfig_irq(struct uart_8250_port *up)
->  {
->  	struct uart_port *port = &up->port;
->  	unsigned char save_mcr, save_ier;
-> +	unsigned long irqs;
->  	unsigned char save_ICP = 0;
->  	unsigned int ICP = 0;
-> -	unsigned long irqs;
->  	int irq;
 
- Gratuitous change here (also breaking the reverse Christmas tree order).
+static __always_inline unsigned long
+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+{
+	unsigned long true_parent_ip;
+	int idx = 0;
 
- Thanks for making the clean-ups we discussed.
+	true_parent_ip = parent_ip;
+	if (unlikely(parent_ip == (unsigned long)&return_to_handler) && fregs)
+		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
+				(unsigned long *)ftrace_regs_get_stack_pointer(fregs));
 
-  Maciej
+	return true_parent_ip;
+}
+
+So you can make a v5 with this update. And I'll go and make the empty
+ftrace_regs structure.
+
+Thanks!
+
+-- Steve
+
+
+>         return true_parent_ip;
+> }
+> 
+> It appears that on some archs (x86 32 bit) the function tracer can be
+> called when "current" is not set up yet, and can crash when accessing it.
+> 
+> So perhaps we need to add:
+> 
+> #ifdef CONFIG_ARCH_WANTS_NO_INSTR
+> static __always_inline unsigned long
+> function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+> {
+>         unsigned long true_parent_ip;
+>         int idx = 0;
+> 
+>         true_parent_ip = parent_ip;
+>         if (unlikely(parent_ip == (unsigned long)&return_to_handler))
+>                 true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,  <<<----- CRASH
+>                                 (unsigned long *)fregs->regs.sp);
+>         return true_parent_ip;
+> }
+> #else
+> # define function_get_true_parent_ip(parent_ip, fregs)  parent_ip
+> #endif
+> 
+> That is, if the arch has noinstr implemented, it should always be safe
+> to access current, but if not, then there's no guarantee.
+> 
+> ?
 
