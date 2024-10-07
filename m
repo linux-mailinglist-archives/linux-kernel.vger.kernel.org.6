@@ -1,142 +1,179 @@
-Return-Path: <linux-kernel+bounces-353904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8028499343B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C2899343E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427E0281816
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E8B28365C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B421DC1BC;
-	Mon,  7 Oct 2024 16:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997E1DA62D;
+	Mon,  7 Oct 2024 16:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kS7fqN6s"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DYIIOMBw"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7B31DBB20;
-	Mon,  7 Oct 2024 16:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399761DC06C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320260; cv=none; b=E1ikmxO2fubrzUt4SB4vDLGqvloW9vpy+Iw0saDoskWjelQ4xjMPh1l1RuJH6+3UQsn9VMh39gzGSoIodHRjZsnrVQtXIkBcPSjm8hiJlDJawBUf0QZCocUbpBauyWLR5zayLJ9OByV9tzB3cqWG3BLppvDX0jNFsFALQEPYZoY=
+	t=1728320293; cv=none; b=SNoP1zhq1grGOeNKD1QNp8ExBgyt2dBfF2GTorBaCVTmTLkVlNT8pEeyNvoS3+PCZ5ec9HAkqlRf+TSS1AewA0W053MhcorpDyqDxR8B4DcQTJavAwE2tC3h06Ej+9HRKR8VVhAQ+iPvgeaCCztvC1gzsz87EJjZWl8j/udcsQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320260; c=relaxed/simple;
-	bh=yfRyAB3xOijwlnoxe03nZjku5m28Im9Zs4j9KZ2Qrlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4hluBCPmE2yG4sNjr5PCX8PpoDUW4qf8q2idRjxcvWGLtajlMgLbPdM3NmBmO6exBu55RYtEtMW671K2cOmf1UinI3B7bGaV3Yq/iUqC2xBC+WYcEuDP24EC8Cpyn1vOS6n0iDmN3CHLrefmTQhwjna7ltHONdZEKCl7wvO/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kS7fqN6s; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=/4zb+CNZ65QQblVRwLbBOPKFpFZ76Z32xRQ86mlA65E=; b=kS
-	7fqN6sXpvUD+U/5isc3RbmM6m4z+3wojtCKq6xcyBVUS8REsHl3SP5ohIZl0qsVQWuvVDpm1Otr9H
-	KJGG9ivz05dcvTEf4C1oTvaQQthi15BW7E3cqi7UZjgUCrLFOOj0w9dwTBsYCTjfHnsYinb0mHBXw
-	2w1aRVV4r9DFb3U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sxr33-009I0o-Sx; Mon, 07 Oct 2024 18:57:29 +0200
-Date: Mon, 7 Oct 2024 18:57:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Robert Hancock <robert.hancock@calian.com>,
-	Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>,
-	Tristram Ha <tristram.ha@microchip.com>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: Re: [PATCH] net: phy: disable eee due to errata on various KSZ
- switches
-Message-ID: <ad44d06a-4d30-4696-bace-1a78a8bcfca6@lunn.ch>
-References: <20241004213235.3353398-1-tharvey@gateworks.com>
- <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
- <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
+	s=arc-20240116; t=1728320293; c=relaxed/simple;
+	bh=yzIwSmW9HtFRrrzylid8yhtEpl5lGIwiwFhhu3I22i4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b59cf6qi+0NWpNL/KCBORtYWQ8VvWe6GDEZakeLtmoOIF/vHr/FMvkwG3K4e2MBka9eUBtVCet2pynyn4NmqMRdJla3yNLMF2OqWuclac4rdMAFrvqmMw6pU8svCAlUxIVypfstzGrXGS1mBBEHgUjhzyVo2dO81moPzj/Bk4T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DYIIOMBw; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e26048d1235so3732089276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728320291; x=1728925091; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FDLwYr0W0I2TyrqabkmE1dfXEL1zmhPVUq3NdPKOu8=;
+        b=DYIIOMBwvC9WJ0Tvxs31qZewYS5/GAjvSOlaxhK4lp4PRLcPprJVbFpVKmYYYpURAe
+         7P5uXGUt8OVhakz8wKUv4I2U+trUTvZIMbI7TiTEGsyxlU0q7EFpV8QxPZn3GeFEecPB
+         L+vg5o5yfRcNcG6kud+XoltFYsFACAVUw8tGvR5yhZ2NGDA50li3UIbvI3KMGaDbDN6n
+         S705jZmHpbEd3Q/dCzvGNWa377eGW3sIG7mwj2n2HObbZTFmPXBycuhEtRda16Z6aWyT
+         TfKe9ujirtuVZ3cEeF2DAuNIhl3r2zPzZKJAy7qapZiefc91q61t+851oI+WMn7cNMX9
+         MvUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728320291; x=1728925091;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8FDLwYr0W0I2TyrqabkmE1dfXEL1zmhPVUq3NdPKOu8=;
+        b=qTVOLpMG2bnMXV7VuJDTXNlyp/BiQj63w9I1al/TuDnl3zOI/c8n0bOtD0hWu1ufSJ
+         NJryax2ZBWBcwu8qJLrosAC1derGrzh2SkAEv8nOWgjyJhotni5g4HD2r3Bz+4iywsdL
+         Jb8A9jRLZXnW8BHoV2U4auLccPlHGy+Zyzs7Gv/NC6/++4fRM9sEAQcH/Yo718hk9oL7
+         2HvuilpAXXlgBI06h32zuxUjZn6WXE9iFHqei3RkLd0N/pcw64YVHGADaJITsMCgFfeU
+         2qY8TUZ3dPobMoPDwb4vpiDuf6H9pY/TUIEh3r9dPfvJT3i3MAFNsaOeFh/TSOLwAuPV
+         F6kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAgmzdiwdnY4Nqa+8SrcRFu1XC15SqvjJFSwTPK0xOnm50yj+vblMOMpRf9YWnlzZHBCUv17lVGDwh0WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7a901PYVF0FElIlthpMZvzK7jLE8bW6l3FedTdzm5B4Zn93ap
+	SPn6GuCZLjuepQmgEcnuVEWS4DJWWIAje6xzzcqRmcXGd9idrk5r6ux0kqzXlKJNttOr5+j6z2u
+	RALC9fblB9DtAhpI/Scet9nX6C3JYQ8qswdpS
+X-Google-Smtp-Source: AGHT+IFNRdRw5/QfeWn+YZcg6EYhNUDISm5RwXNFrmhrBCU4JilAZjxQqSfb9m9kQ/pHzm2oJ8T1BPTDLI27V/5AAXQ=
+X-Received: by 2002:a05:6902:2408:b0:e25:c0b4:f364 with SMTP id
+ 3f1490d57ef6-e28936dc8f5mr7574805276.17.1728320291200; Mon, 07 Oct 2024
+ 09:58:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+ <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+ <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
+ <CAHC9VhSEMSwzxjXUHLCWXoGj3ds8pQJ-nH6WQuRDzBkx6Svotw@mail.gmail.com> <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
+In-Reply-To: <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 7 Oct 2024 12:58:05 -0400
+Message-ID: <CAHC9VhRt1BA_U2cEDFjHK_bmfW0ejx2AtbwZKgE5FFRDbUYNOg@mail.gmail.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Shu Han <ebpqwerty472123@gmail.com>, 
+	syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 09:38:59AM -0700, Tim Harvey wrote:
-> On Sat, Oct 5, 2024 at 9:46 AM Andrew Lunn <andrew@lunn.ch> wrote:
+On Mon, Oct 7, 2024 at 12:49=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Mon, 2024-10-07 at 12:35 -0400, Paul Moore wrote:
+> > On Mon, Oct 7, 2024 at 11:31=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
+> > > > On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@gm=
+ail.com> wrote:
+> > > > >
+> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > WARNING: possible circular locking dependency detected
+> > > > > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+> > > > > > ------------------------------------------------------
+> > > > > > syz-executor369/5231 is trying to acquire lock:
+> > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at:=
+ inode_lock include/linux/fs.h:815 [inline]
+> > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at:=
+ process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+> > > > > >
+> > > > > > but task is already holding lock:
+> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_l=
+ock_killable include/linux/mmap_lock.h:122 [inline]
+> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_rem=
+ap_file_pages mm/mmap.c:1649 [inline]
+> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_rem=
+ap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+> > > > > >
+> > > > > > which lock already depends on the new lock.
+> > > > >
+> > > > > This issue (if not a false positive?) is due to the possible `pro=
+t`
+> > > > > change caused by the processing logic for READ_IMPLIES_EXEC in do=
+_mmap(),
+> > > > > so the remap_file_pages() must perform LSM check before calling d=
+o_mmap(),
+> > > > > this is what the previous commit want to do.
+> > > >
+> > > > My apologies for the delay on this, I was traveling for a bit and
+> > > > missed this issue while away.
+> > > >
+> > > > Looking quickly at the report, I don't believe this is a false posi=
+tive.
+> > > >
+> > > > > The LSM check is required to know what the `prot` is, but `prot` =
+must be
+> > > > > obtained after holding the `mmap_write_lock`.
+> > > > >
+> > > > > If the `mmap_write_lock` is released after getting the `prot` and=
+ before
+> > > > > the LSM call in remap_file_pages(), it may cause TOCTOU.
+> > > >
+> > > > Looking at the IMA code, specifically the process_measurement()
+> > > > function which is called from the security_mmap_file() LSM hook, I'=
+m
+> > > > not sure why there is the inode_lock() protected region.  Mimi?
+> > > > Roberto?  My best guess is that locking the inode may have been
+> > > > necessary before we moved the IMA inode state into the inode's LSM
+> > > > security blob, but I'm not certain.
+> > > >
+> > > > Mimi and Roberto, can we safely remove the inode locking in
+> > > > process_measurement()?
+> > >
+> > > I discussed a bit with Mimi. Her concern was the duplicate iint
+> > > structure creation during concurrent file accesses. Now that inode
+> > > integrity metadata have been moved to the inode security blob, we can
+> > > take the iint->mutex out of the ima_iint_cache structure, and store i=
+t
+> > > directly in the security blob. In this way, we can remove the inode
+> > > lock.
+> > >
+> > > Will write a patch and see if it passes our tests.
 > >
-> > On Fri, Oct 04, 2024 at 02:32:35PM -0700, Tim Harvey wrote:
-> > > The well-known errata regarding EEE not being functional on various KSZ
-> > > switches has been refactored a few times. Recently the refactoring has
-> > > excluded several switches that the errata should also apply to.
-> >
-> > Does the commit message say why?
-> >
-> > Does this need a Fixes: tag?
-> >
-> 
-> Hi Andrew,
-> 
-> Good question. I couldn't really figure out what fixes tag would be
-> appropriate as this code has changed a few times and broken in strange
-> ways. Here's a history as best I can tell:
-> 
-> The original workaround for the errata was applied with a register
-> write to manually disable the EEE feature in MMD 7:60 which was being
-> applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
-> 
-> Then came commit ("26dd2974c5b5 net: phy: micrel: Move KSZ9477 errata
-> fixes to PHY driver") and commit ("6068e6d7ba50 net: dsa: microchip:
-> remove KSZ9477 PHY errata handling") which moved the errata from the
-> switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
-> however that PHY code was dead code because an entry was never added
-> for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE. So even if we add a
-> 'Fixes: 6068e6d7ba50' it would not be fixed.
-> 
-> This was apparently realized much later and commit ("54a4e5c16382 net:
-> phy: micrel: add Microchip KSZ 9477 to the device table") added the
-> PHY_ID_KSZ9477 to the PHY driver. I believe the code was proper at
-> this point.
-> 
-> Later commit ("6149db4997f5 net: phy: micrel: fix KSZ9477 PHY issues
-> after suspend/resume") breaks this again for all but KSZ9897 by only
-> applying the errata for that PHY ID.
-> 
-> The most recent time this was affected was with commit ("08c6d8bae48c
-> net: phy: Provide Module 4 KSZ9477 errata (DS80000754C)") which
-> removes the blatant register write to MMD 7:60 and replaces it by
-> setting phydev->eee_broken_modes = -1 so that the generic phy-c45 code
-> disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID)
-> so its still broken at this point for the other switches that have
-> this errata.
-> 
-> So at this point, the only commit that my patch would apply over is
-> the most recent 08c6d8bae48c but that wouldn't fix any of the previous
-> issues and it would be unclear what switch was broken at what point in
-> time.
+> > That's great, thanks Roberto.  Assuming all goes well we'll want to
+> > backport this everywhere we merged the remap_file_pages() patch.
+>
+> Welcome. Probably it can go down only until the kernel where IMA and
+> EVM are LSMs.
 
-O.K, so its a mess :-(
+Yes, we'll need to look at that once we solve this in Linus' tree.
 
-Lets look at this from a different direction. Which stable kernels do
-you actually care about? Is 6.6 enough for you? Do you need 6.1? 4.19?
-
-You should use a Fixed tag which goes back far enough for you. The
-patch itself might not apply that far back, but once you get it merged
-and backported as far as it does go, you can submit ported versions
-for older kernel, referencing the original fix commit hash number.
-
-	Andrew
-
-
+--=20
+paul-moore.com
 
