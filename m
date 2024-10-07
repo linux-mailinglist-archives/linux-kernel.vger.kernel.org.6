@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-353554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56524992F68
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C52992F6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE01628656C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156EB1C22773
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B431D88D5;
-	Mon,  7 Oct 2024 14:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C981D8E08;
+	Mon,  7 Oct 2024 14:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJZcZWx/"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="TtvtK9rc"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591561D61B6;
-	Mon,  7 Oct 2024 14:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076831D8A0B;
+	Mon,  7 Oct 2024 14:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311365; cv=none; b=Y02A9P9AJseoOWzr0O2svicQyBFJLDSl5VyRJUdRUCjkBED/3KuM5U0inpOaH0HfShI+AbOoKfkToXjiz0d9OWRKoiZNmNYNlZdCUDqoZMdyXVcQ5cWPbUOlaPCDLSOYq/OlbVAIi943AtU9maSrKEvZdEpRUA00fgKcy37+VFA=
+	t=1728311370; cv=none; b=eJI2xfeUIxAFnZVWhH2hdaohXtCx13bMbsS9B1KD9cMxJSuyDBPzCZ1w/E7/er8Yb0ENVctMeT7Brkc7BfbJVPxXsK3+eyd4tjhyoAMK8CQIaa0QN0BLckk6g94G2i0SsSom64c/7IMGuHaWqfm37Xwz2yKrSrNg0SKJIOxnWVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311365; c=relaxed/simple;
-	bh=W/RzfjYVv6DChxrW9f6IHL/wmpR8NAqJMEkuwZp3wyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Id+MkEw8bZJCgNdUAK1x9tQleAo+5XbOdOPiTbZ+Ao9CM0KmMVDDURWD422OJuwdIsH35sYocE0BL7MQo76dvu+by0ONO9XpJt/t1BfOQ1/zW2zyX6D6L6ryPVHNZjTDvC6240Rk822qFqKE/S3aI7q5CxsAeoWr/94fyy1q51M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJZcZWx/; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so3482433b3a.1;
-        Mon, 07 Oct 2024 07:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728311364; x=1728916164; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uNQxMPdLPQGiG6CFdOj3sCHGNid6tI7wiHJS+3jAN/I=;
-        b=AJZcZWx/pl09MPdlErGtQj1fkRDxdNIYUPkQndWkEGKCKmQNIauLLGvCpXZ1yIgu4C
-         nIOBPzaARsm9Jz9jU7KHlKHU/VgIFjpSmTmC2M0Yi8R2zgFmRru5h9yMuDVxac1sqpIA
-         D+W0usTg5pSmfzgS7XzM2vGHiL1enceYzlW62NOGKXKolOigoY81Q4EtuO3qoE/dCJsE
-         Dit710WfEPqkkOjjKTNlzGRLGHGM4yZis8N6+kkf6Shyn5T4Mh0qemolK6hhVwjcbuQC
-         raXIjnY1NrnZFocK3NaPtlYY52Az0QjuO+tczjcVKUtNGxdW3SzN29HL3zlkB5O73F/v
-         2lLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728311364; x=1728916164;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNQxMPdLPQGiG6CFdOj3sCHGNid6tI7wiHJS+3jAN/I=;
-        b=vloYyQkLH2dSptsp3LO00QC6xU7JvD2TWoXGy3WUNDnd0KlN+M0TPIm7fs+K3Mut8F
-         rNVmHzzD/YwlQmsX6QTbxmZ9qHw3LYumWIeSYLpJy7PAKs/f+qVRlKUXMwrsVbb737lf
-         KwRRiAiWgDFjnIs1RBdKXraNN25hBpX9HXvbRN+Hup2nZMpMfOJljzg/R00Ck777QZp+
-         o24bn6U8QSI8KhNNaGUz9ZdlVeywsvJVh+1ElKcPJiAWoqGpB5SivDgyDlVKr2ZvG5sI
-         bfVwlzeUux8l0K6ABoOOlCmAkayECp+Xdnqna4IJ6RC/KhCHcgDBxKtx4J1l9M/UGOrs
-         BttA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLT6IvV0yIV+VTLAIorVk2xyuspKSYMQt695pgqAVKpExfq+I56fV7W2RZyO06rLY2ISJUtmeH@vger.kernel.org, AJvYcCXr2V4ZU2SsScPWcEiCRKTRdq8aztRK3G4aI0m90UzkdzZh3zy4LC24tb3UMheGBL743/bcdLWdqQh160w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFDMjAN9Bat/hySA7Y0cWfLQaa85m12z1MmikYvkDipssPiT48
-	qrEdKnPNcr0yedCTog1hh+AYaYyIln6ZdAqZQ09xNNEm/ORlahhX
-X-Google-Smtp-Source: AGHT+IGIiRtkKKCUduaI8GCNJogac1D3SBdylmV9cioQC+jHWoCQyQ0/lcyIVAjkFoSJs+bM7fZq3w==
-X-Received: by 2002:a05:6a20:a12c:b0:1d4:f7b7:f20 with SMTP id adf61e73a8af0-1d6d3b011d7mr25611937637.21.1728311363591;
-        Mon, 07 Oct 2024 07:29:23 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:9c11:1d1b:c444:fe85? ([2409:8a55:301b:e120:9c11:1d1b:c444:fe85])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f68320ffsm5030385a12.46.2024.10.07.07.29.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:29:23 -0700 (PDT)
-Message-ID: <218513be-857b-4457-8bd8-c12e170233b7@gmail.com>
-Date: Mon, 7 Oct 2024 22:29:13 +0800
+	s=arc-20240116; t=1728311370; c=relaxed/simple;
+	bh=MUEHCdKh3aJ5JqNifbPS8ENpMQSLR/6AYBe3Pc4AvcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yr69nJynmZi7RTBPXKl3TsXf1PZ4m95ldnts9TzVmbgxMOpP7+1vjKou4oG8rkfm9da396tJvTRfkDKzDP3Hd7vJEJzNZQoMARSuC1b+ZAPcP6jo5iyi7McR0nq9+sH3jMPxG85UvCeD4K2ZzQwfJhYVbGywE+NO8gnvGFW1Ers=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=TtvtK9rc; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 6EFD51F9DE;
+	Mon,  7 Oct 2024 16:29:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728311364;
+	bh=sOHjT9wpAB5MT/e6tMUBafhY6CRxXTHGsGrCQWp+3xw=; h=From:To:Subject;
+	b=TtvtK9rcn0sjN6KhgYDsjIlXY+cSp+kVfMEtbDnVmrFzJkT0aQ8tlHQ9HniVUsGP8
+	 +y/yiT+tuUS276VbPQxXuU5Nblnk1QnzwvQeKuTVCDsySdyhRagn74gUO+GmBuPn/y
+	 hxlh/Rb7o1bW0lxP/qDuaEZupV5zBkVpYM3OXgeVpdsKduW8UgrRYGUUjsj3kKWZ6G
+	 1tPRtigLpriqL3a9PsoFZ/6V8Wbd/WM9yXVGEb5MCbh68ZSRQE8ttA40RsxF1d6w6M
+	 lpYfdE+hkYUZN0d0rNZcdgIc3npP+enEwP/GaC3p7kt5Y8VfgEjhZTJgipMMHe4RjO
+	 LtUIKZkG29oPg==
+Date: Mon, 7 Oct 2024 16:29:20 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, linux-kernel@vger.kernel.org,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-usb@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: add TUSB73x0 PCIe
+Message-ID: <20241007142920.GA60623@francesco-nb>
+References: <20241007093205.27130-1-francesco@dolcini.it>
+ <20241007093205.27130-2-francesco@dolcini.it>
+ <172831060758.15259.15265542019562102842.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache()
- helper
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>,
- David Ahern <dsahern@kernel.org>
-References: <20241001075858.48936-1-linyunsheng@huawei.com>
- <20241001075858.48936-10-linyunsheng@huawei.com>
- <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
- <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
- <CAKgT0UfY5JtfqsFUG-Cj6ZkOOiWFWJ3w9=35c6c0QWbktKbvLg@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <CAKgT0UfY5JtfqsFUG-Cj6ZkOOiWFWJ3w9=35c6c0QWbktKbvLg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172831060758.15259.15265542019562102842.robh@kernel.org>
 
-On 10/7/2024 12:18 AM, Alexander Duyck wrote:
+Hello,
+
+On Mon, Oct 07, 2024 at 09:16:48AM -0500, Rob Herring (Arm) wrote:
+> On Mon, 07 Oct 2024 11:32:04 +0200, Francesco Dolcini wrote:
+> > From: Parth Pancholi <parth.pancholi@toradex.com>
+> > 
+> > Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
+> > host controller. The controller supports software configuration
+> > through PCIe registers, such as controlling the PWRONx polarity
+> > via the USB control register (E0h).
+> > 
+> > Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
+> > as an example.
+> > 
+> > Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
+> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> > v2: rename property to ti,tusb7320-pwron-active-high and change type to flag
+> > ---
+> >  .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.example.dtb: pcie@0: usb@0:compatible: ['pci104C,8241'] does not contain items matching the given schema
+> 	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241007093205.27130-2-francesco@dolcini.it
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+
+I do not have this error locally, and I am not sure I see the issue in
+the yaml file ...
+
+$ make dt_binding_check W=1 DT_SCHEMA_FILES=ti,tusb73x0-pci.yaml
 
 ...
 
-> 
-> I could probably live with sk_copy_to_skb_data_nocache since we also
-> refer to the section after the page section with data_len. The basic
-> idea is we are wanting to define what the function does with the
-> function name rather than just report the arguments it is accepting.
+  CHKDT   Documentation/devicetree/bindings
+  LINT    Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.example.dts
+  DTC [C] Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.example.dtb
 
-Yes, looking more closely:
-skb_add_data_nocache() does memcpy'ing to skb->data and update skb->len
-only by calling skb_put(), and skb_copy_to_page_nocache() does
-memcpy'ing to skb frag by updating both skb->len and skb->data_len
-through the calling of skb_len_add().
+$ pip3 list |grep dtschema
+dtschema                  2024.10.dev5+g0934678abc36
 
-Perhaps skb_add_frag_nocache() might seems a better name for now, and
-the 'sk_' prefix might be done in the future if it does make sense.
+Any idea?
 
+Francesco
 
 
