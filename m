@@ -1,171 +1,204 @@
-Return-Path: <linux-kernel+bounces-353077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159F4992820
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DEF992827
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B39DA2837B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCC81F22BA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F6018E77E;
-	Mon,  7 Oct 2024 09:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110D218C027;
+	Mon,  7 Oct 2024 09:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AjNFk6Jd"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QtFRIe4H"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173A412E1D1;
-	Mon,  7 Oct 2024 09:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECC718CC0A;
+	Mon,  7 Oct 2024 09:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728293433; cv=none; b=Ui2NJPwnhqvdIR55rHA9Uj4FuWYs/EZuJpcA/TBhJx3QLRNsEUPeiWsgikzLNwiw0CEFiTMUX6SYgNklaMOYIufmCE07H7xgcSQ91y9GSGuqSvp73tU3e61OsBwyp/Gl+ol2+JCbrHFSkH7lZF6du+ssjPnx5PzHgXpvHJ4YvL0=
+	t=1728293487; cv=none; b=ioFicaEEeOSiZf/9g2cjK3iaRQETiMumwWXY025gbjNX0RrqmeHCuyU1rf13EjtPKKrNnW+7i8TCuElUyPIJ+BJVbadj4FNLGRAmNEYR14HHWEO1S25ZHmc9KvIcoD/LEL4j8PCVaMLTBVTFJcTcgQOXPmPJGEr0LJNCX6jB514=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728293433; c=relaxed/simple;
-	bh=Tz1GKph4drPLEeVbp418Bu54k3rNav7IVlT79MqKv0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nGeMcFa+RIS3ozz27y2dZWgFd2yGbDVmPKwZ32V8YNRjUYdQ1CZ0BeuvtrDm288vQeJvGebIkyxL4m1s7Q88r9ydjBgYCxhbYOPTjbG33o9hcO8fXZbbdgBFQn15u4m25w6kQKQu+7zz8kLew/S4/dgixcvsVuzoGBAfZEZwyOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AjNFk6Jd; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 654DBC0003;
-	Mon,  7 Oct 2024 09:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728293428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=namY25WQ52fwKUQOtiBU5zuLS5KPYImSKTERIUGh7sA=;
-	b=AjNFk6Jdj2MWLv9QzPMlBjnRGG5qXVrSNe/5xaVlw1rSCA6Sm8FMZGKHUF79vSzfoRxsI+
-	QX1T2YoVXjD3u7HKtuuba+4BlDszgchGcxwzy7DuY2QYfyyOxNiNcZGlxT5Ira7MXz7uQx
-	2rHE0QWgw7asVBGQhdogNFtJHyi9KVOaNlz6mom6Ieoq+DaUmbBtrGXaCnjHrOvIn0+9ZL
-	Elevcr0oA0zcXrNIpjmo4ZCtjZABBwriF020lIAylWMUdohUWb1hw8K4QRKlljXZ6llb/X
-	ax53HDL4keySHLsXVcTrYv3cusVJfPVxx5w6NdlRi9pjT8eToHE3eyy9hoewaw==
-Date: Mon, 7 Oct 2024 11:30:26 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 06/12] net: ethtool: Add PSE new port priority
- support feature
-Message-ID: <20241007113026.39c4a8c2@kmaincent-XPS-13-7390>
-In-Reply-To: <ZwDcHCr1aXeGWXIh@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<20241002-feature_poe_port_prio-v1-6-787054f74ed5@bootlin.com>
-	<ZwDcHCr1aXeGWXIh@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728293487; c=relaxed/simple;
+	bh=MLwRO+9lWwscEa9FACM8gG7ouKiu4dMHaFkAgiF14uA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QAE1uzqqxIBD1ypMx4DgsJ4CtUXPQeClilgA7qHrlkDNnOZIW1tI21gw59iu0DDz0egO4yiHFKFOWwRPoAa40lTT82d+4MQJImFqQCPWyC8iRFIhTBUgielFiyw+SLUQ3gq9DBV16FdaIZHWyfjt4voWCqtemZgjwwI3pZ7bgP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QtFRIe4H; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728293482;
+	bh=MLwRO+9lWwscEa9FACM8gG7ouKiu4dMHaFkAgiF14uA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QtFRIe4H4fOIHa6i236if/3Np6ItoediA1wqhyltvITYDq5Hq5adVZG02288CUkcz
+	 /8DTIRTzCueY9aX0Bo4UONy5/oxciwTHodvc7Q3lUE+5QhLLPv19QOje6xrSOhHDWq
+	 fkiGPXlM5GcBWIXADRyo69tlQoWbKwcksKkgnkxPCP5mIiOdc4WchIYKdWCC2PeXSE
+	 YVQD1LgHdkQ8/R06SeNzXxFitLsjI3weDc6c3hOQijcpZg9cStDnKzkMfnYO2qMJCG
+	 FbTPBMEeBuO+2xl5ARZkN5JbYKugzIHMm37AaNAy46eyAc8rhYaW98pYp6eV62iF9H
+	 ZyRjo67mm77bg==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C53E917E1147;
+	Mon,  7 Oct 2024 11:31:21 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chunkuang.hu@kernel.org
+Cc: robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	shawn.sung@mediatek.com,
+	yu-chang.lee@mediatek.com,
+	ck.hu@mediatek.com,
+	jitao.shi@mediatek.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	wenst@chromium.org,
+	kernel@collabora.com,
+	sui.jingfeng@linux.dev,
+	michael@walle.cc,
+	sjoerd@collabora.com
+Subject: [PATCH v11 0/3] drm/mediatek: Add support for OF graphs
+Date: Mon,  7 Oct 2024 11:31:11 +0200
+Message-ID: <20241007093114.35332-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Oct 2024 08:26:36 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Changes in v11:
+ - Added OVL_ADAPTOR_MDP_RDMA to OVL Adaptor exclusive components list
+   to avoid failures in graphs with MDP_RDMA inside
+ - Rebased on next-20241004
 
-> >  When set, the optional ``ETHTOOL_A_PODL_PSE_ADMIN_CONTROL`` attribute =
-is
-> > used @@ -1871,6 +1883,10 @@ various existing products that document pow=
-er
-> > consumption in watts rather than classes. If power limit configuration
-> > based on classes is needed, the conversion can be done in user space, f=
-or
-> > example by ethtool.=20
-> > +When set, the optional ``ETHTOOL_A_C33_PSE_PRIO`` attributes is used to
-> > +control the C33 PSE priority. Allowed priority value are between zero
-> > +and the value of ``ETHTOOL_A_C33_PSE_PRIO_MAX`` attribute. =20
-> =20
-> We need to introduce a new attribute to effectively manage PSE priorities.
-> With the addition of the `ETHTOOL_A_C33_PSE_PRIO` attribute for setting
-> priorities, it's important to know which PSE controller or domain each po=
-rt
-> belongs to.
->=20
-> Initially, we might consider using a PSE controller index, such as
-> `ETHTOOL_A_PSE_CONTROLLER_ID`, to identify the specific PSE controller
-> associated with each port.
->=20
-> However, using just the PSE controller index is too limiting. Here's why:
->=20
-> - Typical PSE controllers handle priorities only within themselves. They
-> usually can't manage prioritization across different controllers unless t=
-hey
-> are part of the same power domain. In systems where multiple PSE controll=
-ers
-> cooperate=E2=80=94either directly or through software mechanisms like the=
- regulator
-> framework=E2=80=94controllers might share power domains or manage priorit=
-ies together.
-> This means priorities are not confined to individual controllers but are
-> relevant within shared power domains.
->=20
-> - As systems become more complex, with controllers that can work together,
-> relying solely on a controller index won't accommodate these cooperative
-> scenarios.
->=20
-> To address these issues, we should use a power domain identifier instead.=
- I
-> suggest introducing a new attribute called `ETHTOOL_A_PSE_POWER_DOMAIN_ID=
-`.
->=20
-> - It specifies the power domain to which each port belongs, ensuring that
-> priorities are managed correctly within that domain.
->=20
-> - It accommodates systems where controllers cooperate and share power
-> resources, allowing for proper coordination of priorities across controll=
-ers
-> within the same power domain.
->=20
-> - It provides flexibility for future developments where controllers might=
- work
-> together in new ways, preventing limitations that would arise from using a
-> strict controller index.
->=20
-> However, to provide comprehensive information, it would be beneficial to =
-use
-> both attributes:
->=20
-> - `ETHTOOL_A_PSE_CONTROLLER_ID` to identify the specific PSE controller
-> associated with each port.
->=20
-> - `ETHTOOL_A_PSE_POWER_DOMAIN_ID` to specify the power domain to which ea=
-ch
-> port belongs.
+Changes in v10:
+ - Removed erroneously added *.orig/*.rej files
 
-Currently the priority is managed by the PSE controller so the port is the =
-only
-information needed. The user interface is ethtool, and I don't see why he w=
-ould
-need such things like controller id or power domain id. Instead, it could be
-managed by the PSE core depending on the power domains described in the
-devicetree. The user only wants to know if he can allow a specific power bu=
-dget
-on a Ethernet port and configure port priority in case of over power-budget
-event.
+Changes in v9:
+ - Rebased on next-20240910
+ - Removed redundant assignment and changed a print to dev_err()
+ - Dropped if branch to switch conversion as requested; this will
+   be sent as a separate commit out of this series.
 
-I don't have hardware with several PSE controllers. Is there already such
-hardware existing in the market?
-This seems like an interesting idea but I think it would belong in another =
-patch
-series.
-Still, it is good to talk about it for future development idea.
+Changes in v8:
+ - Rebased on next-20240617
+ - Changed to allow probing a VDO with no available display outputs
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Changes in v7:
+ - Fix typo in patch 3/3
+
+Changes in v6:
+ - Added EPROBE_DEFER check to fix dsi/dpi false positive DT fallback case
+ - Dropped refcount of ep_out in mtk_drm_of_get_ddp_ep_cid()
+ - Fixed double refcount drop during path building
+ - Removed failure upon finding a DT-disabled path as requested
+ - Tested again on MT8195, MT8395 boards
+
+Changes in v5:
+ - Fixed commit [2/3], changed allOf -> anyOf to get the
+   intended allowance in the binding
+
+Changes in v4:
+ - Fixed a typo that caused pure OF graphs pipelines multiple
+   concurrent outputs to not get correctly parsed (port->id); 
+ - Added OVL_ADAPTOR support for OF graph specified pipelines;
+ - Now tested with fully OF Graph specified pipelines on MT8195
+   Chromebooks and MT8395 boards;
+ - Rebased on next-20240516
+
+Changes in v3:
+ - Rebased on next-20240502 because of renames in mediatek-drm
+
+Changes in v2:
+ - Fixed wrong `required` block indentation in commit [2/3]
+
+
+The display IPs in MediaTek SoCs are *VERY* flexible and those support
+being interconnected with different instances of DDP IPs (for example,
+merge0 or merge1) and/or with different DDP IPs (for example, rdma can
+be connected with either color, dpi, dsi, merge, etc), forming a full
+Display Data Path that ends with an actual display.
+
+This series was born because of an issue that I've found while enabling
+support for MT8195/MT8395 boards with DSI output as main display: the
+current mtk_drm_route variations would not work as currently, the driver
+hardcodes a display path for Chromebooks, which have a DisplayPort panel
+with DSC support, instead of a DSI panel without DSC support.
+
+There are other reasons for which I wrote this series, and I find that
+hardcoding those paths - when a HW path is clearly board-specific - is
+highly suboptimal. Also, let's not forget about keeping this driver from
+becoming a huge list of paths for each combination of SoC->board->disp
+and... this and that.
+
+For more information, please look at the commit description for each of
+the commits included in this series.
+
+This series is essential to enable support for the MT8195/MT8395 EVK,
+Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
+and Chromebooks to co-exist without conflicts.
+
+Besides, this is also a valid option for MT8188 Chromebooks which might
+have different DSI-or-eDP displays depending on the model (as far as I
+can see from the mtk_drm_route attempt for this SoC that is already
+present in this driver).
+
+This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+NIO-12L with both hardcoded paths, OF graph support and partially
+hardcoded paths, and pure OF graph support including pipelines that
+require OVL_ADAPTOR support.
+
+
+AngeloGioacchino Del Regno (3):
+  dt-bindings: display: mediatek: Add OF graph support for board path
+  dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
+  drm/mediatek: Implement OF graphs support for display paths
+
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
+ .../display/mediatek/mediatek,aal.yaml        |  40 +++
+ .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
+ .../display/mediatek/mediatek,color.yaml      |  22 ++
+ .../display/mediatek/mediatek,dither.yaml     |  22 ++
+ .../display/mediatek/mediatek,dpi.yaml        |  25 +-
+ .../display/mediatek/mediatek,dsc.yaml        |  24 ++
+ .../display/mediatek/mediatek,dsi.yaml        |  27 +-
+ .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
+ .../display/mediatek/mediatek,gamma.yaml      |  19 ++
+ .../display/mediatek/mediatek,merge.yaml      |  23 ++
+ .../display/mediatek/mediatek,od.yaml         |  22 ++
+ .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
+ .../display/mediatek/mediatek,ovl.yaml        |  22 ++
+ .../display/mediatek/mediatek,postmask.yaml   |  21 ++
+ .../display/mediatek/mediatek,rdma.yaml       |  22 ++
+ .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
+ .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  43 ++-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  21 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 253 +++++++++++++++++-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  14 +-
+ 23 files changed, 712 insertions(+), 25 deletions(-)
+
+-- 
+2.46.1
+
 
