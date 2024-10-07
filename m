@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-353926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19A899348D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:14:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB40999348E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8A3283FE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:14:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4E3283C27
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6249B1DD52F;
-	Mon,  7 Oct 2024 17:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C02C1DD53D;
+	Mon,  7 Oct 2024 17:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="17Gnuf9a"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5phIiAb"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FEF1DBB3C;
-	Mon,  7 Oct 2024 17:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46AA1DD52F;
+	Mon,  7 Oct 2024 17:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321241; cv=none; b=RsuB1mvgpZ+VErCmRvpqlQujhKdXuMpG2j4d8L4URDINT2D6i21fiyvTRQK0M93NdS5NFgWW168wn+cbHKGqDk85MUlj9VvAxX2Afz++CusazaJpZI10sZFWlXcSexc0yK0YDbKHgcTR+oa7rF0iGShQY9XiKqxYdydT3ZQh9X8=
+	t=1728321292; cv=none; b=dOs2kPD2vhWe4823+jWoUQvkgvKI8wCMW0fF+4PN1dQ/LBSdPmLfKopfartzs/UyQT1mboiEpMMqi2dNvy8rlS+0aGKJoJnIIcl6mMlsacrtE9gsUIAhn7owiOsY5URwjgNyLF1DGwCbe3brwCQn5gG0v5AxxbSKALEprnxTwNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321241; c=relaxed/simple;
-	bh=+1el5oe20173DkKtwlL01ebh1nxEK5s/2QXdYu96hEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kf9YR+YownZXGMt9Aks+zm6Mx3FJ5o0haRg/xRGUhPQhN8JOvnNKHyu2LjYmrLdhzQcAQEsels7jg7c5IX/66EfUcb5q94RNIv8JffqdytTgooUQbAkQ236O2lKKYz4ZKc9uz3gsNHun4pRbTKKvKiv8n2FyIt/ZPYkxek/MXfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=17Gnuf9a; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=w6ppkj+1yxEfd3/jQGqcf2ZXkXdKjMbZSyR2uVRspF4=; b=17Gnuf9acoMaaQd0RE23twEGwi
-	wIEVPxK2AxR/WnNqghdtdfWTy7sL74c4oHHlIATIgasy+k7a57Xc16gAAyJ7ISAgb4wU8yEgW2q1+
-	AFYFl7Ru+0553DIa9dmg1MNqd1vT3l1QX3gw7ZrBZydp2+lrLkCZEFoATg4HHmzGNdaI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sxrIi-009I7h-Rp; Mon, 07 Oct 2024 19:13:40 +0200
-Date: Mon, 7 Oct 2024 19:13:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-6-fujita.tomonori@gmail.com>
- <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
- <ZwG8H7u3ddYH6gRx@boqun-archlinux>
- <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
- <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
+	s=arc-20240116; t=1728321292; c=relaxed/simple;
+	bh=BpYXhQah0fJT3SbEgLlFhwNGnaSQXJFg6G1TaS+EDOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pps9OQ8o60Akm2SzdfXqHLhcfP84kRLl7SVvEyhiP21BN0OobhQAjW543I+Y6vekVDHgqm3zLAsxDJsx8MlPVbAFaC/xcUavkVsIlWvxlzToJiOvf5hS69SSa0RlsiuYpKawCKTcM++6eaOlKCXftnZYzhLKUFBLs/Cd3TIn82k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5phIiAb; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db3e962c2aso484296a12.0;
+        Mon, 07 Oct 2024 10:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728321291; x=1728926091; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BpYXhQah0fJT3SbEgLlFhwNGnaSQXJFg6G1TaS+EDOM=;
+        b=h5phIiAbTymOpvlyBs+nSpvrdEH8HzPTOJm1O2/ZkW1jQVIUDDgYWaW1sJbBofdsWt
+         OIz/PZ/c1ZkXhmCWsgZV77jlEL7PRJtapJ7+W9LHHU+ddATAH/HFPBvuwUmKj1sOkika
+         HMAHB+DMicJ7z7PQ1b1LnFGqhiiFj4puh0d/zw72+RGNRBFv0DO5L7vaWePmfc2nPRlX
+         7apxfQd3XA2BFMcaxD8BWVlRThLJ+W5YwRcjN0UxJpb0+1LZF3glaXQ0Mtlz3epN8lDd
+         5A/07CjTkDL/TO+5TLamFUTMrB+pkZeu8vizS1rgcTkb3Vq+AEA+Y1LvT2r4v8IV4hdg
+         FJoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728321291; x=1728926091;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BpYXhQah0fJT3SbEgLlFhwNGnaSQXJFg6G1TaS+EDOM=;
+        b=QSHBVf34ToKFIO85mxMu4LE76oxue0en0v/ERT7/T3ieM0kbblF3MP435cKuCQOa5W
+         jJNz0CktLQaLhOMGeqrj6uXOW2wYt1ny0hBo5rsYLpbsxQjQOC/TcNoMQz3de6DhtTrC
+         itzynAPmzsg5uUjjdgDQzxEL0XrR9SFMRQwdrxUD0o6+1yfdBVZ5wmpp924ejdKcwqKO
+         Fi4NTjHk0uUPqkiUWzYH218asGqS6YVFrPk0EwjECEwpy8Ifci2x6iky8bJKrVqlU6Pw
+         NxiZs1s4zI0sRL1VylnUfaEtEflWz69Twk7sdLQAJv3S1TRlwFrv9k2Kix2dkrS6Wxi9
+         7EdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnFhQfpbATaB2L6h5kREbBg0218Zjr14elq+iLH5lH+Xy2piFuiEPQ+tQav4EoqnVn26o62Rfh2P+AA6M4Lg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfvjUqVgQ3eV3LRJRgMPWqub/S7HhPo1zLl6zQkj+R7USrsrRl
+	4v98KOHNNDfnp/jkokYn9pw/hE2otyIGnlBGgKCqmjKSe7P+0ARf6VspPITXmOL2IGtQ1XOIi3I
+	pDmpKMX7mP4kiFGwEUAOfTYeYCWs=
+X-Google-Smtp-Source: AGHT+IG+NPeTglkgCJ+Y1+VY72mMJP/S062G1APqaSWaI8AMKqTGElp9uGT8qmU1d8BdvMQfwASc3Bly/y/6mlnZtfg=
+X-Received: by 2002:a05:6a21:6da4:b0:1cf:4bd8:3a02 with SMTP id
+ adf61e73a8af0-1d6dfa1e607mr8475036637.3.1728321290777; Mon, 07 Oct 2024
+ 10:14:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwPsdvzxQVsD7wHm@boqun-archlinux>
+References: <CANiq72na=RqV=vhKZr8iZMdvKZXxqX5r7bDgo84KnPWddc4Z1w@mail.gmail.com>
+ <20241006140244.5509-1-timo.grautstueck@web.de>
+In-Reply-To: <20241006140244.5509-1-timo.grautstueck@web.de>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 7 Oct 2024 19:14:38 +0200
+Message-ID: <CANiq72knW1J3=gRpEpo5TQSE=oKygObCSKkigFdVDS3315PUww@mail.gmail.com>
+Subject: Re: [PATCH v3] lib/Kconfig.debug: fix grammar in RUST_BUILD_ASSERT_ALLOW
+To: =?UTF-8?Q?Timo_Grautst=C3=BCck?= <timo.grautstueck@web.de>
+Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > pub fn might_sleep() {
-> >     // SAFETY: Always safe to call.
-> >     unsafe { bindings::might_sleep() };
-> 
-> It's not always safe to call, because might_sleep() has a
-> might_resched() and in preempt=voluntary kernel, that's a
-> cond_resched(), which may eventually call __schedule() and report a
-> quiescent state of RCU. This could means an unexpected early grace
-> period, and that means a potential use-afer-free.
+On Sun, Oct 6, 2024 at 4:03=E2=80=AFPM Timo Grautst=C3=BCck <timo.grautstue=
+ck@web.de> wrote:
+>
+> From: Timo Grautstueck <timo.grautstueck@web.de>
+>
+> Just a grammar fix in lib/Kconfig.debug, under the config option
+> RUST_BUILD_ASSERT_ALLOW.
+>
+> Reported-by: Miguel Ojeda <ojeda@kernel.org>
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1006
+> Fixes: ecaa6ddff2fd ("rust: add `build_error` crate")
+> Signed-off-by: Timo Grautstueck <timo.grautstueck@web.de>
 
-How does C handle this?
+Applied to `rust-fixes` -- thanks!
 
-I'm not an RCU person...
+(If we don't get any other fixes, I may end up applying this to
+`rust-next`, since it is trivial)
 
-But if you have called might_sleep() you are about to do something
-which could sleep. If it does sleep, the scheduler is going to be
-called, the grace period has ended, and RCU is going to do its
-thing. If that results in a use-after-free, your code is
-broken. might_sleep makes no difference here, the code is still
-broken, it just happens to light the fuse for the explosion a bit
-earlier.
-
-Or, i'm missing something, not being an RCU person.
-
-	Andrew
+Cheers,
+Miguel
 
