@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-354067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12B2993742
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3868F993745
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7566A2848A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2EF1F23E05
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2C01DE2CA;
-	Mon,  7 Oct 2024 19:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DE81DE2C7;
+	Mon,  7 Oct 2024 19:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YBYpVsV6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxJFGzSe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75AE13B797;
-	Mon,  7 Oct 2024 19:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF7713B797;
+	Mon,  7 Oct 2024 19:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329025; cv=none; b=oUlCLMwWvGIbVV6yBz8iZ1bk5gda1DBdfeRZwn32TDN84UiAyH/ORqH7lKRBeH+SfZ+gBj6ay3/XuATGwDMa0a8MfvgnEZGK4+9y1LRKjxJbKF+PE0Eb9aUEKXt/DnyUFMbLWGlzEdGz1vg/OQeUAyFJBJOb0b9faSVAvLW32ME=
+	t=1728329076; cv=none; b=pXXwvlWxdogrTgeMDdLuMe+JmMd3jAbFTN1onRo2pLuOst7AIi0guzdqJueVsl39nMu5ZE2ezB323izMBvtaNoDGhlb0EdWKgJBybJcGA53gxsDnO07NaqggYMX/IEl0CJO5NTJbIefd30b9zYiop3FtTzE7RO7yWJJqirp0dfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329025; c=relaxed/simple;
-	bh=0jljGmY6PN0GJBzo5UrRdlg7PesUC+Z5bcaPW8iXpIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I7KxrRC0QSFZd+NiymtG2HMEiJEq9Jzz+BaQX8vAK0CIf19+X1kjc/EIIKuInTa5LnU8k9DhQiECReSV/fBgYC3QWlXWCxLHAiWY2tuqXVVKKKl1XGxkMo80xAZH1zitke0oRe/H4w8YkOnVbHAq1ZKzaasSMaRz+MPoXE+qkyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YBYpVsV6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4979NTGY006603;
-	Mon, 7 Oct 2024 19:23:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	p1EGGJPxSmvLiTrrD2VO8xxQnqrJnihpAqAU2vH7SE0=; b=YBYpVsV6Xh48Or/U
-	fbGvKD0mk8wJXXXK4yeCgfe4vTc2hqBsOLomu4DjWX5ugEyvUc+XIitTKaiT+RKK
-	k1rXLZc2cd1r9hODKZApvR7rgbNC+HV9ySn7OSW9Lmqrir8tRJSwFfpqBe1JXW8u
-	Uho2Y6bNvDyEFiwsswDzokjK34wa65AfGcanTN/tKNZAYnREuFCJPah7C0UxGsqC
-	OyAbjSy2Tmk5QBkh63l1uQ48+8Zhhkpxke9vLNCFsGVHHu8yrABnmCBM+MAsyXcS
-	jqK59Tck5fH1hCS4m368++HkQR0e4d5YlUkXK9MKdlyRBrryLbZDdSMqvWMl8Hbf
-	PUE2aQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424cy79jff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 19:23:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497JNcQp019014
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 19:23:38 GMT
-Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 12:23:36 -0700
-Message-ID: <0c91b95f-1945-4c9d-a119-fac5dc4f5661@quicinc.com>
-Date: Tue, 8 Oct 2024 00:53:33 +0530
+	s=arc-20240116; t=1728329076; c=relaxed/simple;
+	bh=MJyteUBXzR7rkYONl8zAQVKdleok4P6vuQ1Z0LCohv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocUDb10uRZT55jfLuxy8dnTEd8iueS7DLtdVp75/MYVW/3tHZrwsGMKGzYDF/e45US6pXxfuQlYljbVS6dhpWKcC28igCE3nUkvjwGk1FjhBdFwGuOiC1VgrEyxd5vX/sgCPga0zNYkhqxTeNMtjgyRgP/4S8WyXaeD3e8dfLkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxJFGzSe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D36C4CEC6;
+	Mon,  7 Oct 2024 19:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728329076;
+	bh=MJyteUBXzR7rkYONl8zAQVKdleok4P6vuQ1Z0LCohv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UxJFGzSeq55JlqKAuiQRKTXuZxh6yPGQ0Sz6c4VxEhqQCUZsuo1FrJBLZ5aFvu3k4
+	 AAfcjRrPqEBrTTUyIE+yE1xBu+V9TGckEopicJQXNthMTU7WJH4RemFIsZoWAD5aKE
+	 NQ9YsclEX2zayMF1ji4E2WmnMi4it+UqMBQIHWUICamBa/REQCekbxIlFfbOqIMByR
+	 Tk8XhRHmk7qE1NtZhnoQaRb3y8b6FaACflXi9o0TyjNFDqmCESd6LFEsfDenPgnhKD
+	 La8DljEE1S23CfaMBgo2RfVeESrgz+aOpsHuq7nG+DFq0CWVB5G+OeP2Ej/fCiefq3
+	 j+f3abeWb25Gw==
+Date: Mon, 7 Oct 2024 12:24:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	eranian@google.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	santosh.shukla@amd.com, ananth.narayan@amd.com,
+	sandipan.das@amd.com
+Subject: Re: [PATCH 5/8] perf/amd/ibs: Don't allow freq mode event creation
+ through ->config interface
+Message-ID: <ZwQ1cRhRuE3kunjK@google.com>
+References: <20241007034810.754-1-ravi.bangoria@amd.com>
+ <20241007034810.754-6-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
- <ylfkupkpy26gupri4lbwij3sh4uwrm7lxr7q7q2rhrgiwai6mc@bkplz3mlrsxb>
- <CACMJSevsbXeVV8t=nZ1L_ZCefuaU0Ew5=VFcSWTSHpMj_Bo92A@mail.gmail.com>
-Content-Language: en-US
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-In-Reply-To: <CACMJSevsbXeVV8t=nZ1L_ZCefuaU0Ew5=VFcSWTSHpMj_Bo92A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8kNErFsOb0MBtzI3J2fDS0LSEYvAmOH2
-X-Proofpoint-GUID: 8kNErFsOb0MBtzI3J2fDS0LSEYvAmOH2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 clxscore=1015 bulkscore=0 malwarescore=0
- mlxlogscore=904 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070133
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241007034810.754-6-ravi.bangoria@amd.com>
 
+On Mon, Oct 07, 2024 at 03:48:07AM +0000, Ravi Bangoria wrote:
+> Most perf_event_attr->config bits directly maps to IBS_{FETCH|OP}_CTL
+> MSR. Since the sample period is programmed in these control registers,
+> IBS PMU driver allows opening an IBS event by setting sample period
+> value directly in perf_event_attr->config instead of using explicit
+> perf_event_attr->sample_period interface.
+> 
+> However, this logic is not applicable for freq mode events since the
+> semantics of control register fields are applicable only to fixed
+> sample period whereas the freq mode event adjusts sample period after
+> each and every sample. Currently, IBS driver (unintentionally) allows
+> creating freq mode event via ->config interface, which is semantically
+> wrong as well as detrimental because it can be misused to bypass
+> perf_event_max_sample_rate checks.
+> 
+> Don't allow freq mode event creation through perf_event_attr->config
+> interface.
 
-On 10/7/2024 7:53 PM, Bartosz Golaszewski wrote:
-> On Mon, 7 Oct 2024 at 03:18, Bjorn Andersson <andersson@kernel.org> wrote:
->>
->> On Sat, Oct 05, 2024 at 07:31:50PM GMT, Kuldeep Singh wrote:
->>> The qcom_tzmem driver currently has multiple exposed APIs that lack
->>> validations on input parameters. This oversight can lead to unexpected
->>> crashes due to null pointer dereference when incorrect inputs are
->>> provided.
->>>
->>> To address this issue, add required sanity for all input parameters in
->>> the exposed APIs.
->>>
->>
->> Unless there's good reason for the opposite, I rather see that we define
->> the API to only accept valid pointers. Then if a client passes a NULL we
->> get a oops with a nice callstack, which is easy to debug>>
->> The alternative is that we return -EINVAL, which not unlikely is
->> propagated to some application which may or may not result in a bug
->> report from a user - without any tangible information about where things
->> went wrong.
+Sounds reasonable.  I agree the freq mode should use the standard
+interface using attr->sample_freq.  But I'm not sure if the behaivor is
+defined when attr->freq is set and attr->sample_freq is 0.  Maybe this
+should be handled in the generic code.
 
-Discussing with Dmitry as well on other thread over same point.
-Not all checks are needed but I believe some sanity is still needed to avoid crashes.
+Thanks,
+Namhyung
 
 > 
-> Agreed, I don't think this is a good pattern in a kernel API (as
-> opposed to user-space interfaces where we validate everything). We
-> expect a certain level of sanity from in-kernel users.
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> ---
+>  arch/x86/events/amd/ibs.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Bart
-
--- 
-Regards
-Kuldeep
+> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+> index 152f9116af1e..368ed839b612 100644
+> --- a/arch/x86/events/amd/ibs.c
+> +++ b/arch/x86/events/amd/ibs.c
+> @@ -302,6 +302,9 @@ static int perf_ibs_init(struct perf_event *event)
+>  	} else {
+>  		u64 period = 0;
+>  
+> +		if (event->attr.freq)
+> +			return -EINVAL;
+> +
+>  		if (perf_ibs == &perf_ibs_op) {
+>  			period = (config & IBS_OP_MAX_CNT) << 4;
+>  			if (ibs_caps & IBS_CAPS_OPCNTEXT)
+> -- 
+> 2.46.2
+> 
 
