@@ -1,99 +1,87 @@
-Return-Path: <linux-kernel+bounces-354129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7694B993822
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE44A993823
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204221F223FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC941C214EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072251DE885;
-	Mon,  7 Oct 2024 20:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A7F1DE895;
+	Mon,  7 Oct 2024 20:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="L6KryEch"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2xhk//Ek"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965A91DE4E0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E91D8E1F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332557; cv=none; b=Hu82lZNiB/PUuesyxiWq6YKmiDHi+fy7QdVf0S7RqlpD+n03chYRiPbKHoSey4Q0ryDKOHQqWVvr9e+uEfi9PtGsuq188BWFhNFKB6S8Ktsyc+pj5YmbDKnhQBrEW9Eicdu1tpHAc4aU7CrjkhH2zdKTOtf6c6V47JHV46eW9ig=
+	t=1728332558; cv=none; b=JOSrPhcg4oS2WjmdwqgcRQlLXpDUSAH9Qa7YXyVmAvqT17ulJ0QMwVltwuMmkm15Yuw9jpcXgg0c8SPdbRiNFeK4Gdu6uiWVHf53oSNzXCpHMT23ITN8L1EH5gmOEa75RFvW6fAe7z5KOuIZwOhb9HXfw5z58EXKFzjkmCjCouE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332557; c=relaxed/simple;
-	bh=+JurRkojZY4EtF+xRmXEH88+oNqlfaBMDd8Nb4X/7hQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c3oej/vBneuY3KsVdzjHcmEJTvUhofu0Yvl9RmbEes4jXCkgtBb70Od/YBtXS4hyJULaXaDCk8HUXmESzi261CGmIjXOl7Z8DQj+RORw6+tPVWRsmJEyub2SiBBOLN78dPR6hyimj972WAOzQsoyYINBxkv5pHRFofeZ5GaQeJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=L6KryEch; arc=none smtp.client-ip=209.85.166.46
+	s=arc-20240116; t=1728332558; c=relaxed/simple;
+	bh=21qP7Tak30Olxg5P/qZkkhpMiiPnYGWRaPxCeAM+y1o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qb/K3F9JNDJiORhhKvN4JLX3M1nQXzT5hj6fUrU0OMLoq7NDLG3HanyNYTle5gsdXNd/hxF3FplpwzPVb2Oe4RxhqlnSJlzUtQ3GZQv5njucKQQOmMEpP2qot8hDxxeanYXq1GLU2vTh8HsHmji70pDivGEGInBcHwKQRZ1Of2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2xhk//Ek; arc=none smtp.client-ip=209.85.166.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82aa7c3b3dbso205424039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:22:35 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82cf3286261so186425639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728332554; x=1728937354; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728332556; x=1728937356; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QefVMDm8hBjPT+1JwbSaVFa7IKUqqLaGgXLC/P+/zW0=;
-        b=L6KryEchvj6hS292mMNLvBuKS6scDoEQpsWzujALkWKGRh4Qnqj2JKhFbvAQWWl/mw
-         VCmsc1KUaHgn/gZq3oLsq348QdMAfMB969zABGRZqI+ZBIJZkdVXCLY3yfLmghf+FTdq
-         YWgjgikwcXddrprcM/P3vvQzaMqwENYgCJvtmz2Um48+TrrPurslUjW3ldWrOp/LFt9W
-         nrhYzaTMQIl9Ft5LZykTnZjJ2FLLY82v/Q4b1r4PIL0TXsr0IYvvw2Zjej8i1TUUyXC2
-         DtZsiZqAaiLEYgj/DvMDrhaTxjfteH9XHRZS1X1KFTFQrg9/aRHVqMxRJ129IadhXVyt
-         bBZg==
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CR6hQb9CxfxGMdRoKEcbQoEJHNZRJy3CqaZVl8rk6E8=;
+        b=2xhk//EkJy+lYoE40NfNiaY8JMyEv3g/Gm7BN5SKCdwDnEnVND0SwwDN80Inkkd/BB
+         9DUdSJwxsRZOxlGywI7LfqwC5CljpXfhQQoxDR1JCS4AxeWQkV9p6pGpTB5Xe4LJDcaB
+         zf7hl6CA8XruUUWmV23Y+ostTaWPAV9RVXvFGVdRTklyodT3YtEs8yhNsEv6KqP0vH9o
+         Vzpg2Ha+wn1Tlbe7n6wh5qO9EhqiahsVE8JoC9ZN9lx2DvRyi5H6V+nataKQtzq8OncP
+         n2j7yc5mma5nPhQ7ag/Xyz3Fj1EEBEBM8WBJFffMiNYFZYqVQSFtzJI3R0k71NSibZR1
+         jEqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728332554; x=1728937354;
+        d=1e100.net; s=20230601; t=1728332556; x=1728937356;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QefVMDm8hBjPT+1JwbSaVFa7IKUqqLaGgXLC/P+/zW0=;
-        b=Qx6sgSAT11LCXwe0Vq0EK/ji0e6DZUU/6jFjdK4gPEMOSbV5YfbUVh2vCt8iqq1Dg3
-         nRYX18QD1SAt5ypjy6XERUGIsqs9n9/Ehy57AkQLDEQfH6bkSyW0mmsFAKiiLa1w9LUZ
-         /DrGvHILURJ8A8ezf5eGwEPiTsW+D3MF7iFR+R5fiUCewO7H5Uf3girmvo8gLe2kQYtx
-         5P4LHIJUBSK6zghsiqx51amK3Ajgt9Nq0D0CI23xm2Rspy8qaPnBjXVVh9c4nWMuNGGf
-         5LuKlV5lSTaexyPAbjFSwVwLhEZkovhByRL8z0eC3+oDiDbbNDbfQM/zWklhvpBCQseU
-         G9pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbV8vFte1P5M9961W1ez2UfDFN9tm0AniaqcH9UUVDERWt8/LRLipX4uqtJDPYQJzwAp2RR4/loN7P4gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbckf5/JIWRWJc0EDrrijyqkxMBz2DkxrwzXp8v9mpeImLgvGD
-	0DjBrDKU+T8bfKZ0OKXdmRW/jlDuXenXLKRcOV3tuwxDLoZtFLIPhAPCCLPfK/g=
-X-Google-Smtp-Source: AGHT+IF2W3KnYL3GA1TILGogvaha8pYup4+NHEwZvTPOaV7yC6EWbx9hu3M/fgNeyIQEycR1C6cK/Q==
-X-Received: by 2002:a05:6e02:1fc8:b0:3a3:44b2:acb2 with SMTP id e9e14a558f8ab-3a375be2a9dmr113900705ab.25.1728332554520;
-        Mon, 07 Oct 2024 13:22:34 -0700 (PDT)
+        bh=CR6hQb9CxfxGMdRoKEcbQoEJHNZRJy3CqaZVl8rk6E8=;
+        b=Bc8Si73+ZAiHmXI7nzsuyxXlCnf0SnNVtLjc7NgZpGHGwTqIJHKPNN/HYLILR+WERX
+         AoQhZTYEGqKw9I8FJpNSWMfN2Azms8HSDrvXdINr3ABFzQVesdqZm7XJ04wWPjSquAQR
+         a4RUrK98xh11GtwPg6nENhrH1EiZCHXSQl+ZEAFMjpYtaWVGs3OYyBVEtfxipBnneqFh
+         Gbosbd6C7z4ToCuc2vLWv7mecuKHctoLJGhsnWmmWaklPClrnuVkS+oimwlR/By61Bjc
+         NgvkH5s2FIZGl9bVKo1DDrNydu2TiADVGTzN85TCzgnCWC2bKXL+0uq4J2K/E6seu9rN
+         rWNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsr7z3Ony3nf6SmtCDGSELFO581XsGDtqHHJNou/DISXvC3OAyxe2c/M0V7XM8dn0riAFRaUKpg/740KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsjqKvYKNUQm16rJZ4RHo0s06pTcCWgHitrmhqXqHbQcBJ3GIk
+	nxS9JBhEGNzXI52VY8v8l3qB86+gEeeIOEw4gj/0K9PFjXKrXnV6QEm80Ji4LfM=
+X-Google-Smtp-Source: AGHT+IEAMVfOE5sPUtiSwm/TWfv2tfGIIhjiTnyU3vDHUtq0SM2wY34KGRRxJU7Br0YzNi0Fry8+GQ==
+X-Received: by 2002:a05:6602:610f:b0:82a:2053:e715 with SMTP id ca18e2360f4ac-834f7d93c3amr1217728039f.14.1728332556273;
+        Mon, 07 Oct 2024 13:22:36 -0700 (PDT)
 Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db86e86898sm605463173.61.2024.10.07.13.22.32
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db86e86898sm605463173.61.2024.10.07.13.22.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 13:22:33 -0700 (PDT)
+        Mon, 07 Oct 2024 13:22:35 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
-To: Jonathan Corbet <corbet@lwn.net>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
- INAGAKI Hiroshi <musashino.open@gmail.com>, 
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
- Ming Lei <ming.lei@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>, 
- Christian Heusel <christian@heusel.eu>, Avri Altman <avri.altman@wdc.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Riyan Dhiman <riyandhiman14@gmail.com>, 
- Mikko Rapeli <mikko.rapeli@linaro.org>, 
- Jorge Ramirez-Ortiz <jorge@foundries.io>, 
- Li Zhijian <lizhijian@fujitsu.com>, 
- Dominique Martinet <dominique.martinet@atmark-techno.com>, 
- Jens Wiklander <jens.wiklander@linaro.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
- devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com, 
- Christoph Hellwig <hch@infradead.org>, 
- Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20241002221306.4403-1-ansuelsmth@gmail.com>
-References: <20241002221306.4403-1-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v6 0/6] block: partition table OF support
-Message-Id: <172833255295.162249.16483920948700467749.b4-ty@kernel.dk>
-Date: Mon, 07 Oct 2024 14:22:32 -0600
+To: Al Viro <viro@zeniv.linux.org.uk>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ Kyle Fortin <kyle.fortin@oracle.com>, 
+ Douglas Anderson <dianders@google.com>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Christian Heusel <christian@heusel.eu>, Jan Kara <jack@suse.cz>, 
+ Li Lingfeng <lilingfeng3@huawei.com>, Ming Lei <ming.lei@redhat.com>, 
+ Riyan Dhiman <riyandhiman14@gmail.com>, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konstantin Khlebnikov <koct9i@gmail.com>
+In-Reply-To: <20241004171340.v2.1.I938c91d10e454e841fdf5d64499a8ae8514dc004@changeid>
+References: <20241004171340.v2.1.I938c91d10e454e841fdf5d64499a8ae8514dc004@changeid>
+Subject: Re: [PATCH v2] block: add partition uuid into uevent as "PARTUUID"
+Message-Id: <172833255467.162249.3695820190422916095.b4-ty@kernel.dk>
+Date: Mon, 07 Oct 2024 14:22:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,32 +93,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Thu, 03 Oct 2024 00:11:40 +0200, Christian Marangi wrote:
-> this is an initial proposal to complete support for manually defining
-> partition table.
+On Fri, 04 Oct 2024 17:13:43 -0700, Douglas Anderson wrote:
+> Both most common formats have uuid in addition to partition name:
+> GPT: standard uuid xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+> DOS: 4 byte disk signature and 1 byte partition xxxxxxxx-xx
 > 
-> Some background on this. Many OEM on embedded device (modem, router...)
-> are starting to migrate from NOR/NAND flash to eMMC. The reason for this
-> is that OEM are starting to require more and more space for the firmware
-> and price difference is becoming so little that using eMMC is only benefits
-> and no cons.
+> Tools from util-linux use the same notation for them.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] block: add support for defining read-only partitions
-      commit: 03cb793b26834ddca170ba87057c8f883772dd45
-[2/6] docs: block: Document support for read-only partition in cmdline part
-      commit: 62adb971e515d1bb0e9e555f3dd1d5dc948cf6a1
-[3/6] block: introduce add_disk_fwnode()
-      commit: e5f587242b6072ffab4f4a084a459a59f3035873
-[4/6] mmc: block: attach partitions fwnode if found in mmc-card
-      commit: 45ff6c340ddfc2dade74d5b7a8962c778ab7042c
-[5/6] block: add support for partition table defined in OF
-      commit: 884555b557e5e6d41c866e2cd8d7b32f50ec974b
-[6/6] dt-bindings: mmc: Document support for partition table in mmc-card
-      commit: 06f39701d0666d89dd3c86ff0b163c7139b7ba2d
+[1/1] block: add partition uuid into uevent as "PARTUUID"
+      commit: 74f4a8dc0dd8bf337edacb693383911b856f61e3
 
 Best regards,
 -- 
