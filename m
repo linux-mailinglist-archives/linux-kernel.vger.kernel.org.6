@@ -1,173 +1,115 @@
-Return-Path: <linux-kernel+bounces-353007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1768992739
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 758FC992741
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9B41F239A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A511F23B19
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C35A18DF96;
-	Mon,  7 Oct 2024 08:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190C518C035;
+	Mon,  7 Oct 2024 08:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="s7E/YDfi"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTVH5krJ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774CD18C920;
-	Mon,  7 Oct 2024 08:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF1B16F909;
+	Mon,  7 Oct 2024 08:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290288; cv=none; b=nlPYZfIclRGbx4ZmJmeN+iQn+v7pbfKc0WO+6tJqOdEPQzAYryKraPJVcbiBcxsvRrS3dCnJjcCvehtZQsl0VzFfi5BEXQeUCKP6qThye+U8z7+VvZsv71srBEF06PSqLBp06x8yMxJDLdOvcAtTAPnAmhcC+FA5ArghYvXj8cU=
+	t=1728290369; cv=none; b=q4gGvwHiafVrKFoExDzFamzyCZPzZUi57TWK7eRGUO8SnUd4MRTEFdeQjmVU8oq4u3K86BfORFpnqQC7B6UZeIqxNdQvvR+/q2OTV3stYy8mANGe2B2t6mLtAZHuiQzdNeW8HAd42dW9za9dj9VsYXnzKwPN7U+/aCcrecIKOgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290288; c=relaxed/simple;
-	bh=hQ8AoXwUvegxDlaiAn+sm9ptwD601U0SAG4PTocO1tY=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=ts8bmdhjXyYId0TPb1TvKC5u8+arFsbIbU1DXbsSTGa6U/PQPOtdPEgz1K/4uqnjZ+Aea+Bx0mguWYu1ojpbiGB+jgKFVsEYVvyKO5VGwKu53D/G99skVCWQgxz1ieYzt0UDNSzVCBMriP5xVIR8pqjSeD35LYFcXt2hB21ESi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=s7E/YDfi; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1728290266; x=1728895066; i=frank-w@public-files.de;
-	bh=UtqXSW0/Q2zac9n3oW8JsHdhJ8qh8TUEmTMJ6DzB6wI=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s7E/YDfiw0ikUvrnidHc9ZKgpRom3d4iGHarFK00g2jnkVVc2foxUCPF7MkRnQCo
-	 LgDCrQZX8avKIR1+WxP771Jc/0zUM6whgoLTb10smRgTZJLOyUzOJa771wMG9pZUq
-	 rvtQfRWqNv8VlkF7MIUaW+DVAls5Zttk8s8slXGXoweOuQ7GhXoHeJ9aIEjUjpOAY
-	 7zQ4zyJzJJYefMJxBfHl62EZ0R64sSzbASA4vw5hicshqpGUYiFI9lWwuX7D/AYvg
-	 Ji66ifxX/R2272+xOiqgRFkO+aB98ROpJCpAF2ayn6KbUAYUVDj2wZDdSCpyCjvvJ
-	 EyXJkN/YYz9YxNJKqA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.153.101] ([217.61.153.101]) by web-mail.gmx.net
- (3c-app-gmx-bap03.server.lan [172.19.172.73]) (via HTTP); Mon, 7 Oct 2024
- 10:37:46 +0200
+	s=arc-20240116; t=1728290369; c=relaxed/simple;
+	bh=9k7Y4c/hhOvuRWVVPUzkVMrQ1gz0vDeevhjMeJwkHx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pTRr0F0T3h3uZxa4I6WYCHcnXIaVs9tMtovR7/h6rnIk1FJaEd/x9+WohjEPTCJjdaeGyD94Upg33dRFgEcpwgRUIsB/xK2/gAEhR/uBBo6Yxv0qQudLSRJyHnNscWuXswxnZDrBo/xyRfep4vYRodDIIu0uuHbPiqG5nx628kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTVH5krJ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso41540245e9.2;
+        Mon, 07 Oct 2024 01:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728290365; x=1728895165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kgqgUblZEOn6S4lzBI2hhbB7tsPXrcoYH8WdcFD/Ebw=;
+        b=bTVH5krJzRzqrvnGobamNiy3+u1/OVDD36Q4S74c4wUe2AGLG2Jg4r0hUMnKKYOZXN
+         J/LgXKE5++TeybpTkIOJeTHQE3d2JYiQZ16ioB2u55oV4fqBjW8Y67xPL+17vrMdNf57
+         MiYJoCTu6WklNkpTmpM9oIBNM5SFbB9cKwJStS/a748cCbd7Y3TrjcuwTF49MKX/jo62
+         sIAOP3m4SEFiKLKIhJSlM0UpI1EP4nXmJwYklqAK7DF0eW0q5uh/gYb0dubg37FRZ/++
+         1wykm8/o5FTU17Jk2sJ6qv7U74vsKb9C8zwcZgJtYoEOQyyoFPzPUl20GQrDyjlwOl3r
+         sQEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728290365; x=1728895165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kgqgUblZEOn6S4lzBI2hhbB7tsPXrcoYH8WdcFD/Ebw=;
+        b=bMpWFcNh7SkD10CBHYRApnrh62gXkUhwKRyR1CGbdosKjDpdY1PSBh1xTtoWmkLTc1
+         9hdLHXvAcZAMLWsiXNOUgZxlsAIjfbTe7BNq83tY3uDsGkpwtRyuGPOapNedxWgi2Qa7
+         c0w09jKAqEl9D/M5l7JcZzrzgW23kjQCnWJvMn8G35McUd2Gt2uQovp1h29w6ljb1JD0
+         NL9oyF3pYyo4lTl/TXvkx8nThCUVHM553nqhZeS8SgQAUwk76foEfvzE9AcjYwYdt88w
+         ETgrjggR05lJ4cQ0CxVSDmC0/WfafLaqBtQW0uIShFnULfm5xDj+4JPblpz8lVnJc65n
+         j/aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEbW48EIJE5zu0A+Fmp4zQKr64o+juYTJcUW4+DoDy/ozMlOWNlOgQetCLdxD9UjWTdOcTaq28+r3t1xE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3v7+DxBgzMe1CtPztW77HQTKME6z6WubiUUhTysUP8vgb7dnN
+	dpBeG8CN895/6CwWUbe8TDNv0IfgKz0g1w07la0D0wyDgCXDED6dLHj34PxvBFE=
+X-Google-Smtp-Source: AGHT+IEsRghjNhCM57yu1Q8QL0Y7ELKIyN1xZmdPSv7iNm4czQBnmoO90GoyuU+ZJy4nV4A6UNbbxw==
+X-Received: by 2002:a05:600c:468f:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42f85aea086mr78623355e9.28.1728290364933;
+        Mon, 07 Oct 2024 01:39:24 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e83356sm67968385e9.3.2024.10.07.01.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:39:24 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [PATCH] dma-buf: Use atomic64_inc_return() in dma_buf_getfile()
+Date: Mon,  7 Oct 2024 10:37:52 +0200
+Message-ID: <20241007083921.47525-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-2ac8c3fe-ad19-424b-ab4f-da84c42c4ae1-1728290266613@3c-app-gmx-bap03>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <linux@fw-web.de>, Chaotian Jing
- <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-Subject: Aw: Re: [PATCH v2 2/2] mmc: mtk-sd: add support for mt7988
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 7 Oct 2024 10:37:46 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <89e54baa-0f05-47d7-8d81-68862f822c59@collabora.com>
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-3-linux@fw-web.de>
- <89e54baa-0f05-47d7-8d81-68862f822c59@collabora.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:z4a5J2wLlWmjRI+/xOzyHBo8m7kd7rV/6DvFgeVonFs3TVL+zjoT3vEXNnJSjA1rRT0Sw
- +YC5u5d46gqNRMH/lBLtPV5bXJDuov14lACGuhU6imck/2+rJxgCoAj6wHDukpsmPXM/wSElyoWP
- qiCL7AlihMPsnGk449JOJVtw2GWsKc++ZfG71miseO0XWalAb0Ixe9yjBL2QCiwEohB09yNbW4YH
- YiSbwpAr0N2LfV6vT0DD1xJrNyKBm/XiXHand3daPhrb3onkyd6I1Lp5n64GLOpwMMFU9nSEHg9+
- 1k=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PBivFzyeUiM=;ItkuaBFr4/dqKmnih8O3plOgMr1
- RVebIRCT01GBGX6cqg/AIGULfwOfsA8hu4ysnw2NEL7DifcgKlj0Mlfx4eQdmnuJk2nbPSgi2
- mA9YFpW6K46kl2wh6HMJ46YU6/E4C1CCI6OPStjzm1+O6hS9pY8SvHNFxYfXqd8KDiUWITDrL
- sWZO/kplCHPidteWR/dueSuI8jG5I7JoMg1S21lX8xH6I8v1WCd2A6N2R6Ejz0gw7OXfytc4N
- kuisbsdcHQNrjab9b6lfELD0T5R/BgeI+1bvCYtR7RsBduRozl4zHKxZ3Ywvk1DXp8bAGYga9
- /i8cLC7zYlK4Rc/dxkMqa5N7ZppclUcxFhX0sIpWMde67s6vpmC/Tk1/6MAtFXyksqIJ4lrmC
- yhqjWTJfL7MoVl5jQEDCFupSMd3ZwQx7R0pQY0NdbIh700dvPglY/i/YCIzrASWhyfYxxzFD0
- xKHp9DxEIdMMfKsW9pmzQif71zGwZKEpfHGp6QvfxOIFinRJOwkWqICzdariBXvj74nhrsR1S
- A8PU/wfZf+bsIJZFNslTe0TuALmcrmURstmyml3Fp0KteEsrLlX4NP0no1LosIN1C5b0qaHxV
- HQNtKw1+bGVXb8DfjBOsXkmEcBU4IJoZt5fBSQ9yUBP+IZXdxm9EeV6/uWPK9oClLsRYukRPt
- Z4ExU3g6Myt8tt8v2gED9xVRD2v4z79wdmtoXJLxZg==
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi
+Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+to use optimized implementation and ease register pressure around
+the primitive for targets that implement optimized variant.
 
-> Gesendet: Montag, 07. Oktober 2024 um 09:58 Uhr
-> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.c=
-om>
-> Betreff: Re: [PATCH v2 2/2] mmc: mtk-sd: add support for mt7988
->
-> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
-> > From: Frank Wunderlich <frank-w@public-files.de>
-> >
-> > Add support for mmc on MT7988 SoC.
-> >
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->
-> There's no need to add yet one more duplicate mtk_mmc_compatible platfor=
-m
-> data, nor one more compatible string to this driver, as this is exactly
-> the same as mt7986.
->
-> Please reuse the MT7986 compatible; in DT you'll have:
->
-> compatible =3D "mediatek,mt7988-mmc", "mediatek,mt7986-mmc";
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: "Christian König" <christian.koenig@amd.com>
+---
+ drivers/dma-buf/dma-buf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-as explained in binding, the clock config is completely different (except =
-first 2 also required by driver - 3-7 are optional there). mt7988 uses axi=
- and ahb clocks.
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 8892bc701a66..a3649db76add 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -558,7 +558,7 @@ static struct file *dma_buf_getfile(size_t size, int flags)
+ 	 * Override ->i_ino with the unique and dmabuffs specific
+ 	 * value.
+ 	 */
+-	inode->i_ino = atomic64_add_return(1, &dmabuf_inode);
++	inode->i_ino = atomic64_inc_return(&dmabuf_inode);
+ 	flags &= O_ACCMODE | O_NONBLOCK;
+ 	file = alloc_file_pseudo(inode, dma_buf_mnt, "dmabuf",
+ 				 flags, &dma_buf_fops);
+-- 
+2.46.2
 
-but i could of course use the mt7988 compatible with mt7986 compat data...=
-but looked dirty to me so just copied the block (to allow later changes if=
- needed).
-
-> Cheers,
-> Angelo
->
-> > ---
-> >   drivers/mmc/host/mtk-sd.c | 14 ++++++++++++++
-> >   1 file changed, 14 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> > index 89018b6c97b9..6d5afe51a61d 100644
-> > --- a/drivers/mmc/host/mtk-sd.c
-> > +++ b/drivers/mmc/host/mtk-sd.c
-> > @@ -571,6 +571,19 @@ static const struct mtk_mmc_compatible mt7986_com=
-pat =3D {
-> >   	.support_64g =3D true,
-> >   };
-> >
-> > +static const struct mtk_mmc_compatible mt7988_compat =3D {
-> > +	.clk_div_bits =3D 12,
-> > +	.recheck_sdio_irq =3D true,
-> > +	.hs400_tune =3D false,
-> > +	.pad_tune_reg =3D MSDC_PAD_TUNE0,
-> > +	.async_fifo =3D true,
-> > +	.data_tune =3D true,
-> > +	.busy_check =3D true,
-> > +	.stop_clk_fix =3D true,
-> > +	.enhance_rx =3D true,
-> > +	.support_64g =3D true,
-> > +};
-> > +
-> >   static const struct mtk_mmc_compatible mt8135_compat =3D {
-> >   	.clk_div_bits =3D 8,
-> >   	.recheck_sdio_irq =3D true,
-> > @@ -629,6 +642,7 @@ static const struct of_device_id msdc_of_ids[] =3D=
- {
-> >   	{ .compatible =3D "mediatek,mt7620-mmc", .data =3D &mt7620_compat},
-> >   	{ .compatible =3D "mediatek,mt7622-mmc", .data =3D &mt7622_compat},
-> >   	{ .compatible =3D "mediatek,mt7986-mmc", .data =3D &mt7986_compat},
-> > +	{ .compatible =3D "mediatek,mt7988-mmc", .data =3D &mt7988_compat},
-> >   	{ .compatible =3D "mediatek,mt8135-mmc", .data =3D &mt8135_compat},
-> >   	{ .compatible =3D "mediatek,mt8173-mmc", .data =3D &mt8173_compat},
-> >   	{ .compatible =3D "mediatek,mt8183-mmc", .data =3D &mt8183_compat},
->
->
 
