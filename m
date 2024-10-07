@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-353944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B430B9934EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C189934F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BA01C23BA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36272280638
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C21DD554;
-	Mon,  7 Oct 2024 17:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7BB1DD536;
+	Mon,  7 Oct 2024 17:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NO1Jf5IO"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XBbk2TTm"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B201DD553
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6035D18D624
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321942; cv=none; b=Y2dtwZbSGEgzYgy80E/f2wdoNvMlhBhwznNsvvwa9qc7/EgJUKPxkQfBGjMmhbwF+xaEnCdw1y4GyEcFNWmmNF7clZl2AvknWEgVRrK1ytLIeUy1o5E9VYPCR3q8mbabZDLbj1OpRNuZN4wq2CxUJqvo2WPlAMxgiUa1p++TUWE=
+	t=1728321981; cv=none; b=mAnT2tFY1SLexbzjEBVW0NoLl8ogReD58tiEBB3fpym6MsEFN1M7M5ap6aR1Z54UtG3cnw3Nm/blbDE/Y6T6NICWeyqWzMC2CICC8cLJBEwrAcHrWrU2IKsQX1eHOOukhjxq132JwJnzCljdQjTSiqkdLE4ICXqu/bq20anqjtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321942; c=relaxed/simple;
-	bh=TKT1fPvBhdSvjFM+su119l3omgqtUQlkCyVErd6M9rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vyu/o5q+Z0f7Gc4OLPA60eJyPun/i6UR7YjAo6B765/fdKjTW4c7SrWDaD5IQQzvm9OxZxENfG7aTmgzEjR1HIxex26RRr8xQEce3Wn2Oo2Qu5lYAJhCWn2z8DFMSSjJk1c1U04RFkRMFYfQmKwoZvS8TfIsLc8/8/m3L5NVpng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NO1Jf5IO; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fac187eef2so56235201fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:25:39 -0700 (PDT)
+	s=arc-20240116; t=1728321981; c=relaxed/simple;
+	bh=4qQEphBKvk8M31ANqTY8ST6ybCd2aMPTyFq1EXbp24Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axMSB0FRUdTSGqsU/o05Z8y6s/8FkWcWb7KYrTjyyAOwUvUS3Dd+KozrhkqOsx+A6KpFEGhAWckIWVPz5i7wEeOVPrHtz1dNH3hyVjUiQORVMpJMxj58zqQwShVZEZU2pjuCB6DNWrJGaJAxmmx5Bv7n4AZE9T9Y1lE9eh2eBq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XBbk2TTm; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso812006266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728321937; x=1728926737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tvu25YDiI2Z9U1zJ1C5SAcMTqiUsv9QKQ7L6f51vKjo=;
-        b=NO1Jf5IOr7O5GndUS0EiZQbnUIQBZaOnlP9Hmrc4QDH+J6MqKOuEBQPCIE4TFd6ruh
-         pb7yF5Z/med75RjJK5qCyPl7IVy+MqERaRi2dJ90ZqowBxJHbjp3PlgEny5B4UHl6ohY
-         PWJ7oxlBmkOVF1SUFg4WDYV/qj+UuKOU7m4pYqCK1hWXHJFEbx5dh4gNUVFN02nk4gb9
-         JetWW/m/bSlKGrPA46ehBEBrB6AqOgN9hyM10ijIHPkIH9jyISjy4mmSD8LszKizWAs9
-         OJ2d8x33GK/TUFPCWPBENvk+N8/zekgO8B1An/GO8RFCVHnOLhgRNwjSslfiuBwR5Ity
-         vkfQ==
+        d=linux-foundation.org; s=google; t=1728321977; x=1728926777; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpGAocpAw/FPuQxEaYG6XWJIDzd4pKCEJY2xZgGA3Tk=;
+        b=XBbk2TTmWcMt0jFOs3dyvki8DZ8YTCOlvx84YQoWmtERrvVlwJ3PxljfezK9t5ta8q
+         RF7igbSUrfbQeoyZurixItTZ10mMAh2wVkProMHVOB0PVRVgG5aOmTJ0pnUIrCvAP8at
+         7YO0tPofy3DTYOdokjz58qfOVgqQJYaNhvfWU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728321937; x=1728926737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tvu25YDiI2Z9U1zJ1C5SAcMTqiUsv9QKQ7L6f51vKjo=;
-        b=xMCpvUF0FYk7pxe+Dm4ILKrfIS5CHs32q5MVwzXISnK7YYT5iFHCF/wyLeg2deRQTD
-         G2ha6PMT6hNDqCL8lKuqZI8zEsBKSABgYKv7BZCDMXDDBANrrgYurCJS8t0yL2Sh9x+E
-         1U5f0eB9MX8wCyqB+K20beD8u37ils9NbYc/hbt+S8Bp2M3ZxNwfHDVjgq3uQR/N4fMw
-         1UVM7b8Tzgh7Dr+81MTur8tFATIJKRYXqUHRV4beSZD8lD44sza/AQiWzkMqqmold0yn
-         FPevVEbQ+dTLIdiEA96sdDdlEAowhLUKcpgk331khOfIWU9BK1/qyE3e4YlbU0z3XaiI
-         89DA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSu95xSNKiyOofoJEtOTVLcHeQJtABKOz2/9morSMXMweF37lr+VJElNIZOh98bc283Rva0uOKevTkJyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzBya2Y/M6cunExeMt1i+ycPOMNkVARAT/KF2mts6XQoZOzlQq
-	FMO1g/TwWTU8ZLTS9TbGLEA671akmscK4WKTkBLt7b09bR/705koIW755nRDjaE=
-X-Google-Smtp-Source: AGHT+IHXXpe3wiF3z7CUGfLiUgBYqbFDfwzcAqjxebC9RdM/MyB0v33/hBXc3wcZsORKpMIqA34Y/w==
-X-Received: by 2002:a05:651c:550:b0:2fa:cac0:2a14 with SMTP id 38308e7fff4ca-2faf3c50682mr57224721fa.11.1728321937446;
-        Mon, 07 Oct 2024 10:25:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9ac46d7sm8801421fa.37.2024.10.07.10.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 10:25:35 -0700 (PDT)
-Date: Mon, 7 Oct 2024 20:25:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Karl Chan <exxxxkc@getgoogleoff.me>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 3/5] clk: qcom: ipq5018: allow it to be bulid on arm32
-Message-ID: <2jquh7pamtohql4escq7kdcliyhtvztpfmp2cbcjvotmgua26g@6cz4rrhqgv3x>
-References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
- <20241007163414.32458-4-exxxxkc@getgoogleoff.me>
+        d=1e100.net; s=20230601; t=1728321977; x=1728926777;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NpGAocpAw/FPuQxEaYG6XWJIDzd4pKCEJY2xZgGA3Tk=;
+        b=jaRzMmSCQ82S056C2+pC5qD6R+313VYsMPaAmxqVrSvZMcVfLoeqnFT+RBCE7Mhy/h
+         mG1sJqosq5xgzV1u229z/iqDpePfCjhVNWh4iceUvqqZOxyTVFxUBs+wmxPZaTjUSG68
+         O0RbwTtMbi1iHxRjgfqx8FUEPByHY9PqZ3pwGKPk/hxzVGTtXsQ/60zaEnYSDKf27SEJ
+         5Nvd3Gm461MamtyQlcePbZBDXv9jnxFJEa4kSfvzghAkntqVsKhIo/pEyioehdlUSOun
+         6UIdFNI8tOmK8OjtPHNAlYq7cCCblDcPUWiENxrpnpk8bUdZ6hkZVNPyjfpCLZFC+nGS
+         fZ8w==
+X-Gm-Message-State: AOJu0YzrRxxD1jYYdH+40u+IdPu2oqgtopyf26AR2Ly75iyiwDdQ2b10
+	s0w43/ovKI5kGRKyQztfR16S5Kp7mduRoVAxR/FmLxNMtJML8E6S29wtwPGg9MTm+stiUFfayd8
+	jaho=
+X-Google-Smtp-Source: AGHT+IGL2y8ZOgwAUCuFCkwWE3fYBXKYVwipBGcyaOKP3ExQFCAAv2hpfJZUZjKq/cgBFpNrCCD1XQ==
+X-Received: by 2002:a17:907:7e8e:b0:a99:57c3:1fbb with SMTP id a640c23a62f3a-a996789317cmr50753466b.9.1728321977472;
+        Mon, 07 Oct 2024 10:26:17 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9949c54efdsm254427366b.60.2024.10.07.10.26.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 10:26:16 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso812001966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:26:16 -0700 (PDT)
+X-Received: by 2002:a17:907:7d8a:b0:a8d:3fb6:33df with SMTP id
+ a640c23a62f3a-a99678aeeeemr45173166b.8.1728321976095; Mon, 07 Oct 2024
+ 10:26:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007163414.32458-4-exxxxkc@getgoogleoff.me>
+References: <CAHk-=wgMS-TBfirwuxf+oFA3cTMWVLik=w+mA5KdT9dAvcvhTA@mail.gmail.com>
+ <3016e3d6-f916-4a6e-82a5-2bfcd1f2dc2d@roeck-us.net>
+In-Reply-To: <3016e3d6-f916-4a6e-82a5-2bfcd1f2dc2d@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Oct 2024 10:25:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj4zK9YY1rsghi5CJHYfLypj5OBHUgtMuytXZw=Vbea_w@mail.gmail.com>
+Message-ID: <CAHk-=wj4zK9YY1rsghi5CJHYfLypj5OBHUgtMuytXZw=Vbea_w@mail.gmail.com>
+Subject: Re: Linux 6.12-rc2
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>, 
+	Wei Fang <wei.fang@nxp.com>, Paolo Abeni <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 08, 2024 at 12:34:12AM GMT, Karl Chan wrote:
-> There are some ipq5018 based device's firmware only can able to boot
-> arm32 but the clock driver dont allow it to be compiled on
-> arm32.Therefore this patch needed for those devices.
+On Mon, 7 Oct 2024 at 10:00, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> The failed qemu tests are crashes, bisected to commit d9335d0232d2 ("net: fec: Reload PTP
+> registers after link-state change"). I copied the author and reviewers for feedback.
 
-if there is another revision of the series for whatever reason,
+It seems to be this in timecounter_read_delta() (inlined into
+timecounter_read()):
 
-s/this patch needed for those devices/allow GCC for IPQ5018 to be
-selected when building ARM32 kernel/
+        /* read cycle counter: */
+        cycle_now = tc->cc->read(tc->cc);
 
-> 
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-> ---
->  drivers/clk/qcom/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+where "tc->cc" is NULL (but that's just a guess from the fact that the
+exception happens very early in timecounter_read()).
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+So presumably the timecounter_init() hasn't been called yet
+(fec_ptp_init -> fec_ptp_start_cyclecounter -> timecounter_init).
 
--- 
-With best wishes
-Dmitry
+And looking around, we have fec_probe() doing
+
+        irq_cnt = fec_enet_get_irq_cnt(pdev);
+        if (fep->bufdesc_ex)
+                fec_ptp_init(pdev, irq_cnt);
+
+so the fec_ptp_init() is called conditionally, but
+fec_ptp_save_state() that does the timecounter_read() seems to be
+called unconditionally.
+
+So that commit d9335d0232d2 looks just broken. Either the
+timecounter_init() needs to be done unconditionally, or the
+timecounter_read() needs to be conditional on ptp being inited.
+
+                Linus
 
