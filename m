@@ -1,157 +1,167 @@
-Return-Path: <linux-kernel+bounces-352680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A9E99228B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 03:18:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E98399229B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 03:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6C7281C27
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 01:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1031F21A9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 01:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA23FC11;
-	Mon,  7 Oct 2024 01:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC6210A19;
+	Mon,  7 Oct 2024 01:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+6EDAXl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbCYIp59"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1A5C8D7;
-	Mon,  7 Oct 2024 01:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AF6849C;
+	Mon,  7 Oct 2024 01:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728263914; cv=none; b=qGf2eUmLXn5d7F45wkEE4Zu/1wnqRrSvnluc/+uKYx4dncpQ83Zctvo1kbi2HdtQarAG0ca8NaEl0YNBafjMcYD+8oIeY++oztC4eUjuvPqHQMCBf7DwmQYYpxENXDoi7LmC3VkDTIOH1qjzPTlu6QSH6MoyNmW1ZxKOgWQ96BA=
+	t=1728264646; cv=none; b=bw76qJ/BaK5/+XE5vgenKIWYHiNITtsvN2ra9Ei1cip7iiZS1gQQ5F0SGFvh6Gc3kZgWQz03pYzyUJxwYIrh0wQwnQRSpdStqPayCua009AYd5dtub/DGXWIDMTw0sOTep9muBwCEZTe3lbU04WYskxmixgwp80/2PzAEUB+gYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728263914; c=relaxed/simple;
-	bh=jIeIDhuD7B6PYQz4howXktaATGkaNZIsJZVVjgkjcTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvH55Deki2wVqKSPf5pt+j96VDV+d9Cecnn4YolK8eTdmJoNnksUR7hiTTe0eojG7H1b+00MgHpmeXz3uSH4eUUY/u/1IhiX4nmoOdXcahDycXjlKo09iNIjRWCTwR81bPbgXRag4bz8AUvtAqG1my093sZGhb0CDf6wdd1iHbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+6EDAXl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B74C4CEC5;
-	Mon,  7 Oct 2024 01:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728263913;
-	bh=jIeIDhuD7B6PYQz4howXktaATGkaNZIsJZVVjgkjcTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a+6EDAXlNOOeJqTi76IspB4TOMesu0BGTg31mLIFZvw6hJsArpmC6KX1zJ5E6ZKu8
-	 2/ZIpzwyAVcVXBajOOXxFlU+/Rlz1eTsTS8p2iJPSjC35hHsCmpukIzOYe3TlJ5kvJ
-	 a5SLvN5GPnTRX+LBBjETgaN3ifc2xF/G4DmgMsz9RUbchWv9x63aq3KmHY/y9M7PMS
-	 aw0E3KBkLJXwLkwzJsVOF7Hz65kMydVCbqWk8Dj69rLKpMxQZjVb6y7qapxtyH2GfI
-	 n3DYkyqzXMGB6+56cd2EmVyRT3CEfr0Etlnpg3ksCi3vfQCg+INdtq7q0LM0uHBLga
-	 27VHQ7B6/NODg==
-Date: Sun, 6 Oct 2024 20:18:30 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Kuldeep Singh <quic_kuldsing@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
-Message-ID: <ylfkupkpy26gupri4lbwij3sh4uwrm7lxr7q7q2rhrgiwai6mc@bkplz3mlrsxb>
-References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
- <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
+	s=arc-20240116; t=1728264646; c=relaxed/simple;
+	bh=CnJ6EhrzDENcvUxAwCmy0yyNq4GGx+eeT/Ap9yxdkJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uOedF55wbeAldMJFJV5FRriy+HJLeIeVShnxgKjQ/eYhhrTk7arF4f12CLTC+0tAfgl7M0j+QnhUMq5QJwQdnN/Dq+O8mJSY6lWqolP0L/Z1LI7nYP4ka8Lj6kurmENmcbQz7JFgftgXiomf/h7Ux7idnaGWdhuBPVsu7JSRXMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IbCYIp59; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a9a30a045cso346892685a.2;
+        Sun, 06 Oct 2024 18:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728264644; x=1728869444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4BL7q8zanMLPZgq1AZ71CIoIOsuiwDVh+BCfFx3B8I=;
+        b=IbCYIp59hyFvrdHEcPpFWhpSguajB7XuEsyw17uPmBRQU5VP4+5zi0jSyMY8o1ud39
+         DtyJ0g/bLiTw/4witeYS5QplOT1ZImepMTte8CwuIIlQoBSfEiE2y2ZedTv+43kJSeTy
+         lDK4iL0KteVaqPqNWcGtccY+q43z6HSfVaD4kSo2bI533/dvUHktgRtEVGfLQK2+Bfw7
+         BwBoTA6AmMq8WVgjmfS5NO6F5iZxW3ytxBzZzZJoSWLzCI5aDpIKVfze9usCe8W1EGSf
+         JrsMNhALxWCTW05m6nKsor1JfbFD9jAiG34Uym7CaXK25yibcLFhtICPlgj0M8QQAtxM
+         QNrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728264644; x=1728869444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M4BL7q8zanMLPZgq1AZ71CIoIOsuiwDVh+BCfFx3B8I=;
+        b=EIEwZKGdG9NXBtgFS0edJqL2Apivm27aQPfMi/F2BdFKI58QZvkLjv/iYIKqkSdski
+         5vjNuD167rYVr8OX7eYHTE9gfWopQLrvxg5k67RQdpdhGkq0WDvujOXHnAMSuABvZ9Ug
+         e2pW5TjTjaDibreeVg/PmhcdeacPra1CsKSZxgpd6qTDWb6zYLGAYqUITASS1iF2YGBb
+         p6X1RSR8N7Q1IDr+Fvjle8Wb5lmIYjwYgY8VW4lRBYi3j972f/SzxW/ncQOtlF70xzd4
+         QrLE2iaGZsq73Qqgqyi6CtXZb7uZn5ypIiEKFcS9MVvQEdPct2a23tq7iPQcf9BwEBc8
+         YLIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrIkE1nB905v02LNnXu2gJt1zoF5e6wMTZRNCANjECsU9jTWvjFft8ZxYIxEz1T9r2k65kUsMp6hliiwby@vger.kernel.org, AJvYcCWsDvtYxMBbtL277ntutRpMoJrlC60ZPsJPuJDRaCN13FRxmwH4fJbkjht2HwPc92sXw5nlw+f6TYJ+@vger.kernel.org, AJvYcCXECZ35zCce0KVULFn5U/ipXju0/DXR3TIh65J2YMHyLnIccmOC7BF0QwVOgvum0RXeawRpuglmKage@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYyPL79LLqW+uEJ7AC3Rm+haIGbXevPKiuW8fDc3Zda8h+Mot3
+	E6ChEPhISAmU2hdBM8OWZre7QFNK+PWPqMi6mrFjGB+1Mm6zfh+A
+X-Google-Smtp-Source: AGHT+IEUwTDUTwHQPPMnXkL2oBBF20EQpAtzbYg+OHDr2onQw1DYJTSZ7x3HJKuUZql/yUpw2OUU6A==
+X-Received: by 2002:a05:620a:31a5:b0:7a9:c610:99fd with SMTP id af79cd13be357-7ae6f4a696cmr1503155585a.56.1728264644003;
+        Sun, 06 Oct 2024 18:30:44 -0700 (PDT)
+Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae757627fdsm207326985a.100.2024.10.06.18.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 18:30:43 -0700 (PDT)
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: u.kleine-koenig@baylibre.com,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Mehdi Djait <mehdi.djait@bootlin.com>
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH v9 0/2] Add driver for Sharp Memory LCD
+Date: Sun,  6 Oct 2024 21:30:04 -0400
+Message-ID: <20241007013036.3104877-1-lanzano.alex@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 07:31:50PM GMT, Kuldeep Singh wrote:
-> The qcom_tzmem driver currently has multiple exposed APIs that lack
-> validations on input parameters. This oversight can lead to unexpected
-> crashes due to null pointer dereference when incorrect inputs are
-> provided.
-> 
-> To address this issue, add required sanity for all input parameters in
-> the exposed APIs.
-> 
+This patch series add support for the monochrome Sharp Memory LCD
+panels. This series is based off of the work done by Mehdi Djait.
 
-Unless there's good reason for the opposite, I rather see that we define
-the API to only accept valid pointers. Then if a client passes a NULL we
-get a oops with a nice callstack, which is easy to debug.
+References:
+https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
+https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
 
-The alternative is that we return -EINVAL, which not unlikely is
-propagated to some application which may or may not result in a bug
-report from a user - without any tangible information about where things
-went wrong.
+Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+---
+Changes in v9:
+- Move pwm and software VCOM generation to probe/remove functions instead of crtc enable/disable functions.
+  pwd_disable will suffice on driver removal.
+- Change comment format to match Linux Kernel style.
 
-But, if you think there's a good reason, please let me know.
+Changes in v8:
+- Addressed review comments from Uwe
+    - Replace pwm_get_state with pwm_init_state
+    - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
 
-Regards,
-Bjorn
+Changes in v7:
+- Add Reviewed-by tag back to dt-binding patch
 
-> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> ---
->  drivers/firmware/qcom/qcom_tzmem.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
-> index 92b365178235..2f2e1f2fa9fc 100644
-> --- a/drivers/firmware/qcom/qcom_tzmem.c
-> +++ b/drivers/firmware/qcom/qcom_tzmem.c
-> @@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
->  
->  	might_sleep();
->  
-> +	if (!config || !config->policy)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	switch (config->policy) {
->  	case QCOM_TZMEM_POLICY_STATIC:
->  		if (!config->initial_size)
-> @@ -316,6 +319,9 @@ devm_qcom_tzmem_pool_new(struct device *dev,
->  	struct qcom_tzmem_pool *pool;
->  	int ret;
->  
-> +	if (!dev || !config)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	pool = qcom_tzmem_pool_new(config);
->  	if (IS_ERR(pool))
->  		return pool;
-> @@ -366,7 +372,7 @@ void *qcom_tzmem_alloc(struct qcom_tzmem_pool *pool, size_t size, gfp_t gfp)
->  	unsigned long vaddr;
->  	int ret;
->  
-> -	if (!size)
-> +	if (!pool || !size)
->  		return NULL;
->  
->  	size = PAGE_ALIGN(size);
-> @@ -412,6 +418,9 @@ void qcom_tzmem_free(void *vaddr)
->  {
->  	struct qcom_tzmem_chunk *chunk;
->  
-> +	if (!vaddr)
-> +		return;
-> +
->  	scoped_guard(spinlock_irqsave, &qcom_tzmem_chunks_lock)
->  		chunk = radix_tree_delete_item(&qcom_tzmem_chunks,
->  					       (unsigned long)vaddr, NULL);
-> @@ -446,6 +455,9 @@ phys_addr_t qcom_tzmem_to_phys(void *vaddr)
->  	void __rcu **slot;
->  	phys_addr_t ret;
->  
-> +	if (!vaddr)
-> +		return 0;
-> +
->  	guard(spinlock_irqsave)(&qcom_tzmem_chunks_lock);
->  
->  	radix_tree_for_each_slot(slot, &qcom_tzmem_chunks, &iter, 0) {
-> @@ -466,6 +478,9 @@ EXPORT_SYMBOL_GPL(qcom_tzmem_to_phys);
->  
->  int qcom_tzmem_enable(struct device *dev)
->  {
-> +	if (!dev)
-> +		return -EINVAL;
-> +
->  	if (qcom_tzmem_dev)
->  		return -EBUSY;
->  
-> -- 
-> 2.34.1
-> 
+Changes in v6:
+- Rebase off latest drm-misc-next
+- Replace pwm_apply_state with pwm_apply_might_sleep
+
+Changes in v5:
+- Address minor style issues in sharp-memory.c
+
+Changes in v4:
+- Remove redundant dev_err
+
+Changes in v3:
+- Fix file path in MAINTAINERS file
+- Address review comments
+- Simplify mode selection based on match data instead of model
+
+Changes in v2:
+- Credited Mehdi Djait in commit messages
+- Renamed sharp,sharp-memory.yaml to sharp,ls010b7dh04.yaml
+- Using strings instead of int for vcom-mode in dt-binding
+- Fixed indentation of binding example
+- Removed binding header
+- Removed extra whitespace in sharp-memory.c
+- Fixed error handling in sharp-memory.c
+- Added match data to of_device_id table to be in-sync with spi_device_id table
+- Replaced redundant function with spi_get_device_match_data
+- Sorted header files in sharp-memory.c
+---
+
+Alex Lanzano (2):
+  dt-bindings: display: Add Sharp Memory LCD bindings
+  drm/tiny: Add driver for Sharp Memory LCD
+
+ .../bindings/display/sharp,ls010b7dh04.yaml   |  92 +++
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/tiny/Kconfig                  |  20 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/sharp-memory.c           | 666 ++++++++++++++++++
+ 5 files changed, 785 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+ create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
+
+-- 
+2.46.2
+
 
