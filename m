@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-352866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EF99255D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3E7992588
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343071F21404
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3BF1C22232
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A5816132E;
-	Mon,  7 Oct 2024 07:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC8018C32E;
+	Mon,  7 Oct 2024 07:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kbZl2yLI"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k9gJOplw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F07B6FC5;
-	Mon,  7 Oct 2024 07:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E1B17DE15;
+	Mon,  7 Oct 2024 07:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284811; cv=none; b=B1c2fyxqLdwk0o+P0UCoW2j0jx+G5qvjokKt9lI5Zo2UpqpWjz7M63spR6nL/A9yIKOuspKrvrxRcwRkeODY/Xyucd+hQMBCVlAcyPGIqXdMQ6v7pCcuieRezKscu9rFTXzBetw6B3rOBmF0+2AXirtGkXFm6Wj9uG6R76qhrws=
+	t=1728284954; cv=none; b=U4h3PZ1xgEyv5/e+Lp6NxtlYghv/b3cCKjThT1A+KgbrJyZQsXFohKgr2WQl3/sxszHOEMxdS+4v5VroORJz/CfL2h9sUOW9khlGI6SBIp8cZ8/MSxqeyAh6dPuHlTH/RgRQub7XSo/2TuszwLjegLCTEjM6y1hAPJkvcaPgQVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284811; c=relaxed/simple;
-	bh=G42xkt2HXDJsEm/1X6zsNTuNdHNDZFtY/2XKj0r1FmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnFCqQs1D83awZM/4rr8dgURiQpoJYRELmeZBk2GxTWJd4HcKrWg+ZM/KU7vr6mbdTXhrPXR00ybaH8v6Tk32196Cwyx9KI3BGd3tNCl1zPjNzGVclSZCIsZBk6tW9wsSEeJQbPYpPyyFTXcF3tiICLIoihiHontAIvV/Xr0c98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kbZl2yLI; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WPrGACetzn240lxkdUEDnFIeJe4VvQIHLBhegiGUuD8=; b=kbZl2yLI7r24lQNgu54c9qhvF8
-	lV9ZOhzm0IWhCk97HGiqo6tTyV7M1r7fvKtrXu1ZbtJ5Yz2qzfmYi3XCKDVyY0Y2kzfWwxoi2JjyS
-	f0fedCVjGXq7A0YlId+p5Mn3tgowZ20sS3RxQl1AYPLGzm+VyjLKwqo97s+3U/CnEn5uuX2zgPfMm
-	K/LYc5j5hbgn0nl7Bb8/PvxXhOr61coobajXrXOaV8nd+iE5qtFgUJnsOOnPHJ74sj0bl2Z6ZXIQG
-	A+YMYwyA3kPWNWuL/YAQuxnUeiyhR2N0BIsGE3zyUURj6GVK8ChjWPOyfXLKD6R0YEx4v5u0qs1rN
-	aTNb3RDg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxhp6-00000004NYw-1PAI;
-	Mon, 07 Oct 2024 07:06:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5FF6A30088D; Mon,  7 Oct 2024 09:06:27 +0200 (CEST)
-Date: Mon, 7 Oct 2024 09:06:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
- hazard pointers
-Message-ID: <20241007070627.GC18071@noisy.programming.kicks-ass.net>
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com>
- <20241005161537.GB18071@noisy.programming.kicks-ass.net>
- <CAHk-=whvxq3378vOn++=ZiOQc9=4N-3ejUWr+dXEJ5ti43kT6w@mail.gmail.com>
+	s=arc-20240116; t=1728284954; c=relaxed/simple;
+	bh=HaYluipwIXVvdOFAJ9zPfQ+R9ZmE1ePxVV5rbpyspfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jkUGw1sqGTvVF70XDuATq/YepnVnuOW8q3HbLrpIBVtGxicTdOIsqU9x3WEvf9k72G7zUQMM11ZTMBfTEz56nRtu9tUuXPaRHSbzuzjyx2wInLbIViutu4gblqu69XH0JflREkbc2KnFbBE9J5boDYZblR5bnuBZUYOAGFVniqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k9gJOplw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TXLZ005308;
+	Mon, 7 Oct 2024 07:08:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7OiBlFCcy+EsRXW8qMeYAkYGqWC12eyHX2jjrnsKEvk=; b=k9gJOplwfo2xbQDp
+	ch32EP1Ytroil0LNAerBlCuQvEKaHge45GuBVxRk/tLQPPvlyYCAeYKkXwbz/1j0
+	c4vBuLn/Nh31krpOjb0BuTZtVEXm6UJe+LxvwrYgEiKr7N+OMinirn76hYdkf4O/
+	4+XtoPUNfqP1FsolhpQnG+vrYUiFNP8nirlMwXdGr1nDTAr9UGUPbnBMOGt+bB5S
+	NbG0Flssu/Nf0bgkrrxtlg8ipUEagpU/rdivUbyJr0sd/Q1AiR47osuQCjXho0Ft
+	NEpvE/1c4as75bIMHTXG6O+TzqC7koWBhj3aptPGmKIR4gwyf1rZoRbKKTRWDECJ
+	4bY7Jw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqnu8yc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 07:08:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49778uPS004008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 07:08:56 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 00:08:52 -0700
+Message-ID: <25015664-22a7-2d4b-7ba7-ef9611fb3045@quicinc.com>
+Date: Mon, 7 Oct 2024 12:38:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whvxq3378vOn++=ZiOQc9=4N-3ejUWr+dXEJ5ti43kT6w@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] pmdomain: arm: Fix debugfs node creation failure
+To: Sudeep Holla <sudeep.holla@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>
+CC: <cristian.marussi@arm.com>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <johan@kernel.org>, Peng Fan <peng.fan@nxp.com>
+References: <20240703110741.2668800-1-quic_sibis@quicinc.com>
+ <ZoZ6Pk7NSUNDB74i@bogus> <064274c4-3783-c59e-e293-dd53a8595d8e@quicinc.com>
+ <Zofvc31pPU23mjnp@bogus>
+ <CAPDyKFrESupeNS4BO8TPHPGpXFLsNqLPrUEw3xzr8oh8FsLHeA@mail.gmail.com>
+ <Zryxrdodn2Y2xsej@bogus>
+ <CAPDyKFqmV7yvMdLjGhDHJN4CFiUun3FXprEk7uGFV_qmn9vA8Q@mail.gmail.com>
+ <Zr4GsOndEEMI-6ap@bogus>
+Content-Language: en-US
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <Zr4GsOndEEMI-6ap@bogus>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6rlIe34IG3MUdHAYsCgaAX2GUJsA_PUm
+X-Proofpoint-GUID: 6rlIe34IG3MUdHAYsCgaAX2GUJsA_PUm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070049
 
-On Sat, Oct 05, 2024 at 09:56:24AM -0700, Linus Torvalds wrote:
-> On Sat, 5 Oct 2024 at 09:16, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Oct 02, 2024 at 10:39:15AM -0700, Linus Torvalds wrote:
-> > > So I think the real issue is that "active_mm" is an old hack from a
-> > > bygone era when we didn't have the (much more involved) full TLB
-> > > tracking.
-> >
-> > I still seem to have these patches that neither Andy nor I ever managed
-> > to find time to finish:
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=x86/lazy
-> 
-> Yes, that looks very much like what I had in mind.
-> 
-> In fact, it looks a lot smaller and simpler than what my mental model was.
-> 
-> I was thinking I'd do it by removing "active_mm" entirely from 'struct
-> task_struct', and turn it into a per-cpu variable instead, and then
-> try to massage that into some global new world order. That patch
-> series you point to seems to be much simpler and clearer.
-> 
-> Of course, you also say "never managed to finish", so presumably
-> there's something completely broken in that series, and it doesn't
-> actually work?
 
-Last time I tried it, it worked fine. I just didn't get around to
-actually fully thinking it trough and making sure nothing subtle was
-broken etc. Pesky details and such..
+
+On 8/15/24 19:16, Sudeep Holla wrote:
+> On Thu, Aug 15, 2024 at 12:46:15PM +0200, Ulf Hansson wrote:
+>> On Wed, 14 Aug 2024 at 15:31, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>>
+>>> On Wed, Aug 14, 2024 at 02:38:24PM +0200, Ulf Hansson wrote:
+>>>>
+>>>> Sudeep, while I understand your point and I agree with it, it's really
+>>>> a simple fix that $subject patch is proposing. As the unique name
+>>>> isn't mandated by the SCMI spec, it looks to me that we should make a
+>>>> fix for it on the Linux side.
+>>>>
+>>>
+>>> Yes, I did come to the conclusion that this is inevitable but hadn't
+>>> thought much on the exact solution. This email and you merging the original
+>>> patch made me think a bit quickly now 😉
+>>
+>> Alright, great!
+>>
+>>>
+>>>> I have therefore decided to queue up $subject patch for fixes. Please
+>>>> let me know if you have any other proposals/objections moving forward.
+>>>
+>>> The original patch may not work well with the use case Peng presented.
+>>> As the name and id may also match in their case, I was wondering if we
+>>> need to add some prefix like perf- or something to avoid the potential
+>>> clash across power and perf genpds ? I may be missing something still as
+>>> it is hard to visualise all possible case that can happen with variety
+>>> of platform and their firmware.
+>>>
+>>> In short, happy to have some fix for the issue in some form whichever
+>>> works for wider set of platforms.
+>>
+>> Okay, so I have dropped the $subject patch from my fixes branch for
+>> now, to allow us and Sibi to come up with an improved approach.
+>>
+>> That said, it looks to me that the proper fix needs to involve
+>> pm_genpd_init() in some way, as this problem with unique device naming
+>> isn't really limited to SCMI. Normally we use an "ida" to get a unique
+>> index that we tag on to the device's name, but maybe there is a better
+>> strategy here!?
+> 
+> Yes using "ida" for unique index might work here as well AFAIU. It can be
+> one of the possible solution for sure.
+
+Just re-spun it with ida, I've also shared how the output looks
+with those additional device ids added to the device name. Have
+a look at it when you get time.
+
+-Sibi
+
+> 
 
