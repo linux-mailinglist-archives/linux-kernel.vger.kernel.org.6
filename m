@@ -1,82 +1,59 @@
-Return-Path: <linux-kernel+bounces-353348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75029992CA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6512F992CCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 343AE283536
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972B41C229C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F751D359A;
-	Mon,  7 Oct 2024 13:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B32B1D358F;
+	Mon,  7 Oct 2024 13:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="giuipzxN"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VNG3Ewy8"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B8218BC14
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9C01D3629;
+	Mon,  7 Oct 2024 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728306484; cv=none; b=cNv5QmfBauuBbnr1RI1UV+gWL+uvSfLYzBZVpg4n8+XtBSoSj/jkNEFYHYOVweOnRjGZdF/fseuuXq5jX0lDnNa3BNqtZbSLYdDGn8wal75Nqa10/7xScoaOlKS0m5KES2scm3jH2oyVYhvFQ384oQyMIThNNOYWAQIMazDwc6s=
+	t=1728306859; cv=none; b=K6UmDS2M4/yeWRfuK1fcJT+37RNb25KlolRuDYvbWdpjmETHvFxB4qZ8pbhfy7RoFWRyJkOkJhFnVExm+b04X6GEHYiTKbamA8DYG0T6yWwRL8rthlBwmuKCQZW5F0V8ga/eyvGUGJ78U47hUYM5z4o/CAYI+A/y1C+lrltqKxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728306484; c=relaxed/simple;
-	bh=KYZdCfC0G0TJf0tBV4UmKxSBuXIDsk+eUUerAygPEqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xykz62He3FxsjlEMqJCG1w6EzcCK7pZvOICxPSi4t1TBmC5PGKrw7xcTXYvP1bkwAKml1/YdZgBg4m8SOuo6qLcyLzdH1IEzcfY4LQfwUxfMBiFVe1PiRPMixpEkg++8XM6tQBbH50Gjs6WE5YLFhNUf3VrNQXOBhWQA7wnZfpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=giuipzxN; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdae9e107so337315f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1728306480; x=1728911280; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CnzLtnFN9tco4+Q7+k8LRZ84/ndqz1jYrt7A2OLgTL8=;
-        b=giuipzxNZ2QUJBrrDgDyuIRgXTX1m7/lHJASPXJvXG/NHGRSzrx0qnYAFoiomS0dop
-         njqZ7mtWHbP6Bcyzc5Bje3kPnHaoa/4KYHhYhoLuPDsD7g2vAyY18lElg0Guiw6/f5zn
-         F9nP8LfQIUrZUXBvdCRilFt+4JfnmNx6Zj19+EaKmK0XJ8SMojq1SfXl1PqZlWk6CJwp
-         g7wo3xOu1ppb+P2kG6qjHr7USlREUetmG/DPlolv9dQkPeezq7VWD61Bfhuyq7dAx1WT
-         h+fRPuTCELSSL2bXySB6DB+Z4RY64P9xGMH9DfzVGsEpI1y3Pwts8xaqBLmdU4q/lE6K
-         7ttw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728306480; x=1728911280;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CnzLtnFN9tco4+Q7+k8LRZ84/ndqz1jYrt7A2OLgTL8=;
-        b=Qp5MvLLa/M14Kfj7oo1s5y4++ML4nvnPfDMWvypDmfzuQeG5ufq42+nGk5sIJfmbIo
-         yrHQeKa2DrZs7DzT8IKG2x7S2919z/KwUU6k0+edKtuKHk5D++zvPETyYJ18RH7/Jpzp
-         cqzXyjSkpLPNp9raP3qVmJ2lM7U9/lEVF7o6yuheMUDVZA/lKuGMkXnsZADYclIJYcNh
-         yUafjW45wuZYA/lmtbdytkHeszF4OzppE6J50M1gcZMgxKlZ/8c5kUxVOc6uH3mnnMDq
-         Nx50aMeopwhqyAEDcAXpipzEpuhb5dxmQmHVdXr4jqTrSJwIzU7t5dl2Psr/Qx5tUJV9
-         sxkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0niIWrFKPZZz0Uqw3lZxkTja3OEZ2JZB5B6bhhJ5ozZHGq9gYdHPUwdVsZoQQmcSLK/F1Kb5J4CDSgcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws78TqgFT+4ZhMNOy519HcPUgFU43zqi6xe5inszHdVQooyeyy
-	O7FwMtBPjvI7QewDz0seXXwo5pauutTohuQQsym6L5Ac5+S+Nj8XADr3eZ7ndGI=
-X-Google-Smtp-Source: AGHT+IFKomC1GoHgGz5NqJWTmdK3mKrk/2NM18HnZpDqf7JGIgfOX+Yoshy8dmLmPM10rEY56FpXrw==
-X-Received: by 2002:a05:6000:186c:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-37d0e6f362fmr3112919f8f.1.1728306480338;
-        Mon, 07 Oct 2024 06:08:00 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-206.dynamic.mnet-online.de. [62.216.208.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695f113sm5679931f8f.80.2024.10.07.06.07.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:07:59 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@toblux.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-ext4@vger.kernel.org,
+	s=arc-20240116; t=1728306859; c=relaxed/simple;
+	bh=NYc8GAjTu9F6DiVdK8eJC36y7F//hihFgSMNmUQsvvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qt/Q8OJ+zp3Nd0nQDwUGdvpesNUSx2u+9rxjSCAmKNi8A8yGfED3FYLpSxJE5MU6l46cpFzuuZDKOZU+U03LsQx63zRmpVKIYtbQ/zymIOyprN1G5zly8V0FVlFUE0Xy2AkrAyfS1DK90L1Gv47V1Rv8h5VgxeduLGMpGAUuG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VNG3Ewy8; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1728306522;
+	bh=lrKGIRf2F9bRmM3xJUTak84RRDbsg04jWzFdaqnj5LA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VNG3Ewy8n65C/nm4nIvO3WQt6OlLu+KtFGSOnym65kQ9qeVFk52jFTu5Osa3V8Yli
+	 mDhwlAVrce2m6FMKqd92Ny6v6QiluTKdf7pYTA8M4c2pxbgAoble1c7J44tTb9MZhh
+	 IO8WX3uRD0xvlfJ7OFlmSaGVj/6iqo1HiYgzqZ/8=
+Received: from stargazer.. (unknown [113.200.174.29])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 3BBF21A41FD;
+	Mon,  7 Oct 2024 09:08:41 -0400 (EDT)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Mateusz Guzik <mjguzik@gmail.com>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>,
+	Miao Wang <shankerwangmiao@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [RESEND PATCH] ext4: Annotate struct fname with __counted_by()
-Date: Mon,  7 Oct 2024 15:07:16 +0200
-Message-ID: <20241007130716.3442-1-thorsten.blum@toblux.com>
+	stable@vger.kernel.org
+Subject: [PATCH 0/2] vfs: fstatat, statx: Consistently accept AT_EMPTY_PATH and NULL path
+Date: Mon,  7 Oct 2024 21:08:21 +0800
+Message-ID: <20241007130825.10326-1-xry111@xry111.site>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,49 +63,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the __counted_by compiler attribute to the flexible array member
-name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+Since Linux 6.11 we support AT_EMPTY_PATH and NULL path for fstatat and
+statx in "some circumstances" mostly for performance and allowing
+seccomp audition.  But to make the API easier to be documented and used,
+we should just treat AT_EMPTY_PATH and NULL as is AT_EMPTY_PATH and
+empty string even if there are no performance or seccomp benefits.
 
-Inline and use struct_size() to calculate the number of bytes to
-allocate for new_fn and remove the local variable len.
+Cc: Miao Wang <shankerwangmiao@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/dir.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Xi Ruoyao (2):
+  vfs: support fstatat(..., NULL, AT_EMPTY_PATH | AT_NO_AUTOMOUNT, ...)
+  vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH | ..., NULL, ...)
+    behave as (..., AT_EMPTY_PATH | ..., "", ...)
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index ef6a3c8f3a9a..02d47a64e8d1 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -418,7 +418,7 @@ struct fname {
- 	__u32		inode;
- 	__u8		name_len;
- 	__u8		file_type;
--	char		name[];
-+	char		name[] __counted_by(name_len);
- };
- 
- /*
-@@ -471,14 +471,13 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
- 	struct rb_node **p, *parent = NULL;
- 	struct fname *fname, *new_fn;
- 	struct dir_private_info *info;
--	int len;
- 
- 	info = dir_file->private_data;
- 	p = &info->root.rb_node;
- 
- 	/* Create and allocate the fname structure */
--	len = sizeof(struct fname) + ent_name->len + 1;
--	new_fn = kzalloc(len, GFP_KERNEL);
-+	new_fn = kzalloc(struct_size(new_fn, name, ent_name->len + 1),
-+			 GFP_KERNEL);
- 	if (!new_fn)
- 		return -ENOMEM;
- 	new_fn->hash = hash;
+ fs/stat.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
 -- 
 2.46.2
 
