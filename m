@@ -1,88 +1,222 @@
-Return-Path: <linux-kernel+bounces-352752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D399923C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2460D9923C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487001F22933
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E35E1C20C87
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9550013BAE2;
-	Mon,  7 Oct 2024 05:02:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E89C7C0BE;
+	Mon,  7 Oct 2024 05:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hJPpaRt6"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DC5139587
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728277327; cv=none; b=Y0pvdvkpUhfKzAl/bYQeoyzGDdBHfi+TbV4G5hGdQEmARSgK6mYu69tqa0tQVf1bZ+SCzBScQSOj7ArLZqU6CPZhXDBDrltTjjXeux/PRiwgovhpgulc9UCj3BPe5ENF5wxERr9hdlvDKOx12zzIuX5Z4BT7awn8+waEPl8ilUg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728277327; c=relaxed/simple;
-	bh=CIIjV/hWcdyFP05m5m4NTGbWgsxHfusAn7Dl+7PLsrk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W01gwb7cuMqrVZ2JIwmfAzXvsqd2W8Pw7crHg+kespKR19JvkBomm3GhZ/QznyD8b2Zwc2NLjKZ9bbYQxXAfS8QpNwyCke0Fq5P9qhKEjWl2DLPrUihQnYWZ0c7vWONB3eqlG9+AZGBoJUEcQJWCCOAarfqjvXgr9uwydnTCvas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a2af837dso42013965ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:02:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728277325; x=1728882125;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M81u5pFZU9kf7CiDd7xdJW6Q5HmFx0rGdBALi4uV7Ps=;
-        b=V4aLjNIohctR7qRJGAX0ujtE5b2XiRTtE4Zpa42dlSeix/+wOQuvx6R57Dex0IkljB
-         P4A1uhBsqR3Rmf1EEamuvm07MKUAdu7a83BskaiaybqAMabBD6xGZPqvqtmGyLGlDbbk
-         IT7RuCAbkcvH6F+544c//Dph3egzmyjayJsSEy9MSN7vo8poNWPiZ8dR+a65VBP+fbQl
-         u1itSnu8FnmI39UCgreFriNK715zpPq7JLKGT9QhxgkuIjycjkxxtTW3iU5z/Ex+xcQj
-         adIhtbFJTk31W+PPlOzUjK8G7cRWhzlO32gryxST4GzGj+xWpDm+R15N0Azolgv3Rlp0
-         +gvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLwP771ANBthlxxFbF0RuSayisiYotXDb+ZiT1EFIm+sw7BU628Cn/pFQXkdYqCW6MEno1AmUnw2KblFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaPCTyOS/t8/P5dOpnSuoXOXnDGL1XhK+/FuUIeCNunrmfZc3U
-	v9jJfdg7zYPACa3mGZsSWeB89myrAlxvTevlt+oFxa6a0YKtNGBFQfUKqPZ6E19/R2FsCtTorCm
-	ztkOX+8yggcc7xpHWFKqRLN3MuGIvlHXK0nC9ImXoASzxB0PzKQfvWD8=
-X-Google-Smtp-Source: AGHT+IGcHQlHbT+mZEs24tHUFLZOVw30EswUciVc4QnWf5Jxogro6ZUfcA/4pKxRE4+/8wJlDefVCu03RLZagRZjhfg17YPv2kjj
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072253C0B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728277460; cv=fail; b=T7inpRBNSIOjgF2LT7O86HuwGYelh1KnoOt2wyESYnNovl9vT/jYsrOioMKLVTycGzES0aIRbiVwv+Yc/wDGeM4m6TwYVt6yiMoGPNLNQlK85sa64gNBtqQXxriYUpQhXa309G7/Iya86JaEJoRZdu+CJIb1z995NpHPFQqp9HE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728277460; c=relaxed/simple;
+	bh=elj8IrydbsNWYjOdv6psahgWceuxXqF3efuNoODbHSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VSxqO6YxRHmWTUwZ5UKdMbBsamnmT9EvtNdDvg7SMJaA/jqu7qhKwK1+26fdfPfsBPDi2VQSP5yOu+xyPKBaKB68ZqPeik8Lf6oVl8qzsKCD3lmy2KxwSxRKlx3kUI5BpqsMt21kg7tlbtHbBnl2o1VBndpblDFbmbce5UX22F4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hJPpaRt6; arc=fail smtp.client-ip=40.107.92.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SO6IAPmYKV0XYaOxGFIHIFGXNx8jQ4Wp6+40gEQqmC147wagWE3tOvJTkVNvxzJ1qxpeP7cw6zI8/Se3cGfiD0r5SoYr2lrKrr6w4ZSkmh1xhDcBf3DZq8/6AN8TvDl7EMF6YiBgknBGsvT1e8UvqBFTXkWOu5UDAEUVdWPfjinrh5AhEv9B2aanYnAMd2sS7W7cStCc4LLcrHxxEYp1bGSg4XZ2r4FvoixRuSjQ87ppaSLBZYGkiH6jUz5+UpgO61Nvbz8cMcN5tvDVbjwcIqGtQlkOqUVn5olIB2dsbMhO83C2YK6X31Yj0oTuYUtZbwmMxlts4Wi/Wnxoc76BfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zE9691sSOo450XbTsuvt/W24suWrMy5aD0R2TTZiv+g=;
+ b=g/dzrurKfmKt67GA0/mMqi76IzBd4LS5iZEhLfUJAfspDe01xTZUhqKe8El+Bg20Ee5ag2ALbFOH0uDWBzz3H/5FsM1QaXZ0M76gKq7ek7C8tGh06qIDSnzB2rl/GNkVb86PHP2A1X1020y/tf/U53c3xPYFIqmw4I+Kq/DJhz3hHVX9usM8nY55LjwdPN7F+JKQ4szwbIe+lDc1f82VfSEBJV6aPX1Hyy5dGozZ5kEOYGj73YIupbRj268TNbzS4tKAWTmNRh9OYidquwBRCjuqkl/MABjZGgjdN5nWglslB473HDWjqy5EOeViZiODbaOPiqRNOaVA8zCNUxiKzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zE9691sSOo450XbTsuvt/W24suWrMy5aD0R2TTZiv+g=;
+ b=hJPpaRt6x92/AfSdqSPHVTgxuihkzzShSvJQqiKNJ2bGCFZcSP1Jnk7RD98BFBvxQbk6k7ZlYX3M1hYcy4DqcZyqg3WTtOtxpk36KhTGX365tf1FcLBoXqu0L5FZdOIl0SnRISLxXy0zcM21AmmSfZpzPlKTmGfNtEGcYvXkfZI=
+Received: from MN0PR05CA0007.namprd05.prod.outlook.com (2603:10b6:208:52c::9)
+ by PH8PR12MB6819.namprd12.prod.outlook.com (2603:10b6:510:1ca::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Mon, 7 Oct
+ 2024 05:04:15 +0000
+Received: from BN1PEPF00004689.namprd05.prod.outlook.com
+ (2603:10b6:208:52c:cafe::16) by MN0PR05CA0007.outlook.office365.com
+ (2603:10b6:208:52c::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16 via Frontend
+ Transport; Mon, 7 Oct 2024 05:04:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004689.mail.protection.outlook.com (10.167.243.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Mon, 7 Oct 2024 05:04:15 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Oct
+ 2024 00:02:53 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 7 Oct 2024 00:02:53 -0500
+Message-ID: <8347abb4-7c9a-416c-4837-29e78fd715f0@amd.com>
+Date: Sun, 6 Oct 2024 22:02:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b02:b0:3a1:a2b4:6665 with SMTP id
- e9e14a558f8ab-3a375ce11c9mr76668105ab.12.1728277324939; Sun, 06 Oct 2024
- 22:02:04 -0700 (PDT)
-Date: Sun, 06 Oct 2024 22:02:04 -0700
-In-Reply-To: <tencent_B3968DE192105D945D9F997D4FE88DAE2507@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67036b4c.050a0220.49194.04f9.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in ntfs_extend_initialized_size
-From: syzbot <syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, eadavis@qq.com, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 05/11] accel/amdxdna: Add hardware context
+Content-Language: en-US
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-6-lizhi.hou@amd.com>
+ <c1f92388-bd94-ebc2-dd59-0434a3fa63a6@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <c1f92388-bd94-ebc2-dd59-0434a3fa63a6@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004689:EE_|PH8PR12MB6819:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60b0ddef-f882-4f51-1392-08dce68d7db2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MVBXNGtXOGVnNmlabnFSUjZTdHMzYm9VaVpmbHpDa0ZET1JTektUTVlWNVRI?=
+ =?utf-8?B?amNLTjFnNklncUFEb0U0ZjdpSnhVcW9JcWptRlhwbFdna2RGQnVNbDJzVzRi?=
+ =?utf-8?B?ejVKREdBaGYwS3lZc3NHcnR1MWVkZW04Y3ZMd29MOXhQMEdxSU5iWGJWalNS?=
+ =?utf-8?B?M0k4dlp3YlN3amZrUFFNWmNkTDJKcUFuS2l0eEhwWStJa0NMUTROQXorWmdH?=
+ =?utf-8?B?dE80ZTdISTN2YjNpYjFFMFNGb1NrMXNzQXNpYzVIT2pQWkNMZUNTZVdFaitO?=
+ =?utf-8?B?MGZoNVBFQU1TZW1SOFA4OXhWYzU5ZWJGWkhoVENDRTJieVlnVDdNNGJwcHZK?=
+ =?utf-8?B?Uy8zWnFlS0RmVnZjWFg3anJQdkZVSnBiK0E0ZGFXZEFGeUdSUjIrTThzY1ZV?=
+ =?utf-8?B?d05heXFGWEpOMnppV2V4d0p6cjFqR3RnckJ5K01DcmNOZUJuOWxoNmprRCtk?=
+ =?utf-8?B?WUw3dEhkb3E4bW93MzVRUjJ4by9ZWW1kQXVzcmcxeHA5bG5FUnFyRkRtWDRM?=
+ =?utf-8?B?dFVZMFpLdGo1TmRRdlBrWWRUeXhyU2dESHVIUEprRnJBQmNOWm5LM0IyNC9R?=
+ =?utf-8?B?K29YMzZiTURFeHZkTGRNMlV5RkdBakxjeElJWjZJRlZVbysvc1JVNDlWMkYv?=
+ =?utf-8?B?Q0c4dVRtck5QcXhMRGIwVU9QZHVXQWFQU1A2ZzNPNXdZVVd6RHZISUpNUVph?=
+ =?utf-8?B?c2liMlJSd3VJeElmVVROWXlyUE0vTW02SXEwUTVZVWxsbmdpejVTbHk3MlVk?=
+ =?utf-8?B?RFJlck4zK3BjS2tJYlEyallxRS9rMmFENStpOGliOGpTV3BqRi85eW0zQTJu?=
+ =?utf-8?B?cnhQWTl4bUU3REFSYVE4OGNYR2tVNTR4R1lHYVdzY0JkdU5sNUJwcjFwbjNT?=
+ =?utf-8?B?US94TUVnbmg2R0JSYXNOVmxWbm9Ua05qNklxSDlyMWFrRmxrQk9CcEZ4dmhZ?=
+ =?utf-8?B?czZvUDRmbzlLcDBBM1liWWNva2xTL2xuYlRueXRLMEhkWHFmMURmaVJqbUFD?=
+ =?utf-8?B?NExSc0tOWVNLdyswWkM0WXZKMmIyTm9sMWMyY1doM211YmM0S0hEVUh5SWxG?=
+ =?utf-8?B?OHpvZXgvOTQrRitFMmZOVFpnNjBpcTdBeURBdzJBUTBNb3h4bGw3Z3RkOUlI?=
+ =?utf-8?B?c2pvTEsyckl3OElhbVFHZlF0S2hWdjNyMDRUSzdSbmR0TjUwRzVUeWJwL1dM?=
+ =?utf-8?B?UG0xTUd6V1lNcUxrbmdBeWNwVm5sRnFtaFc4a3JmdFlpVUxEamZQVnRSMmpZ?=
+ =?utf-8?B?ckgxYW95Qm1Wcm5tcTNnR21PVGJVMy9aWmI3MjF0RkhLNHNETGdKVWd3L0Iw?=
+ =?utf-8?B?RVowbnVnTzNjS1c4R0dWV0k3cHpZaDZJSjBYOUVHRVRvVW5KUDBmT3ZYS0dQ?=
+ =?utf-8?B?RjN2bWg3L3ZIeFV1diswd3J3VWJxS0pGbnVlZ3dGbTM5d3F2Q0xMN1liM0I3?=
+ =?utf-8?B?dHI1UFl4aDBIeVZUZy9vRFpoc2FrMkdxamU0Qys3NVVnUmF6SE94TnNTZmIz?=
+ =?utf-8?B?WmpPTjh4dkdyQmwrRmUvQ3JuK3hraG5JWWpUUUJkMVNsM2M0M3dsci9Mckla?=
+ =?utf-8?B?akg3ZDlSR0ZwMGlIbTR4YnNQQTBGQXZNWTZESFROcG9hS2pBY3FyWFZtT1cv?=
+ =?utf-8?B?UHdrLzRIZk1ka00vcWhkTzFTNlVrdHRnRnJrVWZEUXhpR3Nwc1JsbTBZTWRJ?=
+ =?utf-8?B?VE11NmFEdGdxaE9YK1M5UWtEd3BvTlkvcXZ6Z0h6b2t5OVU3Rm5XV2t0ZkQ4?=
+ =?utf-8?B?OWxUU2hHcGNjam8zVXB1YUEwalNVczk4VXNuYnRkd1hiYlB4b3p4QWdDSkdT?=
+ =?utf-8?Q?hJ+Ri0qtKw/NoZrViOY7+7uL8fe4tagYj9AKc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 05:04:15.2742
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60b0ddef-f882-4f51-1392-08dce68d7db2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004689.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6819
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 10/4/24 10:50, Jeffrey Hugo wrote:
+> On 9/11/2024 12:05 PM, Lizhi Hou wrote:
+>> diff --git a/drivers/accel/amdxdna/aie2_ctx.c 
+>> b/drivers/accel/amdxdna/aie2_ctx.c
+>> new file mode 100644
+>> index 000000000000..52a71661f887
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+>> @@ -0,0 +1,186 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <drm/amdxdna_accel.h>
+>> +#include <drm/drm_device.h>
+>> +#include <drm/drm_print.h>
+>> +#include <linux/types.h>
+>> +
+>> +#include "amdxdna_ctx.h"
+>> +#include "amdxdna_mailbox.h"
+>> +#include "amdxdna_pci_drv.h"
+>> +#include "aie2_pci.h"
+>> +#include "aie2_solver.h"
+>
+> Alphabetical order?
+>
+> <snip>
+>> +/**
+>> + * struct amdxdna_drm_create_hwctx - Create hardware context.
+>> + * @ext: MBZ.
+>> + * @ext_flags: MBZ.
+>> + * @qos_p: Address of QoS info.
+>> + * @umq_bo: BO handle for user mode queue(UMQ).
+>> + * @log_buf_bo: BO handle for log buffer.
+>> + * @max_opc: Maximum operations per cycle.
+>> + * @num_tiles: Number of AIE tiles.
+>> + * @mem_size: Size of AIE tile memory.
+>> + * @umq_doorbell: Returned offset of doorbell associated with UMQ.
+>> + * @handle: Returned hardware context handle.
+>> + * @pad: MBZ.
+>
+> You specify must be zero, but I don't see that checked anywhere.
 
-Reported-by: syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
-Tested-by: syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
+Ok. I did not see any driver checks structure pad. And pad should not be 
+used. I will remove MBZ for pad.
 
-Tested on:
 
-commit:         8cf0b939 Linux 6.12-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e24327980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-dashboard link: https://syzkaller.appspot.com/bug?extid=e37dd1dfc814b10caa55
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13ac4327980000
+Thanks,
 
-Note: testing is done by a robot and is best-effort only.
+Lizhi
+
+>
+>> + */
+>> +struct amdxdna_drm_create_hwctx {
+>> +    __u64 ext;
+>> +    __u64 ext_flags;
+>> +    __u64 qos_p;
+>> +    __u32 umq_bo;
+>> +    __u32 log_buf_bo;
+>> +    __u32 max_opc;
+>> +    __u32 num_tiles;
+>> +    __u32 mem_size;
+>> +    __u32 umq_doorbell;
+>> +    __u32 handle;
+>> +    __u32 pad;
+>> +};
 
