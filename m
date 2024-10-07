@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-353393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF66992D35
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD1A992D6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B721C22820
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3881F235DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124C01D363A;
-	Mon,  7 Oct 2024 13:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E141D54E9;
+	Mon,  7 Oct 2024 13:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="paTGwcYj"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FQYoFP41"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0451D2B35
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9B41D27A5;
+	Mon,  7 Oct 2024 13:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307642; cv=none; b=X4LT8Sf3SnUVKNtiXZfHTE4mHYkOLiMJSZ84GtU44Ths5R9ROxPL2P5ESSyZqowscd18h38VQ2qN0zjkqsFaVujXL5eNoQp3aUh5TDx1z73LjwpFoRrHNec8cIKVeriqX0zCa6lQ0XzTZv3gC6wo4DBCrqkXOZG8cwGqdG0e1y8=
+	t=1728307971; cv=none; b=Htx/7iqf2NDUyaN0vtnatavmchAoKpTFBem6NwzF198VGm7k8k0Hfm/aQvBVWVROGh194/div+WY/bichG4PSDpTYNrdJCEJYtAlTn946336NfW2L/ROWLS2fCLoeje9qCkdygnB4RdDnsdSKAnrWMhXOyqCIv6iv1fNkmEBKy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307642; c=relaxed/simple;
-	bh=/H07fizqd8f9Un958oTh+xHyU1oyuvblBrcmK3PLaGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEKlLBNRnH1GlcL/CWts3gvf/JmcCfgdMbg7BD31zVdHz9k1cL2oyYwrtIIgb+ByQj8uo6WbIG7glRSlm4IaObpaaBbJT5y7nZg+rpGhRxYPftfCc6JwPDIJX19hvWvK81+BJLEU9ody1MaOmskZ6/FgOALST8Foeu0CWS8c8Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=paTGwcYj; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso4356726e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728307639; x=1728912439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNxLoRSbZI0k7IXFvf75H791GvPIK6wndlWEPKIZrUY=;
-        b=paTGwcYjPUfOcTFxYfx9dq1RuBUfE2kNk3p74qZZ90QVi6kYq5gtM43XOvU5rKzM6Y
-         Go9SmWdGrWsQ9/imWu5HgWozdxX5gvRQHT6u6bvp194/rgiAVru65+ajaCDh7n7cZfsC
-         5WPGVjwAorDd4wMIaPGr+vXS9aJO/MMXzt1xxO9hS3AhvFz58E8q25WV3MwItI8LOVzd
-         3nxNFou0rDcZlKai2PSDoXWK1a9B2D855TXzRy4PQ/TKOLFl0ZLC8jHeSkh1qT4/JfDK
-         ppOXKv4M1Z/uEJxJ6V9TuhL8iNvPIuKsJofwbc7Bfrr1cvc8grwNqKUJSyidmIAPeDmC
-         swog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307639; x=1728912439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lNxLoRSbZI0k7IXFvf75H791GvPIK6wndlWEPKIZrUY=;
-        b=n+xC4uFcsjCGHWOkSBRwyARzCqoVzglU6HunuoIXcBrojwmGVaMO0ihMvQAozqAoZp
-         HiuqfzrgvQ5e8wPqGY+edzaMCMHqSnh1ZbXtrY+ABUEIPZWrj+JaokQzLEWBsXO7Ahl6
-         DyvaSALRUc8khHdPB3ZpJcZjfZ+DQGTeZNUUmnu2OM6XchDcLNybuHEeTfpQZW8qZKf4
-         2vzXNrUCzRSDR2CM+I/3wAKEBqeKfACDjaDa9kM5W3An6J7PL3wtyaQZ0sNqkJU/9gAx
-         m7wEJZVb3lQ0gTJItTwE839PfENK+GT5YBaZFguLqUsNx3BXarmSJr3mDdGhqbjCtMM6
-         V3BA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE1b/MjLDTyMnqNNUzcHI8s/Yq0i3/J7xrZXhXj4fEMHrfxjVP9lIbhwJ7gu1/GBwtEHcEy8rbwspMfq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOHZZ/rkqvVR/IKGkf8R0kbo6oXrK78x6IsPBA2v93n9QXp8Tx
-	e36wZepFaKHWjJeYDxmh3C8RpVZGt6RZA/IJRfnMQpF6CKHsO564dgBOTJBt6cc=
-X-Google-Smtp-Source: AGHT+IGl3vWdg5PH3ZdDeOZUmYnJZIlfXksyhP6LqocHQQkxY1Zwp9M/DFEYLfPwa5CHI2U89NDQ3Q==
-X-Received: by 2002:a05:6512:3087:b0:535:6bb6:e7bd with SMTP id 2adb3069b0e04-539ab88a58bmr5319560e87.28.1728307638864;
-        Mon, 07 Oct 2024 06:27:18 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d3cdsm846024e87.166.2024.10.07.06.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:27:17 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:27:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v1 0/4] Add invokeV2 to support new features
-Message-ID: <ferdfqahe2s5a33l5bbswzx2ufrttmmleobthwqoogalx45iz4@z3fhono6eio4>
-References: <20241007084518.3649876-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1728307971; c=relaxed/simple;
+	bh=uNE635MurB0pF4mfKSEeqVoO1HzSWyf/+Ne4tUmOmCY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n3OCMUXmHXj1bkiHByAFo3+FUkth8bqO6Nyjk2zfUYJ1X5/akeoJMeSF0qY1vVXJQrd/kMevXhc1Px/OhMj/5KA5JXST+FImKMweAaUf58j7guzXijQbYfuitZxkVsFQ/+9c0HTy+sJRN7ABl9vQiedtBGmXYk2/ILaNGR88gdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FQYoFP41; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497CkqjW013725;
+	Mon, 7 Oct 2024 15:32:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=0Uy4D/ioMUiMzIiIOi6IbE
+	9dbO4iOUOot3KiGq4Gkrk=; b=FQYoFP41RtoIJO90BLw2X/Grf321yhfVuPrZTl
+	cHp0TUNwE9zJYVsJ5oStKFPUGTSCDijVj1Ayt07KLKoZspChvZL6Kjv1IQA86oX2
+	79dkxzFDu+//TCgJK4KoDQLr6aL6yvfOkHkRk5DrbWexAqs41/VjQZxe+zqdJQS9
+	nPJiwVT1cEv8Bm9qmCXVcTpw0dElnibnWLPSog9ujhNgjpV1UzPG7tqNDJHh7QLs
+	JgIew7YTxpO42uye0pZbjtOyy02yXOqTKDjsMA3A4JRaUtVZP/v5w1GaDMbW6v2Z
+	UUW6ZqysHBUlVFt8v9RFjC0DI8+mVQqoiEWondGsSeiZ0mCA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 422xs194nu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 15:32:17 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AED624004A;
+	Mon,  7 Oct 2024 15:30:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7B74C279E77;
+	Mon,  7 Oct 2024 15:27:45 +0200 (CEST)
+Received: from localhost (10.48.86.225) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 15:27:45 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+To: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lionel Debieve <lionel.debieve@foss.st.com>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Yang
+ Yingliang <yangyingliang@huawei.com>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>
+Subject: [PATCH 0/4] Add support for stm32mp25x RNG
+Date: Mon, 7 Oct 2024 15:27:17 +0200
+Message-ID: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007084518.3649876-1-quic_ekangupt@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Oct 07, 2024 at 02:15:14PM GMT, Ekansh Gupta wrote:
-> This patch series adds the listed features that have been missing
-> in upstream fastRPC driver.
+This patchset adds support for the Random Number
+Generator(RNG) present on the stm32mp25x platforms.
+On these platforms, the clock management and the RNG
+parameters are different.
 
-please use sensible subject for the cover letter too. Ideally it should
-start with the corresponding subsys name or otherwise point out the
-target.
+While there, update the RNG max clock frequency on
+stm32mp15 platforms according to the latest specs.
 
-> 
-> - Add changes to support new enhanced invocation ioctl request.
-> - Add support for CRC check.
-> - Add support for DSP and kernel performance counters.
-> - Add polling mode support.
-> 
-> Userspace change: https://github.com/quic/fastrpc/pull/73
+Tested on the stm32mp257f-ev1 platform with a deep
+power sequence with rngtest before/after the sequence with
+satisfying results.
 
-Up to now we have been using [1].  There is no way to switch to the
-mentioned repo with no changelog information between them.
+Same was done on stm32mp135f-dk to make sure no regression was added.
 
-And anyway, as pointed out earlier, please steer your activities towards
-implementation at [2]. Both "fastrpc" implementation are ugly,
-AOSP-centric and must be dropped as soon as possible.
+On stm32mp157c-dk2, I didn't perform a power sequence but the rngtest
+results were satisfying.
 
-[1] https://git.codelinaro.org/linaro/qcomlt/fastrpc.git
-[2] https://github.com/linux-msm/hexagonrpc
+Gatien Chevallier (4):
+  dt-bindings: rng: add st,stm32mp25-rng support
+  hwrng: stm32 - implement support for STM32MP25x platforms
+  hwrng: stm32 - update STM32MP15 RNG max clock frequency
+  arm64: dts: st: add RNG node on stm32mp251
 
-> 
-> Ekansh Gupta (4):
->   misc: fastrpc: Add CRC support using invokeV2 request
->   misc: fastrpc: Capture kernel and DSP performance counters
->   misc: fastrpc: Modify context id calculation for poll mode
->   misc: fastrpc: Add polling mode support for fastRPC driver
-> 
->  drivers/misc/fastrpc.c      | 435 ++++++++++++++++++++++++++++++------
->  include/uapi/misc/fastrpc.h |  10 +
->  2 files changed, 376 insertions(+), 69 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+ .../devicetree/bindings/rng/st,stm32-rng.yaml | 41 ++++++++-
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 10 +++
+ drivers/char/hw_random/stm32-rng.c            | 83 +++++++++++++++++--
+ 3 files changed, 126 insertions(+), 8 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
