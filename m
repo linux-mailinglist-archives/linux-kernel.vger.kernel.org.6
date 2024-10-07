@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-353111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7399928C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:06:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017159928C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22054285E6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:06:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765161F24D6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEBF1BD4F0;
-	Mon,  7 Oct 2024 10:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9559F1AFB39;
+	Mon,  7 Oct 2024 10:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fMNqxoyW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="OwfHSKDB"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4779D1AFB3E;
-	Mon,  7 Oct 2024 10:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B981231CA9
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728295468; cv=none; b=R3MxRtU7onTCrhKWrrJrmJXoC+NMSw1iw532nbbdkwB5DsdWAnYEqFjXGOkNdsvGc/XK2GiR2/ol7g1LGBC8tjjXlhCNAgEp/gwSd77OgByqqX0maLzMu38T5CRDWtfNK7lzBPhP/pFpLuz99DinXk6uio6IuwOdzEnR/o0y6D8=
+	t=1728295466; cv=none; b=Ewhq36xRH0dLJB/lYJ7WrTUcNz5s7cCr+ekjM8+/FIeJZtYXtt/e04MzSgPva2V2NpMLkEhAWly+ODvtWg8q69rkAIsCQZBuWo4zUa9dP4XsuDISIGYZWliDDavI9ksR6Cc17Pg5UXIf0ljd5HXGLUUhWC2VTropxkhpeLhTd5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728295468; c=relaxed/simple;
-	bh=EiKaK+wNOB/xWHp7Dr+hJAI83LLfdUOkwnue9ETryhc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=YZVT+4zxDhrRHcdGeNRzzJH1YiADGMgh5b1EpEiTaRDZAJcttWXWMJmV2Qy086e5R85x6STE4be8WzZGG7tdd3TDQ7zr0tKbFkW1GkU8ZTKskDzcMwBMTqPiUFQgTiI55fxm3s3HoijTNen3SHUdQsSvpXKeRPmiTV5ccyUKQtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fMNqxoyW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974Spx6004197;
-	Mon, 7 Oct 2024 10:04:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QCIboNDi0+QF4x956SfXdlu4UjpNYXVD4wRwQLp6HOA=; b=fMNqxoyWIUFRQBAM
-	I3C0D9wgbjx78VJxsOrXdxFHf+4UVA0rVuzkbw8qhIZxsUx1ZbAI74WglF4qrzv1
-	APRlVFs17H6UbQK/FNWyxLwrYmMLTaTq/87o1jcmxmZvuAViGbtAveXYRtv5iiwh
-	qdMfPI19M7fxeXHkkkSOW5psk68VACwJ5vL8ZU5lxlzfz6up6xduiQ9CMQ/p4y6b
-	nsms4SSFsXj5HIeOPbfSYbHCJgGWRCdalKJSf1IEAzcgJf7ki+oNYYPTtTP2vbsS
-	JIuwF2eIDoC/yADD1U0kUER/AKqB9GwfJ8T8DedFBqj/o5J/iyyH3aiXKt99OApc
-	yqTqHQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqnup6h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 10:04:07 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497A46lY014009
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 10:04:06 GMT
-Received: from [10.131.117.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 03:04:02 -0700
-Message-ID: <98d56e5e-47ca-45d8-8e0e-07c204fcc04b@quicinc.com>
-Date: Mon, 7 Oct 2024 15:33:52 +0530
+	s=arc-20240116; t=1728295466; c=relaxed/simple;
+	bh=ChnF36euALpyYjrslbFWg1ZKHmzg/57fTmXHPuGpKQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DY62ihtTiym4pvie2CQQcK33kWVOQ4AO3WcdeBFOOUu+pKBs1NrYWkr965DxcIACbJMyMV3bhYoAD3V2oWoa4f9g09DK8zUlYwp2OKVl55yRdf7OJvOIHJEgNJtnoggrixSHxn+9n1RnIz9sq6HLoFUzs6h28AVjK6BRJFmf0jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=OwfHSKDB; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cca239886so2545239f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1728295462; x=1728900262; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NuQVqhahf1Jz4tT/fjagwPK72T8/bE0LW699MmZGlaQ=;
+        b=OwfHSKDBF/XoVENQojW5Vu2AudD++ZgFnzc21DmcsVCYf3LrwBLynRjiQ3iPunMNup
+         mIqsu0891LnhvXcIl6AbMkPyQL3DWkeZGxJWGifdWjs9HZghL2ih8bIsICW80KeA4pTp
+         fPoWlfFR7SlGA/Tyxo5j0HctC8MpoK0Jp9A1kTSER6haZnKzHMWqMGIhgEzzYUUAp9pH
+         0Igm44L0srar4Hf7cekjKvVIBby5bXK8vUQGdgGGxJR8auarxxc1ENjMf3kowByiTVMK
+         3YbV5xGio1sve5W+llxChySzTGTH0YXjNLJEJWhDajolQ4EN810CQvEBKRtneUXNuhEG
+         9WDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728295462; x=1728900262;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NuQVqhahf1Jz4tT/fjagwPK72T8/bE0LW699MmZGlaQ=;
+        b=H8zGM5kewRpXrIArVQTo/Wg7ANLU8lqhea1W4Lqd8PcOuz4ywGJurAV2ORDBNFUZQW
+         JKQIiQAFdQmrx3Wm1fSBd4rfaQEdid42hMdkIC/hEy2mzelOSJPgytPfu4RqtpC3AV/l
+         KeH2R88U3m96IYLnD9nMyPK2jdIcOQarHI1FVpTrgntYHvX+78/OnK2DXRasTKZbFpDW
+         jpD0LKhdfrQmhUolR4yhddXXxBo+vXIUTGX2MYOzAb5250J+XekeLaR1Nqs6kEBbfQnB
+         TDN2Y3OeoTEMELjwfR2YK87T8+NON/K7mSAH0XVPuxukBxECxRRnjiMxwJ3ms8QBjviW
+         mFIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWC1ERniwTOuC9/tNip3zdLN/A2MmDZEXPs6FzMxnl0uk1Jqxhv0q9MOF4wIZpUJa54hqGbACg/tSMy3XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyESIlC1bQBofI3CXVFsw8n7xFOHyPfE3hXE6rkYLdO5VYXMtHj
+	9EriU+VVZNaxa1uIM7h4+IDlkA21JmLmpZcewHo8snXKMMCMmSZPw9H7LCa46OE=
+X-Google-Smtp-Source: AGHT+IFiOMOtDWrPLesR2YJI+T+TdB6ghsVgNuyfeGu7LKXq2EfNxD4KWjWvAly9Tu54tUuOs/JPVw==
+X-Received: by 2002:a5d:598c:0:b0:374:fa0a:773c with SMTP id ffacd0b85a97d-37d0eafa3admr7113034f8f.47.1728295461909;
+        Mon, 07 Oct 2024 03:04:21 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:efc3:b0c0:f886:97ea? ([2001:67c:2fbc:1:efc3:b0c0:f886:97ea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f25asm5354842f8f.11.2024.10.07.03.04.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 03:04:21 -0700 (PDT)
+Message-ID: <e09ea6b5-fe0c-4f90-8943-83aa410ccc1f@openvpn.net>
+Date: Mon, 7 Oct 2024 12:04:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,103 +76,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu: Don't disable next-page prefetcher on
- devices it works on
-From: Pankaj Patil <quic_pankpati@quicinc.com>
-To: Doug Anderson <dianders@chromium.org>, Will Deacon <will@kernel.org>
-CC: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Stephen Boyd <swboyd@chromium.org>, Chen Lin <chen45464546@163.com>,
-        <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_sibis@quicinc.com>
-References: <20240513161343.1.I5db5530070a1335e6cc3c55e056c2a84b1031308@changeid>
- <20240517163742.GA525@willie-the-truck>
- <CAD=FV=UEXjD=w41Hj_gE--DXhkSjNdfPnkc7X=FrZJ5_90Jq0g@mail.gmail.com>
- <b143a3c3-8a12-4ac9-bb0f-3b4b9ea976a1@quicinc.com>
+Subject: Re: [PATCH net-next v8 01/24] netlink: add NLA_POLICY_MAX_LEN macro
+To: Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ sd@queasysnail.net, ryazanov.s.a@gmail.com
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-1-37ceffcffbde@openvpn.net> <m2msjkf2jn.fsf@gmail.com>
+ <20241004063855.1a693dd1@kernel.org>
 Content-Language: en-US
-In-Reply-To: <b143a3c3-8a12-4ac9-bb0f-3b4b9ea976a1@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wZ3g98OVtQqnb7P1DzBI_wgju32o5mUP
-X-Proofpoint-GUID: wZ3g98OVtQqnb7P1DzBI_wgju32o5mUP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070070
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20241004063855.1a693dd1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/4/2024 1:59 PM, Pankaj Patil wrote:
-> On 5/17/2024 10:49 PM, Doug Anderson wrote:
->> Hi,
+Hi,
+
+On 04/10/2024 15:38, Jakub Kicinski wrote:
+> On Fri, 04 Oct 2024 13:58:04 +0100 Donald Hunter wrote:
+>>> @@ -466,6 +466,8 @@ class TypeBinary(Type):
+>>>       def _attr_policy(self, policy):
+>>>           if 'exact-len' in self.checks:
+>>>               mem = 'NLA_POLICY_EXACT_LEN(' + str(self.get_limit('exact-len')) + ')'
+>>> +        elif 'max-len' in self.checks:
+>>> +            mem = 'NLA_POLICY_MAX_LEN(' + str(self.get_limit('max-len')) + ')'
 >>
->> On Fri, May 17, 2024 at 9:37 AM Will Deacon <will@kernel.org> wrote:
->>>
->>> Hi Doug,
->>>
->>> On Mon, May 13, 2024 at 04:13:47PM -0700, Douglas Anderson wrote:
->>>> On sc7180 trogdor devices we get a scary warning at bootup:
->>>>   arm-smmu 15000000.iommu:
->>>>   Failed to disable prefetcher [errata #841119 and #826419], check ACR.CACHE_LOCK
->>>>
->>>> We spent some time trying to figure out how we were going to fix these
->>>> errata and whether we needed to do a firmware update. Upon closer
->>>> inspection, however, we realized that the errata don't apply to us.
->>>> Specifically, the errata document says that for these errata:
->>>> * Found in: r0p0
->>>> * Fixed in: r2p2
->>>>
->>>> ...and trogdor devices appear to be running r2p4. That means that they
->>>> are unaffected despite the scary warning.
->>>>
->>>> The issue is that the kernel unconditionally tries to disable the
->>>> prefetcher even on unaffected devices and then warns when it's unable
->>>> to.
->>>>
->>>> Let's change the kernel to only disable the prefetcher on affected
->>>> devices, which will get rid of the scary warning on devices that are
->>>> unaffected. As per the comment the prefetcher is
->>>> "not-particularly-beneficial" but it shouldn't hurt to leave it on for
->>>> devices where it doesn't cause problems.
->>>>
->>>> Fixes: f87f6e5b4539 ("iommu/arm-smmu: Warn once when the perfetcher errata patch fails to apply")
->>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>> ---
->>>>
->>>>  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c | 21 +++++++++++++--------
->>>>  1 file changed, 13 insertions(+), 8 deletions(-)
->>>
->>>
->>> Just curious, but did you see any performance impact (good or bad) as a
->>> result of this patch? The next-page prefetcher has always looked a little
->>> naive to me and, with a tendency for tiny TLBs in some implementations,
->>> there's a possibility it could do more harm than good.
->>
->> This patch actually makes no difference on trogdor today other than
->> getting rid of the scary warning. Specifically on trogdor the
->> ACR.CACHE_LOCK bit seems to be set so the kernel is unable to change
->> the setting anyway and has never been able to. We are working on
->> figuring out how to fix the firmware and then we have to get a
->> firmware spin before we can really see any changes. I'll keep an eye
->> out to see if performance numbers change when the firmware uprevs.
->>
->> BTW: any idea how big of a deal these errata are? We're _just_
->> finishing a firmware uprev process and there is always pushback
->> against kicking off a new one unless the issue is important. Given
->> that we've been living with this issue since devices shipped I'm going
->> to assume we don't need to rush a firmware update, but if this is
->> really scary and needs to be addressed sooner we can figure that out.
->>
->> -Doug
+>> This takes precedence over min-length. What if both are set? The logic
+>> should probably check and use NLA_POLICY_RANGE
 > 
-> Receiving the warning on pre-silicon platforms as well, despite being unaffected. If merged, it will help in reducing log clutter.
-> The patch applies cleanly on the tip of linux-next, tag: next-20240904.
+> Or we could check if len(self.checks) <= 1 early and throw our hands up
+> if there is more, for now?
+
+We already perform the same check in the 'else' branch below.
+It'd be about moving it at the beginning of the function and bail out if 
+true, right?
+
+Should I modify this patch and move the check above?
+
+
+Cheers,
+
 > 
-Following up on the patch. Please let me know if any additional 
-changes are required.
+>>>           else:
+>>>               mem = '{ '
+>>>               if len(self.checks) == 1 and 'min-len' in self.checks:
+>>
+>> Perhaps this should use NLA_POLICY_MIN_LEN ? In fact the current code
+>> looks broken to me because the NLA_BINARY len check in validate_nla() is
+>> a max length check, right?
+>>
+>> https://elixir.bootlin.com/linux/v6.11.1/source/lib/nlattr.c#L499
+>>
+>> The alternative is you emit an explicit initializer that includes the
+>> correct NLA_VALIDATE_* type and sets type, min and/or max.
+> 
+> Yeah, this code leads to endless confusion. We use NLA_UNSPEC (0)
+> if min-len is set (IOW we don't set .type to NLA_BINARY). NLA_UNSPEC
+> has different semantics for len.
+> 
+> Agreed that we should probably clean this up, but no bug AFAICT.
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
