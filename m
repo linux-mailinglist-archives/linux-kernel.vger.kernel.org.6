@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-354005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB471993624
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:25:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69ED1993626
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA992832F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:25:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF951F22B0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E601DDC3E;
-	Mon,  7 Oct 2024 18:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0E81DDC36;
+	Mon,  7 Oct 2024 18:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCmaZQGo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pL9+HteB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2241DDC2B;
-	Mon,  7 Oct 2024 18:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AAF1D958F;
+	Mon,  7 Oct 2024 18:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728325523; cv=none; b=ImGtOI3kijNpl83bZV/LSn/6lQxcoflacrY8G4kXGUozY1hZXuajXEDjLq8xigEBYKOWwtQCUqgo8AJmGke1nN6s4h8mfZycRAKc/tNqoO6amUj4EfuJOFos/4Fe+eV+2F+sDjfxQz2BjWKZRkLWvc9my45+2kBLF5tmSX/NR9c=
+	t=1728325566; cv=none; b=RRtGBTPphQF1z2O4QIoCaCl23lZxue9lrffu5unp0NUJAF0vQsiWNkNxmQ2R/7C6UXjiwsOv+Mg9EfuLHy+Azg9IOCjliMuUhiKpIVxNR/xrwzpY4zxnBhFfvVUGuq224cncgRpAoVlH07vxzJy3zdBVYEhPL7PLW7nm+C+75hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728325523; c=relaxed/simple;
-	bh=eL+UUseJdKGqGlrV0AxBjqNKuNBQCF6P3bXK2xko/k0=;
+	s=arc-20240116; t=1728325566; c=relaxed/simple;
+	bh=YEnynhxrrE/6PuEr8w5deE0PsZc3kVpk08z+7Q9NWGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgfHBS3a795Wr1ZbT6kqZwvxDtzNJS/EI8AdI0c8J2R8a9sBN1M7AGw8DgBtpn9K0LLQ3kA2G525GBqasyfmqWCNJ3suKx/oqpAO9G4UBo/93i4IPtjEmhJh4p/XPvaHEh/vD50tH/sSO3iTcpfs4sjX1jxtMGdF3Xby/04fcXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCmaZQGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F01C4CEC6;
-	Mon,  7 Oct 2024 18:25:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvQSnf4OhMez400Wb+KvHvYA0H8PntqikwkHyzcO+7HR1gnb0eOeWi/zVWQiclpNf31R6RIhhaY4AQFu+WnraFuKKG7fp0bq8zITqhn6DzrsBmtaBRD1jj6j0VsRDyUUfsFr487CrJ/8sDRn2RGK0SfXEWPOwhb9zjB71x8t4oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pL9+HteB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F9AC4CEC6;
+	Mon,  7 Oct 2024 18:26:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728325523;
-	bh=eL+UUseJdKGqGlrV0AxBjqNKuNBQCF6P3bXK2xko/k0=;
+	s=k20201202; t=1728325566;
+	bh=YEnynhxrrE/6PuEr8w5deE0PsZc3kVpk08z+7Q9NWGU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCmaZQGoYQNAyZAP+PMMyWWRvSKuk9gy4NbiJHS/a3HkpiCyNdsAfeL/tZEdMkD4+
-	 2bPusCmdXGLO+hTZJ1vnThSRcjuWG8/kvchtFn7+DAoSd+zUM5+p/3ZZfMdl7c3iFw
-	 xjEpqnfZBpf6XssacHILkl8jTDczXiS+/k1hb+6EX94K2p22LAk8I1H3WwGlvSs8bb
-	 ETWb/8aY5306cqQNxLxP8Amh5aO+8eWZXO4idItKtp+NMW4mmoaVVBh2TanVNtAqC6
-	 7zxlCwHJXLiB9C4mw4FR0ZSraqNvqZ2cyG7Wg29Z07+TW3f60VUyG8L0tOAU69WCcK
-	 RvwZA9RCUPEoQ==
-Date: Mon, 7 Oct 2024 11:25:21 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH] tracepoints: Use new static branch API
-Message-ID: <20241007182521.xtlduygupnt6wnfa@treble>
-References: <03da49e81c50eb2a9f47918409e4c590c0f28060.1727817249.git.jpoimboe@kernel.org>
+	b=pL9+HteBPgzPc37Qtd/TLMiHmEDjHO44Fb12d6hYP+gdF6a011Zas93xrSQqBPuo3
+	 6qlKxpgfS/4low1VNm//KQzTDIs/sHa793HsRqr1Kqa5NQrLEqxLp0bbx7/pCv71k4
+	 wapVho8z8T7C1kHzlS5oB2hxj7M4DhudEU3CcvOlDuZZl42E7OZ+05KZDLjklr3WOi
+	 62B6ZxqQm7e46/h7IEmXTrz+ZLsITgAUvmpdkf6zhsiXGmg00nqzXz+Dl+F3SOiIjl
+	 PLSW0p9vy+93x0OWN7NrZM+sH6ucOlapvnqjNiPmByE+Xc9iiu4s/EgcYPFs8EpcSM
+	 tDTuqmnNCyk9w==
+Date: Mon, 7 Oct 2024 13:26:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
+	marex@denx.de, s.trumtrar@pengutronix.de,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] ARM: dts: socfpga: add Enclustra Mercury SA1
+Message-ID: <20241007182605.GA1915276-robh@kernel.org>
+References: <20241007133115.1482619-1-l.rubusch@gmail.com>
+ <20241007133115.1482619-5-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <03da49e81c50eb2a9f47918409e4c590c0f28060.1727817249.git.jpoimboe@kernel.org>
+In-Reply-To: <20241007133115.1482619-5-l.rubusch@gmail.com>
 
-On Tue, Oct 01, 2024 at 03:24:01PM -0700, Josh Poimboeuf wrote:
-> The old static key API based on 'struct static_key' is deprecated.
-> Convert tracepoints to use the new API.
+On Mon, Oct 07, 2024 at 01:31:11PM +0000, Lothar Rubusch wrote:
+> Introduce support for Enclustra's Mercury SA1 SoM based on Intel Cyclone5
+> technology as a .dtsi file.
 > 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Andreas Buerkler <andreas.buerkler@enclustra.com>
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  .../devicetree/bindings/arm/altera.yaml       |  10 ++
 
-Steven,
+Bindings should be a separate patch.
 
-The kernel test robot found this patch breaks the build with
-CONFIG_HIST_TRIGGERS:
-
-  https://lore.kernel.org/202410040333.vJSL1NXx-lkp@intel.com
-
-Here's the fix, do you want to squash it in or should I post a v2?
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 5f9119eb7c67..cc2924ad32a3 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -822,7 +822,7 @@ static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
- {
- 	struct tracepoint *tp = event->tp;
- 
--	if (unlikely(atomic_read(&tp->key.enabled) > 0)) {
-+	if (unlikely(static_key_enabled(&tp->key))) {
- 		struct tracepoint_func *probe_func_ptr;
- 		synth_probe_func_t probe_func;
- 		void *__data;
+>  .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 ++++++++++++++++++
+>  2 files changed, 153 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
+> index 8c7575455..87a22d2a4 100644
+> --- a/Documentation/devicetree/bindings/arm/altera.yaml
+> +++ b/Documentation/devicetree/bindings/arm/altera.yaml
+> @@ -51,6 +51,16 @@ properties:
+>            - const: altr,socfpga-cyclone5
+>            - const: altr,socfpga
+>  
+> +      - description: Mercury SA1 boards
+> +        items:
+> +          - enum:
+> +              - enclustra,mercury-sa1-pe1
+> +              - enclustra,mercury-sa1-pe3
+> +              - enclustra,mercury-sa1-st1
+> +          - const: enclustra,mercury-sa1
+> +          - const: altr,socfpga-cyclone5
+> +          - const: altr,socfpga
+> +
+>        - description: Stratix 10 boards
+>          items:
+>            - enum:
 
