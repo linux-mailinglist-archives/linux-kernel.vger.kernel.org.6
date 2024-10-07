@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-353922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7744F99347F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:10:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CE9993481
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C981F2210C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:10:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61B5CB23236
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA631DCB1F;
-	Mon,  7 Oct 2024 17:10:49 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE661DC752;
+	Mon,  7 Oct 2024 17:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BpYasyLV"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AE31DCB0C;
-	Mon,  7 Oct 2024 17:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEE11DC74E;
+	Mon,  7 Oct 2024 17:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321048; cv=none; b=RXXKVuZBbd3MMaoM3WQQmsV1hUQZHMzSfcLeTJmBdC009dm546VBC+SBCWANEkYYGtdoqh2EtP4nR9DJOrxboSPaWWhttMJnxUMuf3qpbnHB03BXdTO3XdWlH84BBnghvMB8VMYp3+EtmiBimNP2EVRZ7GZQSrYdVuu+6OqpiQs=
+	t=1728321075; cv=none; b=DcHSGujyOuI6YeGOAr9eOaU8x3LgxN3Abep9uZLALDW5NI6/q5EuDyWXhCSxSc4hpDAwN/MSXVujAY2JKvOrqqA2FCKI/B1Hg7qC30WCNA4zrXB8Ess6zN0o9yF+Q4MqKs/CeUyJzl4Ev9xna6pb4qWPSRZ5hL/Th+1UAaQL+w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321048; c=relaxed/simple;
-	bh=+Lf6Lx4ZUuyRtEXHzSyOLeGyiwoNL+r+8vUo7hDjvVc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m/CyCA9tB1Dq9F2GhczbdkoSpxiFmyGXDCHohKfHG5mHkKAUQG5cclqXlXtdAw/xZYgiHdkPi/38Y7Ofd3BqHpyiNE/Bu0O+5FHITnJFYt7BY6LET2qLdNXOsYpvL/TQwP1NIzEah+agMxNaD50KWbddcMjfOWEchi8oQ774ymA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1sxrFi-000mSJ-JR;
-	Mon, 07 Oct 2024 17:10:34 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH v2] net: phy: disable eee due to errata on various KSZ switches
-Date: Mon,  7 Oct 2024 10:10:32 -0700
-Message-Id: <20241007171032.3510003-1-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728321075; c=relaxed/simple;
+	bh=AptONEvCNX1GKVvhPkzoF3vywhPwo6cOvMbQHNecPGk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OpLGkvH7IgrM94m+TTZJtnBeWXSIybIRkA2K31F17X0ebDxDfqkLFNElx6jaN9ba5OUk0u6QZXNyPWd/vTTmOH7ZNuG1/EU9NXMAOYrwWAWNQZXvBE/pEqRGeYNsaVVPKeZ0MiMqUeK6EHmLdHuIzLdozvnFwWYiiL91ghIPOgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BpYasyLV; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CDCC042C0D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728321074; bh=2bTYKJiPDek+61ldh6+ljnqYIrz9NZnpUzQ4fuxn8vs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=BpYasyLVKUuaLgKvHJJknf17RS+GFgARpw33OJIhjaypMDtmeLJXJpS/5ARA/AXKf
+	 svfjN7nTpCEqiPQ0j/Q72+Lu3v+q8D1R2W1TpdxMGnvkviSwsHZzFb3QXYxqFodzbC
+	 m/io0BFTYKOUsK/sUrAxOxnNc76sMIB2pwxkiGZjFR9a8xbToRJdkGtMSKR8Mhjz5D
+	 d4JJrlOs7+FgMpO4is2BuOxMhy/uoIioZzlUbQde461cNdyjYJUtQKAnqaWxE0GF8G
+	 RjKEyyvw3tyVbK3Oub0iBOtbwQHTS9cNSPVv4OIPBIoWW1+JloVkCpjbuq7oG3cHCD
+	 TVmSkXMjRasaw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id CDCC042C0D;
+	Mon,  7 Oct 2024 17:11:13 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Vishnu Sanal T <t.v.s10123@gmail.com>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vishnu Sanal T <t.v.s10123@gmail.com>
+Subject: Re: [PATCH] fix grammar on false-sharing.rst
+In-Reply-To: <20241002100852.70982-2-t.v.s10123@gmail.com>
+References: <20241002100852.70982-2-t.v.s10123@gmail.com>
+Date: Mon, 07 Oct 2024 11:11:13 -0600
+Message-ID: <87ed4rkfda.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The well-known errata regarding EEE not being functional on various KSZ
-switches has been refactored a few times. Recently the refactoring has
-excluded several switches that the errata should also apply to.
+Vishnu Sanal T <t.v.s10123@gmail.com> writes:
 
-Disable EEE for additional switches with this errata.
+> fix the grammar mistakes on kernel-hacking/false-sharing.rst
+>
+> Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+> ---
+>  Documentation/kernel-hacking/false-sharing.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/kernel-hacking/false-sharing.rst b/Documentation/kernel-hacking/false-sharing.rst
+> index 122b0e124656..ad7cb60bef29 100644
+> --- a/Documentation/kernel-hacking/false-sharing.rst
+> +++ b/Documentation/kernel-hacking/false-sharing.rst
+> @@ -196,9 +196,9 @@ the hotspot switches to a new place.
+>  
+>  Miscellaneous
+>  =============
+> -One open issue is that kernel has an optional data structure
+> -randomization mechanism, which also randomizes the situation of cache
+> -line sharing of data members.
+> +One open issue is that the kernel has an optional data structure
 
-The original workaround for the errata was applied with a register
-write to manually disable the EEE feature in MMD 7:60 which was being
-applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
+So here you are fixing a problem, which is good
 
-Then came commit ("26dd2974c5b5 net: phy: micrel: Move KSZ9477 errata
-fixes to PHY driver") and commit ("6068e6d7ba50 net: dsa: microchip:
-remove KSZ9477 PHY errata handling") which moved the errata from the
-switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
-however that PHY code was dead code because an entry was never added
-for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE.
+> +randomization mechanism, which also randomize the situation of cache
 
-This was apparently realized much later and commit ("54a4e5c16382 net:
-phy: micrel: add Microchip KSZ 9477 to the device table") added the
-PHY_ID_KSZ9477 to the PHY driver but as the errata was only being
-applied to PHY_ID_KSZ9477 it's not completely clear what switches
-that relates to.
+But here you are introducing a new one, which is a bit less so....?
 
-Later commit ("6149db4997f5 net: phy: micrel: fix KSZ9477 PHY issues
-after suspend/resume") breaks this again for all but KSZ9897 by only
-applying the errata for that PHY ID.
+> +line sharing among data members.
 
-The most recent time this was affected was with commit ("08c6d8bae48c
-net: phy: Provide Module 4 KSZ9477 errata (DS80000754C)") which
-removes the blatant register write to MMD 7:60 and replaces it by
-setting phydev->eee_broken_modes = -1 so that the generic phy-c45 code
-disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID).
+Thanks,
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
-v2: added fixes tag and history of issue
----
- drivers/net/dsa/microchip/ksz_common.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index b074b4bb0629..d2bd82a1067c 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2578,11 +2578,19 @@ static u32 ksz_get_phy_flags(struct dsa_switch *ds, int port)
- 		if (!port)
- 			return MICREL_KSZ8_P1_ERRATA;
- 		break;
-+	case KSZ8795_CHIP_ID:
-+	case KSZ8794_CHIP_ID:
-+	case KSZ8765_CHIP_ID:
-+		/* KSZ87xx DS80000687C Module 2 */
-+	case KSZ9896_CHIP_ID:
-+		/* KSZ9896 Errata DS80000757A Module 2 */
-+	case KSZ9897_CHIP_ID:
-+		/* KSZ9897 Errata DS00002394C Module 4 */
-+	case KSZ9567_CHIP_ID:
-+		/* KSZ9567 Errata DS80000756A Module 4 */
- 	case KSZ9477_CHIP_ID:
--		/* KSZ9477 Errata DS80000754C
--		 *
--		 * Module 4: Energy Efficient Ethernet (EEE) feature select must
--		 * be manually disabled
-+		/* KSZ9477 Errata DS80000754C Module 4 */
-+		/* Energy Efficient Ethernet (EEE) feature select must be manually disabled
- 		 *   The EEE feature is enabled by default, but it is not fully
- 		 *   operational. It must be manually disabled through register
- 		 *   controls. If not disabled, the PHY ports can auto-negotiate
--- 
-2.25.1
-
+jon
 
