@@ -1,128 +1,81 @@
-Return-Path: <linux-kernel+bounces-352799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230D699243E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621C7992455
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26BF280C37
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:11:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902511C222A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AB91494B1;
-	Mon,  7 Oct 2024 06:10:41 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317681482E2;
+	Mon,  7 Oct 2024 06:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kmxc/Vrt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25259143736;
-	Mon,  7 Oct 2024 06:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA9861FD8;
+	Mon,  7 Oct 2024 06:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728281441; cv=none; b=hmuJPK6EDs7Fhk1Tcl7uHmHoY/CPjJGZ+jYRg85n1SNz4oZA00d0+i1BGfyM/DWfvZLisiMeduCP3zCv5LatZq0XT0RuSRiggrcuhJrEbZl2VnDGA+GF7gGaWWnJ4XJSgknYkP3Y1HavV5i//wS2sxAfC1LOYrkZUSPlzbfWqC8=
+	t=1728281732; cv=none; b=IhEdoGQmed3ZPfeyh4HYG1DA+YMpzswm25sM5/Zv/WUs1WnI6DmyRb9FwigOimmYoE9rjaj8kN8cIvleplXtdjhcGx1oP/7lHdX/e+IpaY6gOyZ7AuUB1uaIPD+V2v/mtHSmi43kjfMAT9eYsiZCPdPVNdnlP7buNxZIexbr+w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728281441; c=relaxed/simple;
-	bh=Pz7YAkecEWI4lLC/CsyGcJiYbFNUqdqlEpWHPvlDfPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3DvBtZ1dPm83Aj9xOCZvIb5MQupNVEEiMmXw6Ia81KaBsSdK+zsosMOIRHRDXauH+nyVTRXS0SDdwBOrHXLomcC5ja8GfKJk9QfL89TFuQQ98sbb0jIypWBqliGdVV10xPkn3dvO5fTTc0zQtWCO2uId7vr6tgo3XlJGR0WzVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XMTKS6Q7Rz9sPd;
-	Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id DIML3QXE3sOd; Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XMTKS5XC8z9rvV;
-	Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AB1AD8B765;
-	Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id XZVaR_2kVu_W; Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 556AB8B764;
-	Mon,  7 Oct 2024 08:10:36 +0200 (CEST)
-Message-ID: <0a419a1d-6124-411c-bcae-a8dac87f73d0@csgroup.eu>
-Date: Mon, 7 Oct 2024 08:10:36 +0200
+	s=arc-20240116; t=1728281732; c=relaxed/simple;
+	bh=PAlO2/0oeLaCiTChrJrxR82FAuJV1p5u9yp6LU0cKC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuEhJZCycz7Z13FluV3kSs/2z0oe1iKo+bJni14R/Ey8+mU0lHXMe1ykTAcwadiVyRG/xYAFCThMoN2gKnG6H9Azr2BIP1zjyST44yzpEkJk6UPCBDf3Z5kpliBb3rGRgv0wMQT+tMvm1ZlVNoFquSai3ESaFXfREiHUVg3tvhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kmxc/Vrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 172F7C4CEC6;
+	Mon,  7 Oct 2024 06:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728281731;
+	bh=PAlO2/0oeLaCiTChrJrxR82FAuJV1p5u9yp6LU0cKC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kmxc/Vrtptz7VB4T+5Eg4MLf6j3QjE9Z/JOfhNWQOaCA72RmnLUnD8iZIzukLLS11
+	 wEJoPUy5Sh+5g+KuLZCCkNLCIr7+N1zMJpfpwk1S0BD0bY3mDstUPzP0NnBYlC0FIa
+	 FYfbtoingUoR/IY39+45k8uwwowH/6aqIdHN8Fz2mSJFe6HwSuYiKksnyfC6xKG9b1
+	 kXsbM3e9gTp2bviCkY7GmgxFNdzm7QuBNmkjlq4i97aMu8sOpPamVN3N0aZXkt1SqZ
+	 MpEDQbcU3uOEikP6JM70ljtSwhhc+RLHVB+e7TYwTfaTYrSV8uW0Hz1dFecOAQPybh
+	 MZhhcuIh8s5Uw==
+Date: Mon, 7 Oct 2024 08:15:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alain Volmat <avolmat@me.com>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpu: mali-utgard: Add
+ st,stih410-mali compatible
+Message-ID: <w4gdi2vhp7pq62xmdmvspqnwf2szirif5xe4cnok5vpeisqeb4@qfws4d4pufna>
+References: <20241006-sti-gpu-v2-0-c6bb408d6903@me.com>
+ <20241006-sti-gpu-v2-1-c6bb408d6903@me.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm: Fix fault format
-To: Arnd Bergmann <arnd@arndb.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
- <20241003152910.3287259-2-vincenzo.frascino@arm.com>
- <5b52dfcf-7b4c-4715-b1b2-6e41062302bd@app.fastmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <5b52dfcf-7b4c-4715-b1b2-6e41062302bd@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241006-sti-gpu-v2-1-c6bb408d6903@me.com>
 
-
-
-Le 04/10/2024 à 15:21, Arnd Bergmann a écrit :
-> On Thu, Oct 3, 2024, at 15:29, Vincenzo Frascino wrote:
->> diff --git a/drivers/gpu/drm/i915/gt/intel_gt.c
->> b/drivers/gpu/drm/i915/gt/intel_gt.c
->> index a6c69a706fd7..352ef5e1c615 100644
->> --- a/drivers/gpu/drm/i915/gt/intel_gt.c
->> +++ b/drivers/gpu/drm/i915/gt/intel_gt.c
->> @@ -308,7 +308,7 @@ static void gen6_check_faults(struct intel_gt *gt)
->>   		fault = GEN6_RING_FAULT_REG_READ(engine);
->>   		if (fault & RING_FAULT_VALID) {
->>   			gt_dbg(gt, "Unexpected fault\n"
->> -			       "\tAddr: 0x%08lx\n"
->> +			       "\tAddr: 0x%08x\n"
->>   			       "\tAddress space: %s\n"
->>   			       "\tSource ID: %d\n"
->>   			       "\tType: %d\n",
+On Sun, Oct 06, 2024 at 08:42:49PM +0000, Alain Volmat wrote:
+> ST STiH410 SoC has a Mali400. Add a compatible for it.
 > 
-> Isn't the type of PAGE_MASK still architecture dependent?
+> Signed-off-by: Alain Volmat <avolmat@me.com>
+> ---
+>  Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Indeed when I commented that PAGE_MASK was type agnostic I was thinking 
-about the powerpc PAGE_MASK:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-#define PAGE_MASK      (~((1 << PAGE_SHIFT) - 1))
+Best regards,
+Krzysztof
 
-It should probably be possible to generalise it to all architectures.
-
-But if you keep some PAGE_MASK with forced UL type just like:
-
-#define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
-#define PAGE_MASK		(~(PAGE_SIZE-1))
-
-Then that version of PAGE_MASK isn't agnostic and ANDing an int with 
-that mask makes a long result.
-
-> I think you need a cast to either 'int' or 'long' here to
-> make the corresponding format string work across all
-> architectures. With the current version of your patch 2/2,
-> it looks like it has to be %x for architectures with
-> 64-bit phys_addr_t, but %lx for the other ones.
-> 
-> Changing the 'u32 fault' variable to 'unsigned long'
-> would also work here.
-> 
->        Arnd
 
