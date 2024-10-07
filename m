@@ -1,168 +1,597 @@
-Return-Path: <linux-kernel+bounces-353692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8245993131
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E5699313D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832961F2248E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13251F2429C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9420E1D8E1A;
-	Mon,  7 Oct 2024 15:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2A41DA61E;
+	Mon,  7 Oct 2024 15:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ayRPP2BO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N3eOmimU"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1521DDC9
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AEA1DA603
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728314997; cv=none; b=Yinx5LP9F/MEsU+9FHpGioP4Smdj8fsgsAufHoia2eaysaM36x4tCpLMmUt+BUn8ZXZTcQpv5kWbTZ8FeAem+1fg1EzGTO8rb7vmgTIUfA/DIDO3MTjJ5ogPcu78iTwQuJTF8Fyw0JbHnsozZ3jveOmgLlNSypsZ4XHZTHdXMhI=
+	t=1728315081; cv=none; b=pHnGowkjM8SEuKJmPVisac2i5xdpRiO2AofXWglQo7e+4WEPZhi08rfsjbR7aC5bp4pJQasthlLUZ1FlPoH7VapJCg0uZP4UEVP27Afhnc88U5Cys0+yoUjIr7LlvrjthdAqMQLZeoGUw0OP6LUonbU7FdeBqsl2ETPyuKvjwV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728314997; c=relaxed/simple;
-	bh=BdC6/Eb5tLR1aE1RjpCPnR/DrqwirHLNBzx3xXufORg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XLWNDl44jzkHbg3vd00XVzqKlCk7x6OhdlZ2UjIZYMnnp4YxQLd85P8fBcAJJjxwE0qCd/2E+W6cerD8h9rPKYP8xb6kATeiX8hKRh68rFymyo5wml1RcTAIJeMd3oeBs321vQaV+ncHd21P8Hh+GOHA46oIGy4RlkbV2/kQ2b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ayRPP2BO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728314995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MtOwAVvuEnrMZfqZ36PLpitEO3nHndslOyukUer3z5U=;
-	b=ayRPP2BO0h8MOolqlsEW4q0M6SZG/YI+HlsB/FWfWIBqZd9JxVOda2SAf7gi+fgrki+sFK
-	yuJkZ+FCWt6TdLN6UGCl7E03BKPO5+4Jfoa5xFpH0Wt4EOyUahouCkl3I8qazywTX1FmbD
-	EkZiaa2IoxfS8uuFOk6r0OmNvNvTh8I=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-209-aaIJ1ynjMF2y3lH25jY2Ag-1; Mon,
- 07 Oct 2024 11:29:53 -0400
-X-MC-Unique: aaIJ1ynjMF2y3lH25jY2Ag-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 368F61955EA7;
-	Mon,  7 Oct 2024 15:29:52 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.16.200])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2E503300019E;
-	Mon,  7 Oct 2024 15:29:49 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Luis Goncalves <lgoncalv@redhat.com>,
-	Chunyu Hu <chuhu@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v3] locking/rtmutex: Always use trylock in rt_mutex_trylock()
-Date: Mon,  7 Oct 2024 11:29:10 -0400
-Message-ID: <20241007152910.29457-1-longman@redhat.com>
+	s=arc-20240116; t=1728315081; c=relaxed/simple;
+	bh=wABfdzjaqX8/h5ONr6CadoBlLpcxPp1M2y909ir0UNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iHdN2YV8tPgjUP6I/IpmY2CtvA7WRL1ayn2tNL2eiYGSq0v2XQxSqqnR3iSNVPddYmHdd7LRVc4tpFEwPjLOnmtFF4u4GS0MTdYWuviRbqwNq5m75J6Fx8PlrswDXgMJ/kwI9InhwVl0/VPASV/rxIyFACAErBtI0NqhhwQwl50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N3eOmimU; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e27a0d7819so356446b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728315078; x=1728919878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L4WEqwrZq7bPz4Km+Jp3zyNPl9dhOMj3xp8bD9mdso4=;
+        b=N3eOmimUhH/TTMXQyzx8r9LkRFvF0tEEyUK+UbVfVYN2fbIGY2KfOoaoIqUIE3FT/o
+         jT2DAic1FiznQ3QNo0qiD+7Y7g30AwTShR0lXzUd6XZGCzUJ987CibHKn8FEC6KXNLGz
+         SUOawWIKzdltn9jc/C+3d8pU6e2gAAOXe225A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728315078; x=1728919878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L4WEqwrZq7bPz4Km+Jp3zyNPl9dhOMj3xp8bD9mdso4=;
+        b=sMgABD0BDw69Bx91ZyoggqBcGWIaqgAAx6qWm54SdZ95aBhtTr9veLDkiuAxB5ZJQJ
+         VeEZp4yQpDwaYFonS1S58P3F8TH6L4pVCRZyGFmRMY5+GF5f7NWmU43tJPC5uCEwX+gN
+         iaIyJzzYgjiHYT5hNkq97Kd+PCzzDxdn29Ehjp0/aYhEvVeBPhEGlRN/Yudi6jMGuRen
+         lx2i9v64HmYTsAM5QMlDpn4joGOzfWkBaAkNg4e2vDzmgeEeT/rN2UuduBzppIsuWREH
+         8PCsbwJauHs9TJGGMX278rfsJDjTq34F5ovjnA6+X3t/rryjhF0a0DtL3MQddXWaujpN
+         WGiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNC9wysV/7E1jAi6EuyOt+8L47PT20/B+fYuj9g8sD/3yS+kKGhfZgUJ5Ve4CSJf/EKabAKFo+Jdtf8tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgVafOqR7mFkNfL+MM7XmS8tCXeHVFxFi697TtzEqyECxeLHeN
+	8lE3+ZR1LMHkqM9yq+0RG2IRWLT41HPNmcZOMr6GZOD1EwUDWkqh5VSo1Us8RUMGUmESmKx7tm5
+	JNJx7xF8Zz7WW0BW3xOJQciuhqksX3fJiFsXT
+X-Google-Smtp-Source: AGHT+IF13B85o77zgdXRCS9I+dpEvNjCs/SJC+ox1mA0OGDWxtmr/PbDB3/IM62HopXLbs/umGTk+Z44qNgnpk5xF+E=
+X-Received: by 2002:a05:6870:d201:b0:27b:9f8b:7e49 with SMTP id
+ 586e51a60fabf-287c22913fdmr2428259fac.11.1728315077534; Mon, 07 Oct 2024
+ 08:31:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
+ <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
+ <CABi2SkWzjTVjEwED_QjNz385m4aGo8OfAS2RkRjuZdpSviNkJQ@mail.gmail.com> <dd62c167-f8d5-4c48-b92e-9efde6a61d7e@lucifer.local>
+In-Reply-To: <dd62c167-f8d5-4c48-b92e-9efde6a61d7e@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 7 Oct 2024 08:30:00 -0700
+Message-ID: <CABi2SkX2Giz5LaLbipbwx0B9G464pkK79WQ+dnbAjD2Zv5RzwQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, 
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-One reason to use a trylock is to avoid a ABBA deadlock in case we need
-to use a locking sequence that is not in the expected locking order. That
-requires the use of trylock all the ways in the abnormal locking
-sequence. Unfortunately, this is not the case for rt_mutex_trylock() as
-it uses a raw_spin_lock_irqsave() to acquire the lock->wait_lock.
+Hi Lorenzo
 
-There are just a few rt_mutex_trylock() call sites in the stock kernel.
-For PREEMPT_RT kernel, however, all the spin_trylock() calls become
-rt_mutex_trylock(). There are a few hundreds of them. So it will be a lot
-easier to trigger a circular locking lockdep splat.
+On Fri, Oct 4, 2024 at 11:26=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Oct 04, 2024 at 11:17:13AM -0700, Jeff Xu wrote:
+> > Hi Lorenzo,
+> >
+> > Please add me to this series, I 'm interested in everything related to
+> > mseal :-), thanks.
+>
+> Hi Jeff, more than happy to cc you on this going forward :)
+>
+> The only change to mseal is a trivial change because the poison operation
+> discards, wasn't intentional, but apologies, I should have cc'd you
+> regardless! Will do so on any such interaction with mseal moving forward.
+>
+No problems :-).
 
-One particular instance where a circular locking lockdep splat happens
-is for a v6.11 debug kernel with KASAN enabled.
+I do sometimes scan the emails to search for mseal keyword and that is
+how I find this patch series.
 
-   sched_tick() [ acquire rq->lock ]
-   -> task_work_add()
-    -> __kasan_record_aux_stack()
-     -> kasan_save_stack()
-      -> stack_depot_save_flags()
-       -> alloc_pages_mpol_noprof()
-        -> __alloc_pages_noprof()
-	 -> get_page_from_freelist()
-	  -> rmqueue()
-	   -> rmqueue_pcplist()
-	    -> rt_spin_trylock()
-	     -> rt_mutex_slowtrylock()
-	      -> _raw_spin_lock_irqsave() [ acquire wait_lock ]
+> >
+> > I also added Kees into the cc, since mseal is a security feature.
+>
+> Sure no problem happy to keep Kees cc-d too (Kees - ping me if you'd pref=
+er
+> not :>), however a note on this - guard pages _themselves_ are emphatical=
+ly
+> NOT a security feature, and make no guarantees on this front, but rather
+> are a convenience/effiency thing.
+>
+It is a nice feature nevertheless. I imagine the guide page can detect
+cases such as trying to go-over  the main stack ?
 
-[   63.695462] ======================================================
-[   63.695464] WARNING: possible circular locking dependency detected
-[   63.695467] 6.11.0-0.rc5.22.el10.x86_64+rt-debug #1 Not tainted
-[   63.695470] ------------------------------------------------------
-[   63.695473] modprobe/610 is trying to acquire lock:
-[   63.695476] ff110007e9613058 (&lock->wait_lock){-...}-{2:2}, at: rt_mutex_slowtrylock+0x3f/0xb0
-[   63.695495]
-[   63.695495] but task is already holding lock:
-[   63.695497] ff110007e96096d8 (&rq->__lock){-...}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0xc0
+> Obviously however I am adding madvise() functionality here, and all such
+> functionality must take into account whether or not they are discard
+> operations as to ensure mseal semantics are obeyed - see below for my
+> argument as to why I feel the poison operation falls under this.
+>
+> >
+> >
+> > On Fri, Sep 27, 2024 at 5:52=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > Implement a new lightweight guard page feature, that is regions of us=
+erland
+> > > virtual memory that, when accessed, cause a fatal signal to arise.
+> > >
+> > > Currently users must establish PROT_NONE ranges to achieve this.
+> > >
+> > > However this is very costly memory-wise - we need a VMA for each and =
+every
+> > > one of these regions AND they become unmergeable with surrounding VMA=
+s.
+> > >
+> > > In addition repeated mmap() calls require repeated kernel context swi=
+tches
+> > > and contention of the mmap lock to install these ranges, potentially =
+also
+> > > having to unmap memory if installed over existing ranges.
+> > >
+> > > The lightweight guard approach eliminates the VMA cost altogether - r=
+ather
+> > > than establishing a PROT_NONE VMA, it operates at the level of page t=
+able
+> > > entries - poisoning PTEs such that accesses to them cause a fault fol=
+lowed
+> > > by a SIGSGEV signal being raised.
+> > >
+> > > This is achieved through the PTE marker mechanism, which a previous c=
+ommit
+> > > in this series extended to permit this to be done, installed via the
+> > > generic page walking logic, also extended by a prior commit for this
+> > > purpose.
+> > >
+> > > These poison ranges are established with MADV_GUARD_POISON, and if th=
+e
+> > > range in which they are installed contain any existing mappings, they=
+ will
+> > > be zapped, i.e. free the range and unmap memory (thus mimicking the
+> > > behaviour of MADV_DONTNEED in this respect).
+> > >
+> > > Any existing poison entries will be left untouched. There is no nesti=
+ng of
+> > > poisoned pages.
+> > >
+> > > Poisoned ranges are NOT cleared by MADV_DONTNEED, as this would be ra=
+ther
+> > > unexpected behaviour, but are cleared on process teardown or unmappin=
+g of
+> > > memory ranges.
+> > >
+> > > Ranges can have the poison property removed by MADV_GUARD_UNPOISON -
+> > > 'remedying' the poisoning. The ranges over which this is applied, sho=
+uld
+> > > they contain non-poison entries, will be untouched, only poison entri=
+es
+> > > will be cleared.
+> > >
+> > > We permit this operation on anonymous memory only, and only VMAs whic=
+h are
+> > > non-special, non-huge and not mlock()'d (if we permitted this we'd ha=
+ve to
+> > > drop locked pages which would be rather counterintuitive).
+> > >
+> > > The poisoning of the range must be performed under mmap write lock as=
+ we
+> > > have to install an anon_vma to ensure correct behaviour on fork.
+> > >
+> > > Suggested-by: Vlastimil Babka <vbabka@suze.cz>
+> > > Suggested-by: Jann Horn <jannh@google.com>
+> > > Suggested-by: David Hildenbrand <david@redhat.com>
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > ---
+> > >  arch/alpha/include/uapi/asm/mman.h     |   3 +
+> > >  arch/mips/include/uapi/asm/mman.h      |   3 +
+> > >  arch/parisc/include/uapi/asm/mman.h    |   3 +
+> > >  arch/xtensa/include/uapi/asm/mman.h    |   3 +
+> > >  include/uapi/asm-generic/mman-common.h |   3 +
+> > >  mm/madvise.c                           | 158 +++++++++++++++++++++++=
+++
+> > >  mm/mprotect.c                          |   3 +-
+> > >  mm/mseal.c                             |   1 +
+> > >  8 files changed, 176 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/=
+uapi/asm/mman.h
+> > > index 763929e814e9..71e13f27742d 100644
+> > > --- a/arch/alpha/include/uapi/asm/mman.h
+> > > +++ b/arch/alpha/include/uapi/asm/mman.h
+> > > @@ -78,6 +78,9 @@
+> > >
+> > >  #define MADV_COLLAPSE  25              /* Synchronous hugepage colla=
+pse */
+> > >
+> > > +#define MADV_GUARD_POISON 102          /* fatal signal on access to =
+range */
+> > > +#define MADV_GUARD_UNPOISON 103                /* revoke guard poiso=
+ning */
+> > > +
+> > >  /* compatibility flags */
+> > >  #define MAP_FILE       0
+> > >
+> > > diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/ua=
+pi/asm/mman.h
+> > > index 9c48d9a21aa0..1a2222322f77 100644
+> > > --- a/arch/mips/include/uapi/asm/mman.h
+> > > +++ b/arch/mips/include/uapi/asm/mman.h
+> > > @@ -105,6 +105,9 @@
+> > >
+> > >  #define MADV_COLLAPSE  25              /* Synchronous hugepage colla=
+pse */
+> > >
+> > > +#define MADV_GUARD_POISON 102          /* fatal signal on access to =
+range */
+> > > +#define MADV_GUARD_UNPOISON 103                /* revoke guard poiso=
+ning */
+> > > +
+> > >  /* compatibility flags */
+> > >  #define MAP_FILE       0
+> > >
+> > > diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/includ=
+e/uapi/asm/mman.h
+> > > index 68c44f99bc93..380905522397 100644
+> > > --- a/arch/parisc/include/uapi/asm/mman.h
+> > > +++ b/arch/parisc/include/uapi/asm/mman.h
+> > > @@ -75,6 +75,9 @@
+> > >  #define MADV_HWPOISON     100          /* poison a page for testing =
+*/
+> > >  #define MADV_SOFT_OFFLINE 101          /* soft offline page for test=
+ing */
+> > >
+> > > +#define MADV_GUARD_POISON 102          /* fatal signal on access to =
+range */
+> > > +#define MADV_GUARD_UNPOISON 103                /* revoke guard poiso=
+ning */
+> > > +
+> > >  /* compatibility flags */
+> > >  #define MAP_FILE       0
+> > >
+> > > diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/includ=
+e/uapi/asm/mman.h
+> > > index 1ff0c858544f..e8d5affceb28 100644
+> > > --- a/arch/xtensa/include/uapi/asm/mman.h
+> > > +++ b/arch/xtensa/include/uapi/asm/mman.h
+> > > @@ -113,6 +113,9 @@
+> > >
+> > >  #define MADV_COLLAPSE  25              /* Synchronous hugepage colla=
+pse */
+> > >
+> > > +#define MADV_GUARD_POISON 102          /* fatal signal on access to =
+range */
+> > > +#define MADV_GUARD_UNPOISON 103                /* revoke guard poiso=
+ning */
+> > > +
+> > >  /* compatibility flags */
+> > >  #define MAP_FILE       0
+> > >
+> > > diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/as=
+m-generic/mman-common.h
+> > > index 6ce1f1ceb432..5dfd3d442de4 100644
+> > > --- a/include/uapi/asm-generic/mman-common.h
+> > > +++ b/include/uapi/asm-generic/mman-common.h
+> > > @@ -79,6 +79,9 @@
+> > >
+> > >  #define MADV_COLLAPSE  25              /* Synchronous hugepage colla=
+pse */
+> > >
+> > > +#define MADV_GUARD_POISON 102          /* fatal signal on access to =
+range */
+> > > +#define MADV_GUARD_UNPOISON 103                /* revoke guard poiso=
+ning */
+> > > +
+> > >  /* compatibility flags */
+> > >  #define MAP_FILE       0
+> > >
+> > > diff --git a/mm/madvise.c b/mm/madvise.c
+> > > index e871a72a6c32..7216e10723ae 100644
+> > > --- a/mm/madvise.c
+> > > +++ b/mm/madvise.c
+> > > @@ -60,6 +60,7 @@ static int madvise_need_mmap_write(int behavior)
+> > >         case MADV_POPULATE_READ:
+> > >         case MADV_POPULATE_WRITE:
+> > >         case MADV_COLLAPSE:
+> > > +       case MADV_GUARD_UNPOISON: /* Only poisoning needs a write loc=
+k. */
+> > >                 return 0;
+> > >         default:
+> > >                 /* be safe, default to 1. list exceptions explicitly =
+*/
+> > > @@ -1017,6 +1018,157 @@ static long madvise_remove(struct vm_area_str=
+uct *vma,
+> > >         return error;
+> > >  }
+> > >
+> > > +static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allo=
+w_locked)
+> > > +{
+> > > +       vm_flags_t disallowed =3D VM_SPECIAL | VM_HUGETLB;
+> > > +
+> > > +       /*
+> > > +        * A user could lock after poisoning but that's fine, as they=
+'d not be
+> > > +        * able to fault in. The issue arises when we try to zap exis=
+ting locked
+> > > +        * VMAs. We don't want to do that.
+> > > +        */
+> > > +       if (!allow_locked)
+> > > +               disallowed |=3D VM_LOCKED;
+> > > +
+> > > +       if (!vma_is_anonymous(vma))
+> > > +               return false;
+> > > +
+> > > +       if ((vma->vm_flags & (VM_MAYWRITE | disallowed)) !=3D VM_MAYW=
+RITE)
+> > > +               return false;
+> > > +
+> > > +       return true;
+> > > +}
+> > > +
+> > > +static int guard_poison_install_pte(unsigned long addr, unsigned lon=
+g next,
+> > > +                                   pte_t *ptep, struct mm_walk *walk=
+)
+> > > +{
+> > > +       unsigned long *num_installed =3D (unsigned long *)walk->priva=
+te;
+> > > +
+> > > +       (*num_installed)++;
+> > > +       /* Simply install a PTE marker, this causes segfault on acces=
+s. */
+> > > +       *ptep =3D make_pte_marker(PTE_MARKER_GUARD);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static bool is_guard_pte_marker(pte_t ptent)
+> > > +{
+> > > +       return is_pte_marker(ptent) &&
+> > > +               is_guard_swp_entry(pte_to_swp_entry(ptent));
+> > > +}
+> > > +
+> > > +static int guard_poison_pte_entry(pte_t *pte, unsigned long addr,
+> > > +                                 unsigned long next, struct mm_walk =
+*walk)
+> > > +{
+> > > +       pte_t ptent =3D ptep_get(pte);
+> > > +
+> > > +       /*
+> > > +        * If not a guard marker, simply abort the operation. We retu=
+rn a value
+> > > +        * > 0 indicating a non-error abort.
+> > > +        */
+> > > +       return !is_guard_pte_marker(ptent);
+> > > +}
+> > > +
+> > > +static const struct mm_walk_ops guard_poison_walk_ops =3D {
+> > > +       .install_pte            =3D guard_poison_install_pte,
+> > > +       .pte_entry              =3D guard_poison_pte_entry,
+> > > +       /* We might need to install an anon_vma. */
+> > > +       .walk_lock              =3D PGWALK_WRLOCK,
+> > > +};
+> > > +
+> > > +static long madvise_guard_poison(struct vm_area_struct *vma,
+> > > +                                struct vm_area_struct **prev,
+> > > +                                unsigned long start, unsigned long e=
+nd)
+> > > +{
+> > > +       long err;
+> > > +       bool retried =3D false;
+> > > +
+> > > +       *prev =3D vma;
+> > > +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */false))
+> > > +               return -EINVAL;
+> > > +
+> > > +       /*
+> > > +        * Optimistically try to install the guard poison pages first=
+. If any
+> > > +        * non-guard pages are encountered, give up and zap the range=
+ before
+> > > +        * trying again.
+> > > +        */
+> > > +       while (true) {
+> > > +               unsigned long num_installed =3D 0;
+> > > +
+> > > +               /* Returns < 0 on error, =3D=3D 0 if success, > 0 if =
+zap needed. */
+> > > +               err =3D walk_page_range_mm(vma->vm_mm, start, end,
+> > > +                                        &guard_poison_walk_ops,
+> > > +                                        &num_installed);
+> > > +               /*
+> > > +                * If we install poison markers, then the range is no=
+ longer
+> > > +                * empty from a page table perspective and therefore =
+it's
+> > > +                * appropriate to have an anon_vma.
+> > > +                *
+> > > +                * This ensures that on fork, we copy page tables cor=
+rectly.
+> > > +                */
+> > > +               if (err >=3D 0 && num_installed > 0) {
+> > > +                       int err_anon =3D anon_vma_prepare(vma);
+> > > +
+> > > +                       if (err_anon)
+> > > +                               err =3D err_anon;
+> > > +               }
+> > > +
+> > > +               if (err <=3D 0)
+> > > +                       return err;
+> > > +
+> > > +               if (!retried)
+> > > +                       /*
+> > > +                        * OK some of the range have non-guard pages =
+mapped, zap
+> > > +                        * them. This leaves existing guard pages in =
+place.
+> > > +                        */
+> > > +                       zap_page_range_single(vma, start, end - start=
+, NULL);
+> > > +               else
+> > > +                       /*
+> > > +                        * If we reach here, then there is a racing f=
+ault that
+> > > +                        * has populated the PTE after we zapped. Giv=
+e up and
+> > > +                        * let the user know to try again.
+> > > +                        */
+> > > +                       return -EAGAIN;
+> > > +
+> > > +               retried =3D true;
+> > > +       }
+> > > +}
+> > > +
+> > > +static int guard_unpoison_pte_entry(pte_t *pte, unsigned long addr,
+> > > +                                   unsigned long next, struct mm_wal=
+k *walk)
+> > > +{
+> > > +       pte_t ptent =3D ptep_get(pte);
+> > > +
+> > > +       if (is_guard_pte_marker(ptent)) {
+> > > +               /* Simply clear the PTE marker. */
+> > > +               pte_clear_not_present_full(walk->mm, addr, pte, true)=
+;
+> > > +               update_mmu_cache(walk->vma, addr, pte);
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static const struct mm_walk_ops guard_unpoison_walk_ops =3D {
+> > > +       .pte_entry              =3D guard_unpoison_pte_entry,
+> > > +       .walk_lock              =3D PGWALK_RDLOCK,
+> > > +};
+> > > +
+> > > +static long madvise_guard_unpoison(struct vm_area_struct *vma,
+> > > +                                  struct vm_area_struct **prev,
+> > > +                                  unsigned long start, unsigned long=
+ end)
+> > > +{
+> > > +       *prev =3D vma;
+> > > +       /*
+> > > +        * We're ok with unpoisoning mlock()'d ranges, as this is a
+> > > +        * non-destructive action.
+> > > +        */
+> > > +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */true))
+> > > +               return -EINVAL;
+> > > +
+> > > +       return walk_page_range(vma->vm_mm, start, end,
+> > > +                              &guard_unpoison_walk_ops, NULL);
+> > > +}
+> > > +
+> > >  /*
+> > >   * Apply an madvise behavior to a region of a vma.  madvise_update_v=
+ma
+> > >   * will handle splitting a vm area into separate areas, each area wi=
+th its own
+> > > @@ -1098,6 +1250,10 @@ static int madvise_vma_behavior(struct vm_area=
+_struct *vma,
+> > >                 break;
+> > >         case MADV_COLLAPSE:
+> > >                 return madvise_collapse(vma, prev, start, end);
+> > > +       case MADV_GUARD_POISON:
+> > > +               return madvise_guard_poison(vma, prev, start, end);
+> > > +       case MADV_GUARD_UNPOISON:
+> > > +               return madvise_guard_unpoison(vma, prev, start, end);
+> > >         }
+> > >
+> > >         anon_name =3D anon_vma_name(vma);
+> > > @@ -1197,6 +1353,8 @@ madvise_behavior_valid(int behavior)
+> > >         case MADV_DODUMP:
+> > >         case MADV_WIPEONFORK:
+> > >         case MADV_KEEPONFORK:
+> > > +       case MADV_GUARD_POISON:
+> > > +       case MADV_GUARD_UNPOISON:
+> > >  #ifdef CONFIG_MEMORY_FAILURE
+> > >         case MADV_SOFT_OFFLINE:
+> > >         case MADV_HWPOISON:
+> > > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > > index 0c5d6d06107d..d0e3ebfadef8 100644
+> > > --- a/mm/mprotect.c
+> > > +++ b/mm/mprotect.c
+> > > @@ -236,7 +236,8 @@ static long change_pte_range(struct mmu_gather *t=
+lb,
+> > >                         } else if (is_pte_marker_entry(entry)) {
+> > >                                 /*
+> > >                                  * Ignore error swap entries uncondit=
+ionally,
+> > > -                                * because any access should sigbus a=
+nyway.
+> > > +                                * because any access should sigbus/s=
+igsegv
+> > > +                                * anyway.
+> > >                                  */
+> > >                                 if (is_poisoned_swp_entry(entry))
+> > >                                         continue;
+> > > diff --git a/mm/mseal.c b/mm/mseal.c
+> > > index ece977bd21e1..21bf5534bcf5 100644
+> > > --- a/mm/mseal.c
+> > > +++ b/mm/mseal.c
+> > > @@ -30,6 +30,7 @@ static bool is_madv_discard(int behavior)
+> > >         case MADV_REMOVE:
+> > >         case MADV_DONTFORK:
+> > >         case MADV_WIPEONFORK:
+> > > +       case MADV_GUARD_POISON:
+> >
+> > Can you please describe the rationale to add this to the existing
+> > mseal's semantic ?
+> >
+> > I didn't not find any description from the cover letter or this
+> > patch's description, hence asking.
+>
+> Sure, this is because when you guard-poison ranges that have existing
+> mappings, it zaps them, which performs basically the exact same operation
+> as MADV_DONTNEED, and obviously discards any underlying data in doing so.
+>
+> As a result, I felt it was correct to add this operation to the list of
+> discard operations from the perspective of mseal.
+>
+That makes sense.  Thanks for thinking about memory sealing when
+adding new features.
 
-The rtmutex API has the locking dependency "&lock->wait_lock -->
-&p->pi_lock". The scheduler code has the locking dependency "&p->pi_lock
---> &rq->__lock". As a result, there is a circular lock dependency.
+ If possible, please add the reasoning here in the commit description
+in the next version, for future reference. As far as I am concerned,
+the mseal.c changes LGTM.
 
-[   63.695842] Chain exists of:
-[   63.695842]   &lock->wait_lock --> &p->pi_lock --> &rq->__lock
-[   63.695842]
-[   63.695850]  Possible unsafe locking scenario:
-[   63.695850]
-[   63.695851]        CPU0                    CPU1
-[   63.695852]        ----                    ----
-[   63.695854]   lock(&rq->__lock);
-[   63.695857]                                lock(&p->pi_lock);
-[   63.695861]                                lock(&rq->__lock);
-[   63.695864]   lock(&lock->wait_lock);
-[   63.695868]
-[   63.695868]  *** DEADLOCK ***
+Thanks
+-Jeff
 
-Fix it by using raw_spin_trylock_irqsave() in rt_mutex_slowtrylock()
-instead.
 
-Fixes: 23f78d4a03c5 ("[PATCH] pi-futex: rt mutex core")
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
----
- kernel/locking/rtmutex.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index ebebd0eec7f6..a32bc2bb5d5e 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1381,10 +1381,13 @@ static int __sched rt_mutex_slowtrylock(struct rt_mutex_base *lock)
- 		return 0;
- 
- 	/*
--	 * The mutex has currently no owner. Lock the wait lock and try to
--	 * acquire the lock. We use irqsave here to support early boot calls.
-+	 * The mutex has currently no owner. Try to lock the wait lock first.
-+	 * If successful, try to acquire the lock. We use irqsave here to
-+	 * support early boot calls. Trylock is used all the way to avoid
-+	 * circular lock dependency.
- 	 */
--	raw_spin_lock_irqsave(&lock->wait_lock, flags);
-+	if (!raw_spin_trylock_irqsave(&lock->wait_lock, flags))
-+		return 0;
- 
- 	ret = __rt_mutex_slowtrylock(lock);
- 
--- 
-2.46.2
-
+> >
+> > Thanks
+> > -Jeff
+> >
+> > >                 return true;
+> > >         }
+> > >
+> > > --
+> > > 2.46.2
+> > >
+> > >
 
