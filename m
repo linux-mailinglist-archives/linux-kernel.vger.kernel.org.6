@@ -1,132 +1,213 @@
-Return-Path: <linux-kernel+bounces-353021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78FF99275B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD5199275E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0FF7280F92
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5551C22AA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952F318BC24;
-	Mon,  7 Oct 2024 08:44:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6935818C003;
+	Mon,  7 Oct 2024 08:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="xZcbLOXs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fO2LJhza"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6976849C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54518B467;
+	Mon,  7 Oct 2024 08:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290659; cv=none; b=iaOycxPJHYNszPH2jehVagyTX9Xryp4vSIwvtrA5IZhVqm0K2Gfx60EM+ixb6DwOeoYedfgP8qoOhc0StyUuLI4N+p48cIgcGgPKv9YL4G0IfFvIK3FRCLOee1xiANa6+hZJ69bCzlxIuRJ4WLTeil8+ZLx+D8y/vTKlck43/es=
+	t=1728290661; cv=none; b=KY+ADKQ+3KTP1vSOXABf8naj72xe19k3OoYXsb5ghCiipdWy0PWzTkfiEZaep9GXQ/T/QVeJ6ioj1svR1dUJfYm8jnQ6OhlhMgCOjuDVYLnSd4mw827Jj65XWyPiRXzoJHn0uoZ7NdOT0y/R23ieVUtD1FBWMoys8zruO+AjA5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290659; c=relaxed/simple;
-	bh=ny759ZsE+GykhYiOWEKMypSj4JCeUDq1tVV4LUkkils=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LIxZPTE52ni+9onc2njlYUvYfIG6D0wnB/K/fJDDlqm0emB/jEYN0n22uqHNGqlo7wIOjFatavyVaxkKIEtiA+RdSY4iy76GZ9KDqI7axhVFX9T8mcuC5nbkHUppHf2JAZJLokBD+hObmyCtL7usZL2hyaSgSLiiqwK9ewFG0Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sxjLV-0000hz-NP; Mon, 07 Oct 2024 10:44:01 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sxjLT-0005S8-Hz; Mon, 07 Oct 2024 10:43:59 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sxjLT-000Bl4-1Z;
-	Mon, 07 Oct 2024 10:43:59 +0200
-Message-ID: <64c560c483f09d90c788eb949890d00f3b94cc87.camel@pengutronix.de>
-Subject: Re: [PATCH v6 RESET 2/3] PCI: rockchip: Simplify reset control
- handling by using reset_control_bulk*() function
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Anand Moon <linux.amoon@gmail.com>, Shawn Lin
- <shawn.lin@rock-chips.com>,  Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, "open
- list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, "open list:PCIE
- DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>,  "moderated
- list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, open
- list <linux-kernel@vger.kernel.org>
-Date: Mon, 07 Oct 2024 10:43:59 +0200
-In-Reply-To: <20241006182445.3713-3-linux.amoon@gmail.com>
-References: <20241006182445.3713-1-linux.amoon@gmail.com>
-	 <20241006182445.3713-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1728290661; c=relaxed/simple;
+	bh=Z5R8+yP0HA/NQUemXrMlONKZ5GJ9wbsUFWun6gb3o1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8UuFzWWCyfW4pJ695uThjqLroN7oo6T6BF91s5FxqBeOjgqGWTbduOtC9Eb3eH4oaGGs5KRCJyMr7WVXx8k0kvmKDq/GoR6TTbvIr7ZuKrj5+DPlJtE+OQInsp61iIGrArFf/+WRDSIzBh2lcDlGk4lCYkhNSlsNDn4hM2518U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=xZcbLOXs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fO2LJhza; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D45DD1140239;
+	Mon,  7 Oct 2024 04:44:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Mon, 07 Oct 2024 04:44:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1728290657; x=
+	1728377057; bh=pReAlbAp+RVZKMZPw8OzBm+oVocBKEzeB7uhsl5SfPU=; b=x
+	ZcbLOXs6H3dMG3I/3jO2oYLp09QiGNqLxgOz76DNRk3LAZWaIXPq7pcfdqeJUygS
+	KIYlN4Dk2FC/SH3NhnrRoTO77YdwhTTLw55LIVzJIIk7/hoI/+62GI1yy3s2otIY
+	spvBpo1i/gd5H/Vxaqi2FXYPc0zxO9mxFSnuqqOTSqmLwNF8TAbmBwWk1lUvumal
+	X1T2ffkW2PsTHd625RbLw9JdIReMmqaGUbAJjqKhgShaKRLrRt/EtuT35s0LSQQv
+	cd/XmJs9Zqxqs96L54Zf8+VhhwVRdSvCZyY9z9nse3oUjvU4WxAv/v606JGvo55C
+	BmUe7Dzr/r7PsbElEvgTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728290657; x=1728377057; bh=pReAlbAp+RVZKMZPw8OzBm+oVocB
+	KEzeB7uhsl5SfPU=; b=fO2LJhzabR8jo7pHX9s6UkIFUtNI1MTFGfJ3MJnGXUW8
+	nSgFoyQS4O/EqGHlfB7TLuV9gGUUcxSA/u7npit2roOQJxhZR3mPpZTvTmWM/bjs
+	xwf1uQelPbCKodvbTe4kdgx1vKlU9s2LWVEnWGzq66kgF/1eCwchMy4KnEwUO3ey
+	sWwrQKIUiusG4xhu5AbupplmQE5/kEGuOMJEctMnrLI6NOxn67aJuHKEK7rJzEzL
+	1Bg5ThmgLi89drrnQn3NBeilBT3omzNWDmfcZYQJ/y/ceCEz75PN5p1FKcX/u8t7
+	nYNThmEDeJLsvUBNjQ9VrJZpZ7PEiFJnc5lJNwD+TA==
+X-ME-Sender: <xms:YZ8DZ50jtA0smBX-hTs4JUhwmJuw2yv7ftmTPsUK2JwCyHShJSDn-Q>
+    <xme:YZ8DZwFUZPDynkcGKoRFEGP4KrW75aahVEOoxkVPfSnYiVYO3rQgPdqXFmDvlDHlv
+    7q5bjKfl2j02KNpWAs>
+X-ME-Received: <xmr:YZ8DZ54CfcSGlpTthFEOMMGIbgRuXVkUVZr6mBwPkgfcoxqJqhND7DWm4DmBOcTh3mkKdw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepvdegpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegrnhhthhhonhihrdihiihnrghgrgesohhrrggtlhgvrdgtohhmpdhrtghpthht
+    oheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhope
+    ifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhgrrhhkhhgvmhhm
+    sehgohhoghhlvghmrghilhdrtghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlh
+    hinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhm
+    pdhrtghpthhtohepkhhhrghlihgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnh
+    gurhgvhihknhhvlhesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvgdrhhgrnhhs
+    vghnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:YZ8DZ219H6y75t49sbtvr9IF1VZVhDqw0ndB2pSVDuBesXUejzL_FQ>
+    <xmx:YZ8DZ8EZ2PaYD90Eoeba4pl8eWefmMGCnjL8QDz0N3wTrXBEDSUU2w>
+    <xmx:YZ8DZ3_5-N0cy7rnxFbonCGjXKE-94qTbkJk9X2GgbVHM9rnUqUKQQ>
+    <xmx:YZ8DZ5nm28gKJJhTyqbcr_6CrVQsYs4FXP_Dh9ixTjhuh7-NvkMckA>
+    <xmx:YZ8DZ8WLXye2wADwd0wC4LVEoe9K2ADvNCcFNk8-PzEcDTyIh87DJS96>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Oct 2024 04:44:10 -0400 (EDT)
+Date: Mon, 7 Oct 2024 11:44:05 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, 
+	markhemm@googlemail.com, viro@zeniv.linux.org.uk, david@redhat.com, khalid@kernel.org, 
+	andreyknvl@gmail.com, dave.hansen@intel.com, luto@kernel.org, brauner@kernel.org, 
+	arnd@arndb.de, ebiederm@xmission.com, catalin.marinas@arm.com, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mhiramat@kernel.org, rostedt@goodmis.org, vasily.averin@linux.dev, 
+	xhao@linux.alibaba.com, pcc@google.com, neilb@suse.de, maz@kernel.org
+Subject: Re: [RFC PATCH v3 09/10] mm: create __do_mmap() to take an mm_struct
+ * arg
+Message-ID: <sgrdkcwjzoazuqqutzmzlsjo5outzsp5gh7zsn6ur5qvhaslgw@b74envmtrahz>
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <20240903232241.43995-10-anthony.yznaga@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903232241.43995-10-anthony.yznaga@oracle.com>
 
-On So, 2024-10-06 at 23:54 +0530, Anand Moon wrote:
-> Refactor the reset control handling in the Rockchip PCIe driver,
-> introducing a more robust and efficient method for assert and
-> deassert reset controller using reset_control_bulk*() API. Using the
-> reset_control_bulk APIs, the reset handling for the core clocks reset
-> unit becomes much simpler.
->=20
-> Spilt the reset controller in two groups as pre the RK3399 TRM.
-> After power up, the software driver should de-assert the reset of PCIe PH=
-Y,
-> then wait the PLL locked by polling the status, if PLL
-> has locked, then can de-assert the rest reset simultaneously
-> driver need to De-assert the reset pins simultionaly.
->=20
->   PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N.
->=20
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On Tue, Sep 03, 2024 at 04:22:40PM -0700, Anthony Yznaga wrote:
+> In preparation for mapping objects into an mshare region, create
+> __do_mmap() to allow mapping into a specified mm. There are no
+> functional changes otherwise.
+> 
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 > ---
-> V6: Add reason for the split of the RESET pins.
-> v5: Fix the De-assert reset core as per the TRM
->     De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
->     simultaneously.
-> v4: use dev_err_probe in error path.
-> v3: Fix typo in commit message, dropped reported by.
-> v2: Fix compilation error reported by Intel test robot
->     fixed checkpatch warning
-> ---
->  drivers/pci/controller/pcie-rockchip.c | 151 +++++--------------------
->  drivers/pci/controller/pcie-rockchip.h |  26 +++--
->  2 files changed, 49 insertions(+), 128 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/control=
-ler/pcie-rockchip.c
-> index 2777ef0cb599..87daa3288a01 100644
-> --- a/drivers/pci/controller/pcie-rockchip.c
-> +++ b/drivers/pci/controller/pcie-rockchip.c
-[...]
-> @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rock=
-chip)
->  	if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
->  		rockchip->link_gen =3D 2;
-> =20
-> -	rockchip->core_rst =3D devm_reset_control_get_exclusive(dev, "core");
-> -	rockchip->mgmt_rst =3D devm_reset_control_get_exclusive(dev, "mgmt");
-> -	rockchip->mgmt_sticky_rst =3D devm_reset_control_get_exclusive(dev,
-> -	rockchip->pipe_rst =3D devm_reset_control_get_exclusive(dev, "pipe");
-> -	rockchip->pm_rst =3D devm_reset_control_get_exclusive(dev, "pm");
-> +	err =3D devm_reset_control_bulk_get_optional_exclusive(dev,
-[...]
+>  include/linux/mm.h | 18 +++++++++++++++++-
+>  mm/mmap.c          | 12 +++++-------
+>  2 files changed, 22 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 3aa0b3322284..a9afbda73cb0 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3409,11 +3409,27 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+>  
+>  extern unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+> -	struct list_head *uf);
+> +	struct list_head *uf, struct mm_struct *mm);
+> +#ifdef CONFIG_MMU
+> +extern unsigned long __do_mmap(struct file *file, unsigned long addr,
+> +	unsigned long len, unsigned long prot, unsigned long flags,
+> +	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
+> +	struct list_head *uf, struct mm_struct *mm);
+> +static inline unsigned long do_mmap(struct file *file, unsigned long addr,
+> +	unsigned long len, unsigned long prot, unsigned long flags,
+> +	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
+> +	struct list_head *uf)
+> +{
+> +	return __do_mmap(file, addr, len, prot, flags, vm_flags, pgoff,
+> +			 populate, uf, current->mm);
+> +}
+> +#else
+>  extern unsigned long do_mmap(struct file *file, unsigned long addr,
+>  	unsigned long len, unsigned long prot, unsigned long flags,
+>  	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
+>  	struct list_head *uf);
+> +#endif
+> +
+>  extern int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
+>  			 unsigned long start, size_t len, struct list_head *uf,
+>  			 bool unlock);
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d0dfc85b209b..4112f18e7302 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1250,15 +1250,14 @@ static inline bool file_mmap_ok(struct file *file, struct inode *inode,
+>  }
+>  
+>  /*
+> - * The caller must write-lock current->mm->mmap_lock.
+> + * The caller must write-lock mm->mmap_lock.
+>   */
+> -unsigned long do_mmap(struct file *file, unsigned long addr,
+> +unsigned long __do_mmap(struct file *file, unsigned long addr,
+>  			unsigned long len, unsigned long prot,
+>  			unsigned long flags, vm_flags_t vm_flags,
+>  			unsigned long pgoff, unsigned long *populate,
+> -			struct list_head *uf)
+> +			struct list_head *uf, struct mm_struct *mm)
 
+Argument list getting too long. At some point we need to have a struct to
+pass them around.
 
-Why are the reset controls optional now? The commit message doesn't
-mention this change.
+>  {
+> -	struct mm_struct *mm = current->mm;
+>  	int pkey = 0;
+>  
+>  	*populate = 0;
+> @@ -1465,7 +1464,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+>  			vm_flags |= VM_NORESERVE;
+>  	}
+>  
+> -	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
+> +	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf, mm);
+>  	if (!IS_ERR_VALUE(addr) &&
+>  	    ((vm_flags & VM_LOCKED) ||
+>  	     (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE))
+> @@ -2848,9 +2847,8 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>  
+>  unsigned long mmap_region(struct file *file, unsigned long addr,
+>  		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+> -		struct list_head *uf)
+> +		struct list_head *uf, struct mm_struct *mm)
+>  {
+> -	struct mm_struct *mm = current->mm;
+>  	struct vm_area_struct *vma = NULL;
+>  	struct vm_area_struct *next, *prev, *merge;
+>  	pgoff_t pglen = len >> PAGE_SHIFT;
+> -- 
+> 2.43.5
+> 
 
-regards
-Philipp
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
