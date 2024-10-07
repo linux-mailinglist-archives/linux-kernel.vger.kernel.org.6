@@ -1,179 +1,103 @@
-Return-Path: <linux-kernel+bounces-354161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A49993888
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0173699388C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1B81F23778
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0B91F241F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A351DE3C1;
-	Mon,  7 Oct 2024 20:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4F71DD86A;
+	Mon,  7 Oct 2024 20:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="l7EQmoWY"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WpBc3NQU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63F18B49C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B38E41C7F;
+	Mon,  7 Oct 2024 20:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728334194; cv=none; b=K9wuOWILbbiPvNJVMrguRA5Ign3qe9ly90ueD40y4gV63DNgTFzDXHwxZcssqoX90snB8DnvleGpyHEJPHNgG54ubX+sU8nMiVX6Kse9HzHdv8p18nLu98wcbmPm+IgYJWdDcuXa3Vd2oU04T4IfdlabzVyXRfzSekcf8jqkD70=
+	t=1728334308; cv=none; b=ltPkFUEX+J1Ef92Uq1kd7p3H4pDHLHZ6gz6wy90E1Hc3gNzRy2DYEDNEJ8QdXiJWbMJzJ8IgALYWZHtxOLaK+t2c6i4qbkrt26yEEWtsDaGzgAyolUBpXyLa6iRItDM16vFEy9XAkJH+LXje5TBKyGGLHPd1BXhadLHCCwHEg+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728334194; c=relaxed/simple;
-	bh=IZfOo8coClihvsH2TTkHO+abz2SwMDB31rZRYwzXsq8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cc2iNyDnzO5a51UDQKnGRF/G1LcVg08vFIVePBbAmlqWrVnt/TesNtlFfeqxBScjQgSjobHIqgS4Ectug0JGw3XvlwRyumzE1IEHFjVwx+arl3glq7cM7o3ThAlST19ziK43c6uo/c2Ll8MBGao5wRwLvhX1zgMYdS+wenCQctU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=l7EQmoWY; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	s=arc-20240116; t=1728334308; c=relaxed/simple;
+	bh=pNzMZQp7xxmtAJ6EYh10F6qScrJGqDIUHNJAbNo8+eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ufgcOYSust2r0Q8fU3TTheFwrrDveUXJbwcbjm6iXx9BfB9RghkJkcCAp53vQluE10G+lT8XTKxi3Bfam+g5SlecTwM7xFuUIkl2JH/XzrjvLtOxJ4vjcwW50NY3nECDKsW24LiHTnNwFE86MSvobkB5ILLHLiMbLhxcFM7WzMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WpBc3NQU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728334303;
+	bh=dZQ0UJcEJ6A2ihOhukBk8OGhLVM0q0RnBDsMFFzW92k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WpBc3NQUwZohfdG8wlwLRW6rTZ/rQpl2+kx0kacCph68EjB6/7wD8/tlxzVltBy+F
+	 hkE1gIbSUYhemJQW4F2oxyxPuHbreS8Ey9N/N2pv7oAuObVjWXF7hECP1PzgDNp1Y0
+	 jgGzFPN5iJEYR4VvdM7OjDK3cZYgkVwXBIWWr6qmCkmTo/2i/X6UO7+9z+DDQEYIPx
+	 o5ZGQziFGmFC2efNtY4jz0cdagu10+Mh5tPdbpaf532UXsVr88YKh4B77HFRKT0mn8
+	 QD08l1gijERDEjrHhRaaO7Dr3jpOf1TYDlbgK9+o9yRF43PxoFECLKQGqIlpr4qRj2
+	 GFH07nY4uO4zQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B62B62C0E1E;
-	Tue,  8 Oct 2024 09:49:49 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728334189;
-	bh=IZfOo8coClihvsH2TTkHO+abz2SwMDB31rZRYwzXsq8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=l7EQmoWYFchn6IYfDYl6OtgKhJj5tWPV+xHT0INkY/w3wIAHTccg76MfedH9yhJiU
-	 EBL1JVgxK/0abQ86bx/Be3GpNVxI9W5pkrA14h1L/EKqB0mXOq8Km6Fr8qQiMZjrZK
-	 Dt5Tm9helwC7PF1UdKsnQ6tSS/AkRrvzE9dIA/CSkKtby0ycHXMobUIvMOZJFFsSFy
-	 2+Cms/8oI1IUhiJsTU9mKOr9THtZ5BdpOGv7cIKz7Jb5/ckF9D/TVRVOv8Al+DVH2p
-	 vl0aO/A6xEpDTOTD94HZW8fNgVBQWOlux5j5iFhYHYRzUGBnu4IUB6mQ0vdaeT8izy
-	 N3Cj1TtUCVmQA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6704496d0000>; Tue, 08 Oct 2024 09:49:49 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 8A2C313ED7B;
-	Tue,  8 Oct 2024 09:49:49 +1300 (NZDT)
-Message-ID: <8bf08456-0780-4dfe-9153-37ef5d01285b@alliedtelesis.co.nz>
-Date: Tue, 8 Oct 2024 09:49:49 +1300
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XMrt74w56z4wbr;
+	Tue,  8 Oct 2024 07:51:43 +1100 (AEDT)
+Date: Tue, 8 Oct 2024 07:51:43 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the rdma-fixes tree
+Message-ID: <20241008075143.6d444ee3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
- <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
- <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
- <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
-Content-Language: en-US
-In-Reply-To: <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; boundary="Sig_/BaQfL9Ppn4uLEOvW3KG9n08";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/BaQfL9Ppn4uLEOvW3KG9n08
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=6704496d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=gEfo2CItAAAA:8 a=X0WHbVYDd5x4bSxCIEEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
 
+Hi all,
 
-On 8/10/24 08:58, Chris Packham wrote:
->
-> On 7/10/24 19:40, Krzysztof Kozlowski wrote:
->> On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
->>> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
->>> controller supports
->>> =C2=A0 * Serial/Dual/Quad data with
->>> =C2=A0 * PIO and DMA data read/write operation
->>> =C2=A0 * Configurable flash access timing
->>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ---
->>> =C2=A0 .../bindings/spi/realtek,rtl9300-snand.yaml=C2=A0=C2=A0 | 58=20
->>> +++++++++++++++++++
->>> =C2=A0 1 file changed, 58 insertions(+)
->>> =C2=A0 create mode 100644=20
->>> Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>>
->>> diff --git=20
->>> a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml=20
->>> b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>> new file mode 100644
->>> index 000000000000..c66aea24cb35
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yam=
-l
->>> @@ -0,0 +1,58 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/spi/realtek,rtl9300-snand.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
->>> +
->>> +maintainers:
->>> +=C2=A0 - Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> +
->>> +description:
->>> +=C2=A0 The Realtek RTL9300 SoCs have a built in SPI-NAND controller.=
- It=20
->>> supports
->>> +=C2=A0 typical SPI-NAND page cache operations in single, dual or qua=
-d IO=20
->>> mode.
->>> +
->>> +properties:
->>> +=C2=A0 compatible:
->>> +=C2=A0=C2=A0=C2=A0 items:
->> Why 9300 cannot be alone? What does 9300 mean even? Wildcards and fami=
-ly
->> models are not allowed in general.
->
-> The main thing about the RTL9300 is that that is what all the Realtek=20
-> documents use to refer to these chips and the specific numbers are=20
-> akin to the manufacturing part number that you'd actually order (maybe=20
-> that's a bit of a stretch).
->
-> The SoC/CPU block probably does exist as a separate silicon die that=20
-> they connect to the different switch blocks in the chips that they=20
-> sell but I don't think you can get "just" the SoC. There is every=20
-> chance that we'll see that same SoC/CPU block pop up in new chips (I=20
-> see references to a RTL9302D in some documents). I'd like to be able=20
-> to support these chips using "rtl9300" but if that's violating the=20
-> wildcard rule I can drop it.
->
-Maybe it's helpful to think of the RTL9300 as the IP block that is=20
-integrated into the RTL9301, RTL9302B, etc.
+Commits
 
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - realtek,rtl=
-9301-snand
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - realtek,rtl=
-9302b-snand
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - realtek,rtl=
-9302c-snand
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - realtek,rtl=
-9303-snand
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: realtek,rtl9300-snand
->>> +
->>> +=C2=A0 reg:
->>> +=C2=A0=C2=A0=C2=A0 items:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: SPI NAND controller re=
-gisters address and size
->> Also: why no clocks? Binding is supposed to be complete. If it cannot,
->> you should explain it in the commit msg.
->
-> I didn't add it because I had no need for it in my driver. But as=20
-> you've said previously the binding shouldn't care what the driver does.
->
-> I do have the clocking info from the datasheets. I'll add it in v2.
->
->> Best regards,
->> Krzysztof
->>
->>
+  3630aae47658 ("RDMA/nldev: Fix NULL pointer dereferences issue in rdma_nl=
+_notify_event")
+  b53f62a213af ("RDMA/bnxt_re: Fix the max WQEs used in Static WQE mode")
+  ff30f6617674 ("RDMA/bnxt_re: Add a check for memory allocation")
+  b5b35e04a1c7 ("RDMA/bnxt_re: Fix incorrect AVID type in WQE structure")
+  fd5b49d3ce98 ("RDMA/bnxt_re: Fix a possible memory leak")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BaQfL9Ppn4uLEOvW3KG9n08
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcESd8ACgkQAVBC80lX
+0GxCyQf/TBTBoOsq7pJlFA40rSxjYKNlABWZD/FKKxijIScKJq9btlE+kQDpP6XY
+sTZQfgHVWOnPBEUUABvMF3WvTaRGUvWDHoZ4h5pwDMAiN9hkoSozp/IepjhULcst
+zn5jEp1C09VaWY56oSKaxQqF56e83Enda/XRsH4gkoHzFASSG9gqne8fJgdX3XrM
+FspWIMIaJToJFo9Tv0d6gE94v4CMAkO/7zCJ+kKWkuCss5o4u+l5rB3eFHfPRKhH
+R+JFRkczkDff2p8iEDLBj9caKpmvujF92h/LoswiFaW+WiK0i6BLYs+xMBUmSBD4
+vkbOp7MQbBFnNtyKorDx2RA5GnB5ww==
+=7LHQ
+-----END PGP SIGNATURE-----
+
+--Sig_/BaQfL9Ppn4uLEOvW3KG9n08--
 
