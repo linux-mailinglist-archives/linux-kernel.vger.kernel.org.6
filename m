@@ -1,201 +1,118 @@
-Return-Path: <linux-kernel+bounces-354056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC4B9936FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:09:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D97D993700
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DF11C212BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:09:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5091A284C01
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC0D1DE2D5;
-	Mon,  7 Oct 2024 19:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7038D1DE2D2;
+	Mon,  7 Oct 2024 19:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eBt3MUGV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0+FuOw6"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F522098;
-	Mon,  7 Oct 2024 19:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E51DDA3C;
+	Mon,  7 Oct 2024 19:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728328175; cv=none; b=OoCh4eISXRZ/p/VYfI/C6DtneuTZ/GoOu62zBr1kFlhRAhUjoLc+8O1PXBZOXZm42OtlRfkE+EWsfeU7NtoME22iUlggSAVNtkXFEb/Kkh18yJXb4dSYiVPVPHq48MRXwAwkqIpLMNdwLijXJhaliuze9d4D1hJO/DzvP2zHcH4=
+	t=1728328302; cv=none; b=TDfghLLvhm6oCrJTmA11NyMD6lw/QaAK4y97A44nUE82/1AXaztHTrs5CMKwwkxhs5xIqndYf9R7rkbP9Q5DRpDo3n8zxM4qceVjpA57u2NtSoXLrZfHU02a5JoQkKnJz7xOEsK/FR0tUfCcqZa2/0NXLCVkaHQCrWDsuKH9/vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728328175; c=relaxed/simple;
-	bh=fEFHXNifSDqcdgC2PtIYIoO64Kj+N+TM9ZorMGL31PM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2wH6T/YHLLrBvimfCEAYPDxh7eXFb00h3J/BIY3MunCj9B6Va9KMgcVCIMj3tjAQIRt9NYI3EEfZ26kHv59Srg5uCh72i/mFCE7spukIot7aoFbnw0qD1SENlPp9vF4jIFnxfT0RTU5hlcmzJfP3Sa5XZvwxce7B+4fnUzkFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eBt3MUGV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497GaOVx022694;
-	Mon, 7 Oct 2024 19:09:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Bzwvv81UXqjNB2FoSpGguXIM
-	mYyCLc6yZvdrbJ6MPMQ=; b=eBt3MUGVBlqEqyazPgTx62ehWHNcX7PblJVs0v+7
-	L9QfNSE4dtHsgSchmKnISXEGvvWQ/DAUGjg1Xkpkiq+3jMD2TCGz7vk7BVVXKOye
-	WPAGXCSTlTAsxlweYsYEBLJ/x+F7U/V56bhtc//zcfPXRtgrzpbKTFllLcPlSEz4
-	U/tKpvTH2ljhG/cBK8k9Vd4gYk0RxYan+GjF9l5aTVbQNmEV2gxFKScPTxAOMKn3
-	ZXOn9cO7lErOgQtDKW64kvDe01le9JkqTYr8Gqxb1k/nx9U4n1g1ufBpMWyl2QO0
-	4RedQWfxUmABLOB/GAqDf3+TdgwwEmTpcOXRJuMSnpQIGQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaerb40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 19:09:29 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497J9Sih020695
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 19:09:28 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 7 Oct 2024 12:09:25 -0700
-Date: Tue, 8 Oct 2024 00:39:22 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
-Message-ID: <ZwQx4h3gtyX30PMh@hu-mojha-hyd.qualcomm.com>
-References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
- <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
- <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
- <ZvcqrbLKqCQyYBsF@hu-bjorande-lv.qualcomm.com>
- <ZvuYYbIycFKRBcCi@hu-mojha-hyd.qualcomm.com>
- <ZvxmiEnHprF5q4ug@hu-bjorande-lv.qualcomm.com>
+	s=arc-20240116; t=1728328302; c=relaxed/simple;
+	bh=rPGBpUDmuluYM3kPA2v2k+S7mMp8Pnj229p7YWfRwxE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=quPQiJ+KgiUnEPWbB1Iib/lJn7D3lgP3BaWVZL/HdtleRVl9vtQzv0Vz9kevvrZJ5hyHf8oii7go+hYMau5SAbpIXe5j+FoRljr3+/ryjjS8rVvvDCuB3IE0rYjMzYJgi5J6OHOP5UiSjuyEFDtau7IUoqmqf21uN/BcbBT7wQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0+FuOw6; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e02249621so961822b3a.1;
+        Mon, 07 Oct 2024 12:11:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728328301; x=1728933101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8vKrILaV3KipAnQWlC9aofkDkZksYMkXQccgQRs1O7M=;
+        b=O0+FuOw6MA1HMukF+smTq0/3jbIR407OEundkGnPB+o4fJ3I2iNDxmPjtrBPQtYauV
+         mf1yKxvbs2YJiNPy1/3iJO/k+nY9MMsBgslsrD1rJj/qWCe8EvaF0Z/6Vy+3j2KKsiPC
+         vxeNBuh0lVxhMMr/m8yJi3B/d+U0sa+NTR5qdbgLv4Ah9Ad8ItNLB0icqvROQefoaRAa
+         wpsQ0hdV6+jIo0Oe5cli4DcDUwcaoMKDYJYYzlUSoZq6h6WpRG3YB6hvfeuUKbowPzAb
+         gCXZTXFXLOI1ovNgcEvb4Tw/vHApIsI2Oxu2pPwjl6ZL8HQ7LGxghwIKTfAjCsTDZ+FL
+         1wGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728328301; x=1728933101;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8vKrILaV3KipAnQWlC9aofkDkZksYMkXQccgQRs1O7M=;
+        b=ClGOx84H9z6IrWhs/F1lympLGb79DhEknwSBjufZI5pdbkJV0sDaKJ57SwnUuv6hJL
+         C+Lfa6PdCBxc93f3SsvMseGYCPjVOW2WZKGhOeCtEczVqabDeReoW3Ul3f9fwU0GIB8H
+         KujS2XU4LeJ+qA9+WLvUpIqIwaeZFRH6LYN5KoQrcNVrTo7Qwc0HkIHxIrShmYh5Ifbb
+         ERnYHEmdIjNl7kDhMHFG/r/wST6yiTJI8FmGYIvHTMvgcqNTn3739PNfE+ZpXaA0r/kE
+         VKVfKw0e62hCGtnLd5qBmSBczdVJWEK9hkz/vx2BU3PFkif22+loMTc+/qX+yKsCGUgW
+         8+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHPj4oCRY1zwABO4Uupw3VU3hkz+NMOODRhbdTf9lep6DfRHQYOOclDTqLN2yfctbcVkJFDFl9K3bvDiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4m5nnDKuzTVXp045bAaMMXjvoIks0/kzYA5sNjnKU8E2J7PlI
+	5po7o9MgZNlbzgRhVUUFSmR8fbiV7DS6KO9xM/qIF7WhQbB/ZJy1
+X-Google-Smtp-Source: AGHT+IHt2c4t3x6zScjl46pQSTnSV7WKaMG2I62ck+vL7P7P5e6nUXMmEHBm3SNFhAxfzsun5GFGcw==
+X-Received: by 2002:a05:6a00:3a14:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-71de22e1e3fmr21909998b3a.0.1728328300780;
+        Mon, 07 Oct 2024 12:11:40 -0700 (PDT)
+Received: from vishnu-pc ([117.248.56.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d6af99sm4740165b3a.184.2024.10.07.12.11.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 12:11:40 -0700 (PDT)
+From: Vishnu Sanal T <t.v.s10123@gmail.com>
+To: linux-doc@vger.kernel.org
+Cc: corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	Vishnu Sanal T <t.v.s10123@gmail.com>
+Subject: [PATCH v2] fix grammar on false-sharing.rst
+Date: Tue,  8 Oct 2024 00:42:54 +0530
+Message-ID: <20241007191253.112697-2-t.v.s10123@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241002100852.70982-2-t.v.s10123@gmail.com>
+References: <20241002100852.70982-2-t.v.s10123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZvxmiEnHprF5q4ug@hu-bjorande-lv.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LDvqDFHDrclBiLrd5zB7dW11ptHdLJQ9
-X-Proofpoint-GUID: LDvqDFHDrclBiLrd5zB7dW11ptHdLJQ9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070132
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 02:15:52PM -0700, Bjorn Andersson wrote:
-> On Tue, Oct 01, 2024 at 12:06:17PM +0530, Mukesh Ojha wrote:
-> > On Fri, Sep 27, 2024 at 02:59:09PM -0700, Bjorn Andersson wrote:
-> > > On Sat, Sep 28, 2024 at 01:07:43AM +0530, Mukesh Ojha wrote:
-> > > > On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
-> > > > > On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
-> > > > > > Multiple call to glink_subdev_stop() for the same remoteproc can happen
-> > > > > > if rproc_stop() fails from Process-A that leaves the rproc state to
-> > > > > > RPROC_CRASHED state later a call to recovery_store from user space in
-> > > > > > Process B triggers rproc_trigger_recovery() of the same remoteproc to
-> > > > > > recover it results in NULL pointer dereference issue in
-> > > > > > qcom_glink_smem_unregister().
-> > > > > > 
-> > > > > > Fix it by having a NULL check in glink_subdev_stop().
-> > > > > > 
-> > > > > > 	Process-A                			Process-B
-> > > > > > 
-> > > > > >   fatal error interrupt happens
-> > > > > > 
-> > > > > >   rproc_crash_handler_work()
-> > > > > >     mutex_lock_interruptible(&rproc->lock);
-> > > > > >     ...
-> > > > > > 
-> > > > > >        rproc->state = RPROC_CRASHED;
-> > > > > >     ...
-> > > > > >     mutex_unlock(&rproc->lock);
-> > > > > > 
-> > > > > >     rproc_trigger_recovery()
-> > > > > >      mutex_lock_interruptible(&rproc->lock);
-> > > > > > 
-> > > > > >       adsp_stop()
-> > > > > >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
-> > > > > >       remoteproc remoteproc3: can't stop rproc: -22
-> > > > > 
-> > > > > I presume that at this point this remoteproc is in some undefined state
-> > > > > and the only way to recover is for the user to reboot the machine?
-> > > > 
-> > > > Here, 50+ (5s) retry of scm shutdown is failing during decryption of
-> > > > remote processor memory region, and i don't think, it is anyway to do
-> > > > with remote processor state here, as a best effort more number of
-> > > > retries can be tried instead of 50 or wait for some other recovery
-> > > > command like recovery_store() to let it do the retry again from
-> > > > beginning.
-> > > > 
-> > > 
-> > > But are you saying that retrying a bit later would allow us to get out
-> > > of this problem? If we just didn't hit the NULL pointer(s)?
-> > 
-> > I am not sure whether adding more number of retries will solve the issue
-> > and initially thinking from perspective that, it is better to retry than
-> > to leave the remoteproc in some unknown state however, I do get that
-> > letting it retry could give unnecessary patching every code e.g., ssr
-> > notifier callbacks, which is not expecting to be called twice as a
-> > side-effect of remoteproc unknown state.
-> 
-> That's not what I'm asking you. When the remote processor fails to stop,
-> can you recover the system by just trying a bit later, or is the
-> remoteproc dead until reboot?
+Fix slight grammar mistake on kernel-hacking/false-sharing.rst
 
-I cannot say this with certainty. For the current issue, the remoteproc
-fails to stop as it is running out of heap memory.
+Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+---
+Changes in v2:
 
--Mukesh
-> 
-> > > 
-> > > How long are we talking about here? Is the timeout too short?
-> > 
-> > 5sec is very significant amount of time in wait for remote processor to
-> > get recovered, we should not change this.
-> 
-> Okay, I'm just trying to understand the problem you're trying to solve.
-> 
-> Regards,
-> Bjorn
-> 
-> > > 
-> > > > > 
-> > > > > 
-> > > > > The check for glink->edge avoids one pitfall following this, but I'd
-> > > > > prefer to see a solution that avoids issues in this scenario in the
-> > > > > remoteproc core - rather than working around side effects of this in
-> > > > > different places.
-> > > > 
-> > > > Handling in a remoteproc core means we may need another state something
-> > > > like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
-> > > > failure and checking the same during another try return immediately with
-> > > > some log message.
-> > > > 
-> > > 
-> > > Yes, if we are failing to shut down the remoteproc and there's no way
-> > > for us to reliably recover from that (e.g. we are not able to reclaim
-> > > the memory), it seems reasonable that we have to mark it using a new
-> > > state.
-> > > 
-> > > If that is the case, I'd call it RPROC_DEFUNCT (or something like that
-> > > instead), because while in some "unknown" state, from a remoteproc
-> > > framework's point of view, it's in a well known (broken) state.
-> > 
-> > Ack.
-> > 
-> > -Mukesh
-> > > 
-> > > Regards,
-> > > Bjorn
+- revert inadverdent mistake introduced on the word "randomizes"
+---
+ Documentation/kernel-hacking/false-sharing.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/kernel-hacking/false-sharing.rst b/Documentation/kernel-hacking/false-sharing.rst
+index 122b0e124656..eb0596734e55 100644
+--- a/Documentation/kernel-hacking/false-sharing.rst
++++ b/Documentation/kernel-hacking/false-sharing.rst
+@@ -196,9 +196,9 @@ the hotspot switches to a new place.
+ 
+ Miscellaneous
+ =============
+-One open issue is that kernel has an optional data structure
++One open issue is that the kernel has an optional data structure
+ randomization mechanism, which also randomizes the situation of cache
+-line sharing of data members.
++line sharing among data members.
+ 
+ 
+ .. [1] https://en.wikipedia.org/wiki/False_sharing
+-- 
+2.46.2
+
 
