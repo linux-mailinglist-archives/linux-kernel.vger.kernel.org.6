@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-352700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435CD9922D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7ABC9922D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9211C220A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0C8282A9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E354D12E48;
-	Mon,  7 Oct 2024 02:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56FB14277;
+	Mon,  7 Oct 2024 02:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="i6i8fyXf"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYfNWiiz"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D3DE574;
-	Mon,  7 Oct 2024 02:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB041E574;
+	Mon,  7 Oct 2024 02:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728269600; cv=none; b=XgjcIVQu77B8VdOxr/BNw5wqDaYbhb1oKynygIho8VxdWXB8gwCqMaqXqhTpPEPPWbWAKdm/V+XyXAluTze46d+pg80PCYQzhomxF7YxbogCwdL72xlDt5/KiOvC+wyK1Pwrk/RpOu/n7e9XD9MeS493jBWrOfYrL3DhL8U28hE=
+	t=1728269823; cv=none; b=T9JIBBdAD5Y5liSyU7Qy6LDlw0noGjxwe4sU/s8j2nPX9u7sUx2z9wHdSe1d8P9qv7LJTyhU6wmuKskqwE89pqN+d26Glxvzp2BjT5I7QBA4cG9Ps397ipmyiZb7ufWKkMGIfmEcjg8ZIRhuPFHmN8N5imxnxn83EsM3Fn8evGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728269600; c=relaxed/simple;
-	bh=881KbzcbX8SxBHoAc4rb+ELsyBUwrME/E7fkmNtqcsg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OyF0Q+R2/OvHfjO8INZA2xWbBNTEe3fq93eD3t/vunkkeJ6m985s22c2tHAAgMcY9mTxN4PDV1fEb4V2uzOV5TmQi2nns147J4f36XCYMrpcGjR2te4eN1DBEc4KIlejbtj0SK6Gub6C/8HG9xAjhe9XGdsNPL1dSoW+JV4BRJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=i6i8fyXf; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1728269594; x=1728528794;
-	bh=iv7kvcuVHYOUPMvnAsML1zSU5lL8RIxypUUyiPuNsP0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=i6i8fyXfu+KoQoNlSFztXhI8nHcYWcPp89scu8VB6VDyZDQfNs9a36ZPFPVi5pSAh
-	 JiUMNV4MgJBwlklCigc2Ff/PxKhaSiIxJ2Iw3UHKSd2jIZX6zgvFki9AXyfftNPhLK
-	 LH7ABCflxn5Hrab/ZFL4omRy+VwpLeBTB1w4kx5OPlZWBWt97IvXGqKOK6fX3k6PW1
-	 zjma06Tegb43bPgBjOHRnHtnsU6+YoOPp4NahrAk5G8aV+NFkGgW4O8pYTnL1+A5lR
-	 5X9+/arMDArKH+j9ectRtJVJ/9l+IGYQ27luc0OvclalPpzDpOkIr5MuO3zB2WIKpP
-	 lKzMM5kZtA0Ew==
-Date: Mon, 07 Oct 2024 02:53:13 +0000
-To: Piotr Zalewski <pZ010001011111@proton.me>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com
-Subject: Re: [PATCH v1] bcachefs: add check for btree id against max in try read node
-Message-ID: <O4rJH-M2oslervXHx_G8BgaihhTfNDOLBvBL3_-k-xQ5v3RLnZ1m8WfhBENbliRTjeQV-22K7tqvKJzgLNeV2A72qKLNmFl5KBa_Y65unyo=@proton.me>
-In-Reply-To: <20240929142348.4028284-2-pZ010001011111@proton.me>
-References: <20240929142348.4028284-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: d562aeb5bf30fab3ce34254b0df7b4632698ff28
+	s=arc-20240116; t=1728269823; c=relaxed/simple;
+	bh=fCvIs1nwp96x+JVT//3xLsH7McgWe0ybdKYlG2H/j9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tM2DsDaGCpyUrMEYG2zR9aVRy8lfSHlTd9Kjm/7JQSz4HND3/+knz/s/KIBb3O7/yAmsMpcQAx5/KxV/UbBdZgOJsoGHHxowiF7SiZef6MURIAM1/3xFFgu6l4yMqSLrrX/HFXnBUkSpPmTe1TIRj9p2OnAIkxKUjd4UYuO8tJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYfNWiiz; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71dfc250001so682698b3a.2;
+        Sun, 06 Oct 2024 19:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728269821; x=1728874621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bo8yVY2LwYLpMiHODLXo99yxSx6R1pGfgpw5S+JeFJQ=;
+        b=jYfNWiizuOXHKm/caQGC/VkxR3ZOLUgGsVjKyHjguAwh1e5NrtPIk/kureN+ZyfN45
+         tWl41Ktw7IRFv6gay5naK1RtKNJTNbCnZX/Rybok5EIT9raOKG7WPxyTF/2PrCkRGNlL
+         UL9rvN3kOtBQwnYm0iHyYTBTRXcnjgV6tW+E18K0E/zM0p+sbwfvQu9OjUA06Ar1ApF5
+         oxT3Pepprgi4y8y1Udb6X8vvIoxmK9ps9AMSc4r79m8Hg5kfqE3o31SVdNmTpJRd7lop
+         kpgq3TCe11I+fwRTRBRRk6EayAHFAY6L7/xOsRoRPfXBhHPbslu9q1TQ0vXvs1ubU02X
+         b3/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728269821; x=1728874621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bo8yVY2LwYLpMiHODLXo99yxSx6R1pGfgpw5S+JeFJQ=;
+        b=coKrFUco5QfD7H/gr/klh7XCkoUgLnXsAAJBJM73Vmz168qMTBxU+EPhZXAvtSe0XG
+         b5J1GKBOBRLORIip1B6y2MI4lslObJZq9fXzrKEZ94kS/Fdmq+0KDedjgilTdY+aIHff
+         fRmwiaVgt16pI+2IEeff9Y8gwYoGCUJLsEapVyGU4qFHcv3vLyPf9KkjwAEpV2cPt0ek
+         sR8+hBwaJRqSdJUpWa451YWFEQu6cS/DfOrz5X/aAm+VQM12cRm66qj6zeu8TYqtf8uy
+         +H8zv6tdJqzInOn+jtbbiLNez7cvq09JBE+ZKteNtnh3arKyYnl8WiTjuKjjnyb5Gsm8
+         RKJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXn9Do66WbWzM617tkJW3R2mYOEFAhaeHjSlpUEz2Uml3LNjC2/pvt/hxJmlQQok1nSpWS5DGGIYCL@vger.kernel.org, AJvYcCUhNPpovc4aZjbqftki+La3M78jGNfX7CUvQz29g61zBSuKfynP1DLGJtRrC+fOlLNm+nv0pMLs6BdMn0QGcw==@vger.kernel.org, AJvYcCVs/ESIuhdtFo9zztO/+B4S1B06ucH+Nsa8x+Ik0ZqWUyK7ji0kFAL+67zxftmYvhKfExE9IXxLVC1qx8wI@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdrrmt9dndxUYe9JMyFx2VfRTMvrk5IzoiA5TKxUir65X3kVWz
+	hN2gAKUBUDMokU3vwW2zFUp5w5+gwuaKimGqOpgGortm8h/cpSQb
+X-Google-Smtp-Source: AGHT+IGW9oMmDOsTCVG026ZXmF6CK6Q7T6eNTgbZHZYoi1OLJqrQ9a+OxM7yJ6iEqCkYoq0mfmBxXA==
+X-Received: by 2002:a05:6a00:2302:b0:719:8f48:ff00 with SMTP id d2e1a72fcca58-71de23e8f6fmr15928243b3a.15.1728269820924;
+        Sun, 06 Oct 2024 19:57:00 -0700 (PDT)
+Received: from localhost.localdomain ([103.149.249.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbccffsm3408998b3a.32.2024.10.06.19.56.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 19:57:00 -0700 (PDT)
+Date: Mon, 7 Oct 2024 10:57:17 +0800
+From: Jianhua Lu <lujianhua000@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3]  arm64: dts: qcom: sm8250-xiaomi-elish: Add wifi node
+Message-ID: <ZwNODSqKNJmkY-l2@localhost.localdomain>
+References: <20240929112908.99612-1-lujianhua000@gmail.com>
+ <20240929112908.99612-2-lujianhua000@gmail.com>
+ <p75ivby5ajlmnvebqkn3mq7t5xh6awewjwkwpa5rjiqv2ijijl@aqemqgxveu55>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <p75ivby5ajlmnvebqkn3mq7t5xh6awewjwkwpa5rjiqv2ijijl@aqemqgxveu55>
 
-> Add check for read node's btree_id against BTREE_ID_NR_MAX in
-> try_read_btree_node to prevent triggering EBUG_ON condition in
-> bch2_btree_id_root[1].
-
-There seems to be some kind of (pro)regression regarding this issue. Now it
-triggers a deadlock. I also found related bug detected by syzbot[2] for
-which someone supplied the same patch recently and it triggered the same
-deadlock. I will look into it (perhaps simple check isn't a proper fix=20
-here).
-
-> [1] https://syzkaller.appspot.com/bug?extid=3Dcf7b2215b5d70600ec00
-
-[2] https://syzkaller.appspot.com/bug?extid=3D9f41e4b255897d99d4e9
-
-> Reported-by: syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dcf7b2215b5d70600ec00
-> Fixes: 4409b8081d16 ("bcachefs: Repair pass for scanning for btree nodes"=
-)
-> Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
->=20
-> ---
-> fs/bcachefs/btree_node_scan.c | 3 +++
-> 1 file changed, 3 insertions(+)
->=20
-> diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.=
-c
-> index b28c649c6838..a24b4004e8f0 100644
-> --- a/fs/bcachefs/btree_node_scan.c
-> +++ b/fs/bcachefs/btree_node_scan.c
-> @@ -171,6 +171,9 @@ static void try_read_btree_node(struct find_btree_nod=
-es *f, struct bch_dev *ca,
-> if (BTREE_NODE_LEVEL(bn) >=3D BTREE_MAX_DEPTH)
->=20
-> return;
->=20
-> + if (BTREE_NODE_ID(bn) >=3D BTREE_ID_NR_MAX)
->=20
-> + return;
-> +
-> rcu_read_lock();
-> struct found_btree_node n =3D {
-> .btree_id =3D BTREE_NODE_ID(bn),
-> --
-> 2.46.2
+On Mon, Oct 07, 2024 at 12:02:34AM +0300, Dmitry Baryshkov wrote:
+> On Sun, Sep 29, 2024 at 07:29:07PM GMT, Jianhua Lu wrote:
+> > Add wifi node and this wifi module is connected to pice port.
 > 
+> Could you please add ath11k probe messages to the log? We might need to
+> add an additional node with the calibration variant.
+> 
+Hi, Dmitry. Do you mean that I should add ath11k probe message to the commit message?
+The following is ath11k probe message:
+[   10.285469] ath11k_pci 0000:01:00.0: Adding to iommu group 12
+[   10.285637] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x60400000-0x604fffff 64bit]: assigned
+[   10.285699] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+[   10.286003] ath11k_pci 0000:01:00.0: MSI vectors: 32
+[   10.286023] ath11k_pci 0000:01:00.0: qca6390 hw2.0
+[   10.652407] ath11k_pci 0000:01:00.0: chip_id 0x0 chip_family 0xb board_id 0xff soc_id 0xffffffff
+[   10.652429] ath11k_pci 0000:01:00.0: fw_version 0x10121492 fw_build_timestamp 2021-11-04 11:23 fw_build_id
+
+I'm not sure if it's necessary to add calibration variant because wifi
+works normally on this board without adding calibration variant.
 
