@@ -1,168 +1,163 @@
-Return-Path: <linux-kernel+bounces-352693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1697D9922C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127329922C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BFBB21D9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D08B1C215EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90151125B9;
-	Mon,  7 Oct 2024 02:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BC712E4A;
+	Mon,  7 Oct 2024 02:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="R8vJSV7H"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=kev009.com header.i=@kev009.com header.b="tuIpb769"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5EE13AF9;
-	Mon,  7 Oct 2024 02:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315AEEEC9
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 02:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728268131; cv=none; b=IWaGNynrvG6PkHiqvSXpjJjh9jPoGQqDcNSpTNcwr+u87InZ/rKtTRI5apbB85JKRrkhwOinORLml/gpwZTVL2d8Mz78HkrolSqYeiBSjjpcaBCN1P+LYXPEjTFoquv2DGrfUwxVGRmK+E/67tOes1MVRgg0T3RR08ZQG6pE76w=
+	t=1728268382; cv=none; b=oEvespimO4wbMzdiJUbniiUoQYPcqKEw2JLoXkIUU2ob2BEnPv/8vkc5iZN1rAbRDa60qw7tfdcK1Rk3WOZSFGrvEOt6sKu/PRMX5v7u/+VClqdQTSK+G3/Ag8GnTr3gKU8nb+7nfpjbYkuo3Az6jxWjaHQoM2+ZE2VCiuj6uQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728268131; c=relaxed/simple;
-	bh=aOK4bkzvCwrFeDWFtt3875lnjeobQDJNTcWPA/fn9ak=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B9odr3Nqnuhzt0Kac6M6w8McPVQ+gRknrXK1mG9gv6vzTPDaFvj8Ny5Qsj/vxjNL72LyXMGI+8E46rRebIY6mj5b4GGh6bbSu4n4RYhskoXn4m7EJB5s6efzjoIo1ZjeVqgLfVqp/77Ex3aWGDq+37K+ru5T4roLgpO+i8mdNRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=R8vJSV7H; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: db545a8e845311ef8b96093e013ec31c-20241007
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=KzPUQbEjOiXpx6ijP6tPbRsMDmZ7MKDhzyzVeLNXZBc=;
-	b=R8vJSV7HAJvmLOFyOreH9N6qz7iNpCVEnyBs6tG1cQcKA0Ryj6AKu+lgie/FKyFRBYFzDlhU4+r216qP4MEFm+MXT2LLvbMQvKnOwPdY8oOulIo9Z3gvRxR4X+xZNAPwshZ8J0JHyXxJKvxfAfnVFrguv4jqCKxzJTiU61L2Iak=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:67219dd3-9de8-4ad2-9678-7f5e511fe5f2,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:d3566126-5902-4533-af4f-d0904aa89b3c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: db545a8e845311ef8b96093e013ec31c-20241007
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <moudy.ho@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1273646072; Mon, 07 Oct 2024 10:28:36 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 7 Oct 2024 10:28:35 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 7 Oct 2024 10:28:35 +0800
-From: Moudy Ho <moudy.ho@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Moudy Ho <moudy.ho@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>
-Subject: [PATCH v5] dt-bindings: display: mediatek: split: add subschema property constraints
-Date: Mon, 7 Oct 2024 10:28:34 +0800
-Message-ID: <20241007022834.4609-1-moudy.ho@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728268382; c=relaxed/simple;
+	bh=UmYzWjwwdRldGzMtasrj0iUPzywF33QHaFRM8bXmb/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cc3Tzkidt8zN1IxKuufzktbHldZT0DtZX3osblG2Q2XI2tBTrOUKVmwg5eZB+NGiSildwNlL+ysvncN5CX6xXp2chSks+2azBmlJZfL0yw1+tZp+aldcsX9VzkKiRSzMeZUydvVs9c16eDKyH+kRLmxu1dBP01koVP500uFyPMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kev009.com; spf=pass smtp.mailfrom=kev009.com; dkim=fail (0-bit key) header.d=kev009.com header.i=@kev009.com header.b=tuIpb769 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kev009.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kev009.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45d8f76eca7so41537431cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 19:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kev009.com; s=google; t=1728268379; x=1728873179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eIagNj3XBeiwbes7ESay7OedVVX9YeO+j3SWRSuWDgU=;
+        b=tuIpb769p5oD0BWU9SUrJE4RyPonSCiDvwzOKjzffMGJDU82HUKHq4lzCS/ioKYOrm
+         QDXVeJV6LQjGIWPMtPKHYfrf4AEIiyZpWU3He1FOCy/6WqsM0rud7fQP4UtlJDBTZCq1
+         ZjzQRzllrHWRp3q6Q9zICqXpK/uhznT/YuZoY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728268379; x=1728873179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eIagNj3XBeiwbes7ESay7OedVVX9YeO+j3SWRSuWDgU=;
+        b=FstMMJoI+j0BPEPDIsrhKYeHhW79xUUsJYHK3tFB7LzMwbdnodv0Zt2YojCi85Ro9N
+         uYdqKyYTog4me/0wECfY/2GhYS9K4dntBiXWNEZSP7M3WZN34okrD38DioOVUlCvq5zO
+         VYhOD6QKtV+1z8xkidl6s8kygx+xqgClj88OR/FBjjQBzsKwnaUO4ueAPb8dnPCpxnwW
+         1/QTAkCOYYGVqkad8zfeR9pSIfJ845mLGp2gzoHnRw+bzTvqo9/m5pg2AnpV2jerDpGU
+         8NzHmknrNaqWbtyRLKBR5KCvG9yLBynF/KzfTyOq6LPMVqXNOhTYbQr3ML8NtDLH+R+J
+         s9Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCW8bPDF4eP5UEWPI7dQmyRoiAU324uEEyX60O89vDXZ52DRAxUzDcw2PXuEnbWMhtbrJoMd9oK2HO8gqiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQMocSwE2sX6eyTYd6V8XgL7TxIy3tynIxOHxrHwcX5TSzikFB
+	wkL/J/Q6nzg17ugETB35P3nTrr0y8IDAPQHszGvZ0wWJgxX+rBm5/nBUXWaLPYo0oIlmDodvn6D
+	52HjWU/TwJq1c8F6uku/niGnJZMrtBbfvqcyc
+X-Google-Smtp-Source: AGHT+IGW6ESRO/rs7JsIqpNrzr5mR+Qf6lp+llFyFWrhgLaCLuuBhqRYKgzRWQDEQknxfpZf58As69biVB1biwW3opY=
+X-Received: by 2002:ac8:5792:0:b0:45b:1d3:d9a8 with SMTP id
+ d75a77b69052e-45d9ba85fdcmr172235491cf.27.1728268379057; Sun, 06 Oct 2024
+ 19:32:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+References: <20240801210155.89097-1-kevin.bowling@kev009.com>
+In-Reply-To: <20240801210155.89097-1-kevin.bowling@kev009.com>
+From: Kevin Bowling <kevin.bowling@kev009.com>
+Date: Sun, 6 Oct 2024 19:32:47 -0700
+Message-ID: <CAK7dMtDiL16JAXvTuTv3fOL5JNkMOCyjr6tVx44uDMKQxVnwqA@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: Print digitalSignature and CA link errors
+To: dhowells@redhat.com, keyrings@vger.kernel.org, jarkko@kernel.org
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
-to an excessively long 'clocks' property:
-  display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
+Hi,
 
-To resolve this issue, the constraints for 'clocks' and
-other properties within the subschemas will be reinforced.
+Hopefully this is pretty self explanatory, it just increases the
+diagnostic capabilities of using the keyring erroneously.  How do I
+get someone to look at it?
 
-Fixes: 739058a9c5c3 ("dt-bindings: display: mediatek: split: add compatible for MT8195")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
+Regards,
+Kevin
 
---
-This is based on [v2] dt-bindings: display: mediatek: split: add clocks count constraint for MT8195
 
-Changes since v4:
-  - Eliminate the possibility of varying quantities in the 'clocks'
-    property of mt8195.
-  - Move the constraint for 'power-domains' to the top-level.
-
-Changes since v3:
-  - Correct the compatible name for the mt8173 split in the subschema.
-
-Changes since v2:
-  - Revise the commit message.
-  - Enhance the descriptions of 'clocks'.
-  - Strengthen the conditions within the subschema.
-
-Changes since v1:
-  - Adding functional descriptions and quantity restrictions.
----
- .../display/mediatek/mediatek,split.yaml      | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-index e4affc854f3d..4b6ff546757e 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
-@@ -38,6 +38,7 @@ properties:
-     description: A phandle and PM domain specifier as defined by bindings of
-       the power controller specified by phandle. See
-       Documentation/devicetree/bindings/power/power-domain.yaml for details.
-+    maxItems: 1
- 
-   mediatek,gce-client-reg:
-     description:
-@@ -57,6 +58,9 @@ properties:
-   clocks:
-     items:
-       - description: SPLIT Clock
-+      - description: Used for interfacing with the HDMI RX signal source.
-+      - description: Paired with receiving HDMI RX metadata.
-+    minItems: 1
- 
- required:
-   - compatible
-@@ -72,9 +76,24 @@ allOf:
-             const: mediatek,mt8195-mdp3-split
- 
-     then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+
-       required:
-         - mediatek,gce-client-reg
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: mediatek,mt8173-disp-split
-+
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+
- additionalProperties: false
- 
- examples:
--- 
-2.34.1
-
+On Thu, Aug 1, 2024 at 2:02=E2=80=AFPM Kevin Bowling <kevin.bowling@kev009.=
+com> wrote:
+>
+> ENOKEY is overloaded for several different failure types in these link
+> functions.  In addition, by the time we are consuming the return several
+> other methods can return ENOKEY.  Add some error prints to help diagnose
+> fundamental certificate issues.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kevin Bowling <kevin.bowling@kev009.com>
+> ---
+>  crypto/asymmetric_keys/restrict.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/r=
+estrict.c
+> index afcd4d101ac5..472561e451b3 100644
+> --- a/crypto/asymmetric_keys/restrict.c
+> +++ b/crypto/asymmetric_keys/restrict.c
+> @@ -140,14 +140,20 @@ int restrict_link_by_ca(struct key *dest_keyring,
+>         pkey =3D payload->data[asym_crypto];
+>         if (!pkey)
+>                 return -ENOPKG;
+> -       if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
+> +       if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags)) {
+> +               pr_err("Missing CA usage bit\n");
+>                 return -ENOKEY;
+> -       if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
+> +       }
+> +       if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags)) {
+> +               pr_err("Missing keyCertSign usage bit\n");
+>                 return -ENOKEY;
+> +       }
+>         if (!IS_ENABLED(CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX))
+>                 return 0;
+> -       if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
+> +       if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags)) {
+> +               pr_err("Unexpected digitalSignature usage bit\n");
+>                 return -ENOKEY;
+> +       }
+>
+>         return 0;
+>  }
+> @@ -183,14 +189,20 @@ int restrict_link_by_digsig(struct key *dest_keyrin=
+g,
+>         if (!pkey)
+>                 return -ENOPKG;
+>
+> -       if (!test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
+> +       if (!test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags)) {
+> +               pr_err("Missing digitalSignature usage bit\n");
+>                 return -ENOKEY;
+> +       }
+>
+> -       if (test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
+> +       if (test_bit(KEY_EFLAG_CA, &pkey->key_eflags)) {
+> +               pr_err("Unexpected CA usage bit\n");
+>                 return -ENOKEY;
+> +       }
+>
+> -       if (test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
+> +       if (test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags)) {
+> +               pr_err("Unexpected keyCertSign usage bit\n");
+>                 return -ENOKEY;
+> +       }
+>
+>         return restrict_link_by_signature(dest_keyring, type, payload,
+>                                           trust_keyring);
+> --
+> 2.46.0
+>
 
