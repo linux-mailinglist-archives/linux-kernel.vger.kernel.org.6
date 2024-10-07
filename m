@@ -1,203 +1,155 @@
-Return-Path: <linux-kernel+bounces-354188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29226993932
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87FB99393C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8071F22C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E55F1F23683
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71A018C00C;
-	Mon,  7 Oct 2024 21:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C30218C32F;
+	Mon,  7 Oct 2024 21:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4AZviZjv"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="YsrItt43"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB228EA
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC2018C02D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728336711; cv=none; b=l5CpE1lDpFLSXykDw0SvdTN9JwklgEpFjnS3CWAY23mG/hb3JdQOnvR97BXgXbg0AEKxICIM8IgkJsgXWXvdTonpDGaO+om4c6OfbQk/kkY6cjwPaezcJ3LuWwWdeOAva1wTTwiixJLAGjYJ7PuRvK0SAr4fdkMAV+zhES4/v6E=
+	t=1728336935; cv=none; b=qbLUYqNXrBsU/cG6BBJZ5Vf2akmoirL4aYBJbpPdVEweut3a+PgPDKBnX0TmVXPuIO2xOyZhlIUMfubiqA+ucRsrKaz77NzbAMx4tmr2zmg0sMx2fO/uUwCAC6EQckzul8TpSyvuLqH0vWyQnrY2ieD+JM05iv4U3o8dJCe9Rbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728336711; c=relaxed/simple;
-	bh=bUUNrV8DKM05tKO6BgQBrd2fwMkS3O5H+hm1F2kPCsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=F2HBEeBa7x4u6L2KUOdg0ZH/1yTA1rLgMTzlrbXfsccYrAWwXVeMcYJd79EkCMLB3gO6cMyos6OcUqiF1NwEm8rS9CI9yzmSYQ+kT749zyr1LRF6UpyfS8gNWuAVHffLwfMjwZVnD6gxQ/xq2tMlgohc83h6RWjwIFDUkU94DV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4AZviZjv; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cae4ead5bso26325e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 14:31:48 -0700 (PDT)
+	s=arc-20240116; t=1728336935; c=relaxed/simple;
+	bh=Cj/g2VTG0C81FjDq7sBsvd4h8InwdCQJmL5VU9F0Z9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SprBcahun6L4qKeqcEn+UtC5bvDSTG+0qVQrlnW8lxzW9zkMqE9ravHAgKRNnSr3FU0+lekdRDx/qDlklz0G0oJPwhZt4iZ1ftcXxb2kRM2yE8GkMqwtYCNt4b/XRrpAt9o6VTK3cjzbVYG5cAuiCxfXmUbML/Syk8ttrHAcgF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=YsrItt43; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso50782195e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 14:35:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728336707; x=1728941507; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zcwa0K69IwSijQTkEu3XQl+titgYL25kpkU8tLNbnQs=;
-        b=4AZviZjv1s4Zaywl6NGHAZFjLFfUs3EguunYwmRiNis9mugqpn5JLK6ys4OxHAwQZg
-         4vR1DMm4TUzakX8bXW2muu2mE8kU1dEobrw3pmdJrR7hgqFA277UXa4C/7ie77RFkmrI
-         1Eur+zXkl9o/8qLoDiJc4KpK4RBRbYwJVM5CohCfP1DQyLUcN6T3YVfhtgfkPkvK+jNr
-         0dcLcfiKD+sJqt2qvD45ZwaUkZxBNnif60LUAO4gtNtTnr87h18zQ1eOfxD5fC24fGql
-         uUBCqueeEDpGO8+j8j451JCmGsfF81/MlGu7bWrVqud4bdWnqqbALdCxM/xwYVSuO2nL
-         mFDg==
+        d=cloudflare.com; s=google09082023; t=1728336932; x=1728941732; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jrqMOPb+Ys+vm2FHKNfe83E/YEHFtEwX37/HgcffrLo=;
+        b=YsrItt43njWe4aw+ykZd/UEPseVGMOZjD0t3/bWccbWX/hc4Qb1wzL3A2/9nSjtQFu
+         90S7U5/c/lYwBLL/6koIGOTJynxk1S3kCOCM2vtPPsx3vzUCjU7AQBH/DfkFP5hoqHOA
+         vfB+/nBhtSB2AvFgE+R7rq6stUTeqVmW8lUDexWnnOnlv5RXwL1Ruox4UhQ5BBcAoqYw
+         bIQbNgqU5FLGJIAJYkABvf1R52isIKe0kT/Dqy0WHCW1EMDZoctcy1MlTApLozI8vUmU
+         CWXV/TtaKYugUxkU2Q3m68XgF+j1b+ZaDwLaxSH4lPrjRH5Z3epL28z8oBQyu/S4j742
+         wLCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728336707; x=1728941507;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zcwa0K69IwSijQTkEu3XQl+titgYL25kpkU8tLNbnQs=;
-        b=DF70KJcguvUJGEPzR/kBii/aWF7ZxmBXm20rPc47wwdpUDMPUqbSKvbeAyPdue1Df9
-         0sSmNeLAt9NTXbq/OsjNcMjp8j7WUaLMJhUbTe7ZXQhL5jMIBYH6w+mbmY/a3LvYlW/x
-         vo8YoZo70Wz/zNU20PbnBwd5TXWgC89Iv93ICSwT8iaJLShW3s18l+85LKaOZVUGhN2w
-         lpn/PQh369EtLDeLlYFXpCoMXjWiU8sSh4GZbw4wvTJVuptsK5ZXbou79xNTRegDxiy4
-         YssGvCKbAtil/TlcOxIVhiX1/v6aCLjg/aSFyVTS25yS3vNMzZ+6p+vzHLnxYkmevTlW
-         yN1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXGRfENeFWsnh7y91k2JQKVQJFUXGvFvvaRGYrnPnIrD6NQPccGNiVM/p3I8HPEgkMfF8kn6RmWYv8vX1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGJz0W03Hl3rGwP6j94ZKd9h5UQnR11IEFVG7qve3CDWG+57Aa
-	ixkQxTtV6SwPe+E3RJ9D+cQWGcXpIcNPJMgbajKv/W0ai08cI9omzT0RxLbNKsRY9unrck6l340
-	adzRtnZY5V8M5g8Ue0Fdpa6D4zIQkMg30oRjN
-X-Google-Smtp-Source: AGHT+IGin0ZNEVS1gSKXXrgs4W00kOMVovkBWvysigwLPBAWQgXtJtvhQAKjkfxN+M/JJJeT4+58OvhYq79D6KZt7Qs=
-X-Received: by 2002:a05:600c:34cb:b0:428:31c:5a4f with SMTP id
- 5b1f17b1804b1-4303b67064bmr452985e9.3.1728336706808; Mon, 07 Oct 2024
- 14:31:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728336932; x=1728941732;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jrqMOPb+Ys+vm2FHKNfe83E/YEHFtEwX37/HgcffrLo=;
+        b=s3tUjf7h3pG6STmsKr8WpfPJgF5rNWmtzx1Vv6RU6b8/nGrqaa29nOpRkB/RjQGxmD
+         OP+pW0DdXvYfE6FIwkIJoHXgE6ge28WdaP1sx8bWPIKyBTUdFY0UGwnk7Ln0VDnVTLvq
+         HGTIMw7qfUwjscF000euKIWdq6wgsYNAtHfqGHqqRGVLEnFgLpAuSPd3lVuTYSGxJJ7E
+         3cK429ZtaVjEggnxf7U2NtOTSgivmFi9v/LsZ18H3bJO5kcK9b88d5j8IjAIdoRnXqSW
+         OpmSM1X2Q1UEVGqv/X0uH4btCwk/aJ2g/ansEgmSra/NX1CFc6iW2pH/AVVK2OghIB2I
+         DFZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyE8J4YmXn1w+Rsabd4VcgUlgSaxepvz2ScVeldHgPtD1o68ZklT2z3qGPbFI+95eAKxdJpx6Fp5a5JIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpeZPEQkefBW0TI7Td267ldDV0bE5kNGaym7S34zd+3NiPZptd
+	4m/XE90JWSoHL/rpd0KEdevkyDUZLxj7NVIE3UZknEw3FnLFkJ0NPpir0OXp2Fw=
+X-Google-Smtp-Source: AGHT+IHlG2I62I2zeXAxqMGyHeNmGHzkATxTykamA43gyhtpvqM0nGUZ+C0M68aJb9FCrknBGd5udA==
+X-Received: by 2002:a05:600c:5804:b0:42c:b1ee:4b04 with SMTP id 5b1f17b1804b1-42f85ae918amr92954035e9.28.1728336932471;
+        Mon, 07 Oct 2024 14:35:32 -0700 (PDT)
+Received: from localhost.localdomain ([104.28.192.66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a4absm6535887f8f.29.2024.10.07.14.35.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 07 Oct 2024 14:35:31 -0700 (PDT)
+From: Ignat Korchagin <ignat@cloudflare.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	David Ahern <dsahern@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-can@vger.kernel.org,
+	linux-wpan@vger.kernel.org
+Cc: kernel-team@cloudflare.com,
+	kuniyu@amazon.com,
+	alibuda@linux.alibaba.com,
+	Ignat Korchagin <ignat@cloudflare.com>
+Subject: [PATCH v2 0/8] do not leave dangling sk pointers in pf->create functions
+Date: Mon,  7 Oct 2024 22:34:54 +0100
+Message-Id: <20241007213502.28183-1-ignat@cloudflare.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830040101.822209-1-Liam.Howlett@oracle.com>
- <20240830040101.822209-15-Liam.Howlett@oracle.com> <CAG48ez0ZpGzxi=-5O_uGQ0xKXOmbjeQ0LjZsRJ1Qtf2X5eOr1w@mail.gmail.com>
- <wxvj55hptaogh2yxhhfftaomwzm6ifek5xu3uobbdsaabdmjll@t2ixdotfhaie>
-In-Reply-To: <wxvj55hptaogh2yxhhfftaomwzm6ifek5xu3uobbdsaabdmjll@t2ixdotfhaie>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 7 Oct 2024 23:31:09 +0200
-Message-ID: <CAG48ez3Ao_XkT0LKHfZsZSEZaoDAc4zRjitKG=P5O7R2BOgHxw@mail.gmail.com>
-Subject: Re: [BUG] page table UAF, Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing
- vma tree in mmap_region()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Linux-MM <linux-mm@kvack.org>, kernel list <linux-kernel@vger.kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
-	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Jeff Xu <jeffxu@chromium.org>, 
-	Seth Jenkins <sethjenkins@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 7, 2024 at 10:31=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
-> * Jann Horn <jannh@google.com> [241007 15:06]:
-> > On Fri, Aug 30, 2024 at 6:00=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
-racle.com> wrote:
-> > > Instead of zeroing the vma tree and then overwriting the area, let th=
-e
-> > > area be overwritten and then clean up the gathered vmas using
-> > > vms_complete_munmap_vmas().
-> > >
-> > > To ensure locking is downgraded correctly, the mm is set regardless o=
-f
-> > > MAP_FIXED or not (NULL vma).
-> > >
-> > > If a driver is mapping over an existing vma, then clear the ptes befo=
-re
-> > > the call_mmap() invocation.  This is done using the vms_clean_up_area=
-()
-> > > helper.  If there is a close vm_ops, that must also be called to ensu=
-re
-> > > any cleanup is done before mapping over the area.  This also means th=
-at
-> > > calling open has been added to the abort of an unmap operation, for n=
-ow.
-> >
-> > As currently implemented, this is not a valid optimization because it
-> > violates the (unwritten?) rule that you must not call free_pgd_range()
-> > on a region in the page tables which can concurrently be walked. A
-> > region in the page tables can be concurrently walked if it overlaps a
-> > VMA which is linked into rmaps which are not write-locked.
->
-> Just for clarity, this is the rmap write lock.
+Some protocol family create() implementations have an error path after
+allocating the sk object and calling sock_init_data(). sock_init_data()
+attaches the allocated sk object to the sock object, provided by the
+caller.
 
-Ah, yes.
+If the create() implementation errors out after calling sock_init_data(),
+it releases the allocated sk object, but the caller ends up having a
+dangling sk pointer in its sock object on return. Subsequent manipulations
+on this sock object may try to access the sk pointer, because it is not
+NULL thus creating a use-after-free scenario.
 
-> > On Linux 6.12-rc2, when you mmap(MAP_FIXED) over an existing VMA, and
-> > the new mapping is created by expanding an adjacent VMA, the following
-> > race with an ftruncate() is possible (because page tables for the old
-> > mapping are removed while the new VMA in the same location is already
-> > fully set up and linked into the rmap):
-> >
-> >
-> > task 1 (mmap, MAP_FIXED)     task 2 (ftruncate)
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > mmap_region
-> >   vma_merge_new_range
-> >     vma_expand
-> >       commit_merge
-> >         vma_prepare
-> >           [take rmap locks]
-> >         vma_set_range
-> >           [expand adjacent mapping]
-> >         vma_complete
-> >           [drop rmap locks]
-> >   vms_complete_munmap_vmas
-> >     vms_clear_ptes
-> >       unmap_vmas
-> >         [removes ptes]
-> >       free_pgtables
-> >         [unlinks old vma from rmap]
-> >                              unmap_mapping_range
-> >                                unmap_mapping_pages
-> >                                  i_mmap_lock_read
-> >                                  unmap_mapping_range_tree
-> >                                    [loop]
-> >                                      unmap_mapping_range_vma
-> >                                        zap_page_range_single
-> >                                          unmap_single_vma
-> >                                            unmap_page_range
-> >                                              zap_p4d_range
-> >                                                zap_pud_range
-> >                                                  zap_pmd_range
-> >                                                    [looks up pmd entry]
-> >         free_pgd_range
-> >           [frees pmd]
-> >                                                    [UAF pmd entry acces=
-s]
-> >
-> > To reproduce this, apply the attached mmap-vs-truncate-racewiden.diff
-> > to widen the race windows, then build and run the attached reproducer
-> > mmap-fixed-race.c.
-> >
-> > Under a kernel with KASAN, you should ideally get a KASAN splat like th=
-is:
->
-> Thanks for all the work you did finding the root cause here, I
-> appreciate it.
+While the first patch in the series should be enough to handle this
+scenario Eric Dumazet suggested that it would be a good idea to refactor
+the code for the af_packet implementation to avoid the error path, which
+leaves a dangling pointer, because it may be better for some tools like
+kmemleak. I went a bit further and tried to actually fix all the
+implementations, which could potentially leave a dangling sk pointer.
 
-Ah, this is not a bug I ran into while testing, it's a bug I found
-while reading the patch. It's much easier to explain the issue and
-come up with a nice reproducer this way than when you start out from a
-crash. :P
+Changes in V2:
+  * reverted the change introduced in 6cd4a78d962b ("net: do not leave a
+    dangling sk pointer, when socket creation fails")
+  * added optional commits to all pf->create implementaions to clear the
+    sk pointer on error after sock_init_data()
 
-> I think the correct fix is to take the rmap lock on free_pgtables, when
-> necessary.  There are a few code paths (error recovery) that are not
-> regularly run that will also need to change.
+Ignat Korchagin (8):
+  net: explicitly clear the sk pointer, when pf->create fails
+  af_packet: avoid erroring out after sock_init_data() in
+    packet_create()
+  Bluetooth: L2CAP: do not leave dangling sk pointer on error in
+    l2cap_sock_create()
+  Bluetooth: RFCOMM: avoid leaving dangling sk pointer in
+    rfcomm_sock_alloc()
+  net: af_can: do not leave a dangling sk pointer in can_create()
+  net: ieee802154: do not leave a dangling sk pointer in
+    ieee802154_create()
+  net: inet: do not leave a dangling sk pointer in inet_create()
+  inet6: do not leave a dangling sk pointer in inet6_create()
 
-Hmm, yes, I guess that might work. Though I think there might be more
-races: One related aspect of this optimization that is unintuitive to
-me is that, directly after vma_merge_new_range(), a concurrent rmap
-walk could probably be walking the newly-extended VMA but still
-observe PTEs belonging to the previous VMA. I don't know how robust
-the various rmap walks are to things like encountering pfnmap PTEs in
-non-pfnmap VMAs, or hugetlb PUD entries in non-hugetlb VMAs. For
-example, page_vma_mapped_walk() looks like, if you called it on a page
-table range with huge PUD entries, but with a VMA without VM_HUGETLB,
-something might go wrong on the "pmd_offset(pud, pvmw->address)" call,
-and a 1G hugepage might get misinterpreted as a page table? But I
-haven't experimentally verified that.
+ net/bluetooth/l2cap_sock.c  |  1 +
+ net/bluetooth/rfcomm/sock.c | 10 +++++-----
+ net/can/af_can.c            |  1 +
+ net/core/sock.c             |  3 ---
+ net/ieee802154/socket.c     | 12 +++++++-----
+ net/ipv4/af_inet.c          | 22 ++++++++++------------
+ net/ipv6/af_inet6.c         | 22 ++++++++++------------
+ net/packet/af_packet.c      | 12 ++++++------
+ net/socket.c                |  7 ++++++-
+ 9 files changed, 46 insertions(+), 44 deletions(-)
+
+-- 
+2.39.5
+
 
