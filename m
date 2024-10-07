@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-353278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986F4992B82
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DC5992B7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D8E1F24B53
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D8F28619A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486381D2B2C;
-	Mon,  7 Oct 2024 12:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rz397/jq"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B6B1D2780;
-	Mon,  7 Oct 2024 12:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BA91D319B;
+	Mon,  7 Oct 2024 12:19:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158961D2F62;
+	Mon,  7 Oct 2024 12:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303567; cv=none; b=UWvKcEEbR7MksdQ9Zo6RiuREl/+LJDZfwq6uEglJ4K/7MFSbLiuYmaTB4mgvbzfFySfBfd2jttDXwQz9Au073RfNgjIpVXmzwy8NJv22UJQW8V2T+7SMHJragENe07HnebyCCqJAEfO3xvAIs8LELBvm0ChauZw0Pi66qqlX4Hw=
+	t=1728303544; cv=none; b=LBKHrSp8wXylMtRAAuf77uhrffkYJrhAiDotc+OgunACEucimQXw0xDzqCsOQFpFi71vtJIp/s47NK+r/4HtAC9+JHaIC4AuNsyNb+myg3UXaIZte49hA9dSjALtcsI0RL8bmWzToKzEGV8kBOkO58uTG5KXrmNueIMBq8qlCh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303567; c=relaxed/simple;
-	bh=XVB7UJJCr/qf0hPwflV9ZKUcwosiuI4w7GG7pLjN4kg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y8wyFe667bYL2Fq2RvgJvwBryiuYIeBX3GGk0sZws1Xp0bvT868tyWElTlQ08pIUaEoEH9bJ469Sw0P6CmMMbduI+B0gS1ZJxuKu9xZ2GReOp+wg8B0GCGkEBwTMfR182DfI7GMTmqRpK4ctFVIulTUK/SU2sn9Vb/BT20S9Ym4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rz397/jq; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6896020005;
-	Mon,  7 Oct 2024 12:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728303557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pg580Ry3VlAsGHyS5CkIwdwzGTxEmOyviaHGBYrll7U=;
-	b=Rz397/jqnTAX2f3W9lIe5fqhET3C/f0si4x4DYwKOQwJbigCR+dSvf5JQWnrNejcNwvBTQ
-	FrgHfZSHvnCtl9FydhqGEMlpUQ2A28DBj+/1iz5ClI18JswkDp3g9AITBVkpIstTvOmd9B
-	3QuZDxNSOeaMZGbhcsk+iDFW7qdbHFlfKZ+NiG2+b6FZG3rW8wZIbd5qrOtzSeL2yhHFzk
-	9kX5szIgfwZ8FFCJwb09U+Fn6K1Pw3FlJwLdAvJYwsEfkNDs4NRhXSLhOaEx+FFps5qjhi
-	3L9k8jbN4uRfAw2JXuKgsd0bZh8XZgJzojxXvyEDhr24T5T/QSxcMbdn86Tqnw==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Mon, 07 Oct 2024 14:18:50 +0200
-Subject: [PATCH ethtool-next v2 2/2] ethtool.8: Add documentation for new
- C33 PSE features
+	s=arc-20240116; t=1728303544; c=relaxed/simple;
+	bh=Bb2uZH3F+3Adbwwnj2mGFE4zgp2x6RFZEK/oQhjl1tw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IGm6JiJV1wHvJI2ULGGBYAQBHIdL5ffQ6hnwiBvjqBtVFEyHwQqncZrm4Ntxc71kxJXwaS6RdrTlPEQWVbkm2ze1y1zrIOX89TLEVXqboJXIfa9NTrSmwL1S3QasIpq5MdmjxZVuliUsLTZrW+uOaX943zCpXTVuRVoejsEeFqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48FDFFEC;
+	Mon,  7 Oct 2024 05:19:32 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 588213F640;
+	Mon,  7 Oct 2024 05:19:01 -0700 (PDT)
+From: Mark Rutland <mark.rutland@arm.com>
+To: stable@vger.kernel.org
+Cc: anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	james.morse@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org
+Subject: [PATCH 5.4 3/3] arm64: errata: Expand speculative SSBS workaround once more
+Date: Mon,  7 Oct 2024 13:18:50 +0100
+Message-Id: <20241007121850.548687-4-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241007121850.548687-1-mark.rutland@arm.com>
+References: <20241007121850.548687-1-mark.rutland@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241007-feature_poe_power_cap-v2-2-cbd1aa1064df@bootlin.com>
-References: <20241007-feature_poe_power_cap-v2-0-cbd1aa1064df@bootlin.com>
-In-Reply-To: <20241007-feature_poe_power_cap-v2-0-cbd1aa1064df@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
-Cc: Kyle Swenson <kyle.swenson@est.tech>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+[ Upstream commit 081eb7932c2b244f63317a982c5e3990e2c7fbdd ]
 
-Add documentation to described the newly C33 PSE features supported.
+A number of Arm Ltd CPUs suffer from errata whereby an MSR to the SSBS
+special-purpose register does not affect subsequent speculative
+instructions, permitting speculative store bypassing for a window of
+time.
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+We worked around this for a number of CPUs in commits:
+
+* 7187bb7d0b5c7dfa ("arm64: errata: Add workaround for Arm errata 3194386 and 3312417")
+* 75b3c43eab594bfb ("arm64: errata: Expand speculative SSBS workaround")
+* 145502cac7ea70b5 ("arm64: errata: Expand speculative SSBS workaround (again)")
+
+Since then, a (hopefully final) batch of updates have been published,
+with two more affected CPUs. For the affected CPUs the existing
+mitigation is sufficient, as described in their respective Software
+Developer Errata Notice (SDEN) documents:
+
+* Cortex-A715 (MP148) SDEN v15.0, erratum 3456084
+  https://developer.arm.com/documentation/SDEN-2148827/1500/
+
+* Neoverse-N3 (MP195) SDEN v5.0, erratum 3456111
+  https://developer.arm.com/documentation/SDEN-3050973/0500/
+
+Enable the existing mitigation by adding the relevant MIDRs to
+erratum_spec_ssbs_list, and update silicon-errata.rst and the
+Kconfig text accordingly.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20240930111705.3352047-3-mark.rutland@arm.com
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+[ Mark: fix conflict in silicon-errata.rst, handle move ]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 ---
- ethtool.8.in | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ Documentation/arm64/silicon-errata.rst | 4 ++++
+ arch/arm64/Kconfig                     | 2 ++
+ arch/arm64/kernel/cpu_errata.c         | 2 ++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/ethtool.8.in b/ethtool.8.in
-index 151e520..1bd524d 100644
---- a/ethtool.8.in
-+++ b/ethtool.8.in
-@@ -545,6 +545,7 @@ ethtool \- query or control network driver and hardware settings
- .BR enable | disable ]
- .RB [ c33\-pse\-admin\-control
- .BR enable | disable ]
-+.BN c33\-pse\-avail\-pw\-limit N
- .HP
- .B ethtool \-\-flash\-module\-firmware
- .I devname
-@@ -1815,6 +1816,36 @@ status depend on internal PSE state machine and automatic PD classification
- support. It corresponds to IEEE 802.3-2022 30.9.1.1.5
- (aPSEPowerDetectionStatus) with potential values being
- .B disabled, searching, delivering power, test, fault, other fault
-+.TP
-+.B c33-pse-extended-state
-+This attribute indicates the Extended state of the c33 PSE. The extended
-+state correlated with the c33 PSE Extended Substate allows to have more
-+detail on the c33 PSE current error state.
-+It corresponds to IEEE 802.3-2022 33.2.4.4 Variables.
-+.TP
-+.B c33-pse-extended-substate
-+This attribute indicates the Extended substate of the c33 PSE. Correlated
-+with the c33 PSE Extended state value, it allows to have more detail on the
-+c33 PSE current error state.
-+.TP
-+.B c33-pse-power-class
-+This attribute identifies the power class of the c33 PSE. It depends on
-+the class negotiated between the PSE and the PD. It corresponds to
-+IEEE 802.3-2022 30.9.1.1.8 (aPSEPowerClassification).
-+.TP
-+.B c33-pse-actual-power
-+This attribute identifies the actual power drawn by the c33 PSE. It
-+corresponds to ``IEEE 802.3-2022`` 30.9.1.1.23 (aPSEActualPower). Actual
-+power is reported in mW.
-+.TP
-+.B c33-pse-available-power-limit
-+This attribute identifies the configured c33 PSE power limit in mW.
-+.TP
-+.B c33-pse-power-limit-ranges
-+This attribute specifies the allowed power limit ranges in mW for
-+configuring the c33-pse-avail-pw-limit parameter. It defines the valid
-+power levels that can be assigned to the c33 PSE in compliance with the
-+c33 standard.
- 
- .RE
- .TP
-@@ -1829,6 +1860,11 @@ This parameter manages PoDL PSE Admin operations in accordance with the IEEE
- .A2 c33-pse-admin-control \ enable disable
- This parameter manages c33 PSE Admin operations in accordance with the IEEE
- 802.3-2022 30.9.1.2.1 (acPSEAdminControl) specification.
-+.TP
-+.B c33-pse-avail-pw-limit \ N
-+This parameter manages c33 PSE Available Power Limit in mW, in accordance
-+with the IEEE 802.3-2022 33.2.4.4 Variables (pse_available_power)
-+specification.
- 
- .RE
- .TP
-
+diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
+index 00755541a9c50..17da972099760 100644
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -98,6 +98,8 @@ stable kernels.
+ +----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Cortex-A710     | #3324338        | ARM64_ERRATUM_3194386       |
+ +----------------+-----------------+-----------------+-----------------------------+
++| ARM            | Cortex-A715     | #3456084        | ARM64_ERRATUM_3194386       |
+++----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Cortex-A720     | #3456091        | ARM64_ERRATUM_3194386       |
+ +----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Cortex-A725     | #3456106        | ARM64_ERRATUM_3194386       |
+@@ -124,6 +126,8 @@ stable kernels.
+ +----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Neoverse-N2     | #3324339        | ARM64_ERRATUM_3194386       |
+ +----------------+-----------------+-----------------+-----------------------------+
++| ARM            | Neoverse-N3     | #3456111        | ARM64_ERRATUM_3194386       |
+++----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Neoverse-V1     | #3324341        | ARM64_ERRATUM_3194386       |
+ +----------------+-----------------+-----------------+-----------------------------+
+ | ARM            | Neoverse-V2     | #3324336        | ARM64_ERRATUM_3194386       |
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 562558e0915cb..82eba7ffa1d58 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -602,6 +602,7 @@ config ARM64_ERRATUM_3194386
+ 	  * ARM Cortex-A78C erratum 3324346
+ 	  * ARM Cortex-A78C erratum 3324347
+ 	  * ARM Cortex-A710 erratam 3324338
++	  * ARM Cortex-A715 errartum 3456084
+ 	  * ARM Cortex-A720 erratum 3456091
+ 	  * ARM Cortex-A725 erratum 3456106
+ 	  * ARM Cortex-X1 erratum 3324344
+@@ -612,6 +613,7 @@ config ARM64_ERRATUM_3194386
+ 	  * ARM Cortex-X925 erratum 3324334
+ 	  * ARM Neoverse-N1 erratum 3324349
+ 	  * ARM Neoverse N2 erratum 3324339
++	  * ARM Neoverse-N3 erratum 3456111
+ 	  * ARM Neoverse-V1 erratum 3324341
+ 	  * ARM Neoverse V2 erratum 3324336
+ 	  * ARM Neoverse-V3 erratum 3312417
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 20c8d39b71cd6..1e1dfe59a469e 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -848,6 +848,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A715),
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A725),
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
+@@ -858,6 +859,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
+ 	MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
+ 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+ 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
++	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N3),
+ 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+ 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
+ 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
 -- 
-2.34.1
+2.30.2
 
 
