@@ -1,195 +1,105 @@
-Return-Path: <linux-kernel+bounces-353574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D08992FA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:42:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68FA992FAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719EC1C22CE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:42:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB21F2375B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E481D5ADE;
-	Mon,  7 Oct 2024 14:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021CB1D4615;
+	Mon,  7 Oct 2024 14:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcCwN+zg"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBZtBemW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2FA18BBA3
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EC3F50F;
+	Mon,  7 Oct 2024 14:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312155; cv=none; b=ETahjMajMlF6sv8LV0RBhZ9ID81IbMqMNnwaDbb55OeByqh6cS1biiBR1vNeRRoZbrrQZDfUO+IxTFgnA0ahs1c0RXJnyC7DFYton4h4NkjoiLgUyOGgukWb0p5aeYeJdwJ2GaPETDQGeEA7aq7LPHltaV7ekAsygrlWyuFYkak=
+	t=1728312190; cv=none; b=GBNm9yZgcWTTfxE+MDB6zGgalZjVZCb7tIKGQpAR/zVRWHSBLOoPZgK/xNu/LpEH8viKy/InJMxPfQOl0om4Cxo/vy8UOByPCmrmChnl/E2+tA7G3BYnX7p6skLLb9ZYqOnL8wqMHfequzGowYJ7V3/9fWebPIXg0YBqJYBvcGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312155; c=relaxed/simple;
-	bh=D5kVbpKzUhQvMtWTZRZg9zhd9Je1CQMs6r/pautCquw=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=kVT0l9Nqdu9gTMc8+O8gxQwq8UTP26GT3UjCh4eXXczno6a90YdTYSnM5ScS+Pn5oB9uWzfKytAPVH8gAlZ7SOPNVF7tw+sh70kwec2rV7sD5s3mkDS/aQtDJBgTitpzXRwxxmccxJ/6y6R2v7gXb5d2a1itc/L3pYmjg6Iq6Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcCwN+zg; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53991d05416so5264009e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728312152; x=1728916952; darn=vger.kernel.org;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OG0U1jbBXC/7HilBWvE9sxBBHqzXaiJZGz0KVtp1OY=;
-        b=JcCwN+zgmM1vTcUOlJNMEYM0jMe5Y9uz4lfKNna7L6JxjZv6dj+fFbJ7S4Mz21l2MC
-         WPFZdEQgvgzvMxw27vRakqY7EmXAgJygO/9CWS0DM4Plw3CUA8IxXDoIjTsk2gsZtZti
-         V+zj+Sj5BmafvNEhr+Q6mcBsbRQhqp9pt9ZneaS/r/1pnyFYT2fVdui9bbaoFrcrd7H/
-         EJB3mQyPD1Zi93JIwikl8zuA8oTefkAB9QvCKyfmB++NE61hs5yVK6omFt6iNdNZ1E3V
-         fgDTN5kykqfbQVRZC7rIvf6yE/0dQs1/k0WLpdiUxPSSkgc9YDVGC9SiaEHf+udebF3f
-         mIEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728312152; x=1728916952;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5OG0U1jbBXC/7HilBWvE9sxBBHqzXaiJZGz0KVtp1OY=;
-        b=C2uKs0KA+ORPFEHPDaEcgLJ9uKoIZrFLFMpZbq1ec7qKrdnc+xwkT/r3Qlb9LcxfXS
-         vLSreY7N2hro/i61NMEX6f0S+dhuSQZTgTyfeW0YwbEfBQfC9qKn/AFmWgAdA6AMYTty
-         SIkkrQ/bCeDYZXpNKaRUOVuksR7KMQUnfU2rFAWJdqXsWH+gBkm0iACNIHlzeXD52bm1
-         RnzDEVNSWV5YXua/6JngF44TQc7fD4gq2pKYYzz4nReEuTUIT7ye+k+NzsrZ1P7L95sZ
-         dQ7WB1/yhF8mM8kWJxK7rPY50y9kCeoRz2HBNJhHscT7oiTCWL6yKWgX0TR7oDOzLDoN
-         tlNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSLFbO8oRpIw+6MAP/Oa+KMq6uZCa9p903KYgToV/zFDjvNbzt3mLDPFMxt0kifOBDmJwDNAZISubt9OU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiGKVN7AyyzLCuAenNypHrcpSrfpZFIWGEaRvS3FTAKCsPdNud
-	+pOix5GzJDtFK0U+HrOS9+pVNOK+2YL4RwnKOiX2VP4AZWPDvxkl
-X-Google-Smtp-Source: AGHT+IGztI27Tmigl5KSZUpChAclReVjTvDqzmCe6NGfCs6+JNfloCcqixsHuiDwKgpyiigf26s/Rw==
-X-Received: by 2002:a05:6512:138d:b0:533:4497:9f29 with SMTP id 2adb3069b0e04-539ab87dd29mr7436136e87.31.1728312151890;
-        Mon, 07 Oct 2024 07:42:31 -0700 (PDT)
-Received: from [192.168.1.100] ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9949a37f79sm240442766b.44.2024.10.07.07.42.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:42:31 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------DOSrrXCulbNPxmqX14qrO8oc"
-Message-ID: <cc44a5ca-ddf9-ca7a-93f8-38bf26ac1f1f@gmail.com>
-Date: Mon, 7 Oct 2024 16:42:30 +0200
+	s=arc-20240116; t=1728312190; c=relaxed/simple;
+	bh=eJcPBzPOo94qozRNulmiiqa57Jsp9yA4mklXXVuzvDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jm4GAqqjIQjlz91+A4ZlTbyMlaTkmPDnbZEvdt/L+nFUFZUL3w+bgKLoX9n9Onc56lKa2zr7XtzIMk2JbjMHKeB7QPx4hpjU8oqvtJuuURsZ64tsSrHGaseFlK+Cv6YqC4E+cxJp1h3pCwjJh43DWEK3BGyO2shDB2U4JT/yC2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBZtBemW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62370C4CEC6;
+	Mon,  7 Oct 2024 14:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728312189;
+	bh=eJcPBzPOo94qozRNulmiiqa57Jsp9yA4mklXXVuzvDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PBZtBemW8bI3a2O7I1dI0KMmYVCAWWCsfhu+4bUsvyu5eYvrD48xVPnlFxcy8O0xs
+	 w5OELJCHnrwwkH20SIQWayKuIa9659om4Gj9HQC/zwipdvU5PeRfqKtRCccrWBImiY
+	 EwKZEXEU+XQfALxq9i3ijAsLx4LNvGVm/hoCwgNQi0NtBpxCUrdIQZYf617PtbowXW
+	 8ZnJ+hgyGAN7yukpbDfdubQ1q759MIRYUXQpGZPWpyOiYQRhxEJgN47K53LWoz30T5
+	 CCp9UAE4l2CDP0EJ6CddgVtHM4jG+iBwESd4FH75I0WFga7vqIEvqK/0Z5Yn/t78o/
+	 kbS7CBY1DWBDA==
+Date: Mon, 7 Oct 2024 15:42:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: Re: [PATCH 3/3] spi: spi-mem: Add Realtek SPI-NAND controller
+Message-ID: <ZwPzav6dFQdXSnjx@finisterre.sirena.org.uk>
+References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
+ <20241006233347.333586-4-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 2/6] iommu/amd: Introduce helper function to update
- 256-bit DTE
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Cc: joro@8bytes.org, robin.murphy@arm.com, vasant.hegde@amd.com,
- jgg@nvidia.com, kevin.tian@intel.com, jon.grimm@amd.com,
- santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
-References: <20241007041353.4756-1-suravee.suthikulpanit@amd.com>
- <20241007041353.4756-3-suravee.suthikulpanit@amd.com>
-Content-Language: en-US
-From: Uros Bizjak <ubizjak@gmail.com>
-In-Reply-To: <20241007041353.4756-3-suravee.suthikulpanit@amd.com>
-
-This is a multi-part message in MIME format.
---------------DOSrrXCulbNPxmqX14qrO8oc
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EQSz8Y55RytcW1nf"
+Content-Disposition: inline
+In-Reply-To: <20241006233347.333586-4-chris.packham@alliedtelesis.co.nz>
+X-Cookie: Editing is a rewording activity.
 
 
+--EQSz8Y55RytcW1nf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7. 10. 24 06:13, Suravee Suthikulpanit wrote:
+On Mon, Oct 07, 2024 at 12:33:47PM +1300, Chris Packham wrote:
 
-> +
->   /****************************************************************************
->    *
->    * Helper functions
->    *
->    ****************************************************************************/
->   
-> +static void write_dte_upper128(struct dev_table_entry *ptr, struct dev_table_entry *new)
+> +REALTEK SPI-NAND
+> +M:	Chris Pacham <chris.packham@alliedtelesis.co.nz>
+
+Pacham?
+
+> +static int rtl_snand_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
 > +{
-> +	struct dev_table_entry old = {};
-> +
-> +	do {
-> +		old.data128[1] = ptr->data128[1];
-> +		new->data[2] &= ~DTE_DATA2_INTR_MASK;
-> +		new->data[2] |= old.data[2] & (DTE_DATA2_INTR_MASK | DTE_DATA2_RESV_MASK);
-> +	} while (!try_cmpxchg128(&ptr->data128[1], &old.data128[1], new->data128[1]));
-
-Please note that try_cmpxchg inherently updates &old.data128[1] above on 
-failure. There is no need to update value again in the loop.
-
-Please also note that the value from ptr->data128[1] should be read 
-using READ_ONCE() to prevent compiler from merging, refetching or 
-reordering the read. Currently, there is no READ_ONCE() implemented for 
-__int128, so something like the attached patch should be used.
-
-Based on the above, the loop should be rewritten as:
-
-	old.data128[1] = READ_ONCE(ptr->data128[1]);
-	do {
-		new->data[2] &= ~DTE_DATA2_INTR_MASK;
-		new->data[2] |= old.data[2] & (DTE_DATA2_INTR_MASK | DTE_DATA2_RESV_MASK);
-	} while (!try_cmpxchg128(&ptr->data128[1], &old.data128[1], 
-new->data128[1]));
-
+> +	return 0;
 > +}
 > +
-> +static void write_dte_lower128(struct dev_table_entry *ptr, struct dev_table_entry *new)
-> +{
-> +	struct dev_table_entry old = {};
-> +
-> +	/*
-> +	 * Need to preserve DTE[96:106], which can be set by information in IVRS table.
-> +	 * See set_dev_entry_from_acpi().
-> +	 */
-> +	new->data[1] |= ptr->data[1] & DTE_FLAG_MASK;
-> +
-> +	do {
-> +		old.data128[0] = ptr->data128[0];
-> +	} while (!try_cmpxchg128(&ptr->data128[0], &old.data128[0], new->data128[0]));
 
-And this one as:
+If the framework doesn't already support this callback being missing we
+should probably make it so.
 
-	old.data128[0] = READ_ONCE(ptr->data128[0]);
-	do {
-	} while (!try_cmpxchg128(&ptr->data128[0], &old.data128[0], 
-new->data128[0]));
+Otherwise this looks good.
 
-Best regards,
-Uros.
---------------DOSrrXCulbNPxmqX14qrO8oc
-Content-Type: text/plain; charset=UTF-8; name="p.diff.txt"
-Content-Disposition: attachment; filename="p.diff.txt"
-Content-Transfer-Encoding: base64
+--EQSz8Y55RytcW1nf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvcndvbmNlLmggYi9pbmNsdWRlL2Fz
-bS1nZW5lcmljL3J3b25jZS5oCmluZGV4IDhkMGE2MjgwZTk4Mi4uOGJmOTQyYWQ1ZWYzIDEw
-MDY0NAotLS0gYS9pbmNsdWRlL2FzbS1nZW5lcmljL3J3b25jZS5oCisrKyBiL2luY2x1ZGUv
-YXNtLWdlbmVyaWMvcndvbmNlLmgKQEAgLTMzLDcgKzMzLDcgQEAKICAqIChlLmcuIGEgdmly
-dHVhbCBhZGRyZXNzKSBhbmQgYSBzdHJvbmcgcHJldmFpbGluZyB3aW5kLgogICovCiAjZGVm
-aW5lIGNvbXBpbGV0aW1lX2Fzc2VydF9yd29uY2VfdHlwZSh0KQkJCQkJXAotCWNvbXBpbGV0
-aW1lX2Fzc2VydChfX25hdGl2ZV93b3JkKHQpIHx8IHNpemVvZih0KSA9PSBzaXplb2YobG9u
-ZyBsb25nKSwJXAorCWNvbXBpbGV0aW1lX2Fzc2VydChfX25hdGl2ZV93b3JkKHQpIHx8IHNp
-emVvZih0KSA9PSBzaXplb2YoX19kd29yZF90eXBlKSwgXAogCQkiVW5zdXBwb3J0ZWQgYWNj
-ZXNzIHNpemUgZm9yIHtSRUFELFdSSVRFfV9PTkNFKCkuIikKIAogLyoKZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvbGludXgvY29tcGlsZXJfdHlwZXMuaCBiL2luY2x1ZGUvbGludXgvY29tcGls
-ZXJfdHlwZXMuaAppbmRleCA5NGI4ZmVkZmIwNzcuLjg2MTVlOTFmNDhmZCAxMDA2NDQKLS0t
-IGEvaW5jbHVkZS9saW51eC9jb21waWxlcl90eXBlcy5oCisrKyBiL2luY2x1ZGUvbGludXgv
-Y29tcGlsZXJfdHlwZXMuaApAQCAtNDY5LDYgKzQ2OSwxMiBAQCBzdHJ1Y3QgZnRyYWNlX2xp
-a2VseV9kYXRhIHsKIAkJdW5zaWduZWQgdHlwZToJKHVuc2lnbmVkIHR5cGUpMCwJCQlcCiAJ
-CXNpZ25lZCB0eXBlOgkoc2lnbmVkIHR5cGUpMAogCisjaWZkZWYgX19TSVpFT0ZfSU5UMTI4
-X18KKyNkZWZpbmUgX19kd29yZF90eXBlIF9faW50MTI4CisjZWxzZQorI2RlZmluZSBfX2R3
-b3JkX3R5cGUgbG9uZyBsb25nCisjZW5kaWYKKwogI2RlZmluZSBfX3VucXVhbF9zY2FsYXJf
-dHlwZW9mKHgpIHR5cGVvZigJCQkJXAogCQlfR2VuZXJpYygoeCksCQkJCQkJXAogCQkJIGNo
-YXI6CShjaGFyKTAsCQkJCVwKQEAgLTQ3Niw3ICs0ODIsNyBAQCBzdHJ1Y3QgZnRyYWNlX2xp
-a2VseV9kYXRhIHsKIAkJCSBfX3NjYWxhcl90eXBlX3RvX2V4cHJfY2FzZXMoc2hvcnQpLAkJ
-XAogCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9jYXNlcyhpbnQpLAkJXAogCQkJIF9fc2Nh
-bGFyX3R5cGVfdG9fZXhwcl9jYXNlcyhsb25nKSwJCVwKLQkJCSBfX3NjYWxhcl90eXBlX3Rv
-X2V4cHJfY2FzZXMobG9uZyBsb25nKSwJXAorCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9j
-YXNlcyhfX2R3b3JkX3R5cGUpLAlcCiAJCQkgZGVmYXVsdDogKHgpKSkKIAogLyogSXMgdGhp
-cyB0eXBlIGEgbmF0aXZlIHdvcmQgc2l6ZSAtLSB1c2VmdWwgZm9yIGF0b21pYyBvcGVyYXRp
-b25zICovCg==
+-----BEGIN PGP SIGNATURE-----
 
---------------DOSrrXCulbNPxmqX14qrO8oc--
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcD82oACgkQJNaLcl1U
+h9B8vQf/f+utPoBaQipGj9uZ9LhmVUzoDgoFI2BI9OjypVnf2Dbvytwow5MGzxjw
+UPWx6WsalMR6f2vXz5D/vjXkZfHtRtEZ2kSiihcOVQLuamSDMJBRd4HxZ716ytKv
+MK3KE9efa6zssJDrY31blYzcGOucrLxXHG/2Y6KfDWhnsTFH9yQFmEL8OF55xC5o
+bPVS0FTzrH0Kplrs2tD5g3p48ngm0tPxO9LzuY5SMrx0Z6P0YyxzCx63ZjHgkYMz
+DONDFxLORmYr9DGleHsbVOXY8vtmgLhUJRxWKTx45Ene6VwdEqxyNK44NY4E1p2l
+GElS7IvtAXqDRzAhubNdh8ToPrNqHA==
+=9dFi
+-----END PGP SIGNATURE-----
+
+--EQSz8Y55RytcW1nf--
 
