@@ -1,142 +1,205 @@
-Return-Path: <linux-kernel+bounces-352963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9C199268A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A18992691
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A571F22961
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F3C281811
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BF0187855;
-	Mon,  7 Oct 2024 08:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65A3187879;
+	Mon,  7 Oct 2024 08:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RjT9NDll"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uz4OQYvq"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86671292CE;
-	Mon,  7 Oct 2024 08:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAA2849C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288054; cv=none; b=bGiNalSEAseKqlv08UbNksozBlpnyATRcUZW5qkTClfD6sbb2nmc7aiXTMvu/9gVBEmLEd5tvQowfOBaKW4dZhnpJ4hOb7LPDZZkfiqUv+ma+UW9AqjYNflC2rzHfSwtEAqiW+EkVVuuzm8uPI3qd+ngaPMb2loTVRo3KML8rRs=
+	t=1728288278; cv=none; b=VkdZN0J0dICCtAR/+grcYNG5SoDF/HOdHhCycTHCd6RwEN3LXMIxiCb1Ld8Lmu1YCF7+UQT5ymgjSfMf6Y8P9z+HkBc0fEoez+8bxEuT93p2IJpN8lx6WHs8PqdaqxmIMIUoWsLHKdAhXUwu1425/do4mKZXmeKj7sEOjVwwd0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288054; c=relaxed/simple;
-	bh=+5Ki3Qd+uQCkPFiAQomOVnbgyWWRRbTdJWTqhHlaVq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kU0Xo+58h0ZoCrWbK0aSiqKmum9rl2E/8wQaLd5uPv6eKehUn3Qepb2y6s2k2kN7ImTGV5ctRKhIl1dtKOZILWytXHVp/mtarEk7+uZVR8rm4Eokp3jLgoLPBzVDRnNpgnHPWPzfxuKXJ0yi5sQ3QhZcMRhYaapPI2+i4eddkNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RjT9NDll; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728288051;
-	bh=+5Ki3Qd+uQCkPFiAQomOVnbgyWWRRbTdJWTqhHlaVq4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RjT9NDll8qfp1wjFx0DPdEJkWpdQKui1hxY2PaCaHV9TbAah1XFOEYX9ir6cPI6Z4
-	 M8tcogeET2C6IzHyqoZvSiPruwky+1RM9m7ro8G48pudLC0J1At0IgME+MtjrjyDTv
-	 meAqySur6PPaKEegLuzuEbVnFT4ixqkncq8YSc8va2dzuTnD48CY0+B/7iBH2zVKeH
-	 CHPHmCkGngdEpKV5kgtZwh8WdYv5tCtWiiYTf41GO996NZejoo6SJKNuSSD/B4qeuE
-	 sZ7vdTloIBTD3/YwSMxVcjUE8GqTiErPxKRGKl43YQypKKbDuMWTr/2mt3cEXMjbJ2
-	 50uLKGa8rd/Xw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6BF8B17E1083;
-	Mon,  7 Oct 2024 10:00:50 +0200 (CEST)
-Message-ID: <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
-Date: Mon, 7 Oct 2024 10:00:49 +0200
+	s=arc-20240116; t=1728288278; c=relaxed/simple;
+	bh=d0Nr50T9BuaMEGr5DGSvDugCxM7HjgbbhG+C5L9WMpc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=bV8Z5WCGfkH1/oXqWPWFSGCW8O/l9FdVgPZqjpTvUq95JdnSWFqIwVRIUI7ecH97wj4rKsM6MxEyz4fdf/IMoRy/U5M4BgLCo7eHbEl7IhpQAChh/f7W0msJsUHyXNleCxGh6plGXDzeM1RmDWQ7gtrMTw2lcKUGEMHbgcgtYsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uz4OQYvq; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241007080433epoutp0201a3283d79785ebd1420931c09b4095a~8HQc1FQqd0801308013epoutp02N
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:04:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241007080433epoutp0201a3283d79785ebd1420931c09b4095a~8HQc1FQqd0801308013epoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728288273;
+	bh=RPX6OnITTkeWg+UgZ7xmUxRv/ENHDG8npcBLJcp5fAY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=uz4OQYvq4cKOWw9bVFCPXUos0m/6UHM42coAhY4D+NhdEYAd/iIjiTJcWxR9hJtoB
+	 saLRXTr0muP+ZIAg7ZhjdJ5jFIiWPGMR7N6IO6Yd767cQMdSojzU+ukitEAXLDmEVY
+	 RTB6kBGuo7OJ81Dy+dYB8uHtHdy1ZshcsFcpk1wY=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241007080433epcas2p392d0ad9103fff9170110096eae69174b~8HQcONqxU0759607596epcas2p3T;
+	Mon,  7 Oct 2024 08:04:33 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XMWrw5GVTz4x9Q7; Mon,  7 Oct
+	2024 08:04:32 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F7.55.09770.01693076; Mon,  7 Oct 2024 17:04:32 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241007080432epcas2p29b631c66d2303786552d52f8aed81da7~8HQba05vB2947929479epcas2p2K;
+	Mon,  7 Oct 2024 08:04:32 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241007080432epsmtrp178678f4dc0bbfa575a7fa9ca1d5b403d~8HQbZ9yAk1186511865epsmtrp1e;
+	Mon,  7 Oct 2024 08:04:32 +0000 (GMT)
+X-AuditID: b6c32a46-00dfa7000000262a-35-67039610e35b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	40.FE.08227.01693076; Mon,  7 Oct 2024 17:04:32 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241007080431epsmtip2930faf35e22019d19dcda213c25e6499~8HQbI7JlJ1335713357epsmtip2P;
+	Mon,  7 Oct 2024 08:04:31 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzk+dt@kernel.org>, "'Rob Herring'" <robh@kernel.org>, "'Conor Dooley'"
+	<conor+dt@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+	"'Sylwester	Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+In-Reply-To: <db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
+Subject: RE: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
+ hsi0/1 clock support
+Date: Mon, 7 Oct 2024 17:04:31 +0900
+Message-ID: <00a501db188f$8a7142b0$9f53c810$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-To: Frank Wunderlich <linux@fw-web.de>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-References: <20241006153447.41377-1-linux@fw-web.de>
- <20241006153447.41377-2-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241006153447.41377-2-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFSCxBMLhmUc00YvRpkCeNGXSX0HwHNkDzvAdUnffwB72SclrNgdZtw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmha7ANOZ0gz1zNSwezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi5ax7bBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
+	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7Y8v0lY8FFgYrdO7czNjAe
+	5+1i5OSQEDCR2LLsCEsXIxeHkMAORonjB5eyQzifGCV6jl+Bcr4xSnw5MIsRpqX99342iMRe
+	Rom+xvNQzktGiSVPVzGDVLEJ6Eus7r4NlhAR6GGW6Jk7AWwLs8A6Roldf7awg1RxCthJPFo9
+	lQXEFhZIktg5bQWYzSKgItH6+gMbiM0rYCkx4+x/RghbUOLkzCdgNcwC8hLb385hhrhJQeLn
+	02WsILaIgJvEnAsbWCFqRCRmd7YxgyyWEDjDIbFg1WcghwPIcZH4tl8eoldY4tVxiHskBKQk
+	Xva3Qdn5EpOvv2WC6G1glLj2rxtqmb3EojM/2UHmMAtoSqzfpQ8xUlniyC2o0/gkOg7/ZYcI
+	80p0tAlBNKpJfLpyGWqIjMSxE8+YJzAqzULy2Cwkj81C8sAshF0LGFlWMYqlFhTnpqcWGxUY
+	waM7OT93EyM4EWu57WCc8vaD3iFGJg7GQ4wSHMxKIrwRaxjThXhTEiurUovy44tKc1KLDzGa
+	AoN6IrOUaHI+MBfklcQbmlgamJiZGZobmRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
+	xBPZGVH07kL8hZADs3Nm+p/e5PDmj0zc3/JlJpoclxeV6Ucc3698aG9YCOtkI1ZTQ/XZ8Zyy
+	N/U+hhu03duqNluCU+jdetvCOsnK4MsBDL/s5mt3Wee0qtb8PCrT+uz1dq2psvaLnMJv73sV
+	Ee8Us3M7w3T3i4IFl+ouv+z+ZasRtVhmu6e+cT6DivLGHxLFS19f2SxUf/LtjLUPlNZkhv6Q
+	e8fE/zcu5Nrsw/zv913ItP3QF37v7HoOM1aH9O4PP+QF+J9x1xi+0yzOK7OdV/9ecL5sv28W
+	56Lvj6TSdCz7PIqEE7/bv5mzsVpZbd+HCLMWjfW3WXMCHkXo9etft53wZh2n+ovgqe5BahOU
+	WIozEg21mIuKEwECQxTATQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvK7ANOZ0g8vT2C0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi5ax7bBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
+	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZWz5
+	/pKx4KJAxe6d2xkbGI/zdjFyckgImEi0/97P1sXIxSEksJtR4m3XahaIhIzExob/7BC2sMT9
+	liOsEEXPGSX+nd/EDJJgE9CXWN19G6xbRGASs8SUF3dYQBxmgU2MElsaXjJDtHxnlDjdsBBs
+	FqeAncSj1VPBdggLJEjsbt7HBGKzCKhItL7+wAZi8wpYSsw4+58RwhaUODnzCVg9s4C2RO/D
+	VkYIW15i+9s5zBD3KUj8fLqMFcQWEXCTmHNhAytEjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZ
+	wMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOC61tHYw7ln1Qe8QIxMH4yFGCQ5m
+	JRHeiDWM6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73uTRESSE8sSc1OTS1ILYLJMnFwSjUw
+	rV03vVUk0Y514a+9Js6P/tzbULIq/+QjFfGvH5il4trtAxPzNX65e0p/3epQrs6yZ/nBja4a
+	yansPbxf+bIS97jOj13C+q3PL5H1WKnMnq/nv7hM2peR2H1U4szXvxlnJPkV5LjX+60QfODN
+	k9vwtLjBaate6+13H2fV+55bYJLOdsk5h93OXc6ofs2nuTbLPBcFS5eKN5rX+x8TfaLipbOv
+	laVrccRVFr1nG04Lv/+8aV7OzaVP+JZ1LGo1OVNn3Xug71LG2+R01cxd8xy09mofX1yxv1v4
+	mwOL1rrjLk9ttoduVlkv9c1ixt5X3AcnLv7Fejs9If7UCp25ogJtTHzbdcxi4j4+D80w3rFd
+	iaU4I9FQi7moOBEAxBs1ZjoDAAA=
+X-CMS-MailID: 20241007080432epcas2p29b631c66d2303786552d52f8aed81da7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d
+References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
+	<CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
+	<20240912103856.3330631-3-sunyeal.hong@samsung.com>
+	<db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
 
-Il 06/10/24 17:34, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
+Hello Krzysztof,
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Monday, September 30, 2024 8:36 PM
+> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; Sylwester
+> Nawrocki <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
+> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>
+> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> clk@vger.kernel.org
+> Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc
+> and hsi0/1 clock support
 > 
-> Add binding definitions for mmc on MT7988 SoC.
+> On 12/09/2024 12:38, Sunyeal Hong wrote:
+> > Like CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and
+> USI_I3C.
+> > Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
+> > Like CMU_HSI0, this provides clocks for PCIE.
+> > Like CMU_HSI1, this provides clocks for USB and MMC.
+> >
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > ---
 > 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> v2:
-> - fixed minItems to 4
-> ---
->   .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
->   1 file changed, 24 insertions(+)
+> ...
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> index c532ec92d2d9..7380f72ea189 100644
-> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> @@ -21,6 +21,7 @@ properties:
->             - mediatek,mt7620-mmc
->             - mediatek,mt7622-mmc
->             - mediatek,mt7986-mmc
-> +          - mediatek,mt7988-mmc
->             - mediatek,mt8135-mmc
->             - mediatek,mt8173-mmc
->             - mediatek,mt8183-mmc
-> @@ -263,6 +264,29 @@ allOf:
->               - const: bus_clk
->               - const: sys_cg
->   
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt7988-mmc
+> > +
+> >  static int __init exynosautov920_cmu_probe(struct platform_device
+> > *pdev)  {
+> >  	const struct samsung_cmu_info *info; @@ -1154,6 +1431,19 @@ static
+> > const struct of_device_id exynosautov920_cmu_of_match[] = {
+> >  	{
+> >  		.compatible = "samsung,exynosautov920-cmu-peric0",
+> >  		.data = &peric0_cmu_info,
+> > +	}, {
+> > +		 .compatible = "samsung,exynosautov920-cmu-peric1",
+> > +		 .data = &peric1_cmu_info,
+> > +	}, {
+> > +		 .compatible = "samsung,exynosautov920-cmu-misc",
+> > +		 .data = &misc_cmu_info,
+> > +	}, {
+> > +		.compatible = "samsung,exynosautov920-cmu-hsi0",
+> > +		.data = &hsi0_cmu_info,
+> > +	}, {
+> > +		.compatible = "samsung,exynosautov920-cmu-hsi1",
+> > +		.data = &hsi1_cmu_info,
+> > +	}, {
+> 
+> This is unrelated change. Please rebase.
+> 
+Could you please explain in more detail the comment mentioned above?
 
-Are you really sure that you can't reuse the MT7986 compatible?
+Best Regards,
+sunyeal
 
-Cheers,
-Angelo
-
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
-> +          items:
-> +            - description: source clock
-> +            - description: HCLK which used for host
-> +            - description: Advanced eXtensible Interface
-> +            - description: Advanced High-performance Bus clock
-> +        clock-names:
-> +          minItems: 3
-> +          items:
-> +            - const: source
-> +            - const: hclk
-> +            - const: axi_cg
-> +            - const: ahb_cg
-> +
->     - if:
->         properties:
->           compatible:
+> Best regards,
+> Krzysztof
+> 
 
 
 
