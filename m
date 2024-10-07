@@ -1,124 +1,215 @@
-Return-Path: <linux-kernel+bounces-353525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02B3992F09
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:25:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A22992F0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B079A284411
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A16E1F218F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4E41D798E;
-	Mon,  7 Oct 2024 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160E21D5CD6;
+	Mon,  7 Oct 2024 14:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d80rBEkU"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i3As6tQ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468B31D61A2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B251D54DC;
+	Mon,  7 Oct 2024 14:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311084; cv=none; b=G4yFDSxLvEO6FGXeuCktnIUAIi4TwYQ23az0Mk58kCQE/bYwd4UP63N6FD3AE3HJzLEUul7OYGv3MPRoFEPy31O7HBvfxOMiePVZG7a5T79rLO3eBA6WujONIAMafC5Kfn12xvSB5YrBq6oc2wlUwaoNwjI6PDPsTrE544bppoo=
+	t=1728311090; cv=none; b=snn+6hdXNfKVHdrIpRykBLl/BFfD4l72IYcjByjjHeouN0vKv1/zlQsdSfIV84xf/ehMenNJhYRzal5nNH4d9k4wohdLOHwqhWtdrGelJdazvJVfbP98jzO7SlPcC6VpmSYvt/q4D5A4iAl9V/8XvYDiAxppdhUfgDdmtvXnDJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311084; c=relaxed/simple;
-	bh=M/ln/IfRG23UW65hQDx2sPi2M1oZ1ULBSaWU8tBPOQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=smLJqIRSB/SKI2opExIGrSOK7esOjEUCrmk8PfRUmfdK+z5exCIx20XNMK/HrTZsB2h8ZFHHyOh7I6pop1aO8t5VoNHTOKoqSG4mpcvNR5u+CflBXj58WWtfnUt97A0C3C+zMnQauJ3r7ZrWXHJhaPu2+bbVbG/Is8TbQmINL+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d80rBEkU; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db908c9c83so2805228a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:24:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728311082; x=1728915882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CMzHKJcLgL4mw0mj0q3+1HsZsdarzSx1Vg2HXSvY4Sk=;
-        b=d80rBEkUzhDsi5lz1SwK7HDvpLitxX7Ntn8CG5K7XwOl2Nrz23NXVs+7EVOAO2tgIG
-         aZReRkULwcbABT4p8T8HUphRUE3rKmgmG16V7do2uJ2eJcRGpsY+ph/teyPrNz6p9ADh
-         B6C378f4XkUGRY2mo/opqE6kOlGddUPQOy2O63+3jx8RZUr3lr1AtYpnIZHsf8Aj0Jz9
-         SlAfQqOH6tx8yxJBnyt+UjnauLQYhAC+vi6KrZ+PoZgsSvlWiXwmWC687IcBAmg/aNoK
-         rCIaEZ0zX1gndXDenp9PIHMUwnw9DMD20xoCR6OFOdqZT31i552UOcn0raqiabDTal09
-         Yqgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728311082; x=1728915882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CMzHKJcLgL4mw0mj0q3+1HsZsdarzSx1Vg2HXSvY4Sk=;
-        b=VMdR+RVgcKXRTBBynG/LZVH4Af012o3Gas7TvwbmmEWTUmxj8JCnoYIaxEcBET5uD0
-         oWHdk8HU+vAup4jZvJvu7X+ePYeGvVOo4v5XjmGdYO9wFQhPTWbmKWPPT7zTfu9qznKN
-         mqB/5Q86SvR4XV78TwYWdU1fXUYguoOZC+Su57XaKvpcSeh0bIEFMiqMgoJo6dzDaQgm
-         y5SVSjJjqiwblPbxvmtU3mtiGuZ8PwyEL3o7sk8Qb0LuW2RAI74A3ItySmliSDRF9kf6
-         CdqmE5yAN8MPNUvcR9nyNcM0hH/Un35JPy2KbiBQEphzkyVf0SnP1cPqTYWnNB1AzbPS
-         v4MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuoyPrB9j8XfZQMvbZ3BrktCRJXbm0Fpmh20D5LMNSyDFg8L1kpiyCXIcDCBX+soYqphWQ21QoTyhCK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPTXKvlZpwEAYqjZFxoJoZqO/EfuA/d1Mw6F7/YycmAGuI86NK
-	gpnW2JHCrD9w1CDijEeIpv3tkrcHpYlDx/SFOhGbJR8sHzG5Ry/hpjknzEjVp3POD3JM6xea7z4
-	4XVdKa6zWgfdfQUywBGf78NLTsHhssbfM+MQc
-X-Google-Smtp-Source: AGHT+IFw6uM5+6C7SMH67mk+Hc1sAMfXhD2yPqK2binLtdR+dEflXw9OzVkLv56wMCTjpeR0STCBxEH2wN1oY363ons=
-X-Received: by 2002:a05:6a20:d81a:b0:1d3:5202:f9a8 with SMTP id
- adf61e73a8af0-1d6dfa3b32bmr18029273637.15.1728311082348; Mon, 07 Oct 2024
- 07:24:42 -0700 (PDT)
+	s=arc-20240116; t=1728311090; c=relaxed/simple;
+	bh=xtD5r6R1+iAiOT5E2n5P7WbselsT4vAju7aEoR9WU7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2jYnBbBZIOvVoetxN9RBjS8PJynscFOhYtIgmNjgaVTi/iCgxt39guTC3dEKZ22FOJBkGjAmni4tjX8FAqXGSqKaQic5puinfypcVv63fPAYzaTgukcEwvb4G3Zgg9XJRYeSkTfXGxAO+qmgVYKeeAyetHt+ubSxX7sECUdrFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i3As6tQ6; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728311089; x=1759847089;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xtD5r6R1+iAiOT5E2n5P7WbselsT4vAju7aEoR9WU7k=;
+  b=i3As6tQ68sepqwtt+1vnF5rp+rKpQwhXsmhEfNiBX5oHPJPt4Nkpe5L8
+   DFJoWbbjcpG/k310lpxQuwkiyqzUKdqXgY12Yjx5D5F+xX+LwSthYz6AL
+   2LwnQV3t+TLhyF7VeRqN83jQGmVvpPfJ3DRIf0Id19hMA2qj3u8NoD03q
+   5100qFwDTyYVlE+XPbY6Yes+Hl4ag6qFv/tH+vHwBYCF5Wb2+MolHiyRb
+   lr4yDkviu8rEtdwd2r55ylhZdmDXYHzUjOAJM+RonHu4bYROhH+IsrZzH
+   AFOXSoZCPsz2YThAnkTAxjg0wkD8DQJSteVlZVlbdsFKBO9d9vYdbrx3x
+   w==;
+X-CSE-ConnectionGUID: a+GtRHKtT2SPaVPK8Qr+Tw==
+X-CSE-MsgGUID: OLW3yXJ4RV6MDufSlFTOiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="38066724"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="38066724"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:24:48 -0700
+X-CSE-ConnectionGUID: GY0tNvgjRFGpfhvvU6AzHA==
+X-CSE-MsgGUID: B/OfJPxKRyKdLRPqMuh9HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="106244537"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:24:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sxofB-00000000F60-2JO7;
+	Mon, 07 Oct 2024 17:24:41 +0300
+Date: Mon, 7 Oct 2024 17:24:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <ZwPvKST69TdcaVO8@smile.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <65838cc0-9a20-4994-a0ef-9cd50bb00951@redhat.com>
+ <Ztmlw1q3Djn94MRQ@smile.fi.intel.com>
+ <09d44b21-9739-417b-a76c-5383fcbde96b@redhat.com>
+ <Ztmo_EITDSRewSka@smile.fi.intel.com>
+ <922e97d9-e16a-4bb8-90b0-4bb3347174e8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-4-fujita.tomonori@gmail.com> <CANiq72=YAumHrwE4fCSy2TqaSYBHgxFTJmvnp336iQBKmGGTMw@mail.gmail.com>
- <20241007.151707.748215468112346610.fujita.tomonori@gmail.com>
-In-Reply-To: <20241007.151707.748215468112346610.fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 7 Oct 2024 16:24:28 +0200
-Message-ID: <CAH5fLghps=Aa69Aye5PCGu6LuoHomMcQYEN1USTd5JiBkLdJLQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/6] rust: time: Implement addition of Ktime
- and Delta
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	miguel.ojeda.sandonis@gmail.com, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <922e97d9-e16a-4bb8-90b0-4bb3347174e8@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 7, 2024 at 8:17=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> On Sat, 5 Oct 2024 20:36:44 +0200
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
->
-> > On Sat, Oct 5, 2024 at 2:26=E2=80=AFPM FUJITA Tomonori
-> > <fujita.tomonori@gmail.com> wrote:
-> >>
-> >> +    fn add(self, delta: Delta) -> Ktime {
-> >> +        // SAFETY: FFI call.
-> >> +        let t =3D unsafe { bindings::ktime_add_ns(self.inner, delta.a=
-s_nanos() as u64) };
-> >> +        Ktime::from_raw(t)
-> >> +    }
-> >
-> > I wonder if we want to use the `ktime` macros/operations for this type
-> > or not (even if we still promise it is the same type underneath). It
-> > means having to define helpers, adding `unsafe` code and `SAFETY`
-> > comments, a call penalty in non-LTO, losing overflow checking (if we
-> > want it for these types), and so on.
->
-> Yeah, if we are allowed to touch ktime_t directly instead of using the
-> accessors, it's great for the rust side.
->
-> The timers maintainers, what do you think?
+On Thu, Sep 05, 2024 at 02:57:34PM +0200, David Hildenbrand wrote:
+> On 05.09.24 14:50, Andy Shevchenko wrote:
+> > On Thu, Sep 05, 2024 at 02:42:05PM +0200, David Hildenbrand wrote:
+> > > On 05.09.24 14:36, Andy Shevchenko wrote:
+> > > > On Thu, Sep 05, 2024 at 01:08:35PM +0200, David Hildenbrand wrote:
+> > > > > On 05.09.24 12:56, Andy Shevchenko wrote:
+> > > > > > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+> > > > > > > Huang, Ying wrote:
+> > > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-We already do that in the existing code. The Ktime::sub method touches
-the ktime_t directly and performs a subtraction using the - operator
-rather than call a ktime_ method for it.
+[..]
 
-Alice
+> > > > > > > > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+> > > > > > > > > message.
+> > > > > > > > 
+> > > > > > > > Emm... It appears that it's a common practice to include "Cc" in the
+> > > > > > > > commit log.
+> > > > > > > 
+> > > > > > > Yes, just ignore this feedback, it goes against common practice. Cc list
+> > > > > > > as is looks sane to me.
+> > > > > > 
+> > > > > > It seems nobody can give technical arguments why it's better than just keeping
+> > > > > > them outside of the commit message. Mantra "common practice" nowadays is
+> > > > > > questionable.
+> > > > > 
+> > > > > Just look at how patches look like in the git tree that Andrew picks up.
+> > > > > (IIRC, he adds a bunch of CCs himself that are not even part of the original
+> > > > > patch).
+> > > > 
+> > > > I know that and it's historical, he has a lot of the scripts that work and when
+> > > > he moved to the Git it was another long story. Now you even can see how he uses
+> > > > Git in his quilt approach. So, it's an exceptional and not usual workflow, hence
+> > > > bad example. Try again :-)
+> > > 
+> > > Point is, it doesn't matter what we do in this patch here if Andrew will
+> > > unify it at all.
+> > 
+> > Point is, that this is exceptional. And better to teach people based on better
+> > practices, no?
+> 
+> "Better" in your opinion.
+
+> I don't care
+
+Exactly, that's what I pointed out as well to the previous reply to Dan:
+it's matter of our care about number of things.
+
+> about a couple of Cc lines in a git
+> commit. They've been useful for me, apparently not for you.
+
+I hardly can imagine how _nowadays_ this may be still useful in this form.
+What I admit is the lore archive and Link tag is really useful. Much more
+than bare Cc list.
+
+> If you succeed in convincing Andrew to change it, then Andrew can fixup his
+> scripts to remove all of these from the patches he sends out.
+
+Maybe at some point in time. As you know he is the most conservative maintainer
+(from tooling or workflow perspective), so it might take time, but I'm going to
+do my best to convince people to look at this problem from different angles.
+
+> > > > > Having in the git tree who was actually involved/CCed can be quite valuable.
+> > > > > More helpful than get_maintainers.pl sometimes.
+> > > > 
+> > > > First of all, there is no guarantee they _were_ involved. From this perspective
+> > > > having Link: tag instead has much more value and supports my side of arguments.
+> > > 
+> > > Link is certainly preferable. Usually when I fix a commit, I make sure to CC
+> > > the people that are listed for the patch, because it at least should have
+> > > ended up in their mailbox.
+> > > 
+> > > Often, it also helped to see if a buggy commit was at least CCed to the
+> > > right persons without digging through mailing list archives.
+> > 
+> > How is it better than having it in lore.kernel.org in archives where you even
+> > see who _actually_ participated in discussion, if any?
+> 
+> You might have to dig through multiple code revisions to find that out.
+
+The Link tag will refer to the one that has been applied. It keeps not less
+information as bare Cc list, but on top one may:
+
+1) either put a few Link tags with versioning;
+2) or refer to the previous version of the patches in the respective cover
+letter.
+
+> Again, I used this in the past quite successfully.
+> 
+> > Again, Cc neither in the Git commit, nor in the email guarantees the people
+> > were involved. Having Cc in the commit just a big noise that pollutes it.
+> > Especially I do not understand at all Cc: mailing-list@bla.bla.bla cases.
+> > They are not people, they have a lot of archives besides lore.kernel.org,
+> > only waste of resources in all means of that. I tried to summarize that in
+> > the submitted patches to the documentation, that I referred earlier in this
+> > thread to.
+> 
+> I, for my part, never add "Cc:" to patches or cover letters that refer to
+> mailing lists. I add these manually to my git-send-email "--cc" list. I
+> though Andrews script also fix that up, but I might be wrong.
+
+I see some people / scripts? still put mailing lists to the Cc list which
+comes as part of the commit messages. This is most odd part to me why.
+
+> Anyhow, this is a discussion to be had with Andrew, not with me, so feel
+> free to engage with Andrew to change is scripts to throw away all CC.
+
+I will try, definitely.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
