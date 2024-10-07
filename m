@@ -1,231 +1,143 @@
-Return-Path: <linux-kernel+bounces-354109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B349937E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 100E09937E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09B91C236A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428EF1C23660
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022371DE4CC;
-	Mon,  7 Oct 2024 20:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FECB1DE4CA;
+	Mon,  7 Oct 2024 20:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jPNHNFFf"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRqb7x5Q"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52FC1DE2D3;
-	Mon,  7 Oct 2024 20:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFD91DE3D8;
+	Mon,  7 Oct 2024 20:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331572; cv=none; b=fqhdmEVUz0TiOqIjbVrA2b3ekLwnTPxR2C+5PLXC+yYpskH0+EwSRKccpSfLg0t6g2uqQ7MVhkmcJIrYYtl6HWlDqjh/OhZ23A/YXaBC2iSWD4t8EHK46RLZNEumI+Ks12WfbRNs5ah4FPnYLuhTuAJ6w3w67Hv+KYnkACxo3BQ=
+	t=1728331607; cv=none; b=L3GGTDUqneD3JzfuOwOQ88U3t1A9AgHFpUZ/c/VC9VdVPNVco2+tI+eCHgS9jA2+KHJvFSNLI33QE+CPH3FoAnHhqPTo0WaR8Frj+tLcky0bqAGvMZCy7K4xtT+mrbHUSgFtI0VMBQYGZB33VqTCASMLZstDdaGsXNUecnJ9ylg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331572; c=relaxed/simple;
-	bh=fF+pVLgA3Hex/Fn5K86ObxcJMLlJ2PovFtoJ6BAxvAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8aBFNZ+wcKTxJF1NBtXDrFprIEapEwZWqpXlhmWWnIsNP1lh1rFOnpkqq3bROyWsQ69zZ10f77SpxkvtxANhac4PMEoa5wIVfY3YPc0QQqL3ru1weHpnHVBnRO543171a7OVg6afD59SVlkvrwHaFc8z3AijdYagV5ez3SSrrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jPNHNFFf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8ECA12EC;
-	Mon,  7 Oct 2024 22:04:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728331473;
-	bh=fF+pVLgA3Hex/Fn5K86ObxcJMLlJ2PovFtoJ6BAxvAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jPNHNFFf5BM8Wsl91oB26SQm5Su22Wwpm4oybF58QnZciWdUYMIWHwajndpk/TH6D
-	 2EE9N5Ub9jKATh2jmfDbMSrlUAViTK8eHwWYJ+63SNqh2PK4ZdIOaz1qkWxr86UydF
-	 uAH6hAeeFiQw6RDz/IuAlIiPVmOgGsNkDjVeF0X8=
-Date: Mon, 7 Oct 2024 23:06:03 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v4 13/17] media: rzg2l-cru: video: Implement
- .link_validate() callback
-Message-ID: <20241007200603.GA28812@pendragon.ideasonboard.com>
-References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1728331607; c=relaxed/simple;
+	bh=GsIwhIQVTTkGLvK7w+sRPrDJNQNLfp5MvJrkD7KllOI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mTiUzNwDPLDWEh19kBmT73+zJusy9zmi49H2dLdampLT2TB3+xg/xk0rdAkm6oCapoyotBh3mPWopV9Yf3llHdIr5lv9DnKrSsNoa2ZP9ax0xM1YVtnPMqKw+prr8g6tDKWFKJOa8yY0qG4utaVlLvZSAyumsIQB+MxFP+gYUgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRqb7x5Q; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so42341665e9.2;
+        Mon, 07 Oct 2024 13:06:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728331605; x=1728936405; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0M3WlIByMpnGigxWTYyi8ul6vf98g2GRWAjBe+Sh3Ms=;
+        b=QRqb7x5Q3GPPabzkIOMExk0VFMpVGiORpEPuXhexMjnR6qgn+clbFbiHIEocl60QqQ
+         e3/gO/6qLmanr+wUlOlEJ3H5o7Aq+uQqDPeXEEOWIJw+j2Y2s2dLX8NkWWk/ZytuTQxD
+         mUcjJzf3HGaE3jZv0ih3y3gPd9Mk/nsHFsru2tBE5t5vR43fP0f9pr5iagyvz0r8KeMH
+         9YhYv2HNBqk4JIsIRXoe3E6B0CerV5zS3JytFoVEu9xQ/CFNjVob6BF6pdbwH6xTjvBu
+         mGE46hNMQiTpIHvIdkVy6lcsJtH3hb1W8oPw/4M6Ny5OLq0J259NdfBWafWSQpT1UXUK
+         k6iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728331605; x=1728936405;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0M3WlIByMpnGigxWTYyi8ul6vf98g2GRWAjBe+Sh3Ms=;
+        b=BpRyEwZVjfTsjsrYqqMSTZvJIrV+XvKyimEwbXS4lr09GXS0JTSLOtnPXCDlGt/hyt
+         ouu6yVhdjjWpeuf/YILDw0UPibyo0ZgOD5v1uWcnZInUU62tspDrpF1UsEiDKWY0uI4V
+         od/RsIcn3t9FLPrwpIIb8Hu7Z+62yjXTkrtOj2mU3OjihS9stzGF+kpRxgNgR/KWMuGF
+         CK4DHsHD9U+6PLP7ukBuqpVDo9MiWiVjCdIrXLNgaYVYdLwwNoo3d7p7z9aQDtLsCVtJ
+         GHWv08zgnHhyqgFhCQrIBajokGB98YtmXZBgsBDi3Xlb1ZnkRB1goDEqIWbR1wN//9J5
+         PryA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYyQKzpukhLU7bViRnym4J0Fu+LkvScuKDdIXxb/012RpbQfwYhgNG2Wb449Jlc0MaSJSm13eR5WI=@vger.kernel.org, AJvYcCXrpIehXaEoT+6K2xeeCjBuS8EqYCCE1vPD9nzVrpYmgRJFmRQBVu5zI+Bs/CVBs8nwEKSMNZZm9WW5s03i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMGsjQkiIMv6SreV04yNqG0I5zZckU/Ru+hNmH4xvlo1i9Wcod
+	DEdc/vqyGGRxUOlJmfTDaGhaxT1XkbU4Oiq2xNJTaoBa8Cux1gpz
+X-Google-Smtp-Source: AGHT+IHH5ZiAIKuC+TEjXQZ5x1KRzck1heAcIRWoxW8bWtIYUwLAHIpeuI6Uc97Lbn/8/dp8gDilGg==
+X-Received: by 2002:a05:600c:3b18:b0:42c:b34d:720c with SMTP id 5b1f17b1804b1-42f93184f9bmr21696565e9.4.1728331604449;
+        Mon, 07 Oct 2024 13:06:44 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-26cc-001d-7ed0-e346.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:26cc:1d:7ed0:e346])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89eda21esm85547155e9.46.2024.10.07.13.06.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 13:06:44 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/2] iio: {amplifiers,dac,frequency,resolver}: add
+ missing selects in Kconfig
+Date: Mon, 07 Oct 2024 22:06:37 +0200
+Message-Id: <20241007-ad2s1210-select-v2-0-7345d228040f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE0/BGcC/3WNywrCMBBFf6XM2sjkIUZX/od0MaTTdqAPSUpQS
+ v7d2L3Lc+Ceu0PiKJzg3uwQOUuSdalgTg2EkZaBlXSVwaBxGtEq6kzSRqNKPHHYFCFdLTmP1hP
+ U1StyL++j+Gwrj5K2NX6Og6x/9n8ra4XKob65i+19sPYxzCTTOawztKWUL+G4eyiuAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, 
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Cristian Pop <cristian.pop@analog.com>, 
+ Mircea Caprioru <mircea.caprioru@analog.com>, 
+ Alexandru Tachici <alexandru.tachici@analog.com>, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728331603; l=1346;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=GsIwhIQVTTkGLvK7w+sRPrDJNQNLfp5MvJrkD7KllOI=;
+ b=1WDaejsWNoLavonRb9Irnhoqiv/YOb4cMddMQvFLP9V2JuiF+efcIPjB/iGMjpEYi/uI0Siyh
+ 8UvptnXXnN0BzUDjEXLujKEv2mGbx0lPmAZccL7v1ODhNV/YlMfuusd
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Prabhakar,
+This series adds some missing selects in the Kconfig entry for the
+following drivers:
+- ad2s1210 (BUFFER, TRIGGERED_BUFFER, REGMAP)
+- adf4377 (REGMAP_SPI)
+- admv4420 (REMGAP_SPI)
+- ada4250 (REGMAP_SPI)
+- ad4770r (REGMAP_SPI)
+- ltc1660 (REGMAP_SPI)
+- stm32-dac-core (REGMAP_MMIO)
 
-Thank you for the patch.
+Usually you will not notice the missing dependencies, but tiny
+config files where those drivers are include will lead to multiple
+errors when compiling and linking.
 
-On Mon, Oct 07, 2024 at 07:48:35PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Implement the `.link_validate()` callback for the video node and move the
-> format checking into this function. This change allows the removal of
-> `rzg2l_cru_mc_validate_format()`.
-> 
-> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 91 ++++++++++---------
->  1 file changed, 47 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index ceb9012c9d70..385b4242db2f 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buffer *vb)
->  	spin_unlock_irqrestore(&cru->qlock, flags);
->  }
->  
-> -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
-> -					struct v4l2_subdev *sd,
-> -					struct media_pad *pad)
-> -{
-> -	struct v4l2_subdev_format fmt = {
-> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> -	};
-> -
-> -	fmt.pad = pad->index;
-> -	if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
-> -		return -EPIPE;
-> -
-> -	switch (fmt.format.code) {
-> -	case MEDIA_BUS_FMT_UYVY8_1X16:
-> -		break;
-> -	default:
-> -		return -EPIPE;
-> -	}
-> -
-> -	switch (fmt.format.field) {
-> -	case V4L2_FIELD_TOP:
-> -	case V4L2_FIELD_BOTTOM:
-> -	case V4L2_FIELD_NONE:
-> -	case V4L2_FIELD_INTERLACED_TB:
-> -	case V4L2_FIELD_INTERLACED_BT:
-> -	case V4L2_FIELD_INTERLACED:
-> -	case V4L2_FIELD_SEQ_TB:
-> -	case V4L2_FIELD_SEQ_BT:
-> -		break;
-> -	default:
-> -		return -EPIPE;
-> -	}
-> -
-> -	if (fmt.format.width != cru->format.width ||
-> -	    fmt.format.height != cru->format.height)
-> -		return -EPIPE;
-> -
-> -	return 0;
-> -}
-> -
->  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
->  				    int slot, dma_addr_t addr)
->  {
-> @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_dev *cru, int on)
->  		return stream_off_ret;
->  	}
->  
-> -	ret = rzg2l_cru_mc_validate_format(cru, sd, pad);
-> -	if (ret)
-> -		return ret;
-> -
->  	pipe = media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
->  	ret = video_device_pipeline_start(&cru->vdev, pipe);
->  	if (ret)
-> @@ -995,6 +951,52 @@ static const struct v4l2_file_operations rzg2l_cru_fops = {
->  	.read		= vb2_fop_read,
->  };
->  
-> +/* -----------------------------------------------------------------------------
-> + * Media entity operations
-> + */
-> +
-> +static int rzg2l_cru_video_link_validate(struct media_link *link)
-> +{
-> +	struct v4l2_subdev_format fmt = {
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +	};
-> +	const struct rzg2l_cru_ip_format *video_fmt;
-> +	const struct rzg2l_cru_ip_format *ip_fmt;
-> +	struct v4l2_subdev *subdev;
-> +	struct rzg2l_cru_dev *cru;
-> +	struct media_pad *remote;
-> +	int ret;
-> +
-> +	remote = link->source;
-> +	subdev = media_entity_to_v4l2_subdev(remote->entity);
-> +	fmt.pad = remote->index;
+The issue was found while compiling the ad2s1210, and then I looked for
+other cases where REGMAP was missing.
 
-	subdev = media_entity_to_v4l2_subdev(link->source->entity);
-	fmt.pad = link->source->index;
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- rebase onto iio/fixes-togreg to drop applied patches.
+- Split [4/8] and extend the code formatting to adrf6780.
+- Link to v1: https://lore.kernel.org/r/20241003-ad2s1210-select-v1-0-4019453f8c33@gmail.com
 
-and drop the remote variable. Or, if you prefer keeping it, rename it to
-source.
+---
+Javier Carrasco (2):
+      iio: frequency: {admv4420,adrf6780}: format Kconfig entries
+      iio: frequency: admv4420: fix missing select REMAP_SPI in Kconfig
 
-> +	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-> +	if (ret < 0)
-> +		return ret == -ENOIOCTLCMD ? -EINVAL : ret;
-> +
-> +	cru = container_of(media_entity_to_video_device(link->sink->entity),
-> +			   struct rzg2l_cru_dev, vdev);
-> +	video_fmt = rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat);
-> +	if (!video_fmt)
-> +		return -EPIPE;
+ drivers/iio/frequency/Kconfig | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
+---
+base-commit: ccf9af8b0dadd0aecc24503ef289cbc178208418
+change-id: 20241003-ad2s1210-select-a0a73a48038a
 
-Can this happen, doesn't the s_fmt handler on the video device ensure
-that pixelformat is always valid.
-
-> +	ip_fmt = rzg2l_cru_ip_code_to_fmt(fmt.format.code);
-> +	if (!ip_fmt)
-> +		return -EPIPE;
-
-Same question here.
-
-> +
-> +	if (fmt.format.width != cru->format.width ||
-> +	    fmt.format.height != cru->format.height ||
-> +	    fmt.format.field != cru->format.field ||
-> +	    video_fmt->code != fmt.format.code ||
-> +	    ip_fmt->format != cru->format.pixelformat)
-
-The last two line seem to implement the same check.
-
-> +		return -EPIPE;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct media_entity_operations rzg2l_cru_video_media_ops = {
-> +	.link_validate = rzg2l_cru_video_link_validate,
-> +};
-> +
->  static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
->  {
->  	struct video_device *vdev = &cru->vdev;
-> @@ -1006,6 +1008,7 @@ static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
->  	vdev->lock = &cru->lock;
->  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
->  	vdev->device_caps |= V4L2_CAP_IO_MC;
-> +	vdev->entity.ops = &rzg2l_cru_video_media_ops;
->  	vdev->fops = &rzg2l_cru_fops;
->  	vdev->ioctl_ops = &rzg2l_cru_ioctl_ops;
->  
-
+Best regards,
 -- 
-Regards,
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Laurent Pinchart
 
