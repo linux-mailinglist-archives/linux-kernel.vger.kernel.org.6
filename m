@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-353350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD54992CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA91992CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4AE61F23EA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219D52820B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CEE1D4174;
-	Mon,  7 Oct 2024 13:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7601D3631;
+	Mon,  7 Oct 2024 13:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="mCoRwMsC"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnG6EYzZ"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C636E1D3644;
-	Mon,  7 Oct 2024 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BADC1D2709;
+	Mon,  7 Oct 2024 13:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728306535; cv=none; b=GQdLhKstwFiAaVwLtQimqw7s+A9e34OZxbwlV/QbBZt7TQg69kcE6KZFdh0ACTMmBuizKEtTOiW0TrtBiK2FTEMTkGVg4cL1o7ffnBQsv6tOo0bOHw3Dpc4SGzwQ2pHlAXAqPIlcE4yllPEIJQb12KwOZEB8c9UmsKoveKHbdZ4=
+	t=1728306612; cv=none; b=d+VbR9ERG50CzVhtAbpMMDxLrScZMaD09RN0C89vk5fGvYYK0UE1D+pG7R5qvbsI+HZwrUYb9DvvDVGVgaov7j11vpxvFTb9m0hLE22387YcIVtt6OmxzqLEmrTJmbFdZBEwKkFG5fPMTkzPGJb373Fc8xycbVlWm/BcpnSOmD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728306535; c=relaxed/simple;
-	bh=Hwn+L+H96EJQ6fbu74oOsk0yt1bHFdhq8Aneq+L/aRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DRNhjvWVegXM89boAolFYycDBSHyWKkZtyqYLnIzzjwFVdMKY66OJH9UuY/vAqMmw1Y17Zz0+RD38x912NRw6Zh2tOTdJ2yIh8F0iHC7QsuEFICB1ENDq+3UFGSF/M5OgUDaTg/pCAQVb0772O/ANzxhEGEhhREHa/h1IxV3TU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=mCoRwMsC; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1728306533;
-	bh=YjS8pOHAMAb3lFxDk/ag9Aaz6T0IQGKpkIr0d1Ynq34=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mCoRwMsCPg0+MVQJ+sI5hryZA7UL982qDRqI5yEclIPiyRC4TaFYgNR7uMktIzsg4
-	 XW9AxBauMiQF4HfOgCP7blZ2H7zxjm2JcFRK22JYoTXqY6NuWxBvUhvNhxQUnHdJ9b
-	 k/oxGeE9gVD8YKlZBEkvKQD1FgeNuLslVZhrU6nw=
-Received: from stargazer.. (unknown [113.200.174.29])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 858D91A41FF;
-	Mon,  7 Oct 2024 09:08:51 -0400 (EDT)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Mateusz Guzik <mjguzik@gmail.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>,
-	Miao Wang <shankerwangmiao@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH | ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
-Date: Mon,  7 Oct 2024 21:08:23 +0800
-Message-ID: <20241007130825.10326-3-xry111@xry111.site>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241007130825.10326-1-xry111@xry111.site>
-References: <20241007130825.10326-1-xry111@xry111.site>
+	s=arc-20240116; t=1728306612; c=relaxed/simple;
+	bh=ZKMOHYyIlUI8eYLsmNF+LAQ3GbeFDijfwV4HhewOToo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cr4hdfJUM29UDZVZSbQuAmkm8VTKq2M/B3a/sSl1xQkR7Qq0Of+b9FhbrOMhNpJuCEftjI4fcH63j8fRyX1S1S8q8MHsNWw330+qMcwLmULNq/r48a3g8WJHsmkeIR6iHi2/gnWxAxsMjiHCLIjMS72X6lkPqO657lLKPJVo4Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnG6EYzZ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e078d28fe9so2979407a91.2;
+        Mon, 07 Oct 2024 06:10:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728306610; x=1728911410; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wl8n/9TAPqgHKrSdwENGKR05xh35YHjoavZofuJF+rs=;
+        b=TnG6EYzZQ0jA0NpySDTBDm5nYX5cJ9dj25r+OUPQ41TOjeoAGnYdk2cdHRweES4Yg7
+         O0jUbW76vA2Zq2u1lXhAD87zljHbDxi60CLFidjNsq9hSZa2BzoiYWeSGwrI28molAoJ
+         htB1X4fo+A7br/5g498I46cK1di9/L0gWt2g/EEHxaMO82lgjrisIXrxnbEB8bYo7+mL
+         qk+3bx0DtRZTotgp/2OSZs152uv6nS4TP8AM0ErcOfCZO5XyVUSLQG+UhStlj/ncvO3H
+         eIG6diMnNwvjUTD9G0lvlWWiYAaZ2KHFd3n24jbMnv97fvNFnRa8KwjaGF4zizLBlAo3
+         4IFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728306610; x=1728911410;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wl8n/9TAPqgHKrSdwENGKR05xh35YHjoavZofuJF+rs=;
+        b=ZVvky2nqd9DcWAUs72xy/Hc0KuVRWQ6CLtfVOx6FpaQ+jR1N0REvjuwdjYKjCOIdzO
+         SD/y1ev3twLAwc+pFRb+eLSQnTRs2Svx8eNGPeXdVJgmQGLdDDxq5pYggOSBg+EWUNRy
+         i5GEHYmGqD2YtDGF6ud0UVnZnkawzEeS5w6zaa4hkEBYOyRVQnWo4xILVACn3qGSrfZh
+         iWlSqz+J5JJle5wTRrABGRQHOliJ+b55Iop9ltlvjUfJgiEKFkLM5rAuW1ItS6p/nCes
+         LvYpxoN7YRghpBrYe7RzlV8B4QmHAPjRK/lMXIUdTUXJoFIjs2dFy5KkaZ2PqPcooEsW
+         FZUA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/xkGAuv/QC2lowfUTz9MrF0JgaW3i2lWy5MvJOQqU/pV5eDyV9ssLGyop60PLQZ11PZ6N/RJWl+nKhukB@vger.kernel.org, AJvYcCX9A953fjYXVq1ASw8XsQa05DS3gvooHmPB5vmgRPyLMa0gohi1twsbCif3IqokWCDlUd9BlqacM+P4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFUE2LizP9Mkv/UX018T28iyhziH68DdtBqojCt+Fdq0845V8R
+	oJwq4dNOuzod0TdGM/LnBJ4Vl7U34ytNa7lQeAuYaraanFoMkkq6
+X-Google-Smtp-Source: AGHT+IH6dkdmoCABOb5rzM+ePQDA5F0ivfidowVx++O9LwE8IbPiZigqZNzfL+ryQGYC2Bfr1FfH2Q==
+X-Received: by 2002:a17:90a:c393:b0:2d3:ba42:775c with SMTP id 98e67ed59e1d1-2e1e620eb83mr14850209a91.1.1728306610132;
+        Mon, 07 Oct 2024 06:10:10 -0700 (PDT)
+Received: from localhost.localdomain ([103.149.249.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85c99c3sm7018643a91.23.2024.10.07.06.10.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 06:10:09 -0700 (PDT)
+Date: Mon, 7 Oct 2024 21:10:27 +0800
+From: Jianhua Lu <lujianhua000@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ath11k@lists.infradead.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sm8250-xiaomi-elish: Add wifi
+ node
+Message-ID: <ZwPdw-O-LnohVV0Z@localhost.localdomain>
+References: <20241007130251.125022-1-lujianhua000@gmail.com>
+ <20241007130251.125022-2-lujianhua000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007130251.125022-2-lujianhua000@gmail.com>
 
-We've supported {statx,fstatat}(real_fd, NULL, AT_EMPTY_PATH, ...) since
-Linux 6.11 for better performance.  However there are other cases, for
-example using AT_FDCWD as the fd or having AT_SYMLINK_NOFOLLOW in flags,
-not covered by the fast path.  While it may be impossible, too
-difficult, or not very beneficial to optimize these cases, we should
-still turn NULL into "" for them in the slow path to make the API easier
-to be documented and used.
+sorry, I forget to CC Dmitry Baryshkov.
 
-Fixes: 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
- fs/stat.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/fs/stat.c b/fs/stat.c
-index ed9d4fd8ba2c..5d1b51c23c62 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -337,8 +337,11 @@ int vfs_fstatat(int dfd, const char __user *filename,
- 	flags &= ~AT_NO_AUTOMOUNT;
- 	if (flags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
- 		return vfs_fstat(dfd, stat);
-+	else if ((flags & AT_EMPTY_PATH) && !filename)
-+		name = getname_kernel("");
-+	else
-+		name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(statx_flags));
- 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
- 	putname(name);
- 
-@@ -791,8 +794,11 @@ SYSCALL_DEFINE5(statx,
- 	lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
- 	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
- 		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
-+	else if ((lflags & AT_EMPTY_PATH) && !filename)
-+		name = getname_kernel("");
-+	else
-+		name = getname_flags(filename, getname_statx_lookup_flags(flags));
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(flags));
- 	ret = do_statx(dfd, name, flags, mask, buffer);
- 	putname(name);
- 
--- 
-2.46.2
-
+On Mon, Oct 07, 2024 at 09:02:50PM +0800, Jianhua Lu wrote:
+> Add wifi node and this wifi module is connected to pice port.
+> The following is qca6390 probe message:
+>   ath11k_pci 0000:01:00.0: Adding to iommu group 12
+>   ath11k_pci 0000:01:00.0: BAR 0 [mem 0x60400000-0x604fffff 64bit]: assigned
+>   ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+>   ath11k_pci 0000:01:00.0: MSI vectors: 32
+>   ath11k_pci 0000:01:00.0: qca6390 hw2.0
+>   ath11k_pci 0000:01:00.0: chip_id 0x0 chip_family 0xb board_id 0xff soc_id 0xffffffff
+>   ath11k_pci 0000:01:00.0: fw_version 0x10121492 fw_build_timestamp 2021-11-04 11:23 fw_build_id
+> 
+> Signed-off-by: Jianhua Lu <lujianhua000@gmail.com>
+> ---
+> changes in v2:
+> 1. add ath11k-calibration-variant property.
+> 
+>  .../dts/qcom/sm8250-xiaomi-elish-common.dtsi  | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> index ebea283f56ea..7a55e271c3ac 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> @@ -680,6 +680,25 @@ &pcie0_phy {
+>  	status = "okay";
+>  };
+>  
+> +&pcieport0 {
+> +	wifi@0 {
+> +		compatible = "pci17cb,1101";
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +
+> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
+> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
+> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
+> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+> +
+> +		qcom,ath11k-calibration-variant = "Xiaomi_Pad_5Pro";
+> +	};
+> +};
+> +
+>  &pm8150_gpios {
+>  	vol_up_n: vol-up-n-state {
+>  		pins = "gpio6";
+> -- 
+> 2.46.0
+> 
 
