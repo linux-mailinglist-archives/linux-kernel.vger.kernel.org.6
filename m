@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-353627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628C0993078
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108C8993043
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DEC1F249CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D731C22FDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7071D934D;
-	Mon,  7 Oct 2024 15:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A40F1D54E9;
+	Mon,  7 Oct 2024 15:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uCi0A54U"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AbQ3gka7"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A7E1D90D3;
-	Mon,  7 Oct 2024 15:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9E51D54E1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313371; cv=none; b=AM4j7JNMmshjeLWm5/kDP5hTKRdB3cgCM/w7BNNOiyqIAviuqHCnnZqUMKxjkyRlxawwO9dD4C1xl09euc7YPtw1j/JqfQrjkqhZipB9eE+Go0xiKjyMW1x7Bkj6fDJVq9dm3U07i23tDXJwKRbJHuJvg8PkCoEGTB8S+eh0OOk=
+	t=1728313207; cv=none; b=gp2NTV1dXoC+w5ix+M6RT4ydQW6vie07EA0yf+Fdszl9Evjvz3HCLSIkB9+S+WpfLVDKC3DSXIYLIK+wWtdS3iRIofnUYeY8MNVMGqktTeSupYj+HJSZ+gBj8pe2JiENtLTLx9W+fqjxMBs+E+KK6Jm1mwpxPad+cgjRsrgdGEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313371; c=relaxed/simple;
-	bh=uUXzZRGTOsCHhO5wiewVtgT3oIHAUzqRQWNce2x5Cpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BaaQSjGps56HClecKyUJ5sBNJl/2QcIs3mtGLVMaDF04osprLl1nUcxu0uSabUHsYQZx6VXa5DgaZIl+dfI65vsEr/ITFmY0mRW8fhu/CsmYewHo8HOnz8Pxv4SzFued2kLs7lmcPnCvCrgkV5mtyo+0FDhIMGTqXtw6b/+U7Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uCi0A54U; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497EXR3A003950;
-	Mon, 7 Oct 2024 17:02:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	I0LlClbgeKDBHJrm3HldlhZvNAnt4HDdPl4EU0YX6zc=; b=uCi0A54UigacpP8b
-	EWJWXMHODBTuB+ieZqoxhr5y4mYPP9P8RaGlrlT6uewrOgZMWDyNnrF6Ml68lq9Y
-	F6D9OKv9+DkL+4sABpBOGe/udyd5SZxAjKFkWBt3IO82+5c2HdtsF68EYot6ffR0
-	+aSzGJm71CWso9RHA16ciar0EGpZTAurmqVJWjBRUuF71Y5KO4AU/xMJwVBf0ddJ
-	uRd2YM0b99Ne1/FVsDxvMuwvz6d2DiAiP2f+YwGUA6gz2lKfk2AXYC0T88KpDnKb
-	S1c5ulM1dew4y608JrP2jSbVOi+HUFEZn/Rl0D61p8a/UknMp+AgpE4iJ/cjGgDc
-	iPpSng==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f10ptcf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 17:02:22 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C2F7C40046;
-	Mon,  7 Oct 2024 17:00:52 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 149DD226FAB;
-	Mon,  7 Oct 2024 16:59:55 +0200 (CEST)
-Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
- 2024 16:59:54 +0200
-Message-ID: <d4bfc454-5a20-4cee-85f6-118323c46eca@foss.st.com>
-Date: Mon, 7 Oct 2024 16:59:53 +0200
+	s=arc-20240116; t=1728313207; c=relaxed/simple;
+	bh=Kmt9cHJm8WwS3XspxjzVmwcEHGHmVBkZJdu4NDC3smo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gZh251Q8ywPQeQ/WmYCGQL26oRVMWDqHvQOuC13E/WzN4phn8eFZK9V0cjn+8gKD71+5LUPG4ekPa05nsLZEcI1+pi1VdT76DMiIRoMDWbmGDVTQEjEs0KwD01IZqrj4o0megFY7EsrncGb2smQKNv9Nq9B/AJonzb9zgF+cQ88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AbQ3gka7; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5e5b7d54ff8so104534eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728313205; x=1728918005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T0KwE80YUYePgxalt01KSjIBVcvG8O10aqSXbDz0ito=;
+        b=AbQ3gka7A0McnDohcQXIxVybxx+mssk805CSxaQG/2kIvzyQ5qeAvfgVIVqdZR/2BT
+         iYad8oSVhVrR8dO1v4CgjtHOcfPl8ejyJg82T0xm00wk/K9/b4wQPpAR+99AjIxlLxQj
+         f7uFM2YLZzeUqCKYEQ7kxeuYcORG2iNqafPDQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728313205; x=1728918005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T0KwE80YUYePgxalt01KSjIBVcvG8O10aqSXbDz0ito=;
+        b=GEZO1dLv7Eg2QVPFZjOcKqwjQB74cbvDBqCWj+c3EAlTfVQOiRhfZcGfCSZMiX1HhS
+         7TfHBqjzjm1f1oIVYWgaVC+x9dSP2ku5vdxha4J/eoayyL15R21Bj+G9yf54puZMzG66
+         YEEajMs3cYhNvWHs++SM9jgb+opDLszX01FJ2v9H3CX7PFhvXhPlkqyD6d2j4KKKAfic
+         8nzDIVWAIc3d1Xct5zvY8T1l2yIdpE7y2cwzuLMX9djrS+GDdVDu5xXN0ONCgXKkGhKm
+         F05AZuazZ6FJTOicdUrft7WbmknG61cMQMnUYPgip4gbsthG1Sja+PpPwHVy9xJ7BjjD
+         TnIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGF4f8W8WGvyW97V1as5yYXQrmVWZsC/JMG5wmw+2mtvKva98EdDOL3/6OhKkKKDQUFZZJ7RlW/5TcIec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBLkLMj1fxqQZ804UPy0y+hF4OAqiZYJSSdt7X3THJdwWKJbG2
+	3tXiVwg7Q1J2t6itfOVcmNpoSjB+LLKMmSwdLaogRucWVEJyzODwobL66GkQuhgIfiF1dHB1Lga
+	QSNpOHnsBEWB8qabe5GcGqok7ecSanUKnPL60
+X-Google-Smtp-Source: AGHT+IEgxSO+or+LT/iiFA/sF2fonUe9w7Iegy6X1aayhSdUynY7mkN/5hXV/JGVKok0IKxa3fAcXXlLQMR9UOr4eLM=
+X-Received: by 2002:a05:6870:1641:b0:27b:9f8b:277b with SMTP id
+ 586e51a60fabf-287c22d93a8mr1797632fac.14.1728313205390; Mon, 07 Oct 2024
+ 08:00:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: st: add RNG node on stm32mp251
-To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
-        Herbert
- Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Lionel
- Debieve <lionel.debieve@foss.st.com>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Yang
- Yingliang <yangyingliang@huawei.com>
-References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
- <20241007132721.168428-5-gatien.chevallier@foss.st.com>
- <869fe073-c20f-4611-ae84-8268a890a12c@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <869fe073-c20f-4611-ae84-8268a890a12c@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20241004163155.3493183-1-jeffxu@google.com> <20241004163155.3493183-2-jeffxu@google.com>
+ <20241005202025.GB24353@redhat.com>
+In-Reply-To: <20241005202025.GB24353@redhat.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 7 Oct 2024 08:00:00 -0700
+Message-ID: <CABi2SkWNy16VmXrnPtmE7njb8UzLF=z9J+Ym9titbT8Gw6g0=Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/1] exec: seal system mappings
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, 
+	ojeda@kernel.org, adobriyan@gmail.com, anna-maria@linutronix.de, 
+	mark.rutland@arm.com, linus.walleij@linaro.org, mike.kravetz@oracle.com, 
+	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
+	hch@lst.de, peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com, 
+	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, 
+	ardb@kernel.org, nathan_lynch@mentor.com, dsafonov@virtuozzo.com, 
+	Liam.Howlett@oracle.com, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, lorenzo.stoakes@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Oct 5, 2024 at 1:21=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wrot=
+e:
+>
+> Sorry for the noise, forgot to mention...
+>
+> On 10/04, jeffxu@chromium.org wrote:
+> >
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -1535,6 +1535,15 @@
+> >                       Permit 'security.evm' to be updated regardless of
+> >                       current integrity status.
+> >
+> > +     exec.seal_system_mappings =3D [KNL]
+> > +                     Format: { never | always }
+> > +                     Seal system mappings: vdso, vvar, sigpage, uprobe=
+s,
+> > +                     vsyscall.
+> > +                     This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPIN=
+GS_*
+> > +                     - 'never':  never seal system mappings.
+> > +                     - 'always': always seal system mappings.
+> > +                     If not specified or invalid, default is the KCONF=
+IG value.
+>
+> perhaps the documentation should also mention that this new parameter has
+> no effect if CONFIG_64BIT=3Dn.
+Good point, I will add that.
 
+Thanks
 
-On 10/7/24 15:55, Marek Vasut wrote:
-> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
->> Update the device-tree stm32mp251.dtsi by adding the Random Number
->> Generator(RNG) node.
->>
->> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
->> ---
->>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi 
->> b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> index 1167cf63d7e8..40b96353a803 100644
->> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> @@ -493,6 +493,16 @@ uart8: serial@40380000 {
->>                   status = "disabled";
->>               };
->> +            rng: rng@42020000 {
->> +                compatible = "st,stm32mp25-rng";
->> +                reg = <0x42020000 0x400>;
->> +                clocks = <&clk_rcbsec>, <&rcc CK_BUS_RNG>;
->> +                clock-names = "rng_clk", "rng_hclk";
->> +                resets = <&rcc RNG_R>;
->> +                access-controllers = <&rifsc 92>;
-> It would be good if someone finally sorted the access-controllers 
-> property in all the MP2 nodes alphabetically ; that's separate 
-> patch/series though.
-
-I'll pin your comment to take a look into that in the near future.
-
-Gatien
+>
+> Oleg.
+>
 
