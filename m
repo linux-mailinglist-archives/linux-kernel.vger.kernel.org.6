@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-353809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D812F9932F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9ED4993300
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7D728438E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E4328312B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCBE1DA628;
-	Mon,  7 Oct 2024 16:20:21 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7971D1DA630;
+	Mon,  7 Oct 2024 16:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4c60YB/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4391522086;
-	Mon,  7 Oct 2024 16:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDC21D4152;
+	Mon,  7 Oct 2024 16:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318020; cv=none; b=DUNgzc/5WN/tfd6yCXCnCcBLv18Nb2Spw5otTbOZ2Xg1BNdKZI2m4eJ3Su64EIATb391QYnFtViZkZVP0nwpY8iuc7d7psT7yhAgCormN2fD222dcgX1PMtKek5zWKM5Oze7HynVh0mTCZdb3+672S/ts6bJhs7PL2aC2sJYzoE=
+	t=1728318105; cv=none; b=cb0fp2EdwNwS92Q7QlKRT/AFTz6EwvBP4/rbFz2uRzlr+5Yjw3lghmeFCMNKSHLSVWgKN6M1S6zzKCFtBnudTyB9JhskToDLEdZ5JfD81czyYhA5mdz22Bh0xmHuQnCj2NWhrZmNOECrtAcY6Oe1eUo7DR6cK6LWp4xM57BwDtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318020; c=relaxed/simple;
-	bh=t7vC9PC4zJvaYTiJkSnCHnY2yzJGQXV0UyLw9N2ZBeA=;
+	s=arc-20240116; t=1728318105; c=relaxed/simple;
+	bh=PoWOtQj6nr9yo/vCoJ1K+oh816ywT+jG0OzA4+bxEvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHMMIJ7QwKwcF3LR8Uj5IjTV1Ghf+VcLT6lTq53OeLNrdWAtivObjqpoeh7WtWPICglWyYV4b1y13N/n0k84QKNxfI+IawdEDtXUdU7ey4zCGNPFFr/MPY6LPUE242w/3DKyYHSDDgJ8NtVDV9rXBX2E96PX7ktXWe6ccI1cOos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c87c7d6ad4so6365024a12.3;
-        Mon, 07 Oct 2024 09:20:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728318017; x=1728922817;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ei8wLpkyvMKcvykxtKriHlZBL1OGliBEE4xkdqzdKZk=;
-        b=UoI7WmIwlNIZV9/REgmDtSvykl9waMRlPHq+5Ho8fQY2/73D3WPUxYWx0yyUf5I+ud
-         Wr1ggotG2SYS64rY7t6vk+TvQF3+RpIQukXbeuKsJTzBX+ffHQlNBuKegeh8vOy2WFDg
-         fPlR9g/GwTysl23HonO3ECmjPvowMBwmY/E3JVxhHpi8OHhqHNcfDR3tKsxRsUNdkZ8f
-         poUfvBJ6EQ5CiAboB+/+StpSWfN1k4THUVLvIpS6XTq9LDxhf6kCLPMPY6ga02iW9gEI
-         NQmIKXvoW6yGU2TbVkFv1bHZuv/QGjPEtfbkBY21rz5SKrLqDCHyXMLzjJ0EOPhMXXy1
-         iAwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxgFT/e/L5SWFr/naFolwN+8Ne8aH0yDgv7ILDC7EKSfryUZkhzXvjQYK0wUMqUY2bUPjR9eJz2/6ecKG3@vger.kernel.org, AJvYcCWQBhd18ezWZ8YBX7zFcoiq4t1QGzBilNnWh5fIIXucbg6cdHMLlmgs/l2tWrWMfbZ9C2onleOE@vger.kernel.org, AJvYcCXp/OX/w9r+PjXoVNBgGV8VhVbqGZVcfuAZZUsTiUwuAE4ynsVoeSrBS3+5t0HydsmuBB5rULrkkX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznG612Kfx6Q3dk6xywZNI5L+4L24Au9Ro6lrzJjI/JTQet8NV6
-	RTrvJ3uMol/pNzZ5LAQxk2gLNSI71n2dIC3g41GLCjpUhX1mtLck
-X-Google-Smtp-Source: AGHT+IHV9d9KXFM2IJDQlbbS87AXFGLCbkF2x+IJ/RFLoVqbdDta2pCk79gXR46aVX+WwqoK/yrmZQ==
-X-Received: by 2002:a05:6402:1d4e:b0:5bf:1bd:adb3 with SMTP id 4fb4d7f45d1cf-5c8d2e5194fmr12906633a12.14.1728318017484;
-        Mon, 07 Oct 2024 09:20:17 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05f395esm3333118a12.84.2024.10.07.09.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 09:20:17 -0700 (PDT)
-Date: Mon, 7 Oct 2024 09:20:14 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, Jonathan Corbet <corbet@lwn.net>,
-	horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mina Almasry <almasrymina@google.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <20241007-flat-steel-cuscus-9bffda@leitao>
-References: <20241002113316.2527669-1-leitao@debian.org>
- <CAC5umyjkmkY4111CG_ODK6s=rcxT_HHAQisOiwRp5de0KJkzBA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTRIacSZ9rijZeP3SMdoYkOkMaPX4t71EZOYgNbV/XGXL8xH8JHWicAenNB/InErqkDir5YBGbOrKULVVg/KJ9VyVXC0LqxWcvoplLSn1G4z09Nfe7M80eZOLkDSAcEY1rjRT/PBsm+bI4sK17SqSWL8pMVx71q7vvHisH66cw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4c60YB/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E6DC4CEC6;
+	Mon,  7 Oct 2024 16:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728318105;
+	bh=PoWOtQj6nr9yo/vCoJ1K+oh816ywT+jG0OzA4+bxEvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P4c60YB/3QXa3mURnfXL8Ghv/b6KAgZmA2FrqRnKW8h4XQIysndHls9cl89GK2UJI
+	 +fQF0ig4Jt+4Sg4XSbRrhyMD5Nj7fao2ipJT0Lp3bray3rnjJrNJ9igw3z2QAT8ney
+	 IXB1ExI6sxdOlBNw8FCufB+FiriiVxjDRSwYHUXAaldJYU/qsbwvGNIE0BmPlgTOHP
+	 dgi8ggs14XXIpDtt0iJ9NwbgHRippzrwajCbBQapPZTWB2kgrJ0LzxnAJfZ2aneBgn
+	 cWtYSj+8EuxHwY1lBTENiwUfvmhuCjvK881WNPTnnUoBfxQY+iU0/rtQZocWA5kjNx
+	 Jto0n4hRkqxww==
+Date: Mon, 7 Oct 2024 17:20:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH v2] selftests: sched_ext: Add sched_ext as proper
+ selftest target
+Message-ID: <ZwQKRe7iIzZjjEQd@finisterre.sirena.org.uk>
+References: <20241007073133.989166-1-bjorn@kernel.org>
+ <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
+ <87r08rnbra.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mdbUJb1cNu8O2f9z"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC5umyjkmkY4111CG_ODK6s=rcxT_HHAQisOiwRp5de0KJkzBA@mail.gmail.com>
+In-Reply-To: <87r08rnbra.fsf@all.your.base.are.belong.to.us>
+X-Cookie: Editing is a rewording activity.
 
-On Sat, Oct 05, 2024 at 01:38:59PM +0900, Akinobu Mita wrote:
-> 2024年10月2日(水) 20:37 Breno Leitao <leitao@debian.org>:
-> >
-> > Introduce a fault injection mechanism to force skb reallocation. The
-> > primary goal is to catch bugs related to pointer invalidation after
-> > potential skb reallocation.
-> >
-> > The fault injection mechanism aims to identify scenarios where callers
-> > retain pointers to various headers in the skb but fail to reload these
-> > pointers after calling a function that may reallocate the data. This
-> > type of bug can lead to memory corruption or crashes if the old,
-> > now-invalid pointers are used.
-> >
-> > By forcing reallocation through fault injection, we can stress-test code
-> > paths and ensure proper pointer management after potential skb
-> > reallocations.
-> >
-> > Add a hook for fault injection in the following functions:
-> >
-> >  * pskb_trim_rcsum()
-> >  * pskb_may_pull_reason()
-> >  * pskb_trim()
-> >
-> > As the other fault injection mechanism, protect it under a debug Kconfig
-> > called CONFIG_FAIL_SKB_FORCE_REALLOC.
-> >
-> > This patch was *heavily* inspired by Jakub's proposal from:
-> > https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
-> >
-> > CC: Akinobu Mita <akinobu.mita@gmail.com>
-> > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> This new addition seems sensible.  It might be more useful to have a filter
-> that allows you to specify things like protocol family.
 
-I think it might make more sense to be network interface specific. For
-instance, only fault inject in interface `ethx`.
+--mdbUJb1cNu8O2f9z
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Let me spend some time and have this done.
+On Mon, Oct 07, 2024 at 06:00:57PM +0200, Bj=F6rn T=F6pel wrote:
+> Mark Brown <broonie@kernel.org> writes:
+> > On Mon, Oct 07, 2024 at 09:31:32AM +0200, Bj=F6rn T=F6pel wrote:
 
-Thanks for the feedback.
---breno
+> >   CLNG-BPF create_dsq.bpf.o
+> > In file included from create_dsq.bpf.c:9:
+> > /home/broonie/git/linux/tools/sched_ext/include/scx/common.bpf.h:33:17:=
+ error: use of undeclared identifier 'SCX_DSQ_FLAG_BUILTIN'
+> >    33 |         _Static_assert(SCX_DSQ_FLAG_BUILTIN,
+> >       |                        ^
+
+> This is most likely due to incorrect VMLINUX_BTF_PATHS, so that
+> vmlinux.h is incorrectly generated. Try grepping for
+> SCX_DSQ_FLAG_BUILTIN in vmlinux.h.
+
+Yeah, it's not in the generated files:
+
+broonie@finisterre:~/git/linux$ grep SCX_DSQ_FLAG_BUILTIN ./tools/testing/s=
+elftests/sched_ext/build/include/vmlinux.h ./tools/testing/selftests/sched_=
+ext/build/obj/bpftool/vmlinux.h
+broonie@finisterre:~/git/linux$=20
+
+I didn't actually build a kernel, if the build system needs a kernel
+it's just silently not detected that it's missing?
+
+--mdbUJb1cNu8O2f9z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcECkUACgkQJNaLcl1U
+h9BY3AgAhgSd/gtJOHhPdgDJdlWHAcccsg0/qZNJNyUwqLK62pnBWJtCXAN3P1ur
+6wfsjd2wIRRomHekliWei8/9wsP3Ag+/uUSMbeczP7xDAouuwtPUZlDDjQq8hMrk
+2bSTZmTIa2qpjrrfKJRLsX5RDGziW+Q6C3A4hSSa5+l2Ys1lU9Z4rr96eMzoDvTM
+sAyppbbqUPHE59Wqn2L8vHA4qO9ODaYc+VmEZkZPOS661nN9pcImXFu9jd3sbquR
+ZhCA5Jzmj83gP2U4rmSlhWna45c+io68Nd5Zf7ZrdFYceR5VFPkKWRry+a/N/bPg
+JuUBz8uQVlPVg5VsbFNnqbcT+b+SGw==
+=AxkR
+-----END PGP SIGNATURE-----
+
+--mdbUJb1cNu8O2f9z--
 
