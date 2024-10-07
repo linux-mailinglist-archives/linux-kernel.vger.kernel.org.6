@@ -1,646 +1,282 @@
-Return-Path: <linux-kernel+bounces-353329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A56992C4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E88A992C52
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82B1281C42
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93663B20CBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD311D31B2;
-	Mon,  7 Oct 2024 12:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758BA1D4175;
+	Mon,  7 Oct 2024 12:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZQjBTe29"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="pgVSjU3u"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2081.outbound.protection.outlook.com [40.107.21.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF381D2B1C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728305100; cv=none; b=Mab1mZdAg8J2hyCDcrPYnE4+P8acoCwpo/K3siY53NMVJM8h+35Vbe489ad6UFR6p77LTrzdfqmKZw9At8/gNnDgyPqZSicX9kHhjWZh0yIdwfkN1XbyKi/BPPZy2m5cigGYe7GBF5mjVJqMMx2EW8/pWK9iMzvZQVVahbj5vWg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728305100; c=relaxed/simple;
-	bh=Jgv2iZYEQb+BiQdUaGmFz6ejNiuNYY5pzo9vAft8A0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aD2i0uA9/Wh6JzW3p3oWmKLC1t1+zBb0PX10JFOrvoVttqH0zQOzO7cgIcr4QyFGZ/I5nOKefcPgu/2SeqTKKr3Uo/y6FNgxhINrHqDqUiH4zP963KxrMPqiNIIF5fXebqUyvJkx/S4cqzXPdDEq7aav/bYoYAPofKS3UWlJ/7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZQjBTe29; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728305097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtZfgDxivEv1/YdNfUXkg0QDnikWSQOwdP6FggffpxU=;
-	b=ZQjBTe29Rb4UpVats+swRH1P1Cz7wGKQOHyguJb6v86D58Op/eiV/uW0xxBlG9a1OIdtZi
-	E2dXafa2SEUJKgbxNgvWfSWUPT+bUr7cVyG+OB4S/mJXB5Uv/So01AP8tx4r5lMd2AN5G0
-	obWWtctcdiv1jjYWd4XuWKY0jGYNrw0=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-fxKYp3isNnWk9kfjQNarRQ-1; Mon, 07 Oct 2024 08:44:56 -0400
-X-MC-Unique: fxKYp3isNnWk9kfjQNarRQ-1
-Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e0353b731b8so5898611276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:44:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728305096; x=1728909896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xtZfgDxivEv1/YdNfUXkg0QDnikWSQOwdP6FggffpxU=;
-        b=WuOvrxq8CkNGpZlV7jLWA8MNHFPQLKS3CIXEesnNzrCw8rRDgxjQGZvLK/udn9Xje2
-         0I9rI/XojVi1U3ATRTHTPMQ+XyK5Bor797lWropnIScuAtoVqa804QBi8pFQsTCcIuPE
-         kNQMHZToaETuR/wCHuZr42vu4VJrprBpxymmW7ivjm7bZIKnMgE/xY9wrIW3IFXD9PHe
-         g3U2DSyIsBUe7/bWQPueGcQ6jq3paVzop7nkpjgfafkW9Qs+TRwNfmjsnz6MvdbmsmrT
-         oUpHVDvoiDMqV/zmt+4c4+osFRazOsLzvWM70/J0JkLx5iFb9igDDJpyXmZthu+QzZwI
-         XeTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsxzfc1AKMODofh64JqVsGmssRPqVmtzAy2Ma9cBg1E6Pr895BXtSe5kcPa8yIDBuMWA9u/AKMp1p3nCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwu2hs+GqvQKLTHaGrgIh9S0faDAFdoSSa4iWIvI8Kpxot3+Db
-	ExKbho8TJkRctDS4kRg5DzYn00WHgrwMXkC5kN77DOe3mFqGoVvXy2j/aWv11g1W4tyWNRwKWCa
-	umH92p1gCp/DWZons6iTrji2RlLUqhpZK1gt66MtzObJw+5HvFQCNmnZLKGS3WQ==
-X-Received: by 2002:a05:6902:1a4a:b0:e20:291e:7fe1 with SMTP id 3f1490d57ef6-e28936ea426mr8147344276.25.1728305095507;
-        Mon, 07 Oct 2024 05:44:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6mQAQf/zIqjG3RCCUakXz0p/7iRxTyP/szvwCZ6Kw9sRidl4bf5wmRc2+LONqZ2vT7PHh2A==
-X-Received: by 2002:a05:6902:1a4a:b0:e20:291e:7fe1 with SMTP id 3f1490d57ef6-e28936ea426mr8147328276.25.1728305094931;
-        Mon, 07 Oct 2024 05:44:54 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46dfc37sm25328336d6.48.2024.10.07.05.44.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 05:44:54 -0700 (PDT)
-Date: Mon, 7 Oct 2024 14:44:46 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: huangwenyu1998@gmail.com
-Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] virtio: Make vring_new_virtqueue support for packed
- vring
-Message-ID: <ejvroia6dxwc57bfk5nqray2aibonwwxwin7lbuhttl374qisl@bvweusdurfqk>
-References: <20241005074201.52727-1-huangwenyu1998@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F2F1D3653;
+	Mon,  7 Oct 2024 12:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728305158; cv=fail; b=n6iS148XDiWe7YhJvTK42VuVknnDdn7N2MjdZtdvYndWj+G3zx6LjMnmHOVyoqkEubTkAjcHQ1vB9CBZ2M1ryQ+zTPftjZxrTTNLmJJkhm2nco4SgAcvZGbNohIY4mEUhVLpec6KcAUCeya9sLpTnMbVdjrQ8M/AbVgYUQyG/gw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728305158; c=relaxed/simple;
+	bh=NgbtXqhqd23JFgpfG+p4eg+2YWo1o1wM6kHtMNMd1rQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bt3Pkl9rCY3rnpWLk8lDYeKKBOjkfjq94iBsuYHZiXY6WHEEMdUqE4OmwmvAGm6FmWxTZR5c2TyKdoduKTf9yjPUIcXC6esibh5crL7vfgkByJLHq6H6bv+DXoatSGaIxCBphpxpulHCXrxZ3vMiv8oSXiSm6UII0R3gothjEos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=pgVSjU3u; arc=fail smtp.client-ip=40.107.21.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SpSK0LS2m50zi7saSbkqHv5OwL0jfQfI9EwJjRKK5qnfkZpzEpNByurWTW0QkRpeQmg0S+L+e044FXChH6SWOyKePhsqDumDk0hdOeSewwcRdheG75lbTnxMyQwYZWrO6xhng+2owqfcWd7FuvRaSg8O0Impg2GaflAGqGgLwUxZfBf9em/CZJ2ffmRgsLqleHRmQH96FKYaKMudC7sThDJxRg7l4NWID9Ysr31Zcv+17IaMx1k3IQ060CqBhCFsUYuayx7pc2HNl5eB4eFE8jdyzQxsJHuwk+hkME0fEktbXuGbSFsBwbL8QVcPaYt5Z4tGXf/QP7J/nZQZCcoybQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NgbtXqhqd23JFgpfG+p4eg+2YWo1o1wM6kHtMNMd1rQ=;
+ b=N1yWqooGYMSJmhN9yGOHdPGg9a8R85yr++F8e84GPDWmSUvXYpfPFrARsZ+6KZ5gA4bzHr2z3p5X+bP/AWRQamg3tMW5lXsRbJgodxbUFenffMHs1SZb3F5tBN7Hn8bN+XU1kVVWVAafTOQKkNjERL2HhkfwyeZX69A8oA3AsGmUWN0YZUS7/Vu16TNvdgCr5w98kp++K1UJdB805plm825hvM8KUxEVSi5xbtRP9ATFPCNF/8ipUtFuSASukAhKMzK59J+T5ajZjqODqibRf4+sef2npqsxlj7oQ27X2N+VxGGqJSgH+Kos1HnxXUnHds/m+mgEkZeTo18BXrP9Ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
+ header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NgbtXqhqd23JFgpfG+p4eg+2YWo1o1wM6kHtMNMd1rQ=;
+ b=pgVSjU3u54NzuCnO2AzKOxbVF8eip5S4PYfKTmc/3WjQkYsoUKto3OUrljhYzVE2L7Q+irMZwYWa8XCq9N57SxNkM9YIyr5RFRy0atb6saQmCzUVhmG/rk8mV/Vh6vN5JogCw9qZGmyOEmzhVDo7UQaT9b3Y6bjm3bjf/46/Jxo=
+Received: from DBAPR06MB6901.eurprd06.prod.outlook.com (2603:10a6:10:1a0::11)
+ by PR3PR06MB7052.eurprd06.prod.outlook.com (2603:10a6:102:8f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
+ 2024 12:45:52 +0000
+Received: from DBAPR06MB6901.eurprd06.prod.outlook.com
+ ([fe80::3988:68ff:8fd1:7ea0]) by DBAPR06MB6901.eurprd06.prod.outlook.com
+ ([fe80::3988:68ff:8fd1:7ea0%5]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 12:45:52 +0000
+From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
+To: Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
+	<amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com"
+	<luiz.dentz@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+CC: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH 2/2] Bluetooth: btnxpuart: implement powerup sequence.
+Thread-Topic: [PATCH 2/2] Bluetooth: btnxpuart: implement powerup sequence.
+Thread-Index: AQHbFlGY+Tlj3xyvrk6D8R3pK4wfIrJ5cLuAgAHQUQA=
+Date: Mon, 7 Oct 2024 12:45:52 +0000
+Message-ID: <7f40433e-0474-449f-b4e6-de69d5082043@leica-geosystems.com>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <20241004113557.2851060-2-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB84296D227CDA74D732399B9C927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <DB9PR04MB84296D227CDA74D732399B9C927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Accept-Language: en-CH, en-US
+Content-Language: aa
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=leica-geosystems.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DBAPR06MB6901:EE_|PR3PR06MB7052:EE_
+x-ms-office365-filtering-correlation-id: 6fef1b9f-dd7e-46d9-07b2-08dce6cdfab8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?c09kNytnRVREYnNNM200R2ovY0ZrSEpTWmNScm1ib3RKZ3hxYTFGQVVidXkw?=
+ =?utf-8?B?clNybjFGOWhHNmJrUHZ5NloxUHZ6VTJZOWh3V0ZpaDlPb2JoaGZqZmkwSU9S?=
+ =?utf-8?B?ZjcvaFVYTFBSU1VCVGR3Sm1yQ3F3UkpNdjZWd3ZNTnVRdytWVU1Xck9pWlJB?=
+ =?utf-8?B?SEl5Q3VOSjdZVERRQmxWT0xuN3hjT0wzamEyTlM2elF0STA4U2Rka3Myc3BB?=
+ =?utf-8?B?Vndxd1FyUkJRQ2RFRTB0ZndSbmpEc1NFSVJjQlZFd05tajV5RFVXRGp4djEz?=
+ =?utf-8?B?MmZ2d3hQODAyS1RsYVBYY21ERUdBb0cxcnRSNGNYZVJOTTlVMSt4WnZoOTY2?=
+ =?utf-8?B?Q0JQU2tXb2gwOFJnMHVLdVNDMGM1YmpPVnVBbEFBejVaYlhHbUlxUE5QbG1H?=
+ =?utf-8?B?L0p1LzFYRFJ6NVU0SmJibTZrTDZuN1RVTkUrWEZDV2lOUkFVdWQyaTdhT1Y2?=
+ =?utf-8?B?RjlLR01xNzZSYjgxL3N1SGwvMlB3b0Nwd0ltSWZBZkxJR2svR00xRFF4VnI4?=
+ =?utf-8?B?aVdFYmRJS1NoMzUvSzZ0blJINm53M0NjbU1LeEtVVVdCOGJHVkdhMXJCRWQz?=
+ =?utf-8?B?NTlmT0JlUEhxY0JDS1NHVlloQi9VRnVqOFE3ZGppcWNOdGRuK1FKQkZWTzZ1?=
+ =?utf-8?B?WjZTZ1VZVkd1WER3VmVhcFZnUERPcTZaMjhuNkFKOS9ROGUzYTRJMitoS1d2?=
+ =?utf-8?B?YWNyUCs0cjFVZXVLRXBBUkxZT1h2T3RBZFFWdjdJWUxia1FlaVVTQVpoVDFI?=
+ =?utf-8?B?c01wMXJFYnQ2ZlZEbStoeFBoRmx1NEhmenVseGxCMFRTWmZRa2VBNkhjd0ox?=
+ =?utf-8?B?cUViMEwzV0NiUitxUVFvalUvdTRveUlJaU1VaEpJM2R3UGFlUThyWGd3QmVK?=
+ =?utf-8?B?cWxyQW9SVFg4bW1HLzUrcm10ZW1hdVdlUnQyTTBBcDI1NHdGeWVNdDB0MUF0?=
+ =?utf-8?B?WnVEK05YekhpbDU4TFM5SFBzVCtFK3pzQ1c2dXdZWlVhcmdpWGpEdHBocm1y?=
+ =?utf-8?B?dzVLdkNSbVM4VC9DOVRSTExNVVhrTi95eWFoWTZrNWFaWlM0ZmxDbmRCR3l6?=
+ =?utf-8?B?VEYvRlY5R3pCTytONnljQkFtOTBoNndTRjZyaUQ3Mkx2V3FvbWpEUGw1WlBD?=
+ =?utf-8?B?cHJXZkRRQ0NndFg2eWd6TGhWa0NRb0RQOEluc0lRSXJwNC9BUjQ0UUZkOGhC?=
+ =?utf-8?B?TzZOLy9rVUVocGJrRWxRN0h4YzVraXhqcUNhL2gwazFVOVA2bHMvYklKUnQz?=
+ =?utf-8?B?a1VpNjQvbVc4SHNGYVVHdERRQzE3VlFCbGduQkZlc3dDTTJsY3RxR1hVUkpv?=
+ =?utf-8?B?K2swUHE0alZwNGNxdXlzY3EwMUV0TExHL3pPMVJKRDZoaEVEK01XcUE3cjBn?=
+ =?utf-8?B?QzBoaVRweVg2cVY1c2I1NVFuR0I0NWFmUWdRK0lHWlBwdjFxR21WZHhMY1lq?=
+ =?utf-8?B?aEp5RjZvRHUwbjdJRUJVdzZJSzZWMWhiOWl6c0haZkw0YmxDVndVbWtjQjdP?=
+ =?utf-8?B?cG9HblB6aWprTGVRMFJMd1JOWHM3b2lIY0JkZCs3dW9LUFZ2VGl4dkJwRytL?=
+ =?utf-8?B?a0padW9mNzFmOGtqOWkrMzRlRHhPbEhzNUQwaVBSVkpLWFdoUXhYYS9XMytU?=
+ =?utf-8?B?Z3ZWZXRPRG4wazRlZERKMEszTUVpeXFXTUxyYi9CNGpjTnE3TnhIbVVBSnp1?=
+ =?utf-8?B?bnlPVmhIQUVHL3NiRWlieU5hUnJ2UkZDdm5tR0VOdWVxL3JxcDFQc0p1VGpk?=
+ =?utf-8?B?NFNlQ3Vpa1cxbEVuTEV5NUZrQnhtL2Rza0lidkVOQkt6ZUpodjJLdWxyS1BI?=
+ =?utf-8?B?MTQ3ZThvamtHdURTSlpDZz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBAPR06MB6901.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eWhSM1NsRjNIVEN4ZmMwSG13aDhpb3BCRm1XMmdWWmkwQVJuODBNeUpZN05H?=
+ =?utf-8?B?UUREcFVzRG1LNUpJSlJvbDMvbnoydWNLK2o3K3pBT0NuNEpCQmpXYytrMUtW?=
+ =?utf-8?B?K3JCc2QyUU5nSkhrU1ptL21EN2x6Tnc3UWg5NWZOa1g2MUJEZjgyTks0UGR2?=
+ =?utf-8?B?RnhOQjNQZUtWQjU3WXVwVU1OcVpzYlZoVUc2bldpMEtBaTZWSHlyTTQvcUY0?=
+ =?utf-8?B?WDFCN0p0Q0dBUlpoNTY2SFNvMTRuOVkzWkNtUFRnbG8rMnp5UXRrYmkzaGNi?=
+ =?utf-8?B?MWQyRno1MDYrOHV1VkRNb0IyWnBqODg5OWNMNjZYdWpnN3l3cWF5OEZkd2sr?=
+ =?utf-8?B?b0g2U0xMSXdhRjlvYlZuRmpCdHp6ZWJQanNPQkRFbXZvcGI4OGtLUHZTZmdZ?=
+ =?utf-8?B?bEVnQTh3U1doWkREaVd6ZFQ3bjdab0ZzRnVZeUlxRjRJRm1BTDZqTktLSUdz?=
+ =?utf-8?B?UWxybHBpZlVGd3pvaVh3WnZsZlBqK1dpOEIyWWE3dTA5NmtudjRZalRob0Vp?=
+ =?utf-8?B?V1VIZWJZQ2FBNGtOR0tHME1rOFk2ZWhseGU2Ri9kNUQwNXU4QnUzM0R2TlZT?=
+ =?utf-8?B?K2wvbTh5RUo0dXEzZGhLSXJiRTdQZFFDVTRKY2JCb0czOTNaai8rMUlXZklK?=
+ =?utf-8?B?WFgxU2lOM1FYbEhhZHJReVVPY1gyMGJsYXBQcDFCYjJ0eW44K3dKQkMxdnhJ?=
+ =?utf-8?B?UFNFVnNrUGczZlhVVGxTNWxpN2hQNTgrOGk0em9zbmpEQWVGblQ5RjR0em1D?=
+ =?utf-8?B?STYxV0FablAwYm44TSt1bHpUYm5Qc3BET1VPODc1dCszTjNZMHlEQkR3aCtD?=
+ =?utf-8?B?Q0N1Qyt6aVB6cnZkYXJUcnBRVk4yai9RVExXQmx1VEc0NDF0bFR1SWQvT1Yw?=
+ =?utf-8?B?QUh2OHhRSFJxSHVBNmVZalJkeHNFYzlta3ZHalprOWVQYWR1VmpaZkEvV0d1?=
+ =?utf-8?B?MkRvWlRoOUVTNnNHS2ZUNVhQZEtTRlZmanIxS3IzM3luTytTY2VqTVAyWGxm?=
+ =?utf-8?B?K0RSRkxEWFlEbk82eE02d1QvQzVIb0JJV0RydlRXblFpVnY0SGVIS0FyU2dW?=
+ =?utf-8?B?NHROZzg0TjAwRCtNZmpDVkx2bGN3RmU1d29pWittWklLaGxsY0ZER0lVWVla?=
+ =?utf-8?B?b2tLRWltbWlmWVl2LzVGNzBobVFNekpVWjJlNS84Y2xEOTNJUk9KYXpxMzMr?=
+ =?utf-8?B?SU82Yjl4L2dYSHNIVEN2bTErNlVZY1JiV3FQd251R1loVEtxRHlDMnphSkQ0?=
+ =?utf-8?B?S3l0R1BsTmxVQnRzRDBTaENiTTVEVVZuWTJCekZDd0NxdVpQUEJrci9JLys0?=
+ =?utf-8?B?bW1iYlpCVmRjRVpPaVJqQytMZEI0cXFCaUd1S0pjWGVOZG1SMldoSVA3TUVh?=
+ =?utf-8?B?VUlBYWFCVFZyZlhwN3VFY2RCejBuOUJHQUppRWJleEVYNXpTeERndlpzK3Rk?=
+ =?utf-8?B?S05rQWtuVXdvcXJLN2VuWm11SEQ5K1VqK2cwdjdkejlibnE3MG1PdFRZbjRN?=
+ =?utf-8?B?VnZROU9yZ0ZXbFJpUUlIelFWc2FCeGhRMndleC9TVTRyRDhpTC9obXd4b3c5?=
+ =?utf-8?B?TXo0U0VZcGgremY1NTVGYi9KblFseW96djJ1OFM3RXY2dlQzNXpLTWd6M0Mw?=
+ =?utf-8?B?Z09LUnFIaHBMcjZObExmblJwaStSc1AxZGVTdlpPSWlENEZzZE4zcXFYdWhF?=
+ =?utf-8?B?S2VhSmczUlBYNkJ3ZGRHekFROW9ydG91L29tRndBaXNtQTJKNzFCb2NuamJq?=
+ =?utf-8?B?bVZ0VkNKNmN0b0RaYnJHcHMrVlhLZEZwRUdqMVlQWnZBQndKSlUvRlRjRkJs?=
+ =?utf-8?B?cjFHT2cyd0c2NHN2cUJURnM3b3pHWTNJQVRaTzRFOERHYzJOb0Y4Y0thcWpt?=
+ =?utf-8?B?Z0xXK204MlgrcWJXR3M3L1ZwNHRkKy9mSHBmL1NaM21JM2g3MWduaitQRDdX?=
+ =?utf-8?B?RmpOMEc1VTRUNUo4NTJjN1RpVzY5L0QvRTFOVXI4UHVnVy9HNk9GZ3N4Mktz?=
+ =?utf-8?B?Q0NkZTJhMVRwWTZhL0ROZkZyVXh1MlFVVGdUT1hVRFhsUFA5eTdwRkI3ay90?=
+ =?utf-8?B?R0dkUktyYkZFL0x4TjczdmVWOG5jdG1raXRCN2FEbUZoQzJmZThXc0swZUJ2?=
+ =?utf-8?B?SENqZGkwT1hyWGpTN2p4VHNGbnNmdjFsWHBmYWtRWThOMmo5QVNxdlZHT21q?=
+ =?utf-8?B?RVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BE68BE83A67A34489A78AB45F5D9C648@eurprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241005074201.52727-1-huangwenyu1998@gmail.com>
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DBAPR06MB6901.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fef1b9f-dd7e-46d9-07b2-08dce6cdfab8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2024 12:45:52.8365
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1Ig3QOupaWYDmvyvSbBaVJFPsEg9LMsTeuWSQlGu9tO0s/pY9Eb8ZAK1gQGGuYBPpQwdQeR9W26q1ZIPs/cnou6HrLINIOKNE6xRAQubIb9JGHiEm6yXTqvdYrBJnkYc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR06MB7052
 
-On Sat, Oct 05, 2024 at 03:42:01PM GMT, huangwenyu1998@gmail.com wrote:
->From: Wenyu Huang <huangwenyu1998@gmail.com>
->
->It used for testing in tools/virtio/vringh_test.c.
->If vring_new_virtqueue supports packed vring, we can add support for
->packed vring to vringh and test it.
->
->Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
->---
->Changes in v2: Make the commit title and description more clearer.
-> drivers/virtio/virtio_ring.c | 153 +++++++++++++++++++++--------------
-> 1 file changed, 92 insertions(+), 61 deletions(-)
->
->diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->index be7309b1e860..664a0c40ee05 100644
->--- a/drivers/virtio/virtio_ring.c
->+++ b/drivers/virtio/virtio_ring.c
->@@ -223,7 +223,7 @@ struct vring_virtqueue {
-> #endif
-> };
->
->-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
->+static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
-> 					       struct vring_virtqueue_split *vring_split,
-> 					       struct virtio_device *vdev,
-> 					       bool weak_barriers,
->@@ -232,6 +232,15 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> 					       void (*callback)(struct virtqueue *),
-> 					       const char *name,
-> 					       struct device *dma_dev);
->+static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
->+					       struct vring_virtqueue_packed *vring_packed,
->+					       struct virtio_device *vdev,
->+					       bool weak_barriers,
->+					       bool context,
->+					       bool (*notify)(struct virtqueue *),
->+					       void (*callback)(struct virtqueue *),
->+					       const char *name,
->+					       struct device *dma_dev);
-> static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
-> static void vring_free(struct virtqueue *_vq);
->
->@@ -1160,7 +1169,7 @@ static struct virtqueue *vring_create_virtqueue_split(
-> 	if (err)
-> 		return NULL;
->
->-	vq = __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
->+	vq = __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
-> 				   context, notify, callback, name, dma_dev);
-> 	if (!vq) {
-> 		vring_free_split(&vring_split, vdev, dma_dev);
->@@ -2064,62 +2073,21 @@ static struct virtqueue *vring_create_virtqueue_packed(
-> 	struct device *dma_dev)
-> {
-> 	struct vring_virtqueue_packed vring_packed = {};
->-	struct vring_virtqueue *vq;
->-	int err;
->+	struct virtqueue *vq;
->
-> 	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
->-		goto err_ring;
->-
->-	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
->-	if (!vq)
->-		goto err_vq;
->-
->-	vq->vq.callback = callback;
->-	vq->vq.vdev = vdev;
->-	vq->vq.name = name;
->-	vq->vq.index = index;
->-	vq->vq.reset = false;
->-	vq->we_own_ring = true;
->-	vq->notify = notify;
->-	vq->weak_barriers = weak_barriers;
->-#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
->-	vq->broken = true;
->-#else
->-	vq->broken = false;
->-#endif
->-	vq->packed_ring = true;
->-	vq->dma_dev = dma_dev;
->-	vq->use_dma_api = vring_use_dma_api(vdev);
->-	vq->premapped = false;
->-	vq->do_unmap = vq->use_dma_api;
->-
->-	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
->-		!context;
->-	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->-
->-	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
->-		vq->weak_barriers = false;
->-
->-	err = vring_alloc_state_extra_packed(&vring_packed);
->-	if (err)
->-		goto err_state_extra;
->-
->-	virtqueue_vring_init_packed(&vring_packed, !!callback);
->+		return NULL;
->
->-	virtqueue_init(vq, num);
->-	virtqueue_vring_attach_packed(vq, &vring_packed);
->+	vq = __vring_new_virtqueue_packed(index, &vring_packed, vdev, weak_barriers,
->+					context, notify, callback, name, dma_dev);
->+	if (!vq) {
->+		vring_free_packed(&vring_packed, vdev, dma_dev);
->+		return NULL;
->+	}
->
->-	spin_lock(&vdev->vqs_list_lock);
->-	list_add_tail(&vq->vq.list, &vdev->vqs);
->-	spin_unlock(&vdev->vqs_list_lock);
->-	return &vq->vq;
->+	to_vvq(vq)->we_own_ring = true;
->
->-err_state_extra:
->-	kfree(vq);
->-err_vq:
->-	vring_free_packed(&vring_packed, vdev, dma_dev);
->-err_ring:
->-	return NULL;
->+	return vq;
-> }
->
-> static int virtqueue_resize_packed(struct virtqueue *_vq, u32 num)
->@@ -2599,7 +2567,7 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
-> EXPORT_SYMBOL_GPL(vring_interrupt);
->
-> /* Only available for split ring */
-      ^
-This comment is not needed anymore.
-
->-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
->+static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
-> 					       struct vring_virtqueue_split *vring_split,
-> 					       struct virtio_device *vdev,
-> 					       bool weak_barriers,
->@@ -2612,9 +2580,6 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> 	struct vring_virtqueue *vq;
-> 	int err;
->
->-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
->-		return NULL;
->-
-> 	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
-> 	if (!vq)
-> 		return NULL;
->@@ -2662,6 +2627,66 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> 	return &vq->vq;
-> }
->
->+static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
->+					       struct vring_virtqueue_packed *vring_packed,
->+					       struct virtio_device *vdev,
->+					       bool weak_barriers,
->+					       bool context,
->+					       bool (*notify)(struct virtqueue *),
->+					       void (*callback)(struct virtqueue *),
->+					       const char *name,
->+					       struct device *dma_dev)
->+{
->+	struct vring_virtqueue *vq;
->+	int err;
->+
->+	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
->+	if (!vq)
->+		return NULL;
->+
->+	vq->vq.callback = callback;
->+	vq->vq.vdev = vdev;
->+	vq->vq.name = name;
->+	vq->vq.index = index;
->+	vq->vq.reset = false;
->+	vq->we_own_ring = false;
->+	vq->notify = notify;
->+	vq->weak_barriers = weak_barriers;
->+#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
->+	vq->broken = true;
->+#else
->+	vq->broken = false;
->+#endif
->+	vq->packed_ring = true;
->+	vq->dma_dev = dma_dev;
->+	vq->use_dma_api = vring_use_dma_api(vdev);
->+	vq->premapped = false;
->+	vq->do_unmap = vq->use_dma_api;
->+
->+	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
->+		!context;
->+	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->+
->+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
->+		vq->weak_barriers = false;
->+
->+	err = vring_alloc_state_extra_packed(vring_packed);
->+	if (err) {
->+		kfree(vq);
->+		return NULL;
->+	}
->+
->+	virtqueue_vring_init_packed(vring_packed, !!callback);
->+
->+	virtqueue_init(vq, vring_packed->vring.num);
->+	virtqueue_vring_attach_packed(vq, vring_packed);
->+
->+	spin_lock(&vdev->vqs_list_lock);
->+	list_add_tail(&vq->vq.list, &vdev->vqs);
->+	spin_unlock(&vdev->vqs_list_lock);
->+	return &vq->vq;
->+}
->+
-> struct virtqueue *vring_create_virtqueue(
-> 	unsigned int index,
-> 	unsigned int num,
->@@ -2840,7 +2865,6 @@ int virtqueue_reset(struct virtqueue *_vq,
-> }
-> EXPORT_SYMBOL_GPL(virtqueue_reset);
->
->-/* Only available for split ring */
-> struct virtqueue *vring_new_virtqueue(unsigned int index,
-> 				      unsigned int num,
-> 				      unsigned int vring_align,
->@@ -2853,12 +2877,19 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
-> 				      const char *name)
-> {
-> 	struct vring_virtqueue_split vring_split = {};
->+	struct vring_virtqueue_packed vring_packed = {};
-
-nit: we can move this declaration ...
-
->
->-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
->-		return NULL;
->+	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED)) {
-
-... here, since we use it only in this branch.
-
->+		vring_packed.vring.num = num;
->+		vring_packed.vring.desc = pages;
->+		return __vring_new_virtqueue_packed(index, &vring_packed,
->+						    vdev, weak_barriers,
->+						    context, notify, callback,
->+						    name, vdev->dev.parent);
->+	}
->
-> 	vring_init(&vring_split.vring, num, pages, vring_align);
->-	return __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
->+	return __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
-> 				     context, notify, callback, name,
-> 				     vdev->dev.parent);
-> }
-
-Since it looks like we have 2 sections in virtio_ring.c for split and
-packed API, what about moving the 2 new functions?
-
-In this way we can also remove the definition on top of the file, I mean
-to apply the following changes to your patch:
-
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 664a0c40ee05..9f67a98b0914 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -223,24 +223,6 @@ struct vring_virtqueue {
-  #endif
-  };
-
--static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
--					       struct vring_virtqueue_split *vring_split,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev);
--static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
--					       struct vring_virtqueue_packed *vring_packed,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev);
-  static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
-  static void vring_free(struct virtqueue *_vq);
-
-@@ -1147,6 +1129,66 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
-  	return 0;
-  }
-
-+static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
-+					       struct vring_virtqueue_split *vring_split,
-+					       struct virtio_device *vdev,
-+					       bool weak_barriers,
-+					       bool context,
-+					       bool (*notify)(struct virtqueue *),
-+					       void (*callback)(struct virtqueue *),
-+					       const char *name,
-+					       struct device *dma_dev)
-+{
-+	struct vring_virtqueue *vq;
-+	int err;
-+
-+	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
-+	if (!vq)
-+		return NULL;
-+
-+	vq->packed_ring = false;
-+	vq->vq.callback = callback;
-+	vq->vq.vdev = vdev;
-+	vq->vq.name = name;
-+	vq->vq.index = index;
-+	vq->vq.reset = false;
-+	vq->we_own_ring = false;
-+	vq->notify = notify;
-+	vq->weak_barriers = weak_barriers;
-+#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-+	vq->broken = true;
-+#else
-+	vq->broken = false;
-+#endif
-+	vq->dma_dev = dma_dev;
-+	vq->use_dma_api = vring_use_dma_api(vdev);
-+	vq->premapped = false;
-+	vq->do_unmap = vq->use_dma_api;
-+
-+	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
-+		!context;
-+	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-+
-+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-+		vq->weak_barriers = false;
-+
-+	err = vring_alloc_state_extra_split(vring_split);
-+	if (err) {
-+		kfree(vq);
-+		return NULL;
-+	}
-+
-+	virtqueue_vring_init_split(vring_split, vq);
-+
-+	virtqueue_init(vq, vring_split->vring.num);
-+	virtqueue_vring_attach_split(vq, vring_split);
-+
-+	spin_lock(&vdev->vqs_list_lock);
-+	list_add_tail(&vq->vq.list, &vdev->vqs);
-+	spin_unlock(&vdev->vqs_list_lock);
-+	return &vq->vq;
-+}
-+
-  static struct virtqueue *vring_create_virtqueue_split(
-  	unsigned int index,
-  	unsigned int num,
-@@ -2059,6 +2101,66 @@ static void virtqueue_reinit_packed(struct vring_virtqueue *vq)
-  	virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
-  }
-
-+static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
-+					       struct vring_virtqueue_packed *vring_packed,
-+					       struct virtio_device *vdev,
-+					       bool weak_barriers,
-+					       bool context,
-+					       bool (*notify)(struct virtqueue *),
-+					       void (*callback)(struct virtqueue *),
-+					       const char *name,
-+					       struct device *dma_dev)
-+{
-+	struct vring_virtqueue *vq;
-+	int err;
-+
-+	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
-+	if (!vq)
-+		return NULL;
-+
-+	vq->vq.callback = callback;
-+	vq->vq.vdev = vdev;
-+	vq->vq.name = name;
-+	vq->vq.index = index;
-+	vq->vq.reset = false;
-+	vq->we_own_ring = false;
-+	vq->notify = notify;
-+	vq->weak_barriers = weak_barriers;
-+#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-+	vq->broken = true;
-+#else
-+	vq->broken = false;
-+#endif
-+	vq->packed_ring = true;
-+	vq->dma_dev = dma_dev;
-+	vq->use_dma_api = vring_use_dma_api(vdev);
-+	vq->premapped = false;
-+	vq->do_unmap = vq->use_dma_api;
-+
-+	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
-+		!context;
-+	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-+
-+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-+		vq->weak_barriers = false;
-+
-+	err = vring_alloc_state_extra_packed(vring_packed);
-+	if (err) {
-+		kfree(vq);
-+		return NULL;
-+	}
-+
-+	virtqueue_vring_init_packed(vring_packed, !!callback);
-+
-+	virtqueue_init(vq, vring_packed->vring.num);
-+	virtqueue_vring_attach_packed(vq, vring_packed);
-+
-+	spin_lock(&vdev->vqs_list_lock);
-+	list_add_tail(&vq->vq.list, &vdev->vqs);
-+	spin_unlock(&vdev->vqs_list_lock);
-+	return &vq->vq;
-+}
-+
-  static struct virtqueue *vring_create_virtqueue_packed(
-  	unsigned int index,
-  	unsigned int num,
-@@ -2566,127 +2668,6 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
-  }
-  EXPORT_SYMBOL_GPL(vring_interrupt);
-
--/* Only available for split ring */
--static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
--					       struct vring_virtqueue_split *vring_split,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev)
--{
--	struct vring_virtqueue *vq;
--	int err;
--
--	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
--	if (!vq)
--		return NULL;
--
--	vq->packed_ring = false;
--	vq->vq.callback = callback;
--	vq->vq.vdev = vdev;
--	vq->vq.name = name;
--	vq->vq.index = index;
--	vq->vq.reset = false;
--	vq->we_own_ring = false;
--	vq->notify = notify;
--	vq->weak_barriers = weak_barriers;
--#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
--	vq->broken = true;
--#else
--	vq->broken = false;
--#endif
--	vq->dma_dev = dma_dev;
--	vq->use_dma_api = vring_use_dma_api(vdev);
--	vq->premapped = false;
--	vq->do_unmap = vq->use_dma_api;
--
--	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
--		!context;
--	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
--
--	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
--		vq->weak_barriers = false;
--
--	err = vring_alloc_state_extra_split(vring_split);
--	if (err) {
--		kfree(vq);
--		return NULL;
--	}
--
--	virtqueue_vring_init_split(vring_split, vq);
--
--	virtqueue_init(vq, vring_split->vring.num);
--	virtqueue_vring_attach_split(vq, vring_split);
--
--	spin_lock(&vdev->vqs_list_lock);
--	list_add_tail(&vq->vq.list, &vdev->vqs);
--	spin_unlock(&vdev->vqs_list_lock);
--	return &vq->vq;
--}
--
--static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
--					       struct vring_virtqueue_packed *vring_packed,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev)
--{
--	struct vring_virtqueue *vq;
--	int err;
--
--	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
--	if (!vq)
--		return NULL;
--
--	vq->vq.callback = callback;
--	vq->vq.vdev = vdev;
--	vq->vq.name = name;
--	vq->vq.index = index;
--	vq->vq.reset = false;
--	vq->we_own_ring = false;
--	vq->notify = notify;
--	vq->weak_barriers = weak_barriers;
--#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
--	vq->broken = true;
--#else
--	vq->broken = false;
--#endif
--	vq->packed_ring = true;
--	vq->dma_dev = dma_dev;
--	vq->use_dma_api = vring_use_dma_api(vdev);
--	vq->premapped = false;
--	vq->do_unmap = vq->use_dma_api;
--
--	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
--		!context;
--	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
--
--	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
--		vq->weak_barriers = false;
--
--	err = vring_alloc_state_extra_packed(vring_packed);
--	if (err) {
--		kfree(vq);
--		return NULL;
--	}
--
--	virtqueue_vring_init_packed(vring_packed, !!callback);
--
--	virtqueue_init(vq, vring_packed->vring.num);
--	virtqueue_vring_attach_packed(vq, vring_packed);
--
--	spin_lock(&vdev->vqs_list_lock);
--	list_add_tail(&vq->vq.list, &vdev->vqs);
--	spin_unlock(&vdev->vqs_list_lock);
--	return &vq->vq;
--}
--
-  struct virtqueue *vring_create_virtqueue(
-  	unsigned int index,
-  	unsigned int num,
-
-
-Thanks,
-Stefano
-
+T24gMDYvMTAvMjAyNCAxMTowNCwgU2hlcnJ5IFN1biB3cm90ZToNCj4gW+aUtuWIsOatpOmCruS7
+tueahOafkOS6m+S6uumAmuW4uOS4jeS8muaUtuWIsOadpeiHqiBzaGVycnkuc3VuQG54cC5jb20g
+55qE55S15a2Q6YKu5Lu244CC6K+36K6/6ZeuIGh0dHBzOi8vYWthLm1zL0xlYXJuQWJvdXRTZW5k
+ZXJJZGVudGlmaWNhdGlvbu+8jOS7peS6huino+S4uuS7gOS5iOi/meS4gOeCueW+iOmHjeimgeOA
+gl0NCj4NCj4gVGhpcyBlbWFpbCBpcyBub3QgZnJvbSBIZXhhZ29u4oCZcyBPZmZpY2UgMzY1IGlu
+c3RhbmNlLiBQbGVhc2UgYmUgY2FyZWZ1bCB3aGlsZSBjbGlja2luZyBsaW5rcywgb3BlbmluZyBh
+dHRhY2htZW50cywgb3IgcmVwbHlpbmcgdG8gdGhpcyBlbWFpbC4NCj4NCj4NCj4+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+PiBGcm9tOiBDYXRhbGluIFBvcGVzY3UgPGNhdGFsaW4ucG9w
+ZXNjdUBsZWljYS1nZW9zeXN0ZW1zLmNvbT4NCj4+IFNlbnQ6IEZyaWRheSwgT2N0b2JlciA0LCAy
+MDI0IDc6MzYgUE0NCj4+IFRvOiBBbWl0a3VtYXIgS2Fyd2FyIDxhbWl0a3VtYXIua2Fyd2FyQG54
+cC5jb20+OyBOZWVyYWogU2FuamF5IEthbGUNCj4+IDxuZWVyYWouc2FuamF5a2FsZUBueHAuY29t
+PjsgbWFyY2VsQGhvbHRtYW5uLm9yZzsNCj4+IGx1aXouZGVudHpAZ21haWwuY29tOyByb2JoQGtl
+cm5lbC5vcmc7IGtyemsrZHRAa2VybmVsLm9yZzsNCj4+IGNvbm9yK2R0QGtlcm5lbC5vcmc7IHAu
+emFiZWxAcGVuZ3V0cm9uaXguZGUNCj4+IENjOiBsaW51eC1ibHVldG9vdGhAdmdlci5rZXJuZWwu
+b3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+PiBrZXJuZWxAdmdlci5r
+ZXJuZWwub3JnOyBtLmZlbHNjaEBwZW5ndXRyb25peC5kZTsgYnNwLQ0KPj4gZGV2ZWxvcG1lbnQu
+Z2VvQGxlaWNhLWdlb3N5c3RlbXMuY29tOyBDYXRhbGluIFBvcGVzY3UNCj4+IDxjYXRhbGluLnBv
+cGVzY3VAbGVpY2EtZ2Vvc3lzdGVtcy5jb20+DQo+PiBTdWJqZWN0OiBbUEFUQ0ggMi8yXSBCbHVl
+dG9vdGg6IGJ0bnhwdWFydDogaW1wbGVtZW50IHBvd2VydXAgc2VxdWVuY2UuDQo+Pg0KPj4gTlhQ
+IGJsdWV0b290aCBjaGlwIHNoYXJlcyBwb3dlciBzdXBwbHkgYW5kIHJlc2V0IGdwaW8gd2l0aCBh
+IFdMQU4gY2hpcC4NCj4+IEFkZCBzdXBwb3J0IGZvciBwb3dlciBzdXBwbHkgYW5kIHJlc2V0IGFu
+ZCBlbmZvcmNlIHBvd2VydXANCj4+IHNlcXVlbmNlOg0KPj4gMS4gYXBwbHkgcG93ZXIgc3VwcGx5
+DQo+PiAyLiBkZWFzc2VydCByZXNldC9wb3dlcmRvd24NCj4gSGkgQ2F0YWxpbiwNCj4NCj4gRm9y
+IE5YUCBXSUZJL0JUIGNoaXAsIFdJRkkgYW5kIEJUIHNoYXJlIHRoZSBvbmUgUERuIHBpbiwgd2hp
+Y2ggbWVhbnMgdGhhdCBib3RoIHdpZmkgYW5kIEJUIGNvbnRyb2xsZXIgd2lsbCBiZSBwb3dlcmVk
+IG9uIGFuZCBvZmYgYXQgdGhlIHNhbWUgdGltZS4gU28geW91IGNvbnRyb2wgdGhpcyBwaW4gaW4g
+dGhlIEJUIGRyaXZlciBwcm9iZSBhbmQgcmVtb3ZlIGZ1bmN0aW9uIHdpbGwgZGlyZWN0bHkgYnJl
+YWsgdGhlIHdpZmkgZnVuY3Rpb24gSSB0aGluay4NCg0KSGkgU2hlcnJ5LA0KDQpJIGtub3cgYW5k
+IHRoYXQncyB3aHkgSSdtIHVzaW5nIHJlc2V0IGNvbnRyb2wgYW5kIG5vdCBncGlvLi4uIFJlc2V0
+IA0KY29udHJvbCBhcmUgcmVmY291bnRlZCwgZ3Bpb3MgYXJlIG5vdC4gU28sIGJhc2ljYWxseSB3
+ZSBjYW4gdXNlIG9uZSANCnJlc2V0IGNvbnRyb2wgc2hhcmVkIGJ5IGJsdWV0b290aCBhbmQgd2xh
+biBkcml2ZXJzLCBlYWNoIGRyaXZlciBjYW4gDQpvcGVyYXRlIGluZGVwZW5kZW50bHkgZnJvbSBv
+dGhlciBhcyBsb25nIGFzIHRoZXkgaW1wbGVtZW50IHRoZSBwb3dlcnVwIA0Kc2VxdWVuY2UgKHNo
+YXJlZCBzdXBwbHkgYW5kIHJlc2V0IHBpbikgYW5kIGRvd25sb2FkIHRoZWlyIHNwZWNpZmljIA0K
+ZmlybXdhcmUgKGNvbWJvIGZpcm13YXJlIG5vdCB1c2VkKS4gQXMgbG9uZyBhcyBvbmUgZHJpdmVy
+IGlzIGZ1bmN0aW9uYWwsIA0KdGhlIGNoaXAgc3VwcGx5IGFuZCByZXNldCBpcyBub3QgYXNzZXJ0
+ZWQuIFNvLCB5b3UgY2FuIGxvb2sgYXQgdGhlIA0KZHJpdmVycyBhcyB1c2VycyBvZiBzaGFyZWQg
+cmVzb3VyY2VzIChzdXBwbHkgYW5kIHJlc2V0KS4NCg0KPg0KPj4gU2lnbmVkLW9mZi1ieTogQ2F0
+YWxpbiBQb3Blc2N1IDxjYXRhbGluLnBvcGVzY3VAbGVpY2EtZ2Vvc3lzdGVtcy5jb20+DQo+PiAt
+LS0NCj4+ICAgZHJpdmVycy9ibHVldG9vdGgvYnRueHB1YXJ0LmMgfCAxOCArKysrKysrKysrKysr
+KysrKysNCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKykNCj4+DQo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ibHVldG9vdGgvYnRueHB1YXJ0LmMgYi9kcml2ZXJzL2JsdWV0b290
+aC9idG54cHVhcnQuYw0KPj4gaW5kZXggNGY0OTNiZTc2M2I4Li5lNThlN2FjNzk5OWYgMTAwNjQ0
+DQo+PiAtLS0gYS9kcml2ZXJzL2JsdWV0b290aC9idG54cHVhcnQuYw0KPj4gKysrIGIvZHJpdmVy
+cy9ibHVldG9vdGgvYnRueHB1YXJ0LmMNCj4+IEBAIC0xNiw2ICsxNiw4IEBADQo+PiAgICNpbmNs
+dWRlIDxsaW51eC9jcmM4Lmg+DQo+PiAgICNpbmNsdWRlIDxsaW51eC9jcmMzMi5oPg0KPj4gICAj
+aW5jbHVkZSA8bGludXgvc3RyaW5nX2hlbHBlcnMuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvcmVn
+dWxhdG9yL2NvbnN1bWVyLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L3Jlc2V0Lmg+DQo+Pg0KPj4g
+ICAjaW5jbHVkZSA8bmV0L2JsdWV0b290aC9ibHVldG9vdGguaD4NCj4+ICAgI2luY2x1ZGUgPG5l
+dC9ibHVldG9vdGgvaGNpX2NvcmUuaD4NCj4+IEBAIC0xODgsNiArMTkwLDcgQEAgc3RydWN0IGJ0
+bnhwdWFydF9kZXYgew0KPj4NCj4+ICAgICAgICBzdHJ1Y3QgcHNfZGF0YSBwc2RhdGE7DQo+PiAg
+ICAgICAgc3RydWN0IGJ0bnhwdWFydF9kYXRhICpueHBfZGF0YTsNCj4+ICsgICAgIHN0cnVjdCBy
+ZXNldF9jb250cm9sICpwZG47DQo+PiAgIH07DQo+Pg0KPj4gICAjZGVmaW5lIE5YUF9WMV9GV19S
+RVFfUEtUICAgIDB4YTUNCj4+IEBAIC0xNDU4LDYgKzE0NjEsNyBAQCBzdGF0aWMgaW50IG54cF9z
+ZXJkZXZfcHJvYmUoc3RydWN0IHNlcmRldl9kZXZpY2UNCj4+ICpzZXJkZXYpICB7DQo+PiAgICAg
+ICAgc3RydWN0IGhjaV9kZXYgKmhkZXY7DQo+PiAgICAgICAgc3RydWN0IGJ0bnhwdWFydF9kZXYg
+Km54cGRldjsNCj4+ICsgICAgIGludCBlcnI7DQo+Pg0KPj4gICAgICAgIG54cGRldiA9IGRldm1f
+a3phbGxvYygmc2VyZGV2LT5kZXYsIHNpemVvZigqbnhwZGV2KSwgR0ZQX0tFUk5FTCk7DQo+PiAg
+ICAgICAgaWYgKCFueHBkZXYpDQo+PiBAQCAtMTQ4NSw2ICsxNDg5LDE2IEBAIHN0YXRpYyBpbnQg
+bnhwX3NlcmRldl9wcm9iZShzdHJ1Y3Qgc2VyZGV2X2RldmljZQ0KPj4gKnNlcmRldikNCj4+DQo+
+PiAgICAgICAgY3JjOF9wb3B1bGF0ZV9tc2IoY3JjOF90YWJsZSwgUE9MWU5PTUlBTDgpOw0KPj4N
+Cj4+ICsgICAgIG54cGRldi0+cGRuID0gZGV2bV9yZXNldF9jb250cm9sX2dldF9vcHRpb25hbF9z
+aGFyZWQoJnNlcmRldi0NCj4+PiBkZXYsIE5VTEwpOw0KPj4gKyAgICAgaWYgKElTX0VSUihueHBk
+ZXYtPnBkbikpDQo+PiArICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKG54cGRldi0+cGRuKTsN
+Cj4+ICsNCj4+ICsgICAgIGVyciA9IGRldm1fcmVndWxhdG9yX2dldF9lbmFibGUoJnNlcmRldi0+
+ZGV2LCAidmNjIik7DQo+PiArICAgICBpZiAoZXJyKSB7DQo+PiArICAgICAgICAgICAgIGRldl9l
+cnIoJnNlcmRldi0+ZGV2LCAiRmFpbGVkIHRvIGVuYWJsZSB2Y2MgcmVndWxhdG9yXG4iKTsNCj4+
+ICsgICAgICAgICAgICAgcmV0dXJuIGVycjsNCj4+ICsgICAgIH0NCj4+ICsNCj4gTm93IGluIE5Y
+UCBsb2NhbCByZXBvLCB0aGUgUERuIHBpbiBoYXMgYmVlbiBjb250cm9sbGVkIGJ5IHRoZSBjb3Jy
+ZXNwb25kaW5nIHdpZmkgUENJZS9TRElPIGNvbnRyb2xsZXIsIHNvIHdlIHdvbid0IGFkZCB0aGUg
+dmNjLXN1cHBseSBhbmQgcmVzZXQtZ3Bpb3MgcHJvcGVydGllcyBmb3IgdGhlIEJUIGRyaXZlciwg
+c2VlbXMgdGhlIGNvZGUgaGVyZSB3aWxsIHJldHVybiBlcnIgaWYgbm8gdmNjLXN1cHBseSBhbmQg
+cmVzZXQtZ3Bpb3MgcHJvcGVydGllcyBwcm92aWRlZCwgd2hpY2ggd2lsbCBicmVhayB0aGUgQlQg
+ZHJpdmVyIHByb2JlLg0KSWYgeW91IGxvb2sgY2xvc2VseSwgdGhlIGdwaW8gaXMgb3B0aW9uYWwg
+YW5kIHRoZSBzdXBwbHkgd2lsbCByZXR1cm4gYSANCmR1bW15IGlmIG5vbmUgaXMgZGVjbGFyZWQg
+aW4gdGhlIERULiBTbywgdGhpcyBjaGFuZ2Ugd29uJ3QgYnJlYWsgYW55dGhpbmcuDQo+IEJlc3Qg
+UmVnYXJkcw0KPiBTaGVycnkNCj4NCj4+ICAgICAgICAvKiBJbml0aWFsaXplIGFuZCByZWdpc3Rl
+ciBIQ0kgZGV2aWNlICovDQo+PiAgICAgICAgaGRldiA9IGhjaV9hbGxvY19kZXYoKTsNCj4+ICAg
+ICAgICBpZiAoIWhkZXYpIHsNCj4+IEBAIC0xNDkyLDYgKzE1MDYsOCBAQCBzdGF0aWMgaW50IG54
+cF9zZXJkZXZfcHJvYmUoc3RydWN0IHNlcmRldl9kZXZpY2UNCj4+ICpzZXJkZXYpDQo+PiAgICAg
+ICAgICAgICAgICByZXR1cm4gLUVOT01FTTsNCj4+ICAgICAgICB9DQo+Pg0KPj4gKyAgICAgcmVz
+ZXRfY29udHJvbF9kZWFzc2VydChueHBkZXYtPnBkbik7DQo+PiArDQo+PiAgICAgICAgbnhwZGV2
+LT5oZGV2ID0gaGRldjsNCj4+DQo+PiAgICAgICAgaGRldi0+YnVzID0gSENJX1VBUlQ7DQo+PiBA
+QCAtMTUwOSw2ICsxNTI1LDcgQEAgc3RhdGljIGludCBueHBfc2VyZGV2X3Byb2JlKHN0cnVjdCBz
+ZXJkZXZfZGV2aWNlDQo+PiAqc2VyZGV2KQ0KPj4NCj4+ICAgICAgICBpZiAoaGNpX3JlZ2lzdGVy
+X2RldihoZGV2KSA8IDApIHsNCj4+ICAgICAgICAgICAgICAgIGRldl9lcnIoJnNlcmRldi0+ZGV2
+LCAiQ2FuJ3QgcmVnaXN0ZXIgSENJIGRldmljZVxuIik7DQo+PiArICAgICAgICAgICAgIHJlc2V0
+X2NvbnRyb2xfYXNzZXJ0KG54cGRldi0+cGRuKTsNCj4+ICAgICAgICAgICAgICAgIGhjaV9mcmVl
+X2RldihoZGV2KTsNCj4+ICAgICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPj4gICAgICAg
+IH0NCj4+IEBAIC0xNTQwLDYgKzE1NTcsNyBAQCBzdGF0aWMgdm9pZCBueHBfc2VyZGV2X3JlbW92
+ZShzdHJ1Y3QNCj4+IHNlcmRldl9kZXZpY2UgKnNlcmRldikNCj4+ICAgICAgICB9DQo+PiAgICAg
+ICAgcHNfY2xlYW51cChueHBkZXYpOw0KPj4gICAgICAgIGhjaV91bnJlZ2lzdGVyX2RldihoZGV2
+KTsNCj4+ICsgICAgIHJlc2V0X2NvbnRyb2xfYXNzZXJ0KG54cGRldi0+cGRuKTsNCj4+ICAgICAg
+ICBoY2lfZnJlZV9kZXYoaGRldik7DQo+PiAgIH0NCj4+DQo+PiAtLQ0KPj4gMi4zNC4xDQo+Pg0K
+DQo=
 
