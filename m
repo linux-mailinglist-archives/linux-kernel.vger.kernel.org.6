@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-354291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF66993B55
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:41:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37A6993B58
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64799283C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:41:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F86B2374C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27E19882C;
-	Mon,  7 Oct 2024 23:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6541C1AA3;
+	Mon,  7 Oct 2024 23:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DV4p0uHp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pquGL2AD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069B193082;
-	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A92B1C1735;
+	Mon,  7 Oct 2024 23:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728344433; cv=none; b=KxVaAhObwN+elM1LsYdbeaR6dVb5viXwnOvadfYTUYtIsylvqaiqJgKTJHa0nJryHcyPGN5Ib9HtfHFypnWMP5WyowDh50AN/VbKuvPTF5Soa/g8G8bHlP4VIH7HA8Z26Ub19Xr1l0K9MkunsdPHuxfkPocGTd+1z1O1FE5P0lE=
+	t=1728344436; cv=none; b=XL1q7aaca9gS+zL1h4BchsZMWJ0GpTUG1kSJooSdCoav0JX7choMXj9TpFZyOAVxYCc6HemFiUwwcMWG8to91q17QVPgdwEWdr2LZTeJ4GR9kn4mDn9i3VC2f6O7F2/FGjiIzh89ktLdHbYuVTl/6WF75Q3h2kUQYVbg5mKL5CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728344433; c=relaxed/simple;
-	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	s=arc-20240116; t=1728344436; c=relaxed/simple;
+	bh=SGETYmsZKUXFo7TaGMMNBKR1PTn6kxgtInZrcSU5fco=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SLIt3Nr9b7B6134FXjMSfNvJc3reSzklFwWTI7J4Cg6Wkb3iJPBGLEiyEVIXjogJCCcfLokcB2ad6P5WTaI3usZ8VgYBdPIV8sRgse+9uPTEpBTHaoV1J25johS+5MdSCcKbi91sVf0jWx7EZ03mHniVlKVXTkrm3rzaYUvJc9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DV4p0uHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0F2C4CEC6;
-	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=o+4+LAIWXP3qTIFmxn3JM0OJKbe0jpv1jyZ7YPNvTeFiekm7wNziZQlTV6QtFDOlQPc6VFn7m4OX47HRXJMyAM6kzkd1FDbA44bANhM2BS4RAF4bmrOdzqLWr3Gkex3Ybtuu/t0UAW5eTcx06KDVMwbsl5HdUJHl4esTnCPCSvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pquGL2AD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 210D8C4CEC6;
+	Mon,  7 Oct 2024 23:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728344433;
-	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	s=k20201202; t=1728344436;
+	bh=SGETYmsZKUXFo7TaGMMNBKR1PTn6kxgtInZrcSU5fco=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DV4p0uHpv1fRof3Ju93U028CIuMu/W8zpcP/QFdolXJ4V1uJT6CStQ27oa2IYlzjF
-	 V3qQMpvxyLwlT2bINJmGJho6YSGwilTx3VJ7EcBvjg8NmOM0XTSVvbvFn74yPQW9hS
-	 CeSfiMi5rCMqoEp+E+GTYM1Z6TFZCk4OCez6l+LNGtodsbyUIJqRZtmM8gYdYIQhrV
-	 ZgO+XH+sbw6KZ7apvS+kBralr09+dRV9ejuXL+0wVn9UAgf/afmwzE7dvtcc2bT5la
-	 CFaxTUME2ApOYkR2UkFEKT4bmATb1P6BzZ5nZGWkMD4DaQUyRtzxJApCQd9s3l2kek
-	 R1S0/beLHhqOA==
+	b=pquGL2ADFxBuZYmD+GBV2PUpGl5eAYQSq5z0tG6DaFZ0C20ScoqExzgpVY7WGnuwe
+	 CUPFf/pdLVHUf7QC9WNSrQP1Yx2p8skU02Myy4pT5ZMHLgssACD5XqDecCGZQ2bEwm
+	 kinh0xz1VTDxhBsbLF6VXqnybMPH5cgGZhUpDEw7NOZ9m6RstIrwGW7bdpSfQSssfM
+	 /mBy3ilyhiptgX4Sik2Qattzx3B4JYT7hJvBH2KGQmXXBdB6SDj4fjWfCuFuZ5KjAg
+	 T6aogJGJ/R5h9zSGmuf2ceJ+BPMvSP6WTOtq1WGhHmqTnprflUsraTqT/OoBYyeLwS
+	 wgQ1t7YybJqIA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE9B3803262;
-	Mon,  7 Oct 2024 23:40:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BBE3803262;
+	Mon,  7 Oct 2024 23:40:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] mlxsw: spectrum_acl_flex_keys: Constify struct
- mlxsw_afk_element_inst
+Subject: Re: [PATCH net-next] net: tcp: refresh tcp_mstamp for compressed ack in
+ timer
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172834443748.18821.2044156392058705252.git-patchwork-notify@kernel.org>
-Date: Mon, 07 Oct 2024 23:40:37 +0000
-References: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: idosch@nvidia.com, petrm@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
+ <172834444024.18821.12180555939100702405.git-patchwork-notify@kernel.org>
+Date: Mon, 07 Oct 2024 23:40:40 +0000
+References: <20241003082231.759759-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20241003082231.759759-1-dongml2@chinatelecom.cn>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dongml2@chinatelecom.cn
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  4 Oct 2024 07:26:05 +0200 you wrote:
-> 'struct mlxsw_afk_element_inst' are not modified in these drivers.
+On Thu,  3 Oct 2024 16:22:31 +0800 you wrote:
+> For now, we refresh the tcp_mstamp for delayed acks and keepalives, but
+> not for the compressed ack in tcp_compressed_ack_kick().
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security.
+> I have not found out the effact of the tcp_mstamp when sending ack, but
+> we can still refresh it for the compressed ack to keep consistent.
 > 
-> Update a few functions and struct mlxsw_afk_block accordingly.
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] mlxsw: spectrum_acl_flex_keys: Constify struct mlxsw_afk_element_inst
-    https://git.kernel.org/netdev/net-next/c/bec2a32145d5
+  - [net-next] net: tcp: refresh tcp_mstamp for compressed ack in timer
+    https://git.kernel.org/netdev/net-next/c/269084f74852
 
 You are awesome, thank you!
 -- 
