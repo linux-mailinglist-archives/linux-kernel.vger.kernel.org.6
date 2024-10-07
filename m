@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-352784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151EA992419
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C540992429
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417591C222FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:06:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4A81B22BC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEA91422D8;
-	Mon,  7 Oct 2024 06:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24A816132A;
+	Mon,  7 Oct 2024 06:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOTCS8Rz"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o+w9MCZ0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C889A52F76;
-	Mon,  7 Oct 2024 06:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D2C1531C1;
+	Mon,  7 Oct 2024 06:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728281172; cv=none; b=JZ2NbkBlUmebMrH66PubAcocS6bbzjQiaRLang0A5eb+2Cp4/YxrzfLJ0zPveVrOACGQW3vhKzcPAEEWroPy2tiT+O276GaJb+36xidrU0CpDnJyIfOQupVApPOrkqFXdEMBcIwlc6SOAG86Nb678AyNq1LZTo/FmSLHwafqXtY=
+	t=1728281268; cv=none; b=ahUA8QmlP0b1utZVGDZh0vJaDS8TB+brG6SJvD26fYCd7BUH4sriW4ROHOPPH08FEmPtWkV7iiMtvX6R4a+HxTtkVFdgP7nHzoF57zEa6Fms/LNW+Ba1KJEJfnkjSOaY7Nyw0fbU8sew7KkTd8KpE0t3z1pZWqmopCZW1pCjL2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728281172; c=relaxed/simple;
-	bh=+l3wlKA88q1ClQr4W+6U830Pe0etfYRBQMmgNTUPAIk=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=E7haA/4tFdcbjhc4l8JOdqEI96eypaL2y9wE+k4lN5oFDewnLC6lH9Z+w3ZLFD1P6U5GmRUoKnNHtT3YBg0ysICNhQoaYjCqgFMMC7ieG/WmiY2PuexFumhdBmTXRKJpe1wtgqur9WAPMjomX0wlhCo+8qOIgLtQlV6lnFKobzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOTCS8Rz; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e7b121be30so2575149a12.1;
-        Sun, 06 Oct 2024 23:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728281170; x=1728885970; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xWHhUCe+PAU3jh7iwjTBYQhtG3bIBdoYbmm9fmNXtKs=;
-        b=FOTCS8RzBPULVWoGy5Y4W/3k25WZkE47x7+TIvNXVw1nscdzQ0Nc2FZG5zTNIm12a5
-         HDpOclXAb9QKKX2zY2SUhh3WDwt6kXd8q4m0bqdj5CaApUW84+fWwK2/IK1NmdOlz0nm
-         WbKhY4oGX+hnI5zbmcBCaeNYDcdttg45OUGslUgEa6I60XHiznQpnFFE1UukAEykpPE5
-         /gs3H7tuuEryleiBnCIZLKNKsOeqq5XecfePJ1Myf7VUurJR2SrNEYjQHZ6vYaLYC5M8
-         kssTdKiN3P5ARGkQIvS6kGA7qwuBvl9RbxuxtRyGyYsalTSy9EEGmXHw7mmYo6/T7oWq
-         +/9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728281170; x=1728885970;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xWHhUCe+PAU3jh7iwjTBYQhtG3bIBdoYbmm9fmNXtKs=;
-        b=Bb+oPkgX6LinxXk7bP93ieoN6ML+vBnqV7m6nJuFo1eudzbtBXgMuUuaFfgW3Xnv3w
-         xvxNbdZRYelamGqlqdCRug0BlEUO0RJJaxqUdYaVWuBa4b6GUmld/dUd8Lz94owWa4VY
-         ime/WQk/TE51bU0V218r8pNby+MyCoJPgzfUT3zMo2L/Q0ooINXBo0mVD8GtvoFd8wbd
-         xnx4QP/ipcaQp7wnk1eBSkrF7ahXc7XKFEnMV5cKRLqViLW9yfR6RrtSlH562iT3AJZq
-         P65qzRG+3ZpgjsY9tVEW41yGEAKXajra3/2LdW5jvzVoEU1IVN2j9A0SiXEEtCvY2xy3
-         mU7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUb4+20oHHbwpqlsV8koGoeXiYggC5bsvJWh4hMKdEtIOIs6Pj/B3WrGRmjcwWBYIaOS/ZKk7uIO0mOOZulgJs=@vger.kernel.org, AJvYcCVKF69Om+jV5llztFiiQhMgaFTeunKC49uW9teARNT4qDrOO978x26uP7RQAnB1coAXCqDBWZ19@vger.kernel.org, AJvYcCW/bQgkkJN5cTLj385V1ieMeYk3vATjOmHasNOQpjR+F8beWauv91Muxz5NkeJXZqoTuGGgVw8eC64xHYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+xeGmPRgQjity0lVSgx0DsMEhQc2DlLPxh7ecM4aMU8WmNaP6
-	9fdQTepELMbwPzJdFIax0q6Kaxc6YsJU7ME4dyruSvtBEiOqnKbB
-X-Google-Smtp-Source: AGHT+IEvd3S8eK8gR4rQ41FHgEB3jyYUD2JrqICCWIkI4p+O2FH9zQaZzSQuw5zqN2tTZdGi8odBzA==
-X-Received: by 2002:a17:90b:4b0a:b0:2d8:f7c6:e1dd with SMTP id 98e67ed59e1d1-2e1e63c1878mr15696218a91.37.1728281170093;
-        Sun, 06 Oct 2024 23:06:10 -0700 (PDT)
-Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b12adbcsm4442851a91.53.2024.10.06.23.06.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 23:06:09 -0700 (PDT)
-Date: Mon, 07 Oct 2024 15:06:04 +0900 (JST)
-Message-Id: <20241007.150604.1865244214901545486.fujita.tomonori@gmail.com>
-To: me@kloenk.dev
-Cc: andrew@lunn.ch, fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu,
- ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com,
- aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
- tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/6] rust: time: Implement addition of
- Ktime and Delta
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <A3581250-0876-42FC-9B3F-67F437CC16AC@kloenk.dev>
-References: <20241005122531.20298-4-fujita.tomonori@gmail.com>
-	<e540d2cd-2c47-4057-9000-8d403247abf6@lunn.ch>
-	<A3581250-0876-42FC-9B3F-67F437CC16AC@kloenk.dev>
+	s=arc-20240116; t=1728281268; c=relaxed/simple;
+	bh=1zkhF5j0Yfw8wEglWFoGgfvTDXqYAccNbdeOJh5HwDk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sUv/OJU2yEBUAdRAEyD5Ouped8cU+dxZsp638DKHCu+Nn4cXK9NGY9ZFxdDuzpEgG6EGBRhSWeyyL/xwpanFbxBWrjIK2BhU9v/9V2y2C96/3Z1xlaUj2XnuuIAeeHyMaNdnAIiJfkgIXxrZUXOUN3Xm+grv5JOfb9+hpniTDws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o+w9MCZ0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TBtD027139;
+	Mon, 7 Oct 2024 06:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pqc2VP+MLjp0hUrnxVvMv5
+	GmaCVOoqr7kCbfwtJ+IGg=; b=o+w9MCZ0QjFq+KWkAv+heKkLjHm/mHpXXjDbrk
+	4Zzld/MSVTTDvDgqGYEa/ZVuyivLnkvEl3gP69BhgQFrBYfprljg7gAGEtUTXHga
+	6B3PZ04gewxT+eAU8IczytxFWmCEzxuFz+LzsXvmtYQFspWHyhlfeWHGptOCb688
+	+Fv1sf8GNkePgxZ82rJPVKEZkLp0hyHzeTmZOst8PLXfH0aW/bd/pHP4NlhVXXzv
+	+UdWx8MhkVsu13LHo4ZoBnNzPfzVpcuLs+58IykfP2VxIzIXMzmVabRQ59cZtXWV
+	72R+Rzg5X+z1RPkD8PqpNZW/sHuxWPEI1vBdN9Rk0m+CVOlQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xu6b4dk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 06:07:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49767KFe007798
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 06:07:20 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 6 Oct 2024 23:07:16 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <johan@kernel.org>, <konradybcio@kernel.org>,
+        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>
+Subject: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
+Date: Mon, 7 Oct 2024 11:36:38 +0530
+Message-ID: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wJGfF22zYrib2cyoxMDWMUaAIZOt_JD3
+X-Proofpoint-ORIG-GUID: wJGfF22zYrib2cyoxMDWMUaAIZOt_JD3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ spamscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070041
 
-On Sun, 06 Oct 2024 12:45:06 +0200
-Fiona Behrens <me@kloenk.dev> wrote:
+The series addresses the kernel warnings reported by Johan at [1] and are
+are required to X1E cpufreq device tree changes [2] to land.
 
->> On Sat, Oct 05, 2024 at 09:25:28PM +0900, FUJITA Tomonori wrote:
->>> Implement Add<Delta> for Ktime to support the operation:
->>>
->>> Ktime = Ktime + Delta
->>>
->>> This is used to calculate the future time when the timeout will occur.
->>
->> Since Delta can be negative, it could also be a passed time. For a
->> timeout, that does not make much sense.
->>
-> 
-> Are there more usecases than Delta? Would it make sense in that case to also implement Sub as well?
+[1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+[2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
 
-We might add the api to calculate the elapsed time when it becomes
-necessary:
+The following warnings remain unadressed:
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
 
-Delta = Ktime - Ktime
+Duplicate levels:
+arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
+arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
+arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
+
+^^ exist because SCP reports duplicate values for the highest sustainable
+freq for perf domains 1 and 2. These are the only freqs that appear as
+duplicates and will be fixed with a firmware update. FWIW the warnings
+that we are addressing in this series will also get fixed by a firmware
+update but they still have to land for devices already out in the wild.
+
+V2:
+* Include the fix for do_xfer timeout
+* Include the fix debugfs node creation failure
+* Include Cristian's fix for skipping opp duplication
+
+V1:
+* add missing MSG_SUPPORTS_FASTCHANNEL definition.
+
+Base branch: next-20241004
+
+Cristian Marussi (1):
+  firmware: arm_scmi: Skip adding bad duplicates
+
+Sibi Sankar (3):
+  firmware: arm_scmi: Ensure that the message-id supports fastchannel
+  pmdomain: core: Fix debugfs node creation failure
+  mailbox: qcom-cpucp: Mark the irq with IRQF_NO_SUSPEND flag
+
+ drivers/firmware/arm_scmi/driver.c    |  9 ++++++
+ drivers/firmware/arm_scmi/perf.c      | 37 +++++++++++++++++++------
+ drivers/firmware/arm_scmi/protocols.h |  2 ++
+ drivers/mailbox/qcom-cpucp-mbox.c     |  2 +-
+ drivers/pmdomain/core.c               | 40 +++++++++++++++++----------
+ include/linux/pm_domain.h             |  1 +
+ 6 files changed, 66 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
 
 
