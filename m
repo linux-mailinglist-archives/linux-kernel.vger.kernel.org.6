@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-354135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E93993835
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:28:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8705993842
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49DB31F2224E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:28:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDBBF1F228ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0884B1DE881;
-	Mon,  7 Oct 2024 20:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AD21DE8A0;
+	Mon,  7 Oct 2024 20:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L4coOals"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="F1rLU2IX"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5671DE4DC
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073A61DE894;
+	Mon,  7 Oct 2024 20:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332888; cv=none; b=YyhmjGFPV2imVZ95HZ+UnQ5HkJPLSnqozsl0QwQeck90o9vqPYaRhSExNQAjvuZPSEkoGkG1gp4W8lYdVPwYqBXOFDdw6RrhySdNFPo79ETVZ12j6Oqz8j4jGKqILtaPNiKcW6qFaPtezMj/331o/oZeuzxRhYp3qaYsX1j+QIk=
+	t=1728333071; cv=none; b=aiQs/oer3KNlL3s7iM13QejiRx2Q6qcE1uCCPYL6rBfkpN7phNseCuoj2VUMPF1iBvVQuKvnxSU2xmzDyZF8MKUgktGNzcH7GJsXFmG/qbQpIUJtZG/NDTdbTbPea4VX1AkvXdq37OUtwv1diaKhKQ/lmR3roGreDruLZ5J2GlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332888; c=relaxed/simple;
-	bh=lFATey50dXtS9PQrNILwMtPc5G4caMsohzKY0ft8MzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DHOJFt/9UbhSRp/02ZPrtOSXWFc3f8Vzk3ZPbEcGPy0/jYytnJBLlqVaRD4ntaWvVz+n4nlKPqZ+IUGmSGTG0sOAdnItFLQv/BBrLRfxlZBj2INS8dIqq0/X8iL6/TCBWAw2SeL5f7jfirrN+bMdRdG2w61R9x/xmHFSMBKK0kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L4coOals; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728332885;
+	s=arc-20240116; t=1728333071; c=relaxed/simple;
+	bh=HrnsC/rbAWcVrXZlDoo7J6JaiHvmzWh68qIzFB/4eqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UnecFhKpxsjKyA7QNIpHBsw+HYu/tA/rF6J7ZOoWzCXcWk3VUoEekrNAh0Gl/8Q9+yvuEATWzOf5K56xaqwwyYriJsRQDmpZCBhMt+g3KdlIeRJfDiPszYb4QzMn8ohXyOLACG3HVXj7RhyLNXMEyczVUUp3Ur7Tn8jgQcI4Kro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=F1rLU2IX; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
+	by mxout2.routing.net (Postfix) with ESMTP id B9AA25FEF8;
+	Mon,  7 Oct 2024 20:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1728333060;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B4glB5DjDUk8NiG4IJ2tdcRgXmWk2aBSKv4B5a3gzA=;
-	b=L4coOals5FOPwCQd8nahFoQi0lG+N7owMiWPMbF5PM1UdxVrW8m3AeSP+zIRHP9uv30Cre
-	LDq05NpnCJXii9GQj/GXW5G6wi/xhEZBKskIhsA2pCfdrZ7QKpPWrUeGz4YgnXFnZGiLoS
-	FfZELtRUAAz8P7s8cBfhkzJX63rm+jw=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-445-yW1ZnYMCNZWWwAgx0ZrufQ-1; Mon, 07 Oct 2024 16:28:04 -0400
-X-MC-Unique: yW1ZnYMCNZWWwAgx0ZrufQ-1
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0ce8cf657so53864225ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:28:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728332884; x=1728937684;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4B4glB5DjDUk8NiG4IJ2tdcRgXmWk2aBSKv4B5a3gzA=;
-        b=luLbD9cM9Wh5FY0BZQf799vmpqLhO4evI+qKYD/C0g27iOegTh7gmIuJ7NqZboWM/i
-         LTIMm0V0LcXLPfx6ewVF9mcLGbdj+7fhBnt+X9/atkxE5GDOGk+QSC6Lwc2pPG+x7RnE
-         qAEGDPyB/mAVh4UR8GZjh6vZ+gGZsv3XL/AGw3bUScdU4YVldXbf21hd/KZa7ziYlGP0
-         z4S9Hdt+0FeWav+sW1Jmf+m1HxdyltR1ATvq/ehJsHMJG9hOjYZMa7QRLyRv0f2CA6Th
-         8oy8WvH9v1fMwSb4aIuUKo1d/UvwutDND6EhymkpKyMlGSUr4sc6N3l+hpDkBbpljsxK
-         YzeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIMBrQdXSFG/YGHX2JzS6mfuwSD1hHUvagY9hnJOahi5YF+5YHSd2LwEPT+oYpTaCikg+ndLVpR8iOFq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCZPayaVLg11cubtKUs/BhF77njnHAVUTSh/FbUOPtt1/BD5Fu
-	c3P5eICSrC240iWtnNqz3GDBOiNLjaR3BrrKtO3x5o2aQOFW7xu5t68vP2pSvi8ehbRv5IhTX5n
-	a8cY7rC6++Si0Ujv9mhBbv8sWGZvkkNeeosUtD+HehJFK97Tu1OBj/BUclDO4Zw==
-X-Received: by 2002:a05:6e02:13a7:b0:3a0:8edc:d133 with SMTP id e9e14a558f8ab-3a375999ec7mr110742025ab.9.1728332883843;
-        Mon, 07 Oct 2024 13:28:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBmRzjnCd//uRIldrVNUB+pEl5NkIv81VplPeLwdKtLvMVnjarQoTS1mbY8SY7c7SWCayFCA==
-X-Received: by 2002:a05:6e02:13a7:b0:3a0:8edc:d133 with SMTP id e9e14a558f8ab-3a375999ec7mr110741895ab.9.1728332883548;
-        Mon, 07 Oct 2024 13:28:03 -0700 (PDT)
-Received: from [10.0.0.71] (67-4-202-127.mpls.qwest.net. [67.4.202.127])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db884f47edsm575830173.111.2024.10.07.13.28.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 13:28:02 -0700 (PDT)
-Message-ID: <5c31f6f0-b68e-4ee6-80ae-e57799177f6c@redhat.com>
-Date: Mon, 7 Oct 2024 15:28:01 -0500
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6TLu7Yfzf4lbg0y6z1FzkWz5coi/i50OEYYrcpN/ESs=;
+	b=F1rLU2IX5ExchOPTTgvShxw97tG9m63vhbl8shc9SW30D+fYg2NEqoCORz+lfGNWRPWzha
+	Nlb1sWq8WXgiYOo6LsBKeGg0lAp14R8AcLncsTxVeqSMYQ9aAROy3pSuAbgWanYFbX5SDW
+	80wADJBsT1tBPbdTWdHOjCecTbeKehc=
+Received: from frank-u24.. (fttx-pool-157.180.226.56.bambit.de [157.180.226.56])
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 7E823360200;
+	Mon,  7 Oct 2024 20:30:59 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	daniel@makrotopia.org,
+	john@phrozen.org,
+	ansuelsmth@gmail.com,
+	eladwf@gmail.com
+Subject: [PATCH v3 0/4] Add pinctrl support for mt7988
+Date: Mon,  7 Oct 2024 22:30:41 +0200
+Message-ID: <20241007203053.72862-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [hfs?] general protection fault in hfs_mdb_commit
-To: syzbot <syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com>,
- brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <67011a15.050a0220.49194.04bc.GAE@google.com>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <67011a15.050a0220.49194.04bc.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 0734da11-ea93-4fd0-bc82-59581f47b628
 
-On 10/5/24 5:51 AM, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit c87d1f1aa91c2e54234672c728e0e117d2bff756
-> Author: Eric Sandeen <sandeen@redhat.com>
-> Date:   Mon Sep 16 17:26:21 2024 +0000
-> 
->     hfs: convert hfs to use the new mount api
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b2bbd0580000
-> start commit:   c02d24a5af66 Add linux-next specific files for 20241003
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1472bbd0580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1072bbd0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5cfa9ffce7cc5744fe24
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be307980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bef527980000
-> 
-> Reported-by: syzbot+5cfa9ffce7cc5744fe24@syzkaller.appspotmail.com
-> Fixes: c87d1f1aa91c ("hfs: convert hfs to use the new mount api")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+From: Frank Wunderlich <frank-w@public-files.de>
 
-#syz test 
+This series adds pinctrl driver, dt-bindings and dts node for pinctrl
+on mediatek mt7988 SoC.
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index ee314f3e39f8..3bee9b5dba5e 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -328,6 +328,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	spin_lock_init(&sbi->work_lock);
- 	INIT_DELAYED_WORK(&sbi->mdb_work, flush_mdb);
- 
-+	sbi->sb = sb;
- 	sb->s_op = &hfs_super_operations;
- 	sb->s_xattr = hfs_xattr_handlers;
- 	sb->s_flags |= SB_NODIRATIME;
+changes in v3:
+- rebase on rafals dts patches
+- update binding to have mux subnode as fixed string and conf with optional suffix
 
+changes in v2:
+  binding:
+  - drop gpio-cells description
+  - move ref in mux subnode up
+  - order uart-functions alphanumeric and fix typo
+  dts:
+  - fix indentation of reg-values
+
+Daniel Golle (2):
+  pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
+  pinctrl: mediatek: add MT7988 pinctrl driver
+
+Frank Wunderlich (2):
+  dt-bindings: pinctrl: add binding for MT7988 SoC
+  arm64: dts: mediatek: mt7988: add pinctrl support
+
+ .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  569 ++++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |  241 +++
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7988.c     | 1526 +++++++++++++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   59 +
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    1 +
+ 7 files changed, 2404 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988.c
+
+-- 
+2.43.0
 
 
