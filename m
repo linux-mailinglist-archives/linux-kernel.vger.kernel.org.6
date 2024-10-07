@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-353404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA0F992D53
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CDB992D55
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8206D28438A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB722842DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AC91D54FE;
-	Mon,  7 Oct 2024 13:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42D1D5CD7;
+	Mon,  7 Oct 2024 13:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkQOg00D"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDsclhWG"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A8D1D4607;
-	Mon,  7 Oct 2024 13:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766C51D54D6;
+	Mon,  7 Oct 2024 13:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307886; cv=none; b=Dv+7cW+KkbCNloNCcJbVVOCgTT8lEHfQ+F3ADjo08aBWejdMCph4iaeoWRPD5NIGc9pmSb4icsXPIm+HelQt2wa12LQNYc7uuKVTvo4jQZsvZdu39RAwlSQaKEp8Sv6m14a8NMbBgpbgOLBUEUa/ujL1LWwG7NVageA3GRQ5+cU=
+	t=1728307888; cv=none; b=JE5EkmWI2BZGTEp8Rm7FhTPeGjzfFSkJ4mo7BIWMa/z2yLTr1a0ML3JA8YpHUF6w0w9THfC+OLTxHviqXXIvbf2tfOITp/NmM6zhDphKxIPlvI9VG4kb20enl3YZ9CBeSVQrjMtrHSAdlsYCzZb32gQWjNCzd7la0WstA1k5gF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307886; c=relaxed/simple;
-	bh=UByxZBjKRbwyzR0DDzBHRC6J+92XJ9jNgFVV6HU/ghY=;
+	s=arc-20240116; t=1728307888; c=relaxed/simple;
+	bh=vV42RUHGMW9kFSk33JmlcysIBmsyJL1a3vd4cWxBy7c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DK4lh8NCq0+hSrk3r73DvHxQdO3m8ac+7vxCtoA0EVHFRVZejmIBt2uZBjg0Y1vaOhD3G//jbpDsS49bH5CIx+YIIGGx0ujN1/MOsJ4xf3fd93otSbVL9K5Jo9aScb4dsy8KG5NYcRPwPAZf6xfXbN/VGfUm62fDzputqccu2jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkQOg00D; arc=none smtp.client-ip=209.85.208.50
+	 MIME-Version; b=pGkTN8D5wwwAVdruPALI6vE4wL46EeqnfQeQcVg/oPcyEHRgeGaX8GuqNh8shL6FCiiDKrSi/cxQGD+GE3GyVn61Fzab9bfGX6SAI1+jLG5ifL4L25Jn9EL0dkptXBTjCcqbbgOabonEuIp9ATaZOPXnUYi1hrtfD90wZoDvJE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDsclhWG; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c884bc72e9so564649a12.0;
-        Mon, 07 Oct 2024 06:31:24 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cdc7bd941so288895f8f.0;
+        Mon, 07 Oct 2024 06:31:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728307883; x=1728912683; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728307885; x=1728912685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r3lP69XlVRrU1wGs7GEr6WIM2xmTxn5oh9fziuvY1p4=;
-        b=DkQOg00DgA00UPESjFdJDV98jpWgBngbG07QovFx0tQl19gKDkLyec6E57mikq/BEH
-         yfKKsRJ+ZifVgY5ZToFK4c+hx6wFl4HhIUk0cZ3WkfoiAIJAh0XbkEepN7Y+hEN9nn+f
-         8vcLda/oQVsb9FrOBcp9a0AIpbYXAe6UVqnQ9qRennldKD6/b8ZaiQ/0iALnbHKnmTHw
-         NA6Boco5SolgYo+HZGzTTGa+ZZ55zliuCqunHQioV9po2dEFQ/WKYAc4Nr/LEG62jUlE
-         X82FNIlo4oGkJPWEgsA9ziLwiqFN9bbTVG88IayTQwosS0mUILPh/MYvCc/L/5HftSrx
-         KdUg==
+        bh=naEfAmzSKhpqtQnWvxkkJprHetAHHfZ0yc3YYzM5sc4=;
+        b=bDsclhWG0pYwQjTUFBxnpLyktsh13NsFuW+i4HuTybUSOVsAPbrCkBsMsfYtD4F3Sd
+         TL5K/Bghqj1+2TJj5Hl9zbP+sm+jshUhRNfaltrk1Dp7kuRah/31TN70FfkSQWGAJct7
+         Z8IMqR69slFmqV9kY3gj1bE3/26W2tYlcUhlvpyGwJ9Rz/YpI/ZvCkuwCQZs28wqxWhi
+         OWMxjNnRKfFMAL97G9y9aVBPDu+h/SZBYIxI+4WHqXXBrDxUK8aWbWFA4v10+OfMvElS
+         QPQCK+LUwNopXR8YZDNAhw1wdMdD2OV3UILgS5QSOlUfDfTx6nRFw4u24AB1HnNckVLh
+         KBUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307883; x=1728912683;
+        d=1e100.net; s=20230601; t=1728307885; x=1728912685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r3lP69XlVRrU1wGs7GEr6WIM2xmTxn5oh9fziuvY1p4=;
-        b=lQlvYhijkdirqTNLEMVJ2KoP4QwfAEjCfqejfTZYnQQjKp0Hav5lq+RXSTysSv3JrL
-         lbIBOJssRCREgugz3y4kfRH7wHk73ETmp+awEltdef8u7e37EOwfECqzIfjREcEForyC
-         FHHpIuDJkf69LvA2E+HtHy6UtMYsWQ3QrVz7rox+ONXZn82eOcpYlaPVf4imAan2L3mT
-         HxTtUyd33gB9r22bYoS34zoof7brJKd96zJECxGCc0SKbUXvWJbofRjQzi4qU/qgmMVb
-         Y5AGjN/WETqfY0n2sIb0+DHzfE0eH4S8mVpQmx22Rypa0BBQ3BxHGlgH3M8MhqqO+Tgq
-         dXiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiKxCmwESyq5CdrxTkSfnaR4n1wvZ7SUD5pH3GFjKj4UpW7ZwB1Rpg0UArvoeLiS4rFHyuqdGUTiry@vger.kernel.org, AJvYcCWz8qx1DdRm2+dYIYNNFX/gCjymWD+72w9FHfC1BZAtGYT5e8ctMpLvwIsA1gHZvLgugOK2HH3iuad7R6YY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBPpH6oI/U1bnEemDA1/soL3WfFtWRaGwBq/abOjb4KygBQLtH
-	aSdGfoDXOin/lZWNzLClHZ90F/GDU0r4J7FkdZVyEuutuRkr8K+/9OO2Vg==
-X-Google-Smtp-Source: AGHT+IH6MXh8mM3403LuJQh7fgE75AvPVNhR9ies1jDcYT6uTfSt5fQI/T+GuKgewEIYAxVE+SJgMA==
-X-Received: by 2002:a05:6402:3507:b0:5c8:8381:c0f9 with SMTP id 4fb4d7f45d1cf-5c8d2d00bc2mr4539830a12.2.1728307882786;
-        Mon, 07 Oct 2024 06:31:22 -0700 (PDT)
+        bh=naEfAmzSKhpqtQnWvxkkJprHetAHHfZ0yc3YYzM5sc4=;
+        b=Uhilrm0bpyFrUB9QPjW+yiN9OxDScjYQ7ti5gB7YbcSzCXCU66sHdmgbrmv+qz4aQU
+         0nNNQ9nPPMW9d1jMK08oDxIcK2aWeCirAc3kGBt4fw42Xjk6gPYkjLjo6TyJmcAkmV4C
+         RIe/kCI8I3BiIN1E7511nkJRyQNIJrIZomRn2BWJQLpaAZvR6SsECXUnJGbkYM8YESf5
+         PSW5h+ESB5D8Vv5QPZo6MnWA9CSo9o150mzjLQn06eERjJUXB8edIn6b7rQiKBqyWwg+
+         8twqzbZUuetJAuKCb7Ua3yHa4vE3BufiAQtT7zTMsuf/GosxyKReZEWivbUSQHp2qGoQ
+         dueQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV71z8vua3YHJjQaSTpxc0dHoiw1NsYEwdGvoou/RQriawZFpM4eeJojU5q4VmTSFclfFAnzZn9OxE/@vger.kernel.org, AJvYcCXLmAjS7zIp7CwE+jd9CqVIwWA3m5Karpk5ZNL6GkfOrhxsZ/RToqL/UTfxDW8xeN77pQ1qSULwX1uHlpjW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6B38DnzZ9ZcQFp1bRtAH/TIXdE4zvSa1ev82/nNrbnZKSXEUh
+	8rs8+lDJoqK5LawIzxLPeCCTytjpwjkBYdDOQdTWRq6Xt3a7d5jg6X5SLg==
+X-Google-Smtp-Source: AGHT+IG3PsM5ISXCIuw3ztJSKHSFYrqgWl0jBUycIDe60ZoOzTofZm5d9vQwgasBeSxqRsi9KhmDWw==
+X-Received: by 2002:a5d:6daa:0:b0:374:c962:a18a with SMTP id ffacd0b85a97d-37d0e7b6563mr3438212f8f.4.1728307884564;
+        Mon, 07 Oct 2024 06:31:24 -0700 (PDT)
 Received: from e8ff02ae9b18.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb34csm3193089a12.59.2024.10.07.06.31.21
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb34csm3193089a12.59.2024.10.07.06.31.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:31:22 -0700 (PDT)
+        Mon, 07 Oct 2024 06:31:24 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -76,9 +76,9 @@ To: robh@kernel.org,
 Cc: l.rubusch@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] ARM: dts: socfpga: add Enclustra Mercury SA1
-Date: Mon,  7 Oct 2024 13:31:11 +0000
-Message-Id: <20241007133115.1482619-5-l.rubusch@gmail.com>
+Subject: [PATCH 5/8] ARM: dts: socfpga: add Enclustra Mercury+ SA2
+Date: Mon,  7 Oct 2024 13:31:12 +0000
+Message-Id: <20241007133115.1482619-6-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241007133115.1482619-1-l.rubusch@gmail.com>
 References: <20241007133115.1482619-1-l.rubusch@gmail.com>
@@ -90,44 +90,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce support for Enclustra's Mercury SA1 SoM based on Intel Cyclone5
+Introduce Enclustra's Mercury+ SA2 SoM based on Intel Cyclone5
 technology as a .dtsi file.
 
 Signed-off-by: Andreas Buerkler <andreas.buerkler@enclustra.com>
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
  .../devicetree/bindings/arm/altera.yaml       |  10 ++
- .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 ++++++++++++++++++
- 2 files changed, 153 insertions(+)
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+ .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
+ 2 files changed, 156 insertions(+)
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
 
 diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
-index 8c7575455..87a22d2a4 100644
+index 87a22d2a4..31af6859d 100644
 --- a/Documentation/devicetree/bindings/arm/altera.yaml
 +++ b/Documentation/devicetree/bindings/arm/altera.yaml
-@@ -51,6 +51,16 @@ properties:
+@@ -61,6 +61,16 @@ properties:
            - const: altr,socfpga-cyclone5
            - const: altr,socfpga
  
-+      - description: Mercury SA1 boards
++      - description: Mercury+ SA2 boards
 +        items:
 +          - enum:
-+              - enclustra,mercury-sa1-pe1
-+              - enclustra,mercury-sa1-pe3
-+              - enclustra,mercury-sa1-st1
-+          - const: enclustra,mercury-sa1
++              - enclustra,mercury-sa2-pe1
++              - enclustra,mercury-sa2-pe3
++              - enclustra,mercury-sa2-st1
++          - const: enclustra,mercury-sa2
 +          - const: altr,socfpga-cyclone5
 +          - const: altr,socfpga
 +
        - description: Stratix 10 boards
          items:
            - enum:
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
 new file mode 100644
-index 000000000..3eb2c559f
+index 000000000..0425520e9
 --- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
-@@ -0,0 +1,143 @@
++++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+@@ -0,0 +1,146 @@
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +/*
 + * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
@@ -136,7 +136,7 @@ index 000000000..3eb2c559f
 +#include "socfpga_cyclone5.dtsi"
 +
 +/ {
-+	model = "Enclustra Mercury SA1";
++	model = "Enclustra Mercury+ SA2";
 +	compatible = "altr,socfpga-cyclone5", "altr,socfpga";
 +
 +	chosen {
@@ -165,7 +165,7 @@ index 000000000..3eb2c559f
 +	memory {
 +		name = "memory";
 +		device_type = "memory";
-+		reg = <0x0 0x40000000>; /* 1GB */
++		reg = <0x0 0x80000000>; /* 2GB */
 +	};
 +};
 +
@@ -182,6 +182,11 @@ index 000000000..3eb2c559f
 +		compatible = "isil,isl12022";
 +		reg = <0x6f>;
 +	};
++
++	atsha204a: atsha204a@64 {
++		compatible = "atmel,atsha204a";
++		reg = <0x64>;
++	};
 +};
 +
 +&i2c_encl_fpga {
@@ -195,8 +200,6 @@ index 000000000..3eb2c559f
 +
 +&mmc0 {
 +	status = "okay";
-+	/delete-property/ cap-mmc-highspeed;
-+	/delete-property/ cap-sd-highspeed;
 +};
 +
 +&qspi {
