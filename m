@@ -1,207 +1,262 @@
-Return-Path: <linux-kernel+bounces-353158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768B199297E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A593D992984
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A60D284B68
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F64F284794
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29BA1D1E78;
-	Mon,  7 Oct 2024 10:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584181D14EC;
+	Mon,  7 Oct 2024 10:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="ZyVpiHpQ"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2130.outbound.protection.outlook.com [40.107.255.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y96zapP3"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA3E1D1748;
-	Mon,  7 Oct 2024 10:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298102; cv=fail; b=iNbkIJsN+jEKhASIM3mUnwAiki4MaDzVPANujQ2QimBcBeonbVQl6V8kj1b44GsrDd9GZFXv2CtLK1QJ0zz1bjkbvcXpcZSOKPmQQTqPzLVDOEQ1nTCtI9OVjtaWh4maQvfHM6JIAH2cjbhZAbwS0D+pH94cdVz1j0B7m8bGaxw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298102; c=relaxed/simple;
-	bh=4ejSWZUJowfq2W0BveNOLXFL24+r7SIn4DoXVFdhax0=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GtHzuCzrkIr9iqerh2uyXfvyOvENhrdhCNc8T1J7GxcDGfnuonc0Fhtb6wyPw4D8apKbl5qQWxOPnRqomZHKChThbPtj38i4GM5svfW5hKt9WourJQ9r12qgShJgvZ5e2fADQgSdSaz1NH5yvyG8pplnOUlKoSQJHpg7WOgpXJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=ZyVpiHpQ; arc=fail smtp.client-ip=40.107.255.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MHQSRBapGZ2wEpHb0+NpGHHPb+fKaPRgI//FxGjhPThOL9hc3yXLzsqxeR2Wkdxj8zzflAdzmWLTOC9L26QtYfu13i78gIZ31tH6xxdExm3Ntq6QX/N5Hbzn2eSnYo0Gu4Y2rwwD2c6Fvh7ftzmqQIIZvcHaVdqmijIF/kSt8nSswJOQfLlLB5bq1oajUELQ+5nvPQEWCAz19z1G4Bbnm8Hhu8tlarOyhl19whlQRHHeJJGX3uhNCMj7AhRPqRFAHrhNydN/ZI3v6ueRzMQS7uq/5kQHLqKmd8q0BCkTDF5YRY/+LWxoz1rLSlucs881tNo1+oGmq+rGveYuPvxR4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4ejSWZUJowfq2W0BveNOLXFL24+r7SIn4DoXVFdhax0=;
- b=GJcxy23Is1VQREuIbscLH25iuWqErPV0/bXJoDKjIef0aCgHd4EnXOAJxSJgRglBjjW9TPpxWA8j7p6oe75ZS0IXcU4fBnyBxDAPoR50cR06PB/t0UcTGyqrersa2pbQtiUaJkHkFT1aMv2sc5BE6Ylt6R0LeMnpseXuXbtj0h7BQc5LaHseZLP0NEz7ZHL13hKEckPMue+JBZ67toVeW4I3kpoKQEuerFyGyA9ycg7qOMkhHMmLXoXuMrt90MR5k/aNKEslUTa9WrfhEO6bluDDJqJUTB6yJdVQGG9gv3C84z0J9kvpjIUyADSWaONXPvi6olBUXizVK0F57BmyrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4ejSWZUJowfq2W0BveNOLXFL24+r7SIn4DoXVFdhax0=;
- b=ZyVpiHpQ3Q9CkQKrO4Ny1oV+7fuv2SMjE0XzjDuTRYulh1QtDZviX4nP30RzfcFDvKQTFVqRN3l/7copSN+kE4VKhQ4mlKv91yoErjcWJra7uOGntwApzGXd1yZvZvvoo76GPtFsWOIukjQdCShihdNaijcU5OcPt8SN3YTXgKm3AdK/rrYVBgIOF28MawQmJ9sD3BTonvzuL4QZLO6qeT1xKmNzQUd/q0oOuflRoz7NPjl+rhaZgkWhGEtMm73ULeNpq8H7LF87hKlu/M0LRoWtXV0Rx8jpEBHTQYsnVCoTtdzQm145cq8GIAnEDdCff46xbvVfwZx7P4vLkxgI0A==
-Received: from PSAPR06MB4949.apcprd06.prod.outlook.com (2603:1096:301:ad::9)
- by SEZPR06MB6496.apcprd06.prod.outlook.com (2603:1096:101:186::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Mon, 7 Oct
- 2024 10:48:18 +0000
-Received: from PSAPR06MB4949.apcprd06.prod.outlook.com
- ([fe80::7bdd:639a:6b94:37bf]) by PSAPR06MB4949.apcprd06.prod.outlook.com
- ([fe80::7bdd:639a:6b94:37bf%5]) with mapi id 15.20.8048.013; Mon, 7 Oct 2024
- 10:48:18 +0000
-From: Kevin Chen <kevin_chen@aspeedtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>
-Subject: RE: [PATCH v2 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
-Thread-Topic: [PATCH v2 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
-Thread-Index: AQHa7j7h/7S5Esh0RUuWKKXnnknulrImybAAgFSGV6A=
-Date: Mon, 7 Oct 2024 10:48:18 +0000
-Message-ID:
- <PSAPR06MB4949E625766C4E6F5173EB1B897D2@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
- <20240814114106.2809876-4-kevin_chen@aspeedtech.com>
- <4817e23e-a726-4557-b756-e0cbc54eebaa@kernel.org>
-In-Reply-To: <4817e23e-a726-4557-b756-e0cbc54eebaa@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR06MB4949:EE_|SEZPR06MB6496:EE_
-x-ms-office365-filtering-correlation-id: ac8e36b4-ed41-4615-9a10-08dce6bd8e18
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?am9GWW1WUEhuSExHemM4a2t6WnBMS3JhQXJteTEzZE4vM3RNRjFvVmRDaEVx?=
- =?utf-8?B?aUJHaG13bVRQNkxkTkRWTTJBYVFoclZMQnpMK2NPYTNFeEFySk1tUGFrSE1K?=
- =?utf-8?B?dEt1eHo3UGZSZTRnSDEyaHFmck85cU1DeDRRTjFubUpzYWJSdmFVR0lWWFRo?=
- =?utf-8?B?b2RnR29GaHJqSkQrQjVNU1BEUnczQW4yckJzT0NBeS94RjQzaE13b24zYUFU?=
- =?utf-8?B?K2RFQktMMmxvMnZZbW9Bc2d5d2RvSDArV1lsK21naVRYQjZ5aWo2YXVTOTdH?=
- =?utf-8?B?aVFIanFqRjRrTy84ZFcrVlR4b05kUURCTHZ2c3lDY1dPODcxbUlPNXhKNGVw?=
- =?utf-8?B?blhUUlgrbkdGTFRFNStSVmJybTFyWFkxQXBqbjB2V1lRTTNqdmxkRWtmcHBu?=
- =?utf-8?B?eUtTOG5Zcnl0L3lBZEV0bHk3VlBRcGMrOWMyamVjZkNROUIxUXVIV1owNkJS?=
- =?utf-8?B?NGVwUEp4V2lSZmhObHBEb1pia3M1cGlpSjBza3AxdzZ0dko4cmkxRzRiWkRP?=
- =?utf-8?B?VTNyalNKbFk0WEM2VEkvelQvRjE2NEk4Z1UrSFAvN05USVdKZlM1eFhxM1Bw?=
- =?utf-8?B?YVMzcXRNZDMxU0x0OHBFeFY3QlV5ZG9rTTBLTWVDa3dHSVZHRU5pN1VHb0tL?=
- =?utf-8?B?V3YvdzJMQlRGYnFDVi9WVzJIVGZPc2x2MzQwUVE4ODJmVThpTXhpT09Mcjdl?=
- =?utf-8?B?dThLTVJwaEFYQmREZWZzMWh6cWx3OW9WVnUyNzBZQmQ4K3FiU2ovVnRxS2J3?=
- =?utf-8?B?NC9QTndvU3JXVkljWHpZTTlkcDVTZEpzV2s4T1VrNHNBZXZCTHkxLzlIZXpH?=
- =?utf-8?B?eDlIMDZKcWxIR0liZU1DY3BqZkdiUDdJVFl5RS9iVEZmTEV3NlBXNy9rYXBO?=
- =?utf-8?B?dVRtcFlSUU1ibGllOVhkbWtyN2twcGtRd1habCs0NHJVbkFxZ3J0T2ZzZ1FI?=
- =?utf-8?B?cWlFcXM4VFJRVlB6eEhNWElrL1ZyUE8zdEpNeWVuVzlPRXczekJ2NVlLc3dT?=
- =?utf-8?B?U1VhQjBreER4WEF6YlNmS0I5SkxhWEx1MFJqM2FDakJFaWRvM2l4aXYzYzdo?=
- =?utf-8?B?dm92dSs3dDhoblloaTRPZFNUM0F3QVpNK3IzZXNENGM5cjcxMUF0WGN6WUM3?=
- =?utf-8?B?bHY5MmFaYmkxTUgwZEhxU1dhNStYWDJ3KzVmMFdsYzFxQW9YQlQ3OHhzdXdy?=
- =?utf-8?B?cmJGN3A3RU4vOHJEdExwbkJKcXZyUzArSmpuYUhLdjF4MkpnUlFOZmx1K3hj?=
- =?utf-8?B?eml4ZXpGdFl2bkp1ckdiTFJjNEkyNnhOV0d5dDc2enRjVG9uaEhTZXBuWEl1?=
- =?utf-8?B?cTNyNzgzbDJTSVJCYnV2YW5GSWhIbElQY215c2h4Tkw1VXhxQXRKV3FYTXZi?=
- =?utf-8?B?RjVXbTJqTFZlb2d2dmkvU2s0Mzhld0ZSY29BZkJ6Sy9uUWM4cThzcHhiSGt3?=
- =?utf-8?B?WjZRK3RkVUFjNWhKUGtFd2RSNmo0dVZuWndDaHhKRzJCWEZEVUVwOWZQSWlY?=
- =?utf-8?B?bWU3SnJ3RjI0WjV1ZmVwRmczamVWYytwdjRhc3ZpeHIzVHl1RG1SQ2REYno2?=
- =?utf-8?B?MFRXWXFGOFBUV0xJaThKNUFCVURwSk5aR2lkZzJFY1M3Qk9pWmU1Z0JLdW1v?=
- =?utf-8?B?MjJPOTdwd2Y1R1VNY0llTm12Ny9YeG9GSTBKYUw1VWJia0xDMmlyZktrNThR?=
- =?utf-8?B?Q2J0dlhuMzdqeUlxV1lGc3hGTVFkcDd0WXBNeTY1S2R6VEE5cmFJRGY5UVBq?=
- =?utf-8?B?RjFEeTNWMHhsOHpjdzVlN3ZHTHZnU3BqV0xhMnVnMERhZldkRFJxU2o1TVpG?=
- =?utf-8?Q?PwFrnC9zjWXC+V816rOtzYgQSMo3VRmP0Jyvw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4949.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(921020)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aFlkWWMzZ1FPNFFnbmVtazRoZmdwQ08rY00xa2Z6SXhCMFM4UTBIMXIvRXhu?=
- =?utf-8?B?YUM5TFN4MzZlcjZhQVM5RDJoOXlJenpFVkNIVzlvV1AxbFdhanE4ckFCRmR0?=
- =?utf-8?B?RWN2NUVMZU5MbzlsY1pkY3pZRlltYXZlOTdjM0ZKSHlIZ2JuYUJpV2lqQUxl?=
- =?utf-8?B?TnN4Tkl4Zk5qQ1Z4R0Y1ZG5UQ1U1b2pHamFSUStQZmgvVmFaaEp6NTRYZEVV?=
- =?utf-8?B?S2R6aFdsMlFMek5OYXhLdFZ0Y3BaenA5bXRnSDgwR01nTEVGY0xhMkxBVjkz?=
- =?utf-8?B?OGcwOGhwMTVabjJNSXJVaWo3R3J2U29LNnZXRkVRVU5NNWdmQ2FUUlVWSU9W?=
- =?utf-8?B?S0JWOEw1MnFlSG5yT0N6Q0oxZThETm9zNzlyK3JMVUtXQWc5c0hwWnM3MUpT?=
- =?utf-8?B?QkhpTEs3bG9kbFpPOU1zekhaVGtJZW5NQ01RYTg2RGNtMk0xRERBdWRmUmF3?=
- =?utf-8?B?YkRiaW5VWldVVXZ4UW5YU01SUW9ad2YvdVB3MnQ2RFcxWGpJd09HVFkzcHlM?=
- =?utf-8?B?bGFNdFFsYWV0c2N1ekVna0k2Q1RvTlRRdC9NQ3MvR2pIT29KOGRTZW9wNkYy?=
- =?utf-8?B?Z2N1VWdiQTgzUFB3RTJMay9rMGZjeFNDYUV4UGpSR0ZLaWJaSUFKSkpWNUpv?=
- =?utf-8?B?dzhaR2ZETHdXNmx1Qy9CL0FqeTFLRmdBZTlvcnpEVVlkSmtLeEZTYjRhRzN0?=
- =?utf-8?B?SnVFME4vUmFmY3A1NFY0MkIrUUFoKzRSUC9vZ1V3Z0ZIRGVKd0hFQWZndDkx?=
- =?utf-8?B?MEN1dUI4QWMrSkUyYXNHd2VaZFRyd2pVYnpxMDNzN1Yxd1BnT2l1UGpTcVpM?=
- =?utf-8?B?OGhFd3Q5NjRBYTJRSTBCTzBkc1c3Q3RzN1NmVWJrd0xXK2NZZG1tTHpCbUFi?=
- =?utf-8?B?NDJPa21mVm1taEtHaGExVXJxYnRyditGaUpEWUFxNnRBN3VZVXZlaUFaVDZW?=
- =?utf-8?B?SGRWZFNUODJTTUEzSkU1aGF4ZjVGREZIN2xRUmVpckJyV2Zpa2VGcVBTUWRw?=
- =?utf-8?B?UjFYTVZOdCtwazVBNi9nRVIvN1NIMjhyTFVIenZNZnhaOW5sOCsxTStxS1RC?=
- =?utf-8?B?WUlzMmpDVERSNGEydGg4T3AyRXh6a3lvaThPaEMzSXFBWVptdVZJNTJCU0lN?=
- =?utf-8?B?VUZRYzRuWVN2Q2JlS3dBMHBGcmp6dUcvQ3MxcmV3cVFhZS9KeUdvZnRyaUNF?=
- =?utf-8?B?Rnd5aGNZeEhBRVZHUjlxYitCMml5OEFYNzRyTThWd3ZESUdoYklBWUxkdWVP?=
- =?utf-8?B?S3dJZE5WRnlZOEZJckppRUwzaUpJOTE5enZrVHpsbzNhSXhpaUE4L0Z6Skpw?=
- =?utf-8?B?Zk8yZFpONmhQcytwN0VZY28rVGJJNUwySzUrWG5ybFR0Y2dXUUlEckdQUlo3?=
- =?utf-8?B?VzJhM29MSGdEaG1yWWM3T1dLaENvWWVKNDJFZ21FeXpGQXJMcXhtUDNHa21O?=
- =?utf-8?B?Nkk1bGN2K0V4RGhocC9HMXdPT25ZMlQ5QlBoem5QQWlmZUg0U1V2anpveXVE?=
- =?utf-8?B?YXc0S3UreTJHM2FTY2ZlZWxVTWdjeGJmaHpmc1p1SmJ6UXRGa1A3b3lkVnVY?=
- =?utf-8?B?VnhqajE3S3VsSDA2RW45dWhtNmI0ME5NYXpUMGY4M3lGSnRTUGEvV3JrY2hK?=
- =?utf-8?B?R2RZa1d0c2pCMnp4eS9Dc1MyQmM1VHNicGdsaHJIRXdxbUFVLzBhK2x0Smhn?=
- =?utf-8?B?VFFQSGozN0VaS2dIRWxUajlrSjBlV2t5S01mV0JxOHNGRm9tUnRHZi9UTGlw?=
- =?utf-8?B?aUNsbFQ3enp4S1F6TXN6U0I5MWF4d3VoeEIzSURvL1k2T2s1ejhOUjBwL0ly?=
- =?utf-8?B?MHNPS1lHaUYxMlFZbVBSeHdzRXFpdVlXVnJKM1V3cVV6Z01MYm93VjBnRGZT?=
- =?utf-8?B?UUVCRGt1S2ZCZUxzTSthejVBSFB4dGh0Rlk5S1U4ekJGZmtpajk3ZFAzL1Uv?=
- =?utf-8?B?dnFSZkJuUTl3UUp3S01LUnJvZ0RVM05rTkdmUlNYNmhOd3NkVjc5Z0YrT0VP?=
- =?utf-8?B?TFByZTNlRHZPdnRZUDhxZUYyVFVEWVNnOVdoRHpwSXg3bEozdHlsOUlpY2d5?=
- =?utf-8?B?cVQzbG14emVSbGFRMVVhNXRlcXRIKzZRV3lURm1acnErako1V0ZLU1ErSGs0?=
- =?utf-8?Q?y8Z65IX4DtQLybi7/e13nhpJm?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077181C878E;
+	Mon,  7 Oct 2024 10:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728298146; cv=none; b=tdbXMMJBvmwkNjIS8MQG4GHeAjW8/7gTr/8RhO/PK+xUs7LXKZwYaof56PxXosR9wKUweKR06giXKkDG6O+nryFfr8ZW+DoxYaqi8cxhDx/Xjw71/gV3LgzRHR+I0K6JQOZxYWCD0Rviq3MrsEv2fT84dSGQ71vK6itnBrIRll4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728298146; c=relaxed/simple;
+	bh=GiVGZEa2IQeWE2UVxCtpQJDbRZFjZHoVO6B1KXrrr2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Se7U/UpM7/teOTVzp4kodm8kE/y2I0eNBSFYS6hAlOVqnSP3KgjIV+RB1a348d0rTvNPSp6Zrzj72hzf4zGW6PffIs3zHt6JkF6No/3mmvcJ+CW6SNE3UVz+/v5UUZz/kJ7nAZfA5FjvUp73H5Qhib3JG/q9so1aoi80WEC9KlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y96zapP3; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50c9fb5751cso585354e0c.0;
+        Mon, 07 Oct 2024 03:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728298144; x=1728902944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
+        b=Y96zapP3Grm7qt4BHnk5U4h7Hrt2p+r4tHDIpAYwQioLMsHC6uR1HHC3A7pAQiUGzd
+         xE/Ekofc19SF7c0rseOdzLwuraIzT4oAG3eyO5ygFEzmzTy+FzY3TX0kjoRTHfE3xUkF
+         S8EPpY2/RsBcmarW8N2VeEWnVIspkwo7xJS0AzlREy1Z77SS+F+2WVGO/r49FURv7621
+         XRm1XgSLLir74E9PAq/0tDsoIkFoUA2UZiUplEhKG7TI7Hm35E+VE8eeWuQvysh1xHEo
+         UvnXm6TI0k4abofv7RN/f60VRDIx7FJO0SMTLaJnijGpLIoFlJiNeer6YnwR+JP/lxIx
+         Qtvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728298144; x=1728902944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
+        b=tjMAYrAW28gKZiQjg01NWy240sEgU5dGICW87CGV290AecL1A99NXz+bYlw7LnlczY
+         uoEEn0imTuWOv/X0yD7pLgZgVD2JPlEP/kGFEifTrHA4TgCuywzb6jacqorVmjWUsCqk
+         DyO/Q6NZ5uZbjpiMdIUF8BqXxbkYg16lTKGoqk7n+D4l+gu5hpRcNWX0pRnlwNgZDDyE
+         xz+L8VWAU88mHprWXwFDAeUvu3HUHppksWdmsfes3moq149K2ix1Bn0FDPLZlamAvlm+
+         4svoXr/Q24O9RfrxMmXKnMMH6HAfDOlpscF4C8urNKdJlf8fQPzRkks+H6NPTu4mt74f
+         9ktA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh0hw8xu6x98osPREtOImR7k9fY+hLP+GNDEvKB/LjMS0mVaY6h8YGCLZ0QETdV+dVjuLB86Tkf1BGo/E=@vger.kernel.org, AJvYcCVw0j7+SR9pkvrwYR/q+jP2og6zYTsu0qwR2Z8KJYH/xz9r4JStJPwHlIRGCnhXd6vm7iEKDW9qZQwxKAqze8U8TyA=@vger.kernel.org, AJvYcCWSRDgq4si2z7ic4vHfwXie6BGI9xoL6YTKQgqsXKf57p9sttVn8k07phy1WofjZYMM8dotaNS6trSxVmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqkZNe6qBx80nlw9id3W4fAa+4Ko5r9Pdwcq4fuX58jxoJ/QjA
+	5cO+pB4p2C0SnizZmNB2M39eSP46dniAhIJbtVxOyV9AklWEbpXz1+qw85EgFgNcJhzNEEswZ4p
+	8n89uQmew4t1jRycLE9pu6fEL6zI=
+X-Google-Smtp-Source: AGHT+IHehaPUBSxW//F/OgBrXY4lNPZ//6JPmW1b2lYfQQBZIG9PFAOF9kmMe64JteLU4XtQdwAZmR8wIXWjXJTsyJs=
+X-Received: by 2002:a05:6122:1816:b0:50a:7044:7b2a with SMTP id
+ 71dfb90a1353d-50c8548f7admr8089516e0c.4.1728298143714; Mon, 07 Oct 2024
+ 03:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4949.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac8e36b4-ed41-4615-9a10-08dce6bd8e18
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2024 10:48:18.6581
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BZsEUO/kqqwsT5qLicM7ZY+bxwzKTkBR1rPwb5j1bl1DUUwIPeKj9GbYJjiUyRwxHdxLNSbUDi9FvC2+AXDtLyMfJvpPBJb69SyYT8/5ZSM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6496
+References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241001140919.206139-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003145112.GE5468@pendragon.ideasonboard.com>
+In-Reply-To: <20241003145112.GE5468@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 7 Oct 2024 11:48:37 +0100
+Message-ID: <CA+V-a8teWvx++_dFFT_H156VVHwgKKcdGB71i9MBs0mDAdmvVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 13/17] media: rzg2l-cru: video: Implement
+ .link_validate() callback
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiA+IFN1cHBvcnQgZm9yIHRoZSBBc3BlZWQgSW50ZXJydXB0IENvbnRyb2xsZXIgZm91bmQgb24g
-QXNwZWVkIFNpbGljb24NCj4gPiBTb0NzLCBzdWNoIGFzIHRoZSBBU1QyNzAwLCB3aGljaCBpcyBh
-cm02NCBhcmNoaXRlY3R1cmUuDQo+ID4NCj4gPiBUbyBzdXBwb3J0IEFTUEVFRCBpbnRlcnJ1cHQg
-Y29udHJvbGxlcihJTlRDKSBtYXBzIHRoZSBpbnRlcm5hbA0KPiA+IGludGVycnVwdCBzb3VyY2Vz
-IG9mIHRoZSBBU1QyN1hYIGRldmljZSB0byBhbiBwYXJlbnQgaW50ZXJydXB0IGNvbnRyb2xsZXIu
-DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvaXJxY2hpcC9NYWtlZmlsZSAgICAgICAgICB8ICAgMSAr
-DQo+ID4gIGRyaXZlcnMvaXJxY2hpcC9pcnEtYXNwZWVkLWludGMuYyB8IDEzNw0KPiA+ICsrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDEzOCBpbnNl
-cnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2lycWNoaXAvaXJxLWFz
-cGVlZC1pbnRjLmMNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvTWFrZWZp
-bGUgYi9kcml2ZXJzL2lycWNoaXAvTWFrZWZpbGUgaW5kZXgNCj4gPiAxNTYzNTgxMmIyZDYuLjVk
-YTNmMmY0ZWVkZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2lycWNoaXAvTWFrZWZpbGUNCj4g
-PiArKysgYi9kcml2ZXJzL2lycWNoaXAvTWFrZWZpbGUNCj4gPiBAQCAtODQsNiArODQsNyBAQCBv
-YmotJChDT05GSUdfTVZFQlVfU0VJKQkJCSs9DQo+IGlycS1tdmVidS1zZWkubw0KPiA+ICBvYmot
-JChDT05GSUdfTFNfRVhUSVJRKQkJCSs9IGlycS1scy1leHRpcnEubw0KPiA+ICBvYmotJChDT05G
-SUdfTFNfU0NGR19NU0kpCQkrPSBpcnEtbHMtc2NmZy1tc2kubw0KPiA+ICBvYmotJChDT05GSUdf
-QVJDSF9BU1BFRUQpCQkrPSBpcnEtYXNwZWVkLXZpYy5vIGlycS1hc3BlZWQtaTJjLWljLm8NCj4g
-aXJxLWFzcGVlZC1zY3UtaWMubw0KPiA+ICtvYmotJChDT05GSUdfQVNQRUVEX0c3X0lOVEMpCQkr
-PSBpcnEtYXNwZWVkLWludGMubw0KPiANCj4gDQo+IFRoZXJlIGlzIG5vIHN1Y2ggY29uZmlnIHN5
-bWJvbC4NCkFncmVlLCBJIHdpbGwgdXNlIENPTkZJR19BUkNIX0FTUEVFRCBhcyB0aGUgZm9sbG93
-aW5nLg0Kb2JqLSQoQ09ORklHX0FSQ0hfQVNQRUVEKQkJKz0gaXJxLWFzcGVlZC1pbnRjLm8NCg0K
-PiANCj4gWW91IGFscmVhZHkgZ290IHRoaXMgZXhhY3QgY29tbWVudC4gUmVwbGFjaW5nIG9uZSBi
-cm9rZW4gY29kZSB3aXRoIG90aGVyDQo+IGJyb2tlbiBjb2RlIGlzIG5vdCB0aGUgc29sdXRpb24u
-DQo+IA0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCg0K
+Hi Laurent,
+
+Thank you for the review.
+
+On Thu, Oct 3, 2024 at 3:51=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Tue, Oct 01, 2024 at 03:09:15PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Implement the `.link_validate()` callback for the video node and move t=
+he
+> > format checking into this function. This change allows the removal of
+> > `rzg2l_cru_mc_validate_format()`.
+> >
+> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
+om>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3
+> > - New patch
+> > ---
+> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 99 ++++++++++---------
+> >  1 file changed, 55 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index ceb9012c9d70..c6c82b9b130a 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buff=
+er *vb)
+> >       spin_unlock_irqrestore(&cru->qlock, flags);
+> >  }
+> >
+> > -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
+> > -                                     struct v4l2_subdev *sd,
+> > -                                     struct media_pad *pad)
+> > -{
+> > -     struct v4l2_subdev_format fmt =3D {
+> > -             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> > -     };
+> > -
+> > -     fmt.pad =3D pad->index;
+> > -     if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
+> > -             return -EPIPE;
+> > -
+> > -     switch (fmt.format.code) {
+> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
+> > -             break;
+> > -     default:
+> > -             return -EPIPE;
+> > -     }
+> > -
+> > -     switch (fmt.format.field) {
+> > -     case V4L2_FIELD_TOP:
+> > -     case V4L2_FIELD_BOTTOM:
+> > -     case V4L2_FIELD_NONE:
+> > -     case V4L2_FIELD_INTERLACED_TB:
+> > -     case V4L2_FIELD_INTERLACED_BT:
+> > -     case V4L2_FIELD_INTERLACED:
+> > -     case V4L2_FIELD_SEQ_TB:
+> > -     case V4L2_FIELD_SEQ_BT:
+> > -             break;
+> > -     default:
+> > -             return -EPIPE;
+> > -     }
+> > -
+> > -     if (fmt.format.width !=3D cru->format.width ||
+> > -         fmt.format.height !=3D cru->format.height)
+> > -             return -EPIPE;
+> > -
+> > -     return 0;
+> > -}
+> > -
+> >  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
+> >                                   int slot, dma_addr_t addr)
+> >  {
+> > @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_d=
+ev *cru, int on)
+> >               return stream_off_ret;
+> >       }
+> >
+> > -     ret =3D rzg2l_cru_mc_validate_format(cru, sd, pad);
+> > -     if (ret)
+> > -             return ret;
+> > -
+> >       pipe =3D media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
+> >       ret =3D video_device_pipeline_start(&cru->vdev, pipe);
+> >       if (ret)
+> > @@ -995,6 +951,60 @@ static const struct v4l2_file_operations rzg2l_cru=
+_fops =3D {
+> >       .read           =3D vb2_fop_read,
+> >  };
+> >
+> > +/* -------------------------------------------------------------------=
+----------
+> > + * Media entity operations
+> > + */
+> > +
+> > +static int rzg2l_cru_video_link_validate(struct media_link *link)
+> > +{
+> > +     struct v4l2_subdev_format fmt =3D {
+> > +             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> > +     };
+> > +     struct v4l2_subdev *subdev;
+> > +     struct media_entity *entity;
+> > +     struct rzg2l_cru_dev *cru;
+> > +     struct media_pad *remote;
+> > +     int ret;
+> > +
+> > +     entity =3D link->sink->entity;
+> > +     remote =3D link->source;
+> > +
+> > +     subdev =3D media_entity_to_v4l2_subdev(remote->entity);
+> > +     fmt.pad =3D remote->index;
+> > +     ret =3D v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+> > +     if (ret < 0)
+> > +             return ret =3D=3D -ENOIOCTLCMD ? -EINVAL : ret;
+> > +
+> > +     if (!rzg2l_cru_ip_code_to_fmt(fmt.format.code))
+> > +             return -EPIPE;
+>
+> Here you should check that the format on the subdev matches the format
+> on the video device.
+>
+OK, I'll use the return value from rzg2l_cru_ip_code_to_fmt() and
+match it with the video device node.
+
+> > +
+> > +     switch (fmt.format.field) {
+> > +     case V4L2_FIELD_TOP:
+> > +     case V4L2_FIELD_BOTTOM:
+> > +     case V4L2_FIELD_NONE:
+> > +     case V4L2_FIELD_INTERLACED_TB:
+> > +     case V4L2_FIELD_INTERLACED_BT:
+> > +     case V4L2_FIELD_INTERLACED:
+> > +     case V4L2_FIELD_SEQ_TB:
+> > +     case V4L2_FIELD_SEQ_BT:
+> > +             break;
+> > +     default:
+> > +             return -EPIPE;
+> > +     }
+>
+> Instead of checking the field here, shouldn't it be forced to a valid
+> value in the subdev .set_fmt() function ? The link validation handler is
+> responsible for validating that the configuration of the two sides of
+> the link (IP subdev and video device) match. The driver shouldn't allow
+> setting formats that can't be supported.
+>
+Agreed, this is already taken care of in .set_fmt(), so I'll drop this
+check here.
+
+> What you should check here is that the field of the subdev and the
+> field of the video device match.
+>
+OK, I'll add a check for this.
+
+> > +
+> > +     cru =3D container_of(media_entity_to_video_device(entity),
+>
+> You can drop the local entity variable and write
+>
+OK.
+
+Cheers,
+Prabhakar
 
