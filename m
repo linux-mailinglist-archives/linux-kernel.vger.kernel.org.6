@@ -1,44 +1,56 @@
-Return-Path: <linux-kernel+bounces-353609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E33993042
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591CC9930D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5AB22696
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB51C22206
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896FC1D7E21;
-	Mon,  7 Oct 2024 14:59:40 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE291D8DF3;
+	Mon,  7 Oct 2024 15:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="mtxelPCO"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B276A1E49E;
-	Mon,  7 Oct 2024 14:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1B1D4166;
+	Mon,  7 Oct 2024 15:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313180; cv=none; b=V/4K3c1i4AqZXbL6v3GpQLewV8j7ktyAK8/wl8FYipNd4QIOrvTm3xbe2k3B7dVjo9PMW1nWxkD3iX4JSDesUiNPnubZdjONifqezoYse0F2CXQrVOqslZpjWvgHeLpKa0Jnudq1KwVeiZsLIawN9ZStlH3x4O9eUVqIf6DNjMI=
+	t=1728313841; cv=none; b=WtAyT2Al4fFkizlye06wMCe96Ldu53wxfhXnxTfs0vUeTX6oPhzRv1seHw1R9zoS7dgDWywNO+mtc8or2DQpM5XUmF5stT8c601YNBnpEGK+Qye/h1bA6jERwQ0OdHOwHU4LR67lrjI+9Cm6RLsX8n/FmMKW3R/uMCoZpzJb4Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313180; c=relaxed/simple;
-	bh=GVIqygVc5ZBokPnIZpVsJ5SY5rgNzhEdxcEXbU/6Hjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkSwUkRoMmTNrNRfZmeWRXzchfISB7leP+MywEm4TrXDPPGr1bPZpJG3zv9uRMstwmyoxh57urw6ZNo8FohU8jkZdpnH1YiBRiT9dT8HV34MvGjYD2t+DWEj/p4UKqD25MCHVh5EoPIRTB+4T3G49kkc25PfRsFKNc/VX2DEezE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XMhcj368vz9v7Hk;
-	Mon,  7 Oct 2024 22:39:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id D44F8140934;
-	Mon,  7 Oct 2024 22:59:25 +0800 (CST)
-Received: from [10.45.154.49] (unknown [10.45.154.49])
-	by APP1 (Coremail) with SMTP id LxC2BwBn+C899wNnLeJjAg--.43995S2;
-	Mon, 07 Oct 2024 15:59:25 +0100 (CET)
-Message-ID: <b86aac93-d1f7-4716-9283-4a8367b20e48@huaweicloud.com>
-Date: Mon, 7 Oct 2024 16:59:06 +0200
+	s=arc-20240116; t=1728313841; c=relaxed/simple;
+	bh=QODmP8lkkPVyqcqcjsNYQGf3lmTjOZV1uaJ8QJmI5S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
+	 In-Reply-To:Content-Type; b=a+GtwlARE7zbhMS4kGeK9DYY0OZkDAcgIFp+M7KXhFar4473jSbDW8AFZthKzQiew/2qvx5+yW00H5nJqPD0h/vASZRSTc9iExJ7OXgLly4NVciCe/Suvy81Lg27RbBBausoHyVAS72culD9MprMGUlIHAf5gEcSzfhAapDMfU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=mtxelPCO; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 4044A12001B;
+	Mon,  7 Oct 2024 18:01:22 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4044A12001B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1728313282;
+	bh=tDK2N1D0jqnoD+O3ST573uVP5E5qmpYkCDwEUcRwxAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=mtxelPCOxzDQoEKR8h1OhEZ3fmEu7uKxXDrOB55hrZWVkhqe+AUncNiMorF1A2jh4
+	 88KwTu0hgqf3Y9gMweioWko4mPB3hM9uO2yYzFhWdJSWvNfZH6HLEH7BNYMAh0Wh18
+	 GFnvS6x1CNtmNTpXlIydhx0p7BC3KvebkfOCSUmUKdEHilp7pci329QnP5mdvco4MR
+	 94CGF9dYBpmhyIEhvyw7d4Yn5JPYNCAnEX4q/ggE5X90hpwAcu5zkfVUT/YsbkOh1p
+	 cUGdfhXLmuBpfQf4T+SdFq1sVa+u3KNCOQizN1Eqa2aMKTEcaswnQig+2tFtz9BDoZ
+	 wmLIRtuZSKWEQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  7 Oct 2024 18:01:22 +0300 (MSK)
+Message-ID: <3ec49401-de70-4779-87df-9594d3eb3321@salutedevices.com>
+Date: Mon, 7 Oct 2024 17:59:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,126 +58,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: David Laight <David.Laight@ACULAB.COM>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- 'Alan Stern' <stern@rowland.harvard.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- "maged.michael@gmail.com" <maged.michael@gmail.com>,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
-References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
- <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
- <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
- <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
- <6ae2461a-e509-4c4d-8959-ae17eb214419@huaweicloud.com>
- <43788527053542e78001820857445e4d@AcuMS.aculab.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <43788527053542e78001820857445e4d@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH v4 0/5] Add A1 Soc audio clock controller driver
+To: Jerome Brunet <jbrunet@baylibre.com>
+References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
+Content-Language: en-US
+CC: Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, "Kevin
+ Hilman" <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBn+C899wNnLeJjAg--.43995S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4fKr47tFyfGryfKr15urg_yoW8Cr1kpF
-	W5WanIya1kXrWakF1vq3WUZF90yayftFWUCrn5Kry8Z3s8XFn7AFWayryYya4DCr1fG34j
-	vr4jv3sxAF90qFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
-	4iUUUUU
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188273 [Oct 07 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/07 11:09:00
+X-KSMG-LinksScanning: Clean, bases: 2024/10/07 11:09:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/07 12:27:00 #26713662
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+Hi, Jerome! Could you take a look at this patch series?
 
-
-Am 10/7/2024 um 3:18 PM schrieb David Laight:
-> From: Jonas Oberhauser
->> Sent: 07 October 2024 12:55
->>
->> Am 10/3/2024 um 3:23 PM schrieb Mathieu Desnoyers:
->>> What _does_ work however are the following two approaches:
->>>
->>> 1) Perform the equality check on the original variables, creating
->>> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
->>> rest of their use, therefore making sure the pointer dereference
->>> are not derived from versions of the variables which were compared
->>> with another pointer. (as suggested by Boqun)
->>
->> This should not be guaranteed to work, because right after the
->> comparison the compiler can do b=a, then it doesn't matter how much you
->> hide afterwards.
->>
->> However it might work if you escape the addresses of a and b first, in
->> which case the compiler will not do b=a anymore, but it might force the
->> compiler to put a and b on the stack, which has some performance impact.
+On 9/13/24 15:11, Jan Dakinevich wrote:
+> This series adds support for audio clock and reset controllers on A1 SoC family.
 > 
-> Nope, as pointed out last week, the compiler can move the 'a == b'
-> check to before the OPTIMISER_HID_VAR() and then use the same register
-> for both of them.
+> Dependency: [4]
+> 
+> Changes v3 [3] -> v4
+>  - Use auxiliary reset device implemented in [4]
+>  - Split the driver into files
+>  - Use common with axg-audio yaml schema
+>  - Unify clock-names with axg-audio
+> 
+> Changes v2 [2] -> v3
+>  - reset:
+>    * added auxiliary device
+>  - yaml:
+>    * added declaration of optional clocks
+>    * fixed names in example and another cosmetics
+>  - clocks:
+>    * reworked naming
+>    * stop using of "core" clock name
+>    * fixed wrong parenting
+> 
+> Changes v1 [1] -> v2:
+>  - Detached from v1's series (patch 2, 3, 4, 25).
+>  - Reuse some of defines from axg-audio;
+>  - Split the controller into two memory regions.
+> 
+> Links:
+>  [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
+>  [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
+>  [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
+>  [4] https://lore.kernel.org/lkml/9a4377fe27d8eb940399e452b68fb5a6d678929f.camel@pengutronix.de/
+> 
+> Jan Dakinevich (5):
+>   reset: amlogic: add support for A1 SoC in auxiliary reset driver
+>   clk: meson: axg: share the set of audio helper macro
+>   dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
+>     driver
+>   clk: meson: a1: add the audio clock controller driver
+>   arm64: dts: meson: a1: add the audio clock controller
+> 
+>  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  48 +++
+>  drivers/clk/meson/Kconfig                     |  14 +
+>  drivers/clk/meson/Makefile                    |   3 +
+>  drivers/clk/meson/a1-audio-clkc.c             | 359 ++++++++++++++++++
+>  drivers/clk/meson/a1-audio-drv.c              | 104 +++++
+>  drivers/clk/meson/a1-audio-vad-clkc.c         |  85 +++++
+>  drivers/clk/meson/a1-audio.h                  | 131 +++++++
+>  drivers/clk/meson/axg-audio.c                 | 138 +------
+>  drivers/clk/meson/meson-audio.h               | 143 +++++++
+>  drivers/reset/amlogic/reset-meson-aux.c       |   9 +
+>  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++
+>  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++
+>  13 files changed, 1051 insertions(+), 137 deletions(-)
+>  create mode 100644 drivers/clk/meson/a1-audio-clkc.c
+>  create mode 100644 drivers/clk/meson/a1-audio-drv.c
+>  create mode 100644 drivers/clk/meson/a1-audio-vad-clkc.c
+>  create mode 100644 drivers/clk/meson/a1-audio.h
+>  create mode 100644 drivers/clk/meson/meson-audio.h
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
 > 
 
-Since the addresses of a and b have escaped, I don't think it can still 
-put them into the same register (or memory location).
-
-Other threads could be temporarily modifying (inside the escape code) or 
-concurrently reading (after the escape code) the two variables 
-independently.
-
-Something in the direction of
-
-a = ...;
-...
-b = ...;
-
-escape(&a);
-escape(&b);
-if (a == b) {
-    OPTIMIZER_HIDE_VAR(b);
-    *b;
-}
-
-
-Here doing b=a after a==b would (from the point of view of compiler) 
-potentially introduce a data race.
-
-As I pointed out earlier, the compiler might be able to prove that it is 
-a benign data race though and theoretically still do b=a. But if you 
-declare b as volatile on top...
-
-Anyways, the ptr_eq way is much more obvious.
-
-   jonas
-
+-- 
+Best regards
+Jan Dakinevich
 
