@@ -1,182 +1,219 @@
-Return-Path: <linux-kernel+bounces-353854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323419933B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:46:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC0B9933AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC52858FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:46:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3191C23480
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AFD1DC077;
-	Mon,  7 Oct 2024 16:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="SuVpfxXt"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E4A1DBB03;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2840F1DBB19;
 	Mon,  7 Oct 2024 16:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXePPTq4"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0160E1DB555
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319551; cv=none; b=lA4k9/1479JSPaDOBrr5mSXcipGdDxBY6UHzm0bFE+1LjGzf99oyrDFQnkMwN9vXwpfgayCNN10ZiIw/sxaF84gUUJC0QjeQZKbJKUuPEmKuDVQ0U5RhOIsH9hYNHlohY5lkFRSGckZWYBHOifk+Nw8tG8cTJ9TCpsHVWU+uBFw=
+	t=1728319548; cv=none; b=LY5Y0QjFwaL79Vm14TSGpeveftwrbdHLM0KVIoXm1WLflEDxdh/Nx4o2pFUxJK1o8whjV3v+7qdOWzzUxUUc9drXm3Tg1XguViKNCfQGYfjppoMtjUdPR73uye1fvFWMuQ5QF/2+8buZovcj4z+RuzScNtnKFyT9ShVFWRvSZ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319551; c=relaxed/simple;
-	bh=yFB+QWN/l8F6U9qeO8dL+RgHadwGnwUIxUq7V7LW/E4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QS7Uu6KVYkpazJuoFfQ6kbuC0iAuTb2pEZzlyDQyj2QhChnuiMpq4cJNNG9obx35FGd8BebtfiUuAPm5fCNQWZFVqPmW8jtKNGWcOshldhGYdAqQN9j5wdLXAZBBYe78SgS/zQtpgdKJODnriljeYj0wy3/BYpCR8n4aZOiPMdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=SuVpfxXt; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=r0AuEeSC4qr1idtraZXrY2GOnVpY73RCyu2a/wbcIbI=; b=SuVpfxXtsafoPg8bbWoiWO3eO1
-	2Bq3cXcIxdWa2fUpg7lP+rSGHOgrW1XaXbDM/MeRuzVNUjrmMQe6AvyKmmpPl/ae3uM/uQdvyy40Y
-	FOGa9f3v7XcXngFhKrGwLUNUQ4sZ72my2nLnwzJZir/CA8WQGAXex5FhDNXyFdFqAjH0mBYSkmlKu
-	MDGZKcd2rt7P/+CfqyXhe6j6+aSrQck816ZafL/0CJ3F4GCNyTr+SRwOCENb0Wz/+rjK5eE9kwLPT
-	pp4UZ2ro/QvgYW/7gHb70zqEhZOTSaHiHfV7jOeXOBldnKTHlecOg1+IXySR26799McjzFn2hE/ks
-	31FrMMtQ==;
-Received: from i5e860d18.versanet.de ([94.134.13.24] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sxqrg-00035s-Fu; Mon, 07 Oct 2024 18:45:44 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH] ASoC: dt-bindings: rockchip,rk3036-codec: convert to yaml
-Date: Mon,  7 Oct 2024 18:45:42 +0200
-Message-ID: <20241007164542.2452315-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728319548; c=relaxed/simple;
+	bh=/7ztko93ajz3br8UFXDL1lZr8JEVrLlN0ZTViF/M0ZE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jSa3kT+iC8AFdC+GpsJkiXZV67dOPe16Z/JIKLsIIz+Maekc1Dov0rYlqElkX+SXJ8JmNT1/QQHgcAoaZwx6Bb3EtmQoxpB67fH3wz6ETlX6AExxTQ7N8ztT51h8vLt/KCe0cRCg6xSawqVjMHIYeSusYU76kWSxUtLKPgD5+lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXePPTq4; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e08735ed9dso5985312a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728319546; x=1728924346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mnvskd1UMKG/zIpThM4lfsmOmZwPeMRMLKnKM1lSsPQ=;
+        b=xXePPTq4RR/z0SZpU8eiJGE0S884yjaFLnLU3m6V4+AYbqFG4h3JGpxyRaijtlgLCK
+         JjmhN1+6lVrBL4Wl33p6Quh/93MPHXxveGi1eW2G2lX5u0+iiXnpiyw0CfsuB7EHO3YV
+         j0IBNyGOwO4oUnMahW0LfiYR0yCF/+cMDNdRWlxGHaSWwyi6r3SoVtDly5/3Y3EzbJ/b
+         9RSPpVeCZ+sehzEnFLzzKcM+i84ndUHRKv9NRi48/WYh6n/gfrUHv+GepOb46sO6kFEZ
+         P4OKQROCEGU9MC5XfQ1m1v/HN8EB/betFLfaRm5WxyjQ47I46BIDMV0mem0wEw1ov9g6
+         053Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728319546; x=1728924346;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mnvskd1UMKG/zIpThM4lfsmOmZwPeMRMLKnKM1lSsPQ=;
+        b=ICox7fRXCqJFGuJaaIuFU33smL2Cq8OQsLKuPjhK53AxWulK/ap7JU2aeM2TzprsfQ
+         M/7liLUX2qy563cUe+Ur/BWpD+kJ2G4w2QTvhCtvIDlh2UwCnEej5H2ZW/fzJxNwKufy
+         /lXdkLMfOWUl9eRuxWWTdYR/oEZH3FLXlQEyuxBrHylcig7dIfQ1ODX955py99wFh2tS
+         IUUwQ0t87rODw/v0nCdQHhMkaRMbkPOd7lNvtQf1qKKK7keTyHhpBv7hIf6DKXgtCVh6
+         B8kaPH1Tp1RSGPYEkxtMKL1APuiCMYHg+EL5MHcSrAeHrLvQztfyrJ44/YW1SHW+7y69
+         EI5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzFbnjaXNUqjU8du9RfNxVe8PQPXg5lviuqohQxhiMFIqyY0akD6gutfH+f0xtWhT75nv4he1h6ZuzPXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5J7ZfNmZLCKgkIkCCtEwSY98hOybgiUJwIvsFmOavNR3CNqpR
+	RF75CL5FPYvW7cei+HuazZPJpDN3Lg/1TiBJEIO5AIXdOERB1U8JjbSQ0TrZlbg0x8z2aPJ5QIm
+	MNQ==
+X-Google-Smtp-Source: AGHT+IFiIQrhwfP2AODONDAi/MWD5bThgV6AEO8qEDkrjI6w861ThE+bO5hmJB1ie46Q71cAIh+U1THO8Rc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:7807:b0:2e1:e8d7:1947 with SMTP id
+ 98e67ed59e1d1-2e1e8d719d8mr42978a91.1.1728319546131; Mon, 07 Oct 2024
+ 09:45:46 -0700 (PDT)
+Date: Mon, 7 Oct 2024 09:45:44 -0700
+In-Reply-To: <7c13be04-1d18-45bd-8cfc-f5d37bd39a8e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com> <8c7fbaf1-61a0-4f55-8466-1ab40464d9db@redhat.com>
+ <0a1678d8-0974-4783-a6f6-da85adfa1a34@intel.com> <7c13be04-1d18-45bd-8cfc-f5d37bd39a8e@redhat.com>
+Message-ID: <ZwQQOP89Dj5gvbaP@google.com>
+Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, 
+	akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com, 
+	viro@zeniv.linux.org.uk, khalid@kernel.org, andreyknvl@gmail.com, 
+	luto@kernel.org, brauner@kernel.org, arnd@arndb.de, ebiederm@xmission.com, 
+	catalin.marinas@arm.com, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org, 
+	rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com, 
+	pcc@google.com, neilb@suse.de, maz@kernel.org, 
+	David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the binding to yaml.
+On Mon, Oct 07, 2024, David Hildenbrand wrote:
+> On 07.10.24 17:58, Dave Hansen wrote:
+> > On 10/7/24 01:44, David Hildenbrand wrote:
+> > > On 02.10.24 19:35, Dave Hansen wrote:
+> > > > We were just chatting about this on David Rientjes's MM alignment c=
+all.
+> > >=20
+> > > Unfortunately I was not able to attend this time, my body decided it'=
+s a
+> > > good idea to stay in bed for a couple of days.
+> > >=20
+> > > > I thought I'd try to give a little brain
+> > > >=20
+> > > > Let's start by thinking about KVM and secondary MMUs.=C2=A0 KVM has=
+ a primary
+> > > > mm: the QEMU (or whatever) process mm.=C2=A0 The virtualization (EP=
+T/NPT)
+> > > > tables get entries that effectively mirror the primary mm page tabl=
+es
+> > > > and constitute a secondary MMU.=C2=A0 If the primary page tables ch=
+ange,
+> > > > mmu_notifiers ensure that the changes get reflected into the
+> > > > virtualization tables and also that the virtualization paging struc=
+ture
+> > > > caches are flushed.
+> > > >=20
+> > > > msharefs is doing something very similar.=C2=A0 But, in the msharef=
+s case,
+> > > > the secondary MMUs are actually normal CPU MMUs.=C2=A0 The page tab=
+les are
+> > > > normal old page tables and the caches are the normal old TLB.=C2=A0=
+ That's
+> > > > what makes it so confusing: we have lots of infrastructure for deal=
+ing
+> > > > with that "stuff" (CPU page tables and TLB), but msharefs has
+> > > > short-circuited the infrastructure and it doesn't work any more.
+> > >=20
+> > > It's quite different IMHO, to a degree that I believe they are differ=
+ent
+> > > beasts:
+> > >=20
+> > > Secondary MMUs:
+> > > * "Belongs" to same MM context and the primary MMU (process page tabl=
+es)
+> >=20
+> > I think you're speaking to the ratio here.  For each secondary MMU, I
+> > think you're saying that there's one and only one mm_struct.  Is that r=
+ight?
+>=20
+> Yes, that is my understanding (at least with KVM). It's a secondary MMU
+> derived from exactly one primary MMU (MM context -> page table hierarchy)=
+.
 
-The codec seems to be from Innosilicon, but the compatible has ever only
-been rockchip-based, as they sythesized the codec for the rk3036.
+I don't think the ratio is what's important.  I think the important takeawa=
+y is
+that the secondary MMU is explicitly tied to the primary MMU that it is tra=
+cking.
+This is enforced in code, as the list of mmu_notifiers is stored in mm_stru=
+ct.
 
-So the yaml file gets a name matching that compatible.
-The only other notable change is the addition of the #sound-dai-cells
-property, that is always required.
+The 1:1 ratio probably holds true today, e.g. for KVM, each VM is associate=
+d with
+exactly one mm_struct.  But fundamentally, nothing would prevent a secondar=
+y MMU
+that manages a so called software TLB from tracking multiple primary MMUs.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- .../devicetree/bindings/sound/inno-rk3036.txt | 20 -------
- .../bindings/sound/rockchip,rk3036-codec.yaml | 57 +++++++++++++++++++
- 2 files changed, 57 insertions(+), 20 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/inno-rk3036.txt
- create mode 100644 Documentation/devicetree/bindings/sound/rockchip,rk3036-codec.yaml
+E.g. it wouldn't be all that hard to implement in KVM (a bit crazy, but not=
+ hard),
+because KVM's memslots disallow gfn aliases, i.e. each index into KVM's sec=
+ondary
+MMU would be associated with at most one VMA and thus mm_struct.
 
-diff --git a/Documentation/devicetree/bindings/sound/inno-rk3036.txt b/Documentation/devicetree/bindings/sound/inno-rk3036.txt
-deleted file mode 100644
-index 758de8e27561..000000000000
---- a/Documentation/devicetree/bindings/sound/inno-rk3036.txt
-+++ /dev/null
-@@ -1,20 +0,0 @@
--Inno audio codec for RK3036
--
--Inno audio codec is integrated inside RK3036 SoC.
--
--Required properties:
--- compatible : Should be "rockchip,rk3036-codec".
--- reg : The registers of codec.
--- clock-names : Should be "acodec_pclk".
--- clocks : The clock of codec.
--- rockchip,grf : The phandle of grf device node.
--
--Example:
--
--	acodec: acodec-ana@20030000 {
--		compatible = "rk3036-codec";
--		reg = <0x20030000 0x4000>;
--		rockchip,grf = <&grf>;
--		clock-names = "acodec_pclk";
--		clocks = <&cru ACLK_VCODEC>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/rockchip,rk3036-codec.yaml b/Documentation/devicetree/bindings/sound/rockchip,rk3036-codec.yaml
-new file mode 100644
-index 000000000000..786b1ec41999
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/rockchip,rk3036-codec.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/rockchip,rk3036-codec.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3036 internal codec
-+
-+maintainers:
-+  - Heiko Stuebner <heiko@sntech.de>
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: rockchip,rk3036-codec
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: clock for audio codec
-+
-+  clock-names:
-+    items:
-+      - const: acodec_pclk
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      The phandle of the syscon node for the GRF register.
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - rockchip,grf
-+  - "#sound-dai-cells"
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/rk3036-cru.h>
-+    acodec: audio-codec@20030000 {
-+      compatible = "rockchip,rk3036-codec";
-+      reg = <0x20030000 0x4000>;
-+      rockchip,grf = <&grf>;
-+      clock-names = "acodec_pclk";
-+      clocks = <&cru ACLK_VCODEC>;
-+      #sound-dai-cells = <0>;
-+    };
--- 
-2.43.0
+Pulling Dave's earlier comment in:
 
+ : But the short of it is that the msharefs host mm represents a "secondary
+ : MMU".  I don't think it is really that special of an MMU other than the
+ : fact that it has an mm_struct.
+
+and David's (so. many. Davids):
+
+ : I better not think about the complexity of seconary MMUs + mshare (e.g.,
+ : KVM with mshare in guest memory): MMU notifiers for all MMs must be
+ : called ...
+
+mshare() is unique because it creates the possibly of chained "secondary" M=
+MUs.
+I.e. the fact that it has an mm_struct makes it *very* special, IMO.
+
+> > > * Maintains separate tables/PTEs, in completely separate page table
+> > >  =C2=A0 hierarchy
+> >=20
+> > This is the case for KVM and the VMX/SVM MMUs, but it's not generally
+> > true about hardware.  IOMMUs can walk x86 page tables and populate the
+> > IOTLB from the _same_ page table hierarchy as the CPU.
+>=20
+> Yes, of course.
+
+Yeah, the recent rework of invalidate_range() =3D> arch_invalidate_secondar=
+y_tlbs()
+sums things up nicely:
+
+commit 1af5a8109904b7f00828e7f9f63f5695b42f8215
+Author:     Alistair Popple <apopple@nvidia.com>
+AuthorDate: Tue Jul 25 23:42:07 2023 +1000
+Commit:     Andrew Morton <akpm@linux-foundation.org>
+CommitDate: Fri Aug 18 10:12:41 2023 -0700
+
+    mmu_notifiers: rename invalidate_range notifier
+   =20
+    There are two main use cases for mmu notifiers.  One is by KVM which us=
+es
+    mmu_notifier_invalidate_range_start()/end() to manage a software TLB.
+   =20
+    The other is to manage hardware TLBs which need to use the
+    invalidate_range() callback because HW can establish new TLB entries at
+    any time.  Hence using start/end() can lead to memory corruption as the=
+se
+    callbacks happen too soon/late during page unmap.
+   =20
+    mmu notifier users should therefore either use the start()/end() callba=
+cks
+    or the invalidate_range() callbacks.  To make this usage clearer rename
+    the invalidate_range() callback to arch_invalidate_secondary_tlbs() and
+    update documention.
 
