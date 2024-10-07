@@ -1,121 +1,238 @@
-Return-Path: <linux-kernel+bounces-352729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5568D99235C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:11:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0D999235F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7291C21A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6428B1C214F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0F141746;
-	Mon,  7 Oct 2024 04:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C258433CA;
+	Mon,  7 Oct 2024 04:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="SDrzGfJB"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c21jGEas"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D1F3C2F;
-	Mon,  7 Oct 2024 04:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C522E3C2F;
+	Mon,  7 Oct 2024 04:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728274262; cv=none; b=KyKONs/o1nCBnOmXd6RzpIXpAbhshflvLCexRl52QwJRq61xuJ8c6ZX3ytjlK3FwIu7+vBEAKbo17gKIQFYWgLimnwxWp9SnPiwRNGoED89L2Wfcm9SOirteHpjZ8n0mPXdGcIHImAZAUhqQ0n3RXAw3Lx/xJmLQo+zyeuH4WPk=
+	t=1728274281; cv=none; b=j0wn1wVeVSl17bBTW3RwC+e5pfPGC9PDQ0siUNjdsA6NIfcVrFPmTagXBNrgEqKqUWfVJvvYGPrdEFhkJztnYUDdtEZGKNW3uG9zU3tEZLEXl//Gyn60xmDGNv8RmGLEwZkl3H8RxAjSarz/jpLx4aWX/z463w2hx2agikKiF9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728274262; c=relaxed/simple;
-	bh=kdLJV4jPMQR0YmUaJahbxYPtDAXEVTC0gnJSvEmyKKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KqvDDUx25fvcVvlCeDKy2L2GhmbIbbIgjYmDrnHD+Jh6sc4+jNPgTk5di2k5iCldHGgGMb+Ru8YmfP/kn/2oRNTWTCDTsHttc963kAkGR1OcudYoUg6BUj7HiVpgEqfZBUCki1/agWCL234unm/OR7i8ZnWIX4gij8jUDqhnp0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=SDrzGfJB; arc=none smtp.client-ip=43.155.80.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1728274231;
-	bh=f0bfXAMgZ1bZqb171JWN9isr0dbCdWyTuujwC2isf/Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=SDrzGfJB9a9TteO+0vN6wc1gsq+KwlNuwCquePuLe77DhIKyP1qGi0UlgRpAr4BgH
-	 /A2LGY2NvQqkn+FNgG80OweBd9zvn1361vdUEnbhQq9K9yvimfeG3pe1zGZuh0AKS4
-	 BnnDhTJcWPnGpcWEHPNqHS5J4dILLdY+WHrEjmLM=
-X-QQ-mid: bizesmtp81t1728274088t8y7z34a
-X-QQ-Originating-IP: B9rIpp4W0xjv5XTsydH0Wq8+HdW6PE0Ed6KNpJrNxWI=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 07 Oct 2024 12:08:06 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2877473253527766312
-From: WangYuli <wangyuli@uniontech.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	guanwentao@uniontech.com
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v2] HID: multitouch: Add quirk for HONOR MagicBook Art 14 touchpad
-Date: Mon,  7 Oct 2024 12:08:03 +0800
-Message-ID: <43824FB10AAAE5DD+20241007040803.205047-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728274281; c=relaxed/simple;
+	bh=Rb+NMvTY5S/RhDbReczXEbZXZgp9atdbuN4jT0ffcgM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nT9vsnVAhwSMQt06QvTi1qVwGGC6c3LMcVfhAKTRaMNf+5kAfvRVn8xUhNs+3AdJVsY/NqQzyM3bQXJe2bKoUvGxrW1zHjDxrQrg8+x/89hvlMapIbCj4/lffL6ayNmtz8rLHR+z5XWy73MRguTBV7x1EZbWt3xdfqHU5Rf+iVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c21jGEas; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53993c115cfso4929062e87.2;
+        Sun, 06 Oct 2024 21:11:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728274278; x=1728879078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nOgArWBJC8EePXX6ZD6ccL3/wpe9oAMr2gqSbvNQi/8=;
+        b=c21jGEasHjBB31ABlPRvmQr+6iXmtAa33Mb1vLcQuUeN1PDwejRgAEw7zN79PXr0Y5
+         A3IW8BPIiTIhPSyd5wJ7X9rEYsagXCmzbxmMt9MG2Ti0PlUOw1kRjPajQD/c614KEvm2
+         vNpecVXuM4PUX9+RIcFs7kqL9g6frCE03V0wNPIhB0BKtsrdKM2sjbh1DNU6MljyWOup
+         GzKD7W0ygmDVxMiBfyt6GkjIwjzX1Cq6Gx5w5W4Ocf1/yZUoF/VvWPS/iCcccfzA2ceR
+         GWsNLqEz6KUIKulUH4CdhmitUSFaV5yZUQYN3wXmgkNxXQq2gTZBv050xM4qz/y9hoWC
+         LcNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728274278; x=1728879078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nOgArWBJC8EePXX6ZD6ccL3/wpe9oAMr2gqSbvNQi/8=;
+        b=vRBwthtSJ2FMaa+dIWieTPh32RHGsHWgfL+PMA+8URi0/cuPkkiDNCNAg44sjkuK6w
+         /MZ8WQThQtC9RVizDgLBSG/B0NbO1bDNiOQuTkxWKjS7koogYwrqpJ13izqqHC8NVadF
+         S8eoEqrht95eoOskJrJ71GggbSieqdB18J3wQEwHfyQr3WH8G/OC3STSa8hJi22pvmi7
+         7QRv/2+A8yPvOTZSqBHF54lZxJiEiZOkMVGJAFHY5LUDUAl8S+ukzRhQMjFsEn89wiWj
+         tO5z/iD6GWWx39peDJ9U3iaIPf5ttIE9BDwRjBUMqkkZmZkuEigCbWCcg6mE2jTVwaS4
+         T/lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBU3ByIeK8yFFF72qoG52DqOZ2VYD03ECgQW8nX6pv93Am9RQlvz2PZ1tFR9Cu4yWou+DXt26X7rAf@vger.kernel.org, AJvYcCVWN9aTHqIimkX3IFOJ7SXHaQlQyXrK3UotvOy0HsPeBEm0dE2b1amLdjXvTFVEitx/hFi4BnmVjmS572Y0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyzqyWyiXSRtxo8YTEeQ2EZPehVbJGjZgOFrrekKicdOT3k4C9
+	Ur6O9fc/3EyWxId1fyYFw79GVe4KVt3iFa4oIKZmq/R2Mm8YvNKrHNCagBTuolXEDX+Ud6dJRX/
+	frC7RUyLTvJ5mnyjJCooiF0t+y0A=
+X-Google-Smtp-Source: AGHT+IFZ5wRH6KQjFJkULO+H6xtDDe0Y4MoVBbNHr537uuoluDWd91eMT9lO+88/pRE7voBqHVE5Wp+6sajcy6L/R10=
+X-Received: by 2002:a05:6512:104b:b0:535:3c94:70c2 with SMTP id
+ 2adb3069b0e04-539ab87710amr4641895e87.19.1728274277641; Sun, 06 Oct 2024
+ 21:11:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MBN1Gf7pvZQZL9zHsyFYXqFNrhGVYwdnvxPWyyly9GMD4YbkxWNQpCov
-	9CHVLjgNF580+OSs7jloJSWXmQLbi0rd2+2toyMJV1tW/Tr2wed3crhNYoTRd6bSmHlYZx2
-	F9uvQOqwma2dnbzhf7GupIsdyeHqfQpH41TUfzzlNCDmLsZ1LV57s+uvcSRM3zaNFJvRaXT
-	t+sYYPcII/RkzI/Gz8xFkv3PLG3BjcZBD4LG5BGSJM3prlml7oPh7RcqwX3Pyy/VCv8V9EJ
-	tZESMRhlMgCumNgxJp042IZeGstrAzFIfdWHaTOGzsUr8paWqvya85/x5KER29UE8vKvqnv
-	PZLyAD6WVnoVtMIunFZjeV52juxN1P0b8rz5TqaTtYdcEi8mWNMa4WgbCBXzO+J0kCuZ6RP
-	TrmKVhji7RXus+v5CTS7UwSazNoq35EHD3QIJfcwE+mwVxf74exrywi3dU+fjqsGJNG2q90
-	gdPY27/65kHBKWIP3UH8wmdE6nQd00o7CT+siansZ4JnoqM9VM29H5RRk3G3Jqza0bB7hvA
-	DWFeFDi8yjVIBOXgV1IfQXya/AxV44wHyz4IoG2oY38G9K7aZ0k91y0NSkW6W9slKY/FUzS
-	aqoKWu17x/pN3VxBU+dCVNtXUdaFKb/dp64Y6O8mYJow4gosBFqV/+vPZaM1je6Dk4cI1Le
-	c4FLy+qi7RFUNNHiBebKBvAd1jYO49MYUI4yRdZpgBjFACSCJe+txofhCsqJx1KtQcDFC2o
-	d9WdeYpA6vkxRzXom+mrDwNZQv16jfmLj9wpkYzwK+u68ieqWD1oJWFv00HxbNb564FqsHq
-	Pq8n+fQMHLqMcHNL8bCF2wnsN2NQ5DbVtErexwQ3eOs+68l1nsYe8q8Ne1fSDvPXuYiWfWC
-	ZZFxMxwdUHpXTOBPuCHk2nMiMveP5KNVyjOECRaQ2aJXlOwZpTQVrzjCB/bUTBj1BFLqPPF
-	DhuuVaB4lqfu63zPK9eStwA0/TjqdUc0UnI+U5xPPF1qicgmO8oKFGL95
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+References: <20241007004855.150168-1-linux@treblig.org>
+In-Reply-To: <20241007004855.150168-1-linux@treblig.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 6 Oct 2024 23:11:06 -0500
+Message-ID: <CAH2r5mvHnBnoS+hcyFiqNO8Z9rvzy6x=segDEvgP_hCyXfcAPg@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Remove unused functions
+To: linux@treblig.org
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It sometimes after reboot change output from Touchpad to Mouse,
-evtest show it output from "TOPS0102:00 35CC:0104 Touchpad"
-to "TOPS0102:00 35CC:0104 Mouse",and it works as A mouse.
+tentatively merged into cifs-2.6.git for-next pending testing and any
+additional reviews
 
-Like GLO-GXXX, as a workaround, it is possible to call
-MT_QUIRK_FORCE_GET_FEATURE to force set feature in mt_set_input_mode
-for such special touchpad device.
+On Sun, Oct 6, 2024 at 7:49=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> cifs_ses_find_chan() has been unused since commit
+> f486ef8e2003 ("cifs: use the chans_need_reconnect bitmap for reconnect st=
+atus")
+>
+> cifs_read_page_from_socket() has been unused since commit
+> d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than =
+a page list")
+>
+> cifs_chan_in_reconnect() has been unused since commit
+> bc962159e8e3 ("cifs: avoid race conditions with parallel reconnects")
+>
+> Remove them.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  fs/smb/client/cifsproto.h |  9 ---------
+>  fs/smb/client/connect.c   | 12 ------------
+>  fs/smb/client/sess.c      | 32 --------------------------------
+>  3 files changed, 53 deletions(-)
+>
+> diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> index 68c716e6261b..1d3470bca45e 100644
+> --- a/fs/smb/client/cifsproto.h
+> +++ b/fs/smb/client/cifsproto.h
+> @@ -252,10 +252,6 @@ extern int cifs_read_from_socket(struct TCP_Server_I=
+nfo *server, char *buf,
+>                                  unsigned int to_read);
+>  extern ssize_t cifs_discard_from_socket(struct TCP_Server_Info *server,
+>                                         size_t to_read);
+> -extern int cifs_read_page_from_socket(struct TCP_Server_Info *server,
+> -                                       struct page *page,
+> -                                       unsigned int page_offset,
+> -                                       unsigned int to_read);
+>  int cifs_read_iter_from_socket(struct TCP_Server_Info *server,
+>                                struct iov_iter *iter,
+>                                unsigned int to_read);
+> @@ -623,8 +619,6 @@ enum securityEnum cifs_select_sectype(struct TCP_Serv=
+er_Info *,
+>  int cifs_alloc_hash(const char *name, struct shash_desc **sdesc);
+>  void cifs_free_hash(struct shash_desc **sdesc);
+>
+> -struct cifs_chan *
+> -cifs_ses_find_chan(struct cifs_ses *ses, struct TCP_Server_Info *server)=
+;
+>  int cifs_try_adding_channels(struct cifs_ses *ses);
+>  bool is_server_using_iface(struct TCP_Server_Info *server,
+>                            struct cifs_server_iface *iface);
+> @@ -640,9 +634,6 @@ cifs_chan_set_in_reconnect(struct cifs_ses *ses,
+>  void
+>  cifs_chan_clear_in_reconnect(struct cifs_ses *ses,
+>                                struct TCP_Server_Info *server);
+> -bool
+> -cifs_chan_in_reconnect(struct cifs_ses *ses,
+> -                         struct TCP_Server_Info *server);
+>  void
+>  cifs_chan_set_need_reconnect(struct cifs_ses *ses,
+>                              struct TCP_Server_Info *server);
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index adf8758847f6..15d94ac4095e 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -794,18 +794,6 @@ cifs_discard_from_socket(struct TCP_Server_Info *ser=
+ver, size_t to_read)
+>         return cifs_readv_from_socket(server, &smb_msg);
+>  }
+>
+> -int
+> -cifs_read_page_from_socket(struct TCP_Server_Info *server, struct page *=
+page,
+> -       unsigned int page_offset, unsigned int to_read)
+> -{
+> -       struct msghdr smb_msg =3D {};
+> -       struct bio_vec bv;
+> -
+> -       bvec_set_page(&bv, page, to_read, page_offset);
+> -       iov_iter_bvec(&smb_msg.msg_iter, ITER_DEST, &bv, 1, to_read);
+> -       return cifs_readv_from_socket(server, &smb_msg);
+> -}
+> -
+>  int
+>  cifs_read_iter_from_socket(struct TCP_Server_Info *server, struct iov_it=
+er *iter,
+>                            unsigned int to_read)
+> diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+> index 3216f786908f..c88e9657f47a 100644
+> --- a/fs/smb/client/sess.c
+> +++ b/fs/smb/client/sess.c
+> @@ -115,18 +115,6 @@ cifs_chan_clear_in_reconnect(struct cifs_ses *ses,
+>         ses->chans[chan_index].in_reconnect =3D false;
+>  }
+>
+> -bool
+> -cifs_chan_in_reconnect(struct cifs_ses *ses,
+> -                         struct TCP_Server_Info *server)
+> -{
+> -       unsigned int chan_index =3D cifs_ses_get_chan_index(ses, server);
+> -
+> -       if (chan_index =3D=3D CIFS_INVAL_CHAN_INDEX)
+> -               return true;    /* err on the safer side */
+> -
+> -       return CIFS_CHAN_IN_RECONNECT(ses, chan_index);
+> -}
+> -
+>  void
+>  cifs_chan_set_need_reconnect(struct cifs_ses *ses,
+>                              struct TCP_Server_Info *server)
+> @@ -487,26 +475,6 @@ cifs_chan_update_iface(struct cifs_ses *ses, struct =
+TCP_Server_Info *server)
+>         spin_unlock(&ses->chan_lock);
+>  }
+>
+> -/*
+> - * If server is a channel of ses, return the corresponding enclosing
+> - * cifs_chan otherwise return NULL.
+> - */
+> -struct cifs_chan *
+> -cifs_ses_find_chan(struct cifs_ses *ses, struct TCP_Server_Info *server)
+> -{
+> -       int i;
+> -
+> -       spin_lock(&ses->chan_lock);
+> -       for (i =3D 0; i < ses->chan_count; i++) {
+> -               if (ses->chans[i].server =3D=3D server) {
+> -                       spin_unlock(&ses->chan_lock);
+> -                       return &ses->chans[i];
+> -               }
+> -       }
+> -       spin_unlock(&ses->chan_lock);
+> -       return NULL;
+> -}
+> -
+>  static int
+>  cifs_ses_add_channel(struct cifs_ses *ses,
+>                      struct cifs_server_iface *iface)
+> --
+> 2.46.2
+>
+>
 
-Link: https://gitlab.freedesktop.org/libinput/libinput/-/issues/1040
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/hid/hid-multitouch.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 99812c0f830b..a1e0c3db3d4c 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -2082,6 +2082,11 @@ static const struct hid_device_id mt_devices[] = {
- 		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
- 			0x347d, 0x7853) },
- 
-+	/* HONOR MagicBook Art 14 touchpad */
-+	{ .driver_data = MT_CLS_VTL,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-+			0x35cc, 0x0104) },
-+
- 	/* Ilitek dual touch panel */
- 	{  .driver_data = MT_CLS_NSMU,
- 		MT_USB_DEVICE(USB_VENDOR_ID_ILITEK,
--- 
-2.45.2
+--=20
+Thanks,
 
+Steve
 
