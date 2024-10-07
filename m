@@ -1,253 +1,146 @@
-Return-Path: <linux-kernel+bounces-353803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3B79932E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874489932E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D791F2321A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86CB1C238C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE09A1DB340;
-	Mon,  7 Oct 2024 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F7F1DB367;
+	Mon,  7 Oct 2024 16:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DuXHKOzl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOWGEZn8"
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1A1DAC9F;
-	Mon,  7 Oct 2024 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CCD1DB357;
+	Mon,  7 Oct 2024 16:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728317632; cv=none; b=O3bfN/4QyLI9TiOQcNIMm0EC7gOnOIrGSRLTUPeBSO7O/kUuyInKDQZwUR3MkAembZMjOXXaVBFkMHPkZnv13+Z/QPaPcaiapckjVpcQKwk9AIRBn1mHjapB9ULx9uy7FRYEc9Pq/Gb/eAjqEGFvNZQFYKcW2fDWwcFy04cxHaA=
+	t=1728317643; cv=none; b=S44Q6L83cH88yXoM2KdfrcTd8z2QrOeB0XT0PHktzes3Yhq/WuMV7IKfom8123mc4pIwDPiZRih5krq0CPtWVrRKIYovisugScBRg1caj+8GJj+zxZ2e02PxXQWNBXulnLNISTo5HTSeDkcNGCcvAiPfXnpj/FHSPxTy4bLykmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728317632; c=relaxed/simple;
-	bh=T7lUJ3R4cF9aAWBcQ84V/rp0o1tcqum0bACUdkSEU+8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oWPzMNWfR86JHvn4WKXLGF+z8/5R6ZjPIKanKX7x6TaReUH/tPz+Ler/gRCN1ABYAHt8xcqv8RiVDogRw7gI0pNs4hNN/hJdjCc+nobK+Dz2BTaf7KToz6rtEIs9yQMABLUbYu8uqHk2WJMdCZ1AAuq2Bw2ZHfK575b+CVbdp4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DuXHKOzl; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728317630; x=1759853630;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=T7lUJ3R4cF9aAWBcQ84V/rp0o1tcqum0bACUdkSEU+8=;
-  b=DuXHKOzlBNQybBoXVkNNYFOZH/QUg40vdmlXqlbLqwjKo7HKr6wASMFd
-   +f1Nj8tW9orENMIxz2Cu+MVJ/zf7WmAm6AIs35k3TvLxESb7igLbNbDa6
-   p2AYXF6M54jUzRUcdtKL21GnEVp1xn78aayY9zt0L0QCbZSEaAydl9cu9
-   CzSoc2NbCbxDkudes3XTKIU+WdZKOt+ybaN1b4QAFy9GWqDkgwcaVvk8O
-   WN1DsTlZ2IrgUV20HgfwkEi1rGfeFIbQkgc9dn4JsMm1Icbc7vz5LhFgl
-   wbO+CGbdV3MYKNtBbiKAIn2IIjey7rb8lpglcs277tOsG+EPfdtknVAz6
-   Q==;
-X-CSE-ConnectionGUID: A/pnPHeqQ8eVZEy3Fp4N7g==
-X-CSE-MsgGUID: 28ogqBv3QsKJu6TjTggblg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27357250"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27357250"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:13:50 -0700
-X-CSE-ConnectionGUID: kvy8GJ/tRbKNJAf6jlMkrA==
-X-CSE-MsgGUID: We4m2xhFSzu0+TZpg1hwxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="75779008"
-Received: from hcaldwel-desk1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.43])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:13:49 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <miklos@szeredi.hu>, hu1.chen@intel.com, malini.bhandaru@intel.com,
- tim.c.chen@intel.com, mikko.ylinen@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-In-Reply-To: <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com> <87h6a43gcc.fsf@intel.com>
- <20240925-umweht-schiffen-252e157b67f7@brauner> <87bk0b3jis.fsf@intel.com>
- <CAOQ4uxhuvBtSrbw2RAGKnO6O9dXH2DZ-fHJ=z8v+T+5PariZ0w@mail.gmail.com>
-Date: Mon, 07 Oct 2024 09:13:48 -0700
-Message-ID: <87o73vuc03.fsf@intel.com>
+	s=arc-20240116; t=1728317643; c=relaxed/simple;
+	bh=KyvWlTeBSKjtPumumehBe5sSwd1ihWBAwNMVt+a6kDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3dRvdEBAbKNHmHAemig8m/0k1gUC9EtkDgn4DDtnEVylD5mzRP0+X4O1+vyoaIBppdPucUHQ9+FISjn0+73FFT0hjzuwy2zcHy0I60oBaKXTj5BVaoqGepqkqP1jXj8vkq2IoYX39ff0uexRE9ARBTV1h7DCZOGAdupTF8ZvwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOWGEZn8; arc=none smtp.client-ip=209.85.215.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so3787730a12.2;
+        Mon, 07 Oct 2024 09:14:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728317640; x=1728922440; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N+fRgv2moyl1PhmTJtYGS+cs9M/axLjy+ziPJRirSPA=;
+        b=lOWGEZn80ueov5W/N+Ao8tUqStoOSDzPjCVgFZl+I0GpFFbiLutt93E4YkWwXqWvpG
+         aclVefhsTIt2oUB0vsjvYTiy4OflAk21Z7WXcpxVDF1WkeP7jeXddjstvtIrnwDoNjYX
+         fMT2y5w2ZrMJEzS7jT4epi3mABllTzfwYSUcU8+0TTqezNSpC5SUUXs8rPmTY2OoIcQV
+         xqmIKW2cp/yf9htLcLbN69gVHtv/L9HCYOFH5ZwzUmudqzHJPHHEIRn6YhU+iFytkFJ1
+         onUlaLdtWvOTYHDE26iJwvyGGuI3JauveHusm85+mUgOFrJ0dCOrOjLH1MiDdosQjLJK
+         ITfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728317640; x=1728922440;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=N+fRgv2moyl1PhmTJtYGS+cs9M/axLjy+ziPJRirSPA=;
+        b=cx6OyCYBiAPAqCK7eOy5uwLtJ628OJtHtbzjcUVXNBvW58PejqqpRrdGMWtiHgbuf/
+         1vbQsixFX+WeHM1D53V+YoIYJFalcz2PAvVC2OJQfTfqvFvnZkdhwMwYNtExmd+PO419
+         9pOs56L9WJLq2u3zi1eTp7rKFj3ZoDlzPdLwwEQ+MYC5Gf/KexKoAroYF6Hm7ua0fSdt
+         rDvKbbGUyzusRShitdtcAkwPg0dTgcTTi99zWcEvgh/fMJNnVEi4BjPswzTxmzyE0+NE
+         hz4HESDgSpHKR44dm9U7zttTwbJQv8rgQPV3y62UqCGo234KP8Y3TXouQm0sCMe5kmpy
+         WGNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmE1xAiuLWxXeghgT7yvkdywMVMEok6mQ2gY5gPeAOM4HkGj5ToI5V3X6IfrRzs1kOTiISUi5cn0Uf6ApI@vger.kernel.org, AJvYcCW0DCZ/L9EHI7qffyXGTDT6q7O23xnILjJxB5jXXbaRjb6l5hukEV2vx4sNtoGEv15mcWOmeAyYmvHL3Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSejcraWunL0n7h8qih+HDfCdAeeMopEzNPH3aLDdMg/nBdBvU
+	RxFMFJXghL73IMQP3ToEKwk7glkSWczug6S1rowPwIOm3IuiNcPU2sPPkSyG
+X-Google-Smtp-Source: AGHT+IGV50TMfRNVJ24XJBvrkKUYALjj+QN8rmG4wqhvSFlPBG4CwgHfCpgOMVEPZe4q9x8y1YVnHA==
+X-Received: by 2002:a05:6a20:9f09:b0:1d4:e4eb:73e2 with SMTP id adf61e73a8af0-1d6dfa35f28mr17213034637.13.1728317640207;
+        Mon, 07 Oct 2024 09:14:00 -0700 (PDT)
+Received: from [198.18.0.1] (n220246094186.netvigator.com. [220.246.94.186])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d45347sm4546047b3a.135.2024.10.07.09.13.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 09:13:59 -0700 (PDT)
+Message-ID: <f1ad7092-af82-459b-a5a1-863f6254decc@gmail.com>
+Date: Tue, 8 Oct 2024 00:13:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Amir Goldstein <amir73il@gmail.com> writes:
-
-> On Wed, Sep 25, 2024 at 4:17=E2=80=AFPM Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Christian Brauner <brauner@kernel.org> writes:
->>
->> > On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
->> >> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->> >>
->> >> > Miklos Szeredi <miklos@szeredi.hu> writes:
->> >> >
->> >> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
->> >> >> <vinicius.gomes@intel.com> wrote:
->> >> >>>
->> >> >>> Add a comment to these operations that cannot use the _light vers=
-ion
->> >> >>> of override_creds()/revert_creds(), because during the critical
->> >> >>> section the struct cred .usage counter might be modified.
->> >> >>
->> >> >> Why is it a problem if the usage counter is modified?  Why is the
->> >> >> counter modified in each of these cases?
->> >> >>
->> >> >
->> >> > Working on getting some logs from the crash that I get when I conve=
-rt
->> >> > the remaining cases to use the _light() functions.
->> >> >
->> >>
->> >> See the log below.
->> >>
->> >> > Perhaps I was wrong on my interpretation of the crash.
->> >> >
->> >>
->> >> What I am seeing is that ovl_setup_cred_for_create() has a "side
->> >> effect", it creates another set of credentials, runs the security hoo=
-ks
->> >> with this new credentials, and the side effect is that when it return=
-s,
->> >> by design, 'current->cred' is this new credentials (a third set of
->> >> credentials).
->> >
->> > Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
->> > overwritten. But I'm stil confused what the exact problem is as it was
->> > always clear that ovl_setup_cred_for_create() wouldn't be ported to
->> > light variants.
->> >
->> > /me looks...
->> >
->> >>
->> >> And this implies that refcounting for this is somewhat tricky, as said
->> >> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout=
-").
->> >>
->> >> I see two ways forward:
->> >>
->> >> 1. Keep using the non _light() versions in functions that call
->> >>    ovl_setup_cred_for_create().
->> >> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
->> >>    refcount.
->> >>
->> >> I went with (1), and it still sounds to me like the best way, but I
->> >> agree that my explanation was not good enough, will add the informati=
-on
->> >> I just learned to the commit message and to the code.
->> >>
->> >> Do you see another way forward? Or do you think that I should go with
->> >> (2)?
->> >
->> > ... ok, I understand. Say we have:
->> >
->> > ovl_create_tmpfile()
->> > /* current->cred =3D=3D ovl->creator_cred without refcount bump /*
->> > old_cred =3D ovl_override_creds_light()
->> > -> ovl_setup_cred_for_create()
->> >    /* Copy current->cred =3D=3D ovl->creator_cred */
->> >    modifiable_cred =3D prepare_creds()
->> >
->> >    /* Override current->cred =3D=3D modifiable_cred */
->> >    mounter_creds =3D override_creds(modifiable_cred)
->> >
->> >    /*
->> >     * And here's the BUG BUG BUG where we decrement the refcount on the
->> >     * constant mounter_creds.
->> >     */
->> >    put_cred(mounter_creds) // BUG BUG BUG
->> >
->> >    put_cred(modifiable_creds)
->> >
->> > So (1) is definitely the wrong option given that we can get rid of
->> > refcount decs and incs in the creation path.
->> >
->> > Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
->> > __completely untested__:
->> >
->>
->> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
->> > index ab65e98a1def..e246e0172bb6 100644
->> > --- a/fs/overlayfs/dir.c
->> > +++ b/fs/overlayfs/dir.c
->> > @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentr=
-y *dentry, struct inode *inode,
->> >                 put_cred(override_cred);
->> >                 return err;
->> >         }
->> > -       put_cred(override_creds(override_cred));
->> > +
->> > +       /*
->> > +        * We must be called with creator creds already, otherwise we =
-risk
->> > +        * leaking creds.
->> > +        */
->> > +       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dent=
-ry->d_sb));
->> >         put_cred(override_cred);
->> >
->> >         return 0;
->> >
->>
->> At first glance, looks good. Going to test it and see how it works.
->> Thank you.
->>
->> For the next version of the series, my plan is to include this
->> suggestion/change and remove the guard()/scoped_guard() conversion
->> patches from the series.
->>
->
-> Vinicius,
->
-> I have a request. Since the plan is to keep the _light() helpers around f=
-or the
-> time being, please make the existing helper ovl_override_creds() use the
-> light version and open code the non-light versions in the few places where
-> they are needed and please replace all the matching call sites of
-> revert_creds() to
-> a helper ovl_revert_creds() that is a wrapper for the light version.
->
-
-Seems like a good idea. Will do that, and see how it looks.
-
-> Also, depending on when you intend to post your work for review,
-> I have a feeling that the review of my patches is going to be done
-> before your submit your patches for review, so you may want to consider
-> already basing your patches on top of my development branch [2] to avoid
-> conflicts later.
->
-
-Thanks for the heads up. Will rebase my code on top of your branch.
-
-> Anyway, the parts of my patches that conflict with yours (s/real.file/rea=
-lfile/)
-> are not likely to change anymore.
->
-> Thanks,
-> Amir.
->
-> [1] https://lore.kernel.org/linux-unionfs/20241006082359.263755-1-amir73i=
-l@gmail.com/
-> [2] https://github.com/amir73il/linux/commits/ovl_real_file/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kbuild: Add vmlinux_install to facilitate debugging
+To: masahiroy@kernel.org
+Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241007160710.3937-1-zachwade.k@gmail.com>
+From: Zach Wade <zachwade.k@gmail.com>
+In-Reply-To: <20241007160710.3937-1-zachwade.k@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Cheers,
---=20
-Vinicius
+
+On 2024/10/8 0:07, Zach Wade wrote:
+> When testing multiple versions of the kernel with the same source code,it
+> is often necessary to recompile the kernel, which is time-consuming for
+> small hosts. I need to cp vmlinux to the corresponding module directory.
+> I think adding this will make debugging the kernel a little more
+> convenient.
+> 
+> Signed-off-by: Zach Wade <zachwade.k@gmail.com>
+> ---
+>   Makefile | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index c5493c0c0ca1..1caab011599f 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1579,6 +1579,7 @@ help:
+>   	@echo  '* vmlinux	  - Build the bare kernel'
+>   	@echo  '* modules	  - Build all modules'
+>   	@echo  '  modules_install - Install all modules to INSTALL_MOD_PATH (default: /)'
+> +	@echo  '  vmlinux_install - Install vmlinux to INSTALL_MOD_PATH (default: /)'
+>   	@echo  '  vdso_install    - Install unstripped vdso to INSTALL_MOD_PATH (default: /)'
+>   	@echo  '  dir/            - Build all files in dir and below'
+>   	@echo  '  dir/file.[ois]  - Build specified target only'
+> @@ -1887,6 +1888,19 @@ modpost: $(if $(single-build),, $(if $(KBUILD_BUILTIN), vmlinux.o)) \
+>   	 $(if $(KBUILD_MODULES), modules_check)
+>   	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+>   
+> +# ---------------------------------------------------------------------------
+> +# vmlinux install
+> +
+> +PHONY += vmlinux_install
+> +
+> +vmlinux_install:
+> +	@if [ -f vmlinux ]; then \
+> +		echo "INSTALL ${MODLIB}/vmlinux"; \
+> +		cp -f vmlinux ${MODLIB}/ ; \
+> +	else \
+> +		echo "vmlinux file does not exist."; \
+> +	fi
+> +
+>   # Single targets
+>   # ---------------------------------------------------------------------------
+>   # To build individual files in subdirectories, you can do like this:
+
+Hi Masahiro Yamada,
+
+I think this patch will make me feel comfortable, so I submitted this 
+change.
+However, this submission may not be perfect. I just put forward my 
+ideas. If you think it can be added, you are welcome to point out the 
+parts that need to be modified. I will fix them as required and resubmit 
+the v2 version.
+
+Thanks,
+Zach
 
