@@ -1,182 +1,175 @@
-Return-Path: <linux-kernel+bounces-353600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D4B993024
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D858993022
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9FD28A029
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF34E1C214C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464231D8DFB;
-	Mon,  7 Oct 2024 14:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6F61D86EF;
+	Mon,  7 Oct 2024 14:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b="BF2prAz3"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX8L2U6u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981CE1D79A5;
-	Mon,  7 Oct 2024 14:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BD1D7E35;
+	Mon,  7 Oct 2024 14:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312885; cv=none; b=W6TCGf7tRSxRO5jhLM3+dofeU7sY1qJpnPsHZf/+au5I5/bKF0Lov/Z1UPgB/Rbfm2W280bAPV94JJ2zzc6GaBJ2xcXPengKaZOMXY5+2sqra7qagTO6QFVG9xcFROwElOd2tlGBBcI0ikm6R+fVeH8PBpnImL6xhqJPttAHNHg=
+	t=1728312874; cv=none; b=ZcLvrUnuPHbzIuUsJQrMAsJqUqJaIJpe5Wq6FnXNBUxsRLt6qUO4Iy1Nnd6K6ZvQyfRid2IziyarEKT2Vtvl4lRCivV4rM3lwbiaU4M8lJgWAYi1W0Fu85o4MLD1Wd4QCO1umiV+ottoKcPVD6Xk1J6OT/W5qAm3chyJX4Q9cCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312885; c=relaxed/simple;
-	bh=Iqo8ngZeODghVeUiw2dCz+wYnflCSXSkcVxpoW7h7/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vi15NAY5q5AKcEsCpBu7zccUEp0h6DXSAp2JH7FBEIfXvPLUDznkVZqR3JRZIZlHT3wbOU9Uvnqwl4cKH5gYS/AcvritCnJuBiNuaT73zTMjwCDqopxjIpQz7iCX8KWyo5ahIww5haRRTmyqxKsr3EVive+ASvjJCB8DOqiouv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr; spf=pass smtp.mailfrom=gmx.fr; dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b=BF2prAz3; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.fr;
-	s=s31663417; t=1728312854; x=1728917654; i=benoit.monin@gmx.fr;
-	bh=5CJ3PojilP9pzTP1lBI15/fEZnSMxZWJzIh/6VHIbiw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:Content-Type:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BF2prAz3Kc2ABilUFHCaa7kPUmPxI7YXJQ3i8P+ARVgB4s+iEZr4V8M9xIJmCt92
-	 ORgEQb8LLe81w2z8h1EEK7yiL6hCsTebf/nsb7M81iv3Ayo4c59UfRSyp6ZPYiLzT
-	 F7SQcGO7TgvoptyKdjf9VO+ytumffEunrw1a153Gzp+Yk6qnOyRhlyYJwcXiJ5h+a
-	 CibTkiZA8SUhCh4/X5jY7C0Av+5rDmLGfviz269gfCsSuuGJ1byM4oN75F9H2tGAx
-	 8bGo46Obq7lKgnRZgPANa/QzyaVz1RgJ0Py/aSD2xnd6jLDv82+Ycsc2eEgYiYSt0
-	 Q8bL+SRxxs0e+QqgAw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from pianobar.pianonet ([176.145.30.241]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N6bjy-1u4JYW1QZa-012GRi; Mon, 07
- Oct 2024 16:54:14 +0200
-From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@gmx.fr>
-To: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH net-next] net: skip offload for NETIF_F_IPV6_CSUM if ipv6 header
- contains extension
-Date: Mon, 07 Oct 2024 16:54:12 +0200
-Message-ID: <7056440.9J7NaK4W3v@benoit.monin>
-In-Reply-To: <670326ed8220a_135479294d1@willemb.c.googlers.com.notmuch>
-References:
- <0dc0c2af98e96b1df20bd36aeaed4eb4e27d507e.1728056028.git.benoit.monin@gmx.fr>
- <670326ed8220a_135479294d1@willemb.c.googlers.com.notmuch>
+	s=arc-20240116; t=1728312874; c=relaxed/simple;
+	bh=Fup7vjsNqIh2m2hxZl/CK4OuqCaLmi5YTomMTM3g1sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZJ7R7RoJ7bk49atTxsnstv/cquvh5eOIuMTjT4J3SSwzjB0EdkwP2cqCWR2cQmRWv8GxZlf5L378mqaD1Uil8jW9cU20MVhekuaqTzWvpnqIqmnqCBHJ0zWZETqmsLVlFBchRnrwL5/lKQAkPEamin0/VbKd8W3OfPwxROcLVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX8L2U6u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3ACC4CECC;
+	Mon,  7 Oct 2024 14:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728312874;
+	bh=Fup7vjsNqIh2m2hxZl/CK4OuqCaLmi5YTomMTM3g1sc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OX8L2U6upEy2WgySjpgzRlGk02al/1x34rxf71D2gVL+XkxTgOnB9KRnYdLtDaot8
+	 CDoUjsEKpxABVqea5ivebJE38OVw4CKhyryqJbdK7Rz168lXYC6E3Rqr9Qz35EiTBe
+	 PzecnEj8eJivzohHIVz+tkgkkR/j4ZBCVtgGJA139DOQbYpSbFwhPR4YRI7/yjdIbq
+	 rCLqRQVawnCg7M1tEhmDKQ/aVVMJl1PkKOJSTMA8nuAY8unfgLTKPvOJwn9AMUyO0e
+	 7OMsc+fi2F+r1Bioc2uO2LbmxxizgjtUKpJy9wOK2f4q9IBzDTbAEMmSl0swjIhG/B
+	 Y+8R9zYF9eRvQ==
+Message-ID: <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
+Date: Mon, 7 Oct 2024 16:54:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Provags-ID: V03:K1:sxe0lufCzZrl31HztvVECRrNs0/1q9l2gDX+sqVQ3gnzuA4mRJl
- hYRkpxVJQ5s96ZCoX1GHHaDzUTeNFqqbm2/+hLKwkk2/mv3UnyHJZZE1QqJJyfa5AgtcfmT
- 16LFFuOChxZW/pNs5bzU0F9tDKtdQDKNd9zxBnDH2SnnFqcI4SBVDcSpGPhBcVgnjWHMoRC
- NsazlLT3idjpQxTDLtaMw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mnytWOTI3LY=;Dwas4gEcZSCt+t8SqMatF64rYcJ
- jFc5zDFVixNDN472LFGcQlSFtEb0gtsU5olju1J5u4Hr5TRJGifoC5pszAQMrOyYHR/k79aHq
- ggUjns8gmGoTRuxLwMkKHc4c3WKgktnGxEty7JQ7KSmvzdSWu5kBlF05Zj4rQ7A7EUuCjeVCF
- pg61laObjFGKAkJltc0CSTybJTY5Q996gozvxeSkRtjMoalc8NlareZyiG8njZy7tJrZS7apm
- 66zJRhCBgr8R/QOH27/Rc460fiPPP/vob11gPfWhotBkjXFa8wWrHeB/IQPxbswOUi0PMFKNz
- ij5GVPX3vul3vLB5iNvQo1tfTTK1TexSEuzhHjSa1oKECh9mrfcnsJecwSeaxuzVJAbKJk77d
- kbd1NUi5yHWUmCH370ZZU1wxr6u5BCt/0q2T7E2vL0d5PcRhsdQdz2Y1YVocgGOwdW4OqOm4S
- g1i9Adoa4EyWxS2HtTB20TKpzQ+QN83hw1f8C2g8pudocVn9Ew0RKPUNQ+m5dxKKBkDx1cQpT
- uuCEtjIkOa86Ap9djBKUcY64QKZi4sDsIpgEGGYSEBlDuAg9UppWrtgGRd9nESKnGTR7tOUfy
- K0kDRp5z14MnVoWwRou87dDENBCD9i1eOrPkpEy6hOl+DOPWMh/aWLxg8MOCxk77zoxQK4F1N
- H8TvjgNswPh5RmVKr8k+9uhH35vqSXFN9hL7BTYDFwq7jdOJvI8c7eVCB1tZIDKoFCyVLSnX6
- 8bmlTPqh0A6cXb0SkIvcFPArRkeuAgm1DXVmrHhdeznurWGh2b3BlgDh6YjiMN+/mFtiFcDoF
- 3pVkIW/cbnOluJnmBJWAOkeA==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+To: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+ Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
+ <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+ "marcel@holtmann.org" <marcel@holtmann.org>,
+ "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+ GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
+ <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
+ <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-07/10/2024 Willem de Bruijn wrote :
-> Beno=C3=AEt Monin wrote:
-> > Devices with NETIF_F_IP_CSUM capability can checksum TCP and UDP over
-> > IPv4 with an IP header that may contains options; whereas devices with
-> > NETIF_F_IPV6_CSUM capability can only checksum TCP and UDP over IPv6 if
-> > the IP header does not contains extension.
->=20
-> Are both these statements universally true across devices?
->=20
-> I can believe for NETIF_F_IP_CSUM that this is the definition, and
-> that devices that cannot handle options must fix it up indivually in
-> ndo_features_check.
->=20
-> And same for NETIF_F_IPV6_CSUM with extension headers.
->=20
-> But it would be good to see where this is asserted in the code, or
-> examples of drivers that have to perform such actions.
->=20
-I was referring to the documentation in skbuff.h that describes=20
-NETIF_F_IP_CSUM and NETIF_F_IPV6_CSUM.
+On 07/10/2024 14:58, POPESCU Catalin wrote:
+>>>>
+>>>> +  vcc-supply:
+>>>> +    description:
+>>>> +      phandle of the regulator that provides the supply voltage.
+>>>> +
+>>>> +  reset-gpios:
+>>>> +    description:
+>>>> +      Chip powerdown/reset signal (PDn).
+>>>> +
+>>> Hi Catalin,
+>>>
+>>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
+>>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
+>>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
+> 
+> Hi Sherry,
+> 
+> Regulators and reset controls being refcounted, we can then implement 
+> powerup sequence in both bluetooth/wlan drivers and have the drivers 
+> operate independently. This way bluetooth driver would has no dependance 
+> on the wlan driver for :
+> 
+> - its power supply
+> 
+> - its reset pin (PDn)
+> 
+> - its firmware (being downloaded as part of the combo firmware)
+> 
+> For the wlan driver we use mmc power sequence to drive the chip reset 
+> pin and there's another patchset that adds support for reset control 
+> into the mmc pwrseq simple driver.
+> 
+>> Please wrap your replies.
+>>
+>> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
+> 
+> Hi Krzysztof,
+> 
+> I'm not familiar with power sequencing, but looks like way more 
+> complicated than reset controls. So, why power sequencing is recommended 
+> here ? Is it b/c a supply is involved ?
 
-=46or NETIF_F_IPV6_CSUM, at least fsl_dpa and r8169 expect=20
-ipv6_hdr(skb)->nexthdr to be IPPROTO_{TCP,UDP} to compute the correct=20
-checksum for IPv6.
+Based on earlier message:
 
-I posted more details about the problem I am trying to fix with this=20
-patch in the following thread:=20
-https://lore.kernel.org/netdev/26548921.1r3eYUQgxm@benoit.monin/T/#u
+"For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
+that both wifi and BT controller will be powered on and off at the same
+time."
 
-> > Enforce that in skb_csum_hwoffload_help by checking the network header
-> > length in the case where the IP header version is 6. We cannot simply
-> > rely on the network header length since the IPv4 header can from 20 to
-> > 60 bytes whereas the IPv6 header must be 40 bytes. So we check the
-> > version field which is common to IPv4 and IPv6 headers.
-> >=20
-> > This fixes checksumming errors seen with ip6_tunnel and fou6
-> > encapsulation, for example with GRE-in-UDP over IPv6:
-> > * fou6 adds a UDP header with a partial checksum if the inner packet
-> > does not contains a valid checksum.
->=20
-> Where in the code is this conditional on the inner packet csum?
->=20
-This is done by udp6_set_csum, which called by fou6_build_udp.
+but maybe that's not needed. No clue, I don't know the hardware. But be
+carefully what you write in the bindings, because then it will be ABI.
 
-> > * ip6_tunnel adds an IPv6 header with a destination option extension
-> > header if encap_limit is non-zero (the default value is 4).
->=20
->=20
-> If this is a fix, we'll need to target net and best effort find a
-> suitable fixes tag.
-> =20
-I guess the particular problem I have found is present since the merge=20
-of fou6 in 4.7, but it might not be the only code path to create an=20
-IPv6 packet with an extension header and a partial checksum.
-
-> > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
-> > ---
-> >  net/core/dev.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/net/core/dev.c b/net/core/dev.c
-> > index ea5fbcd133ae..199831d86ec1 100644
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -3639,6 +3639,9 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
-> >  		return 0;
-> >=20
-> >  	if (features & (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)) {
-> > +		if (ip_hdr(skb)->version =3D=3D 6 &&
-> > +		    skb_network_header_len(skb) !=3D sizeof(struct ipv6hdr))
-> > +			goto sw_checksum;
-> >  		switch (skb->csum_offset) {
-> >  		case offsetof(struct tcphdr, check):
-> >  		case offsetof(struct udphdr, check):
-> > @@ -3646,6 +3649,7 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
-> >  		}
-> >  	}
-> >=20
-> > +sw_checksum:
-> >  	return skb_checksum_help(skb);
-> >  }
-> >  EXPORT_SYMBOL(skb_csum_hwoffload_help);
->=20
-
-=2D-=20
-Beno=C3=AEt
-
+Best regards,
+Krzysztof
 
 
