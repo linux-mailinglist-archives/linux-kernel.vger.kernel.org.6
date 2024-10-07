@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-354119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725FD993802
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A0A993805
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D434CB2102D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3798AB21605
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5451DE4FC;
-	Mon,  7 Oct 2024 20:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D761DE4E2;
+	Mon,  7 Oct 2024 20:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8QUUxpq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRHaMUVF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38061DE3C9;
-	Mon,  7 Oct 2024 20:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183A31DE2A6;
+	Mon,  7 Oct 2024 20:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331959; cv=none; b=UyVMHQ9HfvG5VlDgGoXx5muRWjQWWz/YiLWTCiriKFEbUqh29Ylwtwm0NhmwCje+rE4zpexKiReSmRYjNC/GRAKyDjUJUv7UhUIGTZZ/+/OqRwQy0ohJp4+db4clAgSgCfwLyhg5IIVI7PietXQt6bfwUqllx1wWpeLV2QdHjwk=
+	t=1728332012; cv=none; b=hzHDOljFusQTwBYlmY7padqZU8dDLzgyRUHR8X6WeGUMIgJZ2umCO02L30y05OCcr+gE/7SQzRhRlGjf6xPE34kATAMwI5xL7LWCOkMriSP3mV1dFrKA+2vbXGmhuKBmEw6Fjf22oJgEnaZHLP6vu/72bmnEjGM8jYOOJ5s/zRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331959; c=relaxed/simple;
-	bh=luEIaffhWqESf7hIQ7l8nkL5P040xkqBuXpkvCb9Mqk=;
+	s=arc-20240116; t=1728332012; c=relaxed/simple;
+	bh=OwIhuTuOCjUtH+lqgN/r1UqFieX0/XSad9XFiZtVLcs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5/ofJ7QmdWu7Eztv5dr803Q8IqUZgSFciN8IM7YKplpIT1iek+Dw7zcs51aH5+PXVPlOxYnNRPW0vdBnvXhDzQfXj6jlTvVx2fl8E4xsY1j98hOeHTNdfS05xJOb5RQl2aMrVojs76+Lh0hHPsWa2tsjrzNam/INzhmKuDtESU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8QUUxpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3699AC4CEC6;
-	Mon,  7 Oct 2024 20:12:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mK3vIyaYfEuDPHTTyOVGsoprXuz9hWFcuAwApfeDMIyLMmRDBgUfdnjNA4ZJpYmTa1C2fw1W0BztSvsqaGEamLbfZtIEOq0DwsKBDN75MLnMZebF41IBRrLDWADdZvtsxhIMrW5u/k/RAhuH9snzA4ixLanumbQbyGTwNwdkBAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRHaMUVF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523EFC4CEC6;
+	Mon,  7 Oct 2024 20:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728331959;
-	bh=luEIaffhWqESf7hIQ7l8nkL5P040xkqBuXpkvCb9Mqk=;
+	s=k20201202; t=1728332010;
+	bh=OwIhuTuOCjUtH+lqgN/r1UqFieX0/XSad9XFiZtVLcs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l8QUUxpqqS/cPnB77e40GdZVvM8c3ncvPEnXkKSYSqsUiiOZR7ZJNQs3DhtFqufRY
-	 3PkeQn138ZtpSzf0GAHwyghMMHDBRoLz11eV9Oi+vDbGpr6E+PGiKLxkroLvhW5xn5
-	 5qCtsRRBwdyKZrYT446qyJxHm1HP1BK29yxClPgsSJzq8qv3dt3uN2BQER7WXHFPD6
-	 pir0IAd8mYFWdx8hauqOEpr3pbCpx36V1ZeawVCCa12JGiI3HAZBuDZEm8HGa4Bs6N
-	 WQdDUxYwCe5zWSZfWHQXOL2wnah50+1HHCIYtbwkZ3Jz4XuX2MSjr1PAmrn22CN6U+
-	 VzC+nbLMUvnIw==
-Date: Mon, 7 Oct 2024 15:12:38 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, broonie@kernel.org, krzk+dt@kernel.org,
-	lgirdwood@gmail.com, linux-sound@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dt-bindings: rockchip,rk3036-codec: convert to yaml
-Message-ID: <172833195769.2322621.15377290813075812117.robh@kernel.org>
-References: <20241007164542.2452315-1-heiko@sntech.de>
+	b=eRHaMUVFTAo7VuZziMXYKga3+9IlFNUBs1+w/AIQTM7RgYCqXpycouKGEvVepWApW
+	 mN8Dfk0+OAS6pD18TFBoe8TGU9CerVHT8BL15YyDsB/0OS2287GfsvL5BNOLTV+rEc
+	 ruox0bRTM2POMWw4Jtzbc85/q6BiuJXERmo4/UxDADxZ6g/nf6gXuSBqou+zkYStJC
+	 bxvLAg5wGtrFLK11GWMslT5YUiWUFxsz2RmeEy8y/chbCgQJghlm/rBS1wJ/1RbOcV
+	 fGWC1+rxcO/VjMQimuhE6q+bu/pKZjftFARmQQQn9IoKSa2ckW+ioYBQGhBAbHw/8c
+	 qvdKO4xxzsRPw==
+Date: Mon, 7 Oct 2024 21:13:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH v2] selftests: sched_ext: Add sched_ext as proper
+ selftest target
+Message-ID: <ZwRA6P3YZ42JjVk9@finisterre.sirena.org.uk>
+References: <20241007073133.989166-1-bjorn@kernel.org>
+ <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
+ <87r08rnbra.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SlQF1kEi/Sq2tluV"
 Content-Disposition: inline
-In-Reply-To: <20241007164542.2452315-1-heiko@sntech.de>
+In-Reply-To: <87r08rnbra.fsf@all.your.base.are.belong.to.us>
+X-Cookie: Editing is a rewording activity.
 
 
-On Mon, 07 Oct 2024 18:45:42 +0200, Heiko Stuebner wrote:
-> Convert the binding to yaml.
-> 
-> The codec seems to be from Innosilicon, but the compatible has ever only
-> been rockchip-based, as they sythesized the codec for the rk3036.
-> 
-> So the yaml file gets a name matching that compatible.
-> The only other notable change is the addition of the #sound-dai-cells
-> property, that is always required.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../devicetree/bindings/sound/inno-rk3036.txt | 20 -------
->  .../bindings/sound/rockchip,rk3036-codec.yaml | 57 +++++++++++++++++++
->  2 files changed, 57 insertions(+), 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/inno-rk3036.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/rockchip,rk3036-codec.yaml
-> 
+--SlQF1kEi/Sq2tluV
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+On Mon, Oct 07, 2024 at 06:00:57PM +0200, Bj=F6rn T=F6pel wrote:
 
+> The sched_ext BPF programs relies on a vmlinux.h, which is generated
+> using bpftool and the vmlinux with BTF information. Have you built a
+> kernel with BTF support?
+
+OK, so having beaten the kernel config into shape and using GCC rather
+than clang for my build I did get this to build fine.  I think the main
+gotchas are the issues with the arm64 defconfig not supporting BTF and
+the fact that the Makefile silently picked up the host kernel.
+
+--SlQF1kEi/Sq2tluV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcEQOQACgkQJNaLcl1U
+h9CsgAf+JweWiALg8MrJcyZWQ/Pn9EUqi7KrnVreTX5EzvtXhEdADiwSpjKYXx4h
+h9ifs9ponWUCIpZIsC0uBFE5/kUpRfUuqg3lPlJVkbK2OyMy0C9WKk/gs6J06OYR
+YBERMPJ877MHJB1dt1jC0Mmy7jMA3sGY3l3kN4xrJ1eYjRe7jsvDIqnc8KaK5v/l
+P4DZIPKQcecagc6yppx5BYjyEBs3x2osaUKwuUOqHFlavzOZw9JUdSenhfcCJXhh
+Hm3yRRUvyr942RhZdL201NxZBpGFjqFufHL6XQo1eY56U9we/SFVKRBroPo3mOPg
+EM+El1VEGI8+TTAEyp8AIS0xJfFGXA==
+=VPuE
+-----END PGP SIGNATURE-----
+
+--SlQF1kEi/Sq2tluV--
 
