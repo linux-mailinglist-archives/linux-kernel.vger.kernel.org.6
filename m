@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-353447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A856992DEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:56:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4BF992DED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9B52843DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684331F2418D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C370189F45;
-	Mon,  7 Oct 2024 13:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3E81D5CC1;
+	Mon,  7 Oct 2024 13:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CwFtpwfR"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxcxUGoY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223D31D5CDD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0A01D54EE;
+	Mon,  7 Oct 2024 13:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309326; cv=none; b=Gs7EK92WoEvvW+D60IAFD7yzTRcEoYlo3pQ9NjdPK4Guk467a1ou3dM+BdVjGk9pN7mTHk4pcVNmmrGEOiQxLySMUzpLi487q+5oUbytBEJnY9BPaID+9yhVGmrsVS3wHoc6ZCt0AXjM17QkdI5HDtX+3lE4o9DalsNNvPNxXCk=
+	t=1728309323; cv=none; b=Q/skO1eh5kqKEO6uHF7hxhzKbVsb0J7Hp/emsGhslvhTMLoQv1YHHkdof1uRtNxzURJ0Y/6hEJVCPGw6MlCJDADXjSjC6R8P/zNeuHrfJvC6q3yAPKDrlCdMMoKpIuH8iTK7w2zXIEOxlHVPxTPcBhmiVhUL6J4mhV2HlN7L4Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309326; c=relaxed/simple;
-	bh=WkIFA3Bbn+M2B5VzgzqBsaRxhzbrBeYNIHEndslM8DI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XUcROdyXeVLGT4FhwcQn4n9s1thlveBIqXGtqCSkoK4meFevuYXVHUpXJP2i731vLVU4H192H4qxEnsC31fgXQwTHTJ1XQd+PEk0Nju4djFzQIWwabb2fothsTJg5jNRDot/xYkhqHSQIJr1GtMZhdCXiBSBT21tDB3zvwVgpkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CwFtpwfR; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e2555d3d0eso73438317b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728309324; x=1728914124; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CblMzpCPNydZZpvacmjghKpdVLiy01vOQxnw0IUvqWY=;
-        b=CwFtpwfRHMfxXmO55c0Lwx/LrOjH1eknvkF7swKeU1TQfAyX0wWjit2wBTctg7Wd/w
-         /qr+uqc/fYpmY2N9k90Ot6CnQaPcmAXQJPktWTiVT34PSU3QI4uZWcMrKnZnS2zTk928
-         afmkzmQkDjLBHdd+ywWtMt3gX3RwgeVJcGAUA4y0aV8MNjNA0Ifq7GG8jk91dJ5KUIS/
-         /hRT1pBQ+nuL5t128PBIcsgGoOnyWa98VQRvWqp4lwcCJ8fOkBU9EUmzARp+IaAS5qnS
-         UEhcQpruVLvZGnMWyxZtAY8aCyxR44LOTimFhttRR9cz4HCBkiSCIr0bwwihbDdhysMc
-         Q/bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728309324; x=1728914124;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CblMzpCPNydZZpvacmjghKpdVLiy01vOQxnw0IUvqWY=;
-        b=wv7SPQ70xmhMRpzq9qtNFqywVvB5SZQWIE68AjgL78sc4M+7C06ZP6QvS2LXBSfoOF
-         HW40JxVbTVzdwgSTCwxMJ8x6eD/g2w+lqcZkXlZsNb0uEWzdGnVjStiU8un6Eg81xXxb
-         JKGca3MIT114G/vy8F1zgffaWm40YXqFGXfjczI17Bhuukmj7riRaWJdM1ILuD67h7u+
-         n7ij0plyMJryTiQJF8skCgGLwu0ioizQPSOl+gRTiipPh+UhXgsPGvjfGEy01+87Q/NZ
-         lG7b9HhhHN1BeFiFLvyiJZ8mSEbYLkAs6iygRTv28n0qkCNRXC2oKGos+QO0mJJCAP+v
-         zf0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWrIUXC3iA1DtZExRiozQwfXUiBjC03hOreU5JDmXOr5jjLoKk1LaOCQrTfytNEctIJf0UT6lJOLG0ww+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXO+lvif4S3LOoHj05vJo6VF+9Ry5ejuAGZn1C2enrcVlS1f1N
-	QeieBC+nl+IVuw8KKL4NhhSTf9eY3tqmRF8k+iTRSFVQCBjCtmKyE3pR/aYod0JXCyKe+61je/Z
-	gVNyrUWBzDw==
-X-Google-Smtp-Source: AGHT+IHEWUgCEIy7iPCOVn7Lb+x/YbYzsOzZFkYER6vlS8wHJBCQCEMmUmC8PeUdmvbDxuhxB58u1a4APwmNFA==
-X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:690c:d1d:b0:6e2:2c72:3abb with SMTP
- id 00721157ae682-6e2c72bbd5emr3753187b3.7.1728309324364; Mon, 07 Oct 2024
- 06:55:24 -0700 (PDT)
-Date: Mon,  7 Oct 2024 13:55:06 +0000
-In-Reply-To: <20241007135508.3143756-1-joychakr@google.com>
+	s=arc-20240116; t=1728309323; c=relaxed/simple;
+	bh=jV7RkNNOAmSp1W66uhPjFkMmdnAxUOyJwhAUXaxvnhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhXNRa2b8AJmLNQDp9pdXEf9nb/yTMi85mCD1MxBWKFKuFGNuALSNiQbTN/mX5g9tY03wmY7/S9RiuWLFD1i5MsW41NcauY7V5krE7ESHJBjB0OEOfXuBb33VXSBLbvXIIQUGIch/FfLhl8+5ScMApXvnuxRs9UVzTM/a+zAVDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxcxUGoY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B405C4CED7;
+	Mon,  7 Oct 2024 13:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728309323;
+	bh=jV7RkNNOAmSp1W66uhPjFkMmdnAxUOyJwhAUXaxvnhY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cxcxUGoYJ29XLZVgvWMR4vtOIUfu8mmrfjqWCL/LiFMZsUw6XMR3qXSO/6ZYaJCGO
+	 oarmLQsFT0/SLMIz84O6myrMHESfLFWmv8WnltmdWAqoovTcqlTolnrZXcNjn4MxFe
+	 YhRmxJ4d0DgEvLL3TDvXEFc0Bx6Hop/z7DjZ29Vkja2WmrPaIZ4aslrmVvNXmhNEtx
+	 ThT/4+DsKpnfUmQAB+tqdoeWTJGGsbXcKwNhiQjTHM793fJG0aPyEUesJSji+gnTV1
+	 OsJomxMg5crABM0v3dISP3g9oCJJbnNglYijylBjA9mX8PhaoiIg+geKCTdEAyRk6p
+	 4ULbvv0zSLBGg==
+Date: Mon, 7 Oct 2024 14:55:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Benjamin Bara <bbara93@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Bara <benjamin.bara@skidata.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] Revert "ASoC: tegra: machine: Handle component name
+ prefix"
+Message-ID: <ZwPoO5hYiB3ev-ml@finisterre.sirena.org.uk>
+References: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
+ <32040b21-370f-44af-b1fe-bd625bc3fd9d@linaro.org>
+ <CAJpcXm7252KSGdkASJq-GpZPUKnmxL9o3raNJL-QjkL67Pd+OQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241007135508.3143756-1-joychakr@google.com>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241007135508.3143756-3-joychakr@google.com>
-Subject: [PATCH 1/2] dt-bindings: usb: dwc3: Add binding for USB Gen2 De-emphasis
-From: Joy Chakraborty <joychakr@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Joy Chakraborty <joychakr@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rfsTlN80Gow+oO9v"
+Content-Disposition: inline
+In-Reply-To: <CAJpcXm7252KSGdkASJq-GpZPUKnmxL9o3raNJL-QjkL67Pd+OQ@mail.gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-PIPE4 spec defines an 18bit de-emphasis setting to be passed from
-controller to the PHY.
-TxDeemph[17:0] is split as [5:0] C-1, [11:6] C0, [17:12] C+1 for 3 tap
-filter used for USB Gen2(10GT/s).
 
-Signed-off-by: Joy Chakraborty <joychakr@google.com>
----
- Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+--rfsTlN80Gow+oO9v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-index 1cd0ca90127d..a1f1bbcf1467 100644
---- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-@@ -190,6 +190,18 @@ properties:
-       - 1 # -3.5dB de-emphasis
-       - 2 # No de-emphasis
- 
-+  snps,tx_gen2_de_emphasis_quirk:
-+    description: When set core will set Tx de-emphasis for USB Gen2
-+    type: boolean
-+
-+  snps,tx_gen2_de_emphasis:
-+    description:
-+      The 18bit value of Tx deemphasis defined in PIPE4 spec driven to PHY
-+      for normal operation.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 0
-+    maximum: 0x3ffff
-+
-   snps,dis_u3_susphy_quirk:
-     description: When set core will disable USB3 suspend phy
-     type: boolean
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
+On Mon, Oct 07, 2024 at 03:17:45PM +0200, Benjamin Bara wrote:
 
+> Instead of reverting, we could probably also rewrite
+> snd_soc_dapm_widget_name_cmp() to directly use dapm->component, instead
+> of using snd_soc_dapm_to_component(). In this case, we can explicitly
+> check for a NULL and skip the prefix check - not sure why it currently
+> is implemented this way.
+
+> I think fixing snd_soc_dapm_widget_name_cmp() to be able to handle all
+> cases might be the better option, what do you think?
+
+Yes, I think that makes sense.
+
+--rfsTlN80Gow+oO9v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcD6DoACgkQJNaLcl1U
+h9BgUQf/dMB6IM/qORov7dwmlk1NGy30tvrrrgUxwEFMZihx0n5vJ0mZRCNuNS4V
+ODVv/lXQ99BrJK5YrVMpM8XK+a83t6Z6vWQKAqvehGJBIZE5GQVWKZsbzDvRfc4M
+oSinOs5v5oFx2EVXY6l4Tijg5PoAtq5sjdCrDxDZ5r/y0UQbUjmVTJNiZkeI6h+j
+nD1mStsvYmaXLa75AkzDxlFjMp3oGjvrmfeqDb7XJlK3IwefQufItWQY39x2NJDK
+dvYGfZJYIP8qADyyVUQBJHYCS7mnSbc0VaCWwszhEC1UZoFqco7dKpT0LY9+365s
+hh0z1MhnVvGtKHuaCDRfVUE8I/fhng==
+=qsqs
+-----END PGP SIGNATURE-----
+
+--rfsTlN80Gow+oO9v--
 
