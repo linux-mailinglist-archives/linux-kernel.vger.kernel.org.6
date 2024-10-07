@@ -1,99 +1,369 @@
-Return-Path: <linux-kernel+bounces-353044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1EF99279D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:54:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381279927A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96B171F22D7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:54:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41344B243C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D7518BC31;
-	Mon,  7 Oct 2024 08:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cyssuzw8"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B56518BBB4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3438918C32A;
+	Mon,  7 Oct 2024 08:54:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7ED18C036;
+	Mon,  7 Oct 2024 08:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291281; cv=none; b=C6SvEvlyjwz97n4P01ELxFThnlVh5YEKeW7fJN55s+V3ZRqczQiTUhyR50URnAd7qe+km0Ap+EfZnH21CIrPnMtksz6kF0VasbG2WgtehzS0fpOPFNW6roiK0BfqExUkRjHHgCUusvzdoCcl1WuLWsZwPPMiZrTRPYHqJzt/Eok=
+	t=1728291293; cv=none; b=LpwM8UAAz5IQackbXLoCWilrjOafB5WL8LyS800CiB0QFYdHEMcM5c0YqVf72lpIUPeDz4iCY2b2yKp4Qem8WJnIctz+HJ1d5YNTXZ2pKhGWbpbtEWgtkORw7FVkwQNN7jP0L95BYlq/cSt9DH4iyG3nkR6cjP+wbe+1RbPn4cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291281; c=relaxed/simple;
-	bh=OUfE1o2HzBKKhR+SxUsllx8cqGS44Q3syYwiuBt8www=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KPHTML10eJHIWiL5x0iPYtsaRWfIImG6bCYM7UsEX87pnP9fGh9iX3FEvz5GtGCuoyyAzeOsHPAey+qngOeWO3XJzCt5vU6gIfrQxAyEXHqwnM9cv8cZckMZhk+iY99GbsQhc+FdLyNmNqnPg+DmBg5ydrGy8OxL5QwZ6GoEwHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cyssuzw8; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71df7d6c3b2so169178b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728291280; x=1728896080; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OUfE1o2HzBKKhR+SxUsllx8cqGS44Q3syYwiuBt8www=;
-        b=Cyssuzw8epcigYBQZDR0Lg7y9tlckYFcfzjlRRqU0C3tx9VSygxl2n1HuA7uVQKWPz
-         HAqWbZSDqARGr1SEzlPHUsGN7eYg9QSEWI0UbP3tpRDbUSkZdXUu6RrstPpxcCYnzRNN
-         Yf1jFYcmpsMBw26+lkZMqIoUJZb6an/uWHl6Z77B5T+HL/qDiaYOMVodz5ly/kfOQ3HN
-         o5191z05wBdcXkUG0ScSh99sK5ER70F511MVNzAI9mUeVOIDtSBuVahnVZQ4lFn0esNO
-         altuweodRsLEeR1IixYDsEK9vwVu8IEb3Yl38T1skQwPB2gbq1rIInzFh40YsizzCore
-         vgag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728291280; x=1728896080;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OUfE1o2HzBKKhR+SxUsllx8cqGS44Q3syYwiuBt8www=;
-        b=cDnvM0eQ4VVfI5toQCr1m7xamgH1v+OrZwS16TTx+mvbRZERwfyg60OD9s6ouQo1sl
-         f0TWSpU1lt0kbaNF3dQcMJd3tqNORvZP8BiiAUajW5MjIYgHUM0xUc/CL+AJ9rMSOL9/
-         KrW0AuhlBOfWXtQoul6COp+WaV0BXeCCx1DRXZRu0otduoEh2tL651GNbKGhG2K+aOCz
-         ry/wcv+FjJOVuK/q6t7zEaPt7LyPu0UyMk5M/76oL2XGDYb6PUJiOeGPs7Tjrk9g9yW7
-         5jG9vSsJ1t2JY5hMG9OPLwcJJYv7JOKxcUF/g7iB1KmdHS0hopveP6LjQDQucnwF/tVF
-         Q7xA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAu2MzV7WA63hJ/gd5lbdAnecKjYN73pjD5b0ZX8TbmTUeYmoT4tRhWSVAWIaRom9TXdYL02yi3UjtUjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZYoIptT/iU05ZP38gqQ0JcNEo1/3vONn0XtDRc54qtPo2OqiH
-	duilLcj+Rdk8YLdGIsI7OoGyEKttnlWI5E0oNx8BYSWflGrsy3bRLCtUQa332yuCqp4WSwbeCLI
-	BOYDdHMqi1YF3cPD8QK5HKWOdWI4=
-X-Google-Smtp-Source: AGHT+IHJz1pizuVd62NJ7Q4bXUgGdgu3SY2d8zDnBAxjeBsDR9ctmzU+ELMZzk52Hjc4X7YTbdWXw5a5ne0ozVY3nyc=
-X-Received: by 2002:a05:6a21:789b:b0:1cf:2be2:668c with SMTP id
- adf61e73a8af0-1d6dfaef1bfmr6372042637.12.1728291279798; Mon, 07 Oct 2024
- 01:54:39 -0700 (PDT)
+	s=arc-20240116; t=1728291293; c=relaxed/simple;
+	bh=6LtsjONwqSUoFU6nmabpi05B/akMm3Nqxl7GdD5Mrzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FVK4rM9zRwRdGAv3jWQYeYvFXpR9cVLcHDtKO9yamCCJq5/GPwtiKObsMKAva5664/EOPp62KqZryCJvS0VBR9eoI+5J9lXHD9PxCm9i8XMVZcSlMm6PLVv5ynA0eskYf2yOuqvswGT0aJobwKvtoxYA4+qcz5tGO1ido/dXhQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2610AFEC;
+	Mon,  7 Oct 2024 01:55:20 -0700 (PDT)
+Received: from [192.168.4.86] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5ED43F64C;
+	Mon,  7 Oct 2024 01:54:47 -0700 (PDT)
+Message-ID: <9b728a01-159a-4908-9dcf-2906e24f5e2e@arm.com>
+Date: Mon, 7 Oct 2024 09:54:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006225511.121579-1-linux@treblig.org>
-In-Reply-To: <20241006225511.121579-1-linux@treblig.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 7 Oct 2024 10:54:26 +0200
-Message-ID: <CANiq72mAfL7Dukpav86hkjQstcWv2J6y5uRTiRQq2TXEg9bNZw@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: Remove unused functions
-To: linux@treblig.org
-Cc: ojeda@kernel.org, andy@kernel.org, geert@linux-m68k.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-6-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241004152804.72508-6-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 7, 2024 at 12:55=E2=80=AFAM <linux@treblig.org> wrote:
->
-> cfag12864b_getrate() and cfag12864b_isenabled() were both added
-> in commit 70e840499aae ("[PATCH] drivers: add LCD support")
-> but never used.
->
-> Remove them.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi Steven
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+On 04/10/2024 16:27, Steven Price wrote:
+> The RMM (Realm Management Monitor) provides functionality that can be
+> accessed by SMC calls from the host.
+> 
+> The SMC definitions are based on DEN0137[1] version 1.0-rel0
+> 
+> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v4:
+>   * Update to point to final released RMM spec.
+>   * Minor rearrangements.
+> Changes since v3:
+>   * Update to match RMM spec v1.0-rel0-rc1.
+> Changes since v2:
+>   * Fix specification link.
+>   * Rename rec_entry->rec_enter to match spec.
+>   * Fix size of pmu_ovf_status to match spec.
+> ---
+>   arch/arm64/include/asm/rmi_smc.h | 255 +++++++++++++++++++++++++++++++
+>   1 file changed, 255 insertions(+)
+>   create mode 100644 arch/arm64/include/asm/rmi_smc.h
+> 
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> new file mode 100644
+> index 000000000000..0fde2e06d275
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rmi_smc.h
+> @@ -0,0 +1,255 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023-2024 ARM Ltd.
+> + *
+> + * The values and structures in this file are from the Realm Management Monitor
+> + * specification (DEN0137) version 1.0-rel0:
+> + * https://developer.arm.com/documentation/den0137/1-0rel0/
+> + */
+> +
+> +#ifndef __ASM_RME_SMC_H
+> +#define __ASM_RME_SMC_H
+> +
+> +#include <linux/arm-smccc.h>
+> +
+> +#define SMC_RxI_CALL(func)				\
+> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
+> +			   ARM_SMCCC_SMC_64,		\
+> +			   ARM_SMCCC_OWNER_STANDARD,	\
+> +			   (func))
+> +
+> +#define SMC_RMI_DATA_CREATE		SMC_RxI_CALL(0x0153)
+> +#define SMC_RMI_DATA_CREATE_UNKNOWN	SMC_RxI_CALL(0x0154)
+> +#define SMC_RMI_DATA_DESTROY		SMC_RxI_CALL(0x0155)
+> +#define SMC_RMI_FEATURES		SMC_RxI_CALL(0x0165)
+> +#define SMC_RMI_GRANULE_DELEGATE	SMC_RxI_CALL(0x0151)
+> +#define SMC_RMI_GRANULE_UNDELEGATE	SMC_RxI_CALL(0x0152)
+> +#define SMC_RMI_PSCI_COMPLETE		SMC_RxI_CALL(0x0164)
+> +#define SMC_RMI_REALM_ACTIVATE		SMC_RxI_CALL(0x0157)
+> +#define SMC_RMI_REALM_CREATE		SMC_RxI_CALL(0x0158)
+> +#define SMC_RMI_REALM_DESTROY		SMC_RxI_CALL(0x0159)
+> +#define SMC_RMI_REC_AUX_COUNT		SMC_RxI_CALL(0x0167)
+> +#define SMC_RMI_REC_CREATE		SMC_RxI_CALL(0x015a)
+> +#define SMC_RMI_REC_DESTROY		SMC_RxI_CALL(0x015b)
+> +#define SMC_RMI_REC_ENTER		SMC_RxI_CALL(0x015c)
+> +#define SMC_RMI_RTT_CREATE		SMC_RxI_CALL(0x015d)
+> +#define SMC_RMI_RTT_DESTROY		SMC_RxI_CALL(0x015e)
+> +#define SMC_RMI_RTT_FOLD		SMC_RxI_CALL(0x0166)
+> +#define SMC_RMI_RTT_INIT_RIPAS		SMC_RxI_CALL(0x0168)
+> +#define SMC_RMI_RTT_MAP_UNPROTECTED	SMC_RxI_CALL(0x015f)
+> +#define SMC_RMI_RTT_READ_ENTRY		SMC_RxI_CALL(0x0161)
+> +#define SMC_RMI_RTT_SET_RIPAS		SMC_RxI_CALL(0x0169)
+> +#define SMC_RMI_RTT_UNMAP_UNPROTECTED	SMC_RxI_CALL(0x0162)
+> +#define SMC_RMI_VERSION			SMC_RxI_CALL(0x0150)
+> +
+> +#define RMI_ABI_MAJOR_VERSION	1
+> +#define RMI_ABI_MINOR_VERSION	0
+> +
+> +#define RMI_ABI_VERSION_GET_MAJOR(version) ((version) >> 16)
+> +#define RMI_ABI_VERSION_GET_MINOR(version) ((version) & 0xFFFF)
+> +#define RMI_ABI_VERSION(major, minor)      (((major) << 16) | (minor))
+> +
+> +#define RMI_UNASSIGNED			0
+> +#define RMI_ASSIGNED			1
+> +#define RMI_TABLE			2
+> +
+> +#define RMI_RETURN_STATUS(ret)		((ret) & 0xFF)
+> +#define RMI_RETURN_INDEX(ret)		(((ret) >> 8) & 0xFF)
+> +
+> +#define RMI_SUCCESS		0
+> +#define RMI_ERROR_INPUT		1
+> +#define RMI_ERROR_REALM		2
+> +#define RMI_ERROR_REC		3
+> +#define RMI_ERROR_RTT		4
+> +
+> +enum rmi_ripas {
+> +	RMI_EMPTY = 0,
+> +	RMI_RAM = 1,
+> +	RMI_DESTROYED = 2,
+> +};
+> +
+> +#define RMI_NO_MEASURE_CONTENT	0
+> +#define RMI_MEASURE_CONTENT	1
+> +
+> +#define RMI_FEATURE_REGISTER_0_S2SZ		GENMASK(7, 0)
+> +#define RMI_FEATURE_REGISTER_0_LPA2		BIT(8)
+> +#define RMI_FEATURE_REGISTER_0_SVE_EN		BIT(9)
+> +#define RMI_FEATURE_REGISTER_0_SVE_VL		GENMASK(13, 10)
+> +#define RMI_FEATURE_REGISTER_0_NUM_BPS		GENMASK(19, 14)
+> +#define RMI_FEATURE_REGISTER_0_NUM_WPS		GENMASK(25, 20)
+> +#define RMI_FEATURE_REGISTER_0_PMU_EN		BIT(26)
+> +#define RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS	GENMASK(31, 27)
+> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_256	BIT(32)
+> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_512	BIT(33)
+> +#define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
+> +#define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
+> +
+> +#define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
+> +#define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
+> +#define RMI_REALM_PARAM_FLAG_PMU		BIT(2)
+> +
+> +/*
+> + * Note many of these fields are smaller than u64 but all fields have u64
+> + * alignment, so use u64 to ensure correct alignment.
+> + */
+> +struct realm_params {
+> +	union { /* 0x0 */
+> +		struct {
+> +			u64 flags;
+> +			u64 s2sz;
+> +			u64 sve_vl;
+> +			u64 num_bps;
+> +			u64 num_wps;
+> +			u64 pmu_num_ctrs;
+> +			u64 hash_algo;
+> +		};
+> +		u8 padding1[0x400];
+> +	};
+> +	union { /* 0x400 */
+> +		u8 rpv[64];
+> +		u8 padding2[0x400];
+> +	};
+> +	union { /* 0x800 */
+> +		struct {
+> +			u64 vmid;
+> +			u64 rtt_base;
+> +			s64 rtt_level_start;
+> +			u64 rtt_num_start;
+> +		};
+> +		u8 padding3[0x800];
+> +	};
+> +};
+> +
+> +/*
+> + * The number of GPRs (starting from X0) that are
+> + * configured by the host when a REC is created.
+> + */
+> +#define REC_CREATE_NR_GPRS		8
+> +
+> +#define REC_PARAMS_FLAG_RUNNABLE	BIT_ULL(0)
+> +
+> +#define REC_PARAMS_AUX_GRANULES		16
+> +
+> +struct rec_params {
+> +	union { /* 0x0 */
+> +		u64 flags;
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x100 */
+> +		u64 mpidr;
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 pc;
+> +		u8 padding3[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		u64 gprs[REC_CREATE_NR_GPRS];
+> +		u8 padding4[0x500];
+> +	};
+> +	union { /* 0x800 */
+> +		struct {
+> +			u64 num_rec_aux;
+> +			u64 aux[REC_PARAMS_AUX_GRANULES];
+> +		};
+> +		u8 padding5[0x800];
+> +	};
+> +};
+> +
+> +#define REC_ENTER_EMULATED_MMIO		BIT(0)
+> +#define REC_ENTER_INJECT_SEA		BIT(1)
+> +#define REC_ENTER_TRAP_WFI		BIT(2)
+> +#define REC_ENTER_TRAP_WFE		BIT(3)
+> +#define REC_ENTER_RIPAS_RESPONSE	BIT(4)
+> +
+> +#define REC_RUN_GPRS			31
+> +#define REC_GIC_NUM_LRS			16
 
-Cheers,
-Miguel
+minor nit:
+Should we rename this to REC_MAX_GIC_NUM_LRS ? The RMM could
+support lesser number of LRs as indicated in the FEATURE Register 0
+and we need to take that into consideration for VGIC support. Otherwise 
+we may loose LRs on restore path. More on that on the VGIC change.
+
+Suzuki
+
+
+
+
+
+
+> +
+> +struct rec_enter {
+> +	union { /* 0x000 */
+> +		u64 flags;
+> +		u8 padding0[0x200];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
+> +		};
+> +		u8 padding3[0x100];
+> +	};
+> +	u8 padding4[0x400];
+> +};
+> +
+> +#define RMI_EXIT_SYNC			0x00
+> +#define RMI_EXIT_IRQ			0x01
+> +#define RMI_EXIT_FIQ			0x02
+> +#define RMI_EXIT_PSCI			0x03
+> +#define RMI_EXIT_RIPAS_CHANGE		0x04
+> +#define RMI_EXIT_HOST_CALL		0x05
+> +#define RMI_EXIT_SERROR			0x06
+> +
+> +struct rec_exit {
+> +	union { /* 0x000 */
+> +		u8 exit_reason;
+> +		u8 padding0[0x100];
+> +	};
+> +	union { /* 0x100 */
+> +		struct {
+> +			u64 esr;
+> +			u64 far;
+> +			u64 hpfar;
+> +		};
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
+> +			u64 gicv3_misr;
+> +			u64 gicv3_vmcr;
+> +		};
+> +		u8 padding3[0x100];
+> +	};
+> +	union { /* 0x400 */
+> +		struct {
+> +			u64 cntp_ctl;
+> +			u64 cntp_cval;
+> +			u64 cntv_ctl;
+> +			u64 cntv_cval;
+> +		};
+> +		u8 padding4[0x100];
+> +	};
+> +	union { /* 0x500 */
+> +		struct {
+> +			u64 ripas_base;
+> +			u64 ripas_top;
+> +			u64 ripas_value;
+> +		};
+> +		u8 padding5[0x100];
+> +	};
+> +	union { /* 0x600 */
+> +		u16 imm;
+> +		u8 padding6[0x100];
+> +	};
+> +	union { /* 0x700 */
+> +		struct {
+> +			u8 pmu_ovf_status;
+> +		};
+> +		u8 padding7[0x100];
+> +	};
+> +};
+> +
+> +struct rec_run {
+> +	struct rec_enter enter;
+> +	struct rec_exit exit;
+> +};
+> +
+> +#endif
+
 
