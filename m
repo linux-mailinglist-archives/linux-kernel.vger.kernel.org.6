@@ -1,180 +1,227 @@
-Return-Path: <linux-kernel+bounces-352968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6449926A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239F39926A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DDFC1F22DB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472231C223A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B2E188592;
-	Mon,  7 Oct 2024 08:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C9B188736;
+	Mon,  7 Oct 2024 08:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0vbDj8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXUKKJWm"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E0C18732B;
-	Mon,  7 Oct 2024 08:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FDC18732B;
+	Mon,  7 Oct 2024 08:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288418; cv=none; b=LCDx9nAwFx1isVpiePlglc/RKHcMcD2N18isa/2hMJAIcgKomItX36mGBpp/2ZJXujIsOq09287NfZXJNH0Htr/T4iGgkWe6p0xCv+thaesYWgGLB42t8VxYkcoeZg3GAK71DBnPCMAvwylQ9rTWVcAEIE5K+BFL1BNrqGFOqEA=
+	t=1728288441; cv=none; b=pvd4pExffe4dJthsIXTQdgxBI3dlmBra3UT4yzCq0jnPhiBk61dVC/45ji4u9WNyYPLbaPXK/RRa2/OQt7hEVhXSS4gKsYQeLO37bz/eSQOeGDPc0tYUzZSEsE/BQ4zQan9gJtZDunz5oFmQWV2p1Y9jH9nbJCHnk4ft/XltOwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288418; c=relaxed/simple;
-	bh=BpejRmLyKdAMAzWqH63+BEQhESgQZp8DekKdmmrkFcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=raUdyxdTVA7UzNcQNL4P2aXN92rZTBP5E8y4JvYhy4tEJTC6ms/UiKWnwwZa6YiNNYkisgaOGwiyyG7ERGHHTHTCplT3RSxuAhr8ZkICGUjeUbtR9ZVKh73CIdX2ihH+oc2Cv0M/n0yqS801OqAr6MLLuo2UYvJha+WC53yKvgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0vbDj8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B66C4CEC6;
-	Mon,  7 Oct 2024 08:06:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728288417;
-	bh=BpejRmLyKdAMAzWqH63+BEQhESgQZp8DekKdmmrkFcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U0vbDj8MjzuPnSyDD5h7jo8rckO9Q3LQf+nUwR++yCx9YhzoZuM33efYwOToLjRl8
-	 RqIFR6TcEdfUtkKzaBxQQfVV+pOpZP9uL4Wz1qDo1suhJVbcuaRGghVge+bDjsvAsb
-	 xztosqDvNvodHcvRxZgY5psMfWwlW9caYETvk75c9UP6p9MPBf8U8DKfqaudUR5ciM
-	 Mp7mIduylmwdxYl4c/x+fYtGqkh7GMeB9Z8tD+3sizgxXYlEBjf5wK7PM6MfT4Jb6R
-	 NHSO2LR0G6Kf+6RGa8cgRQjmBi79XoBRGGtkTEWjXxlu2dcTvxPpBbUPP27ncl3g36
-	 ywCOrPODzFmHA==
-Message-ID: <06fd4e7e-d401-49bb-81f1-47fcea2dbbee@kernel.org>
-Date: Mon, 7 Oct 2024 10:06:50 +0200
+	s=arc-20240116; t=1728288441; c=relaxed/simple;
+	bh=jYk4qTv8kAO5SLDx69XdaqTCkdLRACIjygpJLLT8lMc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmsaX9gy/48rsCnVsghJVy3WaATrzbBJ40/Uh+82oNrnZ+M9CpKqHHjps5lH9z+FZiRMU7N6gn/VzBr9qxRSr1UhseVn8blusRUVF9D6UxZtRxiO9lyfCoO2cVdWIB4GjsejgVlatYUENndVLH+HXhHPaBK6M2cQqbFK+OTvwV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXUKKJWm; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so41773355e9.3;
+        Mon, 07 Oct 2024 01:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728288437; x=1728893237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ja9w7vdCtDERzAoUGyjJRlwbo3h/9osUMg9vAVY7lrg=;
+        b=JXUKKJWmCbK1cho5KaHHPIaFl+VA+GxJAQttxW0EQJ0ab8wT5HDW23jqR2ctTgsjlK
+         1tuyUrzVOQ1dOT7W4S/dMrzEkRoz+vFDl8YZfQH7QlJFHFkLJfj5dq1gQMLKPYYecbNh
+         m0wYdg8pYkkSwa0DMkze8yEACjEZUbCXDkP35e2KgwXR+dDjijsjMJDbGGlFn3Qo/20i
+         wFQ8seRGoXQ2/fmdpM16uHT4+WKal22478JR9nDoZLYGezliQyP92cGFKXYv0xtMt/qD
+         JDjc/o+FSkGiZAi/nDqSATCzBnsLGx4WMpSdfUYdchXVhhGnmKC9ku9vjlFD6CY2vzd0
+         uqHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728288437; x=1728893237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ja9w7vdCtDERzAoUGyjJRlwbo3h/9osUMg9vAVY7lrg=;
+        b=oe+cuOcyXsfgihsU+pvk7a329kTSSHap2rgWSaEbMakpWmvpU2KucgEZcVc6e1YrKa
+         heJ/qKihilr+hm0us1CxXZnjc2qVd/jRHWV/T5WkW7Emq8h00xfxW716JVC5ds/Wt+F+
+         f0mOu1BZcVOJ72agtNrnrB+4bvApDcTxI+4MaBUhb0194UrgUiAcBRFY6w8IRo2JMt5U
+         UY5NnqRKsF2DlFRkrOb3RT7HP02SsV5lZL1LLtxqZWZQ4OGgLDs/Sbor4RGy9Ws6cT2U
+         yq9bt/ENz5+ytpP96WNBT5V2q8ssB19hnZtYvx8uvPlMyr47i7uGP25pA0/2h3mFyVTQ
+         zLYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMdkKUTg5StZTd33wu/Sep2pbtSvoxPABAi/SxjCfQlwfebrEDL+WhS25SD09Ouz+U/BSKqDjXNir+jVMY@vger.kernel.org, AJvYcCVufFfsSRdyKTI+MPbvH8FEHYIzcHoJ1w+21jimRS3JX80JDnwiBtSMNuVR5FrOnhCdynh8trAfR2bn77qvviEg@vger.kernel.org, AJvYcCW6eCrkvLpK4Mk1ktzi9AeRMN43Jx0awvu+rHJQuE24Y5jf6Gg9k+4iI/CMtnQpn6zqIb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTc/rbYljCxsCh1Z4ufSTIbuipPCLbsmdsSZNwaARVob2Z316a
+	ntuNtM3S7u2YlbpAuCFtC2Ji+ggooeKp47Lif+cFfGT6kPw0TFth
+X-Google-Smtp-Source: AGHT+IGSZXGhFxXfwLuS2KmWGon7scorT641BYrPKbpsyplMaCJjjvTl27nzQjR/VfC+jJ97tU13AQ==
+X-Received: by 2002:a05:600c:1c10:b0:42c:b62c:9f36 with SMTP id 5b1f17b1804b1-42f85a6d528mr87316785e9.5.1728288437146;
+        Mon, 07 Oct 2024 01:07:17 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a56dsm5116236f8f.41.2024.10.07.01.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:07:16 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 7 Oct 2024 10:07:15 +0200
+To: tyrone-wu <wudevelops@gmail.com>
+Cc: laoar.shao@gmail.com, andrii.nakryiko@gmail.com, andrii@kernel.org,
+	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
+	kernel-patches-bot@fb.com, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	martin.lau@linux.dev, mykolal@fb.com, olsajiri@gmail.com,
+	sdf@fomichev.me, shuah@kernel.org, song@kernel.org,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH bpf v5 1/2] bpf: fix unpopulated name_len field in
+ perf_event link info
+Message-ID: <ZwOWs_XrBtlTGE24@krava>
+References: <CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com>
+ <20241006195131.563006-1-wudevelops@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
- hsi0/1 clock support
-To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
- 'Krzysztof Kozlowski' <krzk+dt@kernel.org>, 'Rob Herring' <robh@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
- <alim.akhtar@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
- <CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
- <20240912103856.3330631-3-sunyeal.hong@samsung.com>
- <db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
- <00a501db188f$8a7142b0$9f53c810$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <00a501db188f$8a7142b0$9f53c810$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006195131.563006-1-wudevelops@gmail.com>
 
-On 07/10/2024 10:04, sunyeal.hong wrote:
-> Hello Krzysztof,
+On Sun, Oct 06, 2024 at 07:51:30PM +0000, tyrone-wu wrote:
+> Previously when retrieving `bpf_link_info.perf_event` for
+> kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
+> kernel, leaving it to reflect the value initially set by the user. This
+> behavior was inconsistent with how other input/output string buffer
+> fields function (e.g. `raw_tracepoint.tp_name_len`).
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Monday, September 30, 2024 8:36 PM
->> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Krzysztof Kozlowski
->> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
->> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; Sylwester
->> Nawrocki <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
->> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@kernel.org>
->> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> clk@vger.kernel.org
->> Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc
->> and hsi0/1 clock support
->>
->> On 12/09/2024 12:38, Sunyeal Hong wrote:
->>> Like CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and
->> USI_I3C.
->>> Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
->>> Like CMU_HSI0, this provides clocks for PCIE.
->>> Like CMU_HSI1, this provides clocks for USB and MMC.
->>>
->>> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
->>> ---
->>
->> ...
->>
->>> +
->>>  static int __init exynosautov920_cmu_probe(struct platform_device
->>> *pdev)  {
->>>  	const struct samsung_cmu_info *info; @@ -1154,6 +1431,19 @@ static
->>> const struct of_device_id exynosautov920_cmu_of_match[] = {
->>>  	{
->>>  		.compatible = "samsung,exynosautov920-cmu-peric0",
->>>  		.data = &peric0_cmu_info,
->>> +	}, {
->>> +		 .compatible = "samsung,exynosautov920-cmu-peric1",
->>> +		 .data = &peric1_cmu_info,
->>> +	}, {
->>> +		 .compatible = "samsung,exynosautov920-cmu-misc",
->>> +		 .data = &misc_cmu_info,
->>> +	}, {
->>> +		.compatible = "samsung,exynosautov920-cmu-hsi0",
->>> +		.data = &hsi0_cmu_info,
->>> +	}, {
->>> +		.compatible = "samsung,exynosautov920-cmu-hsi1",
->>> +		.data = &hsi1_cmu_info,
->>> +	}, {
->>
->> This is unrelated change. Please rebase.
->>
-> Could you please explain in more detail the comment mentioned above?
+> This patch fills `name_len` with the actual size of the string name.
+> 
+> Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
+> Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
+> Signed-off-by: tyrone-wu <wudevelops@gmail.com>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+> V4 -> V5:
+> Link: https://lore.kernel.org/bpf/CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com/
+> - Check that buf is not NULL before retrieving/using its length
+> 
+> V3 -> V4:
+> Link: https://lore.kernel.org/bpf/Zv_PP6Gs5cq3W2Ey@krava/
+> - Split patch into separate kernel and selftest change
+> 
+> V2 -> V3:
+> Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
+> - Use clearer variable name for user set/inputted name len (name_len -> input_len)
+> - Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
+> 
+> V1 -> V2:
+> Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
+> - Use user set *ulen in bpf_copy_to_user before overwriting *ulen
+> 
+>  kernel/bpf/syscall.c | 38 ++++++++++++++++++++++++--------------
+>  1 file changed, 24 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index a8f1808a1ca5..3df192a6bdcc 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -3565,32 +3565,35 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
+>  }
+>  
+>  static int bpf_perf_link_fill_common(const struct perf_event *event,
+> -				     char __user *uname, u32 ulen,
+> +				     char __user *uname, u32 *ulen,
+>  				     u64 *probe_offset, u64 *probe_addr,
+>  				     u32 *fd_type, unsigned long *missed)
+>  {
+>  	const char *buf;
+> -	u32 prog_id;
+> +	u32 prog_id, input_len;
+>  	size_t len;
+>  	int err;
+>  
+> -	if (!ulen ^ !uname)
+> +	if (!(*ulen) ^ !uname)
+>  		return -EINVAL;
+>  
+>  	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
+>  				      probe_offset, probe_addr, missed);
+>  	if (err)
+>  		return err;
+> -	if (!uname)
+> -		return 0;
+> +
+>  	if (buf) {
+> +		input_len = *ulen;
+>  		len = strlen(buf);
+> -		err = bpf_copy_to_user(uname, buf, ulen, len);
+> -		if (err)
+> -			return err;
+> -	} else {
+> -		char zero = '\0';
+> +		*ulen = len + 1;
+>  
+> +		if (uname) {
+> +			err = bpf_copy_to_user(uname, buf, input_len, len);
+> +			if (err)
+> +				return err;
+> +		}
+> +	} else if (uname) {
+> +		char zero = '\0';
+>  		if (put_user(zero, uname))
+>  			return -EFAULT;
+>  	}
 
-You were growing this list, didn't you? Then adding sentinel is unrelated.
+hm, why not just simple check buf for and keep the rest? seems less complicated..
+
+jirka
 
 
-Best regards,
-Krzysztof
-
+---
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a8f1808a1ca5..e393b94b90ec 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
+ }
+ 
+ static int bpf_perf_link_fill_common(const struct perf_event *event,
+-				     char __user *uname, u32 ulen,
++				     char __user *uname, u32 *ulen,
+ 				     u64 *probe_offset, u64 *probe_addr,
+ 				     u32 *fd_type, unsigned long *missed)
+ {
+ 	const char *buf;
+-	u32 prog_id;
++	u32 prog_id, input_len;
+ 	size_t len;
+ 	int err;
+ 
+-	if (!ulen ^ !uname)
++	if (!(*ulen) ^ !uname)
+ 		return -EINVAL;
+ 
+ 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
+ 				      probe_offset, probe_addr, missed);
+ 	if (err)
+ 		return err;
++	if (buf) {
++		input_len = *ulen;
++		len = strlen(buf);
++		*ulen = len + 1;
++	}
+ 	if (!uname)
+ 		return 0;
+ 	if (buf) {
+-		len = strlen(buf);
+-		err = bpf_copy_to_user(uname, buf, ulen, len);
++		err = bpf_copy_to_user(uname, buf, input_len, len);
+ 		if (err)
+ 			return err;
+ 	} else {
 
