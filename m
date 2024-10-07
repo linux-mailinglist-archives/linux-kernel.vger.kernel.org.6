@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-352694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127329922C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790F59922C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D08B1C215EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3967E2819A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BC712E4A;
-	Mon,  7 Oct 2024 02:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812A614267;
+	Mon,  7 Oct 2024 02:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=kev009.com header.i=@kev009.com header.b="tuIpb769"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="w3mw9qP3"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315AEEEC9
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 02:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DEDF9C1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 02:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728268382; cv=none; b=oEvespimO4wbMzdiJUbniiUoQYPcqKEw2JLoXkIUU2ob2BEnPv/8vkc5iZN1rAbRDa60qw7tfdcK1Rk3WOZSFGrvEOt6sKu/PRMX5v7u/+VClqdQTSK+G3/Ag8GnTr3gKU8nb+7nfpjbYkuo3Az6jxWjaHQoM2+ZE2VCiuj6uQQ=
+	t=1728268750; cv=none; b=i3LprSTBcB9HPDimmKNiIcf94UHMvW3d/vyP/7UjDdPftrkRxJDVt36Zn9dEPYKcfQBwZs+DHX3/ssXxiXDFXb4WsZhh5xJjCLqCsGXtM0TOEiXQb8AthQL5TnVDwCeo5YX6P3HbtT7JFBEmgLQiu1FNI34Kwenfi0BzNHj1HjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728268382; c=relaxed/simple;
-	bh=UmYzWjwwdRldGzMtasrj0iUPzywF33QHaFRM8bXmb/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cc3Tzkidt8zN1IxKuufzktbHldZT0DtZX3osblG2Q2XI2tBTrOUKVmwg5eZB+NGiSildwNlL+ysvncN5CX6xXp2chSks+2azBmlJZfL0yw1+tZp+aldcsX9VzkKiRSzMeZUydvVs9c16eDKyH+kRLmxu1dBP01koVP500uFyPMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kev009.com; spf=pass smtp.mailfrom=kev009.com; dkim=fail (0-bit key) header.d=kev009.com header.i=@kev009.com header.b=tuIpb769 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kev009.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kev009.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45d8f76eca7so41537431cf.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 19:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kev009.com; s=google; t=1728268379; x=1728873179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eIagNj3XBeiwbes7ESay7OedVVX9YeO+j3SWRSuWDgU=;
-        b=tuIpb769p5oD0BWU9SUrJE4RyPonSCiDvwzOKjzffMGJDU82HUKHq4lzCS/ioKYOrm
-         QDXVeJV6LQjGIWPMtPKHYfrf4AEIiyZpWU3He1FOCy/6WqsM0rud7fQP4UtlJDBTZCq1
-         ZjzQRzllrHWRp3q6Q9zICqXpK/uhznT/YuZoY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728268379; x=1728873179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eIagNj3XBeiwbes7ESay7OedVVX9YeO+j3SWRSuWDgU=;
-        b=FstMMJoI+j0BPEPDIsrhKYeHhW79xUUsJYHK3tFB7LzMwbdnodv0Zt2YojCi85Ro9N
-         uYdqKyYTog4me/0wECfY/2GhYS9K4dntBiXWNEZSP7M3WZN34okrD38DioOVUlCvq5zO
-         VYhOD6QKtV+1z8xkidl6s8kygx+xqgClj88OR/FBjjQBzsKwnaUO4ueAPb8dnPCpxnwW
-         1/QTAkCOYYGVqkad8zfeR9pSIfJ845mLGp2gzoHnRw+bzTvqo9/m5pg2AnpV2jerDpGU
-         8NzHmknrNaqWbtyRLKBR5KCvG9yLBynF/KzfTyOq6LPMVqXNOhTYbQr3ML8NtDLH+R+J
-         s9Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCW8bPDF4eP5UEWPI7dQmyRoiAU324uEEyX60O89vDXZ52DRAxUzDcw2PXuEnbWMhtbrJoMd9oK2HO8gqiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQMocSwE2sX6eyTYd6V8XgL7TxIy3tynIxOHxrHwcX5TSzikFB
-	wkL/J/Q6nzg17ugETB35P3nTrr0y8IDAPQHszGvZ0wWJgxX+rBm5/nBUXWaLPYo0oIlmDodvn6D
-	52HjWU/TwJq1c8F6uku/niGnJZMrtBbfvqcyc
-X-Google-Smtp-Source: AGHT+IGW6ESRO/rs7JsIqpNrzr5mR+Qf6lp+llFyFWrhgLaCLuuBhqRYKgzRWQDEQknxfpZf58As69biVB1biwW3opY=
-X-Received: by 2002:ac8:5792:0:b0:45b:1d3:d9a8 with SMTP id
- d75a77b69052e-45d9ba85fdcmr172235491cf.27.1728268379057; Sun, 06 Oct 2024
- 19:32:59 -0700 (PDT)
+	s=arc-20240116; t=1728268750; c=relaxed/simple;
+	bh=62oZVVEZ6NOPDK9tPBcHARZVaHxkynPnfYWtvj94UgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ly+8L1tPRU/5fbT8E0hj4bsQ3yOu1EV77bs8+zjYMm4wd3VmqJ4mpiIJq54dgsxvf6AoaU5L91P09hJ4iHSBG5vgoxsFM3aJjTQrkX9EEYJ6X7am8lXyJdukCeYfEUtC67ccO9gI/7f+9ZIu3UjESKE87YpXh28R/pTqUOJSgd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=w3mw9qP3; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2DD4E2C06BE;
+	Mon,  7 Oct 2024 15:39:05 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728268745;
+	bh=3JxFGEhq3PiJQk+KKA3SDUOhEPkCovHxH8V1ZqR3Jms=;
+	h=From:To:Cc:Subject:Date:From;
+	b=w3mw9qP3NqjT0QIasOdHAj5i7Euv9fIL7ZPTSukZxDcUtSBgnUE8yRaPsDz0snKgb
+	 wv7BiJBYOaH8Q31C0dgtTRr2cR+Obpn46IKGuzuIo1ipIhRveyPYBlzPgmmzXahhJR
+	 IqGliIHJl8jD7H1kd7rjCykWC1K7Aps8KcgLeUH9Dddvozo1ksmefkOZ6dfNT6RF2n
+	 NaHduHBaEeSl43n0EUx+UZOyb20YVUaXKwYkPqkbM+i2gyYUojEFhQJi8pjHrPsFbh
+	 72pnknxLt7TNkGoQOwQetIBOsEXPioJUCQgbN3mCx3KSjAA0KI1UxVe2/pXq1SiRnF
+	 /bgQBnG0vuVAA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B670349c90000>; Mon, 07 Oct 2024 15:39:05 +1300
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id 0C8D113ED6F;
+	Mon,  7 Oct 2024 15:39:05 +1300 (NZDT)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id 09A172A0C47; Mon,  7 Oct 2024 15:39:05 +1300 (NZDT)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aryan.srivastava@alliedtelesis.co.nz
+Subject: [PATCH v9 0/2] i2c: octeon: Add block-mode r/w
+Date: Mon,  7 Oct 2024 15:38:57 +1300
+Message-ID: <20241007023900.3924763-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801210155.89097-1-kevin.bowling@kev009.com>
-In-Reply-To: <20240801210155.89097-1-kevin.bowling@kev009.com>
-From: Kevin Bowling <kevin.bowling@kev009.com>
-Date: Sun, 6 Oct 2024 19:32:47 -0700
-Message-ID: <CAK7dMtDiL16JAXvTuTv3fOL5JNkMOCyjr6tVx44uDMKQxVnwqA@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: Print digitalSignature and CA link errors
-To: dhowells@redhat.com, keyrings@vger.kernel.org, jarkko@kernel.org
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=670349c9 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=toHKM1xulaPNuss4LNwA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hi,
+Add support for block mode read/write operations on
+Thunderx chips.
 
-Hopefully this is pretty self explanatory, it just increases the
-diagnostic capabilities of using the keyring erroneously.  How do I
-get someone to look at it?
+-Refactor common code for i2c transactions.
+-Add block mode transaction functionality.
 
-Regards,
-Kevin
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+---
+Changes in v2:
+- comment style and formatting.
 
+Changes in v3:
+- comment style and formatting.
 
-On Thu, Aug 1, 2024 at 2:02=E2=80=AFPM Kevin Bowling <kevin.bowling@kev009.=
-com> wrote:
->
-> ENOKEY is overloaded for several different failure types in these link
-> functions.  In addition, by the time we are consuming the return several
-> other methods can return ENOKEY.  Add some error prints to help diagnose
-> fundamental certificate issues.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kevin Bowling <kevin.bowling@kev009.com>
-> ---
->  crypto/asymmetric_keys/restrict.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
->
-> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/r=
-estrict.c
-> index afcd4d101ac5..472561e451b3 100644
-> --- a/crypto/asymmetric_keys/restrict.c
-> +++ b/crypto/asymmetric_keys/restrict.c
-> @@ -140,14 +140,20 @@ int restrict_link_by_ca(struct key *dest_keyring,
->         pkey =3D payload->data[asym_crypto];
->         if (!pkey)
->                 return -ENOPKG;
-> -       if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
-> +       if (!test_bit(KEY_EFLAG_CA, &pkey->key_eflags)) {
-> +               pr_err("Missing CA usage bit\n");
->                 return -ENOKEY;
-> -       if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
-> +       }
-> +       if (!test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags)) {
-> +               pr_err("Missing keyCertSign usage bit\n");
->                 return -ENOKEY;
-> +       }
->         if (!IS_ENABLED(CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX))
->                 return 0;
-> -       if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
-> +       if (test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags)) {
-> +               pr_err("Unexpected digitalSignature usage bit\n");
->                 return -ENOKEY;
-> +       }
->
->         return 0;
->  }
-> @@ -183,14 +189,20 @@ int restrict_link_by_digsig(struct key *dest_keyrin=
-g,
->         if (!pkey)
->                 return -ENOPKG;
->
-> -       if (!test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags))
-> +       if (!test_bit(KEY_EFLAG_DIGITALSIG, &pkey->key_eflags)) {
-> +               pr_err("Missing digitalSignature usage bit\n");
->                 return -ENOKEY;
-> +       }
->
-> -       if (test_bit(KEY_EFLAG_CA, &pkey->key_eflags))
-> +       if (test_bit(KEY_EFLAG_CA, &pkey->key_eflags)) {
-> +               pr_err("Unexpected CA usage bit\n");
->                 return -ENOKEY;
-> +       }
->
-> -       if (test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags))
-> +       if (test_bit(KEY_EFLAG_KEYCERTSIGN, &pkey->key_eflags)) {
-> +               pr_err("Unexpected keyCertSign usage bit\n");
->                 return -ENOKEY;
-> +       }
->
->         return restrict_link_by_signature(dest_keyring, type, payload,
->                                           trust_keyring);
-> --
-> 2.46.0
->
+Changes in v4:
+- Refactoring common code.
+- Additional comments.
+
+Changes in v5:
+- Further refactoring.
+- Split refactoring into separate patch in series.
+- Add more comments + details to comments.
+
+Changes in v6:
+- Reword/reformat commit messages
+
+Changes in v7:
+- Fix typo in commit message.
+- Remove usage of r/w and hlc abbreviations from commits.
+
+Changes in v8
+- Updated refactor commit msg with more information.
+- Rebased patch
+
+Changes in v9
+- Rebased patch against i2c-host
+
+Aryan Srivastava (2):
+  i2c: octeon: refactor common i2c operations
+  i2c: octeon: Add block-mode i2c operations
+
+ drivers/i2c/busses/i2c-octeon-core.c     | 241 +++++++++++++++++++----
+ drivers/i2c/busses/i2c-octeon-core.h     |  13 +-
+ drivers/i2c/busses/i2c-thunderx-pcidrv.c |   3 +
+ 3 files changed, 213 insertions(+), 44 deletions(-)
+
+--=20
+2.46.0
+
 
