@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-353101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCFC9928AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACAF9928A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FDE81C2349F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F3D1F23FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C051DE889;
-	Mon,  7 Oct 2024 09:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6081DED41;
+	Mon,  7 Oct 2024 09:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="pf/Fyioz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IMME2xqi"
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T2AekC6b"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF0E1DE4D0;
-	Mon,  7 Oct 2024 09:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F831DE8AF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 09:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728294832; cv=none; b=bGbbIRjyI/4UUQ8aTMf3WwURTtinXzFkGKbOabfUJsLFvHQDO6TMqkkZpCyT6zPLTgSMVZ/u//AEyR7b6q4PqSvxSYuvZXvfMzVEQKBDToeDRyAaVJIYw+Yme1XXSjgG+3ork07oeGvNRQ1JjjfO4o1Tr5SBebW0U+611cxjJR0=
+	t=1728294892; cv=none; b=o3WJjKKohYsJKB85uErVOqrxv0Kho0tO7D0xIByRB2DSIfQIR/sngcSbBQsv/DlY7/BFdwkxHe2ej5DqO7UG5H5KyJz4ApUpzbBPLcxnLUy8zaNnOgxdl9zUa9VkhXx2yiWk3pJ/1/9gdpFqsgCSsdQq+PhJIsfu6dc7PgiM2f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728294832; c=relaxed/simple;
-	bh=fxHsnXHTAAdTnzQ0WkrUGe3aSKc2E572maRGYHwbans=;
+	s=arc-20240116; t=1728294892; c=relaxed/simple;
+	bh=XPuTahtxHfXasKgZvlJ24F5uRaM7cQ4b1F15SQPxJl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MYxL9sdWGB7s4s18KQTWYmO1m9ev8QfkeTtWNYFPceLSTbhrCIPkdfPpmdChpE7IEPYpN05NzBNVwCP0N1xd4thvWzESj2fZlpbke9szRqG6XyeJgg825SXcZmTVGfiE9Ba0T8nrwvhrWXkSOxLgVbG9r3eQwNWjUYjwBQ/WkCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=pf/Fyioz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IMME2xqi; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 14587200544;
-	Mon,  7 Oct 2024 05:53:49 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Mon, 07 Oct 2024 05:53:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728294829;
-	 x=1728302029; bh=Ey8q2Exixqsv+Hc2U8qhqIZaTVEP7hv/rQPpymDolag=; b=
-	pf/FyiozswrQKEbnxbav3fDlP75KcXR9GBqYfdgubiMskuo9eQTLbMbCDv1WI4x+
-	f8P5i7Itu6WNxLe/7itQACTdglcl+jvQOnGvp0cpWlD6U50cLgTJmxMPPRHFVjEH
-	3YbgpQg3qEFeVemt8Vrr8P/AEaxFeOeL/gbaJ4exc2giEmcL8k1i8tcD03VkSHEq
-	o0KHz9bVUadEUF9ZpyfwCxa6WUWXBBm/YY2yjjgdBXWsqWuhCd7ReBQHnqe9A1cH
-	QuIF2AAteKSeR6fuxNbIoQbCkNeM149Jh6Js3xfmR0lrJuwickJkZYHqrtvk1wIJ
-	MCAqepkcqZRrwWpjppAjwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728294829; x=
-	1728302029; bh=Ey8q2Exixqsv+Hc2U8qhqIZaTVEP7hv/rQPpymDolag=; b=I
-	MME2xqiifKGxwX0j/9XIQoe9GsmOqKhuhvadTlHVCd4QqcNWRdhG+t/KLT6Jvpk1
-	ASUazZ0j1hqNBK78B2f1vp4qNNfmAnjiFHW/TXFIrij2WL5bqVdl/HMygeKvMdXF
-	Nd6bjzrZt4Xs6CRwirshFXZQjeUNBqnwSDCS9doJI8Ll3cFnQJ3Y1j8FV+Lsw0X6
-	KBVnKmWPHnVlVgL3Rl7nX7IGnau2bhmkPoGllXhWQrQNh3hovBNtM6Ars7IvBdBK
-	Mul5km8oxuPRP51Ur9Wg3BVRaAVyJIiaOcyP0SWgq45pzT8b64y1egHkZeDftCRy
-	zr6YnCtKRKSMjZO0W6oqA==
-X-ME-Sender: <xms:rK8DZ0G0SR5WvT1DqqNfZ32VmKws2vxA1UMlXQkF9CW5nbXTROPBLg>
-    <xme:rK8DZ9VBNu_N1BfXzo-uJSSrRl4CKT_yQwAYEkKhke9iEwXSnSAw6emOka1ZHv_lr
-    lk6meAVv-_H8A>
-X-ME-Received: <xmr:rK8DZ-K9-_Z62ooYxnvNWlA2WDPFofVodrl1Jq804aQrad5u8u_fbV1djC-Y2UnWypyGKnKt2puK293uWhHjW7vf5A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpefgkeffieefieevkeelteejvdetvddtledugfdvhfetjeejieduledt
-    fefffedvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepgedvpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehmrghrkhhushdrvghlfhhrihhnghesfigvsgdrug
-    gvpdhrtghpthhtoheplhgrnhiirghnohdrrghlvgigsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepmhgvhhguihdrughjrghithessghoohhtlhhinhdrtghomhdprhgtphhtthhope
-    gurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghp
-    thhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqphifmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhishhtshdrlhhinhhugihfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepuggrnhhivghlsehffhiflhhlrdgthh
-X-ME-Proxy: <xmx:rK8DZ2FRBKNWamAcgnfF_EPiDvyezm_UZZBpwtuYOjghOMH2wQP4bQ>
-    <xmx:rK8DZ6WQo6lImzGcIbIpzoraLpLNJKxcAzz-WB_hYjebnf9qmrGJrg>
-    <xmx:rK8DZ5Nwmx0mMauabCm781pbWVnav8RPQWfredRNaHrVE7STXoI4vg>
-    <xmx:rK8DZx2SdPZykWuw4xRJb4orhDDrGd9jdzTEg0xWTsYMz38CAnB2yg>
-    <xmx:ra8DZx0woy97NI_Ohlvq0cQV8C2hygT_klQbOzGECL7un0niFVuA9Z55>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Oct 2024 05:53:47 -0400 (EDT)
-Date: Mon, 7 Oct 2024 11:53:45 +0200
-From: Greg KH <greg@kroah.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>,
-	Mehdi Djait <mehdi.djait@bootlin.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v9 0/2] Add driver for Sharp Memory LCD
-Message-ID: <2024100737-audacious-subplot-7f4a@gregkh>
-References: <20241007013036.3104877-1-lanzano.alex@gmail.com>
- <4e1d50de-8e00-47a3-94e0-5ee9c5df8755@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFeXgZzN7wYz5quRFnuvP3b+Gw8R24j9jImTwYywWK5W4Ics+x0Qh4YD6v5jZKXmasUB3Hex1r4j/kNSFAAQsk6dXRIHEB8oZ0V2HPEaaee0CXgl41exTuZJcM9c9gDwDrMJgTW6rIr/oKN9VmzHL1Pflpz/d6w0yQyqpPKWwWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T2AekC6b; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso43042205e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 02:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728294888; x=1728899688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaUYthw6ApPY7iMEBlPEvXCrC/ELjE9zT9gwyCjWi3k=;
+        b=T2AekC6bVcBTuQpMKcq8+kdZELdWRHWLETkG84tpVOJKPJW8sEnPY7s/VDZET7rOIJ
+         pNid/w3I3a8mBR5nyLsg65+2jxxUvdHwi7tpiy2URL+nNFzBf9AAoP4t8zDL/Ro2OKnD
+         K7ZCPxtGHg9yI8TzOqQwm1+as0U0KORlWK1ruX7ZrqkDE8G+2rj+mVaJjVrZ6pDF8xuy
+         oMrZmv8yF5Os31LL2UNz8XIHYwqKVgcmAw2l6tz5Jzaa6sG2/ydqDgTYn2dB7GWR1fjh
+         638n8SrrJO8lE4j/FDYM8fwk1Ve961wKkIU2PAeYpE2Ue75NNLSFic2Tq4u3lXpfrEzP
+         F17A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728294888; x=1728899688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gaUYthw6ApPY7iMEBlPEvXCrC/ELjE9zT9gwyCjWi3k=;
+        b=KQf7g3BdeozX37Kf9k7tAQf2Cbj/BW9cdgeXmuW4dD9t5VgBSDjtfhh8x9Qs0Fx6aK
+         EV9EU+txOhXxthSZCX25dbqYhFQH7Sx0/DTLbcz7ERqu9JAMnBMPBqJG1H9U4ZGgg6Kn
+         kF2G95DSA8giuj5QKeXzibD1ACo279xnkm7iH8x8tSYA9db2RXn3MgM8EIIa0qwwAqH7
+         KFl1pf+Jxl0w97aCMZR78fYzq+farj/flvgg80SjToCdab3SWHTM6aNAmSU5ubvZ+JT5
+         XyonY18QVU/rPgv4onemufneOKrJrayjGBB8QtkbKfUJjkJsZ6dO0uUrXgkO5iUCUTjZ
+         j+Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGgI5w+Rig5OaXbGRo79av6CZ2VvS/deAKPyzeVsK1Kw1WYL8JbzHjY4xlo5XB5Nsg9o+7gVZekuC8aSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCG3CFm0NDLA0qLGc0rDp971G6S2ROKw9lLEc5WC46tgjYCQj5
+	vvwoUY7LBDhL9nAx2WaswQWc7BtHE11GuLsDFRhENbtWZidbMZ9Zstmy855O2LE=
+X-Google-Smtp-Source: AGHT+IFVxjKENE97XWETeGH6TckcY3Iu3heqkwwXnzL72mlbXZp4BBGafyTCRPMtDD9hj02mIVRoVw==
+X-Received: by 2002:adf:ed8d:0:b0:37c:d569:467e with SMTP id ffacd0b85a97d-37d0eaf7aa1mr6482622f8f.59.1728294887935;
+        Mon, 07 Oct 2024 02:54:47 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a56dsm5329817f8f.41.2024.10.07.02.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 02:54:47 -0700 (PDT)
+Date: Mon, 7 Oct 2024 12:54:43 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] clk: imx: pll14xx: Fix potential integer overflow
+ on multiplication
+Message-ID: <3e0def9f-ebb6-4171-9395-1da118b0ea29@stanley.mountain>
+References: <20241007084840.1167527-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e1d50de-8e00-47a3-94e0-5ee9c5df8755@web.de>
+In-Reply-To: <20241007084840.1167527-1-colin.i.king@gmail.com>
 
-On Mon, Oct 07, 2024 at 11:34:13AM +0200, Markus Elfring wrote:
-> > This patch series add support for the monochrome Sharp Memory LCD panels.
-> …
-> > ---
-> > Changes in v9:
-> …
+On Mon, Oct 07, 2024 at 09:48:40AM +0100, Colin Ian King wrote:
+> The calculation of fout is using int multiplication and assigning
+> the result to a u64, this can potentially overflow if the int variable
+> mdiv is too large. Fix this by making the 65536 a u64 value to ensure a
+> u64 multiplication is being performed to avoid the overflow.
 > 
-> Would you like to benefit from the application of scope-based resource management
-> (also for this software component)?
+> Fixes: 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Hi,
+mdiv is always clamped in then 0-1023 range by one of these:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+	mdiv = FIELD_GET(MDIV_MASK, pll_div_ctl0);
+	mdiv = clamp(mdiv, 64, 1023);
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+so it can't overflow and the Fixes tag is unnecessary.
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+I think the reason why "fout" is declared as a u64 is because we were worried
+that on 32 bit systems the "fout *=" operation could overflow.  That looks
+reasonable to me.
 
-thanks,
+regards,
+dan carpenter
 
-greg k-h's patch email bot
 
