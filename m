@@ -1,157 +1,472 @@
-Return-Path: <linux-kernel+bounces-353063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CEF9927DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:09:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA519927DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A45FDB20B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916971C224C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AA318CC1A;
-	Mon,  7 Oct 2024 09:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D3618D624;
+	Mon,  7 Oct 2024 09:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsV9XaSz"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kKV4biAQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03818CC10;
-	Mon,  7 Oct 2024 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8ED18CC16;
+	Mon,  7 Oct 2024 09:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728292164; cv=none; b=WuEXaMOZI5A8cMo8X7pkLVBFOpP+pNzA+NfeRbq0IrnKnUQp9bRNG3/1NRDCQ6vFm+Ka9cc7NxTeCFJfgwtLQIiGLHqRAYbLWy06dqnFh0hX85L3UWv0QkqTTdyByThMmCLIpub1HK6STJFkJEfkgUvOYbYxTw3EzlQ6QBVHzk0=
+	t=1728292462; cv=none; b=h/p2H7j4dBvKhWIeEdfM/7yXtKBEtU1gQWbV9VFYc3zx0Xq7aqJU3j8C7OF+Hh2jKRNCvo+KuHrwFvOGs3NPg9U7G3ooglJTK8sitnqMD9e5NulSU3zKmxmmBIhEpQZ4A+CC5czj6d1nRg+9uQ2CAPs5iVAF4MhXMKlfgpxwfvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728292164; c=relaxed/simple;
-	bh=Su8XUq+sJnz9NdA6tq77XAy4mDQAg17s693MdewAyXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXH/S0qLhEDRXrmVsw7kp1LNjkm/LEOZ/z85WyzTPzvQtBXJOViPfwzoF3AjMRP/O3YECiWNL4knx/icJcusdvpofT2Rvfvhp2YFJEFH9oyooqyl7wlZF4wrhO03nxiL1qjmaDkcP/b1OnsClb7cNweB22avmTLhFwq/RIVal6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsV9XaSz; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e7c88a9af8so2208827eaf.1;
-        Mon, 07 Oct 2024 02:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728292162; x=1728896962; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vO/wVWYQXa64Ph3Ozg7JWxoIsbitIFEplk6FEILOj50=;
-        b=NsV9XaSzT2pOfqdxHCqqyadBPizky1Bydha3rp1vHkoxAuws1DywPFuz07rx0l4ply
-         RXlGCFwcWy2DKQ+cMML+IvDwTG2x+sFtcqgBf72a5rWX/vS7XhedPU8chvj0FF48QnQe
-         8Q1ka9NOcW1a3ZDFHKV6bv+HR9XZFBfS48MiGyyDlW0ftJLQaIe1DuTZBr2E5Fzq2nos
-         o3hzBJ0vuDdcTQPF7yhhYOBsQcO7xaxiHjQi43grZpevY6eCAeZs5Ux3+P7scChjcd+t
-         O7KUSc2YiaZHWnuhyB8dUHn8ZcZgQsBhilK1KNcX7eaFr4vyat5AJH/uuTpCuhHjaaAx
-         tCKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728292162; x=1728896962;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vO/wVWYQXa64Ph3Ozg7JWxoIsbitIFEplk6FEILOj50=;
-        b=xDpd8kdmGPxlRKfmhfL1IUbNmU7PAc5+gxVXKLoVMS3ot6yyiRGmFNpfbIiHeIiFF7
-         bdjNIWP3RvPFuSZ1KL5eHp9tWHSRXPVS5V/UIwA98ju03q/YWtvaaAQB6cvNwd0qLeZG
-         UzfToAxzpHnmasyB2Vc9V+U91KBlVvek9OA5uGaPQKWsVtIWNgQG6RJjmJnpk9GL2HFe
-         fYiMiXdkUGrB6NzyYXa4mVF8giQy19JA/ezgnfxP51UINdEB35AsVDl+LfE6BIjSeWhL
-         o8Z7VJqIQRXcjP/ECm1iCStiRSqfWgcyQv/CmsPTI40Ab0iENNSM8twUmqDgdqwcAevw
-         lJHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPJcJdHfQKW5TC9sVmSCJLMGhLksQrPzcn1QoL3k23YzuWOa7bFG1zJAraTYqkevrcnh9vQhoKnpM+@vger.kernel.org, AJvYcCUgpeNVhkUdPVHRswogfMJJ74wEqErWQ/G8H87B+RHrMfououeE78qE4ryJ6PGVPhApZi0V30qenvbCFOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM5Fzk0FSIoPKthPGDDxjgARzUBObP2c36pdvzKre1lXeopQVB
-	s9O5/r0plDiHR2G1Pq+8/Lo4p9IQVEgT7Onfuo1rqqcPh6NvvaSHu6A/oywRp8jpaQbCEzLvoRy
-	AVlWklyH11n9Y4xyS9KK3l6rqg78=
-X-Google-Smtp-Source: AGHT+IGSN2hd+1S8H14t4yjBgBmiF/vETV1Pwx57/H4xXqwPC+rL9LS9yvqub9DTBWgck3LWRv7Ipy7SvuYPdCx1KAo=
-X-Received: by 2002:a05:6870:700b:b0:261:360:746c with SMTP id
- 586e51a60fabf-287c1db2ccfmr6469356fac.19.1728292162473; Mon, 07 Oct 2024
- 02:09:22 -0700 (PDT)
+	s=arc-20240116; t=1728292462; c=relaxed/simple;
+	bh=oE/kBr8rWeOIO22wYtkEcRmGz9/X2NKTXII6iyTMsuw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=OIuwoY6K5FTP5cK2lT99ULtOimozA2xdGZ6yDtRRdL0Wb5IHoEbf1eBBTsy/ybrhYy02E01gWmN1tRbcs4tzUNvV0sjR9V/dJ9D3U8pQ5A7iYGHmot/YMjUIVw6aT2NMtcuEp862FVCukt20FkaB21bzQ0Osqbq1x5Cg+xTRAlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kKV4biAQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TTRS025830;
+	Mon, 7 Oct 2024 09:14:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=pWykGUchrl8M
+	wJ0QD/JLsppVOSbfApjfmBT/1cLRGlw=; b=kKV4biAQ2vAIY2wyHrpouku1H1ji
+	eTjTQRzlV+1Rl/IbNZCkLSXNlevBHHHWfFjbc5yqYsjKwYxXB4tU84TK+nL78yZ1
+	coqNrkH8b8UGSktNheUQLJnvLiHGli7RqlFAEH2THIHDnm264U+/rOEvMWZCWt/F
+	Z4HEYB7bQ1kn5VIF6PGwBe6JgipL27aVphyDA3rHfCbVhuFSxjfLNfoF1/VvQhf0
+	D4P/9+vzbx7kGcM+0I3TUsFDJ6ua1I1UKkdPA8Uin+0T8iPJFwmW+iTG5m2rWoiN
+	AVkzKcKQvM7vRZz5uKiidL+fgeq4iJIGuryhmizE7GL9CTH+4Y0hMP4mMA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xtb3k1d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 09:14:14 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4979EAEQ028317;
+	Mon, 7 Oct 2024 09:14:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 422xhksqup-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 07 Oct 2024 09:14:10 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4979E94Y028303;
+	Mon, 7 Oct 2024 09:14:09 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-vdadhani-hyd.qualcomm.com [10.213.106.28])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4979E9l4028291;
+	Mon, 07 Oct 2024 09:14:09 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4047106)
+	id D86C5500C56; Mon,  7 Oct 2024 14:44:08 +0530 (+0530)
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmitry.baryshkov@linaro.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Subject: [PATCH v3] arm64: dts: qcom: sa8775p: Populate additional UART DT nodes
+Date: Mon,  7 Oct 2024 14:44:07 +0530
+Message-Id: <20241007091407.13798-1-quic_vdadhani@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6tRD8x6tiQ0Hp24SUtg4-TesQmUxGdjA
+X-Proofpoint-GUID: 6tRD8x6tiQ0Hp24SUtg4-TesQmUxGdjA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410070064
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241006182445.3713-1-linux.amoon@gmail.com> <20241006182445.3713-3-linux.amoon@gmail.com>
- <64c560c483f09d90c788eb949890d00f3b94cc87.camel@pengutronix.de>
-In-Reply-To: <64c560c483f09d90c788eb949890d00f3b94cc87.camel@pengutronix.de>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 7 Oct 2024 14:39:06 +0530
-Message-ID: <CANAwSgS15E4-KzexTqEYd4=o3ew9GvigEjBCZ-dAUs0No_b6Hw@mail.gmail.com>
-Subject: Re: [PATCH v6 RESET 2/3] PCI: rockchip: Simplify reset control
- handling by using reset_control_bulk*() function
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Philipp,
+Currently, UART configuration is populated for only a few SEs
+(Serial Engines) in the sa8775p DTSI file. Since every SE can
+support the UART protocol, usecase or client should have the flexibility
+to enable required SE for UART depending on the specific board version.
 
-Thanks for your review comment.
+Hence, populate UART configurations for the remaining SEs in the
+sa8775p SoC.
 
-On Mon, 7 Oct 2024 at 14:14, Philipp Zabel <p.zabel@pengutronix.de> wrote:
->
-> On So, 2024-10-06 at 23:54 +0530, Anand Moon wrote:
-> > Refactor the reset control handling in the Rockchip PCIe driver,
-> > introducing a more robust and efficient method for assert and
-> > deassert reset controller using reset_control_bulk*() API. Using the
-> > reset_control_bulk APIs, the reset handling for the core clocks reset
-> > unit becomes much simpler.
-> >
-> > Spilt the reset controller in two groups as pre the RK3399 TRM.
-> > After power up, the software driver should de-assert the reset of PCIe PHY,
-> > then wait the PLL locked by polling the status, if PLL
-> > has locked, then can de-assert the rest reset simultaneously
-> > driver need to De-assert the reset pins simultionaly.
-> >
-> >   PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > V6: Add reason for the split of the RESET pins.
-> > v5: Fix the De-assert reset core as per the TRM
-> >     De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
-> >     simultaneously.
-> > v4: use dev_err_probe in error path.
-> > v3: Fix typo in commit message, dropped reported by.
-> > v2: Fix compilation error reported by Intel test robot
-> >     fixed checkpatch warning
-> > ---
-> >  drivers/pci/controller/pcie-rockchip.c | 151 +++++--------------------
-> >  drivers/pci/controller/pcie-rockchip.h |  26 +++--
-> >  2 files changed, 49 insertions(+), 128 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-> > index 2777ef0cb599..87daa3288a01 100644
-> > --- a/drivers/pci/controller/pcie-rockchip.c
-> > +++ b/drivers/pci/controller/pcie-rockchip.c
-> [...]
-> > @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
-> >       if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
-> >               rockchip->link_gen = 2;
-> >
-> > -     rockchip->core_rst = devm_reset_control_get_exclusive(dev, "core");
-> > -     rockchip->mgmt_rst = devm_reset_control_get_exclusive(dev, "mgmt");
-> > -     rockchip->mgmt_sticky_rst = devm_reset_control_get_exclusive(dev,
-> > -     rockchip->pipe_rst = devm_reset_control_get_exclusive(dev, "pipe");
-> > -     rockchip->pm_rst = devm_reset_control_get_exclusive(dev, "pm");
-> > +     err = devm_reset_control_bulk_get_optional_exclusive(dev,
-> [...]
->
->
-> Why are the reset controls optional now? The commit message doesn't
-> mention this change.
->
+Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+---
+v2 -> v3:
 
-Oops, It should be  devm_reset_control_bulk_get_exclusive(),
-I will update this in the next version.
+- Modifed commit log as requested by Dmitry.
 
-> regards
-> Philipp
+v2 Link: https://lore.kernel.org/lkml/20240911151447.27544-1-quic_vdadhani@quicinc.com/
 
-Thanks
--Anand
+v1 -> v2:
+
+- Modifed commit log as requested by Krzysztof.
+- Added co-developed-by tag.
+
+v1 Link: https://lore.kernel.org/linux-arm-msm/98e7dc28-4413-4247-bad1-98b529f6d62d@kernel.org/T/
+---
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 231 ++++++++++++++++++++++++++
+ 1 file changed, 231 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index e8dbc8d820a6..0c95a23aecec 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ /*
+  * Copyright (c) 2023, Linaro Limited
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include <dt-bindings/interconnect/qcom,icc.h>
+@@ -905,6 +906,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart14: serial@880000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00880000 0x0 0x4000>;
++				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c15: i2c@884000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x884000 0x0 0x4000>;
+@@ -947,6 +963,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart15: serial@884000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00884000 0x0 0x4000>;
++				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c16: i2c@888000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x888000 0x0 0x4000>;
+@@ -989,6 +1020,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart16: serial@888000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00888000 0x0 0x4000>;
++				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c17: i2c@88c000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x88c000 0x0 0x4000>;
+@@ -1088,6 +1134,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart18: serial@890000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00890000 0x0 0x4000>;
++				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c19: i2c@894000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x894000 0x0 0x4000>;
+@@ -1130,6 +1191,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart19: serial@894000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00894000 0x0 0x4000>;
++				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c20: i2c@898000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x898000 0x0 0x4000>;
+@@ -1171,6 +1247,22 @@
+ 				power-domains = <&rpmhpd SA8775P_CX>;
+ 				status = "disabled";
+ 			};
++
++			uart20: serial@898000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00898000 0x0 0x4000>;
++				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 		};
+ 
+ 		qupv3_id_0: geniqup@9c0000 {
+@@ -1227,6 +1319,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart0: serial@980000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x980000 0x0 0x4000>;
++				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c1: i2c@984000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x984000 0x0 0x4000>;
+@@ -1269,6 +1376,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart1: serial@984000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x984000 0x0 0x4000>;
++				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c2: i2c@988000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x988000 0x0 0x4000>;
+@@ -1311,6 +1433,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart2: serial@988000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x988000 0x0 0x4000>;
++				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c3: i2c@98c000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x98c000 0x0 0x4000>;
+@@ -1353,6 +1490,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart3: serial@98c000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x98c000 0x0 0x4000>;
++				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c4: i2c@990000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x990000 0x0 0x4000>;
+@@ -1395,6 +1547,21 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart4: serial@990000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x990000 0x0 0x4000>;
++				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
++				clock-names = "se";
++				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
++				interconnect-names = "qup-core", "qup-config";
++				power-domains = <&rpmhpd SA8775P_CX>;
++				status = "disabled";
++			};
++
+ 			i2c5: i2c@994000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0x994000 0x0 0x4000>;
+@@ -1507,6 +1674,22 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart7: serial@a80000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00a80000 0x0 0x4000>;
++				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
++				interconnect-names = "qup-core", "qup-config";
++				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>;
++				power-domains = <&rpmhpd SA8775P_CX>;
++				operating-points-v2 = <&qup_opp_table_100mhz>;
++				status = "disabled";
++			};
++
+ 			i2c8: i2c@a84000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0xa84000 0x0 0x4000>;
+@@ -1549,6 +1732,22 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart8: serial@a84000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00a84000 0x0 0x4000>;
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
++				interconnect-names = "qup-core", "qup-config";
++				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>;
++				power-domains = <&rpmhpd SA8775P_CX>;
++				operating-points-v2 = <&qup_opp_table_100mhz>;
++				status = "disabled";
++			};
++
+ 			i2c9: i2c@a88000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0xa88000 0x0 0x4000>;
+@@ -1706,6 +1905,22 @@
+ 				status = "disabled";
+ 			};
+ 
++			uart11: serial@a90000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00a90000 0x0 0x4000>;
++				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
++				interconnect-names = "qup-core", "qup-config";
++				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>;
++				power-domains = <&rpmhpd SA8775P_CX>;
++				operating-points-v2 = <&qup_opp_table_100mhz>;
++				status = "disabled";
++			};
++
+ 			i2c12: i2c@a94000 {
+ 				compatible = "qcom,geni-i2c";
+ 				reg = <0x0 0xa94000 0x0 0x4000>;
+@@ -1838,6 +2053,22 @@
+ 				power-domains = <&rpmhpd SA8775P_CX>;
+ 				status = "disabled";
+ 			};
++
++			uart21: serial@b80000 {
++				compatible = "qcom,geni-uart";
++				reg = <0x0 0x00b80000 0x0 0x4000>;
++				interrupts = <GIC_SPI 831 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
++				interconnect-names = "qup-core", "qup-config";
++				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
++						 &clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
++						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++						 &config_noc SLAVE_QUP_3 QCOM_ICC_TAG_ALWAYS>;
++				power-domains = <&rpmhpd SA8775P_CX>;
++				operating-points-v2 = <&qup_opp_table_100mhz>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		rng: rng@10d2000 {
+-- 
+2.17.1
+
 
