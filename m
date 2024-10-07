@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-360385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4923999A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:18:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0204F999AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC39282ED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:18:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90EDEB218B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6BF1F942F;
-	Fri, 11 Oct 2024 02:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB251F4723;
+	Fri, 11 Oct 2024 02:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBzk3v/B"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+mofnM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA41F8F16;
-	Fri, 11 Oct 2024 02:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9A91F1310
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612932; cv=none; b=QCmLZmgzA3IXeb40vufKCZAy0olw4WCIHQRwf23pRRxuAe50PKSVmspi+iezlNmYjSccFGiBrtDbkomDwbbEkiSaVKLlsz46ufIt9sFWtQxHKYbvN/Jzsmndf++XBTsYEmFyFYumMlFAeo1bC+Ug+nAKTQWw7TR2x79yDAwFUxU=
+	t=1728614985; cv=none; b=P+o+kHQkpv4fI8QHaqVVNijSyiaZS6TmfCs0bX1OAwJQ/snWVPQk1pRYexyn2SczYg5tqvTt6MFvZAgY+LypBFj68mHDZPmUUuIJlPPsZs3L0drTII1aNrQea7nrBdffAuVkOJqQlveVIiyBCsYRDPfx6ID5lWpC9fvatzzbdqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612932; c=relaxed/simple;
-	bh=gKiPKrKK60BJmsa5junoqJcObDYTvmnASwTlUEIPmT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4gBlF8S0yp7Mv51+3XzwFjwg/2BBvVqh/1am+0CfAzk8qmx3Gln+nOry8BbmpGhdAjFmZHDsTRtc22LGBWq0RJ2aegWRjdbr6TfCrTqvBEiDZNxZ5U2DjQtCTCwQ3/qqpy45PaxxniKS3Riku7UCnDu0W0+lmUa0KM4xgE9teI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBzk3v/B; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b7259be6fso16491805ad.0;
-        Thu, 10 Oct 2024 19:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728612930; x=1729217730; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G70sgRbW5zVDibTqLQGClZ8RjbVJyvgKa5ojU/Ri918=;
-        b=OBzk3v/B9RuhNBUTEH7jFTurJY2cDiar41HEcLcU6PWRoA8jUIjrX2jVz0v27AELY3
-         zxzFeD+hT73MwnVmsnlivRf/zcl5ApJi/cKi6VIKoA/9vefM53mPj4KbmoWf/4GQPe1i
-         /8QieYDAoK5fpmdMFeI78T6uAdv9lWfB3mbf6k3Q+zXWUW1Zuzd58/f4V5EHrlsOkoAE
-         iLJF16twSPddzdYdur6kHPJnjvKpIe4ZQx54QfkkTP2ptbjEY/LKcrXJEiJ5RbTmAlig
-         cLmgrDw3NyhCMHqv5VS83ycUPqAJc+MQMLVqLsoxov9G4ywlaIamJVoPMNNmFF4r/rCV
-         cs2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612930; x=1729217730;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G70sgRbW5zVDibTqLQGClZ8RjbVJyvgKa5ojU/Ri918=;
-        b=Z98+kWOdAr1MpG92kr20QJUELAjW+GM68FGunGx0KGGl+CasJs8jDT8iX6XO47Fxzo
-         dbM40f+XbqJu/VhhIwxXXs7hCjLuHZBcnwLP23YAVhnSghBgJb4guF875N7Gp87CrOxG
-         /ahr7a1j00eGfIMsGlYA9Gx3Up3T16vB0bgzCGqlyKKt5ZjWYwXUlS1Io1xNqMkKQhWf
-         BBqr8flwRxsSJ/rg0KQGhQeAgLDoFNdx8FLVThgkAcw3SwstVSFWWSc3vby7l2O7BAYF
-         1rQxSJIxgvxyAK+ca3WTOXoU9I+BRdVeG3FYEHx9Vh4BdJTVLGNLp9GSnyTL8vYhggaw
-         /KkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU96iDsmObkdWUCJEpVN63Wg+KX729Iesvofp3Gk/Oub6H9/ezmS5NSSSlcttOH9guL2aSCOKxyNWLZoX6n@vger.kernel.org, AJvYcCVBuPoWchl2i78Xc0degEp7dh0Ox2EZiAqabZtzQxih9nwjCePhQBMUucKBfhUt4WURVjM2HzC7abPA/g==@vger.kernel.org, AJvYcCW2C7U9Jel80OkzvDSQpVbqKMCtHy3CVQU8SRE8hwqwccDFPgp/OdpXyKiMSIMm2kS8Rp9m6YRGS9TP@vger.kernel.org, AJvYcCXLM+P0cD9EpXVoJWyh02ro3b+3pL3XhLsI7WPsQ13DwBkiH+htrHd2oJLts/d51+ClvB1qTw1WWvWs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsDgac/jlxVMyyC4rFXTeNDdFMTAMUxDEOZJ/ZM2MG2uCYP4Y7
-	tgUAkACCV9jrLj2lvRU5FRJEUtve+EodoWd1DL5Q1dX6Qou8nat+
-X-Google-Smtp-Source: AGHT+IE+MmEO12vUoLLKgbmMkNfIYHaPi9xzVe//y2m2AiK1pGN+UkN2eoeP1RMMb86Uy/RRTG6kzw==
-X-Received: by 2002:a17:902:f789:b0:20c:9821:69a9 with SMTP id d9443c01a7336-20ca169e77dmr10577485ad.37.1728612929724;
-        Thu, 10 Oct 2024 19:15:29 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c350ee8sm15532475ad.295.2024.10.10.19.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 19:15:29 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 99E6E4374224; Fri, 11 Oct 2024 09:15:23 +0700 (WIB)
-Date: Fri, 11 Oct 2024 09:15:23 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: ira.weiny@intel.com, Dave Jiang <dave.jiang@intel.com>,
-	Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 13/28] cxl/mem: Expose DCD partition capabilities in
- sysfs
-Message-ID: <ZwiKOyvXFXfAiOOU@archie.me>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
+	s=arc-20240116; t=1728614985; c=relaxed/simple;
+	bh=jwkX2e1uC07uEDB1lFEYtl2Phzsl08ExNHBCN07tv6w=;
+	h=Message-ID:From:To:Cc:Date:Subject:Content-type; b=RRjTCa1uyktFaxCc/wXHdCO5U7dVTH09zspim1fvOQnIbKSwP891ygurwpGwZaABVq5gcbEPBHHhZR7jnsWDrp2VrzAzKq3RBXNQgdAW1xmIuGi/mg45ac5EIPHMv2QtjpRIgoOA16q7TfvfCAoACIQA8o4bLgMZYBvZ3LGmDQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+mofnM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34FFC4CEC5;
+	Fri, 11 Oct 2024 02:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728614984;
+	bh=jwkX2e1uC07uEDB1lFEYtl2Phzsl08ExNHBCN07tv6w=;
+	h=From:To:Cc:Date:Subject:From;
+	b=L+mofnM5t7IA1Adxs4tzOU2bj61RZr5Inqny8D05QdRC4aN8Mle/LbJtjamAQ/Ubw
+	 KYPQid3AbkC/85744DFV854JdeFjYpCgam0iN7g+bb9D7JE5/A8bUoqQLtLRsrgY5m
+	 EYNaARmwm157F9c1y8wJ+U+tb/zHkrLKV7RNN4+cxEQt+Miz4ohleDBx9yXLN3oVa4
+	 GTK20LmfevgcRwiYAfPcZb/ZKKs0ZcWy4o5Q0kKGzVAawScJKGJo/2LxYEu3KAmtCU
+	 SWDkwazCzN3EpUqomKWmKUHoPpyXnatNSLDBirjbgNQag3BRbmLkYxXJl55+sS9f3S
+	 29jBFzBtduMRg==
+Message-ID: <46a74705b04cab96aa8acdff7df710a8@kernel.org>
+From: Clark Williams <clrkwllms@kernel.org>
+To: Peter Ziljstra <peterz@infradead.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, bhe@redhat.com,
+	yang.lee@linux.alibaba.com, ardb@kernel.org, edumazet@google.com,
+	".com"@web.codeaurora.org, penguin-kernel@I-love.SAKURA.ne.jp
+Date: Mon, 7 Oct 2024 13:30:08 -0500
+Subject: [PATCH] ksysfs:  add a sysfs preemption_mode entry
+Content-type: text/plain
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oaAeGPAZ1RHcucEh"
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
 
+This patch is the result of a discussion at the last
+stable-rt maintainers meeting, regarding what to do about a
+commit that basically just made a 'realtime' entry in /sys/kernel
+to indicate that the running kernel was compiled with PREEMPT_RT.
+Not very useful to non-rt-users.
 
---oaAeGPAZ1RHcucEh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit adds a sysfs entry /sys/kernel/preempt_mode which
+allows a user to determine what preemption mode is active for
+the running kernel.
 
-On Mon, Oct 07, 2024 at 06:16:19PM -0500, ira.weiny@intel.com wrote:
-> +What:		/sys/bus/cxl/devices/memX/dcY/qos_class
-> +Date:		December, 2024
-> +KernelVersion:	v6.13
-> +Contact:	linux-cxl@vger.kernel.org
-> +Description:
-> +		(RO) Dynamic Capacity (DC) region information.  Devices only
-> +		export dcY if DCD partition Y is supported.  For CXL host
-> +		platforms that support "QoS Telemmetry" this attribute conveys
-> +		a comma delimited list of platform specific cookies that
-> +		identifies a QoS performance class for the persistent partition
-> +		of the CXL mem device. These class-ids can be compared against
-> +		a similar "qos_class" published for a root decoder. While it is
-> +		not required that the endpoints map their local memory-class to
-> +		a matching platform class, mismatches are not recommended and
-> +		there are platform specific performance related side-effects
-"... mismatches are not recommended as there are ..."
-> +		that may result. First class-id is displayed.
-> =20
+When read, the file will return one of the following set of
+string values:
 
-Thanks.
+	NONE
+	VOLUNTARY
+	FULL
+	RT
 
---=20
-An old man doll... just what I always wanted! - Clara
+These values correspond to the options CONFIG_PREEMPT_NONE,
+CONFIG_PREEMPT_VOLUNTARY, CONFIG_PREEMPT_FULL and CONFIG_PREEMPT_RT.
 
---oaAeGPAZ1RHcucEh
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Clark Williams <williams@redhat.com>
+---
+ kernel/ksysfs.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
+index 1bab21b4718f..57ebde28e4b9 100644
+--- a/kernel/ksysfs.c
++++ b/kernel/ksysfs.c
+@@ -188,6 +188,27 @@ KERNEL_ATTR_RO(crash_elfcorehdr_size);
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZwiKOwAKCRD2uYlJVVFO
-o8NIAQCZrs5IPtJRWJ3wy4dqN3eWUxQgLyspoOpH7V3EXTsEbwEAuEOVomNyr5Hp
-JxCkGB4XGrygV0ZUzfdlEEXL1qkYYgo=
-=v9WZ
------END PGP SIGNATURE-----
+ #endif /* CONFIG_VMCORE_INFO */
 
---oaAeGPAZ1RHcucEh--
++/*
++ * entry to display the current preemption mode
++ */
++static ssize_t preempt_mode_show(struct kobject *kobj,
++			     struct kobj_attribute *attr, char *buf)
++{
++	char *mode = NULL;
++
++	if (preempt_model_rt())
++		mode = "RT";
++	else if (preempt_model_full())
++		mode = "FULL";
++	else if (preempt_model_voluntary())
++		mode = "VOLUNTARY";
++	else
++		mode = "NONE";
++	WARN_ON(mode == NULL);
++	return sysfs_emit(buf, "%s\n", mode);
++}
++KERNEL_ATTR_RO(preempt_mode);
++
+ /* whether file capabilities are enabled */
+ static ssize_t fscaps_show(struct kobject *kobj,
+ 				  struct kobj_attribute *attr, char *buf)
+@@ -263,6 +284,7 @@ static struct attribute * kernel_attrs[] = {
+ 	&uevent_seqnum_attr.attr,
+ 	&cpu_byteorder_attr.attr,
+ 	&address_bits_attr.attr,
++	&preempt_mode_attr.attr,
+ #ifdef CONFIG_UEVENT_HELPER
+ 	&uevent_helper_attr.attr,
+ #endif
+--
+2.46.2
 
