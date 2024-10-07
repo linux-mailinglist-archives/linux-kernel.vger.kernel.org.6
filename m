@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-353839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA24993383
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9B993358
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343191C23811
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E95283AE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3471DC75E;
-	Mon,  7 Oct 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33F1DB372;
+	Mon,  7 Oct 2024 16:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="UK1er1sL"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l88pJ/ZP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C821DC73A;
-	Mon,  7 Oct 2024 16:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69AD1714D7;
+	Mon,  7 Oct 2024 16:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318973; cv=none; b=Zbi90ZgPiunNXlatFGEtLMwU4xe0lxzCuXEyYhAK5ZuJcgFVbkn5+cyPOX1cBypJZLFXvtYn1Q953koBBGYuN6GLqSIw735aYYMTsRYPNNd/Q20GBIjJotb2o5D/wDHrnuSoUq5v7qB2DwqnTlc/mDSmT0+HSVUk37YAOqF6ha4=
+	t=1728318878; cv=none; b=TMYW4dMpYdhIaHQHUiL5BTOlSCazPj16ZYz4748AR/Sct0qvrUBJgFBJAOPL8i4Sxk2+5PCs42utofEnq0ftNJUwGDOSS3hHG2R+bfOqD6ifrnKJ0ea+2oz/e4QZI6ypW7EElu4NrQrQnN155pMhfACeiRHB9h1h4Htz7cW+zxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318973; c=relaxed/simple;
-	bh=qgs6djftKMsHaoIbJPCzIEn9PiUmxfooSvy4LW9HDeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZhAQEWNZlnwz5/kXQgSxx0wly7U9HCxaJTipj3GjGbwchgg05Wv1MK33N4UO3+30HUKNTQQjXKLLI2TiVgW3D2RzXCUzPjmDGYgrgx9ubjX7cACr+75HSPcEKcO4xLyH2PB+/ralnPVMQ510k+RQ5x5UL93jchTSJ3MbhENdr30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=UK1er1sL; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 0C9B023F20;
-	Mon,  7 Oct 2024 18:36:10 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id BWkq9wvynVqm; Mon,  7 Oct 2024 18:36:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1728318969;
-	bh=qgs6djftKMsHaoIbJPCzIEn9PiUmxfooSvy4LW9HDeE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UK1er1sLrFZL6z2v8psaTd7elv1uOAjOY5KF+Q13ynWGZCILbtIkFjC8JoRbKY7vx
-	 ux2lMsS145kQogdpABgARonVYoFCPwLS6kNPfMdDT4UTNLDPtJ1z1mmL78GXxx8JLt
-	 NHI7SrswHcw++B4ToPWjb+6kLGsmyojFCJE5kxM08IjwLnse6acZunh4MdDAVavLX6
-	 apBwMFLGEnP8Ngqj89GxvnbZAiWc0eDMe1RhmXboNbgfa+vYcpxRfiXowDx57HwgFr
-	 xyYCKPjhb2k+TEmBMFRkPPcgBl2phasyYBZe6p/dEHHcoGQQhpSlrOpE3O962Z7E2A
-	 Af0Qxx57sgTdQ==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linus.walleij@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Karl Chan <exxxxkc@getgoogleoff.me>
-Subject: [PATCH v6 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
-Date: Tue,  8 Oct 2024 00:34:14 +0800
-Message-ID: <20241007163414.32458-6-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
-References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
+	s=arc-20240116; t=1728318878; c=relaxed/simple;
+	bh=80eAqYkNKW/OFeJZu+HxKcNGHWj96jywLFcSMlmhwRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+4t2ObwyHNTnCHjDN+AqzPa0nobEkuKJyyWJ70CRyD3MPY8kVZ3PBN7kLSPJzpiMagRLVRuxIwxpiaM+Yso5mfHEqxShcVVci32itbtmoLlLwO0z/zqI6Mc2iSg6eqVG6jD92sYG8j3FJp7HWHCmhwtwBs/c3SnuZnFAdzjuP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l88pJ/ZP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728318876; x=1759854876;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=80eAqYkNKW/OFeJZu+HxKcNGHWj96jywLFcSMlmhwRM=;
+  b=l88pJ/ZPjYI7RXBGgEhKkdZqSeMinHZzRCXAB3UtKME1IAPD/RwFDSgH
+   iUH6F8eP9aZh0miSOUxg6CL6PDXLC4RShv0OSYcuKkoTAkb56Sl4n3d8u
+   ZnTmYsyPaBpSx5UEpAajEmrIRywr3ISNfOR04sdPQf7b9gBCau/p/Y/nU
+   8FcVg5PEj8iFxWUupoY5qNY8dDdhWHkHqT7JNmthaDOobTsX+Ox4IUebc
+   wLQYNbz4QN9B2OWhtew2ig+pvXNyO5CDdeaw9m/ZcJwhz3NeLILjudPIn
+   ge1U2MiS7UekP+LxN6GK6o1NeGjdHI0KxM/UErwCQtMTZCjDhNvuhPmAh
+   w==;
+X-CSE-ConnectionGUID: j27nKZxCTHyTLi6eDUemWw==
+X-CSE-MsgGUID: DhC1rq5qTuu3ypaA5hNdxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="50012855"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="50012855"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:34:36 -0700
+X-CSE-ConnectionGUID: TmB1TY5IQDKPoKRjqu85BA==
+X-CSE-MsgGUID: UX4CXJUgThmvDtAw51rKJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="106289039"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 09:34:33 -0700
+Message-ID: <c721ae77-f06e-4928-be99-1daa78a83be0@intel.com>
+Date: Mon, 7 Oct 2024 19:34:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mmc: sdhci-of-arasan: Support for emmc hardware reset
+To: Paul Alvin <alvin.paulp@amd.com>, michal.simek@amd.com,
+ ulf.hansson@linaro.org
+Cc: git@amd.com, linux-arm-kernel@lists.infradead.org,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241007095445.19340-1-alvin.paulp@amd.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241007095445.19340-1-alvin.paulp@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The original firmware of EA9350V3 from Linksys can only boot ARM32 kernels
-and there are seems to be no way to boot ARM64 kernels on EA9350.
-It is possible to use this device tree by compiling an ARM32 kernel
-for getting the kernel to boot on EA9350 V3 firmware however.
+On 7/10/24 12:54, Paul Alvin wrote:
+> Add hw_reset callback to support emmc hardware reset, this callback get
+> called from the mmc core only when "cap-mmc-hw-reset" property is
+> defined in the DT.
+> 
+> Signed-off-by: Paul Alvin <alvin.paulp@amd.com>
 
-Building the Linksys EA9350 V3 device trees from the arm64 tree together
-with the ARM32 include to allow booting this device on ARM32.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-The approach to include device tree files from other architectures is
-inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-used to build the device tree for both ARM32 and ARM64.
-
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
----
- arch/arm/boot/dts/qcom/Makefile                         | 1 +
- arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
- 2 files changed, 3 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91..147dbeb30a6a 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk04.1-c3.dtb \
- 	qcom-ipq4019-ap.dk07.1-c1.dtb \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
-+	qcom-ipq5018-linksys-jamaica.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
- 	qcom-msm8226-microsoft-dempsey.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-new file mode 100644
-index 000000000000..9a6ad767ebd7
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-+#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
--- 
-2.46.2
+> ---
+> 
+> Changes in v2:
+> - Updated the CC list
+> 
+>  drivers/mmc/host/sdhci-of-arasan.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index 5edd024347bd..0cb05bdec34d 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -76,6 +76,8 @@
+>  #define FREQSEL_225M_200M		0x7
+>  #define PHY_DLL_TIMEOUT_MS		100
+>  
+> +#define SDHCI_HW_RST_EN		BIT(4)
+> +
+>  /* Default settings for ZynqMP Clock Phases */
+>  #define ZYNQMP_ICLK_PHASE {0, 63, 63, 0, 63,  0,   0, 183, 54,  0, 0}
+>  #define ZYNQMP_OCLK_PHASE {0, 72, 60, 0, 60, 72, 135, 48, 72, 135, 0}
+> @@ -475,6 +477,21 @@ static void sdhci_arasan_reset(struct sdhci_host *host, u8 mask)
+>  	}
+>  }
+>  
+> +static void sdhci_arasan_hw_reset(struct sdhci_host *host)
+> +{
+> +	u8 reg;
+> +
+> +	reg = sdhci_readb(host, SDHCI_POWER_CONTROL);
+> +	reg |= SDHCI_HW_RST_EN;
+> +	sdhci_writeb(host, reg, SDHCI_POWER_CONTROL);
+> +	/* As per eMMC spec, minimum 1us is required but give it 2us for good measure */
+> +	usleep_range(2, 5);
+> +	reg &= ~SDHCI_HW_RST_EN;
+> +	sdhci_writeb(host, reg, SDHCI_POWER_CONTROL);
+> +	/* As per eMMC spec, minimum 200us is required but give it 300us for good measure */
+> +	usleep_range(300, 500);
+> +}
+> +
+>  static int sdhci_arasan_voltage_switch(struct mmc_host *mmc,
+>  				       struct mmc_ios *ios)
+>  {
+> @@ -505,6 +522,7 @@ static const struct sdhci_ops sdhci_arasan_ops = {
+>  	.reset = sdhci_arasan_reset,
+>  	.set_uhs_signaling = sdhci_set_uhs_signaling,
+>  	.set_power = sdhci_set_power_and_bus_voltage,
+> +	.hw_reset = sdhci_arasan_hw_reset,
+>  };
+>  
+>  static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
 
 
