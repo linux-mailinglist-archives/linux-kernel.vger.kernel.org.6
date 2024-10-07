@@ -1,127 +1,84 @@
-Return-Path: <linux-kernel+bounces-353919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D08199347D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F98599347B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F02B268E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:09:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CFAB24BD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B167A1DCB14;
-	Mon,  7 Oct 2024 17:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z6Giz9N6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hpiOnFx0"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FF51DCB0A;
+	Mon,  7 Oct 2024 17:08:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94AE1DCB0D;
-	Mon,  7 Oct 2024 17:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AEA1DCB00;
+	Mon,  7 Oct 2024 17:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320957; cv=none; b=D57dxCiB+YU34oW7Qu48vktpAfLR2kRFjvvrOAevSjP6cdS7YnXgxzAvdRZt2CnzskdrGHiDDzDRdHt96r7azORpv0zJAB7G9QISmUfkiPKZyNIyI6ickqm7ecPf5xNx5I7M7TOpkYThUw5+7dZoTnoSHUP1xxZlzKugDp8JgvQ=
+	t=1728320939; cv=none; b=BCQFenV2pelOYmpcdmBt4Jkg5HgMn9wV53GVgTp69Nr439j/Cdl/bc9vLGev8hH7EBDewYXt6qrx/Sci54On1QJyn5SlpEBoBZF1o4UwCI/Mu+27ex3VlI61MrnFyj2rIeSIdpYqoG81LKZpUFAPK4v6I7rJBoDlTGtLRAReKsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320957; c=relaxed/simple;
-	bh=BYbB9c8YeanuqzRffKnDJYAWr1Q3ltiaButtE86MKks=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uOTRxqSv6KoXdCvTonRz6JT2EqIBKW5dTJrONME+qsoQLMhV1y3oQm8uRxyIdbFth2qhpD+K1y0gI3+Y5Jl7fcfwSkGrEImJA3xef8ECA/p6OwX6XpuplHozltU4+3hUqDdc4OspjEYtMSRGczzcB6aYFxy5v+U36uUjpFP6opI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z6Giz9N6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hpiOnFx0; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9657113801B6;
-	Mon,  7 Oct 2024 13:09:13 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 07 Oct 2024 13:09:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1728320953;
-	 x=1728407353; bh=0miWlT+FY4Q8TJOlD7Hd7TgBPUx/cjgFDZgOPGgtSx0=; b=
-	Z6Giz9N6ENBvAgkuqqGnwdwE5tVjl7xabAuYqpU17Q8+uuAOc5RzWcfagVcf2Kox
-	B6q6Q5ybrW4OFUC6ql6xxJ21jlL1jRgFm5jENIp5A+QrkKM2n333VWw9X8X+cVad
-	7pMR2208tH6D1CGheD3kSo2UouSNcggG37CEgj+YS6O0FjTjL5i2SJsA5e5+GO78
-	yY4l7ObVvIPJzacQrLJqggC3AlYr2VJoruT4sEjM+W8UAyDBqgeqtjyV4ktqG9c3
-	4IlLiqttc0Yn7vfhMcTKG6aZ0+dhupgRJCIGdwK7ZDoVJ4WiMenrmHTrGDRFe0IO
-	cwT6s4Kccwm8AnvomoBNBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728320953; x=
-	1728407353; bh=0miWlT+FY4Q8TJOlD7Hd7TgBPUx/cjgFDZgOPGgtSx0=; b=h
-	piOnFx0CGCd85bnqsHI3noeRmNsoJzU4Ar+yT+CKPkJdzmqdQ4V+z/KhKHgQk5ut
-	8p/XfTjgMII2x0Y9FctFMncNCYFeLbmAMSBi7ZajMGr9nLIihpgiXi+3DPV1/RX4
-	2q1mHdEEJCz/uB+91jD5kjHdzqGcdswkKP/8SDEn5ar7PUgrpPFv2Hnz2uT77iJc
-	JwxjEB6LGf5y/74ORaVCJgAs5ZyHqRlntHfwOUJIh5OxDkwayQ/a627MA/TVTDG/
-	3WGPFkmc62pgxCzJfOZNYHrGAwfLj8+IvIVrMVizHYtnEEiBj+cwsaChncZNHOXA
-	QCSTkxonaSkg3UyHItquQ==
-X-ME-Sender: <xms:uRUEZ3H7Jz0IxGq3KaCkOYwkJsq2qpqkiTumhtZlfjNT47gR56MIIg>
-    <xme:uRUEZ0WxDwh8-vAAGvs_bnp-ClWcksNw99Jq3NytV0bNEHfh-x_4rtAqrOWAW87fH
-    T4Hc2l6wwMxRhBPPsU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledguddutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhlrghighhhthesrg
-    gtuhhlrggsrdgtohhmpdhrtghpthhtohepmhgrrhhiuhhsrdgtrhhishhtvggrsehmihgt
-    rhhotghhihhprdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:uRUEZ5LQ7sDKW7tqFJqC9za7vv8mlxUlHv7OGQdf6c1tbgCdWa3How>
-    <xmx:uRUEZ1FmjdwaFKaXTMk3IN8IVrZKyl6rwu43U-Akr6IpZuWvPqItiQ>
-    <xmx:uRUEZ9UaEb-MaCYK7YFnPJ3_23ovXd0wVHOK6BQ_fO5If6igtfW3uw>
-    <xmx:uRUEZwNnpqu4Ea2wHNHsgwLm1pcaSAv6VsbQbLGVf-C6lJghhIJf_g>
-    <xmx:uRUEZwSKhSBi4owt9-l_u2egfYVJ0X3vL57r8V9UfMTzJRMgPtaJXJ_d>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 429AA2220071; Mon,  7 Oct 2024 13:09:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728320939; c=relaxed/simple;
+	bh=SZ9Llq2XCi1Rzq6/Iql+DUGrm39jHu9DsCfZLr2VjDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hly/YJMn58MLVDJYMddJRIeXXxHGxYRWgJDuVKA85L85EGKAzFDw6RF7GFOObyICcG+Xf9vjXLsSTAxT2xYNiMVkjKImA/k5OIQ+YgaGqxoOiD/lMKXcFiKKfDP3oZs1pZDKuMqToXS4vVfTYLsNg+RKApyVTiN+wcOvYZfXMZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BADC4CEC6;
+	Mon,  7 Oct 2024 17:08:57 +0000 (UTC)
+Date: Mon, 7 Oct 2024 13:08:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mike Rapoport <mike.rapoport@gmail.com>,
+ Kees Cook <keescook@chromium.org>, Ard Biesheuvel <ardb@kernel.org>, Hans
+ de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2] Documentation/tracing: Mention that
+ RESET_ATTACK_MITIGATION can clear memory
+Message-ID: <20241007130858.7e25daeb@gandalf.local.home>
+In-Reply-To: <87v7y3kflt.fsf@trenco.lwn.net>
+References: <20241001095734.11a67b4b@gandalf.local.home>
+	<20241004193800.2ffd0d36@gandalf.local.home>
+	<87v7y3kflt.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 07 Oct 2024 17:08:52 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Marius.Cristea" <Marius.Cristea@microchip.com>,
- "David Laight" <David.Laight@aculab.com>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <43cee6a3-ce29-402d-978e-a8251d08c522@app.fastmail.com>
-In-Reply-To: <2f53046dd5b791845c2ffa783d7637ca94ca330c.camel@microchip.com>
-References: <20240927083543.80275-1-marius.cristea@microchip.com>
- <207733c7c25e4e09b0774eb21322e7e5@AcuMS.aculab.com>
- <04222aeb7a9c35ec080222168bace72a3788c90a.camel@microchip.com>
- <758e1d68-3a27-4d64-8c45-da829ed5904a@app.fastmail.com>
- <2f53046dd5b791845c2ffa783d7637ca94ca330c.camel@microchip.com>
-Subject: Re: [PATCH v1] asm-generic: introduce be56 unaligned accessors
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 7, 2024, at 14:57, Marius.Cristea@microchip.com wrote:
-> On Mon, 2024-10-07 at 14:44 +0000, Arnd Bergmann wrote:
->
-> Most probably this request is quite specific to my driver and I'm not
-> sure how often it will be used by somebody else.
->
-> I'm using block read in order to get multiple registers at a time
-> (around 76 bytes) and to increase the efficiency of the transfer over
-> I2C. Being a block read there are different registers length involved
-> from 16 up to 56 bits long and I need to unpack.
+On Mon, 07 Oct 2024 11:06:06 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-Ok, makes sense. In this case I would keep the exact implementation
-you have but move it into your driver where I guess it started out.
-If we ever get multiple drivers that need the same thing, we can
-still consolidate the implementation.
+> Steven Rostedt <rostedt@goodmis.org> writes:
+> 
+> > Jon,
+> >
+> > This version should be good to go.  
+> 
+> Applied, thanks.
 
-       Arnd
+And I now see I sent an older version that had a typo in it :-p
+
+
++			Note, saving the trace buffer across reboots does require that the system
++			is set up to not wipe memory. For instance, CONFIG_RESET_ATTACK_MITIGATION
++			can force a memory reset on boot which will clear any trace that was stored.
++			This is just one of many ways that can clear memory. Make sure you system
+
+										       your system
+
++			keeps the content of memory across reboots before relying on this option.
++
+
+I can send a v3.
+
+-- Steve
 
