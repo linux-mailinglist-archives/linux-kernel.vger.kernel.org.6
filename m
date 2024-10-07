@@ -1,87 +1,63 @@
-Return-Path: <linux-kernel+bounces-353148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01928992969
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CAF99296A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255BE1C222C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55E41C22716
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F2B1C878E;
-	Mon,  7 Oct 2024 10:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A501C8FD4;
+	Mon,  7 Oct 2024 10:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p0EXI4/V"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6Cna1AT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12F814AD17;
-	Mon,  7 Oct 2024 10:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7CA1C6F47;
+	Mon,  7 Oct 2024 10:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297779; cv=none; b=dmvFm4gV33mNrmW6WWriekxl1blyxwxP0I6S2JnlAD0y3PjY/PD37PMMKABdIhjCpbfs9p+3LsUXDykVzmeotQGV1L0oSaodxTm5ADPHU3sg4rh8C1+N1vdwaWp8Lni4Wb/Who2Lpox/ZnbSOvzP9qtC662jm/gYlckb46Pge7g=
+	t=1728297798; cv=none; b=B058KEPMAoTC0NKsk+pEOzrvs7kGoAfJt5vnNp434Cu56v+6r1PoCKAoGWLHHPaoB07YTJ1L0ypkVr3tbCTqEo1Q8Hv9QCpNvdAVkHr4rrdSMJ9Oym7pTOGnOIJ6u5559j1KldpAfkk8OQvlAqqxtbJfLCRneqXCteS5BiEl4gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297779; c=relaxed/simple;
-	bh=njbck6Ml0PEjAxLYmHKAGsbYIxEvGaAHvYTs36bXAQU=;
+	s=arc-20240116; t=1728297798; c=relaxed/simple;
+	bh=E2yj5HQS5sRTpPyRQQ9fSQQRE2CU7FuRE6H+lHbWjEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+U8jLcoDOA8mcwHFBsOdERrFMAlxGSmDsme9aV4TArJ7RNR996eVx5CINsuzWNwasdQPzR0CL/CNYcoz2RfcjtwUynj8anrBeBJPc6OJ7NDzL3ASz2kvMHtII3pqaeUWJNkSCjw4bD7yFnjRGB7/An98ZPoP+0JQSfBV2KEc1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p0EXI4/V; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=g05qBTGyZVIxUFe0rYd3vtXtUIDafbc2+oZifH/Yg1U=; b=p0EXI4/VR/FUuQlAhWY7U3wu3R
-	j0FqzCaS3DEniv+Xlz17Jn51ZiLfkAtmT11uvD0kwI8X0WFjDHPnWBjmSAkA6b52hWwXIN17JVVai
-	xxgi8zLJajVhHl7gz6SefugIyurIgy1l7F8+0pdz9CYt0pUQZLFk2umVs7H6qw4qi9PApPv8+Y2hJ
-	h1TrH3d3nVs5VrAjVrpemvtU686M+gUuk3vjzhA7v3Jal+Ani56lHEcVvvpA9h+ZUL9soyQW4dctY
-	bU1Zxvr/VxmwbTCgvwg+mUegta88eIpMAmbbxeSD/JzsV08hU37nnE+RWiYIVwil54v6/MWPKderG
-	vi/QoL8Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxlCO-00000004PBu-49TU;
-	Mon, 07 Oct 2024 10:42:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9E7AE30088D; Mon,  7 Oct 2024 12:42:44 +0200 (CEST)
-Date: Mon, 7 Oct 2024 12:42:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH v2 3/4] hp: Implement Hazard Pointers
-Message-ID: <20241007104244.GC4879@noisy.programming.kicks-ass.net>
-References: <20241004182734.1761555-1-mathieu.desnoyers@efficios.com>
- <20241004182734.1761555-4-mathieu.desnoyers@efficios.com>
- <20241005160444.GA18071@noisy.programming.kicks-ass.net>
- <20241005160723.GI33184@noisy.programming.kicks-ass.net>
- <6e7812f7-c94a-46ba-ba4d-cf4b7b1f60c9@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GP2fTonaWLquME0/eXeJ2qhKRSnW8ftBIdtt34Ir5uygpQWNjLV8UbT2bBx3tv1+/93UUMtbb4u3QCCz7uhcotm/Ju9JJLd95zlxdHC/2FHr3+jnUkUEYZdSsY/j8TJM2cA9tPcqGqXF3E7vBPIDHiL9VZKhnPx5IcIpAqNkuFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6Cna1AT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2309FC4CEC6;
+	Mon,  7 Oct 2024 10:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728297797;
+	bh=E2yj5HQS5sRTpPyRQQ9fSQQRE2CU7FuRE6H+lHbWjEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b6Cna1ATkkLOb8xLvWAvSXuwwBZIoIt6zaTFThiCTneR5oRyE5txLdVpzl+gVz9Sa
+	 0Cdh9NLrHVIN9HqOaYqzi08gaU/ag4cDJhTik4xbEGbnvxlWHey5XZOPyX4ahKoYyK
+	 1UOXtz74Jk/LQ65FebiD+CT2QIUGjDGEmlEIf9giSjxE79sOr1Nl7LpeKcUyDrSf7x
+	 05OXnd7QOz9R7n/KQnac0l1ZJzbOZUlt6uvFWqbkK/Vwty1QGD9JL3bqPH7CuEhvAg
+	 NvYI9crYVUNHf1oL7u96RDuhLU5VBbaw6VRWZo/11T0gqSeIF6torX4jaIbG0MIaNB
+	 tW+D6JCq1PNKA==
+Date: Mon, 7 Oct 2024 12:42:53 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH v2 0/5] iommu: Enable user space IOPFs in non-PASID and
+ non-svm cases
+Message-ID: <20241007104253.u6zuiplkdwsln4cn@joelS2.panther.com>
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+ <CGME20240914004847eucas1p23af12d7ea9f70f0de6a9a900072bdad8@eucas1p2.samsung.com>
+ <BL1PR11MB5271994848066586A098327F8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <20240916085054.gpan37ds7ea45pgh@joelS2.panther.com>
+ <BN9PR11MB52761B4848ACE15A7A2384458C6C2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,34 +66,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e7812f7-c94a-46ba-ba4d-cf4b7b1f60c9@efficios.com>
+In-Reply-To: <BN9PR11MB52761B4848ACE15A7A2384458C6C2@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-On Sat, Oct 05, 2024 at 02:56:26PM -0400, Mathieu Desnoyers wrote:
-> On 2024-10-05 18:07, Peter Zijlstra wrote:
-> > On Sat, Oct 05, 2024 at 06:04:44PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Oct 04, 2024 at 02:27:33PM -0400, Mathieu Desnoyers wrote:
+On Fri, Sep 20, 2024 at 06:57:04AM +0000, Tian, Kevin wrote:
+> > From: Joel Granados <j.granados@samsung.com>
+> > Sent: Monday, September 16, 2024 4:51 PM
 > > 
-> > > > +void hp_scan(struct hp_slot __percpu *percpu_slots, void *addr,
-> > > > +	     void (*retire_cb)(int cpu, struct hp_slot *slot, void *addr))
-> > > > +{
-> > > > +	int cpu;
-> > > > +
-> > > > +	/*
-> > > > +	 * Store A precedes hp_scan(): it unpublishes addr (sets it to
-> > > > +	 * NULL or to a different value), and thus hides it from hazard
-> > > > +	 * pointer readers.
-> > > > +	 */
+> > On Sat, Sep 14, 2024 at 12:48:31AM +0000, Tian, Kevin wrote:
+> > > > From: Joel Granados via B4 Relay
+> > > > <devnull+j.granados.samsung.com@kernel.org>
+> > > >
+> > > > This series makes use of iommufd_hwpt_replace_device to execute
+> > > > non-pasid/non-svm user space IOPFs. Our main motivation is to enable
+> > > > user-space driver driven device verification without SVM/PASID.
+> > >
+> > > can you elaborate why IOPFs are necessary to help verify such usage?
 > > 
-> > This should probably assert we're in a preemptible context. Otherwise
-> > people will start using this in non-preemptible context and then we get
-> > to unfuck things later.
+> > In retrospect "enable" might not be the best word to use here. We are not
+> > "enabling" user-space driver driven device verification as it is already
+> > enabled; you could already poke a device from user space. But the whole
+> > poke
+> > space was not available, you could not test IOPF without having an
+> > SVM/PASID
+> > capable IOMMU. Therefore a better wording would be "Our main motivation
+> > is to
+> > expand or facilitate user-space driver driven device verification by enabling
+> > IOPF without SMV/PASID".
+> > 
 > 
-> Something like this ?
+> hmm did you actually see a IOMMU which supports IOPF only but
+> not SVM/PASID? 
 > 
-> +       /* Should only be called from preemptible context. */
-> +       WARN_ON_ONCE(in_atomic());
+> this series alone has its merit, e.g. postcopy migration might want
+> such notification. But not sure it helps solve a real problem in your side...
 
-	lockdep_assert_preemption_enabled();
+I understand that you want more information about what problem(s) are
+solved by this patch set from my point of view. right?
 
-that also checks local IRQ state IIRC.
+One of the main motivations is to enable IOPF in use cases where PASID
+is *not* an option, like NVMe devices. Therefore one of the examples for
+enabling user-space driver driver device verification are NVMe without
+PASID.
+
+Quick Note: I am adding my new email to the thread so I get the
+responses routed to the correct inbox.
+
+
+-- 
+
+Joel Granados
 
