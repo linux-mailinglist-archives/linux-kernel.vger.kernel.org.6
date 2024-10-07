@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-353643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97379930B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2372A9930BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28597B242A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:09:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA608B24CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD291D54DC;
-	Mon,  7 Oct 2024 15:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024511D90BE;
+	Mon,  7 Oct 2024 15:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H9Dq41oI"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DL6TvRqT"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01012E75
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158011D4152
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313652; cv=none; b=RwBCJfOq9RctQ+leQTZ9jZyPj9G0668NFzxCjhRu4LcjGPDU64hnjMuYZ89USVqcAalAVlWSYQea1XgVmcjKioxnV7pghxYPsLPzIvQr/+2U9I++ZuNfWHPb7T39YziM6pQVDDN875SQAyezECkBLJREU9a4cn5TNf2KhiIgl6Q=
+	t=1728313759; cv=none; b=kTse2kxl2QY+5nHS/Zo3mp6PfnfmrmGpcSO474pVgquOWulTK2MNYOKAnZsbbMOtm6LqMlVaDkBjYWNSgPosDklgFOWXPq8pgvgPDNWiaXbBWeWhgF9Ia+9fCNJNymNfWsHyLKpBa59IHz+JJHuigSw5n4gdL+E+7UzTPrzJyGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313652; c=relaxed/simple;
-	bh=CMjkN2SHTY7amr7CLge69sH5Fs5Wd/yIexgmuDkS/ag=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iJJMBplXPthOZodT0hXmV/CjRjpisWOKzV+Hpgl8bIqFNxualagHwXZ5GjK7FToZidytsiwwP2K1JZRY7oBjKBeSJT+QGwsTMqP5fZQcq0UAWcwHq2ihrfByS0XItB+9u/YxuF0ALjFAXnY46z4d+LVYSpLtuLYi0MAvTSHytQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H9Dq41oI; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20b0afabe16so48406125ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:07:30 -0700 (PDT)
+	s=arc-20240116; t=1728313759; c=relaxed/simple;
+	bh=ZkPECxgEeA2guXCbGft7A0EbWEevf+c0gjJj9QsLsfY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cz+rJYP529dtXanzwQQceoEIVBWJwtgh9VP1LVoh1vh3T0xJ+aqmHapTb3r+qEgpqn+OVWJklrFm/tMT5xTc3Dnu4oGeMVl5EFdM0zSq4S0nUxMEjQPjCEfO7b+ZqJLa/1/+6iPgp5bW0990lHjk4Ju71axvG0UHIqxBVDOnd/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DL6TvRqT; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71dec1cf48fso2506737b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728313650; x=1728918450; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yfDahLBAo/4OnEgZIq5ijm172H35wJWJ5vmSa1v7E30=;
-        b=H9Dq41oI4r3cmrm5hqCB5coPRZFCh/cNiZO338JVOAQn7151Dq+vaScp9W1bTJqpWJ
-         0K/n6Sq7bXEeGWsNUU39CZ9lpi+2g/WHtceZWxQVSx0GuoOBXLaFFHTxKBkQxw8Inj6C
-         IIqeIEoeDwugipNE3UxU57VivH9W4mcZsoB1mnSwcRPePjseKJKV+WNZ1OS4aE/rnlYf
-         BwaSVE5kcrE5H6h7ZTSK8j+qHWSnBhKaCzk4zfvwmOREEa6BcoBiZWVWzAidSn0fN6MG
-         w4fyBF1jK3AE1IA1AGaRked/VO1GCVSBTJM+IKd5q+5Ghlpji5Geh3KTC/Io6wTbQm9I
-         kMNg==
+        d=gmail.com; s=20230601; t=1728313757; x=1728918557; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/+GSwCeOWRm/l1+CfEkkyplSY7a0N5EITYY7LFjoig=;
+        b=DL6TvRqTaz0Jx0h89wqItnb4iMzDudSJhNKOifEuEmTooJJUjt7SDOxE3W1jM7u17v
+         VchIf3/R+l5+Tp8epzf0bc7mYnZgz1ZZcCYGfG/rlpbB1xMqyz3B0zcj4m+PmFt0KRQx
+         NCcp6FQLeSN/BdOJ81sOlawSDtwaD8ZDTl9aYDw6ryoa3s7ediDq8YxO4muXXA6xrRzq
+         BYYcsjan8S5sPDK751WusZbvaujSIqqbkFEuLfo3LIomank1jzG+eGYeMUeLCxxkhTJ5
+         kEAgO8VhOp8i94h4s/6ALG3Irtj9CaB1pqjMjU8wTUtlFkmrMgx64jgfRkqlPoHlXu6W
+         QFjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313650; x=1728918450;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yfDahLBAo/4OnEgZIq5ijm172H35wJWJ5vmSa1v7E30=;
-        b=il4oH+vWrKzyya1p6ftvVtV50RS5PbuzvqmepyC++Zkq2bqKx/ewomqLDdE+bTzpUL
-         s+JsCbWWS9nH7kr3m5tqgJcFPdrgBueyPmjdB4uVwibE9e0OpRfaZOJ0WiqOBmYXQbQG
-         IDg+NWefz4M9CvvoeABEUnhAtXFaix5IkV7Is5YWQ83hnX4WAmUlfQz+iYGlGr0sDJAW
-         wGK7OUzPmtZRHPOU28xWR98qpiZY3mB4cXiRftmCzlKG6Bqm0ZXxNxQj1a2lfOFXki4H
-         mxpPXH2tXbg6bVI6pm+Hk47IZ5cMbKiUGjpK7PymQYWH5ZKrGbVZMVDgxoWz5iDG+/MU
-         xdOQ==
-X-Gm-Message-State: AOJu0Yyh/VIke7coJtO6Q3xj/ctPWa7ETdRFyOauzBHiKmihAgM8tyZ/
-	ZzgOakn97UwcwlSM8LBld44RKhPQ+eLiqzjevX4fWMCRtD8Pytqj7t2dYDiWqTdbr4rEimYbaer
-	pjw==
-X-Google-Smtp-Source: AGHT+IGZGeQzhhYh0+4F11B73SDuGkc3ScbkaQ93OWOqk2W9DcKliuRU+Lx9G00ON7I08zlPLwQB8+DshVQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:7885:b0:205:4fe5:8136 with SMTP id
- d9443c01a7336-20be195b2f0mr244345ad.3.1728313649721; Mon, 07 Oct 2024
- 08:07:29 -0700 (PDT)
-Date: Mon, 7 Oct 2024 08:07:28 -0700
-In-Reply-To: <ZwAeJ1RtReFiRiNd@google.com>
+        d=1e100.net; s=20230601; t=1728313757; x=1728918557;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U/+GSwCeOWRm/l1+CfEkkyplSY7a0N5EITYY7LFjoig=;
+        b=iBGsrLzrGoaw4mJVfgW0NmHVURBjkZrqVP7asMCoxBxjdf5Wi93J+e1dnuSxtFSCey
+         EbzAoSYb0lZ688XQogiltpPNrhSGB288gDRwIDh/Ll6TKAz9F7JC9pR5nXtN1lnVnPsp
+         ypY9UvlggKr6XVrxBmuJa1lSvBsVG+4SoMNpNYqyS6XI9EcnmHf1SOAZcLKabMX0MuH5
+         jEV4IF5SvtSfR2z/3LBXt32Ti+uok1Ncmo2uEMwjv5dNyhm64RDHrDF2gmCAdeU9pozC
+         KjCCSkobIRotfbcuOnBY1x3D6RVIVELzvjTPPRqRqKnFCbTFt1h6RHXSrX84+fzNjrJR
+         QTkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuSxfN9X38mYynsWc/aJkG/sjfzRVr0kY0VTPzEPi2+StAX02tc0Mx7Zc80H8dNidBPAXwO/6XuSNasUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbvsh9FOObza65pbCVk66GiyhfqgkrD1tA+AMc+a76kbUpeBEu
+	zQZhfyn0JPvswdntGuvrROfLGdm0QUZYKV09z5d6fkQEl5c7TK18
+X-Google-Smtp-Source: AGHT+IFyaIcmre3vkQABIM8yyNZlEuDS9Fnfn9Gk+ufQWVciOVuxyxkAe1vCDGKPdT/UvjtIoXMFog==
+X-Received: by 2002:a05:6a20:6f07:b0:1d3:2976:144 with SMTP id adf61e73a8af0-1d6dfafc08cmr16632114637.44.1728313757227;
+        Mon, 07 Oct 2024 08:09:17 -0700 (PDT)
+Received: from advait-kdeneon.. ([2405:201:1e:f1d5:ffb9:ea:f539:1909])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c3411asm5011809a12.68.2024.10.07.08.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 08:09:16 -0700 (PDT)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Sam Ravnborg <sam@ravnborg.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Dan Carpenter <error27@gmail.com>
+Subject: [PATCH v2] drm/atmel_hlcdc: Fix uninitialized variable
+Date: Mon,  7 Oct 2024 20:39:04 +0530
+Message-Id: <20241007150904.9840-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241003230105.226476-1-pbonzini@redhat.com> <ZwAeJ1RtReFiRiNd@google.com>
-Message-ID: <ZwP1kvgyIGIO_p0x@google.com>
-Subject: Re: [PATCH] KVM: x86/mmu: fix KVM_X86_QUIRK_SLOT_ZAP_ALL for shadow MMU
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04, 2024, Sean Christopherson wrote:
-> On Thu, Oct 03, 2024, Paolo Bonzini wrote:
-> > +static void kvm_mmu_zap_memslot(struct kvm *kvm,
-> > +				struct kvm_memory_slot *slot)
-> >  {
-> >  	struct kvm_gfn_range range = {
-> >  		.slot = slot,
-> > @@ -7064,11 +7096,11 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
-> >  		.end = slot->base_gfn + slot->npages,
-> >  		.may_block = true,
-> >  	};
-> > +	bool flush;
-> >  
-> >  	write_lock(&kvm->mmu_lock);
-> > -	if (kvm_unmap_gfn_range(kvm, &range))
-> > -		kvm_flush_remote_tlbs_memslot(kvm, slot);
-> > -
-> > +	flush = kvm_unmap_gfn_range(kvm, &range);
-> 
-> Aha!  Finally figured out why this was bugging me.  Using kvm_unmap_gfn_range()
-> is subject to a race that would lead to UAF.  Huh.  And that could explain the
-> old VFIO bug, though it seems unlikely that the race was being hit.
-> 
->   KVM_SET_USER_MEMORY_REGION             vCPU
->                                          __kvm_faultin_pfn() /* resolve fault->pfn */
->   kvm_swap_active_memslots();
->   kvm_zap_gfn_range(APIC);
+atmel_hlcdc_plane_update_buffers: may use an uninitialized
+sr variable when the if condition remains unsatisfied.
+The variable may contain an arbitrary value left from earlier computations.
 
-Copy+paste fail, this was supposed to be synchronize_srcu_expedited().
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <error27@gmail.com>
+Closes: https://lore.kernel.org/r/202409240320.MZPgi3Up-lkp@intel.com/
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+v1->v2: add reported by and closes labels
 
->   kvm_mmu_zap_memslot();
->                                         {read,write}_lock(&kvm->mmu_lock);
->                                         <install SPTE>
-> 
-> KVM's existing memslot deletion relies on the mmu_valid_gen check in is_obsolete_sp()
-> to detect an obsolete root (and the KVM_REQ_MMU_FREE_OBSOLETE_ROOTS check to handle
-> roots without a SP).
-> 
-> With this approach, roots aren't invalidated, and so a vCPU could install a SPTE
-> using the to-be-delete memslot.
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is wrong, I managed to forget kvm->srcu is held for the entire duration of
-KVM_RUN (except for the actual VM-Enter/VM-Exit code).  And the slot is retrieved
-before the mmu_invalidate_seq snapshot is taken.
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+index 4a7ba0918eca..4150c4d0b4f2 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+@@ -559,7 +559,7 @@ static void atmel_hlcdc_plane_update_buffers(struct atmel_hlcdc_plane *plane,
+ 	const struct atmel_hlcdc_layer_desc *desc = plane->layer.desc;
+ 	struct atmel_hlcdc_dc *dc = plane->base.dev->dev_private;
+ 	struct drm_framebuffer *fb = state->base.fb;
+-	u32 sr;
++	u32 sr = 0;
+ 	int i;
+ 
+ 	if (!dc->desc->is_xlcdc)
+-- 
+2.34.1
+
 
