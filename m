@@ -1,111 +1,88 @@
-Return-Path: <linux-kernel+bounces-353528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05761992F0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:26:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A19992F29
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11ED284D3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:26:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08A91F24294
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA441D5AAE;
-	Mon,  7 Oct 2024 14:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116E81D90D4;
+	Mon,  7 Oct 2024 14:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSTaUqw9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vvhm3cVD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239A31D363A;
-	Mon,  7 Oct 2024 14:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC801D8E12;
+	Mon,  7 Oct 2024 14:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311156; cv=none; b=IORbAQcFZtFbNSB0lRXAN00QofiMLKW5054LwRu7P+TAzST0dud0uJ4yhXVFqLGWr07zqI77lQIJuUwC+cE3cONyhS3SFKC4kFjDDhLxUAfAKby/2Wh/Nt0OHFj+dNyZK5vmWe+Te2DX73dcxRsmaxnuB0DoK0abvP/0NzeLa00=
+	t=1728311180; cv=none; b=KQ4Ootge0bjZPETaE5Wbgai3FGlSDi+boPEIN4Rsb0dhZuKUBeM4gAaDtyheQInNaNjQZBFUpquNh7DVztMI05HwnzOg+LC8bEzoae5qmY585IPU9eQq+YNAS9pS3gOydmN5s++WWuksAb7kkUpVRXsSiPUpJE93HZIUSGopkIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311156; c=relaxed/simple;
-	bh=q+TPabjz1vfQ0pdnANMiA1HG/+NexC6E92sIdGx/rs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZ+heZQuGcil2dZDNxKVg7L2ilzYf16VBOqK13oZNO6rdT1QWcE2po1xxnCTw7buCosZanT2e0TEMoeWyK7gsuyenFWbnzwQsbklyAd3I91SEJLevzji3SpK6tXZm+nAbrgHXpr9AJhcqaEJh9F4JFYXwtdkO+kLGkaO48VKUrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSTaUqw9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E1EAC4CEC6;
-	Mon,  7 Oct 2024 14:25:55 +0000 (UTC)
+	s=arc-20240116; t=1728311180; c=relaxed/simple;
+	bh=KHAibUx7xBYiNzRK75fHVxrbbhosgLknR1DAGDwAGwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MbLEEorJHlNRopmAfXcGX8Z7fM0Smo9Zm+ksgMM42PY6gB8l3GtGTF9r6gMUD00f3jllDFIUWPC8LN28dNj1x4xsChnIGn6eU3BuLgDJP+hqxp9dCCrPKvM4QbuOYPDdUNA9q5mbUypQ228GWTF8r6chVN5r+5mKiQrBgwhCCiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vvhm3cVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F122C4CED2;
+	Mon,  7 Oct 2024 14:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728311155;
-	bh=q+TPabjz1vfQ0pdnANMiA1HG/+NexC6E92sIdGx/rs4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mSTaUqw9rr1vY36MLnEA+L2LA5JfdcFTh6jAYD/QV0pbzyARlXQclMtrL5zzAPHJU
-	 ZazwejzBCgO3I6SXFcUWIDLU1/FnaghI3qKu/oJgeMeIaEupcS2Ahux+OeYo/GzyLP
-	 ByDmfCtIs/n5FXhr9CfVaR8TD/XazTvECWmuAI+g87i4GY0RNZx5REKqDuMZhxYAS6
-	 lCpw5XQbvoIfqZHmaZWEBYrufeYnXlRmn/J4e//Huk+OanzmZYWSWJfaa0+ZZao3et
-	 qHqeBEUu12N06jKnAGr6pnjXEaOnkRiq0XXNB5lE4+HJDxqdvkftyDDdEx9KEJ2HUf
-	 obazxL5jhDKIg==
-Date: Mon, 7 Oct 2024 15:25:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-spi@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, rafael@kernel.org,
-	oss@helene.moe, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] driver core: Add device probe log helper
- dev_warn_probe()
-Message-ID: <ZwPvcFvK4l7JT1X9@finisterre.sirena.org.uk>
-References: <cover.1727601608.git.dsimic@manjaro.org>
- <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
+	s=k20201202; t=1728311179;
+	bh=KHAibUx7xBYiNzRK75fHVxrbbhosgLknR1DAGDwAGwM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Vvhm3cVD2lu8GPHuLY2RvciOd4bOLwSx0drvFnsdenWL1YQew9jbBfrhEKpcYrV+u
+	 rafNM53iK3oGI+tnhxRdHPaRJLiXFq9fz8dt/hS9q7a2zx/DbH4QH8VKpIVjSY3YHD
+	 QpBkfpstipQZ8ZvFaDYBsbQOF1cHSd9hLTwL5kbKc+5Ep6nDpMreti/W4OYDu/4du2
+	 npqDXhBNuPd1ua46lhl6e8EPok1n/7w0p4TdkMeNnyDWSHwvBSjh3dVVoFLJ7F9n+Y
+	 XeuDi2d/6UATWPR+7kyGLz3JDfbO4sAxpWaUPMvUUb9v55DvSPZT0wzt6iGrfpikUR
+	 LKxQRCxt+cucQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= <jerome.debretagne@gmail.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Maximilian Luz <luzmaximilian@gmail.com>
+Subject: Re: (subset) [PATCH v2 0/5] Microsoft Surface Pro 9 5G support
+Date: Mon,  7 Oct 2024 09:25:52 -0500
+Message-ID: <172831116175.468342.4376919481343564567.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240908223505.21011-1-jerome.debretagne@gmail.com>
+References: <20240908223505.21011-1-jerome.debretagne@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vXTeh0FEv5Mv84vz"
-Content-Disposition: inline
-In-Reply-To: <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---vXTeh0FEv5Mv84vz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 09 Sep 2024 00:35:00 +0200, Jérôme de Bretagne wrote:
+> This series brings support for the SC8280XP-based Microsoft Surface
+> Pro 9 5G.
+> 
+> 
 
-On Sun, Sep 29, 2024 at 11:21:16AM +0200, Dragan Simic wrote:
-> Some drivers can still provide their functionality to a certain extent ev=
-en
-> some of their resource acquisitions eventually fail.  In such cases, emit=
-ting
-> errors isn't the desired action, but warnings should be emitted instead.
->=20
-> To solve this, introduce dev_warn_probe() as a new device probe log helpe=
-r,
-> which behaves identically as the already existing dev_err_probe(), while =
-it
-> produces warnings instead of errors.  The intended use is with the resour=
-ces
-> that are actually optional for a particular driver.
->=20
-> While there, copyedit the kerneldoc for dev_err_probe() a bit, to simplify
-> its wording a bit, and reuse it as the kerneldoc for dev_warn_probe(), wi=
-th
-> the necessary wording adjustments, of course.
+Applied, thanks!
 
-Greg, this makes sense to me - are you OK with me applying it?
+[1/5] dt-bindings: arm: qcom: Document Microsoft Surface Pro 9 5G
+      commit: e221af165910b8967f7c2788c34826f332f2cc7e
+[4/5] arm64: dts: qcom: sc8280xp: Add uart18
+      commit: 1e70551123d014b3a1c4b85da54d247243750e7c
+[5/5] arm64: dts: qcom: sc8280xp: Add Microsoft Surface Pro 9 5G
+      commit: f6231a2eefd430b8b8798911f023891ea51d1d09
 
---vXTeh0FEv5Mv84vz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcD728ACgkQJNaLcl1U
-h9B9PAf+MtoEs7Y3AEe2kOLgcFOEnHIrD1FSwcTxPFgyC+9e0NoaGcnc69ZkoxNi
-1reeTBW5HHOHFgvPl1wNAPtp6kOofBkknTMmVIgC2olKO8F+7m6Gck0ZeG2gHJBy
-gy/1rMI0sXn94sPTRz/wad+Ju570hxiLCI/7nwu78pgHElMo+7qR8V+npeK5TK9A
-ZTjI7zb/AvxYA5STrDgodAer0oh3+PYEoShZS9gUJnBboB5WK7NX03p2+NrDHBJG
-+1yKycD0eCt0bQBItFijpxcl2+u8E5voN8DKiRc2u01wC6rJ3pehopuAFzW7O9nr
-iEyAfBS/WzxVRPUZWtw4Uo6NZFvvDg==
-=mUTd
------END PGP SIGNATURE-----
-
---vXTeh0FEv5Mv84vz--
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
