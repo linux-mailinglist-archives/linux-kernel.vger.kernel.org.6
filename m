@@ -1,114 +1,80 @@
-Return-Path: <linux-kernel+bounces-352676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB2992282
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EB1992284
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E429F1F21E05
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930BE281516
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ADBEEAA;
-	Mon,  7 Oct 2024 00:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EB8EAD8;
+	Mon,  7 Oct 2024 00:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CgdrVYvz"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GH5n06Ig"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE78BBA3D;
-	Mon,  7 Oct 2024 00:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C211B641
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 00:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728262023; cv=none; b=ZDspcwmzvndUalx1NE9Qm//5WFHH17NI+Fp1fBD8oHod7H4z0LweI7ITMBRVTHYYjQdQb8lnM/Bi2WNl68Qtx0voDAIlLq60VbIQP9njK5xmsZ9nqZ65pUr+SmHWrcUupWFKTFLXZheE++CYR/puyOfQLnFpJcFZfk1dVscJjIg=
+	t=1728262091; cv=none; b=TdjZwkg0qFruNf63MpNz/KwaYBwqAUSJU+idbIAXXaAfe45uoBOHdcYnqjenXPP8OoCIjrs0hvBM/RK99fDGBuvQx0F74/K202jb+3UGFTkT/2l9tSQWLiw1w2ELjnw+7Z8uPFh36+ErfkPkMppB1OUVyW5LdzwL8XxEsy2txJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728262023; c=relaxed/simple;
-	bh=l4Y5hQwARAh5ZdOq6uOOMgjSLowOZAabGby9VNGDuIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L+l5wR8gjpVSKJFMTDvkDMBIH7mPc/hjbb34hIIUxMY90o9hGOzBDqIjTnrpjoN0feyVxKkm01JXdRX10Nv3u6daIrtMDDh1C4Pbz1+CfCkWTtPkQ1ALKaqdeUjn7xpWE9ghj1m9GuD8c/Pv8bMxErgeG6z/2kyWsHBqbae77Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CgdrVYvz; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=PcHrlYUtwLPZXcDXRByLj8WF+hiEj2Pv5BGuslgucc0=; b=CgdrVYvzYbjOwPfS
-	A6Hli9gt0fbRtuAc9PemwgR61x8JA9Dqm/ZrD69nkeycH3aMRfBSl445hHOYAw+zWLG1+xTX4dvRF
-	YUeXkWyIamRBOYhcY8RF0qDB1e4X6OtZgSBhVzrg+1upRvQHhJP3ZTtuKXcJurL4RMgUe7PeaFGM6
-	RIMa9ljTDeDj2MkuCiMd5H6Q0vMKLkM8nVrcj2bRVtG0pjF2/AZCnfrLguvwDBueupugcfESoT8ub
-	P9Fm+CSTzCvozmkKJTjWHenBTYrjbHrUMSsoAao44dvsU0TlxSjEqIub2l3ro2bT4wevU7b/tbAPW
-	dEiFhO7SQX1ESYhtqg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxbtl-009M51-0q;
-	Mon, 07 Oct 2024 00:46:53 +0000
-From: linux@treblig.org
-To: ayush.sawal@chelsio.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] chelsio/chtls: Remove unused chtls_set_tcb_tflag
-Date: Mon,  7 Oct 2024 01:46:52 +0100
-Message-ID: <20241007004652.150065-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728262091; c=relaxed/simple;
+	bh=tKTe9QeUYOyMA4+JdAVr/rrMP9zIqXcn1Vj1lBOLGps=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MoDQa64BBGQIheCq2BJmstTNiNw/WzPJ1AV8aHlSZqQdm9+z1Kv4W2YgD8GFJwv4D92MpNcyUr2i3OOWO8dypu88C4UNcN13j2UbbxyCSueo7JWJFAL5Z2tI8XY2HPjXvtspmP7GfZ0RQdBhFhakqcihOkzY97dr1uT7j3Lvidg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GH5n06Ig; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1728262088; x=1728521288;
+	bh=tKTe9QeUYOyMA4+JdAVr/rrMP9zIqXcn1Vj1lBOLGps=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=GH5n06Ignz+kyr0QJroUGXUHeSxS2T+RZyttU0w/LLl/G8CA9mL4NwQ/Rf7JvEnJW
+	 ZDRBLu5QC+faCEjtjd5VBJpdUD1pheqcf2GkcDaz5DCvYZ9uBc85WlwVEfzGNGO3U4
+	 b4h2RqFPycXaSEFq6RyrIaaK1s+RB2Vc5sW1YWq6z4+hQ59F4pJB0nA5CvwLkIk1UC
+	 V7B5QD9aFEd4T+ujxWUtrxUol+PbsFAzqnZflvwlrV7Z6p0UR+Rl9wd09iwqS/M4Et
+	 ep9U6n9lAJ5XZyGF00gw4BMeKrTVcv4LHQY2wvUKdv7KW5p1UoxwCWi0fv5RT4JMUQ
+	 T1Ac8fOwg38UA==
+Date: Mon, 07 Oct 2024 00:48:04 +0000
+To: Peter Zijlstra <peterz@infradead.org>
+From: Michael Pratt <mcpratt@pm.me>
+Cc: Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [RESEND PATCH] sched/syscalls: Allow setting niceness using sched_param struct
+Message-ID: <AtJ8bVeW6K8aXAFMtYW-Ml-HEP0RuugWjDr9P9O9B3SPNVaL-gl0FjK7AI64AJ6j8l5PmzLKdGUxFOhpT65twtth2huCrLQKDBu0sWaufdk=@pm.me>
+In-Reply-To: <20240916111323.GX4723@noisy.programming.kicks-ass.net>
+References: <20240916050741.24206-1-mcpratt@pm.me> <20240916111323.GX4723@noisy.programming.kicks-ass.net>
+Feedback-ID: 27397442:user:proton
+X-Pm-Message-ID: 1dca41b235aa37dc0fe8d948ee924473e5f89996
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi everyone, again,
 
-chtls_set_tcb_tflag() has been unused since 2021's commit
-827d329105bf ("chtls: Remove invalid set_tcb call")
+I'm still waiting for a serious review of this very short patch after about=
+ a month.
+I'll be getting ready to send this a 3rd time, and to more people, if I don=
+'t hear back again.
 
-Remove it.
+I believe that I have correctly addressed Peter's concerns in my replies,
+and that my patch is still appropriate for inclusion into Linux as it is no=
+w.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h | 1 -
- .../net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c  | 9 ---------
- 2 files changed, 10 deletions(-)
+If I'm wrong please let me know why instead of just silence.
 
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-index 7ff82b6778ba..21e0dfeff158 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-@@ -573,7 +573,6 @@ int send_tx_flowc_wr(struct sock *sk, int compl,
- 		     u32 snd_nxt, u32 rcv_nxt);
- void chtls_tcp_push(struct sock *sk, int flags);
- int chtls_push_frames(struct chtls_sock *csk, int comp);
--int chtls_set_tcb_tflag(struct sock *sk, unsigned int bit_pos, int val);
- void chtls_set_tcb_field_rpl_skb(struct sock *sk, u16 word,
- 				 u64 mask, u64 val, u8 cookie,
- 				 int through_l2t);
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
-index 1e67140b0f80..fab6df21f01c 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
-@@ -106,15 +106,6 @@ void chtls_set_tcb_field_rpl_skb(struct sock *sk, u16 word,
- 	send_or_defer(sk, tcp_sk(sk), skb, through_l2t);
- }
- 
--/*
-- * Set one of the t_flags bits in the TCB.
-- */
--int chtls_set_tcb_tflag(struct sock *sk, unsigned int bit_pos, int val)
--{
--	return chtls_set_tcb_field(sk, 1, 1ULL << bit_pos,
--				   (u64)val << bit_pos);
--}
--
- static int chtls_set_tcb_keyid(struct sock *sk, int keyid)
- {
- 	return chtls_set_tcb_field(sk, 31, 0xFFFFFFFFULL, keyid);
--- 
-2.46.2
+--
+MCP
 
 
