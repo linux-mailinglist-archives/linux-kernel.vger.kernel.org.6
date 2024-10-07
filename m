@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-353828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DCC993352
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766E9993355
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F02283B9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2801F1F23C80
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD2C1DB373;
-	Mon,  7 Oct 2024 16:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC6F1DB371;
+	Mon,  7 Oct 2024 16:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QbPlBce7"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="dj+8jTQO"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF412E75;
-	Mon,  7 Oct 2024 16:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789F31714D7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318729; cv=none; b=PNkmH/qbnNpunWh4cIYw0z8mdgAT+ECXXgi/e5MROqAfLS0H8CLwl/8uNV08k9rfrodWQETIhNC72J2CQsNpUmQ0pL79w5TL9AZFGW8WJr9lZlFWW4RJmFN2uwDXvvvoxB4r/qXmuL3oWhLgUsWoFW6Eld8JEaRjrihamEoVjW8=
+	t=1728318842; cv=none; b=dYp+f5jWzGvrkvT3O4prFVj6kedv1fAfh6fVBXKVEMZlVLYvO8bh7dVhy20LghochE9ivu/o48ySe4mdZCIqdnADh1Rz0z4jRKaMPM1D90L1pxL0L6drIP5Q6fZqL/KDCBNh7FjXSoj+NZ5x9IO2OxnDnxAFQlKCC0KDW8JZOMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318729; c=relaxed/simple;
-	bh=VjtvSTNdYXrAjAQPaS2aqcxVJMUYHBsXG09AkWe3ZWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lt/acSliBMc0/hjlJATp3s6SdP3QxdUXhfBMTiOa9Ozu2sH8MoowwWXzaKxpfEPeK4+GKQdAC7Vsp5idoyUoRggUggCE2yidbk4H9QzNz54PJcgY1qZ6fDjiRVq/KW3rkpEt2kXVCUrmvQA+LjyX0YRK368nufTxmc7SMAAadpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=QbPlBce7; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=rnPvO7Dxi7cMsTUnl6ZIPoL6TSUaVMQMLcKbkYrEPaE=; b=QbPlBce7W+iFJ+T2v9ODULwfUS
-	OcAHQNBsSlDrfhX06m1/OzFGwjwbFnpXJtuy0cmHapSdWfrJ8MHzQ15cwr2zDCb7f0mWwicSgwplJ
-	y5OdYfzdnP0HpLv4f7dKQWbrzfbJBmxGrsD4WT7Zk6MB9kTWKFeCYj0yIIY8+evmP67Hvi8lXiZT+
-	4ad+wkqg/8ECVmmutxOpTTxg+RCTOJ/Eet6WijpYlt18oMmEBJRHTyD6eEuVTsvAzSv4BGDlMpveb
-	S3MW8t/pThWqd6FHz49XLBZoBBQGiNTKiqScetzuOtWEO1XJmEUD/x8bGtv8+Z0bx63z9N0/c1seF
-	f9HosW1A==;
-Date: Mon, 7 Oct 2024 18:31:53 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, Robin Murphy
- <robin.murphy@arm.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, Christoph Hellwig <hch@lst.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Lu Baolu
- <baolu.lu@linux.intel.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Joerg
- Roedel <jroedel@suse.de>, tony Lindgren <tony@atomide.com>, Linux-OMAP
- <linux-omap@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
-Subject: Re: BUG: "iommu: Retire bus ops" breaks omap-iommu and omap3isp
-Message-ID: <20241007183153.6daa419d@akair>
-In-Reply-To: <20241007144824.GS1365916@nvidia.com>
-References: <A7C284A9-33A5-4E21-9B57-9C4C213CC13F@goldelico.com>
-	<20241007121543.GM1365916@nvidia.com>
-	<20241007160117.55d6af74@akair>
-	<20241007144824.GS1365916@nvidia.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728318842; c=relaxed/simple;
+	bh=DdutLgm7LnJZUydsu87UTwymGUlWI6mMAxVG/ZJc31s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gviPbsM8WF55vo0Fam8So3wpKo1fIIfxpzv2+4AxHAltHA3v0cGlKv4z3IEMX9vNqOxWax3b+58odpRxXnYTMkMlDvP+M4QUL6wIf01W+Q1Q9ZUkZP4Cy3Qla2RVjucuE7RdvW5nyJ5fo7ZVwDYnY2LiPhkv1qLDtC+RZQTh3i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=dj+8jTQO; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e0c3e85c5so570411b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1728318838; x=1728923638; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZWM6QTmBe9B09ML2vqXCSoB0/AzhE/+M2NioGDzKy8=;
+        b=dj+8jTQOYb5U/boZEpygD2rjOq762FeMoC5lNAYzq2H1PjmRkGDAtNJlEYsguS2uuO
+         +kqUahIk57P1e2C7T8zJis73pxFkA5CnbtB12EV4/QCa+AgLixnORGQrsIEDkZRDtnTo
+         r+PxO+HHm1mvvhgAOiteTosQ6aHXKK6EbrzJg+t0ASK0M1Yjy8WG48qyOWlfWIudvd2D
+         rypHrkgZffx3ZGCZyOjjFhBdBFwA4Jqvz/IZF0uvMJzNQmbeYHm5He4xTd/aVsn54Nrk
+         F4qNZuXWYGWdoS/d7bBTxLIv/IZbVStYGqo+4anCI3zMLpgjri1K/a7MnmWPdJM/pW4f
+         +EMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728318838; x=1728923638;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZWM6QTmBe9B09ML2vqXCSoB0/AzhE/+M2NioGDzKy8=;
+        b=tL1T++dQoyWu3mWoQg6cosUtfTyncpp8m+PLt3aUiR71OIvlwBTe5fIak0AG/Ou1R8
+         Tktjc3pVyZmiWpNNPmWJY9t+ph9PZxQ2v4HjgsdWFYd/0ckDyJbkJer/uTaumdKSUC7m
+         kfz69ZQI3GiaRr06GXO92to8O/xvE3WdbvEgtC5RMz0qN8dSc5+l6n69djIDvN8bWSeQ
+         CR5/Pughi/eVXYQx+D9OeMmbDfxQgicTem4YYPzGpDVJUlDIeUpzzjBtKv40bJFtm3xI
+         FaYKVITq+e0sycZPtv+uxPBsEsSR2RXusBtiBjS9pbhNp7cqgUz0ojYiYW3FgbJxlA8S
+         +dvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUckMIZSGLP5YCJjxzP44BO+QK8dNaZZtYyu01OLySN/Sn4kfepJsP8SwJhkGMvA+mKirrV5CNBnGH4MWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFEMap8v/m3QU0kSB4hqgU2HHhu60G17gXxTJ8F/fooyZBjHS+
+	wBjtR4JpIWcCMOrCo/zHOytwIFYjLp1lNgdSC4qd+DI6zhSmEOWMqmMjw3obxOY=
+X-Google-Smtp-Source: AGHT+IEOn2aNJRc6PNcmA1E8hHomUDAvzvN8DoqLjg4IGSM4t5x9BXT+gVd7xFtvp6ibMbgO/sW9JA==
+X-Received: by 2002:a05:6a00:1ad0:b0:717:8044:3169 with SMTP id d2e1a72fcca58-71de23b5f19mr17937448b3a.9.1728318837846;
+        Mon, 07 Oct 2024 09:33:57 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d4a1f4sm4590147b3a.113.2024.10.07.09.33.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 09:33:57 -0700 (PDT)
+Date: Mon, 7 Oct 2024 09:33:55 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Drew Fustini <drew@pdp7.com>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pinctrl: th1520: Convert to thp->mutex to guarded
+ mutex
+Message-ID: <ZwQNc9/sO9lhUvmw@x1>
+References: <20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00@tenstorrent.com>
+ <6b3d9f7a-c87b-4ef5-8571-77276f3896a1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b3d9f7a-c87b-4ef5-8571-77276f3896a1@stanley.mountain>
 
-Am Mon, 7 Oct 2024 11:48:24 -0300
-schrieb Jason Gunthorpe <jgg@nvidia.com>:
-
-> On Mon, Oct 07, 2024 at 04:01:17PM +0200, Andreas Kemnade wrote:
-> > > @@ -1233,6 +1233,12 @@ static int omap_iommu_probe(struct
-> > > platform_device *pdev) err = iommu_device_register(&obj->iommu,
-> > > &omap_iommu_ops, &pdev->dev); if (err)
-> > >                         goto out_sysfs;
-> > > +               /*
-> > > +                * omap has a DT reprensetation but can't use the
-> > > common DT
-> > > +                * code. Setting fwnode to NULL causes probe to be
-> > > called for
-> > > +                * every device.
-> > > +                */
-> > > +               obj->iommu.fwnode = NULL;
-> > >                 obj->has_iommu_driver = true;
-> > >         }
-> > >   
-> > hmm, that looks nice for a regression fix.
-> > 
-> > Does it make sense to adopt dt so that the common code can be used
-> > to ease future maintenance?  
+On Mon, Oct 07, 2024 at 06:41:36PM +0300, Dan Carpenter wrote:
+> Hi Drew,
 > 
-> It would be nice, but I recall omap doesn't use the standard dt
-> layout?
+> kernel test robot noticed the following build warnings:
 > 
-that is what is said in the comment. But what is missing? Is it one or
-two properties at one place, or is it turing everything upside-down?
+> url:    https://github.com/intel-lab-lkp/linux/commits/Drew-Fustini/pinctrl-th1520-Convert-to-thp-mutex-to-guarded-mutex/20241006-033647
+> base:   2694868880705e8f6bb61b24b1b25adc42a4a217
+> patch link:    https://lore.kernel.org/r/20241005-th1520-pinctrl-fixes-v1-1-5c65dffa0d00%40tenstorrent.com
+> patch subject: [PATCH 1/2] pinctrl: th1520: Convert to thp->mutex to guarded mutex
+> config: parisc-randconfig-r072-20241007 (https://download.01.org/0day-ci/archive/20241007/202410072108.uG2sVTN4-lkp@intel.com/config)
+> compiler: hppa-linux-gcc (GCC) 14.1.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202410072108.uG2sVTN4-lkp@intel.com/
+> 
+> New smatch warnings:
+> drivers/pinctrl/pinctrl-th1520.c:538 th1520_pinctrl_dt_node_to_map() error: uninitialized symbol 'child'.
 
-Regards,
-Andreas
+It seems this is because the scoped iterator declares *child in the
+macro and thus no separate declaration is needed:
+
+#define for_each_available_child_of_node_scoped(parent, child) \
+	for (struct device_node *child __free(device_node) =		\
+	     of_get_next_available_child(parent, NULL);			\
+	     child != NULL;						\
+	     child = of_get_next_available_child(parent, child))
+
+I'll fix in future revision.
+
+> 
+> Old smatch warnings:
+> drivers/pinctrl/pinctrl-th1520.c:502 th1520_pinctrl_dt_node_to_map() warn: missing error code 'ret'
+
+This has been fixed in the v2 series [1]
+
+Thanks,
+Drew
+
+[1] https://lore.kernel.org/linux-riscv/20241006-th1520-pinctrl-fixes-v2-0-b1822ae3a6d7@tenstorrent.com/
 
