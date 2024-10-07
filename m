@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-353152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0F399296F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:44:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE3E992971
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1EE284987
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5ED1C22929
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC87B1CC14F;
-	Mon,  7 Oct 2024 10:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6E01CACDC;
+	Mon,  7 Oct 2024 10:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="11WREbQr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uuaUDwkD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="VLAZG9TR"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51314AD17
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE6F1C8FD4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297833; cv=none; b=jNMQix2/EamzSE99yqLXCEFz5V5WG/siNn62nZGNjXPah3F91yl2v6VJ4OYnKQtKhGFygOXpXiYWlzs3np+SJboxpw5yaE27cNs3U2t3SFA2tvqlrJoSfqes1WbDBCvGO81ykWElv9ixlXGBBVMRgKvIkQTm7cCHR7O9y7Tqg0I=
+	t=1728297868; cv=none; b=OkP0+oarxrkKKdqgQTgO8woRC7cPYh8ZtykLw5K9vEQNn0+QlB1vPpF/SD3MYWMfBAKx3lasNLp0TX6fMGoIAnUii65pV5tQQNiBp4PPoUjhVDO44gU6CDpyAxK3MjfJnv0A+EY3FRXl1+RIuECecUvVygdDuZZU9opSbQmAedI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297833; c=relaxed/simple;
-	bh=QXW1iU6adpifctfmUvh0hIXb/JWupOeu1MdjsIy/J/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llG2lgBbDlcuU4EEUzGwYDhreZCEiDF2u11sCC/ELpwuL3aXb7BxAuAUpLSb/HxYUFpnuFA9ZRJHex2b1twOsJQV0LpPaLk+0xCB14MNN6JWy+NyY8bldOLLQfZbURt/KduYD2TUXhYgl6qBZ1lJOsw6y43HoIxMRephnZnmR3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=11WREbQr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uuaUDwkD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 7 Oct 2024 12:43:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728297829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X+DqdrS6iCcxvyTC6yHwsLzPqdZ3ScxxXhmioABziL4=;
-	b=11WREbQryZUB+6p/3Jnhtn2e+EGl3o06ZWfAXA1h0H1up/FJTI7o3WCEpby82DYhOEamIS
-	SNo2GK1/pjwtMbvsFMlr0TeRU0EO2A+Fob5UolLo5fyZftXjxYAa7SO9WFuwezd7crzVt4
-	V6loaNbJSNtaumAwHLxJ4CyXzfNeOOATPRyRwxdc3lBCyKZUeuMlrLoe4pat2v5sQn1Lf6
-	qbdUi/sofYbeUxf/c5vZJ7x9ujrfqlksMvcuC4B3WSIwGV6H8RqiL+2iP5jD/cPyfo2H73
-	7vHup3RTQ8ofFdfjsOAd2iXE8Qox2izdP8O3JcFXW8nnN1cVeg8hTEwitHVe4Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728297829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X+DqdrS6iCcxvyTC6yHwsLzPqdZ3ScxxXhmioABziL4=;
-	b=uuaUDwkDAkRjg0n1+IyVHh3x7rt9v9AOYpm9kk/cF5bQzmwmEIfZ4jyBkZiosa1SZQpS9i
-	zt/Bh/pYeLtUM0BQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Hou Tao <houtao1@huawei.com>, Jan Kara <jack@suse.cz>,
-	Jianhui Zhou <912460177@qq.com>, Yury Norov <yury.norov@gmail.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] preempt_rt: increase PERCPU_DYNAMIC_SIZE_SHIFT for slab
- randomization
-Message-ID: <20241007104348.ImJPXDl9@linutronix.de>
-References: <20241004095702.637528-1-arnd@kernel.org>
+	s=arc-20240116; t=1728297868; c=relaxed/simple;
+	bh=GoULCJHgNMbB4CM738JmnUtJvcX4vG3ulM0Gd5w1b/8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mHIZGGzXJBkeG0WXA1n/LDkreL+7iNUUoNaZUbAdmsgrSH8JeCtNjQpc49bmpD5/rZkSsb2mJo0/gi++DgRmoRSYHpSvywH+DdT8fBTIbicQXQWm2dUKN4u5/dzHBy8W/SBWdkstoVUusHzNUeZoc8DpwNj0dz0bfNb9+FMDJWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=VLAZG9TR; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 661B2240101
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:44:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+	t=1728297859; bh=GoULCJHgNMbB4CM738JmnUtJvcX4vG3ulM0Gd5w1b/8=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:From;
+	b=VLAZG9TR+EDAMfbLMuRjoh+ax5fGvDouehLuG1nV1bbovmeqFlZ2hz5VcyPJ8eru4
+	 u/LUYKtAN0q/QJS2Q2GdXiIM2zyGaWwZSoaYwBCj+gfTj5d60D/mAkAqfeELI4jGmK
+	 tZuUXPiehRHsOTUVs9tfRO06oZFltUAT5DxaGpA6B2bAooKa//SwQpGmvABfGrTEMB
+	 cxcOhoQtVk+Gfqpre4olfhTQsjCf819ctBOKbhoW3eEE0IpU+S4wK8U6deP2ipUG3f
+	 lfRJvTgJLsGWaAGBYsghYR0wlNG73DBkP498xJQhTR8kskNbzFPLEaICdd9KoCYLbZ
+	 gl3ydyHp98miQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4XMbPC56J4z6tws;
+	Mon,  7 Oct 2024 12:44:15 +0200 (CEST)
+Message-ID: <f6109c4a7c2648157163bd8d92001dd4e88f6aab.camel@posteo.de>
+Subject: Re: [PATCH 0/3] media: imx8mq-mipi-csi2: Simplify power management
+ handling
+From: Martin Kepplinger <martink@posteo.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "G.N. Zhou (OSS)"
+	 <guoniu.zhou@oss.nxp.com>
+Cc: "rmfrfs@gmail.com" <rmfrfs@gmail.com>, "kernel@puri.sm"
+ <kernel@puri.sm>,  "mchehab@kernel.org" <mchehab@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,  "s.hauer@pengutronix.de"
+ <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+ "festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>,  "linux-media@vger.kernel.org"
+ <linux-media@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Date: Mon, 07 Oct 2024 10:44:15 +0000
+In-Reply-To: <20240930072151.GC31662@pendragon.ideasonboard.com>
+References: <20240929134354.20735-1-laurent.pinchart@ideasonboard.com>
+	 <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+	 <20240930072151.GC31662@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241004095702.637528-1-arnd@kernel.org>
 
-On 2024-10-04 09:56:56 [+0000], Arnd Bergmann wrote:
-> The problem is the additional size overhead from local_lock in
-> struct kmem_cache_cpu.  Avoid this by preallocating a larger area.
+Am Montag, dem 30.09.2024 um 10:21 +0300 schrieb Laurent Pinchart:
+> On Mon, Sep 30, 2024 at 07:08:09AM +0000, G.N. Zhou (OSS) wrote:
+> > On Sunday, September 29, 2024 9:44 PM, Laurent Pinchart wrote:
+> > >=20
+> > > Hello,
+> > >=20
+> > > This small patch series is a reaction to "[PATCH] media: nxp:
+> > > imx8mq-mipi-csi2: Fix CSI clocks always enabled issue" ([1]).
+> > > Instead of making
+> > > the PM handling more complex, I think it can be greatly
+> > > simplified.
+> > >=20
+> > > I have only compile-tested the patches. Guoniu, could you give
+> > > this a try ?
+> >=20
+> > After applying the patches and test both on iMX8ULP.
+> >=20
+> > For iMX8ULP, it will cause kernel dump when access CSI registers
+> > and
+> > system hang during do suspend/resume while streaming
+> > Need to add system suspend/resume handlers and call
+> > pm_runtime_force_suspend/resume in the handlers.
+> >=20
+> > I tried to debug this issue and found pm runtime callback won't be
+> > called when system resume. The state of power domain won't enabled.
+>=20
+> Thank you for testing.
+>=20
+> I wonder if this could be caused by the CSI bridge being resumed from
+> system sleep before the CSI-2 receiver. Could you check if that's the
+> case ? If so, does the following change fix the issue ?
+>=20
+> diff --git a/drivers/media/platform/nxp/imx7-media-csi.c
+> b/drivers/media/platform/nxp/imx7-media-csi.c
+> index 9566ff738818..c66b0621e395 100644
+> --- a/drivers/media/platform/nxp/imx7-media-csi.c
+> +++ b/drivers/media/platform/nxp/imx7-media-csi.c
+> @@ -2057,9 +2057,22 @@ static int imx7_csi_notify_bound(struct
+> v4l2_async_notifier *notifier,
+> =C2=A0{
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct imx7_csi *csi =3D =
+imx7_csi_notifier_to_dev(notifier);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct media_pad *sink =
+=3D &csi-
+> >sd.entity.pads[IMX7_CSI_PAD_SINK];
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device_link *link;
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0csi->src_sd =3D sd;
+> =C2=A0
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Enforce suspend/resume orde=
+ring between the source
+> (supplier) and
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the CSI (consumer). The sou=
+rce will be suspended before
+> and resume
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * after the CSI.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0link =3D device_link_add(csi->=
+dev, sd->dev, DL_FLAG_STATELESS);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!link) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0dev_err(csi->dev,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"Failed t=
+o create device link to source
+> %s\n", sd->name);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0return -EINVAL;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return v4l2_create_fwnode=
+_links_to_pad(sd, sink,
+> MEDIA_LNK_FL_ENABLED |
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> MEDIA_LNK_FL_IMMUTABLE);
+> =C2=A0}
 
-The worst case would be enabling additionally MEMCG so NR_KMALLOC_TYPES
-increases by one. And then we have:
-PERCPU_DYNAMIC_EARLY_SIZE < NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH * sizeof(struct kmem_cache_cpu));
 
-There is more to it than just RANDOM_KMALLOC_CACHES and PREEMPT_RT.
-There is additionally CONFIG_LOCKDEP which increases the size of
-local_lock_t further. Plus CONFIG_LOCK_STAT. The last one a kind of bad
-in terms of required pad area. Then we have CONFIG_PAGE_SIZE_64KB set
-which is the culprit. But 16K_PAGES also fail in this full blown case.
+hi Laurent,
 
-PERCPU_DYNAMIC_EARLY_SIZE < NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH * sizeof(struct kmem_cache_cpu));
-4KiB   20 << 12           <     19           *   (12 + 1)         * 288
-         80KiB            <           69.46875
-16KiB  20 << 12           <     19           *   (14 + 1)         * 288
-         80KiB            <           80.15625
-64KiB  20 << 12           <     19           *   (16 + 1)         * 288
-         80KiB            <           90.84375
-128KiB 20 << 12           <     19           *   (17 + 1)         * 288
-         80KiB            <           96.1875
+I now tested your 3 patches, initially including this extra change, on
+the imx8mq Librem 5 and indeed streaming continues after system resume
+now. It works without this extra change too, even though it seems to
+make sense.
 
-Just disabling CONFIG_LOCK_STAT the 16KiB PAGE_SIZE case works again
-(75.703125), the 64KiB still fails (85.796875).
+so for the 3-patch series at least:
 
-> There is a good chance that there is a better way to address this, this
-> version was the first I came up with and I verified that it fixes all of
-> the broken configs.
+Tested-by: Martin Kepplinger-Novakovi=C4=87 <martink@posteo.de>
 
-How bad is it, to have PERCPU_DYNAMIC_SIZE_SHIFT unconditionally set to
-13? If it is bad could we restrict it with LOCKDEP and PAGE_SIZE > 4KiB?
+thanks. I seem to be able to drop a few patches now, but if anyone else
+can test it too, please wait for that as well,
 
-So maybe something like this:
-
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index b6321fc491598..52b5ea663b9f0 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -41,7 +41,11 @@
- 					 PCPU_MIN_ALLOC_SHIFT)
- 
- #ifdef CONFIG_RANDOM_KMALLOC_CACHES
--#define PERCPU_DYNAMIC_SIZE_SHIFT      12
-+# if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PAGE_SIZE_4KB)
-+# define PERCPU_DYNAMIC_SIZE_SHIFT      13
-+# else
-+# define PERCPU_DYNAMIC_SIZE_SHIFT      12
-+#endif /* LOCKDEP and PAGE_SIZE > 4KiB */
- #else
- #define PERCPU_DYNAMIC_SIZE_SHIFT      10
- #endif
-
-Sebastian
+                              martin
 
