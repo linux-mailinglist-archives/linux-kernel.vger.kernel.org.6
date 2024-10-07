@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-353530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831DC992F13
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:26:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAF9992F16
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE791F242CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B88DFB243E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5B21D61B1;
-	Mon,  7 Oct 2024 14:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89C61D79BC;
+	Mon,  7 Oct 2024 14:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3K84RtG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGDOepA6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDF1D5CCF;
-	Mon,  7 Oct 2024 14:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F9D1D6DB9;
+	Mon,  7 Oct 2024 14:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311172; cv=none; b=RpbPm1H8Maon11Jz5eUJu+GfgQsUS+xsz3KTna4CXtJ1PnUGZVmPlntt/rAVY+gHMwcbDjKK5bQZgwX3mlIFH6JrzgeeY1K47jes6IpmlHV9TnwQLYhFoH57G1uaM/k9hnPubU1xx4QpgeH+XuMas+3zMXlVXwjeO8LhZtwpMO4=
+	t=1728311174; cv=none; b=nMrghC8pmNTDR74b/BKcEOF8O6vXVqREf1fwzapTm5Q+wU89bbktVzG4jz7NU9lUezV9YRVK2clNGIoA4TS9EU6Uq3mjlUx6RqtcCNdH53cVe8jLkWooR4ZqSuuUIU09ihKzXIoi/pUw8H76OQa1oGcAV9qlOIvS6USnMXGXsCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311172; c=relaxed/simple;
-	bh=5yoeWZDaiT1rHV+GcZ78vH0hj4w3W6TEeDPchcWCYZE=;
+	s=arc-20240116; t=1728311174; c=relaxed/simple;
+	bh=u/loiK1Q7VjFVy+f5V2Y/h6o9JbiLQB6m8f71HOvrCY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fUa0AcT0wqd+A3izRhY9fh5k+fa2LU3qMjzurwxY/WTgjL7uZ18pO2Rj3KcYRKZZ7mg58npWajuHIj/kSGytgHMD1OKHTYUbSsA2ZovCjMLLVU4luDpSHKfveGDwfNvq+1xZ0IZnGAEoPqyBsiRSyf9sRywtnGaMobbrtjM8jk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3K84RtG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6403BC4CED0;
-	Mon,  7 Oct 2024 14:26:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fP+YT7W40bOBiKqOS+k9Lg7phd/0MOMY0J85a/thh7i69xLivA0m9JnN/nvcCBKVhaP2xI8wReYMjP2ZkW1LDrYGClfqXd3rnHxLXlvsQTl+sT6S1Y2RwYGzw7XgaiHyYIkoJ6BT+uNY+083o/sIu9yDGh/ZB2u1NOU+lVGgaX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGDOepA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E1AC4CED2;
+	Mon,  7 Oct 2024 14:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728311172;
-	bh=5yoeWZDaiT1rHV+GcZ78vH0hj4w3W6TEeDPchcWCYZE=;
+	s=k20201202; t=1728311173;
+	bh=u/loiK1Q7VjFVy+f5V2Y/h6o9JbiLQB6m8f71HOvrCY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S3K84RtGIb9WmjfS6VUa5hFZzsWPJEandybeBQui41o4z6C+5qGurVt1snz+/zu4t
-	 8fikPAF+etx67Zthq1x0mMLTSDYwJxNtmMKzoSk1j3gQQNIEosn7nZmyQMS8r53ERl
-	 ou0p8JDzyFEmTXM8dV3bmWwwpKpi0jH4wo043XCHf9mTUJxbXi+oJOiASxcTa6hr7s
-	 LolEEBvguGEKaC9W46ne6pPMkc/j3zTo8AQeOU9rwdMQ7IwOywvDjiEDJvvNLdxcwp
-	 vUU4ME5geJUDzt78gOJV+1jEPue4LXgpD9pUV82ZSkeN/v2n8/7uxf1bfvWTwhPDKi
-	 nLSzJHRoYQxPQ==
+	b=iGDOepA6cNHi9+54pr4vXCbAfNbJZtHXJCTrcGAWazEiJ25Hq/9fEeMMFIdUCkgj3
+	 RYF0l5HF23D1/Oa8B4VERAxIDXHjDSfUGt+EYW6CDVng5AlFu0ZTGhYDy16qZUI2Ae
+	 JzccB9iSCPaKZIskX9HrAc+tvUec4U5nPYZ89dtT8nfewESZNyMekfzkBKyI7hhUxR
+	 ppIIsJOghYiXK6+NsDZLDVKdauIg3yTaIPrcu3Dzi3k89l/wOOw0JXytB1bMqanHzE
+	 QzCBNxw8DKtIW95akFATEKrbhEWqOV6zbp9dSn7HA1pvcIiR/IgH9UvK9jirAdATtQ
+	 1p9j1P5dlcO0A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-msm@vger.kernel.org,
+To: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Sagar Dharia <sdharia@codeaurora.org>,
+	Evan Green <evgreen@chromium.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	Girish Mahadevan <girishm@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Rudraksha Gupta <guptarud@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [RESEND PATCH v2] firmware: qcom: scm: fix a NULL-pointer dereference
-Date: Mon,  7 Oct 2024 09:25:47 -0500
-Message-ID: <172831116168.468342.619088735537365838.b4-ty@kernel.org>
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: geni-se: fix array underflow in geni_se_clk_tbl_get()
+Date: Mon,  7 Oct 2024 09:25:48 -0500
+Message-ID: <172831116177.468342.8898139480339823363.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240930083328.17904-1-brgl@bgdev.pl>
-References: <20240930083328.17904-1-brgl@bgdev.pl>
+In-Reply-To: <8cd12678-f44a-4b16-a579-c8f11175ee8c@stanley.mountain>
+References: <8cd12678-f44a-4b16-a579-c8f11175ee8c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,17 +67,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 30 Sep 2024 10:33:28 +0200, Bartosz Golaszewski wrote:
-> Some SCM calls can be invoked with __scm being NULL (the driver may not
-> have been and will not be probed as there's no SCM entry in device-tree).
-> Make sure we don't dereference a NULL pointer.
+On Mon, 30 Sep 2024 10:51:31 +0300, Dan Carpenter wrote:
+> This loop is supposed to break if the frequency returned from
+> clk_round_rate() is the same as on the previous iteration.  However,
+> that check doesn't make sense on the first iteration through the loop.
+> It leads to reading before the start of these->clk_perf_tbl[] array.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] firmware: qcom: scm: fix a NULL-pointer dereference
-      commit: ca61d6836e6f4442a77762e1074d2706a2a6e578
+[1/1] soc: qcom: geni-se: fix array underflow in geni_se_clk_tbl_get()
+      commit: 78261cb08f06c93d362cab5c5034bf5899bc7552
 
 Best regards,
 -- 
