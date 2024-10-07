@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-353243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD13992B2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B47992B30
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848E4283FED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59F11C20296
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA8E1BA285;
-	Mon,  7 Oct 2024 12:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t21ZNTTO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA11C32E4;
+	Mon,  7 Oct 2024 12:12:17 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06A71D1F7B;
-	Mon,  7 Oct 2024 12:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F281D26E6;
+	Mon,  7 Oct 2024 12:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303121; cv=none; b=MF+oE3zxE7qq1q/FBeJkSyNH13pxcu+6Jq195YY5yVR2rFHUMl1EQsg8BvooJJ1Ir3dap2HOhVUX+T/q/JyAkKJWxi3+HyJXXzk6htnyCS9KLxoifKcJQb/RA/4Nur9dNTNc3wt6zGOov/MJKKzuSLyNL675A4vDyYd+8COtMq8=
+	t=1728303136; cv=none; b=gzwe70WJYsHt7bCh0ZVrtUmhrM4xOHIouoXufeMYuMgfxoMiuZIQ4PEnnAqkKrQq/5eaalk3qnQm0oN88VGnpbfS0Kga4iyjZ3dP+vxzFAUWgkaVBLSQCk0/gyYXzF6iYjieZaV5AHLbMQfYs4P0kfqfvfgJf9ebErVCQKi63sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303121; c=relaxed/simple;
-	bh=GBGf7gNPVrZgFa9G7rsgaUZW0YHGQ90+7nfsWjOtqg0=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OX22Cw4xMxvn01gQ/DrcwmgevttF6aklee6EicaEH7P2APUX+luIvIRDtkukoLfDSH+x3A138/nUjuUAdUV+fs8eOWeb4Cyp6u5HStnjmpO5jw3/64iPuV+gk7eUMup64EPuyDqW4GR9U+9OWps0ALVCrkAaZNOH/XFQh3MtynA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t21ZNTTO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50553C4CEC6;
-	Mon,  7 Oct 2024 12:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728303120;
-	bh=GBGf7gNPVrZgFa9G7rsgaUZW0YHGQ90+7nfsWjOtqg0=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=t21ZNTTOBeOIaahalhQQpvgROj4yQF9usVoteoi6rgfX7eINgOIDe/LfRuBP4kiu0
-	 N4T+/2oVY7rU1HLbUfF95CQ2pFJP40mI2u+Nrt0Bn3pdpIYlx4FGAsqG7vSpUl/8yg
-	 ASBwh6GCMRlGHrto7i0YVoxJbnvnbxYacp+zJYWN1aAysTFD3vKa9TaTeZkO45Sor/
-	 KXY+5jmwZbCeB9U7IOB4a0fDWNrrNNP4//iMf4ipUpLugWrU/gbu9rlsGdb8hm1Sl0
-	 gYdu0wwFef/w7hF3twMSST+iw+mslMmxgqGlQg3cyJ9K6k2kFZ2WoppchutiP+OQOO
-	 gJzQSdRskYtOw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 2/2] selftests/bpf: Augment send_signal test
- with remote signaling
-In-Reply-To: <20241007103426.128923-3-puranjay@kernel.org>
-References: <20241007103426.128923-1-puranjay@kernel.org>
- <20241007103426.128923-3-puranjay@kernel.org>
-Date: Mon, 07 Oct 2024 12:11:46 +0000
-Message-ID: <mb61po73wcdtp.fsf@kernel.org>
+	s=arc-20240116; t=1728303136; c=relaxed/simple;
+	bh=aEG/Sdwoei8OrQi/XkH1LmQRsYTS3fu16rCGSrqM2G8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZw2azl+kHOBXwet58mKnM5ShpUVf/dIYbBXRSrarXNedBRntdpsHez0tty64D9C0anB5co4TigmY1+d86QgbFu7OPQi6nyEdKPLfMJNaLTzNBvPnmFz57rAWMjayAIeC2FPP5u6hrZKMnVFI+kpiJSzVffkvU/Mga2BO1+bC6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6db4b602e38so34786617b3.1;
+        Mon, 07 Oct 2024 05:12:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728303133; x=1728907933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E5umuIsyd8oI+QtftRPlBsodl+TM0JFJ877rWIMcDrM=;
+        b=NV8mAzK4wTcrpvANMeETMUugO04XiUaDzAnkRMeWdNAOWrUrFk4lSAGoa8Yu8b7LCh
+         r1Es5Bunv8BCv93wQejHxmcnhs1lpFlK1ulGLsZ2LApSjF9xxf4InCpbiOkyE8RchljI
+         LhylXn2XjWk9QdkPyj/Zj0jlczocMkrpOkDgeH+j7ApDTyxQoJvgSXJ3XjPJQl0dcK8N
+         epG4bpG2wHwDtrkpSv2CkdKL52XHAJ/P7E5q8d4DhFRmgHA0Fm7eN3szJNcMiSYvfM7T
+         2Y/Dqs6KNfi5/F9Roqjzqkd6WBeL07N8yNIXwE7dJ3d3HM/7N2X0JYcu44sUMqWfCha2
+         2vVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUM5Xu8Oo+qIbpnxPlvSrekh0U/zTxlIZY0nYzE5gQEhoa5X61XMIqUo8RUTSJ65kAmrY9TVD4E7wakZKBkSTdB4QI=@vger.kernel.org, AJvYcCVvtceuitui+dYBBttkeXWgjS9DUU9/QuVtvFfXF6xFSsAiM1DI/7EjJer8c0QX+Rh6cV6dOaPu6aFeuWFX@vger.kernel.org, AJvYcCWMUSVvKXwE7xDa1a1aQtCArD5aZ0nPfhZIhBs20z5CIQFBJ2c0UA3CwbodOXs4kn3FGSEqEICfrLRA@vger.kernel.org
+X-Gm-Message-State: AOJu0YysZ33iNtM9aV/qg1qPEZwm+2tGuYBJFGwCLdMlbAc7sGYmTuHu
+	JtApqhiGuDAKxR34iDWkUHkzPnUNLGQs9pktKFYiisAYFKRlV8QpZLoR/GUf
+X-Google-Smtp-Source: AGHT+IE43njdiP6WeKAFp1IIfWf4eMF9vD8utkOf57ZPuBeBsKZo9VAlZXZywSqwiTDRVn8PPWsQGw==
+X-Received: by 2002:a05:690c:d90:b0:6e2:d2a:e998 with SMTP id 00721157ae682-6e2c6fc76acmr73497207b3.2.1728303132710;
+        Mon, 07 Oct 2024 05:12:12 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93e9837sm10027957b3.131.2024.10.07.05.12.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 05:12:11 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6db4b602e38so34786107b3.1;
+        Mon, 07 Oct 2024 05:12:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWS1cSPHvIrx+tjHxfGRaoXMEqU4jz+rBAWDfcvW++C22hvtz0tcH1BVHdsWMTp7BXM1LxWS53BKQmJ+5+46CAUK8A=@vger.kernel.org, AJvYcCWbJKokUCeWVPIqgPvY/vRBPTrLeTdu9IQq9oOPyut2shT8GDHZwo2/VuWvueLaDmKebgC28txtY5Tq@vger.kernel.org, AJvYcCXc+S6TW7YMjyIBGAuima+JC3g73nNVTO+Cf/JzwOi0NhR2FtkPYV5B6qbAhct2R+kb+/b/aWQClB0UrSzR@vger.kernel.org
+X-Received: by 2002:a05:690c:61c4:b0:6e2:5a8:3447 with SMTP id
+ 00721157ae682-6e2c7036dd0mr90015837b3.26.1728303130412; Mon, 07 Oct 2024
+ 05:12:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain
+References: <20240927201313.624762-1-sean.anderson@linux.dev> <20240927201313.624762-3-sean.anderson@linux.dev>
+In-Reply-To: <20240927201313.624762-3-sean.anderson@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Oct 2024 14:11:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXARKT6uaEzPd5Mo=6jZfJ0Dn1ibdbCUvYOenNYqatDQg@mail.gmail.com>
+Message-ID: <CAMuHMdXARKT6uaEzPd5Mo=6jZfJ0Dn1ibdbCUvYOenNYqatDQg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: hihope: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Adam Ford <aford173@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Puranjay Mohan <puranjay@kernel.org> writes:
-
-> Add testcases to test bpf_send_signal_task(). In these new test cases,
-> the main process triggers the BPF program and the forked process
-> receives the signals. The target process's signal handler receives a
-> cookie from the bpf program.
+On Fri, Sep 27, 2024 at 10:13=E2=80=AFPM Sean Anderson <sean.anderson@linux=
+.dev> wrote:
+> Add SD/OE pin properties to the devicetree so that Linux can configure
+> the pin without relying on the OTP. This is based on Geert's analysis of
+> the schematic [1].
 >
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> ---
->  .../selftests/bpf/prog_tests/send_signal.c    | 133 +++++++++++++-----
->  .../bpf/progs/test_send_signal_kern.c         |  35 ++++-
->  2 files changed, 130 insertions(+), 38 deletions(-)
+> [1] https://lore.kernel.org/linux-arm-kernel/CAMuHMdUmf=3DBYrVWGDp4kjLGK=
+=3D66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com/
 >
-> diff --git a/tools/testing/selftests/bpf/prog_tests/send_signal.c b/tools=
-/testing/selftests/bpf/prog_tests/send_signal.c
-> index 6cc69900b3106..beb771347a503 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/send_signal.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/send_signal.c
-> @@ -8,17 +8,25 @@ static int sigusr1_received;
->=20=20
->  static void sigusr1_handler(int signum)
->  {
-> -	sigusr1_received =3D 1;
-> +	sigusr1_received =3D 8;
-> +}
-> +
-> +static void sigusr1_siginfo_handler(int s, siginfo_t *i, void *v)
-> +{
-> +	sigusr1_received =3D i->si_value.sival_int;
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-This is incorrect for big-endian archs and I will change this to:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.13.
 
-     sigusr1_received =3D (int)(long long)i->si_value.sival_ptr;
+Gr{oetje,eeting}s,
 
-This should work on all archs.
+                        Geert
 
->  }
->=20=20
->  static void test_send_signal_common(struct perf_event_attr *attr,
-> -				    bool signal_thread)
-> +				    bool signal_thread, bool remote)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-[...]
-
-Thanks,
-Puranjay
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZwPQAxQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nXb9AP93TgrMYdaOsedUSTEZ8TBFBE1C8gE3
-uRC0PgWADRlOHwD/ekM6ka1QIfptrjottMYN9u/sU3g/YrKgZ+AsHXK0vgY=
-=xM09
------END PGP SIGNATURE-----
---=-=-=--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
