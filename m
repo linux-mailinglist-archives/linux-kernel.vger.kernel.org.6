@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-353500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB69F992EA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:16:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5E992EE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB53B1C22F01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D151F222F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEB21D433B;
-	Mon,  7 Oct 2024 14:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2D1D54FD;
+	Mon,  7 Oct 2024 14:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KNzQ4tcX"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hc4VT7NQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5E71D1748
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C781B5338D;
+	Mon,  7 Oct 2024 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310593; cv=none; b=Ij5MdK/AB4akARRDsl/0gvH/4HYUypLlxIJJ096+QZTw60Z3GLeVsAbnodQBcE8ETpllFD+YVQWbZYtH4mcIn8m32Aac3NfNU6E3ri4SMjRwcu/vbi7Xc6PIugY8I5IeIlt5jKgQ09NwKtHC1+AdWxcjGjj9Au61TwFa8ZTj4jY=
+	t=1728310850; cv=none; b=VL/ALkG/rSZWD0Sv7g5deRHUlAde09oHFu3673EzySsDlPMXxS8u+Le1y7NAHgM2zzfKvLuKdKXo6yGB8UXG0kNHNos6GOJ3zKLCQXwTgA4y6uyP4xZxX70ysRLrNj3SdfwfU9TV8zoEuaX+xoqLbK+7/n+ICwNJLY0HuOcFtJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310593; c=relaxed/simple;
-	bh=WHTwqV6tDRa6dj7SWK8VezUucQdP1t0l/GdZU3cB/1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pYo40U7S+NPSGQBniv2gVVygGHP4OyVynBjnBF2EcgsOvrnnRdefea0hn0R4TJQ76OWIvVHVCMvt5uew5F4alXwESAzVNMwyyNBl+m0Wwh5eToZDk9dNbc6+Lr8vJibQiMCd0TJyN9MqbXsIFpnbCaVW2xNSGgkFo7PUh0c7elw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KNzQ4tcX; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fac63abf63so42526001fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728310589; x=1728915389; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cxVbsU1/6PlRbliGY4tsEIOFuRRavVmNqKCjLC4eEs0=;
-        b=KNzQ4tcXFZmaZpxfiPsDWrxsSTalmt68/KbvoabZjVw5DAiguniN2RutUecv+POEtq
-         n2Nmn81Juiiw8WTl9b4B6OHO7pi5XWZR3Y+wLS1EXeB3H7/vCwKliMAmtsfBQ11zQGLi
-         2/mIHKsXAT76IaOORhzDdnPlH44gHRSaaSUb0sCklCH2EssPmMSJPbXqhdsMaHGNjTaf
-         rX7Uy1bV474mQxk/KZtJa5XUf87ajaQol3KP+8F0jOqyAHcQynRcUsT/POZ0ArZ3/61B
-         m3ELmVVs4VeKDe4TQgfcG1zm5eD+SXTOPR3bpFN5S6RpUW6MtpudotWbhnATC1H39M9A
-         g1JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310589; x=1728915389;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cxVbsU1/6PlRbliGY4tsEIOFuRRavVmNqKCjLC4eEs0=;
-        b=mRFS9454IZwURG8yrTyTBUyYOnza6U63Ffns4S4j/z9/KR1UGSEsKRhDPp8N9ywkvP
-         rDcQshTSF5/nj3m6Vj9v/IUWcmboWOjD4DiRfombq/k5hNLq7iS4TJ4aMZHjM6usN6sQ
-         aEVGMsgk6tJ94+HlkaIIfY3UTesC7VqgXh1zahGxQU81I7nPbAngIfhqL6kdxnlAF4+I
-         Tk6dVEoqQCg6ccvbIqXk8ynG1TjIVMTdzjR005PBRrXzdHc16ySyh6Ap4cuw5PuCEZVS
-         hfs74fdJmXrV3KB6zXG2YFcWE4kfoSI6SS0YM9cAym/omZYgcj4/8YgdoRd/OmhTWp17
-         pXnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUYXB+ePSMPsv26KsnJN+5KlN9a/pNzJvb8kiH99Ch2/68GTokoEZ4K5bzmIN65R4o3kkjeGUEBp9MNng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYJ2j9Uz+7u/Im1Z4tyrqjtTAm/oD3x4SK+JJJq2yNGoGgAyeT
-	99bQyUiGGr3jHkidgbSYqu5VK85Ht1RT7weEAkMuQEPYmNLIqynZ9iK/+oyYwrU=
-X-Google-Smtp-Source: AGHT+IEPRUuIot87bqEBFnZBoR54B02LoDCRIyfJ2/1E0D11LEH0v3cn2FItdSgJHKxr3q6YTB5cGA==
-X-Received: by 2002:a2e:a99d:0:b0:2f7:58bc:f497 with SMTP id 38308e7fff4ca-2faf3d7380bmr55287811fa.28.1728310588723;
-        Mon, 07 Oct 2024 07:16:28 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1370:2201:dbf:8c7d:e87d:3baf? ([2001:a61:1370:2201:dbf:8c7d:e87d:3baf])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb357sm3204024a12.69.2024.10.07.07.16.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:16:28 -0700 (PDT)
-Message-ID: <b60f922a-5c10-4983-9404-ad18bdd86c67@suse.com>
-Date: Mon, 7 Oct 2024 16:16:27 +0200
+	s=arc-20240116; t=1728310850; c=relaxed/simple;
+	bh=zpVx4NcO+FvNMmwInSSBP2llHiiEZi7422EEP8tONds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6cYpeSnGgIVZlFSUlBomKy6D0wVoQ+01l8CiX+0qTTims5qdhvEFTHcnS96o/tqQRvy1ca5LhOVUusn3/XTuboNOrpCZgNHCPfbmFZdkEedUcwln67Vggtq8X1lBg7VO689GobQiZ7Zsok0lS7r2MvmwWrrk/Hng3cDumUjKLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hc4VT7NQ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728310849; x=1759846849;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zpVx4NcO+FvNMmwInSSBP2llHiiEZi7422EEP8tONds=;
+  b=hc4VT7NQtcYCZBDh+0EYQOcQl7R5yNBBVb3mCPApp39t8tu/x7fDWGFD
+   XoLlwCU/rmnUQcTq5WPS515Nzsy2xupZQI7P9eANrrloDL33f1bv3ndqg
+   YihfkRizxlSE5KHj6CUcwYNRgaJ04xQqjB/FBOQ7ZDQplyqAAqUtFnJjG
+   Vm7uG7FmvbBiPvGGCMMyGAokvtKFm4hun1p9BnIls0rX+A1FzUl+B/f1A
+   U4kvaqrxdio0vI2lQZ1NZusu8jb33wfzIlGVoQvH8vQqCVqAW6TvwhA71
+   sU5qzRH8T6Ne4aI4DUor5t4UK1vqygsZKiRRBr1ZjAh+/JKu5LQWRjsn8
+   g==;
+X-CSE-ConnectionGUID: zvYiRAVwQlSeXdrgE2bWXg==
+X-CSE-MsgGUID: en02MRB0TQ6Ur1L096crJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="38118650"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="38118650"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:16:37 -0700
+X-CSE-ConnectionGUID: tMxxieRtTOu1eIukJFqVAQ==
+X-CSE-MsgGUID: EPQots9qQ7SVdTQRLByrJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="79479075"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 07:16:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sxoXG-00000000Ewb-18FR;
+	Mon, 07 Oct 2024 17:16:30 +0300
+Date: Mon, 7 Oct 2024 17:16:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <ZwPtPpKk8SdbXS9h@smile.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <66da24827b2a9_22a2294b3@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_register_dev (2)
-To: syzbot <syzbot+a194ded97ce38690073f@syzkaller.appspotmail.com>,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6703c076.050a0220.49194.0505.GAE@google.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <6703c076.050a0220.49194.0505.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66da24827b2a9_22a2294b3@dwillia2-xfh.jf.intel.com.notmuch>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Sep 05, 2024 at 02:37:06PM -0700, Dan Williams wrote:
+> Andy Shevchenko wrote:
+> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+> > > Huang, Ying wrote:
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
+[..]
 
-On 07.10.24 13:05, syzbot wrote:
+> > > > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+> > > > > message.
+> > > > 
+> > > > Emm... It appears that it's a common practice to include "Cc" in the
+> > > > commit log.
+> > > 
+> > > Yes, just ignore this feedback, it goes against common practice. Cc list
+> > > as is looks sane to me.
+> > 
+> > It seems nobody can give technical arguments why it's better than just keeping
+> > them outside of the commit message. Mantra "common practice" nowadays is
+> > questionable.
+> 
+> Yes, question asked and answered. Not to your satisfaction, but the
+> people that have engaged to date have been cold to the idea.
 
-> INFO: task kworker/1:0:25 blocked for more than 144 seconds.
->        Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/1:0     state:D stack:20416 pid:25    tgid:25    ppid:2      flags:0x00004000
-> Workqueue: pm pm_runtime_work
-> Call Trace:
->   <TASK>
->   context_switch kernel/sched/core.c:5315 [inline]
->   __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
->   __schedule_loop kernel/sched/core.c:6752 [inline]
->   schedule+0x14b/0x320 kernel/sched/core.c:6767
->   usb_poison_urb+0x1bc/0x2e0 drivers/usb/core/urb.c:763
+It's just matter if we care or not (about the environment, about performance
+in reviewing the code, about people who might use small screens or smartphones
+for reading the changes, et cetera). Even status quo should be questioned from
+time to time.
 
-This points to a bug in the HCD.
-usb_poison_urb() is guaranteed to make progress.
+> Historically, reaching into other kernel developers workflows to
+> instantiate a new preference is a high risk low reward endeavor, please
+> moderate your advocacy accordingly.
 
->   poison_urbs drivers/usb/class/cdc-wdm.c:342 [inline]
->   wdm_suspend+0x174/0x380 drivers/usb/class/cdc-wdm.c:1271
->   usb_suspend_interface drivers/usb/core/driver.c:1328 [inline]
->   usb_suspend_both+0x2a5/0x1140 drivers/usb/core/driver.c:1433
->   usb_runtime_suspend+0x59/0x100 drivers/usb/core/driver.c:1968
+Yeah, I got it...
 
-What HC is used for these tests?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-	Regards
-		Oliver
 
 
