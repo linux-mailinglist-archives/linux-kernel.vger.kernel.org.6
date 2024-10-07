@@ -1,210 +1,114 @@
-Return-Path: <linux-kernel+bounces-352979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56969926C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075DF9926C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1005CB228D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00CE1F22C4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99118B464;
-	Mon,  7 Oct 2024 08:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B288189910;
+	Mon,  7 Oct 2024 08:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VZkw6f8A"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="og/70Yoa"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E3E17C7C2;
-	Mon,  7 Oct 2024 08:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB4EEBA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288969; cv=none; b=WRRNj99LP6y0h1fzisAr/ojiH/LmXhSQ7Lla3HuaSYqVV3qthyV4v6jUaI8FvPNt5nmdOwCKUOuWNF3subaM+R0JgOzrIHWFx1gqZWMBAjJClnOukr/FINnxPez/xF/PF+MU/IFDMW9gSdr11yj+jAdfGYjkQPZwbswGh169Sf8=
+	t=1728288967; cv=none; b=Aj0oS8J6+x9olspTWSubmMtWj9RVipfZiexgg/HqoL9mRQa2nRJzgy26n29nAVIyxMeYS0ouBjo9zhshrkbAezROYO88Yn0QvgwPKsuVWfsgEn3f3fPD89xUAooWxA4bdyBYgjglb3JZSNQTc8e105qRsN0QfziyvzTN/XhriOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288969; c=relaxed/simple;
-	bh=tp2Is5gH0vbZp/7LIJTnCVVW2haso6x9+R0tJFjiD3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AxoERmbggCYxoCJMB3Y0rUz5U57bX2TXMH7B1qT+cN+2VZDpKV0LiAIObST1Z8UCgFvAbYVvb3C314LiE0ponaJJXQ+By+eruBmUCwfcLW5KJdLk/shO6AJkrzzLjX214N+allP8zw6g7Lqr0QcOlGVS2Dqjq4xPhTduG9Z+EnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VZkw6f8A; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TTd7015627;
-	Mon, 7 Oct 2024 08:15:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=/KyyzSmZpyWz3jrw1OiF0jpq4ugaU+HOrSv
-	dlB6v3NE=; b=VZkw6f8AWBhdtJmeZRZnYKTd29wonDYjWna64M8/hY2F/+Smj1r
-	WL/UTcPzSFpRXHUCkedER+LLLVgvcAA69N83QoDErdp0JFMS8/iPYnfQ5EDtNI1B
-	CRMb9EIT5f+5uUKXmyWFrIWDoLFoFukiie9oEW52+Abw26xLK+oFcnCuaI+JpyA5
-	SJKlVYFYjJUf+mlwf+j3UWGfNin1vmaZnXHJmPtMTt0fdz6sKOSDwD1qXmgo5gy/
-	bzu3RHJsLffF5/7k8Ezyvi0HO+Jg7yjaD+djve6m5Rc0Ox0rvKWTqtJQ1BBJ94bU
-	1uRs07SB8xyOwlD1UhfZHWqLRpCLQcBt4iw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs73dft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 08:15:51 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4978Fmuf002083;
-	Mon, 7 Oct 2024 08:15:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 422xhksegy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 08:15:48 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4978FlPV002075;
-	Mon, 7 Oct 2024 08:15:47 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.96.82])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4978Fl7M002074
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 08:15:47 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2370923)
-	id A98CC577; Mon,  7 Oct 2024 13:45:46 +0530 (+0530)
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-To: mhi@lists.linux.dev
-Cc: quic_qianyu@quicinc.com, manivannan.sadhasivam@linaro.org,
-        quic_vbadigan@quicinc.com, quic_krichai@quicinc.com,
-        quic_skananth@quicinc.com, quic_mrana@quicinc.com,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>,
-        Slark Xiao <slark_xiao@163.com>, Mank Wang <mank.wang@netprisma.us>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Fabio Porcedda <fabio.porcedda@gmail.com>,
-        linux-arm-msm@vger.kernel.org (open list:MHI BUS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] bus: mhi: host: pci_generic: Add support for QDU100 device
-Date: Mon,  7 Oct 2024 13:45:41 +0530
-Message-Id: <20241007081543.3475027-1-quic_vpernami@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728288967; c=relaxed/simple;
+	bh=RLBbUfYZwTDLmhkDu2VGWVBZxOClNJNvjSaK4IZx/TI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TQmgmiHD8UqHCQSq1qk44IPcfpiatXh18QfkFvrmemTTOTRpdawzJX9d7nbgjAEzHEbU/wCi7TGQhjGqoYAX/wqnnqOUbkhyKo17HZ5WbUzFyBkCpFMxzlRvhaYDNmRM297UX5i/cTA3wkCpZxWcNXYs/cJdcMvLAUhVyJOStdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=og/70Yoa; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e07d91f78aso2984911a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:16:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728288965; x=1728893765; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RLBbUfYZwTDLmhkDu2VGWVBZxOClNJNvjSaK4IZx/TI=;
+        b=og/70YoaG5RxIkh9Ou1qyCFdowm+SCnbV8hlrn0uZnQ6CJjpSJG9YNCNGr9Tvzr+r7
+         exSq326pLMjK+uNVa/hi4LMgDBUYEBFbLGTTGq4zhGAKAqBAHVYcNP+OSUtupswJ4rgS
+         BNMWx6dnAYuC5esIylIpCtIcznfPQ8tyuOz9U4zrwLad/WACyAfxTcAnUNKHTPaUga7l
+         8dg0l7sdkqzVW1uT3dk/Q3C1r618ohavZgmU9dD6cZNKlzt7bMRUjrLlkawR72jjpFFu
+         fFJBsyEZB0Mc6EXIm966BH0ohpZX5wC2i91gIwGmP5IsXfBLZ+iMoXM7CVcTvWQaGvG7
+         2KgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728288965; x=1728893765;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RLBbUfYZwTDLmhkDu2VGWVBZxOClNJNvjSaK4IZx/TI=;
+        b=A4iVCp7YDfaz4jzCRTSZ/9szSV462WfFjaR5FF3NvE1MR4d3c32boKhmuNhcpitmGm
+         I52jO3hIwn+9BgtW8JLqgXJHejbd63duiF4d6aNgLWYR4lRzUTF2WEMvo1bB3yaj8/H8
+         tigbGQh7kU5tRkYPh27z4iT2cal/2WhVRnWNo4XKWIJHKZXNxm9Zb+ovEY7Z81RZwUhp
+         tOVvGGJEq4Mrv9GgJ5ZYiTBMJ1LMWv6/qiZT5SLkMLLhrbdyLb4Yeqd9FQL8zJzXClQg
+         wcAUXIqKTv5XACsjprSc3lElvj+k9vJsBaQHZ/CNOIOfsAt4YMhRO/2HNmsV++7+Bpc6
+         w/Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOmYwMzujDdD6EsXuRKxPKXk64TTmL3JoSYWBL1PJ4Y0jnJO2OvOnMRhD4S2HGoVdSjsdDCJg1HtwLrio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyJcrMQDTCuAz5Vfr/2oWRM2GpyS4Cu4ynmqkGOiZIwnMy6PmQ
+	qIjnsAU01tClUzH35lQwzu6cEKtfrhcM2S8wWAb7L90LzMrNp8w4UeklI6cQff/v7PAi4FnYA5c
+	/XokDbSkWNKXxY9GYneypoTTG8EzBQWrxE0iu6w==
+X-Google-Smtp-Source: AGHT+IH/dkEVQUhcQKXlKEcwsqELauhpOoz/dMeVnv/UCc6LvyZQsR1vl/kuPBJWMXS9N8RGB78rITzqN0M4KBVkTd4=
+X-Received: by 2002:a17:90a:43a7:b0:2de:ec70:84d with SMTP id
+ 98e67ed59e1d1-2e1e62a7d37mr12921080a91.24.1728288965431; Mon, 07 Oct 2024
+ 01:16:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: RVRvMETXdyNU06U75WusFOs1FDdJsv6O
-X-Proofpoint-GUID: RVRvMETXdyNU06U75WusFOs1FDdJsv6O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
- clxscore=1015 malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070057
+References: <20241005005245.829133-1-zhouzhouyi@gmail.com> <CAKfTPtD7TPYcPcwHxC_n8PObZMgqxU+9=U-F6yJbP0=cLAB8hQ@mail.gmail.com>
+ <20241007081015.GF18071@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241007081015.GF18071@noisy.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 7 Oct 2024 10:15:54 +0200
+Message-ID: <CAKfTPtCKEi6-nW5sQ1y2B9zwgmqtEyesooZ62cm=+37AoEPFHw@mail.gmail.com>
+Subject: Re: [PATCH] sched: Fix typo of head comment of ___update_load_avg
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add MHI controller configuration for QDU100 device.
+On Mon, 7 Oct 2024 at 10:10, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Oct 07, 2024 at 08:42:14AM +0200, Vincent Guittot wrote:
+> > On Sat, 5 Oct 2024 at 02:53, Zhouyi Zhou <zhouzhouyi@gmail.com> wrote:
+> > >
+> > > The head comment of ___update_load_avg illustrates the principle of
+> > > PELT divider. "unwanted oscillation in the range [1002..1024[" should
+> > > be "unwanted oscillation in the range [1002..1024]".
+> > >
+> > > Fix above typo.
+> >
+> > This is not a typo as 1024 is an excluded endpoint of the interval.
+> > Some may use [1002..1024) but both [1002..1024[ and [1002..1024) can
+> > be used
+>
+> Because I'm weird, I googled this, and the [a,b[ notation is from
+> Bourbaki and hence popular in the French speaking world :-)
 
-This Qualcomm QDU100 device is inline accelerator card
-which is an extension to QRU100 5G RAN platform.
-which is designed to simplify 5G deployments by offering
-a turnkey solution for ease of deployment with O-RAN
-fronthaul and 5G NR layer 1 High (L1 High) processing,
-and to accelerate operator and infrastructure vendor
-adoption of virtualized RAN platforms.
+Yeah, I firstly thought reversed square bracket was only french and
+parenthesis was the international one but the International standard
+ISO 31-11 describes both in fact
 
-Currently IP_SW1/2 channel support is not present in
-mhi_net driver, will be supporting them in future.
-
-https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-
----
-changes from V1:
-- Changing naming convention from modem_qcom_qdu100*
-  to mhi_qcom_qdu100*
-- Added more commit test for IP_SW1/2 channels.
-- Fixed and corrected by passing mhi_pci_dev_info struct
-  instead of mhi_controller_config.
----
----
- drivers/bus/mhi/host/pci_generic.c | 60 ++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 9938bb034c1c..b9b7dd8d9411 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -245,6 +245,63 @@ struct mhi_pci_dev_info {
- 		.channel = ch_num,		\
- 	}
- 
-+static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-+	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-+	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-+	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
-+	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
-+	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
-+	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
-+};
-+
-+static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-+	/* first ring is control+data ring */
-+	MHI_EVENT_CONFIG_CTRL(0, 64),
-+	/* SAHARA dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-+	/* Software channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-+	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-+	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-+	/* Software IP channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-+};
-+
-+static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-+	.max_channels = 128,
-+	.timeout_ms = 120000,
-+	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-+	.ch_cfg = mhi_qcom_qdu100_channels,
-+	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-+	.event_cfg = mhi_qcom_qdu100_events,
-+};
-+
-+static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-+	.name = "qcom-lassen",
-+	.fw = "qcom/lassen/xbl_s.melf",
-+	.edl = "qcom/lassen/edl.mbn",
-+	.edl_trigger = true,
-+	.config = &mhi_qcom_qdu100_config,
-+	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-+	.dma_data_width = 32,
-+	.sideband_wake = false,
-+};
-+
- static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
- 	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
- 	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-@@ -822,6 +879,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* NETPRISMA FCUN69 (SDX6X) */
- 	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
- 		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-+	/* QDU100, x100-DU */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-+		.driver_data = (kernel_ulong_t)&mhi_qcom_qdu100_info },
- 	{  }
- };
- MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
--- 
-2.34.1
-
+>
+> We don't have many intervals specified in comments and hence we can't
+> make the inconsistent style argument either.
+>
+> So yeah, let it be.. at best its a trigger to get people to better look
+> at the code. At worst its one of those triggers that people keep trying
+> to mindlessly 'fix', like my use of borken :-)
 
