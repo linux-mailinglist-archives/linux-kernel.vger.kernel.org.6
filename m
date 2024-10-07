@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-353241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C148992B26
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBDC992B29
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8251F23756
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4731A1F236B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DAB1D2223;
-	Mon,  7 Oct 2024 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cd1pGCY2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cQZugCeo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D29A18BB90;
+	Mon,  7 Oct 2024 12:11:47 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9276418B483
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A917818B483;
+	Mon,  7 Oct 2024 12:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303094; cv=none; b=BaOV+l7XjZx7386d4ZhOQGzfm1903to+87sdIlTVIDW6k1RsdGthxXtqREcLPouvoy1ahOfnW2tOp7bXtf+AYiSEiPsMGboGcNSxKfZWArMMwRtvrTt8kfY7x896bI0m9kcrvQVVqbZkakpmtcNBK0t7CjSAlbUR1fayScIQB6k=
+	t=1728303107; cv=none; b=cZlcLo/IdTXB9JwxxETY647x2aJfKmqt2K9tJOvxy68SKfOMhrnJ5Nme0NHtal5Vt8422SWIVHOqhjvb5AylY60GV+4k8Wjx1ixiTwuu/swHQweh0wdGR9GYBcFWvZu+BMjRAXPmYd586XW7xty5XUtKqCje3NoKa6ZVZoUaMzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303094; c=relaxed/simple;
-	bh=Zn/Wpnj3cwhJhWqS4LkHHMLONniIADYAf1ITLlgSsVs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kgzHtMLgQvzojxphDqmND7S3qah2gBPD2etDjsAy1o7YYBtuXq8gowjiT4jqDWT+zZiXonEn2UYpDrYftPmqCd5zOV0RBwtEdSxSXFYKjTslif9GCPJ8tAjU2x236Hx5gK0/nIDc7dC0PPZKP5YFwHDy9yTTHdPavmd/OT4On3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cd1pGCY2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cQZugCeo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728303090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lTRX2E/caJSxKYAG5qhU4BSqcKSEG/mvB3eZdZUAjNw=;
-	b=Cd1pGCY2rRH4/r3JCYid6w5CYbQAiFtE7m/HhTJfHR1BvvIl/ztvV8ArnIGcamYSMoU8u+
-	E1wDMkp6CXlrZxw/ByTLaC4dkJB+DG/oeecF4XYBHqhxa8ARWDPVj+Br3jq23HOCjA/FfG
-	wUokjGCM65RoFBExrKWUCvGRJhvu4I6cB0Kocu/BZsX5HVTWjITNCBeRnQcY1e5lpa9KnK
-	vRDEJOnrwgfKo79MC2r0DyaBUDE9Pw96R9mJ6VGlxDVAcG+xjQQV9hz+L1qDLxgnm76eDi
-	DPJkn4SIq2GJay1e1m0C1noFheryNHhOEktNqekoAfIsylOFIGDRoiWET4dKSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728303090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lTRX2E/caJSxKYAG5qhU4BSqcKSEG/mvB3eZdZUAjNw=;
-	b=cQZugCeoyWlmXCJm8AkTUnsx6nT4BsMGMCvlJvo2rTWpUIN3rqnm7NXKvoPOP3EHFhhIRU
-	0N6+pMbDhRhiTaAA==
-To: Bart Van Assche <bvanassche@acm.org>, David Laight
- <David.Laight@ACULAB.COM>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
- <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Clemens Ladisch <clemens@ladisch.de>
-Subject: Re: [PATCH 07/21] hpet: Switch to number_of_interrupts()
-In-Reply-To: <cb045717-5eb8-456f-aa50-667e9f8aabfd@acm.org>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-8-bvanassche@acm.org>
- <b315cbe2e1264d98b57ce57fe5f66a23@AcuMS.aculab.com>
- <cb045717-5eb8-456f-aa50-667e9f8aabfd@acm.org>
-Date: Mon, 07 Oct 2024 14:11:30 +0200
-Message-ID: <874j5oun7x.ffs@tglx>
+	s=arc-20240116; t=1728303107; c=relaxed/simple;
+	bh=hjsAVcqmqqdLHFbzTmYuIhUjB8PxqxLmKX3Au0tyLFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LF7gXitWwqfxUuj/6uXtXubN3zGTD9NtSYOW0ZoTKd/R5TFslcjhCjpO+GW0dK0BloBkkLLmAwQWQ4zwRtabtJjVZzX3fU5qu6/MSIbOeo8/8E++xH7C8Gpv7pn3+pOdNXqjA9EEzanZbmsQOJa6gKtPpE9KYrs/nUVASgyKhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e3e4f65dso11884097b3.3;
+        Mon, 07 Oct 2024 05:11:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728303103; x=1728907903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NpiBUq04Dm+hijVqTOu3uyVD8U1/9dPTQc7Ed99SVnM=;
+        b=PTN8vguqi1rw4Gs5qWpETgjcoa7STwYuSBOSeXUdcN76m9GheHWszT8VIqT5xfD0li
+         uQDiReyX7J92845dmYMXGPcPg64ztt1Fq2i+1ezVL/tg1bABLebGgFBLeYQAuAA6mFWZ
+         aHHKfro9aMXfxUttl/V103yrysOnVwuP54pmtFFcXm5qDXoLFuMcrSN2ecIREs6alEnq
+         MJqwPApqhz0jdXDxd5LKSXkBYnxYwz7qafAosuJDL5QyTm5cmdLosr/pLu9stBWAqYcl
+         sJ5n3dKwNuTr6RalI3ZOJNHTg90qjnGkxCl/oR2uoM5n7E29bz1dRwgHuLTin5TIvzEf
+         4+tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSmoTekWPBmIR9wzLKV9YU9PX+aoSVrK+dMGDl99y8x+7VyqDB+nLw8Fc313C8ijbCoTdyNuxx/Sae@vger.kernel.org, AJvYcCWdQQD8mTrQI6j2kTgdFtOUmgeje44rzzG+dGmEb2Cl9C2Nf9MR3fdCcMuOevTnTU3pCzy9N5q728RpJlCkx1KAeqg=@vger.kernel.org, AJvYcCX8jlObPk3enVOgWPfhLstffaOXVvdaav2vDdbx+Ktu5zmf0VcazDg5dwWv852f41pZBmxjjETtve0QftSG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjyl8XOkYCLQVkqgDkyX/2wlX8vGFO8IV+D2IlnLLMu8xRhzp0
+	F4KLoiZJ8vkDl1Ul7skO4XlsdmrQ5k7CwHV3iTKj9Kzy93VEw1CMr63NAjav
+X-Google-Smtp-Source: AGHT+IHY4TbYjl4pvBVgfHxyk+JP7LX5/wgtBiM22KnuvhAWkpi0FbJrre25DfB8Tmoxfxo/4FrLGw==
+X-Received: by 2002:a05:690c:4a83:b0:6e3:b8f:59d1 with SMTP id 00721157ae682-6e30b8f5d5emr954017b3.31.1728303103514;
+        Mon, 07 Oct 2024 05:11:43 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93848cesm10228417b3.58.2024.10.07.05.11.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 05:11:42 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e3e4f65dso11883127b3.3;
+        Mon, 07 Oct 2024 05:11:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUq7cP6UyHFNgl8b2CuXqxLmUikEQfVTQT7ZxZmxcgQiozBqJo4J7k2a39ugjzxN4Q66d4mAXsZf1XoXPMpm1t0jrI=@vger.kernel.org, AJvYcCUynxuDnPp92f+0W8qfGkTsUGLX3VOyd7vmnY/bWsXLeofvCEfUG3DamERulcpPdjEGFmPuwPKE0lqZ@vger.kernel.org, AJvYcCVWHc+8YozHVGHjPd8YZFxKnMEX1cxzOlHL0rko/Z61iTRc0qdzSvY5NYAYr1QzRy0aBBOqMst5jbet5vof@vger.kernel.org
+X-Received: by 2002:a05:690c:2e90:b0:6dd:ba22:d946 with SMTP id
+ 00721157ae682-6e2c7017d04mr73653377b3.13.1728303102493; Mon, 07 Oct 2024
+ 05:11:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240927201313.624762-1-sean.anderson@linux.dev> <20240927201313.624762-2-sean.anderson@linux.dev>
+In-Reply-To: <20240927201313.624762-2-sean.anderson@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Oct 2024 14:11:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyPWt7bjwkVreRj-U6KUAt5p48CnF=E7ZeUpbTuyJS5Q@mail.gmail.com>
+Message-ID: <CAMuHMdUyPWt7bjwkVreRj-U6KUAt5p48CnF=E7ZeUpbTuyJS5Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: renesas: salvator-x: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Adam Ford <aford173@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 06 2024 at 17:45, Bart Van Assche wrote:
-> On 10/6/24 10:13 AM, David Laight wrote:
->> From: Bart Van Assche
->>> Sent: 30 September 2024 19:16
->>> --- a/drivers/char/hpet.c
->>> +++ b/drivers/char/hpet.c
->>> @@ -195,7 +195,7 @@ static void hpet_timer_set_irq(struct hpet_dev *devp)
->>>   		v &= ~0xffff;
->>>
->>>   	for_each_set_bit(irq, &v, HPET_MAX_IRQ) {
->>> -		if (irq >= nr_irqs) {
->>> +		if (irq >= number_of_interrupts()) {
->>>   			irq = HPET_MAX_IRQ;
->>>   			break;
->>>   		}
->> 
->> This is horrid.
->> You've replaced the read of a global variable (which, in some cases the
->> compiler might be able to pull outside the loop) with a real function
->> call in every loop iteration.
->> 
->> With all the mitigations for cpu speculative execution 'issues' you
->> pretty much don't want trivial function calls.
->> 
->> If you are worried about locals shadowing globals just change one of the names.
+On Fri, Sep 27, 2024 at 10:13=E2=80=AFPM Sean Anderson <sean.anderson@linux=
+.dev> wrote:
+> Add SD/OE pin properties to the devicetree so that Linux can configure
+> the pin without relying on the OTP. This matches the register
+> configuration reported by Geert [1] as well as his analysis of the
+> schematic.
 >
-> Since HPET_MAX_IRQ == 32 and since the lower 16 bits of 'v' are cleared
-> on modern systems, would it be such a big deal if number_of_interrupts()
-> is called 16 times?
+> [1] https://lore.kernel.org/linux-arm-kernel/CAMuHMdUmf=3DBYrVWGDp4kjLGK=
+=3D66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com/
+>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-No. The context is open() which is a slow path operation.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.13.
 
-> Since number_of_interrupts() has been marked as __pure, and since the
-> kernel is built with -O2, do you agree that this should be sufficient to
-> let the compiler CSE optimization step move function calls like the
-> above from inside a loop out of the loop?
+Gr{oetje,eeting}s,
 
-It could do so.
+                        Geert
 
-Thanks,
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-        tglx
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
