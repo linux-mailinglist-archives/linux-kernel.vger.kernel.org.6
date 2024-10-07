@@ -1,125 +1,210 @@
-Return-Path: <linux-kernel+bounces-352977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC37C9926BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:14:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56969926C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB8C283940
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:14:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1005CB228D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89220189B91;
-	Mon,  7 Oct 2024 08:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99118B464;
+	Mon,  7 Oct 2024 08:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zxag0pHO"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VZkw6f8A"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6CE188003;
-	Mon,  7 Oct 2024 08:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E3E17C7C2;
+	Mon,  7 Oct 2024 08:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288851; cv=none; b=Vo8jagWtDR4nSKhid91HtxDRvnsIM2k+Nc0gEAnlA1M7QEw+akKexpagp0AMMoX0A9C7ECC8peEIe459nJa3884xojst9G1RidATjpW9AGmJfWYOoixPY8AsMY1KTxqzXlEAZ9bfpJo1hQAx+GqdOE2JkhuyP+JAsumXVDdG8zg=
+	t=1728288969; cv=none; b=WRRNj99LP6y0h1fzisAr/ojiH/LmXhSQ7Lla3HuaSYqVV3qthyV4v6jUaI8FvPNt5nmdOwCKUOuWNF3subaM+R0JgOzrIHWFx1gqZWMBAjJClnOukr/FINnxPez/xF/PF+MU/IFDMW9gSdr11yj+jAdfGYjkQPZwbswGh169Sf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288851; c=relaxed/simple;
-	bh=CyHYryxsLiYwOZoKOj+rqyE3zGxA4hYzsgEc7oms1nM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jP2Bw20LY6/jNzZrBVtiR48fle+uMR7Qho/GGN8NM6Qmr+dnYPYM/cEZy54NL8lKJHFtCc8A61D4n9NbteTf98+jSr+Ac0DESjHtlKKL8g9Sakqs97YQQ1CbaxtqEdNBZzE9CIFkGG35pfXaOgpF7Hn06OG3rD3kIyjWBC1bkdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zxag0pHO; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 84F16E0004;
-	Mon,  7 Oct 2024 08:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728288841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=428uZN4OXNwScrUiihgmWynciO1ldGPtkCDcUGjhV00=;
-	b=Zxag0pHOQQ5ssx9daaBMo2XiivlMnFlA+W2w7NgVsUAnw/0VdPmFBc5nLvi8u5c/5tVOPS
-	qj8RJSo3TyChHoiPMIchpGXkGdhx07S2+ocaHWKo+HTuRnulDVnFXZn43IUVokR9mMnF4Q
-	yXkHPbvi8ZrCIMBB9R29cQGxKhhMyQO2B3qUCvsYx4WlRnNzRR/8rA8fh6mHI7zhxuTp6D
-	av6eGb18IyZso5uZ2f2G7lZI5TMWlDmv8yadHVI9DQy9D8DM4I5L70zak3G8b0xeCzEvjQ
-	NewMlP7DOZA+I6xmgF5rquONVdXa1x/kIN7AjPKo+Hvz+b4Y0DRJ1YpaTzOtIA==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Josua Mayer <josua@solid-run.com>, Arnd Bergman <arnd.bergmann@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Josua Mayer <josua@solid-run.com>
-Subject: Re: [PATCH v2] arm64: dts: marvell: cn9130-sr-som: fix cp0 mdio pin
- numbers
-In-Reply-To: <20241002-cn9130-som-mdio-v2-1-ec798e4a83ff@solid-run.com>
-References: <20241002-cn9130-som-mdio-v2-1-ec798e4a83ff@solid-run.com>
-Date: Mon, 07 Oct 2024 10:13:59 +0200
-Message-ID: <874j5oe3eg.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1728288969; c=relaxed/simple;
+	bh=tp2Is5gH0vbZp/7LIJTnCVVW2haso6x9+R0tJFjiD3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AxoERmbggCYxoCJMB3Y0rUz5U57bX2TXMH7B1qT+cN+2VZDpKV0LiAIObST1Z8UCgFvAbYVvb3C314LiE0ponaJJXQ+By+eruBmUCwfcLW5KJdLk/shO6AJkrzzLjX214N+allP8zw6g7Lqr0QcOlGVS2Dqjq4xPhTduG9Z+EnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VZkw6f8A; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974TTd7015627;
+	Mon, 7 Oct 2024 08:15:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=/KyyzSmZpyWz3jrw1OiF0jpq4ugaU+HOrSv
+	dlB6v3NE=; b=VZkw6f8AWBhdtJmeZRZnYKTd29wonDYjWna64M8/hY2F/+Smj1r
+	WL/UTcPzSFpRXHUCkedER+LLLVgvcAA69N83QoDErdp0JFMS8/iPYnfQ5EDtNI1B
+	CRMb9EIT5f+5uUKXmyWFrIWDoLFoFukiie9oEW52+Abw26xLK+oFcnCuaI+JpyA5
+	SJKlVYFYjJUf+mlwf+j3UWGfNin1vmaZnXHJmPtMTt0fdz6sKOSDwD1qXmgo5gy/
+	bzu3RHJsLffF5/7k8Ezyvi0HO+Jg7yjaD+djve6m5Rc0Ox0rvKWTqtJQ1BBJ94bU
+	1uRs07SB8xyOwlD1UhfZHWqLRpCLQcBt4iw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs73dft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 08:15:51 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4978Fmuf002083;
+	Mon, 7 Oct 2024 08:15:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 422xhksegy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 08:15:48 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4978FlPV002075;
+	Mon, 7 Oct 2024 08:15:47 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.96.82])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4978Fl7M002074
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 08:15:47 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2370923)
+	id A98CC577; Mon,  7 Oct 2024 13:45:46 +0530 (+0530)
+From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+To: mhi@lists.linux.dev
+Cc: quic_qianyu@quicinc.com, manivannan.sadhasivam@linaro.org,
+        quic_vbadigan@quicinc.com, quic_krichai@quicinc.com,
+        quic_skananth@quicinc.com, quic_mrana@quicinc.com,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>,
+        Slark Xiao <slark_xiao@163.com>, Mank Wang <mank.wang@netprisma.us>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Fabio Porcedda <fabio.porcedda@gmail.com>,
+        linux-arm-msm@vger.kernel.org (open list:MHI BUS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] bus: mhi: host: pci_generic: Add support for QDU100 device
+Date: Mon,  7 Oct 2024 13:45:41 +0530
+Message-Id: <20241007081543.3475027-1-quic_vpernami@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RVRvMETXdyNU06U75WusFOs1FDdJsv6O
+X-Proofpoint-GUID: RVRvMETXdyNU06U75WusFOs1FDdJsv6O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
+ clxscore=1015 malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070057
 
-Hi Josua and Arnd,
+Add MHI controller configuration for QDU100 device.
 
-> SolidRun CN9130 SoM actually uses CP_MPP[0:1] for mdio. CP_MPP[40]
-> provides reference clock for dsa switch and ethernet phy on Clearfog
-> Pro, wheras MPP[41] controls efuse programming voltage "VHV".
->
-> Update the cp0 mdio pinctrl node to specify mpp0, mpp1.
+This Qualcomm QDU100 device is inline accelerator card
+which is an extension to QRU100 5G RAN platform.
+which is designed to simplify 5G deployments by offering
+a turnkey solution for ease of deployment with O-RAN
+fronthaul and 5G NR layer 1 High (L1 High) processing,
+and to accelerate operator and infrastructure vendor
+adoption of virtualized RAN platforms.
 
+Currently IP_SW1/2 channel support is not present in
+mhi_net driver, will be supporting them in future.
 
-Applied on mvebu/fixes
+https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
+Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
 
-Thanks,
+---
+changes from V1:
+- Changing naming convention from modem_qcom_qdu100*
+  to mhi_qcom_qdu100*
+- Added more commit test for IP_SW1/2 channels.
+- Fixed and corrected by passing mhi_pci_dev_info struct
+  instead of mhi_controller_config.
+---
+---
+ drivers/bus/mhi/host/pci_generic.c | 60 ++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Arnd,
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 9938bb034c1c..b9b7dd8d9411 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -245,6 +245,63 @@ struct mhi_pci_dev_info {
+ 		.channel = ch_num,		\
+ 	}
+ 
++static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
++	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
++	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
++	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
++	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
++	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
++	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
++	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
++	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
++	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
++	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
++	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
++	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
++	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
++	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
++	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
++	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
++	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
++	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
++	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
++};
++
++static struct mhi_event_config mhi_qcom_qdu100_events[] = {
++	/* first ring is control+data ring */
++	MHI_EVENT_CONFIG_CTRL(0, 64),
++	/* SAHARA dedicated event ring */
++	MHI_EVENT_CONFIG_SW_DATA(1, 256),
++	/* Software channels dedicated event ring */
++	MHI_EVENT_CONFIG_SW_DATA(2, 64),
++	MHI_EVENT_CONFIG_SW_DATA(3, 256),
++	MHI_EVENT_CONFIG_SW_DATA(4, 256),
++	/* Software IP channels dedicated event ring */
++	MHI_EVENT_CONFIG_SW_DATA(5, 512),
++	MHI_EVENT_CONFIG_SW_DATA(6, 512),
++	MHI_EVENT_CONFIG_SW_DATA(7, 512),
++};
++
++static const struct mhi_controller_config mhi_qcom_qdu100_config = {
++	.max_channels = 128,
++	.timeout_ms = 120000,
++	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
++	.ch_cfg = mhi_qcom_qdu100_channels,
++	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
++	.event_cfg = mhi_qcom_qdu100_events,
++};
++
++static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
++	.name = "qcom-lassen",
++	.fw = "qcom/lassen/xbl_s.melf",
++	.edl = "qcom/lassen/edl.mbn",
++	.edl_trigger = true,
++	.config = &mhi_qcom_qdu100_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.sideband_wake = false,
++};
++
+ static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
+ 	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
+ 	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
+@@ -822,6 +879,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+ 	/* NETPRISMA FCUN69 (SDX6X) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+ 		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
++	/* QDU100, x100-DU */
++	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
++		.driver_data = (kernel_ulong_t)&mhi_qcom_qdu100_info },
+ 	{  }
+ };
+ MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
+-- 
+2.34.1
 
-I've applied it on an mvebu branch and I'll create a PR for it this
-week. However, since we don't have many fixes, you might prefer to apply
-this patch directly to your trees?
-
-Gregory
-
->
-> Fixes: 1c510c7d82e5 ("arm64: dts: add description for solidrun cn9130 som and clearfog boards")
-> Cc: stable@vger.kernel.org # 6.11.x
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
-> Changes in v2:
-> - corrected Cc: stable list address
-> - removed duplicate "mdio" from commit message
-> - added Fixes: tag
-> - Link to v1: https://lore.kernel.org/r/20241002-cn9130-som-mdio-v1-1-0942be4dc550@solid-run.com
-> ---
->  arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi b/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-> index 4676e3488f54d53041696d877b510b8d51dcd984..cb8d54895a77753c760b58b8b5103149e21e2094 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-> @@ -136,7 +136,7 @@ cp0_i2c0_pins: cp0-i2c0-pins {
->  		};
->  
->  		cp0_mdio_pins: cp0-mdio-pins {
-> -			marvell,pins = "mpp40", "mpp41";
-> +			marvell,pins = "mpp0", "mpp1";
->  			marvell,function = "ge";
->  		};
->  
->
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20241002-cn9130-som-mdio-4a519e6dc7df
->
-> Best regards,
-> -- 
-> Josua Mayer <josua@solid-run.com>
 
