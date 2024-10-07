@@ -1,106 +1,181 @@
-Return-Path: <linux-kernel+bounces-352767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF889923E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:37:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACEC9923E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDE21F22A50
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FAC3B222E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9969C13B787;
-	Mon,  7 Oct 2024 05:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA81B13635E;
+	Mon,  7 Oct 2024 05:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiQkSGt/"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sNjhjZjB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D03F23AB;
-	Mon,  7 Oct 2024 05:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8C123AB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728279435; cv=none; b=qkJC72xfBaxgs4AbaNVpwtUEPrDIs6+JECVPcllHzTC+DY9Hjh7x0XiX+G1nGSlBlSfj+pXZas4+KacDFat6psnCL2TdgwpD2Ee/dk1yonXPfI58IwpFiy2halPgevyrX1K/S4pHEhDFgnpwD9eTnQHo+7Oz1tCFrlq5lgKq0PU=
+	t=1728279655; cv=none; b=UJTlzjHOKpvSv6/MZ8R1TNxDvkBKHhUx8bArZFokThM+mVM0ZBKteYRLB6B1jqlKkj4U40cTu0xPe0hf2u4VFNIAs79tPkICCg5kbNVAylPxCxl9X1r/CPoAaNdlwR/sqC05FsAn33c+laQDKYXEc2NV6KgdW4Xf8kZ1c25R0wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728279435; c=relaxed/simple;
-	bh=JCadmrC3h0MujzKXcT8U0aRt9DPEEGzc5jwPr2ZooF8=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=S5xhQTGGWEjFUtCN6fQYoKfpXfdUtixbKZ2Rn7VFEWAIFzB32qstH1/cw/6z3M1hN58hiDDQE7I3Gq2QyUC+xKdQZpib2X0KfxN3XwRMk81l7seEMMk78AaPPqaG5RzGgfQ5DFiZdsBz9izy3Fm+sNoqpu3fy4Z1t2btifzO9ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiQkSGt/; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b90984971so41798905ad.3;
-        Sun, 06 Oct 2024 22:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728279432; x=1728884232; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cF9L8ZHjqNNLKF2lJh0mQWJpMrn9fQAJhxqakMnEFAI=;
-        b=JiQkSGt/F5Oeo5CIeVL8Qw9o5y69W1zWDs+AvVd6fGO+9Xvoi9IEfpN9LmHcHD+OZM
-         vANIWOcAuOq7L3DwThrS16pnLhAeCu0vA5E4nAgZH1uN7tqvm3lT6SrmwsKMZK0EgP7y
-         lbqIn+ersa7EuNVng193bc4/FVzZs3hanaxAtH16qdCJRKGn+8/2WfN0KWFg8jbPqjbr
-         auowu0H3XDKG4FjoqOpAbHNmsAcJDaqcdakKlpGvuM7nMAGMoDapQeQIEkfVoFC0TRDT
-         ILGTgBMuEnncqgNit2lqu0xg8aYZamxxG3G6mH204FvZPiecd6DK7n14ER0qqQ159LuP
-         N/qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728279432; x=1728884232;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cF9L8ZHjqNNLKF2lJh0mQWJpMrn9fQAJhxqakMnEFAI=;
-        b=jeX0vgDgp/rRMS5Clm3Ypir153+zeHe59foP2EzJLP2o27MhcW8fA6xrDDcWqXb5vq
-         ZsKlNoMP/HOuF5Id+Ky5MbNAwK3C2sJZTN17WaARxxNX0DHzK/5vwmpEURO+lAJzm30C
-         3PmKqP4WNKEdi9Bo3MMXe+YJRpjyPtyjutSEomEXVNeaqR8ivYGmTrShkrnBJMJd36l2
-         SDccGLyedk4OcJBnZt6HYjZ4dXzZaf+/6JHQG+LE3vHy7HqbKH30XUZbqY7obIci3z14
-         Ror8XZSU1o7mAbQg7L1E6MT40/tq3UJoK+HHLqf1PY6Wha7r/ZY4sQpQu45Y8M+1ISHu
-         5lYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwbJYLnTmY/PR1PE5D2a5eUU4KTw74zKeKBDdovQo4N90AAIrzw4EmwoWSBEajUt1pKNFy5Vc0WVwjhP9vCo0=@vger.kernel.org, AJvYcCVeg/WawCNYI0ueVL5jI94QqC3Co4x1J/QcBKKQgVI4NNAhzrPZTeIndH9zfW0QFk73bBOjsySEfOmHljw=@vger.kernel.org, AJvYcCXq+hnDdk9XDNcpanXOc8c08PDawJn+LAaLMckUvtBOoJfGUT1HmeCG17OPAkxxYqMPNArPDUz4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqzxGyfY/4K+zijlRfklgW0wmEfqNcESMFW8M7yHdF7jH7HXU1
-	x6CVh0qFqBLxioHTBBTm0xX45FmNIcyY/ByAc4p+qyGJN5AcNCnd
-X-Google-Smtp-Source: AGHT+IFV3bfcM3/+6NJSr4u/aMHjiq8zXz5plHNqa6mGpBlqdEH6TUKOc5eNKUGE5sjlVkCXrY5w7w==
-X-Received: by 2002:a17:902:c941:b0:20b:937e:ca34 with SMTP id d9443c01a7336-20bfe05d555mr113149585ad.34.1728279432506;
-        Sun, 06 Oct 2024 22:37:12 -0700 (PDT)
-Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c1393175csm32539055ad.140.2024.10.06.22.37.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 22:37:12 -0700 (PDT)
-Date: Mon, 07 Oct 2024 14:37:07 +0900 (JST)
-Message-Id: <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
-To: finn@kloenk.dev
-Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
- PartialOrd for Ktime
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
-	<20241005122531.20298-2-fujita.tomonori@gmail.com>
-	<3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
+	s=arc-20240116; t=1728279655; c=relaxed/simple;
+	bh=NW15jWfGTv6CdDOi6P06k5U18XEUpN8HTkfm1rnMo4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i6fzi0+2Zq0ETne4BDVlk8sM/CwiiT1AaRCYlClL+R8fuXabm3FdabDgwBw1pMlxJfBArVFi57Z9HRQIMEZOQiSXLgZStMa1P1EFAoBxzF48te8tHPxjUG8PPMmZlLYm5MwxAWNrk12cwRGzr7pS7qxaTCgREWUFgrWyH3VpBWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sNjhjZjB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974JsDb024539;
+	Mon, 7 Oct 2024 05:40:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=YVpQRnzWLCjGXCfVMKGoRaXUhi
+	59IGwbCEnH+odbRp8=; b=sNjhjZjBre5eDLD4BD2645IxK4qQNaLlwbxKLv/+LL
+	Hi72lwAV2EB1nQxoa3Ypgaxsu5XKwc2qT0h/g2xEVSytan2q7gIqpx6ewvBXwRtX
+	7FR6WDlC4sz/iR0QCsCj0jbJKaboCJNcPsaivhdKMDYpTgQSNfPzLeUZFPIWS8Hi
+	YTkV/sYgFRfInqhLcIIoT8mARaD8pQ36EjWOq9EbLFleHljs0rCx6pWE2IeKLRtr
+	tsaRLjnTkDmJ1YgF0N7EATT0LNFNIrMVUNDgqOZFgqthZIrO03Ex8+Ro01SEtc++
+	eH02l4eL26NRuiuzJqsJbwkrEiE0YjVY9CPe7Ra9IL2A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4248h1g8u3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 05:40:24 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4975eNpI021204;
+	Mon, 7 Oct 2024 05:40:23 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4248h1g8u2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 05:40:23 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49751H2a022867;
+	Mon, 7 Oct 2024 05:40:22 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0mf3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 05:40:22 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4975eIKp52756846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Oct 2024 05:40:18 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6750A20049;
+	Mon,  7 Oct 2024 05:40:18 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0B53920040;
+	Mon,  7 Oct 2024 05:40:15 +0000 (GMT)
+Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.ibm.com (unknown [9.43.47.32])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  7 Oct 2024 05:40:14 +0000 (GMT)
+From: "Nysal Jan K.A." <nysal@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A" <nysal@linux.ibm.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH] sched/membarrier: Fix redundant load of membarrier_state
+Date: Mon,  7 Oct 2024 11:09:32 +0530
+Message-ID: <20241007053936.833392-1-nysal@linux.ibm.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Q1mO7SjCHn1YLn4pkYaKQsvL8C9UN_Cd
+X-Proofpoint-GUID: _-4VV4ZENx6hWaATop6qUVBBWxVEMWij
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-06_21,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 clxscore=1011 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070036
 
-On Sun, 06 Oct 2024 12:28:59 +0200
-Fiona Behrens <finn@kloenk.dev> wrote:
+From: "Nysal Jan K.A" <nysal@linux.ibm.com>
 
->> Implement PartialEq and PartialOrd trait for Ktime by using C's
->> ktime_compare function so two Ktime instances can be compared to
->> determine whether a timeout is met or not.
-> 
-> Why is this only PartialEq/PartialOrd? Could we either document why or implement Eq/Ord as well?
+On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+is not selected, sync_core_before_usermode() is a no-op.
+In membarrier_mm_sync_core_before_usermode() the compiler does not
+eliminate redundant branches and the load of mm->membarrier_state
+for this case as the atomic_read() cannot be optimized away.
 
-Because what we need to do is comparing two Ktime instances so we
-don't need them?
+Here's a snippet of the code generated for finish_task_switch() on powerpc:
+
+1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
+.......
+1b78c8:   cmpdi   cr7,r26,0
+1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
+1b78d0:   ld      r9,2312(r13)    # current
+1b78d4:   ld      r9,1888(r9)     # current->mm
+1b78d8:   cmpd    cr7,r26,r9
+1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
+1b78e0:   hwsync
+1b78e4:   cmplwi  cr7,r27,128
+.......
+1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
+1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
+
+This was found while analyzing "perf c2c" reports on kernels prior
+to commit c1753fd02a00 ("mm: move mm_count into its own cache line")
+where mm_count was false sharing with membarrier_state.
+
+There is a minor improvement in the size of finish_task_switch().
+The following are results from bloat-o-meter:
+
+GCC 7.5.0:
+----------
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+Function                                     old     new   delta
+finish_task_switch                           884     852     -32
+
+GCC 12.2.1:
+-----------
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+Function                                     old     new   delta
+finish_task_switch.isra                      852     820     -32
+
+LLVM 17.0.6:
+------------
+add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-36 (-36)
+Function                                     old     new   delta
+rt_mutex_schedule                            120     104     -16
+finish_task_switch                           792     772     -20
+
+Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
+---
+ include/linux/sched/mm.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 07bb8d4181d7..042e60ab853a 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -540,6 +540,8 @@ enum {
+ 
+ static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+ {
++	if (!IS_ENABLED(CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE))
++		return;
+ 	if (current->mm != mm)
+ 		return;
+ 	if (likely(!(atomic_read(&mm->membarrier_state) &
+-- 
+2.35.3
+
 
