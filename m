@@ -1,238 +1,199 @@
-Return-Path: <linux-kernel+bounces-353296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48007992BBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:28:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002AD992BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85501F22664
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:28:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60F00B23A53
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4821D26EA;
-	Mon,  7 Oct 2024 12:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838A81D27B1;
+	Mon,  7 Oct 2024 12:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ssW7Ip/R"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZ0poWZ5"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24C51547D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728304117; cv=fail; b=MnFhU39jnb3sXsu54cO/bIOe/8MvUUicyPlRH+YQ4FPhvEGQcsqzHcvUjqwQoohF+bL/Xs5uaJGiLX9r4RmTFyUI6qG/7Qf8CmoTNBheI6oSItKly6iLxyntWoVInGm1jz1pO6TzJAoTqqTcuU6hQRKdGmwvzaEPqFExWxKy/AE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728304117; c=relaxed/simple;
-	bh=J1VK+aHzqsksYICvEbzIMdwD+Sdy6VhY1oSDBMN0NXY=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RuLqmrrvKiJE9VeiatOcP1zFrE9esOXQTElQlNRSU8hdQlfWO9sQSYtUFQFnom5sjS0xdvdriz7NiOIAFcbQQpdAO22LDAe8LU8hiZ6SUe/3WrSKFwVAiRgqAAe/tolY71mQ1YA536NUHZeXQWOxhUmJ+Y9h6LlR8wmusLycNmQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ssW7Ip/R; arc=fail smtp.client-ip=40.107.94.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tmGs9bf5fZBk0C5CPdpvqReuNGYpn2dxpf1Mq7/D1X5YjjRNb0dagShO7584OIXF04/2h6hj1RZZtQbDd5w1E9tam1rLTt5mC3gbMZn7tgj0meUOmhbC6JBBLsBc3vGq5oywwHxHq25Ciirdyek7svfSYCHahBfQZDdDlnYsmvDmOEWwGSEV5mBv7bstTiV5sCNJmtThm7x+03tQguqFYUa9+dyNmlLMeIyqBV1iVepFK+JMD7bcnpYFnmtir74IlOUFm5poQytBgnFv7LAjMyKkv6vsdRuR4gNtoEKvngY8IR88SBZWc/xjdllnGlmBuHaE5kGB9u9ArvVDxgnPSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CctZH7L+yPRG4QhflR2Z+mL90lwc/GBr/Bs9VMgF1/U=;
- b=sABCh2BZ6gbmnY/c5pbTOQcjAR47dBkIc+1l5U456InP129+vcRUZqXPybbD6r2mirtU+evZ7Ojrdjthv2cHrkCLTD+PiOcjZU7ZzuD17udf7Qe3pN/trxXLZBtNfA7uUDFTEe+T7jlQvh3Y1+aUZwETGtw3ASlvtgmn/NyJHPaCtyF6g6HbUg4WXmPbgWj0CTenhxdaJnMw4hefMRjxJXsUeNfBXg5ZbZjNDL3M0xQvilyKaQw3faNIjUImmNI3Hxu1ksh2xKJK7/9qeJRNlUS3jydgbgNEbvR3Ee/zJoHsqlCZ+WFNLF3rduQriRDFyyoLciMaf23o/2owgDNO6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CctZH7L+yPRG4QhflR2Z+mL90lwc/GBr/Bs9VMgF1/U=;
- b=ssW7Ip/Rrp4+DDyMEQsFFRbnmgcvHgsURJTaMAMp2gSWycTVQSHtjw/1RRBxE2kvBYWBScRPp1/I6Znk6eGRsHuQ3VFilJ9/QSIKvtzyZoQLXQ775MWw910FAtAZ0HWawk4ncPpFJUMEXcqf4Jq9Z9erKevhyNZesF3Et+MEHKEDfsUg9ld1i50iVJLt3T5wiy86uFlJpfhuF79g+zW/EAemjJhLwNhBTKzkj8/z2a8R+1mHUWF0Pt/MVSciqxecwQxpxOqyO7y30BPzqBT8rlobXzFSc/Wc8w7mAG2DxY/3yvKSowvwWI039LoSWXXHwX9D4A1AdQivUhvpkCYD/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com (2603:10b6:208:396::13)
- by BN5PR12MB9512.namprd12.prod.outlook.com (2603:10b6:408:2ab::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.9; Mon, 7 Oct
- 2024 12:28:31 +0000
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938]) by BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938%6]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
- 12:28:31 +0000
-Message-ID: <f9fa14c1-f487-4ad9-9bc9-7c1db6de1ae6@nvidia.com>
-Date: Mon, 7 Oct 2024 15:28:22 +0300
-User-Agent: Mozilla Thunderbird
-From: Yonatan Maman <ymaman@nvidia.com>
-Subject: Re: [PATCH 2/2] nouveau/dmem: Fix memory leak in `migrate_to_ram`
- upon copy error
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: nouveau@lists.freedesktop.org, Gal Shalom <GalShalom@nvidia.com>,
- kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
- daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240923135449.356244-1-Ymaman@Nvidia.com>
- <20240923135449.356244-3-Ymaman@Nvidia.com> <ZvqJgMVBs2kAWguk@pollux>
-Content-Language: en-US
-In-Reply-To: <ZvqJgMVBs2kAWguk@pollux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0516.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13b::23) To DM4PR12MB5866.namprd12.prod.outlook.com
- (2603:10b6:8:65::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF8118BC03;
+	Mon,  7 Oct 2024 12:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728304190; cv=none; b=HjwKkOjZmYPKTnIm6pqxXMkrVnBUX8fb9mzZlNi1r0C/PzLLgEsVLzA9SMVw263T+mwnWMnV/KErgUjvJoLj8ZGMlFH13/LzN++GMEyhnkFRZJlNDbePv1WJo3qRGxjLeFzao07AEa0AhMQtVIn4xdsH0EDEnX81FVAlFf0/TGw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728304190; c=relaxed/simple;
+	bh=S0PmYZ88hEZrLiL/PiuJ/v9Q7mo3hEoRYd3HOJjCjwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOzHeWLrwDAlzvnQkdVuK1V404xxjfznPRVYyVNs/WClG016EZEnHj7fW0uI4L4mUs6i+H2M62ZVSPpMHw2TIStv6vJvudTV2AhDy2LH+kb8TfiwAYa9clAr7zSKoIsYQewUVmgk6OMxse/tib4AIL/6Rh4wQk4wc7KH2nsHtBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZ0poWZ5; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb2e5d0104so32241926d6.3;
+        Mon, 07 Oct 2024 05:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728304188; x=1728908988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XoM4lIRKq6wt6tvordN282TXwd9yd9Pg0kZvSLGS/L4=;
+        b=MZ0poWZ5d5nJ8DnSHDuTfwunvHD/Ot2zNoAxAEdurWdzMyk6xpK+k4/an6fWdPuQYh
+         eJMKckL7VNKBOljCCC4G46kD42ltFGoBtCP9Ngw7RrIisN7GfVhFvpjNTDHxPhyvQDSE
+         l13z991WtY3HlFr7LPIlRsQOG/EkFGpWnQlVSfx6CKLtUPFW52sNQCUdwEAyT7TLnZBD
+         qQKc/eWNLQcZiezlmZQAfue5w8/JvY+pj/0+TZQNvACk1IzHpqWSOYC8j58aAwPrnfA8
+         2BK8vCDlMr0Ox1pCRRvLaaglVCUPzrzjgLZaOYItEOuwQDotis8vzZrqOU5KOPaR7hyL
+         3yeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728304188; x=1728908988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XoM4lIRKq6wt6tvordN282TXwd9yd9Pg0kZvSLGS/L4=;
+        b=uD5erVJH4AG9AxFioCGZNZBRJwHT6NskCqebl0GKqj+EraWaMNCaqxIRSYSEd8kdie
+         P46LKBT2g7qQxpzNt2AARQ0F4n/ixk0MAXdqhCYUtVeec5VuoIR1ZV7M2H41Ujutzyht
+         dOCASHzTQlZGYo3aUo8usEgoDc3SRXvlCN6lg9pGXNwC8JbxqzNTR49z097veaQWCdgJ
+         XT93Yhy2QB4PgEEPp2lSeqqyUo4dT+fij4YLq6CY880/9ssGsfaYwtZQIT7slYnxJlpD
+         5ext59OUfJ4wLIXpdIN1whsWwtHuH085BDUoiFqxfP1m+CF8fZlWHEVSImB0Er+tFpOj
+         WDUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXgCHRV8gZN9qlAuHa+kRjbLC5I+SV1rSRtmYghBxX3I0CzpN8MKqsM5YWXTuHViW/hvpJvwuUHwh6wzm0dhM=@vger.kernel.org, AJvYcCWfEuvXd04f9p3mPP7x63rlLfzm3v8AYtFrrzahAQW+X0F4UB0rOdUQSTmjZKpuxUzFpyGAIGWT@vger.kernel.org, AJvYcCXKxeBDKOrZDAW26V7jzf13sdTgKUVq+dGrhCWAdpdBrWy4lZhP+L7pyW/xoBQ3h5Dqtte9QbfOpcetazQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8Qa8YmGkxrhrJ/rrg+BhiFpFX62wqZMpJGxjYJC4gBzFke4Ko
+	y9KmAaG3I71paqiAi9MrIx50LUe3M8c2E4/xJD4fmU7IKuZubOkd
+X-Google-Smtp-Source: AGHT+IGEyeCqIjlSUSKGI4oWYd+KNlZgB0SFN8Z4gxmCPqUzAoWZwMhyG/fWX8kWZY3LWknsznciFQ==
+X-Received: by 2002:a05:6214:5684:b0:6cb:3b9b:1673 with SMTP id 6a1803df08f44-6cb9a4fbdd5mr176978746d6.49.1728304188014;
+        Mon, 07 Oct 2024 05:29:48 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46efeddsm25227246d6.71.2024.10.07.05.29.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 05:29:47 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CBF3E120006B;
+	Mon,  7 Oct 2024 08:29:46 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 07 Oct 2024 08:29:46 -0400
+X-ME-Sender: <xms:OtQDZyCv97xoN1FWH6QL8w2dK5iLh5iuZS8I8EVp8ViJx6PZ8Tov-g>
+    <xme:OtQDZ8hsQnanpkzGQcdV9to7iarQBkrGzTWXszY7oqP-J2cKx87_qAtWWwaKn0p1e
+    7raZFAGRARza2laUw>
+X-ME-Received: <xmr:OtQDZ1lZxLcebLFYxul1fFCnIxWareSXd3moacpuzTMH9ZkhdbsnhdtoqD92Ig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledghedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeeigeethfejvdfhudegtdevtefhleelffegteev
+    tdelgfeugefhhffhteegiefhheenucffohhmrghinheplhifnhdrnhgvthenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghs
+    mhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhe
+    dvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdp
+    nhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnh
+    gurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhi
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopeho
+    jhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvght
+X-ME-Proxy: <xmx:OtQDZwxtz3fxqqg9zam0wKbkTd52nmytCjdrRCXtIHG_aFQDmoAQ7g>
+    <xmx:OtQDZ3T6nYowzw0MAuXho6wIjZY1C8GacVyWYyZ8xXzkIPcLZsDndg>
+    <xmx:OtQDZ7Z3HvDpMPnE47YoCfmx3UGzaA7RsU8AANTb47l_jkskvhRpiQ>
+    <xmx:OtQDZwQO7D6aAYnO1IxRPH62lNc73hiDuBNxZ9xpwHQf1M0gxmDGIQ>
+    <xmx:OtQDZ5Bcekv_zvj5qcQ2luZ4a8Q5kNVioYZYrr83jZNS7EJzAWzPbKpV>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Oct 2024 08:29:46 -0400 (EDT)
+Date: Mon, 7 Oct 2024 05:28:28 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
+Message-ID: <ZwPT7HZvG1aYONkQ@boqun-archlinux>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-6-fujita.tomonori@gmail.com>
+ <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+ <ZwG8H7u3ddYH6gRx@boqun-archlinux>
+ <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5851:EE_|BN5PR12MB9512:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd3e0782-1427-4645-5dc2-08dce6cb8d5d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0doV1Z5c2ZUSE42WU5ZTVVrSmVXSENJTldPR2h0SDQ0UFZyL01VaFdjdjdY?=
- =?utf-8?B?T1VYUGF1ODhKUEo4cThaWnNCSTlXRnMyYnZ6TFRScjhDYU15LzhMUU1oeW54?=
- =?utf-8?B?NFMrOWhxYmhaLzloUUFCQUFkR2tGU1pWTmVQRFJ4MC9KcXMyOWc0OHJPNVky?=
- =?utf-8?B?SFduNXB3eElueWxXUFg5MzIzVTFhNE1yRlVrZXl4MCtpNmhSVGF5VFJPVTFH?=
- =?utf-8?B?SHRKbmhGUXgwWkMvdFBucXQzQ3ZwTUZSazBCVGlmMnNHT2YvN21TRUxIRm5l?=
- =?utf-8?B?S2xkeE16b01zWDhkTS9jVWhTc3ZqSVRxbTg5dk1RajRNbHVDaURwMEljeEk4?=
- =?utf-8?B?RG9WTll0K2FaY1plSmxZR0FQdTVSQjM3QW0vZHY4MTBWbFdhQTYxM215SjlS?=
- =?utf-8?B?ME9JSE0ySzgvZVBWUC9NSWN6RWRBQ2tqbUxMZVcwWDFsNVpGSGNVQWpJMHkv?=
- =?utf-8?B?U3hyN1BjT0pUOWlEbEJ0VFlBUzh3YlhuL011SGYwSks0ZDRZUVlma2ZCVWI4?=
- =?utf-8?B?UVEwdUVvbFFwRmIyek1lVWZRUmI0RVRwMGEyV2syZngvMmhMdnlwTUlBci9s?=
- =?utf-8?B?bjJxa2VmQmNLNmRleThjalh5RldVTVZ2VGVjUzdzRStyQU1ncFJaakpQNlFL?=
- =?utf-8?B?bFJ6WkFVQ0VPZGI1c2xNNUVZYlJJaWQveFdQWWNrcUYyRjlLd0lqOFU5YUpR?=
- =?utf-8?B?czlxQkExdmhLeGVTQTY2U2ozYzdjQVoxVGxQb2lXbkttL0RVQ2lLNGYvVEls?=
- =?utf-8?B?YURHbnNob0JIWUwwZHdjbUtvTjZLTkNPdmxxdjdsRE5DRit5ZTJ4T0o0czFm?=
- =?utf-8?B?bFBneGdRVFQ4MHpKQ216NWUwdkVXT3RLRWNQTEdoVHdtaTA3Wi85bkpWak9v?=
- =?utf-8?B?dUlQY0ZhOUROZW5wejIwblBnbTN6cUpLSlBWcW9DMEw1OFpsMUpUdkYzTFdN?=
- =?utf-8?B?VWJjbU1aUCtNVUEwNkZLSHN1ZDRjVFduY1N4cFRnSGFYOTlOMVFMTnA2R0Qv?=
- =?utf-8?B?Z1JKdVZqU25QYnZmK1RqUEwvRFFLRTRFc0xMTFg3NWJpRjhVTG1xWFNudmhF?=
- =?utf-8?B?NGVIYmJGSlUyUTVIdTAwdFZCdElaZTdodGZuSWFtU0NiR2ZYYlBzK3JkTGdF?=
- =?utf-8?B?aFRLOFVIQmdNRjQ4Tmg4R0VFTXE3eGhvenpiUGVIb0N2S1dNVVBvRFBxY1Vq?=
- =?utf-8?B?STJET2l2cHlNUWRIMXpwVEx5Z3VOOFRxMTlEdEJUTlFlaTU0RnBWdXlEd040?=
- =?utf-8?B?ckJSN3RETkFla3FWZTcxRGRHcHRrVS9DL2JFUFZwY3BsUHlRcEo5aUtpN0dE?=
- =?utf-8?B?aHlseGgvdUJMRHpmR3RKVFNuWEM3MlM5YmR0MDVlbmtackorWHJyRTZRTUtv?=
- =?utf-8?B?dDVCR1I1ZHlSK0tHdWxmRTZ0aGdXUW92VFJVZ1RzZEFManphZldXRTBucTZy?=
- =?utf-8?B?RVJpdkhpNDBIZnZVa1dmVm9ZcGIzNHNhVTQreFQxS0YwejZ5NFB4OUJFbGRN?=
- =?utf-8?B?UnJvb3BDeFBXdTU1ZjlncUltdjJnZnJJZm9Va0JGeXhOV1pDZnpWTUpEQ0Vn?=
- =?utf-8?B?R1RBWjV4KzRFalI5S0FDS3Bpck50K0xnaHZ4Y2RvMHJxYXdCVC9nOE82MFo2?=
- =?utf-8?B?a2hpM3FjVWFTQVdQWit4SDdrTWJPcktwWS9HMklpenBoQzlZc0FkMkpPL2xV?=
- =?utf-8?B?NS8rMzd2d1o1bGR2OHJVNmtKVU5MNC9oVXU2WDkwU0o3NWVDOGoxNUpRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5851.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QnhjNWI2QVduYVdXSTBVRDRvSW40cnYvWHVwck9XZ1RZc3BhRHluQ1o1VjBz?=
- =?utf-8?B?Q0Y3em5FL3N1UHB3Q0RRaTkxN2VubGVlYkNxbzdPQWo3NW1vV2l0VDM3MENG?=
- =?utf-8?B?cCs5ZTVXZG5zNmZiTlVsVUFFNUdGUitFaUJEWGl3b0JHaThpRFhvd2FCZnYv?=
- =?utf-8?B?c3VJUU5yMW9OYVJOdmxvY1pSZmV3R1R1YW5IMU1mU2QrRWxsUlBETkRRR2NM?=
- =?utf-8?B?L09nVU80WWNSRnUvQ0xFaDVpc2tTWEVYSkVySjdvN3JyNWFGWjBlalNYTUNt?=
- =?utf-8?B?OWk2TzlrNzlhK3VkYUt6YlhNMW5ya0h0WGZ2WUhyUXhwSUFkY2crRFgyVGRM?=
- =?utf-8?B?YVFiNjVqS3l5ZUkzQ1B2ZWl0RkwyV2QrdEVzbTFVZU1mampDZGs1KzIxL0lo?=
- =?utf-8?B?YXhFM2g1YTVOZ2Q1S05UVlJEL05HTEg4TTVBeVRuR1BLZzUvM1dpQnpDTTlK?=
- =?utf-8?B?TkxaSm5iMnU4SGNVNktaNEEvekFNVXVTYjNuU0s2VXVWYkUvd3NRUDFXNDk2?=
- =?utf-8?B?UTRKbmVXTVBIai9RbVUvWHZuUlc4VkhqTzBvSitkWXlLMVh1cXRJU21nVVk4?=
- =?utf-8?B?RnBKMFhQeGJ5Q2JwY1plL2dzNkV4MytnemE5bkJkK2tFWXJYN3RraEpDZGlv?=
- =?utf-8?B?V1F4ZTNja0QyUUQ2WjlTM09Ya2h1dDc1a01xbUo0dzFnS01WdGNUVzhaaDJ6?=
- =?utf-8?B?TTBmWDhuVXRBeGRlSG1SS2hvek56d0s5aHVwZ00xWWxnUHFOM2NKTmFsbmk3?=
- =?utf-8?B?d3F2N1REbjhnY3lBWmgweXhxNUhSdFJJR0RxUGcxdFBIcUdZYWowR290dVMw?=
- =?utf-8?B?OW93ZUVkSXAyd0J4eTRIbFF0VWhoUjljZ2hVZ0M1dk5GVEFKakxwL0hRUjlF?=
- =?utf-8?B?QkRUVUtYNDV4NjhOK2pkdzlGNHlxSUt5MExCQkJUbnAvdlliaitFYWRzelBx?=
- =?utf-8?B?dnNVVEJDYlBRdHM1cU4rNTA3OTJJQlhzVjZuL0M1Rlk4R2hVR0wzVVoxcWFK?=
- =?utf-8?B?QThhMFVyQlJIdGVlSWZneUNURVRZTWdMTGtFT290NWQ1YXErZThuY3lRWGVJ?=
- =?utf-8?B?Mk1BWE5mdFF2RW1HWms3ZkVtK254NXVnZm5peDV5WjJCdGs3djViZ1czRFg0?=
- =?utf-8?B?aitKblRxZDd1cTlHeWswNGlaVkh0Q2VFRlhTTzFlRzZEOEJjblh4TUxuNzFV?=
- =?utf-8?B?NmNRTnplSjJaZ1g1cU1WZG5iTG1FQUwyM2cyL1JKSlViQzJDdGNuc2t0ZXZq?=
- =?utf-8?B?eTVqVFo2eG1GTUlqWDBkYTFjNXZyeG5ob3RHNXo5QVlDM3FDdmh6T2tyL2dm?=
- =?utf-8?B?Y2tFdTdlaHRpbklLSWo3QlJYMmdoNzVpYjJWK01sODNXZExnam00NFFpRHpE?=
- =?utf-8?B?QUowUGpYMWJFZlJmdk1SbFN5dktzbWkwQ0R0eTJGdmlITjdVQTlCVU1aVVB0?=
- =?utf-8?B?enh5eUJ6Q1Q1bGQ0QnBqTVZ4YTlUQ21KRUlla1c2bGx3cWVFNlJkNHJ4THVr?=
- =?utf-8?B?OG44UFN3VVdlckkvY2lqZkMyUXNxcmM1cW1TcG9jemRhZVRWK2htUkk5R2xk?=
- =?utf-8?B?eElCUk93SVBUM1Bodm9NQ2ZKVElPZUFDSWlheXZpWm4wSUhHVmlDb1VGMnIz?=
- =?utf-8?B?L25qNEM1MnRDUEJTR0crUEhWemsrNVluVEtJMU8rcmhUcVg1eTcwMXdnODYw?=
- =?utf-8?B?VjJBWCtQTmZCMi9LVndoZUh4STMzYW81VFhSa21QTGFzVDN2Z3dRdkdhYlpT?=
- =?utf-8?B?SHNjRkJKSzJOMzk2eFpiTWVpekhmNjVuWkZkckdXRW9EYW1PMlNtZDl6Nm56?=
- =?utf-8?B?U1V1RHp5YVRDNXRaUlBOeWZlRHFYbUlla0pTcUtsMTY3ODBMVVJBVU8zeUtG?=
- =?utf-8?B?RW54bGM4YjZFYlFhb01odjJQNWJ1bjV5ZjByNjhGZVJrakJUdzl2ak1qazUr?=
- =?utf-8?B?WmtrOEpUaWM3b0ZmcmZBMGRjYnR6YlVueVBBTVVhZUlOalVSNkdqWndycEhN?=
- =?utf-8?B?NXZXbE44RjdudFRTWXVyRHR3YXc2NXpJakh0WTJkd2VVVWsvaTJMbStYV0w2?=
- =?utf-8?B?ZHExOFFMQ2xuaGRyVGpBdHpFeTNmaXBPQWJZRnZqaThFZ0cvM0FUSG5TRWxO?=
- =?utf-8?Q?b+yxoUq5v6RbWDCsiANRL/0+b?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd3e0782-1427-4645-5dc2-08dce6cb8d5d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5866.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 12:28:31.3829
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gSsnaENVQquwraiGkWxr/wdf+gAbaQU20du/542RwTP0WuWpaQyOPsd2GQIg5aIFxHYfk8uPNQp9V1bITN7i7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9512
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
+
+On Sun, Oct 06, 2024 at 04:45:21PM +0200, Andrew Lunn wrote:
+[...]
+> > > > +    if sleep {
+> > > > +        // SAFETY: FFI call.
+> > > > +        unsafe { bindings::might_sleep() }
+> > > > +    }
+> > > 
+> > > What is actually unsafe about might_sleep()? It is a void foo(void)
+> > 
+> > Every extern "C" function is by default unsafe, because C doesn't have
+> > the concept of safe/unsafe. If you want to avoid unsafe, you could
+> > introduce a Rust's might_sleep() which calls into
+> > `bindings::might_sleep()`:
+> > 
+> > 	pub fn might_sleep() {
+> > 	    // SAFETY: ??
+> > 	    unsafe { bindings::might_sleep() }
+> > 	}
+> > 
+> > however, if you call a might_sleep() in a preemption disabled context
+> > when CONFIG_DEBUG_ATOMIC_SLEEP=n and PREEMPT=VOLUNTERY, it could means
+> > an unexpected RCU quiescent state, which results an early RCU grace
+> > period, and that may mean a use-after-free. So it's not that safe as you
+> > may expected.
+> 
+> If you call might_sleep() in a preemption disabled context you code is
+> already unsafe, since that is the whole point of it, to find bugs
+
+Well, in Rust, the rule is: any type-checked (compiled successfully)
+code that only calls safe Rust functions cannot be unsafe. So the fact
+that calling might_sleep() in a preemption disabled context is unsafe
+means that something has to be unsafe.
+
+This eventually can turn into a "blaming game" in the design space: we
+can either design the preemption disable function as unsafe or the
+might_sleep() function as unsafe. But one of them has to be unsafe
+function, otherwise we are breaking the safe code guarantee.
+
+However, this is actually a special case: currently we want to use klint
+[1] to detect all context mis-matches at compile time. So the above rule
+extends for kernel: any type-checked *and klint-checked* code that only
+calls safe Rust functions cannot be unsafe. I.e. we add additional
+compile time checking for unsafe code. So if might_sleep() has the
+proper klint annotation, and we actually enable klint for kernel code,
+then we can make it safe (along with preemption disable functions being
+safe).
+
+> where you use a sleeping function in atomic context. Depending on why
+> you are in atomic context, it might appear to work, until it does not
+> actually work, and bad things happen. So it is not might_sleep() which
+> is unsafe, it is the Rust code calling it.
+
+The whole point of unsafe functions is that calling it may result into
+unsafe code, so that's why all extern "C" functions are unsafe, so are
+might_sleep() (without klint in the picture).
 
 
+[1]: https://lwn.net/Articles/951550/
 
-On 30/09/2024 14:20, Danilo Krummrich wrote:
-> External email: Use caution opening links or attachments
+Regards,
+Boqun
+
+> 
+> 	Andrew
 > 
 > 
-> On Mon, Sep 23, 2024 at 01:54:58PM +0000, Yonatan Maman wrote:
->> A copy push command might fail, causing `migrate_to_ram` to return a
->> dirty HIGH_USER page to the user.
->>
->> This exposes a security vulnerability in the nouveau driver. To prevent
->> memory leaks in `migrate_to_ram` upon a copy error, allocate a zero
->> page for the destination page.
 > 
-> So, you refer to the case where this function fails in nouveau_dmem_copy_one()?
 > 
-> If so, can you please explain why adding __GFP_ZERO to alloc_page_vma() helps
-> with that?
-> 
-
-The nouveau_dmem_copy_one function ensures that the copy push command is 
-sent to the device firmware but does not track whether it was executed 
-successfully.
-
-In the case of a copy error (e.g., firmware or hardware error), the 
-command will be sent in the firmware channel, and nouveau_dmem_copy_one 
-might succeed, as well as the migrate_to_ram function. Thus, a dirty 
-page could be returned to the user.
-
-It’s important to note that we attempted to use nouveau_fence_wait 
-status to handle migration errors, but it does not catch all error types.
-
-To avoid this vulnerability, we allocate a zero page. So that, in case 
-of an error, a non-dirty (zero) page will be returned to the user.
-
->>
->> Signed-off-by: Yonatan Maman <Ymaman@Nvidia.com>
->> Signed-off-by: Gal Shalom <GalShalom@Nvidia.com>
-> 
-> Since this is a bug, please also add a 'Fixes' tag, CC stable and add a
-> 'Co-developed-by' tag if appropriate.
-
-sure, thanks, I will add, and push it as V2 patch-series.
-> 
->> ---
->>   drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
->> index 6fb65b01d778..097bd3af0719 100644
->> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
->> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
->> @@ -193,7 +193,7 @@ static vm_fault_t nouveau_dmem_migrate_to_ram(struct vm_fault *vmf)
->>        if (!spage || !(src & MIGRATE_PFN_MIGRATE))
->>                goto done;
->>
->> -     dpage = alloc_page_vma(GFP_HIGHUSER, vmf->vma, vmf->address);
->> +     dpage = alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO, vmf->vma, vmf->address);
->>        if (!dpage)
->>                goto done;
->>
->> --
->> 2.34.1
->>
-
 
