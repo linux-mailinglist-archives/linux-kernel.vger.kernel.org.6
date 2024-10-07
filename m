@@ -1,198 +1,260 @@
-Return-Path: <linux-kernel+bounces-352905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C309E9925F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5139925F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CAED1F230BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BAC1F21906
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF2517C203;
-	Mon,  7 Oct 2024 07:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D11166310;
+	Mon,  7 Oct 2024 07:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="D1hk9mmm"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2085.outbound.protection.outlook.com [40.107.104.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z9sG4du5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0hX7je+I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z9sG4du5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0hX7je+I"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E60165F17;
-	Mon,  7 Oct 2024 07:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728285551; cv=fail; b=juKXCrvUkKXPN8tfYEsLuh9cjijpfzmq6zPRKBi0p8DPxs+xL3SZ0vM06vhzc3Yx+tpm6lruYRl7j8rMI7sya77eot4KlSBji1Cn1Z38T8ZLrJUOodc6oWzMhnHl3RUx7T0PL/3wbB/Bd8nOXx80qOiiaC36MzIuPCPmGlFU8EI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728285551; c=relaxed/simple;
-	bh=tAnbHu4kvX8kVu4BUZhAllAHHZ64ajnPPItpSqnIRrU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=goF50twNizTq4Eijt1NSv1f9HotNyedowspgGgZqv42vjeCoNN5EIJTeBMxmsZsVhLvPIjnUOHaKzNf7yRXuL3IAPqqV4GpqBjPWcuFCb9uk82fF0OgcbRd/o3QNTTLNhfV7JAn8ibyPGnQxZeSKrCMznUdDUf3w4AHAj1e8y8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=D1hk9mmm; arc=fail smtp.client-ip=40.107.104.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xMaJSCb+DCgxL7BFnCqmryyTuWMG9aTzYSgv1yv2lZi59Q1KpBepgPoRJf6taij+7Y8e+g+44jqgTp+rn7Ca59k7nFrfCyZeIV0I8A/KoDI52pLkNGhbQwtraHtglGafjg18Ew6Nnzt8TnAARuX6pKaGeLLhgeRnRGN9WB6ZNfurgONJ4gxTCD7v1OKAYKTqpg7+8NcV4Jv+9yavYy93BaZfXwN9vqa8yTIt+uo0dxxEkemtPcevVX0K5qME0zYxJtdNPkOBrAQAEuvmJViAQbzu59XmKjJ4tUXzvCCUHB56bB8NIHYStyn4PW4wQk2jZQZXPpvDb+3upSmOeXsOUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tAnbHu4kvX8kVu4BUZhAllAHHZ64ajnPPItpSqnIRrU=;
- b=mTi59B5lFQeEkx9l/XBW1b8pxLN1ikz0KhejjSxqFrQQ5NknEsqnBIljT68CwAWrfsFQgSy3PDHFLEOVY8CTU7mtyOn95ceBIMVTWOpX19nTidwM+gKA1J2Pbs9VUOFoHL0tmtXM3Z0TFl8SVplUu2dkQylcj/P7r8YGSVLqWxMkoQWL2aMn5wL3JpepzuftSVvV6ZNcnRl/NsqE+okbnKa+YkGV4CSXlp6EkcrmyPQ81+KdSXZrAtEci09dgY1emGNgzgh7BZPO8EpZIAUUkI90aL5nffK1KtUjo0Yykr5oGMBLaFRkvhX+Xagby/OW6P6xrMfEpAnSWwzALbJS3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tAnbHu4kvX8kVu4BUZhAllAHHZ64ajnPPItpSqnIRrU=;
- b=D1hk9mmmjtpCVvnnNpvAltdO1YAjfEirKPJVVPOi71jCdY3VhQkLv7lYgjpB7xCl/dtIYaDjdMKa3TStg8uhIdY8OdDW/O2v7RqgaOGbPbWxTKbHKalK/mOwgeB43vbuKQ+ZWhgOaaHS/1DAbnp8rSP8tlpxpGpU+iYOHrY96N8=
-Received: from AM0PR02MB5779.eurprd02.prod.outlook.com (2603:10a6:208:189::21)
- by DBBPR02MB10532.eurprd02.prod.outlook.com (2603:10a6:10:535::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
- 2024 07:19:06 +0000
-Received: from AM0PR02MB5779.eurprd02.prod.outlook.com
- ([fe80::e74f:6969:b1e9:30bd]) by AM0PR02MB5779.eurprd02.prod.outlook.com
- ([fe80::e74f:6969:b1e9:30bd%6]) with mapi id 15.20.8005.026; Mon, 7 Oct 2024
- 07:19:06 +0000
-From: Emil Gedenryd <Emil.Gedenryd@axis.com>
-To: "jic23@kernel.org" <jic23@kernel.org>
-CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "dannenberg@ti.com" <dannenberg@ti.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "lars@metafoo.de"
-	<lars@metafoo.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Kernel
-	<Kernel@axis.com>
-Subject: Re: [PATCH v4 2/2] iio: light: opt3001: add support for TI's opt3002
- light sensor
-Thread-Topic: [PATCH v4 2/2] iio: light: opt3001: add support for TI's opt3002
- light sensor
-Thread-Index: AQHbFY8HuXJEWWs0RkmgVD58ZYYY2rJ5uMQAgAEugIA=
-Date: Mon, 7 Oct 2024 07:19:06 +0000
-Message-ID: <b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
-References: <20241003-add_opt3002-v4-0-c550dc4591b4@axis.com>
-	 <20241003-add_opt3002-v4-2-c550dc4591b4@axis.com>
-	 <20241006141624.3fa5bf34@jic23-huawei>
-In-Reply-To: <20241006141624.3fa5bf34@jic23-huawei>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR02MB5779:EE_|DBBPR02MB10532:EE_
-x-ms-office365-filtering-correlation-id: 157fd4ec-5b88-4efe-d2d4-08dce6a05448
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Sm9DVFAraytHbTFINFY3Mjl0TkVhMXRRMEwrbTN1RTA3cmlzMnBGckFVWm82?=
- =?utf-8?B?eUJ1bk9mU3g2U1hvTW9JZXgwelVyb0xsOEVMRkx6OU1HdkFTS1RpSml6aXl6?=
- =?utf-8?B?UjIwQVVaakEzMHhLZ24yM1VlZjd3N2k3c3ZhZ1pVVXMzUE9GWGppdU5XWDBI?=
- =?utf-8?B?NWlSQ25vNkoyKzAxclBQOFdQS2p1Qy8zYUxoT1VGaDl2b0pJeUdXaWtTQjNx?=
- =?utf-8?B?UFBYby9Wdm5kYXlFNVZmSStzQStGWlk3OFdkUFV4MS9VNUQvWnJYWEhCbHNk?=
- =?utf-8?B?aDR0OTNzMnNHOExIc0o2MnpCNy9ia1RmY1hiZUNubW04Z0tjRnhnSk1vbXZZ?=
- =?utf-8?B?OER5MUN6NCtWSFc5NjRyVHVwRXhEb0UzczRyNGMwRTFXUExsV2FUR3ZYL0c5?=
- =?utf-8?B?NFpsYnhHL0ZPRFo3Rkswa1RxNDdrVm1nS2NRdFdKV0YyOWs4K0N2bnNBNmZZ?=
- =?utf-8?B?M04zc3Q4WXRScEZHcG0zaHN6dVZoejBzdWNzdWRNYjRyM29qM084eEJEa1l6?=
- =?utf-8?B?eDFYYnhqMEc5VDdxc2JLQWVjcUhYc2lNWFJiSDdrYk9HTVdNQmJja3dmcDRY?=
- =?utf-8?B?M1JpcHNWYjgrWjV4cWw2VnM4SEQ1Z2Ntc1UzSlY2cTMxYmNjak9aeE1UdVVp?=
- =?utf-8?B?U3FycWpLYnlKaWJFeFVxOWlrK0lRYXA3MVI0K2dUZUhNVFFRbjJiRmxqeDJ6?=
- =?utf-8?B?aWEvWnpiOU9tUlVhLzdFM0dBZW8xaU1GQStSQ2Q5Y09rU2I1M1BFK1hzYkl2?=
- =?utf-8?B?bnFuVGtDc21JaEd5WEY4MUo2TGFkbnhDRUd2Wi9rRzlDbExBdk11alcwazhJ?=
- =?utf-8?B?Zjc0ai9uSG83QU5OZ0w2OVFZNmhJV2o1ZitUdjlqN00zdFhHSlpEVk1zYzhK?=
- =?utf-8?B?RkhCc0RlMEhSZDVCZkRtYUNLYzVhbWQ4QVZHRXQvSU5wd1M3VDUrVThPVmlx?=
- =?utf-8?B?UWdQeFRkeDQ1WjNNbEF1MzJYU1JNYWd3TlBqN1p0aTIxY1dNT2xralE2QUpK?=
- =?utf-8?B?WG51bGV3dTBaR0UxQUxrT1BkNmlzd3NZSVlJTXE5WHErRzVzNEdNelZIU2hZ?=
- =?utf-8?B?VUF4bk1CSFVMK2Via0ZpWk5TL0M2MjRuYjY3NEluUzdHeER3c1ZMVXhodnh4?=
- =?utf-8?B?K2tFK28ycEYzOE1OMXFjWFp5RzZBM3NyaXlna1J4TEJHY2NhclY3TXJyb09R?=
- =?utf-8?B?OXJzdTRsYjRFS1ZtaWF1VFFvWmhJbFhQWFpqSFVOTGhBVkY3YkZ3TFY0Mmhz?=
- =?utf-8?B?Nld3a3hjamhoZktNSFloQUdFOFpBRThBVjJMc3Z3cnhsVlNIRGdEZnRBVlp3?=
- =?utf-8?B?bmVMOS9ab0ZLY3pBN1pKT1NUWGxHYUhyZ2xJSTRIQThrVHR6K2F1SkMzY0xu?=
- =?utf-8?B?QUs3bUFwcW9QMHJDOExvNVBBNFhZLzdHR1dRNndVUThyOHVEcW5FQUcvWDJ4?=
- =?utf-8?B?WTZlUE93MXZPTS9wRllYaThPUCtJaW5wZnd5aEZtWW40b2t1NGVVSHgwTUd1?=
- =?utf-8?B?bVZYbm5rNnZvL2VYdm4vQWhLM0kvVjB4MW05di9vNlZVZEUwajhsSXJ4WHBw?=
- =?utf-8?B?L3pwQjZjdzdwVkhGV25vdTM5cFVhZ2ZzSWtNYXdEZXIvcDZWdU5LK3JTd0xm?=
- =?utf-8?B?TC9vMnlLWFVVakZkWFVUL3N2VHJZalVqRWNUa0ZJV2RCVW5oVTRrQ1pjUkVv?=
- =?utf-8?B?akpTbzRHdTRLVGdrZTZubjhwZWFFa1daVERlZ3g1Q3ZxRE1wUnBFYk9aTXp3?=
- =?utf-8?B?blcxajJXYm5XNmtWWTJaQmlDaWxtcUUrMnRManB6OXhwbkhqSStsZXFUTzRm?=
- =?utf-8?B?VGdjbXBzd2lnTGpPMGluZz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR02MB5779.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cjJFTWZ3bXYvY3huSjJVTFIyek9tbGtjWG41TC8zQVdHUmhqajdreGh6d0Jy?=
- =?utf-8?B?TVVRK3ZBUVBzMWVLSmZ5OU1XUHBQekNRZDkxVk9wbDRzOWVVT2tXd1c4Smpx?=
- =?utf-8?B?ZjQybVZCeDJxdkhocXhKTXZqNHRnWWoxYVhraEhPaHExRjAxYk9VWlBmOUdk?=
- =?utf-8?B?UExyMTVmblR5dnIrTXVtMzNUalZnczFDYUtJSjFQRWNaK2VLaWRwUmR1MS9j?=
- =?utf-8?B?eVgweVpqOG9FSVUrcTRSeHdoSW5Odk5WRzRpRHNoS2ZRb2YzNjdOSFNRcllY?=
- =?utf-8?B?QXc2K0g2VEtKV3FRNDNuaTFRZU9kUU1DemRySHo0WllwVExSRHJndVpjSVR2?=
- =?utf-8?B?VE10VXhPWlhYYytwQmkxSm5XN21Na1pycjJBKzZUek1pZzQ0cTBRT2p1bFFi?=
- =?utf-8?B?Y3dOOXBNaS9Ob1F1YjF3WE9ySVdrOERIWUh4VHNhazNBQUR4RlVBb0FwRXZJ?=
- =?utf-8?B?cllsSXduUGk0U1BoMStybDJYbmxQR1pTb09ha2x6ZXQwTEN3aHVmVHdLM0xm?=
- =?utf-8?B?U2RZUjBNcVVoenhFMTBGK2Z1MDZrV2NoMlc4a1dyRE9xMVNjblYxU0VCSHhU?=
- =?utf-8?B?dSt5b0NqbUNUczlCU2tWdXBRVHdKK2xUODhXbFF1WURVZGtac3AyeWd4OElP?=
- =?utf-8?B?YnRXemZ2SFlRWmdyaWVmWGtLOFROOUF5MlVUQ0xmMUNQQjdrYzM4OGtIdjFT?=
- =?utf-8?B?SjJueWhnVEZqaTB5djV4OTJUMEhnK2hmeXBtWmliOTlGQkRTdkU5c2ppQXln?=
- =?utf-8?B?ZkdmVVBld2owa1NJS0x4TTQyZWVxN2c4WEF5Vy9VSWVmTjQ4N0JacnRadFI4?=
- =?utf-8?B?SHB1QmNhdGQwZjNwZXRYSVZ3MloyRkVNUWtyZkV6RW9LeksyZXBaL09WVXFz?=
- =?utf-8?B?WjJOdDZXTm10UkxvZXFNdTJWTUJKWnlKN0hNa0diaDJuTnpxY211dWhvYlRZ?=
- =?utf-8?B?azh5ZThwWDgrblhERUFHVjkyWWZuL2lkbkNZM0RzTUpLZUt0RWppc2RTSlYz?=
- =?utf-8?B?d1pCcE9CcUpiY0J4S3U5YXdJRDg4VFBkbzNZQ3JtbU40emFoUXc4S1hSK0lq?=
- =?utf-8?B?eVVrMCtYeTFaNkh6blp3TUFhS0lFMnk1L0ZDYW0rNUluMUN1VXAvc2FDaThi?=
- =?utf-8?B?dzRRSE11RGxWcGdOSEtaWHlpTkY0TnQ4aHpGU01EaFNVVGcyY1EyZm5mMDF0?=
- =?utf-8?B?bWhYMXo0QjVnT1FUc0hJZVNvajdhQTNObmhIUlFpWHJXd2RRTG54M2JMYWpW?=
- =?utf-8?B?MUNLMHBWT3l4TFhPQ1E0Z296bmk5WWZWTHI1UmxIY3J3dUtlYVdwVlAyWEFW?=
- =?utf-8?B?STljcmdNcW96R0o2UzBTcmZaNUhoZEFWT1VRS3ZhYmVKQ1FHQitRK1NLUCtU?=
- =?utf-8?B?d0FKL2hQOUNaZG8wdGRCUCtmZWdmMzF0YW14YVp0cy9Wb1Ixem5oSStZYlFU?=
- =?utf-8?B?MjBFV2IxeTk0cG5zZ1BxaWN4SmhSN1o4NFdMamQ3L3ZGZ3B2QjRhRTJHc0xy?=
- =?utf-8?B?Q0FwdG03VEhQOEFrOUhKeGh6bm5WYll2K3lTSDdXT2FvZ1RyZ0p2b1JUcUtS?=
- =?utf-8?B?b2hSeG5FRXJCK1A3SVM0UHlqbHo0MTJVb044a1JxZ09pTjJvdkdQbGpqUHZ1?=
- =?utf-8?B?WXdkWjBjTGcwenM1ckVUMVJPZ3V0SkYxWkxRMGU1ampMejVhU094eCs1VGxR?=
- =?utf-8?B?aVljeFp2NmhMQVhPNDlwNmtiQit3cTZvSkRqT0NBak9vUkNQOE1yQlYyY3BH?=
- =?utf-8?B?OEhMbE1jWUJ2SjkzSEUvUXVINzgrU2gxb1hKQ2NvZGtiVmtkekZTb3hHOU42?=
- =?utf-8?B?VXhNcHJ5SlAzblNnNWtUUmNpL0FIcklOTmV4L3hZRUtwSU5EeGZ4M1R0ekNW?=
- =?utf-8?B?THZUMVJOQS9vQUF0b21ralhmN0RuM1Eyd2pvcUZXdlFIbG5MTVg3Y1dLdUk3?=
- =?utf-8?B?Slo4VXlaVDRmWDdlK3ZFdzMyU1J0ZVV5WGpOK0NrWmtRYUx1ZWl5WnZDZ04x?=
- =?utf-8?B?SExNZmRva0toR2R2a2JjUmxVMWxtWmNwMXlaOGJma0JRMU1zYzE1cGFyMXds?=
- =?utf-8?B?YmR2cHFONk1makZyWWdvV056clgySDJjNDd1Tk8wYXFCU2F2enFXeTNTUjV4?=
- =?utf-8?Q?I3jbrqjHcfoZkBTTJogc7P4o+?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1755DC847FAFBD49974D35A246EB077E@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD3E1662E4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728285561; cv=none; b=CGKiRhxLbJL3MVXFxLTXrpvoXmaB4zSgmH59cgq2OT6sa67V+NLie/pMksaWg1afZ6PhnrclgZVb3U34bVB0d6Hgs+2m+qvYr1Mgo4iIMrEbel2PfpIy+QvCAV5o+L3GcaDmJ2G4qYtOx5W5ZPHa9Mi+0zIzg6hqDUfX5Nw9tnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728285561; c=relaxed/simple;
+	bh=ACSKReOpeGuTVro2w1DHKbX+19SLSpe3fjxbcKeSnH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZOEvZL8WR7ot/+4s1U0+0C9PgnUiVsnsfpFp8Lc8cx/gm/ZhbF6A6H0aqhDs106c+cK4PN4im6IpgjVtjXTJltRZS63f0MJjCIIDMZGvI/Muk1QF51uc3iJMMQ5rSZbU8ibamtl7kG9M88lt4TS/QfoW+BqPi4bYY5LBEmr8QLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z9sG4du5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0hX7je+I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z9sG4du5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0hX7je+I; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 653091FD12;
+	Mon,  7 Oct 2024 07:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728285556; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UawE5IaZhH+nBsddJnD8RyGq+p3Jsd2GXC7wWG4082w=;
+	b=z9sG4du5JvepLEwQaMP01R3+xlkBd0h4dzfqmO/hgN02ooTEB0PfSkgiWXjVXiKT+cypyD
+	O3EhA0NgjlOiZdKqeQ3FrS/m5K5bMYPXFxLuGi48i+Ag2nK+qXrtlR+L8JhDMsDXrQg4KH
+	4gd8pQsuWKcFk758mpZVGYfTF8KQ4Kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728285556;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UawE5IaZhH+nBsddJnD8RyGq+p3Jsd2GXC7wWG4082w=;
+	b=0hX7je+IrNEE3uawqwxnzDqwLEANPDwUNRanT74vtLvnhfMR7TJw2u+k2tCuxFzs5zNICq
+	Px3loVOA6C3btfCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=z9sG4du5;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0hX7je+I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728285556; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UawE5IaZhH+nBsddJnD8RyGq+p3Jsd2GXC7wWG4082w=;
+	b=z9sG4du5JvepLEwQaMP01R3+xlkBd0h4dzfqmO/hgN02ooTEB0PfSkgiWXjVXiKT+cypyD
+	O3EhA0NgjlOiZdKqeQ3FrS/m5K5bMYPXFxLuGi48i+Ag2nK+qXrtlR+L8JhDMsDXrQg4KH
+	4gd8pQsuWKcFk758mpZVGYfTF8KQ4Kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728285556;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UawE5IaZhH+nBsddJnD8RyGq+p3Jsd2GXC7wWG4082w=;
+	b=0hX7je+IrNEE3uawqwxnzDqwLEANPDwUNRanT74vtLvnhfMR7TJw2u+k2tCuxFzs5zNICq
+	Px3loVOA6C3btfCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14A9713786;
+	Mon,  7 Oct 2024 07:19:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oa8eA3SLA2ezYgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 07 Oct 2024 07:19:16 +0000
+Message-ID: <6d3aa140-347e-482a-93d2-0e2d1325339b@suse.de>
+Date: Mon, 7 Oct 2024 09:19:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR02MB5779.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 157fd4ec-5b88-4efe-d2d4-08dce6a05448
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2024 07:19:06.2923
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zf9OYeXIir/pbv5HoBN5BbLKgKTgERlgl+6myDPpPVa9FSMP6AiG4CERlKoU3jr9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR02MB10532
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/fbdev-dma: Only cleanup deferred I/O if necessary
+To: Janne Grunau <j@jannau.net>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <ZwLNuZL-8Gh5UUQb@robin>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <ZwLNuZL-8Gh5UUQb@robin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 653091FD12
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[jannau.net,linux.intel.com,kernel.org,gmail.com,linaro.org,ffwll.ch];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-T24gU3VuLCAyMDI0LTEwLTA2IGF0IDE0OjE2ICswMTAwLCBKb25hdGhhbiBDYW1lcm9uIHdyb3Rl
-Og0KPiBPbiBUaHUsIDMgT2N0IDIwMjQgMTQ6MjI6MTcgKzAyMDANCj4gRW1pbCBHZWRlbnJ5ZCA8
-ZW1pbC5nZWRlbnJ5ZEBheGlzLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gK3N0cnVjdCBvcHQzMDAx
-X2NoaXBfaW5mbyB7DQo+ID4gKwljb25zdCBzdHJ1Y3QgaWlvX2NoYW5fc3BlYyAoKmNoYW5uZWxz
-KVsyXTsNCj4gPiArCWVudW0gaWlvX2NoYW5fdHlwZSBjaGFuX3R5cGU7DQo+ID4gKwlpbnQgbnVt
-X2NoYW5uZWxzOw0KPiA+ICsNCj4gPiArCWNvbnN0IHN0cnVjdCBvcHQzMDAxX3NjYWxlICgqc2Nh
-bGVzKVsxMl07DQo+IFRoaXMgZG9lc24ndCBjb21waWxlIGZvciBtZSBhcyBvbmUgb2YgdGhlIHR3
-byBvcHRpb25zIG9ubHkNCj4gaGFzIDExIGVudHJpZXMuICBZb3UgY291bGQgZWl0aGVyIGZvcmNl
-IHRoZW0gdG8gYmUgMTINCj4gZW50cmllcyBlYWNoIG9yIHVzZSBhIHBvaW50ZXIgd2l0aG91dCB0
-aGUgc2l6ZSBhbmQNCj4gYWRkIGEgbnVtX3NjYWxlcyBlbnRyeSBpbiBoZXJlLg0KPiANCj4gSm9u
-YXRoYW4NCg0KSGkgSm9uYXRoYW4sDQoNCkFyZSB5b3UgYnVpbGRpbmcgb24gdG9wIG9mIHRoZSBw
-YXRjaCB0aGF0IHdhcyBhY2NlcHRlZCBpbiBlYXJsaWVyIHZlcnNpb25zIG9mIHRoaXMNCnBhdGNo
-IHNldD8gVGhhdCBwYXRjaCBhZGRzIHRoZSB0d2VsZnRoIG1pc3Npbmcgc2NhbGUgdmFsdWUgZm9y
-IHRoZSBvcHQzMDAxLg0KU2VlOsKgaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwOTE2
-LWFkZF9vcHQzMDAyLXYzLTEtOTg0YjE5MGNkNjhjQGF4aXMuY29tLw0KDQpTaG91bGQgSSBoYXZl
-IGFkZGVkIHNvbWUgdGFnIHRvIGhpZ2hsaWdodCB0aGUgZGVwZW5kZW5jeSBmb3IgdGhpcyB2ZXJz
-aW9uIG9mIHRoZQ0KcGF0Y2ggc2V0Pw0KDQpCZXN0IHJlZ2FyZHMsDQpFbWlsIA0K
+
+
+Am 06.10.24 um 19:49 schrieb Janne Grunau:
+> Commit 5a498d4d06d6 ("drm/fbdev-dma: Only install deferred I/O if
+> necessary") initializes deferred I/O only if it is used.
+> drm_fbdev_dma_fb_destroy() however calls fb_deferred_io_cleanup()
+> unconditionally with struct fb_info.fbdefio == NULL. KASAN with the
+> out-of-tree Apple silicon display driver posts following warning from
+> __flush_work() of a random struct work_struct instead of the expected
+> NULL pointer derefs.
+>
+> [   22.053799] ------------[ cut here ]------------
+> [   22.054832] WARNING: CPU: 2 PID: 1 at kernel/workqueue.c:4177 __flush_work+0x4d8/0x580
+> [   22.056597] Modules linked in: uhid bnep uinput nls_ascii ip6_tables ip_tables i2c_dev loop fuse dm_multipath nfnetlink zram hid_magicmouse btrfs xor xor_neon brcmfmac_wcc raid6_pq hci_bcm4377 bluetooth brcmfmac hid_apple brcmutil nvmem_spmi_mfd simple_mfd_spmi dockchannel_hid cfg80211 joydev regmap_spmi nvme_apple ecdh_generic ecc macsmc_hid rfkill dwc3 appledrm snd_soc_macaudio macsmc_power nvme_core apple_isp phy_apple_atc apple_sart apple_rtkit_helper apple_dockchannel tps6598x macsmc_hwmon snd_soc_cs42l84 videobuf2_v4l2 spmi_apple_controller nvmem_apple_efuses videobuf2_dma_sg apple_z2 videobuf2_memops spi_nor panel_summit videobuf2_common asahi videodev pwm_apple apple_dcp snd_soc_apple_mca apple_admac spi_apple clk_apple_nco i2c_pasemi_platform snd_pcm_dmaengine mc i2c_pasemi_core mux_core ofpart adpdrm drm_dma_helper apple_dart apple_soc_cpufreq leds_pwm phram
+> [   22.073768] CPU: 2 UID: 0 PID: 1 Comm: systemd-shutdow Not tainted 6.11.2-asahi+ #asahi-dev
+> [   22.075612] Hardware name: Apple MacBook Pro (13-inch, M2, 2022) (DT)
+> [   22.077032] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [   22.078567] pc : __flush_work+0x4d8/0x580
+> [   22.079471] lr : __flush_work+0x54/0x580
+> [   22.080345] sp : ffffc000836ef820
+> [   22.081089] x29: ffffc000836ef880 x28: 0000000000000000 x27: ffff80002ddb7128
+> [   22.082678] x26: dfffc00000000000 x25: 1ffff000096f0c57 x24: ffffc00082d3e358
+> [   22.084263] x23: ffff80004b7862b8 x22: dfffc00000000000 x21: ffff80005aa1d470
+> [   22.085855] x20: ffff80004b786000 x19: ffff80004b7862a0 x18: 0000000000000000
+> [   22.087439] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000005
+> [   22.089030] x14: 1ffff800106ddf0a x13: 0000000000000000 x12: 0000000000000000
+> [   22.090618] x11: ffffb800106ddf0f x10: dfffc00000000000 x9 : 1ffff800106ddf0e
+> [   22.092206] x8 : 0000000000000000 x7 : aaaaaaaaaaaaaaaa x6 : 0000000000000001
+> [   22.093790] x5 : ffffc000836ef728 x4 : 0000000000000000 x3 : 0000000000000020
+> [   22.095368] x2 : 0000000000000008 x1 : 00000000000000aa x0 : 0000000000000000
+> [   22.096955] Call trace:
+> [   22.097505]  __flush_work+0x4d8/0x580
+> [   22.098330]  flush_delayed_work+0x80/0xb8
+> [   22.099231]  fb_deferred_io_cleanup+0x3c/0x130
+> [   22.100217]  drm_fbdev_dma_fb_destroy+0x6c/0xe0 [drm_dma_helper]
+> [   22.101559]  unregister_framebuffer+0x210/0x2f0
+> [   22.102575]  drm_fb_helper_unregister_info+0x48/0x60
+> [   22.103683]  drm_fbdev_dma_client_unregister+0x4c/0x80 [drm_dma_helper]
+> [   22.105147]  drm_client_dev_unregister+0x1cc/0x230
+> [   22.106217]  drm_dev_unregister+0x58/0x570
+> [   22.107125]  apple_drm_unbind+0x50/0x98 [appledrm]
+> [   22.108199]  component_del+0x1f8/0x3a8
+> [   22.109042]  dcp_platform_shutdown+0x24/0x38 [apple_dcp]
+> [   22.110357]  platform_shutdown+0x70/0x90
+> [   22.111219]  device_shutdown+0x368/0x4d8
+> [   22.112095]  kernel_restart+0x6c/0x1d0
+> [   22.112946]  __arm64_sys_reboot+0x1c8/0x328
+> [   22.113868]  invoke_syscall+0x78/0x1a8
+> [   22.114703]  do_el0_svc+0x124/0x1a0
+> [   22.115498]  el0_svc+0x3c/0xe0
+> [   22.116181]  el0t_64_sync_handler+0x70/0xc0
+> [   22.117110]  el0t_64_sync+0x190/0x198
+> [   22.117931] ---[ end trace 0000000000000000 ]---
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Fixes: 5a498d4d06d6 ("drm/fbdev-dma: Only install deferred I/O if necessary")
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   drivers/gpu/drm/drm_fbdev_dma.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
+> index b0602c4f3628..51c2d742d199 100644
+> --- a/drivers/gpu/drm/drm_fbdev_dma.c
+> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
+> @@ -50,7 +50,8 @@ static void drm_fbdev_dma_fb_destroy(struct fb_info *info)
+>   	if (!fb_helper->dev)
+>   		return;
+>   
+> -	fb_deferred_io_cleanup(info);
+> +	if (info->fbdefio)
+> +		fb_deferred_io_cleanup(info);
+>   	drm_fb_helper_fini(fb_helper);
+>   
+>   	drm_client_buffer_vunmap(fb_helper->buffer);
+>
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20241006-drm_fbdev_dma_deferred_io_cleanup-de87ee345dbc
+>
+> Best regards,
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
