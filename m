@@ -1,163 +1,170 @@
-Return-Path: <linux-kernel+bounces-354225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660DF993A1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:23:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF343993A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FCE81F2471A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5211C23EBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A46D192586;
-	Mon,  7 Oct 2024 22:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758518CC07;
+	Mon,  7 Oct 2024 22:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayunz/gp"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVJI2Vuz"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24CC18FDC9;
-	Mon,  7 Oct 2024 22:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773D93FB9F;
+	Mon,  7 Oct 2024 22:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728339801; cv=none; b=j7kGBo9EPnmzFMappOPHX/eoKoFecVF1O+fuQtHBm863f2/8L1Jp0h+BqeDR6UBB6kSR4ZH/Xz+0+uMFXhcO7ae5MWPLJBvXGuvFHBz1dvJNoeZtqa1wjR91wgx5POo1Yi+KJjH2EvCv/xx1K06DYX8AfzZYRsT9NuC+IcKpcVg=
+	t=1728339762; cv=none; b=bNNtEtNZ6JchFjw3DPmGbANfeSyjeM9YzAeTMrQnZrvSFSOX/vJ6laFKmeao2eW6KlHUVrJPUgWmMsrRtTnIq1/ClNNhMPl4iYU3Qn1ieaVleZEy4tfu3w2doPTIXokwrHCPXNG7urPiDgHfUZtg2qEEGLiF5/N2kutXoJ+2WxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728339801; c=relaxed/simple;
-	bh=1xwCQjw7OIJYwBx+Ll76469/2xlTnNv83u+vEUHeLE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tT9ZDSi1yQUpOfz0EVcac2xMJCEIIyi6Ujbr31SEriZ0LtQs4IXnANwjoP2rRnfsvCw3yxjL55tFOgE5vwsvSleiC9cCaXfWi2+90odJyQmVman6wfkFHpwTqe9CtG/+2rT5/rVcc46rQviCse6AbzrA11AkKx7yzpB7hKyL1rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayunz/gp; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1728339762; c=relaxed/simple;
+	bh=jA7657oYvyV3XrqSUBNkL19mW8/bKR0MnRg4WNj9tuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hd+yCqhbxJE6XfbOiJ2kTegSGFzCsHZ6/+4bl3byjXJlZg4Uc7K1uFEAah9y9R98jUHkb4X1DG5ifvc6cQVzzdje7pjtRqxCSneJTj6V6YucfUMbKP3R9NcwpALEFUWeVNXIz+uN4gLiZbX5r3sR0ByJF48iAhVF2bupwf7DJ2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVJI2Vuz; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ccd81de57so3306280f8f.0;
-        Mon, 07 Oct 2024 15:23:19 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb1866c8fso7254365e9.3;
+        Mon, 07 Oct 2024 15:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728339798; x=1728944598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNPNpp0MeAYNrngJnQDd8W/cQ07lWgfLVB+09bhq70A=;
-        b=ayunz/gp25apHU/r9GIxv8ewBmSpd6/ydDVKPZJWs2zV3ITvh8563ybdkK5YPvRKE8
-         yKwWhAF9g72RuqlOgxUQTJJmOCGpIVQ6JNeGZLy3VjJsUoayY9SLDG0rwSBKyG87NQmL
-         2sP8lWM1v1bxfzABl+1KLN0XZIbhlJkFZt5dFGC+e1/QS0pMPA/OHpp8E43glekePcCB
-         AkHHB6aS/pCFxgvRAHX+cVL3tTrhc3UJfwKTX3jolwfsM+RW5q2wDX/0IEV1+wBmJFXp
-         PML2+MtTZg/b8AQxEQzUCOaTPdbGG4YkbbJ43uS1ZplGGhTzEv8AqZs5dZ/xmTTpIgj4
-         5rWA==
+        d=gmail.com; s=20230601; t=1728339759; x=1728944559; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTNOwseZ9u/i9eKVq4JVSJZMCNYcJLzLevMhGQTrMOA=;
+        b=YVJI2VuzNQyZNv7UPLP7rPNErDR//Olh6MOZm/aomyOMBwKf0gsdvxV6Bva9r/HwYK
+         h8KhKH6Kruw1rjX0/i0eJ8UzhFgp7Vg/tVvsfF58KBcvBoIDE+SO5IX59M4csHitlOLK
+         TWyTDitjKqudG6C7dPEvThLyuADMzerhXA0uwVN/gSReOYSgQtIk8++wx4aSHunoAxWw
+         5RmvvsxmpKQIXJDi/sCf9Ig7MalmN6qvKVI66iiZux8hyxYnnkP0MvLBNqKhJtYf1XP1
+         0Hd3GLzSLSluGPZYmwDtYQ//WGm95nGcMY+gPuMFfv1sPb/oGk0NsxTqNNXxlrdZrWIF
+         1FGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728339798; x=1728944598;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UNPNpp0MeAYNrngJnQDd8W/cQ07lWgfLVB+09bhq70A=;
-        b=IsXt10J52xtUqem0027KgKc9/gbNyLK7o/XLvrJn48ti8FkUJi8M7PZ68Eldti1hi/
-         xQCYphHqVA89SW7bstaQv3eoiUOAIOYwb4ZDD2pe5GNV22av0UONmZt5NxYhIw3qdcRO
-         NCLTlv6+LCMVEFNwLkjmx/BzHZA72YgbwXsrmXpXjFlljw6U9HfDYipy7Clweiri4/gd
-         pW2eDPmkDhprC6SBw1BhdYllhqzip5Fvo1bePrlS13z2ePGXyyJBz0MRJJCYzoiXmBVQ
-         o3ZsouKeLef7rpko+8hzg0DIr4/EYWwzfPqcAtjC0Ar3nYApGUgf/fHeDsp1Svy1m9x8
-         QGtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEI0ODwEWvJ9vzYprVD5LgyQ88ywGX9CQWCslfqXGbYyEK7TIN17Pzc6I3I0HpqopUoARFf1pu97Hnsyfv@vger.kernel.org, AJvYcCXaznV+9lbrPNKMGxy/upKV6G8FcDsMacBeXI/akzbm3XO7nD4jLhXpWUhxVANK7kuZCSdrso2OnrRb//RAZLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytpiuC1CRY4Agd/dhJovTfLuyFhIBX3Yh2+7RAB/lIdNkBhfuV
-	FahuYcL7vRw4nSjhGT1ojSLyaGqU6AICmniMMQ3KC8S2BCFryErTz0K+bA==
-X-Google-Smtp-Source: AGHT+IHIj9TkpZy8HCYg3j0VAxoa8KY9XxdoduFtTNQxvWoBWr6/f4R1GJ94Lah6EOpK/nHxcrQaYA==
-X-Received: by 2002:a5d:4567:0:b0:37c:fbb7:5082 with SMTP id ffacd0b85a97d-37d29315e90mr544928f8f.25.1728339798139;
-        Mon, 07 Oct 2024 15:23:18 -0700 (PDT)
-Received: from ALPER-PC.koi-vector.ts.net ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f3b1sm6545857f8f.14.2024.10.07.15.23.15
+        d=1e100.net; s=20230601; t=1728339759; x=1728944559;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TTNOwseZ9u/i9eKVq4JVSJZMCNYcJLzLevMhGQTrMOA=;
+        b=ukf6E7EwRCMV31X77nUtOwUNUNetZxFTCBKcExrzzRJTr3d27rJNEK1ps6RrweCFMQ
+         PkneCNJEVfMqG0Pv6gI7oUgH2op39bfugKmRCHNzcamn8RPyjkVZh47XeP5us8oNs0Of
+         H8OXA7BkGDxMPXntFP/GgPEwM4P6DTjlAsCy1fJqSh1da7KDbbzYReCws4BXEpOU433D
+         PkX3KrvkPm2eI7eCCkm0Mwaf2ZqifnseH4yAaW6koLh7ImofcCe7U7RsSfCobRGLnxlB
+         fWf5AJTUoySklTEjDdTA26fCAecT+chT325qwuu/fvrDUmc79/1T1uJSxMYYoDdBUX/u
+         jBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM+FHenrEMYWddb+LfPF+jIcRmU4mCZBMZ3Kn/Olvnafn7e9X0P1tWnvKp/WRacFSq89fZmDj2cdQFoeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfUSSUmTUZrfSrYIsnK5LqN98VmXiHzsyp6ME7xCIrKSB6N7MY
+	mByqxj1aX2q0He7vrzQ4BbYFdNPtomYMP8P4cGy1alWgbdOm0USo1fgdkIEj
+X-Google-Smtp-Source: AGHT+IGjQZAmF23AbTN/w+lhuQ1c9GUIAxD7wcnRobzNIzxsfCvllWOu5uNlCFxIdIlWAfX+RtWlIA==
+X-Received: by 2002:a05:600c:1c2a:b0:42c:c0d8:bf49 with SMTP id 5b1f17b1804b1-42f859b1444mr46373735e9.0.1728339758536;
+        Mon, 07 Oct 2024 15:22:38 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a2052asm105048945e9.18.2024.10.07.15.22.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 15:23:17 -0700 (PDT)
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Kees Cook <kees@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Brian Norris <briannorris@chromium.org>,
-	David Lin <yu-hao.lin@nxp.com>,
-	linux-hardening@vger.kernel.org,
-	Kalle Valo <kvalo@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Subject: [PATCH v2 2/2] wifi: mwifiex: Annotate mwifiex_ie_types_wildcard_ssid_params with __counted_by()
-Date: Tue,  8 Oct 2024 01:20:55 +0300
-Message-ID: <20241007222301.24154-2-alpernebiyasak@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241007222301.24154-1-alpernebiyasak@gmail.com>
-References: <20241007222301.24154-1-alpernebiyasak@gmail.com>
+        Mon, 07 Oct 2024 15:22:36 -0700 (PDT)
+Date: Tue, 8 Oct 2024 01:22:34 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan
+ configuration in dsa_user_set_wol
+Message-ID: <20241007222234.ekpqibldugchuvk7@skbuf>
+References: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 
-Add the __counted_by compiler attribute to the flexible array member
-`ssid` to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+Hi Mohammed,
 
-Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
----
-I've mimicked the commit messages from `git log -S"__counted_by("`.
-Since they refer to UBSAN I tried testing with CONFIG_KASAN (w/
-kasan_multi_shot), CONFIG_UBSAN and CONFIG_FORTIFY_SOURCE. I do not
-get any errors relating to this module with those options, but have
-others -- I even had to test on another board altogether.
+On Mon, Oct 07, 2024 at 04:49:38AM +0530, Mohammed Anees wrote:
+> In the original implementation of dsa_user_set_wol(), the return
+> value of phylink_ethtool_set_wol() was not checked, which could
+> lead to errors being ignored. This wouldn't matter if it returned
+> -EOPNOTSUPP, since that indicates the PHY layer doesn't support
+> the option, but if any other value is returned, it is problematic
+> and must be checked. The solution is to check the return value of
+> phylink_ethtool_set_wol(), and if it returns anything other than
+> -EOPNOTSUPP, immediately return the error. Only if it returns
+> -EOPNOTSUPP should the function proceed to check whether WoL can
+> be set by ds->ops->set_wol().
+> 
+> Fixes: 57719771a244 ("Merge tag 'sound-6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound")
 
-This attribute was suggested in reviews, I don't fully understand it,
-but I am not sure it is correct in the context of this comment from
-scan.c (with irrelelvant parts omitted):
+The Fixes: tag is completely bogus. It's supposed to point to the commit
+which introduced the issue (aka what 'git bisect' would land on).
 
-    ssid_len = user_scan_in->ssid_list[i].ssid_len;
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> ---
+> v2:
+> - Added error checking for phylink_ethtool_set_wol(), ensuring correct
+> handling compared to v1.
+> ___
 
-    wildcard_ssid_tlv =
-            (struct mwifiex_ie_types_wildcard_ssid_params *)
-            tlv_pos;
+this should have been "---" not "___".
 
-    /*
-     * max_ssid_length = 0 tells firmware to perform
-     * specific scan for the SSID filled, whereas
-     * max_ssid_length = IEEE80211_MAX_SSID_LEN is for
-     * wildcard scan.
-     */
-    if (ssid_len)
-            wildcard_ssid_tlv->max_ssid_length = 0;
-    else
-            wildcard_ssid_tlv->max_ssid_length =
-                                    IEEE80211_MAX_SSID_LEN;
+>  net/dsa/user.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/dsa/user.c b/net/dsa/user.c
+> index 74eda9b30608..bae5ed22db91 100644
+> --- a/net/dsa/user.c
+> +++ b/net/dsa/user.c
+> @@ -1215,14 +1215,17 @@ static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
+> -	phylink_ethtool_set_wol(dp->pl, w);
+> +	ret = phylink_ethtool_get_wol(dp->pl, w);
 
-    memcpy(wildcard_ssid_tlv->ssid,
-           user_scan_in->ssid_list[i].ssid, ssid_len);
+Could you tell us a bit about your motivation for making a change?
+How have you noticed the lack of error checking in phylink_ethtool_set_wol()?
+What user-visible problem has it caused?
 
-I expect we want to use __counted_by(ssid_len) instead, but do not have
-it in the struct. And max_ssid_length = 0 when ssid[] is non-empty, so
-is it really appropriate as the __counted_by()? But then again, I
-couldn't get this to produce a warning.
+Since patches with Fixes: tags to older than net-next commits
+get backported to stable kernels, the triage rules from
+Documentation/process/stable-kernel-rules.rst apply.
 
-Changes in v2:
-- Add patch to annotate ssid field with __counted_by(max_ssid_length)
+If this is purely theoretical and you are not already testing this,
+then please do so. (it seems you aren't, because you replaced
+phylink_ethtool_get_wol() with phylink_ethtool_set_wol()).
 
- drivers/net/wireless/marvell/mwifiex/fw.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Luckily, you could somewhat exercise the code paths using the dsa_loop
+mock-up driver even if you don't have a supported hardware switch. It
+isn't the same as the real thing, but with some instrumentation and
+carefully chosen test cases and simulated return codes, I could see it
+being used to prove a point.
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
-index 4a96281792cc..e4e35ba35454 100644
---- a/drivers/net/wireless/marvell/mwifiex/fw.h
-+++ b/drivers/net/wireless/marvell/mwifiex/fw.h
-@@ -875,7 +875,7 @@ struct mwifiex_ietypes_chanstats {
- struct mwifiex_ie_types_wildcard_ssid_params {
- 	struct mwifiex_ie_types_header header;
- 	u8 max_ssid_length;
--	u8 ssid[];
-+	u8 ssid[] __counted_by(max_ssid_length);
- } __packed;
- 
- #define TSF_DATA_SIZE            8
--- 
-2.45.2
+If you don't have the interest of testing this patch, then I would
+request you to abandon it. The topic of combining MAC WoL with PHY WoL
+is not trivial and a theoretical "fix" can make things that used to work
+stop working. It's unlikely that basing patches off of a chat on the
+mailing list is going to make things better if it all stays theoretical
+and no one tests anything, even if that chat is with Andrew and Russell,
+the opinions of both of whom are extremely respectable in this area.
 
+In principle there's also the option of requesting somebody else to
+test if you cannot, like the submitter of the blamed patch, if there's
+reasonable suspicion that something is not right. In this case,
+interesting thing, the phylink_ethtool_set_wol() call got introduced in
+commit aab9c4067d23 ("net: dsa: Plug in PHYLINK support") by Florian,
+but there was no phy_ethtool_set_wol() prior to that. So it's not clear
+at all what use cases came to depend upon the phylink_ethtool_set_wol()
+call in the meantime since 2018. I'm not convinced that said commit
+voluntarily introduced the call.
+
+If this is not an exclusively theoretical issue and this was just an
+honest mistake, then please do continue the patch submission process.
+But for my curiosity, what platform are you experimenting on?
 
