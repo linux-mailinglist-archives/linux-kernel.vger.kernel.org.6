@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-353767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA9D993256
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF96993259
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D631F24E06
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FE01C22AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98ABB1DA0E9;
-	Mon,  7 Oct 2024 16:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2F1DA0F1;
+	Mon,  7 Oct 2024 16:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWw9gKTg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMvlMyGg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0198A1D2B2F;
-	Mon,  7 Oct 2024 16:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAEB1D4615;
+	Mon,  7 Oct 2024 16:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316849; cv=none; b=nkrOKvYrJvslnP1hN0aCxxtu2yWPWklXxPSU1qhpZmVKdc+9LUYb1N6agfML2oMVghQuUqygBH+JSzgf404vS/6pNkb+LpKhsBJoTznh8o5mPzbgzITg2/vKyI4N9yTM9edI8ti4uvQ7OUfK2SwCcaqO9yMEjB31bdecC79v5Rw=
+	t=1728316862; cv=none; b=Ri6WoodCATUehcmQBKW37jKkXipQii7quK25eYYzWzmq/gzX/YW5iozUGBftd9h2dz89PIhuFnq58Vcgz2lG1f1ZeGiAwcg+F+xc7CXvRTiw9YrKiq4ZtDniDPv2PQbU9cY4urkLYy0mZNyEiDmH5bgomxNSGYB5KHNuDiseCYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316849; c=relaxed/simple;
-	bh=PHuV8i42D3IcLa5ai+RwLXHJQ2M2sbKr33lxihFuD3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z4V+XiIW81PMst5l/0b784DKfpI7Lkv7KilRBqC6JnYlegdt23wrZYR9sSuOEP1Ck9xADDpSpish+Tfa+PwbDk+uZvlin1b4ZatbcsBbu8k7pX/gGHPRsyclB95RzJ1b+AsxQ9Kqkds/ahlmd5UpG6+2X1nNEmj1GKSiuPYS5dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWw9gKTg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B33C4CEC6;
-	Mon,  7 Oct 2024 16:00:48 +0000 (UTC)
+	s=arc-20240116; t=1728316862; c=relaxed/simple;
+	bh=e2NBHTw6PPvjULzXCQpYbFWcRNCqsXQxPgENG33mKoQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C1UOj9XtFLi+oUF7533yu95unfBzZTIfTNa6VBnUafHZn3jVQEjTKp+ykOi6KoHsY0FkLcG0nzjwE+rjyfpu89JUalwDH0cPTyx1lq9eVtCmifJHE4CdCS/Eq5rW0bVQf/tfwPoP5jh+r8V0W3qPdRAm4fYkD9+4WGTg3pMCJEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMvlMyGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2E7C4CEC7;
+	Mon,  7 Oct 2024 16:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728316848;
-	bh=PHuV8i42D3IcLa5ai+RwLXHJQ2M2sbKr33lxihFuD3U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tWw9gKTggu0sXA/A49DmgnIJP8c49cyXOarpEH3diPKuTNLhdwWufl1+PuP65Mwqo
-	 eVFx+kJ/hDELX6s4qDErCuqj/KZWjNTXUgza7wCMTn/UqrZoS22srj5VFQwBuzurYv
-	 ik841qJa8r3aG55RVnPLCIfTyjjL31TNbVuL3TYvWU4nOcjupJM9IcplsLtqKzuhyF
-	 zmeL31+nKM2I93q7Ui1R1PiRsHx7RZvloX4+76V5kpcV/LwwIx+5qZLuEHSSA1kzL9
-	 cyuoz0uxBIiSCWTblf6nneXVQqdy6/yEqrhG0J0IS+QINmtzA5vcSJuybXNnNz3mw8
-	 6xdYwiEPT9fOA==
-Date: Mon, 7 Oct 2024 09:00:47 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: <Parthiban.Veerasooran@microchip.com>
-Cc: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <ramon.nordin.rodriguez@ferroamp.se>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
- <Thorsten.Kummermehr@microchip.com>
-Subject: Re: [PATCH net-next v3 2/7] net: phy: microchip_t1s: update new
- initial settings for LAN865X Rev.B0
-Message-ID: <20241007090047.07483ee1@kernel.org>
-In-Reply-To: <2fb5dab7-f266-4304-a637-2b9eabb1184f@microchip.com>
-References: <20241001123734.1667581-1-parthiban.veerasooran@microchip.com>
-	<20241001123734.1667581-3-parthiban.veerasooran@microchip.com>
-	<20241004115006.4876eed1@kernel.org>
-	<2fb5dab7-f266-4304-a637-2b9eabb1184f@microchip.com>
+	s=k20201202; t=1728316861;
+	bh=e2NBHTw6PPvjULzXCQpYbFWcRNCqsXQxPgENG33mKoQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WMvlMyGgn0mENSHuioUpratdm0Fb72jH/kyBzfNDdc11bZdmf3uNCn5qkmZiqgAjA
+	 3ZgPvnDTMA/gDx07PgsHCfRvUUnLr1IBUyvMZ73Abl/ur+HQ14iEqXtKy3vXr7JRjM
+	 MlB7ynIIb4SOzxaNenMQFfx2laXFSRsI2HH+0ndsfY+NTFJPjHQ3ymJFsy9YDIATXv
+	 1jtvMsLJyLpwgwK83CxA/HKgkJ6cyX8TtM7h2AJixNYiNMj41W9xuQ6F3C+aVJxI8I
+	 JjVsW2EV//PdyPUejWOFFV/pJMg95M+X3wSlsdtlmRGY82RB4OEnPrvcmEPr8wLw0W
+	 OPYet1W0eHtfA==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, Shuah Khan
+ <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>,
+ bpf@vger.kernel.org, linux-riscv@lists.infradead.org, Anders Roxell
+ <anders.roxell@linaro.org>
+Subject: Re: [PATCH v2] selftests: sched_ext: Add sched_ext as proper
+ selftest target
+In-Reply-To: <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
+References: <20241007073133.989166-1-bjorn@kernel.org>
+ <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
+Date: Mon, 07 Oct 2024 18:00:57 +0200
+Message-ID: <87r08rnbra.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 7 Oct 2024 07:51:36 +0000 Parthiban.Veerasooran@microchip.com
-wrote:
-> On 05/10/24 12:20 am, Jakub Kicinski wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > On Tue, 1 Oct 2024 18:07:29 +0530 Parthiban Veerasooran wrote:  
-> >> +     cfg_results[0] = FIELD_PREP(GENMASK(15, 10), (9 + offsets[0]) & 0x3F) |
-> >> +                      FIELD_PREP(GENMASK(15, 4), (14 + offsets[0]) & 0x3F) |
-> >> +                      0x03;
-> >> +     cfg_results[1] = FIELD_PREP(GENMASK(15, 10), (40 + offsets[1]) & 0x3F);  
-> > 
-> > It's really strange to OR together FIELD_PREP()s with overlapping
-> > fields. What's going on here? 15:10 and 15:4 ranges overlap, then
-> > there is 0x3 hardcoded, with no fields size definition.  
-> This calculation has been implemented based on the logic provided in the 
-> configuration application note (AN1760) released with the product. 
-> Please refer the link [1] below for more info.
-> 
-> As mentioned in the AN1760 document, "it provides guidance on how to 
-> configure the LAN8650/1 internal PHY for optimal performance in 
-> 10BASE-T1S networks." Unfortunately we don't have any other information 
-> on those each and every parameters and constants used for the 
-> calculation. They are all derived by design team to bring up the device 
-> to the nominal state.
-> 
-> It is also mentioned as, "The following parameters must be calculated 
-> from the device configuration parameters mentioned above to use for the
-> configuration of the registers."
-> 
-> uint16 cfgparam1 = (uint16) (((9 + offset1) & 0x3F) << 10) | (uint16) 
-> (((14 + offset1) & 0x3F) << 4) | 0x03
-> uint16 cfgparam2 = (uint16) (((40 + offset2) & 0x3F) << 10)
-> 
-> This is the reason why the above logic has been implemented.
+Mark Brown <broonie@kernel.org> writes:
 
-In this case the code should simply be:
+> On Mon, Oct 07, 2024 at 09:31:32AM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
+>
+>> When building the kselftest suite, e.g.:
+>
+>>   make ARCH=3Driscv CROSS_COMPILE=3Driscv64-linux-gnu- \
+>>     SKIP_TARGETS=3D"" O=3D/output/foo -C tools/testing/selftests install
+>
+>> The expectation is that the sched_ext is included, cross-built, and
+>> placed into /output/foo.
+>
+> When building for arm64 with this applied on top of mainline or -next
+> I'm seeing:
 
-     cfg_results[0] = FIELD_PREP(GENMASK(15, 10), 9 + offsets[0]) |
-                      FIELD_PREP(GENMASK(9, 4), 14 + offsets[0]) |
+Thanks for taking it for a spin!
 
-the fields are clearly 6b each. FILED_PREP() already masks.
+>    make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -C tools/testing/=
+selftests TARGETS=3Dsched_ext SKIP_TARGETS=3D"
+>
+> give
+>
+>   CLNG-BPF create_dsq.bpf.o
+> In file included from create_dsq.bpf.c:9:
+> /home/broonie/git/linux/tools/sched_ext/include/scx/common.bpf.h:33:17: e=
+rror: use of undeclared identifier 'SCX_DSQ_FLAG_BUILTIN'
+>    33 |         _Static_assert(SCX_DSQ_FLAG_BUILTIN,
+>       |                        ^
 
-> > Could you clarify and preferably name as many of the constants
-> > as possible?  
-> I would like to do that but as I mentioned above there is no info on 
-> those constants in the application note.
-> > 
-> > Also why are you masking the result of the sum with 0x3f?
-> > Can the result not fit? Is that safe or should we error out?  
-> Hope the above info clarifies this as well.
-> >   
-> >> +             ret &= GENMASK(4, 0);  
-> > ?               if (ret & BIT(4))
-> > 
-> > GENMASK() is nice but naming the fields would be even nicer..
-> > What's 3:0, what's 4:4 ?  
-> As per the information provided in the application note, the offset 
-> value expected range is from -5 to 15. Offsets are stored as signed 
-> 5-bit values in the addresses 0x04 and 0x08. So 0x1F is used to mask the 
-> 5-bit value and if the 4th bit is set then the value from 27 to 31 will 
-> be considered as -ve value from -5 to -1.
-> 
-> I think adding the above comment in the above code snippet will clarify 
-> the need. What do you think?
+This is most likely due to incorrect VMLINUX_BTF_PATHS, so that
+vmlinux.h is incorrectly generated. Try grepping for
+SCX_DSQ_FLAG_BUILTIN in vmlinux.h.
 
-Oh yes, a comment, e.g. /* 5-bit signed value, sign extend */
-would help a lot, thanks!
+> and more (my system clang is clang 20).  It's also failing with a native
+> x86_64 build in the same way.  I've run "make headers_install", it looks
+> like clang is not getting told about the copy of the headers installed
+> in ./usr/include:
+>
+> clang -g -D__TARGET_ARCH_x86 -mlittle-endian -I/home/broonie/git/linux/to=
+ols/testing/selftests/sched_ext/include -I/home/broonie/git/linux/tools/tes=
+ting/selftests/sched_ext/include/bpf-compat -I/home/broonie/git/linux/tools=
+/testing/selftests/sched_ext/build/include -I/home/broonie/git/linux/tools/=
+include/uapi -I/home/broonie/git/linux/tools/sched_ext/include -I/home/broo=
+nie/git/linux/include -idirafter /usr/lib/llvm-20/lib/clang/20/include -idi=
+rafter /usr/local/include -idirafter /usr/include/x86_64-linux-gnu -idiraft=
+er /usr/include  -Wall -Wno-compare-distinct-pointer-types -Wno-incompatibl=
+e-function-pointer-types -O2 -mcpu=3Dv3 -target bpf -c create_dsq.bpf.c -o =
+/home/broonie/git/linux/tools/testing/selftests/sched_ext/build/obj/sched_e=
+xt/create_dsq.bpf.o
+
+The sched_ext BPF programs relies on a vmlinux.h, which is generated
+using bpftool and the vmlinux with BTF information. Have you built a
+kernel with BTF support?
+
+>> Add CROSS_COMPILE, OUTPUT, and TARGETS support to the sched_ext
+>> selftest. Also, remove some variables that were unused by the
+>> Makefile.
+>
+>> +ifneq ($(CROSS_COMPILE),)
+>> +DEFAULT_BPFTOOL :=3D $(OUTPUT_DIR)/host/sbin/bpftool
+>> +HOST_OBJ_DIR :=3D $(OBJ_DIR)/host/bpftool
+>> +HOST_LIBBPF_OUTPUT :=3D $(OBJ_DIR)/host/libbpf/
+>> +HOST_LIBBPF_DESTDIR :=3D $(OUTPUT_DIR)/host/
+>> +HOST_DESTDIR :=3D $(OUTPUT_DIR)/host/
+>> +else
+>> +DEFAULT_BPFTOOL :=3D $(OUTPUT_DIR)/sbin/bpftool
+>> +HOST_OBJ_DIR :=3D $(OBJ_DIR)/bpftool
+>> +HOST_LIBBPF_OUTPUT :=3D $(OBJ_DIR)/libbpf/
+>> +HOST_LIBBPF_DESTDIR :=3D $(OUTPUT_DIR)/
+>> +HOST_DESTDIR :=3D $(OUTPUT_DIR)/
+>> +endif
+>
+> This won't detect a cross compile when building using LLVM as that
+> doesn't need to set CROSS_COMPILE, it can use the same binaries for all
+> targets.  There's runes in the Makefile for the mm selftests for
+> identifying the target architecture, though actually I'm wondering if
+> it's worth just always building the host copy and never having to worry
+> if the target build is a cross build or not?  It's obvious overhead in
+> the native case though if we actually need the target copy.
+
+Yeah, that would indeed simplify things! I'll spin a v3 with that (and
+wait for more feedback).
+
+
+Thanks for testing the patch!
+Bj=C3=B6rn
 
