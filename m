@@ -1,123 +1,257 @@
-Return-Path: <linux-kernel+bounces-353126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74779992921
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C168992924
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333532838B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:24:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB291C22CCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BEB1B4F37;
-	Mon,  7 Oct 2024 10:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB491B7905;
+	Mon,  7 Oct 2024 10:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="WOSH2NPt"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VZtdbv0a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373D136354
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2A51B655B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728296678; cv=none; b=DG3jfYsXH7PMlpd/CqOAytY9q4trIeGtUsSr1HWkUuYgP5opdnoII28jpA10LFHL6o6cUWjcy3os500LaSu6fNpTcI6WaBHKySPeNFYWFjDGmEhAbryiFRfnddJvZmfrq+NQ7GqJFKakK39TM97LWD7/VDBfnjonDiADvcFkRk4=
+	t=1728296703; cv=none; b=toq3jrR+Yrk+ufPPM6+lyhaeoKQewOEfRHLJM/LQT6MLA/+kFR6CMahdYgsLiQZmc1/V6ypTLtNnl4u3hiz0G6uRaNTJD59W6MoTPzvrQa92oB8WSF4hTXM5j899QIbzLkq2w2g0Q0bGCyvrdfbbP8QhRiHjWdUEB9q+E0yXB9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728296678; c=relaxed/simple;
-	bh=5GNj/zyhCQEF+jVar7YrC7KhafSmp007Qa31mvJ/AUo=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=gZi/UezLJX7Ms9ailNUEkckta2PP8MsqdlmnAv5/Xk8ikW1a77yxcPRqYwQMhJ5Mwotu9OEQitUq4PjJ7I+OF5aHZ2+QzRjXVeeAdRVjEw65CX5MvAF8tOiLd3GQCtTqc+uC4jyMceIz4LL+lPEItTKRrDTc6OnYH1hwYYCmtK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=WOSH2NPt; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=j59YkxTBgoRlpUL2wnN8AYuBff3YLIS7SQonOmmmQaU=;
-  b=WOSH2NPtjyLHSbi0JrAPJpX1QB6XedV75WFmo2VBJTh8C0y3xL2MeDHx
-   moGZ2rTOj847uth8dojBlEGj/Zd32UlSBXZPV2oNmZxbc8UZS5+SE1q3n
-   yBszbbwhiZtyKvISF6r33ikxks4d6tBpsN5QbTcGsOakvoh9PcrhxTo6x
-   Y=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.11,184,1725314400"; 
-   d="scan'208";a="187378384"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 12:24:31 +0200
-Date: Mon, 7 Oct 2024 12:24:31 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Imre Deak <imre.deak@intel.com>, 
-    Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>, 
-    linux-kernel@vger.kernel.org
-cc: oe-kbuild-all@lists.linux.dev
-Subject: drivers/gpu/drm/i915/display/intel_ddi.c:2225:7-13: opportunity for
- str_enabled_disabled(enable) (fwd)
-Message-ID: <14b98e31-4cf-1021-e61d-6ac0eb87feb@inria.fr>
+	s=arc-20240116; t=1728296703; c=relaxed/simple;
+	bh=fkAzh6HKnTVkN9u8oxgAlrLIgYJMbNBUPxpZVbaBnho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DUA1ImqOxMGnbfgyYYQ+OpTpAoCriupOGsO8AqG8cVgCjqVyX1WXXOu4NtI2WNb/Nq8zz9cZwwkaSw+OpcHOzrQUt/QnwOJ0iu2TV0rUInNNWs9dFlQe9Jb6KSK9lC+66r0knap1PmYaipFz+Ig1d+C2xu0VAuFuqYwf4gPcwxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VZtdbv0a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728296700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OqsZjaaBaUUsDXvs4mHnhWXU90gxYxc87aEmageaD9o=;
+	b=VZtdbv0aANbED2JKhq2iUBkVbHlZ6c+BY2d597QRYcxF2AE15ub40XLq3e2GRCB59zLkma
+	JJ8jZPfFtjFkM2PLZKKVBIEYyKdcqmEoVNzHj2p0PRZtQllrykhvM1l0nCw+GSmrmMCQfO
+	eLRbeKV7P3N0E22p9afMn3448y2qCYM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-GdH0VAH9Oryut7iuMdjDZQ-1; Mon, 07 Oct 2024 06:24:59 -0400
+X-MC-Unique: GdH0VAH9Oryut7iuMdjDZQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so37863505e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:24:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728296698; x=1728901498;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OqsZjaaBaUUsDXvs4mHnhWXU90gxYxc87aEmageaD9o=;
+        b=MtCND1YKrIsu19E63R/z+exXqw1cVFAfqbHsD+zKtLo2qgMN7QT5G6EvdSkkpdumaS
+         CIUDFN6sPjHo+P90msZcQkmN48cjc8Fdwi7yqgrkEHYL6EW0pEdPDGrlnITrMS8XetOi
+         ZasAWxTFig3AA4dwud0CG7Ggp0J9eqvkhNRw/ym5hIv1Hy1lSguDLXzonlxV2d8qwIE4
+         45Nrq0ac03TjB1YqKw385F8nNzImS1Arv1CuCuu8uM8yDGUD15Q0ULk11JeKO18k8t+b
+         p/pSjJXEkflScLUuhIXj5D9K+HZT4X7slGDl6SrKzeWyPRDxu0MQS4LCbcy5o39TKSgr
+         Ni5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqVGQBRNh8SOawAw/fqeEwJwnsbV2loJQAICgw/mCUFSGwRJJn9hrUDOIyYlcO7uFF6ifjmSZf1UhYBnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8CzfoYZ7KRlN0kcztgXQ0gpZJ4tfW0DfqyL1MUUBVlq3etiLh
+	GCqSi98dqwwIypAGQHPCFnTJltCFoB/dtPLcR4jBlJZT6NtXqwMMhuIV1CcSmPqqHmyWhSFNugh
+	9RzUNSPfb4bg1YRvDoZs8vsVGgwDlFBCUlchavMviLHJarw47oQC6LEaDelM4Wg==
+X-Received: by 2002:a05:600c:1e26:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42f9210c3d1mr13493545e9.12.1728296698241;
+        Mon, 07 Oct 2024 03:24:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkP+jiCh5p6yhuunhbY+WDtBNvwCLEabBxZDiquvMZ1w1+g+/pjtLs6yQ7Cn6elaAxAQq1bg==
+X-Received: by 2002:a05:600c:1e26:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42f9210c3d1mr13493285e9.12.1728296697805;
+        Mon, 07 Oct 2024 03:24:57 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c725:8700:77c7:bde:9446:8d34? (p200300cbc725870077c70bde94468d34.dip0.t-ipconnect.de. [2003:cb:c725:8700:77c7:bde:9446:8d34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b44374sm87917245e9.30.2024.10.07.03.24.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 03:24:57 -0700 (PDT)
+Message-ID: <04c4314e-7958-47bd-8281-23c3e35fc10e@redhat.com>
+Date: Mon, 7 Oct 2024 12:24:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 06/10] mm/mshare: Add vm flag for shared PTEs
+To: James Houghton <jthoughton@google.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com,
+ viro@zeniv.linux.org.uk, khalid@kernel.org, andreyknvl@gmail.com,
+ dave.hansen@intel.com, luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
+ ebiederm@xmission.com, catalin.marinas@arm.com, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org,
+ rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com,
+ pcc@google.com, neilb@suse.de, maz@kernel.org
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <20240903232241.43995-7-anthony.yznaga@oracle.com>
+ <CADrL8HV51t44EBKFwXoT-A48miq2TT7w1yjSUFo6uc5WDN=z9A@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CADrL8HV51t44EBKFwXoT-A48miq2TT7w1yjSUFo6uc5WDN=z9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 04.09.24 01:40, James Houghton wrote:
+> On Tue, Sep 3, 2024 at 4:23 PM Anthony Yznaga <anthony.yznaga@oracle.com> wrote:
+>>
+>> From: Khalid Aziz <khalid@kernel.org>
+>>
+>> Add a bit to vm_flags to indicate a vma shares PTEs with others. Add
+>> a function to determine if a vma shares PTEs by checking this flag.
+>> This is to be used to find the shared page table entries on page fault
+>> for vmas sharing PTEs.
+>>
+>> Signed-off-by: Khalid Aziz <khalid@kernel.org>
+>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+>> ---
+>>   include/linux/mm.h             | 7 +++++++
+>>   include/trace/events/mmflags.h | 3 +++
+>>   mm/internal.h                  | 5 +++++
+>>   3 files changed, 15 insertions(+)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 6549d0979b28..3aa0b3322284 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -413,6 +413,13 @@ extern unsigned int kobjsize(const void *objp);
+>>   #define VM_DROPPABLE           VM_NONE
+>>   #endif
+>>
+>> +#ifdef CONFIG_64BIT
+>> +#define VM_SHARED_PT_BIT       41
+>> +#define VM_SHARED_PT           BIT(VM_SHARED_PT_BIT)
+>> +#else
+>> +#define VM_SHARED_PT           VM_NONE
+>> +#endif
+>> +
+>>   #ifdef CONFIG_64BIT
+>>   /* VM is sealed, in vm_flags */
+>>   #define VM_SEALED      _BITUL(63)
+>> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+>> index b63d211bd141..e1ae1e60d086 100644
+>> --- a/include/trace/events/mmflags.h
+>> +++ b/include/trace/events/mmflags.h
+>> @@ -167,8 +167,10 @@ IF_HAVE_PG_ARCH_X(arch_3)
+>>
+>>   #ifdef CONFIG_64BIT
+>>   # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+>> +# define IF_HAVE_VM_SHARED_PT(flag, name) {flag, name},
+>>   #else
+>>   # define IF_HAVE_VM_DROPPABLE(flag, name)
+>> +# define IF_HAVE_VM_SHARED_PT(flag, name)
+>>   #endif
+>>
+>>   #define __def_vmaflag_names                                            \
+>> @@ -204,6 +206,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )               \
+>>          {VM_HUGEPAGE,                   "hugepage"      },              \
+>>          {VM_NOHUGEPAGE,                 "nohugepage"    },              \
+>>   IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,     "droppable"     )               \
+>> +IF_HAVE_VM_SHARED_PT(VM_SHARED_PT,     "sharedpt"      )               \
+>>          {VM_MERGEABLE,                  "mergeable"     }               \
+>>
+>>   #define show_vma_flags(flags)                                          \
+>> diff --git a/mm/internal.h b/mm/internal.h
+>> index b4d86436565b..8005d5956b6e 100644
+>> --- a/mm/internal.h
+>> +++ b/mm/internal.h
+>> @@ -1578,4 +1578,9 @@ void unlink_file_vma_batch_init(struct unlink_vma_file_batch *);
+>>   void unlink_file_vma_batch_add(struct unlink_vma_file_batch *, struct vm_area_struct *);
+>>   void unlink_file_vma_batch_final(struct unlink_vma_file_batch *);
+>>
+> 
+> Hi Anthony,
+> 
+> I'm really excited to see this series on the mailing list again! :) I
+> won't have time to review this series in too much detail, but I hope
+> something like it gets merged eventually.
+> 
+>> +static inline bool vma_is_shared(const struct vm_area_struct *vma)
+>> +{
+>> +       return VM_SHARED_PT && (vma->vm_flags & VM_SHARED_PT);
+>> +}
+> 
+> Tiny comment - I find vma_is_shared() to be a bit of a confusing name,
+> especially given how vma_is_shared_maywrite() is defined. (Sorry if
+> this has already been discussed before.)
+> 
+> How about vma_is_shared_pt()?
 
+vma_is_mshare() ? ;)
 
----------- Forwarded message ----------
-Date: Mon, 7 Oct 2024 17:01:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: oe-kbuild@lists.linux.dev
-Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-Subject: drivers/gpu/drm/i915/display/intel_ddi.c:2225:7-13: opportunity for
-    str_enabled_disabled(enable)
+The whole "shared PT / shared PTE" is a bit misleading IMHO and a bit 
+too dominant in the series. Yes, we're sharing PTEs/page tables, but the 
+main point is that a single mshare VMA might cover multiple different 
+VMAs (in a different process).
 
-BCC: lkp@intel.com
-CC: oe-kbuild-all@lists.linux.dev
-CC: linux-kernel@vger.kernel.org
-TO: Imre Deak <imre.deak@intel.com>
-CC: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+I would describe mshare VMAs as being something that shares page tables 
+with another MM, BUT, also that the VMA is a container and what exactly 
+the *actual* VMAs in there are (including holes), only the owner knows.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-commit: 8ab5a03643fc529f0e8663bc4d5b43f8f6885922 drm/i915/dp: Disable FEC ready flag in the sink
-date:   11 months ago
-:::::: branch date: 10 hours ago
-:::::: commit date: 11 months ago
-config: x86_64-randconfig-102-20241007 (https://download.01.org/0day-ci/archive/20241007/202410071601.TFpXoqgW-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+E.g., is_vm_hugetlb_page() might be *false* for an mshare VMA, but there 
+might be hugetlb folios mapped into the page tables, described by a 
+is_vm_hugetlb_page() VMA in the owner MM.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Julia Lawall <julia.lawall@inria.fr>
-| Closes: https://lore.kernel.org/r/202410071601.TFpXoqgW-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/i915/display/intel_ddi.c:2225:7-13: opportunity for str_enabled_disabled(enable)
-
-vim +2225 drivers/gpu/drm/i915/display/intel_ddi.c
-
-1639406a31c23ca drivers/gpu/drm/i915/display/intel_ddi.c Manasi Navare   2021-01-22  2212
-a322b97589a6af4 drivers/gpu/drm/i915/intel_ddi.c         Anusha Srivatsa 2018-11-28  2213  static void intel_dp_sink_set_fec_ready(struct intel_dp *intel_dp,
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2214  					const struct intel_crtc_state *crtc_state,
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2215  					bool enable)
-a322b97589a6af4 drivers/gpu/drm/i915/intel_ddi.c         Anusha Srivatsa 2018-11-28  2216  {
-47bdb1caba0bc5a drivers/gpu/drm/i915/display/intel_ddi.c Jani Nikula     2020-03-20  2217  	struct drm_i915_private *i915 = dp_to_i915(intel_dp);
-47bdb1caba0bc5a drivers/gpu/drm/i915/display/intel_ddi.c Jani Nikula     2020-03-20  2218
-a322b97589a6af4 drivers/gpu/drm/i915/intel_ddi.c         Anusha Srivatsa 2018-11-28  2219  	if (!crtc_state->fec_enable)
-a322b97589a6af4 drivers/gpu/drm/i915/intel_ddi.c         Anusha Srivatsa 2018-11-28  2220  		return;
-a322b97589a6af4 drivers/gpu/drm/i915/intel_ddi.c         Anusha Srivatsa 2018-11-28  2221
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2222  	if (drm_dp_dpcd_writeb(&intel_dp->aux, DP_FEC_CONFIGURATION,
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2223  			       enable ? DP_FEC_READY : 0) <= 0)
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2224  		drm_dbg_kms(&i915->drm, "Failed to set FEC_READY to %s in the sink\n",
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24 @2225  			    enable ? "enabled" : "disabled");
-6e916b35afa8a37 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2226
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2227  	if (enable &&
-8ab5a03643fc529 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2228  	    drm_dp_dpcd_writeb(&intel_dp->aux, DP_FEC_STATUS,
-6e916b35afa8a37 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2229  			       DP_FEC_DECODE_EN_DETECTED | DP_FEC_DECODE_DIS_DETECTED) <= 0)
-6e916b35afa8a37 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2230  		drm_dbg_kms(&i915->drm, "Failed to clear FEC detected flags\n");
-6e916b35afa8a37 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2231  }
-6e916b35afa8a37 drivers/gpu/drm/i915/display/intel_ddi.c Imre Deak       2023-10-24  2232
+So again, it's not just "sharing page tables".
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+
+David / dhildenb
+
 
