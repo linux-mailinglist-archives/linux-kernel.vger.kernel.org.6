@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-353060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28649927CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:05:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E339927D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219C3282DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF381F23063
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FA018BC16;
-	Mon,  7 Oct 2024 09:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE3E18CC16;
+	Mon,  7 Oct 2024 09:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A+13tIXI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mRWm4xkZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E13628EA;
-	Mon,  7 Oct 2024 09:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEA218CBF4;
+	Mon,  7 Oct 2024 09:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291942; cv=none; b=uMPM5jL9f7X1CjAJNJfyen/RgIsLTd3+sI8TRjRS3XCXc6V5lIvFrPdM0JDk6j2hoBV5K3nk7Rl3+EV35tzwhnoOA9wJoGSB2cZl6BVpKe/Nd/NwhsBToK6BuO01rK5HjzAjA/L2t3TL/ke3GUf7F0bNDQGCes/84+Zn1EcB3yk=
+	t=1728292038; cv=none; b=fGPhZyCE0+a/MdwoIodpgV0sjVUqeLHyLmqAjfunPO+WhYo9OElL/IvZQF7OO992lNIzftw+YAFrtwrNsMENXJKf4hjlfwkuLZ0LQjVee/Bv8Gx4cTegvBtZGQwPk4AHto2C69uROj+9s0AP6AtIZg+Un/u+EIoXPWa6BZhlmPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291942; c=relaxed/simple;
-	bh=uQeNvsiSV1kj3jk5hB6wIWiHs0hBMW7OkluGU+OeX3w=;
+	s=arc-20240116; t=1728292038; c=relaxed/simple;
+	bh=VXt5sLIDbpBVweOL/oYwBGRs5o9/j78sVlhz+RGVTVg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uCQfeTatJAjGQDKsisz1G0FhNKvSSlKmC7mgHh/eZeDRuCgOJ8NReeALa0uKrE9mFomX4YOhWon4ieBW0Ik9dhpBBlcCA94+1l1AAAzCOpHU8B1c+hSkDaqaCzMSU3k3KeXg7T2f9R5oc9KpCEg+e6CixXEYd6r/dw7Us4Plem8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A+13tIXI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057C3C4CEC6;
-	Mon,  7 Oct 2024 09:05:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9NvPs5AA8NGRx5gzoBtWN6sDaBOZJpvShG3x+oKo5VEfWJWrGez3dqVC+FLo5jSNp8EKfYbIIJNZMkQAZxqQEgZHbi2agKcnv3yJ+hpxqdRvaJClvofb0EUk3V4a9WB3oAaOH6jAXS0FNf7E91bk8R62xFaaBvBcL3yW2+91fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mRWm4xkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B2BC4CEC6;
+	Mon,  7 Oct 2024 09:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728291941;
-	bh=uQeNvsiSV1kj3jk5hB6wIWiHs0hBMW7OkluGU+OeX3w=;
+	s=korg; t=1728292037;
+	bh=VXt5sLIDbpBVweOL/oYwBGRs5o9/j78sVlhz+RGVTVg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A+13tIXI6PXQBoHMp7h3fIsc954/fJ6T2DXmsGuUWbR29gm2C/jcG8G1CKA8BGvTj
-	 SYj5c2Igz8mAe2QUyCKaYV9UCUPwDKM1cFRCylVFzcvlAtgQy8R9pJfke1LibUbeim
-	 ptpPntUkGBXKvafVHVOOz3DeHz0EHtBWXfdwoK9I=
-Date: Mon, 7 Oct 2024 11:05:38 +0200
+	b=mRWm4xkZgfNz/Z+dM+Ju1O7LvJycsyBIKdz8+Ps6ZG53ygL64uyCiDujcM5/yuwMg
+	 hbHRfmnfpvruEpbhN6WbQHO0lYoZcUAAdmWuCIFyfwQqTGMkQBXKMCiuE5ElNQvkhD
+	 299KWmWD94OlISP2mV8zcvo1ZKrbqerdWTiKdikU=
+Date: Mon, 7 Oct 2024 11:07:14 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: akpm@linux-foundation.org, usama.anjum@collabora.com, peterx@redhat.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] mm: remove the newlines, which are added for unknown
- reasons and interfere with bug analysis
-Message-ID: <2024100700-animal-upriver-fb7c@gregkh>
-References: <20241007065307.4158-1-aha310510@gmail.com>
- <2024100748-exhume-overgrown-bf0d@gregkh>
- <CAO9qdTFwaK36EKV1c8gLCgBG+BR5JmC6=PGk2a6YdHVrH9NukQ@mail.gmail.com>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	arnd@arndb.de
+Subject: Re: [PATCH v1 2/4] misc: fastrpc: Capture kernel and DSP performance
+ counters
+Message-ID: <2024100702-pony-repent-d1b8@gregkh>
+References: <20241007084518.3649876-1-quic_ekangupt@quicinc.com>
+ <20241007084518.3649876-3-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,78 +57,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO9qdTFwaK36EKV1c8gLCgBG+BR5JmC6=PGk2a6YdHVrH9NukQ@mail.gmail.com>
+In-Reply-To: <20241007084518.3649876-3-quic_ekangupt@quicinc.com>
 
-On Mon, Oct 07, 2024 at 05:57:18PM +0900, Jeongjun Park wrote:
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Oct 07, 2024 at 03:53:07PM +0900, Jeongjun Park wrote:
-> > > Looking at the source code links for mm/memory.c in the sample reports
-> > > in the syzbot report links [1].
-> > >
-> > > it looks like the line numbers are designated as lines that have been
-> > > increased by 1. This may seem like a problem with syzkaller or the
-> > > addr2line program that assigns the line numbers, but there is no problem
-> > > with either of them.
-> > >
-> > > In the previous commit d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC"),
-> > > when modifying mm/memory.c, an unknown line break is added to the very first
-> > > line of the file. However, the git.kernel.org site displays the source code
-> > > with the added line break removed, so even though addr2line has assigned
-> > > the correct line number, it looks like the line number has increased by 1.
-> > >
-> > > This may seem like a trivial thing, but I think it would be appropriate
-> > > to remove all the newline characters added to the upstream and stable
-> > > versions, as they are not only incorrect in terms of code style but also
-> > > hinder bug analysis.
-> > >
-> > > [1]
-> > >
-> > > https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
-> > > https://syzkaller.appspot.com/bug?extid=fa43f1b63e3aa6f66329
-> > > https://syzkaller.appspot.com/bug?extid=890a1df7294175947697
-> > >
-> > > Fixes: d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  mm/memory.c | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > >
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index 2366578015ad..7dffe8749014 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -1,4 +1,3 @@
-> > > -
-> >
-> > This sounds like you have broken tools that can not handle an empty line
-> > in a file.
-> >
-> > Why not fix those?
+On Mon, Oct 07, 2024 at 02:15:16PM +0530, Ekansh Gupta wrote:
+> Add support to capture kernel performance counters for different
+> kernel level operations. These counters collects the information
+> for remote call and copies the information to a buffer shared
+> by user.
 > 
-> As I mentioned above, there is no problem with addr2line's ability to parse
-> the code line that called the function in the calltrace of the crash report.
-> 
-> However, when the source code of mm/memory.c is printed on the screen on the
-> git.kernel.org site, the line break character that exists in the first line
-> of the file is deleted and printed, so as a result, all code lines in the
-> mm/memory.c file are located at line numbers that are -1 less than the
-> actual line.
-> 
-> You can understand it easily if you compare the source code of mm/memory.c
-> on github and git.kernel.org.
-> 
-> https://github.com/torvalds/linux/blob/master/mm/memory.c
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/memory.c
-> 
-> Since I cannot modify the source code printing function of the git.kernel.org
-> site, the best solution I can suggest is to remove the unnecessary line break
-> character that exists in all versions.
+> Collection of DSP performance counters is also added as part of
+> this change. DSP updates the performance information in the
+> metadata which is then copied to a buffer passed by the users.
 
-I would recommend fixing the git.kernel.org code, it is all open source
-and can be fixed up, as odds are other projects/repos would like to have
-it fixed as well.
+"also" usually means "should be broken up into a new patch", right?
+
+Also, where is any of these new "performance counters" documented?  Why
+not use the normal kernel apis for performance counters?
 
 thanks,
 
