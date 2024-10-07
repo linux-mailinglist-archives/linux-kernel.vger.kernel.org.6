@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-354107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60239937E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:04:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A4A9937E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EE41F21BF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0F328364B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EAF1DE4C2;
-	Mon,  7 Oct 2024 20:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E471DE4C2;
+	Mon,  7 Oct 2024 20:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJc/qEe8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CS2vbW2j"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA5E1865FC;
-	Mon,  7 Oct 2024 20:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5601DE2D3
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331463; cv=none; b=llsBoIG2LYYR+Jt7WyJAusMjRbsx0qXX+aD0GCOkTXOPZz3yfr/VjtJ8B42oR6bZSxQMyRqsxQMDXmIqz+h7x7VyStKLGY1TvfM7HG6Lg7TcxRirNBUoGd/rwOo3nPas/xhkJ6CPdx3XdG/un3YhYaESMQ6s8rFfINBTJuUyK9c=
+	t=1728331537; cv=none; b=B4mwZo2mDwi/4y54y7nza0nufSWlw9OqsqE/0aIZZsaqGnp8Ec5pQBcwpJFg9dipHdJycoaqtFWkc/5XFTxiLzk4FSKU6JCziXokjvVq4MzW3kXo2iDa1ySVCOIIjDrEg7A6dsiQABP9VbF0t5epjb5nZrEKDQNHK07eewl3Xhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331463; c=relaxed/simple;
-	bh=zMuEK/+LlzrBce+U/LzRTcJ//VPj1HV7lbrBSEf7RLo=;
+	s=arc-20240116; t=1728331537; c=relaxed/simple;
+	bh=Fiud0yj3UkoKF9eqslOVQBgzuRDk/DsfR+p/SmNwsxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRLX3Cf+hIrfresIxMp0RfVI58jm+ntlB1/uW1lTB2u1rVdZlUhHyMl/kFYuyGq0DW3qr9cOxhkIe1cVVLK6oh7pIxr96+CGT24JsqLludgKNcqS41G+8yOTx4TBzUiVpcFl52qPbJ4uEi0Pey1sUX1C08qXdCTlHNp8WerKUgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJc/qEe8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB09EC4CEC6;
-	Mon,  7 Oct 2024 20:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728331463;
-	bh=zMuEK/+LlzrBce+U/LzRTcJ//VPj1HV7lbrBSEf7RLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vJc/qEe8QWUHpTJAB/2vMtKcCCPLDPKqhGujEcnsY+syGQPYh6seMeeJ8vpd1IVeH
-	 FIqAvFz6u7NXEUmDp1jbGaRuaElNQht2OPpe6rrSHtXS4hzFixxSjVoi2pT4fP++/j
-	 ulkuL/w+gTB1TNIw1uuWrlMY3HJ+v1Ykx+6XNu0D9geydwdjo5uTIDlFyVrzHbCHMh
-	 SncLV2kQ9DLngGCdbiqfxjwI1VDL/aN9AKhUub5xfE6djnT9tH3i+e88cKnvBIK8Wz
-	 Fj10FVHJIZRE7n+ar+4yt3OpiVlHi7zbT/KDzzYHui1XkH247fArCb53hqn1kgTlJI
-	 N1T1hFOlYerRw==
-Date: Mon, 7 Oct 2024 15:04:22 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMZuSHNCzy3s4/sHmXh9B7X1mZlqGIZXCirlkxoUL+F/OF7st1Z5/4XJIsIQmiW0jZqi9ZwKl+8xS1ItFuFKA1j/D9RgB7FN1L/7xBwNCAE8i2aV1p0LCG7MJ8sGEwh594fs//Ohv7dMZf86wLszMFHxlFfkaryVG9eifxLGZkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CS2vbW2j; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 8 Oct 2024 04:05:28 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728331531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwnTZ30pE64PPVgzu3ilNOXtrbZO989Ve0baEc4aua0=;
+	b=CS2vbW2jGVUL81gcsiQvBhkWv4SlqRUuDyp4/RY5UHhO1JJNZx9E4yJF/Mh0lz8SauXDtI
+	bwvlR8idy2Y2jfbPMrtnfw2Yre3y6zG1vUQ0XuNOSLxZciYLpbxfD9IHTrBQ0QmBRoH//3
+	ITiCcuBYsMK3k4LqUbm3/9lLi4LHnp4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leo Yan <leo.yan@linux.dev>
+To: Julien Meunier <julien.meunier@nokia.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	stable@vger.kernel.org, coresight@lists.linaro.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: soc: amlogic,meson-gx-hhi-sysctrl: Document
- the System Control registers found on early Meson SoC
-Message-ID: <172833146176.2311218.15217658645332069046.robh@kernel.org>
-References: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-hhi-sysctrl-meson8-v1-1-896b24e6c3c8@linaro.org>
+	leo.yan@arm.com
+Subject: Re: [PATCH] coresight: etm4x: Fix PID tracing when perf is run in an
+ init PID namespace
+Message-ID: <20241007200528.GB30834@debian-dev>
+References: <20240925131357.9468-1-julien.meunier@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +62,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-hhi-sysctrl-meson8-v1-1-896b24e6c3c8@linaro.org>
+In-Reply-To: <20240925131357.9468-1-julien.meunier@nokia.com>
+X-Migadu-Flow: FLOW_OUT
 
+Hi Julien,
 
-On Mon, 07 Oct 2024 16:09:38 +0200, Neil Armstrong wrote:
-> The early Amlogic SoCs also has a System Control registers register set,
-> document it in the amlogic,meson-gx-hhi-sysctrl now the clock controller
-> has been converted to yaml dt-schema.
+On Wed, Sep 25, 2024 at 03:13:56PM +0200, Julien Meunier wrote:
+> The previous implementation limited the tracing capabilities when perf
+> was run in the init PID namespace, making it impossible to trace
+> applications in non-init PID namespaces.
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> This update improves the tracing process by verifying the event owner.
+> This allows us to determine whether the user has the necessary
+> permissions to trace the application.
+
+The original commit aab473867fed is not for constraint permission. It is
+about PID namespace mismatching issue.
+
+E.g. Perf runs in non-root namespace, thus it records process info in the
+non-root PID namespace. On the other hand, Arm CoreSight traces PID for
+root namespace, as a result, it will lead mess when decoding.
+
+With this change, I am not convinced that Arm CoreSight can trace PID for
+non-root PID namespace. Seems to me, the concerned issue is still existed
+- it might cause PID mismatching issue between hardware trace data and
+Perf's process info.
+
+I think we need to check using the software context switch event. With
+more clear idea, I will get back at here.
+
+Thanks,
+Leo
+
+> Cc: stable@vger.kernel.org
+> Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
+> Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
 > ---
->  .../bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  drivers/hwtracing/coresight/coresight-etm4x-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index bf01f01964cf..8365307b1aec 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -695,7 +695,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>  
+>  	/* Only trace contextID when runs in root PID namespace */
+>  	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
+> -	    task_is_in_init_pid_ns(current))
+> +	    task_is_in_init_pid_ns(event->owner))
+>  		/* bit[6], Context ID tracing bit */
+>  		config->cfg |= TRCCONFIGR_CID;
+>  
+> @@ -710,7 +710,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>  			goto out;
+>  		}
+>  		/* Only trace virtual contextID when runs in root PID namespace */
+> -		if (task_is_in_init_pid_ns(current))
+> +		if (task_is_in_init_pid_ns(event->owner))
+>  			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
+>  	}
+>  
+> -- 
+> 2.34.1
+> 
+> 
 
