@@ -1,111 +1,145 @@
-Return-Path: <linux-kernel+bounces-353846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EC699339C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:39:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7295E99339F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBE31C239DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8AB287A40
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474B91DC75A;
-	Mon,  7 Oct 2024 16:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F851DC048;
+	Mon,  7 Oct 2024 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ixZh1NFR"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="d9QaOaVA"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4001DC737
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AFB1D9334
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728319073; cv=none; b=U6cYIBnDleq+F84brs8BOpByQgYPubUayGHK5uof3XzobmttRviX3HS+IANwp1G/u3n/4I7hT6+jiPYjLnGU31mXQ2iMqLmXFLbbfLxZuY3TVM++jNMs1+5NsLr9v+Np6zrd6RFH7T+4QiBDV75+WT2QLR7HBK2W69yy150/rxE=
+	t=1728319154; cv=none; b=nLynNsMYKFSDe6gvIvSYedZDMNyk9lzZCqZinQ1CC5DAfA+6c+1C9zWLjq5cchwjaByU6m0X9j6FBZ687O4c2M6Q00sQluAFxHm9qh/TzKXf6TYlIUa7KPxcQkzZd/ImeBIrQl8mlM0qcgYkIs1RPP2peTghKKENxPM1qBjnOUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728319073; c=relaxed/simple;
-	bh=0mzLrB2OomyLtoMgMpkUXKBQAaht79Vh1csmlF+3YCk=;
+	s=arc-20240116; t=1728319154; c=relaxed/simple;
+	bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T6e46SyhcvNlaGCczajTelVUDlalD296CidQsW6PUal+UThQGHeF8lSEJlUUdoZXqLGkVBnGBoW2aGwIBNE3MrnsmLvn8+oKtuKwCBPChoj3XxgHIQ+V9cli4qtggp10kyjb/F3Pv44YcllgEnR1pHh+ep0tPZeg1/X9l7+RlL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ixZh1NFR; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a9a30a0490so452218385a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:37:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=Jr10at+jLFeCMuc0esUR3KCExq11FATXRrj//5vlw7X3fjKR054SQgjhNlYDBqwJr8U0TlAlQtn/SUkTDAJyHUy0SMNVGTZtkueGuLufXvgGNDhIzAERJo2KDlePklyr1BOpkFn6jFkQxEp1iZ2R4Y4xbljpDt4BLcI/ID3kT18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=d9QaOaVA; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso4178434276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1728319071; x=1728923871; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W4CFFIJB0/w1KDKpJP7Na0Tu7Wo8uI2KSmr76xqMrKs=;
-        b=ixZh1NFRp0ea8wKvo0Iw723PpYrfpp4mtK/OzwvBIh8Le09kGbxl7daPYLs2o8QFoS
-         wSUWfXqMzptRJ01pUlxnUCUCv9s3FsAHV1NJ/i/saAe5+Lryqtc+1x+LJ8P1NVmrZ+sY
-         dl5v8mB91IQH1826eVz8uywUfYs/39ZfktY7biGxOafcmXkl3ZR0pfWh007o8vWKA7zT
-         sMRTkrPljOB0gifHCn1TH2yi3rYmwmPKz6NkUlMTi38nfw0v0LqaVW+H5OjFriY8X9Cj
-         bRN3RnHPSTnTDcHqzNsNKUKQTCKHNaVLh291pN+hde75nmEh3pVp7wfG1HK58VAnRjoW
-         Rrvw==
+        d=gateworks.com; s=google; t=1728319151; x=1728923951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
+        b=d9QaOaVADhSatQfXRAd8EuYxI9qSPj2mnRamsUAXChIG8UUX3nZR9dtyfRULq9+Qws
+         Cuf+ET+0h1+UKjggjD4N5C3aWjdDgwXTqbyDoNQLXJ+bmBMhkhmViS1Fmw8TCoHhAzuW
+         ouuP4ms5+aEKC61hhfr/KlvvfsFkpjnL5G5i8WcOkB68mCZaWKJqFejta04/U3iQuSkv
+         cY4z/yZ5fctyKljVH2cyopYumvB7ipggBDEsFpbu+VgXsbA2ANdfiPAP2U62/yEyseOm
+         oKiW4dLeAf3veduY9zojZAvFugIgjgCWhCr0IC3V7wAc5ol4UccFOOBRLi1xom8naqDF
+         C6nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728319071; x=1728923871;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W4CFFIJB0/w1KDKpJP7Na0Tu7Wo8uI2KSmr76xqMrKs=;
-        b=VXTFBmhYxnTMubbFNRzTbObuWjnj27ETGQtsKQB0TbAJweZQnfo+6OCsrRUPA0O7Kd
-         L1rqzQuhjX4BNLsTKtCz4r+YUQVpJRSv5jvarJi9Up8yHSSVw4JmZ1YQVX2E6PXaWJLA
-         vW+0L1b5cq0a1N6walzRNAAuqQfeMDY8ZeQ0OMeg/rHb1YHtFqIzIRy5CFIc5mLGE3Ji
-         asF8gvOvYTux6+Djfplj9jnvjEOshZDG/d0NPqXeGX/sNBQXt/ourHWy6Lq8tvaR+EMr
-         Ktv8n076i7886T5g3H87+3QfydrOsuUFM2gBbbBk+EfOI5gP5NCQAct5gln36K1Pg2oh
-         1PDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/ii9yBKhjhRoqATPXfBgG3CXn0VugX9BvDpp+GjsR34rgG3nCPCaGggI3ElS4y0MQkqLVitByHxhr+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6EFfhB9CZ9u9aeBgKjjHCL+2zqCPqa02XhijEn5Ph1OLhM+8W
-	7btu7P3mX/GjUQlUrc0y3oi5slmNj9HLX6b9OC/FMqnAY5Buj5hOnobpKUq+XCMJS5Ujwr/NMTt
-	utBRJc18982uYgMJPHrOFzvgOL8g+FmYFiKggMQ==
-X-Google-Smtp-Source: AGHT+IFUEdp+6Zfk/3canOH8YLTeCDElWZbOWdFUC/AjiXkqb6tWoEUHRz5ImwY747H/eYo44KjaW8o6FN6Tmv1CB1Q=
-X-Received: by 2002:a05:620a:1aa0:b0:7ac:b3bf:c30c with SMTP id
- af79cd13be357-7ae6f48ae1fmr1890545885a.45.1728319070658; Mon, 07 Oct 2024
- 09:37:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728319151; x=1728923951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5kSchx6lq8m+AgwXuUQA/TeosOSLv6yImAWfDG7gJ/k=;
+        b=M4KFhlYBiKEC3b9+e/yJGxQ4ec9yH3P7LNvhZC41/ogKEO7qVLbRep+RfUHn+HxIZT
+         qpOMPYUnrFPwIKsIldvue4cevAoZJ6WAGlvVgS+GGuRJ/GTNoj1gAEOpFlLG60Y77w2e
+         3t2j3G9S+L80n1DIS6k327vV2GAp5K/3HhmG0F9SUyJ6NZHX7TpukWJ75Vjm8ghQ5sHF
+         FrwOpOOUBvS85zNpQbpKI4xqiOrSFDotfsyEoSPCEK8AojqFpqz2O//tJiEwJUVAQ7RU
+         NVMHxPEBWC4RoS//AWnCLMkKeRkomQWep3ln7MqVwpOEV0Vyt2iXkYDXHbS1bNwWxRY0
+         wzhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVtz+KoM6DV4+Qn+oKurYkHOKvvUO/4npSELl/h8JZhnEBLq4uGXUzrjRayzdOt0R4vK+8hhXRJSIoIkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzceqE7dAu54J+15UPaUg90yqmNa5oYMpGjwN5Fl3uKJbtSCRE3
+	lDGlTvSAkwa1rPvvcJldltxP6Xor6eIaW7s8TGdi02lbKtY62UlKXres8gvvudksDp6cAADkU5H
+	9RA0d/uTT3tLhHbZ4zTuhuuU/GJNxHHr2qvPJmA==
+X-Google-Smtp-Source: AGHT+IGVHfa0Imx231sJnOBuoe92zkuhYXnw1oVdVHbQtk8cEuUjipp2aWJ66W3Pqtgo5AbrAyW9cZWVR4KX9tMqDjk=
+X-Received: by 2002:a05:6902:704:b0:e28:eab7:b647 with SMTP id
+ 3f1490d57ef6-e28eab7b8bemr111736276.11.1728319151351; Mon, 07 Oct 2024
+ 09:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004133126.2436930-1-vignesh.raman@collabora.com> <20241004133126.2436930-2-vignesh.raman@collabora.com>
-In-Reply-To: <20241004133126.2436930-2-vignesh.raman@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Mon, 7 Oct 2024 12:37:39 -0400
-Message-ID: <CAPj87rPGD8Pu_CSPXfRtsS_w8UYVJGR9CoLx7RAT69EUKefs3A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] drm/ci: refactor software-driver stage jobs
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, 
-	robdclark@gmail.com, guilherme.gallo@collabora.com, 
-	sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com, 
-	dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20241004213235.3353398-1-tharvey@gateworks.com> <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
+In-Reply-To: <a9467e93-3b35-4136-a756-2c0de2550500@lunn.ch>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Mon, 7 Oct 2024 09:38:59 -0700
+Message-ID: <CAJ+vNU2Hdo-J8HxVXG63AEauBXUdnuRViwmMmE1mNj30NcyF8A@mail.gmail.com>
+Subject: Re: [PATCH] net: phy: disable eee due to errata on various KSZ switches
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Robert Hancock <robert.hancock@calian.com>, 
+	Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>, 
+	Tristram Ha <tristram.ha@microchip.com>, Lukasz Majewski <lukma@denx.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vignesh,
+On Sat, Oct 5, 2024 at 9:46=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Fri, Oct 04, 2024 at 02:32:35PM -0700, Tim Harvey wrote:
+> > The well-known errata regarding EEE not being functional on various KSZ
+> > switches has been refactored a few times. Recently the refactoring has
+> > excluded several switches that the errata should also apply to.
+>
+> Does the commit message say why?
+>
+> Does this need a Fixes: tag?
+>
 
-On Fri, 4 Oct 2024 at 09:31, Vignesh Raman <vignesh.raman@collabora.com> wrote:
-> +.software-driver:
-> +  stage: software-driver
-> +  extends:
-> +    - .test-gl
-> +    - .test-rules
-> +  timeout: "1h30m"
-> +  tags:
-> +    - kvm
-> +  script:
-> +    - ln -sf $CI_PROJECT_DIR/install /install
-> +    - mv install/bzImage /lava-files/bzImage
-> +    - mkdir -p /lib/modules
-> +    - mkdir -p $CI_PROJECT_DIR/results
-> +    - ln -sf $CI_PROJECT_DIR/results /results
-> +    - install/crosvm-runner.sh install/igt_runner.sh
+Hi Andrew,
 
-Instead of inlining this here, can we please move towards reusing more
-of .gitlab-ci/common/init-stage[12].sh? If those files need to be
-modified then that's totally fine, but I'd rather have something more
-predictable, and fewer random pieces of shell in each job section.
+Good question. I couldn't really figure out what fixes tag would be
+appropriate as this code has changed a few times and broken in strange
+ways. Here's a history as best I can tell:
+
+The original workaround for the errata was applied with a register
+write to manually disable the EEE feature in MMD 7:60 which was being
+applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
+
+Then came commit ("26dd2974c5b5 net: phy: micrel: Move KSZ9477 errata
+fixes to PHY driver") and commit ("6068e6d7ba50 net: dsa: microchip:
+remove KSZ9477 PHY errata handling") which moved the errata from the
+switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
+however that PHY code was dead code because an entry was never added
+for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE. So even if we add a
+'Fixes: 6068e6d7ba50' it would not be fixed.
+
+This was apparently realized much later and commit ("54a4e5c16382 net:
+phy: micrel: add Microchip KSZ 9477 to the device table") added the
+PHY_ID_KSZ9477 to the PHY driver. I believe the code was proper at
+this point.
+
+Later commit ("6149db4997f5 net: phy: micrel: fix KSZ9477 PHY issues
+after suspend/resume") breaks this again for all but KSZ9897 by only
+applying the errata for that PHY ID.
+
+The most recent time this was affected was with commit ("08c6d8bae48c
+net: phy: Provide Module 4 KSZ9477 errata (DS80000754C)") which
+removes the blatant register write to MMD 7:60 and replaces it by
+setting phydev->eee_broken_modes =3D -1 so that the generic phy-c45 code
+disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID)
+so its still broken at this point for the other switches that have
+this errata.
+
+So at this point, the only commit that my patch would apply over is
+the most recent 08c6d8bae48c but that wouldn't fix any of the previous
+issues and it would be unclear what switch was broken at what point in
+time.
+
+Best Regards,
+
+Tim
 
