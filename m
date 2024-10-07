@@ -1,32 +1,33 @@
-Return-Path: <linux-kernel+bounces-353036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0755499278C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EE499278B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE6E1C2231A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:52:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0CEB23106
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6C618C012;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E19E18BBB7;
 	Mon,  7 Oct 2024 08:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="mLEMjr1y"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="SMbomuSf"
 Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B582F18BB99
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3B31537C8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291154; cv=none; b=BvA6WU1vnijJ0PC659eX9+Xbiw7jCcxOgr0IRql7/j1glajp64o496FiM8vTIUIMw423WYJvVyeFw59RF/rBrNwM9IoOAqtuLiIjMUSdCDS/E5TGZ8ZDyHK120n0HmullxXZ4vez2TNMyiFkhkybnu4HBZ+08ceFBOd5ZGDANnk=
+	t=1728291153; cv=none; b=Lf5rLc/6gDBFaLkaMLqs0PSP279ks50lFO0Hf+FITrFAdJf1RlYwFkZJYNxx5N3ruNoQZW3imxTP6ezG9wRX4VSceF0bid8HAxQSqOwJWxc2ymja5fJlvjzUDlJitEw1Y0BXOP1bNj2geMZhiV2QPr4GFK4IfQWu1vsplJxHHGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291154; c=relaxed/simple;
-	bh=rjJs6/+LBe3JuPUUwumlHtFe+K7btVqCHR1LK6ewR6U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L+FP7xULa4tBJh+HQKaz/RPmtVPPqOE6sxEfC10YNjvXEkcO5V/hBe4F+6D3IEv0oiTg2y/v3E37iZPZc6bg3vS7q9VcrXEyTiWbfwpFdKtpc0BdZc3O8xOPIEXLqwZDSczJiFnSMUoyDaVOrgug9dxpaonfRpkxh/x9mgsqdXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=mLEMjr1y; arc=none smtp.client-ip=91.26.50.163
+	s=arc-20240116; t=1728291153; c=relaxed/simple;
+	bh=B9zujzAKvv5sce8cu4Pj2ClVC8Ea3SSfSYNnhTHta+g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AWqzn33ErmlWFnVWe45xpdjNWNj8wBXHMVW/PH87YAHaB2LEXZOOePHdZPAu8Mhoiao6/uOSMY8luGgiW/BhAMpoWE82Yhd39AE4Cdlh6feg6DsP8u22AYLG8wo64jSVT67Kix83D0gkteFk+I+KnC6iWkb/hIxHSzfJzJhMCcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=SMbomuSf; arc=none smtp.client-ip=91.26.50.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
 DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
@@ -35,15 +36,15 @@ DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rjJs6/+LBe3JuPUUwumlHtFe+K7btVqCHR1LK6ewR6U=;
-	b=mLEMjr1y3msfWoq/Or0z7TjbfsMZKUVcyzT+6v2CpYPpT6y3557aRfr5+aRGM11c
-	UvP3/zhcGgiGNHcMQsI8KYX2ncPjwCT3XID3Rqyvn7pENf7zAeaonc3YFREGEMCr
-	VfrMOgNKqN9QvqHgEBzCccsBTq48qlBSvbiGmNTuHKQ=;
-X-AuditID: ac14000a-4637f70000004e2a-f5-6703a145764b
+	bh=B9zujzAKvv5sce8cu4Pj2ClVC8Ea3SSfSYNnhTHta+g=;
+	b=SMbomuSfNW7slXUQ/g9mHEfFmJL0ab5CUzVoUcjNnvM/qUROzeqPuQpte5XZiGLx
+	SbRKbaKOS2qKbV9RrLFxmsPSkAlgpaIW6xqgVPpnxxVyQNlVJk5gnZc9RLtvVwwv
+	GU6nxa+pxHp3jRF9Ya2SOPx5j4koLAgcNs0IUV/XuJE=;
+X-AuditID: ac14000a-ecaea24000004e2a-f6-6703a1461352
 Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
 	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 33.A0.20010.641A3076; Mon,  7 Oct 2024 10:52:22 +0200 (CEST)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 43.A0.20010.641A3076; Mon,  7 Oct 2024 10:52:22 +0200 (CEST)
 Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
  (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 7 Oct 2024
@@ -57,10 +58,12 @@ CC: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<bbrezillon@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
 	<robh@kernel.org>, <upstream@lists.phytec.de>
-Subject: [PATCH v2 0/2] Introduce bus-width property for input bus format
-Date: Mon, 7 Oct 2024 10:52:11 +0200
-Message-ID: <20241007085213.2918982-1-w.egorov@phytec.de>
+Subject: [PATCH v2 1/2] dt-bindings: display: bridge: sil,sii9022: Add bus-width
+Date: Mon, 7 Oct 2024 10:52:12 +0200
+Message-ID: <20241007085213.2918982-2-w.egorov@phytec.de>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241007085213.2918982-1-w.egorov@phytec.de>
+References: <20241007085213.2918982-1-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,39 +74,62 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
  (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWyRpKBR9dtIXO6wckzwhYnri9isri/+DOL
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWyRpKBR9dtIXO6webrohYnri9isri/+DOL
 	xeqW6YwWa/aeY7KYf+Qcq8WVr+/ZLJ7PX8docfLNVRaLl7PusVl0TlzCbnF51xw2i4Uft7JY
 	tHUuY7V4v/MWo8WkeTdZLf7v2cFuMfvdfnaLLW8mslp0v1N3EPbY+20Bi8fOWXfZPWZ3zGT1
 	WLznJZPHplWdbB4nJlxi8rhzbQ+bx7yTgR73u48zefR3t7B6bD5d7fF5k1wATxSXTUpqTmZZ
-	apG+XQJXxtzf75kL9rFVHD3/gLWBcSFrFyMnh4SAicTzRX1ANheHkMASJomGj5uYIZxHjBL3
-	v7xmBKliE1CXuLPhG1iHiICfxK0v+9hBipgFNjFLfH69GywhLOApMfv0JGYQm0VAReLunttg
-	Nq+ApcT/vxfZINbJS8y89J0dIi4ocXLmExYQmxko3rx1NjOELSFx8MULMFsIKP7i0nIWmN5p
-	514zQ9ihEkc2rWaawCgwC8moWUhGzUIyagEj8ypGodzM5OzUosxsvYKMypLUZL2U1E2MoNgU
-	YeDawdg3x+MQIxMH4yFGCQ5mJRHeiDWM6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5V3cEpwoJ
-	pCeWpGanphakFsFkmTg4pRoYeS2L5u/6/ezzE5e4LaqP1RWcF+foSUcIrZnnyR+gFywtW1rG
-	e0BCvelbu93BKsdiyxmOLg6MZlxxky/kd6otuWEi6sd6bt/q+w+8VNIf/FYx1Znet7DAqvf8
-	2eZHF7c8vJTVqZgvIJBYrKfg73Tsbgw329Rcr0/z7r3rdLln8tz+WtLuLbpKLMUZiYZazEXF
-	iQDYfVnFuwIAAA==
+	apG+XQJXxqXNixkLVvBUvDl/jKWBcTZnFyMnh4SAicTVo49Yuhi5OIQEljBJdDdtZYVwHjFK
+	3P/ymhGkik1AXeLOhm+sILaIgJ/ErS/72EGKmAU2MUt8fr0bLCEsECDR2LCdDcRmEVCRmDJt
+	JzuIzStgKbHnXRMTxDp5iZmXvoPFOQWsJKbfn8IMYgsB1Xw/u40Jol5Q4uTMJywgNjNQffPW
+	2cwQtoTEwRcvoOrlJV5cWs4CM3PaudfMEHaoxJFNq5kmMArNQjJqFpJRs5CMWsDIvIpRKDcz
+	OTu1KDNbryCjsiQ1WS8ldRMjKJZFGLh2MPbN8TjEyMTBeIhRgoNZSYQ3Yg1juhBvSmJlVWpR
+	fnxRaU5q8SFGaQ4WJXHe1R3BqUIC6YklqdmpqQWpRTBZJg5OqQbGogOmH/3PLtxn//en+KYm
+	8fy1K/72iH660jtnx9/1L9Ju3LO3NP+qtHiRjdeRrvtMnfvefDnjHTnhS4nUnrNrf35YlrtF
+	KmLP4RWrKzeZ/Ne5NidbpVtI3ul0yIli+6Pr2q13GGX6inTXad+zTOKfmZTEt+/SurkHDy1Z
+	3uN6u0LHNentrcNCzUosxRmJhlrMRcWJAPD479HTAgAA
 
-This patch series introduces a bus-width property for the SI9022 HDMI
-transmitter, allowing the input bus format to be configured based on the
-number of RGB input pins. The default is set to 24-bit if unspecified.
+The SI9022 HDMI transmitter can be configured with a bus-width of 16,
+18, or 24 bits. Introduce a bus-width property to the input endpoint,
+specifying the number of parallel RGB input bits connected to the
+transmitter.
 
-v2:
-  - Reorder patches to have dt-bindings go first
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+v2: 
   - Use bus-width instead of data-lines as suggested by Krzysztof
-  - Handle default case separately as an error case
+  - Provide a default
+---
+ .../bindings/display/bridge/sil,sii9022.yaml      | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/lkml/20241003082006.2728617-1-w.egorov@phytec.de/T/
-
-Wadim Egorov (2):
-  dt-bindings: display: bridge: sil,sii9022: Add bus-width
-  drm/bridge: sii902x: Set input bus format based on bus-width
-
- .../bindings/display/bridge/sil,sii9022.yaml  | 15 +++++++++-
- drivers/gpu/drm/bridge/sii902x.c              | 28 ++++++++++++++++++-
- 2 files changed, 41 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
+index 5a69547ad3d7..1509c4535e53 100644
+--- a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
+@@ -81,9 +81,22 @@ properties:
+ 
+     properties:
+       port@0:
+-        $ref: /schemas/graph.yaml#/properties/port
++        unevaluatedProperties: false
++        $ref: /schemas/graph.yaml#/$defs/port-base
+         description: Parallel RGB input port
+ 
++        properties:
++          endpoint:
++            $ref: /schemas/graph.yaml#/$defs/endpoint-base
++            unevaluatedProperties: false
++
++            properties:
++              bus-width:
++                description:
++                  Endpoint bus width.
++                enum: [ 16, 18, 24 ]
++                default: 24
++
+       port@1:
+         $ref: /schemas/graph.yaml#/properties/port
+         description: HDMI output port
 -- 
 2.34.1
 
