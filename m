@@ -1,58 +1,87 @@
-Return-Path: <linux-kernel+bounces-352751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70FC9923C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AF59923CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E604AB2241C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB2E28243B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EAC20314;
-	Mon,  7 Oct 2024 05:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CAE136672;
+	Mon,  7 Oct 2024 05:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="sfq0Tpxl"
-Received: from mail.tkos.co.il (wiki.tkos.co.il [84.110.109.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="NAOCqU14"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D353C0B;
-	Mon,  7 Oct 2024 05:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96583FBA5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728277323; cv=none; b=aBO4aSJthkK0uhMyo3QUYJ/bHEMrkidFVB2NoGE1+Anzpb0ut1uzI6dxLCaqwY3YWgvc0ZWAtFGXnwwcypv/fTG69OfBCcJQSP2Qo008qDC8NOONFxe+GcyOoDlU2CwYfwkCxBFEgXvN7z7+KnxDn7IXTuulwbgMxRegM4DCkEM=
+	t=1728277564; cv=none; b=AmMnWGBTynHM0io72Gmx4C7XCtzs1D3e2h/3DbkmRk/Mq/5v4aFoLAxebbrF90LzlX7V8GvxN9G6DJZxABaYLXeqhJ5ZmuXmcdnCVGtmKWoKRHNqeupNARreMfsydSrl46la9OHAU86mHmjaYwwRMCFYVIuq2US5ZB9dF5mrVzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728277323; c=relaxed/simple;
-	bh=AVq7ffhL3ZN51fmf75QAPcx7Wn3ylu2Ol3tLggyH95Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oVkuWWkAAP71Gk+xo942ZP1/qmEs5PZ1hHawohutQ6SiD7k9jsSmyPOXbJrXWEIk02Qoh+L9OxcLZ/94TYquIqbtxcsRcPi4dvjnHSVo4A1LzrCP+e4JsIj8warwnrp74BH5yewmw+4aOkRLd9elXQhsJTMCiTi9vFt12jjvCDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=sfq0Tpxl; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
-Received: from tarshish.tkos.co.il (unknown [10.0.8.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.tkos.co.il (Postfix) with ESMTPS id C964744079E;
-	Mon,  7 Oct 2024 07:59:12 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1728277152;
-	bh=AVq7ffhL3ZN51fmf75QAPcx7Wn3ylu2Ol3tLggyH95Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sfq0TpxlKvEis4lwSpLBZoA2dZ13fibB9rDFOyN9pFOYZlpjWRRsxsyeoSjkzNPOp
-	 AFWptZI7sbBRMcbeS7tu6jBg73dQgE6VIfURcX9K09RAQQNNvKn83vhih1aDYXn3Bn
-	 xHEy945HRSTzYt8D+IDi35ulqkDwglp6bXr+kgaQ2AW0CvwxobfHCck5/2O4H4rURd
-	 7gvEgZI0anSxn150mD8ludIx1U7w04bRT3B4rbqKeFHksKzLlo4CAxaO8g51RFUjxe
-	 mxodMaM/78f3XjkoZKJVR8GZVWzuEiVibZ0iJc4Dwsw6K7szjaY15GyABOvR0jmRNe
-	 B6jeyxa2Qimew==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH] docs: gcov: correct build machine files copying
-Date: Mon,  7 Oct 2024 08:01:41 +0300
-Message-ID: <2ca2302b84196df56b5527a066bf6884a634ad7d.1728277301.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728277564; c=relaxed/simple;
+	bh=BSkmIVg1JYY73MM4nOsC3ku83PUaCGrVCyX8gAHIOhQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFQjOjQTZnubUQtLNV6faMx+O+ZtfaRpa+He9LczY8p7CYjLUJQT2eUSChmoI3F+3ZNA8qJXzlbY3HT56qj9VMHDolqORcEH7QSMzwx4RbO4eJtzNFyc9mYlLoLzE/C6ywYSvdIT50t+KjEZ9Sl9C7hAOZjLylEitkVDyuXqrNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=NAOCqU14; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb97afcec9so27856846d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728277561; x=1728882361; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=roE3JMr9lMbeU1huQ5l+ymUGwxuvCsD8E2naNBrZpXE=;
+        b=NAOCqU14CugTOTirvyvZ0ZeFAEpFIwZMLujnl8uemBDflKVYZxmrhSPmIwys7XXeQB
+         6uPJJPCv0Yss89YaD4oMf141lz50CqYEbwFNEH+/+vM0lzIbgZ1fGYeC6Ba0V5NLB8lW
+         hgN/57d4iMytD3P7hwN1CC7I4JTsVslOluYL3d7Hke3KdcqJcZYXggzg3+uJmBkjSyiY
+         Q/9wfbFAUEO9+POkicgKpJB2ywGTTC8+IRpb9Pfe2R75kKfIFzyXiDvokrnDpPPazWG6
+         VU4Ch5EJ64GElf0M/i58kXfsW4X/gN4Ayt360OpRP0SJl7esK68IIvFCbxgCN2VHK8Z/
+         n7NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728277561; x=1728882361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=roE3JMr9lMbeU1huQ5l+ymUGwxuvCsD8E2naNBrZpXE=;
+        b=Jw3XBEP4MDEcGItIQ5bJFEcxWQhMPBLVjncnftesVrxf1EmGLffxgGOX+y8H6EB8/E
+         flBXjr6QhF/8Kme0StViIKPvxtomVqVTYzTcxYiI0be5hG+6ELl4Ok9liGNbeQIeIKaT
+         DaJODcBANfurRaleaWWvf4d/CZ0h7mKMCp0z0JUsAn1sV4HqLTpAwHx5LNa6756CJGfK
+         3X4xhYUc1TzzMKH5gCeOOlhnw8p1aUn1/KXH2ZizPWAg7BGC6ojKyLbK/dgV1qnPSCxg
+         Pc4D5uWSKxnA0YYkSMfcasik5Y9Ecv3zXEo6n4w+cSepneyMQHSygD9HIFK719rM1tN/
+         utag==
+X-Forwarded-Encrypted: i=1; AJvYcCUlKEL1+k0Lsgi3EU/jHsplpudGiKBJ5/2Z//GEzz0nzXYqa3qWSn86LIXx2oYBqtLsCG75PIGnQuVdXh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRxbcHIWSq90C4/JxiArApHl5UxA+FedxiyMprlKatYKuZKuDO
+	Zo6iKR27BLuOOW5U5xbsC+5qx+0q9EAeFFaAHc1TgODxU128Y4kp+rSeqZChtoY=
+X-Google-Smtp-Source: AGHT+IEFqA0OIk3ks3aFd2muaztD8wK5Pr5n5CCRe39FVoqFWsj3k1MVbhTRHDeseeL2V/taCAEOOQ==
+X-Received: by 2002:a0c:f40a:0:b0:6c3:e231:960e with SMTP id 6a1803df08f44-6cb9a32e928mr162731146d6.17.1728277560758;
+        Sun, 06 Oct 2024 22:06:00 -0700 (PDT)
+Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba476152asm22452216d6.126.2024.10.06.22.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 22:06:00 -0700 (PDT)
+From: Jonathan Marek <jonathan@marek.ca>
+To: freedreno@lists.freedesktop.org
+Cc: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org (open list:DRM DRIVER for Qualcomm display hardware),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm display hardware),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] drm/msm/dsi: improve/fix dsc pclk calculation
+Date: Mon,  7 Oct 2024 01:01:48 -0400
+Message-ID: <20241007050157.26855-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,30 +90,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-.gcda files are not present on the build machine. These files are
-generated at run time on test machine. The sample gather_on_build.sh
-script listed below correctly refers to .gcno files only.
+drm_mode_vrefresh() can introduce a large rounding error, avoid it.
 
-Fixes: 2521f2c228ad ("gcov: add gcov profiling infrastructure")
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Fixes: 7c9e4a554d4a ("drm/msm/dsi: Reduce pclk rate for compression")
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- Documentation/dev-tools/gcov.rst | 2 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/dev-tools/gcov.rst b/Documentation/dev-tools/gcov.rst
-index 075df6a4598d..71052273c084 100644
---- a/Documentation/dev-tools/gcov.rst
-+++ b/Documentation/dev-tools/gcov.rst
-@@ -148,7 +148,7 @@ a) gcov is run on the TEST machine
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 185d7de0bf376..1205aa398e445 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -542,7 +542,7 @@ static unsigned long dsi_adjust_pclk_for_compression(const struct drm_display_mo
  
-     from the build tree:
-       - all C source files + headers
--      - all .gcda and .gcno files
-+      - all .gcno files
-       - all links to directories
+ 	int new_htotal = mode->htotal - mode->hdisplay + new_hdisplay;
  
-     It is important to note that these files need to be placed into the
+-	return new_htotal * mode->vtotal * drm_mode_vrefresh(mode);
++	return mult_frac(mode->clock * 1000u, new_htotal, mode->htotal);
+ }
+ 
+ static unsigned long dsi_get_pclk_rate(const struct drm_display_mode *mode,
 -- 
-2.45.2
+2.45.1
 
 
