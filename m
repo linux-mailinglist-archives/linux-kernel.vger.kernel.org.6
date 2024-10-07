@@ -1,171 +1,199 @@
-Return-Path: <linux-kernel+bounces-353752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB136993218
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:55:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1394993216
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2749A280C08
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C0D1C23480
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDB11DA60F;
-	Mon,  7 Oct 2024 15:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F701DA626;
+	Mon,  7 Oct 2024 15:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=timo.grautstueck@web.de header.b="YuLSiBzB"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="s/whtzDI"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82EC1D14E3;
-	Mon,  7 Oct 2024 15:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A81D9678;
+	Mon,  7 Oct 2024 15:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316508; cv=none; b=IPzMb4f3/xgXG8bn029dA3KMaBH46ZuufNU2mmRcZSSYGNmqVikfcjUfTfrTI2PNVSUOUdK3xxSnOrTE48SSOnLxajLUvLScsFPH3V+Ij2L0SvROizD5dgbjA17l2STlkpQIzscf18J/KDMrh2bkicbvdmJ9n3DYSUvnSfu2Z34=
+	t=1728316428; cv=none; b=PcuP611Ps3EJ+G7pMXtTpO0jUNfFnNjH2dnmlzNMXiMjT6AsI361q8zB/v3elvrUziCDX5hgE8+y5ZKElKmI78fNlCc/soRGeb8S2ilK3PgnIm2O8zCvNJ1pIkbDxc/A1InyzNOSO1i9c0rduYgXOqjJ9SbYBSx/Vg3KvFpW9R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316508; c=relaxed/simple;
-	bh=01cY3E7WMjbmgRpn35G0Wsg5xsXMcmTXUoC9DpxF3DY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mZ2STT3Y8V9Pnqev/gbModjdOFNF2CQIcusQJXSNc93UVvPqRa8wH1UCUrKTbKRaGMhA9qNX8Vqwstm+0KQKANrL40XvfXKeyR6AcCMEyNnWMXyoFQISESvx0LmgH3aks23TokEzfoN6GDc33N0mF/P7E2vzu2PvGZJhMaMhToU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=timo.grautstueck@web.de header.b=YuLSiBzB; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728316496; x=1728921296; i=timo.grautstueck@web.de;
-	bh=tZyMhH5kp7QMFFRMcSTA1VhW+Z5ZM7Gk0Y6yV2wQRWY=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YuLSiBzBM2oFmPTScD5Okvbju+TUytW4UMTeu5VGyxjkgzzDY7kno38LQhh4S/jY
-	 +JpKXU0ZT+J062EkbRE+A70LEkeUGeT+OP5eUt6PbbcpaDCtHZRAdt/bIim7HwOxT
-	 6cWq8Ks2AjwbnaqeQJrD/coXTS2/dKJv1tdCwoPDB/vfLc6MZfpuu2N8X1dqa4QM7
-	 Yg2sr4UQVBhza5a1oTh0nd/W6NfRQ5KYIBUOFBq8WDLj1rmBhhs4p+XbnSJlA5O2K
-	 ATsd5tn/1vi6jr1xL95W2cP0NFfxfHDTPximSYmH/suVlFlSvWWgMZBtMGhyolF2T
-	 I8eaewXyfkuu7fq/rQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from fedora ([95.223.78.106]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzkST-1ttXE10Oxd-00xIwa; Mon, 07
- Oct 2024 17:54:56 +0200
-From: Timo Grautstueck <timo.grautstueck@web.de>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: miguel.ojeda.sandonis@gmail.com,
-	Timo Grautstueck <timo.grautstueck@web.de>,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: [PATCH] rust: types: 'real-life' example for Either
-Date: Mon,  7 Oct 2024 17:53:15 +0200
-Message-ID: <20241007155315.1145503-1-timo.grautstueck@web.de>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <CANiq72n25iBCJtDV=XD2q5AEg4Awh9hyeKM0YwbeE0pv0H2hLA@mail.gmail.com>
-References: <CANiq72n25iBCJtDV=XD2q5AEg4Awh9hyeKM0YwbeE0pv0H2hLA@mail.gmail.com>
+	s=arc-20240116; t=1728316428; c=relaxed/simple;
+	bh=cIMV19T/3lFlhqobVozq0VLwjOer2cPU9m9G7YWkwzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLwNdQaIsGl/wePO0fXccbL1YpIu/+XoJ8QFWEAPzjXbRKc1sln9C0/Dy4Ww907/0v2xTOwHwQZIJ0k9ER8d4Qyafm6883vSVZjsFplQ/Ozr8iM+57L8JjGnpJGZb7+5rU7fjc+cN9F1Gx8R+Emvg1JKvX3M87SptPSgF9Kwb20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=s/whtzDI; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1W2GwgW+APmUS4pvv9gMoyqqnk6ovxCaiwBqGyMOiNA=; b=s/whtzDI77U86sqcQklzx7Vjyl
+	Y3WDSHSOBwI1j+QSp0hsq1SIo/i+VW98U3RTEvrdsHV0P3qYMuetVPuEMv6O8pyFyzDpoec9c4jll
+	U709R1dpaDCQFfSvpWYc8eMnGE++0QsvUHHnc13TcwYDS98nZ4hCZbBOYWlfDdQRrGRp8JyeaYd/p
+	Oc6lqFcoHDzRJXrS75CB8rrPenvtSvKGTqQpsIptzgHO8l68eh7Dd8vU9kad5uCUmsuRZn26POhSs
+	NoNULtNO9MhtScqXpmF+EiswXQO0i7+rdupBt4DEyL3p8UiT2nXwjyyYAhGluNJa1u+XgqqyAoT2g
+	djExF07Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56788)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sxq3G-0005zY-1F;
+	Mon, 07 Oct 2024 16:53:38 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sxq3B-0004KC-07;
+	Mon, 07 Oct 2024 16:53:33 +0100
+Date: Mon, 7 Oct 2024 16:53:32 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 0/9] Allow isolating PHY devices
+Message-ID: <ZwQD_ByawFLEQ1MZ@shell.armlinux.org.uk>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+ <ZwAfoeHUGOnDz1Y1@shell.armlinux.org.uk>
+ <20241007122513.4ab8e77b@device-21.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XM1gdjh2IJlIEGEMQVk7SqSl570Wb1a/u96g4D37eLnYEYkzgD4
- +S64nV7TQGlAP7jm25p4Oy8DHERs3Yu7H27ArkEXCh1wjgRTmt1mSiQsNNwFzaQYS+Fo4AK
- uW0Tq6TKPXEkbe/MemnUj8AqupzptKAcZLNEWD6wXnVNgrUGX57KzsCASj7BfddxYjBSFGr
- JABtgnBJIfmUsgVy2sNsA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3b2WYKAoh+E=;QzZEVu1dRtxxy9qCU+6Z7BjSweg
- CBl0r0QbZuXv6nfalKgCsuDt7iLjQzGMt8q0b9bEH/HwW3eQqth2bKnuXtx1t1Wer7iIkwXaj
- 3kENZPh9i0ia6Z9931Dv7LX3LnYVjcCs00PQyP49/5Gbu3RamJVyNOdnEFVy2PmHnm4xHaT2l
- lMo/shT7gOOXT3q+35jRb0cfCfQMbyJFEATd0nLTeNWuOMKqcOmqEOjorSHVJ8Xcfi8leJJxl
- JY2+iC5R1yFdt0KcjGPbcVQPyYQYBT2ad3j1tMi7oVXdiFY2lJ9RXVYJG8XMkmrVt7V+6mjyO
- VqmsiihwMk2YBw1diDOiKO2wngBDb3DlSGoWCnTn+3gqc3dfMAHdyQsbxunQTt5cCEefZZf3z
- C4uX6SAHS9T0rV5F2IIhhprehRGJdaO7XfaMSEkH44N2Me85rHPfz9FCNIhHUxzl0mjGMWP3d
- F3c+/MKRXdMsAwarXGLD25qHtPoUGYsm4jDqDYiP4dKcCQ+QPXcNXLzPFj1c4f0siRoyqO0WY
- 70v0PcT4O9M3eMQoeFNlGspSfRU2lqFJ7xy/retE2Hg+LrrSmE6wsMsQzZHvZpULTsyhsDh5r
- rm4VY9cM0HebuGNGKcGNw5y0jeiKo8KBKfQ1s2U5fV0Qn36d/EMnfZFTE89qPt+kFDxkrcaHM
- zPkqCA0Zaug2gBuSyVU5JRTI4yKAAJ8I/xkIo8ZC5WLPADLcAOJauoq+q9NTHmPFntzI2PgJc
- ceZ4Du2YY6By55txsBSL8FVGki2AgomKehHslJDtZ7FxiImRch9LmWffPYsEr+g7iz4WNqCi+
- ImKO4ahgDEgl8/hPrmXySDlg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007122513.4ab8e77b@device-21.home>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Added a 'real-life' example for the type `Either`. This example
-uses a work queue and extends the first example in `workqueue.rs`
-(commit ID: 15b286d) to demonstrate how to hold and distinguish
-between two different data types.
+On Mon, Oct 07, 2024 at 12:25:13PM +0200, Maxime Chevallier wrote:
+> Hello Russell
+> 
+> On Fri, 4 Oct 2024 18:02:25 +0100
+> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> 
+> > I'm going to ask a very basic question concerning this.
+> > 
+> > Isolation was present in PHYs early on when speeds were low, and thus
+> > electrical reflections weren't too much of a problem, and thus star
+> > topologies didn't have too much of an effect. A star topology is
+> > multi-drop. Even if the PCB tracks go from MAC to PHY1 and then onto
+> > PHY2, if PHY2 is isolated, there are two paths that the signal will
+> > take, one to MAC and the other to PHY2. If there's no impediance match
+> > at PHY2 (e.g. because it's in high-impedance mode) then that
+> > transmission line is unterminated, and thus will reflect back towards
+> > the MAC.
+> > 
+> > As speeds get faster, then reflections from unterminated ends become
+> > more of an issue.
+> > 
+> > I suspect the reason why e.g. 88x3310, 88E1111 etc do not support
+> > isolate mode is because of this - especially when being used in
+> > serdes mode, the topology is essentially point-to-point and any
+> > side branches can end up causing data corruption.
+> 
+> I suspect indeed that this won't work on serdes interfaces. I didn't
+> find any reliable information on that, but so far the few PHYs I've
+> seen seem to work that way.
+> 
+> The 88e1512 supports that, but I was testing in RGMII.
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1122
-Signed-off-by: Timo Grautstueck <timo.grautstueck@web.de>
-=2D--
- rust/kernel/types.rs | 54 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+Looking at 802.3, there is no support for isolation in the clause 45
+register set - the isolate bit only appears in the clause 22 BMCR.
+Clause 22 registers are optional for clause 45 PHYs.
 
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 5ea9126c8c93..a56192141a0c 100644
-=2D-- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -322,6 +322,60 @@ pub const fn raw_get(this: *const Self) -> *mut T {
- /// let left_value: Either<i32, &str> =3D Either::Left(7);
- /// let right_value: Either<i32, &str> =3D Either::Right("right value");
- /// ```
-+///
-+/// The following example demonstrates how we can create a struct
-+/// that uses `Either` to hold either an integer or a string.
-+/// This struct will be scheduled on the workqueue, and when executed,
-+/// we will perform different actions depending on whether it holds
-+/// a `Left` value (integer) or a `Right` value (string).
-+///
-+/// ```
-+/// use kernel::prelude::*;
-+/// use kernel::sync::Arc;
-+/// use kernel::types::Either;
-+/// use kernel::workqueue::{self, new_work, Work, WorkItem};
-+///
-+/// #[pin_data]
-+/// struct WorkStruct {
-+///     value: Either<i32, &'static str>,
-+///     #[pin]
-+///     work: Work<WorkStruct>,
-+/// }
-+///
-+/// impl_has_work! {
-+///     impl HasWork<Self> for WorkStruct { self.work }
-+/// }
-+///
-+/// impl WorkStruct {
-+///     fn new(value: Either<i32, &'static str>) -> Result<Arc<Self>> {
-+///         Arc::pin_init(pin_init!(WorkStruct {
-+///             value,
-+///             work <- new_work!("WorkStruct::work"),
-+///         }), GFP_KERNEL)
-+///     }
-+/// }
-+///
-+/// impl WorkItem for WorkStruct {
-+///     type Pointer =3D Arc<WorkStruct>;
-+///
-+///     fn run(this: Arc<WorkStruct>) {
-+///         match &this.value {
-+///             Either::Left(left_value) =3D> {
-+///                 pr_info!("Left value: {}", left_value);
-+///                 pr_info!("Left value times two: {}", left_value << 1)=
-;
-+///             }
-+///             Either::Right(right_value) =3D> {
-+///                 pr_info!("Right value: {}", right_value);
-+///                 pr_info!("Length of right value: {}", right_value.len=
-());
-+///             }
-+///         }
-+///     }
-+/// }
-+///
-+/// fn enqueue_work(work_item: Arc<WorkStruct>) {
-+///     let _ =3D workqueue::system().enqueue(work_item);
-+/// }
-+/// ```
- pub enum Either<L, R> {
-     /// Constructs an instance of [`Either`] containing a value of type `=
-L`.
-     Left(L),
-=2D-
-2.46.2
+My reading of this is that 802.3 has phased out isolation support on
+the MII side of the PHY on more modern PHYs, so this seems to be a
+legacy feature.
 
+Andrew has already suggested that we should default to isolate not
+being supported - given that it's legacy, I agree with that.
+
+> > So my questions would be, is adding support for isolation mode in
+> > PHYs given todays network speeds something that is realistic, and
+> > do we have actual hardware out there where there is more than one
+> > PHY in the bus. If there is, it may be useful to include details
+> > of that (such as PHY interface type) in the patch series description.
+> 
+> I do have some hardware with this configuration (I'd like to support
+> that upstream, the topology work was preliminary work for that, and the
+> next move would be to send an RFC for these topolopgies exactly).
+> 
+> I am working with 3 different HW platforms with this layout :
+> 
+>       /--- PHY
+>       |
+> MAC  -|  phy_interface_mode == MII so, 100Mbps Max.
+>       |
+>       \--- PHY
+> 
+> and another that is similar but with RMII. I finally have one last case
+> with MII interface, same layout, but the PHYs can't isolate so we need
+> to make sure all but one PHYs are powered-down at any given time.
+
+You have given further details in other response to Andrew. I'll
+comment further there.
+
+> I will include that in the cover.
+
+Yes, it would be good to include all these details in the cover message
+so that it isn't spread out over numerous replies.
+
+> Could we consider limiting the isolation to non-serdes interfaces ?
+> that would be :
+> 
+>  - MII
+>  - RMII
+>  - GMII
+>  - RGMII and its -[TX|RX] ID flavours
+>  - TBI and RTBI ?? (I'm not sure about these)
+> 
+> Trying to isolate a PHY that doesn't have any of the interfaces above
+> would result in -EOPNOTSUPP ?
+
+I think the question should be: which MII interfaces can electrically
+support multi-drop setups.
+
+22.2.4.1.6 describes the Clause 22 Isolate bit, which only suggests
+at one use case - for a PHY connected via an 802.3 defined connector
+which shall power up in isolated state "to avoid the possibility of
+having multiple MII output drivers actively driving the same signal
+path simultaneously". This connector only supports four data signals
+in each direction, which precludes GMII over this defined connector.
+
+However, it talks about isolating the MII and GMII signals in this
+section.
+
+Putting that all together, 802.3 suggests that it is possible to
+have multiple PHYs on a MII or GMII (which in an explanatory note
+elsewhere, MII means 100Mb/s, GMII for 1Gb/s.) However, it is
+vague.
+
+Now... I want to say more, but this thread is fragmented and the
+next bit of the reply needs to go elsewhere in this thread,
+which is going to make reviewing this discussion later on rather
+difficult... but we're being drip-fed the technical details.
+
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
