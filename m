@@ -1,212 +1,134 @@
-Return-Path: <linux-kernel+bounces-353454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2A7992E08
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFA7992E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD6F1F242BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D39EB238E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7285E1D47B3;
-	Mon,  7 Oct 2024 13:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6A01D5AA1;
+	Mon,  7 Oct 2024 13:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FILTEH8L"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HN4vAl2g"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EFC1D417C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F136018BB98
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309556; cv=none; b=JmqEHcohhYMLNLvYsxgISo7zVl2WSrjxG4xoSIL0l7zP0SLnVapESkY7zlbj/zs7w7iRQIWRMEs0K5A+Mw1F4D+SjynqLu/UGihbf3ERBTWfkmY9L0rquu0iBRbbo7EJgLgCVX3J1rOxRTeoQ2i+MY8sV6+AfVUHvL6nBRC1IIg=
+	t=1728309563; cv=none; b=ltP7S8BLO8x1sHLiS/X3xrfBqxTgm3eNGBqdGZtF721Oref9vOy2MrE8nMPf1OA0QlbbzMZD/Y7cdCcbgUcNtpmowcbAhgd+4TZB2FYnRPaiiczEnIlodIv/Acsw1eqm/K0V1THIZltmOgyzDUuGYGiVm2mhCBhruJTRrTxNeNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309556; c=relaxed/simple;
-	bh=n4oG5LTAxLA3y2xDimyibVs2v/zqS3TxXWLrkbSEufY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmcEgXwp4bppuOw53jNSMD+WDOdVLIxKaxiiZek9ItSojC0HC6Wh3aAzltQs9z2vUsOE1GjIjr2OOXr1Y6hTh4edUK8eAZlgNhYwS5WrM2XppAXRdZXSqKGbAYoZHd9iLo21VoYyyve+xpfEqIZzdloHOa2ABCG9dOwT7Q1I/Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FILTEH8L; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac3f1287bso48009381fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:59:13 -0700 (PDT)
+	s=arc-20240116; t=1728309563; c=relaxed/simple;
+	bh=xc/x30uf9iyb5xezbKYekNH++PSzPkxlm8mpT+Naf5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uMdPrBlXnzSmRiJZ1R2IgUkau3r11SKqPqd2J3vNoTHqxWsHyt4OTFcJ9hrmD/EabkPRngfYyDxV6tPtLbARXwSF5SE8YMEmqsFQDMz30fRiomb/J73udawcnouTy8CMDk7rqKsry2CVsI4tjaPejOUacsvigP22DkHdobstPow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HN4vAl2g; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ccdc0d7f6so2906310f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728309552; x=1728914352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1uBnw43piXXI7n4DTLKHOMAEK5UpUIcRTL2fHxKrp9w=;
-        b=FILTEH8LPbb4STNWT7CFXKXtPIRbS+Gn2hjkTcNRgw1QN8PZnXwbbynpchmzob3tbI
-         9n0DNJvRhkQshocgo+WkJxzqgAcwR8shQcXydsjVGxhUWHdK5SS5eqQf5ebKImpCExln
-         tNRNup+ug8UJUxaV3YE4OEgNvJumCdVvOuo7OPc18rcSkjSFO2IiKQD5ngBLcUA7TsMz
-         bXYdZPCejyT6IpR9ijnI+exv7B7jfxZTid/8slDBHmsru+yv1ulyBywuJq/u1DrTTgRp
-         tQL8cWi/JCc9KmU3RK9EAc/XeTN/NRsUfOSrMbjB5mnmBQmBk/KDMx4MBR9GG6AJRG+E
-         EhfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728309552; x=1728914352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1728309560; x=1728914360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1uBnw43piXXI7n4DTLKHOMAEK5UpUIcRTL2fHxKrp9w=;
-        b=RJpJs9SiA4VPc7LIrZmOWg0wFULOr1EEvnUyDvq3xQJ3VzpysJmpKovpi+Mz9fOA99
-         0tseWBNCKfj3jizLwIoSzJnGbjc5yl++aSQr9rV57HHt/Lh/bme3DD6YfU0ma4noSbt3
-         h6XS7PYwMU3wdx8US4nuM73ALTGsWqLvkz64DUcxlgc8N5Ys4rGCYXLNxmu1y2A5vFxE
-         o2H4Of+ealrzEh6sM9JprIHrFBwpAj+5ng+xLG6ibHqGtQ7oyDQVTWlKqRA0JZVlosOL
-         8ylQyON4TpfO+fUWp6J+8jyIF+KWqvyMXrKb32WgTffdhbjsjw5a+xfnIpTRJC6XZ5Cx
-         rDFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLNR+t38CDYLLxi9YDdepcD+sC6P+t939gVQrNP1Yf19uqEb4K+u/ijRf5VCYXzbiaFwmA7ff2+Bq2xYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY2d8h3OsDanvZT6IpfLSV14BFwavGr+LAHnQmAjoxwy3Jmpci
-	4xAoRHbBm4roxgOow3fgsMRgzY+LJ8hLlGSUXyX8oAuCdheafpqx7kinP+5j0PMFcXhiC6XdDDv
-	Tfa2lVzPI
-X-Google-Smtp-Source: AGHT+IFYsE5/TCR+Rx1O7DTrCu76UULZ5EhjsnIt4QmOaZn1KvQoOZfaRPVgfvAAqetrCt3ywPY3Rg==
-X-Received: by 2002:a2e:bc21:0:b0:2fa:d534:3ee7 with SMTP id 38308e7fff4ca-2faf3d724dfmr57178661fa.35.1728309552125;
-        Mon, 07 Oct 2024 06:59:12 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9adcdd3sm7887201fa.69.2024.10.07.06.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:59:10 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:59:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vivek Pernamitta <quic_vpernami@quicinc.com>
-Cc: mhi@lists.linux.dev, quic_qianyu@quicinc.com, 
-	manivannan.sadhasivam@linaro.org, quic_vbadigan@quicinc.com, quic_krichai@quicinc.com, 
-	quic_skananth@quicinc.com, quic_mrana@quicinc.com, Slark Xiao <slark_xiao@163.com>, 
-	Mank Wang <mank.wang@netprisma.us>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Fabio Porcedda <fabio.porcedda@gmail.com>, "open list:MHI BUS" <linux-arm-msm@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] bus: mhi: host: pci_generic: Add support for QDU100
- device
-Message-ID: <kukqsg4dpvfa2i53fssqsdihud3qy3w6le5srf2a7yiiwsbmob@se44vnmgbbye>
-References: <20241007091622.3497928-1-quic_vpernami@quicinc.com>
+        bh=xc/x30uf9iyb5xezbKYekNH++PSzPkxlm8mpT+Naf5M=;
+        b=HN4vAl2g+LwuAJFMU+IXfMWdo5Im20EHErQ2uFXinS4Z/EJxbZyYkTU+ojlXXztFDi
+         LpXMkFdZXwRLpbQv1hTCCWOodCmk+ASEEasAG7D0IKIov9efxR3ZChlsG9eSz150OjjX
+         Lf12nL8wXDLKhKnpczBVdmA1a2uAA6PL9mLoAk7WKyxvYtVJ1lbJds95sgYYjxHgTVFW
+         /Y48FRknMfpfhQtfDTeHax2SvumuKW8UvPD5r6S/YKCzhml40tbv/dUBCIpBMAGBAiMa
+         VmSgToCfuIaQ8IWDGCCoVRjtSKG4TIWbb1KvrJ6vCYwNKnkv7sW4qi6vD4/pYhDrpI2o
+         KSsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728309560; x=1728914360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xc/x30uf9iyb5xezbKYekNH++PSzPkxlm8mpT+Naf5M=;
+        b=oSFCC9SzBQ0GhgGRLqQJSuujRooHgbRXADV3yjRyZ1Xxx+aycnHGVJKK1yfcBTcsHG
+         ejxNkkPXie8OdzeNJEoXhi8PLzxOyn9wXzpJQgeodfN1q8KDvOmoSEX6tiC1mLn9ppn+
+         ot3c8KAXrnAJQTYH+Ia91OiJHnbn4ZZGgGkZRYC9PvrVWTul0H5+EWWTjC22Ywzyubxi
+         Z9d7/qTgRtWsYFZyNjhD180wsxVtJpVq9VJnVrdTGNc9RygWc4d62ncF+pWmWlOIrdSU
+         gD3b4eyGNL7z6ZDg6F52fToGeFrC0mlgfsQr9Mea7H9b2vKf1kShdUdzcukhyO1qvXlO
+         QjMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJGlNX3nZ1GyUQQikSwW7HkizL8+HkPxvFAlVXY7zEXVdOiapWxWSohMk/k0sWl2k7jw1LRoEZJ1+IJko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr4ulO65/eGXozPeNGk2OXG/iK5WGJKWgkJvw+WWk0psVM071Y
+	IKSgtTobBydLWdxL359c9A7RQYYAsEI4w3hBjRdHb1wrGu02L3HOuRihc72ztxMg8LKNvo21vCY
+	vW08P5gonTU/QpU5sjb+JAbRqPOsVddBU5Cbd
+X-Google-Smtp-Source: AGHT+IEt/ppds1p51xP37UM+hKVF1KH288oFeowg/BwHOg7VYcXokM6av1Qx8ie/tkzTdafDoXlV9Nm6Gj+c3Vp38l4=
+X-Received: by 2002:a5d:5e04:0:b0:37c:c5c4:627 with SMTP id
+ ffacd0b85a97d-37d1902b4a7mr4418321f8f.5.1728309560112; Mon, 07 Oct 2024
+ 06:59:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007091622.3497928-1-quic_vpernami@quicinc.com>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-2-fujita.tomonori@gmail.com> <3D24A2BA-E6CC-4B82-95EF-DE341C7C665B@kloenk.dev>
+ <20241007.143707.787219256158321665.fujita.tomonori@gmail.com>
+ <CAH5fLgirPLNMXnqJBuGhpuoj+s32FAS=e3MGgpoeSbkfxxjjLQ@mail.gmail.com> <f31d6f3e-e53c-4ced-920a-976ac44235e9@lunn.ch>
+In-Reply-To: <f31d6f3e-e53c-4ced-920a-976ac44235e9@lunn.ch>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 7 Oct 2024 15:59:07 +0200
+Message-ID: <CAH5fLghaLTMFS18cdjY6ntQ8BE85APjG71F1MvEEhxG667HU4A@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/6] rust: time: Implement PartialEq and
+ PartialOrd for Ktime
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, finn@kloenk.dev, netdev@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
+	arnd@arndb.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 02:46:20PM GMT, Vivek Pernamitta wrote:
-> Add MHI controller configuration for QDU100 device
-> 
-> The Qualcomm X100 5G RAN Accelerator Card is designed to
-> enhance Open vRAN servers by offloading CPUs from intensive
-> 5G baseband functions.
-> 
-> Currently IP_SW1/2 channel support is not present in
-> mhi_net driver, will be supporting them in future.
+On Mon, Oct 7, 2024 at 3:16=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Oct 07, 2024 at 10:41:23AM +0200, Alice Ryhl wrote:
+> > On Mon, Oct 7, 2024 at 7:37=E2=80=AFAM FUJITA Tomonori
+> > <fujita.tomonori@gmail.com> wrote:
+> > >
+> > > On Sun, 06 Oct 2024 12:28:59 +0200
+> > > Fiona Behrens <finn@kloenk.dev> wrote:
+> > >
+> > > >> Implement PartialEq and PartialOrd trait for Ktime by using C's
+> > > >> ktime_compare function so two Ktime instances can be compared to
+> > > >> determine whether a timeout is met or not.
+> > > >
+> > > > Why is this only PartialEq/PartialOrd? Could we either document why=
+ or implement Eq/Ord as well?
+> > >
+> > > Because what we need to do is comparing two Ktime instances so we
+> > > don't need them?
+> >
+> > When you implement PartialEq without Eq, you are telling the reader
+> > that this is a weird type such as floats where there exists values
+> > that are not equal to themselves. That's not the case here, so don't
+> > confuse the reader by leaving out `Eq`.
+>
+> This might be one of those areas where there needs to be a difference
+> between C and Rust in terms of kernel rules. For C, there would need
+> to be a user. Here you seem to be saying the type system needs it, for
+> the type to be meaningful, even if there is no user?
+>
+> Without Eq, would the compiler complain on an =3D=3D operation, saying it
+> is not a valid operation? Is there a clear difference between nobody
+> has implemented this yet, vs such an operation is impossible, such as
+> your float example?
 
-When? Can we get corresponding support as a part of the same patch
-series?
+Think of it this way: I wrote an implementation of something that
+works in situations A and B, but I only use it in situation A. Must I
+write my program in a way to make it impossible to use it in situation
+B? That's how I see this case. Implementing Eq does not involve adding
+any new functions.
 
-> 
-> Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-> 
-
-No empty lines between tags.
-
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> 
-> ---
-> changs from V2:
-> - updated commit text.
-> 
-> changes from V1:
-> - Changing naming convention from modem_qcom_qdu100*
->   to mhi_qcom_qdu100*.
-> - Updated commit text.
-> - Fixed and corrected by passing mhi_pci_dev_info struct
->   instead of mhi_controller_config.
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 60 ++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 9938bb034c1c..b9b7dd8d9411 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -245,6 +245,63 @@ struct mhi_pci_dev_info {
->  		.channel = ch_num,		\
->  	}
->  
-> +static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-> +	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
-> +	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
-> +	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
-> +	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
-> +};
-> +
-> +static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-> +	/* first ring is control+data ring */
-> +	MHI_EVENT_CONFIG_CTRL(0, 64),
-> +	/* SAHARA dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-> +	/* Software channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-> +	/* Software IP channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-> +};
-> +
-> +static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-> +	.max_channels = 128,
-> +	.timeout_ms = 120000,
-> +	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-> +	.ch_cfg = mhi_qcom_qdu100_channels,
-> +	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-> +	.event_cfg = mhi_qcom_qdu100_events,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-> +	.name = "qcom-lassen",
-> +	.fw = "qcom/lassen/xbl_s.melf",
-> +	.edl = "qcom/lassen/edl.mbn",
-> +	.edl_trigger = true,
-> +	.config = &mhi_qcom_qdu100_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.sideband_wake = false,
-> +};
-> +
->  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
->  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
->  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-> @@ -822,6 +879,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  	/* NETPRISMA FCUN69 (SDX6X) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
->  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-> +	/* QDU100, x100-DU */
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-> +		.driver_data = (kernel_ulong_t)&mhi_qcom_qdu100_info },
->  	{  }
->  };
->  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Alice
 
