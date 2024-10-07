@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-353937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2703A9934C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:20:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86D69934C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEEE7284AAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D761F24F08
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01B81DD556;
-	Mon,  7 Oct 2024 17:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE711DD53B;
+	Mon,  7 Oct 2024 17:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALKNzRJj"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IQTpJbB8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A9E1DD536;
-	Mon,  7 Oct 2024 17:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F851DD523;
+	Mon,  7 Oct 2024 17:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321622; cv=none; b=Ivj4HiWFJSqhCjkZhR+dxKTt8Gn1d7Sf4oUumG3WJrGoqBzK3+aiS9nzMgfSWWW8WgaJn+NXbdEVrx/HmPqBS93PiR9Z3v8pSDbi59sEbkxxE1wR+byTDGAb4QDJJ64BBy2ChlGbHqLDoQesJaU/JQ+HevJ5beY1328rBhPn6UM=
+	t=1728321645; cv=none; b=hpIJDKSHK9dEXoRK1Aa63Y008XY1Dq+qgLu7f0MgFlCswTbFT2H1AmHQkH7wbuOrtj8LGEcFCpP2PDXzE2GWXZpjK6ZmP/9YzZaCTwaMQkhpYn9j/t3bBSuphKSM7jMduTG9KimO8Z1n/c51yNldCZCdZuFTHG/NoNceIBbPb2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321622; c=relaxed/simple;
-	bh=+nHdP0CRzxXGYUNrcO8SvBJYed7YBYWo/gPX6y3dyXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mFYk3mUKHXgMOuo8KWoDukdzYLAHqxqlGtPZICo5JR8Pg3NiRtDPIe9OkgNc6F4o5sizX7OOtpLvUhoAerhgqc2dg1hw2tklSee0PdHwfZCkQFxbZb5ab3nZf4hzYj2JrGbHQ1k6zkuN8ILAHQ4yBTrpp785IMG5MDeuTwCWweM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALKNzRJj; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20bc8cd7134so4187315ad.3;
-        Mon, 07 Oct 2024 10:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728321620; x=1728926420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=an0L/rV/vkBqGjIrfNcu/hfafXdqkuQOyhzA7vdtBsA=;
-        b=ALKNzRJj8wO3MIHmtjF/1IN5EPdGtkCL/ESZ1+zyJqrgxwF6jSFxDE1JUAQafO5c1i
-         w7ujUL8s8JRrL4eSbPkrW7cq2Gpu83E6liZDu6KHEKdD+Eu0TMDFyhIjpe7VNvZwiREz
-         fZPWIRg6CE2ToOKEShbhaN1dmsJt0RQSKGjk0po4pmLqXdP63+TteyOH7wXu8+MAMvn2
-         Wf5rApOYer99izXqQ7JBad3MNAKDi+6YRp/t+KkY7uYiP/MWtl3+FjPC9aqqctvsaiNj
-         m8NrhVnjK0j0OsSgHzYva3i3zN6tR5UsG508Gjj1q9ngKlk/Ij0hupOdVfijxCXRQVr1
-         4eZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728321620; x=1728926420;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=an0L/rV/vkBqGjIrfNcu/hfafXdqkuQOyhzA7vdtBsA=;
-        b=drXMJRgTczow5PX6QxSIXdeRFNZGRqCUnsrBHXvwbe/+EHzRpfa1UWhPcIoA7isFuJ
-         nu+GYY/1INAvGZofM41t+WVoe9DynolpGI1qmKrVXeQU3+W9wtNjKhvB5DaqXO8VzdzO
-         d5SUBTBieeUigeKAAbcYT+e97Wl+1TSad5NVuASca4kCAj4BFSx9lkXAR80G0hNyCXZT
-         2jkFImdBujcYXIUgI8o3e5l1vKscVfnIqaVllh2hUe7bTu2ZD4m++xB+OoFmJmyT3wlb
-         YSZsB9H/kUOL/gPxTM0EwtE2uitSEnlxwiluCm2KmIZU5U4VbQZ3znhl85SnqiFET2AW
-         oG/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFYwCcDmsJ55kPFzN6zLYdxVkjO0TFZYVfaLCdLJLOAB4FIL+c3UBWLt/hKhwANubH3g0DoLVJ9ZMBxzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylHbFejQkjMuf/cML6kgFWb9L82KisrVEF42WFVtOqcSsgBd33
-	KU67GElx8cncjZfwASUtX84NtVdEW+wk3yq0Pha7FlWVYSDkZ8uo
-X-Google-Smtp-Source: AGHT+IHZv/1UbXr0nVyHk0fU3ne8Wddj62YTTctd0f6irMCtLxyT8OqXsm7FHu/4BWoLsEKSU9fJxg==
-X-Received: by 2002:a17:902:d48c:b0:205:861c:5c37 with SMTP id d9443c01a7336-20bfe04c77bmr78308495ad.6.1728321620188;
-        Mon, 07 Oct 2024 10:20:20 -0700 (PDT)
-Received: from dev.. ([2402:e280:214c:86:a843:852f:eac4:ff92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139353f3sm42243025ad.168.2024.10.07.10.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 10:20:19 -0700 (PDT)
-From: R Sundar <prosunofficial@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	riteshh@linux.ibm.com,
-	R Sundar <prosunofficial@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: [PATCH linux-next] ext4: use string choices helpers
-Date: Mon,  7 Oct 2024 22:50:06 +0530
-Message-Id: <20241007172006.83339-1-prosunofficial@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728321645; c=relaxed/simple;
+	bh=BiWtr4IVq/5xsgaa3fV0CRaC4Xyzet6pkUEDfK38hs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cLv2TxBJnBt7ckErol67xvp+SgImQbrKvAt+SV9kEUuVXCCTuWtNOjrqiAEMhcSm+KCOI62/lYDEQ2M7oYDYZUCjiejibreGqplTCMbsZUnVXERjqnxRDGZv0D1G5Cq2vZR8eKQi0fWb+RPiq307QS/7Q38QbHfYuas9lEqUPyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IQTpJbB8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497Gp6sJ026632;
+	Mon, 7 Oct 2024 17:20:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=B
+	iWtr4IVq/5xsgaa3fV0CRaC4Xyzet6pkUEDfK38hs4=; b=IQTpJbB8enCB8eIe5
+	TM9cZLlsiuhRrkwpZUnTTuD4yHMdxnpz2bZUbpzFmMAOcSxrtRS/h5fQ5mDlPyhu
+	N22jTxVXsInbS79nFqkg/MOEXzBpfrq0sICEQWWX/O7zAgXpdeqhxipUiVFJPQ/G
+	VkXPGnwZrpZCPT4EJ5BDTvBGfB4p3otISAMHFjfafGux4GgU+e382JXPabPi/idE
+	ql+QEr+4dquq6u3bNhuluRtgUCdjManO1l/lKjiW7EW836749y3QIFiV93l8ru7F
+	t+CenrHC+b/Hv1eNHBtnTP8J+Uz/i3CT1Q3AAKeUpqCuq/c/muui9b2Ro8a+BRja
+	tZhug==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424kgyg5c5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 17:20:20 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 497HKJfc022703;
+	Mon, 7 Oct 2024 17:20:19 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424kgyg5c2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 17:20:19 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 497FUWrN022852;
+	Mon, 7 Oct 2024 17:20:18 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0qjf7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 17:20:18 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 497HKGtn49152382
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Oct 2024 17:20:17 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DDE5420043;
+	Mon,  7 Oct 2024 17:20:16 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FAB620040;
+	Mon,  7 Oct 2024 17:20:13 +0000 (GMT)
+Received: from [9.39.16.71] (unknown [9.39.16.71])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  7 Oct 2024 17:20:13 +0000 (GMT)
+Message-ID: <ae65e4aa-3407-4fb0-b1f1-eb7c2626f768@linux.ibm.com>
+Date: Mon, 7 Oct 2024 22:50:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>,
+        "Rafael J. Wysocki"
+ <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christian Loehle <christian.loehle@arm.com>,
+        Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240728184551.42133-1-qyousef@layalina.io>
+Content-Language: en-US
+From: Anjali K <anjalik@linux.ibm.com>
+In-Reply-To: <20240728184551.42133-1-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ty1IRVPvPrRYZTNQU7ANS6Pxd5XiQ0w0
+X-Proofpoint-ORIG-GUID: FYLorLhiWLWSPUEUUKsj3t3mlEz4qhjB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-07_10,2024-10-07_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ spamscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 bulkscore=0
+ mlxlogscore=599 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070121
 
-Use string choice helpers for better readability and to fix cocci warning
+Hi, I tested this patch to see if it causes any regressions on bare-metal power9 systems with microbenchmarks.
+The test system is a 2 NUMA node 128 cpu powernv power9 system. The conservative governor is enabled.
+I took the baseline as the 6.10.0-rc1 tip sched/core kernel.
+No regressions were found.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/r/202410062256.BoynX3c2-lkp@intel.com/
-Signed-off-by: R Sundar <prosunofficial@gmail.com>
----
++------------------------------------------------------+--------------------+----------+
+|                     Benchmark                        |      Baseline      | Baseline |
+|                                                      |  (6.10.0-rc1 tip   | + patch  |
+|                                                      |  sched/core)       |          |
++------------------------------------------------------+--------------------+----------+
+|Hackbench run duration (sec)                          |         1          |   1.01   |
+|Lmbench simple fstat (usec)                           |         1          |   0.99   |
+|Lmbench simple open/close (usec)                      |         1          |   1.02   |
+|Lmbench simple read (usec)                            |         1          |   1      |
+|Lmbench simple stat (usec)                            |         1          |   1.01   |
+|Lmbench simple syscall (usec)                         |         1          |   1.01   |
+|Lmbench simple write (usec)                           |         1          |   1      |
+|stressng (bogo ops)                                   |         1          |   0.94   |
+|Unixbench execl throughput (lps)                      |         1          |   0.97   |
+|Unixbench Pipebased Context Switching throughput (lps)|         1          |   0.94   |
+|Unixbench Process Creation (lps)                      |         1          |   1      |
+|Unixbench Shell Scripts (1 concurrent) (lpm)          |         1          |   1      |
+|Unixbench Shell Scripts (8 concurrent) (lpm)          |         1          |   1.01   |
++------------------------------------------------------+--------------------+----------+
 
-Reported in linux repo:
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-cocci warnings: (new ones prefixed by >>)
->> fs/ext4/mballoc.c:4597:47-50: opportunity for str_yes_no(ret)
-
-vim +4597 fs/ext4/mballoc.c
-
-compile tested only.
-
- fs/ext4/mballoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index d73e38323879..49dd27c2f2dc 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -6056,7 +6056,7 @@ static bool ext4_mb_discard_preallocations_should_retry(struct super_block *sb,
- 	}
- 
- out_dbg:
--	mb_debug(sb, "freed %d, retry ? %s\n", freed, ret ? "yes" : "no");
-+	mb_debug(sb, "freed %d, retry ? %s\n", freed, str_yes_no(ret));
- 	return ret;
- }
- 
--- 
-2.34.1
+Thank you,
+Anjali K
 
 
