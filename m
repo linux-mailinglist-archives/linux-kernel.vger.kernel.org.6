@@ -1,139 +1,98 @@
-Return-Path: <linux-kernel+bounces-353373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A0992CFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:18:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76552992D04
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075E41F22061
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205D41F2381E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F92E1D4342;
-	Mon,  7 Oct 2024 13:18:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9C51D3631
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D152D1D359E;
+	Mon,  7 Oct 2024 13:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="NJc2ucq7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5D31D26F1;
+	Mon,  7 Oct 2024 13:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307096; cv=none; b=QFcVjIoGHMMaflGdcqo/tFol1rO0zLpOxeBMaA+2IqCk+LOfxReqGzq7B/l/LXZOisj2DiFyENTBvJ4ISQLEXiTEVteDQ6A2nejl8JdfrJQcEa7Hi0i2djeLsvlKSQ8c5aC5Ze1IWtH1zcYgXFFjEtHmuDJivhcKk17ymETiDvI=
+	t=1728307172; cv=none; b=eYryBTURuDnawNP5nJ0WUnaJ9y1ykbUdixy5xyAcdKYwRdiYxgWOddzgSv1O16ZidQcRwUVJkl+IVIl8B1AYSxdwQyAOn/0ybfIDq4tNt+Neus5mpwbsUpMPcslKVng/2xz9yQqzjC+MniNdkgl2/db6CVenw1cOFAZKxqCJge0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307096; c=relaxed/simple;
-	bh=dZK6kvcyzCqDjfqcIZsbVEH+5Bx/jLFVt7liNE6pC7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fy9tvWUIWLBktR3ff6ATOzPPzvY/8rKgsTI79cylCEHsStyQOJlnwXZh0ss5ftOnDVZi/exjEoMOeV44LDRkV3Ct8NR/8HX0CHjeXqaQxld4pUZOdWpocU2TFrQUw94TKd+jHwrTz2NCX2Y+dkv9tTS5fzy2vNuTcpTGufbVyug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83616DA7
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 06:18:43 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BD99F3F640
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 06:18:13 -0700 (PDT)
-Date: Mon, 7 Oct 2024 14:17:58 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] drm/panthor: Fix OPP refcnt leaks in devfreq
- initialisation
-Message-ID: <ZwPfhg0z3T8u8a6_@e110455-lin.cambridge.arm.com>
-References: <20241005160857.347796-1-adrian.larumbe@collabora.com>
- <20241005160857.347796-2-adrian.larumbe@collabora.com>
+	s=arc-20240116; t=1728307172; c=relaxed/simple;
+	bh=vAz7pZDL3BR81Lhia4d2r7TiUxEWmjljNtzZ3P6X1XI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Dak494ng7csibUpeJHzJ4mtjQF3VKW2Km6PD6GVJCo4S9FJEMNoLSXNBngIKFrk6wU0OQYALqaAiRTZhCY7zUJA8fF7CRkB76++zzllUaAEDiuviBbHqltSpu+GmfchrdOVXA3XrWCmMxviuSdB5ff7dp8luxJ9CyTroyMXrrTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=NJc2ucq7 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=zstMmq+3IQ9atdLT3B4wAddmtdx2y8lJRRg5bRY003M=; b=N
+	Jc2ucq7KeSrQpQisOFH7t+LkF2yhH49412aaXlCyN+S/WHaKT/Gplm8NXXYv9pkh
+	6VSJrUG90Pv6q5eU60eZovjw/NaETFtg5E9c+3OAC69Tq6lW7yZuzl1EkX5x2Fvw
+	RaUj+8WWljSwiDfo1V8ssOYuaIdxjjt1i3ifNVk7Tg=
+Received: from xavier_qy$163.com ( [2408:820c:340b:a810:21d6:43cb:fa74:1f0d]
+ ) by ajax-webmail-wmsvr-40-128 (Coremail) ; Mon, 7 Oct 2024 21:18:52 +0800
+ (CST)
+Date: Mon, 7 Oct 2024 21:18:52 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Kuan-Wei Chiu" <visitorckw@gmail.com>
+Cc: longman@redhat.com, lizefan.x@bytedance.com, tj@kernel.org, 
+	hannes@cmpxchg.org, mkoutny@suse.com, akpm@linux-foundation.org, 
+	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org
+Subject: Re:[PATCH 4/5] lib/union_find: Optimize uf_find() with enhanced
+ path compression
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20241005214938.2147393-5-visitorckw@gmail.com>
+References: <20241005214938.2147393-1-visitorckw@gmail.com>
+ <20241005214938.2147393-5-visitorckw@gmail.com>
+X-NTES-SC: AL_Qu2ZCv+buEko5CScYukfmk4QgeY+WMW1vP4m34NSN5FwjA7pxD84QnJOGWnX/8OIAieCnBWacxVuxfhBQqlacb0b7UN7nfe3i9r84FIBrdjppg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241005160857.347796-2-adrian.larumbe@collabora.com>
+Message-ID: <18b085ce.3da3.1926721f823.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gCgvCgDnz3C83wNnQk4HAA--.42779W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiZRVvEGcBr68fBQAEs3
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sat, Oct 05, 2024 at 05:08:53PM +0100, Adrián Larumbe wrote:
-> Rearrange lookup of recommended OPP for the Mali GPU device and its refcnt
-> decremental to make sure no OPP object leaks happen in the error path.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> Fixes: fac9b22df4b1 ("drm/panthor: Add the devfreq logical block")
-> Reviewed-by: Steven Price <steven.price@arm.com>
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> index 9d0f891b9b53..ecc7a52bd688 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -163,13 +163,6 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  
->  	cur_freq = clk_get_rate(ptdev->clks.core);
->  
-> -	opp = devfreq_recommended_opp(dev, &cur_freq, 0);
-> -	if (IS_ERR(opp))
-> -		return PTR_ERR(opp);
-> -
-> -	panthor_devfreq_profile.initial_freq = cur_freq;
-> -	ptdev->current_frequency = cur_freq;
-> -
->  	/* Regulator coupling only takes care of synchronizing/balancing voltage
->  	 * updates, but the coupled regulator needs to be enabled manually.
->  	 *
-> @@ -200,18 +193,24 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  		return ret;
->  	}
->  
-> +	opp = devfreq_recommended_opp(dev, &cur_freq, 0);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	panthor_devfreq_profile.initial_freq = cur_freq;
-> +	ptdev->current_frequency = cur_freq;
-> +
->  	/*
->  	 * Set the recommend OPP this will enable and configure the regulator
->  	 * if any and will avoid a switch off by regulator_late_cleanup()
->  	 */
->  	ret = dev_pm_opp_set_opp(dev, opp);
-> +	dev_pm_opp_put(opp);
->  	if (ret) {
->  		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
->  		return ret;
->  	}
->  
-> -	dev_pm_opp_put(opp);
-> -
->  	/* Find the fastest defined rate  */
->  	opp = dev_pm_opp_find_freq_floor(dev, &freq);
->  	if (IS_ERR(opp))
-> -- 
-> 2.46.2
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+CgpBdCAyMDI0LTEwLTA2IDA1OjQ5OjM3LCAiS3Vhbi1XZWkgQ2hpdSIgPHZpc2l0b3Jja3dAZ21h
+aWwuY29tPiB3cm90ZToKPk9wdGltaXplIHRoZSB1Zl9maW5kKCkgZnVuY3Rpb24gdG8gZW5oYW5j
+ZSBpdHMgZWZmaWNpZW5jeSBieQo+aW1wbGVtZW50aW5nIGEgbW9yZSBlZmZlY3RpdmUgcGF0aCBj
+b21wcmVzc2lvbiBzdHJhdGVneS4gVGhlIG9yaWdpbmFsCj5pbXBsZW1lbnRhdGlvbiBvbmx5IHVw
+ZGF0ZWQgdGhlIHBhcmVudCBwb2ludGVyIG9mIHRoZSBjdXJyZW50IG5vZGUgdG8KPml0cyBncmFu
+ZHBhcmVudCwgcmVzdWx0aW5nIGluIGEgcmVsYXRpdmVseSBzaGFsbG93IHRyZWUuCj4KPkluIHRo
+ZSB1cGRhdGVkIHZlcnNpb24sIG9uY2UgdGhlIHJvb3Qgb2YgdGhlIG5vZGUgaXMgaWRlbnRpZmll
+ZCwgYWxsCj5ub2RlcyBhbG9uZyB0aGUgc2VhcmNoIHBhdGggYXJlIHVwZGF0ZWQgdG8gZGlyZWN0
+bHkgcG9pbnQgdG8gdGhlIHJvb3QuCj5UaGlzIGNoYW5nZSBtaW5pbWl6ZXMgdGhlIGhlaWdodCBv
+ZiB0aGUgdHJlZSBhbmQgaW1wcm92ZXMgdGhlCj5lZmZpY2llbmN5IGZvciBzdWJzZXF1ZW50IGZp
+bmQgb3BlcmF0aW9ucywgcHJvdmlkaW5nIGJldHRlciBwZXJmb3JtYW5jZQo+Zm9yIHRoZSBVbmlv
+bi1GaW5kIGRhdGEgc3RydWN0dXJlLgo+Cj5TaWduZWQtb2ZmLWJ5OiBLdWFuLVdlaSBDaGl1IDx2
+aXNpdG9yY2t3QGdtYWlsLmNvbT4KPi0tLQo+Tm90ZTogVGVzdGVkIHdpdGggdGhlIEtVbml0IHRl
+c3RzIGludHJvZHVjZWQgaW4gdGhlIHByZXZpb3VzIHBhdGNoLgo+Cj4gbGliL3VuaW9uX2ZpbmQu
+YyB8IDkgKysrKysrKy0tCj4gMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxl
+dGlvbnMoLSkKPgo+ZGlmZiAtLWdpdCBhL2xpYi91bmlvbl9maW5kLmMgYi9saWIvdW5pb25fZmlu
+ZC5jCj5pbmRleCBhMjA2NzhkYTAyMjAuLjdjNTUzZmE2MjJjOCAxMDA2NDQKPi0tLSBhL2xpYi91
+bmlvbl9maW5kLmMKPisrKyBiL2xpYi91bmlvbl9maW5kLmMKPkBAIC0xMywxNCArMTMsMTkgQEAK
+PiAgKi8KPiBzdHJ1Y3QgdWZfbm9kZSAqdWZfZmluZChzdHJ1Y3QgdWZfbm9kZSAqbm9kZSkKPiB7
+Cj4rCXN0cnVjdCB1Zl9ub2RlICpyb290ID0gbm9kZTsKPiAJc3RydWN0IHVmX25vZGUgKnBhcmVu
+dDsKPiAKPisJd2hpbGUgKHJvb3QtPnBhcmVudCAhPSByb290KQo+KwkJcm9vdCA9IHJvb3QtPnBh
+cmVudDsKPisKPiAJd2hpbGUgKG5vZGUtPnBhcmVudCAhPSBub2RlKSB7CgpVc2luZyChsHJvb3Sh
+sSBmb3IgdGhpcyBqdWRnbWVudCBtaWdodCBiZSBiZXR0ZXIsIGFzIGl0IGNvdWxkCnJlZHVjZSB1
+bm5lY2Vzc2FyeSBlbnRlcmluZy4KICAgICAgICB3aGlsZSAobm9kZS0+cGFyZW50ICE9IHJvb3Qp
+IHsKCj4gCQlwYXJlbnQgPSBub2RlLT5wYXJlbnQ7Cj4tCQlub2RlLT5wYXJlbnQgPSBwYXJlbnQt
+PnBhcmVudDsKPisJCW5vZGUtPnBhcmVudCA9IHJvb3Q7Cj4gCQlub2RlID0gcGFyZW50Owo+IAl9
+Cj4tCXJldHVybiBub2RlOwo+Kwo+KwlyZXR1cm4gcm9vdDsKPiB9Cj4gRVhQT1JUX1NZTUJPTCh1
+Zl9maW5kKTsKPiAKPi0tIAo+Mi4zNC4xCg==
 
