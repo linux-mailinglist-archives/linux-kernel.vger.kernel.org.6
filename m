@@ -1,130 +1,231 @@
-Return-Path: <linux-kernel+bounces-354108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A4A9937E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:05:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B349937E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0F328364B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09B91C236A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E471DE4C2;
-	Mon,  7 Oct 2024 20:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022371DE4CC;
+	Mon,  7 Oct 2024 20:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CS2vbW2j"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jPNHNFFf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5601DE2D3
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52FC1DE2D3;
+	Mon,  7 Oct 2024 20:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331537; cv=none; b=B4mwZo2mDwi/4y54y7nza0nufSWlw9OqsqE/0aIZZsaqGnp8Ec5pQBcwpJFg9dipHdJycoaqtFWkc/5XFTxiLzk4FSKU6JCziXokjvVq4MzW3kXo2iDa1ySVCOIIjDrEg7A6dsiQABP9VbF0t5epjb5nZrEKDQNHK07eewl3Xhk=
+	t=1728331572; cv=none; b=fqhdmEVUz0TiOqIjbVrA2b3ekLwnTPxR2C+5PLXC+yYpskH0+EwSRKccpSfLg0t6g2uqQ7MVhkmcJIrYYtl6HWlDqjh/OhZ23A/YXaBC2iSWD4t8EHK46RLZNEumI+Ks12WfbRNs5ah4FPnYLuhTuAJ6w3w67Hv+KYnkACxo3BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331537; c=relaxed/simple;
-	bh=Fiud0yj3UkoKF9eqslOVQBgzuRDk/DsfR+p/SmNwsxA=;
+	s=arc-20240116; t=1728331572; c=relaxed/simple;
+	bh=fF+pVLgA3Hex/Fn5K86ObxcJMLlJ2PovFtoJ6BAxvAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMZuSHNCzy3s4/sHmXh9B7X1mZlqGIZXCirlkxoUL+F/OF7st1Z5/4XJIsIQmiW0jZqi9ZwKl+8xS1ItFuFKA1j/D9RgB7FN1L/7xBwNCAE8i2aV1p0LCG7MJ8sGEwh594fs//Ohv7dMZf86wLszMFHxlFfkaryVG9eifxLGZkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CS2vbW2j; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 8 Oct 2024 04:05:28 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728331531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwnTZ30pE64PPVgzu3ilNOXtrbZO989Ve0baEc4aua0=;
-	b=CS2vbW2jGVUL81gcsiQvBhkWv4SlqRUuDyp4/RY5UHhO1JJNZx9E4yJF/Mh0lz8SauXDtI
-	bwvlR8idy2Y2jfbPMrtnfw2Yre3y6zG1vUQ0XuNOSLxZciYLpbxfD9IHTrBQ0QmBRoH//3
-	ITiCcuBYsMK3k4LqUbm3/9lLi4LHnp4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leo Yan <leo.yan@linux.dev>
-To: Julien Meunier <julien.meunier@nokia.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	stable@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	leo.yan@arm.com
-Subject: Re: [PATCH] coresight: etm4x: Fix PID tracing when perf is run in an
- init PID namespace
-Message-ID: <20241007200528.GB30834@debian-dev>
-References: <20240925131357.9468-1-julien.meunier@nokia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8aBFNZ+wcKTxJF1NBtXDrFprIEapEwZWqpXlhmWWnIsNP1lh1rFOnpkqq3bROyWsQ69zZ10f77SpxkvtxANhac4PMEoa5wIVfY3YPc0QQqL3ru1weHpnHVBnRO543171a7OVg6afD59SVlkvrwHaFc8z3AijdYagV5ez3SSrrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jPNHNFFf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8ECA12EC;
+	Mon,  7 Oct 2024 22:04:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728331473;
+	bh=fF+pVLgA3Hex/Fn5K86ObxcJMLlJ2PovFtoJ6BAxvAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jPNHNFFf5BM8Wsl91oB26SQm5Su22Wwpm4oybF58QnZciWdUYMIWHwajndpk/TH6D
+	 2EE9N5Ub9jKATh2jmfDbMSrlUAViTK8eHwWYJ+63SNqh2PK4ZdIOaz1qkWxr86UydF
+	 uAH6hAeeFiQw6RDz/IuAlIiPVmOgGsNkDjVeF0X8=
+Date: Mon, 7 Oct 2024 23:06:03 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 13/17] media: rzg2l-cru: video: Implement
+ .link_validate() callback
+Message-ID: <20241007200603.GA28812@pendragon.ideasonboard.com>
+References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925131357.9468-1-julien.meunier@nokia.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Julien,
+Hi Prabhakar,
 
-On Wed, Sep 25, 2024 at 03:13:56PM +0200, Julien Meunier wrote:
-> The previous implementation limited the tracing capabilities when perf
-> was run in the init PID namespace, making it impossible to trace
-> applications in non-init PID namespaces.
+Thank you for the patch.
+
+On Mon, Oct 07, 2024 at 07:48:35PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> This update improves the tracing process by verifying the event owner.
-> This allows us to determine whether the user has the necessary
-> permissions to trace the application.
-
-The original commit aab473867fed is not for constraint permission. It is
-about PID namespace mismatching issue.
-
-E.g. Perf runs in non-root namespace, thus it records process info in the
-non-root PID namespace. On the other hand, Arm CoreSight traces PID for
-root namespace, as a result, it will lead mess when decoding.
-
-With this change, I am not convinced that Arm CoreSight can trace PID for
-non-root PID namespace. Seems to me, the concerned issue is still existed
-- it might cause PID mismatching issue between hardware trace data and
-Perf's process info.
-
-I think we need to check using the software context switch event. With
-more clear idea, I will get back at here.
-
-Thanks,
-Leo
-
-> Cc: stable@vger.kernel.org
-> Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
-> Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
+> Implement the `.link_validate()` callback for the video node and move the
+> format checking into this function. This change allows the removal of
+> `rzg2l_cru_mc_validate_format()`.
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/hwtracing/coresight/coresight-etm4x-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 91 ++++++++++---------
+>  1 file changed, 47 insertions(+), 44 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index bf01f01964cf..8365307b1aec 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -695,7 +695,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index ceb9012c9d70..385b4242db2f 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buffer *vb)
+>  	spin_unlock_irqrestore(&cru->qlock, flags);
+>  }
 >  
->  	/* Only trace contextID when runs in root PID namespace */
->  	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
-> -	    task_is_in_init_pid_ns(current))
-> +	    task_is_in_init_pid_ns(event->owner))
->  		/* bit[6], Context ID tracing bit */
->  		config->cfg |= TRCCONFIGR_CID;
->  
-> @@ -710,7 +710,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->  			goto out;
->  		}
->  		/* Only trace virtual contextID when runs in root PID namespace */
-> -		if (task_is_in_init_pid_ns(current))
-> +		if (task_is_in_init_pid_ns(event->owner))
->  			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
+> -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
+> -					struct v4l2_subdev *sd,
+> -					struct media_pad *pad)
+> -{
+> -	struct v4l2_subdev_format fmt = {
+> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> -	};
+> -
+> -	fmt.pad = pad->index;
+> -	if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
+> -		return -EPIPE;
+> -
+> -	switch (fmt.format.code) {
+> -	case MEDIA_BUS_FMT_UYVY8_1X16:
+> -		break;
+> -	default:
+> -		return -EPIPE;
+> -	}
+> -
+> -	switch (fmt.format.field) {
+> -	case V4L2_FIELD_TOP:
+> -	case V4L2_FIELD_BOTTOM:
+> -	case V4L2_FIELD_NONE:
+> -	case V4L2_FIELD_INTERLACED_TB:
+> -	case V4L2_FIELD_INTERLACED_BT:
+> -	case V4L2_FIELD_INTERLACED:
+> -	case V4L2_FIELD_SEQ_TB:
+> -	case V4L2_FIELD_SEQ_BT:
+> -		break;
+> -	default:
+> -		return -EPIPE;
+> -	}
+> -
+> -	if (fmt.format.width != cru->format.width ||
+> -	    fmt.format.height != cru->format.height)
+> -		return -EPIPE;
+> -
+> -	return 0;
+> -}
+> -
+>  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
+>  				    int slot, dma_addr_t addr)
+>  {
+> @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_dev *cru, int on)
+>  		return stream_off_ret;
 >  	}
 >  
-> -- 
-> 2.34.1
-> 
-> 
+> -	ret = rzg2l_cru_mc_validate_format(cru, sd, pad);
+> -	if (ret)
+> -		return ret;
+> -
+>  	pipe = media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
+>  	ret = video_device_pipeline_start(&cru->vdev, pipe);
+>  	if (ret)
+> @@ -995,6 +951,52 @@ static const struct v4l2_file_operations rzg2l_cru_fops = {
+>  	.read		= vb2_fop_read,
+>  };
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Media entity operations
+> + */
+> +
+> +static int rzg2l_cru_video_link_validate(struct media_link *link)
+> +{
+> +	struct v4l2_subdev_format fmt = {
+> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> +	};
+> +	const struct rzg2l_cru_ip_format *video_fmt;
+> +	const struct rzg2l_cru_ip_format *ip_fmt;
+> +	struct v4l2_subdev *subdev;
+> +	struct rzg2l_cru_dev *cru;
+> +	struct media_pad *remote;
+> +	int ret;
+> +
+> +	remote = link->source;
+> +	subdev = media_entity_to_v4l2_subdev(remote->entity);
+> +	fmt.pad = remote->index;
+
+	subdev = media_entity_to_v4l2_subdev(link->source->entity);
+	fmt.pad = link->source->index;
+
+and drop the remote variable. Or, if you prefer keeping it, rename it to
+source.
+
+> +	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+> +	if (ret < 0)
+> +		return ret == -ENOIOCTLCMD ? -EINVAL : ret;
+> +
+> +	cru = container_of(media_entity_to_video_device(link->sink->entity),
+> +			   struct rzg2l_cru_dev, vdev);
+> +	video_fmt = rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat);
+> +	if (!video_fmt)
+> +		return -EPIPE;
+
+Can this happen, doesn't the s_fmt handler on the video device ensure
+that pixelformat is always valid.
+
+> +	ip_fmt = rzg2l_cru_ip_code_to_fmt(fmt.format.code);
+> +	if (!ip_fmt)
+> +		return -EPIPE;
+
+Same question here.
+
+> +
+> +	if (fmt.format.width != cru->format.width ||
+> +	    fmt.format.height != cru->format.height ||
+> +	    fmt.format.field != cru->format.field ||
+> +	    video_fmt->code != fmt.format.code ||
+> +	    ip_fmt->format != cru->format.pixelformat)
+
+The last two line seem to implement the same check.
+
+> +		return -EPIPE;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct media_entity_operations rzg2l_cru_video_media_ops = {
+> +	.link_validate = rzg2l_cru_video_link_validate,
+> +};
+> +
+>  static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
+>  {
+>  	struct video_device *vdev = &cru->vdev;
+> @@ -1006,6 +1008,7 @@ static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
+>  	vdev->lock = &cru->lock;
+>  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
+>  	vdev->device_caps |= V4L2_CAP_IO_MC;
+> +	vdev->entity.ops = &rzg2l_cru_video_media_ops;
+>  	vdev->fops = &rzg2l_cru_fops;
+>  	vdev->ioctl_ops = &rzg2l_cru_ioctl_ops;
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
 
