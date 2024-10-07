@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-353220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D93992A93
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:47:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EEE992A9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A812835A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23036B20DEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851701B4F2F;
-	Mon,  7 Oct 2024 11:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB5D1D1F58;
+	Mon,  7 Oct 2024 11:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P1QnB3s1"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gENxy5AY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C056818A6AD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6D218A6AD;
+	Mon,  7 Oct 2024 11:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728301614; cv=none; b=mkHObswV2yxzc2iaCMewGJiM4Z0uy9HboDBjxIz+te+7jLdpZf8CQWvXjfUjJ13SSCrWbWRm8uzHHXW258WNSxD2g+ORfkvOFyNNBeyeG0oey8fgqKBpJ7M/flp3whMkH/G8RsQhcebsJOJRk8X0JQzcgNvUxZgIrhlO39ClFto=
+	t=1728301703; cv=none; b=nB5d5BXJD9FpwhFwogWQeO8LoLqujnWqkWKa+qVQoMZj+WINMsZU0oJ8BJe7cClaVjB8TWwAE5q/7g+c+h/MJJkGBhzCoqcOTT47e/DkGiw4gvs2imhMKHu9OvvrE0hxkKMmQLewFoShhkx1WWDCok6wWDEjSrDx6J53l4zkgU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728301614; c=relaxed/simple;
-	bh=+FgrIbE/YvDLp+WWfmzWSJOntTSQcjxrlHLLvoQZAv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZEdql9q/pYiG2S3kZgYgyP/FeckX1HPozeeKo5zSDWHE+ptOiV5bvMepzUjCQOpTKa1e+5YHTuvFXN/kPiN2IGgGq4gsjy/WHoao4Q4PJbHp0I6447AB3vc/rvtpmJT7nGgFy5mTDXRlG/1dSsYXV4rDz7eq1nGuxid56iHKTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P1QnB3s1; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728301610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xI5pJ0sea7IKzkBw+m/YUJfJHhAPmQx7k7R0WfJFwcY=;
-	b=P1QnB3s1jNHMoJzfQ5QSUUyUVQc0hHQOI9RIyF1XlH59b8CRoMARTdkvC+euwT5MjR+5KF
-	/SLiYYZHuMVNFePzpFb1EI5yF0+46/r5yvzlxWK5gKiXwPH8gQsWICu8Z6YlsPsTCW+Wzr
-	6+JzbTcKzPO6fmZ/ihPmEr0lkghnUUE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] f2fs: Use struct_size() to improve f2fs_acl_clone()
-Date: Mon,  7 Oct 2024 13:46:37 +0200
-Message-ID: <20241007114638.1337-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1728301703; c=relaxed/simple;
+	bh=385W9W9QYNTyfuD6FUYa8ebktE7Q2QSi8i4s3DwWVPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VMUFXX6xsFBMJEVZDRcNvRsJhAulv75rRiDfaiaplyQtEmldMYaczTCBf3R3mSwDb5sZ7z17030RTO6LxgKiqwbJGAHklLWWg1v+Nsghjl7dijHjTEnkJggYdLj/ixK+Am+AsAZHLgxKRKeJzV4l4MERVeM+kd6zhE7zgCX/dfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gENxy5AY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000B4C4CEC6;
+	Mon,  7 Oct 2024 11:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728301703;
+	bh=385W9W9QYNTyfuD6FUYa8ebktE7Q2QSi8i4s3DwWVPg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gENxy5AYP9qM7KkOxjjoibALNHn9iljkoW+UY7NPcxKhMyAvZ/dIecYLxCT/PojIu
+	 04r+asy/SeC7JVqw16e/6zMXN3C+nGRCcVhbCCMsMwdiwWfnH+idjPd4wZ21UHcZpc
+	 znfz9qXfLQbTat27nyPawY2Nf/WeGH3WIRYNhT2pclC+/QyLBYOfImUVv8yB3uO7dI
+	 xlLK8E3FU4mUJnTnhQs9+it9uKwVzBFE2De1Ich4q/kmHGBOBSrdKiUjwibHOhhUAN
+	 V+fbPRjJEIIu/4MKGFb82TdWCPmRDiC7YmhCS5WViu/NRbUwtth8+HIiuqHofdZmBR
+	 PbYdJNO527yfA==
+Message-ID: <dc17ed49-aed6-4c44-97e9-d6b21e5966dd@kernel.org>
+Date: Mon, 7 Oct 2024 14:48:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix race condition for VLAN
+ table access
+To: MD Danish Anwar <danishanwar@ti.com>, robh@kernel.org,
+ jan.kiszka@siemens.com, diogo.ivo@siemens.com, andrew@lunn.ch,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20241007054124.832792-1-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241007054124.832792-1-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Use struct_size() to calculate the number of bytes to allocate for a
-cloned acl.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/f2fs/acl.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 8bffdeccdbc3..1fbc0607363b 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -296,9 +296,8 @@ static struct posix_acl *f2fs_acl_clone(const struct posix_acl *acl,
- 	struct posix_acl *clone = NULL;
- 
- 	if (acl) {
--		int size = sizeof(struct posix_acl) + acl->a_count *
--				sizeof(struct posix_acl_entry);
--		clone = kmemdup(acl, size, flags);
-+		clone = kmemdup(acl, struct_size(acl, a_entries, acl->a_count),
-+				flags);
- 		if (clone)
- 			refcount_set(&clone->a_refcount, 1);
- 	}
--- 
-2.46.2
+On 07/10/2024 08:41, MD Danish Anwar wrote:
+> The VLAN table is a shared memory between the two ports/slices
+> in a ICSSG cluster and this may lead to race condition when the
+> common code paths for both ports are executed in different CPUs.
+> 
+> Fix the race condition access by locking the shared memory access
+> 
+> Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
