@@ -1,268 +1,206 @@
-Return-Path: <linux-kernel+bounces-353202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8883A992A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57770992A4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F963B228E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2228B2111F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EEE1D223B;
-	Mon,  7 Oct 2024 11:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B0F1D1E91;
+	Mon,  7 Oct 2024 11:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="g4uUvBUe"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RYLwNgCB"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475D1101C4;
-	Mon,  7 Oct 2024 11:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786E8101C4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300827; cv=none; b=TEMKATMjmcjGnUhkdHO2MqlBr8Sy1OaxuTIf2pjUoC/3p4s/L4vGo6kBlUJW9IHDQp+vI4cy/30tCADXSWMA30Fsa0L7CwPc+Xq7I9cNy8ovRx65B8eUME/kRYy5gFOF5iDKvumm6gjQOCwtxxuc/2251I2GsLlL0NZslf38NgU=
+	t=1728300976; cv=none; b=sv/CAJZ7dKKuoUQQCYidbzURz9vOkTZ5q12//wM8PQVxcJsav3I5DRO1hZOl3wkLJqWvxxLMZI11uAB5n+nGqDiMOg/fKNoBKMLM6AjFkhCY0zjgOVNEFlwlZks6r92nwh7Qj/+w6K0SqPyh5fP+5oHf7eHletj4mh6GgiNO0Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300827; c=relaxed/simple;
-	bh=62QDIxmSWTrnrXu44YKt8uHSPpZYXk71NEfzgPe03jM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lNa2A5I63tx9vL80l6kbu4gzOY+01EtvOmlORyqwviFIIH90ad5+oZEny6ek/pildyslboM7ZbY+lh7qV7UI542R0DNorRsYqIBkYFx6TDU2vtVL8dMwQewnj8lgHYdIzD4TGppo2w81jlpAPG2dC6sfD1/Ig8mjAAXw+YfMRD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=g4uUvBUe; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1728300810; x=1728905610; i=wahrenst@gmx.net;
-	bh=pvflpRRcQ8zmpRqzWFEb37Up3Laahcfpm5VEYL3qNDE=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=g4uUvBUeqCc/nbd4gTmwA+s33kKS7jwjOCCbkLjxdumaFvk4QyJ30EFkwX4Ll30K
-	 S066eFheieHVU1plU5YNHEBDJqCOhBoxLJU2lj5eil4wADJegVkUdu3Uqv28n9lGx
-	 2diXr79qKtzD5yDKNRP8BekZePc/EBCkpMw+byxSwDYBrPmwiWe4M0wTuiMmrlyiM
-	 R8rpN7gpc6TcCYgsYUFxxI5FY5TnyBUz2l3uTs8FEusIQzg2EaHel+2YPFLvok3iI
-	 vs6aJY42yj3fnRoVxuNLGjYQtb8J79hWS16R/ZgeIk3Ex0+r2A+LShfH9QYbdCviR
-	 ngei87uKq0AoDbI9bA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtfNl-1tqq9O4Amd-00qycG; Mon, 07
- Oct 2024 13:33:30 +0200
-From: Stefan Wahren <wahrenst@gmx.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1728300976; c=relaxed/simple;
+	bh=P5BPFG8e5ClLH2i6KDp+sSNB6btkuosh3rUzkEErfp8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUvukFfGUVaS0lbmevwkwlRSyYz4nL6t3E+sxvpHOHo0N0B6yGpDwCAivNN0MOv2CxIB6cbDfI1TW2LBADpy/frgoFTn5NK/bkAYXPWyMEqUI+yo96VLLn2xzwmAPi3dai/qr7hx7hepd10Gvbuw9LFB+cb7E5FUD1gEd7fjK6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RYLwNgCB; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728300971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qzZxe9R4Jas3GMKD/rY0M+GDfcweX2HMw86N1Uklvi0=;
+	b=RYLwNgCBMYrdaoidtO0jhIscDgC6nY1KmcddhnIpfslmjqcOMFg0+jfGPluMuCqXZBxuuB
+	Jys7R6acf65s5/fHhvEN4dGloNGqpFLqpc3Ywa8sB84fYpNJY8956oB+vfWFRQ7mLPn5bj
+	RaxOBUz425FwjOP6c0TS5r9sd2XXEBI=
+From: Jeff Xie <jeff.xie@linux.dev>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Michael Heimpold <mhei@heimpold.de>,
-	Christoph Fritz <chf.fritz@googlemail.com>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 2/2 net-next] qca_spi: Improve reset mechanism
-Date: Mon,  7 Oct 2024 13:33:12 +0200
-Message-Id: <20241007113312.38728-3-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241007113312.38728-1-wahrenst@gmx.net>
-References: <20241007113312.38728-1-wahrenst@gmx.net>
+	xiehuan09@gmail.com,
+	dolinux.peng@gmail.com,
+	chensong_2000@189.cn,
+	Jeff Xie <jeff.xie@linux.dev>
+Subject: [PATCH v4] ftrace: Get the true parent ip for function tracer
+Date: Mon,  7 Oct 2024 19:35:37 +0800
+Message-ID: <20241007113537.19686-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NPLHNP9KVStcNrSSuOhvb6jeipujIrljpji5fCC5xNiGlz0MhJg
- 9wCiexBaZw0abPtkRWq13BViY+r6qWIpMElUhzO0xYVp1KQv5pLBNbTh5WCn9vPkDjeZ9lw
- XdrKkUU5lvCjCBz32UqBlP/XUV2bKYarm3FD7i6q27U9XsdzJMV1gikiqhDpGPUn0Fb+c4a
- d6bqg+sGNYEpKLqift1jQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hGq4UUDKIts=;4mlIJuK1aIibPwE7Gs8Y+IO+EYx
- XDw2rwaqK0EsuVxgfDQC5RN0Xngqe+R6WVLhFsixbRbo82m/eQAzH4VeUEmuRJGs9/ZVdl8G2
- smYEmABPc9yIDkT8oq6VIvm/OX3BrsqhR3nkOljfXBg1Q4FCD2lEmH24ZGvcBoHPfkmXCTWVb
- 8lS47oQVe+7pSh2WvrWyDDqRy42NPsrSQmXiNUdWbCaE0vrjoHLeyO/+MALLNH6kwq+/tPAFb
- zY4IZu/VMWJkOe79hOnXLMQGxUHtUhkhyx57NOYi4iij8DthsoIQFkjxyFfXg/KDXKab/f6Fs
- q8Pg1rEcsKfIxrJIa6UQb3P2sJ3sHCZTuNknuwTLnDX1OGzSxCkMGzwVX+jWi09CLtgcsGNTA
- QZttXoV6+2yct4B/c+2KHu4ctZ3xDmQ+4d79ED/VnPz2VC8gAvoqQlW/VAZtNMJ3r8M6UTig3
- UvScB2egYmdShtv6+r/F/QQCSgydSQY0ui/90v1+q1AUR7W2Uh9CXLCCm2GE1CAL5C63rjJqs
- UJ5nW+l2BqbpdvaM7aQnRG3s9tGveIiN/gcuzFRhGwtbi/p/4pjHlVNvE/PWdR5teggsJd3QV
- IfKI0Ay70MafK7VvTIcu5wEgQgcMRrD7ATUOjjT+SnNtvhoMbroQO26ohcGZncclbK0JHFiRn
- BuKGWJtuXyNi2xn9O5x1NLPdmIlFZmlree6Jec29XiZocLzlqINej1FfCslHIAC0fXCgLMzXI
- JDCsNVlnaYCiQmziKQ3q8q3BEaP7546a+D5GeJmJobeG3M76Pl64OfWBeJiA4/8lspqJK2s7c
- wanTQFXo01PPtAMYYqGmyFoA==
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The commit 92717c2356cb ("net: qca_spi: Avoid high load if QCA7000 is not
-available") fixed the high load in case the QCA7000 is not available
-but introduced sync delays for some corner cases like buffer errors.
+When using both function tracer and function graph simultaneously,
+it is found that function tracer sometimes captures a fake parent ip
+(return_to_handler) instead of the true parent ip.
 
-So add the reset requests to the atomics flags, which are polled by
-the SPI thread. As a result reset requests and sync state are now
-separated. This has the nice benefit to make the code easier to
-understand.
+This issue is easy to reproduce. Below are my reproduction steps:
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/net/ethernet/qualcomm/qca_debug.c |  4 ++--
- drivers/net/ethernet/qualcomm/qca_spi.c   | 29 +++++++++++++----------
- drivers/net/ethernet/qualcomm/qca_spi.h   |  2 +-
- 3 files changed, 20 insertions(+), 15 deletions(-)
+jeff-labs:~/bin # ./trace-net.sh
 
-diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ether=
-net/qualcomm/qca_debug.c
-index ad06da0fdaa0..13deb3da4a64 100644
-=2D-- a/drivers/net/ethernet/qualcomm/qca_debug.c
-+++ b/drivers/net/ethernet/qualcomm/qca_debug.c
-@@ -98,8 +98,8 @@ qcaspi_info_show(struct seq_file *s, void *what)
+jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
+    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
+    [...]
 
- 	seq_printf(s, "IRQ              : %d\n",
- 		   qca->spi_dev->irq);
--	seq_printf(s, "INTR             : %lx\n",
--		   qca->intr);
-+	seq_printf(s, "FLAGS            : %lx\n",
-+		   qca->flags);
+The following is my simple trace script:
 
- 	seq_printf(s, "SPI max speed    : %lu\n",
- 		   (unsigned long)qca->spi_dev->max_speed_hz);
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/etherne=
-t/qualcomm/qca_spi.c
-index fde7197372fe..b8fa6c56104e 100644
-=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -35,7 +35,8 @@
+<snip>
+jeff-labs:~/bin # cat ./trace-net.sh
+TRACE_PATH="/sys/kernel/debug/tracing"
 
- #define MAX_DMA_BURST_LEN 5000
+set_events() {
+        echo 1 > $1/events/net/enable
+        echo 1 > $1/events/tcp/enable
+        echo 1 > $1/events/sock/enable
+        echo 1 > $1/events/napi/enable
+        echo 1 > $1/events/fib/enable
+        echo 1 > $1/events/neigh/enable
+}
 
--#define SPI_INTR 0
-+#define SPI_INTR	0
-+#define SPI_RESET	1
+set_events ${TRACE_PATH}
+echo 1 > ${TRACE_PATH}/options/sym-offset
+echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
 
- /*   Modules parameters     */
- #define QCASPI_CLK_SPEED_MIN 1000000
-@@ -495,7 +496,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 			if (qca->sync =3D=3D QCASPI_SYNC_READY)
- 				qca->stats.bad_signature++;
+echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+echo function_graph > ${TRACE_PATH}/current_tracer
 
--			qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+			set_bit(SPI_RESET, &qca->flags);
- 			netdev_dbg(qca->net_dev, "sync: got CPU on, but signature was invalid,=
- restart\n");
- 			return;
- 		} else {
-@@ -512,6 +513,10 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 				return;
- 			}
- 		}
-+	} else {
-+		/* Handle reset only on QCASPI_EVENT_UPDATE */
-+		if (test_and_clear_bit(SPI_RESET, &qca->flags))
-+			qca->sync =3D QCASPI_SYNC_UNKNOWN;
- 	}
+INSTANCE_FOO=${TRACE_PATH}/instances/foo
+if [ ! -e $INSTANCE_FOO ]; then
+        mkdir ${INSTANCE_FOO}
+fi
+set_events ${INSTANCE_FOO}
+echo 1 > ${INSTANCE_FOO}/options/sym-offset
+echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+echo function > ${INSTANCE_FOO}/current_tracer
 
- 	switch (qca->sync) {
-@@ -522,7 +527,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 			qcaspi_read_register(qca, SPI_REG_SIGNATURE, &signature);
+echo 1 > ${TRACE_PATH}/tracing_on
+echo 1 > ${INSTANCE_FOO}/tracing_on
 
- 		if (signature !=3D QCASPI_GOOD_SIGNATURE) {
--			qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+			set_bit(SPI_RESET, &qca->flags);
- 			qca->stats.bad_signature++;
- 			netdev_dbg(qca->net_dev, "sync: bad signature, restart\n");
- 			/* don't reset right away */
-@@ -553,7 +558,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 			   qca->reset_count);
- 		if (qca->reset_count >=3D QCASPI_RESET_TIMEOUT) {
- 			/* reset did not seem to take place, try again */
--			qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+			set_bit(SPI_RESET, &qca->flags);
- 			qca->stats.reset_timeout++;
- 			netdev_dbg(qca->net_dev, "sync: reset timeout, restarting process.\n")=
-;
- 		}
-@@ -582,14 +587,14 @@ qcaspi_spi_thread(void *data)
- 			continue;
- 		}
+echo > ${TRACE_PATH}/trace
+echo > ${INSTANCE_FOO}/trace
+</snip>
 
--		if (!test_bit(SPI_INTR, &qca->intr) &&
-+		if (!qca->flags &&
- 		    !qca->txr.skb[qca->txr.head])
- 			schedule();
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+---
+v4:
+  https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@rorschach.local.home/
+- fixed the crash when accessing the "current" if the arch has not implemented noinstr
+  thanks steve for the testing and the detailed explanation
 
- 		set_current_state(TASK_RUNNING);
+v3:
+  https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b312f1d956cf352a2@kernel.org/
+- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=n suggested by Masami
 
- 		netdev_dbg(qca->net_dev, "have work to do. int: %lu, tx_skb: %p\n",
--			   qca->intr,
-+			   qca->flags,
- 			   qca->txr.skb[qca->txr.head]);
+v2:
+  https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@gandalf.local.home/
+- Adding __always_inline to function_get_true_parent_ip suggested by Steve
 
- 		qcaspi_qca7k_sync(qca, QCASPI_EVENT_UPDATE);
-@@ -603,7 +608,7 @@ qcaspi_spi_thread(void *data)
- 			msleep(QCASPI_QCA7K_REBOOT_TIME_MS);
- 		}
+ kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
--		if (test_and_clear_bit(SPI_INTR, &qca->intr)) {
-+		if (test_and_clear_bit(SPI_INTR, &qca->flags)) {
- 			start_spi_intr_handling(qca, &intr_cause);
-
- 			if (intr_cause & SPI_INT_CPU_ON) {
-@@ -628,7 +633,7 @@ qcaspi_spi_thread(void *data)
- 				/* restart sync */
- 				netdev_dbg(qca->net_dev, "=3D=3D=3D> rdbuf error!\n");
- 				qca->stats.read_buf_err++;
--				qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+				set_bit(SPI_RESET, &qca->flags);
- 				continue;
- 			}
-
-@@ -636,7 +641,7 @@ qcaspi_spi_thread(void *data)
- 				/* restart sync */
- 				netdev_dbg(qca->net_dev, "=3D=3D=3D> wrbuf error!\n");
- 				qca->stats.write_buf_err++;
--				qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+				set_bit(SPI_RESET, &qca->flags);
- 				continue;
- 			}
-
-@@ -665,7 +670,7 @@ qcaspi_intr_handler(int irq, void *data)
- {
- 	struct qcaspi *qca =3D data;
-
--	set_bit(SPI_INTR, &qca->intr);
-+	set_bit(SPI_INTR, &qca->flags);
- 	if (qca->spi_thread)
- 		wake_up_process(qca->spi_thread);
-
-@@ -681,7 +686,7 @@ qcaspi_netdev_open(struct net_device *dev)
- 	if (!qca)
- 		return -EINVAL;
-
--	set_bit(SPI_INTR, &qca->intr);
-+	set_bit(SPI_INTR, &qca->flags);
- 	qca->sync =3D QCASPI_SYNC_UNKNOWN;
- 	qcafrm_fsm_init_spi(&qca->frm_handle);
-
-@@ -800,7 +805,7 @@ qcaspi_netdev_tx_timeout(struct net_device *dev, unsig=
-ned int txqueue)
- 		    jiffies, jiffies - dev_trans_start(dev));
- 	qca->net_dev->stats.tx_errors++;
- 	/* Trigger tx queue flush and QCA7000 reset */
--	qca->sync =3D QCASPI_SYNC_UNKNOWN;
-+	set_bit(SPI_RESET, &qca->flags);
-
- 	if (qca->spi_thread)
- 		wake_up_process(qca->spi_thread);
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/etherne=
-t/qualcomm/qca_spi.h
-index 8f4808695e82..7ba5c9e2f61c 100644
-=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.h
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.h
-@@ -81,7 +81,7 @@ struct qcaspi {
- 	struct qcafrm_handle frm_handle;
- 	struct sk_buff *rx_skb;
-
--	unsigned long intr;
-+	unsigned long flags;
- 	u16 reset_count;
-
- #ifdef CONFIG_DEBUG_FS
-=2D-
-2.34.1
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..46b663d22c37 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
++#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_ARCH_WANTS_NO_INSTR)
++static __always_inline unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	unsigned long true_parent_ip;
++	int idx = 0;
++
++	true_parent_ip = parent_ip;
++	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
++		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
++				(unsigned long *)fregs->regs.sp);
++	return true_parent_ip;
++}
++#else
++static __always_inline unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	return parent_ip;
++}
++#endif
++
+ static void
+ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
+@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
++
+ 	trace_ctx = tracing_gen_ctx();
+ 
+ 	cpu = smp_processor_id();
+@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	if (atomic_read(&data->disabled))
+@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+-- 
+2.43.0
 
 
