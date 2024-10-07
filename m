@@ -1,132 +1,184 @@
-Return-Path: <linux-kernel+bounces-352765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680F49923E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF0A9923DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A461C2219A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59532826DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757E5136672;
-	Mon,  7 Oct 2024 05:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EkcWkra3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39F94C91;
-	Mon,  7 Oct 2024 05:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDCC139587;
+	Mon,  7 Oct 2024 05:24:23 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA7E17740
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728278732; cv=none; b=fRvSkgQgr6eK1I+gmbvIy2eUiEWU0RVS3rL8whZ7jFa2yZZCzF9A5qXVi+KuMQHoB5vqwLvSQuKQV5b7PuDvogqvzQ/erWAaqNL6KF0gHQpKdNPGAO98KMKZMA9BYE0Ai6SRM5BZLf67en51sKVYa2pxe1vap85Miki+cVhhOr4=
+	t=1728278663; cv=none; b=kXn47kinKzZbvk2Lm9Mn2I5XofWyK3FRM133IJs6BZhkovIAH6tFrT1Kh+8NHPh0NBr992oTpUl4NlnuU/a17XieOWMWUenPClAPRN5TejCDdRrmBssypY7b1eXD+3etD8sDiG++6FBJGFHxEq/YCXbRy6Rn3clfV65gVno4Gpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728278732; c=relaxed/simple;
-	bh=HGWJxwIRNXsyN17Qpv93j15/elFdg1kKrAGTqGqbi0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=br00+Vis7e0vYjUyIYPRT5UZzQrzUvRfLBazkNd8mMb2PqwsWjZF8iTLuM/EYzyzeHDlxHHZ3UTzGBlWg0TFPjWZJIrrzdmcUUBXWlNCEDAPohBYq7J2y9X3ke+n7hOvRslndZ5Ll9zZLryzckAHMOFyWcdbk0klz0QOSkefofM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EkcWkra3; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=324PJEeBYpJfWCK8xWbXB9A56qDSOD1jxIROj5ssz1g=;
-	b=EkcWkra3uZT2kbTGpHZYgb7udCwytAwrTEGLutzPRkZseEfRYKfbZQLg8ZU1tk
-	MeDPNHt1Hd8wjLQgHtEI22zJHaTWChvSByJ8W2l2+M2zC2ND/C440wemjEhFjjHU
-	FRI3qkCyHan9TCOK8lH3pge4yGy38GAC1Bb2uKNkDMU0c=
-Received: from localhost (unknown [39.144.4.86])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBnN4NccANnI_KQBQ--.20392S3;
-	Mon, 07 Oct 2024 13:23:41 +0800 (CST)
-Date: Mon, 7 Oct 2024 13:23:40 +0800
-From: Melon Liu <melon1335@163.com>
-To: linux@armlinux.org.uk, lecopzer.chen@mediatek.com,
-	linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] ARM/mm: Fix stack recursion caused by KASAN
-Message-ID: <ZwNwXF2MqPpHvzqW@liu>
+	s=arc-20240116; t=1728278663; c=relaxed/simple;
+	bh=BfXqHwKacYlyfKlsyU5jxlqJhyB67gpoXh95UTrlHNM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VNRjm+cFFjpA4ickkzwxR0ZRmdF6vyuoXy1tJc2w+7AHojC8u6C+GGfoYZT3g/1CdNGz0+vrSBuWeyEyqn6BzfYGGGyvPFopITTvqZVDr4zqxgbrgIq9PYRtdTCIAN/2YMp+69m3OckcwWcgNJKGewWN/Ad8wv5LFKo45GmnUiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19665ed40so30580965ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 22:24:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728278661; x=1728883461;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/AIRQPHTgvdZ7jAuuFNBy85i0UfMXrmiIvbDH4nGzBI=;
+        b=aQ940BvWhBgW+/9/tyxZvM5MJLKCKX7aCJJ6tEMGfecoUrztlmpcRb0zz9DIdii14D
+         9PooG11XrLKMk9uQ0TEbG2Fp2o8xEBfS9iJL11zIzLikob95X9wjXHdiSAB6S83PKJ4C
+         k27UnMP0Zu6zyGX5EAPTFEDpHrXmStziEdmIXUlbFofNfXt/pjMeXxGc9QOJk2Sh+iz+
+         YRWPZ0kTWXS8kAqEYafkLj+CGM7fUF9nQkjZ8nMuUpob5ngbFgJEojuwZ5Lzkp3dfcw4
+         OSAI4fjByHg0qURsh3PGhUrbDeqs5djuW4BQD5ZC09PSMaTrSs6XEF+IEN20rqgQF9xY
+         xY0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtzvhWTJzX47dg4MMAAHIBWK8yB73HuwweFtNrIKNs30ia/c37J0HQ9rCijAAceivXYfqXSDJQRIYIce0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8mf72kuU/6Bo5hVX4TnGngYb5XjG9+iKGwnw86ePQ2X4K3uXc
+	gCZgR5fQLGzdOpX4NqJP+AQ9LhULmvOx4XJvhTOOHI4QotaG5t8XbuFoXsu8l3oZ2qfrTIt2PeT
+	z8WyPG+/0+dXHxc8zt1mtAdI61jAfRgSmHkrxO22eR0iN8SPjTFqr4HQ=
+X-Google-Smtp-Source: AGHT+IF247V/nCJeF+xQvJQ+DDdGbioA32XPXJjCoMMHg41yI54GWh5WH0vmKJqok4i79rtevGel8jfCW0kQQzzUuKXf/PEH5nEK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-CM-TRANSID:_____wBnN4NccANnI_KQBQ--.20392S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4xWFy5XFWDGr1xGF18uFg_yoW8uF1xpF
-	43Ca4rArsxXr1akrW3Xa18uF95t3WkK3WUt392gayrWrWUKr1UJF40qFWfu34UWrW8AFWa
-	yFWSya45urn7t3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joHq7UUUUU=
-X-CM-SenderInfo: ppho00irttkqqrwthudrp/xtbBhQlxIWcDZn9sZQAAso
+X-Received: by 2002:a05:6e02:1aad:b0:3a0:8e7c:b4ae with SMTP id
+ e9e14a558f8ab-3a375c3b6f5mr74743345ab.2.1728278661144; Sun, 06 Oct 2024
+ 22:24:21 -0700 (PDT)
+Date: Sun, 06 Oct 2024 22:24:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67037085.050a0220.49194.04fa.GAE@google.com>
+Subject: [syzbot] [bpf?] WARNING in acquire_reference_state
+From: syzbot <syzbot+b2f95ad40a2119295cc1@syzkaller.appspotmail.com>
+To: 42.hyeyoo@gmail.com, akpm@linux-foundation.org, andrii@kernel.org, 
+	ast@kernel.org, bpf@vger.kernel.org, cl@linux.com, daniel@iogearbox.net, 
+	eddyz87@gmail.com, feng.tang@intel.com, haoluo@google.com, 
+	iamjoonsoo.kim@lge.com, john.fastabend@gmail.com, jolsa@kernel.org, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	martin.lau@linux.dev, penberg@kernel.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-When accessing the KASAN shadow area corresponding to the task stack
-which is in vmalloc space, the stack recursion would occur if the area`s
-page tables are unpopulated.
+Hello,
 
-Calltrace:
- ...
- __dabt_svc+0x4c/0x80
- __asan_load4+0x30/0x88
- do_translation_fault+0x2c/0x110
- do_DataAbort+0x4c/0xec
- __dabt_svc+0x4c/0x80
- __asan_load4+0x30/0x88
- do_translation_fault+0x2c/0x110
- do_DataAbort+0x4c/0xec
- __dabt_svc+0x4c/0x80
- sched_setscheduler_nocheck+0x60/0x158
- kthread+0xec/0x198
- ret_from_fork+0x14/0x28
+syzbot found the following issue on:
 
-Fixes: 565cbaad83d ("ARM: 9202/1: kasan: support CONFIG_KASAN_VMALLOC")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Melon Liu <melon1335@163.org>
+HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1113e307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b2f95ad40a2119295cc1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bc33d0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11772b9f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
+
+The issue was bisected to:
+
+commit d0a38fad51cc70ab3dd3c59b54d8079ac19220b9
+Author: Feng Tang <feng.tang@intel.com>
+Date:   Wed Sep 11 06:45:34 2024 +0000
+
+    mm/slub: Improve redzone check and zeroing for krealloc()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15191307980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17191307980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13191307980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b2f95ad40a2119295cc1@syzkaller.appspotmail.com
+Fixes: d0a38fad51cc ("mm/slub: Improve redzone check and zeroing for krealloc()")
+
+------------[ cut here ]------------
+virt_to_cache: Object is not a Slab page!
+WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 virt_to_cache mm/slub.c:4655 [inline]
+WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 __do_krealloc mm/slub.c:4753 [inline]
+WARNING: CPU: 0 PID: 5236 at mm/slub.c:4655 krealloc_noprof+0x1b3/0x2e0 mm/slub.c:4838
+Modules linked in:
+CPU: 0 UID: 0 PID: 5236 Comm: syz-executor185 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:virt_to_cache mm/slub.c:4655 [inline]
+RIP: 0010:__do_krealloc mm/slub.c:4753 [inline]
+RIP: 0010:krealloc_noprof+0x1b3/0x2e0 mm/slub.c:4838
+Code: 45 31 ff 45 31 f6 45 31 ed e9 21 ff ff ff c6 05 4e 2a 14 0e 01 90 48 c7 c7 24 f2 0b 8e 48 c7 c6 44 f2 0b 8e e8 3e 19 63 ff 90 <0f> 0b 90 90 e9 d9 fe ff ff f3 0f 1e fa 41 8b 45 08 f7 d0 a8 88 0f
+RSP: 0018:ffffc900039ce958 EFLAGS: 00010246
+RAX: d5f86d2e4537eb00 RBX: 0000000000000000 RCX: ffff88802bd81e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff8880276c0000 R08: ffffffff8155d412 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: 0000000000004000
+R13: 00000000000002ac R14: 0000000000000cc0 R15: 00000000000002ac
+FS:  000055555e044380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005564fc7f1000 CR3: 0000000079940000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ realloc_array kernel/bpf/verifier.c:1247 [inline]
+ resize_reference_state kernel/bpf/verifier.c:1287 [inline]
+ acquire_reference_state+0x136/0x460 kernel/bpf/verifier.c:1334
+ check_helper_call+0x65cc/0x7660 kernel/bpf/verifier.c:10897
+ do_check+0x9954/0xfe40 kernel/bpf/verifier.c:18529
+ do_check_common+0x14bd/0x1dd0 kernel/bpf/verifier.c:21618
+ do_check_main kernel/bpf/verifier.c:21709 [inline]
+ bpf_check+0x18a25/0x1e320 kernel/bpf/verifier.c:22421
+ bpf_prog_load+0x1667/0x20f0 kernel/bpf/syscall.c:2846
+ __sys_bpf+0x4ee/0x810 kernel/bpf/syscall.c:5634
+ __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f922052d669
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc58143c38 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007ffc58143e08 RCX: 00007f922052d669
+RDX: 0000000000000090 RSI: 0000000020000840 RDI: 0000000000000005
+RBP: 00007f92205a0610 R08: 00007ffc58143e08 R09: 00007ffc58143e08
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc58143df8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
 ---
- arch/arm/mm/ioremap.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-index 794cfea9f..f952b0b0f 100644
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@ -115,16 +115,31 @@ int ioremap_page(unsigned long virt, unsigned long phys,
- }
- EXPORT_SYMBOL(ioremap_page);
- 
-+static inline void sync_pgds(struct mm_struct *mm, unsigned long start,
-+			     unsigned long end)
-+{
-+	end = ALIGN(end, PGDIR_SIZE);
-+	memcpy(pgd_offset(mm, start), pgd_offset_k(start),
-+	       sizeof(pgd_t) * (pgd_index(end) - pgd_index(start)));
-+}
-+
-+static inline void sync_vmalloc_pgds(struct mm_struct *mm)
-+{
-+	sync_pgds(mm, VMALLOC_START, VMALLOC_END);
-+	if (IS_ENABLED(CONFIG_KASAN_VMALLOC))
-+		sync_pgds(mm, (unsigned long)kasan_mem_to_shadow(
-+					(void *)VMALLOC_START),
-+			      (unsigned long)kasan_mem_to_shadow(
-+					(void *)VMALLOC_END));
-+}
-+
- void __check_vmalloc_seq(struct mm_struct *mm)
- {
- 	int seq;
- 
- 	do {
- 		seq = atomic_read(&init_mm.context.vmalloc_seq);
--		memcpy(pgd_offset(mm, VMALLOC_START),
--		       pgd_offset_k(VMALLOC_START),
--		       sizeof(pgd_t) * (pgd_index(VMALLOC_END) -
--					pgd_index(VMALLOC_START)));
-+		sync_vmalloc_pgds(mm);
- 		/*
- 		 * Use a store-release so that other CPUs that observe the
- 		 * counter's new value are guaranteed to see the results of the
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
