@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-352973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF189926B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 756659926B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741382816C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD2D2837BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DABF1885B7;
-	Mon,  7 Oct 2024 08:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719E4188728;
+	Mon,  7 Oct 2024 08:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M3IJUX7w"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qSbQ8grX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C96HFozS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6F187332
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003C6187332;
+	Mon,  7 Oct 2024 08:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288622; cv=none; b=g40G//ukak441EdT+k4MbRfv1T3A+9ZmI8nQe7fwvQyp0ix4P1U6DpVPsfBaLIbu4vXgClx8ksXQu4VWVkdcFnSoUL2yRUlsdyyJ+2HGiL7KKyxnMZXE7SaxgFDaLoUVfRwAe48uwJGufcF33m1Ji/qFL/0O09lELy/1OdJhQdY=
+	t=1728288666; cv=none; b=BGkesCJ2p4qbF6iPrA7cyjh5Z0acJfakU8wPhSX/xj5ybW7SXgk4P0Rd1lhADIuBg0lAWtdFI2e1L5YzzwK7zvQH+HcuWKCY/MNlqfinvmxur+u9zRTgPvgawfNTg2Qf+Zra7GXZxQ1X0C+ZgE7ib98HqDvCVN2yIRBFie/jv5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288622; c=relaxed/simple;
-	bh=8OGIDHax1KXeVAAUYRU7IFMAKHZqyH5jQOxedo9bECA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aj4ccIhXtFH3eM0BWFJCjDR6rcN+XsjFN5qufiHsSfzehv4TPfF0pcBL/NsCbSURzZ4kCX/fEebROujKdDw5nJgWxVWEvnUJUpR6ok9z9fEeUHhGZ5P56RUEabr6LpdarcOue8E7IMOz96vkrMT4FVBZJ8pJ4IS+eoErMr0w79U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M3IJUX7w; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=76DW6ZA1eJLyPIZ3Ff65SazzP572eJ8HTZ6/x+IBeLw=; b=M3IJUX7wAaRR4wjy0mXImxvbUL
-	y98kzdGFQstyyubDPtnotEujaBWEeCMqJH5VhD7Qh4NRJoGDFkvOTCEdWplhKYRUVPSFOLad3HKr5
-	MJcle/c8frz6tPVp+HBBULEhbI4vFLbaKIg8GgiBP3nb+k7GpQeAiHvLQSoHR0N+6RhhlA/0w6Xc0
-	rgDgW4TmY9/vmhIFV7wAZyvXCYqkLo5FxgAAl60XIHYHM/TvGrBvf50TAFkCir+xlscsTUjmmdYEN
-	PUiZ7Fj15OyvCYzvySDXoFTPhbWLDyL5P7DrzuQL6XYd9h2iIPueBUhQR9IOtFbCARQfwHzRkLca6
-	ggGXX+6A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sxiop-0000000Gxpz-2g67;
-	Mon, 07 Oct 2024 08:10:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C97CA30088D; Mon,  7 Oct 2024 10:10:15 +0200 (CEST)
-Date: Mon, 7 Oct 2024 10:10:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com
-Subject: Re: [PATCH] sched: Fix typo of head comment of ___update_load_avg
-Message-ID: <20241007081015.GF18071@noisy.programming.kicks-ass.net>
-References: <20241005005245.829133-1-zhouzhouyi@gmail.com>
- <CAKfTPtD7TPYcPcwHxC_n8PObZMgqxU+9=U-F6yJbP0=cLAB8hQ@mail.gmail.com>
+	s=arc-20240116; t=1728288666; c=relaxed/simple;
+	bh=lispu6tim7ilYKQupOCja5YSio/uDDN1rKjKcuVDCGg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rLQWGVtSINp5JO1+wbFiBSjHx4/2UM8h5gwUeHilhCQSGYvN8SvisNu7l2QaNiZUsbNEK9rd3GAjpvmgiNlr108jIgC3HKtmqewtcjtY8eOeN7vGLGg0VTqXdfUiAaxiI8fkPhrPWOu7AYYAqg3jBl4D2FpVmtYnX8P+xNLLth8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qSbQ8grX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C96HFozS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728288658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rc2WRBa9nsOxlON/kWst27eS+j+Ou1jn3dp+OeGc1c4=;
+	b=qSbQ8grXfMsH7c6tRz45ejhi3TWlBwAXSY+LiotmkzilEuiTM9N7ajuHyxP57KYFsNR2Lk
+	TKeGipwNt/+Jk5dJYPamYwDNKbc0gOlYVHhg5YBO5Ptwl1cZOND4l5+kSTuo6Gti0ecPfF
+	SAgyu541WeKsfqfRmvdZe2vcxb6jDrGcr52EjmDGOf5spSjUm0viOTljqCropoCTA1s20B
+	AcJbwmd2mGvzczpMzHXh+2fRuRdbhwwUiTJL0AKiwXoIGJI76bffKGWAlT2F4lMxW4rDsA
+	BtIto1efZbH94gtyIe5TgfNN0EeL/gdaLHt7a+graO0k71yt54YG+WYb/5M67g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728288658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rc2WRBa9nsOxlON/kWst27eS+j+Ou1jn3dp+OeGc1c4=;
+	b=C96HFozSVO1mVAgksYL9+flj8sN1PaCmK4hdeo9ASZIgfDpL7AjSASC4q6dO+EY/7+wqir
+	mwVvmC97bSsV//DA==
+Date: Mon, 07 Oct 2024 10:10:55 +0200
+Subject: [PATCH] selftests/nolibc: start qemu with 1 GiB of memory
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtD7TPYcPcwHxC_n8PObZMgqxU+9=U-F6yJbP0=cLAB8hQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241007-nolibc-qemu-mem-v1-1-c1c2f9acd0f8@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAI6XA2cC/x3MTQqAIBBA4avErBuYRBO6SrToZ6qBtFKKQLp70
+ vJbvJcgchCO0BQJAt8SZfcZVVnAuPZ+YZQpGxQpXRFZ9Psmw4gnuwsdOzQ81WSMIm0V5OoIPMv
+ zH9vufT/9JtAPYQAAAA==
+X-Change-ID: 20241007-nolibc-qemu-mem-5ed605520472
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728288656; l=1917;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=lispu6tim7ilYKQupOCja5YSio/uDDN1rKjKcuVDCGg=;
+ b=m1wJs6YqqjNyJ0GFI8DMGeCXkglP3nCk9iqtHJKO+yLtBnKPpIqckdd3JUfMaz3UjsKBZaoKW
+ twesCn2gwBqANMBouMrkZF34QiStoI5SYSTyaQkNoPMVlWoE+kgGauq
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Mon, Oct 07, 2024 at 08:42:14AM +0200, Vincent Guittot wrote:
-> On Sat, 5 Oct 2024 at 02:53, Zhouyi Zhou <zhouzhouyi@gmail.com> wrote:
-> >
-> > The head comment of ___update_load_avg illustrates the principle of
-> > PELT divider. "unwanted oscillation in the range [1002..1024[" should
-> > be "unwanted oscillation in the range [1002..1024]".
-> >
-> > Fix above typo.
-> 
-> This is not a typo as 1024 is an excluded endpoint of the interval.
-> Some may use [1002..1024) but both [1002..1024[ and [1002..1024) can
-> be used
+Recently the loongarch defconfig stopped working with the default 128 MiB
+of memory. The VM just spins infinitively.
+Increasing the available memory to 1 GiB, similar to s390, fixes the
+issue. To avoid having to do this for each architecture on its own,
+proactively apply to all architectures.
 
-Because I'm weird, I googled this, and the [a,b[ notation is from
-Bourbaki and hence popular in the French speaking world :-)
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ tools/testing/selftests/nolibc/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-We don't have many intervals specified in comments and hence we can't
-make the inconsistent style argument either.
+diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
+index 8de98ea7af8071caa0597aa7b86d91a2d1d50e68..e92e0b88586111072a0e043cb15f3b59cf42c3a6 100644
+--- a/tools/testing/selftests/nolibc/Makefile
++++ b/tools/testing/selftests/nolibc/Makefile
+@@ -130,9 +130,9 @@ QEMU_ARGS_ppc        = -M g3beige -append "console=ttyS0 panic=-1 $(TEST:%=NOLIB
+ QEMU_ARGS_ppc64      = -M powernv -append "console=hvc0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
+ QEMU_ARGS_ppc64le    = -M powernv -append "console=hvc0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
+ QEMU_ARGS_riscv      = -M virt -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
+-QEMU_ARGS_s390       = -M s390-ccw-virtio -m 1G -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
++QEMU_ARGS_s390       = -M s390-ccw-virtio -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
+ QEMU_ARGS_loongarch  = -M virt -append "console=ttyS0,115200 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
+-QEMU_ARGS            = $(QEMU_ARGS_$(XARCH)) $(QEMU_ARGS_BIOS) $(QEMU_ARGS_EXTRA)
++QEMU_ARGS            = -m 1G $(QEMU_ARGS_$(XARCH)) $(QEMU_ARGS_BIOS) $(QEMU_ARGS_EXTRA)
+ 
+ # OUTPUT is only set when run from the main makefile, otherwise
+ # it defaults to this nolibc directory.
 
-So yeah, let it be.. at best its a trigger to get people to better look
-at the code. At worst its one of those triggers that people keep trying
-to mindlessly 'fix', like my use of borken :-)
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241007-nolibc-qemu-mem-5ed605520472
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
