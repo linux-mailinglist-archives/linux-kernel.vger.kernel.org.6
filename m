@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-353823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F865993335
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5E799333D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273441F23D34
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AE31F237AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E03D1DB54B;
-	Mon,  7 Oct 2024 16:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00D1DB54A;
+	Mon,  7 Oct 2024 16:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbgKcnUn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="YDO2iA6g"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676221DA62C;
-	Mon,  7 Oct 2024 16:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2801DACB0;
+	Mon,  7 Oct 2024 16:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318472; cv=none; b=Uymt7fvO+mtmYtAmBxf/i8KPTQ5x6GYLeKKkF9wVGEw0qDfSBVHUWInZPqZRyE1ODEjWgy2Ly3IWO212KYoAsXRj8oq5H5dW9yKCe7B2d4/tQK4Qzecr30rpUrj+G7qTZnyyvdZv2xkDN/IHF3f++kzP2DxF9IjrEFHO8NjOtHY=
+	t=1728318534; cv=none; b=evkqXND1V4sADDURzLwgxe/WwWbV+PQuNUkzTbHzpDpn3gQYg+H2dXlH2JG1riDr3e652V9DDJwOLE6ri45AFmrKRe6W7deYogsDzMpyZH8Xi5/h8hgtCO564FrmdC25sR3CZEXfzrXPSXdavAkcLucAf9hgHKefWbWiuW+/t0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318472; c=relaxed/simple;
-	bh=x1oW3n5t/b/A2xKX8m3gu11wJ95kYfjdEVRLVlS5QSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/CsTXY3vodpiQkVWys3Qld8IXPOMg4TXqyJcskAhlB1an5zKNa8Og973SfF89KnHqoSCNb3PzUHDbNR13zI5kRWU8XX79NrWbInhGbZgL0/hB5ABnLudgIymxzsak7Rbh2n37PNO8LOknVzpXgNgZEvlwIhdkNUjhDL7kevi9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbgKcnUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5458EC4CEC6;
-	Mon,  7 Oct 2024 16:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728318471;
-	bh=x1oW3n5t/b/A2xKX8m3gu11wJ95kYfjdEVRLVlS5QSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RbgKcnUnSFcRGlJ2vo+Z+PJk+mif54xbmJEmk3uVpQR9NUY7fImgKI8VvfYxkeHy1
-	 iaJ5q16l5+PnYHR0+ZvtdRK3gE2v0SBQWPetWRsYWovrildMOGZK2nz1NEMFa6rcI7
-	 33kgosgwEW424iwoC42WYUjgvF6OVviW5YGwZ61bKFmLlojv9KcjIt0jji/2mhSbij
-	 /tv5fPzeNdoZl3EFbwLdWM0FmKv8L9DNmWUwmVYbfws8waZXZAlNxnNE8Nl3BfFWqr
-	 lPe+GCYmDjuld0XCNLRK+H8nyc2UqRc9VwIofrCFMz9ciQG/BqjK9RsJQwjFHhtcoV
-	 UfqNJpDmi09RA==
-Date: Mon, 7 Oct 2024 17:27:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH v2] selftests: sched_ext: Add sched_ext as proper
- selftest target
-Message-ID: <ZwQL1RkyCwNxyqVE@finisterre.sirena.org.uk>
-References: <20241007073133.989166-1-bjorn@kernel.org>
- <ZwQBqlG6MShCkNrU@finisterre.sirena.org.uk>
- <87r08rnbra.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1728318534; c=relaxed/simple;
+	bh=rVbwsO5KaljigcpRJZKzwIeX9VBoFVelJZKeKGjXHx4=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=t1nDtuXOapUwpoHxznlOVjiAmC1yOPUftGu50H3BapGobPSG4V0y9IGeesYhLhIrWVPT6ZxM25CYLdLImkeLRP6GcIJkFK74cVKHnXPAphVZep6gTTy2Lw2X6u/OoIzymuPEqIufF6zqa5AE4SRK3AyzF0TZpAO/WpLxBDEujVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=YDO2iA6g; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=HuoxMRjaBLuwT/6a6tcDA3Z2nPuOO6xI46MVrCuOTSA=; b=YDO2iA6gdbHg2eqfSXbziS5ANH
+	vSNpteSdbC55nia3sUcTGp8veZpMrx6+NyA3GVxgcjoUWlvF00tZ+WSdyS/Y0I8pvR8XGWAK1L00V
+	N+KyWCFE4HWOVqXhxTvAqSudelMIEOLsW9fXpYt9q5seZHH8BA/6i73OffUrxqMUOZMQ=;
+Received: from [70.80.174.168] (port=45258 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1sxqb8-0006qO-JR; Mon, 07 Oct 2024 12:28:39 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: hugo@hugovil.com,
+	andriy.shevchenko@linux.intel.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Konstantin Pugin <ria.freelander@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Date: Mon,  7 Oct 2024 12:27:15 -0400
+Message-Id: <20241007162716.3122912-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5SqJr+ARYPJxKn7Z"
-Content-Disposition: inline
-In-Reply-To: <87r08rnbra.fsf@all.your.base.are.belong.to.us>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH] serial: sc16is7xx: announce support for SER_RS485_RTS_ON_SEND
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
---5SqJr+ARYPJxKn7Z
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When specifying flag SER_RS485_RTS_ON_SEND in RS485 configuration,
+we get the following warning after commit 4afeced55baa ("serial: core:
+fix sanitizing check for RTS settings"):
 
-On Mon, Oct 07, 2024 at 06:00:57PM +0200, Bj=F6rn T=F6pel wrote:
-> Mark Brown <broonie@kernel.org> writes:
+    invalid RTS setting, using RTS_AFTER_SEND instead
 
-> > When building for arm64 with this applied on top of mainline or -next
-> > I'm seeing:
+This results in SER_RS485_RTS_AFTER_SEND being set and the
+driver always write to the register field SC16IS7XX_EFCR_RTS_INVERT_BIT,
+which breaks some hardware using these chips.
 
-> Thanks for taking it for a spin!
+The hardware supports both RTS_ON_SEND and RTS_AFTER_SEND modes, so fix
+this by announcing support for RTS_ON_SEND.
 
-> >    make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -C tools/testin=
-g/selftests TARGETS=3Dsched_ext SKIP_TARGETS=3D"
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Suggested-by: Konstantin Pugin <ria.freelander@gmail.com>
+Link: https://lore.kernel.org/lkml/20240422133219.2710061-2-ria.freelander@gmail.com
+---
 
-Oh, and for arm64 as previously noted the sched_ext config fragment
-odesn't DTRT, merge_config.sh says:
+This patch was part of a series to add support for a new EXAR variant by
+Konstantin, but the final version was never submitted. I need this patch
+for a new revision of our board which has reverse RTS signal compared to the
+old revision.
+---
+ drivers/tty/serial/sc16is7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Value requested for CONFIG_SCHED_DEBUG not in final .config
-Requested value:  CONFIG_SCHED_DEBUG=3Dy
-Actual value:    =20
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index ad88a33a504f..9d0c971e49f5 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1473,7 +1473,7 @@ static int sc16is7xx_setup_mctrl_ports(struct sc16is7xx_port *s,
+ }
+ 
+ static const struct serial_rs485 sc16is7xx_rs485_supported = {
+-	.flags = SER_RS485_ENABLED | SER_RS485_RTS_AFTER_SEND,
++	.flags = SER_RS485_ENABLED | SER_RS485_RTS_ON_SEND | SER_RS485_RTS_AFTER_SEND,
+ 	.delay_rts_before_send = 1,
+ 	.delay_rts_after_send = 1,	/* Not supported but keep returning -EINVAL */
+ };
 
-Value requested for CONFIG_SCHED_CLASS_EXT not in final .config
-Requested value:  CONFIG_SCHED_CLASS_EXT=3Dy
-Actual value:    =20
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+-- 
+2.39.5
 
-Value requested for CONFIG_EXT_GROUP_SCHED not in final .config
-Requested value:  CONFIG_EXT_GROUP_SCHED=3Dy
-Actual value:    =20
-
-Value requested for CONFIG_DEBUG_INFO not in final .config
-Requested value:  CONFIG_DEBUG_INFO=3Dy
-Actual value:    =20
-
-Value requested for CONFIG_DEBUG_INFO_BTF not in final .config
-Requested value:  CONFIG_DEBUG_INFO_BTF=3Dy
-Actual value:    =20
-
---5SqJr+ARYPJxKn7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcEC9QACgkQJNaLcl1U
-h9C3xAf6AwFHej9Yp+45Zx7N58Nweo6FPmkTT+Jshlja6vZYMeVf82rFI2+n5p3w
-8bTCQ/Nf9OgyFrbJF9lDXUVCNAWh7/VnQvhvnINGTmNKLhsjQpWdCcTcHsuVR+Lt
-g14lxMDvrqzE5t9UowfeB1CtFQDPyGzItMwFmZkXGmY+MBRUDTuw9Men4cTafqCr
-025RguRmgBO6cbNhDkxEdbC41ZUbnNwGt/pV0P75EZxHqyjuUkFj3ajGEeXcJAP6
-TpVIWd/2YR9RTAZMVLm0uth7Zi7zlmqxn4bKu19QYiKj6YQKQKjrZWaOWjxYA0UG
-jLrjYvwY89ZEwnRNtI/ESEaqjJm+Vw==
-=So6V
------END PGP SIGNATURE-----
-
---5SqJr+ARYPJxKn7Z--
 
