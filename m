@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-353185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3E0992A02
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:07:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0415A9929DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7D71F2315A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBE01F22DEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B91D1E89;
-	Mon,  7 Oct 2024 11:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8AD1D172E;
+	Mon,  7 Oct 2024 11:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bkfsrNLI"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jmMUycRd"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C5115D5C1;
-	Mon,  7 Oct 2024 11:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800013FBA5;
+	Mon,  7 Oct 2024 11:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299253; cv=none; b=lOpzdhNbdBhxO3rsHtz5kSPdf326u7lDjwZ0EXPAhfrhgpmfOCKoaRU/1a/knhdLepQt9NS9qcHqjZglFvL6Jduj2VAw6tT4rxaOdiGf+Dl/VHf8vDoPFNyuCgYEAmAqgwZG/QJ8fSS7ja16qrYzWREKAHqkZbBs4hGVSKFn7HQ=
+	t=1728298966; cv=none; b=OJYDtsHHmqKfisTcsg3xHS7aloIsETDVhUmPDGrOGl+5ZnA2TErEQ8n9JRjS6hRzt13ptjGfTyHFaBh+WZCd2M6LXeg1OY6qysUtstXZlVBHUKiHYY0qF5xVkzGtM80nwOa78BIiSY9fmYvJYNT8g8JB2QlbpHu/si0Ey0N48+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299253; c=relaxed/simple;
-	bh=WIsUAcB6g5ekP+h/5Qa+2MJuGTsIxkOO9FCOSqFplbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FeqHJRyH+bzbck0GK6v0vaJpD+j29oE6HSR9aXVRhMuN5/z/vmIfzR/aPF3EdzATJyApKc9rNwM9xjIVSlnUqD1Y6vwr2Ky5rBTQBp5Ux9udLbr6QKxCoCFZ7VfioFISmePHKDNJmow29DS1j/yD8APtsPPjhO+v3RKP3xGqMRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bkfsrNLI; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4979nq3s003196;
-	Mon, 7 Oct 2024 11:02:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=H
-	lfaUppSnhlYTBtOdNhHzLyqLgKPEpMIJGf6GhYDUFw=; b=bkfsrNLIIeP81w49E
-	sxCVoSfOA7o54mDxq4BSn4bML01kfdUMKoCShlwoOa15wuNnxA3sgyyST7y9qkHu
-	+f8xWn16qZ0+yF38M8MjKCAaaHxg+mKjQuRIU2X+B/rWbg4Du92yGBZyriPAWgny
-	ohZbqT+c/Vl2giYVVpNjNuAxv2s+9A0o5l/U18MwD6MpDsCLq+m8YwJRjrYTwLr0
-	5nNqyxbxLrRZCWIsxKF8WeH4fuR84sxHuLC9VZ7rxiaNpZV0Urot/wXaWBMoxDBm
-	4wJZrCkSr7m3s+yM4eNouk/0lr2VOmp+3U+yn4N6dxNFVhHbdwkb3Jp33P5XcWWI
-	3LB4w==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 424dbv8bkk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 11:02:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 497Au0CT011512;
-	Mon, 7 Oct 2024 11:02:05 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5xe745-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 11:02:05 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 497B23iW41812290
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Oct 2024 11:02:03 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC56958056;
-	Mon,  7 Oct 2024 11:02:03 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9CF4B58052;
-	Mon,  7 Oct 2024 11:02:03 +0000 (GMT)
-Received: from [9.61.253.216] (unknown [9.61.253.216])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  7 Oct 2024 11:02:03 +0000 (GMT)
-Message-ID: <e1b6c598-0200-49b3-b1af-176826a5e83f@linux.ibm.com>
-Date: Mon, 7 Oct 2024 06:02:03 -0500
+	s=arc-20240116; t=1728298966; c=relaxed/simple;
+	bh=FRySkjQzO6lfk1QnDsoJoJYyGOnf6qBzb2WynHvIQlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9EkTu5yw9Ne8uKSkgc84wL+UjlAZ5ONLh7sN0JYr1lQG7fPZurxOB/4Zk5rPqM7iFK+0QoAVM7A7Xf/L4ihYIGcFk7eXjQqILKOgDqEWL4S86Reg8r43qSH4Epjt8KKwQC/GpVHJB1IEbKaugGK/1JXVdKd7D83Fy+WNR9UKuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jmMUycRd; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=4UdrlcSM0R9sIwpXI9mXRLqDoDJqEckyOHQSRBFfszo=; b=jmMUycRdrju7lfyC
+	6cziNsZ8IoScMbK/7hxxP/20Fzbwuo/vZ7CYIkwcDsDfI17PRbue7THHymb20Mc0sGGaQHwVjKiNQ
+	ZdXabwZ9CDftFO2V3jXzj6XhVq5p73BSqlRZEYSni7c9Hpz+Mc6KtO0qVWHO4oS3T5IMMHLL2Evtz
+	i7+6P/nBNCrBNIaTmU7PWfoHH48/lEjZ+iHA/3nmQVdvu0Sdz87+UGvE2Tth0OIShgUpJaByoLKIJ
+	YCMltCKMtZ7jlGUrG9kso09d1kAvkyVNJQmfTtZ66QJ0xlaw2Q7TYqC0cqiAEiJXPx1j4A/QsMT8l
+	iJtzmcdkNHfEx610aA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sxlVY-009QFo-0K;
+	Mon, 07 Oct 2024 11:02:32 +0000
+Date: Mon, 7 Oct 2024 11:02:32 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+Cc: johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cfg80211: Remove unused cfg80211_background_cac_abort
+Message-ID: <ZwO_yAmGLB5aqgXR@gallifrey>
+References: <20241006225303.121445-1-linux@treblig.org>
+ <20241006225303.121445-2-linux@treblig.org>
+ <831a7a48-2fed-c84c-dee5-8e74735309fb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] crypto: Fix data mismatch over ipsec tunnel
- encrypted/decrypted with ppc64le AES/GCM module.
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, stable@vger.kernel.org, leitao@debian.org,
-        nayna@linux.ibm.com, appro@cryptogams.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
-References: <20240923133040.4630-1-dtsen@linux.ibm.com>
- <ZwDQLmwA1LvWx5Dg@gondor.apana.org.au>
-Content-Language: en-US
-From: Danny Tsen <dtsen@linux.ibm.com>
-In-Reply-To: <ZwDQLmwA1LvWx5Dg@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Fh1jG0QpfSRCnmdfj-GbvttqGPMGgb90
-X-Proofpoint-GUID: Fh1jG0QpfSRCnmdfj-GbvttqGPMGgb90
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-07_01,2024-10-07_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0 adultscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070076
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <831a7a48-2fed-c84c-dee5-8e74735309fb@quicinc.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 11:02:02 up 151 days, 22:16,  1 user,  load average: 0.17, 0.08,
+ 0.02
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Thanks Herbert.
+* Vasanthakumar Thiagarajan (quic_vthiagar@quicinc.com) wrote:
+> 
+> 
+> On 10/7/2024 4:23 AM, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > cfg80211_background_cac_abort() is unused.
+> > It got renamed from cfg80211_offchan_cac_abort by commit
+> > a95bfb876fa8 ("cfg80211: rename offchannel_chain structs to background_chain to avoid confusion with ETSI standard")
+> > 
+> > and that was originally added in commit
+> > 1507b1531981 ("cfg80211: move offchan_cac_event to a dedicated work")
+> > but never used.
+> > 
+> > To me it looks like the queue is still used (I see a queue_work
+> > in __cfg80211_radar_event), so I think it's just the wrapper that's
+> > unused.
+> > 
+> > Remove cfg80211_background_cac_abort.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >   include/net/cfg80211.h | 9 ---------
+> >   net/wireless/mlme.c    | 8 --------
+> >   2 files changed, 17 deletions(-)
+> > 
+> > diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+> > index 69ec1eb41a09..fd843a519329 100644
+> > --- a/include/net/cfg80211.h
+> > +++ b/include/net/cfg80211.h
+> > @@ -8752,15 +8752,6 @@ void cfg80211_cac_event(struct net_device *netdev,
+> >   			enum nl80211_radar_event event, gfp_t gfp,
+> >   			unsigned int link_id);
+> > -/**
+> > - * cfg80211_background_cac_abort - Channel Availability Check offchan abort event
+> > - * @wiphy: the wiphy
+> > - *
+> > - * This function is called by the driver when a Channel Availability Check
+> > - * (CAC) is aborted by a offchannel dedicated chain.
+> > - */
+> > -void cfg80211_background_cac_abort(struct wiphy *wiphy);
+> > -
+> >   /**
+> >    * cfg80211_gtk_rekey_notify - notify userspace about driver rekeying
+> >    * @dev: network device
+> > diff --git a/net/wireless/mlme.c b/net/wireless/mlme.c
+> > index 4dac81854721..8ec236bbbc7c 100644
+> > --- a/net/wireless/mlme.c
+> > +++ b/net/wireless/mlme.c
+> > @@ -1226,14 +1226,6 @@ void cfg80211_background_cac_abort_wk(struct work_struct *work)
+> >   				      NL80211_RADAR_CAC_ABORTED);
+> >   }
+> > -void cfg80211_background_cac_abort(struct wiphy *wiphy)
+> > -{
+> > -	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
+> > -
+> > -	queue_work(cfg80211_wq, &rdev->background_cac_abort_wk);
+> > -}
+> > -EXPORT_SYMBOL(cfg80211_background_cac_abort);
+> > -
+> 
+> We have an internal WIP ath driver implementation for background radar feature
+> calling this function to notify the background CAC abort state. There is definitely
+> real use case for this function.
 
--Danny
+OK, fair enough.
 
-On 10/5/24 12:35 AM, Herbert Xu wrote:
-> On Mon, Sep 23, 2024 at 09:30:37AM -0400, Danny Tsen wrote:
->> Fix data mismatch over ipsec tunnel encrypted/decrypted with ppc64le AES/GCM module.
->>
->> This patch is to fix an issue when simd is not usable that data mismatch
->> may occur. The fix is to register algs as SIMD modules so that the
->> algorithm is excecuted when SIMD instructions is usable.
->>
->> A new module rfc4106(gcm(aes)) is also added. Re-write AES/GCM assembly
->> codes with smaller footprints and small performance gain.
->>
->> This patch has been tested with the kernel crypto module tcrypt.ko and
->> has passed the selftest.  The patch is also tested with
->> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
->>
->> Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
->> Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
->> Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
->>
->> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
->>
->> Danny Tsen (3):
->>    crypto: Re-write AES/GCM stitched implementation for ppcle64.
->>    crypto: Register modules as SIMD modules for ppcle64 AES/GCM algs.
->>    crypto: added CRYPTO_SIMD in Kconfig for CRYPTO_AES_GCM_P10.
->>
->>   arch/powerpc/crypto/Kconfig            |    2 +-
->>   arch/powerpc/crypto/aes-gcm-p10-glue.c |  141 +-
->>   arch/powerpc/crypto/aes-gcm-p10.S      | 2421 +++++++++++-------------
->>   3 files changed, 1187 insertions(+), 1377 deletions(-)
->>
->> -- 
->> 2.43.0
-> All applied.  Thanks.
+What about the other patch?
+
+Dave
+
+> Vasanth
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
