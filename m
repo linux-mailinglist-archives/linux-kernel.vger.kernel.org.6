@@ -1,227 +1,194 @@
-Return-Path: <linux-kernel+bounces-352969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239F39926A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BFE9926AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472231C223A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E575281239
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C9B188736;
-	Mon,  7 Oct 2024 08:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8159C188700;
+	Mon,  7 Oct 2024 08:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXUKKJWm"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSBUatO0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FDC18732B;
-	Mon,  7 Oct 2024 08:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD736187332;
+	Mon,  7 Oct 2024 08:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288441; cv=none; b=pvd4pExffe4dJthsIXTQdgxBI3dlmBra3UT4yzCq0jnPhiBk61dVC/45ji4u9WNyYPLbaPXK/RRa2/OQt7hEVhXSS4gKsYQeLO37bz/eSQOeGDPc0tYUzZSEsE/BQ4zQan9gJtZDunz5oFmQWV2p1Y9jH9nbJCHnk4ft/XltOwM=
+	t=1728288486; cv=none; b=lPV9G39G+Xtlg5tI/LvU9Awfv4I8gvlXEY3JI7oYpkwZXy+p9ijDgNJWVsjqKayod04Wmbw1+VG5d3mVrNHyyvB/ix56w90cme/ZPBk674lS7TXUjtjJ8aKT2oNGa1tpVjW6rBH+fx2NUuW908RihfJmGGx23pWHAObkqceNSdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288441; c=relaxed/simple;
-	bh=jYk4qTv8kAO5SLDx69XdaqTCkdLRACIjygpJLLT8lMc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JmsaX9gy/48rsCnVsghJVy3WaATrzbBJ40/Uh+82oNrnZ+M9CpKqHHjps5lH9z+FZiRMU7N6gn/VzBr9qxRSr1UhseVn8blusRUVF9D6UxZtRxiO9lyfCoO2cVdWIB4GjsejgVlatYUENndVLH+HXhHPaBK6M2cQqbFK+OTvwV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXUKKJWm; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so41773355e9.3;
-        Mon, 07 Oct 2024 01:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728288437; x=1728893237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ja9w7vdCtDERzAoUGyjJRlwbo3h/9osUMg9vAVY7lrg=;
-        b=JXUKKJWmCbK1cho5KaHHPIaFl+VA+GxJAQttxW0EQJ0ab8wT5HDW23jqR2ctTgsjlK
-         1tuyUrzVOQ1dOT7W4S/dMrzEkRoz+vFDl8YZfQH7QlJFHFkLJfj5dq1gQMLKPYYecbNh
-         m0wYdg8pYkkSwa0DMkze8yEACjEZUbCXDkP35e2KgwXR+dDjijsjMJDbGGlFn3Qo/20i
-         wFQ8seRGoXQ2/fmdpM16uHT4+WKal22478JR9nDoZLYGezliQyP92cGFKXYv0xtMt/qD
-         JDjc/o+FSkGiZAi/nDqSATCzBnsLGx4WMpSdfUYdchXVhhGnmKC9ku9vjlFD6CY2vzd0
-         uqHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728288437; x=1728893237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ja9w7vdCtDERzAoUGyjJRlwbo3h/9osUMg9vAVY7lrg=;
-        b=oe+cuOcyXsfgihsU+pvk7a329kTSSHap2rgWSaEbMakpWmvpU2KucgEZcVc6e1YrKa
-         heJ/qKihilr+hm0us1CxXZnjc2qVd/jRHWV/T5WkW7Emq8h00xfxW716JVC5ds/Wt+F+
-         f0mOu1BZcVOJ72agtNrnrB+4bvApDcTxI+4MaBUhb0194UrgUiAcBRFY6w8IRo2JMt5U
-         UY5NnqRKsF2DlFRkrOb3RT7HP02SsV5lZL1LLtxqZWZQ4OGgLDs/Sbor4RGy9Ws6cT2U
-         yq9bt/ENz5+ytpP96WNBT5V2q8ssB19hnZtYvx8uvPlMyr47i7uGP25pA0/2h3mFyVTQ
-         zLYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMdkKUTg5StZTd33wu/Sep2pbtSvoxPABAi/SxjCfQlwfebrEDL+WhS25SD09Ouz+U/BSKqDjXNir+jVMY@vger.kernel.org, AJvYcCVufFfsSRdyKTI+MPbvH8FEHYIzcHoJ1w+21jimRS3JX80JDnwiBtSMNuVR5FrOnhCdynh8trAfR2bn77qvviEg@vger.kernel.org, AJvYcCW6eCrkvLpK4Mk1ktzi9AeRMN43Jx0awvu+rHJQuE24Y5jf6Gg9k+4iI/CMtnQpn6zqIb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTc/rbYljCxsCh1Z4ufSTIbuipPCLbsmdsSZNwaARVob2Z316a
-	ntuNtM3S7u2YlbpAuCFtC2Ji+ggooeKp47Lif+cFfGT6kPw0TFth
-X-Google-Smtp-Source: AGHT+IGSZXGhFxXfwLuS2KmWGon7scorT641BYrPKbpsyplMaCJjjvTl27nzQjR/VfC+jJ97tU13AQ==
-X-Received: by 2002:a05:600c:1c10:b0:42c:b62c:9f36 with SMTP id 5b1f17b1804b1-42f85a6d528mr87316785e9.5.1728288437146;
-        Mon, 07 Oct 2024 01:07:17 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a56dsm5116236f8f.41.2024.10.07.01.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 01:07:16 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 7 Oct 2024 10:07:15 +0200
-To: tyrone-wu <wudevelops@gmail.com>
-Cc: laoar.shao@gmail.com, andrii.nakryiko@gmail.com, andrii@kernel.org,
-	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
-	kernel-patches-bot@fb.com, kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	martin.lau@linux.dev, mykolal@fb.com, olsajiri@gmail.com,
-	sdf@fomichev.me, shuah@kernel.org, song@kernel.org,
-	yonghong.song@linux.dev
-Subject: Re: [PATCH bpf v5 1/2] bpf: fix unpopulated name_len field in
- perf_event link info
-Message-ID: <ZwOWs_XrBtlTGE24@krava>
-References: <CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com>
- <20241006195131.563006-1-wudevelops@gmail.com>
+	s=arc-20240116; t=1728288486; c=relaxed/simple;
+	bh=Jj+bA/iDpKmZb0BWsx4i5xD4QtvKKl6H4sm84kO751s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XBF8FU7vk4/biU10q42AYdKYzGvY4qUzCYpLlaW+BDPoo3TjI4F/74mat7TLJuHSxGWHPLS7s5j8rBQojrNskaYcmkp/YyhoIwcfP1P9x1igXeJtkOyqrWLa5JnZNEeVx5TAvKqD8Lura9r8buD/bhRjKO2lC6tEHk5kyGG/6l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSBUatO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E985C4CEC6;
+	Mon,  7 Oct 2024 08:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728288486;
+	bh=Jj+bA/iDpKmZb0BWsx4i5xD4QtvKKl6H4sm84kO751s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SSBUatO0qMA5dwFmh8IuLOyc7n5tIKqA2wt4O/zfGXHKcKYOZerci4Z76ljfggMxc
+	 EUeu/tC8AmSPGGTVkYP5FvJuXTQkM6nPbST+BStybCFdaZ1V5egNlRRcp0Uc3rroXz
+	 8g7IInruEhFSW+tjIHXeCmSWuu+cwgWBA0kp0npQoSa9dP6V1Oj7RHXz8kyQ7U9Pty
+	 bBbQJuqnhg/Ant9iT/xEm2Tz7vL6xlwmKyvDmTO8eCeF+Cw0N7ocJSvXsYdcllQVz/
+	 I7c+a4NHzoGbyu/dvKORakrrUlo2VihEZXOFexj1yyxExL6jIQWodQVYR4iyeGi6EP
+	 lHRmLpAmGWz1g==
+Date: Mon, 7 Oct 2024 17:07:55 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
+ <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, Will
+ Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, Mike Leach
+ <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren
+ <guoren@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nick
+ Terrell <terrelln@fb.com>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+ Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>,
+ Daniel Bristot de Oliveira <bristot@kernel.org>, Daniel Wagner
+ <dwagner@suse.de>, Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev
+ <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Kajol Jain <kjain@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Bibo
+ Mao <maobibo@loongson.cn>, Anup Patel <anup@brainfault.org>, Atish Patra
+ <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>,
+ Oliver Upton <oliver.upton@linux.dev>, "Steinar H. Gunderson"
+ <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Chen Pei
+ <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, Yury Norov
+ <yury.norov@gmail.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 16/31] perf dwarf-regs: Pass accurate disassembly
+ machine to get_dwarf_regnum
+Message-Id: <20241007170755.03697b9178ed3dcac24dfa21@kernel.org>
+In-Reply-To: <20241005195541.380070-17-irogers@google.com>
+References: <20241005195541.380070-1-irogers@google.com>
+	<20241005195541.380070-17-irogers@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006195131.563006-1-wudevelops@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 07:51:30PM +0000, tyrone-wu wrote:
-> Previously when retrieving `bpf_link_info.perf_event` for
-> kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
-> kernel, leaving it to reflect the value initially set by the user. This
-> behavior was inconsistent with how other input/output string buffer
-> fields function (e.g. `raw_tracepoint.tp_name_len`).
+On Sat,  5 Oct 2024 12:55:26 -0700
+Ian Rogers <irogers@google.com> wrote:
+
+> Rather than pass 0/EM_NONE, use the value computed in the disasm
+> struct arch. Switch the EM_NONE case to EM_HOST, rewriting EM_NONE if
+> it were passed to get_dwarf_regnum. Pass a flags value as
+> architectures like csky need the flags to determine the ABI variant.
 > 
-> This patch fills `name_len` with the actual size of the string name.
-> 
-> Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
-> Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
-> Signed-off-by: tyrone-wu <wudevelops@gmail.com>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+Does this change the command output when we use it for cross-build
+environment? E.g. remote arch is different from host arch? If so,
+please add output examples with/without this change.
+
+Thank you,
+
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
-> V4 -> V5:
-> Link: https://lore.kernel.org/bpf/CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCWiOVqTKmdZp-Q@mail.gmail.com/
-> - Check that buf is not NULL before retrieving/using its length
+>  tools/perf/util/annotate.c           | 6 +++---
+>  tools/perf/util/dwarf-regs.c         | 8 ++++++--
+>  tools/perf/util/include/dwarf-regs.h | 5 +++--
+>  3 files changed, 12 insertions(+), 7 deletions(-)
 > 
-> V3 -> V4:
-> Link: https://lore.kernel.org/bpf/Zv_PP6Gs5cq3W2Ey@krava/
-> - Split patch into separate kernel and selftest change
-> 
-> V2 -> V3:
-> Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
-> - Use clearer variable name for user set/inputted name len (name_len -> input_len)
-> - Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
-> 
-> V1 -> V2:
-> Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
-> - Use user set *ulen in bpf_copy_to_user before overwriting *ulen
-> 
->  kernel/bpf/syscall.c | 38 ++++++++++++++++++++++++--------------
->  1 file changed, 24 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index a8f1808a1ca5..3df192a6bdcc 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -3565,32 +3565,35 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 37ce43c4eb8f..b1d98da79be8 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2292,7 +2292,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
+>  	if (regname == NULL)
+>  		return -1;
+>  
+> -	op_loc->reg1 = get_dwarf_regnum(regname, 0);
+> +	op_loc->reg1 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
+>  	free(regname);
+>  
+>  	/* Get the second register */
+> @@ -2305,7 +2305,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
+>  		if (regname == NULL)
+>  			return -1;
+>  
+> -		op_loc->reg2 = get_dwarf_regnum(regname, 0);
+> +		op_loc->reg2 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
+>  		free(regname);
+>  	}
+>  	return 0;
+> @@ -2405,7 +2405,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
+>  				return -1;
+>  
+>  			if (*s == arch->objdump.register_char)
+> -				op_loc->reg1 = get_dwarf_regnum(s, 0);
+> +				op_loc->reg1 = get_dwarf_regnum(s, arch->e_machine, arch->e_flags);
+>  			else if (*s == arch->objdump.imm_char) {
+>  				op_loc->offset = strtol(s + 1, &p, 0);
+>  				if (p && p != s + 1)
+> diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
+> index 7c01bc4d7e5b..1321387f6948 100644
+> --- a/tools/perf/util/dwarf-regs.c
+> +++ b/tools/perf/util/dwarf-regs.c
+> @@ -70,7 +70,7 @@ __weak int get_arch_regnum(const char *name __maybe_unused)
 >  }
 >  
->  static int bpf_perf_link_fill_common(const struct perf_event *event,
-> -				     char __user *uname, u32 ulen,
-> +				     char __user *uname, u32 *ulen,
->  				     u64 *probe_offset, u64 *probe_addr,
->  				     u32 *fd_type, unsigned long *missed)
+>  /* Return DWARF register number from architecture register name */
+> -int get_dwarf_regnum(const char *name, unsigned int machine)
+> +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags __maybe_unused)
 >  {
->  	const char *buf;
-> -	u32 prog_id;
-> +	u32 prog_id, input_len;
->  	size_t len;
->  	int err;
+>  	char *regname = strdup(name);
+>  	int reg = -1;
+> @@ -84,8 +84,12 @@ int get_dwarf_regnum(const char *name, unsigned int machine)
+>  	if (p)
+>  		*p = '\0';
 >  
-> -	if (!ulen ^ !uname)
-> +	if (!(*ulen) ^ !uname)
->  		return -EINVAL;
+> +	if (machine == EM_NONE) {
+> +		/* Generic arch - use host arch */
+> +		machine = EM_HOST;
+> +	}
+>  	switch (machine) {
+> -	case EM_NONE:	/* Generic arch - use host arch */
+> +	case EM_HOST:
+>  		reg = get_arch_regnum(regname);
+>  		break;
+>  	default:
+> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
+> index f4f87ded5e3d..ee0a734564c7 100644
+> --- a/tools/perf/util/include/dwarf-regs.h
+> +++ b/tools/perf/util/include/dwarf-regs.h
+> @@ -93,12 +93,13 @@ int get_arch_regnum(const char *name);
+>   * name: architecture register name
+>   * machine: ELF machine signature (EM_*)
+>   */
+> -int get_dwarf_regnum(const char *name, unsigned int machine);
+> +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags);
 >  
->  	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
->  				      probe_offset, probe_addr, missed);
->  	if (err)
->  		return err;
-> -	if (!uname)
-> -		return 0;
-> +
->  	if (buf) {
-> +		input_len = *ulen;
->  		len = strlen(buf);
-> -		err = bpf_copy_to_user(uname, buf, ulen, len);
-> -		if (err)
-> -			return err;
-> -	} else {
-> -		char zero = '\0';
-> +		*ulen = len + 1;
+>  #else /* HAVE_LIBDW_SUPPORT */
 >  
-> +		if (uname) {
-> +			err = bpf_copy_to_user(uname, buf, input_len, len);
-> +			if (err)
-> +				return err;
-> +		}
-> +	} else if (uname) {
-> +		char zero = '\0';
->  		if (put_user(zero, uname))
->  			return -EFAULT;
->  	}
-
-hm, why not just simple check buf for and keep the rest? seems less complicated..
-
-jirka
+>  static inline int get_dwarf_regnum(const char *name __maybe_unused,
+> -				   unsigned int machine __maybe_unused)
+> +				   unsigned int machine __maybe_unused,
+> +				   unsigned int flags __maybe_unused)
+>  {
+>  	return -1;
+>  }
+> -- 
+> 2.47.0.rc0.187.ge670bccf7e-goog
+> 
 
 
----
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a8f1808a1ca5..e393b94b90ec 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
- }
- 
- static int bpf_perf_link_fill_common(const struct perf_event *event,
--				     char __user *uname, u32 ulen,
-+				     char __user *uname, u32 *ulen,
- 				     u64 *probe_offset, u64 *probe_addr,
- 				     u32 *fd_type, unsigned long *missed)
- {
- 	const char *buf;
--	u32 prog_id;
-+	u32 prog_id, input_len;
- 	size_t len;
- 	int err;
- 
--	if (!ulen ^ !uname)
-+	if (!(*ulen) ^ !uname)
- 		return -EINVAL;
- 
- 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
- 				      probe_offset, probe_addr, missed);
- 	if (err)
- 		return err;
-+	if (buf) {
-+		input_len = *ulen;
-+		len = strlen(buf);
-+		*ulen = len + 1;
-+	}
- 	if (!uname)
- 		return 0;
- 	if (buf) {
--		len = strlen(buf);
--		err = bpf_copy_to_user(uname, buf, ulen, len);
-+		err = bpf_copy_to_user(uname, buf, input_len, len);
- 		if (err)
- 			return err;
- 	} else {
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
