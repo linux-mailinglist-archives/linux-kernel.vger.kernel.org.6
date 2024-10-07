@@ -1,305 +1,147 @@
-Return-Path: <linux-kernel+bounces-352857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2999799254D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:01:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C43A992552
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6941C2217C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:01:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD621B20A4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E956170A37;
-	Mon,  7 Oct 2024 07:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E4115DBC1;
+	Mon,  7 Oct 2024 07:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DgxQvMMD"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gctuq3im"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC94139CF2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFB86FC5;
+	Mon,  7 Oct 2024 07:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284473; cv=none; b=c6kQJhnHP+aoFXLVUmZtSYJX0RJ7mBwe1KVuXunmBFfZNCtGnZIj7TDJdhELGVFT669MIA/H8XemvU89tD4jrNxwNzG8rz3vuNurVYbhnGEKI2P89vbBST4oJtVa5bmLmAkmRQJzCQxuQqBNzU1VAOvBukAVd7JuIwqE6pdIcTg=
+	t=1728284613; cv=none; b=eChL5+xfBgD2RLptFVCl4WEN3GJOqtu2kTAt6sBdxLvq1axdLaep0u1HYVAzPNqy3pPkfwAxH5Nj0YUFleN4tChCIc3JUkOL+R/623Tsp4z/2HrGM2ZAwXY8QbsFI8CXpk41FTckmvWnWsrQYsGig51+AgH5JTJQM13WnV+VdgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284473; c=relaxed/simple;
-	bh=EZcGHkBZvvyO2Gk5UFsCNx2Ee/GfvK3KVztWNJcGHNc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A7W3s6z2owfskOb0AdHBVHFgHDyPAC7LCEB2whUvbsSCuIRH45Icp/nci/W78g2HjQ3ShtMuzoq1RUL40y0HnYRFQ32yaX2we+lrSwxTCd7QLMRn0pi3prBza2ddnecbAidrTG7A2ky9pc6qvPndENzV/8cD8ZNsAK8o6CVsO7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DgxQvMMD; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: eb9f13fe847911ef8b96093e013ec31c-20241007
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=HUAoNHkgqgr0AnMY6wJzpTNO+6y1bdxYcYe4IvYKdOQ=;
-	b=DgxQvMMDq6501DwPuHXMNHIO4zlypUW+2FK9m59bt+Rt5hTr8RrGk/2SWKaHzkhPrDvoY/rXqHrf+Qc91aXzDxNFI1j/KvsnZLgMREysi+fcjRZ6VYntT83vqM4Eb2WKapN2t1cBZm2tzKWMC96DTc8kpHHGnFNYKPsMwTJXzgg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:76d29a7c-0211-43de-8b7a-821bb7db960e,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:4c7f6526-5902-4533-af4f-d0904aa89b3c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: eb9f13fe847911ef8b96093e013ec31c-20241007
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1411766351; Mon, 07 Oct 2024 15:01:05 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 7 Oct 2024 15:01:03 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 7 Oct 2024 15:01:03 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Adam Thiede <me@adamthiede.com>, Yassine Oudjana
-	<yassine.oudjana@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Shawn Sung <shawn.sung@mediatek.com>, Alper Nebi Yasak
-	<alpernebiyasak@gmail.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
- Lin <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v9 5/5] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-Date: Mon, 7 Oct 2024 15:01:01 +0800
-Message-ID: <20241007070101.23263-6-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241007070101.23263-1-jason-jh.lin@mediatek.com>
-References: <20241007070101.23263-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1728284613; c=relaxed/simple;
+	bh=yin3X0p6KndC3LjC8KR6JekjL9QgLk0AL3Q16Hmhr0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDYGz8a7SjLZCeXiYyLELDaEVR+2zo4p1fky2+Q3jmDDzVE/cCVUvbVVaMKflm+gi838YRwLVGRGIckakXZD0bBwvSj8gSzqVcDhz96woh/tIipLzdjkCSeI90dvoriugXJTTnfl8HKcmXqqJl93s5fVSfUpRUdW4uI/pHK/Dh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gctuq3im; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9431CC4CEC6;
+	Mon,  7 Oct 2024 07:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728284613;
+	bh=yin3X0p6KndC3LjC8KR6JekjL9QgLk0AL3Q16Hmhr0s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gctuq3imdLEkUCABrzaDk0vdQmJ1kVqVZJeKRSLm+/vyliBjAVZ8Tkt/PrJFGj3An
+	 VNrSc7VqNO1HJ4hs08VqZcHQN5B1BqUOuMD6++1tRcK3si0SAotr3IGlzsXIVpuWim
+	 QMP1W0q3pTHwa/DWFQd2+d28iNlL5hubUt7HQe2DCi0wvj4RJKLGVXoPxOLzgufPQx
+	 F9WQk2HOczkl+dOFCznoOA6oIGS5PE6UdO75mZfHYg2tXX/47Pl0tZm198AA0YqBNK
+	 QaRDAqBYXlyrvE3+Moc4dLFEbhaPrYT046DoGkvtUC3UMoBYGkaWTZTLA64WLMJNxK
+	 exvn6AOm+906Q==
+Message-ID: <e1aaf325-2bdc-4b3b-a955-35a313b44255@kernel.org>
+Date: Mon, 7 Oct 2024 09:03:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] dt-bindings: mtd: davinci: convert to yaml
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241006-ondie-v4-0-ff9b9fd9a81d@gmail.com>
+ <20241006-ondie-v4-2-ff9b9fd9a81d@gmail.com>
+ <deeflg5wd756tkfr6zdta4imuc7ijwl56yclfwiqexlqdq6jsk@5za5g6i7wj6k>
+ <ZwN_2LsLep_mXUgy@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZwN_2LsLep_mXUgy@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since some SoCs support premultiplied pixel formats but some do not,
-the blend_modes parameter is added to mtk_plane_init(), which is
-obtained from the mtk_ddp_comp_get_blend_modes function implemented
-in different blending supported components.
+On 07/10/2024 08:29, Marcus Folkesson wrote:
+> On Mon, Oct 07, 2024 at 08:07:27AM +0200, Krzysztof Kozlowski wrote:
+>> On Sun, Oct 06, 2024 at 03:05:47PM +0200, Marcus Folkesson wrote:
+>>> +  ti,davinci-nand-use-bbt:
+>>> +    type: boolean
+>>> +    description:
+>>> +      Use flash based bad block table support. OOB identifier is saved in OOB
+>>> +      area.
+>>> +    deprecated: true
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - ti,davinci-chipselect
+>>> +
+>>> +additionalProperties: true
+>>
+>> That's a final device schema, this cannot be true. Why you are doing
+>> this entirely different than all other bindings?
+> 
+> From my understanding, additionalProperties is to indicate that the
+> schema could contain properties that were not explicit listed here but
+> inherited from e.g. nand-controller.yaml.
+> 
+> Obviously that is not the case.
+> Could you please give me some guidance?
 
-The blending supported components can use driver data to set the
-blend mode capabilities for different SoCs.
+I suggested - open any other binding. What is there? What was the exact
+error automation reported to you *twice*?
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c             |  1 +
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c         |  2 ++
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h         | 10 ++++++++++
- drivers/gpu/drm/mediatek/mtk_disp_drv.h         |  2 ++
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.c            |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.h            |  1 +
- drivers/gpu/drm/mediatek/mtk_plane.c            | 15 +++++++--------
- drivers/gpu/drm/mediatek/mtk_plane.h            |  4 ++--
- 10 files changed, 46 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 175b00e5a253..b65f196f2015 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -913,6 +913,7 @@ static int mtk_crtc_init_comp_planes(struct drm_device *drm_dev,
- 				BIT(pipe),
- 				mtk_crtc_plane_type(mtk_crtc->layer_nr, num_planes),
- 				mtk_ddp_comp_supported_rotations(comp),
-+				mtk_ddp_comp_get_blend_modes(comp),
- 				mtk_ddp_comp_get_formats(comp),
- 				mtk_ddp_comp_get_num_formats(comp), i);
- 		if (ret)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index be66d94be361..edc6417639e6 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -363,6 +363,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl = {
- 	.layer_config = mtk_ovl_layer_config,
- 	.bgclr_in_on = mtk_ovl_bgclr_in_on,
- 	.bgclr_in_off = mtk_ovl_bgclr_in_off,
-+	.get_blend_modes = mtk_ovl_get_blend_modes,
- 	.get_formats = mtk_ovl_get_formats,
- 	.get_num_formats = mtk_ovl_get_num_formats,
- };
-@@ -416,6 +417,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl_adaptor = {
- 	.disconnect = mtk_ovl_adaptor_disconnect,
- 	.add = mtk_ovl_adaptor_add_comp,
- 	.remove = mtk_ovl_adaptor_remove_comp,
-+	.get_blend_modes = mtk_ovl_adaptor_get_blend_modes,
- 	.get_formats = mtk_ovl_adaptor_get_formats,
- 	.get_num_formats = mtk_ovl_adaptor_get_num_formats,
- 	.mode_valid = mtk_ovl_adaptor_mode_valid,
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index ecf6dc283cd7..39720b27f4e9 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -80,6 +80,7 @@ struct mtk_ddp_comp_funcs {
- 	void (*ctm_set)(struct device *dev,
- 			struct drm_crtc_state *state);
- 	struct device * (*dma_dev_get)(struct device *dev);
-+	u32 (*get_blend_modes)(struct device *dev);
- 	const u32 *(*get_formats)(struct device *dev);
- 	size_t (*get_num_formats)(struct device *dev);
- 	void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
-@@ -266,6 +267,15 @@ static inline struct device *mtk_ddp_comp_dma_dev_get(struct mtk_ddp_comp *comp)
- 	return comp->dev;
- }
- 
-+static inline
-+u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-+{
-+	if (comp->funcs && comp->funcs->get_blend_modes)
-+		return comp->funcs->get_blend_modes(comp->dev);
-+
-+	return 0;
-+}
-+
- static inline
- const u32 *mtk_ddp_comp_get_formats(struct mtk_ddp_comp *comp)
- {
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_drv.h b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-index 082ac18fe04a..04154db9085c 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-@@ -103,6 +103,7 @@ void mtk_ovl_register_vblank_cb(struct device *dev,
- void mtk_ovl_unregister_vblank_cb(struct device *dev);
- void mtk_ovl_enable_vblank(struct device *dev);
- void mtk_ovl_disable_vblank(struct device *dev);
-+u32 mtk_ovl_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_get_formats(struct device *dev);
- size_t mtk_ovl_get_num_formats(struct device *dev);
- 
-@@ -131,6 +132,7 @@ void mtk_ovl_adaptor_start(struct device *dev);
- void mtk_ovl_adaptor_stop(struct device *dev);
- unsigned int mtk_ovl_adaptor_layer_nr(struct device *dev);
- struct device *mtk_ovl_adaptor_dma_dev_get(struct device *dev);
-+u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev);
- size_t mtk_ovl_adaptor_get_num_formats(struct device *dev);
- enum drm_mode_status mtk_ovl_adaptor_mode_valid(struct device *dev,
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index 41874dc9d933..f747b91e586f 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -215,6 +215,13 @@ void mtk_ovl_disable_vblank(struct device *dev)
- 	writel_relaxed(0x0, ovl->regs + DISP_REG_OVL_INTEN);
- }
- 
-+u32 mtk_ovl_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-+
-+	return ovl->data->blend_modes;
-+}
-+
- const u32 *mtk_ovl_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index c6768210b08b..bf2546c4681a 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -400,6 +400,13 @@ void mtk_ovl_adaptor_disable_vblank(struct device *dev)
- 	mtk_ethdr_disable_vblank(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
- }
- 
-+u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-+
-+	return mtk_ethdr_get_blend_modes(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
-+}
-+
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-index d1d9cf8b10e1..0f22e7d337cb 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-@@ -145,6 +145,13 @@ static irqreturn_t mtk_ethdr_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+u32 mtk_ethdr_get_blend_modes(struct device *dev)
-+{
-+	return BIT(DRM_MODE_BLEND_PREMULTI) |
-+	       BIT(DRM_MODE_BLEND_COVERAGE) |
-+	       BIT(DRM_MODE_BLEND_PIXEL_NONE);
-+}
-+
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.h b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-index 81af9edea3f7..a72aeee46829 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-@@ -13,6 +13,7 @@ void mtk_ethdr_clk_disable(struct device *dev);
- void mtk_ethdr_config(struct device *dev, unsigned int w,
- 		      unsigned int h, unsigned int vrefresh,
- 		      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-+u32 mtk_ethdr_get_blend_modes(struct device *dev);
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt);
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index 7d2cb4e0fafa..8a48b3b0a956 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -320,8 +320,8 @@ static const struct drm_plane_helper_funcs mtk_plane_helper_funcs = {
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx)
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx)
- {
- 	int err;
- 
-@@ -366,12 +366,11 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 	if (err)
- 		DRM_ERROR("failed to create property: alpha\n");
- 
--	err = drm_plane_create_blend_mode_property(plane,
--						   BIT(DRM_MODE_BLEND_PREMULTI) |
--						   BIT(DRM_MODE_BLEND_COVERAGE) |
--						   BIT(DRM_MODE_BLEND_PIXEL_NONE));
--	if (err)
--		DRM_ERROR("failed to create property: blend_mode\n");
-+	if (blend_modes) {
-+		err = drm_plane_create_blend_mode_property(plane, blend_modes);
-+		if (err)
-+			DRM_ERROR("failed to create property: blend_mode\n");
-+	}
- 
- 	drm_plane_helper_add(plane, &mtk_plane_helper_funcs);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/mediatek/mtk_plane.h
-index 5b177eac67b7..3b13b89989c7 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.h
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.h
-@@ -48,6 +48,6 @@ to_mtk_plane_state(struct drm_plane_state *state)
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx);
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx);
- #endif
--- 
-2.43.0
+
+Best regards,
+Krzysztof
 
 
