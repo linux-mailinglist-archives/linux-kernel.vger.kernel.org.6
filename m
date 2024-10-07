@@ -1,93 +1,154 @@
-Return-Path: <linux-kernel+bounces-353605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E2C993033
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1449699304A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5441F229E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA341F21046
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D211D79B7;
-	Mon,  7 Oct 2024 14:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A635C1D7E58;
+	Mon,  7 Oct 2024 15:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bah2ODZF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="faxNql5f"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E83A1D2B35;
-	Mon,  7 Oct 2024 14:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8521D45FF;
+	Mon,  7 Oct 2024 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313015; cv=none; b=KzwFYVpeIPXj8bOjG6l7oHjlZ7ASiiC66/+63AZqt8HUoEFZXWlLuVVC9DZRsZXMOxfnpnuImp3LJA6O9VLj+ugF2FdXHf8qyzEdbZKoYa4FIXFTKf6z3oaQylSu+sFFbuM1nNpsD9maN9rlXIiLNmvoz9IahxTMZt4lcMz2Z5M=
+	t=1728313227; cv=none; b=u5XIiYxv3w4Dlf9nloNBVOfgZDbrLXCXwdaOW7YRkk3eF4gmV1iXvFaD2JlJRggawB9yR9OXUeNcEkk1O9M2F0TPoxH59BHEJavwitC6kXDWwgMSKD4x9E2dd5k1lYuUXkdK0teJRavGGBF1neNu/LSUlyQzVX/+fewy8ZwOxIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313015; c=relaxed/simple;
-	bh=6iic3wdWBosJglMC+i44cbzejQl/TRQeICH6/SoXQG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYJgjM1xbi9T030iIvkM+ByG+6HtuujTXiC75UkvNViD4x+gLyQr7WhjmCxe4QmguNahpaLtfVC3ch1XTHdbKwj2GafUkNMMnM/uU++UT4cHKARFm2ZsK/yfe2yzxORTaojyptY0RHwfBkVfNOyC2HRNdpHMzo/dQaycyEbvSa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bah2ODZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA20CC4CEC7;
-	Mon,  7 Oct 2024 14:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728313015;
-	bh=6iic3wdWBosJglMC+i44cbzejQl/TRQeICH6/SoXQG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bah2ODZFwYUZb7WWkI6I6ImJPD6A657T4Y7NSH0+mA2HbCw902Z5ohPlE1vhal9WZ
-	 bO8qgYwESXiry4oyLwBAGXHMaVqk8+JdHvZKwuxRUgkU38otGXKWT3EKIayw3s/PKE
-	 kGltFpi9LJdAn+uY4V0KlIthXlH0DcmOyX90J9WyZ9JPtnbT0MwLmdZQh5e9zTnx++
-	 PFmz2yNK3s0mBACLBps6TA3U9S+ycWBiWLmiTDOKDK8vW1Ds2z9swXwVY/vsnagQY5
-	 hVlrp+OYthHILpkm4PnTDjuvoccHYr6/P9Z99ajJNSJ2nU9bLZN1Wu0OFuNj7eMrso
-	 W+d2ecq5pFezw==
-Date: Mon, 7 Oct 2024 16:56:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Uros Bizjak <ubizjak@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] namespace: Use atomic64_inc_return() in alloc_mnt_ns()
-Message-ID: <20241007-unklar-wurzel-ce2d0693dfc8@brauner>
-References: <20241007085303.48312-1-ubizjak@gmail.com>
- <20241007145034.GM4017910@ZenIV>
+	s=arc-20240116; t=1728313227; c=relaxed/simple;
+	bh=XVAzbaIIhFFe5lynUDZs7JKyFb3ss6nsbfmrEvX1kyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a0lrifR6uao0513Do9N9zEd1zd3SwIX1G3nVFji81UzU3DmUL/zMNMaigAegccw4caN4zi0T9TEozBo5Duu07bU4NJxljtNt5LJIIepyE/FafLk1o5kAeKKwmphmsW6pn/1R/6dYX87HhBKeU2qGGgh0HSLJPXsTPWnhyTWeDoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=faxNql5f; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BL5xg003601;
+	Mon, 7 Oct 2024 16:59:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	BJ8Knk1OilaXvESuSFI3aU6RMgbAH9yejobycbQkYhg=; b=faxNql5faKfAou6p
+	EZ+UECY5U+KLZiBJtDX1R4fkCO+eRfv/PxOodhiM2F9+CfvRiHFNJltQrMyARQu+
+	GqXh/y0uf2LAAm0DYLsOOHKKH0nQE4/utct4UE5ErMfuEm5EO7A7DY1Sa2G7Wszh
+	nsB72b33nxoXkKlgni+In0vQrPpTTIE98wO9PN392ts5YhC/FwIKtthF62DuNtjb
+	RygPljlMDnOfnAsN7ncI/MNIhP2Woteuac0GIijAn1siZe8KcoTEnowX+yOOpbQ3
+	E5lVd8jG7FevDcGGtKMe6T4syzrH8i8QGIozLNvOsRQnQMJ5WeKBTnSdawgjdVqh
+	8Pl7bw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f10pt0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 16:59:53 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A773E40048;
+	Mon,  7 Oct 2024 16:58:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 379592216F8;
+	Mon,  7 Oct 2024 16:57:27 +0200 (CEST)
+Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 16:57:26 +0200
+Message-ID: <2e1ee778-06b1-4cb3-b10a-6f5a97338d82@foss.st.com>
+Date: Mon, 7 Oct 2024 16:57:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007145034.GM4017910@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: rng: add st,stm32mp25-rng support
+To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
+        Herbert
+ Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lionel
+ Debieve <lionel.debieve@foss.st.com>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Yang
+ Yingliang <yangyingliang@huawei.com>
+References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
+ <20241007132721.168428-2-gatien.chevallier@foss.st.com>
+ <a7b2d849-ce6c-46b3-bf4f-c619106e2edd@denx.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <a7b2d849-ce6c-46b3-bf4f-c619106e2edd@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Oct 07, 2024 at 03:50:34PM GMT, Al Viro wrote:
-> On Mon, Oct 07, 2024 at 10:52:37AM +0200, Uros Bizjak wrote:
-> > Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-> > to use optimized implementation and ease register pressure around
-> > the primitive for targets that implement optimized variant.
-> > 
-> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/namespace.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 93c377816d75..9a3c251d033d 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -3901,7 +3901,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
-> >  	}
-> >  	new_ns->ns.ops = &mntns_operations;
-> >  	if (!anon)
-> > -		new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
-> > +		new_ns->seq = atomic64_inc_return(&mnt_ns_seq);
-> 
-> On which load do you see that path hot enough for the change to
-> make any difference???
 
-I don't think that's really an issue. Imho, *inc_return() is just
-straightforward compared to the add variant. That can easily be
-reflected in the commit message when I push out.
+
+On 10/7/24 15:53, Marek Vasut wrote:
+> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
+>> Add RNG STM32MP25x platforms compatible. Update the clock
+>> properties management to support all versions.
+>>
+>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+>> ---
+>>   .../devicetree/bindings/rng/st,stm32-rng.yaml | 41 +++++++++++++++++--
+>>   1 file changed, 38 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml 
+>> b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> index 340d01d481d1..c92ce92b6ac9 100644
+>> --- a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> +++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> @@ -18,12 +18,19 @@ properties:
+>>       enum:
+>>         - st,stm32-rng
+>>         - st,stm32mp13-rng
+>> +      - st,stm32mp25-rng
+>>     reg:
+>>       maxItems: 1
+>>     clocks:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: rng_clk
+>> +      - const: rng_hclk
+>>     resets:
+>>       maxItems: 1
+>> @@ -57,15 +64,43 @@ allOf:
+>>         properties:
+>>           st,rng-lock-conf: false
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - st,stm32mp25-rng
+> Maybe this match should be inverted, it is likely the next generation of 
+> stm32 will also use 2 input clock into the RNG block and it will be only 
+> the legacy MP1 that uses one clock.
+
+Hi, sure, makes more sense, I'll change it for V2.
+
+Gatien
 
