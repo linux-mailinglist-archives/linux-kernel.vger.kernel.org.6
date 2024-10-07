@@ -1,200 +1,95 @@
-Return-Path: <linux-kernel+bounces-353819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B498993324
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:26:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B984C99332A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8E11C22B33
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5FC281BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABB71DA630;
-	Mon,  7 Oct 2024 16:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEF11D2711;
+	Mon,  7 Oct 2024 16:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="icowUNR4"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prkcmbst"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCF91D2711
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4551DA62C;
+	Mon,  7 Oct 2024 16:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318409; cv=none; b=LhMvNUyB6EqGY22McEloo3YWrAZCeOt80kwP+hXHKs8a7xfVqwDonfiLjFGDGk1wdmBUwuv2DhmlcvOmt1/AMsVsRYebW2fc+f5o+UPv9a5ZjTNI4YvHaGVkg4PiBsbbNisVIRedhzXjT98sS5ZeH2LrZCQtmFBl71AKRI563X4=
+	t=1728318421; cv=none; b=L2SCAuhbM6mJfc7iRDL2Yz7moJmaTrTzTeypMRxdSxjTreGdfxxLMKMLnFvDt9HElZAJ+7x0l6oIv9yVPdIXzDfS7ev5YEFVxnNqYAyHwHkQMfljoZEc99xqK75G4Nok8xf8unh964Oh/pGSL+n2wPzheNTlWhIob7sWEbiIczc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318409; c=relaxed/simple;
-	bh=7fjFA7r/9mC9DN1IVzI7GzR8lpPWpWYTSl2fAVlwvXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDrXyI2kZt0ZiM3wDXqdKO9STipQc1MxMl67HKV7s5WbEzQB+cJ4JzhJ+lT5Rwe8mbwmR68fVnBRWneraMQSZwjOc30XC3Z5XjcfgyzQbNJfn3H+I9qc3vNrJCQlfVF2CHiMdEgQ0IlqpFDovnUnvp8Osxur8RPuZO0BnUoR1xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=icowUNR4; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XMl0Q5y1qz6ClY9J;
-	Mon,  7 Oct 2024 16:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1728318403; x=1730910404; bh=xzPmNdv2TFmV5boL0kfIaw0J
-	ro3m689lcloJz0nHyeM=; b=icowUNR4HKdX07OoJZp7oN9d5x+Pdn5JrZOxQuEU
-	aflqUcRG3VSJwVHwdc47YjMMHih4XoRwiaVvQ0QJEMoxX/M1fnGmPSI//rN6yala
-	VExEBLtNvkGjbqavXkB+gq0iELYpwLGOsqU1H27InqRhnFQpZ4dqraRlTBzIH4ou
-	9wh4u4K0MUlCl7pEGpg41xKkjSkWF8EzWzhnGhfs3iuOZnAPe8eBpXLID8QvrQpb
-	Ox+1dqPxhB/DDf8lEWhk76YTh8ER0uPnd2IGwveJQu8KllYM54KbUoSc9KQLf9x/
-	T5fsWmz4//On1rcbZVzdrxuliW0F+yGSNC1KNWtU+XNyeQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Iwld-yDRhRq6; Mon,  7 Oct 2024 16:26:43 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XMl0L4h3wz6ClY8v;
-	Mon,  7 Oct 2024 16:26:42 +0000 (UTC)
-Message-ID: <562d3545-00f1-4ca2-80c0-7326f104c926@acm.org>
-Date: Mon, 7 Oct 2024 09:26:41 -0700
+	s=arc-20240116; t=1728318421; c=relaxed/simple;
+	bh=E51cAw039sGKO+0n/PcKNXG85+KvGPhgm7rZPbowDhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+wzwdsMJKo5aew/S/iZuziI7/qmpuNZfq5K+koKjgrRcKiFXbmnVtbRwoHVra/OTQ4nr2LrWG7CLIamwk6Q+h+/Nt6GO2mC6+7YZx50YhS1gc5kNmDIfKUSdKA9WwhKstd1Pp4uifNQ78/ViPA1/I9eFYtH0RT2EzAKolxbMvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prkcmbst; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC26C4CEC6;
+	Mon,  7 Oct 2024 16:26:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728318420;
+	bh=E51cAw039sGKO+0n/PcKNXG85+KvGPhgm7rZPbowDhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=prkcmbst67g+qeppLZY5cSVTDa3n32T/+3uU7wIq06HUNtdZFyrXgklHYcK5XIjsB
+	 L1RDbZZHtA+yh5o5XbvvoYxgq931+zMKcIWrBDT5Ug4yEupCoZW7lcJqNizCnHcTqj
+	 fAkpw+0aRZgjk6c25adVWYjyWVE2c4IWFHSG9VMHOXLH6D8jDWYeM6PDyFV+TJUIsA
+	 0HLYXd0snULKB5HaW14eiMVwpD8NuTgXQ5SNNbsuLixgBKkllSFlbcHZLwyZzqwBnE
+	 xgFvVXlkeSQZLmH53i7KOloLnV0ssdyUm6UV4ybHgx+9mbsnCUQYZTrJatT6jds/ca
+	 at+j8gKEIudHg==
+Date: Mon, 7 Oct 2024 16:26:58 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	iommu@lists.linux.dev, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	virtualization@lists.linux.dev, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	catalin.marinas@arm.com, will@kernel.org, luto@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, arnd@arndb.de,
+	sgarzare@redhat.com, jinankjain@linux.microsoft.com,
+	muminulrussell@gmail.com, skinsburskii@linux.microsoft.com,
+	mukeshrathor@microsoft.com
+Subject: Re: [PATCH 0/5] Add new headers for Hyper-V Dom0
+Message-ID: <ZwQL0v-VE4q3iXAt@liuwe-devbox-debian-v2>
+References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/21] genirq: Switch to number_of_interrupts()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
- David Laight <David.Laight@ACULAB.COM>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-21-bvanassche@acm.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240930181600.1684198-21-bvanassche@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-On 9/30/24 11:15 AM, Bart Van Assche wrote:
-> Use the number_of_interrupts() function instead of the global variable
-> 'nr_irqs'. This patch prepares for changing 'nr_irqs' from an exported
-> global variable into a variable with file scope.
+On Thu, Oct 03, 2024 at 12:50:59PM -0700, Nuno Das Neves wrote:
+> To support Hyper-V Dom0 (aka Linux as root partition), many new
+> definitions are required.
+> 
+> The plan going forward is to directly import headers from
+> Hyper-V. This is a more maintainable way to import definitions
+> rather than via the TLFS doc. This patch series introduces
+> new headers (hvhdk.h, hvgdk.h, etc, see patch #3) directly
+> derived from Hyper-V code.
+> 
+> This patch series replaces hyperv-tlfs.h with hvhdk.h, but only
+> in Microsoft-maintained Hyper-V code where they are needed. This
+> leaves the existing hyperv-tlfs.h in use elsewhere - notably for
+> Hyper-V enlightenments on KVM guests.
 
-(replying to my own email)
+It goes without saying that we need to make sure KVM still builds
+correctly after this series. Please make sure to test that. Thanks.
 
-Although no code should loop over all interrupts in the hot path, if 
-nobody objects, I will replace this patch with the patch below. The 
-patch below does not rely on CSE (common subexpression eliminiation) to
-reduce the number of irq_get_nr_irqs() calls. The patch below should
-support code that uses 'break' or 'continue' inside for_each_irq* loops.
-
-Thanks,
-
-Bart.
-
-
-Subject: [PATCH] genirq: Switch to irq_get_nr_irqs()
-
-Use the irq_get_nr_irqs() function instead of the global variable
-'nr_irqs'. This patch prepares for changing 'nr_irqs' from an exported
-global variable into a variable with file scope.
-
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
-  include/linux/irqnr.h  | 33 +++++++++++++++++++--------------
-  kernel/irq/irqdomain.c |  2 +-
-  kernel/irq/proc.c      |  5 +++--
-  3 files changed, 23 insertions(+), 17 deletions(-)
-
-diff --git a/include/linux/irqnr.h b/include/linux/irqnr.h
-index 7419b807b71b..a33088d27c54 100644
---- a/include/linux/irqnr.h
-+++ b/include/linux/irqnr.h
-@@ -11,26 +11,31 @@ unsigned int irq_set_nr_irqs(unsigned int nr);
-  extern struct irq_desc *irq_to_desc(unsigned int irq);
-  unsigned int irq_get_next_irq(unsigned int offset);
-
--# define for_each_irq_desc(irq, desc)					\
--	for (irq = 0, desc = irq_to_desc(irq); irq < nr_irqs;		\
--	     irq++, desc = irq_to_desc(irq))				\
--		if (!desc)						\
--			;						\
--		else
--
-+#define for_each_irq_desc(irq, desc)                                      \
-+	for (unsigned int __nr_irqs__ = irq_get_nr_irqs(); __nr_irqs__;   \
-+	     __nr_irqs__ = 0)                                             \
-+		for (irq = 0, desc = irq_to_desc(irq); irq < __nr_irqs__; \
-+		     irq++, desc = irq_to_desc(irq))                      \
-+			if (!desc)                                        \
-+				;                                         \
-+			else
-
-  # define for_each_irq_desc_reverse(irq, desc)				\
--	for (irq = nr_irqs - 1, desc = irq_to_desc(irq); irq >= 0;	\
--	     irq--, desc = irq_to_desc(irq))				\
-+	for (irq = irq_get_nr_irqs() - 1, desc = irq_to_desc(irq);	\
-+	     irq >= 0; irq--, desc = irq_to_desc(irq))			\
-  		if (!desc)						\
-  			;						\
-  		else
-
--# define for_each_active_irq(irq)			\
--	for (irq = irq_get_next_irq(0); irq < nr_irqs;	\
--	     irq = irq_get_next_irq(irq + 1))
-+#define for_each_active_irq(irq)                                        \
-+	for (unsigned int __nr_irqs__ = irq_get_nr_irqs(); __nr_irqs__; \
-+	     __nr_irqs__ = 0)                                           \
-+		for (irq = irq_get_next_irq(0); irq < __nr_irqs__;      \
-+		     irq = irq_get_next_irq(irq + 1))
-
--#define for_each_irq_nr(irq)                   \
--       for (irq = 0; irq < nr_irqs; irq++)
-+#define for_each_irq_nr(irq)                                            \
-+	for (unsigned int __nr_irqs__ = irq_get_nr_irqs(); __nr_irqs__; \
-+	     __nr_irqs__ = 0)                                           \
-+		for (irq = 0; irq < __nr_irqs__; irq++)
-
-  #endif
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index e0bff21f30e0..ec6d8e72d980 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1225,7 +1225,7 @@ int irq_domain_alloc_descs(int virq, unsigned int 
-cnt, irq_hw_number_t hwirq,
-  		virq = __irq_alloc_descs(virq, virq, cnt, node, THIS_MODULE,
-  					 affinity);
-  	} else {
--		hint = hwirq % nr_irqs;
-+		hint = hwirq % irq_get_nr_irqs();
-  		if (hint == 0)
-  			hint++;
-  		virq = __irq_alloc_descs(-1, hint, cnt, node, THIS_MODULE,
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 9081ada81c3d..36ffff4eb352 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -457,7 +457,7 @@ int __weak arch_show_interrupts(struct seq_file *p, 
-int prec)
-  }
-
-  #ifndef ACTUAL_NR_IRQS
--# define ACTUAL_NR_IRQS nr_irqs
-+# define ACTUAL_NR_IRQS irq_get_nr_irqs()
-  #endif
-
-  int show_interrupts(struct seq_file *p, void *v)
-@@ -477,7 +477,8 @@ int show_interrupts(struct seq_file *p, void *v)
-
-  	/* print header and calculate the width of the first column */
-  	if (i == 0) {
--		for (prec = 3, j = 1000; prec < 10 && j <= nr_irqs; ++prec)
-+		for (prec = 3, j = 1000;
-+		     prec < 10 && j <= irq_get_nr_irqs(); ++prec)
-  			j *= 10;
-
-  		seq_printf(p, "%*s", prec + 8, "");
-
+Wei.
 
