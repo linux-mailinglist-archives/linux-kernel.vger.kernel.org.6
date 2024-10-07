@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-354128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136B599381D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7694B993822
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B053CB22236
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:22:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204221F223FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47151DE896;
-	Mon,  7 Oct 2024 20:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072251DE885;
+	Mon,  7 Oct 2024 20:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVPlvYVq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="L6KryEch"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0745C1DE4FD;
-	Mon,  7 Oct 2024 20:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965A91DE4E0
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332508; cv=none; b=iokfQqEoZtg1BM8vJk/rAUCjlRusTVDyO+wyuT9Atfi7gat/2+qIbGBys4tkguJ2Ku7wqUJk4021+891aFGnIKuOnmeEFghdCDhOMdsX9c1OZdY1QxE2j0Snjgj4z1suwg6vPucrdKWodx86Ac/j/ExWeAyRIP8HXD3gKB8GKsg=
+	t=1728332557; cv=none; b=Hu82lZNiB/PUuesyxiWq6YKmiDHi+fy7QdVf0S7RqlpD+n03chYRiPbKHoSey4Q0ryDKOHQqWVvr9e+uEfi9PtGsuq188BWFhNFKB6S8Ktsyc+pj5YmbDKnhQBrEW9Eicdu1tpHAc4aU7CrjkhH2zdKTOtf6c6V47JHV46eW9ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332508; c=relaxed/simple;
-	bh=bWBoo6hev+A1JdZZ3/T0UgCXV2e5zIWTVjvdL/7brxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmAgeGGKAmpAnX2G93CPoCEL4YN0Am5SIgyg79nxPLgV5B+sLbu9McB8EINPoxx+qe/D09M8EVnoNxmKBqbGNoC8tYl/MNeFuIrkAldxBw84RR+rHMkSVyZvqeNiSZQU3zc3HyrkAmQmutDhW+KDAo7Lh7qg/1uO5YDQtmpuJPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVPlvYVq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE5CC4CEC6;
-	Mon,  7 Oct 2024 20:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728332507;
-	bh=bWBoo6hev+A1JdZZ3/T0UgCXV2e5zIWTVjvdL/7brxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DVPlvYVqRilZa0oFH76WFqHJOVwVOyU8AduarmW+04ZOW8eaJRWzd6enkxVnoOOy4
-	 7RF8RPT/xH1QwBmZbjO1ZSnFNEJw60uWgzqCRkYb1Jv158nh3CvWx6CMS+685D3U8a
-	 0qZaLIB4FxhxT0pYQWR2AHc+yHFjjvIhU/LHDjLzSGlr2Xa5CHyMMsofs1pj449c8s
-	 bzHn67IM6XGwD0RoPxAke5UodXSz2+NP058dGWdPkEYDmHbAIzlRsnaGOkFhiyofjv
-	 AJXuN09Cmd1ujcpKNR+caTeZvM4FTAAGZNpg68607lKF23MixONc2odeSG4/h75Y0j
-	 lFnZexEoJ1kYw==
-Date: Mon, 7 Oct 2024 22:21:39 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Xingyu Li <xli399@ucr.edu>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, dsahern@kernel.org, linux@weissschuh.net,
-	judyhsiao@chromium.org, James.Z.Li@dell.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
-Subject: Re: BUG: corrupted list in neigh_parms_release
-Message-ID: <20241007202139.f5mccuwwuexuvtle@joelS2.panther.com>
-References: <CALAgD-7NTOZ-8-uLbRSa35B+wKkXzzmviE1hy6ajLxwU2kfj7Q@mail.gmail.com>
+	s=arc-20240116; t=1728332557; c=relaxed/simple;
+	bh=+JurRkojZY4EtF+xRmXEH88+oNqlfaBMDd8Nb4X/7hQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c3oej/vBneuY3KsVdzjHcmEJTvUhofu0Yvl9RmbEes4jXCkgtBb70Od/YBtXS4hyJULaXaDCk8HUXmESzi261CGmIjXOl7Z8DQj+RORw6+tPVWRsmJEyub2SiBBOLN78dPR6hyimj972WAOzQsoyYINBxkv5pHRFofeZ5GaQeJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=L6KryEch; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82aa7c3b3dbso205424039f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728332554; x=1728937354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QefVMDm8hBjPT+1JwbSaVFa7IKUqqLaGgXLC/P+/zW0=;
+        b=L6KryEchvj6hS292mMNLvBuKS6scDoEQpsWzujALkWKGRh4Qnqj2JKhFbvAQWWl/mw
+         VCmsc1KUaHgn/gZq3oLsq348QdMAfMB969zABGRZqI+ZBIJZkdVXCLY3yfLmghf+FTdq
+         YWgjgikwcXddrprcM/P3vvQzaMqwENYgCJvtmz2Um48+TrrPurslUjW3ldWrOp/LFt9W
+         nrhYzaTMQIl9Ft5LZykTnZjJ2FLLY82v/Q4b1r4PIL0TXsr0IYvvw2Zjej8i1TUUyXC2
+         DtZsiZqAaiLEYgj/DvMDrhaTxjfteH9XHRZS1X1KFTFQrg9/aRHVqMxRJ129IadhXVyt
+         bBZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728332554; x=1728937354;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QefVMDm8hBjPT+1JwbSaVFa7IKUqqLaGgXLC/P+/zW0=;
+        b=Qx6sgSAT11LCXwe0Vq0EK/ji0e6DZUU/6jFjdK4gPEMOSbV5YfbUVh2vCt8iqq1Dg3
+         nRYX18QD1SAt5ypjy6XERUGIsqs9n9/Ehy57AkQLDEQfH6bkSyW0mmsFAKiiLa1w9LUZ
+         /DrGvHILURJ8A8ezf5eGwEPiTsW+D3MF7iFR+R5fiUCewO7H5Uf3girmvo8gLe2kQYtx
+         5P4LHIJUBSK6zghsiqx51amK3Ajgt9Nq0D0CI23xm2Rspy8qaPnBjXVVh9c4nWMuNGGf
+         5LuKlV5lSTaexyPAbjFSwVwLhEZkovhByRL8z0eC3+oDiDbbNDbfQM/zWklhvpBCQseU
+         G9pA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbV8vFte1P5M9961W1ez2UfDFN9tm0AniaqcH9UUVDERWt8/LRLipX4uqtJDPYQJzwAp2RR4/loN7P4gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbckf5/JIWRWJc0EDrrijyqkxMBz2DkxrwzXp8v9mpeImLgvGD
+	0DjBrDKU+T8bfKZ0OKXdmRW/jlDuXenXLKRcOV3tuwxDLoZtFLIPhAPCCLPfK/g=
+X-Google-Smtp-Source: AGHT+IF2W3KnYL3GA1TILGogvaha8pYup4+NHEwZvTPOaV7yC6EWbx9hu3M/fgNeyIQEycR1C6cK/Q==
+X-Received: by 2002:a05:6e02:1fc8:b0:3a3:44b2:acb2 with SMTP id e9e14a558f8ab-3a375be2a9dmr113900705ab.25.1728332554520;
+        Mon, 07 Oct 2024 13:22:34 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db86e86898sm605463173.61.2024.10.07.13.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 13:22:33 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jonathan Corbet <corbet@lwn.net>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
+ INAGAKI Hiroshi <musashino.open@gmail.com>, 
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Ming Lei <ming.lei@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>, 
+ Christian Heusel <christian@heusel.eu>, Avri Altman <avri.altman@wdc.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Riyan Dhiman <riyandhiman14@gmail.com>, 
+ Mikko Rapeli <mikko.rapeli@linaro.org>, 
+ Jorge Ramirez-Ortiz <jorge@foundries.io>, 
+ Li Zhijian <lizhijian@fujitsu.com>, 
+ Dominique Martinet <dominique.martinet@atmark-techno.com>, 
+ Jens Wiklander <jens.wiklander@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com, 
+ Christoph Hellwig <hch@infradead.org>, 
+ Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20241002221306.4403-1-ansuelsmth@gmail.com>
+References: <20241002221306.4403-1-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v6 0/6] block: partition table OF support
+Message-Id: <172833255295.162249.16483920948700467749.b4-ty@kernel.dk>
+Date: Mon, 07 Oct 2024 14:22:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAgD-7NTOZ-8-uLbRSa35B+wKkXzzmviE1hy6ajLxwU2kfj7Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Wed, Aug 28, 2024 at 04:36:00PM -0700, Xingyu Li wrote:
-> Hi,
-> 
-> We found a bug in Linux 6.10 using syzkaller. It is possibly a
-> corrupted list  bug.
-> The bug report is as follows, but unfortunately there is no generated
-> syzkaller reproducer.
-Sorry for the late reply. Please resend when you find a reproducer.
 
+On Thu, 03 Oct 2024 00:11:40 +0200, Christian Marangi wrote:
+> this is an initial proposal to complete support for manually defining
+> partition table.
 > 
-> Bug report:
+> Some background on this. Many OEM on embedded device (modem, router...)
+> are starting to migrate from NOR/NAND flash to eMMC. The reason for this
+> is that OEM are starting to require more and more space for the firmware
+> and price difference is becoming so little that using eMMC is only benefits
+> and no cons.
 > 
-> list_del corruption. next->prev should be ffff88801b3bdc18, but was
-> 0000000000000000. (next=ffff88803c7c5018)
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:67!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 0 PID: 47298 Comm: kworker/u4:24 Not tainted 6.10.0 #13
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> Workqueue: netns cleanup_net
-> RIP: 0010:__list_del_entry_valid_or_report+0x11e/0x120 lib/list_debug.c:65
-> Code: 96 06 0f 0b 48 c7 c7 e0 5b a9 8b 4c 89 fe 48 89 d9 e8 96 ff 96
-> 06 0f 0b 48 c7 c7 60 5c a9 8b 4c 89 fe 4c 89 f1 e8 82 ff 96 06 <0f> 0b
-> 80 3d bd 35 c6 0a 00 74 01 c3 31 d2 eb 02 66 90 55 41 57 41
-> RSP: 0018:ffffc90002aff6b8 EFLAGS: 00010246
-> RAX: 000000000000006d RBX: ffff88803c7c5020 RCX: 1547a0d62a403a00
-> RDX: 0000000000000000 RSI: 0000000080000201 RDI: 0000000000000000
-> RBP: ffffffff8ee71680 R08: ffffffff8172e30c R09: 1ffff9200055fe78
-> R10: dffffc0000000000 R11: fffff5200055fe79 R12: dffffc0000000000
-> R13: dffffc0000000000 R14: ffff88803c7c5018 R15: ffff88801b3bdc18
-> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6cc5e4f360 CR3: 00000000413bc000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __list_del_entry_valid include/linux/list.h:124 [inline]
->  __list_del_entry include/linux/list.h:215 [inline]
->  list_del include/linux/list.h:229 [inline]
->  neigh_parms_release+0x51/0x230 net/core/neighbour.c:1759
->  addrconf_ifdown+0x188c/0x1b50 net/ipv6/addrconf.c:4009
->  addrconf_notify+0x3c4/0x1000
->  notifier_call_chain kernel/notifier.c:93 [inline]
->  raw_notifier_call_chain+0xe0/0x180 kernel/notifier.c:461
->  call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
->  call_netdevice_notifiers net/core/dev.c:2044 [inline]
->  unregister_netdevice_many_notify+0xd65/0x16d0 net/core/dev.c:11219
->  cleanup_net+0x764/0xcd0 net/core/net_namespace.c:635
->  process_one_work kernel/workqueue.c:3248 [inline]
->  process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
->  worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
->  kthread+0x2eb/0x380 kernel/kthread.c:389
->  ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__list_del_entry_valid_or_report+0x11e/0x120 lib/list_debug.c:65
-> Code: 96 06 0f 0b 48 c7 c7 e0 5b a9 8b 4c 89 fe 48 89 d9 e8 96 ff 96
-> 06 0f 0b 48 c7 c7 60 5c a9 8b 4c 89 fe 4c 89 f1 e8 82 ff 96 06 <0f> 0b
-> 80 3d bd 35 c6 0a 00 74 01 c3 31 d2 eb 02 66 90 55 41 57 41
-> RSP: 0018:ffffc90002aff6b8 EFLAGS: 00010246
-> RAX: 000000000000006d RBX: ffff88803c7c5020 RCX: 1547a0d62a403a00
-> RDX: 0000000000000000 RSI: 0000000080000201 RDI: 0000000000000000
-> RBP: ffffffff8ee71680 R08: ffffffff8172e30c R09: 1ffff9200055fe78
-> R10: dffffc0000000000 R11: fffff5200055fe79 R12: dffffc0000000000
-> R13: dffffc0000000000 R14: ffff88803c7c5018 R15: ffff88801b3bdc18
-> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6cc5e4f360 CR3: 00000000413bc000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> -- 
-> Yours sincerely,
-> Xingyu
+> [...]
 
+Applied, thanks!
+
+[1/6] block: add support for defining read-only partitions
+      commit: 03cb793b26834ddca170ba87057c8f883772dd45
+[2/6] docs: block: Document support for read-only partition in cmdline part
+      commit: 62adb971e515d1bb0e9e555f3dd1d5dc948cf6a1
+[3/6] block: introduce add_disk_fwnode()
+      commit: e5f587242b6072ffab4f4a084a459a59f3035873
+[4/6] mmc: block: attach partitions fwnode if found in mmc-card
+      commit: 45ff6c340ddfc2dade74d5b7a8962c778ab7042c
+[5/6] block: add support for partition table defined in OF
+      commit: 884555b557e5e6d41c866e2cd8d7b32f50ec974b
+[6/6] dt-bindings: mmc: Document support for partition table in mmc-card
+      commit: 06f39701d0666d89dd3c86ff0b163c7139b7ba2d
+
+Best regards,
 -- 
+Jens Axboe
 
-Joel Granados
+
+
 
