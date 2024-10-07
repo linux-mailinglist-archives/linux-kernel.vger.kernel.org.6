@@ -1,194 +1,312 @@
-Return-Path: <linux-kernel+bounces-352970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BFE9926AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C27F79926AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E575281239
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506C5280F8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8159C188700;
-	Mon,  7 Oct 2024 08:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50735188736;
+	Mon,  7 Oct 2024 08:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSBUatO0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oNlPFNBp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD736187332;
-	Mon,  7 Oct 2024 08:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B314D188013
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288486; cv=none; b=lPV9G39G+Xtlg5tI/LvU9Awfv4I8gvlXEY3JI7oYpkwZXy+p9ijDgNJWVsjqKayod04Wmbw1+VG5d3mVrNHyyvB/ix56w90cme/ZPBk674lS7TXUjtjJ8aKT2oNGa1tpVjW6rBH+fx2NUuW908RihfJmGGx23pWHAObkqceNSdA=
+	t=1728288501; cv=none; b=pDDUn6DlpWlD8UXPez7ZtheBgB80+jwk8j07i9hsufyarcatiiSgYXYmg7hKaebE5QaIOBtekke8NNCE6FYVXhQ+5c49/WL/zNAnuHYlwxcoaOwGj7B+FyxMemDX1esH6X8iodC2KQEPBhW+H1vs3R6L5jvsFjJyaii8I+Va930=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288486; c=relaxed/simple;
-	bh=Jj+bA/iDpKmZb0BWsx4i5xD4QtvKKl6H4sm84kO751s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XBF8FU7vk4/biU10q42AYdKYzGvY4qUzCYpLlaW+BDPoo3TjI4F/74mat7TLJuHSxGWHPLS7s5j8rBQojrNskaYcmkp/YyhoIwcfP1P9x1igXeJtkOyqrWLa5JnZNEeVx5TAvKqD8Lura9r8buD/bhRjKO2lC6tEHk5kyGG/6l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSBUatO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E985C4CEC6;
-	Mon,  7 Oct 2024 08:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728288486;
-	bh=Jj+bA/iDpKmZb0BWsx4i5xD4QtvKKl6H4sm84kO751s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SSBUatO0qMA5dwFmh8IuLOyc7n5tIKqA2wt4O/zfGXHKcKYOZerci4Z76ljfggMxc
-	 EUeu/tC8AmSPGGTVkYP5FvJuXTQkM6nPbST+BStybCFdaZ1V5egNlRRcp0Uc3rroXz
-	 8g7IInruEhFSW+tjIHXeCmSWuu+cwgWBA0kp0npQoSa9dP6V1Oj7RHXz8kyQ7U9Pty
-	 bBbQJuqnhg/Ant9iT/xEm2Tz7vL6xlwmKyvDmTO8eCeF+Cw0N7ocJSvXsYdcllQVz/
-	 I7c+a4NHzoGbyu/dvKORakrrUlo2VihEZXOFexj1yyxExL6jIQWodQVYR4iyeGi6EP
-	 lHRmLpAmGWz1g==
-Date: Mon, 7 Oct 2024 17:07:55 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
- <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, Will
- Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, Mike Leach
- <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren
- <guoren@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nick
- Terrell <terrelln@fb.com>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>,
- Daniel Bristot de Oliveira <bristot@kernel.org>, Daniel Wagner
- <dwagner@suse.de>, Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Kajol Jain <kjain@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Bibo
- Mao <maobibo@loongson.cn>, Anup Patel <anup@brainfault.org>, Atish Patra
- <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>,
- Oliver Upton <oliver.upton@linux.dev>, "Steinar H. Gunderson"
- <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Chen Pei
- <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, Yury Norov
- <yury.norov@gmail.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 16/31] perf dwarf-regs: Pass accurate disassembly
- machine to get_dwarf_regnum
-Message-Id: <20241007170755.03697b9178ed3dcac24dfa21@kernel.org>
-In-Reply-To: <20241005195541.380070-17-irogers@google.com>
-References: <20241005195541.380070-1-irogers@google.com>
-	<20241005195541.380070-17-irogers@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728288501; c=relaxed/simple;
+	bh=IxYWj9Xorz1AZbfO/tpFcZsn5IGSnomV6GTPPSeCQFM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Mctc161W86+gzxDFtSN1noIb2h0St4qFUxAGzf/jvNy9v+CNqveY/gXpaTk7iAnnddN1WD2UHdnwXecAttIjIUXzDsGF9DGlYE/OGDt266Ck4cSDcVMkkh+x1za3Zw2HhLX7zn6s9/0qxE5yVyusJPrLoAKTQghr7g8AdcSNQyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oNlPFNBp; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so55092475e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728288498; x=1728893298; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GNnagbUk9E0Ml9V+Nduq7EQawbw5vOZA0KfAKQ2AxhM=;
+        b=oNlPFNBpU7wcHyjxOMVgi3HVLtLFfibcFDCJbZEbJH4pJXdlTEBcpfORbLKUun9Wbp
+         fIqQFW4gbAPc5N86DiAHrPc0Mj8Ium/0yZVBalfsz2aOCtpCT1uZ3d0B2NlOuOhK2OsB
+         KeefxvXxzacWgFrnoxqMFUqesGsB1LLhgyYyd7gOp9D7P21+EVWZ4lRTBC+fGkuatgfF
+         uJqNMB2rnBr8lap79xHe5ejav7tPzajM+mLdMHne+mEdBOBj633qUwLBJP9j4DhOCEVu
+         c1umLY8u7N1DOv9hwQFntOpe/DICe+ywgZHK/LoVht720tDVzxdbFn6R1Zr3RCvql8Rs
+         3DxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728288498; x=1728893298;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GNnagbUk9E0Ml9V+Nduq7EQawbw5vOZA0KfAKQ2AxhM=;
+        b=FD1AHlylSEJ+CSsxEfHai9YQP9DdNIPIu2IqhPTOr/jO0+3NPZg8vsObqjqhYettqR
+         VQ+WZSecqXrQ4wCdqiRPPSnd1jgiuFV3xqU5B2gh0WbUDfACo/AOETrtGoxIGlst4RKa
+         ftnsal5+QpplR5HedJh2fxgx1/DE7y/AovneKiqNbcVGGbHItw7DzAjUjI385hTCqEIx
+         yTw0M1VN9gqVs+T6ZnkCCnOlT+XlgMQ/HEfxovqd14caT/IRevT9MtQI+dDnOPmyY5h5
+         c5Rzvjn4YkeqnauD7ddf3dUXdLMg7GNdQKc//Te+ZmGqpBF0pJ5FWad6MOOtoW+CV2xK
+         oMrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkMD6VcmzU/Tw5MdTMrTxGwROKQS4+FGs3Md69i/ujt0agLS+C42ZtyqMimfM11+FjWvEZMXWks8r54mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCzM5guKhNQe3W+AVjKzG5AwoVVk/w+vdKzW9sJWlICDw8hkc6
+	OzyxrzLOYQjiynJXgG/B1biVyuoF+TtSUJHVOfA68/ag423BHzCAPZ/zzKQTv+A=
+X-Google-Smtp-Source: AGHT+IFPwZCQpnEAqjX6GbBQ235vE41Kh0cdPVs7FsU1Ni6P07LOC9oc6/ORmYHV6fNNeUFYp6SLvg==
+X-Received: by 2002:a05:600c:35cf:b0:42c:b62c:9f0d with SMTP id 5b1f17b1804b1-42f85ab87cdmr124709045e9.17.1728288498096;
+        Mon, 07 Oct 2024 01:08:18 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695e8b6sm5143596f8f.71.2024.10.07.01.08.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 01:08:17 -0700 (PDT)
+Message-ID: <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
+Date: Mon, 7 Oct 2024 10:08:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/6] remoteproc: qcom: Add helper function to support
+ IOMMU devmem translation
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shiraz Hashim <quic_shashim@quicinc.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-4-quic_mojha@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241004212359.2263502-4-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sat,  5 Oct 2024 12:55:26 -0700
-Ian Rogers <irogers@google.com> wrote:
-
-> Rather than pass 0/EM_NONE, use the value computed in the disasm
-> struct arch. Switch the EM_NONE case to EM_HOST, rewriting EM_NONE if
-> it were passed to get_dwarf_regnum. Pass a flags value as
-> architectures like csky need the flags to determine the ABI variant.
+On 04/10/2024 23:23, Mukesh Ojha wrote:
+> From: Shiraz Hashim <quic_shashim@quicinc.com>
 > 
+> Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> translation set up for remote processors is managed by QHEE itself
+> however, for a case when these remote processors has to run under KVM
 
-Does this change the command output when we use it for cross-build
-environment? E.g. remote arch is different from host arch? If so,
-please add output examples with/without this change.
+This is not true, KVM is a Linux hypervisor, remote processors have
+nothing to do with KVM, please rephrase.
 
-Thank you,
-
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> hypervisor, IOMMU translation need to setup from Linux remoteproc driver
+> before it is brought up.
+> 
+> Add qcom_devmem_info and qcom_devmem_table data structure and make a
+> common helper functions which caller can call if these translation need
+> to be taken care by the driver to enable iommu devmem access for
+> remoteproc processors.
+> 
+> Signed-off-by: Shiraz Hashim <quic_shashim@quicinc.com>
+> Co-developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > ---
->  tools/perf/util/annotate.c           | 6 +++---
->  tools/perf/util/dwarf-regs.c         | 8 ++++++--
->  tools/perf/util/include/dwarf-regs.h | 5 +++--
->  3 files changed, 12 insertions(+), 7 deletions(-)
+>   drivers/remoteproc/qcom_common.c | 96 ++++++++++++++++++++++++++++++++
+>   drivers/remoteproc/qcom_common.h | 35 ++++++++++++
+>   2 files changed, 131 insertions(+)
 > 
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index 37ce43c4eb8f..b1d98da79be8 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -2292,7 +2292,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
->  	if (regname == NULL)
->  		return -1;
->  
-> -	op_loc->reg1 = get_dwarf_regnum(regname, 0);
-> +	op_loc->reg1 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
->  	free(regname);
->  
->  	/* Get the second register */
-> @@ -2305,7 +2305,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
->  		if (regname == NULL)
->  			return -1;
->  
-> -		op_loc->reg2 = get_dwarf_regnum(regname, 0);
-> +		op_loc->reg2 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
->  		free(regname);
->  	}
->  	return 0;
-> @@ -2405,7 +2405,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
->  				return -1;
->  
->  			if (*s == arch->objdump.register_char)
-> -				op_loc->reg1 = get_dwarf_regnum(s, 0);
-> +				op_loc->reg1 = get_dwarf_regnum(s, arch->e_machine, arch->e_flags);
->  			else if (*s == arch->objdump.imm_char) {
->  				op_loc->offset = strtol(s + 1, &p, 0);
->  				if (p && p != s + 1)
-> diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
-> index 7c01bc4d7e5b..1321387f6948 100644
-> --- a/tools/perf/util/dwarf-regs.c
-> +++ b/tools/perf/util/dwarf-regs.c
-> @@ -70,7 +70,7 @@ __weak int get_arch_regnum(const char *name __maybe_unused)
->  }
->  
->  /* Return DWARF register number from architecture register name */
-> -int get_dwarf_regnum(const char *name, unsigned int machine)
-> +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags __maybe_unused)
->  {
->  	char *regname = strdup(name);
->  	int reg = -1;
-> @@ -84,8 +84,12 @@ int get_dwarf_regnum(const char *name, unsigned int machine)
->  	if (p)
->  		*p = '\0';
->  
-> +	if (machine == EM_NONE) {
-> +		/* Generic arch - use host arch */
-> +		machine = EM_HOST;
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 1c7887dc65b4..644920972b58 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -658,5 +658,101 @@ int qcom_map_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t me
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_map_unmap_carveout);
+>   
+> +/**
+> + * qcom_map_devmem() - Map the device memories needed by Remoteproc using IOMMU
+> + *
+> + * When Qualcomm EL2 hypervisor(QHEE) present, device memories needed for remoteproc
+> + * processors is managed by it and Linux remoteproc drivers should not call
+> + * this and its respective unmap function in such scenario. This function
+> + * should only be called if remoteproc IOMMU translation need to be managed
+> + * from Linux side.
+> + *
+> + * @rproc: rproc handle
+> + * @devmem_table: list of devmem regions to map
+> + * @use_sid: decision to append sid to iova
+> + * @sid: SID value
+> + */
+> +int qcom_map_devmem(struct rproc *rproc, struct qcom_devmem_table *devmem_table,
+> +		    bool use_sid, unsigned long sid)
+> +{
+> +	struct qcom_devmem_info *info;
+> +	unsigned long sid_def_val;
+> +	int ret;
+> +	int i;
+> +
+> +	if (!rproc->has_iommu)
+> +		return 0;
+> +
+> +	if (!rproc->domain)
+> +		return -EINVAL;
+> +
+> +	/* remoteproc may not have devmem data */
+> +	if (!devmem_table)
+> +		return 0;
+> +
+> +	if (use_sid && sid)
+> +		sid_def_val = sid & SID_MASK_DEFAULT;
+> +
+> +	info = &devmem_table->entries[0];
+> +	for (i = 0; i < devmem_table->num_entries; i++, info++) {
+> +		/*
+> +		 * Remote processor like ADSP supports upto 36 bit device
+> +		 * address space and some of its clients like fastrpc uses
+> +		 * upper 32-35 bits to keep lower 4 bits of its SID to use
+> +		 * larger address space. To keep this consistent across other
+> +		 * use cases add remoteproc SID configuration for firmware
+> +		 * to IOMMU for carveouts.
+> +		 */
+> +		if (use_sid)
+> +			info->da |= (sid_def_val << 32);
+> +
+> +		ret = iommu_map(rproc->domain, info->da, info->pa, info->len, info->flags, GFP_KERNEL);
+> +		if (ret) {
+> +			dev_err(&rproc->dev, "Unable to map devmem, ret: %d\n", ret);
+> +			if (use_sid)
+> +				info->da &= ~(SID_MASK_DEFAULT << 32);
+> +			goto undo_mapping;
+> +		}
 > +	}
->  	switch (machine) {
-> -	case EM_NONE:	/* Generic arch - use host arch */
-> +	case EM_HOST:
->  		reg = get_arch_regnum(regname);
->  		break;
->  	default:
-> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
-> index f4f87ded5e3d..ee0a734564c7 100644
-> --- a/tools/perf/util/include/dwarf-regs.h
-> +++ b/tools/perf/util/include/dwarf-regs.h
-> @@ -93,12 +93,13 @@ int get_arch_regnum(const char *name);
->   * name: architecture register name
->   * machine: ELF machine signature (EM_*)
->   */
-> -int get_dwarf_regnum(const char *name, unsigned int machine);
-> +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags);
->  
->  #else /* HAVE_LIBDW_SUPPORT */
->  
->  static inline int get_dwarf_regnum(const char *name __maybe_unused,
-> -				   unsigned int machine __maybe_unused)
-> +				   unsigned int machine __maybe_unused,
-> +				   unsigned int flags __maybe_unused)
->  {
->  	return -1;
->  }
-> -- 
-> 2.47.0.rc0.187.ge670bccf7e-goog
-> 
+> +
+> +	return 0;
+> +
+> +undo_mapping:
+> +	for (i = i - 1; i >= 0; i--, info--) {
+> +		iommu_unmap(rproc->domain, info->da, info->len);
+> +		if (use_sid)
+> +			info->da &= ~(SID_MASK_DEFAULT << 32);
+> +	}
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_map_devmem);
+> +
+> +/**
+> + * qcom_unmap_devmem() -  unmap the device memories needed by Remoteproc using IOMMU
+> + *
+> + * @rproc:		rproc handle
+> + * @devmem_table:	list of devmem regions to unmap
+> + * @use_sid:		decision to append sid to iova
+> + */
+> +void qcom_unmap_devmem(struct rproc *rproc, struct qcom_devmem_table *devmem_table, bool use_sid)
+> +{
+> +	struct qcom_devmem_info *info;
+> +	int i;
+> +
+> +	if (!rproc->has_iommu || !rproc->domain || !devmem_table)
+> +		return;
+> +
+> +	info = &devmem_table->entries[0];
+> +	for (i = 0; i < devmem_table->num_entries; i++, info++) {
+> +		iommu_unmap(rproc->domain, info->da, info->len);
+> +		if (use_sid)
+> +			info->da &= ~(SID_MASK_DEFAULT << 32);
+> +	}
+> +
+> +	return;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_unmap_devmem);
+> +
+>   MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+> index bbc41054e1ea..bbc684e1df01 100644
+> --- a/drivers/remoteproc/qcom_common.h
+> +++ b/drivers/remoteproc/qcom_common.h
+> @@ -41,6 +41,36 @@ struct qcom_rproc_pdm {
+>   	struct auxiliary_device *adev;
+>   };
+>   
+> +/**
+> + * struct qcom_devmem_info - iommu devmem region
+> + * @da: device address
+> + * @pa: physical address
+> + * @len: length (in bytes)
+> + * @flags: iommu protection flags
+> + *
+> + * The resource entry carries the device address to which a physical address is
+> + * to be mapped with required permissions in flag. The pa, len is expected to
+> + * be a physically contiguous memory region.
+> + */
+> +struct qcom_devmem_info {
+> +	u64 da;
+> +	u64 pa;
+> +	u32 len;
+> +	u32 flags;
+> +};
+> +
+> +/**
+> + * struct qcom_devmem_table - iommu devmem entries
+> + * @num_entries: number of devmem entries
+> + * @entries: devmem entries
+> + *
+> + * The table that carries each devmem resource entry.
+> + */
+> +struct qcom_devmem_table {
+> +	int num_entries;
+> +	struct qcom_devmem_info entries[0];
+> +};
+> +
+>   void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+>   			void (*rproc_dumpfn_t)(struct rproc *rproc,
+>   				struct rproc_dump_segment *segment, void *dest, size_t offset,
+> @@ -65,6 +95,11 @@ int qcom_map_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t me
+>   void qcom_add_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
+>   void qcom_remove_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
+>   
+> +int qcom_map_devmem(struct rproc *rproc, struct qcom_devmem_table *table,
+> +		    bool use_sid, unsigned long sid);
+> +void qcom_unmap_devmem(struct rproc *rproc, struct qcom_devmem_table *table,
+> +		       bool use_sid);
+> +
+>   #if IS_ENABLED(CONFIG_QCOM_SYSMON)
+>   struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
+>   					   const char *name,
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
