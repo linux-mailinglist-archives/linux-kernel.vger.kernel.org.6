@@ -1,359 +1,240 @@
-Return-Path: <linux-kernel+bounces-353010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6725999273F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29545992744
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87B8F1C2298D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A166D1F23870
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EF918BC2D;
-	Mon,  7 Oct 2024 08:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A48418C344;
+	Mon,  7 Oct 2024 08:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dMDsBfzX"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SQwuWTGG"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF2F18BC2A;
-	Mon,  7 Oct 2024 08:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728290308; cv=fail; b=mCnJ2gedju5yL7n+V691wHlhhik2lO3WGvCz4l/wmD2O9px51hTBnnL0vW1a8uBj8ICioMcrjVGL6+tDp6wgyKgXJDevI24tt+ULef5EYGg4hQXkoMwMk4t5xYyveqFhweb4WglQhzWto+V3dHrL2APvktz+hTd4SpXv/zOIEEI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728290308; c=relaxed/simple;
-	bh=lv2f9JngngCRD9BvcWivV1tcnVPBORaOaWgoyLweqOo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=USNB2DbXbMueB8KwxuX+HpW4f+DBjcVuS5wbqC85ulYifDFjibwjhUnbxm+GZfTjyu1Yqd0nvFWEYOOA0BBlutyZZtz9anJvYq0LGW3xKCh6vDTnvgK3O2h8h02Gz53CRiLuTwyGRkNtjjNAplFmQe/oUlda6hOEyLshuKzSgDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dMDsBfzX; arc=fail smtp.client-ip=40.107.243.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v6nE3GRU3/kHpZKPQuaPj7q3Nd+QXHo45OU2T12dEvGDF6LOpPH118icYx1SXPHnl50k6d1nyz2xX9Rfa6bLUtoZdoqt0TTI+s2iEu+i8aWGkDKF4dMOSD94WBaHCi1zfJSI+/oB/AuJBYcmBZXj6qV06rKuc76bjtIxAs6vFhmTM4DSirKrxSAc2AyUgIYu3sseU4KBoj7Eu8x1yqXJkXAyzLkKV49QF6L9FlP5JHLn1IqOkRPoEmp0atCc6EpJ3rRS1iy1x4aG+u9dNZnAQFEn/10TVJFGCp4I0SoupFTOzdqAaL4mPMLVAypUOpLg1zoQ/pSzs6agCCTngiDmqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7L/m/Re9bzUHZIoB1i/N94gP+G3sAc7U/+MSQZLj4rk=;
- b=E6M6oIZ2y5JfO4wgQ/di4NLxhlohCYxbM6VbxD0EZNGN/dTkJx8NfYCHwJPFzblYjF03ATeb1isgVfScvoZIiDGNnvg1aAuoWf+4XcJZ8yWMPj5xgPcJ32iTKEZOKeMbDw6vrXyzvTWVmmt9tsL1/5HokX5BGBiBTdTPLsLPGZsWRBYI1X/fN2lvjOVFFJgXmfQBoGXC5aQLP/8tZ7LOG2QfIb+6xR882qeVDm6lCV9O+g8a5cgSrPmJWxo+Cz1X3PgK/jXY9cPr1DrVGA2eiETcXTFMDbfKBbp/0AmNDaoquELHPSevTNoEmEpt3JjON+KPMZhBD2FQu/ptv0ek5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7L/m/Re9bzUHZIoB1i/N94gP+G3sAc7U/+MSQZLj4rk=;
- b=dMDsBfzXhBwt6x7Zv/yh6o8kRdwC0xY1hYFOjK3i2YKOeItsOmiUxNpEmV4t6voQRE+j27SlFYM241wOK1Scva8C9F0tQhW0I2CjRRkR0TUdrBR2BmX3aVuVFEyoQE7x3wiTb8VWU9PPOjUP+n3QktNrlyhZh4kDrP94JUZeGvY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by LV3PR12MB9354.namprd12.prod.outlook.com (2603:10b6:408:211::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
- 2024 08:38:23 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
- 08:38:22 +0000
-Message-ID: <e43c36d3-4cf4-431b-bd6b-3e7f072179c4@amd.com>
-Date: Mon, 7 Oct 2024 14:08:13 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 9/9] perf/x86/rapl: Add per-core energy counter support
- for AMD CPUs
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rui.zhang@intel.com, oleksandr@natalenko.name, eranian@google.com,
- ravi.bangoria@amd.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240913152149.6317-1-Dhananjay.Ugwekar@amd.com>
- <20240913154801.6446-1-Dhananjay.Ugwekar@amd.com>
- <20240913154801.6446-6-Dhananjay.Ugwekar@amd.com>
- <ZwOCiEGmbeRfurwG@BLRRASHENOY1.amd.com>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <ZwOCiEGmbeRfurwG@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0205.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e9::12) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2F418BBB4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728290371; cv=none; b=RV0ITmS3XemRrVYOyqFBn/C6e9lSK3cNEDetQiZZbwZivvk6K7ZCQDEI+WPEfKmeEx9bZGcqpYoKPT0ra3X+nPtgHTF9y0stRsUlX3c4f3TZuMxIB/zFx+NskxqEwnn3Wh4tPGVDwuL/R2FCgnQTSOdzO97Lt4nysuVsyS2w0l0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728290371; c=relaxed/simple;
+	bh=WCOdrGDsLGIiqFFiuT+0u8EblzmcKgUGhQiRtsMrLa4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=PaSQR1QccFQhmBaqxKJI6hjQodiiDFPcsWkFKVrXBk7XFtx1FzzojHV+pXvF31KYwM1RlPF41HHChZFUnB4AOiVxpi74UMyhsacAI79JPMBIRGHMw5PyC5jYzsyioKPFlmFVaowvz8OKZAQnLShBspaRFxh42I5BOiealY4IHMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SQwuWTGG; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241007083927epoutp049ddb650b4ab812e8b21f3dca4ee4b344~8Hu6m_08m1653316533epoutp04W
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:39:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241007083927epoutp049ddb650b4ab812e8b21f3dca4ee4b344~8Hu6m_08m1653316533epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728290367;
+	bh=oJyTeOI31xg01zEi71YOR5TyTZkLUxjzCK7LhUkgqms=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=SQwuWTGGVv7DC9XndyqSZNM4zhokiYFoCkJ4UunsFKPCrElwLHNOBLFJA5rQ4rogA
+	 DMzqXKjqWdAZ8IQ3oH4cufwDu3Rw2VU93CXGpjOiF86QUmbeBE65tYhs74dhxZdZNa
+	 xY42Nuo/bY6Y/q8eyE74g1pFEONjNAdJX7VBPU08=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241007083926epcas2p3801cce95e30a538f23c82ab1310a1a8c~8Hu6EjrTR1601116011epcas2p3g;
+	Mon,  7 Oct 2024 08:39:26 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XMXdB3Bgwz4x9Pt; Mon,  7 Oct
+	2024 08:39:26 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	69.FD.09396.E3E93076; Mon,  7 Oct 2024 17:39:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241007083925epcas2p10d85918059a49c8b97d0d0a1b4786035~8Hu4w4Hye2828728287epcas2p1X;
+	Mon,  7 Oct 2024 08:39:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241007083925epsmtrp24966c152dbd0f5e832a196b01aff179c~8Hu4v5ER11447714477epsmtrp2m;
+	Mon,  7 Oct 2024 08:39:25 +0000 (GMT)
+X-AuditID: b6c32a45-6c5b7700000024b4-45-67039e3eaf00
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	12.F3.08229.D3E93076; Mon,  7 Oct 2024 17:39:25 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241007083925epsmtip22b2b3a3506648b9ab32d2c4347223715~8Hu4e4eTF0223502235epsmtip2K;
+	Mon,  7 Oct 2024 08:39:25 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzk+dt@kernel.org>, "'Rob Herring'" <robh@kernel.org>, "'Conor Dooley'"
+	<conor+dt@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+	"'Sylwester	Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+In-Reply-To: <06fd4e7e-d401-49bb-81f1-47fcea2dbbee@kernel.org>
+Subject: RE: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
+ hsi0/1 clock support
+Date: Mon, 7 Oct 2024 17:39:24 +0900
+Message-ID: <00a601db1894$6a074790$3e15d6b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|LV3PR12MB9354:EE_
-X-MS-Office365-Filtering-Correlation-Id: 490d1754-bb81-47e8-406f-08dce6ab6755
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eE50OUR1NGNkbktKRStHcTBBYkE2b3UxNU1sQXZwUXZWTWptQUdQZFJZTmNE?=
- =?utf-8?B?VmhRdTd2SklaaHc5Wk5IUnZoMUFrVGsxc3BWUkdhZ2lOdUx5bW4yTG5CZzhs?=
- =?utf-8?B?c0x3SWFCMVkzL2k0eFIvcDNkUjRMZXNHSkVmdldVWWxXV2t4K2c5L0ZxQVpZ?=
- =?utf-8?B?aDVTNFgxYjAva2RtSDluajFtOTBlZ1JoQkhWaTZ6YXBtVU13MWZQdy9oSDdL?=
- =?utf-8?B?bUtzQzhlNDhvbHN3dmFhQUxzYzIyM09SRzZJL1FVaXR4TStXeHB1VmgzaE1B?=
- =?utf-8?B?dU1ob0xncU41WDMyU2JweS9hNVNPRzZTdWNRSkhVUVRjZjF2Zk9DcUhURWE2?=
- =?utf-8?B?aXZXSk8vaXZlbkZFWGJ4Yi9ISnYvUytjM3hKTmJEVDFjaFdad2xNVmdtR1lB?=
- =?utf-8?B?djdjM1hsVlJTV2VnR2JLdHFQYVdCS2ZGcExtbVNWdFU0clFPak1VTGE4SjdN?=
- =?utf-8?B?ckZxOGdXQmpWZ0NFaTY2WmVRc2xBZ0FKVHozQU0rcXNYQlB2K0F4Q3l6RlJM?=
- =?utf-8?B?YlBSWlZTblV3NnBDWkhxaXhvZHM3cGhlb2tVM212bFJwMno2Lys3UEliVGdm?=
- =?utf-8?B?cytrVkFMT1pzMFFLbmpPTm5uZUY2ckJKT1FmSm96V3lkMjNXdkI3NVZWWkU5?=
- =?utf-8?B?N0VudjRTY2lqQWEzQXdMRi84QWNMdWVXWkJtenVMNzZIbVgwd1lVZVBCdGl2?=
- =?utf-8?B?d0FpcVREQkVNcTI3dm1PckRsRW9iemFjSmRnZUcrMnFiZGliSytHUTVvSU4y?=
- =?utf-8?B?dEpIKzdhYjhaWXhaNWtmSEwwSVRUQ2NvVFFtVmhqQUxyemF5Z0svZThiVWp6?=
- =?utf-8?B?b3VkWEwwdjRrYUx5RE4rcFlydXlUQjc1cU1EM0FPK2ltNE4vdGEwdU1ySFcz?=
- =?utf-8?B?eS9wN2hlelJhK0VGM1c2TWs0NFI2bFBnMFhBSmxHNUZBY2VTVFhGRUR4ajZQ?=
- =?utf-8?B?bGVTYzlqNGV4MDF2RUhSWlo5OWNKR0prM21EWVFkcm5TY3hNcEhERUNmLzRD?=
- =?utf-8?B?WnBuanJMRkxaVHRDT01XVTZiSWx3YjEvRWFzQjVyQkZHWTBzTFp2ZW10SFp5?=
- =?utf-8?B?WExGSHUwMHl5QkNLVEdOUllzTWVLS1FMTkQ3cCtLbzNQTlNWdjcwNG1yK1pL?=
- =?utf-8?B?dVhoaTRTSGNmQ0R4TUVYRjErUHpKNDZhbnJTYko1Z1BhUktzc1FrYlhhQ0xJ?=
- =?utf-8?B?Wm10Smk2bE12bEpCUWVPcjFhTTE0b3RXL2dMUkw5ZkxQQzVEaGdVYzljZDVJ?=
- =?utf-8?B?K2t5dEwzQlV1eHpobXBNbHFIOUxrWTJmSWFaYUpYNkRMcENMQU1ESXEzMkZs?=
- =?utf-8?B?QlFzbHZvKzZoQnZBQmVCMTI0VXVXUko4eERvaTdidC8zV0RCL2RnM1hOY1JK?=
- =?utf-8?B?T3c1RHR1M1dlM2hRUE5vOUhCSzV4OXhPM09pUjdFZmF6bEQ0Qjh0MTV4aXMv?=
- =?utf-8?B?bTdITlhVOFU0NWgxZndtZkI4cy94RFB4RXJKM1JKbThOQVU4QVZMS2JmTW5t?=
- =?utf-8?B?dGlYUGpjeGg0QmVJS1NhSmN4akhKRjdFMDVaaDRkZDN6c0FGVUVCbTBrQ2tO?=
- =?utf-8?B?VFQrWFM0MHJkSWp6YTljVWJ5WlQzSWRvOG0zUkgyTHpScUw1T0Y3NUNrdzlt?=
- =?utf-8?B?b1N4bTRsVDZpT2JpZUQzaWlZa2VSOG56WW5JVzZhYjR1djBkcW9KaHNaV3JX?=
- =?utf-8?B?TnZuOTYwcGtEdHN3bHQ0M0pvSmFJQ3lGWmpkWVBCTTVMRXpkWW5MWlV3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWJpYjZVdUtnc2ZHTytmSWNIbWV0ZytrWTMyeWUyRytFTis4VVYrMWRqS2No?=
- =?utf-8?B?eEUrTDJTM005Wk1YTEpRSVVUZU12TzFsRk1kdnVNazEwRERZek9OUU4zSldZ?=
- =?utf-8?B?ZnpGVWxFTUlXQ3hreXBta1ArNWxQUnlUeWNBL0hlRkFMdytSRlR2Z2V1Q2lZ?=
- =?utf-8?B?d1lqdCtuSFNpN3c3MWtRNVlvM2xNVTFLQW5RR2pLRFhCWXFvUm91dWdhYXEv?=
- =?utf-8?B?dTVHUW1TTTFBa2RtUGFuak5FbWZsTHJJWmlFV0xKSlZrVVowS0RqTUVneXQ0?=
- =?utf-8?B?UU9hZVArV05vaVBPa2VTRmRENmFZSlBVdkx3T0pyaUlFMkhwNVJvT3dJN0hr?=
- =?utf-8?B?bHFUYmVOdnlWNm5YaHJsT2JNM1FBSVVET2JMK2kyeU1JaWVaazE1Z1ZqUGYy?=
- =?utf-8?B?QVJrWldlZ0ZxWFBzYkpwbmdZSFlTTTlKOXhQM25EdTg3TjAzUDd4ckcwZTVI?=
- =?utf-8?B?Zjh6Und4dFlVemF1bEYreW5UUk5SK25NOU9EMUZpMUlabWZWaWlLb1lVdGpD?=
- =?utf-8?B?eDZEdVNjNE9IU2pneXNnQm5QOEhic1JGM2prQlBCTy9Tb3dkYzhnWmdMcW4x?=
- =?utf-8?B?c3NzNmZlQlJYcnRaVHptZW1XbE8zdS9iQXZ5WFF0Mk5udUFONVVRcW9NM1Bl?=
- =?utf-8?B?MnFGZUt4c1VuQ2d2OE9mNWFtdTBPTzUxZmcxMzZFSU9aUFVxTmtEOUJHUzJS?=
- =?utf-8?B?RjJ4Z1N6bG4rTHMxTjNWbnp1MllmajR3ZjlZeDdNbWVtdmdJaFdTT0xBb0xt?=
- =?utf-8?B?R2QyTHlBWWhqeHgxTHhlQVRnL2hCd1FtWmFVVHlreHQ4bFJFNWdHam5WSVky?=
- =?utf-8?B?R1NXY2JBcmFXckptdk8rM3RUeHEzY0VWRytybjRMdlFLdC9RTXdNazNadU9a?=
- =?utf-8?B?OTRxbzJmTXlLZ0t3WjVHcUhFV1ZROHlmTzhvZEE0OEtXWVZ2K1ozNGJCNU1B?=
- =?utf-8?B?ZXF1REpFK0czWW4wa2trVkNLS0FIeDJyc3g0UCtIbFZBS3JlNjlLWjd0SW9p?=
- =?utf-8?B?NzNHWURRRkNvVFFqeE1IUHJNUnlhQW1tdkFuUTNBWUd2a3l4cEZHMDl1dXBs?=
- =?utf-8?B?MHlTNUZVTGtmVzhGSjlUNkU4U3oyOFJneEg1cEtmdnhZL0Z4SWE4OUgrZzVs?=
- =?utf-8?B?NVBJbGt2MldaUVZoekkyczhWNDNjVng1SXpMbEJiRFV6ckc3SXJ3TWVYY0xQ?=
- =?utf-8?B?MGdTSE9OWlpPSEovWnVKaEJOVE9YZHFLRnFYbjNLZ3hTbElhUjFHVk1ScFNH?=
- =?utf-8?B?ZjVhdmlyOHBLd0pFWmI0dGdZaWlJZnZYNE1tV1dsSWlqdU93ZzNyRmJEd0pw?=
- =?utf-8?B?dGFwUHZPVDdXTlIwTVF1dnZsbzFIeVJrVUF2aHM1blRYYW5lL2U1Q3Vhc2g1?=
- =?utf-8?B?RllaVktwbVJaekFTNVBtWHhiUHBtdmxnZkpNRmZ2cy9VRzZ0QW1Vbjh2YWF6?=
- =?utf-8?B?TXNQZzN0TjZ3T1lFRkhlSzdGMnBQT3VJUm1OMmhJQlg5UEpDUmsrOEpyM3Zm?=
- =?utf-8?B?VU5adEtBUzdQa0k2aHJkb0hZd1NwS2RFMTM3WHpqT0s0QndhamY5blFQN2Zz?=
- =?utf-8?B?QTdKd0lJZFNnZWVWcCtBWFUwbWt6SEdwQ3NGWG9KellGNGNZZHJvSnJjY0t1?=
- =?utf-8?B?L0VIM0lJNXY2QzFLK0x3SWh1OTUxQXBGc1gxK213eDh0VVlNUWdYV24rNzdD?=
- =?utf-8?B?RCtxN2tDUTcwQk9nY3BGMnprbUNYYmR2QjJLWmswa084WE53RGN3cTFuL0pN?=
- =?utf-8?B?NjRXZGlkcS90L2tEYVplWG1qcU82WTM5SnQ0bzlWc1RJRDUvUjZFM1dLc0Na?=
- =?utf-8?B?Zm1yLzB3MFV2MldjUXVnRVFKdjlHOWpPUExRQzdIREE1OEErOUhLcW5QOEF6?=
- =?utf-8?B?dVQzNGMreUx0T2NQdkpqZmVkY2VGb2IwcWcybDFmSWtpQndrbVdtZzA1S3B1?=
- =?utf-8?B?c3BRR3FkdEdRRUF0Yno1TVdneUEyWVNiQUU4c1czbnNGUXR5R25JcnBhL1N1?=
- =?utf-8?B?c0xHOGYvbktVMm9SbkhtbEF2OU1YUjNiNVFWRFBUbm9SQmszV0tmdTFGY1hw?=
- =?utf-8?B?cWFhK3A5NmZ4c2FvNnBOUnZseHQzUmZGaDFiSzZlMkpscWwvcjJTbEs0YTdU?=
- =?utf-8?Q?MI0eihJXMGzGWcUKJdaVnP1os?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 490d1754-bb81-47e8-406f-08dce6ab6755
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 08:38:22.8171
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8stK4IBdJvo5iF7N6TQTuEDUbuWEkdXmbd+a8dw/LOgZKPEW3EI6DT9x+FEbGgO7sshduNEW0zfDSJKS1YALKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9354
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFSCxBMLhmUc00YvRpkCeNGXSX0HwHNkDzvAdUnffwB72SclgF+0mDoAm3WOaGzQRhyYA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmma7dPOZ0g3f7RS0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi5ax7bBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
+	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM44eOsHc8EK6YqV3dPYGxif
+	inUxcnBICJhIvJvN1MXIxSEksINRYubreYwQzidGiUUXprNDON8YJabdnsLcxcgJ1vH48zRW
+	EFtIYC+jRPdle4iil4wSb/ob2UASbAL6Equ7b7OBJEQEepgleuZOYAFxmAXWMUrs+rOFHaSK
+	U8BOYsWOvWCjhAWSJHZOW8ECchSLgIrEnhv5IGFeAUuJ7l3X2CBsQYmTM5+wgNjMAtoSyxa+
+	hrpIQeLn02WsIK0iAmESf097QJSISMzubGMGWSshcIZD4uTyl6wQ9S4S3T9vskPYwhKvjm+B
+	sqUkPr/bywZh50tMvv6WCaK5gVHi2r9uqGX2EovO/GQHWcYsoCmxfpc+JByVJY7cgjqNT6Lj
+	8F92iDCvREebEESjmsSnK5ehhshIHDvxjHkCo9IsJI/NQvLYLCQfzELYtYCRZRWjWGpBcW56
+	arFRgSE8rpPzczcxglOwlusOxslvP+gdYmTiYDzEKMHBrCTCG7GGMV2INyWxsiq1KD++qDQn
+	tfgQoykwpCcyS4km5wOzQF5JvKGJpYGJmZmhuZGpgbmSOO+91rkpQgLpiSWp2ampBalFMH1M
+	HJxSDUyHJMOd3T4yqTcylParK2h63Zj076uA9Xm3esa2LV6HU7zrPyisV0nwlZDcwyYmecP0
+	i9k3fqWbcybvnrrMJa3L/uFzBh23Kay7bPrsH6/pKPBokJ0wiZXT9fjvuanycQeUeGbP2+2g
+	qLz4xHMTpukNYj6Zvit1VjMkSfvxVP+rerXSIZdtXUSVvNE5o+3fv9udCF+xdU5l+9mMhTkP
+	32tppnLfZX2bF+1qdKQoNfibhPv0f9biv9zTz19cG/VK/v0PuZ/zvr+W4XqQNC+kNk5pu+b8
+	LVOj3ZkqyzXWhF7w/Dr1AdP9Eret7Xm8MjklgXaBKTXscpYRmziXTjzCf7l+x44Sq1OK7Y08
+	rmzPlFiKMxINtZiLihMBYdWTNkoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWy7bCSvK7tPOZ0gw3NfBYP5m1js1iz9xyT
+	xfUvz1kt5h85x2rxctY9Novz5zewW2x6fI3V4mPPPVaLy7vmsFnMOL+PyeLiKVeL/3t2sFsc
+	ftPOavHv2kYWBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mj4f
+	6GQsWCZVsX3zK6YGxseiXYycHBICJhKPP09j7WLk4hAS2M0osfPKKkaIhIzExob/7BC2sMT9
+	liNQRc8ZJVYfa2AGSbAJ6Eus7r7NBpIQEZjELDHlxR0WEIdZYBOjxJaGl8wQLdeZJE5v+wI2
+	i1PATmLFjr2sILawQILE7uZ9TF2MHBwsAioSe27kg4R5BSwlunddY4OwBSVOznzCAmIzC2hL
+	9D5sZYSxly18zQxxnoLEz6fLWEHGiAiESfw97QFRIiIxu7ONeQKj8Cwkk2YhmTQLyaRZSFoW
+	MLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjkktzR2M21d90DvEyMTBeIhRgoNZ
+	SYQ3Yg1juhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWpRTBZJg5OqQam
+	vCMNXjVpkx08/rHWfjqzhCN1qZHOw0+Wd+wmHSmMjNT8utkrfhmfmE9Sydlij1cnd2g7/v9u
+	lzD7SLnb8eMMZbeyFqpNjfd6G6nZwdZVKD31jnJAR/E2d2ef+1ffcOlZzGbiS910Y5VlmdvC
+	HmbOLZ2yhQGnWowaV+zvlp3XpZFYm2Lon1/fe+yCiND1qPTKE6L2+m8X3zp9x1rl63+pLxOT
+	/zst6QpNaylsfm6jPLXzw2uN/jiVWTmOCbNTRTav6Ci7+2957/yZX3qVNaSd1W8cun9Basra
+	yDu5Pbf2MD5Z0Lv18W8X/WvWXLFXjqY4129qqJTefbHrz0kjh8kW2hPXrUsxtE/7ucnjYJES
+	S3FGoqEWc1FxIgBSSRHdOAMAAA==
+X-CMS-MailID: 20241007083925epcas2p10d85918059a49c8b97d0d0a1b4786035
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d
+References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
+	<CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
+	<20240912103856.3330631-3-sunyeal.hong@samsung.com>
+	<db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
+	<00a501db188f$8a7142b0$9f53c810$@samsung.com>
+	<06fd4e7e-d401-49bb-81f1-47fcea2dbbee@kernel.org>
 
-Hello Gautham,
+Hello Krzysztof,
 
-On 10/7/2024 12:11 PM, Gautham R. Shenoy wrote:
-> On Fri, Sep 13, 2024 at 03:48:01PM +0000, Dhananjay Ugwekar wrote:
->> Add a new "power_per_core" PMU and "energy-per-core" event for
->> monitoring energy consumption by each core. The existing energy-cores
->> event aggregates the energy consumption at the package level.
->> This new event aligns with the AMD's per_core energy counters.
-[Snip]
->>  
->> @@ -156,10 +170,14 @@ static struct rapl_model *rapl_model;
->>   * Helper function to get the correct topology id according to the
->>   * RAPL PMU scope.
->>   */
->> -static inline unsigned int get_rapl_pmu_idx(int cpu)
->> +static inline unsigned int get_rapl_pmu_idx(int cpu, int scope)
->>  {
->> -	return rapl_pkg_pmu_is_pkg_scope() ? topology_logical_package_id(cpu) :
->> -					 topology_logical_die_id(cpu);
->> +	if (scope == PERF_PMU_SCOPE_PKG)
->> +		return topology_logical_package_id(cpu);
->> +	else if (scope == PERF_PMU_SCOPE_DIE)
-> 
-> You don't need the "else if" since you are returning if there is a
-> match for the earlier if condition.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Monday, October 7, 2024 5:07 PM
+> To: sunyeal.hong <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzk+dt=40kernel.org>; 'Rob Herring' <robh=40kernel.org>; 'Conor Dooley'
+> <conor+dt=40kernel.org>; 'Alim Akhtar' <alim.akhtar=40samsung.com>; 'Sylw=
+ester
+> Nawrocki' <s.nawrocki=40samsung.com>; 'Chanwoo Choi' <cw00.choi=40samsung=
+.com>;
+> 'Michael Turquette' <mturquette=40baylibre.com>; 'Stephen Boyd'
+> <sboyd=40kernel.org>
+> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> linux-samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linu=
+x-
+> clk=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/3=5D clk: samsung: exynosautov920: add peric1, mi=
+sc
+> and hsi0/1 clock support
+>=20
+> On 07/10/2024 10:04, sunyeal.hong wrote:
+> > Hello Krzysztof,
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: Monday, September 30, 2024 8:36 PM
+> >> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Krzysztof Kozlowski
+> >> <krzk+dt=40kernel.org>; Rob Herring <robh=40kernel.org>; Conor Dooley
+> >> <conor+dt=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>;
+> >> Sylwester Nawrocki <s.nawrocki=40samsung.com>; Chanwoo Choi
+> >> <cw00.choi=40samsung.com>; Michael Turquette <mturquette=40baylibre.co=
+m>;
+> >> Stephen Boyd <sboyd=40kernel.org>
+> >> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.o=
+rg;
+> >> linux-samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> >> linux- clk=40vger.kernel.org
+> >> Subject: Re: =5BPATCH 2/3=5D clk: samsung: exynosautov920: add peric1,
+> >> misc and hsi0/1 clock support
+> >>
+> >> On 12/09/2024 12:38, Sunyeal Hong wrote:
+> >>> Like CMU_PERIC1, this provides clocks for USI09 =7E USI17, USI_I2C an=
+d
+> >> USI_I3C.
+> >>> Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
+> >>> Like CMU_HSI0, this provides clocks for PCIE.
+> >>> Like CMU_HSI1, this provides clocks for USB and MMC.
+> >>>
+> >>> Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> >>> ---
+> >>
+> >> ...
+> >>
+> >>> +
+> >>>  static int __init exynosautov920_cmu_probe(struct platform_device
+> >>> *pdev)  =7B
+> >>>  	const struct samsung_cmu_info *info; =40=40 -1154,6 +1431,19 =40=40=
+ static
+> >>> const struct of_device_id exynosautov920_cmu_of_match=5B=5D =3D =7B
+> >>>  	=7B
+> >>>  		.compatible =3D =22samsung,exynosautov920-cmu-peric0=22,
+> >>>  		.data =3D &peric0_cmu_info,
+> >>> +	=7D, =7B
+> >>> +		 .compatible =3D =22samsung,exynosautov920-cmu-peric1=22,
+> >>> +		 .data =3D &peric1_cmu_info,
+> >>> +	=7D, =7B
+> >>> +		 .compatible =3D =22samsung,exynosautov920-cmu-misc=22,
+> >>> +		 .data =3D &misc_cmu_info,
+> >>> +	=7D, =7B
+> >>> +		.compatible =3D =22samsung,exynosautov920-cmu-hsi0=22,
+> >>> +		.data =3D &hsi0_cmu_info,
+> >>> +	=7D, =7B
+> >>> +		.compatible =3D =22samsung,exynosautov920-cmu-hsi1=22,
+> >>> +		.data =3D &hsi1_cmu_info,
+> >>> +	=7D, =7B
+> >>
+> >> This is unrelated change. Please rebase.
+> >>
+> > Could you please explain in more detail the comment mentioned above?
+>=20
+> You were growing this list, didn't you? Then adding sentinel is unrelated=
+.
+>=20
 
-Right, will modify accordingly
+I have confirmed that the sentinel is being applied duplicately. I will sen=
+d you a patch after fixing it.
 
-> 
->> +		return topology_logical_die_id(cpu);
->> +	else
->         ^^^^^
-> Please check if the scope is SCOPE_CORE here. Again, you don't need the
-> else condition.
+Best Regards,
+sunyeal
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-Yes, will add the if check and remove the else
-
-> 
-> 
->> +		return topology_logical_core_id(cpu);
-> 
-> 
-> 
->>  }
->>  
->>  static inline u64 rapl_read_counter(struct perf_event *event)
-[Snip]
->> @@ -337,12 +356,13 @@ static void rapl_pmu_event_del(struct perf_event *event, int flags)
->>  static int rapl_pmu_event_init(struct perf_event *event)
->>  {
->>  	u64 cfg = event->attr.config & RAPL_EVENT_MASK;
->> -	int bit, rapl_pmu_idx, ret = 0;
->> +	int bit, rapl_pmus_scope, rapl_pmu_idx, ret = 0;
->>  	struct rapl_pmu *rapl_pmu;
->> +	struct rapl_pmus *rapl_pmus;
->>  
->> -	/* only look at RAPL events */
->> -	if (event->attr.type != rapl_pmus_pkg->pmu.type)
->> -		return -ENOENT;
-> 
-> Don't we need the check to only look at RAPL events of pkg or core ?
-> Or is that covered by a check below ?
-
-I moved this check to the PMU specific if blocks (highlighted below)
-
-> 
-> 
-> 
->> +	/* unsupported modes and filters */
->> +	if (event->attr.sample_period) /* no sampling */
->> +		return -EINVAL;
->>  
->>  	/* check only supported bits are set */
->>  	if (event->attr.config & ~RAPL_EVENT_MASK)
->> @@ -351,31 +371,49 @@ static int rapl_pmu_event_init(struct perf_event *event)
->>  	if (event->cpu < 0)
->>  		return -EINVAL;
->>  
->> -	if (!cfg || cfg >= NR_RAPL_PKG_DOMAINS + 1)
->> +	rapl_pmus = container_of(event->pmu, struct rapl_pmus, pmu);
->> +	if (!rapl_pmus)
->>  		return -EINVAL;
->> -
->> -	cfg = array_index_nospec((long)cfg, NR_RAPL_PKG_DOMAINS + 1);
->> -	bit = cfg - 1;
->> -
->> -	/* check event supported */
->> -	if (!(rapl_pmus_pkg->cntr_mask & (1 << bit)))
->> +	rapl_pmus_scope = rapl_pmus->pmu.scope;
->> +
->> +	if (rapl_pmus_scope == PERF_PMU_SCOPE_PKG || rapl_pmus_scope == PERF_PMU_SCOPE_DIE) {
->> +		/* only look at RAPL package events */
->> +		if (event->attr.type != rapl_pmus_pkg->pmu.type)
->> +			return -ENOENT; 		^^^^ here and
->> +
->> +		cfg = array_index_nospec((long)cfg, NR_RAPL_PKG_DOMAINS + 1);
->> +		if (!cfg || cfg >= NR_RAPL_PKG_DOMAINS + 1)
->> +			return -EINVAL;
->> +
->> +		bit = cfg - 1;
->> +		event->hw.event_base = rapl_model->rapl_pkg_msrs[bit].msr;
->> +	} else if (rapl_pmus_scope == PERF_PMU_SCOPE_CORE) {
->> +		/* only look at RAPL per-core events */
->> +		if (event->attr.type != rapl_pmus_core->pmu.type)
->> +			return -ENOENT;
-		^^^^ here
->> +
->> +		cfg = array_index_nospec((long)cfg, NR_RAPL_CORE_DOMAINS + 1);
->> +		if (!cfg || cfg >= NR_RAPL_PKG_DOMAINS + 1)
->> +			return -EINVAL;
->> +
->> +		bit = cfg - 1;
->> +		event->hw.event_base = rapl_model->rapl_core_msrs[bit].msr;
->> +	} else
->>  		return -EINVAL;
->>  
->> -	/* unsupported modes and filters */
->> -	if (event->attr.sample_period) /* no sampling */
->> +	/* check event supported */
->> +	if (!(rapl_pmus->cntr_mask & (1 << bit)))
->>  		return -EINVAL;
->>  
->> -	rapl_pmu_idx = get_rapl_pmu_idx(event->cpu);
->> -	if (rapl_pmu_idx >= rapl_pmus_pkg->nr_rapl_pmu)
->> +	rapl_pmu_idx = get_rapl_pmu_idx(event->cpu, rapl_pmus_scope);
->> +	if (rapl_pmu_idx >= rapl_pmus->nr_rapl_pmu)
->>  		return -EINVAL;
->> -
->>  	/* must be done before validate_group */
->> -	rapl_pmu = rapl_pmus_pkg->rapl_pmu[rapl_pmu_idx];
->> +	rapl_pmu = rapl_pmus->rapl_pmu[rapl_pmu_idx];
->>  	if (!rapl_pmu)
->>  		return -EINVAL;
->>  
->>  	event->pmu_private = rapl_pmu;
->> -	event->hw.event_base = rapl_model->rapl_pkg_msrs[bit].msr;
->>  	event->hw.config = cfg;
->>  	event->hw.idx = bit;
->>  
-[Snip]
->> @@ -644,15 +720,19 @@ static void __init init_rapl_pmu(struct rapl_pmus *rapl_pmus)
->>  	cpus_read_unlock();
->>  }
->>  
->> -static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_scope)
->> +static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_scope,
->> +				 const struct attribute_group **rapl_attr_groups,
->> +				 const struct attribute_group **rapl_attr_update)
->>  {
->>  	int nr_rapl_pmu;
->>  	struct rapl_pmus *rapl_pmus;
->>  
->>  	if (rapl_pmu_scope == PERF_PMU_SCOPE_PKG)
->>  		nr_rapl_pmu	= topology_max_packages();
->> -	else
->> +	else if (rapl_pmu_scope == PERF_PMU_SCOPE_DIE)
->>  		nr_rapl_pmu	= topology_max_packages() * topology_max_dies_per_package();
->> +	else
->> +		nr_rapl_pmu	= topology_max_packages() * topology_num_cores_per_package();
-> 
-> Here please check if the rapl_pmu_scope is PERF_PMU_SCOPE_CORE instead
-> of assuming it to be the case if the scope is neither SCOPE_PKG nor
-> SCOPE_DIE. If it is neither of these three, then return an error.
-
-Actually, I thought there is only one caller of this function (rapl_pmu_init), 
-which only passes one of these 3 values, so I thought maybe the error check isnt 
-needed. What do you think? 
-
-Thanks,
-Dhananjay
-
-> 
-> 
-> --
-> Thanks and Regards
-> gautham.
-> 
->>  
->>  	rapl_pmus = kzalloc(struct_size(rapl_pmus, rapl_pmu, nr_rapl_pmu), GFP_KERNEL);
->>  	if (!rapl_pmus)
 
 
