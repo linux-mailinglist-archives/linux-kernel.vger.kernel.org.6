@@ -1,205 +1,231 @@
-Return-Path: <linux-kernel+bounces-352964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A18992691
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E844992694
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F3C281811
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27EC1C224A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65A3187879;
-	Mon,  7 Oct 2024 08:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452A5185E50;
+	Mon,  7 Oct 2024 08:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uz4OQYvq"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dI/ChHbc"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAA2849C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE221292CE
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288278; cv=none; b=VkdZN0J0dICCtAR/+grcYNG5SoDF/HOdHhCycTHCd6RwEN3LXMIxiCb1Ld8Lmu1YCF7+UQT5ymgjSfMf6Y8P9z+HkBc0fEoez+8bxEuT93p2IJpN8lx6WHs8PqdaqxmIMIUoWsLHKdAhXUwu1425/do4mKZXmeKj7sEOjVwwd0U=
+	t=1728288314; cv=none; b=hWr0Sq2aKTWcVZkQKgf/vRxY9/R7XuhIwgXi0CCugf54HMB6h2vW5YzHl3LMSXUNnGhB7q3rqFjCrtNsYvi2r1gAWrfuXqJDQcElF2XgjuScIFgWU/1i/LylH6AvgNZ3a/a8ukPgR68kTUmxnKlL1c9jZ5tKJWY4N187008upmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288278; c=relaxed/simple;
-	bh=d0Nr50T9BuaMEGr5DGSvDugCxM7HjgbbhG+C5L9WMpc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=bV8Z5WCGfkH1/oXqWPWFSGCW8O/l9FdVgPZqjpTvUq95JdnSWFqIwVRIUI7ecH97wj4rKsM6MxEyz4fdf/IMoRy/U5M4BgLCo7eHbEl7IhpQAChh/f7W0msJsUHyXNleCxGh6plGXDzeM1RmDWQ7gtrMTw2lcKUGEMHbgcgtYsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uz4OQYvq; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241007080433epoutp0201a3283d79785ebd1420931c09b4095a~8HQc1FQqd0801308013epoutp02N
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:04:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241007080433epoutp0201a3283d79785ebd1420931c09b4095a~8HQc1FQqd0801308013epoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728288273;
-	bh=RPX6OnITTkeWg+UgZ7xmUxRv/ENHDG8npcBLJcp5fAY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=uz4OQYvq4cKOWw9bVFCPXUos0m/6UHM42coAhY4D+NhdEYAd/iIjiTJcWxR9hJtoB
-	 saLRXTr0muP+ZIAg7ZhjdJ5jFIiWPGMR7N6IO6Yd767cQMdSojzU+ukitEAXLDmEVY
-	 RTB6kBGuo7OJ81Dy+dYB8uHtHdy1ZshcsFcpk1wY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20241007080433epcas2p392d0ad9103fff9170110096eae69174b~8HQcONqxU0759607596epcas2p3T;
-	Mon,  7 Oct 2024 08:04:33 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XMWrw5GVTz4x9Q7; Mon,  7 Oct
-	2024 08:04:32 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F7.55.09770.01693076; Mon,  7 Oct 2024 17:04:32 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241007080432epcas2p29b631c66d2303786552d52f8aed81da7~8HQba05vB2947929479epcas2p2K;
-	Mon,  7 Oct 2024 08:04:32 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241007080432epsmtrp178678f4dc0bbfa575a7fa9ca1d5b403d~8HQbZ9yAk1186511865epsmtrp1e;
-	Mon,  7 Oct 2024 08:04:32 +0000 (GMT)
-X-AuditID: b6c32a46-00dfa7000000262a-35-67039610e35b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.FE.08227.01693076; Mon,  7 Oct 2024 17:04:32 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241007080431epsmtip2930faf35e22019d19dcda213c25e6499~8HQbI7JlJ1335713357epsmtip2P;
-	Mon,  7 Oct 2024 08:04:31 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzk+dt@kernel.org>, "'Rob Herring'" <robh@kernel.org>, "'Conor Dooley'"
-	<conor+dt@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-	"'Sylwester	Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
-	<cw00.choi@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
-	"'Stephen Boyd'" <sboyd@kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-In-Reply-To: <db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
-Subject: RE: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
- hsi0/1 clock support
-Date: Mon, 7 Oct 2024 17:04:31 +0900
-Message-ID: <00a501db188f$8a7142b0$9f53c810$@samsung.com>
+	s=arc-20240116; t=1728288314; c=relaxed/simple;
+	bh=WR3k/UWUY3JLCggtl8vM66rf4EoXPTOkmnrbj3uQQRA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ahklYD+ZMOkPUSd7HTaDmV+qNRElXW+onMMsZk3KPIvg3XJWm84moAlzzbvS85JkuKO0ooG6LM4kM6s5uGTw325+JZ3AVZWRcLstcYq1rGDe4hTR5CRfjS/pfTLDNvS7GdwFzVRdudtyipCu/c1OXT0qTzoe/N6DC+8ECanG90A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dI/ChHbc; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so37059335e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728288311; x=1728893111; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lFnLYkKTDIXKXrJBh+inLDexXIYWE25RlyyZH2KwJVk=;
+        b=dI/ChHbcnRg1D3l/4va2OcWnKd8bnS38BocV5bwjTd+09xE4srfDFh5rO6cktm3SoK
+         v7nn/VLlBr4l/OCsvNau4tMrCYLPzYtP0sqwJqCbOqUKOEin7Nqkh/4wgsoP6zLDGBjZ
+         Tkdkjrywlg0y7svEd3wIoCoxPimZrhmJ8j8H+cCZJUmknqJmxcbds2UnrIuHA9T287Xr
+         4nHrTbFBCakQhkYXgzwmzQWt4TKjI1egyI96W/K3bfK4aJzlcdAODC/+9J3GpRiV3u0A
+         v5WwTVrNeg4f+d8CRkyPDeVdk84b568nPm9Np/oi7+OAPaEUNjD6q49/6OzTK28uRkcE
+         HOWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728288311; x=1728893111;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lFnLYkKTDIXKXrJBh+inLDexXIYWE25RlyyZH2KwJVk=;
+        b=DEKTEj7XMLOMDAHiLb+h2mA/HrsEEBZelobpOg94ryKRALJXi0GFKX8Gvg0oR4vu7P
+         vMs0QJuKQWkHedzWKkp3yWB/bu3A3lD0SDnkMZ0XYwfU56tZZmKbJhQ4fCJC8xBHHX6x
+         GX/M6UcCR6BWR+2PBoDzdegehBjMZq9Bp9CMdcwC8dal4/Um1sDgyYFd0bQ5kbtjiZAP
+         Fow5O47K9F2Q3urJpoA+AhegTzAu/jYXMrwZ8ICIUhpsuhYvnGNwoh6vKJ3rgswNVbq1
+         DbHX3QVGLMyMCXLlhW7K3Am0e8WRBnscfcq6o8OCW15cDqHfaBYl2CdWYCTX3nVaSh4F
+         N4XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS3m0a+urSnOHR31Jm6xWEeMCVQePzAL87TdbBj87zXKGjQYpAZiEA6Nmhej/x08eBF/f3q/2j8gq/0xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy99zVfATIXZdr0KKElvlWpi2H87saAW0f46mPbr8Jy0I5ITeZv
+	1rp0QKOFCLCRvtnv0+3jypEVSM+T3DXoY6xVWHM1IgJiXQ8hD/HqsJn3g1kchskmieRQG2GuuCp
+	Dgmk=
+X-Google-Smtp-Source: AGHT+IGrEjMOLjc4o6yunkgNDMMTRgj2SQizgjy4m7cuxGU924V6RRKaWDxgLmm9wPSV3NPtTWWp3w==
+X-Received: by 2002:a05:600c:348d:b0:42c:b3e5:f68c with SMTP id 5b1f17b1804b1-42f8e24c884mr33582415e9.4.1728288310835;
+        Mon, 07 Oct 2024 01:05:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b444a4sm84264745e9.29.2024.10.07.01.05.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 01:05:09 -0700 (PDT)
+Message-ID: <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+Date: Mon, 7 Oct 2024 10:05:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241004212359.2263502-7-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFSCxBMLhmUc00YvRpkCeNGXSX0HwHNkDzvAdUnffwB72SclrNgdZtw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmha7ANOZ0gz1zNSwezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi5ax7bBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
-	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7Y8v0lY8FFgYrdO7czNjAe
-	5+1i5OSQEDCR2LLsCEsXIxeHkMAORonjB5eyQzifGCV6jl+Bcr4xSnw5MIsRpqX99342iMRe
-	Rom+xvNQzktGiSVPVzGDVLEJ6Eus7r4NlhAR6GGW6Jk7AWwLs8A6Roldf7awg1RxCthJPFo9
-	lQXEFhZIktg5bQWYzSKgItH6+gMbiM0rYCkx4+x/RghbUOLkzCdgNcwC8hLb385hhrhJQeLn
-	02WsILaIgJvEnAsbWCFqRCRmd7YxgyyWEDjDIbFg1WcghwPIcZH4tl8eoldY4tVxiHskBKQk
-	Xva3Qdn5EpOvv2WC6G1glLj2rxtqmb3EojM/2UHmMAtoSqzfpQ8xUlniyC2o0/gkOg7/ZYcI
-	80p0tAlBNKpJfLpyGWqIjMSxE8+YJzAqzULy2Cwkj81C8sAshF0LGFlWMYqlFhTnpqcWGxUY
-	waM7OT93EyM4EWu57WCc8vaD3iFGJg7GQ4wSHMxKIrwRaxjThXhTEiurUovy44tKc1KLDzGa
-	AoN6IrOUaHI+MBfklcQbmlgamJiZGZobmRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
-	xBPZGVH07kL8hZADs3Nm+p/e5PDmj0zc3/JlJpoclxeV6Ucc3698aG9YCOtkI1ZTQ/XZ8Zyy
-	N/U+hhu03duqNluCU+jdetvCOsnK4MsBDL/s5mt3Wee0qtb8PCrT+uz1dq2psvaLnMJv73sV
-	Ee8Us3M7w3T3i4IFl+ouv+z+ZasRtVhmu6e+cT6DivLGHxLFS19f2SxUf/LtjLUPlNZkhv6Q
-	e8fE/zcu5Nrsw/zv913ItP3QF37v7HoOM1aH9O4PP+QF+J9x1xi+0yzOK7OdV/9ecL5sv28W
-	56Lvj6TSdCz7PIqEE7/bv5mzsVpZbd+HCLMWjfW3WXMCHkXo9etft53wZh2n+ovgqe5BahOU
-	WIozEg21mIuKEwECQxTATQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvK7ANOZ0g8vT2C0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi5ax7bBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
-	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZWz5
-	/pKx4KJAxe6d2xkbGI/zdjFyckgImEi0/97P1sXIxSEksJtR4m3XahaIhIzExob/7BC2sMT9
-	liOsEEXPGSX+nd/EDJJgE9CXWN19G6xbRGASs8SUF3dYQBxmgU2MElsaXjJDtHxnlDjdsBBs
-	FqeAncSj1VPBdggLJEjsbt7HBGKzCKhItL7+wAZi8wpYSsw4+58RwhaUODnzCVg9s4C2RO/D
-	VkYIW15i+9s5zBD3KUj8fLqMFcQWEXCTmHNhAytEjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZ
-	wMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOC61tHYw7ln1Qe8QIxMH4yFGCQ5m
-	JRHeiDWM6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73uTRESSE8sSc1OTS1ILYLJMnFwSjUw
-	rV03vVUk0Y514a+9Js6P/tzbULIq/+QjFfGvH5il4trtAxPzNX65e0p/3epQrs6yZ/nBja4a
-	yansPbxf+bIS97jOj13C+q3PL5H1WKnMnq/nv7hM2peR2H1U4szXvxlnJPkV5LjX+60QfODN
-	k9vwtLjBaate6+13H2fV+55bYJLOdsk5h93OXc6ofs2nuTbLPBcFS5eKN5rX+x8TfaLipbOv
-	laVrccRVFr1nG04Lv/+8aV7OzaVP+JZ1LGo1OVNn3Xug71LG2+R01cxd8xy09mofX1yxv1v4
-	mwOL1rrjLk9ttoduVlkv9c1ixt5X3AcnLv7Fejs9If7UCp25ogJtTHzbdcxi4j4+D80w3rFd
-	iaU4I9FQi7moOBEAxBs1ZjoDAAA=
-X-CMS-MailID: 20241007080432epcas2p29b631c66d2303786552d52f8aed81da7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d
-References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
-	<CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
-	<20240912103856.3330631-3-sunyeal.hong@samsung.com>
-	<db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
 
-Hello Krzysztof,
+On 04/10/2024 23:23, Mukesh Ojha wrote:
+> For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> translation for remote processors is managed by QHEE and if the same SoC
+> run under KVM, remoteproc carveout and devmem region should be IOMMU
+> mapped from Linux PAS driver before remoteproc is brought up and
+> unmapped once it is tear down and apart from this, SHM bridge also need
+> to set up to enable memory protection on both remoteproc meta data
+> memory as well as for the carveout region.
+> 
+> Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> hypervisors.
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+>   1 file changed, 40 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index ac339145e072..13bd13f1b989 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -122,6 +122,7 @@ struct qcom_adsp {
+>   
+>   	struct qcom_devmem_table *devmem;
+>   	struct qcom_tzmem_area *tzmem;
+> +	unsigned long sid;
+>   };
+>   
+>   static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+> @@ -310,9 +311,21 @@ static int adsp_start(struct rproc *rproc)
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, true, true, adsp->sid);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "iommu mapping failed, ret: %d\n", ret);
+> +		goto disable_irqs;
+> +	}
+> +
+> +	ret = qcom_map_devmem(rproc, adsp->devmem, true, adsp->sid);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "devmem iommu mapping failed, ret: %d\n", ret);
+> +		goto unmap_carveout;
+> +	}
+> +
+>   	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+>   	if (ret < 0)
+> -		goto disable_irqs;
+> +		goto unmap_devmem;
+>   
+>   	ret = clk_prepare_enable(adsp->xo);
+>   	if (ret)
+> @@ -400,6 +413,10 @@ static int adsp_start(struct rproc *rproc)
+>   	clk_disable_unprepare(adsp->xo);
+>   disable_proxy_pds:
+>   	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+> +unmap_devmem:
+> +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> +unmap_carveout:
+> +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+>   disable_irqs:
+>   	qcom_q6v5_unprepare(&adsp->q6v5);
+>   
+> @@ -445,6 +462,9 @@ static int adsp_stop(struct rproc *rproc)
+>   			dev_err(adsp->dev, "failed to shutdown dtb: %d\n", ret);
+>   	}
+>   
+> +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> +
+>   	handover = qcom_q6v5_unprepare(&adsp->q6v5);
+>   	if (handover)
+>   		qcom_pas_handover(&adsp->q6v5);
+> @@ -844,6 +864,25 @@ static int adsp_probe(struct platform_device *pdev)
+>   	}
+>   	platform_set_drvdata(pdev, adsp);
+>   
+> +	if (of_property_present(pdev->dev.of_node, "iommus")) {
+> +		struct of_phandle_args args;
+> +
+> +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		rproc->has_iommu = true;
+> +		adsp->sid = args.args[0];
+> +		of_node_put(args.np);
+> +		ret = adsp_devmem_init(adsp);
+> +		if (ret)
+> +			return ret;
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Monday, September 30, 2024 8:36 PM
-> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; Sylwester
-> Nawrocki <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
-> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> clk@vger.kernel.org
-> Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc
-> and hsi0/1 clock support
-> 
-> On 12/09/2024 12:38, Sunyeal Hong wrote:
-> > Like CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and
-> USI_I3C.
-> > Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
-> > Like CMU_HSI0, this provides clocks for PCIE.
-> > Like CMU_HSI1, this provides clocks for USB and MMC.
-> >
-> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
-> > ---
-> 
-> ...
-> 
-> > +
-> >  static int __init exynosautov920_cmu_probe(struct platform_device
-> > *pdev)  {
-> >  	const struct samsung_cmu_info *info; @@ -1154,6 +1431,19 @@ static
-> > const struct of_device_id exynosautov920_cmu_of_match[] = {
-> >  	{
-> >  		.compatible = "samsung,exynosautov920-cmu-peric0",
-> >  		.data = &peric0_cmu_info,
-> > +	}, {
-> > +		 .compatible = "samsung,exynosautov920-cmu-peric1",
-> > +		 .data = &peric1_cmu_info,
-> > +	}, {
-> > +		 .compatible = "samsung,exynosautov920-cmu-misc",
-> > +		 .data = &misc_cmu_info,
-> > +	}, {
-> > +		.compatible = "samsung,exynosautov920-cmu-hsi0",
-> > +		.data = &hsi0_cmu_info,
-> > +	}, {
-> > +		.compatible = "samsung,exynosautov920-cmu-hsi1",
-> > +		.data = &hsi1_cmu_info,
-> > +	}, {
-> 
-> This is unrelated change. Please rebase.
-> 
-Could you please explain in more detail the comment mentioned above?
+Why don't you get this table from the firmware like presumably QHEE does ?
 
-Best Regards,
-sunyeal
+Neil
 
-> Best regards,
-> Krzysztof
-> 
-
+> +
+> +		adsp->pas_metadata.shm_bridge_needed = true;
+> +	} else {
+> +		rproc->has_iommu = false;
+> +	}
+> +
+>   	ret = device_init_wakeup(adsp->dev, true);
+>   	if (ret)
+>   		goto free_rproc;
 
 
