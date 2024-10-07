@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-353423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE9B992D91
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A29992D94
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8101F24D90
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:40:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E33C328169D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0501D432C;
-	Mon,  7 Oct 2024 13:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC01D4326;
+	Mon,  7 Oct 2024 13:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NlJ4r+5T"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mUKv0TWD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583B5156875;
-	Mon,  7 Oct 2024 13:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6201D27A5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728308446; cv=none; b=LWO1VkXQQfqtqCT3GLuNvuhvKCMcLaYUqHOZ0Cx0/DNulUfk7H+qd3W8h2u9GmScPGCMSIWaFvxNl1/lLudNQF5xzP7gtcT4Bjl+qt6aNCHmKHIjlG5PWKMTrdWCQDb+NcpMU25h/mgKTW0LEJx37KiFiQW+HIUbxgEhdRrCpas=
+	t=1728308470; cv=none; b=r7u7/yiDD6v4NM2nLSB5KzizsGlky2meZnHKhfQ+5aW11xtzzt8Uywy8Vbrn4Wb4fg8LbkEzvC4Vut5xstcxRIX7lENSpMOUZZb0Km9ayWt9AnqI5ccq2HuvSOXeN9kN1KybjgJN4U7iF/71regENp3EAVcyMk3eEsej8cEX2KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728308446; c=relaxed/simple;
-	bh=jLz84yx57rMUyMrYweXyVDvuBOPGOAyZYEzz4GQzM78=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=PBuC1BrstSQFHjuLlohJ8s9LxrVOmrju3OtBVvOExAsE+Uw5s8IcwyYVb+p2pM1nX+rmbXXm7ACSayFd91Gq812KoJxgTaJwuGUgcviARs3l44MeBFP7QU1GNSq2knijXCfsw4k2WpJvuriQqZVnWzjmdf4Nw8esUsciKcCRj8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NlJ4r+5T; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728308423; x=1728913223; i=markus.elfring@web.de;
-	bh=uNDbyTC+VvTw4II8s+8j3WlwWTsyRMvrYvyOAIO6/gw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NlJ4r+5TwqjWaDr3b8lv54NXLE12M75yY1PuGqve8EHk6iukf3rAo7Xo8mBLERo0
-	 ex02+qHeivWGi+xVsQULamO2TxMekqdJsQJL7W18qZEplbJL3j7iXn6rFMvIH+l03
-	 2MqWR1Df4vZh2yCOz2SNzE/J3eW+7JRIOBq0UfjJGxkdMJBoAyb2KUetJLkMVNrMb
-	 jgDfCZKtpPoe5x7nXaQhF8/LfVb25V4v+j8GuLDOSlaVnFCo5I40MC/AGFVJjuejC
-	 TO2ug7+xr+bBIT8+HrHxFds9TKhTASA03iszzEBaEMeJZ/D2ApFX7lseUC/FXN9S9
-	 5rcZ36Qzy/C6qOW7VQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MsJSy-1tq3UC3Rta-00rGtP; Mon, 07
- Oct 2024 15:40:22 +0200
-Message-ID: <bc2f9291-c91d-4e46-bfa9-573eea6a67c2@web.de>
-Date: Mon, 7 Oct 2024 15:40:21 +0200
+	s=arc-20240116; t=1728308470; c=relaxed/simple;
+	bh=PmL2xXE8BnzEt05PC++iV4GvglcxASXwdgQKwqxjv6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kukt0Lk09uUuQyIn2PmO7RHU3xgx+WeNc0rRGUlQrefAsyzfGt1vAGhDnySL15aXXAcQg3pXndZfvpUTNplsj5vmmW+P6sCPQCpR4PmqvcBdy7uOjwcuYAqtcNHECBNbCR0MYmCaeUyFjx3za9UsHRm+4gzNUPWiwc4qud7QbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mUKv0TWD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so38377135e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:41:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728308467; x=1728913267; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=18IwUzJqtKG/CgmSwOnapNoHLokmBRx3kK5mOETO+Ss=;
+        b=mUKv0TWDQWTnKCHNcSpMghXXqupaEfZ8UBWGpcnIAuJOEcCqEH/9n+UO2D0xScxhL0
+         fJaT4OhpVtzFWd4wi5LfISYVWzdSEwEoQRtZZ3Ta6TkyXgucMpVzqDiSg5Sm9TwWVExp
+         GFdFrJgBSWFJHPPZEKStQlbf9PObPGKBuHVPmkxFvtBaIJR5XvxtvYXLkHESse8omHQ/
+         EzjCAHWEG3Z23iEO7vY0wAxPJx4DnHSG5WmvjL4C5pr2e8SvJhZjm58HeoLLPVnA3+vV
+         oYSyBGi/GWOvRPHQlKl+lLGByB1xwIyxIauEwodXPP9n2x8/E2doam8Gd+sNL8/xdPZ7
+         Jk0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728308467; x=1728913267;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=18IwUzJqtKG/CgmSwOnapNoHLokmBRx3kK5mOETO+Ss=;
+        b=JEwXAEU6oI7VsRVFZVJYAnP6HTq9VFIfbPWVMHJq31Izd8DUA/JcUYPTpiwnt9V1AB
+         Z6wb1zerVz9pdgGUmTrWjoCbuBGK95N668nUm090H0AxktLB3cV0GRYTBM2hydFQUuu0
+         MKc64TXSM2sBDxgfvyCK1WVlO200w8hHfONhhBoL5eGSSALD45ejgyv/u2KvONagHdfQ
+         4Oj6J1mm63bhREBi10nJEF59ebnld/4Y1JyyV0E8Hr5MFyPOdi0LC7PNe7o5tog1t+pQ
+         LNorqH0mNQreqkuUMVgXotlMLz+HDREk38H6VCouyHE/3xD0bif6lBxpJLkX6yHkhCn/
+         aB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUW0YBkTa9llGat2LBIfbNjsBx96kofHJZJ3GYeOHdCrAfKVYJtDybFJ7g6EyCoE+uPklMmRMukmev4EuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0IC/rsov3FEeD54yejrOU7w5qIZOv8yAjN/Fq6sjgN8H/mpp4
+	Rln1fupSTqUVvHOLvybpKv0tOX3gb7ZIQ/2PJcgV/CS9lXTLEa6n1eeGxvAq9Uk=
+X-Google-Smtp-Source: AGHT+IHn9j8gKlTyGUNL6SJnMg/6TE1OAWoRwNw/fMGqK5wfF55HTcD6FZceAL/RR9mRJBsXvzpTrw==
+X-Received: by 2002:a05:600c:1546:b0:426:64a2:5362 with SMTP id 5b1f17b1804b1-42f85ab4746mr83561765e9.8.1728308466852;
+        Mon, 07 Oct 2024 06:41:06 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f66csm5765373f8f.13.2024.10.07.06.41.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 06:41:06 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH net-next] net: phy: smsc: use devm_clk_get_optional_enabled_with_rate()
+Date: Mon,  7 Oct 2024 15:41:00 +0200
+Message-ID: <20241007134100.107921-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rohit kumar <quic_rohkumar@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Chenyuan Yang <chenyuan0y@gmail.com>, Zijie Zhao <zzjas98@gmail.com>
-References: <20241006205737.8829-1-zichenxie0106@gmail.com>
-Subject: Re: [v3?] ASoC: qcom: Fix NULL Dereference in
- asoc_qcom_lpass_cpu_platform_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241006205737.8829-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:riV0L5mlmEIR4dXPGagU2I773oUqWQtoY5KYJxgB1uVUBjxO5Om
- zNswnhL7l5jeECauaAHGaRj1UYfNM1QSxOxpcZVrl1iz+JOtnI1L2vA/K7P9hjZSUAlztn6
- TOAfvKXIOIr1sy8jMQeOKp1MjBJWh9umA4anhUJJXMqRebm6rMIatMkIheT8/WP0UNw1c0B
- azqb0PrQC1FSw4sOmBamA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Fn7znV4Vg3o=;us8pt03XPhEI8ToSvd3lelJu9IA
- 1QhsJ66wVxBBvXjxnYLIANg3kXp25Y2n9wRMf9QcTDe3Hbf9xrC9WLvHlnV1GpvADdLlINUIw
- X96hgxF+6+RztwsX5+OfAEXfQ1+PBA4+vmMJ5xOG53pke6meywwyxRYGhsEwalrKpD0C7041T
- J/G7t0hy3r+1hZe9wgD270F/qXfGOrGtk6OhJ3V2jhKzL+TIzeN5neff17HFZqxBKe6LVVAyZ
- SDUqxwJX6yTf5LCJyT8C6Znx7N5dHYp7mBWO9pr/PvCNuwQMhgZHSbut4IXEigmgGprF7D1lA
- D/kjjelWVblWcmVd/wiggfIQtVhLZNtcSWzfXAftX1UkcX7j+EyDaqnc6PP14Yl49EIXMunns
- 0JYHUoLBF/2F9lq2BTTbWAb9UhC2RztLr2rcffe+3XY/EwNeHpvZyUH8KD6QkFxMsO6uerA0t
- VEfycSmES0Oz7ZBI6r0kVTqFz8qQleqVJKzj3DnQi3Ao4+TifpQGXNssa7MN7LeUvBJSIB8cg
- y8+2mdBxOWkGWo2TRJruEDQ0iPtVzl7LAZT4se1it7a9KiN4iWOZ6RSfuCmsrheGRTfWOgDle
- u0Mo3fNtEe3um2qdon8JTuyruancO66xZdMuNX7d660PeVExQlJxRKVDcLaFb5sWHRuryzPok
- v3rVK6qf26O5Dw7noQQfbwQ/JYSb/WjxgH8RhTmBoA2I6zJuQPm2AAZ9lrPDYGW5Q23gmEyjf
- CEjZ0djXbtPMgiNDH3BXxFztmmSsy1bfX1GIRjFXv2Jtca2y/LVpr1hcTKufslr6rELfEspwR
- ozDEeofaUVNr7am4mget4yvw==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> ---
-> v2: Fix "From" tag.
-> v3: Format tags to Fixes/Cc/Signed-off-by.
-> ---
-=E2=80=A6
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-* How do you think about to reconsider the version numbers
-  a bit more?
+Fold the separate call to clk_set_rate() into the clock getter.
 
-* Would you like to mention the repeated adjustment of
-  the patch subject?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/net/phy/smsc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-* Can a duplicate marker line be replaced by a blank line?
+diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+index 150aea7c9c36..e1853599d9ba 100644
+--- a/drivers/net/phy/smsc.c
++++ b/drivers/net/phy/smsc.c
+@@ -627,12 +627,13 @@ int smsc_phy_probe(struct phy_device *phydev)
+ 	phydev->priv = priv;
+ 
+ 	/* Make clk optional to keep DTB backward compatibility. */
+-	refclk = devm_clk_get_optional_enabled(dev, NULL);
++	refclk = devm_clk_get_optional_enabled_with_rate(dev, NULL,
++							 50 * 1000 * 1000);
+ 	if (IS_ERR(refclk))
+ 		return dev_err_probe(dev, PTR_ERR(refclk),
+ 				     "Failed to request clock\n");
+ 
+-	return clk_set_rate(refclk, 50 * 1000 * 1000);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(smsc_phy_probe);
+ 
+-- 
+2.43.0
 
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n231
-
-Is the email address =E2=80=9Clinux-kernel@vger.kernel.org=E2=80=9D still =
-relevant here?
-
-Regards,
-Markus
 
