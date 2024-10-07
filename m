@@ -1,167 +1,156 @@
-Return-Path: <linux-kernel+bounces-353841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A54299338B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:38:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE41993386
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D224C1F2483D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335EA1F23639
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839C91DBB1F;
-	Mon,  7 Oct 2024 16:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA141DCB0B;
+	Mon,  7 Oct 2024 16:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="kM1/1/Sl"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eMNx+f2H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkXuX+Ia";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eMNx+f2H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkXuX+Ia"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4101D9321;
-	Mon,  7 Oct 2024 16:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B15F1DC735;
+	Mon,  7 Oct 2024 16:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318985; cv=none; b=cnhp9pW9FToX29amlJjh8hLKYjqSe6rU9aylvsUJzQ7D2WSm3vaSIQ3A32n2IlRTCfQlBpT6UxdBONTy4HI2Uv3yhvG+Byl3DTc9rdQPo1CC/DmcIR9nljYEyBZ76AruRAe3tfCaurdhY7QP3c83bdM/diCMeBgwzSlvFJ3Wd1A=
+	t=1728318973; cv=none; b=jLLqALUGIaZ/IymCn5So9fWWQsX5D2HKKgL821kQKFmukdnC62qz2IVjrsPwwMVsP3uSeTKKNnS/u6ke82lgPMOwwiX9OSCo/inyG00/57mn5P3tWRUObG2TTN8/ijoIw49FEei46WVPsKroCFAaV1crt4hhzAM3tF0baaBHwzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318985; c=relaxed/simple;
-	bh=7TOE9NeqioqCUACWEMJrQIzAP0w3FqBCW3WN8nJoU1Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TclCenohps3VYYKBsEZcnV9RrLOLCfgJQU7wPEmw5pyMdpTd3HQvPa+LHYikijxiX7wO2AvWaaPY5MUzO0VZFlVanKBYg8pmsNbwCn67hdwqTTwI7eLrjK0tAVpJktIgfsHOiUzlvCMpHG7XzyHM6al4QxFQDC9FXmvQFAHMY14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=kM1/1/Sl; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	s=arc-20240116; t=1728318973; c=relaxed/simple;
+	bh=VztaX+9gTAlWmZdz+0uti4MjoKc0EkcnkbQwNIYYXUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sis7UbFETVVliG36KQa7HcQcWVwEFaoqNuuEA1gt5pVGEk3HidFS7HOemh5KZGgiYIz9WkFoBO1zjHkZoNWGbH6tWHoWNrEFapzgN8oo+oEpwKdIo+rNnG4mvqJU85OcyNq0hN+gaVAxWrDC2CBpfC+EuhjVRbJeHrp1N9KkgxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eMNx+f2H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkXuX+Ia; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eMNx+f2H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkXuX+Ia; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XMlCH5KQTz9tGd;
-	Mon,  7 Oct 2024 18:36:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
-	t=1728318971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B6261FD60;
+	Mon,  7 Oct 2024 16:36:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728318969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WgLPv7uERTkbMvbht7gCy9ZDJZFZ/eWPvmA0Pw8Yh+o=;
-	b=kM1/1/Slm05feSR/aJjRCd0NidpPBiN4LaEhiYnq01WOgl6yhlRPP8Sitmd1PQkwfw2opi
-	PHdsyHsiZsbDeAOTuoIxsld8PGOm2J/rDulF0c7/SNOgflWWfkuIzPtsFZVSHk5HOLzEuA
-	KOZnyi4j3ZHZzdGE1UZR2arhcKJaeVP1OxiX41emyb+WAZBeP0+yqCGRUU5xJRJJYF47Vp
-	G8LsDSTyi+ZBxM1+9KKauEbhiKO9XPRZV0dXOX2w0QAIMCfpH9/Z5zRzCIVg+cyLZ4c0vi
-	w0dZA1aWZ/A1k3Mz64wInZPqFhhV6dP8pCE1WIGUzaR7cBhV1E8N2MJ45nQBLA==
-Message-ID: <1224f317cb45fcc5117a7d8dbd19142b0916559a.camel@dirkwinkel.cc>
-Subject: Re: [PATCH V4] PCI: Extend ACS configurability
-From: Steffen Dirkwinkel <me@steffen.cc>
-To: Jason Gunthorpe <jgg@nvidia.com>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com, 
-	galshalom@nvidia.com, leonro@nvidia.com, treding@nvidia.com,
- jonathanh@nvidia.com, 	mmoshrefjava@nvidia.com, shahafs@nvidia.com,
- vsethi@nvidia.com, 	sdonthineni@nvidia.com, jan@nvidia.com,
- tdave@nvidia.com, 	linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, 
-	sagar.tv@gmail.com, vliaskovitis@suse.com
-Date: Mon, 07 Oct 2024 18:36:03 +0200
-In-Reply-To: <20241001193300.GJ1365916@nvidia.com>
-References: <20240523063528.199908-1-vidyas@nvidia.com>
-	 <20240625153150.159310-1-vidyas@nvidia.com>
-	 <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
-	 <3cbd6ddb-1984-4055-9d29-297b4633fc41@kernel.org>
-	 <b8fa3062-48ec-4de7-b314-2ff959775ecc@kernel.org>
-	 <20241001193300.GJ1365916@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	bh=uwNoAqJhXhpbGMqF1DzgplVeFBNHUOaYm/i1J0qxCSM=;
+	b=eMNx+f2Hpbmm33XYXCpnOsVGLXB7kjRJr/tEo8pS2Zjc+ddcT1vbiD4g4hORlzrkhxjcyN
+	W/Ooj95nJcTmwyLGCSBaUhq6BYWVTQXt61KTkf/q9l5NpAL7U8OQ9iZbnDDsjCatq3zd0u
+	MqXxgnmn/sTqlYUL/zQ5MOmJI7ymkdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728318969;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwNoAqJhXhpbGMqF1DzgplVeFBNHUOaYm/i1J0qxCSM=;
+	b=EkXuX+IatllWm+gvYNbjntIzFysCJh5Jtw5iwCKGmE/YiqE1j9a2gFntpr2k7yDUENc3ho
+	ZO4JuijXfaI5wdBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728318969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwNoAqJhXhpbGMqF1DzgplVeFBNHUOaYm/i1J0qxCSM=;
+	b=eMNx+f2Hpbmm33XYXCpnOsVGLXB7kjRJr/tEo8pS2Zjc+ddcT1vbiD4g4hORlzrkhxjcyN
+	W/Ooj95nJcTmwyLGCSBaUhq6BYWVTQXt61KTkf/q9l5NpAL7U8OQ9iZbnDDsjCatq3zd0u
+	MqXxgnmn/sTqlYUL/zQ5MOmJI7ymkdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728318969;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwNoAqJhXhpbGMqF1DzgplVeFBNHUOaYm/i1J0qxCSM=;
+	b=EkXuX+IatllWm+gvYNbjntIzFysCJh5Jtw5iwCKGmE/YiqE1j9a2gFntpr2k7yDUENc3ho
+	ZO4JuijXfaI5wdBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7FBBF132BD;
+	Mon,  7 Oct 2024 16:36:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r3coH/kNBGc9JgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 07 Oct 2024 16:36:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2C215A07D0; Mon,  7 Oct 2024 18:36:09 +0200 (CEST)
+Date: Mon, 7 Oct 2024 18:36:09 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: jack@suse.cz, hch@infradead.org, willy@infradead.org,
+	akpm@linux-foundation.org, chandan.babu@oracle.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] xfs: Let the max iomap length be consistent with
+ the writeback code
+Message-ID: <20241007163609.fkwiybr3nnw7utnc@quack3>
+References: <20241006152849.247152-1-yizhou.tang@shopee.com>
+ <20241006152849.247152-4-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006152849.247152-4-yizhou.tang@shopee.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, 2024-10-01 at 16:33 -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 25, 2024 at 07:49:59AM +0200, Jiri Slaby wrote:
-> > On 25. 09. 24, 7:29, Jiri Slaby wrote:
-> > > On 25. 09. 24, 7:06, Jiri Slaby wrote:
-> > > > > @@ -1047,23 +1066,33 @@ static void pci_std_enable_acs(struct
-> > > > > pci_dev *dev)
-> > > > > =C2=A0=C2=A0 */
-> > > > > =C2=A0 static void pci_enable_acs(struct pci_dev *dev)
-> > > > > =C2=A0 {
-> > > > > -=C2=A0=C2=A0=C2=A0 if (!pci_acs_enable)
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto disable_acs_redi=
-r;
-> > > > > +=C2=A0=C2=A0=C2=A0 struct pci_acs caps;
-> > > > > +=C2=A0=C2=A0=C2=A0 int pos;
-> > > > > +
-> > > > > +=C2=A0=C2=A0=C2=A0 pos =3D dev->acs_cap;
-> > > > > +=C2=A0=C2=A0=C2=A0 if (!pos)
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
-> >=20
-> > Ignore the previous post.
-> >=20
-> > The bridge has no ACS (see lspci below). So it used to be enabled
-> > by
-> > pci_quirk_enable_intel_pch_acs() by another registers.=20
->=20
-> Er, Ok, so it overrides the whole thing with
-> pci_dev_specific_acs_enabled() too..
->=20
-> > I am not sure how to fix this as we cannot have "caps" from these
-> > quirks, so
-> > that whole idea of __pci_config_acs() is nonworking for these
-> > quirks.
->=20
-> We just need to allow the quirk to run before we try to do anything
-> with the cap, which has probably always been a NOP anyhow.
->=20
-> Maybe like this?
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 7d85c04fbba2ae..225a6cd2e9ca3b 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1067,8 +1067,15 @@ static void pci_std_enable_acs(struct pci_dev
-> *dev, struct pci_acs *caps)
-> =C2=A0static void pci_enable_acs(struct pci_dev *dev)
-> =C2=A0{
-> =C2=A0	struct pci_acs caps;
-> +	bool enable_acs =3D false;
-> =C2=A0	int pos;
-> =C2=A0
-> +	/* If an iommu is present we start with kernel default caps
-> */
-> +	if (pci_acs_enable) {
-> +		if (pci_dev_specific_enable_acs(dev))
-> +			enable_acs =3D true;
-> +	}
-> +
-> =C2=A0	pos =3D dev->acs_cap;
-> =C2=A0	if (!pos)
-> =C2=A0		return;
-> @@ -1077,11 +1084,8 @@ static void pci_enable_acs(struct pci_dev
-> *dev)
-> =C2=A0	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &caps.ctrl);
-> =C2=A0	caps.fw_ctrl =3D caps.ctrl;
-> =C2=A0
-> -	/* If an iommu is present we start with kernel default caps
-> */
-> -	if (pci_acs_enable) {
-> -		if (pci_dev_specific_enable_acs(dev))
-> -			pci_std_enable_acs(dev, &caps);
-> -	}
-> +	if (enable_acs)
-> +		pci_std_enable_acs(dev, &caps);
-> =C2=A0
-> =C2=A0	/*
-> =C2=A0	 * Always apply caps from the command line, even if there is
-> no iommu.
+On Sun 06-10-24 23:28:49, Tang Yizhou wrote:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
+> 
+> Since commit 1a12d8bd7b29 ("writeback: scale IO chunk size up to half
+> device bandwidth"), macro MAX_WRITEBACK_PAGES has been removed from the
+> writeback path. Therefore, the MAX_WRITEBACK_PAGES comments in
+> xfs_direct_write_iomap_begin() and xfs_buffered_write_iomap_begin() appear
+> outdated.
+> 
+> In addition, Christoph mentioned that the xfs iomap process should be
+> similar to writeback, so xfs_max_map_length() was written following the
+> logic of writeback_chunk_size().
 
-Hi,
+Well, I'd defer to XFS maintainers here but at least to me it does not make
+a huge amount of sense to scale mapping size with the device writeback
+throughput. E.g. if the device writeback throughput is low, it does not
+mean that it is good to perform current write(2) in small chunks...
 
-I just ran into this issue (fewer iommu groups starting with 6.11).
-Both reverting the original patch or applying your suggestion worked
-for me.
+								Honza
 
-Thanks
-Steffen
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
