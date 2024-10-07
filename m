@@ -1,188 +1,192 @@
-Return-Path: <linux-kernel+bounces-352743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9117D9923A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:34:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4612A9923A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9781F22902
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6033B1C21A2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFC312B17C;
-	Mon,  7 Oct 2024 04:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WEPBW6Y1"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A108E54918
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526EE12B143;
+	Mon,  7 Oct 2024 04:37:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A40810A1C;
+	Mon,  7 Oct 2024 04:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728275672; cv=none; b=pO5e6lCTOduup6g32kD/rZOZZ1JQuUGm6qXMA61lQtTBcq5oqAyhQx7jipJsF2DAF7BXFrrkfu1jCcWcIMctFc6P5WSU1csYOrwPfSvaI+xCrBizznyfa37ZirCiCM8Q3eWyL80zX3iNPggs9WWMiwU/893RxjyAEV9E/nJJJ0U=
+	t=1728275859; cv=none; b=hJiDhXUs9XpBjRPE89r0vmchflabQ1agtdkEokmwBkUd0swghMcEchDvmB822B5+n27ypCWSvnO1VHHdMhXj86z1/jmAIl50nXptDyH355El7L4bro/iztwVERQpX85kf1ZcEpyBH9IlZtoMToN7qziACQMjdYX48O4ZPo3Lk+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728275672; c=relaxed/simple;
-	bh=xtVT0IFCi2Qto8kpSQiCGlBpvaMpt3JFkS6nS7bOX5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m+ROxLUZjO/fuzsFNmBPm+BQZIuAI+mNwpVjakl+f/313SHK0Iqvu4D/LvFCbyHOPvPAWUiJj1Te9ASLo+ooq1UvtO9PRynVTs12bvlS24RMehG8VF4JAaUh/07KVAUASLVzkZK8EED3oESUmjeFFSH/fDAiI1gVx6OpEFqBdPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WEPBW6Y1; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 171D93F31D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728275662;
-	bh=RKS/f2MF9K/DRHRfB0v5ZmIcK+e+Ci2Bwh5D2AMKYp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=WEPBW6Y1EsIzoBjxthb0gqfWCq9lAoePhji1M2UfUnpiLpbKiqa8EnUIR/qmyIWY1
-	 f/1B7c+9P/97mOYFUMPEp4nwea+9ZF6nGwrpIaM5H9QTuz9wdy7ySo/Qoebl15f5t0
-	 yiLsZ9QEcI1gnl8Nx7OZlw0E8gDZTn1f1VY5JhhdZm7O5ptlff5VT2hPFN+XL7SnjE
-	 FxXChujo9sbi5mWSZGOqzceD8YED/H4IYcfpUYD9hfe+p8uX9EeuhF/b7yqcD1Qrar
-	 Cy05DJR9q9Nc6VBMHqk03l/DAvtWDI9Qf+48AEUz+Nn9gvh3iNHm2O3TWKf/4JjHjU
-	 K2Q54onz3skQA==
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6e28d223794so66829597b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2024 21:34:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728275660; x=1728880460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RKS/f2MF9K/DRHRfB0v5ZmIcK+e+Ci2Bwh5D2AMKYp8=;
-        b=QJzM21QHw/6PgzrDTpnaOA2mNyS0X37A/c8vC/M5eSgdExsMxHKXUt96FnVkX22GcJ
-         mLu9SRucFUgCDFjRU33Iyi65V3hlGpK73Nh3mBRX7EATXJ9YnRN8pqsgVNO9v73EKixn
-         7ea4Kip9oDGdcm0u//UNU0vWOX8YRHnIocoUgiMypK9IyWEL+B7M1+OckTMeX8mRQfbM
-         UUJmitgNku/zSVcQztFsxQBGKdFWAM6ds43mcss+ECqOszx0K9/2I+Qbge3aUeDC/m6d
-         TQRhXF5BOoJDPPlkW1M3LKNSc4knCGQJzaiJvtPZJy3OWDaigYs5M11PIsgS2i+pxi41
-         YATQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNqKcji6Lxh40SYoUYdDCApeGDWENLjE4+l7S1ZNtUNtqluYZr74+7entBOF9twXtoa0KOJMGrFboWPL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTz+iOG+XLW+kB2+wZ6SEaLjSRaOSQE7FpzENQFXQWGObL0Zha
-	yYnyL2kXDMdEg+YMAoy125Oh1LJypLjxWRFpjn0YjUCyFrFaoDqqxTGogn5q4G2WQQpyi9VBIIo
-	B7v5ppYDir9GvBUIj0aHwPLpqIEHGx/SidZ+e/EzYCxxefqsb+x6FRr+LvJQgI/I/gvZnItraT5
-	EjJ4gNfdpHvemM+QXtc5V35z4B3eTLAKuieQlWLgUcY2LczRHqnk5A
-X-Received: by 2002:a05:6902:2388:b0:e22:5b1b:f1f1 with SMTP id 3f1490d57ef6-e28936d681cmr7110370276.22.1728275660429;
-        Sun, 06 Oct 2024 21:34:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHi3j06zDsu+UMiFSC0YAaoU5Gwv3GT9ajM093Bdzuvg/07VdqPhd1wdUbzIXoRnTEH9VD+2v/cf2IOe3HLgE=
-X-Received: by 2002:a05:6902:2388:b0:e22:5b1b:f1f1 with SMTP id
- 3f1490d57ef6-e28936d681cmr7110367276.22.1728275660149; Sun, 06 Oct 2024
- 21:34:20 -0700 (PDT)
+	s=arc-20240116; t=1728275859; c=relaxed/simple;
+	bh=T35S/DgpRJqqEin38uykAt6yEO3kleccsAZmlNz1yEU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JNYRstluJh5Y2AlkCtcpBjEGyVdXL2bv48N3SApNtLy2W034mUDtBc/ItTqY83nX7f4Fd2iQWcYkRZ1TDZxPTlF8M/kG7UmVsnXlpBi6PZ4FOaDaDbSmYa9sziMVrh/Y1se1MTuuFyszidlTm/wHu0fU9vUiKayK77oh2L2NWC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B51FAFEC;
+	Sun,  6 Oct 2024 21:38:05 -0700 (PDT)
+Received: from [10.162.40.20] (e116581.arm.com [10.162.40.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 503E23F640;
+	Sun,  6 Oct 2024 21:37:30 -0700 (PDT)
+Message-ID: <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
+Date: Mon, 7 Oct 2024 10:07:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926125909.2362244-1-acelan.kao@canonical.com>
- <ZvVgTGVSco0Kg7H5@wunner.de> <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
- <ZvZ61srt3QAca2AI@wunner.de> <Zvf7xYEA32VgLRJ6@wunner.de> <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
- <ZvvW1ua2UjwHIOEN@wunner.de> <ZvvXDQSBRZMEI2EX@wunner.de>
-In-Reply-To: <ZvvXDQSBRZMEI2EX@wunner.de>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Mon, 7 Oct 2024 12:34:09 +0800
-Message-ID: <CAFv23Q=4O5czQaNw2mEnwkb9LQfODfQDeW+qQD14rfdeVEwjwA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
- during suspend
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Dev Jain <dev.jain@arm.com>
+Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
+To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sj@kernel.org, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org
+References: <20240822121415.3589190-1-dev.jain@arm.com>
+ <20240822121415.3589190-2-dev.jain@arm.com>
+ <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
+ <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
+ <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
+ <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
+ <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
+ <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
+ <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
+ <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
+ <03c5b10d-b81c-4074-9c27-8ffc8c7fc84a@arm.com>
+ <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
+ <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+Content-Language: en-US
+In-Reply-To: <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Lukas Wunner <lukas@wunner.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=881=E6=97=A5=
- =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:03=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Oct 01, 2024 at 01:02:46PM +0200, Lukas Wunner wrote:
-> > On Mon, Sep 30, 2024 at 09:31:53AM +0800, AceLan Kao wrote:
-> > > Lukas Wunner <lukas@wunner.de> 2024 9 28 8:51:
-> > > > -       if (pci_get_dsn(pdev) !=3D ctrl->dsn)
-> > > > +       dsn =3D pci_get_dsn(pdev);
-> > > > +       if (!PCI_POSSIBLE_ERROR(dsn) &&
-> > > > +           dsn !=3D ctrl->dsn)
-> > > >                 return true;
-> > >
-> > > In my case, the pciehp_device_replaced() returns true from this final=
- check.
-> > > And these are the values I got
-> > > dsn =3D 0x00000000, ctrl->dsn =3D 0x7800AA00
-> > > dsn =3D 0x00000000, ctrl->dsn =3D 0x21B7D000
-> >
-> > Ah because pci_get_dsn() returns 0 if the device is gone.
-> > Below is a modified patch which returns false in that case.
->
-> Sorry, forgot to include the patch:
->
-> -- >8 --
->
-> diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pcie=
-hp_core.c
-> index ff458e6..957c320 100644
-> --- a/drivers/pci/hotplug/pciehp_core.c
-> +++ b/drivers/pci/hotplug/pciehp_core.c
-> @@ -287,24 +287,32 @@ static int pciehp_suspend(struct pcie_device *dev)
->  static bool pciehp_device_replaced(struct controller *ctrl)
->  {
->         struct pci_dev *pdev __free(pci_dev_put);
-> +       u64 dsn;
->         u32 reg;
->
->         pdev =3D pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0,=
- 0));
->         if (!pdev)
-> +               return false;
-> +
-> +       if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) =3D=3D 0 &&
-> +           !PCI_POSSIBLE_ERROR(reg) &&
-> +           reg !=3D (pdev->vendor | (pdev->device << 16)))
->                 return true;
->
-> -       if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
-> -           reg !=3D (pdev->vendor | (pdev->device << 16)) ||
-> -           pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
-> +       if (pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) =3D=3D =
-0 &&
-> +           !PCI_POSSIBLE_ERROR(reg) &&
->             reg !=3D (pdev->revision | (pdev->class << 8)))
->                 return true;
->
->         if (pdev->hdr_type =3D=3D PCI_HEADER_TYPE_NORMAL &&
-> -           (pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) |=
-|
-> -            reg !=3D (pdev->subsystem_vendor | (pdev->subsystem_device <=
-< 16))))
-> +           pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) =
-=3D=3D 0 &&
-> +           !PCI_POSSIBLE_ERROR(reg) &&
-> +           reg !=3D (pdev->subsystem_vendor | (pdev->subsystem_device <<=
- 16)))
->                 return true;
->
-> -       if (pci_get_dsn(pdev) !=3D ctrl->dsn)
-> +       if ((dsn =3D pci_get_dsn(pdev)) &&
-> +           !PCI_POSSIBLE_ERROR(dsn) &&
-> +           dsn !=3D ctrl->dsn)
->                 return true;
->
->         return false;
-Hi Lukas,
 
-Sorry for the late reply, just encountered a strong typhoon in my area
-last week and can't check this in our lab.
+On 9/16/24 09:28, Dev Jain wrote:
+>
+> On 9/9/24 23:24, Shuah Khan wrote:
+>> On 9/8/24 23:16, Dev Jain wrote:
+>>>
+>>> On 9/7/24 01:29, Shuah Khan wrote:
+>>>> On 9/4/24 23:56, Dev Jain wrote:
+>>>>>
+>>>>> On 9/4/24 22:35, Shuah Khan wrote:
+>>>>>> On 9/3/24 22:52, Dev Jain wrote:
+>>>>>>>
+>>>>>>> On 9/4/24 03:14, Shuah Khan wrote:
+>>>>>>>> On 8/30/24 10:29, Dev Jain wrote:
+>>>>>>>>>
+>>>>>>>>> On 8/27/24 17:16, Dev Jain wrote:
+>>>>>>>>>>
+>>>>>>>>>> On 8/27/24 17:14, Shuah Khan wrote:
+>>>>>>>>>>> On 8/22/24 06:14, Dev Jain wrote:
+>>>>>>>>>>>> Rename sigaltstack to generic signal directory, to allow 
+>>>>>>>>>>>> adding more
+>>>>>>>>>>>> signal tests in the future.
+>>>>>>>>>>>
+>>>>>>>>>>> Sorry - I think I mentioned I don't like this test renamed. 
+>>>>>>>>>>> Why are you sending
+>>>>>>>>>>> this rename still included in the patch series?
+>>>>>>>>>>
+>>>>>>>>>> I am not renaming the test, just the directory. The directory 
+>>>>>>>>>> name
+>>>>>>>>>> is changed to signal, and I have retained the name of the test -
+>>>>>>>>>> sas.c.
+>>>>>>>>>
+>>>>>>>>> Gentle ping: I guess there was a misunderstanding; in v5, I was
+>>>>>>>>> also changing the name of the test, to which you objected, and
+>>>>>>>>> I agreed. But, we need to change the name of the directory since
+>>>>>>>>> the new test has no relation to the current directory name,
+>>>>>>>>> "sigaltstack". The patch description explains that the directory
+>>>>>>>>> should be generically named.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Right. You are no longer changing the test name. You are still
+>>>>>>>> changing the directory name. The problem I mentioned stays the
+>>>>>>>> same. Any fixes to the existing tests in this directory can no
+>>>>>>>> longer auto applied to stables releases.
+>>>>>>>
+>>>>>>> I understand your point, but commit baa489fabd01 (selftests/vm: 
+>>>>>>> rename
+>>>>>>> selftests/vm to selftests/mm) is also present. That was a lot 
+>>>>>>> bigger change;
+>>>>>>> sigaltstack contains just one test currently, whose fixes 
+>>>>>>> possibly would have
+>>>>>>> to be backported, so I guess it should not be that much of a big 
+>>>>>>> problem?
+>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>> So who does the backports whenevenr something changes? You are 
+>>>>>> adding
+>>>>>> work where as the automated process would just work without this
+>>>>>> change. It doesn't matter if there is another test that changed
+>>>>>> the name.
+>>>>>>
+>>>>>>>> Other than the desire to rename the directory to generic, what
+>>>>>>>> other value does this change bring?
+>>>>>>>
+>>>>>>> Do you have an alternative suggestion as to where I should put 
+>>>>>>> my new test then;
+>>>>>>> I do not see what is the value of creating another directory to 
+>>>>>>> just include
+>>>>>>> my test. This will unnecessarily clutter the selftests/ 
+>>>>>>> directory with
+>>>>>>> directories containing single tests. And, putting this in 
+>>>>>>> "sigaltstack" is just
+>>>>>>> wrong since this test has no relation with sigaltstack.
+>>>>>>>
+>>>>>>
+>>>>>> If this new test has no relation to sigaltstack, then why are you 
+>>>>>> changing
+>>>>>> and renaming the sigaltstack directory?
+>>>>>
+>>>>> Because the functionality I am testing is of signals, and signals 
+>>>>> are a superset
+>>>>> of sigaltstack. Still, I can think of a compromise, if 
+>>>>> semantically you want to
+>>>>> consider the new test as not testing signals, but a specific 
+>>>>> syscall "sigaction"
+>>>>> and its interaction with blocking of signals, how about naming the 
+>>>>> new directory "sigaction"?
+>>>>>> Adding a new directory is much better
+>>>>>> than going down a path that is more confusing and adding backport 
+>>>>>> overhead.
+>>>>>>
+>>>>
+>>>> Okay - they are related except that you view signalstack as a subset
+>>>> of signals. I saw Mark's response as well saying sigaction isn't
+>>>> a good name for this.
+>>>>
+>>>> Rename usually wipe out git history as well based on what have seen
+>>>> in the past.
+>>>>
+>>>> My main concern is backports. Considering sigstack hasn't changed
+>>>> 2021 (as Mark's email), let's rename it.
+>>>>
+>>>> I am reluctantly agreeing to the rename as it seems to make sense
+>>>> in this case.
+>>>
+>>> Thanks! I guess there is no update required from my side, and you can
+>>> pull this series?
+>>>>
+>>
+>> I can pull this with x86v maintainer ack.
+>>
+>> Or to go through x86 tree:
+>>
+>> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+>>
+>>
+> Gentle ping, adding all x86 maintainers and the x86 list, in case they 
+> missed.
 
-The patched pciehp_device_replaced() returns false at the end of the
-function in my case.
-Unplug the dock which is connected with a tbt storage won't be
-considered as a replacement.
-
-But when I tried to replace the dock with the tbt storage during
-suspend, it still returned false at the end of the function like
-unplugged.
-
-BTW, it's a new model, so I think the ICM is used. And the reg is
-0xffffffff when unplugged.
+Gentle ping
 
