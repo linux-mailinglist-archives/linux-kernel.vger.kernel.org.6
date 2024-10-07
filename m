@@ -1,108 +1,129 @@
-Return-Path: <linux-kernel+bounces-353910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB38993454
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6908799346F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C74E3B2356E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:02:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E06B2331F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67ECC1DC047;
-	Mon,  7 Oct 2024 17:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A518E1DC1AD;
+	Mon,  7 Oct 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dojKfxVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sq/js/em"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A135338D;
-	Mon,  7 Oct 2024 17:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58F71D9691;
+	Mon,  7 Oct 2024 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320537; cv=none; b=Hf6TdDScqRgkDuZitR15O0MzSZr/ZFVjFGw/DhcDaKaGp2sN7bOLLhW0zfIZJtRzUQlbkpEM1t+QGB5VsxqQDaJ2/ZaOw5fnp5nQWqx/bsFd1DyBYaYH46rWJmdh2KiP2VXpyRGrXwYB3VNC9D6OSYWz5BxFdRbcrV5fkdob6h8=
+	t=1728320730; cv=none; b=Iu/LfFqC0/vsgOUTOIkNTGqa+kJx9K2wshyviFP6bniQYjoJicOpms1xkTLdipIxuwvptsxy6rxPv0zijqoNCi26AjkhNvjrbNayXsBqnld4ZN9A7lBw/vP6/funSAqyVjZPi7R6B5BYNC34J2Mjkoae8SaYod900KdzT7anWVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320537; c=relaxed/simple;
-	bh=wAcQZUYR2X+U9mQnYI6Nw7qul/vVksbDqUcIiTCow7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJYCuJZ7U/0IDP6AtHNTFPBqdPjNgYQLfl6EHHyAqO68Tc32Aeo3ctlw1ThSxLHMf1BS4grnMqVbiN/iVLa+PfNovygHCxuG/l2mj/XqGqJ57LEkKpuHK8+VU5JGwueAX5dFefkwVl5HnVLTkY7YAXG5v1paNBuwPZObp67Zw8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dojKfxVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A34C4CEC6;
-	Mon,  7 Oct 2024 17:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728320537;
-	bh=wAcQZUYR2X+U9mQnYI6Nw7qul/vVksbDqUcIiTCow7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dojKfxVDeQKLrEqv1GEKYDiZmXATDi3sJWsFxNiZDIypv2fGdTTJrFxJuwt0hI55R
-	 Kh0myqpGe3iAZksI4c8RJXhJH+dIeU1cMzc29FqeYeWzT7hq8HB5amaHHQxT/R0lEa
-	 AyACcOuwMEqo45+fXho8zaWD/BRuovdRhCPduEKU6FT14jcQr78vKE0dJaATWSrI8J
-	 /oSHAGRutKEe7rv7s6MKLZcsBzAWJecisT3WNvKr+3MA9cH6vxWbmKV2Qix8CHE63/
-	 /1CaTpYVgATc/o5r3F0Cved9rB9jW3n+nKCyH0iiVvafDwX58G5Vxq+QMx9iScQDDn
-	 +hjkWQNijoY9Q==
-Date: Mon, 7 Oct 2024 10:02:17 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 04/12] iomap: include iomap_read_end_io() in header
-Message-ID: <20241007170217.GD21836@frogsfrogsfrogs>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
+	s=arc-20240116; t=1728320730; c=relaxed/simple;
+	bh=W9t+CJDGdQjY/tdFRvwaw/Flp6uBpy53jglHZub+DdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ly2S/SHigNRif/+C7998MtTTZsWBN/LlK4M6dd0oDn4rdgmJ20aMagz5HbAiKmgh3qH6S2oK3hz+Yn9taSQysa6V6snd65XOGOXEMhykR25Wa00NW8sMh/wtJO/G+O9lAdw4T/WL+WF66WYlpGlU5JWE3Q8UWtz7zXLOuw7e8pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sq/js/em; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-207115e3056so42736085ad.2;
+        Mon, 07 Oct 2024 10:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728320728; x=1728925528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FJvSdXqaEFcuQy3Y9WUyVakw1biqWpzJyfw0T7fy12I=;
+        b=Sq/js/emHHu9F5h4rrkJSwHNhOaXBxJQOvA0rQzl16cE5JzNyk1G+a2qxI7WDkj1Xj
+         yaSraUmesylChCt2stoJ51+JuymRh64/rOqdch+qBP1HPsPQ4xB+sanib6luMwSlGbYD
+         e6j5jghdT44q+YTtaeCxQzuhAh90UPpAMwcv7m3eiT2cqoa6GTg4GLxelL23YkDyGX+6
+         qWdFBy7vHpeUGgKZx+JYJ6zdblfOr6VTbESjWP5/hPaPtgGNYRqXo1NATHu8zsy8mRqa
+         Ek68A2uesx/CXIc5kr9TsSSMMNujNhu07+BkMjfZryDCOe5ZVYgUIDbX7H722x4PF357
+         4wyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728320728; x=1728925528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FJvSdXqaEFcuQy3Y9WUyVakw1biqWpzJyfw0T7fy12I=;
+        b=CZp+EEpVf+0Gxr4cxoFhiawMwtu3vzz+QTqk7FOJ10nGw1iXJCScFVS8En/+lJaiQT
+         2JuifRqZfFzKB1iYaU0SD++rkUAtW1K0ja92t8V9ZHjocO2YuIn7+NOrbrDw77fpCVuZ
+         UTeQfDDuJZAFdXEdiLyXK6dhNcrL7m9SKcVPl7BKcwls+EM1wqnQ2h7RNGhDFXq5B5P8
+         XHPzyKFYeVe0MciXj9QgK9p8TulGjRfW0akxRWUAp1pG5U7wFdbloccNyGp4U7vlLZjs
+         0NcoVQRH8tM2+RceK6ggFQ3i94+NVhwe9iweWvlaxetyYCH6Buh1+CLnXt2VclGDbCeE
+         0s3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDeCnG3QSJtklTlEVdaIaNawNOJVsSu6+KNhjlX6dZkQv8B/gWCbfnnYjmrN1lWPNqFjQEfnSMq25mweQ@vger.kernel.org, AJvYcCVEmxWEpw7yydClAWP2EWQqQtugF2FKIeKCpFQjE+F6+M/bxl7E9zjyqKMQ7snt2YOahac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcVRnJVInpw9/mKt5uu66WZENhQ4hGbracQ1PqYnXllm2CDdB5
+	Jc1c3BPfPGEBQrpDKAk1ERbwG8s5iWfUuYttkSM9eQeWcpadOtojVINc/4Fsiw67ZP2UuHbsana
+	EjTA9Y9qmfDOpn6qkVf/9oeJbPuk=
+X-Google-Smtp-Source: AGHT+IFuIzzkQ+aYhNsqrwuq62kan4xtPQvwQfRQIyymgXebs0Fas5ZkvAOPaRjozaVR8s+SIeciuEovhswzVCTQFMQ=
+X-Received: by 2002:a17:90a:6984:b0:2e0:a4ce:108c with SMTP id
+ 98e67ed59e1d1-2e1e63c1750mr12218257a91.40.1728320727891; Mon, 07 Oct 2024
+ 10:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
+References: <20241001225207.2215639-1-andrii@kernel.org> <20241001225207.2215639-2-andrii@kernel.org>
+In-Reply-To: <20241001225207.2215639-2-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 7 Oct 2024 10:05:15 -0700
+Message-ID: <CAEf4BzaUUgtYiCQOhKps-UY=_8ANyoWbkpHqFqc2co9Jthfzew@mail.gmail.com>
+Subject: Re: [PATCH v2 tip/perf/core 1/5] mm: introduce mmap_lock_speculation_{start|end}
+To: akpm@linux-foundation.org, willy@infradead.org, mhocko@kernel.org, 
+	vbabka@suse.cz, linux-mm@kvack.org
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	surenb@google.com, mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, 
+	mingo@kernel.org, Andrii Nakryiko <andrii@kernel.org>, 
+	Liam Howlett <liam.howlett@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 04:04:31PM -0400, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> iomap_read_end_io() will be used BTRFS after it has completed the reads
-> to handle control back to iomap to finish reads on all folios.
++cc Liam, sorry, seems like I forgot to add you to the entire patch
+set on initial submission.
 
-That probably needs EXPORT_SYMBOL_GPL if btrfs is going to use it,
-right?
-
---D
-
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Tue, Oct 1, 2024 at 3:52=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org> =
+wrote:
+>
+> From: Suren Baghdasaryan <surenb@google.com>
+>
+> Add helper functions to speculatively perform operations without
+> read-locking mmap_lock, expecting that mmap_lock will not be
+> write-locked and mm is not modified from under us.
+>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@google.c=
+om
 > ---
->  fs/iomap/buffered-io.c | 2 +-
->  include/linux/iomap.h  | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index d007b4a8307c..0e682ff84e4a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -326,7 +326,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t off,
->  		folio_end_read(folio, uptodate);
->  }
->  
-> -static void iomap_read_end_io(struct bio *bio)
-> +void iomap_read_end_io(struct bio *bio)
->  {
->  	int error = blk_status_to_errno(bio->bi_status);
->  	struct folio_iter fi;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index f876d16353c6..7b757bea8455 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -280,6 +280,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
->  		const struct iomap_read_folio_ops *);
->  void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops,
->  		const struct iomap_read_folio_ops *);
-> +void iomap_read_end_io(struct bio *bio);
->  bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
->  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
->  bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
-> -- 
-> 2.46.1
-> 
-> 
+>  include/linux/mm_types.h  |  3 ++
+>  include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
+>  kernel/fork.c             |  3 --
+>  3 files changed, 63 insertions(+), 15 deletions(-)
+>
+
+Are memory-management folks OK with these changes? It would be nice to
+get some acks, if so, and I'd include it into respin, fixing minor
+things in uprobe patches. Thank you!
+
+Note, while this is initially needed for uprobe functionality, having
+an ability to quickly change whether mm_struct changed inbetween some
+speculative querying is generally useful functionality, and I believe
+it would help eliminating mmap_lock usage from /proc/PID/maps code.
+Which is a great outcome for everyone, as that mmap_lock can be quite
+disruptive in production workloads.
+
+So please don't see it as some irrelevant uprobe-related requirement,
+the applicability of this is much wider.
+
+[...]
 
