@@ -1,166 +1,167 @@
-Return-Path: <linux-kernel+bounces-353833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32DB993362
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A54299338B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3FC1F246B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D224C1F2483D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCDB1DB94F;
-	Mon,  7 Oct 2024 16:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839C91DBB1F;
+	Mon,  7 Oct 2024 16:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J1sbWIIY"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="kM1/1/Sl"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0971DB342
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 16:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4101D9321;
+	Mon,  7 Oct 2024 16:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728318959; cv=none; b=V5zTbNQALli5VS3exrHZ4UGANIt80DmxLOcz0A1qh7zZMVjvuMfezZMY1YFdWnUROCpppv6hJ8GfEGTlC0pQxzoB04bM4x2iJ7vWKZ9O6rL+HGKpNGMlnchybntCdBMP3EDJbTQCIXJioKig7TopG26kjUvC/rqKVj9Cn3YGvfQ=
+	t=1728318985; cv=none; b=cnhp9pW9FToX29amlJjh8hLKYjqSe6rU9aylvsUJzQ7D2WSm3vaSIQ3A32n2IlRTCfQlBpT6UxdBONTy4HI2Uv3yhvG+Byl3DTc9rdQPo1CC/DmcIR9nljYEyBZ76AruRAe3tfCaurdhY7QP3c83bdM/diCMeBgwzSlvFJ3Wd1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728318959; c=relaxed/simple;
-	bh=XWRRmYhbIsGnPQa0UxnUE2+vH7hB5dKVgAhDvK4tq/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hl3XO3/0/2953bQBVkThpEZOosO07jaBu0acNgPRpTwyCJ+lwTeNEooawhV+3bQKzkjtStd2WnQOHROe28UwtW9LL3JvfpoquqU8cqmZDQ82t46xhQTbv5tQzMOYS0hXYuZkRojKBlXj9VTwdFK2tm3RkoQYhf8ukyG2/R/KBbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J1sbWIIY; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e25ccdffcc5so3978542276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 09:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728318957; x=1728923757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FGLVVCKHdNtO/ioaopKZCdho+ecoPCau6mCNU2xBYcs=;
-        b=J1sbWIIYrj5CKMu/nTkPtGa+lM72NkEqOe6oMtpLZqp9tXATmacb2Cqr7jsRLj1faw
-         hyb8hpRwKjgylgCLDi3VH1wjJz4+lyOToEoeMsbyjgxro5St0r5JhduR1asM27bHGxPU
-         NAImOQh23TkQnlooaP2LjqzbHRIuc1JUoGVhr0s5diDikCU6IPBX42mJc1NrDmN6qq/h
-         lfH2yRHastJpLSf6mWpUvqHCrzYYKps0KMv3j1QlKnYyMD8Lt65oADbGQkSXOiZmqEVY
-         sUExpsAPb0xytj2NPo8gXlkm79PobnJDSMsug2ph7YP4MzpYRRTHMonqrJKyvB3haJ2P
-         gnRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728318957; x=1728923757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FGLVVCKHdNtO/ioaopKZCdho+ecoPCau6mCNU2xBYcs=;
-        b=N38FjwWMmKDIXutK5Q+R1KBkylIAqVt5OvwEQ5Qcp/96o8hxenSgzGOyo6TrMHwYyA
-         F8bzpVvgxidnS5SMx5ZpwO0jJzA4IHFDGIGjCv/86sdJby6nFUWOVQQutBbkws9vC1zk
-         LQTHC4HQAj0273THaoalZoY0/THwK5l2vMcWxjs+j9otdyQStF7IzAeHRii9rna0V9dq
-         e3MgsxKgHLO4qB7ZMUKm4L1dgu58dFqAJxWxGFVYlbi4bhbPrgi4WCsEdYyFKuKz3+0X
-         /wHxlrnBtJlf7pv60g1XcPKAxo9ZRlbIeMMpVKzVOBVlhyMgSltCLyRl/GtyjkwfOHQg
-         dzIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ8eolzSSkk1kbWCY5WKJSyN+Ni/RSBUhEuk2kml7hoMHOZTLfyeGC3Z0raUC/85FfGkB9MCaV8zlTGRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSh+NwtxnNGXCZpL71/Quk8aMoe6ysbfH4Tg7MD/ghTJvz0T1f
-	mPQrxoGmt0nNolLrIFtsPTVV+xhXda7v+F1yItjU8xJLjLnH0QnHDrOqJ1rDzPIs1mYrmPVHJX6
-	k1gbPC5bb35vMUbxlYwzaOJh/M4roJagC8NAU
-X-Google-Smtp-Source: AGHT+IHMnCKj/L8qumQO35MXRgmOOBpLRXITDLkE2JHuYnlF1uX8MtmRoQF/PE4lBXFoP3VKXpQqHk5de4DKSnvSRQU=
-X-Received: by 2002:a05:6902:2301:b0:e1a:9379:5aac with SMTP id
- 3f1490d57ef6-e28937e4569mr9008649276.30.1728318957146; Mon, 07 Oct 2024
- 09:35:57 -0700 (PDT)
+	s=arc-20240116; t=1728318985; c=relaxed/simple;
+	bh=7TOE9NeqioqCUACWEMJrQIzAP0w3FqBCW3WN8nJoU1Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TclCenohps3VYYKBsEZcnV9RrLOLCfgJQU7wPEmw5pyMdpTd3HQvPa+LHYikijxiX7wO2AvWaaPY5MUzO0VZFlVanKBYg8pmsNbwCn67hdwqTTwI7eLrjK0tAVpJktIgfsHOiUzlvCMpHG7XzyHM6al4QxFQDC9FXmvQFAHMY14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=kM1/1/Sl; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XMlCH5KQTz9tGd;
+	Mon,  7 Oct 2024 18:36:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
+	t=1728318971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WgLPv7uERTkbMvbht7gCy9ZDJZFZ/eWPvmA0Pw8Yh+o=;
+	b=kM1/1/Slm05feSR/aJjRCd0NidpPBiN4LaEhiYnq01WOgl6yhlRPP8Sitmd1PQkwfw2opi
+	PHdsyHsiZsbDeAOTuoIxsld8PGOm2J/rDulF0c7/SNOgflWWfkuIzPtsFZVSHk5HOLzEuA
+	KOZnyi4j3ZHZzdGE1UZR2arhcKJaeVP1OxiX41emyb+WAZBeP0+yqCGRUU5xJRJJYF47Vp
+	G8LsDSTyi+ZBxM1+9KKauEbhiKO9XPRZV0dXOX2w0QAIMCfpH9/Z5zRzCIVg+cyLZ4c0vi
+	w0dZA1aWZ/A1k3Mz64wInZPqFhhV6dP8pCE1WIGUzaR7cBhV1E8N2MJ45nQBLA==
+Message-ID: <1224f317cb45fcc5117a7d8dbd19142b0916559a.camel@dirkwinkel.cc>
+Subject: Re: [PATCH V4] PCI: Extend ACS configurability
+From: Steffen Dirkwinkel <me@steffen.cc>
+To: Jason Gunthorpe <jgg@nvidia.com>, Jiri Slaby <jirislaby@kernel.org>
+Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com, 
+	galshalom@nvidia.com, leonro@nvidia.com, treding@nvidia.com,
+ jonathanh@nvidia.com, 	mmoshrefjava@nvidia.com, shahafs@nvidia.com,
+ vsethi@nvidia.com, 	sdonthineni@nvidia.com, jan@nvidia.com,
+ tdave@nvidia.com, 	linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, 
+	sagar.tv@gmail.com, vliaskovitis@suse.com
+Date: Mon, 07 Oct 2024 18:36:03 +0200
+In-Reply-To: <20241001193300.GJ1365916@nvidia.com>
+References: <20240523063528.199908-1-vidyas@nvidia.com>
+	 <20240625153150.159310-1-vidyas@nvidia.com>
+	 <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
+	 <3cbd6ddb-1984-4055-9d29-297b4633fc41@kernel.org>
+	 <b8fa3062-48ec-4de7-b314-2ff959775ecc@kernel.org>
+	 <20241001193300.GJ1365916@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
- <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com> <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
-In-Reply-To: <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Oct 2024 12:35:46 -0400
-Message-ID: <CAHC9VhSEMSwzxjXUHLCWXoGj3ds8pQJ-nH6WQuRDzBkx6Svotw@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Shu Han <ebpqwerty472123@gmail.com>, 
-	syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 7, 2024 at 11:31=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
-> > On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@gmail.=
-com> wrote:
-> > >
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> > > > WARNING: possible circular locking dependency detected
-> > > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
-> > > > ------------------------------------------------------
-> > > > syz-executor369/5231 is trying to acquire lock:
-> > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: ino=
-de_lock include/linux/fs.h:815 [inline]
-> > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: pro=
-cess_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
-> > > >
-> > > > but task is already holding lock:
-> > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_=
-killable include/linux/mmap_lock.h:122 [inline]
-> > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_f=
-ile_pages mm/mmap.c:1649 [inline]
-> > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_f=
-ile_pages+0x22d/0xa50 mm/mmap.c:1624
-> > > >
-> > > > which lock already depends on the new lock.
-> > >
-> > > This issue (if not a false positive?) is due to the possible `prot`
-> > > change caused by the processing logic for READ_IMPLIES_EXEC in do_mma=
-p(),
-> > > so the remap_file_pages() must perform LSM check before calling do_mm=
-ap(),
-> > > this is what the previous commit want to do.
-> >
-> > My apologies for the delay on this, I was traveling for a bit and
-> > missed this issue while away.
-> >
-> > Looking quickly at the report, I don't believe this is a false positive=
-.
-> >
-> > > The LSM check is required to know what the `prot` is, but `prot` must=
- be
-> > > obtained after holding the `mmap_write_lock`.
-> > >
-> > > If the `mmap_write_lock` is released after getting the `prot` and bef=
-ore
-> > > the LSM call in remap_file_pages(), it may cause TOCTOU.
-> >
-> > Looking at the IMA code, specifically the process_measurement()
-> > function which is called from the security_mmap_file() LSM hook, I'm
-> > not sure why there is the inode_lock() protected region.  Mimi?
-> > Roberto?  My best guess is that locking the inode may have been
-> > necessary before we moved the IMA inode state into the inode's LSM
-> > security blob, but I'm not certain.
-> >
-> > Mimi and Roberto, can we safely remove the inode locking in
-> > process_measurement()?
->
-> I discussed a bit with Mimi. Her concern was the duplicate iint
-> structure creation during concurrent file accesses. Now that inode
-> integrity metadata have been moved to the inode security blob, we can
-> take the iint->mutex out of the ima_iint_cache structure, and store it
-> directly in the security blob. In this way, we can remove the inode
-> lock.
->
-> Will write a patch and see if it passes our tests.
+On Tue, 2024-10-01 at 16:33 -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 25, 2024 at 07:49:59AM +0200, Jiri Slaby wrote:
+> > On 25. 09. 24, 7:29, Jiri Slaby wrote:
+> > > On 25. 09. 24, 7:06, Jiri Slaby wrote:
+> > > > > @@ -1047,23 +1066,33 @@ static void pci_std_enable_acs(struct
+> > > > > pci_dev *dev)
+> > > > > =C2=A0=C2=A0 */
+> > > > > =C2=A0 static void pci_enable_acs(struct pci_dev *dev)
+> > > > > =C2=A0 {
+> > > > > -=C2=A0=C2=A0=C2=A0 if (!pci_acs_enable)
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto disable_acs_redi=
+r;
+> > > > > +=C2=A0=C2=A0=C2=A0 struct pci_acs caps;
+> > > > > +=C2=A0=C2=A0=C2=A0 int pos;
+> > > > > +
+> > > > > +=C2=A0=C2=A0=C2=A0 pos =3D dev->acs_cap;
+> > > > > +=C2=A0=C2=A0=C2=A0 if (!pos)
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+> >=20
+> > Ignore the previous post.
+> >=20
+> > The bridge has no ACS (see lspci below). So it used to be enabled
+> > by
+> > pci_quirk_enable_intel_pch_acs() by another registers.=20
+>=20
+> Er, Ok, so it overrides the whole thing with
+> pci_dev_specific_acs_enabled() too..
+>=20
+> > I am not sure how to fix this as we cannot have "caps" from these
+> > quirks, so
+> > that whole idea of __pci_config_acs() is nonworking for these
+> > quirks.
+>=20
+> We just need to allow the quirk to run before we try to do anything
+> with the cap, which has probably always been a NOP anyhow.
+>=20
+> Maybe like this?
+>=20
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 7d85c04fbba2ae..225a6cd2e9ca3b 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1067,8 +1067,15 @@ static void pci_std_enable_acs(struct pci_dev
+> *dev, struct pci_acs *caps)
+> =C2=A0static void pci_enable_acs(struct pci_dev *dev)
+> =C2=A0{
+> =C2=A0	struct pci_acs caps;
+> +	bool enable_acs =3D false;
+> =C2=A0	int pos;
+> =C2=A0
+> +	/* If an iommu is present we start with kernel default caps
+> */
+> +	if (pci_acs_enable) {
+> +		if (pci_dev_specific_enable_acs(dev))
+> +			enable_acs =3D true;
+> +	}
+> +
+> =C2=A0	pos =3D dev->acs_cap;
+> =C2=A0	if (!pos)
+> =C2=A0		return;
+> @@ -1077,11 +1084,8 @@ static void pci_enable_acs(struct pci_dev
+> *dev)
+> =C2=A0	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &caps.ctrl);
+> =C2=A0	caps.fw_ctrl =3D caps.ctrl;
+> =C2=A0
+> -	/* If an iommu is present we start with kernel default caps
+> */
+> -	if (pci_acs_enable) {
+> -		if (pci_dev_specific_enable_acs(dev))
+> -			pci_std_enable_acs(dev, &caps);
+> -	}
+> +	if (enable_acs)
+> +		pci_std_enable_acs(dev, &caps);
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Always apply caps from the command line, even if there is
+> no iommu.
 
-That's great, thanks Roberto.  Assuming all goes well we'll want to
-backport this everywhere we merged the remap_file_pages() patch.
+Hi,
 
---=20
-paul-moore.com
+I just ran into this issue (fewer iommu groups starting with 6.11).
+Both reverting the original patch or applying your suggestion worked
+for me.
+
+Thanks
+Steffen
+
+
 
