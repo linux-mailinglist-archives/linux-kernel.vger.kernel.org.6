@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-353778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E7993285
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F49993288
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5250E1C20756
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A93B283853
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF701DA628;
-	Mon,  7 Oct 2024 16:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8181DA2E5;
+	Mon,  7 Oct 2024 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbULXJIi"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ocSfg4kR"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FF51D61B9;
-	Mon,  7 Oct 2024 16:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F4A1D61B9;
+	Mon,  7 Oct 2024 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728317241; cv=none; b=d9vIgTdUOWpAwNqh0068KhudfDxqlNn5OujFou3psU9ffxjPS/uG3XP0JPXwOlA400beb+1ZlIKiXGPF92ha/9i+YPjOivaGHGDA/RTMOcY71fMt4v+RIb6jFAIpetLI2OFiCWbJrRxvmCnZswLa/PVjDx7iAAkZCYFC5eJm2PU=
+	t=1728317290; cv=none; b=GdnIix/kTm4S1Dyz/p7Z6dPbOcuK6J7AepzPIZ3Q4u/BwE2+YFK+snOPiQETCHb9YFAamEgQWEqxYvGsf+Ds3NtljPmVBS4CxfxEb6JKVOzf9RESRkuaLXMuIKfAoKWRJetvxBmRByqZRunOBKp7LdETz+58bbC0cucupeH6c9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728317241; c=relaxed/simple;
-	bh=oFZDxZzZySVS3T5lGWIAzPggMpxcrF6nUmlUJMgreDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tFssy141RGYfjsVzA2kmOx5MEoAG60wwLf3NRPZC4bOddTye87RCsVcW7BgVBc86pxy7DqJw6D/RDjolErSNZ+GczCsO3uY8xIupcEhBXOm1PAe2V4Ws+jqmeog+Rd3yR6X80FDsf8MjGgM5FO2PoMvoOCRX79xjs4SwcXOJ0xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbULXJIi; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20b49ee353cso43284885ad.2;
-        Mon, 07 Oct 2024 09:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728317239; x=1728922039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=amdae/BqYBmxq5uKSqkgtaxGR1sUx6TEtJQKjIcgahQ=;
-        b=lbULXJIiO3Z5KYGXL6d6n2cTPlNVJpoCs7FeRaO7r86FG7JZgcKy/nyV4uALQe8wIm
-         2t7ojw4J21HWcCMOV+aFCZZZwqeP7hfaS8HOfOtA6L8zd0EYulaNVskX7dnty9fimNSL
-         1gMDDRaZ8RqOiTZVFIDsspznB2UxM2nH1f+tYdFgSJ0jbtI3SgCMFMfw26NdJrCdngc1
-         26xf4J6rH2XKRVjEUq9pMb9rrzLyj8RTuWflfYmnhKjMbrcA7CaPTxyhzsY+ZcGiJSwf
-         WeHgu+Nsgij9FieXYvEzBGA3mGPXIY/a08z4sidAH8IsgEp79Pn+uEU/HMZjFu/jSW1n
-         S16w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728317239; x=1728922039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=amdae/BqYBmxq5uKSqkgtaxGR1sUx6TEtJQKjIcgahQ=;
-        b=DQn37VM3FXOXtmJisKG67yU55kBlECySmXTSxYgUdZpxryiKQAYn0PBk41vVj2aq/X
-         hMqJAOhQzJaUdiMh6vllOTOvCh3AmobtnWXAIF6LNdSEzjlV5DRx+JBYlP6pfTqBPLPc
-         xF8nxGeUoVdZHP3G2Slic2fA/x/H+Xgdugh6U8ufABuPg3hReVg1TqF+HQyoubQMzCKb
-         +2HOVvLCcJ9EHaphv1t33CZglLuV73pV7AsuY7AtPIOx5zv0e4MMQHOWXISWf1OlVigu
-         5c6cy29PGTPp7psTStD3PSjlQYOMagkc4WDjH6f04/Jy0LOP06hqyxe/+TYz9PD2pg3e
-         s8gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVylyZEND0ypdKXpUPchhGOhejd+VkU+3Ch8T9vt/5E90kwp2+1rFJXc/0oq+yMq5Hp0iYcoV4y2YZPkjo=@vger.kernel.org, AJvYcCXu6wClnbpIvnE/QQ8ZnCk0UO1aO5XFynL3joWHqgjsPHInm2LNNBdXYOGTXySzERzbfzzcS7LoyLC/CKO+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXHfMFmdxVg0rcUMFtieuoIO58BDqtT0GGTEdceaVXV9aXWRNC
-	BAJQ9jvzfIfF/EPQ/1R1msglyQ1l7IjgqM2pBNKUzqgfcRLJE9td
-X-Google-Smtp-Source: AGHT+IHG45kLy6GWGFdtJYm8LUxc3XAGRYzgrfjClcgECPwHJj9suXhXoOcR5f9lMPgGD4o0d55PoA==
-X-Received: by 2002:a17:902:f549:b0:20b:ad45:538f with SMTP id d9443c01a7336-20bfdf82fb3mr194702075ad.14.1728317239290;
-        Mon, 07 Oct 2024 09:07:19 -0700 (PDT)
-Received: from localhost.localdomain.localdomain (n220246094186.netvigator.com. [220.246.94.186])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13987b7esm41381575ad.259.2024.10.07.09.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 09:07:18 -0700 (PDT)
-From: Zach Wade <zachwade.k@gmail.com>
-To: masahiroy@kernel.org
-Cc: nathan@kernel.org,
-	nicolas@fjasle.eu,
-	linux-kbuild@vger.kernel.org,
+	s=arc-20240116; t=1728317290; c=relaxed/simple;
+	bh=uqkRqVlfW6WWbHVuSuWc5OtFYX+n1sshI00wPz1tgmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YfPZASXcenTGFjRWNvx2SltPrg3Hfvubs5GVMcdr+QcgVPHFESDBCcyjExS/sT/lLLq+GrKCCpBLNfLuyJhoSrY0ESIKji7tJNPjiiUpwivlsAKGb3rmK/e5zSfDLa/QrZ0jF6lAyYtI7S7Z7EZ8Q172c2UcClUnKP7vWX1QzM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ocSfg4kR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TcfkwV3f9baV8MY6zp7V4iWPZ2iF38+wYPeAUgAVClw=; b=ocSfg4kRHsOgJaXyKMewNo8FXX
+	5v0oto4RYzXvY5jykwI+viOFUVrF87yOBFHEqV+zHKZc+ieUIPE/F1nv+BZG8aUl1gc2JXRaZWPro
+	mssbta0k4hspSkGEGbNH1lyawZuie6EjCvbsZW2O/yc7o0rFIttYT8aL7sWfGOqiQlpPlqTl0q53I
+	AmjH1F9svmbc+uOu5kKv92hSjsfjHJ/YgRTapdUv4Rs4+TDrD6lXSIeVnliG9xxck0wMVruPZrkR8
+	YOBQVrPtgUOorkcq09OsCk0uUvQl6iMJZj/KoMRASvRx7/L3zWLE8luIkiwIydEGQOU3aSa2kSZUe
+	hGNE9BFQ==;
+Received: from i5e860d18.versanet.de ([94.134.13.24] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sxqHG-0002af-Ba; Mon, 07 Oct 2024 18:08:06 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Zach Wade <zachwade.k@gmail.com>
-Subject: [PATCH] kbuild: Add vmlinux_install to facilitate debugging
-Date: Tue,  8 Oct 2024 00:07:10 +0800
-Message-ID: <20241007160710.3937-1-zachwade.k@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	heiko@sntech.de
+Subject: [PATCH] dt-bindings: leds: Document "rc-feedback" trigger
+Date: Mon,  7 Oct 2024 18:08:04 +0200
+Message-ID: <20241007160804.2447947-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,50 +67,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When testing multiple versions of the kernel with the same source code,it 
-is often necessary to recompile the kernel, which is time-consuming for 
-small hosts. I need to cp vmlinux to the corresponding module directory.
-I think adding this will make debugging the kernel a little more 
-convenient.
+Document the "rc-feedback" trigger which is used to control LEDs by
+remote control device activity. This is an existing trigger used in
+existing DTs, document it so validation of those DTs would pass.
 
-Signed-off-by: Zach Wade <zachwade.k@gmail.com>
+It was originally introduced into the Linux kernel in 2013 with
+commit 153a60bb0fac ("[media] rc: add feedback led trigger for rc keypresses")
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- Makefile | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ Documentation/devicetree/bindings/leds/common.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Makefile b/Makefile
-index c5493c0c0ca1..1caab011599f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1579,6 +1579,7 @@ help:
- 	@echo  '* vmlinux	  - Build the bare kernel'
- 	@echo  '* modules	  - Build all modules'
- 	@echo  '  modules_install - Install all modules to INSTALL_MOD_PATH (default: /)'
-+	@echo  '  vmlinux_install - Install vmlinux to INSTALL_MOD_PATH (default: /)'
- 	@echo  '  vdso_install    - Install unstripped vdso to INSTALL_MOD_PATH (default: /)'
- 	@echo  '  dir/            - Build all files in dir and below'
- 	@echo  '  dir/file.[ois]  - Build specified target only'
-@@ -1887,6 +1888,19 @@ modpost: $(if $(single-build),, $(if $(KBUILD_BUILTIN), vmlinux.o)) \
- 	 $(if $(KBUILD_MODULES), modules_check)
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
- 
-+# ---------------------------------------------------------------------------
-+# vmlinux install
-+
-+PHONY += vmlinux_install
-+
-+vmlinux_install:
-+	@if [ -f vmlinux ]; then \
-+		echo "INSTALL ${MODLIB}/vmlinux"; \
-+		cp -f vmlinux ${MODLIB}/ ; \
-+	else \
-+		echo "vmlinux file does not exist."; \
-+	fi
-+
- # Single targets
- # ---------------------------------------------------------------------------
- # To build individual files in subdirectories, you can do like this:
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index bf9a101e4d42..32f9116e03a2 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -119,6 +119,8 @@ properties:
+             # if trigger is absent
+           - none
+             # LED indicates camera torch state
++          - rc-feedback
++            # LED indicates remote control feedback
+           - torch
+             # LED indicates USB gadget activity
+           - usb-gadget
 -- 
-2.46.0
+2.43.0
 
 
