@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-354102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FEE9937CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:59:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2C99937D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3274D1F24209
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CFB1C23567
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CDF1DE4D3;
-	Mon,  7 Oct 2024 19:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F401DE890;
+	Mon,  7 Oct 2024 19:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CPJ/NhI7"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTEJZphu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0A31DE3C9;
-	Mon,  7 Oct 2024 19:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98731DE4ED;
+	Mon,  7 Oct 2024 19:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728331169; cv=none; b=HkQiNx36ormUXwZG2TDJrGc4YttZeJdwJ8x/9NKMYR4wO0L3mNhiZxAaV0MK1ovM15pAYq6MGJRbC1i7mfHaZfYsdeR8e+0X/OKjy/DEDntBAixWzXDoYXByo77IEfB8mcOmNgOtLTJWiYiI5AQzpl6nqKuTmZmw6ceQ75DO/qA=
+	t=1728331172; cv=none; b=ib/PsECqNEtdSOY/KtXJ0fR1CNyGGA7Bs4e1RTUI5xjJRWFfds+3wp7/XiwIDc+RiipGbxtHhf7oSWZ6sO70UUkrSE/Uq7O5UF5WmWFuFIOyvIoKxebxZ40XUMbCwQ50Mqw+AgPUnfeE55WhjE8Wdx2QEgK62bC9OQifrbqQnRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728331169; c=relaxed/simple;
-	bh=zyS2MoYrjjDRv7zTLdZVaJsOLMtAdkXuonDPik1JNlE=;
+	s=arc-20240116; t=1728331172; c=relaxed/simple;
+	bh=kuatBlysKSTgiUPXupQbaL2UIbwsfXdXsP0rFDt7UPs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTtAUHK5iNrY3gftaKOF0oLSh2aePJ2ee5zt3maQCUdnh3HRmPOHqXpcFB6g8YY4hBRJ2mqnoHC+K9JM7JGK0vEMAld0F25eEzOgvB7fsTWOJE8bnqhZnX73L01yd3KixqnMwVmXeaR3lnGX1Lzyg72UcCpXqkeIV43mwYYCPwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CPJ/NhI7; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 7 Oct 2024 15:59:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728331164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fTaQ+JHHJBLPhVTk8LqtlupUHTo1DQk5ZQd2/or6P1k=;
-	b=CPJ/NhI7G1WI4w70Bx3ha9RF0NvYnCQY0D0ZiOoFqY1/LocP2azX5UvCHqwK8rsEW6Yng/
-	ftTXZC79VnvaYRaq2J6MzrXXzsF9RggST1zgj3u6O8SPEtbPltAgE4iC5CJqfJNDIQgrJO
-	cache0/8aHuNCdZHPwMDpntoPLWzocY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Theodore Ts'o <tytso@mit.edu>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <6hjoiumgl3sljhjtmgvsifgu2kdmydlykib3ejlm5pui6zjla4@u7g2bjk4kcau>
-References: <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu>
- <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
- <CAHk-=wh_oAnEY3if4fRC6sJsZxZm=OhULV_9hUDVFm5n7UZ3eA@mail.gmail.com>
- <dcfwznpfogbtbsiwbtj56fa3dxnba4aptkcq5a5buwnkma76nc@rjon67szaahh>
- <ZwP341bZ9eQ0Qyej@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KppuJFh1clJqWCZz9FbhVWqYq0M3YSdEabxYPTcxaYg1Ef8SySCWmK3Tdh4+8Vr+OFtWH+Bpm+nDx2oIN/iEZrgqa/Bd0xXJhdfRYHuws9H8W4e+A2TDwASej51B5oJY/Efaxf3f+Sp59mhbH4NHi7qCxLVsMYnc48qYBNxSsms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTEJZphu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF4FC4CEC6;
+	Mon,  7 Oct 2024 19:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728331171;
+	bh=kuatBlysKSTgiUPXupQbaL2UIbwsfXdXsP0rFDt7UPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QTEJZphuxmsydfB+jMpN/fSoDqJ/sGcLd+qex+rn6BZS2me2A2pDhGbkC87gXuBUG
+	 GafHKW9rLKRH3GHjUllfm5iZe32b6SZDGT2OuFlTnoWyYaTvfm7FTbdnOkkkhp1WMn
+	 pEvrZxeuBeH1Wtuo5a7owTVyUQV9HcjsSlHn89JZPJhLvMc7Pr8qUL9YTJ+oKYaXGT
+	 +uTC0kiIGdMFzR1Z7nyaq5bVl1pzFSy5paRtHhKJ9k2Tc2Ly28/OcPIvhOid/Yu5of
+	 5LkfqcrWx6zr7k0VAoECHqpiCeV63CfGUKfTCZrUYSHr4SBZitTkaYy539SQxd9Pb/
+	 BhlyESjJp6DiQ==
+Date: Mon, 7 Oct 2024 14:59:30 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, linux-mmc@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: mmc: document mmc-slot
+Message-ID: <172833117019.2301548.16704641563450010551.robh@kernel.org>
+References: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-0-ad4eb22c2a8d@linaro.org>
+ <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-2-ad4eb22c2a8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,51 +63,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwP341bZ9eQ0Qyej@zx2c4.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-2-ad4eb22c2a8d@linaro.org>
 
-On Mon, Oct 07, 2024 at 05:01:55PM GMT, Jason A. Donenfeld wrote:
-> On Sun, Oct 06, 2024 at 03:29:51PM -0400, Kent Overstreet wrote:
-> > But - a big gap right now is endian /portability/, and that one is a
-> > pain to cover with automated tests because you either need access to
-> > both big and little endian hardware (at a minumm for creating test
-> > images), or you need to run qemu in full-emulation mode, which is pretty
-> > unbearably slow.
+
+On Mon, 07 Oct 2024 16:03:38 +0200, Neil Armstrong wrote:
+> Document the mmc-slot, which is a subnode of a multi-slot
+> MMC controller, each slot is represented as a full MMC controller,
+> the top node handling all the shared resources and slot mux.
 > 
-> It's really not that bad, at least for my use cases:
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../devicetree/bindings/mmc/mmc-slot.yaml          | 49 ++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
 > 
->     https://www.wireguard.com/build-status/
-> 
-> This thing sends pings to my cellphone too. You can poke around in
-> tools/testing/selftests/wireguard/qemu/ if you're curious. It's kinda
-> gnarly but has proven very very flexible to hack up for whatever
-> additional testing I need. For example, I've been using it for some of
-> my recent non-wireguard work here: https://git.zx2c4.com/linux-rng/commit/?h=jd/vdso-test-harness
-> 
-> Taking this straight-up probably won't fit for your filesystem work, but
-> maybe it can act as a bit of motivation that automated qemu'ing can
-> generally work. It has definitely caught a lot of silly bugs during
-> development time.
 
-I have all the qemu automation:
-https://evilpiepirate.org/git/ktest.git/
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-That's what I use for normal interactive development, i.e. I run
-something like
-
-build-test-kernel -I ~/ktest/tests/fs/bcachefs/replication.ktest rereplicate
-
-which builds a kernel, launches a VM and starts running a test; test
-output on stdout, I can ssh in, ctrl-c kills it like any other test.
-
-And those same tests are run automatically by my CI, which watches
-various git branches and produces results here:
-https://evilpiepirate.org/~testdashboard/ci?user=kmo&branch=bcachefs-testing
-
-(Why yes, thas is a lot of failing tests still.)
-
-I'm giving out accounts on this to anyone in the community doing kernel
-development, we've got fstests wrappers for every local filesystem, plus
-nfs, plus assorted other tests. Can always use more hardware if anyone
-wants to provide more machines.
 
