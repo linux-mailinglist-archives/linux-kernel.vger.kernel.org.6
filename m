@@ -1,97 +1,147 @@
-Return-Path: <linux-kernel+bounces-353562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4194992F7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F75992F7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC2B1C22D97
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28641C228F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C351D5ADE;
-	Mon,  7 Oct 2024 14:33:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1D31D416B;
-	Mon,  7 Oct 2024 14:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A621D5CD6;
+	Mon,  7 Oct 2024 14:34:59 +0000 (UTC)
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A9718F2E8;
+	Mon,  7 Oct 2024 14:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311632; cv=none; b=t40HSmUmWpspPbOvW/NLT0Rk5mGMvsipLUabsTgy0fiaequ0JJG7WDPEOF7ShyShPg9IWGWP4D0QtKLa47paJhl1gO39s1TNo2jG7l907+uxWM9YyuU9aDdxANL+IkPRgTnqjpVkEy2w+54N7j91A0kBQSruMfrFf58pfmaXBns=
+	t=1728311698; cv=none; b=I7izdoIAQnkwvXbosryVqZQK0WQEtQfeJ8dv/gIeDEXuoGVpzKnLGiRjkzYl71yPHL8JP366V7O40LI4YCssZMeU4uX1jjKF+8n2JtWUP4AAcn8/s6ejdu2DFvPpe+OejF12Lh8Nm+AtE0LvXyyPn/RgOf2oEvLR43hbw/p80RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311632; c=relaxed/simple;
-	bh=DSrgYkA2wpT+nsPc4XyV7x4scR6mMUpCmvNZ1QUo8rs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i4haf27I5q4IHxc5PPoPXIyceg/14hRfAAbaKynLRINvljKJt+eJOWowTSE4Wo3cCtkdvMAH914B4Ydpo9mK5tppWJS3OdKbvhlMwkt2pRAav1qTbv2/O8Diapgffjiakr7lyGjxIvBvL4b7wYQvvnVNU3eW4z+6ClOp3i5z5GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 558ECDA7;
-	Mon,  7 Oct 2024 07:34:19 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09B883F64C;
-	Mon,  7 Oct 2024 07:33:48 -0700 (PDT)
-Message-ID: <fdad61fc-c3cf-43b4-a049-b428ea89013f@arm.com>
-Date: Mon, 7 Oct 2024 15:33:47 +0100
+	s=arc-20240116; t=1728311698; c=relaxed/simple;
+	bh=qzQoRyW/Wfplz4M1jSRnf4ZwcMpTMBFYjANqbRji0Ps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=krZiV/z2wSI0QtPH+BhDiIhuegp+zQfLIxo8cxAI7wP/Q/yRCOctnIe/CFJ7l8MxHjSZn6PuYfHyjwG1yO+xDqsnd1WznbcvS+I4KTdqxDXrEmU7zRpJJKuOa3WaGfhHCb12XQTuDlSzvVoAeaQ3dDumzMf4XLYBGVbWB7+7rBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e0465e6bd5so1890804b6e.2;
+        Mon, 07 Oct 2024 07:34:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728311696; x=1728916496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hgfRvfIw2hrPqxojAtVAfwakpPvb5MuSIuzV952AQV4=;
+        b=B31Loz/5xdadb6+cyrznSIbMKDZ+zASdpyTvW0YwY/M441e+dkRyJRzq3Jik/BktJK
+         +1xOYSjt714fPK7MxREFhqs4RotpupNsV2fOVGPbf6pKyltRt98Lb1L51s34Ny7Txm2n
+         eDp7mWVc0iCUkQgK8QmtIxGQYlAR80gv2F2FZeZRQ5lyrNqhrkIRVbsjwBgYFH0ej2lV
+         DuBRrLbTYkt10k0W6xnFI7OpY1gjNIbdFxF4bEvaBKFuar8htnaZ/6FdiAdpef3s980C
+         32MzKAzO6hP4wC4fbm18zdK/CFM39xl0LAXUNFZPbPT34GbzaErahdJ2+D7jv6zM/ODc
+         2oxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsxqTkOBFu1L5tP3Fi0/nAO63j46QqHLgGn4TzObfZUQiIe3cfNKiqbU5G6UmYnk7Xt2Tlf4UEol5mQYZ2@vger.kernel.org, AJvYcCXDWAWsNYkHCw9gK3vNw1FewHIDPOYZsDZQV+iPznZ5Hb3XBAojJuMpkFrlnB4+k2RvvMoJjHB0Uc8NTGtdYhY=@vger.kernel.org, AJvYcCXJ2fZp+VFnB1BudVKs48nI1clArlB0Ke+Wv1tSHB1w7Vf6hNpF76T0XbxNd9GH71JTEJqcd5u6yvmwoJMUeXc5EeQ=@vger.kernel.org, AJvYcCXX5dPCrpPO4Vb0m4lB0qDT8Na73ycmiyHME6UHKaL/1dLuYkL2Iz5rYjeFvsaYgt1uktSipmNE484=@vger.kernel.org, AJvYcCXhiwOWBJap2CdBTZmwjuukM53qUNuQsBHwVQ6VswRJgVMp4XR9sUXiv4hZP8maym9oDSA2x/6jc/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlSUGjs9DQKz2W1mSiYfJOSl8/tSKOGRX7bRWFR4DW7R7ATihO
+	p/nPc5ccOYF2ww6HgBNllS7CCtt/w89hFxQLO3X5XzqFD2oSOQAL7IkQc+AH
+X-Google-Smtp-Source: AGHT+IG56zIs+Mq/vyKIbE0CBfsz8UdllP5xm6WEivv+px76KHM+M78FEfhgBNVSfS6u8mIIWiyJbA==
+X-Received: by 2002:a05:6808:3196:b0:3e3:9e8b:8cef with SMTP id 5614622812f47-3e3c131e167mr6383486b6e.4.1728311696205;
+        Mon, 07 Oct 2024 07:34:56 -0700 (PDT)
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com. [209.85.160.51])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e3c902a502sm1464885b6e.23.2024.10.07.07.34.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 07:34:55 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-287c5745a9bso755092fac.0;
+        Mon, 07 Oct 2024 07:34:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhAJ/AsZXZybEes7Pa0H3UfyDfwzoMgmg/Y0F23QO+E0mJYHOZBY9T/8lHMinmfoyVZ6geNa0NJ/ftzxPGaTXJdX8=@vger.kernel.org, AJvYcCUo9rnRAQlcZXCynkCFjHMWxD6hyS2KQ/HxZfz+RqIqpocCou92GML9IjW/0KajgZuZse6GdoZmd8U=@vger.kernel.org, AJvYcCW/WltbZd9lCutF/Xna8Vy3Jwd9ZTkcs9EW4qHTGAS50gbpluTFfw2GKGLa14KMaKuB6/Ux3MiohhA=@vger.kernel.org, AJvYcCWGAowGKtxaadHhwmw3JkfiNfMug3e4cX9ZVk1BuvCoA8mzL8Sk3QWtVlWMaY6+QFHdrAZHD6kbQiofiRg73xA=@vger.kernel.org, AJvYcCWx05/D6UIZaZWbUTwkqdkP7sxIdiuzEQSOrwjPl+LpnZwogYdzWdbPZxhfBNJtlKwasoEOasfwZ2pOcm7Z@vger.kernel.org
+X-Received: by 2002:a05:6870:6589:b0:270:1eca:e9fd with SMTP id
+ 586e51a60fabf-287c1d3fbe5mr7231243fac.3.1728311695064; Mon, 07 Oct 2024
+ 07:34:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: Consider the NULL character when validating the
- event length
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dave.Martin@arm.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20241007135126.873234-1-leo.yan@arm.com>
- <20241007102242.18d2636e@gandalf.local.home>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20241007102242.18d2636e@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com> <20240902132402.2628900-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240902132402.2628900-5-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Oct 2024 16:34:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVU2CRfN0Qpk0QH1qJXV9ohGfY_maybWYsjEi7A8ggpBw@mail.gmail.com>
+Message-ID: <CAMuHMdVU2CRfN0Qpk0QH1qJXV9ohGfY_maybWYsjEi7A8ggpBw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain
+ in the restart handler
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 2, 2024 at 3:24=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
+> this case, the watchdog device need to be powered on in
+> struct watchdog_ops::restart API. This can be done though
+> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
+> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
+> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and th=
+e
+> watchdog device though pm_runtime_irq_safe().
+>
+> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") pm_runtime_get_sync() was used in watchdog restart handler
+> (which is similar to pm_runtime_resume_and_get() except the later one
+> handles the runtime resume errors).
+>
+> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") dropped the pm_runtime_get_sync() and replaced it with
+> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+> in genpd_runtime_resume() being called from atomic context. But
+> clk_prepare_enable() doesn't fit for this either (as reported by
+> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+> wait context warning as it is not written for this).
+>
+> Because the watchdog device is marked now as IRQ safe (though this patch)
+> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() retur=
+ns
+> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+> always-on), this being the case for RZ/G3S with old device trees and
+> the rest of the SoCs that use this driver, we can now drop also the
+> clk_prepare_enable() calls in restart handler and rely on
+> pm_runtime_resume_and_get().
+>
+> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+> watchdog restart handler.
+>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v4:
+> - collected Ulf's tag
 
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 10/7/24 15:22, Steven Rostedt wrote:
-> Warning: EXTERNAL SENDER, use caution when opening links or attachments.
-> 
-> 
-> On Mon,  7 Oct 2024 14:51:26 +0100
-> Leo Yan <leo.yan@arm.com> wrote:
-> 
->> strlen() returns a string length excluding the null byte. This commit
->> adds 1 to account for the NULL terminating character when checking if an
->> event string is within the maximum length.
->>
->> Fixes: dec65d79fd26 ("tracing/probe: Check event name length correctly")
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   kernel/trace/trace_probe.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
->> index 39877c80d6cb..376ba56c3680 100644
->> --- a/kernel/trace/trace_probe.c
->> +++ b/kernel/trace/trace_probe.c
->> @@ -276,7 +276,7 @@ int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
->>                }
->>                trace_probe_log_err(offset, NO_EVENT_NAME);
->>                return -EINVAL;
->> -     } else if (len > MAX_EVENT_NAME_LEN) {
->> +     } else if (len + 1 > MAX_EVENT_NAME_LEN) {
-> 
-> Usually, the check is:
-> 
->          } else if (len >= MAX_EVENT_NAME_LEN) {
-> 
-> Which is a better way to check max length.
+Gr{oetje,eeting}s,
 
-Will update. Thanks for suggestion.
+                        Geert
 
-Leo
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
