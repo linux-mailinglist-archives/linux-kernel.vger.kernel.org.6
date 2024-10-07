@@ -1,206 +1,108 @@
-Return-Path: <linux-kernel+bounces-353204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57770992A4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0200992A4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2228B2111F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAE31F230C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B0F1D1E91;
-	Mon,  7 Oct 2024 11:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RYLwNgCB"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D41C1D26E0;
+	Mon,  7 Oct 2024 11:36:19 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786E8101C4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA31D1F40;
+	Mon,  7 Oct 2024 11:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300976; cv=none; b=sv/CAJZ7dKKuoUQQCYidbzURz9vOkTZ5q12//wM8PQVxcJsav3I5DRO1hZOl3wkLJqWvxxLMZI11uAB5n+nGqDiMOg/fKNoBKMLM6AjFkhCY0zjgOVNEFlwlZks6r92nwh7Qj/+w6K0SqPyh5fP+5oHf7eHletj4mh6GgiNO0Yc=
+	t=1728300979; cv=none; b=vCQL7mvMgnpedHAVVamKZmdXnki/U0ltKTEzRXlp6FVNfZ9Y5IDCuKFls7NzkrsbfxwJZinCX7yvj3T+IQ+gGtg7TgjGrCZAW+hu2UewIJpsMUC9AVNNlb/CDSXqVS7ArUfTlmV5B/+CKs1xyTYy4TSEtCeR0SoH4gjiYhxrDaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300976; c=relaxed/simple;
-	bh=P5BPFG8e5ClLH2i6KDp+sSNB6btkuosh3rUzkEErfp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUvukFfGUVaS0lbmevwkwlRSyYz4nL6t3E+sxvpHOHo0N0B6yGpDwCAivNN0MOv2CxIB6cbDfI1TW2LBADpy/frgoFTn5NK/bkAYXPWyMEqUI+yo96VLLn2xzwmAPi3dai/qr7hx7hepd10Gvbuw9LFB+cb7E5FUD1gEd7fjK6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RYLwNgCB; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728300971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qzZxe9R4Jas3GMKD/rY0M+GDfcweX2HMw86N1Uklvi0=;
-	b=RYLwNgCBMYrdaoidtO0jhIscDgC6nY1KmcddhnIpfslmjqcOMFg0+jfGPluMuCqXZBxuuB
-	Jys7R6acf65s5/fHhvEN4dGloNGqpFLqpc3Ywa8sB84fYpNJY8956oB+vfWFRQ7mLPn5bj
-	RaxOBUz425FwjOP6c0TS5r9sd2XXEBI=
-From: Jeff Xie <jeff.xie@linux.dev>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xiehuan09@gmail.com,
-	dolinux.peng@gmail.com,
-	chensong_2000@189.cn,
-	Jeff Xie <jeff.xie@linux.dev>
-Subject: [PATCH v4] ftrace: Get the true parent ip for function tracer
-Date: Mon,  7 Oct 2024 19:35:37 +0800
-Message-ID: <20241007113537.19686-1-jeff.xie@linux.dev>
+	s=arc-20240116; t=1728300979; c=relaxed/simple;
+	bh=fJESMTPs+fQRs6bk8iVWf9SUl6L+IiJU7ufzITmJIQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnLGugwAHFMKENwUUWwQHIm+nWmg5M6fRpmytaG8qR8rDfILmuWxgz4AuzlEu8Dg5eh/LIl4j4aAMkxM/Fxb5JpaehcumMvtZlYRY15BCdwyukc2wuJm3YLNwbADhDGefnfWUhWLwBN2Qg5wX6dDKLDR5CZk1qyqEJs7IBctStg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sxm26-000000002Mf-2WkX;
+	Mon, 07 Oct 2024 11:36:10 +0000
+Date: Mon, 7 Oct 2024 12:36:07 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <linux@fw-web.de>,
+	Chaotian Jing <chaotian.jing@mediatek.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Wenbin Mei <wenbin.mei@mediatek.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, john@phrozen.org,
+	eladwf@gmail.com, ansuelsmth@gmail.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
+Message-ID: <ZwPHp9l3Fx7f2lI4@makrotopia.org>
+References: <20241006153447.41377-1-linux@fw-web.de>
+ <20241006153447.41377-2-linux@fw-web.de>
+ <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b41c51c4-775c-49ca-84fd-1137b61f42d5@collabora.com>
 
-When using both function tracer and function graph simultaneously,
-it is found that function tracer sometimes captures a fake parent ip
-(return_to_handler) instead of the true parent ip.
+On Mon, Oct 07, 2024 at 10:00:49AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 06/10/24 17:34, Frank Wunderlich ha scritto:
+> > From: Frank Wunderlich <frank-w@public-files.de>
+> > 
+> > Add binding definitions for mmc on MT7988 SoC.
+> > 
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> > v2:
+> > - fixed minItems to 4
+> > ---
+> >   .../devicetree/bindings/mmc/mtk-sd.yaml       | 24 +++++++++++++++++++
+> >   1 file changed, 24 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > index c532ec92d2d9..7380f72ea189 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> > @@ -21,6 +21,7 @@ properties:
+> >             - mediatek,mt7620-mmc
+> >             - mediatek,mt7622-mmc
+> >             - mediatek,mt7986-mmc
+> > +          - mediatek,mt7988-mmc
+> >             - mediatek,mt8135-mmc
+> >             - mediatek,mt8173-mmc
+> >             - mediatek,mt8183-mmc
+> > @@ -263,6 +264,29 @@ allOf:
+> >               - const: bus_clk
+> >               - const: sys_cg
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - mediatek,mt7988-mmc
+> 
+> Are you really sure that you can't reuse the MT7986 compatible?
 
-This issue is easy to reproduce. Below are my reproduction steps:
-
-jeff-labs:~/bin # ./trace-net.sh
-
-jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
-    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
-    [...]
-
-The following is my simple trace script:
-
-<snip>
-jeff-labs:~/bin # cat ./trace-net.sh
-TRACE_PATH="/sys/kernel/debug/tracing"
-
-set_events() {
-        echo 1 > $1/events/net/enable
-        echo 1 > $1/events/tcp/enable
-        echo 1 > $1/events/sock/enable
-        echo 1 > $1/events/napi/enable
-        echo 1 > $1/events/fib/enable
-        echo 1 > $1/events/neigh/enable
-}
-
-set_events ${TRACE_PATH}
-echo 1 > ${TRACE_PATH}/options/sym-offset
-echo 1 > ${TRACE_PATH}/options/funcgraph-tail
-echo 1 > ${TRACE_PATH}/options/funcgraph-proc
-echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
-
-echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
-echo function_graph > ${TRACE_PATH}/current_tracer
-
-INSTANCE_FOO=${TRACE_PATH}/instances/foo
-if [ ! -e $INSTANCE_FOO ]; then
-        mkdir ${INSTANCE_FOO}
-fi
-set_events ${INSTANCE_FOO}
-echo 1 > ${INSTANCE_FOO}/options/sym-offset
-echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
-echo function > ${INSTANCE_FOO}/current_tracer
-
-echo 1 > ${TRACE_PATH}/tracing_on
-echo 1 > ${INSTANCE_FOO}/tracing_on
-
-echo > ${TRACE_PATH}/trace
-echo > ${INSTANCE_FOO}/trace
-</snip>
-
-Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
----
-v4:
-  https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@rorschach.local.home/
-- fixed the crash when accessing the "current" if the arch has not implemented noinstr
-  thanks steve for the testing and the detailed explanation
-
-v3:
-  https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b312f1d956cf352a2@kernel.org/
-- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=n suggested by Masami
-
-v2:
-  https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@gandalf.local.home/
-- Adding __always_inline to function_get_true_parent_ip suggested by Steve
-
- kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 3b0cea37e029..46b663d22c37 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_array *tr)
- 	tracing_reset_online_cpus(&tr->array_buffer);
- }
- 
-+#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_ARCH_WANTS_NO_INSTR)
-+static __always_inline unsigned long
-+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
-+{
-+	unsigned long true_parent_ip;
-+	int idx = 0;
-+
-+	true_parent_ip = parent_ip;
-+	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
-+		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
-+				(unsigned long *)fregs->regs.sp);
-+	return true_parent_ip;
-+}
-+#else
-+static __always_inline unsigned long
-+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
-+{
-+	return parent_ip;
-+}
-+#endif
-+
- static void
- function_trace_call(unsigned long ip, unsigned long parent_ip,
- 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
-@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
-+
- 	trace_ctx = tracing_gen_ctx();
- 
- 	cpu = smp_processor_id();
-@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
-@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	if (atomic_read(&data->disabled))
-@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
--- 
-2.43.0
-
+In OpenWrt we are doing exactly that. The MMC controller of
+MT7988 (and MT7981) seems 100% the same as in MT7986 and hence
+works just fine with the mediatek,mt7986-mmc compatible.
 
