@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-353514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06FD992ED7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A09992ED8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6551F2483D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6C42839ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034A61D86CE;
-	Mon,  7 Oct 2024 14:19:15 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC011D88A8;
+	Mon,  7 Oct 2024 14:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="en9pM/JD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC931D414C;
-	Mon,  7 Oct 2024 14:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AE91D5ACE
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310754; cv=none; b=NVkzorg+Oo/r1/htLSP/nUqz7ZDNfwkHGhCOZq4Wie0aA7w+uECrjv6jX+7n31ZbxYbhuYt5kWgSAExdoltQv3BmWkzsV3ZwJ3vpvJpSumaYtBh3TNFF/TlsXluQ6UwfZXIfNnPRQpFjnAkqqhS3x3ucSeQ4VqGWH1A8+h53nlI=
+	t=1728310762; cv=none; b=kULPslOePXXdWB00Id0A33iSL4+bmeNjMKzTfCpzO8OeIgZ2PkzG1Tz5QNPJxEPULa1PZKxpMFv0JKymrlt9YlgNM0f8SgrLemwLgnT+F78TwzUVOrw9ixQwHDnzk5+u6jHHl6idRc1sS6mnrjA/fWXuZKyyJqQxoYiTRj6tVz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310754; c=relaxed/simple;
-	bh=Y4hIzHKKp2pqmmmuX5GcD3u4s5c1SmZz+ccGdmi/E9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rbivfwkQJ5DBrxnGpi1sAWgV8bPflYQI3C69uSpukFVmlyaii6c0nX0lRZ9zQ2GOK5v///pptAad9+kB1uvMWm1Wf6HpKC/PEShqCm0Bk9hghlwJgFyYQB9//bI9o8F/Ktfg0wbcAOeMv7vpSP8+xQnVaCeK3LsfSDfyVK7xREw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e260850140fso4295983276.2;
-        Mon, 07 Oct 2024 07:19:12 -0700 (PDT)
+	s=arc-20240116; t=1728310762; c=relaxed/simple;
+	bh=fPpRhAkOlLyr7I5GWfCVLmcMUp2CHa8v4oEGbZ9nCQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CNNwnyoEyPNY+IsNVqDkrUf6wrYSGs4Y143pSO0i4gz6yrdGdoY2PkN83UIG9a0HT1UhJENHM3P81MKHHSe5wuq/5kadmwskE6v5n80vWmgNdii21nrm6OjHL3Ke5KZ2FBY9xp951PGjy9bK+OK6T7Gf9x/9BGCioLKsa/nCbZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=en9pM/JD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728310759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kPk7t5vf7Zw0tZf27l+JYytji+SaN7OikNPmFvip+c=;
+	b=en9pM/JDPcXzG01BLKoyi+Wl2d5bc1nxbMWCK3KwcVRb1cVJnYExwppt9NzvRMz57oAkxE
+	dEpmtUZA6A7XzG9PdUCjKbnk06u1/faoxbbgiKujqn8hi60UpVsq3DVbMriPnyTSDRYxM2
+	DyLQEevD93at8CKFlhUQG5H6EWPKcgc=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75--W_7QEYDNmSqOADvGLUrUg-1; Mon, 07 Oct 2024 10:19:18 -0400
+X-MC-Unique: -W_7QEYDNmSqOADvGLUrUg-1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-834a9a3223aso64310039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310750; x=1728915550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728310757; x=1728915557;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ds8x8rK9fFgQxGIaIXzitG1agS3sP9SVqNHcZua0LkM=;
-        b=geNFtkct+lwek27bk5w0BJiVCgg8cTv4goPFFz+aF7jdNO9I+oOUER5cVNkUYTlWms
-         9lTRkM7QmbWasfYTMQfWl0axVHjJLNHfN37Mc+1INN+ch3r9tvQYRBtwQnUPMsiWa9uu
-         aoN9vAUTfUmYWSuMWnuOxAsRIAfv0uMdVJQpF1zOgJYOcipLwisqjIiLgOcU8IqAbapr
-         +C2kw2M7IvPD+0XIoapf8lXusFC2BzzcDjJ3OfXWs0cZ/2Odz/FMdZIwq9k3GjS0wQTN
-         UdqeLmJ4BnWzps9WwR5RlqS04Pf9/gf8dp3XNxLjnnE2FNfUt3/Lnzq83o74m3wQ+Tys
-         wL2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYn9phrgeU5p3q7wmJvIiUVT8da66I2hf3RdCbKm4FqPJOd5BXC6qa1o7OI0W+4XOtfl+eEk4tfOleOrq0k98=@vger.kernel.org, AJvYcCWEm0sRYjNH5ZR+iRNEmkHS4Mm1vOe7rJ0hW1IKn7Z7GgcN7lHXhihQZmGaVjZ9W5B9JC2vEKN+kY4=@vger.kernel.org, AJvYcCWVNLcHOyD56HkyItcHGWv78/cuVgTu+JU6VDXJexs73rst30uav8fZPwHWivPOzhw3L+73lv2Jlzs6kKaQ4rpoStg=@vger.kernel.org, AJvYcCWy14bbDVf/lQ+PyA49vaCQs6236HEwLCZcBLwomwdGnZVXvlZtgm8m1ZbEez2ZdQkzeMzR0504Dlg=@vger.kernel.org, AJvYcCX1nSvQrtKP/wnQhZcZaF0nz0qaLFh8pUDu7/QzwsWKKw5b8aldujy5xTMe7Hicp3D29TVHEHTMpHUINThq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy69soB2l0cxsFiAmqrPQBA7QTbMMa9bVmdDSvFjmu8mfzAFt0
-	KjQaRBpLfcVorq+MT+LqzPoFqVJedZpXLha7qQ0D1w8CCIk9ORZlF3Vba+B9
-X-Google-Smtp-Source: AGHT+IEOlQDDhooFfyBC4SFKYtPq4+rrdH/7LlNTbGmqqS9stfkLi+e8u3Oqgzp3DY3Jfu1U21OdCw==
-X-Received: by 2002:a25:aa05:0:b0:e26:cc5:4906 with SMTP id 3f1490d57ef6-e2893928939mr6743938276.41.1728310750506;
-        Mon, 07 Oct 2024 07:19:10 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e28a5dbb316sm913306276.64.2024.10.07.07.19.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:19:08 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6db836c6bd7so41373417b3.3;
-        Mon, 07 Oct 2024 07:19:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/X/PjTTjn9fR3M4cN5NdmEbtZBquWqSpDlz/ZL0SXprwRdq0iT/+Np5WyKbCKgYIe6jXB1GL2EOg=@vger.kernel.org, AJvYcCVB9mM4WvzHh8hAQp6uIkRJdrWjais3kyultaKzSZkrqQ08MueoL35OMpdhjWTnL9I7coJb6L2sgae8aUB+@vger.kernel.org, AJvYcCW2pd7UIU70GYcI44KoY0C3zNHQoQ0/Nb/ANBPZik15BIruFidx32F6hOlVNa7jbWJcodqLIUQTTRU=@vger.kernel.org, AJvYcCWoacZK3zgPVIim9hRyQKtAiLlkLSaOB/r7C/gYgZadwH8V0L9c91DloJ2gq8eGCLhAXlOiLH0x4vDTRoSIHqxOigY=@vger.kernel.org, AJvYcCXOmfm8dAYKDzSNXJrwU4evv3g+Uv6IRTQ+PiCZexmRRDASNFE+FTRcmICIIp96EPJFHYx2xd5SJNhn8V9SQro=@vger.kernel.org
-X-Received: by 2002:a05:690c:f14:b0:6e2:1626:fc24 with SMTP id
- 00721157ae682-6e2c6fc3645mr101710117b3.7.1728310748657; Mon, 07 Oct 2024
- 07:19:08 -0700 (PDT)
+        bh=1kPk7t5vf7Zw0tZf27l+JYytji+SaN7OikNPmFvip+c=;
+        b=mpHmyrJWa0TTWheEK0J68kJIs955wfLyhjJCKCsCsoG4viK+sI0eydyTOpq+mo1e55
+         2SRBHm6QTLYCUWL8IelqMn55hXyZt965reQ6rX1+eDeDTNgsWZnzapADuXxDbHNGGvNX
+         U+BKAKoiJh62v4vtvxP0353zlBgacNVLCJOvD3zjqch2qIvgowEVtkObt0hrzzYLp578
+         7Vi2YD9r1nCsEbQhmaU02JpT2aWjyx6NEMJPfxqLhTIIwcw8lkVcMxxtHyuwmTDBtzJx
+         AEKBiLqkQXRzv0eUKjQNEZ2Hk+rMcsZ3wE9JHyVnQTNqJNPxKHfmkjYfX5XOypW5TIkT
+         XyzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhPAC61+TyVYXYulc2Bv2/iQVgwZt29toJP+3bKgIlk76gLrFSsVpCjfwYibgODYX70iyI3e3R14ZYeLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMHNNhNR3i5t6ZtMdZhXntd0R8Z57aAYMsJF0knMnGozuKY8ZQ
+	yUybFI6arUVIGZyYrAfgMPJrhdkOUzD0Qdu0h0cMxuBtOjBQsIcpuoASSzlNtlX1LaHE90RvBOC
+	+BWjfaUZ9pgEGTts/K8hy/uBOm+d+ghjLIktmsyspHdRoVvwW8jKwh21mW8OmEw==
+X-Received: by 2002:a05:6e02:1fc8:b0:3a2:57d2:3489 with SMTP id e9e14a558f8ab-3a375be37d2mr28439545ab.3.1728310757359;
+        Mon, 07 Oct 2024 07:19:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLWUg4d6eCvTKO1CP5bCnvIo2LY6WKj6iaBq4rEUA4pzdXrjH5RxquxJO/p3ji7vOzKVrjxQ==
+X-Received: by 2002:a05:6e02:1fc8:b0:3a2:57d2:3489 with SMTP id e9e14a558f8ab-3a375be37d2mr28439335ab.3.1728310756968;
+        Mon, 07 Oct 2024 07:19:16 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db71114d91sm1080564173.130.2024.10.07.07.19.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 07:19:16 -0700 (PDT)
+Date: Mon, 7 Oct 2024 08:19:13 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: <ankita@nvidia.com>
+Cc: <jgg@nvidia.com>, <yishaih@nvidia.com>,
+ <shameerali.kolothum.thodi@huawei.com>, <kevin.tian@intel.com>,
+ <zhiw@nvidia.com>, <aniketa@nvidia.com>, <cjia@nvidia.com>,
+ <kwankhede@nvidia.com>, <targupta@nvidia.com>, <vsethi@nvidia.com>,
+ <acurrid@nvidia.com>, <apopple@nvidia.com>, <jhubbard@nvidia.com>,
+ <danw@nvidia.com>, <anuaggarwal@nvidia.com>, <mochs@nvidia.com>,
+ <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 0/3] vfio/nvgrace-gpu: Enable grace blackwell boards
+Message-ID: <20241007081913.74b3deed.alex.williamson@redhat.com>
+In-Reply-To: <20241006102722.3991-1-ankita@nvidia.com>
+References: <20241006102722.3991-1-ankita@nvidia.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com> <20240902132402.2628900-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240902132402.2628900-2-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Oct 2024 16:18:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWF=3svkFT8sVEtTahtDh3tJG4FjqmqhJJKs9JYNd+WCQ@mail.gmail.com>
-Message-ID: <CAMuHMdWF=3svkFT8sVEtTahtDh3tJG4FjqmqhJJKs9JYNd+WCQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] clk: renesas: rzg2l-cpg: Move PM domain power on
- in rzg2l_cpg_pd_setup()
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Claudiu,
+On Sun, 6 Oct 2024 10:27:19 +0000
+<ankita@nvidia.com> wrote:
 
-On Mon, Sep 2, 2024 at 3:24=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Move the PM domain power on in rzg2l_cpg_pd_setup(). With this the
-> previously always-on power domains got
-> struct generic_pm_domain::{power_on, power_off} populated (and
-> registered with simple_qos_governor if #power-domain-cells =3D <1> and
-> with pm_domain_always_on_gov if #power-domain-cells =3D <0>). The values =
-for
-> struct generic_pm_domain::{power_on, power_off} are now populated for
-> all registered domains but used by core only for the domains that can
-> use them (the PM domain should be non always-on and registered with
-> simple_qos_governor). Moreover, the power on/off functions check if the
-> mstop support is valid. The mstop is populated only by the RZ/G3S
-> initialization code at the moment.
->
-> This approach was chosen to keep the code simple and use the same code
-> across different implementations. There should be no issues with this
-> approach as the always on domains are registered with GENPD_FLAG_ALWAYS_O=
-N
-> and the PM domain core takes care of it.
->
-> This approach allows doing further cleanups on the rzg2l_cpg power domain
-> registering code that will be handled by the next commit.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v3:
-> - none; this patch is new
+> From: Ankit Agrawal <ankita@nvidia.com>
+> 
+> NVIDIA's recently introduced Grace Blackwell (GB) Superchip in
+> continuation with the Grace Hopper (GH) superchip that provides a
+> cache coherent access to CPU and GPU to each other's memory with
+> an internal proprietary chip-to-chip (C2C) cache coherent interconnect.
+> The in-tree nvgrace-gpu driver manages the GH devices. The intention
+> is to extend the support to the new Grace Blackwell boards.
 
-Thanks for your patch!
+Where do we stand on QEMU enablement of GH, or the GB support here?
+IIRC, the nvgrace-gpu variant driver was initially proposed with QEMU
+being the means through which the community could make use of this
+driver, but there seem to be a number of pieces missing for that
+support.  Thanks,
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -1680,23 +1680,26 @@ static int rzg2l_cpg_power_off(struct generic_pm_=
-domain *domain)
->         return 0;
->  }
->
-> -static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool alway=
-s_on)
-> +static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd,
-> +                                    struct dev_power_governor *governor)
->  {
-> -       struct dev_power_governor *governor;
-> +       bool always_on =3D !!(pd->genpd.flags & GENPD_FLAG_ALWAYS_ON);
-> +       int ret;
->
->         pd->genpd.flags |=3D GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP=
-;
->         pd->genpd.attach_dev =3D rzg2l_cpg_attach_dev;
->         pd->genpd.detach_dev =3D rzg2l_cpg_detach_dev;
-> -       if (always_on) {
-> -               pd->genpd.flags |=3D GENPD_FLAG_ALWAYS_ON;
-> -               governor =3D &pm_domain_always_on_gov;
-> -       } else {
-> -               pd->genpd.power_on =3D rzg2l_cpg_power_on;
-> -               pd->genpd.power_off =3D rzg2l_cpg_power_off;
-> -               governor =3D &simple_qos_governor;
-> -       }
-> +       pd->genpd.power_on =3D rzg2l_cpg_power_on;
-> +       pd->genpd.power_off =3D rzg2l_cpg_power_off;
-> +
-> +       ret =3D pm_genpd_init(&pd->genpd, governor, !always_on);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (governor =3D=3D &simple_qos_governor && always_on)
-> +               ret =3D rzg2l_cpg_power_on(&pd->genpd);
+Alex
 
-I think you can drop the check for simple_qos_governor: in the single
-clock domain case, pd->conf.mstop is zero, so rzg2l_cpg_power_{off,on}()
-become no-ops.  That would also allow you to drop passing the governor
-as a parameter, as it can be set based on the always_on flag, as before.
+> There is a HW defect on GH to support the Multi-Instance GPU (MIG)
+> feature [1] that necessiated the presence of a 1G carved out from
+> the device memory and mapped uncached. The 1G region is shown as a
+> fake BAR (comprising region 2 and 3) to workaround the issue.
+> 
+> The GB systems differ from GH systems in the following aspects.
+> 1. The aforementioned HW defect is fixed on GB systems.
+> 2. There is a usable BAR1 (region 2 and 3) on GB systems for the
+> GPUdirect RDMA feature [2].
+> 
+> This patch series accommodate those GB changes by showing the real
+> physical device BAR1 (region2 and 3) to the VM instead of the fake
+> one. This takes care of both the differences.
+> 
+> The presence of the fix for the HW defect is communicated by the
+> firmware through a DVSEC PCI config register. The module reads
+> this to take a different codepath on GB vs GH.
+> 
+> To improve system bootup time, HBM training is moved out of UEFI
+> in GB system. Poll for the register indicating the training state.
+> Also check the C2C link status if it is ready. Fail the probe if
+> either fails.
+> 
+> Link: https://www.nvidia.com/en-in/technologies/multi-instance-gpu/ [1]
+> Link: https://docs.nvidia.com/cuda/gpudirect-rdma/ [2]
+> 
+> Applied over next-20241003.
+> 
+> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+> 
+> Ankit Agrawal (3):
+>   vfio/nvgrace-gpu: Read dvsec register to determine need for uncached
+>     resmem
+>   vfio/nvgrace-gpu: Expose the blackwell device PF BAR1 to the VM
+>   vfio/nvgrace-gpu: Check the HBM training and C2C link status
+> 
+>  drivers/vfio/pci/nvgrace-gpu/main.c | 115 ++++++++++++++++++++++++++--
+>  1 file changed, 107 insertions(+), 8 deletions(-)
+> 
 
-Regardless:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
