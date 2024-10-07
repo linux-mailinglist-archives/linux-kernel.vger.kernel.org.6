@@ -1,239 +1,157 @@
-Return-Path: <linux-kernel+bounces-352910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB15992605
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:23:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A0B992606
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C371C22201
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267DD1F21195
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41881714D7;
-	Mon,  7 Oct 2024 07:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366FC170A00;
+	Mon,  7 Oct 2024 07:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YmbS4Nod"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ORmNAPgt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jq61R+8M";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DSo+sjC8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E/qq1q0p"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ACD433BE;
-	Mon,  7 Oct 2024 07:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94791BC5C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728285801; cv=none; b=G6KY5/uYNnQcgYC0Xu8M7Hbmm+KwLePWHbWlj+SN/k9BlrxM+86Dsyxp2AtY0HPdVDFIxDYE1ZYdO+OayeE0lfSjLq8y9nkO621r60y7pVHcLXrT/tF63+jNMxSbt0/+wboCdR76kfMtcnFHm2TpD6KfEdZx5+QxD4gzvOsSP4c=
+	t=1728285850; cv=none; b=LUmin5z5430+XyfIWhcSJXx+vRfYfbx54vN/+9qvpXE4a5kHJOayIAlOt2z/L6TS0XJwp6CPiN+EhsKuc+MpCqlZu+gxoZ3fOFdfhXroXyxWVp1/Qky8Mgj2ytpJkyvTXb01Wv4D5B6AYFR+YNNzxV/GHsXbPl8EZuRBUku3VQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728285801; c=relaxed/simple;
-	bh=GvBpSQzOXESGhV/x8XEJU5Qy8f9yp1IITFgLl0Bmdcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A6F9an9VLDzDWao9TLccmIFhnPw0ZJD7DBmkSncyFIntijgzvOuibQUN0Thlq7zcccR+nHeIxf0dBCcgjX84xiVXbitsgMclFQLdRWyn5sGAmKJFOWFYmIHwF5aT0OyVbauvHCsy2deRdGIbOGWguDQdNVrd7oEITEQYoJoj+f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YmbS4Nod; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974Sncb015089;
-	Mon, 7 Oct 2024 07:22:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0JDJt5Q0je4jRf2z5Cuz81cI/CF+kYh0LlkwUpsDRVE=; b=YmbS4NodnHSXJyiq
-	G6nKvNQr9sHmUY1KvAqJ9fp9r0+GwTLDI3i+hsDZFc3kHcYYV5RrhsW7ilcRg22u
-	gpG2Gh+RO997jA+Ca18zAy7DWNKpgz88H7ziQsKsyAs21xySWVUMVq1agiYGXyHP
-	J0oOFY91yzEECM28ycMK6AyaF8iQWitSHpJTdcq9DkTPGzZNKT8beVuPNr65z8Pg
-	6RhnkFj9eLViiQ+Uk5Miqrm7fycbe/eXA9GoPnxuoPe6IzwlBmaGucvNAvsSkVTW
-	b3bqXqpKcmboTaw/X6HzBmtAkIXmidPv4oWiKKfHJl6zf5+99sDhZbz5gBlWCqFN
-	lngEMg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs73a72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 07:22:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4977MrVm000394
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 07:22:53 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
- 00:22:49 -0700
-Message-ID: <32904576-e048-6858-a213-f00f92e9e434@quicinc.com>
-Date: Mon, 7 Oct 2024 12:52:46 +0530
+	s=arc-20240116; t=1728285850; c=relaxed/simple;
+	bh=cOFvncNvugzfWHnXqgSofSxQW5kvj+EchwIbpa1sU7I=;
+	h=From:To:Subject:CC:Date:Message-ID:MIME-Version:Content-Type; b=MFfbGtbIkZK+h+xBHPoaZT/Yi7f0qW7BlOhvbrHfega1MIURiLjn7q5Mn0eosQtl8GgZTwEFxbEq7NL8HNtDhALLvQ0o4Ob5+Gtc9FRTTPAk4qhBwOPXebb3mayDRmEVstKfQ/SUgCXb2/k/UqufNZuJGwG5kXzcHTpOZcfxZ5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ORmNAPgt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jq61R+8M; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DSo+sjC8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E/qq1q0p; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from hawking.nue2.suse.org (unknown [IPv6:2a07:de40:a101:3:92b1:1cff:fe69:ddc])
+	by smtp-out2.suse.de (Postfix) with ESMTP id E22941FD13;
+	Mon,  7 Oct 2024 07:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728285847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=VVxqbpcpXZewZglUoXE5j167IfC1NCYRa8tUWDda670=;
+	b=ORmNAPgt+/y2C43V4nq4xzectkjXblHHtN7bO9t5NcoQDleqbZOgs1pBOP0vC5L9dj5o0d
+	f13BDzF2HRnzAaLjoLN7itJByDXIcRQjgmH1GwYasxPNQ5Jy6gWCjh2rIAyLtoLAfoiNBC
+	W4R5lPAsN6dKBxlnESrHCSZgbhflzKw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728285847;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=VVxqbpcpXZewZglUoXE5j167IfC1NCYRa8tUWDda670=;
+	b=jq61R+8MZenGVidiIuZQDmp2CMq48kjPBFa3ju7/oT0qgWtXz6REFbgd8izbe9WXOTFd97
+	UKtnK5UqspSSxvDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DSo+sjC8;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="E/qq1q0p"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728285846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=VVxqbpcpXZewZglUoXE5j167IfC1NCYRa8tUWDda670=;
+	b=DSo+sjC8iNf1Bifsk4jNlIWcPPLInYL9z9mVipp1DO0hBkoCNc2S/IVzsbTw8JZWz6TUJE
+	5JCHfjixSZ0Aevek+bzitKkhP7Idz/YHwIcIB3c6q6ylrj5BsHzt98xFvpPcrK+vhCGcBz
+	I2oCSRhgIPPR5iNmycJ7tecNBctE8cQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728285846;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=VVxqbpcpXZewZglUoXE5j167IfC1NCYRa8tUWDda670=;
+	b=E/qq1q0pO8/g/96NKAkfFJMkIsyRH+yVbrfDTb9oVjEHp3fTD31R7hn8YoFbbeqN4MkVNa
+	E8vFRBj0Pp9wZbAQ==
+Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
+	id AB2B04A03D4; Mon,  7 Oct 2024 09:24:06 +0200 (CEST)
+From: Andreas Schwab <schwab@suse.de>
+To: linux-riscv@lists.infradead.org
+Subject: [PATCH] tools: add forwarding header for
+ arch/riscv/include/asm/fence.h
+CC: Charlie Jenkins <charlie@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt
+ <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,  Andrea Parri
+ <parri.andrea@gmail.com>,  linux-kernel@vger.kernel.org
+X-Yow: FUN is never having to say you're SUSHI!!
+Date: Mon, 07 Oct 2024 09:24:06 +0200
+Message-ID: <mvm5xq44bqh.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC V3 3/4] soc: qcom: Introduce SCMI based Memlat (Memory
- Latency) governor
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, <sudeep.holla@arm.com>,
-        <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, Amir Vajid <avajid@quicinc.com>
-References: <20240702191440.2161623-1-quic_sibis@quicinc.com>
- <20240702191440.2161623-4-quic_sibis@quicinc.com>
- <54219ac8-45e2-49ea-b49d-d5304b8b7d94@linaro.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <54219ac8-45e2-49ea-b49d-d5304b8b7d94@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xOczqBz53ILhNzQ-oWJ7WXG1pKJfExWX
-X-Proofpoint-GUID: xOczqBz53ILhNzQ-oWJ7WXG1pKJfExWX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
- clxscore=1015 malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070051
+Content-Type: text/plain
+X-Spam-Level: ****************
+X-Spamd-Result: default: False [16.77 / 50.00];
+	SPAM_FLAG(5.00)[];
+	NEURAL_SPAM_LONG(3.50)[0.999];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_SPAM_SHORT(2.99)[0.995];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ONCE_RECEIVED(1.20)[];
+	HFILTER_HELO_IP_A(1.00)[hawking.nue2.suse.org];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[hawking.nue2.suse.org];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_NO_TLS_LAST(0.10)[];
+	MX_GOOD(-0.01)[];
+	DIRECT_TO_MX(0.00)[Gnus/5.13 (Gnus v5.13)];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_ONE(0.00)[1];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_CC(0.00)[rivosinc.com,sifive.com,dabbelt.com,eecs.berkeley.edu,gmail.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid]
+X-Spam-Score: 16.77
+X-Spamd-Bar: ++++++++++++++++
+X-Rspamd-Queue-Id: E22941FD13
+X-Rspamd-Action: add header
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Flag: YES
+X-Spam: Yes
+
+This is needed so that <asm/barrier.h> can find <asm/fence.h> on riscv.
+
+Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
+Signed-off-by: Andreas Schwab <schwab@suse.de>
+---
+ tools/include/asm/fence.h | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 tools/include/asm/fence.h
+
+diff --git a/tools/include/asm/fence.h b/tools/include/asm/fence.h
+new file mode 100644
+index 000000000000..917a173059a4
+--- /dev/null
++++ b/tools/include/asm/fence.h
+@@ -0,0 +1,3 @@
++#if defined(__riscv)
++#include "../../arch/riscv/include/asm/fence.h"
++#endif
+-- 
+2.46.2
 
 
-
-On 7/9/24 16:21, Konrad Dybcio wrote:
-> On 2.07.2024 9:14 PM, Sibi Sankar wrote:
->> Introduce a client driver that uses the memlat algorithm string hosted
->> on ARM SCMI QCOM Vendor Protocol to detect memory latency workloads and
->> control frequency/level of the various memory buses (DDR/LLCC/DDR_QOS).
->>
->> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
->> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
->> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
->> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
->> Co-developed-by: Amir Vajid <avajid@quicinc.com>
->> Signed-off-by: Amir Vajid <avajid@quicinc.com>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
-> 
-> [...]
-> 
->> +/**
->> + * scmi_memlat_protocol_cmd - parameter_ids supported by the "MEMLAT" algo_str hosted
->> + *                            by the Qualcomm SCMI Vendor Protocol on the SCMI controller.
-> 
-> 'enum scmi_mem..'
-> 
->> +static int populate_cluster_info(u32 *cluster_info)
->> +{
->> +	char name[MAX_NAME_LEN];
->> +	int i = 0;
->> +
->> +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
->> +	if (!cn)
->> +		return -ENODEV;
->> +
->> +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
->> +	if (!map)
->> +		return -ENODEV;
->> +
->> +	do {
->> +		snprintf(name, sizeof(name), "cluster%d", i);
->> +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
->> +		if (!c)
->> +			break;
->> +
->> +		*(cluster_info + i) = of_get_child_count(c);
->> +		i++;
->> +	} while (1);
-> 
-> of_cpu_device_node_get(0) + of_get_next_cpu_node() +
-> of_get_cpu_hwid() & MPIDR_EL1.Aff2 [1]
-> 
-> [...]
-> 
->> +static struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
->> +							    struct scmi_memory_info *memory,
->> +							    struct device_node *of_node,
->> +							    u32 *cnt)
->> +{
->> +	struct device_node *tbl_np, *opp_np;
->> +	struct cpufreq_memfreq_map *tbl;
->> +	int ret, i = 0;
->> +	u32 level, len;
->> +	u64 rate;
->> +
->> +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
->> +	if (!tbl_np)
->> +		return ERR_PTR(-ENODEV);
->> +
->> +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
->> +	if (len == 0)
->> +		return ERR_PTR(-ENODEV);
->> +
->> +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
->> +			   GFP_KERNEL);
->> +	if (!tbl)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	for_each_available_child_of_node(tbl_np, opp_np) {
->> +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
->> +		if (ret < 0)
->> +			return ERR_PTR(ret);
->> +
->> +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
->> +
->> +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
->> +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
->> +			if (ret < 0)
->> +				return ERR_PTR(ret);
->> +
->> +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
->> +		} else {
->> +			ret = of_property_read_u32(opp_np, "opp-level", &level);
->> +			if (ret < 0)
->> +				return ERR_PTR(ret);
->> +
->> +			tbl[i].memfreq_khz = level;
->> +		}
->> +
->> +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
->> +		i++;
->> +	}
->> +	*cnt = len;
->> +	tbl[i].cpufreq_mhz = 0;
-> 
-> missing of_node_put, or even better __free(device_node)
-> 
-> [...]
-> 
->> +			/*
->> +			 * Variants of the SoC having reduced number of cpus operate
->> +			 * with the same number of logical cpus but the physical
->> +			 * cpu disabled will differ between parts. Calculate the
->> +			 * physical cpu number using cluster information instead.
->> +			 */
->> +			ret = populate_physical_mask(monitor_np, &monitor->mask,
->> +						     info->cluster_info);
->> +			if (ret < 0) {
->> +				dev_err_probe(&sdev->dev, ret, "failed to populate cpu mask\n");
->> +				goto err;
->> +			}
-> 
-> err.. the same number of logical CPUs? as in, PSCI will happily report that
-> the inexistent cores have been booted? or some cores start doing some sort
-> of hyperthreading to make up for the missing ones? this sounds sketchy..
-
-Hey Konrad,
-
-The problem we are describing here is about a scenario where the
-bootloaders disable faulty cpus after reading fuse values by fixing
-up the cpu node in the device tree by marking them as "failed". In
-this case the logical cpu number of the cpus that booted up never
-align with the physical numbers. Hence relying on any logical
-number for this calculation doesn't work. Will address all your
-other comments in v4.
-
--Sibi
-
-> 
-> Konrad
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
 
