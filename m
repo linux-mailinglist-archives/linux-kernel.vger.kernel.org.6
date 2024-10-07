@@ -1,198 +1,132 @@
-Return-Path: <linux-kernel+bounces-352853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C1B99253F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:00:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73811992541
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE23281F3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52401C21F87
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224C013792B;
-	Mon,  7 Oct 2024 07:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4864E175D44;
+	Mon,  7 Oct 2024 07:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zolx/uh4"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pxe17ntV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BD28248D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 07:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43535165EE6;
+	Mon,  7 Oct 2024 07:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728284417; cv=none; b=R+BBe2kxVJdIlQ6XGt2yRqKvTxxvSiyN6fPdCVWWONuiniqGSdfB4pkP+7PsZOAdLvqOC95IMdYRMmRUt56Brr6iid+cj3WopBbBoFWNH3D6towEutG69yJ1fPBVoRJx3+hguAt2r2/SJf0al6UoUvmcpoBc/TpVm4KNth/aMfg=
+	t=1728284431; cv=none; b=ULJnXc8PvHfrLHiNWKFsFaVLSecZvjgMVHtNOwGnJ2KxkKzTYv9yzzfQ/pTsyq6a0Di+zuQdWV//HwNEqJOPt7S918yjestYkpeLRWX+yrkdh61EiiO5gbd53n532CYTX04d+XE7J85JcLnecJBCKtETW6lx6RjzDgTx0UDUst4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728284417; c=relaxed/simple;
-	bh=zATgE7lGXDAfHPAXx2wVXLiJYbpqKrNzx/5xyMndI9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jyEu34+pAP3zfi0ZnHhF8R5xlgKtmH+ZOSOlC3awE/YYGj+8+W23tTAaAQkLIdN+k0tB8Ta8W5+Rcg3aa2nQlID+KdQPB2smSieTVp7bAwCNR/ymdYdEnoEdWanQPYydpnbSWFhisKQtuoknD/SCA9iw9AW0Ny6Yl68abDURE8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zolx/uh4; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-84e96669774so1161601241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 00:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728284414; x=1728889214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCLqDqcDPlkIv6TQ0OP2914TguL03CqjRYbcPbKcDc0=;
-        b=zolx/uh4sLXaKuJgpnOpjOY/E6w9w/Fo3BaJWkc9NKbl1T6N01iswf6BiP/PY9GwCU
-         WfsN7Z+cCyJ5JBeffsEPFTJS+kD5d7XecYpHsvqNONpEISFCV2Cxq90S9bBK7LHYr6z5
-         OTsLsZpyIb3zoPhILtlfLFrVrBXhDLfrIZThH65R37RyOGTiSlZYjrSyi3Fptp3JKQ4A
-         ONnE06dgyY2/OS5xnu3a8alIB9ziigEdEpGEeldZ33Vg2PSfj5prUWBo79auSLN3mc6O
-         IfrQemRKHy4ay3daRNoaxR+oFhmLr5l7edXucGmo1MDfjGYUm/dCThVqPQ8F/TZVZmG8
-         hI0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728284414; x=1728889214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCLqDqcDPlkIv6TQ0OP2914TguL03CqjRYbcPbKcDc0=;
-        b=gUE2+sZaj5AzYRJwaOoSMn5PZ3rfqkNlLur4qeXrHGzuWqFtoefptB3wMO0yFJ4XGK
-         A/y1+cwEjOrQJE6+FDe8RrRRoyPeNAVXSz7DGwK1vFRsg3mstwJIFrSTnfVCo6Wueo3G
-         c7d8g9rNRaBF/uAU7M+P+NYP5IculECM1NdXo5e6frVQsPiB9PDmVqM18CKmHjmDf3y7
-         8dzf1lrApRuEUjdBYHlSsQPtSENaAakPzGUpeoawpSVJnw4dfSz+5dU2UK1SuZNAsD7l
-         VYcaI1TerEuveBGRHw1NQHsVcg8Wemq7J/N7qcGQmZ2Gea2pyXtHdKpkA2gFWQVvzP/W
-         IzXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWX57ZMBin3JU86Lhs2Jwx00/tOyuACmuYBwUnyfn9k7Ll1DL9IL6ejhBeqLdwT2rbsf1tuQ9fUuKqcEtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGEcmF3EHlkX51QQik/2Se9IOHV1kTZH7CdIIZf6QUKJcXQbZ0
-	tVvUYil+0i21DJjKGf1iftDQtiOuu/ac1XY/M3nt1Xz/XdW7SLvT0jBartrKLooDE9QCQJRe8ef
-	vAPZdHJZ3oWNzlafN8y2CqNjhU9bSAi9d2SSfuA==
-X-Google-Smtp-Source: AGHT+IE94jRfwflznC7KODv2WkD1x23XTJ3wMsge83I47cZId79v2Pt+RgapF1ABmVYunsRuAp+VH6dyXb4vh/y7M30=
-X-Received: by 2002:a05:6102:441b:b0:4a3:cc5b:448f with SMTP id
- ada2fe7eead31-4a405748ddbmr5781557137.4.1728284414377; Mon, 07 Oct 2024
- 00:00:14 -0700 (PDT)
+	s=arc-20240116; t=1728284431; c=relaxed/simple;
+	bh=yDgTqPlwj1aRQAu2Ausc7DMOcMAhUVxmyAer1SiD+Js=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n8yJFHgqD81bWVaJh5A11Va+F11sfUqYR7sMU/urOc4P3FyQnR5Gc5kSE33T4aezRTaTqqUvuZmnABpjW9DH/e9EbWujlbbUlvKkSf0TU+FcqQJsYYvGmW0QvVm3y/oeMkjofGbZ52+XNL6zvHCWreDm2pKT6xcJm1zbZeIwzco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pxe17ntV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974SpaV019025;
+	Mon, 7 Oct 2024 07:00:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eRgKxSHvK/yyRGDKHCmlGu4mzr05SryI6lGl/+T31uA=; b=pxe17ntVqaO0IOqr
+	Ee8/rve15dm8Rs7kOXmrsX6rhAm8zKu3m6YmgpSm+BEIx92Ulb1lH4PkFHFUzhIw
+	BKLMaF0XzdiIgclBpFVnBKl1JNELq7MTjoKjZw6nh0tnq+DQrPz8ahqlhOh50LIG
+	NJl/GidCYXXgfQxm4zXaxUNjBXtviHsLtnUQIUrDIe0pLpzgSl5li4mK3tBFssYs
+	sprsX0M/BIP7NAr6mVw+wYn6Qq3rTdN8SZOAHgw5a2QlS+mdArbDeePVrJuLKbYk
+	zirx+vSezNmAxGuOeMa3rItLxLIS3AVX+DkiNWTD7xPKMGU2FXvu46+8aMLWLzeh
+	2LCtaQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xsn39kr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 07:00:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49770Kcc010435
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 07:00:20 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 00:00:17 -0700
+Message-ID: <53d929a2-2f54-ac97-3184-861442e8622b@quicinc.com>
+Date: Mon, 7 Oct 2024 12:30:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919130444.2100447-1-aardelean@baylibre.com>
- <20240919130444.2100447-9-aardelean@baylibre.com> <CA+GgBR_kKYOgPUHM5-LUAZboy6nab1tLvC4TFtzpqkjP+5A8wg@mail.gmail.com>
- <047034ae-135b-4ce9-a407-9b2a00841324@baylibre.com> <20241001194114.16e0ffa5@jic23-huawei>
- <CA+GgBR_HTwNT6WKdweuuTZ_t+ZmMXrMkYNK+b3pp4f2MmTWzGw@mail.gmail.com>
- <20241004145430.000012f4@Huawei.com> <20241006115643.7b1fd461@jic23-huawei>
-In-Reply-To: <20241006115643.7b1fd461@jic23-huawei>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Mon, 7 Oct 2024 10:00:03 +0300
-Message-ID: <CA+GgBR9qGfZ2z8+t6kZEfZQOT_Qf7yFrtzNqztGPJt1wsM-eZw@mail.gmail.com>
-Subject: Re: [PATCH v7 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Lechner <dlechner@baylibre.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
+Content-Language: en-US
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <sudeep.holla@arm.com>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <johan@kernel.org>,
+        <konradybcio@kernel.org>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-3-quic_sibis@quicinc.com> <Zth7DZmkpOieSZEr@pluto>
+ <Zth9EMydkwvJ30T0@pluto>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <Zth9EMydkwvJ30T0@pluto>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _Su-IhBRgV_JaukqNuiQ6df87WN_pWta
+X-Proofpoint-GUID: _Su-IhBRgV_JaukqNuiQ6df87WN_pWta
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=844
+ malwarescore=0 spamscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410070048
 
-On Sun, Oct 6, 2024 at 1:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Fri, 4 Oct 2024 14:54:30 +0100
-> Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
->
-> > On Wed, 2 Oct 2024 09:12:09 +0300
-> > Alexandru Ardelean <aardelean@baylibre.com> wrote:
-> >
-> > > On Tue, Oct 1, 2024 at 9:41=E2=80=AFPM Jonathan Cameron <jic23@kernel=
-.org> wrote:
-> > > >
-> > > > On Tue, 1 Oct 2024 08:42:23 -0500
-> > > > David Lechner <dlechner@baylibre.com> wrote:
-> > > >
-> > > > > On 10/1/24 3:26 AM, Alexandru Ardelean wrote:
-> > > > > > On Thu, Sep 19, 2024 at 4:05=E2=80=AFPM Alexandru Ardelean
-> > > > > > <aardelean@baylibre.com> wrote:
-> > > > > >>
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > >> @@ -153,7 +349,19 @@ static int ad7606_scan_direct(struct iio_=
-dev *indio_dev, unsigned int ch,
-> > > > > >>         if (ret)
-> > > > > >>                 goto error_ret;
-> > > > > >>
-> > > > > >> -       *val =3D sign_extend32(st->data[ch], 15);
-> > > > > >> +       chan =3D &indio_dev->channels[ch + 1];
-> > > > > >> +       if (chan->scan_type.sign =3D=3D 'u') {
-> > > > > >> +               if (storagebits > 16)
-> > > > > >> +                       *val =3D st->data.buf32[ch];
-> > > > > >> +               else
-> > > > > >> +                       *val =3D st->data.buf16[ch];
-> > > > > >> +               return 0;
-> > > > > >
-> > > > > > Arrggh...
-> > > > > > I messed up here.
-> > > > > > Guillaume found a bug here, where this should be "goto error_re=
-t" or
-> > > > > > do an "if ()  {} else {}"
-> > > > > > How should we do it here?
-> > > > if / else. Goto an error label when it's not an error would be horr=
-ible!
-> > > > > >
-> > > > > > Do we send a fix-patch or send a new series?
-> > > > > >
-> > > > >
-> > > > > Since this patch is already applied, just follow up with another
-> > > > > patch with a Fixes: tag.
-> > > >
-> > > > I sometimes tweak these sort of things if I haven't pushed out
-> > > > as togreg yet (or they are really bad!) but in this case I'm not
-> > > > 100% sure what the comment is, so I'll just apply a fix on top.
-> > > >
-> > > > So David is entirely correct in general but by luck of timing
-> > > > this time I'll tweak it.
-> > > >
-> > > > Please check the result in iio.git/testing
-> > > > I'll hold off pushing that out as togreg until at least end of
-> > > > tomorrow.  One more day o
-> > >
-> > > The "return 0" needs to be removed in the driver.
-> > >
-> > >         if (chan->scan_type.sign =3D=3D 'u') {
-> > >                 if (storagebits > 16)
-> > >                         *val =3D st->data.buf32[ch];
-> > >                 else
-> > >                         *val =3D st->data.buf16[ch];
-> > > -                return 0;
-> > Doh!.   Just goes to show why I shouldn't just edit these things.
-> > Stupid mistake.  I'll fix when on right machine.
-> hopefully now done
 
-Looks good now.
-Apologies for the slow reply.
 
-Thanks
-Alex
+On 9/4/24 21:00, Cristian Marussi wrote:
+> On Wed, Sep 04, 2024 at 04:21:49PM +0100, Cristian Marussi wrote:
+>> On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
+>>> Ensure that the bad duplicates reported by the platform firmware doesn't
+>>> get added to the opp-tables.
+>>>
+>>
+>> Hi Sibi,
+>>
+>> so if the idea is to make the code more robust when FW sends BAD
+>> duplicates, you necessarily need to properly drop opps in opp_count too.
+>>
+>> One other option would be to just loop with xa_for_each BUT opp_count is
+>> used in a number of places...so first of all let's try drop count properly.
+>>
+>> Can you try this patch down below, instead of your patch.
+>> If it solves, I will send a patch (after testing it a bit more :D)
+> 
+> Hold on... I sent you a diff that does not apply probably on your tree due
+> to some uncomitted local work of mine...my bad...let me resend.
 
->
-> J
-> >
-> > Jonathan
-> >
-> > >         } else {
-> > >                 if (storagebits > 16)
-> > >                         *val =3D sign_extend32(st->data.buf32[ch], 17=
-);
-> > >                 else
-> > >                         *val =3D sign_extend32(st->data.buf16[ch], 15=
-);
-> > >         }
-> > >
-> > >
-> > >
-> > > >
-> > > > Jonathan
-> > > >
-> > > >
-> > > > >
-> > > > >
-> > > > >
-> > > >
-> > >
-> >
->
+Hey Cristian,
+Thanks for taking time to send out the diff. I thought this would be
+enough but there will still be a disconnect between opp_count and idx
+of the opp we populate. Consider a case were we get to have a valid
+opp just after duplicate opp. The opp_count will still limit us on what
+levels we are allowed to see.
+
+-Sibi
+
+> 
+> Thanks,
+> Cristian
 
