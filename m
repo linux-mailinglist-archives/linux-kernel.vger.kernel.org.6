@@ -1,200 +1,169 @@
-Return-Path: <linux-kernel+bounces-353288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBB9992B99
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:24:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD96992B9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4269B281172
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC41C22CE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989A01D2B24;
-	Mon,  7 Oct 2024 12:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAAE1D27BB;
+	Mon,  7 Oct 2024 12:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HMVPdWPx"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OOrKqUFV"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8621D26EE
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353F1D278C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303847; cv=none; b=C8isZj2Jlyq3U0KqbD4+iCRYs9V7i4Zet4wZn+qNLXQuUS9pTr7qvr05Y3w7hywgwFUoEu7Z0wl5AF3wapYa8EUIHzew0ZwRX4U5KswFJkRcg+cLtmr9el2e6HXOKbDs5Godbrmavl8WlZaMla+t2PBgGuneWdjAVUljZMMFce0=
+	t=1728303861; cv=none; b=pVuPjzSY9MjIOcR8sP0K4dt6pt5S6w0f743YafwsgBoJ/EQOHVqx0mcDZXzH3XchCT4206A+EL4Qe98LhozAFDCayvkURmPzLMbTTrHhaJcpT2ji89y9hDvw8BQ8gR5tV0vVgC4QpSlpj/5jJ/lOzr1Pvw7RhXbXtIIQ2UmXTzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303847; c=relaxed/simple;
-	bh=gG0Kl0JZgDzMtPQi0iW2OUfad0iNnu1PE2ZxUL4VzyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bZpJUirZIxnthKcoLVz1jQV6w0Qyj0sQHrXNS1He9i8bW1KaRiKXAeU0/5D4NNEHu+pbBwCWUCW07nbCej7XWtIiDK9Uc+HIyKJZaiz5GD5EMuTg2b7FVauVwmMVz6e631W+8V1UfKvDsrIhelHzXZYmjAkIBXwtmwIfiLBxZdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HMVPdWPx; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ccfbbd467so3217258f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:24:04 -0700 (PDT)
+	s=arc-20240116; t=1728303861; c=relaxed/simple;
+	bh=t8H6KKTU1kUFSyofCbDB6hb4GjQoj/UNpvlIreQ4WHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=snx6dlQ42oBtwcK4lV4PAKCNW4uEEh+E2J1lxw2Cg2MRPtMzf1OHuofaZ6oarPTkc5kNItQzUj6ow1k3hqS17jlEv06qFCn0QYkv9IKjCM1HVp4F8IX46Pr72balEbEkXp+Ls6mKQ5n4KsDK7Px5S9pMnjkB7L1EwnfiM5Pin/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OOrKqUFV; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdac05af9so4216618f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:24:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728303843; x=1728908643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1728303856; x=1728908656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DGEx0PqXJtkFOmfslpcNhDWKLxmXujVpKffyfiMkAQo=;
-        b=HMVPdWPxq/nUt2n2J6aFMICveRu4GOnspda1Kkep3yma13XW0pn3ZsDVWo0O5nm9K7
-         HWPxnL4YwuBkMwEGqGv10qHigl1FUH13qBOSwnAUdwd48egJDNxWD+1KtW3qM2DQ+vgc
-         SGKaHyI09TlOo0deNQH/RY+ZJxER55ggXmHQD156rINq4XR22tgMvPKQDHYkpSvZZt2z
-         rlYC8gC7oW5aH8hLVk0VhRnhPuQLuZC2GYtofTol8id+HQnCmNpPdQsQzdNK0pdGkjlo
-         QqsY2Rl7tq/AqS+bEIHonilIuj6Z3WehmPCJnoIUD7E8zRdAg+cBAjfQdf4OAC95X0uT
-         x6rg==
+        bh=ku7dHoXpcBGzxmDwFlzy5O2yX7mMKyvUeFGB5ab/Z98=;
+        b=OOrKqUFVGN+til1KTL10MXwaAlvqfhdBAA8OaV/VrMm2yGAP2b+K+rBLws5vWOHClL
+         ysNc9YSd83jY9R+nvpyM16sgL51fZuB4lSgLcGPHKLKNljiOJqu+6eFiIZSM5lLYkNA8
+         ipzPteLU7kLOh6v+kFFqkcJ64PNn4JPqRzxjp7UdAJ/CZCgOAzDUZZQ/suNyknQIli93
+         9frkwkis11dzWOdgunlLuqd37ysfAm+XCAVrD+EGCemfJBxrZYeP0JmxuRdAyYaecUCm
+         oR6RbUoYasV6Nzd4Bf2OxK0wsMBc4FQ7X+Cl95JzEOByYKs4DCxhV2P1GLHkxLTfEQOP
+         kTNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728303843; x=1728908643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728303856; x=1728908656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DGEx0PqXJtkFOmfslpcNhDWKLxmXujVpKffyfiMkAQo=;
-        b=NmPXHQKvx+QV4s0fS/TelCatKRLZE/t9DlYi0+vCTUz5d01nsOHBj6N9lscxRKAzEm
-         J0XmrsI9FkvaA4nvhVw28Df+3/L56ynjf2A/qL0nfiCADTselQbPOJTu+sDu9kB9vA+t
-         /8NQwzNrKDLMi2jI1jKuJR2sNCGJupxCIF1xXW0L3/UltgJNfRZGwqQBxpZFwEpb+tw3
-         GneTJUj7BEwI62plH4fKdVpbhgBK1zZmggFW8c81vuWdvLd+PBiNQaDRMRc5QsRoVWWT
-         pX8FwEfZqinx3Km6mxo5HHXMutrAatjlaouF6ww2o+I6LggPAl6a5IQkBmqUhDkLEPce
-         ilVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZPTx9Z1Ji/+bo6wn+WQDsavKoKUOGq6PE8a1kTVr9J4ApDEyD1j9tmi2uv2xkACbMGtn5LSuwrzPwRWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5w1oZxgc5qqzkHhBqaNKc5fMF11K/bJ6Kdkrlip1du+kFVyqe
-	6O+vGMDgnCC0B27NjvOX0DGT1FSiGrEfR8VR1+0iLWEEpIjzBVhEIs9zXCJeDiQ=
-X-Google-Smtp-Source: AGHT+IG3223yd5krdGXCAeXQtchm5yoDR1rjmKlsg43mtdR4eUr7d5W6MmDV+vaoAWxHhdsKeuM+aw==
-X-Received: by 2002:a05:6000:4586:b0:371:8a90:112f with SMTP id ffacd0b85a97d-37d0e8df590mr6469416f8f.44.1728303843426;
-        Mon, 07 Oct 2024 05:24:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695eee7sm5626914f8f.82.2024.10.07.05.24.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 05:24:02 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 3/3] mtd: rawnand: davinci: use generic device property helpers
-Date: Mon,  7 Oct 2024 14:23:50 +0200
-Message-ID: <20241007122350.75285-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241007122350.75285-1-brgl@bgdev.pl>
-References: <20241007122350.75285-1-brgl@bgdev.pl>
+        bh=ku7dHoXpcBGzxmDwFlzy5O2yX7mMKyvUeFGB5ab/Z98=;
+        b=ipbuc4f59Ks/hc3CiIWNlnsXQxRgfX7f4D7Y0o9O6cxNgxS3Clc7goP9WcuYStdhXl
+         KiP59p1Sq8io1dvsOBXtQ7LSP1Jf5ltk3a7Qtb4GGropXMFtQwPES2oZBIsA/d1Qy1p/
+         23qGFy7mgffA53OB07otD0CMmAS4VicfxpnaiZ4I2GbqLEr80p5fyAHD+6YUOuaB2ZDD
+         b3gUfFRs+bOboEcP/e/y3wx5EOSxtaRXUOuHwVYcYAl/6YlrDgZuHyryUPsZEln2TrZ9
+         7dtk5S8Wo8/DHU7K84BrY+krBYm1ERxLxayykmhT5FNc0mSnJ40BlTOUai5mnrwVw/5A
+         TN7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmPnkPTFpqbuZst7W4G/U8TLt5JDXY7e7wyv84tUY2ipKThvnfnQHfL2VxcM5E6nYSEWV8i5NFVZii2x4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLJ0Ve8CLnqPo71SEveVVTwQgRWree/3gTpzxTl9rfkGZOj6DT
+	R13P5XgpBIwRXceI8Pp5x2OaxDKFPEzFGeEqQ+UQaQoJ4Gqvw0ncySV/PYZchoJ4y+yDSV0Qb7R
+	oADx5gk/G3KGqQ9pYLYAs/cCdow0dVPxEVnFQ
+X-Google-Smtp-Source: AGHT+IH8HYWMusOnnggysgcNaVoQpA7Kkf52UHiKBHrYYgnQi3e5Rs2SF/yP/clJCEOjCdyXWS+b5b1JKOiSHyD1iX0=
+X-Received: by 2002:a5d:61ca:0:b0:37c:fbf8:fc4 with SMTP id
+ ffacd0b85a97d-37d0eaea686mr9189645f8f.59.1728303856278; Mon, 07 Oct 2024
+ 05:24:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com> <20241005122531.20298-5-fujita.tomonori@gmail.com>
+In-Reply-To: <20241005122531.20298-5-fujita.tomonori@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 7 Oct 2024 14:24:03 +0200
+Message-ID: <CAH5fLgjTifsDKrxZTUTo74HR34X1zusO_7h0ftWWH-iZR_NXNA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 4/6] rust: time: add wrapper for fsleep function
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
+	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Sat, Oct 5, 2024 at 2:26=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> Add a wrapper for fsleep, flexible sleep functions in
+> `include/linux/delay.h` which deals with hardware delays.
+>
+> The kernel supports several `sleep` functions to handle various
+> lengths of delay. This adds fsleep, automatically chooses the best
+> sleep method based on a duration.
+>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  rust/helpers/time.c |  6 ++++++
+>  rust/kernel/time.rs | 16 ++++++++++++++++
+>  2 files changed, 22 insertions(+)
+>
+> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+> index 60dee69f4efc..0c85bb06af63 100644
+> --- a/rust/helpers/time.c
+> +++ b/rust/helpers/time.c
+> @@ -1,7 +1,13 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>
+> +#include <linux/delay.h>
+>  #include <linux/ktime.h>
+>
+> +void rust_helper_fsleep(unsigned long usecs)
+> +{
+> +       fsleep(usecs);
+> +}
+> +
+>  ktime_t rust_helper_ktime_add_ns(const ktime_t kt, const u64 nsec)
+>  {
+>         return ktime_add_ns(kt, nsec);
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 3e00ad22ed89..5cca9c60f74a 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -5,9 +5,12 @@
+>  //! This module contains the kernel APIs related to time and timers that
+>  //! have been ported or wrapped for usage by Rust code in the kernel.
+>  //!
+> +//! C header: [`include/linux/delay.h`](srctree/include/linux/delay.h).
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.=
+h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>
+> +use core::ffi::c_ulong;
+> +
+>  /// The number of nanoseconds per microsecond.
+>  pub const NSEC_PER_USEC: i64 =3D bindings::NSEC_PER_USEC as i64;
+>
+> @@ -178,3 +181,16 @@ fn add(self, delta: Delta) -> Ktime {
+>          Ktime::from_raw(t)
+>      }
+>  }
+> +
+> +/// Sleeps for a given duration.
+> +///
+> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
+> +/// which automatically chooses the best sleep method based on a duratio=
+n.
+> +///
+> +/// `Delta` must be longer than one microsecond.
+> +///
+> +/// This function can only be used in a nonatomic context.
+> +pub fn fsleep(delta: Delta) {
+> +    // SAFETY: FFI call.
+> +    unsafe { bindings::fsleep(delta.as_micros() as c_ulong) }
+> +}
 
-There's no reason for this driver to be using OF-specific property
-accessors. Switch to using generic device property interfaces and
-replace the of.h include with property.h. This allows us to no longer
-check the existence of the associated of_node.
+This rounds down. Should this round it up to the nearest microsecond
+instead? It's generally said that fsleep should sleep for at least the
+provided duration, but that it may sleep for longer under some
+circumstances. By rounding up, you preserve that guarantee.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/mtd/nand/raw/davinci_nand.c | 42 ++++++++++++++---------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+Also, the note about always sleeping for "at least" the duration may
+be a good fit for the docs here as well.
 
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 6c884b59bc98..aa7619eec59e 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -16,8 +16,8 @@
- #include <linux/module.h>
- #include <linux/mtd/partitions.h>
- #include <linux/mtd/rawnand.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/slab.h>
- 
- #define NRCSR_OFFSET		0x00
-@@ -490,7 +490,7 @@ MODULE_DEVICE_TABLE(of, davinci_nand_of_match);
- static struct davinci_nand_pdata *
- nand_davinci_get_pdata(struct platform_device *pdev)
- {
--	if (!dev_get_platdata(&pdev->dev) && pdev->dev.of_node) {
-+	if (!dev_get_platdata(&pdev->dev)) {
- 		struct davinci_nand_pdata *pdata;
- 		const char *mode;
- 		u32 prop;
-@@ -501,23 +501,24 @@ nand_davinci_get_pdata(struct platform_device *pdev)
- 		pdev->dev.platform_data = pdata;
- 		if (!pdata)
- 			return ERR_PTR(-ENOMEM);
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-chipselect", &prop))
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-chipselect", &prop))
- 			pdata->core_chipsel = prop;
- 		else
- 			return ERR_PTR(-EINVAL);
- 
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-mask-ale", &prop))
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-mask-ale", &prop))
- 			pdata->mask_ale = prop;
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-mask-cle", &prop))
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-mask-cle", &prop))
- 			pdata->mask_cle = prop;
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-mask-chipsel", &prop))
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-mask-chipsel", &prop))
- 			pdata->mask_chipsel = prop;
--		if (!of_property_read_string(pdev->dev.of_node,
--			"ti,davinci-ecc-mode", &mode)) {
-+		if (!device_property_read_string(&pdev->dev,
-+						 "ti,davinci-ecc-mode",
-+						 &mode)) {
- 			if (!strncmp("none", mode, 4))
- 				pdata->engine_type = NAND_ECC_ENGINE_TYPE_NONE;
- 			if (!strncmp("soft", mode, 4))
-@@ -525,16 +526,17 @@ nand_davinci_get_pdata(struct platform_device *pdev)
- 			if (!strncmp("hw", mode, 2))
- 				pdata->engine_type = NAND_ECC_ENGINE_TYPE_ON_HOST;
- 		}
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-ecc-bits", &prop))
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-ecc-bits", &prop))
- 			pdata->ecc_bits = prop;
- 
--		if (!of_property_read_u32(pdev->dev.of_node,
--			"ti,davinci-nand-buswidth", &prop) && prop == 16)
-+		if (!device_property_read_u32(&pdev->dev,
-+					      "ti,davinci-nand-buswidth",
-+					      &prop) && prop == 16)
- 			pdata->options |= NAND_BUSWIDTH_16;
- 
--		if (of_property_read_bool(pdev->dev.of_node,
--			"ti,davinci-nand-use-bbt"))
-+		if (device_property_read_bool(&pdev->dev,
-+					      "ti,davinci-nand-use-bbt"))
- 			pdata->bbt_options = NAND_BBT_USE_FLASH;
- 
- 		/*
-@@ -548,10 +550,8 @@ nand_davinci_get_pdata(struct platform_device *pdev)
- 		 * then use "ti,davinci-nand" as the compatible in your
- 		 * device-tree file.
- 		 */
--		if (of_device_is_compatible(pdev->dev.of_node,
--					    "ti,keystone-nand")) {
-+		if (device_is_compatible(&pdev->dev, "ti,keystone-nand"))
- 			pdata->options |= NAND_NO_SUBPAGE_WRITE;
--		}
- 	}
- 
- 	return dev_get_platdata(&pdev->dev);
--- 
-2.43.0
-
+Alice
 
