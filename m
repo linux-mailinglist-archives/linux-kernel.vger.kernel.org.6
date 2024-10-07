@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-354306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E9D993B8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:04:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913C2993B77
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A641F241B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2927EB2171C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A817B20E3;
-	Tue,  8 Oct 2024 00:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3F5192B93;
+	Mon,  7 Oct 2024 23:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="H/5b0+dH"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/HIgxjM"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13B101C8;
-	Tue,  8 Oct 2024 00:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C9C18DF65;
+	Mon,  7 Oct 2024 23:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345826; cv=none; b=s/xO66CsI5nR6786FE29ICr0uMxVf2JYqVSaUyaglwwHhM2Pk6LygwMhERQPzYQPG+fRH3mRH3cxfSzGtJuFu4fLcwWG4yk21Vy+iVTlCBXCTxe0Q4xa5EBtQJDzmR/jGmE1fAdgjqeGnPTVVdc1d1cBwMo1OYB0xU6aI8tPc6Y=
+	t=1728345435; cv=none; b=UpcvKZ+/cm1tY6YWv9URuBvl8SreHuzXKia5x9w4ne06M31VB9ZCR5glUC4P12vGZ6cTiETuBb9X5BTRpmIfKdsRBMYJruo1DwCdUrjDFLrDkCZ2f399phLN+jspLc+vfsgzTyWedp/3ftmeR0wgwRUnLF3E3iCxUy7zVvroIS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345826; c=relaxed/simple;
-	bh=gkroZQ+37GTyJM/uyjWAwX/F+a6aQH4+nH6JOA8RU4c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kU+7GPEO5QJ0cvV62n+zl4Y91f8QYvYwdmzTOUHibOpeLOeMjtCgqi1HB+q6rkawKRkL9S/eovF0Kpn+eOYwq5vnQn/yZibwmxFmRUMi+cnDQHsSV/lFzGQApojeZgHoaLlgrnQPcVgY/Z2NBMkX5fyIQ8Ji2YpRl9gTJ2Z7BRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=H/5b0+dH; arc=none smtp.client-ip=192.19.144.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 994ADC0000D4;
-	Mon,  7 Oct 2024 16:54:14 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 994ADC0000D4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1728345254;
-	bh=gkroZQ+37GTyJM/uyjWAwX/F+a6aQH4+nH6JOA8RU4c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=H/5b0+dHo8+ZbyETrM30BF6y2TFEAQtaeoRhyKRYfAtOCSeF2WLhloEy8aDO3mMYl
-	 Z0a+pUSJEnFAPaBUKHPfDLrx4NDax5r5u9UGy7AkdtNA6Tjxy8JcYCYrrUP6K2PWhI
-	 CPH1EDgHdvMFxGsn9wugIuVYTGThp5jy5rGuCfCI=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 38B0318041CAC6;
-	Mon,  7 Oct 2024 16:54:14 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-arm-kernel@lists.infreadead.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	arm-scmi@vger.kernel.org (open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
-	linux-arm-kernel@lists.infradead.org (moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
-	justin.chen@broadcom.com,
-	opendmb@gmail.com,
-	kapil.hali@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2] firmware: arm_scmi: Give SMC transport precedence over mailbox
-Date: Mon,  7 Oct 2024 16:54:13 -0700
-Message-Id: <20241007235413.507860-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728345435; c=relaxed/simple;
+	bh=VJU7qbY8J3u9xtC6EQR+mx6gjjmrdTSW58NPLG7vkX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BxlcXVzEeCuhl7eZ2zaNIEtCrnNUqV8LBydmXn35O8ATWgBPh8KlcYwz/aEQQvXgmuCfy/cBpm/ORUMs8qeA9WxjzdBI/F6fvKDZpWO2XPsHePQRq0DWm2EcoZXPxbguZJSPidfMXUELErUxvCZmLs/QXrJ/IavjKMf9YehoW7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/HIgxjM; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b7a4336easo36691705ad.3;
+        Mon, 07 Oct 2024 16:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728345434; x=1728950234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wiNpm1dKLWSbBugNxf2eNO5rcY6QQ31sW76RgkYbIeI=;
+        b=E/HIgxjMjcWSTEKFpaWDJtwdzIe/5VPLZkYFtN1x7zIGf+mY8qRN4sitI3IOv2zt/I
+         3KOHKnkKZzy3OtArbcYK2JbZmP5/Nu1JVs/SIpdIpfHSoSRIaDoJSfSbpU4tZhCWia6E
+         +0GDIR3qNfhPq2Qtr+3S6nzYd/PDIg5pPwIe1vf1HH9ppHHd8CpV0bAMGepDKuAwIfWa
+         2xH0SnHeqrH22/JRxCKmscU8obH1bYQIqSXvl6arySgpdajQVRftSXtOKBhF6xtwgCPh
+         lvyGQDDmfwW7qtZvpwx2NnKmZ9Ezcm0Z7IU1rQOpT4T5UtfF6Myuwgnmru1rOCgBAFMr
+         x5Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728345434; x=1728950234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wiNpm1dKLWSbBugNxf2eNO5rcY6QQ31sW76RgkYbIeI=;
+        b=OqPWv1RjsUC8fEzGXD2HsHFWuTlbysV4XPxqorx4he9zO//nJch8tXZXJwzzX1wXWs
+         urAN7IJcoDkpwmz3SmLG0iJpMpi2KAmb2wvlZ9RNwstjd7pIcPgIH7QLvJzUcd5mXNKV
+         3hwNK1VmBOl5WlPi4eAQVBwbEXhnH5gygWSkaK9tJSpNKxrHL0jiHyQfun/BLZkF1KfM
+         GYdHNWXnd1agZ/OazvZGpS96lch63aErDugTH/Xbsq16b0yhJwumUcTR56CmBbQOl3As
+         vj2TP7rpcpzkoZ1jNH40R3qdw2hk6/tFOzhXsZZ3uwjOmA7q4LFVj4fxEuVyf5KD8KZ6
+         ckLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXga8Ib0Qr4BlqSOjcfjnwIiSkRENHWgRKfEQO2DqYf8duA/48EXZAqH7LrW0mnqsL6tE29ZafzXsCtWD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvEhy4SVTIGwdRotRI7ceOUoJ6b2KYVqgIMlr39zDUEuPoGp+F
+	ejZvd72LsnQDY9HZKhYjfw/qoZdr6HcDhzBuUPtDM98V2T69G1prD79Z9w==
+X-Google-Smtp-Source: AGHT+IG2WQBalVXy3d58R2M47Rps8Dc2IedLBnATqVk0ogRG/4byALYOK3lFjfDgMDUvtAvbqLCJIA==
+X-Received: by 2002:a17:903:234c:b0:20b:7e0d:9b with SMTP id d9443c01a7336-20bfdfafec1mr195240965ad.18.1728345433585;
+        Mon, 07 Oct 2024 16:57:13 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139316e8sm44787205ad.181.2024.10.07.16.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 16:57:13 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCH net] net: ibm: emac: mal: fix wrong goto
+Date: Mon,  7 Oct 2024 16:57:11 -0700
+Message-ID: <20241007235711.5714-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,55 +88,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Broadcom STB platforms have for historical reasons included both
-"arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
-string, in that order.
+dcr_map is called in the previous if and therefore needs to be unmapped.
 
-After the commit cited in the Fixes tag and with a kernel configuration
-that enables both the SMC and the Mailbox transports, we would probe
-the mailbox transport, but fail to complete since we would not have a
-mailbox driver available. With each SCMI transport being a platform
-driver with its own set of compatible strings to match, rather than an
-unique platform driver entry point, we no longer match from most
-specific to least specific. There is also no simple way for the mailbox
-driver to return -ENODEV and let another platform driver attempt
-probing. This leads to a platform with no SCMI provider, therefore all
-drivers depending upon SCMI resources are put on deferred probe forever.
+Fixes: 1ff0fcfcb1a6 ("ibm_newemac: Fix new MAL feature handling")
 
-By keeping the SMC transport objects linked first, we can let the
-platform driver match the compatible string and probe successfully with
-no adverse effects on platforms using the mailbox transport.
-
-Fixes: b53515fa177c ("firmware: arm_scmi: Make MBOX transport a standalone driver")
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-Changes in v2:
+ drivers/net/ethernet/ibm/emac/mal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- removed downstream Change-Id
-- s/SCMI/SMC in the second paragraph
-- added details about what changed and how that affects the probing
-
- drivers/firmware/arm_scmi/transports/Makefile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/arm_scmi/transports/Makefile b/drivers/firmware/arm_scmi/transports/Makefile
-index 362a406f08e6..3ba3d3bee151 100644
---- a/drivers/firmware/arm_scmi/transports/Makefile
-+++ b/drivers/firmware/arm_scmi/transports/Makefile
-@@ -1,8 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0-only
--scmi_transport_mailbox-objs := mailbox.o
--obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
-+# Keep before scmi_transport_mailbox.o to allow precedence
-+# while matching the compatible.
- scmi_transport_smc-objs := smc.o
- obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
-+scmi_transport_mailbox-objs := mailbox.o
-+obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
- scmi_transport_optee-objs := optee.o
- obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += scmi_transport_optee.o
- scmi_transport_virtio-objs := virtio.o
+diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
+index d92dd9c83031..0c5e22d14372 100644
+--- a/drivers/net/ethernet/ibm/emac/mal.c
++++ b/drivers/net/ethernet/ibm/emac/mal.c
+@@ -578,7 +578,7 @@ static int mal_probe(struct platform_device *ofdev)
+ 		printk(KERN_ERR "%pOF: Support for 405EZ not enabled!\n",
+ 				ofdev->dev.of_node);
+ 		err = -ENODEV;
+-		goto fail;
++		goto fail_unmap;
+ #endif
+ 	}
+ 
 -- 
-2.34.1
+2.46.2
 
 
