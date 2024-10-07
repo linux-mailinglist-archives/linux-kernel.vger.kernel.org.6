@@ -1,91 +1,131 @@
-Return-Path: <linux-kernel+bounces-353680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D7299311C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:27:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DE399311F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C8B1F231F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4191F232DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F91E1D8A0B;
-	Mon,  7 Oct 2024 15:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78201D8E14;
+	Mon,  7 Oct 2024 15:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="osPF7hge";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5fbwiP5p"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDiXg/zM"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435391D61B6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F3C1D8A0B;
+	Mon,  7 Oct 2024 15:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728314851; cv=none; b=dSD5K3A2atw3v4kSs9OABr8FozFnLn6nmktvIXC8YxCNIcDioMtRhuw/PC6Dvbfe4wUKW3jdIWNA2RvqWmfWFa/6FUpgHsQwXvzO9ewHJziEdL1Mstn65ENM8wtolCUF5SHMWm0AKIiZUGSBA75K2NEi5qsgitMaHtwlvZSZJ2c=
+	t=1728314924; cv=none; b=JEkLowxorRk2QP5VcuXE78VruKe+ktIYYjVvE0cYUHQ3tVVB+QD/WKkATCZ3l1Hf0EuPnu52OgFtFwrx55WYzDNEUEaouFA3n0X5RvDRpPghtIutAGIt5ZIgvTvfZ6ov1WDLdGwny/QSAJwRKFvUZLgrnMdJYAvQ7JjJD5RQt98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728314851; c=relaxed/simple;
-	bh=5FYpAJqF/81LDAyVHprhogsXhjYNaFBWWZ3WL8B1v6Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EmE3cOQ8bfAZInLLQltHQKMmd/QP2QGzHA1KuFYMKFpjxVbz0+63CMldpJU5WVEu2Rr3diSJRWk8RJE1rOyFSQ+LpyI8NeS6EfGoMZQIbIc2H9LZIuWx7Y9+hfJNb+j7nN3ose+/VE55S4t4OEijr8t42FPLeZh1AGtDaa5wyao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=osPF7hge; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5fbwiP5p; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728314848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kII8SCzlGG9hmidK7VeJKeDDbOpwIQZ6bj8/kLXRMjM=;
-	b=osPF7hgeBZ8lWe/9mNg3rQvZu+i4t6/Y80BpGZUJZVpUHCodxwh0KUT7HmqgB1N3diVhAO
-	1uCOhv+pNZr0SrHeKvHMo8P8S4dTJ4WYvrtoWHxKMEPZ0DHsAe+GCTC3+iQj/q4377sE08
-	+4I5FZxTa2pORCsfjHusUrDK6wRgQZuDiW3n2EBQYlonoTr7vgaZVxB9jy9W9Qsj3dTBp5
-	bxhOZ6YR6mWYBpQWHOzCkQuO6Ev573TJjfJXRSDG5SgXtHIOzjZfIG1sflf7GGQxqnwB9A
-	h1g/EPWCFso1In7DndSqOofAohOI8zgjBcDdDbWLAoJbzGIRNyAfaCufU0bHOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728314848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kII8SCzlGG9hmidK7VeJKeDDbOpwIQZ6bj8/kLXRMjM=;
-	b=5fbwiP5pCuIZZA8AMNo99t1caJcUlNvZc4qvAuzTzl29dtFSaYPNYzkty36zVPoLxEd4vX
-	W7NWXhISUDF+PICw==
-To: David Laight <David.Laight@ACULAB.COM>, Bart Van Assche
- <bvanassche@acm.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
- <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Clemens Ladisch <clemens@ladisch.de>
-Subject: RE: [PATCH 07/21] hpet: Switch to number_of_interrupts()
-In-Reply-To: <18b139e4a0674892ba69d00e5f170b7f@AcuMS.aculab.com>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-8-bvanassche@acm.org>
- <b315cbe2e1264d98b57ce57fe5f66a23@AcuMS.aculab.com>
- <cb045717-5eb8-456f-aa50-667e9f8aabfd@acm.org> <874j5oun7x.ffs@tglx>
- <18b139e4a0674892ba69d00e5f170b7f@AcuMS.aculab.com>
-Date: Mon, 07 Oct 2024 17:27:27 +0200
-Message-ID: <87o73wszkw.ffs@tglx>
+	s=arc-20240116; t=1728314924; c=relaxed/simple;
+	bh=s32RlqUFiUV2eI1P7gxdnrpO/8RXfRHl8qzEURv0aw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ViOnkV3AT+Aq+ZCJFgcTiyiuW9/pbv223imiDqCYY+3+8weHrfABM4BqyeO+uejSPCo0vf4fR59te7xyh1v3QPVvQ/pzRLj39OoNbBczSo6X4OkRcBG0LgAy+P4WDun9Fq+8YznsrMXDna95/IzZ2fK/P1crcvIVyZmlVXWwJIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDiXg/zM; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e042f4636dso2822017b6e.1;
+        Mon, 07 Oct 2024 08:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728314922; x=1728919722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2xdo0VzL8mnN7ANpNT7CAPvUYDoW+NFuxV3r999Crgg=;
+        b=eDiXg/zMTBmBvRA3pZu2/MQcTGElyDBbDjmGnwgkW67lLd5b4/QkLKboO6qDQQ8M8W
+         Wt0kqsBIjQW7VS+ehwMOpn6pduUDaxECC09SmBmnB9NslRrsQmcQmWjluMKpPlTcWjbW
+         z10OWiCPdTiaOSJmPKg5eGQ3v/Bojwd3j1f5yjw+ZvA5QN/wypZx8Lb82vvO8u6Hcn7b
+         lowlHD0ZTf3sO7OIoouPRLVcldAYUNX3AWdfPA6Lu/j2LZujiOCcdI5fgITS0RH5FN/v
+         yV2V4OCWH8OI5oE1bSac2J9Nbs33zIPti+kiyPEM9JiyIX6EqxzZLnXy+wdpIYWeA13V
+         4GZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728314922; x=1728919722;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2xdo0VzL8mnN7ANpNT7CAPvUYDoW+NFuxV3r999Crgg=;
+        b=a3jwExSdm/EBRietYqj7hd2ATy3ox1nVhpI1GnhGag19GB+YoJuzgTY6OIA4yrKIpz
+         lrhZroCYVoC2Cd7GJHj+p37g8RhFt+QZlL57hZsdbbD3f3naYalNomqZoFCHqqo+pHE/
+         1CDw7Cl3InL7kBLQU6yiFW8dbSYKUjwInZT1mKLMO3zajWusUj56RGcND2KgQV0bUBKz
+         FLirZyRyVeyEglZT8SabhzLm/p4JLggs4K970Em8UaDM5ejv6V0gzA6HCjXKw1zkkyfx
+         o1p2lNYTItd6BAa9dEbBNPxNLMkVwFHtBAoFEu5m9XVXBoAefCZ/HIftF0WT5YfzvE0b
+         BwRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqN+hy/M+yGeImQ7Rm5Ev63XZwONle5rehedWXAsZ36CIUy+blPr2mFAE3M3t9KHPxJmHL3HAr@vger.kernel.org, AJvYcCWKua0PmJO5hHmFtz0SDHXjRzb2SPUerwBohh1AOcfWhvz0AvXIm6Z0ZOZxVCa0RC+mRBEGLS99zLMNDKGn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYmEAbfm8sh1BNZzbdPSCRGWN2/xZ78LBJVViqssLzwHXoXIOa
+	sknHtx2ABXgSifuctXUYxDmg+wj/pD1JYuEJEuBIA1/AvdjE555P
+X-Google-Smtp-Source: AGHT+IGQ4EnLEAoChykGL4XZmx1nS+43oFppiGRl9DslLgkiE8HIueUgdTaJM0TymGQJ7KprMTgMIQ==
+X-Received: by 2002:a05:6808:10cf:b0:3e0:44ad:1d00 with SMTP id 5614622812f47-3e3c132ae59mr7817532b6e.18.1728314921927;
+        Mon, 07 Oct 2024 08:28:41 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4adeasm4360337a12.84.2024.10.07.08.28.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 08:28:41 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: xavier_qy@163.com,
+	longman@redhat.com,
+	lizefan.x@bytedance.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	akpm@linux-foundation.org
+Cc: jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH v2 0/6] Enhance union-find with KUnit tests and optimization improvements
+Date: Mon,  7 Oct 2024 23:28:27 +0800
+Message-Id: <20241007152833.2282199-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07 2024 at 13:00, David Laight wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> In any case 'accessor functions' just move the global symbol from
-> being a data symbol to a code symbol while obfuscating the
-> code and making it harder to find where values are set and used.
+This patch series adds KUnit tests for the union-find implementation
+and optimizes the path compression in the uf_find() function to achieve
+a lower tree height and improved efficiency. Additionally, it modifies
+uf_union() to return a boolean value indicating whether a merge
+occurred, enhancing the process of calculating the number of groups in
+the cgroup cpuset.
 
-That's nonsense. The accessor functions can be as easily grepped for as
-the variable. So that's not making it harder at all, but it encapsulates
-stuff better. That's the whole point of the exercise.
+Regards,
+Kuan-Wei
 
-Thanks,
+---
 
-        tglx
+Changes in v2:
+- Modify uf_find() to compare with root instead of node in the while loop
+- s/Union-Find/union-find/
+- Add myself to MAINTAINERS
 
+v1: https://lore.kernel.org/lkml/20241005214938.2147393-1-visitorckw@gmail.com/
+
+Kuan-Wei Chiu (6):
+  lib/union_find: Add EXPORT_SYMBOL() for uf_find() and uf_union()
+  lib/union_find: Change uf_union() return type to bool
+  lib: Add KUnit tests for union-find implementation
+  lib/union_find: Optimize uf_find() with enhanced path compression
+  cgroup/cpuset: Optimize domain counting using updated uf_union()
+  MAINTAINERS: Add Kuan-Wei as co-maintainer for union-find
+
+ MAINTAINERS                |  2 ++
+ include/linux/union_find.h |  2 +-
+ kernel/cgroup/cpuset.c     | 10 ++----
+ lib/Kconfig.debug          | 12 +++++++
+ lib/Makefile               |  1 +
+ lib/union_find.c           | 22 +++++++++---
+ lib/union_find_kunit.c     | 74 ++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 110 insertions(+), 13 deletions(-)
+ create mode 100644 lib/union_find_kunit.c
+
+-- 
+2.34.1
 
 
