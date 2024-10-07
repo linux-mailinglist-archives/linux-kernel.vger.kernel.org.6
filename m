@@ -1,99 +1,101 @@
-Return-Path: <linux-kernel+bounces-353229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A5A992ACD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:52:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473E1992AD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9B0280FC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:52:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E1E3B22860
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B620A1D1302;
-	Mon,  7 Oct 2024 11:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZAx40C6b"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B2318A6AD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 11:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0011B1D223A;
+	Mon,  7 Oct 2024 11:52:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CD418A6AD;
+	Mon,  7 Oct 2024 11:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728301937; cv=none; b=eMlDD7LoCGkGy8EuoXdYtGie0uYqZhd1FqL+HeYFlQ7uGmXsJfIuscaD79TWvaD+XrSR/F2BJr8VcJffd9uSezfbyP4TyndoYBxNtThBrjN2bFiyHtOjcT1j388m4UeMNH2Y4tIZYt/ctHtvZcbMfgvsZChoA7L83Q70TzREbLg=
+	t=1728301970; cv=none; b=ajPZYmupGyNvaH4CyJsJNysF4Qz4cRmo6afKK/G33YnDQdUDBZFtBnYsm0EDV3DuceLHRwbBEnv7WAWX1wzKC44y0imG86pAb1+TzngFh7yLsYVj7KDtzqf/wt4u5XtEcUgbJgG/p3ACE+TT8kPGf2437zh2shCIizhNAOW8Ij4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728301937; c=relaxed/simple;
-	bh=6LeBGqTxN8uuATCMQW/12XJFuDpvDJOzpQJuePUC4n8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQhMo6K582uKHByAeRc4J4kbPRDCbGlsr1O7iqWxqtrBxe2r+FDJ7+MkEMxmD/WNb0qsvGxJEWpQuxq8jGI2aezJFPxNHbtkF4YWzg5IS2+xMSSmJinxp8aOY4gUvjr3pbkPc74YA3DpCUVXtBJtb/UnDJiigrZe/3xoiI2jPUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZAx40C6b; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728301932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=viQ13pmTPlAVs6SlErEUxS34ERLAOpusxyXGHtUEynM=;
-	b=ZAx40C6b3+icNhpepjoWGjpGGDVTD9u6rwTN4c3eqX9AZ4w51eyuwgWe3rd7LDdP7yCm5y
-	DAhlbEQTDvCB60gmztdIUjqC4d5DoqhFKww845GvBHzid3e+7f5OlRLCZGZllLyLRzgWFE
-	R6qEtNEo8gNjzlt1Wl/YfJIXEktYDD0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] drm/vmwgfx: Remove unnecessary NULL checks before kvfree()
-Date: Mon,  7 Oct 2024 13:51:32 +0200
-Message-ID: <20241007115131.1811-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1728301970; c=relaxed/simple;
+	bh=AAXY8T10Y18po9ZtgYdQspsWDx7aM51t75JyZ9VnPfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mpm+nTld6JT4llKDuoMzr0lxplXzbjBTCAFDKP6hyC2CRyk3a2DbQfUvm+ObDFO7msQLJfa/Hnp/K01QupnZgi0eInQVTymeVaoQJS+AhuE4QqJJcp5IJtosj/sDqTsEpkSqQLMwlNlVdJBTMGvPvtYeBpbireX9LsB6PBcx0NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7F0EFEC;
+	Mon,  7 Oct 2024 04:53:16 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B2C43F640;
+	Mon,  7 Oct 2024 04:52:45 -0700 (PDT)
+Date: Mon, 7 Oct 2024 12:52:33 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-arm-kernel@lists.infread.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
+	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
+	justin.chen@broadcom.com, opendmb@gmail.com,
+	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] firmware: arm_scmi: Give SMC transport precedence over
+ mailbox
+Message-ID: <ZwPLgcGeUcFPvjcz@pluto>
+References: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
 
-Since kvfree() already checks if its argument is NULL, an additional
-check before calling kvfree() is unnecessary and can be removed.
+On Sat, Oct 05, 2024 at 09:33:17PM -0700, Florian Fainelli wrote:
+> Broadcom STB platforms have for historical reasons included both
+> "arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
+> string.
 
-Remove both and the following Coccinelle/coccicheck warnings reported by
-ifnullfree.cocci:
+Hi Florian,
 
-  WARNING: NULL check before some freeing functions is not needed
-  WARNING: NULL check before some freeing functions is not needed
+did not know this..
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_blit.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> After the commit cited in the Fixes tag and with a kernel
+> configuration that enables both the SCMI and the Mailbox transports, we
+> would probe the mailbox transport, but fail to complete since we would
+> not have a mailbox driver available.
+>
+Not sure to have understood this...
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-index 890a66a2361f..64bd7d74854e 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-@@ -635,10 +635,8 @@ int vmw_bo_cpu_blit(struct vmw_bo *vmw_dst,
- 		kunmap_atomic(d.src_addr);
- 	if (d.dst_addr)
- 		kunmap_atomic(d.dst_addr);
--	if (src_pages)
--		kvfree(src_pages);
--	if (dst_pages)
--		kvfree(dst_pages);
-+	kvfree(src_pages);
-+	kvfree(dst_pages);
- 
- 	return ret;
- }
--- 
-2.46.2
+...you mean you DO have the SMC/Mailbox SCMI transport drivers compiled
+into the Kconfig AND you have BOTH the SMC AND Mailbox compatibles in
+DT, BUT your platform does NOT physically have a mbox/shmem transport
+and as a consequence, when MBOX probes (at first), you see an error from
+the core like:
 
+    "arm-scmi: unable to communicate with SCMI"
+
+since it gets no reply from the SCMI server (being not connnected via
+mbox) and it bails out .... am I right ?
+
+If this is the case, without this patch, after this error and the mbox probe
+failing, the SMC transport, instead, DO probe successfully at the end, right ?
+
+IOW, what is the impact without this patch, an error and a delay in the
+probe sequence till it gets to the SMC transport probe 9as second
+attempt) or worse ? (trying to understand here...)
+
+Thanks,
+Cristian
 
