@@ -1,169 +1,219 @@
-Return-Path: <linux-kernel+bounces-353289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD96992B9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B08DA992B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC41C22CE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB681C22CFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAAE1D27BB;
-	Mon,  7 Oct 2024 12:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DFB1D31B5;
+	Mon,  7 Oct 2024 12:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OOrKqUFV"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAHNuIDZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353F1D278C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940FD1D318A;
+	Mon,  7 Oct 2024 12:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303861; cv=none; b=pVuPjzSY9MjIOcR8sP0K4dt6pt5S6w0f743YafwsgBoJ/EQOHVqx0mcDZXzH3XchCT4206A+EL4Qe98LhozAFDCayvkURmPzLMbTTrHhaJcpT2ji89y9hDvw8BQ8gR5tV0vVgC4QpSlpj/5jJ/lOzr1Pvw7RhXbXtIIQ2UmXTzA=
+	t=1728303863; cv=none; b=nrVe6faq/iqId+8P2uio87wCz3ZXr/h/k+SnyZZaAyMEy44hs+fCG+7IEzLTyh2yLXWSOPIdjnLFRWNrSQLfWubfTXyxjsCiOemPU826I4NyhWHXFCu/Qc6y5caMgpdo6I25C9/G5aoau3yhZ+xgtfcvdz9QmnF1qYKDQT1Ji+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303861; c=relaxed/simple;
-	bh=t8H6KKTU1kUFSyofCbDB6hb4GjQoj/UNpvlIreQ4WHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=snx6dlQ42oBtwcK4lV4PAKCNW4uEEh+E2J1lxw2Cg2MRPtMzf1OHuofaZ6oarPTkc5kNItQzUj6ow1k3hqS17jlEv06qFCn0QYkv9IKjCM1HVp4F8IX46Pr72balEbEkXp+Ls6mKQ5n4KsDK7Px5S9pMnjkB7L1EwnfiM5Pin/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OOrKqUFV; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdac05af9so4216618f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 05:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728303856; x=1728908656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ku7dHoXpcBGzxmDwFlzy5O2yX7mMKyvUeFGB5ab/Z98=;
-        b=OOrKqUFVGN+til1KTL10MXwaAlvqfhdBAA8OaV/VrMm2yGAP2b+K+rBLws5vWOHClL
-         ysNc9YSd83jY9R+nvpyM16sgL51fZuB4lSgLcGPHKLKNljiOJqu+6eFiIZSM5lLYkNA8
-         ipzPteLU7kLOh6v+kFFqkcJ64PNn4JPqRzxjp7UdAJ/CZCgOAzDUZZQ/suNyknQIli93
-         9frkwkis11dzWOdgunlLuqd37ysfAm+XCAVrD+EGCemfJBxrZYeP0JmxuRdAyYaecUCm
-         oR6RbUoYasV6Nzd4Bf2OxK0wsMBc4FQ7X+Cl95JzEOByYKs4DCxhV2P1GLHkxLTfEQOP
-         kTNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728303856; x=1728908656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ku7dHoXpcBGzxmDwFlzy5O2yX7mMKyvUeFGB5ab/Z98=;
-        b=ipbuc4f59Ks/hc3CiIWNlnsXQxRgfX7f4D7Y0o9O6cxNgxS3Clc7goP9WcuYStdhXl
-         KiP59p1Sq8io1dvsOBXtQ7LSP1Jf5ltk3a7Qtb4GGropXMFtQwPES2oZBIsA/d1Qy1p/
-         23qGFy7mgffA53OB07otD0CMmAS4VicfxpnaiZ4I2GbqLEr80p5fyAHD+6YUOuaB2ZDD
-         b3gUfFRs+bOboEcP/e/y3wx5EOSxtaRXUOuHwVYcYAl/6YlrDgZuHyryUPsZEln2TrZ9
-         7dtk5S8Wo8/DHU7K84BrY+krBYm1ERxLxayykmhT5FNc0mSnJ40BlTOUai5mnrwVw/5A
-         TN7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWmPnkPTFpqbuZst7W4G/U8TLt5JDXY7e7wyv84tUY2ipKThvnfnQHfL2VxcM5E6nYSEWV8i5NFVZii2x4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLJ0Ve8CLnqPo71SEveVVTwQgRWree/3gTpzxTl9rfkGZOj6DT
-	R13P5XgpBIwRXceI8Pp5x2OaxDKFPEzFGeEqQ+UQaQoJ4Gqvw0ncySV/PYZchoJ4y+yDSV0Qb7R
-	oADx5gk/G3KGqQ9pYLYAs/cCdow0dVPxEVnFQ
-X-Google-Smtp-Source: AGHT+IH8HYWMusOnnggysgcNaVoQpA7Kkf52UHiKBHrYYgnQi3e5Rs2SF/yP/clJCEOjCdyXWS+b5b1JKOiSHyD1iX0=
-X-Received: by 2002:a5d:61ca:0:b0:37c:fbf8:fc4 with SMTP id
- ffacd0b85a97d-37d0eaea686mr9189645f8f.59.1728303856278; Mon, 07 Oct 2024
- 05:24:16 -0700 (PDT)
+	s=arc-20240116; t=1728303863; c=relaxed/simple;
+	bh=UU6wLBGnm1CbrpwWS2xyw4JVMQssEeBg4IEK1MEqFBA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ShYMbX8TrfaddRAd1qc73Jw943EWfs4WHO7X/YVDTAQVeUrPQDhSwHNn7ZTHkTobBIgHkgQ8MUkSBkK6ALbEmRgVZ4gj0pVUaGxpa6DBqlcxU1okrBU1htSsH/8cvdliN5LZ3num8wvM/CVGig5x1Cj5RzbRlQ/kJw/ujs+wcng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAHNuIDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA9FDC4CECF;
+	Mon,  7 Oct 2024 12:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728303863;
+	bh=UU6wLBGnm1CbrpwWS2xyw4JVMQssEeBg4IEK1MEqFBA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lAHNuIDZTPFabM7bIaxGgjuStXbKn94uubuHpRWi7tne8m4DFsSFCAB5EkrnPDS97
+	 w5Hz26GSrPObEO3o+1+bkxR8u/Fij4ZGlbQMOc1n8huc03ICARzrD2FmrvFSKlUix1
+	 fiiS1hc7qJLnlm/WeY735GKTVHoqiC12VecsPS/rfyFUDKwM/M9J4AnSZle7mOrgdp
+	 IOLcj8DbNy0EwNj3o4O+eKnnyIoH5X1SCZ9P8hZaLO9Ki+txIbQkX7k3AcdbpZxTg0
+	 qsAz17u7sdI07cSAobUqm3WTKS5eXb6nAg3nkfJL87KJ3LdgM9RPJk7GUe97LhKZtg
+	 F7dDHVH7oHm/w==
+Date: Mon, 7 Oct 2024 21:24:17 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Xie <jeff.xie@linux.dev>
+Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
+Subject: Re: [PATCH v4] ftrace: Get the true parent ip for function tracer
+Message-Id: <20241007212417.64a199fbe0c80fc4e2cd4b7b@kernel.org>
+In-Reply-To: <20241007113537.19686-1-jeff.xie@linux.dev>
+References: <20241007113537.19686-1-jeff.xie@linux.dev>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com> <20241005122531.20298-5-fujita.tomonori@gmail.com>
-In-Reply-To: <20241005122531.20298-5-fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 7 Oct 2024 14:24:03 +0200
-Message-ID: <CAH5fLgjTifsDKrxZTUTo74HR34X1zusO_7h0ftWWH-iZR_NXNA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 4/6] rust: time: add wrapper for fsleep function
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 5, 2024 at 2:26=E2=80=AFPM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> Add a wrapper for fsleep, flexible sleep functions in
-> `include/linux/delay.h` which deals with hardware delays.
->
-> The kernel supports several `sleep` functions to handle various
-> lengths of delay. This adds fsleep, automatically chooses the best
-> sleep method based on a duration.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+On Mon,  7 Oct 2024 19:35:37 +0800
+Jeff Xie <jeff.xie@linux.dev> wrote:
+
+> When using both function tracer and function graph simultaneously,
+> it is found that function tracer sometimes captures a fake parent ip
+> (return_to_handler) instead of the true parent ip.
+> 
+> This issue is easy to reproduce. Below are my reproduction steps:
+> 
+> jeff-labs:~/bin # ./trace-net.sh
+> 
+> jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
+>     trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
+>     trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
+>     trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
+>     trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
+>     trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
+>     [...]
+> 
+> The following is my simple trace script:
+> 
+> <snip>
+> jeff-labs:~/bin # cat ./trace-net.sh
+> TRACE_PATH="/sys/kernel/debug/tracing"
+> 
+> set_events() {
+>         echo 1 > $1/events/net/enable
+>         echo 1 > $1/events/tcp/enable
+>         echo 1 > $1/events/sock/enable
+>         echo 1 > $1/events/napi/enable
+>         echo 1 > $1/events/fib/enable
+>         echo 1 > $1/events/neigh/enable
+> }
+> 
+> set_events ${TRACE_PATH}
+> echo 1 > ${TRACE_PATH}/options/sym-offset
+> echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+> echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+> echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+> 
+> echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+> echo function_graph > ${TRACE_PATH}/current_tracer
+> 
+> INSTANCE_FOO=${TRACE_PATH}/instances/foo
+> if [ ! -e $INSTANCE_FOO ]; then
+>         mkdir ${INSTANCE_FOO}
+> fi
+> set_events ${INSTANCE_FOO}
+> echo 1 > ${INSTANCE_FOO}/options/sym-offset
+> echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+> echo function > ${INSTANCE_FOO}/current_tracer
+> 
+> echo 1 > ${TRACE_PATH}/tracing_on
+> echo 1 > ${INSTANCE_FOO}/tracing_on
+> 
+> echo > ${TRACE_PATH}/trace
+> echo > ${INSTANCE_FOO}/trace
+> </snip>
+> 
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
+> Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
 > ---
->  rust/helpers/time.c |  6 ++++++
->  rust/kernel/time.rs | 16 ++++++++++++++++
->  2 files changed, 22 insertions(+)
->
-> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
-> index 60dee69f4efc..0c85bb06af63 100644
-> --- a/rust/helpers/time.c
-> +++ b/rust/helpers/time.c
-> @@ -1,7 +1,13 @@
->  // SPDX-License-Identifier: GPL-2.0
->
-> +#include <linux/delay.h>
->  #include <linux/ktime.h>
->
-> +void rust_helper_fsleep(unsigned long usecs)
-> +{
-> +       fsleep(usecs);
-> +}
-> +
->  ktime_t rust_helper_ktime_add_ns(const ktime_t kt, const u64 nsec)
->  {
->         return ktime_add_ns(kt, nsec);
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 3e00ad22ed89..5cca9c60f74a 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -5,9 +5,12 @@
->  //! This module contains the kernel APIs related to time and timers that
->  //! have been ported or wrapped for usage by Rust code in the kernel.
->  //!
-> +//! C header: [`include/linux/delay.h`](srctree/include/linux/delay.h).
->  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.=
-h).
->  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
->
-> +use core::ffi::c_ulong;
-> +
->  /// The number of nanoseconds per microsecond.
->  pub const NSEC_PER_USEC: i64 =3D bindings::NSEC_PER_USEC as i64;
->
-> @@ -178,3 +181,16 @@ fn add(self, delta: Delta) -> Ktime {
->          Ktime::from_raw(t)
->      }
+> v4:
+>   https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@rorschach.local.home/
+> - fixed the crash when accessing the "current" if the arch has not implemented noinstr
+>   thanks steve for the testing and the detailed explanation
+> 
+> v3:
+>   https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b312f1d956cf352a2@kernel.org/
+> - fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=n suggested by Masami
+> 
+> v2:
+>   https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@gandalf.local.home/
+> - Adding __always_inline to function_get_true_parent_ip suggested by Steve
+> 
+>  kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+> index 3b0cea37e029..46b663d22c37 100644
+> --- a/kernel/trace/trace_functions.c
+> +++ b/kernel/trace/trace_functions.c
+> @@ -176,6 +176,27 @@ static void function_trace_start(struct trace_array *tr)
+>  	tracing_reset_online_cpus(&tr->array_buffer);
 >  }
+>  
+> +#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_ARCH_WANTS_NO_INSTR)
+> +static __always_inline unsigned long
+> +function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+> +{
+> +	unsigned long true_parent_ip;
+> +	int idx = 0;
 > +
-> +/// Sleeps for a given duration.
-> +///
-> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
-> +/// which automatically chooses the best sleep method based on a duratio=
-n.
-> +///
-> +/// `Delta` must be longer than one microsecond.
-> +///
-> +/// This function can only be used in a nonatomic context.
-> +pub fn fsleep(delta: Delta) {
-> +    // SAFETY: FFI call.
-> +    unsafe { bindings::fsleep(delta.as_micros() as c_ulong) }
+> +	true_parent_ip = parent_ip;
+> +	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
+> +		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
+> +				(unsigned long *)fregs->regs.sp);
+> +	return true_parent_ip;
 > +}
+> +#else
+> +static __always_inline unsigned long
+> +function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+> +{
+> +	return parent_ip;
+> +}
+> +#endif
+> +
+>  static void
+>  function_trace_call(unsigned long ip, unsigned long parent_ip,
+>  		    struct ftrace_ops *op, struct ftrace_regs *fregs)
+> @@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+>  	if (bit < 0)
+>  		return;
+>  
+> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+> +
+>  	trace_ctx = tracing_gen_ctx();
+>  
+>  	cpu = smp_processor_id();
+> @@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+>  	 * recursive protection is performed.
+>  	 */
+>  	local_irq_save(flags);
+> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+>  	cpu = raw_smp_processor_id();
+>  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+>  	disabled = atomic_inc_return(&data->disabled);
+> @@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+>  	if (bit < 0)
+>  		return;
+>  
+> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+>  	cpu = smp_processor_id();
+>  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+>  	if (atomic_read(&data->disabled))
+> @@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+>  	 * recursive protection is performed.
+>  	 */
+>  	local_irq_save(flags);
+> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+>  	cpu = raw_smp_processor_id();
+>  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+>  	disabled = atomic_inc_return(&data->disabled);
+> -- 
+> 2.43.0
+> 
 
-This rounds down. Should this round it up to the nearest microsecond
-instead? It's generally said that fsleep should sleep for at least the
-provided duration, but that it may sleep for longer under some
-circumstances. By rounding up, you preserve that guarantee.
 
-Also, the note about always sleeping for "at least" the duration may
-be a good fit for the docs here as well.
-
-Alice
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
