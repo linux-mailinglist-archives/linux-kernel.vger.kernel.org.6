@@ -1,94 +1,101 @@
-Return-Path: <linux-kernel+bounces-353925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77781993486
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19A899348D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DB951F24895
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8A3283FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FABC1DCB2D;
-	Mon,  7 Oct 2024 17:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6249B1DD52F;
+	Mon,  7 Oct 2024 17:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="iavcBMRx"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="17Gnuf9a"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F0A1DC18F;
-	Mon,  7 Oct 2024 17:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FEF1DBB3C;
+	Mon,  7 Oct 2024 17:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728321188; cv=none; b=qrAuIoJ+pdFcHnSX/nghI/wc0HtN6ET6JjGaJ0UP/IBH+a9pb/rElN26xztuaGyW8Zgd4ySBugxWRc5bWiZIWeHC+K5QWC0cvKOuszYSZy9cek5KrmWANITboIh0TXjdUotEOciX1DtXVbFL7xwCvBu87KsmJQ9Zs2QAnL1LKXg=
+	t=1728321241; cv=none; b=RsuB1mvgpZ+VErCmRvpqlQujhKdXuMpG2j4d8L4URDINT2D6i21fiyvTRQK0M93NdS5NFgWW168wn+cbHKGqDk85MUlj9VvAxX2Afz++CusazaJpZI10sZFWlXcSexc0yK0YDbKHgcTR+oa7rF0iGShQY9XiKqxYdydT3ZQh9X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728321188; c=relaxed/simple;
-	bh=tPuWQZb9Uudhvv0lmGKN/UPb9yurcbpTbE9L1CfpiqA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V2s++0+VVGzj4DTqDbO9xZREO+X7/i/E7hjqGrf5O4yNgJn0Jzwa4S+sYYQY6S3CUuFI81BYliLv5Vm/HEnZqQS5c8AQcAX9M7i/Izw05ryG4SWqVcLeMqyKzrpJNSsCoxo5iLkL2gXOfjs6gDXHrKyF34JFx7cTiQS5Z+vDfAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=iavcBMRx; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9D30342C0D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728321186; bh=tPuWQZb9Uudhvv0lmGKN/UPb9yurcbpTbE9L1CfpiqA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iavcBMRxvF2CegKq5hiJDAzw3ETGVtzIdA72o/6LYux+xYhoCvLRlQc8aCKtjYG6u
-	 DBKbRIKBmyw7/sAoG6uUfgTMmpkGqe+dZ0IuvYhpw5gPBW6F01F5h64wcn0ahWMm5s
-	 UUiLn5bWfgFjUMpiL+mDVOlkwYuK1Ba6zb1STWeaDYoI6R3GytLbhIjClgYEWezHNS
-	 L/YyCvaEYU9MsPHY+WloYZwxAeg+kUpcuUPu6Pf/hVEIKboD82k/6fwvDxD3WX92i0
-	 5xtqEMkaeuIj8kk2PJpqc3v025rBUP/6yLy7qNPPL1+D7Ks4iL0pNysn3MSlI6JdnO
-	 mM+W8thGUGKvQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 9D30342C0D;
-	Mon,  7 Oct 2024 17:13:06 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Federico Vaga <federico.vaga@vaga.pv.it>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Federico Vaga
- <federico.vaga@vaga.pv.it>
-Subject: Re: [PATCH v3] doc:it_IT: update documents in process/
-In-Reply-To: <20240930202433.37110-1-federico.vaga@vaga.pv.it>
-References: <20240930202433.37110-1-federico.vaga@vaga.pv.it>
-Date: Mon, 07 Oct 2024 11:13:05 -0600
-Message-ID: <87a5ffkfa6.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728321241; c=relaxed/simple;
+	bh=+1el5oe20173DkKtwlL01ebh1nxEK5s/2QXdYu96hEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kf9YR+YownZXGMt9Aks+zm6Mx3FJ5o0haRg/xRGUhPQhN8JOvnNKHyu2LjYmrLdhzQcAQEsels7jg7c5IX/66EfUcb5q94RNIv8JffqdytTgooUQbAkQ236O2lKKYz4ZKc9uz3gsNHun4pRbTKKvKiv8n2FyIt/ZPYkxek/MXfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=17Gnuf9a; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=w6ppkj+1yxEfd3/jQGqcf2ZXkXdKjMbZSyR2uVRspF4=; b=17Gnuf9acoMaaQd0RE23twEGwi
+	wIEVPxK2AxR/WnNqghdtdfWTy7sL74c4oHHlIATIgasy+k7a57Xc16gAAyJ7ISAgb4wU8yEgW2q1+
+	AFYFl7Ru+0553DIa9dmg1MNqd1vT3l1QX3gw7ZrBZydp2+lrLkCZEFoATg4HHmzGNdaI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sxrIi-009I7h-Rp; Mon, 07 Oct 2024 19:13:40 +0200
+Date: Mon, 7 Oct 2024 19:13:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, anna-maria@linutronix.de,
+	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
+Message-ID: <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+ <20241005122531.20298-6-fujita.tomonori@gmail.com>
+ <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
+ <ZwG8H7u3ddYH6gRx@boqun-archlinux>
+ <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
+ <ZwPT7HZvG1aYONkQ@boqun-archlinux>
+ <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
+ <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
+ <ZwPsdvzxQVsD7wHm@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwPsdvzxQVsD7wHm@boqun-archlinux>
 
-Federico Vaga <federico.vaga@vaga.pv.it> writes:
+> > pub fn might_sleep() {
+> >     // SAFETY: Always safe to call.
+> >     unsafe { bindings::might_sleep() };
+> 
+> It's not always safe to call, because might_sleep() has a
+> might_resched() and in preempt=voluntary kernel, that's a
+> cond_resched(), which may eventually call __schedule() and report a
+> quiescent state of RCU. This could means an unexpected early grace
+> period, and that means a potential use-afer-free.
 
-> Update Italian translation following these changes under Documentation/process
->
-> commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
-> commit 413e775efaec ("Documentation: fix links to mailing list services")
-> commit 47c67ec1e8ef ("docs: submit-checklist: use subheadings")
-> commit 5969fbf30274 ("docs: submit-checklist: structure by category")
-> commit 5f99665ee8f4 ("kbuild: raise the minimum GNU Make requirement to 4.0")
-> commit 627395716cc3 ("docs: document python version used for compilation")
-> commit 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
-> commit 56f64b370612 ("rust: upgrade to Rust 1.78.0")
-> commit 82b8000c28b5 ("net: drop special comment style")
-> commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
-> commit 91031ca349ee ("docs: improve comment consistency in .muttrc example configuration")
-> commit 7fe7de7be828 ("Docs/process/email-clients: Document HacKerMaiL")
-> commit 9c03bc90c065 ("Documentation: process: Revert "Document suitability of Proton Mail for kernel development"")
-> commit f9a4f4a0e1f5 ("Docs: Move magic-number from process to staging")
-> commit 7400d25a0a5c ("Docs/process/index: Remove riscv/patch-acceptance from 'Other materi
-> al' section")
->
-> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+How does C handle this?
 
-This fails to apply to docs-next; care to respin?
+I'm not an RCU person...
 
-Thanks,
+But if you have called might_sleep() you are about to do something
+which could sleep. If it does sleep, the scheduler is going to be
+called, the grace period has ended, and RCU is going to do its
+thing. If that results in a use-after-free, your code is
+broken. might_sleep makes no difference here, the code is still
+broken, it just happens to light the fuse for the explosion a bit
+earlier.
 
-jon
+Or, i'm missing something, not being an RCU person.
+
+	Andrew
 
