@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-353579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C881A992FB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:45:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A497992FBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064111C22CE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62EE31C22CC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1A51D356F;
-	Mon,  7 Oct 2024 14:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5F91D5AAE;
+	Mon,  7 Oct 2024 14:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJgyKYyi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icynPHoe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DD21E49E;
-	Mon,  7 Oct 2024 14:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96741DA26;
+	Mon,  7 Oct 2024 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312334; cv=none; b=G/jsy8qcw2LZd84uUQ9dC08TWNwll4Lg0N1+NFk8AHMthDJe8ORBs+OcgbybPmQaPUQtmmVSXjHC4nc9URXYYa5IoDNBONfd4au5dPexb+KkDCujkPxCUunh5sv6GK5JXACyK7SkrsnhG8/K4InfL55bti7YvIXYm2t2xVZo2EE=
+	t=1728312418; cv=none; b=f/3tEmDHhcS67/i/fvWU3NMctHtR1BGQcy4lNEFDWYOjcKsxh4rhz7wjhr2RprU8Ug5aPnYJzV+FjhzD+rAtBf5eYO/GWNQNfFbVfd7iuXbGd9GT6VQ1ngEkpc3XmM5cNJ3kNc1psT5n4e9r2gj+w/1yHbDuWjENoA53Tofq7kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312334; c=relaxed/simple;
-	bh=3FB+fM1SR/GBiOLKvg963NUMpjWXq1ClTwQgLNpRUjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdE7DWhTm/RKXjfpzEyc9ARgtNldzQkM15atN07IMUaYhdEGaECrL3VOlnDIhGzx6NfH7HeHe+tr5/9JtOM7RgXVxQiUDiCMqFjAv/JONXeLGVo38u/yOf7/MFjuLxXPFOPtx0eS6XLMA7tJuuVngFPxrjFwDn2o8HJMv8dEC+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJgyKYyi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8EBCC4CEC6;
-	Mon,  7 Oct 2024 14:45:32 +0000 (UTC)
+	s=arc-20240116; t=1728312418; c=relaxed/simple;
+	bh=te6hFLTS05zT0eZ8ILkDO4EXBOueM9RV2TUahtuJf9o=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=spq3JK1GsdxU4vpxCPJu7Da5WHZ1o/B/pa4cn4REFrn9yaVRPZvJyzNNA9VQkIqWh+FFV8fTC9u9FMRRyHnIaVuUoc3sMhpUo1S00f5/zeKjqbar4kcg9UxXfBD11OKKtMDw3V/zyI7l4aOpGf2jdJ8NJyNVXhI07YteEHvHsEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icynPHoe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E147C4CEC6;
+	Mon,  7 Oct 2024 14:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728312333;
-	bh=3FB+fM1SR/GBiOLKvg963NUMpjWXq1ClTwQgLNpRUjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SJgyKYyi6E6PdkP2KFIApIt1zGeY44HkEypv1U0uHgtenil12+iN0S09ZXgJZRCKE
-	 pggRteEFcZ5N39BBicIygOlg7ulAJZXGCQzY0nDlsCB3FKK+RojoMO49mRq/ZXgpzv
-	 Qv55RWc0k00hQjSORbrH0W+Ry/bvL+T19NW4Ntpuw6mv7CApwGtz4T9t1NVheik3I8
-	 rD/chLiY4YSiDJuEEpBBTxFMbdlJmweWoxgjHw6rj7fA+/l0FREY78hgDdaLI/5QkF
-	 DHmUaiBg4J2+Y4GBc3ceYC1PMCqkbWvJaVQL7qcHPgueLjZIhOYAH1rLdyJi+vlgHx
-	 kUc95jN2jT22A==
-Date: Mon, 7 Oct 2024 15:45:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org,
-	oleg@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-	mark.rutland@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
-	aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sj@kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-Message-ID: <ZwPz-MXhbJMY6-ZU@finisterre.sirena.org.uk>
-References: <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
- <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
- <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
- <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
- <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
- <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
- <03c5b10d-b81c-4074-9c27-8ffc8c7fc84a@arm.com>
- <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
- <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
- <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
+	s=k20201202; t=1728312418;
+	bh=te6hFLTS05zT0eZ8ILkDO4EXBOueM9RV2TUahtuJf9o=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=icynPHoe+ataw4/EtSYkg8Rr3EeRIECkZBpd52KKVVEbaFQgVeub+csTqpJOR7OXD
+	 9CX28srKgi4AdFU54B+vdVjbi6PasbTmUzc/F86g0WltdZILn+5jZIm734DISUffg7
+	 T3v67zfVte3oI6lmiruv/H7wJyKelmtkLqttG8mYPit5mE9Nbj8B581bd4Tq4a+UhS
+	 /j4S1ByFOcjqcJgFyrJj/PaHn5QPE+B9bmXKv2ljSO3i6NtZhYsVwOnjBwC5gapz3k
+	 TCLTC1hopD0YDDbcDUIt6HX17SJEYtLxw/Epehbv8HJZZ8//9mrevQhT4w07DR3D+4
+	 Z8uT2sVNAQm4Q==
+Date: Mon, 07 Oct 2024 09:46:57 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zI1WmKFLB9+n5Rbe"
-Content-Disposition: inline
-In-Reply-To: <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
-X-Cookie: Editing is a rewording activity.
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, 
+ linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+In-Reply-To: <20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org>
+References: <20241007-topic-input-upstream-als31300-v1-0-2c240ea5cb77@linaro.org>
+ <20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org>
+Message-Id: <172831241751.297559.15638330476708022279.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: iio: magnetometer: document the
+ Allegro MicroSystems ALS31300 3-D Linear Hall Effect Sensor
 
 
---zI1WmKFLB9+n5Rbe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 07 Oct 2024 15:14:39 +0200, Neil Armstrong wrote:
+> Document the bindings for the Allegro MicroSystems ALS31300 3-D Linear Hall
+> Effect Sensor controller by an I2C interface, mainly used in 3D head-on
+> motion sensing applications.
+> 
+> The device can be configured with different sensitivities in factory,
+> but the sensitivity value used to calculate value into the Gauss
+> unit is not available from registers, thus the sensitivity is
+> provided by the compatible/device-id string which is based
+> on the part number as described in the datasheet page 2.
+> 
+> The datasheet is available on the product website at [1].
+> 
+> [1] https://www.allegromicro.com/en/products/sense/linear-and-angular-position/linear-position-sensor-ics/als31300
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../iio/magnetometer/allegro,als31300.yaml         | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
 
-On Mon, Oct 07, 2024 at 10:07:24AM +0530, Dev Jain wrote:
-> On 9/16/24 09:28, Dev Jain wrote:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> > Gentle ping, adding all x86 maintainers and the x86 list, in case they
-> > missed.
+yamllint warnings/errors:
 
-> Gentle ping
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/iio/magnetometer/allegromicro,als31300.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml
+Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.example.dtb: /example-0/i2c/sensor@61: failed to match any schema with compatible: ['allegromicro,als31300']
 
-Given that this was posted prior to the merge window you should probably
-resend it at this point.
+doc reference errors (make refcheckdocs):
 
---zI1WmKFLB9+n5Rbe
-Content-Type: application/pgp-signature; name="signature.asc"
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org
 
------BEGIN PGP SIGNATURE-----
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcD8/gACgkQJNaLcl1U
-h9Ddrgf/ecjm5cqThpdVO55ZcWo1Tl68da7MT8BBf2KnrlBHpFW2DgVjvVt5//Rw
-UcXrkPb/CFPPs8buUCeMSuj23bgcT0557mL45gETXpkZ+favSEItVl7ypm7Ty5zE
-HjOpfdvAvmYwBiqAbM2lNQBCMe6VnIuKR/czVd5Ir+VG7M+D/xn875ZdPB+/J04q
-I87Hl7jhVvh0UeniDGNtHUSMefM1Wn9HIMhiiGbA6IlrarG1hQGtPYwlpfnP8Daq
-9hNSO29t/CJ7XvWQOaZE9Rvd+VzBqVKvSmRNGF3x/rAGpkYVioJELxznPlAEVnp7
-qcD0nYKoX370q1qULPMpJzySnGXhnQ==
-=3dxY
------END PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---zI1WmKFLB9+n5Rbe--
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
