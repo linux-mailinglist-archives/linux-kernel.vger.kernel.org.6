@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-353193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19815992A21
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9ED992A24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A18283A74
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C02F1F2112F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EFE1D14EC;
-	Mon,  7 Oct 2024 11:20:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39732AD05;
-	Mon,  7 Oct 2024 11:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B11D1D1319;
+	Mon,  7 Oct 2024 11:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJWyXhgT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0437C2AD05;
+	Mon,  7 Oct 2024 11:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728300030; cv=none; b=cK89TbJZZnBlfEXLbRL7T+tOkHUxnlLaeuI5ihNuYsrsL68nVL+OOuJZLUDIAclvfURpisK2SJIYx4FaJ8Udr6ZJX1n57a29Z4U9S56zMrK8uZbSnFARU7kHkl088KT0Ya3j+iEOuj31Fr3gKxo7TwlMNrZhJNXq8bauhdIjBPs=
+	t=1728300071; cv=none; b=A4w7whvDejq5SrLxx+WlsSNBC+ZPgD2vDqOkP3oJSlIBZSNY9/ul3kJpJJ8HsAQlof7etAYT9XDqUkBbcGcEyXcV99y2i1HPpQIgztHeKVES9DLUzragOThNoOgpf33+FmSK6j5m+6WP65AJ8iNdxDn2K6PjjqXXTczopOunbvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728300030; c=relaxed/simple;
-	bh=FMCXiC1Srhg1bB0cgpwSeqZNLhP8oeIzUvfacDYF2qI=;
+	s=arc-20240116; t=1728300071; c=relaxed/simple;
+	bh=AZ3y3WY/Ut/fXbhJ00IA0h+oVk/0xqW5HzRE9HId71I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L3WG0WRllKi4Kh1CK+UHjFW5qadb4gEWessB+R3avXJyM4EVeyxJ3dVBXVZrROuECln5DYih+W6m/FOSapfhlZnmTsFKylUU1mUEvHEDN14SWoGGC9tFQHON2KCmsUU1JGnLzSpX+PnXa2PVbWaSyhG7WF9kg4X3u4QJE9bb+C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8279FEC;
-	Mon,  7 Oct 2024 04:20:56 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 102613F640;
-	Mon,  7 Oct 2024 04:20:24 -0700 (PDT)
-Message-ID: <6d79c86d-601b-46b9-a06e-6ab78b6d3e8a@arm.com>
-Date: Mon, 7 Oct 2024 12:20:23 +0100
+	 In-Reply-To:Content-Type; b=SQcH1w1+eJ2rearEWdqXUYHn8WUaUjDz/NxsEkIE7glSs40AtQNu1ylRn8bykbJDDEssRS2aXBTMzEVgKctM171PbZouC+2/ZlKfhVbG3offTR4K697YsrePsST/tbbeWC/zSYGWyxzI0Q3bDsH0p4f7CeOTLOsOy236GKY99xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJWyXhgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B28C4CEC6;
+	Mon,  7 Oct 2024 11:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728300070;
+	bh=AZ3y3WY/Ut/fXbhJ00IA0h+oVk/0xqW5HzRE9HId71I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nJWyXhgT4yEM6bx93lshwU8ITuCdLDnD5v/Tt3+XFuP90lWgd171cxSUYNKu47YDq
+	 yagNF57Px/12TToqShFO45Z/gx5u65Nahh+uT2gvLEwZcusx5a/DJyiFLNMhZbhGA8
+	 knFBezVVo43QBfdfs5yQ0Y1QBgJGHTQjcAr0cP9fc1V9ydLrcnMMX3VyvpGVRfrCbz
+	 7TblurOS+R+OThCO9aO43i7FCk06ILiAAq1+NEWZg1kjKzgMc6YWGIfYe4R7uTpwnr
+	 Sf76RPilgNrTGjE5/894c/xkMNVVzdZe3VCs9O+SmLH9k+M4hBv6uuL6FgqKbMtO7z
+	 7Y2gRI65U7R9A==
+Message-ID: <f41d3eb3-a7b5-478d-93b7-671e1662e952@kernel.org>
+Date: Mon, 7 Oct 2024 13:21:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,52 +49,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
-To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
- <20241003152910.3287259-3-vincenzo.frascino@arm.com>
- <423e571b-3ef6-4e80-ba81-bf42589a4ba8@app.fastmail.com>
- <850cdc2a-a336-4dab-bc7a-d9bcae3fb3cf@arm.com>
- <140c4244-1bb2-404c-8372-1e68963eeea5@app.fastmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: display: bridge: sil,sii9022: Add
+ bus-width
+To: Wadim Egorov <w.egorov@phytec.de>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, bbrezillon@kernel.org, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, upstream@lists.phytec.de
+References: <20241007085213.2918982-1-w.egorov@phytec.de>
+ <20241007085213.2918982-2-w.egorov@phytec.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <140c4244-1bb2-404c-8372-1e68963eeea5@app.fastmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241007085213.2918982-2-w.egorov@phytec.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 07/10/2024 12:06, Arnd Bergmann wrote:
-> On Mon, Oct 7, 2024, at 11:01, Vincenzo Frascino wrote:
->> On 04/10/2024 14:13, Arnd Bergmann wrote:
+On 07/10/2024 10:52, Wadim Egorov wrote:
+> The SI9022 HDMI transmitter can be configured with a bus-width of 16,
+> 18, or 24 bits. Introduce a bus-width property to the input endpoint,
+> specifying the number of parallel RGB input bits connected to the
+> transmitter.
 > 
->>
->> It seemed harmless from the tests I did. But adding an '&&
->> defined(CONFIG_32BIT)' makes it logically correct. I will add a comment as well
->> in the next version.
-> 
-> To clarify: this has to be "!defined(CONFIG_64BIT)", as most
-> 32-bit architectures don't define the CONFIG_32BIT symbol
-> (but all 64-bit ones define CONFIG_64BIT).
-> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> ---
 
-You are right, it seemed that every 32-bit architectures with a
-64-bit phys_addr_t had CONFIG_32BIT but this is not the case.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->     Arnd
+Best regards,
+Krzysztof
 
--- 
-Regards,
-Vincenzo
 
