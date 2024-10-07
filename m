@@ -1,93 +1,75 @@
-Return-Path: <linux-kernel+bounces-352768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACEC9923E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD089923EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 07:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FAC3B222E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5150F282CB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 05:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA81B13635E;
-	Mon,  7 Oct 2024 05:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F7F143744;
+	Mon,  7 Oct 2024 05:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sNjhjZjB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fVWIMxIQ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8C123AB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 05:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A6813B797;
+	Mon,  7 Oct 2024 05:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728279655; cv=none; b=UJTlzjHOKpvSv6/MZ8R1TNxDvkBKHhUx8bArZFokThM+mVM0ZBKteYRLB6B1jqlKkj4U40cTu0xPe0hf2u4VFNIAs79tPkICCg5kbNVAylPxCxl9X1r/CPoAaNdlwR/sqC05FsAn33c+laQDKYXEc2NV6KgdW4Xf8kZ1c25R0wE=
+	t=1728279721; cv=none; b=mf5yx7afa+KoxffibooqC39hZnbiJdPnXVxix+B6Vy0y3Jb3pHhFBKQLSl0YX9bN+Ch25c3HvR/4yAgTTm7guHLlRBdX1MonLGje66DHhAuIuBiqfy9pmZ/lXBonddhBpyFTB2DCmp1dsssWtkTqk72GdVkqpOxGxCrNSDo+SNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728279655; c=relaxed/simple;
-	bh=NW15jWfGTv6CdDOi6P06k5U18XEUpN8HTkfm1rnMo4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i6fzi0+2Zq0ETne4BDVlk8sM/CwiiT1AaRCYlClL+R8fuXabm3FdabDgwBw1pMlxJfBArVFi57Z9HRQIMEZOQiSXLgZStMa1P1EFAoBxzF48te8tHPxjUG8PPMmZlLYm5MwxAWNrk12cwRGzr7pS7qxaTCgREWUFgrWyH3VpBWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sNjhjZjB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4974JsDb024539;
-	Mon, 7 Oct 2024 05:40:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=YVpQRnzWLCjGXCfVMKGoRaXUhi
-	59IGwbCEnH+odbRp8=; b=sNjhjZjBre5eDLD4BD2645IxK4qQNaLlwbxKLv/+LL
-	Hi72lwAV2EB1nQxoa3Ypgaxsu5XKwc2qT0h/g2xEVSytan2q7gIqpx6ewvBXwRtX
-	7FR6WDlC4sz/iR0QCsCj0jbJKaboCJNcPsaivhdKMDYpTgQSNfPzLeUZFPIWS8Hi
-	YTkV/sYgFRfInqhLcIIoT8mARaD8pQ36EjWOq9EbLFleHljs0rCx6pWE2IeKLRtr
-	tsaRLjnTkDmJ1YgF0N7EATT0LNFNIrMVUNDgqOZFgqthZIrO03Ex8+Ro01SEtc++
-	eH02l4eL26NRuiuzJqsJbwkrEiE0YjVY9CPe7Ra9IL2A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4248h1g8u3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 05:40:24 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4975eNpI021204;
-	Mon, 7 Oct 2024 05:40:23 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4248h1g8u2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 05:40:23 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49751H2a022867;
-	Mon, 7 Oct 2024 05:40:22 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0mf3j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 05:40:22 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4975eIKp52756846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Oct 2024 05:40:18 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6750A20049;
-	Mon,  7 Oct 2024 05:40:18 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0B53920040;
-	Mon,  7 Oct 2024 05:40:15 +0000 (GMT)
-Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.ibm.com (unknown [9.43.47.32])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  7 Oct 2024 05:40:14 +0000 (GMT)
-From: "Nysal Jan K.A." <nysal@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A" <nysal@linux.ibm.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: [PATCH] sched/membarrier: Fix redundant load of membarrier_state
-Date: Mon,  7 Oct 2024 11:09:32 +0530
-Message-ID: <20241007053936.833392-1-nysal@linux.ibm.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728279721; c=relaxed/simple;
+	bh=P5WpJSFMhe/LxeegZADuRdkunnCVSBG6Td4FAA9WJcQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LoFDGBfNIyIRvIc07v647nMJjLXaCu5oZuI/7QOV7Q1ZaTrhKWWpG3a+/YwYHkbHcsopD4J1/3gHWh/FAq0A1sMf9vC6eRxdXdrZ+78zc1LlV6rf98Oavf+3aW7CaDr/BwCFTd0MMxxBpcabuMpIJ9NEj7i0YdNnHitEAartc0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fVWIMxIQ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4975fS7K119825;
+	Mon, 7 Oct 2024 00:41:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728279688;
+	bh=nP6DdgH29tvlsuXDNcF1Ajyp5JiV1/oAb/SSYPduwc0=;
+	h=From:To:CC:Subject:Date;
+	b=fVWIMxIQlb3CsUZwKYUQXe3OXGlrYg7j7xoUCNI3kbx9a7k6H6SZCeTDBEWBu2b6H
+	 4/dywVxIxjh43oCaCfFVXl6ZanJlh/M7n5S1NsH6f9szhfIT+XpNyuXfzhI8ZRhpuV
+	 o3Nyx5mv0UvGeb8q4pdaHcGWbHVpWEg2Wlrm1f4k=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4975fS5o013121
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 7 Oct 2024 00:41:28 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
+ Oct 2024 00:41:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 7 Oct 2024 00:41:27 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4975fSr5082390;
+	Mon, 7 Oct 2024 00:41:28 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4975fR05013265;
+	Mon, 7 Oct 2024 00:41:27 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <robh@kernel.org>, <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>,
+        <andrew@lunn.ch>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net v2] net: ti: icssg-prueth: Fix race condition for VLAN table access
+Date: Mon, 7 Oct 2024 11:11:24 +0530
+Message-ID: <20241007054124.832792-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,87 +77,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Q1mO7SjCHn1YLn4pkYaKQsvL8C9UN_Cd
-X-Proofpoint-GUID: _-4VV4ZENx6hWaATop6qUVBBWxVEMWij
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-06_21,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 clxscore=1011 malwarescore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070036
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: "Nysal Jan K.A" <nysal@linux.ibm.com>
+The VLAN table is a shared memory between the two ports/slices
+in a ICSSG cluster and this may lead to race condition when the
+common code paths for both ports are executed in different CPUs.
 
-On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-is not selected, sync_core_before_usermode() is a no-op.
-In membarrier_mm_sync_core_before_usermode() the compiler does not
-eliminate redundant branches and the load of mm->membarrier_state
-for this case as the atomic_read() cannot be optimized away.
+Fix the race condition access by locking the shared memory access
 
-Here's a snippet of the code generated for finish_task_switch() on powerpc:
-
-1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
-.......
-1b78c8:   cmpdi   cr7,r26,0
-1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
-1b78d0:   ld      r9,2312(r13)    # current
-1b78d4:   ld      r9,1888(r9)     # current->mm
-1b78d8:   cmpd    cr7,r26,r9
-1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
-1b78e0:   hwsync
-1b78e4:   cmplwi  cr7,r27,128
-.......
-1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
-1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
-
-This was found while analyzing "perf c2c" reports on kernels prior
-to commit c1753fd02a00 ("mm: move mm_count into its own cache line")
-where mm_count was false sharing with membarrier_state.
-
-There is a minor improvement in the size of finish_task_switch().
-The following are results from bloat-o-meter:
-
-GCC 7.5.0:
-----------
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
-Function                                     old     new   delta
-finish_task_switch                           884     852     -32
-
-GCC 12.2.1:
------------
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
-Function                                     old     new   delta
-finish_task_switch.isra                      852     820     -32
-
-LLVM 17.0.6:
-------------
-add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-36 (-36)
-Function                                     old     new   delta
-rt_mutex_schedule                            120     104     -16
-finish_task_switch                           792     772     -20
-
-Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
+Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 ---
- include/linux/sched/mm.h | 2 ++
- 1 file changed, 2 insertions(+)
+v1 - v2:
+*) Fixed kdoc and checkpatch warning by moving kdoc inline for vtbl_lock
+as suggested by Jakub Kicinski <kuba@kernel.org>
 
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 07bb8d4181d7..042e60ab853a 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -540,6 +540,8 @@ enum {
+v1 https://lore.kernel.org/all/20241003105940.533921-1-danishanwar@ti.com/
+
+ drivers/net/ethernet/ti/icssg/icssg_config.c | 2 ++
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 1 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h | 2 ++
+ 3 files changed, 5 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+index 72ace151d8e9..5d2491c2943a 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_config.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+@@ -735,6 +735,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
+ 	u8 fid_c1;
  
- static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
- {
-+	if (!IS_ENABLED(CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE))
-+		return;
- 	if (current->mm != mm)
- 		return;
- 	if (likely(!(atomic_read(&mm->membarrier_state) &
+ 	tbl = prueth->vlan_tbl;
++	spin_lock(&prueth->vtbl_lock);
+ 	fid_c1 = tbl[vid].fid_c1;
+ 
+ 	/* FID_C1: bit0..2 port membership mask,
+@@ -750,6 +751,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
+ 	}
+ 
+ 	tbl[vid].fid_c1 = fid_c1;
++	spin_unlock(&prueth->vtbl_lock);
+ }
+ EXPORT_SYMBOL_GPL(icssg_vtbl_modify);
+ 
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 5fd9902ab181..5c20ceb164df 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -1442,6 +1442,7 @@ static int prueth_probe(struct platform_device *pdev)
+ 		icss_iep_init_fw(prueth->iep1);
+ 	}
+ 
++	spin_lock_init(&prueth->vtbl_lock);
+ 	/* setup netdev interfaces */
+ 	if (eth0_node) {
+ 		ret = prueth_netdev_init(prueth, eth0_node);
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+index bba6da2e6bd8..8722bb4a268a 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+@@ -296,6 +296,8 @@ struct prueth {
+ 	bool is_switchmode_supported;
+ 	unsigned char switch_id[MAX_PHYS_ITEM_ID_LEN];
+ 	int default_vlan;
++	/** @vtbl_lock: Lock for vtbl in shared memory */
++	spinlock_t vtbl_lock;
+ };
+ 
+ struct emac_tx_ts_response {
+
+base-commit: 9234a2549cb6ac038bec36cc7c084218e9575513
 -- 
-2.35.3
+2.34.1
 
 
