@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-353097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FBF992888
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683909928A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A681B22447
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A231F241C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9D91B580C;
-	Mon,  7 Oct 2024 09:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2260E1DDC20;
+	Mon,  7 Oct 2024 09:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5bfMogd"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SKga1kwR"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E291A4E91
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1855A1DDC05
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728294595; cv=none; b=hK5sYZkkgDsYvH635wC4tLrZGMGLX+kAVIeT98F+/iS8d3lDEDg2oiktYfVJGDMhqlZ+aOpokCzuZZPFbZB4nJQL9yscusmagoFD1+Eb17wlldx/ftO0EGUJ2ybbWmPpj1FGKc87eQWiqlqBVp8wH1Xy8kvoiHIa4OJ56rWX2Lo=
+	t=1728294744; cv=none; b=MyV0aIFDWlAoDps1f77WICEsZd6n4bJaMbwsbeXRObSbKnWNAyAJq2+z3lZMl4HiueeK1dzwgI3aZRfzKPLo/prKptBXT4wN5Gkljro3jpqfAzfvst2s8vI8vRIYjpkPgx78qPMCUDRFzxLzoj2AsXqBNNyYvHxb7ouZHInTk6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728294595; c=relaxed/simple;
-	bh=k8brDWLlZk0dTO8J46y2uPWyWt9rqKJ6ybBhtU5TnAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCuSD2Y4ciyr330FfD1AV0hz1bwu5VfarQG09dyqDvOd80F/VG9Hu4OTQbxc+503XfcgEUqEu3HoJNwyrxNcb6A+ulwtU4y95qIfDL2PzGLnWzmPur8xb8WAEVY1TteIwCiSZbRTAnv7u7PulO5VGSui/0tsH832a/Qtu7JsG9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5bfMogd; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e28a083d531so1917238276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 02:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728294593; x=1728899393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8brDWLlZk0dTO8J46y2uPWyWt9rqKJ6ybBhtU5TnAA=;
-        b=n5bfMogdEoYJIDRe/R6/5RahWI1QeMggRlDradUu0D68q7g/Bx1VYnIUEMa3OVjcu/
-         Bba54bKxWv/ciyHFB9/Qw+XJV7ys8sVd8c+kwwXGuv7bktW42F6sBJzxxJOJkEGqnbky
-         x75s+zB0I/6F7cSGr8BXQaVNW4UgGpRdP78PGdfuzbxZbyDnjenE35V2YqCcQ/ExrFJA
-         xQ0GMGj5SQMRW62cMJdlq6DUgQZLVF4AbaK2soxauJ0Yj7gfOzImXTw/65am52mU8gg6
-         rZ155vtqPoXAtZyE1l843uu8WSacCp1VuK+/zGOwvS79ckiNQPnsslDrub0+jZYurPVd
-         zajw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728294593; x=1728899393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k8brDWLlZk0dTO8J46y2uPWyWt9rqKJ6ybBhtU5TnAA=;
-        b=sEyHKKywlSAzff2Gmp0MGhvFZXNnI7mHSxL+xeRBoEAYRCSCxqRqPkDgtKPdjmXhm6
-         2Sx7NEazQf1J0EjHzvEosTeZMBoPOaXA0Otbf/rG/pNIiiRGK0OTSG5E0wcqf6P6mgDb
-         f4PjwYXfNB+A6V/D4triOgqYSH8DS0P7FuppymWiFpPhVs9rOq078dJnmNLh9iH2S7Gt
-         WHVvwMPrN+yl9jSjLHKbxOVCbkWBTdxWNcq46nKBS5UvGVWoxDiKvyTJNDJEuoQ9iEcy
-         LxLFXofzD/Ps2bnITQgQCAnjamOtYslPnW1oPd6+TXi2zrDpxh1I6E616a6WU1JOU4Hu
-         YZHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVa6Ucu0hzUXTBwus5BsxpiC35HrZx96whFoGI1ycswu3k/UabghjmqYFunUyWe4eYx/lJ6nWDNfZhbY/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Pc2f7cdTcrq9WIEDdOucHAdyBhZX2o/VA4leahUwKBNI5UxC
-	PPsYFRC5zCzOvrAymndWO2uWiM5rYQXY0uWucEPF56Jvt6JwG6jgoTCFOXY6nYaEHCjm20V3hU5
-	OGSwtLKeCUBHbVL9AQbiuNS6ea2NgMF39HxJOrQ==
-X-Google-Smtp-Source: AGHT+IGSGgIFN4afz5XWgt9KmsO3+YZJnn8Ko+Z2HXn7fkNdGM2ZDBjhHypaK+quYOHT6jssiLjEWS446xsZEN9pFLg=
-X-Received: by 2002:a05:6902:20c4:b0:e28:6c15:ac6c with SMTP id
- 3f1490d57ef6-e289393a731mr7649236276.40.1728294593313; Mon, 07 Oct 2024
- 02:49:53 -0700 (PDT)
+	s=arc-20240116; t=1728294744; c=relaxed/simple;
+	bh=+EUqUpNUlUllSo0KYk9RtuBCtrCQcl4lEXXT/8nIyGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FGHCpHcFXzdH4hToJN9OFaHjk4UMYqBxtPrPI+mICEG+tcmKPz5pWrLE1PdSS2Etsrc4BIWoD2i0j1R+Bi08lxHKrmYYOg2Gor1RVhFNUv/TYA7Wx7n/51JqJRSbgBKwKYw8koDQ9jSyqy02A6i46KWurPRF2pcQG2gYIxSO0Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SKga1kwR; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F378B40009;
+	Mon,  7 Oct 2024 09:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728294733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tDiPinINBvr6bJAxMdyt3dgUnwijd1daj//Q8bC6Vds=;
+	b=SKga1kwR5GAKPcVI05WN/Vo904GPfbFLRsmuoMPVqB1AYvGwUlfDCXu7IVXRR2sLrkgTen
+	/XPxAzviHAcavd65dJGk1QGf6DZ4H+hdHF4t6aSoJqe7IOqKAuRpdc6hn9wNj6/RlpJQEl
+	ohl2xj/4fatcsrb+szOdNHPC3b9Hs22hyCHznRPoo/iE/v+vgLPDkRrszX2mbfCSlfNgwu
+	fruIRjFZwxZR+QjftdpWXLOuIAs3effI3HmLDYDdPUgxE9PQl6CWoQ8iM3wkptSPBqstXm
+	pLVkg8UPTr2+weIjd4PJ5tmNi667E1lRVFypKqXW7qiVuJxlXKrfH1MJmK+zwQ==
+Date: Mon, 7 Oct 2024 11:52:11 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Han Xu <han.xu@nxp.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, imx@lists.linux.dev, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mtd: nand: raw: gpmi: improve power management
+ handling
+Message-ID: <20241007115211.0ad33fda@xps-13>
+In-Reply-To: <20241004092144.3e0d89b5@xps-13>
+References: <20241002153944.69733-1-han.xu@nxp.com>
+	<20241002153944.69733-2-han.xu@nxp.com>
+	<20241003093840.2965be20@xps-13>
+	<20241003150500.uz2efay7kadu47if@cozumel>
+	<20241003172820.50324192@xps-13>
+	<20241003200508.x7tbf2lpbg6ngm7q@cozumel>
+	<20241004092144.3e0d89b5@xps-13>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
- <4920950.GXAFRqVoOG@diego> <CAPDyKFosf_+m9j8YgHa-PsC2SV8+Aou2O6bTbMfzGBpQ2sY8YA@mail.gmail.com>
- <69d06c04-cc8c-4435-a622-33d5dcd1fa24@arm.com>
-In-Reply-To: <69d06c04-cc8c-4435-a622-33d5dcd1fa24@arm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 7 Oct 2024 11:49:17 +0200
-Message-ID: <CAPDyKFoU=AoQqXov_-qFo8xjEbiDAk9mtTtCR9HAYz_gg-bnzQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: rockchip: Keep controller working for card detect
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	linux-rockchip@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Fri, 4 Oct 2024 at 19:34, Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 02/10/2024 10:55 pm, Ulf Hansson wrote:
-> > On Sat, 14 Sept 2024 at 13:52, Heiko St=C3=BCbner <heiko@sntech.de> wro=
-te:
-> >>
-> >> Am Donnerstag, 12. September 2024, 09:26:14 CEST schrieb Kever Yang:
-> >>> In order to make the SD card hotplug working we need the card detect
-> >>> function logic inside the controller always working. The runtime PM w=
-ill
-> >>> gate the clock and the power domain, which stops controller working w=
-hen
-> >>> no data transfer happen.
-> >>>
-> >>> So lets skip enable runtime PM when the card needs to detected by the
-> >>> controller and the card is removable.
-> >>>
-> >>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> >>
-> >> So for the change itself this looks good, i.e. it fixes an issue for b=
-aords relying
-> >> on the on-chip-card-detect.
-> >>
-> >>
-> >> But for boards doing that, the controller will be running _all the tim=
-e_
-> >> even if there is never any card inserted.
-> >>
-> >> So relying on the on-soc card-detect will effectively increase the pow=
-er-
-> >> consumption of the board - even it it'll never use any sd-card?
-> >
-> > Good point! A better option is to use a polling based mechanism - and
-> > we have MMC_CAP_NEEDS_POLL for exactly that.
-> >
-> > Moreover, on DT based platforms one can even use the "broken-cd"
-> > property to indicate this.
->
-> Except that goes further than is needed here, since it would fall back
-> entirely to software-based polling for card presence. In this case the
-> CD function is not broken in terms of actually detecting a card, it just
-> doesn't work to wake the controller up from suspend because it can't
-> fire its own interrupt while powered off. In principle all we should
-> require here is to periodically resume/suspend the device, to provide a
-> window for the interrupt to work and normal operation to take over if
-> appropriate.
+Hi Miquel,
 
-Well, I would not object if "broken-cd" would be used for this case
-too. I believe it already is.
+miquel.raynal@bootlin.com wrote on Fri, 4 Oct 2024 09:21:44 +0200:
 
-Another option would be to look at a compatible string and set
-MMC_CAP_NEEDS_POLL based on that.
+> Hi Han,
+>=20
+> han.xu@nxp.com wrote on Thu, 3 Oct 2024 15:05:08 -0500:
+>=20
+> > On 24/10/03 05:28PM, Miquel Raynal wrote: =20
+> > > Hi Han,
+> > >=20
+> > > han.xu@nxp.com wrote on Thu, 3 Oct 2024 10:05:16 -0500:
+> > >    =20
+> > > > On 24/10/03 09:38AM, Miquel Raynal wrote:   =20
+> > > > > Hi Han,
+> > > > >=20
+> > > > > han.xu@nxp.com wrote on Wed,  2 Oct 2024 10:39:44 -0500:
+> > > > >      =20
+> > > > > > The commit refactors the power management handling in the gpmi =
+nand
+> > > > > > driver. It removes redundant pm_runtime calls in the probe func=
+tion,
+> > > > > > handles the pad control in suspend and resume, and moves the ca=
+lls to
+> > > > > > acquire and release DMA channels to the runtime suspend and res=
+ume
+> > > > > > functions.     =20
+> > > > >=20
+> > > > > May I know the motivation to acquire and release the DMA channels
+> > > > > during suspend? In general it seems like a different change which=
+ I'd
+> > > > > prefer to see in its own commit with a justification. The rest lo=
+oks
+> > > > > ok otherwise.     =20
+> > > >=20
+> > > > Hi Miquel,
+> > > >=20
+> > > > Thanks for your comments. IMHO there is no much logic changes indee=
+d, just move
+> > > > the dma channel acquire and release from system pm to the runtime p=
+m, releasing
+> > > > the unused resources as early as possible. If you think it's necess=
+ary I will
+> > > > split the patch into two parts.   =20
+> > >=20
+> > > Actually I don't understand why these channels are released and
+> > > acquired again. Does it make sense to do that in the (runtime)
+> > > suspend/resume path? I'd be in favor of avoiding this extra
+> > > configuration which as a first sight does not seem required here.   =
+=20
+> >=20
+> > Our local mxs-dma driver (will upstream the changes later) implemented =
+the runtime
+> > resume/suspend in channel alloc/release functions, so I did this in the=
+ gpmi
+> > nand driver suspend/resume path. =20
+>=20
+> I think it no longer makes sense. RPM takes care of the
+> suppliers, at least since fw_devlink=3Drpm.
 
->
-> Of course the really clever way would be for suspend to switch the pin
-> into GPIO mode, and set the GPIO interrupt as a wakeup to trigger resume
-> and switch it back again, but perhaps that's a bit tricky without
-> explicit pinctrl states in the DT :/
+Just to be clear, you can send v3 addressing Frank's comment and just
+keep the DMA channels handling as it is, but please work on removing
+this hack of dropping/allocating DMA channels in suspend/resume path, it
+is really not worth the trouble and purely useless with any recent
+kernel.
 
-Right. A dedicated GPIO pin for the card detect is certainly the
-preferred method, if you care about not wasting power.
-
-Kind regards
-Uffe
+Thanks,
+Miqu=C3=A8l
 
