@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-353476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A918C992E59
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D3D992DDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AE82816FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B75284A6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0FF1C2DAE;
-	Mon,  7 Oct 2024 14:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A941D4609;
+	Mon,  7 Oct 2024 13:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="xzIjojC5"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DctWvKJa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066D31D3560;
-	Mon,  7 Oct 2024 14:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C45A1D4354;
+	Mon,  7 Oct 2024 13:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310117; cv=none; b=BR1UpNt/Bijg/NETkeHIsjZIfi4fjAQvKh5IV4kARB41e+MB7zf3HavbW4QVqCHBq9VtDLakoaGePbWqpg4XIhuaj9cjoQHkLpg1HqqlUXVqL/ugBy9XNyR1iGZ0kl3JxuABZk3l7cjjiJ/lJa4LS2ykpvaiIVZMEUiyT3AzgLU=
+	t=1728309243; cv=none; b=Y8MMP+rozfL0ve0yqMvydMCdTpsYyegoB0EYgZzGRfMw7khKxiSWlrGshO538RMQpwjODx+AmC2oz2KQxb5ARljvIbDr8RFrbiuXwxSKePtpTqb+E/Yok0qQJ1ThvqriSZ4OHqjeMaPz4kjPBh+JQhmq5+xV8CT91bgiz1vAEEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310117; c=relaxed/simple;
-	bh=UcArVB2WrJQTu0xuLEKElBUf00mQa6MNc9pj2CRTqFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YIDz7wYJK93NC7YeMSrNfiv6RLz+bsT7Q/zFFHQL7xmzq3skHbWZDm5OJuVsBD45V4C5mRQLvL9OGi2rG/lnyOTkE9/40vpIW70JNYks1ElQ1Q0vbasdfQTKWnh3gt+oppPMfIiNcj+dxnNGWNUJe8ZauvtQDGIl1HvltW0W/XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=xzIjojC5; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id AFE6888B78;
-	Mon,  7 Oct 2024 16:08:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728310114;
-	bh=+VpmP0fcyJ4CvVzbF2fPZNTRpsuYq852AIzc/SBidtU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=xzIjojC59GxXRKRyu56hXd98pKsVTbyL5R3E22FUEE3Cm+gMGHRZ9MBK6DHgEnBC+
-	 j/fN/jMlSBxGtNtZNvWQZmzaiM5906Itwyy1RidcsUqo5qjZKhgOaQg2irZ0aRxsOc
-	 GX9GGxZexQtw3+CDRIy007j6VG7zD73biVSG+5SIqwzutx/PXVOBssYDZgcCiowyQv
-	 0EB0XtLElyCYQ+NvTeKEAYdlLub7LVH5qqchcU79KAUzQQLPKyxM/fhC+X3AIH+DQZ
-	 igRNWj2W4n3wOWX7ZtZKMqbBgQrSsJSxVK5O7x4PQkoqHP4mWIdqzYOI4s1Qt73yqz
-	 1MKzuBt3CypfA==
-Message-ID: <a7b2d849-ce6c-46b3-bf4f-c619106e2edd@denx.de>
-Date: Mon, 7 Oct 2024 15:53:03 +0200
+	s=arc-20240116; t=1728309243; c=relaxed/simple;
+	bh=OqTgQbaF1Wymp6tKgKCQ/wtWZC34eQBotCaVLTmxZLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKAOxhY/OF643JNmob447epqDpVAp0DmZOtpt3DrPaDTWcHoEGMEvxDyFGsXyEJJqjhs/JdxSEELxRfhmerld+mNFd3g69rH33Rhe6MtJmTCfbvGbb2mA9rNeCH+bz0Lxg1FigS2v9F7LO8WthlQ5Wvg+qUXkJy1eUvjYkSXQjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DctWvKJa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4082FC4CEC6;
+	Mon,  7 Oct 2024 13:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728309243;
+	bh=OqTgQbaF1Wymp6tKgKCQ/wtWZC34eQBotCaVLTmxZLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DctWvKJa5JQaX+NffcrwW411WL8HqFa26Ui3O2VffAPTPyX3gmFF3E6MzGZkQB/Xr
+	 XVqZnwBA3ox8xdkaQZN+ND5N2xSDCTgIhIuwMwCVD0AIoM5K5JcfVzMmDBWzV4ihbE
+	 qXUqs7r/+DuszgI++u2396nKyh9fB+JV6/IEZzv6r0XSnTPGFMe+TDUXZTcB915kBV
+	 mJCPOl3lKNKLrsq3zEkG9pJvmzzmMeRG6i/AW3+rqqYL7f6EmG6I3mnx4gfH3hF0IM
+	 Bf8e5JNhr9kJZOoR3jTYnIPSwCDog0idaXUpKNT7hib+e9cqs5bE0MVhcbnvI79q4K
+	 AeAtnTSUf2cXw==
+Date: Mon, 7 Oct 2024 15:53:57 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Yonatan Maman <ymaman@nvidia.com>
+Cc: kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com,
+	airlied@gmail.com, daniel@ffwll.ch, bskeggs@nvidia.com,
+	jglisse@redhat.com, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 1/2] nouveau/dmem: Fix privileged error in copy engine
+ channel
+Message-ID: <ZwPn9Z1IPlB65zd-@pollux>
+References: <20241007132700.982800-1-ymaman@nvidia.com>
+ <20241007132700.982800-2-ymaman@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: rng: add st,stm32mp25-rng support
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Lionel Debieve <lionel.debieve@foss.st.com>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Yang Yingliang <yangyingliang@huawei.com>
-References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
- <20241007132721.168428-2-gatien.chevallier@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20241007132721.168428-2-gatien.chevallier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007132700.982800-2-ymaman@nvidia.com>
 
-On 10/7/24 3:27 PM, Gatien Chevallier wrote:
-> Add RNG STM32MP25x platforms compatible. Update the clock
-> properties management to support all versions.
+On Mon, Oct 07, 2024 at 04:26:59PM +0300, Yonatan Maman wrote:
+> From: Yonatan Maman <Ymaman@Nvidia.com>
 > 
-> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+> When `nouveau_dmem_copy_one` is called, the following error occurs:
+> 
+> [272146.675156] nouveau 0000:06:00.0: fifo: PBDMA9: 00000004 [HCE_PRIV]
+> ch 1 00000300 00003386
+> 
+> This indicates that a copy push command triggered a Host Copy Engine
+> Privileged error on channel 1 (Copy Engine channel). To address this
+> issue, modify the Copy Engine channel to allow privileged push commands
+> 
+> Fixes: 6de125383a5c ("drm/nouveau/fifo: expose runlist topology info on all chipsets")
+> Signed-off-by: Yonatan Maman <Ymaman@Nvidia.com>
+> Signed-off-by: Gal Shalom <GalShalom@Nvidia.com>
+
+Again, why is this signed-off by Gal? If he's a co-author, please add the
+corresponding tag.
+
+Please also see my reply to the previous version.
+
+> Reviewed-by: Ben Skeggs <bskeggs@nvidia.com>
 > ---
->   .../devicetree/bindings/rng/st,stm32-rng.yaml | 41 +++++++++++++++++--
->   1 file changed, 38 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/nouveau/nouveau_drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
-> index 340d01d481d1..c92ce92b6ac9 100644
-> --- a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
-> +++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
-> @@ -18,12 +18,19 @@ properties:
->       enum:
->         - st,stm32-rng
->         - st,stm32mp13-rng
-> +      - st,stm32mp25-rng
->   
->     reg:
->       maxItems: 1
->   
->     clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: rng_clk
-> +      - const: rng_hclk
->   
->     resets:
->       maxItems: 1
-> @@ -57,15 +64,43 @@ allOf:
->         properties:
->           st,rng-lock-conf: false
->   
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp25-rng
-Maybe this match should be inverted, it is likely the next generation of 
-stm32 will also use 2 input clock into the RNG block and it will be only 
-the legacy MP1 that uses one clock.
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> index a58c31089613..0a75ce4c5021 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> @@ -356,7 +356,7 @@ nouveau_accel_ce_init(struct nouveau_drm *drm)
+>  		return;
+>  	}
+>  
+> -	ret = nouveau_channel_new(drm, device, false, runm, NvDmaFB, NvDmaTT, &drm->cechan);
+> +	ret = nouveau_channel_new(drm, device, true, runm, NvDmaFB, NvDmaTT, &drm->cechan);
+>  	if (ret)
+>  		NV_ERROR(drm, "failed to create ce channel, %d\n", ret);
+>  }
+> -- 
+> 2.34.1
+> 
 
