@@ -1,279 +1,163 @@
-Return-Path: <linux-kernel+bounces-353636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AE2993096
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA949930A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668F51C2302B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1C1283FAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490DD1D86C7;
-	Mon,  7 Oct 2024 15:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCF51D90B9;
+	Mon,  7 Oct 2024 15:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r/Vlp4W1"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U05b0bqV"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2078.outbound.protection.outlook.com [40.107.243.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8179D1D86F4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313544; cv=none; b=gro1w0RdZcDg0Jgf1jbKuxEtrOpMPx0YhLSQi1wc0f3o/xeebu3sl2vZFA64wOjtCT0DGl3nwaJMuALSjpmzcfeg09jCGBtoyhHSnaM3qg4VSRINanMQXguKdc684uKNWuQFPTuYd6DTeSWNOX6xwEDj4vbBbbUfCIX60OdtabI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313544; c=relaxed/simple;
-	bh=YZA/FsPTJ/0SXCAHzVooq80Clnf9L8yh6nb1QxzQybw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zw2IVk428APzOURJUrr2xfsDRgKg2/zLXX7p68ehyLDfUm4w+v9Ghalk4jBhhF+89tou+eHjni7Y6LOfLRjRVqeGwCDPTXNmeewRWVsgLOLYbg9HRfBrziFcV9w7P6b4rIjsBan0kRTPQHXYLcC02F8l2VNyktQnXQRi5LjauTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r/Vlp4W1; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a1a662a633so792235ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728313540; x=1728918340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4Ifz9XWfcAsuRFxDqc9o17TugXceR60fizX3mKXtiA=;
-        b=r/Vlp4W1mhmkMjHOAnWXFDNCrvZpBJ3UenOh1PwQXMkX1LVE97iC1tIlISDusbmVuz
-         kWd07H/7Snmhqltq+kgzggGHlDDNb7Y6RXZMlT9q1BECrddLujt7LFg38rt5R0HgCICZ
-         mtv6N8Oo7f1FAbtIspc0rABoBZ9oqb3miKQ1YPOAOolRa5YjzcyCSwXxD/9/7BC6YjFb
-         //+6z9jyAgrqIULhlGsqe9cffkD1Mo3w1bJwA4O7l7E9Vxacne+yuquVBEchGEBPC03l
-         SMtqyj0n4WFHvWU9eFTOLk8I+ZDQg24sNW4hiQ0bGx6WXE7O1pmc44yuH6UKpy4ZF9NG
-         8Img==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313540; x=1728918340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N4Ifz9XWfcAsuRFxDqc9o17TugXceR60fizX3mKXtiA=;
-        b=vBsas+ODYKFwyi8FvWg13ZwocC/hjlL+FUPLK6NWFqAMusq/fZqXTxhmw2eyGDHGGn
-         B0U1KyXmhqf4uzczZmm5o1YX9OavP2RobYrDsjziyLQjoX8T1Gt/Jf33s4ICYpsuP0r8
-         ncytnsbTSDOjW5FAccIw1M+DtO96+oCRIhEZa2hOLmqr4p5aKkhW7Mx9yGxZaJAXd++t
-         p4nSkHr2rUcsj2+/BR+Xvk4WaMDJifiPV1z1FTVzsamza6lEDMHREc/JlSdEqRGCJCUF
-         ft/zHCa4JWa1Q7wdrlfpN4t9syn/dSG5jB4UUj4DYHURG4QaLbft83uxXrxb1gbxnX/U
-         C1/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlBY+o3qkxiZ2IU2tRc0CDBgVtj8WpRpL7W7ZFFeUHPquuLDSsiFpBmHAHJT+KP0NZSkMF6u4rrTGBdHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx24LDCjuTlOC+eCWJHaEN4vDTdJ+eptPedjtRd3rSa/yEAAL2A
-	9QN6k2fWFjat/aVySBSqh3VadFDgPVs9TrC2l70GX98c9QcjYYtSq34cF7M0hGa6pIF7ZYiR6vc
-	1SwqUj9SMMYM4PJhsq6isgAG1JLbpNFB147Q+
-X-Google-Smtp-Source: AGHT+IGnVEtAO00vCITXCPwm0s3FUKY4msYOxpuQ04Ol0pYaHnJTKEoTr54hveiZ6TGX6FxH3wcrfJ/ceNrrrrwICog=
-X-Received: by 2002:a05:6e02:b29:b0:3a0:a2c9:5c0b with SMTP id
- e9e14a558f8ab-3a37b879639mr7306245ab.18.1728313540246; Mon, 07 Oct 2024
- 08:05:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB6A1D8A06;
+	Mon,  7 Oct 2024 15:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728313591; cv=fail; b=X5TXesxnzAhWKfXMDP47KvwDYUXxYb5V224Vx+aMg/C7YlD6hC84xlrIK1N/vbhDRK1Te+Egvt1fzjqNAJPAZidWb8DOEsBqA/kAT3doDSDd+rU8R923ANrQMM4JoHp8e+5Sk9OLbxVMWDL6LAaMe7CFV3w/lHD0hwhLpN7kOQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728313591; c=relaxed/simple;
+	bh=0wedgcbvDNzSv6/UguL1supzKNnz/okCj6qpElhr2oM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cSgVvO2BdNCz0C6MNrQeOT/vP7MS/0RzXDY9fi+QSXm2U7IfIatttYXZcUHm3ZRyysIjIEXE6/A21QRhcz66762s1zVmKPAsqPM2ed9+QQG1SIqU/8dgl7MCVNKrdrl0wvPZR5rXfzJ3r2vxtBBdgnGN1k5LhER2onjdbrqFkNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U05b0bqV; arc=fail smtp.client-ip=40.107.243.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IET5aVBijV9qB2NRmA4h+kPjXnh8ykta087p2FnooabM9bZinj/snSSDHlZMI22shj1nkwflOm9BelajsasuKPLtqldCup/FERrEQVeYxy/0FE0i+YACPR6UOnKDdyzkpU+66S9k4YxJGFx8lXkGLLOzqRwG8y5KeVl3SP5+uzNJh2pOe04AeYATS7PFcundkr53Tqf2Nl368ejz8FhO99Jfvq427A+xZWopSI7pXD7GlAErBvXtUWq1kVse8DKSIkFq36Jui4CBPqvF2gRShKcyNNa5QjZU4jMH24fFRIvYuikzzKXQJzaQVQFGMum2Nip9hf1sgG9h9vLovmzgDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rQdORdduLhnZfjT1P0pddrNbfBct02jEvbe5kkfFYg4=;
+ b=hVPIyUrcmz+x0tL/Ry80DAyCzejlvyODT8QUxukwGV4HACdu3C5T9JQyyzOfMWexFYhtef95Ra7jrpd6UHzm4p+8RJCEcYkf7dYEvi3dpFp2+Bn5AUAZG56dzDLKz5H2T43hxTBlGZa06P3EGENakUwcTpIK5kiyVejx/N4ywhZ3Vn47EPq5Y5IT4k1a2gh31h7W7bXsdrJg+qZ/u6ZF8I8MDaCXT72DLDAt+2+1Hc3c2LgGTHBKA0inAvHpO9xX1pINUgrDhhKUxiBvFyVu7IOzQ21UBoslxbmo26QsBUoElZvhv3Pscd0gmz7RPIL7CgxwZctdYJqL2U4IXaSs1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rQdORdduLhnZfjT1P0pddrNbfBct02jEvbe5kkfFYg4=;
+ b=U05b0bqVNDCcO1u7pYET/1NobyDfBi+PGalvezZqzWs9YW6HXwIwJquSLSD4h/QwYg0bMojJWsD4EKpKpFaMaprvVE8r4OqC7bvKoEG+gRW46I61qwOlWOSX+JZOVm1L1zB7B0vuVH6Wq5MDOWIRvHnjH4irdhrzKoyMzO0qUfs=
+Received: from SN7P220CA0021.NAMP220.PROD.OUTLOOK.COM (2603:10b6:806:123::26)
+ by LV2PR12MB5750.namprd12.prod.outlook.com (2603:10b6:408:17e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
+ 2024 15:06:23 +0000
+Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
+ (2603:10b6:806:123:cafe::2a) by SN7P220CA0021.outlook.office365.com
+ (2603:10b6:806:123::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23 via Frontend
+ Transport; Mon, 7 Oct 2024 15:06:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Mon, 7 Oct 2024 15:06:22 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Oct
+ 2024 10:06:19 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 7 Oct 2024 10:06:15 -0500
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <michal.simek@amd.com>, <harini.katakam@amd.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<git@amd.com>, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: [PATCH net-next v2 0/3] net: xilinx: emaclite: Adopt clock support
+Date: Mon, 7 Oct 2024 20:36:00 +0530
+Message-ID: <1728313563-722267-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005195541.380070-1-irogers@google.com> <20241005195541.380070-18-irogers@google.com>
- <20241007170927.f30fced63c5e777628bea311@kernel.org>
-In-Reply-To: <20241007170927.f30fced63c5e777628bea311@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 7 Oct 2024 08:05:23 -0700
-Message-ID: <CAP-5=fVmD-M-ZOinkWZ7AOtfRHqo89gFtDeeatwufq0TcBiZUA@mail.gmail.com>
-Subject: Re: [PATCH v2 17/31] perf dwarf-regs: Pass ELF flags to get_dwarf_regstr
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, Guilherme Amadio <amadio@gentoo.org>, 
-	Changbin Du <changbin.du@huawei.com>, Daniel Bristot de Oliveira <bristot@kernel.org>, 
-	Daniel Wagner <dwagner@suse.de>, Aditya Gupta <adityag@linux.ibm.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Kajol Jain <kjain@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Bibo Mao <maobibo@loongson.cn>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Steinar H. Gunderson" <sesse@google.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Chen Pei <cp0613@linux.alibaba.com>, 
-	Dima Kogan <dima@secretsauce.net>, Yury Norov <yury.norov@gmail.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: radhey.shyam.pandey@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|LV2PR12MB5750:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d9168e0-8056-4f07-5610-08dce6e19b3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rShp2/54Oh+gwbSI0sVtWfS0dCgeG83l1U4WyhDHDtVC70TAR2bEs0aceiNR?=
+ =?us-ascii?Q?ItuPwisODzHu1zichkpQZpMF9QhL+3wU22dv5UCIUaix7ontfMBqupnywTFw?=
+ =?us-ascii?Q?l/YaVrwg4aKxFTr2KhodrKzTLtkdsnKDShqNNHEElR4vXmEmCzH3wGAllQzF?=
+ =?us-ascii?Q?zS1sI9YpaazzMg+1YG+SnXkwoDQTbCAsUCjNiAHV6wKDSfI6m3CHnRK8r66+?=
+ =?us-ascii?Q?jig5DfdON01J0sReV8lgjEv+03hALoCayYspqxZVGhLIh6nNeo83oOoD/8AT?=
+ =?us-ascii?Q?TBk26DZgDG8wm+PtM/B3spuegZdIVBGhy3oHwfm6CcmZBnqp7s5Fnbao7C6h?=
+ =?us-ascii?Q?093FUZ/NwMmjzxCKC7OtAKZjoElix1ftsFJIZVSnA6eMMAhwu9Fgjhes516Z?=
+ =?us-ascii?Q?BgLta3TK0LLfu+veBDIzLnkXJzV+YVdGxsY7SZTih7LcoApcLTCyStLFItVm?=
+ =?us-ascii?Q?freY3E8WgfIjCZtaiTOCe0cZZASB9AyFiT+2wcXW6r8hb1feI6iTw5txuTY1?=
+ =?us-ascii?Q?XUoxIE4b0V3UHrR6Ul6XaEVTpYWl5ggGOtSyPuCimE/4yVQ/z+lrvORPCHNs?=
+ =?us-ascii?Q?7ZW1Vh89HGxsBVSxfg4BMsaT2w4Ik4P2qaJXvo9SqNUg7HxBR+TohXqSKhOE?=
+ =?us-ascii?Q?ZDiHHu9OoNWo30E93ndGA6TjmA+zcKhVEOhpDlk9ur9gSWy/aexY06lBuveu?=
+ =?us-ascii?Q?zkZ8/OoWKEic5vd+DWcG+8L+A7okMBaciNtfyv1HVXfWAB/yAtH3ScWkJKTe?=
+ =?us-ascii?Q?TmyFa6rzUMMOkQuIhQFFxBm/3IzTLPmImG9HAZxAcj2pBzXH8+vl3YIBRFSU?=
+ =?us-ascii?Q?NwOEQYLCbxPNkBqqD6MufbcsaJt5xMZV7kb+9MXHR3XwmwgCkPqAPZy9Qdzv?=
+ =?us-ascii?Q?ShBvvmWmfEVE2lTW6Nk8TdWloSREIkffS2inmdjnQq78F7jrfVXnTVrB0+xX?=
+ =?us-ascii?Q?45+MwpbawXjwnskuTpoWaxvJIaF2kI/5aVpDDqhXtsnQMuDpYjs9+u6Hxsu7?=
+ =?us-ascii?Q?n4Fy7FVDmL3jZWslTBb2ay0A5mbSdkBeUKkKqxv7tr47Hs6ZkunWf2o7hlpO?=
+ =?us-ascii?Q?PGQ1je93UZ34I/I7Q/++vJSkET/JYvZOlqH3GlJACy2Mac5SPM+hyMZXufpU?=
+ =?us-ascii?Q?NsFV9wkluWBGgqSoSnFdKfSWbfjQEEMEaqaQp1q+Jwk0UJznvbOPYZTsGbt6?=
+ =?us-ascii?Q?tmtSnAaF9O32WIizIzMNozUEqLflup823+uXLUaZZt//aWku6l6tGaonqa/c?=
+ =?us-ascii?Q?9RScBs+tCY7qa5tD4r+rbnOIVEUAC1Ar2AgOztUatgb1DoRCY9nXhQRsU7Dw?=
+ =?us-ascii?Q?Sk4dmP6zCUVE812zKcj3UeNcJvM9eyAFLM5+7aiinmqV/hXLES2xpcG9XYCI?=
+ =?us-ascii?Q?77Jni5+qPmaYarMgfu9r1djIGcp9?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 15:06:22.5283
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d9168e0-8056-4f07-5610-08dce6e19b3c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5750
 
-On Mon, Oct 7, 2024 at 1:09=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.or=
-g> wrote:
->
-> On Sat,  5 Oct 2024 12:55:27 -0700
-> Ian Rogers <irogers@google.com> wrote:
->
-> > Pass a flags value as architectures like csky need the flags to
-> > determine the ABI variant.
-> >
->
-> Same here. I need some examples of this chaneg.
+This patchset adds emaclite clock support. AXI Ethernet Lite IP can also
+be used on SoC platforms like Zynq UltraScale+ MPSoC which combines
+powerful processing system (PS) and user-programmable logic (PL) into
+the same device. On these platforms it is mandatory to explicitly enable
+IP clocks for proper functionality.
 
-The code here was already using the ELF machine, so dwarf-regs.c
-functions would already support cross building. There is the addition
-of ELF flags as on csky the registers change depending on the ABI
-version in the ELF flags.
+Changes for v2:
+- Make clocks as required property.
 
-Thanks,
-Ian
 
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/dwarf-regs.c         |  3 ++-
-> >  tools/perf/util/include/dwarf-regs.h | 11 ++++++-----
-> >  tools/perf/util/probe-finder.c       | 13 +++++++------
-> >  tools/perf/util/probe-finder.h       |  3 ++-
-> >  4 files changed, 17 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.=
-c
-> > index 1321387f6948..86b3ef638fbb 100644
-> > --- a/tools/perf/util/dwarf-regs.c
-> > +++ b/tools/perf/util/dwarf-regs.c
-> > @@ -29,7 +29,8 @@
-> >  #define __get_dwarf_regstr(tbl, n) (((n) < ARRAY_SIZE(tbl)) ? (tbl)[(n=
-)] : NULL)
-> >
-> >  /* Return architecture dependent register string (for kprobe-tracer) *=
-/
-> > -const char *get_dwarf_regstr(unsigned int n, unsigned int machine)
-> > +const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
-> > +                          unsigned int flags __maybe_unused)
-> >  {
-> >       switch (machine) {
-> >       case EM_NONE:   /* Generic arch - use host arch */
-> > diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/inc=
-lude/dwarf-regs.h
-> > index ee0a734564c7..925525405e2d 100644
-> > --- a/tools/perf/util/include/dwarf-regs.h
-> > +++ b/tools/perf/util/include/dwarf-regs.h
-> > @@ -80,12 +80,13 @@
-> >
-> >  #ifdef HAVE_LIBDW_SUPPORT
-> >  const char *get_arch_regstr(unsigned int n);
-> > -/*
-> > - * get_dwarf_regstr - Returns ftrace register string from DWARF regnum
-> > - * n: DWARF register number
-> > - * machine: ELF machine signature (EM_*)
-> > +/**
-> > + * get_dwarf_regstr() - Returns ftrace register string from DWARF regn=
-um.
-> > + * @n: DWARF register number.
-> > + * @machine: ELF machine signature (EM_*).
-> > + * @flags: ELF flags for things like ABI differences.
-> >   */
-> > -const char *get_dwarf_regstr(unsigned int n, unsigned int machine);
-> > +const char *get_dwarf_regstr(unsigned int n, unsigned int machine, uns=
-igned int flags);
-> >
-> >  int get_arch_regnum(const char *name);
-> >  /*
-> > diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-fin=
-der.c
-> > index 8019d232f515..29eaa9beca86 100644
-> > --- a/tools/perf/util/probe-finder.c
-> > +++ b/tools/perf/util/probe-finder.c
-> > @@ -56,7 +56,7 @@ static struct probe_trace_arg_ref *alloc_trace_arg_re=
-f(long offs)
-> >   */
-> >  static int convert_variable_location(Dwarf_Die *vr_die, Dwarf_Addr add=
-r,
-> >                                    Dwarf_Op *fb_ops, Dwarf_Die *sp_die,
-> > -                                  unsigned int machine,
-> > +                                  const struct probe_finder *pf,
-> >                                    struct probe_trace_arg *tvar)
-> >  {
-> >       Dwarf_Attribute attr;
-> > @@ -166,7 +166,7 @@ static int convert_variable_location(Dwarf_Die *vr_=
-die, Dwarf_Addr addr,
-> >       if (!tvar)
-> >               return ret2;
-> >
-> > -     regs =3D get_dwarf_regstr(regn, machine);
-> > +     regs =3D get_dwarf_regstr(regn, pf->e_machine, pf->e_flags);
-> >       if (!regs) {
-> >               /* This should be a bug in DWARF or this tool */
-> >               pr_warning("Mapping for the register number %u "
-> > @@ -451,7 +451,7 @@ static int convert_variable(Dwarf_Die *vr_die, stru=
-ct probe_finder *pf)
-> >                dwarf_diename(vr_die));
-> >
-> >       ret =3D convert_variable_location(vr_die, pf->addr, pf->fb_ops,
-> > -                                     &pf->sp_die, pf->machine, pf->tva=
-r);
-> > +                                     &pf->sp_die, pf, pf->tvar);
-> >       if (ret =3D=3D -ENOENT && pf->skip_empty_arg)
-> >               /* This can be found in other place. skip it */
-> >               return 0;
-> > @@ -1134,7 +1134,8 @@ static int debuginfo__find_probes(struct debuginf=
-o *dbg,
-> >       if (gelf_getehdr(elf, &ehdr) =3D=3D NULL)
-> >               return -EINVAL;
-> >
-> > -     pf->machine =3D ehdr.e_machine;
-> > +     pf->e_machine =3D ehdr.e_machine;
-> > +     pf->e_flags =3D ehdr.e_flags;
-> >
-> >       do {
-> >               GElf_Shdr shdr;
-> > @@ -1171,7 +1172,7 @@ static int copy_variables_cb(Dwarf_Die *die_mem, =
-void *data)
-> >           (tag =3D=3D DW_TAG_variable && vf->vars)) {
-> >               if (convert_variable_location(die_mem, vf->pf->addr,
-> >                                             vf->pf->fb_ops, &pf->sp_die=
-,
-> > -                                           pf->machine, NULL) =3D=3D 0=
-) {
-> > +                                           pf, /*tvar=3D*/NULL) =3D=3D=
- 0) {
-> >                       vf->args[vf->nargs].var =3D (char *)dwarf_diename=
-(die_mem);
-> >                       if (vf->args[vf->nargs].var =3D=3D NULL) {
-> >                               vf->ret =3D -ENOMEM;
-> > @@ -1403,7 +1404,7 @@ static int collect_variables_cb(Dwarf_Die *die_me=
-m, void *data)
-> >           tag =3D=3D DW_TAG_variable) {
-> >               ret =3D convert_variable_location(die_mem, af->pf.addr,
-> >                                               af->pf.fb_ops, &af->pf.sp=
-_die,
-> > -                                             af->pf.machine, NULL);
-> > +                                             &af->pf, /*tvar=3D*/NULL)=
-;
-> >               if (ret =3D=3D 0 || ret =3D=3D -ERANGE) {
-> >                       int ret2;
-> >                       bool externs =3D !af->child;
-> > diff --git a/tools/perf/util/probe-finder.h b/tools/perf/util/probe-fin=
-der.h
-> > index b9a5afca4cc1..71e21cb4492a 100644
-> > --- a/tools/perf/util/probe-finder.h
-> > +++ b/tools/perf/util/probe-finder.h
-> > @@ -68,7 +68,8 @@ struct probe_finder {
-> >       /* Call Frame Information from .debug_frame */
-> >       Dwarf_CFI               *cfi_dbg;
-> >       Dwarf_Op                *fb_ops;        /* Frame base attribute *=
-/
-> > -     unsigned int            machine;        /* Target machine arch */
-> > +     unsigned int            e_machine;      /* ELF target machine arc=
-h */
-> > +     unsigned int            e_flags;        /* ELF target machine fla=
-gs */
-> >       struct perf_probe_arg   *pvar;          /* Current target variabl=
-e */
-> >       struct probe_trace_arg  *tvar;          /* Current result variabl=
-e */
-> >       bool                    skip_empty_arg; /* Skip non-exist args */
-> > --
-> > 2.47.0.rc0.187.ge670bccf7e-goog
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Abin Joseph (3):
+  dt-bindings: net: emaclite: Add clock support
+  net: emaclite: Replace alloc_etherdev() with devm_alloc_etherdev()
+  net: emaclite: Adopt clock support
+
+ .../bindings/net/xlnx,emaclite.yaml           |  5 +++++
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c | 22 ++++++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
+
+-- 
+2.34.1
+
 
