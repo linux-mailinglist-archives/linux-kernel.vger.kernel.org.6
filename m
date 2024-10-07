@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-353144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07699992962
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:41:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40BB992965
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18831F231E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF301F242F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA941CC15F;
-	Mon,  7 Oct 2024 10:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384CB1C878E;
+	Mon,  7 Oct 2024 10:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JR2MLbZi"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXtvUwVV";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXtvUwVV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903671C8FD4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C555D14AD17
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297659; cv=none; b=TxC2UJaNvVhdGvnwvSrQY3Ud5wJew3OIvofedmKit+vD4ZyEu9mvf4OPpObXxhMgFfsJOtMGFvYY/esjOGVn0dMs2uX+EArj0z6jL0Ue2DX7aiVluWGB+NdkiY6AW9Poj0u285kZUSNMZjFhXzpuHalBKUlY0XJZiSBMvYgrtDo=
+	t=1728297727; cv=none; b=ibmMMrTBTohEfGi4AqcmMQas6p20VCox5alAXBedWGoqLy/hQd48ZiBXtVeZdTPT5551I2U/bW3DfnHVF6v9+qfqeEEx8h5subuP6MRzOURAujengzkvdeg/aQLNH78qcup6qhGVBcdY0SS3g45vZ5DIbp8eqjoIOZvrmrm9GR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297659; c=relaxed/simple;
-	bh=nZiIh8wnlcFC+dC0TYEiUd7EAPU85KmiRp50eWjyx7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rR/TmgtEbRHxgYGj/za35gTD6K1+PjDVb7zZORuE7DjwQbSGM/zR5JCsGrj22Ll1KHaMd7A1QNQ76Ihz7n00sUQugOBxfU09Wz2j6gPfd79sW+OlOUcXau33iK/3StaeItoSS3UUobeaaTms1McoQB5e3ex4XIF7JexYufvq1gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JR2MLbZi; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccd81de57so2786895f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 03:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728297656; x=1728902456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5gtX24rM5dRR0MpdZIAsxYJR5vb0OJDvfm8ACG2rLjE=;
-        b=JR2MLbZiFOutfBRmHFa9FEwHUax0HjnsdoqQotrMHyUyNvJD2PXdW7maYbGHVmHWrd
-         zYZ5qKo6sbL2Nkog+Pl57+uDEPhlVUEDSJmgd3D/9hoU30gI03ViPiymoIvykTWR0aW5
-         WSnCTbkXHCmtCBIdAVDbgpx4f+s0AxWhz6DGtMwgussWkBt8MYVCcIBTorWo3qTWMKwS
-         p9fZilryPjOIgzNwFOu4HFUkWeN8AjNoVNXRShPcQmsf1FvVOw1cx6oa7Lwg1tvNi/KD
-         8tbbLX8Gsxfa914fm4GKdnxINKzIXsl03ol5PlMm220k3bo1CJWId86OV+p4zzYx86Bm
-         wEDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728297656; x=1728902456;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5gtX24rM5dRR0MpdZIAsxYJR5vb0OJDvfm8ACG2rLjE=;
-        b=Zye9Q8ZiGzHGU7h/dLMX8fGmUVL8yaKZWxPXocWp8cHMXs93L+mPCA2Rm9YCi2rk0D
-         9YFehBHWa7TBnG9Z6buQb0QiikQTTmMj05D8HrdDv+r6zjwOuK6ZtXuaTZ/85pYp32o4
-         6ulH2DxfV6KpyCkDeoeh7DWzc0xpwsXjvOnob8tOS38Rsp9pV38Ei0oLiXJgG9GYj9P5
-         czXOf12YeeITUWBm1fAgF2gWqdaC0DqQLHetRcVovBD7qyCV4hUEXGcRN7MJak+5T5AS
-         NdEzY72iKHtJ8sSdR8jdADWyyNH+I6sWwNxYLnMiEODfnKzAWbIi5aKLKlPZXk7xqwzL
-         9vjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw7JO3ppYVYdmNAwszxlKKEzkRvQHQv9sBFI4WfIqWzwMgbNwd+eDgG46HDoVJ9DpbVaVZn5lSSU+IKog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuOTDhhC45RTsXMLWLRhblmbOlID8jE28E7u5l2KP6JNoZm0SL
-	H62wXwl5kgMVzrz20LXjSoZLdfghKTxCq1baUf629iXEetUOXFhisGArlLKwo6VLt92wylQ6fhv
-	M
-X-Google-Smtp-Source: AGHT+IGN+INg7r1OPDUzlA14lgX4GmFkJL4YfoB6G2zzkWnUEno8sj+zxEMpBokOQaUuFIDxm/83vw==
-X-Received: by 2002:a5d:4904:0:b0:374:be11:22d7 with SMTP id ffacd0b85a97d-37d0f6a4f46mr6254010f8f.13.1728297655930;
-        Mon, 07 Oct 2024 03:40:55 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690fc53sm5474682f8f.4.2024.10.07.03.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 03:40:55 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: ts4900: use generic device properties
-Date: Mon,  7 Oct 2024 12:40:52 +0200
-Message-ID: <20241007104052.39374-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1728297727; c=relaxed/simple;
+	bh=q2O1EWbb3H9OlvF18UvBExVCURf4mkffR8ncq7RjTQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l10C4GTCYRSNwTgL5JSwOkGkec8EXuuM8owPCngKM2iWVV/18B+ygL99r8d+aqt5kUY6b4fyDvuyKhwVL7aSZiJySL2N7JuNkP7yBW+FLhbBE/gHkOaTiw2ZOJG8UyXD7+Q65kpiFlREyVW/IASG+SLtXYLXSGRUZYt2prcUOkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXtvUwVV; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXtvUwVV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C4C8C21C0F;
+	Mon,  7 Oct 2024 10:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728297723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BD5PqP23e7/83Pok91rp0zgpvGvnOoNWAFujvQURO0Y=;
+	b=uXtvUwVVTWamdCCB5gkbPQvkslxeS+AD8S+d35rK1j18gHSNdXkZbY6KSMibb5uqLZ77k9
+	FN3V799o9L39Sf6Q/QXuu7pAmtrAnngIbO0BEn9k9X5vkbR5H65Vc/QMt8zqqBn7wmTMFq
+	t8KIn7KNpc3beG5wxA+k1bmoVvOEWXA=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=uXtvUwVV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728297723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BD5PqP23e7/83Pok91rp0zgpvGvnOoNWAFujvQURO0Y=;
+	b=uXtvUwVVTWamdCCB5gkbPQvkslxeS+AD8S+d35rK1j18gHSNdXkZbY6KSMibb5uqLZ77k9
+	FN3V799o9L39Sf6Q/QXuu7pAmtrAnngIbO0BEn9k9X5vkbR5H65Vc/QMt8zqqBn7wmTMFq
+	t8KIn7KNpc3beG5wxA+k1bmoVvOEWXA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C82D132BD;
+	Mon,  7 Oct 2024 10:42:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kbxuGPu6A2fJLAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 07 Oct 2024 10:42:03 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	xen-devel@lists.xenproject.org,
+	Niels Dettenbach <nd@syndicat.com>
+Subject: [PATCH] x86/xen: mark boot CPU of PV guest in MSR_IA32_APICBASE
+Date: Mon,  7 Oct 2024 12:42:01 +0200
+Message-ID: <20241007104201.15607-1-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -81,49 +85,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: C4C8C21C0F
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Recent topology checks of the x86 boot code uncovered the need for
+PV guests to have the boot cpu marked in the APICBASE MSR.
 
-There's no reason to use OF-specific variants of property getters.
-Switch to using the preferred, generic device property helpers.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Fixes: 9d22c96316ac ("x86/topology: Handle bogus ACPI tables correctly")
+Reported-by: Niels Dettenbach <nd@syndicat.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- drivers/gpio/gpio-ts4900.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/xen/enlighten_pv.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-index 0f6397b77c9d..5c806140fdf0 100644
---- a/drivers/gpio/gpio-ts4900.c
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -8,8 +8,8 @@
- 
- #include <linux/gpio/driver.h>
- #include <linux/i2c.h>
--#include <linux/of.h>
- #include <linux/module.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- 
- #define DEFAULT_PIN_NUMBER	32
-@@ -142,7 +142,7 @@ static int ts4900_gpio_probe(struct i2c_client *client)
- 	u32 ngpio;
- 	int ret;
- 
--	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
-+	if (device_property_read_u32(&client->dev, "ngpios", &ngpio))
- 		ngpio = DEFAULT_PIN_NUMBER;
- 
- 	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-@@ -153,7 +153,7 @@ static int ts4900_gpio_probe(struct i2c_client *client)
- 	priv->gpio_chip.label = "ts4900-gpio";
- 	priv->gpio_chip.ngpio = ngpio;
- 	priv->gpio_chip.parent = &client->dev;
--	priv->input_bit = (uintptr_t)of_device_get_match_data(&client->dev);
-+	priv->input_bit = (uintptr_t)device_get_match_data(&client->dev);
- 
- 	priv->regmap = devm_regmap_init_i2c(client, &ts4900_regmap_config);
- 	if (IS_ERR(priv->regmap)) {
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 2c12ae42dc8b..d6818c6cafda 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1032,6 +1032,10 @@ static u64 xen_do_read_msr(unsigned int msr, int *err)
+ 	switch (msr) {
+ 	case MSR_IA32_APICBASE:
+ 		val &= ~X2APIC_ENABLE;
++		if (smp_processor_id() == 0)
++			val |= MSR_IA32_APICBASE_BSP;
++		else
++			val &= ~MSR_IA32_APICBASE_BSP;
+ 		break;
+ 	}
+ 	return val;
 -- 
 2.43.0
 
