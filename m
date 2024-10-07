@@ -1,280 +1,169 @@
-Return-Path: <linux-kernel+bounces-352665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FB199225E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 01:36:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2429A99226A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 02:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34DFA1C21966
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2024 23:36:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900BEB21D0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 00:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90EF18BC31;
-	Sun,  6 Oct 2024 23:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D93733D8;
+	Mon,  7 Oct 2024 00:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H1a93JSt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Zx/6VsAy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H1a93JSt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Zx/6VsAy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJ0X+HmQ"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09B21C6B2;
-	Sun,  6 Oct 2024 23:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82F3800;
+	Mon,  7 Oct 2024 00:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728257793; cv=none; b=e9HLXnhZbaTWGhTKm7EngVJENJJzr6l/KmcV+1uyddat+D1XjZZ4Q2sJ75DYA4i930TaXjbVQALP5vF0D+yg9OuX70PRS8KKSumRK2XO6dHEC/HX9zmPUJMW0C0B24gvAeFSS1wK7oPUg64INehIpDRe1LNbg/pAPZvELoxBu/8=
+	t=1728259825; cv=none; b=YJdCgGk7Q1wv42nFbIzZb3DTS6aH7msfJdHPHBWUrDtNU69aO4Vi9SamklJLygIKhM6pbg6ZX7xgc8kapeYuPU1kK5nc0vv74+8euSxh2S6Fv5rCM9QThKJWRJgFhGAT24hDG8V1PHkzyZx3HxH4B1+E2ZKnK8Btc4RVqz1dJt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728257793; c=relaxed/simple;
-	bh=lkl/Iv1pnYEDGnjOGVOpxy+8DCxwfBTlVP95TcDD3KI=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=cvaqazLSyt028GsqHJ85te/yhn1A3zzv7FHFkhvCplnqJdEWGjIih2G2kD5+FkpDyexb2G9lGHhTyqwUov0yklifMQOdyi3ABmqqP3+vT0sqrMX/dkuZLHbNKPhBJhd/ceBNWC654i9NXBpDSK8BxXMHvya0uwUQS6KnIn6ybuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H1a93JSt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Zx/6VsAy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H1a93JSt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Zx/6VsAy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B18741F850;
-	Sun,  6 Oct 2024 23:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728257785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBCDMwUUm+ErpFI9J3tWNPWcjlFguC7LAGucOzpTgtE=;
-	b=H1a93JStqot5oMa9lOHwvNFfSf9nr8tWcvJdWq+W17aKsnVO/k1rLZsRotrNWZ1eKRkZtw
-	Vj0MxlC8e9H6gPE2aO8GV5qqAtgKkg8urK+7fpG4sX4ZGqcp1HitD7x2qgVfFAjwIuzK/g
-	iSJWGNDlSvq0cOcIrxZN0PFomJkMfeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728257785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBCDMwUUm+ErpFI9J3tWNPWcjlFguC7LAGucOzpTgtE=;
-	b=Zx/6VsAygew1gGzo21WD2HYlzksY4y9xzSTQ6mQX3tyQwsUgZxSCzevxUla/sK0LiPOxS+
-	+MYSjqmrnBBnNqAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=H1a93JSt;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="Zx/6VsAy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728257785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBCDMwUUm+ErpFI9J3tWNPWcjlFguC7LAGucOzpTgtE=;
-	b=H1a93JStqot5oMa9lOHwvNFfSf9nr8tWcvJdWq+W17aKsnVO/k1rLZsRotrNWZ1eKRkZtw
-	Vj0MxlC8e9H6gPE2aO8GV5qqAtgKkg8urK+7fpG4sX4ZGqcp1HitD7x2qgVfFAjwIuzK/g
-	iSJWGNDlSvq0cOcIrxZN0PFomJkMfeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728257785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBCDMwUUm+ErpFI9J3tWNPWcjlFguC7LAGucOzpTgtE=;
-	b=Zx/6VsAygew1gGzo21WD2HYlzksY4y9xzSTQ6mQX3tyQwsUgZxSCzevxUla/sK0LiPOxS+
-	+MYSjqmrnBBnNqAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0D7F513240;
-	Sun,  6 Oct 2024 23:36:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bPrsLPYeA2dkZwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sun, 06 Oct 2024 23:36:22 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728259825; c=relaxed/simple;
+	bh=fg021ep1byjw4tWhEaB88P+vmjFuA5wTZOIdd6/FVo0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=e5GidSyy3y1CH1Zl3RrCrKKscg15eMcwveT12dEd2rLPmDv+wlnWDiSrDXF5PDBMp5arRd0C4M3jlfhWaHI7AdZTDKIXh+tnX0rEUDukHjpjcJ0Sc9eODf/yiKSpiWGDvV6eR6pMYyZERw0ed7wGUccMwgq/OHx81svSvGD95xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJ0X+HmQ; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a99e4417c3so324762385a.1;
+        Sun, 06 Oct 2024 17:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728259823; x=1728864623; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fhhWHH0miwXsKsyLxNCHn9I5FF0NznVLiuppVDG9nLg=;
+        b=PJ0X+HmQcoGuuFJkfwdbtLPeGDx2gPHd3zRX7aoc0QeLOJ0xoOr8HAfzIfxECQVG4f
+         Qz/a2Yw49w/mhaHCNwek3Okj9vm9wKmn+fA9nokDRymhfXGzAkSxKboKyRNQlMdGK8JK
+         CNp+K8dZr7jDUEYKTW0pPa1TFQxtOeirI/OPziEy1P2wpUeyVZ3amlWR2lGg3F762xtb
+         dOBF7qEgm9m4qJx1beHSnklKturM+wGCoIf+/BXPRnbKxJgDU5uHo0+idSgAJ8c9UKoy
+         Sctctg5ACo29n+UYI/CZV0T+ueLAfViHQgqeajGP6QvfS3V/m5bQDgarHNrJKdvWIaKF
+         J8Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728259823; x=1728864623;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fhhWHH0miwXsKsyLxNCHn9I5FF0NznVLiuppVDG9nLg=;
+        b=ZPHl+deU2ouHF4HYSGqXOI5kzPuV2RMqKxHtbgGp5LlYmkrdhJRBXQjm8NnE/1dc5z
+         cZL10/12l7xfN7nVsRQtsk56QGIDjbtm1OTP3wQnpuOR6TBPFoyDn+GHiZt9q8pOI+AS
+         qiqofLyEwCH5t6csIPQXDTZk1PIL2SmWqnwxXr59JgRxoKFU0pi9aRTqDMSlt2bgknoo
+         3FWzyV7ESln5xv32t5eg80ndXTsO+JGX2h6Fl4n7hlo33lnoCV0STJvLZwpSRWJ+jNQe
+         Y6RJtXxO6PC6LHM8Dyr4Tdx8/Oy3GFVLYpy4MUWLSR1gb+YLpyFf1wTmI0QjphhdVk5k
+         ccnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRaLZXiopassHAi/qo7OIEVSxOJO6TEzAHdWycFCCihIF076PQhv2DLaY1khA5zq6og4K/NDl8fMauYr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG25jnzYTsoIpoGn4qnrqjF6UEoiP3xxBpq2uNfwEDRS4fejcN
+	PJ7P8GUTVtBdvXh6P8tROMPn06h9fopJguxO/ueS90vSYssqUkts
+X-Google-Smtp-Source: AGHT+IEsjpDQVCDTk8XErSaRe1YyX91Rh7iqvh8hhpE7VQm7mvMlqQozxbNWde3vOvT2pcQyx7O00Q==
+X-Received: by 2002:a05:620a:25ce:b0:7a9:9ec7:63d1 with SMTP id af79cd13be357-7ae6f437564mr1638620085a.18.1728259822689;
+        Sun, 06 Oct 2024 17:10:22 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75615955sm204597985a.19.2024.10.06.17.10.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 17:10:21 -0700 (PDT)
+Date: Sun, 06 Oct 2024 20:10:21 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: =?UTF-8?B?QmVub8OudCBNb25pbg==?= <benoit.monin@gmx.fr>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Jiri Pirko <jiri@resnulli.us>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?UTF-8?B?QmVub8OudCBNb25pbg==?= <benoit.monin@gmx.fr>
+Message-ID: <670326ed8220a_135479294d1@willemb.c.googlers.com.notmuch>
+In-Reply-To: <0dc0c2af98e96b1df20bd36aeaed4eb4e27d507e.1728056028.git.benoit.monin@gmx.fr>
+References: <0dc0c2af98e96b1df20bd36aeaed4eb4e27d507e.1728056028.git.benoit.monin@gmx.fr>
+Subject: Re: [PATCH net-next] net: skip offload for NETIF_F_IPV6_CSUM if ipv6
+ header contains extension
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever III" <chuck.lever@oracle.com>
-Cc: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-In-reply-to: <EEC2DC14-EBE9-4F41-9BBE-47F9DDD110C7@oracle.com>
-References: <>, <EEC2DC14-EBE9-4F41-9BBE-47F9DDD110C7@oracle.com>
-Date: Mon, 07 Oct 2024 10:36:15 +1100
-Message-id: <172825777599.1692160.7897699757454912990@noble.neil.brown.name>
-X-Rspamd-Queue-Id: B18741F850
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 07 Oct 2024, Chuck Lever III wrote:
->=20
->=20
-> > On Oct 6, 2024, at 6:29=E2=80=AFPM, Pali Roh=C3=A1r <pali@kernel.org> wro=
-te:
-> >=20
-> > On Monday 07 October 2024 09:13:17 NeilBrown wrote:
-> >> On Mon, 07 Oct 2024, Chuck Lever wrote:
-> >>> On Fri, Sep 13, 2024 at 08:52:20AM +1000, NeilBrown wrote:
-> >>>> On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
-> >>>>> Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not =
-bypass
-> >>>>> only GSS, but bypass any authentication method. This is problem speci=
-ally
-> >>>>> for NFS3 AUTH_NULL-only exports.
-> >>>>>=20
-> >>>>> The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-> >>>>> section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-> >>>>> authentication. So few procedures which do not expose security risk u=
-sed
-> >>>>> during mount time can be called also with AUTH_NONE or AUTH_SYS, to a=
-llow
-> >>>>> client mount operation to finish successfully.
-> >>>>>=20
-> >>>>> The problem with current implementation is that for AUTH_NULL-only ex=
-ports,
-> >>>>> the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mou=
-nt
-> >>>>> attempts which confuse NFS3 clients, and make them think that AUTH_UN=
-IX is
-> >>>>> enabled and is working. Linux NFS3 client never switches from AUTH_UN=
-IX to
-> >>>>> AUTH_NONE on active mount, which makes the mount inaccessible.
-> >>>>>=20
-> >>>>> Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implement=
-ation
-> >>>>> and really allow to bypass only exports which have some GSS auth flav=
-or
-> >>>>> enabled.
-> >>>>>=20
-> >>>>> The result would be: For AUTH_NULL-only export if client attempts to =
-do
-> >>>>> mount with AUTH_UNIX flavor then it will receive access errors, which
-> >>>>> instruct client that AUTH_UNIX flavor is not usable and will either t=
-ry
-> >>>>> other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
-> >>>>>=20
-> >>>>> This should fix problems with AUTH_NULL-only or AUTH_UNIX-only export=
-s if
-> >>>>> client attempts to mount it with other auth flavor (e.g. with AUTH_NU=
-LL for
-> >>>>> AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
-> >>>>=20
-> >>>> The MAY_BYPASS_GSS flag currently also bypasses TLS restrictions.  With
-> >>>> your change it doesn't.  I don't think we want to make that change.
-> >>>=20
-> >>> Neil, I'm not seeing this, I must be missing something.
-> >>>=20
-> >>> RPC_AUTH_TLS is used only on NULL procedures.
-> >>>=20
-> >>> The export's xprtsec=3D setting determines whether a TLS session must
-> >>> be present to access the files on the export. If the TLS session
-> >>> meets the xprtsec=3D policy, then the normal user authentication
-> >>> settings apply. In other words, I don't think execution gets close
-> >>> to check_nfsd_access() unless the xprtsec policy setting is met.
-> >>=20
-> >> check_nfsd_access() is literally the ONLY place that ->ex_xprtsec_modes
-> >> is tested and that seems to be where xprtsec=3D export settings are stor=
-ed.
-> >>=20
-> >>>=20
-> >>> I'm not convinced check_nfsd_access() needs to care about
-> >>> RPC_AUTH_TLS. Can you expand a little on your concern?
-> >>=20
-> >> Probably it doesn't care about RPC_AUTH_TLS which as you say is only
-> >> used on NULL procedures when setting up the TLS connection.
-> >>=20
-> >> But it *does* care about NFS_XPRTSEC_MTLS etc.
-> >>=20
-> >> But I now see that RPC_AUTH_TLS is never reported by OP_SECINFO as an
-> >> acceptable flavour, so the client cannot dynamically determine that TLS
-> >> is required.
-> >=20
-> > Why is not RPC_AUTH_TLS announced in NFS4 OP_SECINFO? Should not NFS4
-> > OP_SECINFO report all possible auth methods for particular filehandle?
->=20
-> SECINFO reports user authentication flavors and pseudoflavors.
->=20
-> RPC_AUTH_TLS is not a user authentication flavor, it is merely
-> a query to see if the server peer supports RPC-with-TLS.
->=20
-> So far the nfsv4 WG has not been able to come to consensus
-> about how a server's transport layer security policies should
-> be reported to clients. There does not seem to be a clean way
-> to do that with existing NFSv4 protocol elements, so a
-> protocol extension might be needed.
+Beno=C3=AEt Monin wrote:
+> Devices with NETIF_F_IP_CSUM capability can checksum TCP and UDP over
+> IPv4 with an IP header that may contains options; whereas devices with
+> NETIF_F_IPV6_CSUM capability can only checksum TCP and UDP over IPv6 if=
 
-Interesting...
+> the IP header does not contains extension.
 
-The distinction between RPC_AUTH_GSS_KRB5I and RPC_AUTH_GSS_KRB5P is not
-about user authentication, it is about transport privacy.
+Are both these statements universally true across devices?
 
-And the distinction between xprtsec=3Dtls and xprtsec=3Dmtls seems to be
-precisely about user authentication.
+I can believe for NETIF_F_IP_CSUM that this is the definition, and
+that devices that cannot handle options must fix it up indivually in
+ndo_features_check.
 
-I would describe the current pseudo flavours as not "a clean way" to
-advise the client of security requirements, but they are at least
-established practice.
+And same for NETIF_F_IPV6_CSUM with extension headers.
 
-RPC_AUTH_SYS_TLS  seems to me to be an obvious sort of pseudo flavour.
+But it would be good to see where this is asserted in the code, or
+examples of drivers that have to perform such actions.
 
-But I suspect all these arguments and more have already been discussed
-within the working group and people can sensibly have different
-opinions.
+> Enforce that in skb_csum_hwoffload_help by checking the network header
+> length in the case where the IP header version is 6. We cannot simply
+> rely on the network header length since the IPv4 header can from 20 to
+> 60 bytes whereas the IPv6 header must be 40 bytes. So we check the
+> version field which is common to IPv4 and IPv6 headers.
+> =
 
-Thanks for helping me understand NFS/TLS a bit better.
+> This fixes checksumming errors seen with ip6_tunnel and fou6
+> encapsulation, for example with GRE-in-UDP over IPv6:
+> * fou6 adds a UDP header with a partial checksum if the inner packet
+> does not contains a valid checksum.
 
-NeilBrown
+Where in the code is this conditional on the inner packet csum?
+
+> * ip6_tunnel adds an IPv6 header with a destination option extension
+> header if encap_limit is non-zero (the default value is 4).
 
 
+If this is a fix, we'll need to target net and best effort find a
+suitable fixes tag.
+ =
 
->=20
->=20
-> >> So there is no value in giving non-tls clients access to
-> >> xprtsec=3Dmtls exports so they can discover that for themselves.  The
-> >> client needs to explicitly mount with tls, or possibly the client can
-> >> opportunistically try TLS in every case, and call back.
-> >>=20
-> >> So the original patch is OK.
-> >>=20
-> >> NeilBrown
->=20
->=20
-> --
-> Chuck Lever
->=20
->=20
->=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
+> ---
+>  net/core/dev.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> =
+
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index ea5fbcd133ae..199831d86ec1 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -3639,6 +3639,9 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+>  		return 0;
+> =
+
+>  	if (features & (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)) {
+> +		if (ip_hdr(skb)->version =3D=3D 6 &&
+> +		    skb_network_header_len(skb) !=3D sizeof(struct ipv6hdr))
+> +			goto sw_checksum;
+>  		switch (skb->csum_offset) {
+>  		case offsetof(struct tcphdr, check):
+>  		case offsetof(struct udphdr, check):
+> @@ -3646,6 +3649,7 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+>  		}
+>  	}
+> =
+
+> +sw_checksum:
+>  	return skb_checksum_help(skb);
+>  }
+>  EXPORT_SYMBOL(skb_csum_hwoffload_help);
+
 
 
