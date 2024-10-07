@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-353975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7249993576
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:56:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803F499357C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4833D1F253C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:56:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F130EB22BB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D111DDC01;
-	Mon,  7 Oct 2024 17:56:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B350C1DDC04;
+	Mon,  7 Oct 2024 17:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="QUBNoX/2"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63911DDA2D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA471DD555;
+	Mon,  7 Oct 2024 17:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728323764; cv=none; b=STwpQHdqcyV4RXOdA/A4pQ+jNc/ZnifQQd4cvyN/AqXXcOJzQmBqXbSGUekOiQMb05yMz4vEpWP0OfyppNh3Dr58eTtEYEdz4YrB024qP0pbzFBOFo3BelY816igA1x2BubhuOMZEQJf266sfcrbp3eSBzJj74zXZZwSAFFHBZ0=
+	t=1728323833; cv=none; b=BYBz9VcGuXcvG7DGVEgeX2QwLWm1MTXLOak2LiKRGFVC2nObfBxaOKgZ6o8Mb7mANIeXSyCkvZXBMsE50tL96evTEHf6Xp/nEu5a5UT/rqEGqRT0cVUW70kCA0ZYeR5wo//8+u1s0sqaTahZq7azzVfqZY3ukKa+8EFzVYHjja4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728323764; c=relaxed/simple;
-	bh=1kXXgQ6pXFLsqmPCedpWDBpYPB0MB8bjAHTS0Z3nbXU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aeuurLtP6QitlM4gLLu9Vn8od6iKhuEFjCVJYWnYOq6s+z6279HSCYtuzfm6DQnE4jkSu3zO3s+jAoGRtsDCLElniWhQwigHNsq7DWOJF1QbG5JoJPPKcAF8mcXyRGnWDuGDsVp6V0zzVXbdMmafUfjrUgQ7NIDOdozZV6EXxF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a364ab1eedso42152625ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:56:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728323762; x=1728928562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPE2DlXlQgHtF9R1VoWf7KZY7YtyqN7X49j3CJzC6fk=;
-        b=dFWtzgTU6bccI8B2FwCMHFp3FeTJHkXFBoM+Fajfotp0d7qyMZVe9XHAoxy9cwIUmo
-         +3a+5W2iZqCz2cLmZPRaUo6fDUlPE+09b3p8G5AWsHUldWiIqnmtqm2XaG+go9awrBvo
-         fwNY6zz/kb2dmjPKkBJSu1p4/B+/rRTyOxVc3Fx+CCI/Pu5DhFQ20gA8AmRxMD/7kyCV
-         7HCn0ELEq5fKY+rIBHW3YfDbxcCul9StFPFkLXZKWM9HyppnEYsPZ5lGzgxH3oWtnlNp
-         AZ6DOLFRYtgSEelW+YLr1ioq5Gfxla4t9+sKPaCn5kdn2Tc4wAgjuiyddZT6A7yjKkG0
-         O+yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU/J8/FuE/RdGltN9tGDcBZdz5LuLQpnlywFKSlEbqXLmAgoI3QF7qw8x3FdPbhyaFDl8qgUPUCBcoo4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ihZUNkul7djoBJjX03ZiNOzqZ0eE5VWqWS2n1hrkinGXTILQ
-	bt651ImYF7DjcO28eAONApQd5uxVABZ43U2bZmCPqUsqrexW7bUr7dO6plUws/1gx1wUK++a5xO
-	Pp4Umi9YxYjrrZ2Gf/3RInmudNNexvMbxtS2f88rZDWcKVcsSxIINGZU=
-X-Google-Smtp-Source: AGHT+IF9H447R8v+BBuaDt2xdDzaKWwWRKSLnQwhLFFn3CFWOf3XiPZWcCDVgpY6zJveMbhEXDU7Mc5XVBqA1K2iCj18ZVOXQ+bH
+	s=arc-20240116; t=1728323833; c=relaxed/simple;
+	bh=h3L8IgVFMqKnfTBdmE7EdHq6WxEkfyAoyfaD5LEtvgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d5zou2y/9e76f002kPhOv9qInL9m+DOLdqTzx8EG3CijsUaSFkmPGmV6W2DCaoUtGGo1lu7RhJxuaUjGzQgOJTkSo1ijH0UclUeLVPynOo9YTYDxJzy7UejTaYhG2T8I+TurHXLXS70QnTrGvxD0BXLOHpPTCdq0cWgjTbDvpN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=QUBNoX/2; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B54F52FC004D;
+	Mon,  7 Oct 2024 19:57:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1728323826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BdldwIyeD16eXrXCJmmOPyc0Ld6j2ynds8Z6PNLTWsE=;
+	b=QUBNoX/2cClS6EjpLosxp8Jv29RatROr1BsQQOBVfzg81bezfTWJ/hq5mgL1SYSAAePAAz
+	Pmgx2dISHwr74NocOwWEJ8TdgxNZz6WMiY1/YKZ46zkTm1wvo33eGZDpYXeQLqhhFwX8we
+	BzGaH1A6DV40AemSLQ7S5m3Bvz7hAJo=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
+Date: Mon, 7 Oct 2024 19:57:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184d:b0:3a0:451b:ade3 with SMTP id
- e9e14a558f8ab-3a375a978dbmr123384115ab.10.1728323761813; Mon, 07 Oct 2024
- 10:56:01 -0700 (PDT)
-Date: Mon, 07 Oct 2024 10:56:01 -0700
-In-Reply-To: <66f7eee8.050a0220.4a974.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670420b1.050a0220.49194.0514.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [bluetooth?] INFO: rcu detected stall in vhci_release
-From: syzbot <syzbot+46c3d1706c2d2688baba@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bigeasy@linutronix.de, edumazet@google.com, 
-	kerneljasonxing@gmail.com, kuba@kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luiz.dentz@gmail.com, 
-	marcel@holtmann.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
+ <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
+ <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
+ <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+ <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+ <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
+ <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Hi,
 
-commit d15121be7485655129101f3960ae6add40204463
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon May 8 06:17:44 2023 +0000
+Am 02.10.24 um 10:31 schrieb Benjamin Tissoires:
+> On Oct 01 2024, Werner Sembach wrote:
+>> Hi Benjamin,
+>>
+>> Am 01.10.24 um 15:41 schrieb Benjamin Tissoires:
+>>> [...]
+>>> PPS: sorry for pushing that hard on HID-BPF, but I can see that it fits
+>>> all of the requirements here:
+>>> - need to be dynamic
+>>> - still unsure of the userspace implementation, meaning that userspace
+>>>     might do something wrong, which might require kernel changes
+>> Well the reference implementetion for the arduiono macropad from microsoft
+>> ignores the intensity (brightness) channel on rgb leds contrary to the HID
+>> spec, soo yeah you have a point here ...
+> Heh :)
+>
+>>> - possibility to extend later the kernel API
+>>> - lots of fun :)
+>> You advertise it good ;). More work for me now but maybe less work for me
+>> later, I will look into it.
+> Again, I'm pushing this because I see the benefits and because I can
+> probably reuse the same code on my Corsair and Logitech keyboards. But
+> also, keep in mind that it's not mandatory because you can actually
+> attach the BPF code on top of your existing driver to change the way it
+> behaves. It'll be slightly more complex if you don't let a couple of
+> vendor passthrough reports that we can use to directly talk to the
+> device without any tampering, but that's doable. But if you want to keep
+> the current implementation and have a different layout, this can easily
+> be done in BPF on top.
+>
+> Cheers,
+> Benjamin
+>
+>
+> [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
 
-    Revert "softirq: Let ksoftirqd do its job"
+Thinking about the minimal WMI to HID today, but found a problem: a HID feature 
+report is either strictly input or output afaik, but the WMI interface has both 
+in some functions.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=132af79f980000
-start commit:   abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=172af79f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a8c36c5e2b56016
-dashboard link: https://syzkaller.appspot.com/bug?extid=46c3d1706c2d2688baba
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10564c80580000
+How would I map that?
 
-Reported-by: syzbot+46c3d1706c2d2688baba@syzkaller.appspotmail.com
-Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
+If I split everything in input and output the new interface wouldn't actually be 
+much smaller.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Also what would I write for the usage for the reserved padding in the report 
+descriptor. Usage: 0x00?
+
+best regards,
+
+Werner
+
 
