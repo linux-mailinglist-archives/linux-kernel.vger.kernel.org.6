@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-353764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20085993268
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD091993249
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09571B28783
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1F1F23372
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACAE1DA619;
-	Mon,  7 Oct 2024 15:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488BE1DB365;
+	Mon,  7 Oct 2024 15:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="IeN8f2L2"
-Received: from rcdn-iport-2.cisco.com (rcdn-iport-2.cisco.com [173.37.86.73])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="rpATpm6a"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3CC1DA0E0;
-	Mon,  7 Oct 2024 15:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F6C1DB551
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316694; cv=none; b=sDOUp/30cNoEVmAptx51ZZS3CyNt0vJaRV/D+88/y+P8CPiJeMElIXQt5Dkgoh96LI6yyl+LRfNxr9hMim8vXDNZF1cEsqZcXadeY8/C7taUfxzyvUAf1uErszhtEVitMrbMrKmNxPe7pkVS8KQqouJwsT+hn9ckU+Y4fBrXbZQ=
+	t=1728316632; cv=none; b=DItUC7ILlQEUEgHlET73OUsdZLCYmLm68Dcr/rB8fceTKYGAnAM4611/xjTKNpf5nt+61CSeDfSLtrth4aVAEzQ/9xBG/zu0bRV4CkEVXJHdaXIoIK1sKZ0dCzMHDsnRyGiShFT1odBrmRTE8hNcxAsQdQQ3M3THmQ6hdVumDqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316694; c=relaxed/simple;
-	bh=BoqOg2/3zHs1NXWmzV+CG2DI2MYPleJDLep1+J4Fons=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f19yuxgh7bgnH3z7FTE7hnVs53NeyjGhfe/fytwvo4sp1iSvZmse0Z+b8rqs0jiar4dw2FfIaoEVw6Nv4VY8vcqG3Es/jyjmn/HE3IQnMm7NxHhh8RRS0rsckElVpg3G7SrNe8r8mbdLYV2Fq0Od7OcaAwm3MpKkwnyqQkrxRq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=IeN8f2L2; arc=none smtp.client-ip=173.37.86.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=249; q=dns/txt; s=iport;
-  t=1728316693; x=1729526293;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BoqOg2/3zHs1NXWmzV+CG2DI2MYPleJDLep1+J4Fons=;
-  b=IeN8f2L2YjsErn7mY1mMzckXC/PQ3WB1YhkNP/LKE1z00llcOssnfupa
-   as+r+QSs5a+RrjoWPz1C/vQKDOniGUoRj11+TOZfjd1ADjaRVWuR/mog1
-   6w8MfENIZ0wNUwOsFHGuJO24kCnc1huAX7BQdW1RTVJ0iCWapHYTVWClE
-   s=;
-X-CSE-ConnectionGUID: eioXcUebSxqay6xPSMl9/Q==
-X-CSE-MsgGUID: jNpo82l/S3Of2YdDcLsUDw==
-X-IPAS-Result: =?us-ascii?q?A0A7AQCKAwRnl43/Ja1aHgEBCxIMggQLhBtClw+LcoxGh?=
- =?us-ascii?q?V6Bfg8BAQEPRAQBAYNzgRQCihcCJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEFA?=
- =?us-ascii?q?QEFAQEBAgEHBRQBAQEBAQEBATcFSYYIhlwBAQECATIBRgULUVaDGoJCIwIBr?=
- =?us-ascii?q?XWCLIEB3jOBbBiBMIgxgQ2EBXCEdycbgUlEhH2FEIV3BIERkHeLaiWBIogli?=
- =?us-ascii?q?CeIaUiBIQNZIQIRAVUTDQoLCQWJNYIDgSMpgWuBCoMLhSWBZwlgiEqBBy2BE?=
- =?us-ascii?q?YEfOoICgTZKhUZHP4JLa045Ag0CN4IlgQiCVoVkQAMLGA1IESw1FBsGPm4Hs?=
- =?us-ascii?q?hemY6B9hCKEb5xNGjODcgGmVy6HY5Blo0luhGaBZzqBW3AVgyNRGQ+OOsYPI?=
- =?us-ascii?q?3ACBwsBAQMJhkiHQwEB?=
-IronPort-Data: A9a23:800wF6K4xazUqug/FE+Rh5UlxSXFcZb7ZxGr2PjKsXjdYENSgzEHy
- 2FJXmqHbP+JM2f3c9x/PY20oEME78eAm4MwTAQd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
- 63yUvGZcYZpCCWa/k79WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVrU0
- T/Oi5eHYgP8g2Yrajt8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKqFIHvS3T
- vr017qw+GXU5X8FUrtJRZ6iLyXm6paLVeS/oiI+t5qK23CulQRuukoPD8fwXG8M49m/c3+d/
- /0W3XC4YV9B0qQhA43xWTEAe811FfUuFLMqvRFTvOTLp3AqfUcAzN1jDUYGNrAV8N1nGGhfq
- +wgExUJP1e60rfeLLKTEoGAh+w5J8XteYdasXZ6wHSBUbAtQIvIROPB4towMDUY358VW62BI
- ZBENHw2ME2ojx5nYj/7DLo5m+yoi2PybxVTqUmeouw85G27IAlZiuWzaoCEJo3XLSlTtkS+v
- mWWpWC+OUo9OoauxRaO1mmRqvCayEsXX6pXTdVU7MVCn0aa7m8eEhsbUR28u/bRolG/XvpbK
- koJ6m8xpLQ59ECsQZ/6RRLQiHuFvRdaRNdLD+Ag4gyXxYLQ4gCEFi4FSCJMbJots8pebTgr0
- EKZt8nuCDds9aCOD3SQ6t+8rz+/PTYcN2IqfjIfQE0J7rHLpIA1kwKKTdt5FqOxpsP6FCu2w
- D2QqiU6wbIJgqYj06S94ECCnDuwrZjFSQEd+AraRCSm4xl/aYrjYJangWU39t5aJ4qfC13Et
- 38elo3GsKYFDIqGk2qGR+Bl8KyVC+itPTzbsVVSEpMa5y2k6iCzRbt15GA5HRI8WiobQgMFc
- HM/qCsIu8UDZyPwMPIpC79dHfjG2kQJKDgcfqm8gi51SsEpLmevpXg2DWbJhjCFraTZufxmU
- XttWZ33Vihy5GUO5GfeetrxJpdxl3BjlD+NH82gp/lluJLHDEOopX4+GAPmRogEAGms+W05L
- /432xO29ihi
-IronPort-HdrOrdr: A9a23:LrCIna2a3k8Y7aoaJVt1XAqjBIkkLtp133Aq2lEZdPWaSKClfq
- eV7ZAmPHDP5gr5NEtLpTnEAtjifZq+z+8R3WBuB9aftWDd0QPCEGgh1/qB/9SKIULDH4BmuJ
- uIWpIOb+EYdWIbsS4/izPIaurJB7K8gcaVuds=
-X-Talos-CUID: 9a23:GC6Pamxt33wLkfIhPqwUBgUZG8cVeUDQxkzAOkapV3ZRc5iRGBiprfY=
-X-Talos-MUID: =?us-ascii?q?9a23=3Acq2sfw/rZSGPo3EB+kWqL9CQf8VO+6P+UkRKqs4?=
- =?us-ascii?q?htZO1OQB7HyygoCviFw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.11,184,1725321600"; 
-   d="scan'208";a="256229495"
-Received: from rcdn-l-core-04.cisco.com ([173.37.255.141])
-  by rcdn-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 07 Oct 2024 15:57:05 +0000
-Received: from sjc-ads-3421.cisco.com (sjc-ads-3421.cisco.com [171.68.249.119])
-	by rcdn-l-core-04.cisco.com (Postfix) with ESMTP id 2A621180001B4;
-	Mon,  7 Oct 2024 15:57:03 +0000 (GMT)
-From: Oleksandr Ocheretnyi <oocheret@cisco.com>
-To: mika.westerberg@linux.intel.com
-Cc: linux@roeck-us.net,
-	jdelvare@suse.de,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	wim@linux-watchdog.org,
-	wsa@kernel.org,
-	xe-linux-external@cisco.com
-Subject: [PATCH v3] iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit() call
-Date: Mon,  7 Oct 2024 08:57:02 -0700
-Message-Id: <20241007155702.3676667-1-oocheret@cisco.com>
-X-Mailer: git-send-email 2.35.6
-In-Reply-To: <05dba51b-7c3c-4455-9c97-09777e885fac@roeck-us.net>
-References: <05dba51b-7c3c-4455-9c97-09777e885fac@roeck-us.net>
+	s=arc-20240116; t=1728316632; c=relaxed/simple;
+	bh=nBVCAnk8Hwj11FeyRJprgB1zO01uAKSCpAsH0AuQt3c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Mepi2KbLLRsqyumUVnl8HbOB1XBhBf/Rt+MXdt3ds0t3+qmeyJokTDeU3Jut3FnsrACjkSMTeofEDaML2clDUlRsO67+bfWJrSHNC7QlJmxCspOOWHClVZiSWvdTPEO0KHbhpTbKfklg5uPXp3bXhXvE1b4m3d3WnYrFuZKBVOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=rpATpm6a; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1728316623;
+	bh=nBVCAnk8Hwj11FeyRJprgB1zO01uAKSCpAsH0AuQt3c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=rpATpm6au7a9MVZBaI4VjyAZt15la1hz6X4tH3c0trwZitMxOKtscQJt5E5xbBkPC
+	 5sVIHZCFovqZ0KTeu9see/JM4LwWtWe1afmwD7SmqmkncTfl8HgPhcSV2V9bwM6eFe
+	 +gbyLDM87RN1c0J4Z9PjN4lvgOJZhMyMtQoCneeg=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id E575E4026D; Mon,  7 Oct 2024 08:57:03 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id E3ED940264;
+	Mon,  7 Oct 2024 08:57:03 -0700 (PDT)
+Date: Mon, 7 Oct 2024 08:57:03 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: "yuan.gao" <yuan.gao@ucloud.cn>
+cc: penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com, 
+    akpm@linux-foundation.org, vbabka@suse.cz, roman.gushchin@linux.dev, 
+    42.hyeyoo@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: =?ISO-8859-15?Q?Re=3A_=5BPATCH=5D_mm=2Fslub=3A_Avoid_list_corru?=
+ =?ISO-8859-15?Q?ption_when_removing_a_slab_from_the_full_?=
+ =?ISO-8859-15?Q?list=A0_=A0?=
+In-Reply-To: <20241006044755.79634-1-yuan.gao@ucloud.cn>
+Message-ID: <1f785dc2-15c1-930c-4f10-6210fca38f37@gentwo.org>
+References: <20241006044755.79634-1-yuan.gao@ucloud.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 171.68.249.119, sjc-ads-3421.cisco.com
-X-Outbound-Node: rcdn-l-core-04.cisco.com
+Content-Type: text/plain; charset=US-ASCII
 
-Hello Mika,
+On Sun, 6 Oct 2024, yuan.gao wrote:
 
-> I suggest adding some #define for the magical number 8 so that it is
-> easier for anyone looking at this driver to figure out what it is doing.
+> If allocated object failed in alloc_consistency_checks, all objects of
+> the slab will be marked as used, and then the slab will be removed from
+> the partial list.
 
-Are the changes with #define NMI_NOW bit fine for you?
+Yea so the intend is to isolate the corrupted slab page. There could be
+more corrupted data on the page.
 
-Best regards,
-Oleksandr
+> When an object belonging to the slab got freed later, the remove_full()
+> function is called. Because the slab is neither on the partial list nor
+> on the full list, it eventually lead to a list corruption.
+
+Right. The full list is used in the debug case.
+
+> So we need to add the slab to full list in this case.
+
+That would mean to put the slab with corrupted memory back in circulation.
+
+I guess we would need some check to avoid handling list operations on a
+slab page that was removed from the lists because of metadata corruption.
 
