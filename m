@@ -1,142 +1,165 @@
-Return-Path: <linux-kernel+bounces-353376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8155992D06
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69274992D2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0B91C221BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ADD61C22743
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247091D359E;
-	Mon,  7 Oct 2024 13:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDB11D27BF;
+	Mon,  7 Oct 2024 13:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1CIejin"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AyWYXTwJ"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F711D2F7C;
-	Mon,  7 Oct 2024 13:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A1D18BB90;
+	Mon,  7 Oct 2024 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307195; cv=none; b=ShqjUFB0BskUQC4Z9huzQ3BAg8JF/jEJZfTV7+WRYB4LE2wgeZjLsYdAR5w9M1FM91+qdyGbQx79VEgRiswzi53aKlxedkbxJppGzfwLm09x0KbR/l49nwPHMZCujrc0hcybzKU3Fim3MpZ7GVY5SLuqi55qSo473KYJh75wt80=
+	t=1728307396; cv=none; b=AvJ9Ay6S0msgK/1MOGppGMBjqM793gPDs/mD730/ONVuUMVRyEO24IKhdUQaOCAP/Upu5h/ldY/TG0XxP/JBOG0wkYAnDqELXvUj2sYcDgccyPQZoYLOr6qLGHm7B94zv67vlhmL8puomiScs/q7SSVy748y07BPbhbtFQShgRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307195; c=relaxed/simple;
-	bh=/e2E4Nsq+0Xkd5BF5AuSOGCkhvFjFskozi3D9yL97JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdRaOzKFB8oz4CdCQxt0oICXnT3QIEALtdV87ncPTkT4rCUSkP6DCLIwJfbEjjcuklFgW8eOYyq8PHk9ClD4CH9WxeSGNv1wFHjhcIXpu3kBS7FQPsbba1JcGI49+UY/RtnJBGH93ODc/O9P2V5rOubspf74ziCXlmZlMM7a/qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1CIejin; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728307195; x=1759843195;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/e2E4Nsq+0Xkd5BF5AuSOGCkhvFjFskozi3D9yL97JI=;
-  b=Z1CIejinADd8ZpXr+BCqfl3GRVqNwH5Z2b+p66W09VT/IPbNwDImKnVD
-   0yLaKjjCd9ZRExGJL8MqFjXK5P+M20lG8rZOgduJsb7ip2tMC+0aLl66t
-   Qk0YHxgY22tDFQRWEbB7iiYDKL6WqT1mO4OE0fsEV9tuH0cgZjHYyHhNz
-   mTguJNC9SoD0ZIBwoG9JEy3BRJnIrG9MFpBOtTORJg2ocKrn6i6yZBTTt
-   628Fu5nZmcYSflISuFysd3qiCXSC032Ihf43ZgtoOISsSCuZcMmgQ3CeC
-   BnkvcLD/GOpWXcBhPpV9Vw+CQMsDH7FcGoHNj1R++3sk51cIl4YWTMFsY
-   Q==;
-X-CSE-ConnectionGUID: FWLPKi5wRyOE8iI46dVxxA==
-X-CSE-MsgGUID: pH2cOo3XTmaGvg4JZtq+JQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27265844"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27265844"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 06:19:54 -0700
-X-CSE-ConnectionGUID: fh6P6qQvQMq8c9iM7VC/xQ==
-X-CSE-MsgGUID: JSDqF9XzRSqXW0n+5D48+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="106306643"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 07 Oct 2024 06:19:51 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxneP-00051K-2P;
-	Mon, 07 Oct 2024 13:19:49 +0000
-Date: Mon, 7 Oct 2024 21:19:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 4/4] power: supply: hwmon: move interface to private
- header
-Message-ID: <202410072120.3jlD28CJ-lkp@intel.com>
-References: <20241005-power-supply-cleanups-v1-4-45303b2d0a4d@weissschuh.net>
+	s=arc-20240116; t=1728307396; c=relaxed/simple;
+	bh=sRmBF0SeDxIe13YKtx2EtfkkIJUtFxsFcv9CqtdHrWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F4kjdrNYS/9L7VvBV1iVaUx+kanln1fcO+XoWupLfbDC58YEb5mkE4gL/0IL4hAPyawTYd4XGk12uRFh4epGGkCGakvHb6jet5+mk0zRMyfhwxXXkd9n50riBcvlQ3A2vst2m9jmKBvvr0rpn4e0ckKDq5ruJp0aRd9MkbeTRUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=AyWYXTwJ; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728307387;
+	bh=sRmBF0SeDxIe13YKtx2EtfkkIJUtFxsFcv9CqtdHrWc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AyWYXTwJOIFfM7YA1yH4qyX7HNVcKXqEM4mCxsjzbyARw0JbSu6tFCQQ0Sb+4dlqy
+	 jRZPbEZYqmCHCjthBX20tX0mRy5Ep4EtS/oSxnpF5mFsqJAa0Nr3N1cfyV15Kt97HY
+	 03gWmio+WUfLakdU6X5Faq04FaFQurydsCXRm96/eynaKzgyDrCQpkB49u8SF37r4Z
+	 d0G4N8+u9zBPCTVTTe1QSMYn5JPmledg4ZDThF3pQU2+pym6uXP5Tz9crKGDB4A+3v
+	 GqeaJsozz8mnEVjNf6Xa/wGYiPTtoFlSmw6/yhhxd8E2jjW3Il7cDFDXp/ccGZBH4E
+	 xyjyfI+YHyiqQ==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XMfwV3qDnz2kt;
+	Mon,  7 Oct 2024 09:23:06 -0400 (EDT)
+Message-ID: <b9e83fb9-c413-4b81-be7d-ddd5f670c773@efficios.com>
+Date: Mon, 7 Oct 2024 09:21:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005-power-supply-cleanups-v1-4-45303b2d0a4d@weissschuh.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: David Laight <David.Laight@ACULAB.COM>,
+ 'Jonas Oberhauser' <jonas.oberhauser@huaweicloud.com>,
+ 'Alan Stern' <stern@rowland.harvard.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ "maged.michael@gmail.com" <maged.michael@gmail.com>,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
+References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+ <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+ <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
+ <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
+ <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
+ <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
+ <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+ <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
+ <6ae2461a-e509-4c4d-8959-ae17eb214419@huaweicloud.com>
+ <43788527053542e78001820857445e4d@AcuMS.aculab.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <43788527053542e78001820857445e4d@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On 2024-10-07 15:18, David Laight wrote:
+> From: Jonas Oberhauser
+>> Sent: 07 October 2024 12:55
+>>
+>> Am 10/3/2024 um 3:23 PM schrieb Mathieu Desnoyers:
+>>> What _does_ work however are the following two approaches:
+>>>
+>>> 1) Perform the equality check on the original variables, creating
+>>> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
+>>> rest of their use, therefore making sure the pointer dereference
+>>> are not derived from versions of the variables which were compared
+>>> with another pointer. (as suggested by Boqun)
+>>
+>> This should not be guaranteed to work, because right after the
+>> comparison the compiler can do b=a, then it doesn't matter how much you
+>> hide afterwards.
+>>
+>> However it might work if you escape the addresses of a and b first, in
+>> which case the compiler will not do b=a anymore, but it might force the
+>> compiler to put a and b on the stack, which has some performance impact.
+> 
+> Nope, as pointed out last week, the compiler can move the 'a == b'
+> check to before the OPTIMISER_HID_VAR() and then use the same register
+> for both of them.
 
-kernel test robot noticed the following build errors:
+Yes.
 
-[auto build test ERROR on 27cc6fdf720183dce1dbd293483ec5a9cb6b595e]
+> 
+>>> 2) Perform the equality check on the versions resulting of hiding
+>>> both variables, making sure those versions of the variables are
+>>> not dereferenced afterwards. (as suggested by Linus)
+> 
+> That (and other things) could usefully use:
+> #define OPTIMISER_HIDE_VALUE(x) \
+> 	({ __auto_type _x = x; OPTIMISER_HIDE_VAR(_x); _x; })
+> You'll almost certainly end up with a register-register move
+> even if 'x' isn't used afterwards.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/power-supply-core-use-device-mutex-wrappers/20241005-181114
-base:   27cc6fdf720183dce1dbd293483ec5a9cb6b595e
-patch link:    https://lore.kernel.org/r/20241005-power-supply-cleanups-v1-4-45303b2d0a4d%40weissschuh.net
-patch subject: [PATCH 4/4] power: supply: hwmon: move interface to private header
-config: x86_64-randconfig-003-20241007 (https://download.01.org/0day-ci/archive/20241007/202410072120.3jlD28CJ-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410072120.3jlD28CJ-lkp@intel.com/reproduce)
+Yes.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410072120.3jlD28CJ-lkp@intel.com/
+> 
+> The calling could just become:
+> 	if (a == OPTIMISER_HIDE_VALUE(b) ...
+> since it is likely that you only care about one of the pointers.
+> (Actually isn't hiding one of them always enough?)
 
-All errors (new ones prefixed by >>):
+Linus asked that we hide both inputs, otherwise it's really asking
+for trouble in terms of API misuse.
 
-   In file included from drivers/power/supply/power_supply_hwmon.c:12:
->> drivers/power/supply/power_supply.h:41:20: error: redefinition of 'power_supply_update_leds'
-      41 | static inline void power_supply_update_leds(struct power_supply *psy) {}
-         |                    ^
-   drivers/power/supply/power_supply.h:41:20: note: previous definition is here
-      41 | static inline void power_supply_update_leds(struct power_supply *psy) {}
-         |                    ^
-   In file included from drivers/power/supply/power_supply_hwmon.c:12:
->> drivers/power/supply/power_supply.h:42:19: error: redefinition of 'power_supply_create_triggers'
-      42 | static inline int power_supply_create_triggers(struct power_supply *psy)
-         |                   ^
-   drivers/power/supply/power_supply.h:42:19: note: previous definition is here
-      42 | static inline int power_supply_create_triggers(struct power_supply *psy)
-         |                   ^
-   In file included from drivers/power/supply/power_supply_hwmon.c:12:
->> drivers/power/supply/power_supply.h:44:20: error: redefinition of 'power_supply_remove_triggers'
-      44 | static inline void power_supply_remove_triggers(struct power_supply *psy) {}
-         |                    ^
-   drivers/power/supply/power_supply.h:44:20: note: previous definition is here
-      44 | static inline void power_supply_remove_triggers(struct power_supply *psy) {}
-         |                    ^
-   3 errors generated.
+Thanks,
 
+Mathieu
 
-vim +/power_supply_update_leds +41 drivers/power/supply/power_supply.h
-
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  40  
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @41  static inline void power_supply_update_leds(struct power_supply *psy) {}
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @42  static inline int power_supply_create_triggers(struct power_supply *psy)
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  43  { return 0; }
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04 @44  static inline void power_supply_remove_triggers(struct power_supply *psy) {}
-4a11b59d828366 drivers/power/power_supply.h Anton Vorontsov 2007-05-04  45  
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
