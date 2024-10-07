@@ -1,193 +1,121 @@
-Return-Path: <linux-kernel+bounces-353051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033A39927AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:58:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D459927B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127411C22472
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AB1F21301
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358E122087;
-	Mon,  7 Oct 2024 08:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0201818BC3B;
+	Mon,  7 Oct 2024 08:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SAc+TxDs"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FY0NUkdW"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D328418BBA6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3BF136354
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291477; cv=none; b=btXUJ8dknEmqlR+W4d5Y+N3USnFYV65MfusAYuYcIJpTSBQgey7Fq6l/Z5GuAY6MPE9KEuBvrtMu3F7gK/ccfvtSIRGCdMSqT/Lg3lKufBmWdO7PSmNFocG0PdDl/grXij1eZIb0D3E3EEHvcFvzt10iYIlyfk1QtudX3Q/f3lQ=
+	t=1728291552; cv=none; b=uc/xweGZNSfZTlqervDrCtSh5XS6dgf71UQdlPyw+kE8V6SGTLAFpjnLOw43jqevTvJmfSUUrIDXpLk+QjASr70AIcHkBjRIlsrSsETPGnImpG9xGM4CwQvT9tvi1E6+sjvcKnhe4Q36uQsmk4naVY+qh7k9cB7M/IHqrqzYgXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291477; c=relaxed/simple;
-	bh=o6axreySiLiy8tZaDub/QM2xsjgpMHcq9uLIaP5eleo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AaFgXL6QaLp05EqsxWuYjNODlMOnV4p1DDpNv1tIe4z4ep5G9Ea0lnPqwF8rGwYOiUVsmidUSEQDOClJSqKfyahJhoWS1Ai6FEJfsCd1QSrA77Bn3nOYrLeS2xoLy8mxWzWz3BLdY93lXvRFK1nRhUy4m0SONhYY31jKy/eB18g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SAc+TxDs; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1728291552; c=relaxed/simple;
+	bh=vhhuZVVwnO9dfXwZL4BPPOq+7WM0qmen7HXYMzh80ho=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=e2zjuy99cELq+f4Oum7NCaI+KUAs0n7FZmrx7tqITHIvFAPerDN1blWe6qHWrRITthnvJvEELGMTEVSiTi8/RNt3sQahYQ/B/CM2uQjwGrp04CDjove9l/tjGMrga8QAuLL2czSnzbzQm1UHa7LQEuCP2HaxUQvcNLz9PcvthX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FY0NUkdW; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so35400795e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:57:54 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so6794015a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728291473; x=1728896273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TGBBMU8rFx26oRjbd1HxpI/xco3E3mGApwngB2hx0UA=;
-        b=SAc+TxDsNzFyGot0PfbWfmi7bonOOMeRG1X/EmKs7a/ycBoENToS9kkShgXgW6hQig
-         swKmfasdkoR4Y/dNIHZUcdR5P9/ovo33iX5OWBRKYwRWN5oejMt6ClgKBWUnfW8emxc8
-         tv6ZMX1Pbet0Mwhf6jvBi3ZsdjIid1h3zjyG3WBdocKFx06PShmW6BkS9Vz9LSpJKrmi
-         frwcIUa3v0HmxHUeAJv9osvRBds+BTx+vBA2VgryxWZydOxH9wAPIPGkYUblemmW16ZF
-         g4Bm3V52qfBNVM7tN4icd8fmk7lmpmHXUzIWs4UOdCTO3mefbSsur5uF33eGXhtRGVYE
-         e41g==
+        d=linaro.org; s=google; t=1728291549; x=1728896349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IEo25s673HAsL8MUxp/tEnXdM7P0s/y6pLj2SqPSQGU=;
+        b=FY0NUkdW9VsHnx0Tuzc3AaS01od3tHucAsfABmrWbC1O4tMBInkaTdLyYnckyowz0h
+         trOM1jDSipimBbaNmGqoD983WUMfY2Yp6WF6tNBZ0uHg0mC2UwnJP22cycNVNPmihmep
+         yxswevz8hbyC1+X6ZMjlvxuDWzC39rMRE+qc/Do2m9J+FQFfLEDXPoywO6nirI7Ik4HN
+         eBpSyVLN+rEMj1PF4pgsaW3LMiEKi/j0kbbjxLXXJSw0eJ2v/d0Sma/N4x+GhM5MxriI
+         aoabbrFN/7bJY59qVaPq6o1E9eRbr7mnLaa+UG8i1449OT/ALrRTWaxOJN/Vaye8DsWM
+         GXrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728291473; x=1728896273;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TGBBMU8rFx26oRjbd1HxpI/xco3E3mGApwngB2hx0UA=;
-        b=bs7wYFmCj+7roaEK4c9mvffEhz7pUX8zCYTvcKreteXTBkTL7ksx0sFLbGMW/Zg7ou
-         I70S5xHeVH1skoCtfr7gP/MfpMVmE3sZCBNISKSXwXWPOUNwMYl0FZhpIJMCJ2jOxvv7
-         cNFHP9K5cgeOFhdYbiTFUWOWvu12bJGIkcbE4MCNPuojNoM+6oSBnqSig7jjyTXueiz2
-         yB8weMeeztc3ALBcgjkiQMWMVVOMlVIpd29he6W2mSKlAycw7PN8ZEJl4t9sE+kqd0Bt
-         R0LagnbMcT8wL2efQAABBL1TJLgAPcHf97IyrTU0kInaYJrSUxQQHzRxBUyqV+giCgqD
-         cZNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkEvgZvyP21VYKdSSZXr/OmSoSKKVel3Ds6aBhwLCs56bBkFRKbFb3OHb6v7yS5yrxRpggR9lV5UZrcEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Qmj4BZAZ0cyaZBdOyEZCM563jIYZZxHY/8BstzdlWRmEU+PZ
-	dYJAQ5mDQwK143PYHcGOmjCYVVv4oudJTP4ewnbRCVB4qxrRTFsxVRM96rMgAMM=
-X-Google-Smtp-Source: AGHT+IHb6K+lD/kBzplnC0Ubjz9+HYTIZIIEg6E9T40OzxD0plJXKDgFKpCxd+La0sGXCiOa+xkq+g==
-X-Received: by 2002:a05:6000:4008:b0:371:8688:1660 with SMTP id ffacd0b85a97d-37d0e8f730fmr7003939f8f.51.1728291473181;
-        Mon, 07 Oct 2024 01:57:53 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a55csm5206567f8f.37.2024.10.07.01.57.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 01:57:52 -0700 (PDT)
-Message-ID: <f2db1521-0fc4-4cc7-b195-498e2a900191@linaro.org>
-Date: Mon, 7 Oct 2024 10:57:51 +0200
+        d=1e100.net; s=20230601; t=1728291549; x=1728896349;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IEo25s673HAsL8MUxp/tEnXdM7P0s/y6pLj2SqPSQGU=;
+        b=foLN6i42CT9Ot++y1kKlsos+93S+3UW1TlHkcIUnluXmZ+7WfxVe5+ltVxEA6i1XAZ
+         IH1kK+3TReFR1lDul2gIp5jDTj3DGEw8Fr2a9kx62in5fWtjwWg1sa9X/85I2F+CUXIP
+         tj13BOJFY718tA+4It78MJXkegyNaufYA9YORJ1aoFPIIYZJJaULiqwN3FVygb9+w+VU
+         +wuS6x3ibcmpR21mDnErn8Df5nV2ELqlxG3B/Ue8bt0+tIPrCpAFWQt3QK9J4mOg/Le5
+         M7Sz4gN5zcUVRBC9bKdsOLakm4TjSk2a4qhCAgdzMUHfOmKaZ5Xk8F+tDqdy3a9S6M8Q
+         IcaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHostZV+w0t1IJPIn03Bkt7VfwK0lkA0uJl+dgiPTvuTFcLchm60JuuAdMW3TtLLU11kF0U4Aa761O7v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytAwm1F/bkHdmuuF3SC8p6fTYtXK9ox+JbPQD8jnHYrd40TSgU
+	Yyd086ia1vF5zrT6/YLVcM80B/m+AFKLI6JVMXUquoQgYzPvLaXvbwEgD4pFW04=
+X-Google-Smtp-Source: AGHT+IFU35Uj2Uq4VSqbgLsUfMd1Mq0DfRI0CmQV3Jy3ET9jvkDSaLfTKu2e8F8U7CjKUALIfZjH3Q==
+X-Received: by 2002:a50:cbc7:0:b0:5c8:d9b8:9325 with SMTP id 4fb4d7f45d1cf-5c8d9b89425mr8000657a12.5.1728291549092;
+        Mon, 07 Oct 2024 01:59:09 -0700 (PDT)
+Received: from [192.168.68.111] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05945c3sm2947257a12.18.2024.10.07.01.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 01:59:08 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <cover.1727963347.git.geert+renesas@glider.be>
+References: <cover.1727963347.git.geert+renesas@glider.be>
+Subject: Re: (subset) [PATCH v3 resend 0/7] Add Renesas R-Car Gen4 E-FUSE
+ support
+Message-Id: <172829154816.179131.15672013040030058967.b4-ty@linaro.org>
+Date: Mon, 07 Oct 2024 09:59:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: mmc: document mmc-slot
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
- <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-2-5aa8bdfe01af@linaro.org>
- <5o2q5kmchnr3e4opmtp2xq3xqlzkq2hudecd5fszamoav4twhb@o3kcftkoxwzg>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <5o2q5kmchnr3e4opmtp2xq3xqlzkq2hudecd5fszamoav4twhb@o3kcftkoxwzg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
-Hi,
 
-On 24/09/2024 11:15, Krzysztof Kozlowski wrote:
-> On Fri, Sep 20, 2024 at 10:38:04AM +0200, Neil Armstrong wrote:
->> Document the mmc-slot, which is a subnode of a multi-slot
->> MMC controlle, each slot is represented as a full MMC controller,
+On Thu, 03 Oct 2024 16:04:24 +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> typo: controller
+> (another rc1, so time for a resend)
 > 
->> the top node handling all the shared resources and slot mux.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   .../devicetree/bindings/mmc/mmc-slot.yaml          | 40 ++++++++++++++++++++++
->>   1 file changed, 40 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
->> new file mode 100644
->> index 000000000000..c30eda4fd2a6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
->> @@ -0,0 +1,40 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mmc/mmc-slot.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MMC/SD/SDIO slot of a multi-slot controller
->> +
->> +maintainers:
->> +  - Ulf Hansson <ulf.hansson@linaro.org>
->> +
+> R-Car Gen3/Gen4 SoCs contain fuses indicating hardware support or
+> hardware parameters.  Unfortunately the various SoCs require different
+> mechanisms to read the state of the fuses:
+>   - On R-Car Gen3, the fuse monitor registers are in the middle of the
+>     Pin Function Controller (PFC) register block,
+>   - On R-Car V3U and S4-8, the E-FUSE non-volatile memory is accessible
+>     through a separate register block in the PFC,
+>   - On R-Car V4H and V4M, the E-FUSE non-volatile memory is accessible
+>     through the second register block of OTP_MEM.
 > 
-> description here saying what is the MMC slot, e.g. what you wrote in
-> commit msg.
+> [...]
 
-Right will fix the description, bad copy paste
+Applied, thanks!
 
-> 
->> +allOf:
->> +  - $ref: mmc-controller.yaml
->> +
-> 
-> Just to be sure - the slots do not have dedicated resources like clocks,
-> resets, power supplies, right? IOW, it is indeed one device which
-> exposes multiple controllers?
+[1/7] dt-bindings: fuse: Move renesas,rcar-{efuse,otp} to nvmem
+      commit: 149e83f1b385661cae3a60cf27271e6ee53ea6e3
+[2/7] nvmem: Add R-Car E-FUSE driver
+      commit: 5ac5933d4e06647b83f6b971b18bc894903a83f2
 
-Yes exact, resources are common to the slots
-
-> 
->> +properties:
->> +  compatible:
->> +    const: mmc-slot
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +unevaluatedProperties: false
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
