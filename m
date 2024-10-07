@@ -1,165 +1,193 @@
-Return-Path: <linux-kernel+bounces-353050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35299927AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033A39927AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2DB2B2379F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127411C22472
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED4C18C015;
-	Mon,  7 Oct 2024 08:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358E122087;
+	Mon,  7 Oct 2024 08:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cW9dHO6j"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SAc+TxDs"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D7818BBA6;
-	Mon,  7 Oct 2024 08:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D328418BBA6
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 08:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728291451; cv=none; b=m5dNPoKRAY0iqzvRH1IYEvQ4f4de7eCQuoMD9bvEL4EGPxNlyIfsEQ2BEDAVzMPQSTJwAOE9+INwGvq5m8nEFvzRPmf0NzVW+w0AnFaGw/o0x92sHhBBbQgMWKrjd0okMMZl8gfWp946s04hL9Dbn4OQ49Dg/Z0TcyzqhWyUzVA=
+	t=1728291477; cv=none; b=btXUJ8dknEmqlR+W4d5Y+N3USnFYV65MfusAYuYcIJpTSBQgey7Fq6l/Z5GuAY6MPE9KEuBvrtMu3F7gK/ccfvtSIRGCdMSqT/Lg3lKufBmWdO7PSmNFocG0PdDl/grXij1eZIb0D3E3EEHvcFvzt10iYIlyfk1QtudX3Q/f3lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728291451; c=relaxed/simple;
-	bh=kpGCHjdO/uo/RWuVF3NujSAO+/m1dj9JeJMwnwS0k20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7PqvPFsgCJnKQTC9ZdJNJo8/oCqD+r9DxJ9v6wm60hlonsjYNsFYS3ytgclYl5kDYA0Dh/O+GKFf8Rrv0Kk5VUQKv79zyxixhFxwroMoxkcacmmI87ONTaJ2edCQTnOjDVlhVlIos+GstN3Q0kHx6QnR3De+GgwSAqTLT+4c4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cW9dHO6j; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e137183587so3463287a91.3;
-        Mon, 07 Oct 2024 01:57:29 -0700 (PDT)
+	s=arc-20240116; t=1728291477; c=relaxed/simple;
+	bh=o6axreySiLiy8tZaDub/QM2xsjgpMHcq9uLIaP5eleo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AaFgXL6QaLp05EqsxWuYjNODlMOnV4p1DDpNv1tIe4z4ep5G9Ea0lnPqwF8rGwYOiUVsmidUSEQDOClJSqKfyahJhoWS1Ai6FEJfsCd1QSrA77Bn3nOYrLeS2xoLy8mxWzWz3BLdY93lXvRFK1nRhUy4m0SONhYY31jKy/eB18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SAc+TxDs; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so35400795e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 01:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728291449; x=1728896249; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BItnmLiFpdp+oHJs3c/Wx0gYeM6qW5xxVzKlwJ1FPGY=;
-        b=cW9dHO6jUTTrXjpl82Y0ca8dnuo5zOYM/qHQ3vOAEukmTB5RLShonQrbF6De76JNQY
-         AnsQPayRzceYepQsWT1SvnVB9VDeQ6Ebwin6J8xPYSMQtOT3bU2kHWqptGEwTlpjpaoQ
-         DmXLz9qJMzgBPQNns4lRqx6Jsj2EpC3S87JyitZ92Xy/sHngvxsSaVD24u4QTp7eVHCS
-         TKyYCZ402Xy+G1kIvbq0MhnCXP8AkyhYd3UxoU0Gy48jr5htJV1WBdyUfHb1tUFd9ZNQ
-         uCfLYWM6AHRTuAEcrsehpzSWmlkWF2UwCbk7onVBAUVQwwxxOXe5CpNluKQbnVNoP1U6
-         A1nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728291449; x=1728896249;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1728291473; x=1728896273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BItnmLiFpdp+oHJs3c/Wx0gYeM6qW5xxVzKlwJ1FPGY=;
-        b=Wmy/vqcziIxP+7BArlSXfK1VHqfuCnR2uStSigIrn5E08g11YaJSIOWFfh1to5b7OG
-         HF/yjAO3uhbn7WaAUsaRubxCGE/0gDd7Xra41oWISNdwoXKNACJ0EYB3SxUVWHlhoi2r
-         IJSj0UbTZw8TFKdDaMW4+4pYmWGk/d4598Pl23z7LCdU59TaC3bbF6035o3oBZ9wnRBe
-         43x0b18/HSnH/Hp0l9CVWaTvNkOwOGzJ3/YMBNzhb4PqUOgqh6WYi0wrGOlqzyNxD0b2
-         BQFIFSJxdoj+wvw1jZ4E7zf1kjXY3yjYfExG+ohKkdSsDAc8Qfgjx/AC+UgmsabRh48h
-         gIGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbN3/P5UMyw5F0HKM1NHqq8KJz3Kjt5GZesW9fuw1yb/xATAb00KXxPH9AJxARCQzRPb0bI0nj@vger.kernel.org, AJvYcCWe8w1Tu1XGxm3KZJ75AHdGRLuyhekU6tz92JrSg6WHbukPXbCYz7X1qFo5eKxd0T3yr42LRilXJNbvV+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlJAmU7WFa4hU/K1yhN9zGq/G7XsOA7TLZW5yudgQBkatgAq0W
-	hmetEzqluskA0NpJqR2cNqn0nlDiyhZPNbc8FFn1jZDhbci7qJW9ZVwndsH238hHS0lTaQ/sTdC
-	6+UtOu0CvUU0cmbCHIMC921dxUdw=
-X-Google-Smtp-Source: AGHT+IEXWmQV0bh6jO3MKbhqkKxGQEjbmFmz4MGs5ETbgrmLuMpRzBG54K0IsT96JLIWKcCQ8RsDwafu2u4Z7SklZGk=
-X-Received: by 2002:a17:90a:b015:b0:2e1:ce67:5d2e with SMTP id
- 98e67ed59e1d1-2e1e6213b03mr16405915a91.5.1728291448818; Mon, 07 Oct 2024
- 01:57:28 -0700 (PDT)
+        bh=TGBBMU8rFx26oRjbd1HxpI/xco3E3mGApwngB2hx0UA=;
+        b=SAc+TxDsNzFyGot0PfbWfmi7bonOOMeRG1X/EmKs7a/ycBoENToS9kkShgXgW6hQig
+         swKmfasdkoR4Y/dNIHZUcdR5P9/ovo33iX5OWBRKYwRWN5oejMt6ClgKBWUnfW8emxc8
+         tv6ZMX1Pbet0Mwhf6jvBi3ZsdjIid1h3zjyG3WBdocKFx06PShmW6BkS9Vz9LSpJKrmi
+         frwcIUa3v0HmxHUeAJv9osvRBds+BTx+vBA2VgryxWZydOxH9wAPIPGkYUblemmW16ZF
+         g4Bm3V52qfBNVM7tN4icd8fmk7lmpmHXUzIWs4UOdCTO3mefbSsur5uF33eGXhtRGVYE
+         e41g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728291473; x=1728896273;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TGBBMU8rFx26oRjbd1HxpI/xco3E3mGApwngB2hx0UA=;
+        b=bs7wYFmCj+7roaEK4c9mvffEhz7pUX8zCYTvcKreteXTBkTL7ksx0sFLbGMW/Zg7ou
+         I70S5xHeVH1skoCtfr7gP/MfpMVmE3sZCBNISKSXwXWPOUNwMYl0FZhpIJMCJ2jOxvv7
+         cNFHP9K5cgeOFhdYbiTFUWOWvu12bJGIkcbE4MCNPuojNoM+6oSBnqSig7jjyTXueiz2
+         yB8weMeeztc3ALBcgjkiQMWMVVOMlVIpd29he6W2mSKlAycw7PN8ZEJl4t9sE+kqd0Bt
+         R0LagnbMcT8wL2efQAABBL1TJLgAPcHf97IyrTU0kInaYJrSUxQQHzRxBUyqV+giCgqD
+         cZNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkEvgZvyP21VYKdSSZXr/OmSoSKKVel3Ds6aBhwLCs56bBkFRKbFb3OHb6v7yS5yrxRpggR9lV5UZrcEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Qmj4BZAZ0cyaZBdOyEZCM563jIYZZxHY/8BstzdlWRmEU+PZ
+	dYJAQ5mDQwK143PYHcGOmjCYVVv4oudJTP4ewnbRCVB4qxrRTFsxVRM96rMgAMM=
+X-Google-Smtp-Source: AGHT+IHb6K+lD/kBzplnC0Ubjz9+HYTIZIIEg6E9T40OzxD0plJXKDgFKpCxd+La0sGXCiOa+xkq+g==
+X-Received: by 2002:a05:6000:4008:b0:371:8688:1660 with SMTP id ffacd0b85a97d-37d0e8f730fmr7003939f8f.51.1728291473181;
+        Mon, 07 Oct 2024 01:57:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a55csm5206567f8f.37.2024.10.07.01.57.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 01:57:52 -0700 (PDT)
+Message-ID: <f2db1521-0fc4-4cc7-b195-498e2a900191@linaro.org>
+Date: Mon, 7 Oct 2024 10:57:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007065307.4158-1-aha310510@gmail.com> <2024100748-exhume-overgrown-bf0d@gregkh>
-In-Reply-To: <2024100748-exhume-overgrown-bf0d@gregkh>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Mon, 7 Oct 2024 17:57:18 +0900
-Message-ID: <CAO9qdTFwaK36EKV1c8gLCgBG+BR5JmC6=PGk2a6YdHVrH9NukQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: remove the newlines, which are added for unknown
- reasons and interfere with bug analysis
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: akpm@linux-foundation.org, usama.anjum@collabora.com, peterx@redhat.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: mmc: document mmc-slot
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
+ <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-2-5aa8bdfe01af@linaro.org>
+ <5o2q5kmchnr3e4opmtp2xq3xqlzkq2hudecd5fszamoav4twhb@o3kcftkoxwzg>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <5o2q5kmchnr3e4opmtp2xq3xqlzkq2hudecd5fszamoav4twhb@o3kcftkoxwzg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Oct 07, 2024 at 03:53:07PM +0900, Jeongjun Park wrote:
-> > Looking at the source code links for mm/memory.c in the sample reports
-> > in the syzbot report links [1].
-> >
-> > it looks like the line numbers are designated as lines that have been
-> > increased by 1. This may seem like a problem with syzkaller or the
-> > addr2line program that assigns the line numbers, but there is no problem
-> > with either of them.
-> >
-> > In the previous commit d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC"),
-> > when modifying mm/memory.c, an unknown line break is added to the very first
-> > line of the file. However, the git.kernel.org site displays the source code
-> > with the added line break removed, so even though addr2line has assigned
-> > the correct line number, it looks like the line number has increased by 1.
-> >
-> > This may seem like a trivial thing, but I think it would be appropriate
-> > to remove all the newline characters added to the upstream and stable
-> > versions, as they are not only incorrect in terms of code style but also
-> > hinder bug analysis.
-> >
-> > [1]
-> >
-> > https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
-> > https://syzkaller.appspot.com/bug?extid=fa43f1b63e3aa6f66329
-> > https://syzkaller.appspot.com/bug?extid=890a1df7294175947697
-> >
-> > Fixes: d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  mm/memory.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 2366578015ad..7dffe8749014 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1,4 +1,3 @@
-> > -
->
-> This sounds like you have broken tools that can not handle an empty line
-> in a file.
->
-> Why not fix those?
+Hi,
 
-As I mentioned above, there is no problem with addr2line's ability to parse
-the code line that called the function in the calltrace of the crash report.
+On 24/09/2024 11:15, Krzysztof Kozlowski wrote:
+> On Fri, Sep 20, 2024 at 10:38:04AM +0200, Neil Armstrong wrote:
+>> Document the mmc-slot, which is a subnode of a multi-slot
+>> MMC controlle, each slot is represented as a full MMC controller,
+> 
+> typo: controller
+> 
+>> the top node handling all the shared resources and slot mux.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   .../devicetree/bindings/mmc/mmc-slot.yaml          | 40 ++++++++++++++++++++++
+>>   1 file changed, 40 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
+>> new file mode 100644
+>> index 000000000000..c30eda4fd2a6
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
+>> @@ -0,0 +1,40 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mmc/mmc-slot.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MMC/SD/SDIO slot of a multi-slot controller
+>> +
+>> +maintainers:
+>> +  - Ulf Hansson <ulf.hansson@linaro.org>
+>> +
+> 
+> description here saying what is the MMC slot, e.g. what you wrote in
+> commit msg.
 
-However, when the source code of mm/memory.c is printed on the screen on the
-git.kernel.org site, the line break character that exists in the first line
-of the file is deleted and printed, so as a result, all code lines in the
-mm/memory.c file are located at line numbers that are -1 less than the
-actual line.
+Right will fix the description, bad copy paste
 
-You can understand it easily if you compare the source code of mm/memory.c
-on github and git.kernel.org.
+> 
+>> +allOf:
+>> +  - $ref: mmc-controller.yaml
+>> +
+> 
+> Just to be sure - the slots do not have dedicated resources like clocks,
+> resets, power supplies, right? IOW, it is indeed one device which
+> exposes multiple controllers?
 
-https://github.com/torvalds/linux/blob/master/mm/memory.c
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/memory.c
+Yes exact, resources are common to the slots
 
-Since I cannot modify the source code printing function of the git.kernel.org
-site, the best solution I can suggest is to remove the unnecessary line break
-character that exists in all versions.
+> 
+>> +properties:
+>> +  compatible:
+>> +    const: mmc-slot
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+> 
+> Best regards,
+> Krzysztof
+> 
 
->
-> Also, your changelog text has trailing whitespace, ironic for a patch
-> that does a whitespace cleanup :)
->
-
-Oops, I forgot to remove the trailing space in the patch description.
-If you absolutely must remove the space, I'll write a v2 patch and
-send it to you.
-
-Regards,
-Jeongjun Park
-
-> thanks,
->
-> greg k-h
 
