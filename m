@@ -1,167 +1,246 @@
-Return-Path: <linux-kernel+bounces-354249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A118993AAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:15:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4AB993AC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD6D1C22FD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66BA7B20A19
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE65D19069B;
-	Mon,  7 Oct 2024 23:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E59B1C3034;
+	Mon,  7 Oct 2024 23:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpXMMoUO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwhMWQRh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232D618C002;
-	Mon,  7 Oct 2024 23:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5C61C1ADA;
+	Mon,  7 Oct 2024 23:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728342905; cv=none; b=lNB+VvvoC/zc89ytp0rOCpZkOEGzL60BuIZ+Kj/iyEufLk+J7tOhtuyzoFLpuGBNylscYe9x1sAfY2NYmAVI0pjhup4mm9QRVWcg0pP3QmTBMkAlKbr+5e8COQ8jzz8PsNfVtgvhWaGvtnEs6FqMheYGP56jLbA6XHwYOoRi+MU=
+	t=1728342987; cv=none; b=NHKWs1lDwIYzbSg4V2BELnu53+2WZooi9ZLyZuMFgBuAZVKIimPp3TVNnznGOPBRRvZ2pfkbWMVR8Str/+HTV4lOWgx/UausWvO1UC2DBZ1Ct4yxqItSyBYZjcbkom8ZMyGAa1mfrEgpJBhpfqjoKd7f2RHFVUpGUEevHLrFkjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728342905; c=relaxed/simple;
-	bh=JdWjJSglb44kyO62Fro8bfFUd47NktATVZQueaOFco8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PnrQ+iAZmkV6XMUYxyq8/HvCfPX2r0bK+stoCcHVectVL3VG055P7Iw3FWU0ZY4Eg/7SaDEGsZg7OPoAmCopixuuusUTER51U5phor7HtSlOLXI+W5sA1ZrHIE4YLAe37xMYNhXbyBKFbMOxKYZmoO2fZOulUvekuJv/rU8STmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpXMMoUO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FB7C4CEC6;
-	Mon,  7 Oct 2024 23:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728342904;
-	bh=JdWjJSglb44kyO62Fro8bfFUd47NktATVZQueaOFco8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=DpXMMoUO/sMB+im79i7DRqTPxXxj2WN+dNI74h4vqz76RIZsRGbIxvCohpCkgDYP+
-	 CwwIL3/BCrXgls6dtSNDNU2w/CVjO9nHvVlDV7q/ODftckK2MypmqmRbyiG/3QSHy4
-	 woeUcU1oI/r5Kgz9NiNn2l9ADDyXTVz6HSHq46/3RV6IJVEoblNxNZxSaFLnITvV45
-	 fpypvQ241D0CTswt1HfXbgUTXZDO0OPts72Q456jdMEkUGZjDH4GaJYm5LZqlw12I6
-	 WroINCpkbb7iukYPLIewYPZ4b5Gqub4t6bMBYstDcIUSb1th5aT773tU429skEjEK0
-	 ckImOnpQfpUDw==
-Message-ID: <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chen Ridong <chenridong@huawei.com>, dhowells@redhat.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chenridong@huaweicloud.com
-Date: Tue, 08 Oct 2024 02:15:00 +0300
-In-Reply-To: <20240913070928.1670785-1-chenridong@huawei.com>
-References: <20240913070928.1670785-1-chenridong@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728342987; c=relaxed/simple;
+	bh=DUb7kz4JTXYdL6/EMDIBmQrN8NitqplSXw+fsyqrMFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHOYcxiDX6mlY/x6eVIg+50eGnrZ0K4vq3HREpT+4i1wzNL5o2yonGKMuZPPiDzV+i6PnoK/Y+0/XMRBoq1DpVt+4PORuPv6s06UcCZj/QA2d0h/RkE//GeLZbLW/AgcjFfnEMkUEibxuvnWFgmAI8lxs1S+EfdWuzIq5MSY9ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwhMWQRh; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728342986; x=1759878986;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DUb7kz4JTXYdL6/EMDIBmQrN8NitqplSXw+fsyqrMFI=;
+  b=BwhMWQRhQzOCknkg0Q+4xLKc0tAZr8oEHkNoQxjBwEbg58jrpFJrW+y0
+   vXYMUQPwhoGllMBgqAzVEvpxKqt12af20Scyi2PZ2LIc2mUmlwxZfp8wC
+   yuqKTgv0AZWGvwd9l07Xn/snPtEDz+Ags1QmE5QScPzJyxWnaNvA3uWOx
+   yfG4gKc7hKC21xmIjvo1mciOptvOih9twP0zkR/3L6DNwDD9GmtOYB5w9
+   TQPD1Hv+MMzZgUn1GqIkk3PNexzMpxdFuLUoSs7Vb2rVd/ZsEHNYoqFn0
+   DLkb6P/C+Q395i8Rde5Y+/LruDmhKyaBndhidD1wIVBh0VWHZVgmtAPLJ
+   g==;
+X-CSE-ConnectionGUID: tsgUourMTF2TnjL401mP+w==
+X-CSE-MsgGUID: soKaP/LEQwuzJ5PoJUs1cA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="50043024"
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="50043024"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 16:16:26 -0700
+X-CSE-ConnectionGUID: WdcWUlizRpy4GVkqUpX3QQ==
+X-CSE-MsgGUID: imA9qnRfQd67i0hrQfr+LA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="106479378"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 Oct 2024 16:16:22 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxwxf-0005eO-2j;
+	Mon, 07 Oct 2024 23:16:19 +0000
+Date: Tue, 8 Oct 2024 07:15:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>
+Subject: Re: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan
+ configuration in dsa_user_set_wol
+Message-ID: <202410080616.wpZV4fAa-lkp@intel.com>
+References: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 
-Hi,
+Hi Mohammed,
 
-Revisit...
+kernel test robot noticed the following build errors:
 
-On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
-> We meet the same issue with the LINK, which reads memory out of
-> bounds:
+[auto build test ERROR on net/main]
+[also build test ERROR on net-next/main linus/master v6.12-rc2 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Never ever use pronoun "we" in a commit message in any possible
-sentence. Instead always use passive imperative.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Anees/net-dsa-Fix-conditional-handling-of-Wake-on-Lan-configuration-in-dsa_user_set_wol/20241007-072229
+base:   net/main
+patch link:    https://lore.kernel.org/r/20241006231938.4382-1-pvmohammedanees2003%40gmail.com
+patch subject: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241008/202410080616.wpZV4fAa-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410080616.wpZV4fAa-lkp@intel.com/reproduce)
 
-What you probably want to say is:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410080616.wpZV4fAa-lkp@intel.com/
 
-"KASAN reports an out of bounds read:"
+All errors (new ones prefixed by >>):
 
-Right?
+   In file included from net/dsa/user.c:8:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from net/dsa/user.c:8:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from net/dsa/user.c:8:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from net/dsa/user.c:8:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> net/dsa/user.c:1220:6: error: assigning to 'int' from incompatible type 'void'
+    1220 |         ret = phylink_ethtool_get_wol(dp->pl, w);
+         |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   16 warnings and 1 error generated.
 
-> BUG: KASAN: slab-out-of-bounds in __kuid_val
-> include/linux/uidgid.h:36
-> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63
-> [inline]
-> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-> security/keys/permission.c:54
-> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
->=20
-> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
-> gafbffd6c3ede #15
-> Call Trace:
->  __dump_stack lib/dump_stack.c:82 [inline]
->  dump_stack+0x107/0x167 lib/dump_stack.c:123
->  print_address_description.constprop.0+0x19/0x170
-> mm/kasan/report.c:400
->  __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
->  kasan_report+0x3a/0x50 mm/kasan/report.c:585
->  __kuid_val include/linux/uidgid.h:36 [inline]
->  uid_eq include/linux/uidgid.h:63 [inline]
->  key_task_permission+0x394/0x410 security/keys/permission.c:54
->  search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
 
-Snip all below away:
 
->  keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
->  search_cred_keyrings_rcu+0x111/0x2e0
-> security/keys/process_keys.c:459
->  search_process_keyrings_rcu+0x1d/0x310
-> security/keys/process_keys.c:544
->  lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
->  keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
->  __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
->  __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
->  do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+vim +1220 net/dsa/user.c
 
-Remember to cut only the relevant part of the stack trace to make this
-commit message more compact and readable.
+  1213	
+  1214	static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
+  1215	{
+  1216		struct dsa_port *dp = dsa_user_to_port(dev);
+  1217		struct dsa_switch *ds = dp->ds;
+  1218		int ret;
+  1219	
+> 1220		ret = phylink_ethtool_get_wol(dp->pl, w);
+  1221	
+  1222		if (ret != -EOPNOTSUPP)
+  1223			return ret;
+  1224	
+  1225		if (ds->ops->set_wol)
+  1226			return ds->ops->set_wol(ds, dp->index, w);
+  1227	
+  1228		return -EOPNOTSUPP;
+  1229	}
+  1230	
 
->=20
-> However, we can't reproduce this issue.
-> After our analysis, it can make this issue by following steps.
-> 1.As syzkaller reported, the memory is allocated for struct
-
-"1. "
-
->   assoc_array_shortcut in the assoc_array_insert_into_terminal_node
->   functions.
-> 2.In the search_nested_keyrings, when we go through the slots in a
-> node,
->   (bellow tag ascend_to_node), and the slot ptr is meta and
->   node->back_pointer !=3D NULL, we will proceed to  descend_to_node.
->   However, there is an exception. If node is the root, and one of the
->   slots points to a shortcut, it will be treated as a keyring.
-> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
-> function.
->   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
->   ASSOC_ARRAY_PTR_SUBTYPE_MASK,
-> 4.As mentioned above, If a slot of the root is a shortcut, it may be
->   mistakenly be transferred to a key*, leading to an read out-of-
-> bounds
->   read.
-
-Delete the whole list and write a description of the problem and why
-your change resolves it.
-
-As per code change, let's layout it something more readable first:
-
-/* Traverse branches into depth: */
-if (assoc_array_ptr_is_meta(ptr)) {
-	if (node->back_pointer || assoc_array_ptr_is_shortcut(ptr))
-		goto descend_to_node;
-}
-
-So one thing that should be explained just to make the description
-rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
-not 'node'. I'm actually 100% sure about that part, which kind
-of supports my view here, right? :-)
-
-The first part of the if-statement obviously filters out everything
-that is not root (when it comes to 'node'). Explain the second part.
-At that point it is know that node is a root node, so continue from
-there.
-
-BR, Jarkko
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
