@@ -1,181 +1,151 @@
-Return-Path: <linux-kernel+bounces-354179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCDA9938CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:11:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3589938CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76442841A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388A01C23BA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 21:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247001DE4E9;
-	Mon,  7 Oct 2024 21:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB831DE4E9;
+	Mon,  7 Oct 2024 21:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+vWUbJa"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Awgs3+rR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283D7189BBD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 21:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126313698F;
+	Mon,  7 Oct 2024 21:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728335493; cv=none; b=rMWu8UJAB99effFWIptXttktxTXkL0JeWYZpz0hxcIvKBMvdwFDCPC/+aCCSDo8KogtwTXTC8gSSxGKhb3CvIbB+QgAnDUpkoidTiA/haDbaa6t1IEu23tqmWQyneH4QjYrzIMye2ACDSjUFDrZ0vajuvu5szs/9TnA/vRjsd3s=
+	t=1728335659; cv=none; b=OR5hU1gJ9UKZr8ckHnHhOb+D8di1LPyKAADJGJTaxFLqJZnhSEQrSUTTc9KA1zUN0o4huwHKs6hNWtfwU8+9h4r2GhE+0o6qXM/bGeWw+VMVwARFlEDBdOPTG/xNl9ojQ+eFOkGwnjjC1h4ltUuh1DKsK5oq3E0OhTGBKMAxSak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728335493; c=relaxed/simple;
-	bh=sz9DDKWT1VHETLFCqbVPq131ZqhABGh0WxE2TKhoAn0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FSDQg4USAWE2AD43UHkSdYiMT97omT874WefXBpmpwtwx5BvARYkeFDzkB7shNVFEnr7SQfHPffaBo5ClxdpKGmfq6JM8GwXYwjW5fEaOfVB8M+vVbvwp7zymydYiioBo+JbF9HzFBoCbHdPT8/lDREpP3iEVT/g0WxoNQxQdME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+vWUbJa; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so740121b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 14:11:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728335490; x=1728940290; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yP7B01LD6qkNHPFXhz3CUcBt6crcfzQgzq/u+GQhFQ=;
-        b=A+vWUbJazpx7dn0p51pl9GtagnAwqOJ8XQG4PFixQZnqkWfkGwMiB6gDBOxKH/GluC
-         fD56ID6C0AXd49BWt9aOCHXcTxc0B6s84w0DJps+5412K4p8Sf1vVXTWGQHU/eRPvWXz
-         GfSj7TYZjBKy+gbjdqnpfK4JrAda8/9Pp4I95941GG5NSUgDDr+wqdZK3Scsmk0ek37M
-         O5gACyY6ZD+MBYrZc+fgnVBgEtmSAbWIVR4L9fBSHqaZrvM5KLIy/mftsWR5OQW0tMlj
-         Trj44pLm1AEMBKMv+nU86qW0H26dESLpJKjsQJp4X+ES/yIHCjvdW7Yd7USUGLdFT5JW
-         XVtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728335490; x=1728940290;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5yP7B01LD6qkNHPFXhz3CUcBt6crcfzQgzq/u+GQhFQ=;
-        b=MX1wZkcd7pfSE3jnoqEqyedbZUUDZlRaN1F7JlmBWuBSGPShCDzb/mggUxIVa4X9a0
-         D45V2OCFejM7irstM5UwAxBj3kTf3ydKBV8b58P2e0dkSkMCPCPnNksDwkf8qNbhw6EJ
-         MohYjH/rfuGcyI0CotnzOU0/4p6q/z+wGCZlPnHhKP0mTB+hNRsFtvR1yr3QPuiCp+jB
-         3osSM/tkHZI3OAoJuLQTzvEpQKJaqEpctt3aT2h9F5d2P4bSYTL0BsqqaYq0Ah2lGfdO
-         Jye508ajIQxZZaqE3PuiCfBV9lYvlJ2qfeHIyjcJ22fOhZuwG8IXQh82jYScRuxnZovl
-         sIWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlooYJxzlUDlR03PL/++vGEYOo6zuoz80zAcU69zlM5xPL0o/EUDYmI4ESG4G2x+5ZEjEkRpGeF5CqTWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRUtXe9+LNDK2eRUwJKvJlkFQOzqMyBkPIzIu3TsBINMAUcFtN
-	KDCBrmu2tiVgvAQrDGcjUbph+ol2y+Kl8gi9jK/3/V6f4nC/IsmS
-X-Google-Smtp-Source: AGHT+IH1UetA9aKyQtikclFIZtNCTgkLFOvfZ75fc4oZ3DIZYFDnTMjqaquTnyik04QM3lOoWxKcSg==
-X-Received: by 2002:a05:6a00:3a14:b0:717:9768:a4f0 with SMTP id d2e1a72fcca58-71de22eb62bmr22422672b3a.0.1728335490010;
-        Mon, 07 Oct 2024 14:11:30 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:3f:c655:c818:c41d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4adeasm4638192a12.84.2024.10.07.14.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 14:11:29 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: jonathankim@gctsemi.com,
-	deanahn@gctsemi.com,
-	gregkh@linuxfoundation.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1728335659; c=relaxed/simple;
+	bh=myn0LaGgPDnuYmsJ3XpcmcFx6LG52VM3eP42s2hw6l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7+9DwKiZZP7RiZiZD81qj9q1jQhahZBBv3JobW4vaHGsMTJzQH+Q25nYepcTNq9APCOZiVf9dOCyrE8Mcbd8gp1MfxuF6GSOBxIBSd+gPQqSzkMeObofzW+XMIqmuzk+G8c8yl1t1Q4/1dsg1ay2Cxm8AOJ0NnF55ru+u5W7HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Awgs3+rR; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728335658; x=1759871658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=myn0LaGgPDnuYmsJ3XpcmcFx6LG52VM3eP42s2hw6l0=;
+  b=Awgs3+rRGykgiedv/DnzxjZNbFBWj1d7eIDBm3c60AfJ8lTho/hrbumD
+   ty0akVNHk8lLbVLXUPEe+hwoLYkNraSHeH6uUflrZ5HQGqOGDzC0KyPC9
+   obPzzE4iVIsd1cEH8uVwsiF98qTx/unRGqt2HfqF4LSts8h/liIEMg+/Q
+   MfTTsEXIUZNBN1M9g64WQ8G0MPusCg19usrC0loKB7f5s2vrMma4S+/AD
+   BuEEjajUkdo3C+ni58uFbeYKZ0bXUnMMekj0VM5/w844Lbcskv4jpjhzS
+   s/8cbB2qRFQLaygtTvomZWkFxwmgqORXyImxC2/9W+RnHPhUN4C3eJePP
+   g==;
+X-CSE-ConnectionGUID: StKMNmeAQFS+VmvB84buiA==
+X-CSE-MsgGUID: 8dO76rGRTZOkEcvIyHNwvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="26963069"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="26963069"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 14:14:18 -0700
+X-CSE-ConnectionGUID: mE9aykswSt2I/Ex5Ki+iOQ==
+X-CSE-MsgGUID: g3j6tNFlT5KZ7UdNFjCdyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="79590986"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Oct 2024 14:14:15 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxv3V-0005Wu-0C;
+	Mon, 07 Oct 2024 21:14:13 +0000
+Date: Tue, 8 Oct 2024 05:13:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: gdm724x: fix returning -1 with return equivalent errors
-Date: Mon,  7 Oct 2024 18:11:24 -0300
-Message-Id: <20241007211124.170540-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Cc: oe-kbuild-all@lists.linux.dev, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>
+Subject: Re: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan
+ configuration in dsa_user_set_wol
+Message-ID: <202410080459.sbnWWj91-lkp@intel.com>
+References: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
 
-As in the TODO file, use proper error codes from PM callbacks and init.
+Hi Mohammed,
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-Changelog
-    v2 minor changes at packet_type_to_tty_index() and gdm_usb_lte_init()
-    v1 https://lore.kernel.org/linux-staging/20241004203458.6497-1-rodrigo.gobbi.7@gmail.com/T/#m258452a56ddade60b2209479f036213e72d43f02
----
- drivers/staging/gdm724x/TODO      |  1 -
- drivers/staging/gdm724x/gdm_mux.c |  6 +++---
- drivers/staging/gdm724x/gdm_usb.c | 10 ++++++----
- 3 files changed, 9 insertions(+), 8 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/staging/gdm724x/TODO b/drivers/staging/gdm724x/TODO
-index b2b571ecb063..56a415b9dcbe 100644
---- a/drivers/staging/gdm724x/TODO
-+++ b/drivers/staging/gdm724x/TODO
-@@ -2,7 +2,6 @@ TODO:
- - Clean up coding style to meet kernel standard. (80 line limit, netdev_err)
- - Remove test for host endian
- - Remove confusing macros (endian, hci_send, sdu_send, rcv_with_cb)
--- Fixes for every instances of function returning -1
- - Check for skb->len in gdm_lte_emulate_arp()
- - Use ALIGN() macro for dummy_cnt in up_to_host()
- - Error handling in init_usb()
-diff --git a/drivers/staging/gdm724x/gdm_mux.c b/drivers/staging/gdm724x/gdm_mux.c
-index 9b12619671a1..82302c6266eb 100644
---- a/drivers/staging/gdm724x/gdm_mux.c
-+++ b/drivers/staging/gdm724x/gdm_mux.c
-@@ -47,7 +47,7 @@ static int packet_type_to_tty_index(u16 packet_type)
- 			return i;
- 	}
- 
--	return -1;
-+	return -ENOENT;
- }
- 
- static struct mux_tx *alloc_mux_tx(int len)
-@@ -594,7 +594,7 @@ static int gdm_mux_suspend(struct usb_interface *intf, pm_message_t pm_msg)
- 
- 	if (mux_dev->usb_state != PM_NORMAL) {
- 		dev_err(intf->usb_dev, "usb suspend - invalid state\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 
- 	mux_dev->usb_state = PM_SUSPEND;
-@@ -622,7 +622,7 @@ static int gdm_mux_resume(struct usb_interface *intf)
- 
- 	if (mux_dev->usb_state != PM_SUSPEND) {
- 		dev_err(intf->usb_dev, "usb resume - invalid state\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 
- 	mux_dev->usb_state = PM_NORMAL;
-diff --git a/drivers/staging/gdm724x/gdm_usb.c b/drivers/staging/gdm724x/gdm_usb.c
-index 54bdb64f52e8..f666fbeeb44c 100644
---- a/drivers/staging/gdm724x/gdm_usb.c
-+++ b/drivers/staging/gdm724x/gdm_usb.c
-@@ -916,7 +916,7 @@ static int gdm_usb_suspend(struct usb_interface *intf, pm_message_t pm_msg)
- 	rx = &udev->rx;
- 	if (udev->usb_state != PM_NORMAL) {
- 		dev_err(intf->usb_dev, "usb suspend - invalid state\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 
- 	udev->usb_state = PM_SUSPEND;
-@@ -952,7 +952,7 @@ static int gdm_usb_resume(struct usb_interface *intf)
- 
- 	if (udev->usb_state != PM_SUSPEND) {
- 		dev_err(intf->usb_dev, "usb resume - invalid state\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 	udev->usb_state = PM_NORMAL;
- 
-@@ -989,9 +989,11 @@ static struct usb_driver gdm_usb_lte_driver = {
- 
- static int __init gdm_usb_lte_init(void)
- {
--	if (gdm_lte_event_init() < 0) {
-+	int ret = gdm_lte_event_init();
-+
-+	if (ret < 0) {
- 		pr_err("error creating event\n");
--		return -1;
-+		return ret;
- 	}
- 
- 	return usb_register(&gdm_usb_lte_driver);
+[auto build test ERROR on net/main]
+[also build test ERROR on net-next/main linus/master v6.12-rc2 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Anees/net-dsa-Fix-conditional-handling-of-Wake-on-Lan-configuration-in-dsa_user_set_wol/20241007-072229
+base:   net/main
+patch link:    https://lore.kernel.org/r/20241006231938.4382-1-pvmohammedanees2003%40gmail.com
+patch subject: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
+config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20241008/202410080459.sbnWWj91-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410080459.sbnWWj91-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410080459.sbnWWj91-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   net/dsa/user.c: In function 'dsa_user_set_wol':
+>> net/dsa/user.c:1220:13: error: void value not ignored as it ought to be
+    1220 |         ret = phylink_ethtool_get_wol(dp->pl, w);
+         |             ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +1220 net/dsa/user.c
+
+  1213	
+  1214	static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
+  1215	{
+  1216		struct dsa_port *dp = dsa_user_to_port(dev);
+  1217		struct dsa_switch *ds = dp->ds;
+  1218		int ret;
+  1219	
+> 1220		ret = phylink_ethtool_get_wol(dp->pl, w);
+  1221	
+  1222		if (ret != -EOPNOTSUPP)
+  1223			return ret;
+  1224	
+  1225		if (ds->ops->set_wol)
+  1226			return ds->ops->set_wol(ds, dp->index, w);
+  1227	
+  1228		return -EOPNOTSUPP;
+  1229	}
+  1230	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
