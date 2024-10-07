@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-352744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4612A9923A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:37:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9319923A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6033B1C21A2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D2128299E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 04:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526EE12B143;
-	Mon,  7 Oct 2024 04:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC5813D53B;
+	Mon,  7 Oct 2024 04:38:25 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A40810A1C;
-	Mon,  7 Oct 2024 04:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564411339A4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 04:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728275859; cv=none; b=hJiDhXUs9XpBjRPE89r0vmchflabQ1agtdkEokmwBkUd0swghMcEchDvmB822B5+n27ypCWSvnO1VHHdMhXj86z1/jmAIl50nXptDyH355El7L4bro/iztwVERQpX85kf1ZcEpyBH9IlZtoMToN7qziACQMjdYX48O4ZPo3Lk+A=
+	t=1728275905; cv=none; b=hmj4jOvVqvMcNu48E65sMZbUoW98oppgo4uvRrNN9tfeBbOmxiysNViRpme6WOGnnMkMnDFV0+M9XVzkzQbKADxbWbMqe5Jf1U7DJ/xlDQNEsheVxDWPaeny/VyTdgLA3sy6qCuObVIcyEEbAXhzZrf7DvpoAOvDFLTyFOYIJ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728275859; c=relaxed/simple;
-	bh=T35S/DgpRJqqEin38uykAt6yEO3kleccsAZmlNz1yEU=;
+	s=arc-20240116; t=1728275905; c=relaxed/simple;
+	bh=7spHXMiPTiTq9OAUqdd9QH8MrgXTR+/ZavwmuQccwsw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JNYRstluJh5Y2AlkCtcpBjEGyVdXL2bv48N3SApNtLy2W034mUDtBc/ItTqY83nX7f4Fd2iQWcYkRZ1TDZxPTlF8M/kG7UmVsnXlpBi6PZ4FOaDaDbSmYa9sziMVrh/Y1se1MTuuFyszidlTm/wHu0fU9vUiKayK77oh2L2NWC4=
+	 In-Reply-To:Content-Type; b=GVKtJr9RwwS8YgxHf9EEvR4LM6rQtAKRp0qr09syNjY6B5jDiE5SYlLZbvwRKa2gd8lsU9BMa+5/JPemla0Uwz/j6ITQswwuqba8NFbtjp8JMB/HzdGiPDeqBMeNta0dhzrfnORPPHd54D8qXvNdS2/TOIxBNuaeEmxYuuZkQZ8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B51FAFEC;
-	Sun,  6 Oct 2024 21:38:05 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05090FEC;
+	Sun,  6 Oct 2024 21:38:52 -0700 (PDT)
 Received: from [10.162.40.20] (e116581.arm.com [10.162.40.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 503E23F640;
-	Sun,  6 Oct 2024 21:37:30 -0700 (PDT)
-Message-ID: <5400ac3c-f730-4ede-a35a-7d9cc79bf997@arm.com>
-Date: Mon, 7 Oct 2024 10:07:24 +0530
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5AD13F640;
+	Sun,  6 Oct 2024 21:38:13 -0700 (PDT)
+Message-ID: <29f94c69-ca62-48cf-a69b-797e89284540@arm.com>
+Date: Mon, 7 Oct 2024 10:08:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,151 +42,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
-Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
- ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
- Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
- aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, sj@kernel.org, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org
-References: <20240822121415.3589190-1-dev.jain@arm.com>
- <20240822121415.3589190-2-dev.jain@arm.com>
- <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
- <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
- <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
- <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
- <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
- <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
- <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
- <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
- <03c5b10d-b81c-4074-9c27-8ffc8c7fc84a@arm.com>
- <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
- <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+Subject: Re: [PATCH v6 1/2] mm: Abstract THP allocation
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240930052812.2627395-1-dev.jain@arm.com>
+ <20240930052812.2627395-2-dev.jain@arm.com>
+ <7c563924-47ea-42d1-82dc-3597151998a3@redhat.com>
 Content-Language: en-US
-In-Reply-To: <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+In-Reply-To: <7c563924-47ea-42d1-82dc-3597151998a3@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
-On 9/16/24 09:28, Dev Jain wrote:
+On 9/30/24 14:15, David Hildenbrand wrote:
+> On 30.09.24 07:28, Dev Jain wrote:
+>> In preparation for the second patch, abstract away the THP allocation
+>> logic present in the create_huge_pmd() path, which corresponds to the
+>> faulting case when no page is present.
+>>
+>> There should be no functional change as a result of applying this patch,
+>> except that, as David notes at [1], a PMD-aligned address should
+>> be passed to update_mmu_cache_pmd().
+>>
+>> [1]: 
+>> https://lore.kernel.org/all/ddd3fcd2-48b3-4170-bcaa-2fe66e093f43@redhat.com/
+>>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/huge_memory.c | 98 ++++++++++++++++++++++++++++--------------------
+>>   1 file changed, 57 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 4e34b7f89daf..e3bcdbc9baa2 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1148,47 +1148,81 @@ unsigned long thp_get_unmapped_area(struct 
+>> file *filp, unsigned long addr,
+>>   }
+>>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>>   -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>> -            struct page *page, gfp_t gfp)
+>> +static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct 
+>> *vma,
+>> +                          unsigned long addr)
 >
-> On 9/9/24 23:24, Shuah Khan wrote:
->> On 9/8/24 23:16, Dev Jain wrote:
->>>
->>> On 9/7/24 01:29, Shuah Khan wrote:
->>>> On 9/4/24 23:56, Dev Jain wrote:
->>>>>
->>>>> On 9/4/24 22:35, Shuah Khan wrote:
->>>>>> On 9/3/24 22:52, Dev Jain wrote:
->>>>>>>
->>>>>>> On 9/4/24 03:14, Shuah Khan wrote:
->>>>>>>> On 8/30/24 10:29, Dev Jain wrote:
->>>>>>>>>
->>>>>>>>> On 8/27/24 17:16, Dev Jain wrote:
->>>>>>>>>>
->>>>>>>>>> On 8/27/24 17:14, Shuah Khan wrote:
->>>>>>>>>>> On 8/22/24 06:14, Dev Jain wrote:
->>>>>>>>>>>> Rename sigaltstack to generic signal directory, to allow 
->>>>>>>>>>>> adding more
->>>>>>>>>>>> signal tests in the future.
->>>>>>>>>>>
->>>>>>>>>>> Sorry - I think I mentioned I don't like this test renamed. 
->>>>>>>>>>> Why are you sending
->>>>>>>>>>> this rename still included in the patch series?
->>>>>>>>>>
->>>>>>>>>> I am not renaming the test, just the directory. The directory 
->>>>>>>>>> name
->>>>>>>>>> is changed to signal, and I have retained the name of the test -
->>>>>>>>>> sas.c.
->>>>>>>>>
->>>>>>>>> Gentle ping: I guess there was a misunderstanding; in v5, I was
->>>>>>>>> also changing the name of the test, to which you objected, and
->>>>>>>>> I agreed. But, we need to change the name of the directory since
->>>>>>>>> the new test has no relation to the current directory name,
->>>>>>>>> "sigaltstack". The patch description explains that the directory
->>>>>>>>> should be generically named.
->>>>>>>>>
->>>>>>>>
->>>>>>>> Right. You are no longer changing the test name. You are still
->>>>>>>> changing the directory name. The problem I mentioned stays the
->>>>>>>> same. Any fixes to the existing tests in this directory can no
->>>>>>>> longer auto applied to stables releases.
->>>>>>>
->>>>>>> I understand your point, but commit baa489fabd01 (selftests/vm: 
->>>>>>> rename
->>>>>>> selftests/vm to selftests/mm) is also present. That was a lot 
->>>>>>> bigger change;
->>>>>>> sigaltstack contains just one test currently, whose fixes 
->>>>>>> possibly would have
->>>>>>> to be backported, so I guess it should not be that much of a big 
->>>>>>> problem?
->>>>>>>
->>>>>>>>
->>>>>>
->>>>>> So who does the backports whenevenr something changes? You are 
->>>>>> adding
->>>>>> work where as the automated process would just work without this
->>>>>> change. It doesn't matter if there is another test that changed
->>>>>> the name.
->>>>>>
->>>>>>>> Other than the desire to rename the directory to generic, what
->>>>>>>> other value does this change bring?
->>>>>>>
->>>>>>> Do you have an alternative suggestion as to where I should put 
->>>>>>> my new test then;
->>>>>>> I do not see what is the value of creating another directory to 
->>>>>>> just include
->>>>>>> my test. This will unnecessarily clutter the selftests/ 
->>>>>>> directory with
->>>>>>> directories containing single tests. And, putting this in 
->>>>>>> "sigaltstack" is just
->>>>>>> wrong since this test has no relation with sigaltstack.
->>>>>>>
->>>>>>
->>>>>> If this new test has no relation to sigaltstack, then why are you 
->>>>>> changing
->>>>>> and renaming the sigaltstack directory?
->>>>>
->>>>> Because the functionality I am testing is of signals, and signals 
->>>>> are a superset
->>>>> of sigaltstack. Still, I can think of a compromise, if 
->>>>> semantically you want to
->>>>> consider the new test as not testing signals, but a specific 
->>>>> syscall "sigaction"
->>>>> and its interaction with blocking of signals, how about naming the 
->>>>> new directory "sigaction"?
->>>>>> Adding a new directory is much better
->>>>>> than going down a path that is more confusing and adding backport 
->>>>>> overhead.
->>>>>>
->>>>
->>>> Okay - they are related except that you view signalstack as a subset
->>>> of signals. I saw Mark's response as well saying sigaction isn't
->>>> a good name for this.
->>>>
->>>> Rename usually wipe out git history as well based on what have seen
->>>> in the past.
->>>>
->>>> My main concern is backports. Considering sigstack hasn't changed
->>>> 2021 (as Mark's email), let's rename it.
->>>>
->>>> I am reluctantly agreeing to the rename as it seems to make sense
->>>> in this case.
->>>
->>> Thanks! I guess there is no update required from my side, and you can
->>> pull this series?
->>>>
->>
->> I can pull this with x86v maintainer ack.
->>
->> Or to go through x86 tree:
->>
->> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
->>
->>
-> Gentle ping, adding all x86 maintainers and the x86 list, in case they 
-> missed.
+> Just a nit as I am skimming over this once more:
+>
+> We try to make any new code / code we touch to use a 2-tab
+> indentation for the second parameter line.
+>
+> E.g.,
+>
+> static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
+>         unsigned long addr)
+> {
 
-Gentle ping
+Ah sorry, didn't know about this. I used to align it with the function 
+parameter opening bracket.
+>
+>
 
