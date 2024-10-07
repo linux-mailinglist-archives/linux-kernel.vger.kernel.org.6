@@ -1,89 +1,138 @@
-Return-Path: <linux-kernel+bounces-354240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9229C993A98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19622993A9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F7EB23295
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BDC1F23A4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD70A18F2FA;
-	Mon,  7 Oct 2024 22:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F518FC7C;
+	Mon,  7 Oct 2024 22:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUA6Isu5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bW3rV3lS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1D18BC19;
-	Mon,  7 Oct 2024 22:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0984318BC19;
+	Mon,  7 Oct 2024 22:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728341792; cv=none; b=di9Ej303Eq1lQkO6FyD934ngqUGANPMQH7IXfpU8QdICqiObrIVJxqEpXwJaov58EKdgnYWcyKG4jR+dG5oGKOtzDfewe04jkOmn2Iq3gSEXalPgrvTEMc6lQiaZDzVyBSMrRanMYNKubjb1OPa6/NP+v+AOx4WtH5MBRu/jh28=
+	t=1728341841; cv=none; b=Lz6v3XTuSm0r2vDFysCrFrE9bUocZ3sRgvga3vUqS8PvWkXNiKV2N0Kx5ul0jlvEa8lxJ9NXOWE6hMoUCjsAi3lsdvn3J2ZtzLN44//xOeBzEeE6xaZhDCK4d73iCpZdrjoe3MoTtzUS73iyjn2BB3NDaqUnKbFPSm9nDvhOkOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728341792; c=relaxed/simple;
-	bh=dKKV1EM0s4QgYvbpKmp0EseNPd4WeO/Tfh2tbg7FeGw=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tgCth+MMgYefybs89FN3wBCnzZWBtYdRCSg9s1vf+pPIghDD9TmUwcsVbLeFw9LPtkw6CWoYVpv3uEaNCu3zP0krigotUAz7H7OvMouCcm1m36d+ZQQp7sqCY/I7PXgdrsHl4o7391HyV95DNxIQ5XueOcmZliq9yaVE3RA8M0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUA6Isu5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D9DC4CEC6;
-	Mon,  7 Oct 2024 22:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728341791;
-	bh=dKKV1EM0s4QgYvbpKmp0EseNPd4WeO/Tfh2tbg7FeGw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tUA6Isu5M+NsZH06dRE55DWXOfj8wFYag1NkXGKdvv9d/tSoKdGwwvjmNjFxtW03q
-	 yDf8gxvdhUOOXUb/RzSJYPSpHXU+31OsNHtGDpu8XuinkD5AQVJKlGNWp8chtuJpnB
-	 KZMTBmF+O9xTn7e5nV00YkSEzZrVpEn6jIjsOhcbJ48YUN4XZwOOSBtOqZboJ5xMs0
-	 sJv1YjpZ2FFVssVbXwtcJ1t2LaA1qTA8iBPZdSaH6eLrezOzG0/9l6B5WiRF+IjCbC
-	 qulqa6W7A71HbGIz3QoVQAL6XGN39OQR/RnVkdozjAf8MhAuNsvGi5JCDvaNufwwh3
-	 t0v4RDvjmOlyA==
-Message-ID: <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728341841; c=relaxed/simple;
+	bh=N39tV22x2P9bOlmw1WyQYXsUAmc3efVBP8V2EwvPVxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GprMi0m7+shlLuBNq8Pauz7ZGkAUhxyDT0j2dALx2G2ilYgfmHOlb4jpT0ICBfmW03Wwqa+omuyYNiROgaT3Aw4TcCWdG2nHp/Bog+iEl3H5w11lhjjhVrc/h6NUhNTN5BxnAUvbj61KOL6A/pKqcKRXhtCXmG8l4t86vJowIZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bW3rV3lS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728341835;
+	bh=Sye/LI2qzNyrNolV9YJtz8azbnOBwKAIMQ/Jd9grQ20=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bW3rV3lSkzigNn1B5FOdSoPEzrbJ0KFpgPn/q67BVKaxLQb1/jGbbV60DkIGpPNYW
+	 lJ3HcIM8nN/8B3RSAKOTYbcCUIPmbDQklPGa5E18Qcxg6JtU/6/gjRh6Ctnn3Y0fTF
+	 mnrNE4Db1GMuWHHWT4Ina3tAEJRzo0r3timqKVgvho0GTwVqk64XpWN4U84GqwpwhR
+	 kFSU5DBqms48nN9H3PG/30+pppSQ2irTUWoSPaHyZt1Zr6tJMnjEyrPWwHO9igL93A
+	 8tNnzQPuOiVUxjIjSwydouhUxnp5hwXehz30kIKW77Ke23s3hrw9QS1fRrvta5jwkl
+	 U6Tx9PUa9RfPQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XMvfy5VVnz4wbv;
+	Tue,  8 Oct 2024 09:57:13 +1100 (AEDT)
+Date: Tue, 8 Oct 2024 09:56:52 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
+ rust-fixes tree
+Message-ID: <20241008095652.2247c731@canb.auug.org.au>
+In-Reply-To: <20241001102839.77211fb8@canb.auug.org.au>
+References: <20241001102839.77211fb8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Bu3DQD.PVh_Phkvw57tpMpc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Bu3DQD.PVh_Phkvw57tpMpc
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
-References: <20240917132201.17513-1-adiupina@astralinux.ru> <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org> <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
-Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-To: Alexandra Diupina <adiupina@astralinux.ru>, Andrew Lunn <andrew@lunn.ch>
-Date: Mon, 07 Oct 2024 15:56:29 -0700
-User-Agent: alot/0.10
 
-Quoting Alexandra Diupina (2024-09-24 06:14:44)
-> >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mveb=
-u/armada-37xx-periph.c
-> >> index 8701a58a5804..b32c6d4d7ee5 100644
-> >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(s=
-truct clk_hw *hw,
-> >>          div =3D get_div(double_div->reg1, double_div->shift1);
-> >>          div *=3D get_div(double_div->reg2, double_div->shift2);
-> >>  =20
-> >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> >> +       if (!div) {
-> >> +               pr_err("Can't recalculate the rate of clock %s\n", hw-=
->init->name);
-> > hw->init is set to NULL after registration (see clk_register() code). If
-> > div is 0 what does the hardware do?
+Hi all,
+
+On Tue, 1 Oct 2024 10:28:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the fs-next tree got a conflict in:
 >=20
-> Thanks for noticing the error. Yes, hw->init is set to zero,
-> I will replace that code with clk_hw_get_name(hw).
-> If the value of div is 0, should I return 0 as stated in the
-> comment for .recalc_rate (in struct clk_ops) or should I
-> return parent_rate as in some other similar rate recalculation
-> functions (in some other drivers)?
+>   rust/kernel/lib.rs
+>=20
+> between commit:
+>=20
+>   ece207a83e46 ("rust: kernel: sort Rust modules")
+>=20
+> from the rust-fixes tree and commit:
+>=20
+>   94d356c0335f ("rust: security: add abstraction for secctx")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc rust/kernel/lib.rs
+> index b5f4b3ce6b48,ff7d88022c57..000000000000
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@@ -44,8 -46,9 +46,9 @@@ pub mod net
+>   pub mod page;
+>   pub mod prelude;
+>   pub mod print;
+>  -pub mod sizes;
+>   pub mod rbtree;
+> + pub mod security;
+>  +pub mod sizes;
+>   mod static_assert;
+>   #[doc(hidden)]
+>   pub mod std_vendor;
 
-It depends on what the hardware does. Does the hardware pass on the
-parent rate if the divider is zero? If so, then return parent_rate. Or
-does it turn off completely? If so, return zero.
+This is now a conflict between the vfs-brauner tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Bu3DQD.PVh_Phkvw57tpMpc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEZzQACgkQAVBC80lX
+0GwqjQf3a7zLjC86nxUyv8EqeaSUYe5f4RnNOiYn/90+RMR1RF0xlf3VYxA8boq4
+cGXNB6AqavDmszIUIvV2f1YfsoMByA+8vmUaCB+lI4IiJLE269AfUjLClWzfdCxo
+B827d9EWfYZC3fTnISHklxrObwaXeWC/HoraUN+HToAA3Akj+WGi4l5UKCGwtAmf
+uFoceBDo0sk8L+kew7rjMU1hGhobBg4JYg2PjUZutcByl/55Pq96MI1jafeKqjQj
+Yq+FcqoxLh5jspErf+3mb9xRqeFWkducJFzJZ6K8C0H+AW5eBHJayGQyL9mwpsSq
+Ooep+ol61RGDwQbZ8qmpGs+rAi7C
+=9MJ7
+-----END PGP SIGNATURE-----
+
+--Sig_/Bu3DQD.PVh_Phkvw57tpMpc--
 
