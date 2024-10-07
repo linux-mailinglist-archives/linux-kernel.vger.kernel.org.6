@@ -1,232 +1,145 @@
-Return-Path: <linux-kernel+bounces-354221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC0F993A0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363F3993A19
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6A21C23EA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41BA285C8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42AA18CBFF;
-	Mon,  7 Oct 2024 22:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A3B18E35C;
+	Mon,  7 Oct 2024 22:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjQZk2TG"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+VdnDnU"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A334E1865ED;
-	Mon,  7 Oct 2024 22:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70C018CC13;
+	Mon,  7 Oct 2024 22:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728339500; cv=none; b=TxJLRxIRqcpg+dIzq5Iu0tCxfMftoVJbwcBE/giyBbaaOxrCSMmq1ux9gED8un+SVlgu7sf1lX6AJivv8oPtkEgsHbveW7Lqc9H7x8ZFV8sRAkIjA1YuKmwv/tIIiEXeKT9Olhgre9IpqoEULm4qnMbEeFSHxeyF+LbX0FCYEfk=
+	t=1728339798; cv=none; b=W6IbCMQzgDWhjGralflWfiZPEaMHUNcjvtyeV0TDqRi29CUO/RJOpGOckR9xoNTI0ZbxYV7Ic3krrHXbbAyT3mOu8Cm0ItJCdewU7PC3QqyUsERVGfQUvrpCTES4YEMBcOj19Vy2QZJEceRqkjLGkcANkcmVKdxcJ0LVrp3wWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728339500; c=relaxed/simple;
-	bh=sC3KyJ5dwliQ0WLK59LNP+zHAObgaZ0x+APBvMZDukA=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BRG50KPGXjIU7ruV0rjfkZK/NFyFfrObG862KV/qVnZrDRQSNtwksSBpI6cBepnZcUoC1IGHEpJPa9hoZUCv/28vxboxU/S3fDDTSXh+ywKkpJjHjQm/7MJVePZ2hXsFoWTtnjjrcNMtCkftgWPaie0+5j5uyMuBNPOJTYAGQx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjQZk2TG; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1728339798; c=relaxed/simple;
+	bh=GMVUL1ph8tnsy7CfmMDTaKhyBTk9+UJc375Sc3WAe04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/hkiMnLDTBDZakvCF+wH3q+wCSSA7mZ5mwcXOOV9YklyCrSK0McAW4D1Cr9wRqCGXvGTlsa/5uKn9kF5lB1v+3/cl9ow081T5u9Z8181V78640JIVTeqAEQm6DFnEIcgJsqIzf6a/ZOhCo8EZjDc5c5jHbwiGowdLL+um9z6t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+VdnDnU; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b9b35c7c3so51972625ad.3;
-        Mon, 07 Oct 2024 15:18:18 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37cc84c12c2so2648745f8f.3;
+        Mon, 07 Oct 2024 15:23:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728339498; x=1728944298; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0gNABxy0rUT0bU4IMMnsUy1TKuFw6aYam8xfxXyLF0=;
-        b=cjQZk2TG66RF6HDMYgryFdcSDpS4UF2ZaAnp0SepbmIDsLQr9Z3xk1ICEXzxkJSLy1
-         +pp0PfY6wRjFfrGQm6IDV+TvQpFecNwAu57vlOIAopSGzntWqVwV+SD5HI/HSvZEuH81
-         aS9vRxntDWnwP9PPepInXuMMK1hnB5bGWb+I0AhLu6JUg/ODI9gvVBbr4eT0/MxLCjvN
-         D4DiA1tCpzTdrkVyCHXDZaWZXy0qgJxKI8WESAPdBH5qZG/YitarJxjjaO/pkggJvlcD
-         4JZ1vDbpptkBHcsXGTUey/hNd5/c+W5iVjDi+X4l9pyKrWdPksxdXU7x/jFeUpF2YqM+
-         ocIw==
+        d=gmail.com; s=20230601; t=1728339795; x=1728944595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcVTSVWTpad1n8YXrLoQ7ztmwpyIAW3B5vIodWxq0OE=;
+        b=k+VdnDnUEWp5NDfcxHVkL6BgFdaMjtVSG46V+SffNRE+32D8tQtHZP8LHcExyZ7BcI
+         XhQw9YapEbLB9mpdCeJ9vpVZ/o4AKchp4w9MI5MsXrvIH8pCHrKwkJItWj9Y9EO+Alox
+         vbdehEZkvj7DVNRCQKgrugpYJytQFSnt+2ZS1vio9+eAXBvk8FK/aKNLqhtZy+YUfnW4
+         oBPSXKhj3wd+cSNt9hcdwUQ9d5WN+leB8Uc1Jk/uIkC2Ja0g0fAo7zNyxEoxqysocNSx
+         ykiRCFjy1qe/+FZ44+hzI2m7k2DjVNtiGMaEwRKmL/VbO9p2pqLZqP6q9E35//3xwzsF
+         k58w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728339498; x=1728944298;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=F0gNABxy0rUT0bU4IMMnsUy1TKuFw6aYam8xfxXyLF0=;
-        b=RJWjl7UgzwniNgy83rUDOyeX75mgvKbGGOGC3ddQNCdqxonKym7fNxNAb5d7cXPjSh
-         kQ1uKGIR6cxaa5nmSIxUu7b+XcvGlDGQuztKFNV9egKLG+aHIpADjVf0DqoPjzC0NKw0
-         JCcDGyewUyIHDsFZvQptsUZLFUK4D6FQlUET9Z4aLnH+oCHcOTcC/EUitVyiU1YtQCIX
-         HjSdZQjR6IUGCTHOGJhqKOjMfB8AbwvnKHkUngRVKzeBmfj+JsrblDEHGHpiRQW45eB8
-         NJRo6fQfTp+u9vxFkUHnnvmF2euS2J9eV3tvVXffIjls1vEWUgZa27rh0nkJ5pThpt8V
-         sgSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeRbFEk1DctWqEe6HtbB+ulSw9TRAOx1zIJ72wjeQBSnCCSjde5de4i0w6JTrfzUqeTa4=@vger.kernel.org, AJvYcCWip1gOCptG9KX8ZbwY1/Y2UyOocrPT+UPJADDWXH+/1kNx/Qitbhwz/inEUFo4canVwq+kplyo/whdd7v6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE1i77rLnCU3n3uwjOzMWVfMumA9gTqmJLHBhu9+aJMFy8ifZu
-	KuUaYYwoy6P3H074t8v3ZfIMFbyKTlWpOjoF66Pf6jtO/V78VJI8
-X-Google-Smtp-Source: AGHT+IFRRv+1E9ZHnVx/W3MEPFuZs1gMqlh5PNFQYbZHrW7DmwoJoGQHXtc2xpJOyXd2iIRfP6tsKg==
-X-Received: by 2002:a17:903:228f:b0:20b:9fa3:233c with SMTP id d9443c01a7336-20bff04b2c8mr194798405ad.40.1728339497779;
-        Mon, 07 Oct 2024 15:18:17 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20a907341sm6049568a91.0.2024.10.07.15.18.16
+        d=1e100.net; s=20230601; t=1728339795; x=1728944595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rcVTSVWTpad1n8YXrLoQ7ztmwpyIAW3B5vIodWxq0OE=;
+        b=mmoczg8yUq4xXBtRoM5v4cnK+p4QjVQDrksf6cUA2oj0BEB5jWi9u0jv3ZwX6ZYwkT
+         2vHkcLfev8qd0XFzCXkpGEuBkAXbXvoONkWUwNKPi3Bi67TLEeZq73eLkY+tVSSgkz8k
+         DknsJvziNfahkDYtL3LI/58cYRIWvBuo+nzczaZWbhvcskam1LVXUMKBeJXtpENF/fsc
+         cSJYoT3zx8bPdz/SeVQ+XTQcHIONcu/XWv+qkqTXhk5xokHONxxMEikccxQGrMYYEw3j
+         aJw5oktJ6gZ7piQ+MO3r8mxomP+yUOeJgO2kw3MvLCSoiMpYtcN3Ne5eNnnXol8H1dSi
+         loVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9KqL0PcKmspknWXwG2Ks/5pZSbNeHH2iYwc16TKGWtkKG5y74AxjgeMc3GLUpdU7jW7tXG/NGpotdWwFlh7I=@vger.kernel.org, AJvYcCXKGMTHawEVtR4INxRppM2oD6qQUaJChny0y0R1myPEpk5LnAXekexW6iJZDPmREAXPSdTgYFo2ue1VrylX@vger.kernel.org
+X-Gm-Message-State: AOJu0YySxf9RZ+U9KN74fgguUsABr1WLK6HMzyJcfB8l05SnDb99aey6
+	5d2FV8Q3AGW8gJh9JRbf31DLog92fapInW0nESToAs1WVdnu4zLK0+iDhQ==
+X-Google-Smtp-Source: AGHT+IHdnrhj/GDV7fld+3pebc4uNX4BY/OkB9M7WkZRA82JeynkKX1zpY/oF1cbl7mtSmr0nVr1IQ==
+X-Received: by 2002:a05:6000:4008:b0:371:8688:1660 with SMTP id ffacd0b85a97d-37d0e8f730fmr8517987f8f.51.1728339794708;
+        Mon, 07 Oct 2024 15:23:14 -0700 (PDT)
+Received: from ALPER-PC.koi-vector.ts.net ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f3b1sm6545857f8f.14.2024.10.07.15.23.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 15:18:17 -0700 (PDT)
-Message-ID: <cfec3ec1b7092e1dde01eb1896ec7fba7ed714f4.camel@gmail.com>
-Subject: Re: [syzbot] [bpf?] WARNING in push_jmp_history
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: syzbot <syzbot+7e46cdef14bf496a3ab4@syzkaller.appspotmail.com>, 
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net,  haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org,  linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me,  song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Date: Mon, 07 Oct 2024 15:18:12 -0700
-In-Reply-To: <670429f6.050a0220.49194.0517.GAE@google.com>
-References: <670429f6.050a0220.49194.0517.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        Mon, 07 Oct 2024 15:23:13 -0700 (PDT)
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Kees Cook <kees@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Brian Norris <briannorris@chromium.org>,
+	David Lin <yu-hao.lin@nxp.com>,
+	linux-hardening@vger.kernel.org,
+	Kalle Valo <kvalo@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Subject: [PATCH v2 1/2] wifi: mwifiex: Fix memcpy() field-spanning write warning in mwifiex_config_scan()
+Date: Tue,  8 Oct 2024 01:20:54 +0300
+Message-ID: <20241007222301.24154-1-alpernebiyasak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-10-07 at 11:35 -0700, syzbot wrote:
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1738270798000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D94f9caf16c0af=
-42d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D7e46cdef14bf496=
-a3ab4
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10b82707980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16f4c32798000=
-0
+Replace one-element array with a flexible-array member in `struct
+mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
+on a MT8173 Chromebook (mt8173-elm-hana):
 
-When I try this reproducer the bpf syscall never exits (waited for 5 minute=
-s).
-Here is the reproducer as a selftest:
+[  356.775250] ------------[ cut here ]------------
+[  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
+[  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
 
-SEC("kprobe")
-__success
-__naked void syzbot_bug(void)
-{
-	asm volatile (
-	"   r2 =3D *(u32 *)(r1 +140)\n"		// 0
-	"   r3 =3D *(u32 *)(r1 +76)\n"		// 1
-	"   r0 =3D r2\n"				// 2
-	"   if w0 > 0xffffff07 goto 1f\n"	// 3
-	"   if r3 <=3D r0 goto +16\n"		// 4
-	"   exit\n"				// 5
-	"1: r6 =3D *(u16 *)(r1 +0)\n"		// 6
-	"   r7 =3D r6\n"				// 7
-	"2: w7 +=3D 447767737\n"			// 8
-	"   if w7 & 0x702000 goto 2b\n"		// 9
-	"   w7 &=3D 2024974\n"			// 10
-	"   r5 =3D r1\n"				// 11
-	"   r7 +=3D r5\n"				// 12
-	"   if r7 s> 0x37d2 goto +0\n"		// 13
-	"   w3 *=3D w0\n"				// 14
-	"   r5 -=3D r7\n"				// 15
-	"   r4 =3D r5\n"				// 16
-	"   r0 +=3D -458748\n"			// 17
-	"   if r3 < r4 goto 3f\n"		// 18
-	"   w0 >>=3D w0\n"			// 19
-	"3: goto +0\n"				// 20
-	"   exit\n"				// 21
-	::: __clobber_all);
-}
+The "(size 6)" above is exactly the length of the SSID of the network
+this device was connected to. The source of the warning looks like:
 
-(e.g. can be put to tools/testing/selftests/bpf/progs/verifier_and.c
- or any other verifier_*.c).
+    ssid_len = user_scan_in->ssid_list[i].ssid_len;
+    [...]
+    memcpy(wildcard_ssid_tlv->ssid,
+           user_scan_in->ssid_list[i].ssid, ssid_len);
 
-Inserting a few printks shows that the following instructions are
-verified in a loop:
-              =20
-           ... verification starts ...
-[    2.094272] do_check: env->insn_idx 0
-[    2.094345] do_check: env->insn_idx 1
-[    2.094417] do_check: env->insn_idx 2
-[    2.094486] do_check: env->insn_idx 3
-[    2.094585] do_check: env->insn_idx 4
-[    2.094675] do_check: env->insn_idx 5
-[    2.094748] do_check: env->insn_idx 21
-[    2.094879] do_check: env->insn_idx 6
-[    2.095005] do_check: env->insn_idx 7
-[    2.095074] do_check: env->insn_idx 8 <------ let's call this point LBL
-[    2.095156] do_check: env->insn_idx 9
-[    2.095264] do_check: env->insn_idx 8
-[    2.095372] do_check: env->insn_idx 9
-[    2.095497] do_check: env->insn_idx 8
-[    2.095579] do_check: env->insn_idx 9
-[    2.095716] do_check: env->insn_idx 8
-[    2.095892] do_check: env->insn_idx 9
-[    2.096070] do_check: env->insn_idx 8
-[    2.096151] do_check: env->insn_idx 9
-[    2.096314] do_check: env->insn_idx 8
-[    2.096402] do_check: env->insn_idx 9
-[    2.096570] do_check: env->insn_idx 8
-[    2.096646] do_check: env->insn_idx 9
-[    2.096840] do_check: env->insn_idx 8
-[    2.096921] do_check: env->insn_idx 9
-[    2.097040] do_check: env->insn_idx 10
-[    2.097113] do_check: env->insn_idx 11
-[    2.097195] do_check: env->insn_idx 12
-[    2.097417] do_check: env->insn_idx 13
-[    2.097521] do_check: env->insn_idx 14
-[    2.097597] do_check: env->insn_idx 15
-[    2.097688] do_check: env->insn_idx 16
-[    2.097774] do_check: env->insn_idx 17
-[    2.097866] do_check: env->insn_idx 18
-[    2.097990] do_check: env->insn_idx 19
-[    2.098050] do_check: env->insn_idx 20
-[    2.098119] do_check: env->insn_idx 21
-[    2.098195] do_check: env->insn_idx 20
-[    2.098347] do_check: env->insn_idx 21
-[    2.098414] do_check: env->insn_idx 14
-[    2.098556] do_check: env->insn_idx 15
-[    2.098629] do_check: env->insn_idx 16
-[    2.098700] do_check: env->insn_idx 17
-[    2.098767] do_check: env->insn_idx 18
-[    2.098842] do_check: env->insn_idx 8
-[    2.098984] do_check: env->insn_idx 9
-[    2.099108] do_check: env->insn_idx 8
-[    2.099171] do_check: env->insn_idx 9
-[    2.099304] do_check: env->insn_idx 8
-[    2.099368] do_check: env->insn_idx 9
-[    2.099505] do_check: env->insn_idx 8
-[    2.099568] do_check: env->insn_idx 9
-[    2.099703] do_check: env->insn_idx 8
-[    2.099774] do_check: env->insn_idx 9
-[    2.099921] do_check: env->insn_idx 8
-[    2.099984] do_check: env->insn_idx 9
-[    2.100133] do_check: env->insn_idx 8
-[    2.100200] do_check: env->insn_idx 9
-[    2.100349] do_check: env->insn_idx 8
-[    2.100413] do_check: env->insn_idx 9
-[    2.100503] do_check: env->insn_idx 10
-[    2.100566] do_check: env->insn_idx 11
-[    2.100636] do_check: env->insn_idx 12
-[    2.100813] do_check: env->insn_idx 13
-[    2.100909] do_check: env->insn_idx 14
-[    2.100972] do_check: env->insn_idx 15
-[    2.101047] do_check: env->insn_idx 16
-[    2.101117] do_check: env->insn_idx 17
-[    2.101185] do_check: env->insn_idx 18
-[    2.101250] do_check: env->insn_idx 14
-[    2.101389] do_check: env->insn_idx 15
-[    2.101462] do_check: env->insn_idx 16
-[    2.101531] do_check: env->insn_idx 17
-[    2.101598] do_check: env->insn_idx 18
+There is a #define WILDCARD_SSID_TLV_MAX_SIZE that uses sizeof() on this
+struct, but it already didn't account for the size of the one-element
+array, so it doesn't need to be changed.
 
-    ... verification repeats from LBL ...
+Fixes: 5e6e3a92b9a4 ("wireless: mwifiex: initial commit for Marvell mwifiex driver")
+Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+---
 
-[...]
+Changes in v2:
+- Drop unnecessary +1 from scan.c #define WILDCARD_SSID_TLV_MAX_SIZE
 
+v1: https://lore.kernel.org/lkml/20240917150938.843879-1-alpernebiyasak@gmail.com/
+
+ drivers/net/wireless/marvell/mwifiex/fw.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
+index d03129d5d24e..4a96281792cc 100644
+--- a/drivers/net/wireless/marvell/mwifiex/fw.h
++++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+@@ -875,7 +875,7 @@ struct mwifiex_ietypes_chanstats {
+ struct mwifiex_ie_types_wildcard_ssid_params {
+ 	struct mwifiex_ie_types_header header;
+ 	u8 max_ssid_length;
+-	u8 ssid[1];
++	u8 ssid[];
+ } __packed;
+ 
+ #define TSF_DATA_SIZE            8
+
+base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
+-- 
+2.45.2
 
 
