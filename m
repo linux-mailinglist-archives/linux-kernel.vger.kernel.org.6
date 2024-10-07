@@ -1,150 +1,363 @@
-Return-Path: <linux-kernel+bounces-354126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1CF993818
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:21:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7990499381B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FEB1F223E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5EC1C211B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F471DE4F3;
-	Mon,  7 Oct 2024 20:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6B11DE4F3;
+	Mon,  7 Oct 2024 20:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d7RUNUBh"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YygHHYdA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88601DE3D6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CF31DE4D3;
+	Mon,  7 Oct 2024 20:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332482; cv=none; b=nFC+g8BPFXKEHTkY5/bW3VwjKWJ6JK+sYemuJkaSHuvNncbglbuM3jU/Li8YrUjr2xv1D3lQ/2eEQHIg7gJuZRwMviVDSkoOS3AD6XCeIENtvKUPO5hJTP+EzdvWzfjaGeWl1J/whvS+1mKDFcrwLfjPHZJ8uNi0ZCSZoJDNraI=
+	t=1728332505; cv=none; b=iRK1tOdw7YhkCNgzcq1XpkKmLwyNXyeggWaYgIt1AbN+id8jGSwbk53dGbEkQSiF/tuzUT26/SslXuUNRILA5vbiBHUv3JmO722rKpmTfnq8ePAXpKwl+WoNpLLFXYSyNLsEz3MVJzcGkTVuOiHna3+g7/9+Dmw1d7g64UFteOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332482; c=relaxed/simple;
-	bh=c4a30u6REFUzrAsoAQwDjsVAZw5JYJBEWWtd09jMs5w=;
+	s=arc-20240116; t=1728332505; c=relaxed/simple;
+	bh=Ob+W0OpfiPXT/RLK3EV+M7HNJhR1KOSyXwZB67F02yw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnZR3fprOnR/ZgFLW0+1Otkd9iypOmsygvqvtsoZFHbAPnEtz/vBUZTcAvW+u6mDWyuP9DeACYqOrcov55CliWgFYFOONM+6qCQD8/yB1AMCff4t/0RsjgVYl2CQp2WrSP6LHbAYb0P3r2UfxEk4brzBWPeTmdrf5Lu8SMZi51Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d7RUNUBh; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 7 Oct 2024 16:21:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728332477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dq8JvnD9tzMMx6q54o7Cvi4gHmHlyDT4zjfEUm1ieqo=;
-	b=d7RUNUBhxcjAVCJTzWcmfZ/fB9XCDnpJxlrgRmQvtrXRB4BM7BWUz8xIz4UV3rTIjTiHWN
-	883bnt5baC77psLPAMIMRzRQcWkLM6eGlgQ6X4j9+fNu5kXJwQ8ZXLUw80ffsg/OEni79E
-	7CbM+gl62PlVQlx+DjLCPh0NL8Bt7Bk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@fb.com
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <u266iwml67vr2zrkhebfr3zwak5k7mebk4grhavnujf2wodwkz@eyksfejhgve2>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <20241007145847.GA1898642@perftesting>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OWzA5chi0l5YohgUvz7VCLgmIUMwKkb1kS2ON7fNP//ODdzyBSecPXb6nc9g99dp12FHW4PrvMS1yJ+vkkbs+wRDW9SrAQym81+HtQH7N5ucDKt8GKyBJIGReccgl6IxDnNMI4yGwHFTe0qMYh7UtouQayIdwQFu6yx8E9b0ngM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YygHHYdA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [132.205.230.14])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 07CEA2EC;
+	Mon,  7 Oct 2024 22:20:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728332406;
+	bh=Ob+W0OpfiPXT/RLK3EV+M7HNJhR1KOSyXwZB67F02yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YygHHYdAOxRYls13j+pBckd7M16lZRMOa5QPkVmENQh7iFvM6izYmWYc56161c8xZ
+	 mQ5qAjrufx7/bgMJtvtR5wP78YCHl2QeuTj8EziRUgEEQYlLqTfQTds2TdxrWcRfPd
+	 dv7iDbY+Z6HSQ52E+3CUJ9k9p0ginNbEAPT02e7U=
+Date: Mon, 7 Oct 2024 23:21:37 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 10/17] media: rzg2l-cru: Simplify handling of
+ supported formats
+Message-ID: <20241007202137.GK14766@pendragon.ideasonboard.com>
+References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241007184839.190519-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241007145847.GA1898642@perftesting>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241007184839.190519-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, Oct 07, 2024 at 10:58:47AM GMT, Josef Bacik wrote:
-> I tend to ignore these kind of emails, it's been a decade and weirdly the file
-> system development community likes to use btrfs as a punching bag.  I honestly
-> don't care what anybody else thinks, but I've gotten feedback from others in the
-> community that they wish I'd say something when somebody says things so patently
-> false.  So I'm going to respond exactly once to this, and it'll be me satisfying
-> my quota for this kind of thing for the rest of the year.
+Hi Prabhakar,
+
+Thank you for the patch.
+
+On Mon, Oct 07, 2024 at 07:48:32PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Btrfs is used by default in the desktop spin of Fedora, openSuse, and maybe some
-> others.  Our development community is actively plugged into those places, we
-> drop everything to help when issues arise there.  Btrfs is the foundation of the
-> Meta fleet.  We rely on its capabilities and, most importantly of all, its
-> stability for our infrastructure.
+> Refactor the handling of supported formats in the RZ/G2L CRU driver by
+> moving the `rzg2l_cru_ip_format` struct to the common header to allow
+> reuse across multiple files and adding pixelformat and bpp members to it.
+> This change centralizes format handling, making it easier to manage and
+> extend.
 > 
-> Is it perfect?  Absolutely not.  You will never hear me say that.  I have often,
-> and publicly, said that Meta also uses XFS in our database workloads, because it
-> simply is just better than Btrfs at that.
+> - Moved the `rzg2l_cru_ip_format` struct to `rzg2l-cru.h` for better
+>   accessibility.
+> - Added format, datatype and bpp members to `rzg2l_cru_ip_format` struct
+> - Dropped rzg2l_cru_formats
+> - Introduced helper functions `rzg2l_cru_ip_code_to_fmt()`,
+>   `rzg2l_cru_ip_format_to_fmt()`, and
+>   `rzg2l_cru_ip_index_to_fmt()` to streamline format lookups.
+> - Refactored the `rzg2l_cru_csi2_setup` and format alignment functions
+>   to utilize the new helpers.
+
+The general rule is once change, one patch. Bundling multiple changes
+together makes review more difficult. A bullet list of changes in a
+commit message is a sign you're bundling too many changed together.
+
+You can still group related changes together when it makes sensor. For
+instance moving rzg2l_cru_ip_format to rzg2l-cru.h and adding the
+rzg2l_cru_ip_code_to_fmt() & co helper functions can be one patch.
+
+> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    | 20 +++++-
+>  .../platform/renesas/rzg2l-cru/rzg2l-ip.c     | 36 ++++++++--
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 67 ++++++-------------
+>  3 files changed, 69 insertions(+), 54 deletions(-)
 > 
-> Yes, XFS is better at Btrfs at some things.  I'm not afraid to admit that,
-> because my personal worth is not tied to the software projects I'm involved in.
-> Dave Chinner, Darrick Wong, Christoph Hellwig, Eric Sandeen, and many others have
-> done a fantastic job with XFS.  I have a lot of respect for them and the work
-> they've done.  I've learned a lot from them.
-> 
-> Ext4 is better at Btrfs in a lot of those same things.  Ted T'so, Andreas
-> Dilger, Jan Kara, and many others have done a fantastic job with ext4.
-> 
-> I have learned a lot from all of these developers, all of these file systems,
-> and many others in this community.
-> 
-> Bcachefs is doing new and interesting things.  There are many things that I see
-> you do that I wish we had the foresight to know were going to be a problem with
-> Btrfs and done it differently.  You, along with the wider file system community,
-> have a lot of the same ideals, same practices, and same desire to do your
-> absolute best work.  That is an admirable trait, one that we all share.
-> 
-> But dragging other people and their projects down is not the sort of behavior
-> that I think should have a place in this community.  This is not the kind of
-> community I want to exist in.  You are not the only person who does this, but
-> you are the most vocal and constant example of it.  Just like I tell my kids,
-> just because somebody else is doing something wrong doesn't mean you get to do
-> it too.
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> index 4fe24bdde5b2..39296a59b3da 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> @@ -62,6 +62,20 @@ struct rzg2l_cru_ip {
+>  	struct v4l2_subdev *remote;
+>  };
+>  
+> +/**
+> + * struct rzg2l_cru_ip_format - CRU IP format
+> + * @code: Media bus code
+> + * @format: 4CC format identifier (V4L2_PIX_FMT_*)
+> + * @datatype: MIPI CSI2 data type
+> + * @bpp: bytes per pixel
+> + */
+> +struct rzg2l_cru_ip_format {
+> +	u32 code;
+> +	u32 format;
+> +	u32 datatype;
+> +	u8 bpp;
+> +};
+> +
+>  /**
+>   * struct rzg2l_cru_dev - Renesas CRU device structure
+>   * @dev:		(OF) device
+> @@ -144,10 +158,12 @@ int rzg2l_cru_video_register(struct rzg2l_cru_dev *cru);
+>  void rzg2l_cru_video_unregister(struct rzg2l_cru_dev *cru);
+>  irqreturn_t rzg2l_cru_irq(int irq, void *data);
+>  
+> -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format);
+> -
+>  int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru);
+>  void rzg2l_cru_ip_subdev_unregister(struct rzg2l_cru_dev *cru);
+>  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru);
+>  
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int code);
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 format);
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_index_to_fmt(u32 index);
+> +
+>  #endif
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> index 7b006a0bfaae..fde6f4781cfb 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> @@ -6,17 +6,21 @@
+>   */
+>  
+>  #include <linux/delay.h>
+> -#include "rzg2l-cru.h"
+>  
+> -struct rzg2l_cru_ip_format {
+> -	u32 code;
+> -};
+> +#include <media/mipi-csi2.h>
+> +
+> +#include "rzg2l-cru.h"
+>  
+>  static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
+> -	{ .code = MEDIA_BUS_FMT_UYVY8_1X16, },
+> +	{
+> +		.code = MEDIA_BUS_FMT_UYVY8_1X16,
+> +		.format = V4L2_PIX_FMT_UYVY,
+> +		.datatype = MIPI_CSI2_DT_YUV422_8B,
+> +		.bpp = 2,
+> +	},
+>  };
+>  
+> -static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int code)
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int code)
+>  {
+>  	unsigned int i;
+>  
+> @@ -27,6 +31,26 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int c
+>  	return NULL;
+>  }
+>  
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 format)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++) {
+> +		if (rzg2l_cru_ip_formats[i].format == format)
+> +			return &rzg2l_cru_ip_formats[i];
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_index_to_fmt(u32 index)
+> +{
+> +	if (index >= ARRAY_SIZE(rzg2l_cru_ip_formats))
+> +		return NULL;
+> +
+> +	return &rzg2l_cru_ip_formats[index];
+> +}
+> +
+>  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru)
+>  {
+>  	struct v4l2_subdev_state *state;
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index de88c0fab961..ceb9012c9d70 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -300,21 +300,10 @@ static void rzg2l_cru_initialize_axi(struct rzg2l_cru_dev *cru)
+>  	rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
+>  }
+>  
+> -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *input_is_yuv,
+> -				 struct v4l2_mbus_framefmt *ip_sd_fmt, u8 csi_vc)
+> +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, u8 csi_vc,
+> +				 u32 csi2_datatype)
 
-Josef, I've got to be honest with you, if 10 years in one filesystem
-still has a lot of user reports that clearly aren't being addressed
-where the filesystem is wedging itself, that's a pretty epic fail and
-that really is the main reason why I'm here.
+I would pass the rzg2l_cru_ip_format pointer (make it const) to this
+function instead of csi2_datatype.
 
-#1 priority in filesystem land has to be robustness. Not features, not
-performance; it has to simply work.
+>  {
+> -	u32 icnmc;
+> -
+> -	switch (ip_sd_fmt->code) {
+> -	case MEDIA_BUS_FMT_UYVY8_1X16:
+> -		icnmc = ICnMC_INF(MIPI_CSI2_DT_YUV422_8B);
+> -		*input_is_yuv = true;
+> -		break;
+> -	default:
+> -		*input_is_yuv = false;
+> -		icnmc = ICnMC_INF(MIPI_CSI2_DT_USER_DEFINED(0));
+> -		break;
+> -	}
+> +	u32 icnmc = ICnMC_INF(csi2_datatype);
+>  
+>  	icnmc |= (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
+>  
+> @@ -328,17 +317,20 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  					   struct v4l2_mbus_framefmt *ip_sd_fmt,
+>  					   u8 csi_vc)
+>  {
+> -	bool output_is_yuv = false;
+> -	bool input_is_yuv = false;
+> +	const struct v4l2_format_info *src_finfo, *dst_finfo;
+> +	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+>  	u32 icndmr;
+>  
+> -	rzg2l_cru_csi2_setup(cru, &input_is_yuv, ip_sd_fmt, csi_vc);
+> +	cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+> +	rzg2l_cru_csi2_setup(cru, csi_vc, cru_ip_fmt->datatype);
+> +
+> +	src_finfo = v4l2_format_info(cru_ip_fmt->format);
+> +	dst_finfo = v4l2_format_info(cru->format.pixelformat);
+>  
+>  	/* Output format */
+>  	switch (cru->format.pixelformat) {
+>  	case V4L2_PIX_FMT_UYVY:
+>  		icndmr = ICnDMR_YCMODE_UYVY;
+> -		output_is_yuv = true;
+>  		break;
+>  	default:
+>  		dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
+> @@ -347,7 +339,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  	}
+>  
+>  	/* If input and output use same colorspace, do bypass mode */
+> -	if (output_is_yuv == input_is_yuv)
+> +	if (v4l2_is_format_yuv(src_finfo) && v4l2_is_format_yuv(dst_finfo))
 
-The bar for "acceptably good" is really, really high when you're
-responsible for user's data. In the rest of the kernel, if you screw up,
-generally the worst that happens is you crash the machine - users are
-annoyed, whatever they were doing gets interrupted, but nothing
-drastically bad happens.
+I think this should be
 
-In filesystem land, fairly minor screwups can lead to the entire machine
-being down for extended periods of time if the filesystem has wedged
-itself and really involved repair procedures that users _should not_
-have to do, or worst real data loss. And you need to be thinking about
-the trust that users are placing in you; that's people's _lives_ they're
-storing on their machines.
+	if (v4l2_is_format_yuv(src_finfo) == v4l2_is_format_yuv(dst_finfo))
 
-So no, based on the feedback I still _regularly_ get I don't think btrfs
-hit an acceptable level of reliability, and if it's taking this long I
-doubt it will.
+>  		rzg2l_cru_write(cru, ICnMC,
+>  				rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
+>  	else
+> @@ -810,35 +802,15 @@ int rzg2l_cru_dma_register(struct rzg2l_cru_dev *cru)
+>  /* -----------------------------------------------------------------------------
+>   * V4L2 stuff
+>   */
+> -
+> -static const struct v4l2_format_info rzg2l_cru_formats[] = {
+> -	{
+> -		.format = V4L2_PIX_FMT_UYVY,
+> -		.bpp[0] = 2,
+> -	},
+> -};
+> -
+> -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(rzg2l_cru_formats); i++)
+> -		if (rzg2l_cru_formats[i].format == format)
+> -			return rzg2l_cru_formats + i;
+> -
+> -	return NULL;
+> -}
+> -
+>  static u32 rzg2l_cru_format_bytesperline(struct v4l2_pix_format *pix)
+>  {
+> -	const struct v4l2_format_info *fmt;
+> -
+> -	fmt = rzg2l_cru_format_from_pixel(pix->pixelformat);
+> +	const struct rzg2l_cru_ip_format *fmt;
+>  
+> +	fmt = rzg2l_cru_ip_format_to_fmt(pix->pixelformat);
+>  	if (WARN_ON(!fmt))
+> -		return -EINVAL;
+> +		return 0;
 
-"Mostly works" is just not good enough.
+This change isn't described in the commit message. 
 
-To be fair, bcachefs isn't "good enough" yet either, I'm still getting
-bug reports where bcachefs wedges itself too.
+>  
+> -	return pix->width * fmt->bpp[0];
+> +	return pix->width * fmt->bpp;
+>  }
+>  
+>  static u32 rzg2l_cru_format_sizeimage(struct v4l2_pix_format *pix)
+> @@ -849,7 +821,7 @@ static u32 rzg2l_cru_format_sizeimage(struct v4l2_pix_format *pix)
+>  static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
+>  				   struct v4l2_pix_format *pix)
+>  {
+> -	if (!rzg2l_cru_format_from_pixel(pix->pixelformat))
+> +	if (!rzg2l_cru_ip_format_to_fmt(pix->pixelformat))
 
-But I've also been pretty explicit about that, and I'm not taking the
-experimental label off until those reports have stopped and we've
-addressed _every_ known way it can wedge itself and we've torture tested
-the absolute crap out of repair.
+Here you're calling rzg2l_cru_ip_format_to_fmt(), and just below the
+function calls rzg2l_cru_format_bytesperline(), which calls
+rzg2l_cru_format_from_pixel() again. Store the pointer here, drop the
+rzg2l_cru_format_bytesperline() function, and just write
 
-And I think you've set the bar too low, by just accepting that btrfs
-isn't going to be as good as xfs in some situations.
+	pix->bytesperline = pix->width * fmt->bpp;
 
-I don't think there's any reason a modern COW filesystem has to be
-crappier in _any_ respect than ext4/xfs. It's just a matter of
-prioritizing the essentials and working at it until it's done.
+below. I would also inline rzg2l_cru_format_sizeimage() in this function
+as there's a single caller.
+
+>  		pix->pixelformat = RZG2L_CRU_DEFAULT_FORMAT;
+>  
+>  	switch (pix->field) {
+> @@ -941,10 +913,13 @@ static int rzg2l_cru_g_fmt_vid_cap(struct file *file, void *priv,
+>  static int rzg2l_cru_enum_fmt_vid_cap(struct file *file, void *priv,
+>  				      struct v4l2_fmtdesc *f)
+>  {
+> -	if (f->index >= ARRAY_SIZE(rzg2l_cru_formats))
+> +	const struct rzg2l_cru_ip_format *fmt;
+> +
+> +	fmt = rzg2l_cru_ip_index_to_fmt(f->index);
+> +	if (!fmt)
+>  		return -EINVAL;
+>  
+> -	f->pixelformat = rzg2l_cru_formats[f->index].format;
+> +	f->pixelformat = fmt->format;
+>  
+>  	return 0;
+>  }
+
+-- 
+Regards,
+
+Laurent Pinchart
 
