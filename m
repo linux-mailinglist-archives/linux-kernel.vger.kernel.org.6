@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-353245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B47992B30
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:12:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F62F992B2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59F11C20296
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8051F23780
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA11C32E4;
-	Mon,  7 Oct 2024 12:12:17 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5C81D222B;
+	Mon,  7 Oct 2024 12:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhYAv6KC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F281D26E6;
-	Mon,  7 Oct 2024 12:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3F81D2715
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 12:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303136; cv=none; b=gzwe70WJYsHt7bCh0ZVrtUmhrM4xOHIouoXufeMYuMgfxoMiuZIQ4PEnnAqkKrQq/5eaalk3qnQm0oN88VGnpbfS0Kga4iyjZ3dP+vxzFAUWgkaVBLSQCk0/gyYXzF6iYjieZaV5AHLbMQfYs4P0kfqfvfgJf9ebErVCQKi63sA=
+	t=1728303123; cv=none; b=KjJ0EGotrhZgAkY5LN7iJ9jc23EK8fF7WQlw4FlIMq1cj9zsxZpYzAqEXMnPUugR+MXnWEhokcXO9F0Hp0xWbSDO/lbqQFEHgk/OeWUBjmxVZhrzypj51VkNVPqmHDFYHcBdIE3zg7NtJtWSAsFReQAe7Sw+KOT2dxr9HZqOVs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303136; c=relaxed/simple;
-	bh=aEG/Sdwoei8OrQi/XkH1LmQRsYTS3fu16rCGSrqM2G8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RZw2azl+kHOBXwet58mKnM5ShpUVf/dIYbBXRSrarXNedBRntdpsHez0tty64D9C0anB5co4TigmY1+d86QgbFu7OPQi6nyEdKPLfMJNaLTzNBvPnmFz57rAWMjayAIeC2FPP5u6hrZKMnVFI+kpiJSzVffkvU/Mga2BO1+bC6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6db4b602e38so34786617b3.1;
-        Mon, 07 Oct 2024 05:12:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728303133; x=1728907933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E5umuIsyd8oI+QtftRPlBsodl+TM0JFJ877rWIMcDrM=;
-        b=NV8mAzK4wTcrpvANMeETMUugO04XiUaDzAnkRMeWdNAOWrUrFk4lSAGoa8Yu8b7LCh
-         r1Es5Bunv8BCv93wQejHxmcnhs1lpFlK1ulGLsZ2LApSjF9xxf4InCpbiOkyE8RchljI
-         LhylXn2XjWk9QdkPyj/Zj0jlczocMkrpOkDgeH+j7ApDTyxQoJvgSXJ3XjPJQl0dcK8N
-         epG4bpG2wHwDtrkpSv2CkdKL52XHAJ/P7E5q8d4DhFRmgHA0Fm7eN3szJNcMiSYvfM7T
-         2Y/Dqs6KNfi5/F9Roqjzqkd6WBeL07N8yNIXwE7dJ3d3HM/7N2X0JYcu44sUMqWfCha2
-         2vVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM5Xu8Oo+qIbpnxPlvSrekh0U/zTxlIZY0nYzE5gQEhoa5X61XMIqUo8RUTSJ65kAmrY9TVD4E7wakZKBkSTdB4QI=@vger.kernel.org, AJvYcCVvtceuitui+dYBBttkeXWgjS9DUU9/QuVtvFfXF6xFSsAiM1DI/7EjJer8c0QX+Rh6cV6dOaPu6aFeuWFX@vger.kernel.org, AJvYcCWMUSVvKXwE7xDa1a1aQtCArD5aZ0nPfhZIhBs20z5CIQFBJ2c0UA3CwbodOXs4kn3FGSEqEICfrLRA@vger.kernel.org
-X-Gm-Message-State: AOJu0YysZ33iNtM9aV/qg1qPEZwm+2tGuYBJFGwCLdMlbAc7sGYmTuHu
-	JtApqhiGuDAKxR34iDWkUHkzPnUNLGQs9pktKFYiisAYFKRlV8QpZLoR/GUf
-X-Google-Smtp-Source: AGHT+IE43njdiP6WeKAFp1IIfWf4eMF9vD8utkOf57ZPuBeBsKZo9VAlZXZywSqwiTDRVn8PPWsQGw==
-X-Received: by 2002:a05:690c:d90:b0:6e2:d2a:e998 with SMTP id 00721157ae682-6e2c6fc76acmr73497207b3.2.1728303132710;
-        Mon, 07 Oct 2024 05:12:12 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93e9837sm10027957b3.131.2024.10.07.05.12.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 05:12:11 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6db4b602e38so34786107b3.1;
-        Mon, 07 Oct 2024 05:12:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWS1cSPHvIrx+tjHxfGRaoXMEqU4jz+rBAWDfcvW++C22hvtz0tcH1BVHdsWMTp7BXM1LxWS53BKQmJ+5+46CAUK8A=@vger.kernel.org, AJvYcCWbJKokUCeWVPIqgPvY/vRBPTrLeTdu9IQq9oOPyut2shT8GDHZwo2/VuWvueLaDmKebgC28txtY5Tq@vger.kernel.org, AJvYcCXc+S6TW7YMjyIBGAuima+JC3g73nNVTO+Cf/JzwOi0NhR2FtkPYV5B6qbAhct2R+kb+/b/aWQClB0UrSzR@vger.kernel.org
-X-Received: by 2002:a05:690c:61c4:b0:6e2:5a8:3447 with SMTP id
- 00721157ae682-6e2c7036dd0mr90015837b3.26.1728303130412; Mon, 07 Oct 2024
- 05:12:10 -0700 (PDT)
+	s=arc-20240116; t=1728303123; c=relaxed/simple;
+	bh=4aClSqb3zVlRLnZXtppz4xCuDV82ll4KJ/g23i5DL2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KiOTIBwb5RjZQVOHhY+LFm1eJeGIZcVhtpvXE6pEfCjrefAqDSweNWqOOqBw6AlO4h0rEXlBmvNYywvNOOcxLKpFPPH/JHU8niTQ56N7lHjmNAcKEjtbdusifDHKP4cAoQN3kRqET2Yq+uczyKqffiCgOX+xaqjG56QZycUZKkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhYAv6KC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C79FC4CEC6;
+	Mon,  7 Oct 2024 12:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728303123;
+	bh=4aClSqb3zVlRLnZXtppz4xCuDV82ll4KJ/g23i5DL2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fhYAv6KC3D6TKz9AQky8JLdlfoRBALi+f99YFGG8qFHO8VaKEo3y2YYKVSHTYtQDe
+	 lwvURWNOMg8RgzVoVH+jZQ79ZUqPqIPN8yQJmanaUqKxFg0sVjSFlODGekGBswaUTr
+	 /Qp0WijRJAkcArlCG80DudkSYkvISe/YwT3EbSBLdEA0WXir0ZE8ysgDVdYBkvaZUX
+	 XDD7+HespHI11Hju+74hOZqVPNpHA7SJfHSmv5SKCSBSpPuv9ks0/UGYtREuQV8iG3
+	 k7fHOpFfvZhyhruXQZVL/EUsyX0ayhbX+dRxb3t7o5gjvZ2bZIW6/TQA08kbOuUGbO
+	 F7005pEqsCw4A==
+Date: Mon, 7 Oct 2024 14:11:59 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Luca Boccassi <luca.boccassi@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
+	christian@brauner.io
+Subject: Re: [PATCH v5] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241007-endsieg-pigmente-357468af306b@brauner>
+References: <20241006145727.291401-1-luca.boccassi@gmail.com>
+ <20241006172158.GA10213@redhat.com>
+ <CAMw=ZnS1GTC9RGQCeTqB8g2b78mFXi4zLfg6bumrp+zmgx0VXg@mail.gmail.com>
+ <20241006185537.GC10213@redhat.com>
+ <CAMw=ZnQUfCy2RBHdkBJ9r-tK5OBidQd=zCKHeJGcfprj4+ELJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927201313.624762-1-sean.anderson@linux.dev> <20240927201313.624762-3-sean.anderson@linux.dev>
-In-Reply-To: <20240927201313.624762-3-sean.anderson@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Oct 2024 14:11:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXARKT6uaEzPd5Mo=6jZfJ0Dn1ibdbCUvYOenNYqatDQg@mail.gmail.com>
-Message-ID: <CAMuHMdXARKT6uaEzPd5Mo=6jZfJ0Dn1ibdbCUvYOenNYqatDQg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: hihope: Add SD/OE pin properties
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Adam Ford <aford173@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMw=ZnQUfCy2RBHdkBJ9r-tK5OBidQd=zCKHeJGcfprj4+ELJg@mail.gmail.com>
 
-On Fri, Sep 27, 2024 at 10:13=E2=80=AFPM Sean Anderson <sean.anderson@linux=
-.dev> wrote:
-> Add SD/OE pin properties to the devicetree so that Linux can configure
-> the pin without relying on the OTP. This is based on Geert's analysis of
-> the schematic [1].
->
-> [1] https://lore.kernel.org/linux-arm-kernel/CAMuHMdUmf=3DBYrVWGDp4kjLGK=
-=3D66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com/
->
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+On Sun, Oct 06, 2024 at 10:33:08PM GMT, Luca Boccassi wrote:
+> On Sun, 6 Oct 2024 at 19:56, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 10/06, Luca Boccassi wrote:
+> > >
+> > > I see, so what should I do here then? Check both? Or none?
+> >
+> > I don't know, because I don't know how are you going to use this API.
+> >
+> > > The caller
+> > > needs to verify that the data is still valid at the point they use it
+> > > anyway,
+> >
+> > So "none" should work fine? Just it should be documented that, say,
+> > kinfo.pid can be 0 if we race with the exiting task.
+> >
+> > Just in case, you can also use lock_task_sighand() || return -ESRCH,
+> > this way kinfo.*pid can't be zero. But I don't think this will buy too
+> > much, the task can exit right after pidfd_info() returns.
+> >
+> > Oleg.
+> 
+> I think what we should do is check if any of those fields was set to
+> 0, and return ESRCH in that case. This way either we return a full set
+> of metadata that was correct at the time it was taken, or we provide
+> nothing and a clear error. We cannot solve the race as you mentioned,
+> but I think it is important to avoid providing incomplete information,
+> so that either the data is complete or nothing is given back. If the
+> information is complete but becomes stale later, that can happen and
+> it's ok.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.13.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Agree.
 
