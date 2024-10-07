@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-353405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CDB992D55
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:32:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FB8992D5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB722842DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3F01C22A07
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42D1D5CD7;
-	Mon,  7 Oct 2024 13:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09781D6191;
+	Mon,  7 Oct 2024 13:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDsclhWG"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhcvY+M8"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766C51D54D6;
-	Mon,  7 Oct 2024 13:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2841D5AB0;
+	Mon,  7 Oct 2024 13:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307888; cv=none; b=JE5EkmWI2BZGTEp8Rm7FhTPeGjzfFSkJ4mo7BIWMa/z2yLTr1a0ML3JA8YpHUF6w0w9THfC+OLTxHviqXXIvbf2tfOITp/NmM6zhDphKxIPlvI9VG4kb20enl3YZ9CBeSVQrjMtrHSAdlsYCzZb32gQWjNCzd7la0WstA1k5gF4=
+	t=1728307889; cv=none; b=LmHV7/rtwTQ/9mmYg7y0rEEXdnGs9i2pUBri1gcHAhP8fAAPpdzSxhh5ysaqjDt0bs84XmxYNfh9Fam0/50l8s5vUw7HMT/xNhk9VwN/Dn327Udm0q6uAAnpjKIMsqEok2HMUkwFpUp95m3Dd8p95bGr/Q2L6EKTd7CmrBVOvew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307888; c=relaxed/simple;
-	bh=vV42RUHGMW9kFSk33JmlcysIBmsyJL1a3vd4cWxBy7c=;
+	s=arc-20240116; t=1728307889; c=relaxed/simple;
+	bh=HCanv8MZxMpQEBSUquYlSfIaSYuC0taVYgBy0mOb0BY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pGkTN8D5wwwAVdruPALI6vE4wL46EeqnfQeQcVg/oPcyEHRgeGaX8GuqNh8shL6FCiiDKrSi/cxQGD+GE3GyVn61Fzab9bfGX6SAI1+jLG5ifL4L25Jn9EL0dkptXBTjCcqbbgOabonEuIp9ATaZOPXnUYi1hrtfD90wZoDvJE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDsclhWG; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=hAwPoSxdO90kPILtDCcyB+AoWGLNOCqYHCArF60p2+QXbRu7fuYHnbt/pNzIu3yJu1EOMOCj4ZwXBwcX91EEPnWPSDlkQNEj7Ze5D8kjyMHJ+9ZdaQK0+SRXX5YHugQSkrFzHNYa67d0Yo0XVbmxKeIIicViNIIkMjt97C0rqaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhcvY+M8; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cdc7bd941so288895f8f.0;
-        Mon, 07 Oct 2024 06:31:26 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c88367684bso896841a12.0;
+        Mon, 07 Oct 2024 06:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728307885; x=1728912685; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728307886; x=1728912686; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=naEfAmzSKhpqtQnWvxkkJprHetAHHfZ0yc3YYzM5sc4=;
-        b=bDsclhWG0pYwQjTUFBxnpLyktsh13NsFuW+i4HuTybUSOVsAPbrCkBsMsfYtD4F3Sd
-         TL5K/Bghqj1+2TJj5Hl9zbP+sm+jshUhRNfaltrk1Dp7kuRah/31TN70FfkSQWGAJct7
-         Z8IMqR69slFmqV9kY3gj1bE3/26W2tYlcUhlvpyGwJ9Rz/YpI/ZvCkuwCQZs28wqxWhi
-         OWMxjNnRKfFMAL97G9y9aVBPDu+h/SZBYIxI+4WHqXXBrDxUK8aWbWFA4v10+OfMvElS
-         QPQCK+LUwNopXR8YZDNAhw1wdMdD2OV3UILgS5QSOlUfDfTx6nRFw4u24AB1HnNckVLh
-         KBUg==
+        bh=OxRwnVlkoapQXGCM67CkaCMcGQmD4T9hS0Kt5niFMDM=;
+        b=WhcvY+M8qqjSqeO02GqE8dN0Qzvek3Zv33EkXKImOyiS4RhfHUgfQb3i9WMLgcPT0E
+         B++AJ8y2WsEdACEHO/XthDECwImxAXaVUXA2+iNv5dPEEVzPfatfglNI/9KbUuOIfOwM
+         GKNRODjIOZHjpSYRwEZ9A52+XxNlJZoMjKMFTTC9bUGIopxrUKDQXf4DMrQAPEo51nPH
+         tYXxCdJfMB5LbEe4hcjfnNorYXS9QqZQnHxQeIDOax5MRSttaCOn2nkk6ljFjI1NU+oK
+         /iLo3T1wXsMpUtqav57Mzh1QwGW75lEsZvOUkTTz9NUr6yXlac6l+MFOOyIzK2jRbWNc
+         a0/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307885; x=1728912685;
+        d=1e100.net; s=20230601; t=1728307886; x=1728912686;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=naEfAmzSKhpqtQnWvxkkJprHetAHHfZ0yc3YYzM5sc4=;
-        b=Uhilrm0bpyFrUB9QPjW+yiN9OxDScjYQ7ti5gB7YbcSzCXCU66sHdmgbrmv+qz4aQU
-         0nNNQ9nPPMW9d1jMK08oDxIcK2aWeCirAc3kGBt4fw42Xjk6gPYkjLjo6TyJmcAkmV4C
-         RIe/kCI8I3BiIN1E7511nkJRyQNIJrIZomRn2BWJQLpaAZvR6SsECXUnJGbkYM8YESf5
-         PSW5h+ESB5D8Vv5QPZo6MnWA9CSo9o150mzjLQn06eERjJUXB8edIn6b7rQiKBqyWwg+
-         8twqzbZUuetJAuKCb7Ua3yHa4vE3BufiAQtT7zTMsuf/GosxyKReZEWivbUSQHp2qGoQ
-         dueQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV71z8vua3YHJjQaSTpxc0dHoiw1NsYEwdGvoou/RQriawZFpM4eeJojU5q4VmTSFclfFAnzZn9OxE/@vger.kernel.org, AJvYcCXLmAjS7zIp7CwE+jd9CqVIwWA3m5Karpk5ZNL6GkfOrhxsZ/RToqL/UTfxDW8xeN77pQ1qSULwX1uHlpjW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6B38DnzZ9ZcQFp1bRtAH/TIXdE4zvSa1ev82/nNrbnZKSXEUh
-	8rs8+lDJoqK5LawIzxLPeCCTytjpwjkBYdDOQdTWRq6Xt3a7d5jg6X5SLg==
-X-Google-Smtp-Source: AGHT+IG3PsM5ISXCIuw3ztJSKHSFYrqgWl0jBUycIDe60ZoOzTofZm5d9vQwgasBeSxqRsi9KhmDWw==
-X-Received: by 2002:a5d:6daa:0:b0:374:c962:a18a with SMTP id ffacd0b85a97d-37d0e7b6563mr3438212f8f.4.1728307884564;
-        Mon, 07 Oct 2024 06:31:24 -0700 (PDT)
+        bh=OxRwnVlkoapQXGCM67CkaCMcGQmD4T9hS0Kt5niFMDM=;
+        b=kZshKwQVtoEIwh1uLuKovcMNkBLBz7zugKlMCSsg+3XFnhzk3E9hr4TOtbV3mjn4HB
+         3NFFpdjYgaqMtpkXm8iwcmGow6U317eWSfZyhQyBuXd5UTC2wgoC8Oc1K2DiFysPSZ1u
+         /jLomKfgSbChjw3Tk/lw8VNAsDWiTCa8Vzi/Guo4g0qRMOkBKSxV1MF+Mt0+8r79XJgM
+         gQEQpprOsE7LAdR8WdIZBpaHdPPsISiqFcaAVM/DzUGMJ0gJduXOVZjG599vkTJPu8YR
+         VARRJ1pcFBG0fpCQgfzef7S9/Q3mGBq4ZwwmTgQIt0LogotuVHZFv5OnbtbDXlYb6Yr9
+         D/RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzd8b3kXRiUeO8uellGBlprxe74nZ051OKQXU+sMeH2GQ0yzCBJSeC6K6vrFJVTwKw+r8mkTKYR36i@vger.kernel.org, AJvYcCWBSwyPPi3bu+LjO8BPAhkNqNq3VIhNUsxfex+WNs9JxHC59tM7QH/DiVZIV5Ak9EQnT814weJzHCNjmsJY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXVGa7L25LEZPR8Fk6gEp4k+pMosrR/dbj2LM485hLy6zLIb2T
+	X8FuTT4yII0d1ArferVofuCwUyvymoaCZXlGefJ31O/ZretxC6oS
+X-Google-Smtp-Source: AGHT+IGz//Vg4XoR0PdmMVCoVC/0KYE77LoHIgOnkn3B2gnSfOEOTk8IWcRGPI9bBEonxFGRZ8v6/Q==
+X-Received: by 2002:a05:6402:40c5:b0:5c8:8381:c2a0 with SMTP id 4fb4d7f45d1cf-5c8d2cfe1d1mr4037847a12.2.1728307885662;
+        Mon, 07 Oct 2024 06:31:25 -0700 (PDT)
 Received: from e8ff02ae9b18.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb34csm3193089a12.59.2024.10.07.06.31.22
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb34csm3193089a12.59.2024.10.07.06.31.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:31:24 -0700 (PDT)
+        Mon, 07 Oct 2024 06:31:25 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -76,9 +76,9 @@ To: robh@kernel.org,
 Cc: l.rubusch@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] ARM: dts: socfpga: add Enclustra Mercury+ SA2
-Date: Mon,  7 Oct 2024 13:31:12 +0000
-Message-Id: <20241007133115.1482619-6-l.rubusch@gmail.com>
+Subject: [PATCH 6/8] ARM: dts: socfpga: update Enclustra Mercury+ AA1
+Date: Mon,  7 Oct 2024 13:31:13 +0000
+Message-Id: <20241007133115.1482619-7-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241007133115.1482619-1-l.rubusch@gmail.com>
 References: <20241007133115.1482619-1-l.rubusch@gmail.com>
@@ -90,62 +90,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce Enclustra's Mercury+ SA2 SoM based on Intel Cyclone5
-technology as a .dtsi file.
+Introduce support for Enclustra's Mercury+ AA1 SoM, based on Intel
+Arria10. This is a flexible approach to allow for combining SoM
+with carrier board .dtsi and boot-mode .dtsi in a device-tree file.
 
 Signed-off-by: Andreas Buerkler <andreas.buerkler@enclustra.com>
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- .../devicetree/bindings/arm/altera.yaml       |  10 ++
- .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
- 2 files changed, 156 insertions(+)
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ .../devicetree/bindings/arm/altera.yaml       |   3 +
+ .../socfpga/socfpga_arria10_mercury_aa1.dtsi  | 141 +++++++++++++++---
+ 2 files changed, 123 insertions(+), 21 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
-index 87a22d2a4..31af6859d 100644
+index 31af6859d..51f10ff8e 100644
 --- a/Documentation/devicetree/bindings/arm/altera.yaml
 +++ b/Documentation/devicetree/bindings/arm/altera.yaml
-@@ -61,6 +61,16 @@ properties:
-           - const: altr,socfpga-cyclone5
-           - const: altr,socfpga
- 
-+      - description: Mercury+ SA2 boards
-+        items:
-+          - enum:
-+              - enclustra,mercury-sa2-pe1
-+              - enclustra,mercury-sa2-pe3
-+              - enclustra,mercury-sa2-st1
-+          - const: enclustra,mercury-sa2
-+          - const: altr,socfpga-cyclone5
-+          - const: altr,socfpga
-+
-       - description: Stratix 10 boards
+@@ -32,6 +32,9 @@ properties:
          items:
            - enum:
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
-new file mode 100644
-index 000000000..0425520e9
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+#include "socfpga_cyclone5.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2";
-+	compatible = "altr,socfpga-cyclone5", "altr,socfpga";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		ethernet0 = &gmac1;
-+	};
+               - enclustra,mercury-pe1
++              - enclustra,mercury-aa1-pe1
++              - enclustra,mercury-aa1-pe3
++              - enclustra,mercury-aa1-st1
+               - google,chameleon-v3
+           - const: enclustra,mercury-aa1
+           - const: altr,socfpga-arria10
+diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1.dtsi
+index 41f865c8c..cdd693cf9 100644
+--- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1.dtsi
++++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1.dtsi
+@@ -7,12 +7,14 @@
+ 
+ / {
+ 
+-	model = "Enclustra Mercury AA1";
+-	compatible = "enclustra,mercury-aa1", "altr,socfpga-arria10", "altr,socfpga";
++	model = "Enclustra Mercury+ AA1";
++	compatible = "enclustra,mercury-aa1",
++		     "altr,socfpga-arria10", "altr,socfpga";
+ 
+ 	aliases {
+ 		ethernet0 = &gmac0;
+ 		serial1 = &uart1;
++		spi0 = &qspi;
+ 	};
+ 
+ 	memory@0 {
+@@ -24,52 +26,102 @@ memory@0 {
+ 	chosen {
+ 		stdout-path = "serial1:115200n8";
+ 	};
 +
 +	/* Adjusted the i2c labels to use generic base-board dtsi files for
 +	 * Enclustra Arria10 and Cyclone5 SoMs.
@@ -156,55 +150,133 @@ index 000000000..0425520e9
 +	 * bus in a generic base-board .dtsi file.
 +	 */
 +	soc {
-+		i2c_encl: i2c@ffc04000 {
++		i2c_encl: i2c@ffc02300 {
 +		};
-+		i2c_encl_fpga: i2c@ffc05000 {
++		i2c_encl_fpga: i2c@ffc02200 {
 +		};
 +	};
-+
-+	memory {
-+		name = "memory";
-+		device_type = "memory";
-+		reg = <0x0 0x80000000>; /* 2GB */
-+	};
-+};
-+
-+&osc1 {
-+	clock-frequency = <50000000>;
 +};
 +
 +&i2c_encl {
++	status = "okay";
 +	i2c-sda-hold-time-ns = <300>;
 +	clock-frequency = <100000>;
-+	status = "okay";
-+
-+	isl12020: isl12020@6f {
-+		compatible = "isil,isl12022";
-+		reg = <0x6f>;
-+	};
 +
 +	atsha204a: atsha204a@64 {
 +		compatible = "atmel,atsha204a";
 +		reg = <0x64>;
++	};
++
++	isl12022: isl12022@6f {
++		compatible = "isil,isl12022";
++		reg = <0x6f>;
 +	};
 +};
 +
 +&i2c_encl_fpga {
 +	i2c-sda-hold-time-ns = <300>;
 +	status = "disabled";
+ };
+ 
+ &gmac0 {
++	status = "okay";
+ 	phy-mode = "rgmii";
+ 	phy-addr = <0xffffffff>; /* probe for phy addr */
+-
+ 	max-frame-size = <3800>;
+-
+ 	phy-handle = <&phy3>;
+ 
++	/delete-property/ mac-address;
++
+ 	mdio {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		compatible = "snps,dwmac-mdio";
+ 		phy3: ethernet-phy@3 {
+-			txd0-skew-ps = <0>; /* -420ps */
+-			txd1-skew-ps = <0>; /* -420ps */
+-			txd2-skew-ps = <0>; /* -420ps */
+-			txd3-skew-ps = <0>; /* -420ps */
++			reg = <3>;
++
++			/* Add 2ns RX clock delay (1.2ns + 0.78ns)*/
++			rxc-skew-ps = <1680>; /* 780ps */
+ 			rxd0-skew-ps = <420>; /* 0ps */
+ 			rxd1-skew-ps = <420>; /* 0ps */
+ 			rxd2-skew-ps = <420>; /* 0ps */
+ 			rxd3-skew-ps = <420>; /* 0ps */
+-			txen-skew-ps = <0>; /* -420ps */
+-			txc-skew-ps = <1860>; /* 960ps */
+ 			rxdv-skew-ps = <420>; /* 0ps */
+-			rxc-skew-ps = <1680>; /* 780ps */
+-			reg = <3>;
++
++			/* Add 1.38ns TX clock delay (0.96ns + 0.42ns)*/
++			txc-skew-ps = <1860>; /* 960ps */
++			txd0-skew-ps = <0>; /* -420ps */
++			txd1-skew-ps = <0>; /* -420ps */
++			txd2-skew-ps = <0>; /* -420ps */
++			txd3-skew-ps = <0>; /* -420ps */
++			txen-skew-ps = <0>; /* -420ps */
+ 		};
+ 	};
+ };
+ 
+-&i2c1 {
+-	atsha204a: crypto@64 {
+-		compatible = "atmel,atsha204a";
+-		reg = <0x64>;
+-	};
++&gpio0 {
++	status = "okay";
++};
+ 
+-	isl12022: isl12022@6f {
+-		compatible = "isil,isl12022";
+-		reg = <0x6f>;
+-	};
++&gpio1 {
++	status = "okay";
++};
++
++&gpio2 {
++	status = "okay";
 +};
 +
 +&uart0 {
-+	clock-frequency = <100000000>;
++	status = "disabled";
 +};
 +
-+&mmc0 {
++&uart1 {
 +	status = "okay";
+ };
+ 
+ /* Following mappings are taken from arria10 socdk dts */
+ &mmc {
++	status = "okay";
+ 	cap-sd-highspeed;
+ 	broken-cd;
+ 	bus-width = <4>;
+@@ -79,3 +131,50 @@ &mmc {
+ &osc1 {
+ 	clock-frequency = <33330000>;
+ };
++
++&eccmgr {
++	sdmmca-ecc@ff8c2c00 {
++		compatible = "altr,socfpga-sdmmc-ecc";
++		reg = <0xff8c2c00 0x400>;
++		altr,ecc-parent = <&mmc>;
++		interrupts = <15 IRQ_TYPE_LEVEL_HIGH>,
++					 <47 IRQ_TYPE_LEVEL_HIGH>,
++					 <16 IRQ_TYPE_LEVEL_HIGH>,
++					 <48 IRQ_TYPE_LEVEL_HIGH>;
++	};
 +};
 +
 +&qspi {
 +	status = "okay";
-+
 +	flash0: s25fl512s@0 {
 +		u-boot,dm-pre-reloc;
 +		#address-cells = <1>;
@@ -229,48 +301,11 @@ index 000000000..0425520e9
 +	};
 +};
 +
-+&gpio0 {
-+	status = "okay";
++&watchdog1 {
++	status = "disabled";
 +};
 +
-+&gpio1 {
-+	status = "okay";
-+};
-+
-+&gmac1 {
-+	status = "okay";
-+	/delete-property/ mac-address;
-+	phy-mode = "rgmii";
-+	phy-handle = <&phy3>;
-+
-+	mdio0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "snps,dwmac-mdio";
-+
-+		phy3: ethernet-phy@3 {
-+			reg = <3>;
-+
-+			/* Add 2ns RX clock delay (1.2ns + 0.78ns)*/
-+			rxc-skew-ps = <1680>;
-+			rxd0-skew-ps = <420>;
-+			rxd1-skew-ps = <420>;
-+			rxd2-skew-ps = <420>;
-+			rxd3-skew-ps = <420>;
-+			rxdv-skew-ps = <420>;
-+
-+			/* Add 1.38ns TX clock delay (0.96ns + 0.42ns)*/
-+			txc-skew-ps = <1860>;
-+			txd0-skew-ps = <0>;
-+			txd1-skew-ps = <0>;
-+			txd2-skew-ps = <0>;
-+			txd3-skew-ps = <0>;
-+			txen-skew-ps = <0>;
-+		};
-+	};
-+};
-+
-+&usb1 {
++&usb0 {
 +	status = "okay";
 +	dr_mode = "host";
 +};
