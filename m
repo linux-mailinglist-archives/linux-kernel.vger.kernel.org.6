@@ -1,128 +1,102 @@
-Return-Path: <linux-kernel+bounces-353091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B0599284F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 391D4992855
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 11:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953CE283C6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF79328411F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 09:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD2E19993D;
-	Mon,  7 Oct 2024 09:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33850199E8F;
+	Mon,  7 Oct 2024 09:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="fBi7Vgk7"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NgxSyPhl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90011433CA;
-	Mon,  7 Oct 2024 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728294061; cv=pass; b=kDoFFi+4BJFCjktM0Ah8tCHHGi7/81AS8SSlhpUlym2sjGg7upfqlKjbzN68vlguANKMlFABJZziRduN7JmzgiNBstuIYtGk4ArxJ2LO+F/TwzlIEqqm4vQVtKVr5BnC+WdOaD+rOAhQwL3Zy/wfG6DFo+HWWQOCvmUNDdThE7I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728294061; c=relaxed/simple;
-	bh=SwdsTsngSuvz6QeG10QNqbVsW20XU1qVdprd/BgSiQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TWTzbnyu2AOAMPixMMUpYvPHm8OPf9AkpyCYmJN1XIC3mm4h2wczvFwWKaDoCYEHLYwXGVlQlyvLUxA2nH+lZQa4u4Eee6+xH7SanBC+OyvuMCbBtMyIdB5KT4L3O7HXsT6lq+by3s8tG0tGzyoBnGTHog1FdBcg7EFXE/b3fSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=fBi7Vgk7; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1728294056; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EFbzVR2KiLoMfc/GCa0cflXGvkw3jIX1UVVIt/1csc5jbZbWEvR4kdZ8YD2qZSda2W/DUShJaYiPdxIVt88aOX6QwzPKgTs5q4U2Kf27jTUUf6+lcNP7iZiEAw5yqsrfuIS06NBWOuctVfYDWcvKeo80g37OSwFeXwqHBNEb7NE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1728294056; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ia7bVofVVswAbaGXu/q9y8haQ9Yf6IOtNOhLDyMshXg=; 
-	b=FalYJF19k1uNVTGIbMM53fFa0LIClMcBmBemf3Om2VHAQc/cCkaBQPvN/hl7UcavTUnwt6pgZgqKt4tNvHTrOhCZOYBC7wJhN5RMvULV2ahyBwKlWo3BvByn+kBuRyoiNFaCCIidMafCYXmvrV4mdjQA+48NOwp5djd1a7aBEkE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728294056;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=ia7bVofVVswAbaGXu/q9y8haQ9Yf6IOtNOhLDyMshXg=;
-	b=fBi7Vgk7f/dMR0kEeVBccvi2f61NT6DN0pslF4YZdoyjSco7o5SmmpTdH75lp90C
-	4AQDgztxcs/vrCDqwIPOW4j1PXV3p1RKghqGzkP3BR++rLK/UBlb71EovbJxpqCFNmr
-	wPPGZesOf9O9fKt/tPFsR9TSr6uAR9VtVKl82ero=
-Received: by mx.zohomail.com with SMTPS id 1728294054769331.59808967692425;
-	Mon, 7 Oct 2024 02:40:54 -0700 (PDT)
-From: Laura Nao <laura.nao@collabora.com>
-To: kernelci@lists.linux.dev
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Testing Quality Call notes - 2024-11-03
-Date: Mon,  7 Oct 2024 11:41:22 +0200
-Message-Id: <20241007094122.22023-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAEF433CA;
+	Mon,  7 Oct 2024 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728294133; cv=none; b=q/2yJ4fZEvBr4xZij9CmYOJWervlvreu07I1dkpViqdWPFP6Lo7a4dHDQm/ZuF/PmtSdk37Y+9NEUTNlUeCNEd7wEHVTunGWmKRvZ0RDkJxteqKjPSq5SV2PHMJe5kk3uOBpFdoDOokqtV2P3sTztCS1wUp/YLe6P2g5ndSm7Ts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728294133; c=relaxed/simple;
+	bh=FeKed36+MTjOd+VWrJxG8wgWlDmgL9nZPXlZjr1SW0c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CN6DAcA9oF4o5zv4ajkJnoknQYJr6WMPeydG6KaYVxSjxLDIhzeL/gIbDyiUDXecEyxE1S923IHACHf5X4kjYegntIyC7m7LgPUL6jt4U/X44fqxr/TilxbvZGT21E8qM+jqXyZziGnBJFjo+/jubaEZVi7/zYwiUASfydqtHJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NgxSyPhl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728294132; x=1759830132;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=FeKed36+MTjOd+VWrJxG8wgWlDmgL9nZPXlZjr1SW0c=;
+  b=NgxSyPhlKOm4eu+ZJCBO5VcQ5uRFMdxRisOxhctJ+5/ENHBRPyyCq8DT
+   TAbvZdOHryxu1QxRf7YFD3vCWqU2WCqcVjm0WyorJ/0NRMEqkdI2Af0Sk
+   g2HqY6gYCKpFJO2o6UccyP2pJ/2hZBOOHpmtG8lcSRw1KVgLhOtEWP5kV
+   3CmvZusFfxVBXt+8WvCkOWufXSs/mkI0WZpTBwjPB2bEt/vIhQcErIa83
+   9ppzoKfS1HkAduTEzU+EU0Q+GJtJ2cpqxlaXLD/oGmJUfqdHty3wmJAWU
+   suIyu5xXxqkG9Mh2fBmkR5hWpwN+z1jM9fb6tuJtkoHs9OSlN5neocD+V
+   A==;
+X-CSE-ConnectionGUID: vttCxKUAR0aTSmtK3uM4RA==
+X-CSE-MsgGUID: 1xSI9n5KSTuf1i7wk/pH5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11217"; a="27317840"
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="27317840"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 02:42:11 -0700
+X-CSE-ConnectionGUID: tA7kamMwTDO50GaZ+4oslg==
+X-CSE-MsgGUID: KDm4i4mqQKqxPWLZU6l5xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
+   d="scan'208";a="80009615"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.186])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 02:42:10 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, 
+ platform-driver-x86@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andy@kernel.org>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+In-Reply-To: <20241003154819.1075141-1-andriy.shevchenko@linux.intel.com>
+References: <20241003154819.1075141-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] platform/x86: intel_scu_ipc: Don't use "proxy"
+ headers
+Message-Id: <172829412325.1956.4300166493999034307.b4-ty@linux.intel.com>
+Date: Mon, 07 Oct 2024 12:42:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hello,
+On Thu, 03 Oct 2024 18:48:19 +0300, Andy Shevchenko wrote:
 
-KernelCI is hosting a bi-weekly call on Thursday to discuss improvements
-to existing upstream tests, the development of new tests to increase 
-kernel testing coverage, and the enablement of these tests in KernelCI. 
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+> 
+> 
 
-Below is a list of the tests the community has been working on and their 
-latest status updates, as discussed in the last meeting held on 
-2024-11-03:
 
-*Missing devices kselftest*
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
 
-- Proposing new kselftest to report devices that go missing in the system
-(v2):
-https://lore.kernel.org/all/20240928-kselftest-dev-exist-v2-1-fab07de6b80b@collabora.com/
-- Sent v2 addressing feedback received on the RFCv1 and during the session
-at LPC 2024:
-https://www.youtube.com/live/kcr8NXEbzcg?si=QWBvJAOjj7tg264o&t=11283
+The list of commits applied:
+[1/1] platform/x86: intel_scu_ipc: Don't use "proxy" headers
+      commit: 066c779b094b63754e0742ad8675d72d6c0a46f6
 
-*Boot time test*
-
-- RFC:
-https://lore.kernel.org/all/20240725110622.96301-1-laura.nao@collabora.com/T/#ma568382acdc81af65c30fe3823a7be3e49f98108
-- Discussed proposal at LPC2024:
-https://www.youtube.com/live/8XQwzUZxLK4?feature=shared&t=16944 
-- Planning on preparing v2, based on feedback received in the session 
-- Suggestions for improvements and additional features include: exploring 
-bootloader tracing via pre-filled ftrace buffers, adding support for 
-specifying variance values on a per-event basis, investigating the use of 
-ftrace histograms for initcalls
-
-*Device testing documentation*
-
-- Patch:
-https://lore.kernel.org/all/20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com/
-- Submitted documentation on device testing, detailing the types of
-kselftests available, their requirements, and the coverage they provide.
-The goal is to guide users in selecting the appropriate tests for their
-devices.
-
-*GPIO test*
-
-- RFC:
-https://lore.kernel.org/all/20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com/
-- Proposed a new kselftest to verify the GPIO driver functionality. The
-test uses a YAML-based test plan that specifies the configurations to be
-checked. It sets each pin configuration and retrieves it to ensure they
-match. Currently, the test only verifies bias settings, but it can be
-easily extended to cover additional pin configurations.
-
-Please reply to this thread if you'd like to join the call or discuss any
-of the topics further. We look forward to collaborating with the community
-to improve upstream tests and expand coverage to more areas of interest
-within the kernel.
-
-Best regards,
-
-Laura Nao
+--
+ i.
 
 
