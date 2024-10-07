@@ -1,131 +1,349 @@
-Return-Path: <linux-kernel+bounces-353481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC1B992E6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:10:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9191992E6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CBE1F220BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BDD2B20EE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A2A1D7E52;
-	Mon,  7 Oct 2024 14:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2611D61AA;
+	Mon,  7 Oct 2024 14:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3M1+eG1D"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ABa/GTh4"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8B51D5CDD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310145; cv=none; b=Jfu5zrX6w6l9yQjVqBSIuDSFm4++PS6mjc9UMkn818vpLNa/tnKUR6K5Xfon5RI2R0f2IsQS4fE2M45tzOuQnnILTV3g/6d4LVNSl25GpQLwJ1APtD0U8UE23WGgviwMoyhy8pSbwEmF2xhJ7cncB09/WN1RidWkA6StzjFUTEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310145; c=relaxed/simple;
-	bh=ivFBOmv6ledmK5xGubGTRk1bSWqSMt6FdYU0h0kX9pQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNVIjfesDLs/108r4iWBk7J2tCESFIt/IqNyvbIrRCS2Fr8aP57jX+89gsa39W7oHZEj6VNu8RyIbGfgNC8FJo7+kEfYkHGTDJEKhn+JCIzu6Vo8AXjMeru4TWg/y0YvkWk38tq60fOoP3yqyjehVNfm8SKwHkByvXxBR6mDL/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3M1+eG1D; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5399675e14cso5053137e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 07:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728310142; x=1728914942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EKZvIK45MDR9TD/1XroJvoyFAFi7DQfKK13CSD5BTzY=;
-        b=3M1+eG1D4TyrOavhNcz6nmkr0W278/ovBoPe5T09mRDlSExFKYnKoCU/6nB7WNyFWY
-         TX6p2Dg5EfUXhL1NFX4DHPdkN6/yaAY3GeodnZCQGnuNoIM8NXToP/ZJIgzAZNDzKNcI
-         VKVnPI2DutdOQAGHh+KpRvMlQIiVGpL35zS7H3o7CK427jrvbJGgJqVHpGmgEGG0ynL6
-         Gq4p1CgnbB1xz/T/wizs0IgovexygPtoGQu0BgTaRezh2bhiCQOTe6ayPn3M1xkTJYkk
-         MTfefzmzQdymou3+XuIPR5+2NBoN6pJEaD9/f52QccAiEsQk4nQwfTh1+aAHJjrF0x0j
-         LgnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728310142; x=1728914942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EKZvIK45MDR9TD/1XroJvoyFAFi7DQfKK13CSD5BTzY=;
-        b=gBOXNTafCovoOfwJDKCt2tL5goV6RRtdcAbgDv4GFTftqH+5yfOumlZeIS+e4z3OC3
-         UQjLNz27wY5bU4ph0Fq7sSdYlZiFmIMysYcHaszgWqbi6+qALISwIKJM6E70Zc2hb3N9
-         PTmDLPq8UqRZCwaPNT7WGLFRG2wYIxLpkht2tFcx1lObBvUfwU5rHgoFg/EOrAX9giOf
-         m3sJHF0N95ayvKkT45NHrvtJOlkPEmIfzQfhlcqFSkMdXSFAcZZuzZwmq+gej6FvjjrM
-         +YULdUkTGpWOyFVYbQ4tc8hPtR/dQJP3gpjpTPS64rlNQ2Qp+p/eHfJJriPJDqDWpGfx
-         +4HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLnrzvqT2i5Kbc5bl2vKabWewItNp7GK+lWf8idKA+4k34tdIHL2angToUbZGMxMMs/Z/c91T3CXMg1Io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQkvOfc5M3Y7j4xm+V+LCIQ5/oos4y8KtOkQFkkCkfcOLsPCfi
-	ULKMfiJVFk2nrCQDTJRAjvf7kwateAGYgk+UFJ+JFuD3wwx03AKuTVQXCX13umf7nJg1uQTtuwW
-	n1hjuQl+BxBt4F3jLetm7uiEjAwQTcORBT1Rz
-X-Google-Smtp-Source: AGHT+IFwTrVIqhDUFyPdVl34T+oKrSGlMdjLolmnCNjPhVYLj4MboC4l1jWOzAigrl97+qSrM8ogZYoRsH321EcL9EY=
-X-Received: by 2002:a05:6512:e93:b0:52c:daa4:2f5c with SMTP id
- 2adb3069b0e04-539ab9d0331mr5921302e87.42.1728310141515; Mon, 07 Oct 2024
- 07:09:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D9A1D61A1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728310154; cv=fail; b=q83+0uCYP+Vu63uI1cdIj9ckH91OHAZe1lEynvRtKCDMds46y1QsIgHw6NOvWbLBH44UKYcCFuFWVQYebNgJDr62YHhXliN+/LAXHjIgO6brLtSo0PEMkli8xUPQMWtmL6VCYAuNunVQ6QVvrptIobNseBbkQThLkLrihSrcbwY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728310154; c=relaxed/simple;
+	bh=1DAc2JAv9jId5/5tNnTeBF7T8vAATb1KQXJmOihlQGQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n5pToVddd2ALKJCIAqTwRhp06CWEpjJZs6Ou4tggQme89j8dt+G1RA7vB2YuY39ly4WDfeIkJ7rDjSjdY6mcePl3jqTZNuQZNqDGg3I6SMvQ8lOclJlBH2CXEZd5aOudzb2hVIbiwje8OvsupcwS6GEoeg1gRWWewPiPI09Hlj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ABa/GTh4; arc=fail smtp.client-ip=40.107.237.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PYbeHuVsUDWBbPqFcoOdFFi36jSdD+adZF0Is8fqM+SDXUoIaZe+YqUaxf/hTLWkLhZVhKR5zM6O4i2M3Q76omUlbNxam9ZnDuQ8FIcSTbwkHOhpGGI1TmH1Nf/biQBM29I3A9dLcCBB4ejTkSXyWmOiw+B3pg0e8L3FwLQbukUUJMkc8qv7rzJ89GN4VV/Wwlm6yMLWN9tFyyQrqlnZwg1Radp2oGAs3Z1zutOxTyoByyoJtbj5SOSq/2JZaa2qimiJfb/64BEkqmIr0ip4oK78TVtSHVPfy3VdA3zexO34onzgdNKO2BTsMX3OX/GPtgn9siffRHYiv9JkmUBMTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AaCIde7XJqgRpNKQ8GJrhQ+jFXm866WM6dZr86z9rKQ=;
+ b=DufIwdkBoIh941CT9hlcnr9fxxDWJVMucw0DwNiyWPKf7kS+aWxMc5d0U5hR76Dm48ugacg90fSuRhZlYEhECn9tRJ7+SxtZ5whf0fFk6+rv1+cKVK5X4OUiPm7ON3cR+IXK8+YpY6TMXHUhoWuO81gxMYk7tWfGWsVhjs3ISXsqmA8PeGw9DQHzd+iyVMKp0NOV/lSCNFlLQBEqQR8Ul7CLV0yPF/pecIfCQI8InqBjfOEP48KTJfJhkEP1YzO9jTIgUcrJ54w9KwgmAJSTIJIpce89So9YKc+9pdswTky5yLoB5oDZuNbG2n97EITaaXKj3jNmkjPPRUqXIDbLkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AaCIde7XJqgRpNKQ8GJrhQ+jFXm866WM6dZr86z9rKQ=;
+ b=ABa/GTh4dTzFCzF+OqxFKjcWl9gXGs/E177w1lU9o8CchEf4UFN0JQn2wfOACgeGs6tm6luHYzauSdimFec5VUdPY2zi7Vz0PIHwAOHWIkKVnB/hG8bdowDMXOOsoLOZzOoyvNYNNNdV4nh6je0FUqcNoMs+RNg1+owhxJWxr+s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DS0PR12MB8272.namprd12.prod.outlook.com (2603:10b6:8:fc::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.23; Mon, 7 Oct 2024 14:09:08 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
+ 14:09:08 +0000
+Message-ID: <5115d57a-8a94-4f9c-8898-a403d720aac7@amd.com>
+Date: Mon, 7 Oct 2024 16:08:59 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon: add late_register for connector
+To: Hoi Pok Wu <wuhoipok@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
+ Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "R.T.Dickinson"
+ <rtd2@xtra.co.nz>, mad skateman <madskateman@gmail.com>,
+ hypexed@yahoo.com.au, Christian Zigotzky <info@xenosoft.de>,
+ Darren Stevens <darren@stevens-zone.net>
+References: <20241003060650.18454-1-wuhoipok@gmail.com>
+ <d2704a2b-ceb2-4919-81d3-f6ff58a734fe@xenosoft.de>
+ <c868e394-b1ad-4f30-b27b-c779e3458c42@csgroup.eu>
+ <CANyH0kDWaS8mavzuUeH4CPHBN9kBQ3hcCGjWA8U0UU2_y=5Gnw@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <CANyH0kDWaS8mavzuUeH4CPHBN9kBQ3hcCGjWA8U0UU2_y=5Gnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0159.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
- <20241005122531.20298-6-fujita.tomonori@gmail.com> <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch>
- <ZwG8H7u3ddYH6gRx@boqun-archlinux> <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
- <ZwPT7HZvG1aYONkQ@boqun-archlinux> <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
-In-Reply-To: <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 7 Oct 2024 16:08:48 +0200
-Message-ID: <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Boqun Feng <boqun.feng@gmail.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, 
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB8272:EE_
+X-MS-Office365-Filtering-Correlation-Id: d786b211-155d-479c-6edc-08dce6d99c08
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nm42Q0t3bjlOeHZrR1oyRytXTE00b0tTZ2J2dTNmeERxOHZEaGxabnZob1pv?=
+ =?utf-8?B?bitJakFMWVBSOXpGM0N2S3c1RkluVjF4V3ZnZmgreEwyaFlZK1ZaMU13cUN2?=
+ =?utf-8?B?TVFlTXJkRmw1UUU2V3N6OGFGZ1RDWjJGMmJ2ZytsbUcyRjIzbXlNRmd1MzJJ?=
+ =?utf-8?B?TzNTZGtwYkZnRUJhOElEOTkza1BGR0ZqNThDUGhpb05YNzJJZmpGN1o3TGFO?=
+ =?utf-8?B?ZWZaQW51TTB3L2dBSnNsR1V6dUNKQmhBeDBHcW5jRWp4M2RrYjFtaTJWV21F?=
+ =?utf-8?B?RlpqVFY0MFJscGV3UFYwQVZOZ1A5MVU3clMzajNuOFV4T2pWSC93aGQwb3N3?=
+ =?utf-8?B?NEdKY2lvZUZiSlV6VGJTNDI4MUpveVNWcGM4ekQ1K1lMcUgvNzdQV2ZzZG1l?=
+ =?utf-8?B?bXo5OEEzdis1N1RQaEsvRVVXb0VJT1lFRU9XWG5sRENvZUlGUWRtSC91NFZw?=
+ =?utf-8?B?d1N2OVk4aVFDcUhla3FJekhwMVh2cXkzTnh4Mm5QQm9WU3h3QVRFTmZnS0ZB?=
+ =?utf-8?B?S2wxb3c5VXU3dVU1TTl4c0RNRnRsSVlVdERyTk5xVHU3VnB3YXlpb2w5T3N2?=
+ =?utf-8?B?OWZ3RE9NZyszcjQ4WUFqNmowdG52UnVwK3dTL2ZUVjVJaGxPeUtBQjB2Zm55?=
+ =?utf-8?B?OE9reE1Fa2c5Q1FKOTNTMkVkMzlTS09WMlF5NmVQU3hOam1NZ0hRcWdwWWZF?=
+ =?utf-8?B?bDhSdEk1QUltL0g0VE5OcWpoSExBeG15N3ZNL0FSRGNueGNxWnNKQnBlbytY?=
+ =?utf-8?B?SnlJa3pkN2syOXM5Z0JrWTZQV2Jqb3pNeXVGUU81UHpsdVhNZVhxZHlJWXJn?=
+ =?utf-8?B?RkhYUUhyd3RweitPY01Wd1Z2Uzc3dXEzWTlVY3g5MDBDaGlvdGdDR0VLVGRV?=
+ =?utf-8?B?VTROd0FwMUt6K2tVNUhYck1Fd2hQaFgxSzUwczR0N3F2blZDWm1JSUxGUGQ2?=
+ =?utf-8?B?TFMzMlpBS3R3WWJaVWJERWRqSVhHcnZ6MmlvV05CbDQzcWl5dFgzOWxXc1Zt?=
+ =?utf-8?B?dUpyWHFLaS92MkxKbmRFbStaTWd4aUVkTTdSS2lPS1ZIWjFYcjJBM2g2Zy81?=
+ =?utf-8?B?ZFJDNS9WaFFPK1BqNXhBRzIxNVFaUE01c2hSbXRqZStNa2kwK1IrbnZNRXNi?=
+ =?utf-8?B?WFZMZ2szYUtna0R6RklsS2p1enA2WTMwR1ZpR25UNVRIRmw5R1N2V0RFZWty?=
+ =?utf-8?B?c3BQU2MxYTlOMHZtZDQ1ZUVKcC96THhoWWh2NTFCZVNqNlJvSWM1bWFXRXJX?=
+ =?utf-8?B?ZHYvRDdVblJDc1NScGRmd0MzR3dSTndPajBhUG1uTWFEZ3RHUnU5bmxFb2xj?=
+ =?utf-8?B?WFlRdUpBTUtuMEkyUHBzOXdncVdnVkdLZUQ4ajFFQklnNUg0K0pZcDBvZGIw?=
+ =?utf-8?B?Y1lid3A3Y3djZFFGbEtkKysyUUI0L0tUalgvaXBBNTFnb1RoV0p4QVFJTXlI?=
+ =?utf-8?B?azZReG1JZ1NBY08rOG5oTi9TQWhxMWZZenl2WWZKdVpRY1hMWHRLVGdRRzE0?=
+ =?utf-8?B?QktZMUZESnZJM09meHRpZ3ZZbklpQmxBNlN0STJta2J6OW9La050OG1BMndy?=
+ =?utf-8?B?QjZBdU5MYktPTXFHbkUvRVN2QStodjgwckpQK2ZjUXlJSk5JL2lienRuTFYx?=
+ =?utf-8?B?VWhVV1RLV0plRTNGa1VlVU9hVnJHa2Fzem5MVmRzYXFkdnM4N3kxbFNCd1BC?=
+ =?utf-8?B?NWhQMTd6ZTg2VlQ1UkxSV2lHWUhaZnZaY29qWFMrd0IzbnNkUGN0TFVBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?THpZdEhmQlptWnZZSWc5MUpmYlUxR2ZBZmtramVTRks2NHo5ZUQvU2dpb2tV?=
+ =?utf-8?B?T3l2UGkxWjRBT2FsY1ZIN01oWk9JWktLczRNVlJBZklQVW1OSEdUOWNOR3g3?=
+ =?utf-8?B?OFNiZGhxdEVqL2h5dTU3RzJIUkt2cFY0ZVhqekFpOGpSSE1rcndYT3dFenB6?=
+ =?utf-8?B?ajhXQ3pBa04xeHVsWFFTcEVpUSs3WUZoT0trdVlBUnJFekV1UWNacmNTWDdD?=
+ =?utf-8?B?M2hvaWpZaWd3bVNsVjBOSUQ2VW5kUmVGMWQzMG4wdzR1b2N2MGd1VTBzTWtq?=
+ =?utf-8?B?WkFDWmlmaHJoRkJrMkllVTh5dFA0K0JaQ3JlWk10MUtTVDNiYk5YbkRqZWVv?=
+ =?utf-8?B?ZHF5WG9Za1NJVjNYdmJUdU8yUzQ5NTRNNWw3WWg2QmRNM3RpalpBelJsZ0x3?=
+ =?utf-8?B?d1ArTE1yMXJTRXhaeWFYTUxVK25LOHN3MGhwU0tzZGoxY2xOR211amtOeC9I?=
+ =?utf-8?B?cXFSSzJqT05CN1QrTnNJbE5jWnFidlJjaTJMK3NJdm1NdnVDVlB1clNhVE9n?=
+ =?utf-8?B?MUlNL0hTSGlWanhCaDA5UDZiYTYxZldtT0xHWFNkakc2YlpLbmxVQ25vNUtl?=
+ =?utf-8?B?RFM2bkJhZjFaVnllRitTTXkyQVEwNFl1cGsvN0FlNVNJdzIvUUNxc2JnWXpI?=
+ =?utf-8?B?cFo0NkdGQnJrb3JnOVFoSmlXY1UwaFYvNHdtbHU2bG04dnIzQ1dscVZQazBn?=
+ =?utf-8?B?S1RGSUxZb2JlcmFNK1l3OEh6cENYUmZWdlJoZmxVQUlMUDR2TkpMd0RkSThz?=
+ =?utf-8?B?M0d4RUxrMU1qU0d3M3c2RkxXR2hzWDh6WlNSTXRXeWZoNEFhdUpveVVERjJB?=
+ =?utf-8?B?U085ZnJ0RUlmYTBsRXl2Z1dTV0ZJY1M1WHBQcmZYSGdLcG9JVDFuY1pnWUNC?=
+ =?utf-8?B?Z0h1Vkc5cDZtWFo1RWFsU0QxYS92dEVXQWtnWkNCV1haYjdqcTFqcVdxQ1VJ?=
+ =?utf-8?B?OHNPUUVoUnFNVmxyaVJOU3poSld0bUcwRFJFcFVOWXZtc1VCdWFjRzhGQ3BN?=
+ =?utf-8?B?Q1djNlFmS2IwSmVINEttamJYWDY5OXBCZDUzUlNZc2F0RmNtSHphRWcwcEpN?=
+ =?utf-8?B?dzZndFhXbXZHbnB2Q0l3cmRCTVpOTmVyNThqRkJvc0ordVNVSkhNeldDcWtY?=
+ =?utf-8?B?VTB4RDVRYnYxNU1qL0FPY1Q4K2tLNXpFOWc0azdEaEtXSVVia0trSlZ1VWts?=
+ =?utf-8?B?dGtwTW9BTGd6U09vdnNmcUZkdWJiYXBJTE9zWFIrZ0gwUVV6UWwxQU9Pc0d3?=
+ =?utf-8?B?djU5TDhzcW5JdktGY1JTdGN2OGs5Z1BUcFJIbUFLWHVrRnFCaDJvRFRuYkpS?=
+ =?utf-8?B?T080Mi81WThwc0xxNzJnRmxrRFBVU3hnL2tuU0FGQzM0eVg2dHl0aW9VTFQw?=
+ =?utf-8?B?OVd2UVJqYytXQUhIRkNvM1RxcGl0RktLdWlpWHMwV1VPZFVKQnMxbjl3cE45?=
+ =?utf-8?B?aFlUUTJaTUxYZXdVM2VYS29GaDhETU80MTFCY1lDTkNac0llUjVWZU5DWnVT?=
+ =?utf-8?B?MHE4U3QwVUhrcnlhN3V4cnplM2cyclVvUkJKeXdOaGkyMm1qbUl3WDY2WjFz?=
+ =?utf-8?B?cE5JQ3hheStFTmsxRnlKMmJFcVYwbDlDQ2JUNmpYalVjZ0tLZW94SGxpb2xZ?=
+ =?utf-8?B?TkE1eTBOZEt5VWZxWGo1SHJOTCt3UzVpREwyV3pPMzAyaXY5UE52RWd6VFhN?=
+ =?utf-8?B?bGhlVTB3YXNKZ0pSbFd0RTgwV1JCaVZZdWpPSHZLbnhFUXFOM21wckFmRjJY?=
+ =?utf-8?B?WWg1elFTb1ozeEFRM2JOY1k0NVI5UHdvQk1lbFhUWFdhR2J5czZYUkozU3Rt?=
+ =?utf-8?B?YUlZZmQ3R2REdVZidkpoclZhYWl2a0ppWTl3Uk1iUXJqK1JZYVZrVDJqMGVW?=
+ =?utf-8?B?QU9rcUZJaHdJa2hnL2dlZkEveWdmcnU2NkNNRWhLZTQ5TVJERkRTYkJvOTUv?=
+ =?utf-8?B?SmRRY0RYMFVaeW5OcU9PdS9pMUIzdFMxTk11ZTdHcUU2bzhQbER4eGZGSVFW?=
+ =?utf-8?B?Z3Y1NkRaNHRic3RJcEw0ZTA3SkxzcW1oVFhqZzJRaFpmUVFVMG03MzZEZ0gw?=
+ =?utf-8?B?T1RDZjQ5RzFXOUkrSm05c3Foa1A2d2hMM1J6Z2ExUVNUQVh3bW5ZL0hWUy9n?=
+ =?utf-8?Q?cjm9ioCpF5xrVfaGJCGcgMwRO?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d786b211-155d-479c-6edc-08dce6d99c08
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 14:09:08.1298
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nIrkqEDJQ/hlrbI34CKy5U6cpzzd9eM+M3WhHqDyRnLUk5BtPLUVuJnmaScVFXWM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8272
 
-On Mon, Oct 7, 2024 at 3:48=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+That's the issue I was working on, give me 10 minutes to send out the fix.
+
+Regards,
+Christian.
+
+Am 07.10.24 um 06:49 schrieb Hoi Pok Wu:
+> Thank you. I am looking at the problem now.
 >
-> On Mon, Oct 07, 2024 at 05:28:28AM -0700, Boqun Feng wrote:
-> > On Sun, Oct 06, 2024 at 04:45:21PM +0200, Andrew Lunn wrote:
-> > However, this is actually a special case: currently we want to use klin=
-t
-> > [1] to detect all context mis-matches at compile time. So the above rul=
-e
-> > extends for kernel: any type-checked *and klint-checked* code that only
-> > calls safe Rust functions cannot be unsafe. I.e. we add additional
-> > compile time checking for unsafe code. So if might_sleep() has the
-> > proper klint annotation, and we actually enable klint for kernel code,
-> > then we can make it safe (along with preemption disable functions being
-> > safe).
-> >
-> > > where you use a sleeping function in atomic context. Depending on why
-> > > you are in atomic context, it might appear to work, until it does not
-> > > actually work, and bad things happen. So it is not might_sleep() whic=
-h
-> > > is unsafe, it is the Rust code calling it.
-> >
-> > The whole point of unsafe functions is that calling it may result into
-> > unsafe code, so that's why all extern "C" functions are unsafe, so are
-> > might_sleep() (without klint in the picture).
->
-> There is a psychological part to this. might_sleep() is a good debug
-> tool, which costs very little in normal builds, but finds logic bugs
-> when enabled in debug builds. What we don't want is Rust developers
-> not scattering it though their code because it adds unsafe code, and
-> the aim is not to have any unsafe code.
+> On Mon, Oct 7, 2024 at 1:37 AM Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+>>
+>>
+>> Le 06/10/2024 à 18:56, Christian Zigotzky a écrit :
+>>> On 03 October 2024 at 08:06 am, Wu Hoi Pok wrote:
+>>>> This is a fix patch not tested yet,
+>>>> for a bug I introduce in previous rework of radeon driver.
+>>>> The bug is a null dereference in 'aux.dev', which is the
+>>>> 'device' not registered, resulting in kernel panic. By having
+>>>> 'late_register', the connector should be registered after
+>>>> 'drm_dev_register' automatically.
+>>>>
+>>>> Please help testing thank you.
+>>> Hello Wu Hoi Pok,
+>>>
+>>> Thanks a lot for your patch. Unfortunately there is a new issue after
+>>> patching the RC1. Could you please fix the following issue?
+>>>
+>>> Thanks,
+>>> Christian
+>>>
+>>> ---
+>>>
+>>> Linux fienix 6.12.0-rc1-2-powerpc64-smp #1 SMP Fri Oct  4 08:55:45 CEST
+>>> 2024 ppc64 GNU/Linux
+>>>
+>>> [   29.167145] systemd[1]: Sent message type=signal sender=n/a
+>>> destination=n/a
+>>> path=/org/freedesktop/systemd1/unit/NetworkManager_2eservice
+>>> interface=org.freedesktop.DBus.Properties member=PropertiesChanged
+>>> cookie=103 reply_cookie=0 signature=sa{sv}as error-name=n/a
+>>> error-message=n/a
+>>> [   29.542140] systemd-journald[1301]: Successfully sent stream file
+>>> descriptor to service manager.
+>>> [   29.561863] BUG: Kernel NULL pointer dereference on read at 0x00000000
+>>> [   29.567156] Faulting instruction address: 0xc000000000c973c0
+>>> [   29.571574] cpu 0x1: Vector: 300 (Data Access) at [c000000006f97640]
+>>> [   29.576637]     pc: c000000000c973c0: .drm_gem_object_free+0x20/0x70
+>>> [   29.581708]     lr: c000000000d28dd8: .radeon_bo_unref+0x58/0x90
+>>> [   29.586428]     sp: c000000006f978e0
+>>> [   29.588695]    msr: 9000000000009032
+>>> [   29.590962]    dar: 0
+>>> [   29.591925]  dsisr: 40000000
+>>> [   29.593496]   current = 0xc0000000085b1f00
+>>> [   29.596286]   paca    = 0xc00000003ffff680     irqmask: 0x03
+>>> irq_happened: 0x01
+>>> [   29.602119]     pid   = 1524, comm = Xorg.wrap
+>>> [   29.605257] Linux version 6.12.0-rc1-2-powerpc64-smp
+>>> (geeko@buildhost) (powerpc64-suse-linux-gcc (SUSE Linux) 7.5.0, GNU ld
+>>> (GNU Binutils; devel:gcc / SLE-15) 2.43.1.20240828-150300.536) #1 SMP
+>>> Fri Oct  4 08:55:45 CEST 2024
+>>> [   29.623892] enter ? for help
+>>> [   29.625487] [c000000006f97960] c000000000d28dd8
+>>> .radeon_bo_unref+0x58/0x90
+>>> [   29.631083] [c000000006f979e0] c000000000e287b0
+>>> .radeon_vm_fini+0x260/0x330
+>>> [   29.636765] [c000000006f97aa0] c000000000d07c94
+>>> .radeon_driver_postclose_kms+0x1a4/0x1f0
+>>> [   29.643579] [c000000006f97b30] c000000000c9374c
+>>> .drm_file_free+0x28c/0x300
+>>> [   29.649174] [c000000006f97be0] c000000000c93900 .drm_release+0x90/0x170
+>>> [   29.654508] [c000000006f97c70] c000000000304790 .__fput+0x120/0x3b0
+>>> [   29.659495] [c000000006f97d10] c0000000002fe0fc .__se_sys_close+0x4c/0xc0
+>>> [   29.665004] [c000000006f97d90] c000000000025bac
+>>> .system_call_exception+0x22c/0x260
+>>> [   29.671295] [c000000006f97e10] c00000000000b554
+>>> system_call_common+0xf4/0x258
+>>> [   29.677164] --- Exception: c00 (System Call) at 00000000006b2b48
+>>> [   29.681876] SP (fff4b3d0) is in userspace
+>>> [   29.684577] 1:mon>  <no input ...>
+>>> [   31.666727] Oops: Kernel access of bad area, sig: 11 [#1]
+>>> [   31.670829] BE PAGE_SIZE=4K MMU=Hash SMP NR_CPUS=2 A-EON Amigaone X1000
+>>> [   31.676144] Modules linked in: snd_hda_codec_idt
+>>> snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel snd_intel_dspcfg
+>>> snd_hda_codec snd_hda_core dm_mod
+>>> [   31.688703] CPU: 1 UID: 0 PID: 1524 Comm: Xorg.wrap Not tainted
+>>> 6.12.0-rc1-2-powerpc64-smp #1
+>>> [   31.695932] Hardware name: pasemi,nemo PA6T 0x900102 A-EON Amigaone X1000
+>>> [   31.701417] NIP:  c000000000c973c0 LR: c000000000d28dd8 CTR:
+>>> c000000000d07af0
+>>> [   31.707250] REGS: c000000006f97640 TRAP: 0300   Not tainted
+>>> (6.12.0-rc1-2-powerpc64-smp)
+>>> [   31.714128] MSR:  9000000000009032 <SF,HV,EE,ME,IR,DR,RI> CR:
+>>> 28002222  XER: 20000000
+>>> [   31.720773] DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0
+>>>                  GPR00: c000000000d28dd8 c000000006f978e0
+>>> c00000000207a800 c0000000085f5468
+>>>                  GPR04: 0000000000000b9b 0000000000000b9a
+>>> 0000000179779000 c0000000086a4b00
+>>>                  GPR08: 0000000000000000 0000000000000000
+>>> 0000000000000001 0000000000000000
+>>>                  GPR12: 0000000048002202 c00000003ffff680
+>>> 0000000000000000 0000000000000000
+>>>                  GPR16: 00000000006e3318 0000000000000001
+>>> 00000000006e289c 0000000000000063
+>>>                  GPR20: 00000000c04064a0 00000000007f0088
+>>> 00000000fff4c734 00000000007d165c
+>>>                  GPR24: 00000000007d1668 c000000024b6a220
+>>> c000000003588000 c000000024b6a200
+>>>                  GPR28: c000000003b3cc00 c000000024b6a248
+>>> c000000002d48820 c0000000085f5468
+>>> [   31.778903] NIP [c000000000c973c0] .drm_gem_object_free+0x20/0x70
+>>> [   31.783701] LR [c000000000d28dd8] .radeon_bo_unref+0x58/0x90
+>>> [   31.788062] Call Trace:
+>>> [   31.789199] [c000000006f978e0] [c000000006f97990] 0xc000000006f97990
+>>> (unreliable)
+>>> [   31.795388] [c000000006f97960] [c000000000d28dd8]
+>>> .radeon_bo_unref+0x58/0x90
+>>> [   31.801142] [c000000006f979e0] [c000000000e287b0]
+>>> .radeon_vm_fini+0x260/0x330
+>>> [   31.806982] [c000000006f97aa0] [c000000000d07c94]
+>>> .radeon_driver_postclose_kms+0x1a4/0x1f0
+>>> [   31.813954] [c000000006f97b30] [c000000000c9374c]
+>>> .drm_file_free+0x28c/0x300
+>>> [   31.819707] [c000000006f97be0] [c000000000c93900] .drm_release+0x90/0x170
+>>> [   31.825197] [c000000006f97c70] [c000000000304790] .__fput+0x120/0x3b0
+>>> [   31.830342] [c000000006f97d10] [c0000000002fe0fc]
+>>> .__se_sys_close+0x4c/0xc0
+>>> [   31.836010] [c000000006f97d90] [c000000000025bac]
+>>> .system_call_exception+0x22c/0x260
+>>> [   31.842460] [c000000006f97e10] [c00000000000b554]
+>>> system_call_common+0xf4/0x258
+>>> [   31.848476] --- interrupt: c00 at 0x6b2b48
+>>> [   31.851267] NIP:  00000000006b2b48 LR: 00000000006b2b20 CTR:
+>>> 0000000000000000
+>>> [   31.857101] REGS: c000000006f97e80 TRAP: 0c00   Not tainted
+>>> (6.12.0-rc1-2-powerpc64-smp)
+>>> [   31.863978] MSR:  100000000200f032 <HV,VEC,EE,PR,FP,ME,IR,DR,RI>  CR:
+>>> 28002400  XER: 00000000
+>>> [   31.871235] IRQMASK: 0
+>>>                  GPR00: 0000000000000006 00000000fff4b3d0
+>>> 00000000f7b7f3a0 0000000000000003
+>>>                  GPR04: 0000000000000000 0000000000000000
+>>> 0000000000000000 0000000000000000
+>>>                  GPR08: 0000000000000000 0000000000000000
+>>> 0000000000000000 0000000000000000
+>>>                  GPR12: 0000000000000000 00000000007efff4
+>>> 0000000000000000 0000000000000000
+>>>                  GPR16: 00000000006e3318 0000000000000001
+>>> 00000000006e289c 0000000000000063
+>>>                  GPR20: 00000000c04064a0 00000000007f0088
+>>> 00000000fff4c734 00000000007d165c
+>>>                  GPR24: 00000000007d1668 00000000fff4b400
+>>> 0000000000000001 0000000000000001
+>>>                  GPR28: 00000000fff4b46c 0000000000000000
+>>> 00000000007bfff4 0000000000000003
+>>> [   31.926053] NIP [00000000006b2b48] 0x6b2b48
+>>> [   31.928930] LR [00000000006b2b20] 0x6b2b20
+>>> [   31.931720] --- interrupt: c00
+>>> [   31.933466] Code: ebe1fff8 7c0803a6 4e800020 60000000 7c0802a6
+>>> fbe1fff8 7c7f1b78 f8010010 f821ff81 60000000 60000000 e93f0140
+>>> <e9290000> 7d2a0074 794ad182 0b0a0000
+>>> [   31.946913] ---[ end trace 0000000000000000 ]---
+>>>
+>>>
+>> That's a NULL pointer dereference in drm_gem_object_free().
+>>
+>> Trying to read obj->funcs->free while obj->funcs is NULL.
+>>
+>> Christophe
 
-We can add a safe wrapper for it:
-
-pub fn might_sleep() {
-    // SAFETY: Always safe to call.
-    unsafe { bindings::might_sleep() };
-}
-
-Alice
 
