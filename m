@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-354155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F59993876
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C31993878
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65194B2220D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7940D1C231EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A761DE898;
-	Mon,  7 Oct 2024 20:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040701DE88F;
+	Mon,  7 Oct 2024 20:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MuEtJFG8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RDVrhouW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C02081727;
-	Mon,  7 Oct 2024 20:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220BF1DE4E9;
+	Mon,  7 Oct 2024 20:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728333835; cv=none; b=N26Ai19jI8O4/dkj4GPSBduhKnrmBaOOG3jafBBzNXwBXvspf7EEBQ3RiNoaMSV6AKsaLtCYfdsJAHICSp6IBDw9YXIaLo3u26G5Z7xHtz/Ez8x/9scjWOKw47hZWOCC1vNxGaQVAG3ZJ0O7xjR0C6YioorZUlkxsaHm7agKELk=
+	t=1728333867; cv=none; b=UTG547/ujtG3NGbGdrDxM1MsvHeONSJBurskxwTk70zJpUAHmcwPVYQQ/1tIxFjv5AjszxeeJZ5BLfLyJDfa+lJ9ult5nHQgW0b1nCXOsFnrZHUW6qDKvgehtVD3JcBuy+b+1VCS3RYKfCRVsYjDQqzyoWV+23qCtlaerhU0pNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728333835; c=relaxed/simple;
-	bh=iD6K7rerHt+BmbV3rXcVuFLHnGOchmZqRMEFAw2pqY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YIB8sQIXsunia5KIpAoqoe6W5r3cv/G4Wqsj+Yojad0o9lm5MidcNuQSIVvhiL8+zUySx/666FGbEND7zPNRY+0ccuY7z7UbYk/16yYe96z5F3nsempODPjIBuERgBG2wWt2X/Dssx3LvSR6FfIlPxqmG/x4YOvyb+09I2tBLXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MuEtJFG8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84766C4CEC6;
-	Mon,  7 Oct 2024 20:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728333834;
-	bh=iD6K7rerHt+BmbV3rXcVuFLHnGOchmZqRMEFAw2pqY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=MuEtJFG8fnFYhq3I+Bk4unZGxAo+9VluXYLaHsTku/5Y2bn+P8Uo2Uz5FJkDINdKf
-	 U21kcX3lz/UivCFWutBxUACSaFTSzIYdRx38uvHehBwhSKz+gbiFNEq+fOLnG0vSOd
-	 c9I2I1czOiqX0LgL+0ur3IYS/t0122jK8xKSsaQPL9G0Jo+edye2uDHz6ob97DtUxq
-	 SFjB2c0BLddatYpjraaOwwJWQcRpwUAS9Ck6IFRJ9wgw14wROgJkmOPPpLPfbaP0Gv
-	 UJTU7WJ6Chq9T2EFFCRkbKqFDkbysasznOl6ueM8zt3NSsh5D7UmCX6IzleL4QtlD5
-	 e4ci1Krujly3A==
-Date: Mon, 7 Oct 2024 15:43:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
-	galshalom@nvidia.com, leonro@nvidia.com, jgg@nvidia.com,
-	treding@nvidia.com, jonathanh@nvidia.com, mmoshrefjava@nvidia.com,
-	shahafs@nvidia.com, vsethi@nvidia.com, sdonthineni@nvidia.com,
-	jan@nvidia.com, tdave@nvidia.com, linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4] PCI: Extend ACS configurability
-Message-ID: <20241007204352.GA449721@bhelgaas>
+	s=arc-20240116; t=1728333867; c=relaxed/simple;
+	bh=GXo/yXyFjpu9ohEyCOnFiUK6XPSuRoDemIM0xnFCMBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VZCH94Z/Yq5UK7tMMxWJ9xZ31ooOVNZfzFR+jD5LlLL+B8wTaoh2v6NR/N0tt57W8a71iG/HMBWdRWanxrUK6ry77opsytQSXGVJJb3AZz6guG5lQoXP36wWHphOxxoOHUWloXalyDyjTvanMBR6DrNntEmuBWZSG5ZLVEJYEvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RDVrhouW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497FADrn021746;
+	Mon, 7 Oct 2024 20:44:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DjxDf+ELb1HoawO1px1+v7Wh3AAJnJv/W2UZ2Hy7mTo=; b=RDVrhouWFX6awRtu
+	XP1DycpGLxmxHtA1V0+GOCsc4u74/V1ucDfjIziXHtn1ccP0gnaQoVUnUK1NrK2H
+	nwvbenroZHLgNKqbBbo+qlIt03KADwgQLaZRXNzcG9MaoIMAtrHNeZTd5NUWDkq/
+	rl+FbeG8Z6/t+GYu6brp0+JEUuTnvivX/+aEVUEFbOX7G5Fu1OSpXetIp9JxNQB7
+	BxfxJDR0SHDlmXRwf5pOvTfKo4NuXBN+ASbnuJkgBIWkma1gXKqWyKRZKXvLQAXS
+	rGPGueKvzdoshNWkYS9dHz1b2Dx5X/L1s040eOh7k9KIjy//EBmz8zP6XqL+MOFU
+	IFzepg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xr5n7ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 20:44:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497KiLUJ025199
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 20:44:21 GMT
+Received: from [10.216.6.71] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 7 Oct 2024
+ 13:44:19 -0700
+Message-ID: <015c697f-5842-4797-89c8-7c6cc68ced49@quicinc.com>
+Date: Tue, 8 Oct 2024 02:14:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241005140150.4109700-1-quic_kuldsing@quicinc.com>
+ <20241005140150.4109700-3-quic_kuldsing@quicinc.com>
+ <wzrj4vhrb4h3pe5dft7vqz2tl55txdyuciuxlysuck5isi7r4z@bs2ts3popy2t>
+ <2eb53ea6-848a-48bb-8c31-83a118bc5a73@quicinc.com>
+ <CAA8EJppEQKJ=oQh=TeFaP0z1sXDQhz=LN_TC4YygiLOe_EX6Tw@mail.gmail.com>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <CAA8EJppEQKJ=oQh=TeFaP0z1sXDQhz=LN_TC4YygiLOe_EX6Tw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AxUGugsuhZ8_oucAWY-aIgcvj10jwF7S
+X-Proofpoint-ORIG-GUID: AxUGugsuhZ8_oucAWY-aIgcvj10jwF7S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=720 priorityscore=1501 impostorscore=0
+ adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070142
 
-On Wed, Sep 25, 2024 at 07:06:41AM +0200, Jiri Slaby wrote:
-> On 25. 06. 24, 17:31, Vidya Sagar wrote:
-> > PCIe ACS settings control the level of isolation and the possible P2P
-> > paths between devices. With greater isolation the kernel will create
-> > smaller iommu_groups and with less isolation there is more HW that
-> > can achieve P2P transfers. From a virtualization perspective all
-> > devices in the same iommu_group must be assigned to the same VM as
-> > they lack security isolation.
-> > 
-> > There is no way for the kernel to automatically know the correct
-> > ACS settings for any given system and workload. Existing command line
-> > options (ex:- disable_acs_redir) allow only for large scale change,
-> > disabling all isolation, but this is not sufficient for more complex cases.
-> > 
-> > Add a kernel command-line option 'config_acs' to directly control all the
-> > ACS bits for specific devices, which allows the operator to setup the
-> > right level of isolation to achieve the desired P2P configuration.
-> > The definition is future proof, when new ACS bits are added to the spec
-> > the open syntax can be extended.
-> > 
-> > ACS needs to be setup early in the kernel boot as the ACS settings
-> > effect how iommu_groups are formed. iommu_group formation is a one
-> > time event during initial device discovery, changing ACS bits after
-> > kernel boot can result in an inaccurate view of the iommu_groups
-> > compared to the current isolation configuration.
-> > 
-> > ACS applies to PCIe Downstream Ports and multi-function devices.
-> > The default ACS settings are strict and deny any direct traffic
-> > between two functions. This results in the smallest iommu_group the
-> > HW can support. Frequently these values result in slow or
-> > non-working P2PDMA.
-> > 
-> > ACS offers a range of security choices controlling how traffic is
-> > allowed to go directly between two devices. Some popular choices:
-> >    - Full prevention
-> >    - Translated requests can be direct, with various options
-> >    - Asymmetric direct traffic, A can reach B but not the reverse
-> >    - All traffic can be direct
-> > Along with some other less common ones for special topologies.
-> > 
-> > The intention is that this option would be used with expert knowledge
-> > of the HW capability and workload to achieve the desired
-> > configuration.
-> 
-> Hi,
-> 
-> this breaks ACS on some platforms (in 6.11). See:
-> https://bugzilla.suse.com/show_bug.cgi?id=1229019
 
-#regzbot introduced: 47c8846a ("PCI: Extend ACS configurability")
-#regzbot link: https://bugzilla.suse.com/show_bug.cgi?id=1229019
+
+On 10/8/2024 1:43 AM, Dmitry Baryshkov wrote:
+> On Mon, 7 Oct 2024 at 21:17, Kuldeep Singh <quic_kuldsing@quicinc.com> wrote:
+>>
+>>
+>> On 10/7/2024 1:00 AM, Dmitry Baryshkov wrote:
+>>> On Sat, Oct 05, 2024 at 07:31:50PM GMT, Kuldeep Singh wrote:
+>>>> The qcom_tzmem driver currently has multiple exposed APIs that lack
+>>>> validations on input parameters. This oversight can lead to unexpected
+>>>> crashes due to null pointer dereference when incorrect inputs are
+>>>> provided.
+>>>>
+>>>> To address this issue, add required sanity for all input parameters in
+>>>> the exposed APIs.
+>>>
+>>> Please don't be overprotective. Inserting guarding conditions is good,
+>>> inserting useless guarding conditions is bad, it complicates the driver
+>>> and makes it harder to follow. Please validate return data rather than
+>>> adding extra checks to the functions.
+>>
+>> Sure, I’ll remove the redundant checks.
+>> Please see below for explanations.
+>>
+>> My intention here is to handle erroneous conditions gracefully to avoid system crashes, as crashes can be detrimental.
+> 
+> Please fix the callers first, rather than adding band-aids.
+
+I see your point and understand the emphasis.
+I'll submit v2 as per suggestion.
+
+
+-- 
+Regards
+Kuldeep
 
