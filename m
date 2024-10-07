@@ -1,93 +1,125 @@
-Return-Path: <linux-kernel+bounces-353617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E8499305B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63FF99306D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E54428CD22
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 902B028DB21
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D971D8E08;
-	Mon,  7 Oct 2024 15:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396D21DA2F7;
+	Mon,  7 Oct 2024 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="C3jR8ClV"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EsG8/Azs"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420D1D86FB;
-	Mon,  7 Oct 2024 15:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B566C1D6DB9
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313286; cv=none; b=PaMQXfUbu0GVcIR0fpAaJU0gq4roGVcDOS3p/gqY+OanHMAJZgmgtk7hO77EdNx0tdjgtF5JcbzFo9gYTl+p7xi9OAMShGA3LHMaBv7eK2q+9Xdvhvkp1VRfLnOzj+DBeS+NYX92jwsq5LBLKMAz8CPyxmecTaYw94SPT6BizWo=
+	t=1728313303; cv=none; b=cesg3J2nWvXJfHh+ytxbvW6vW7R0naUYS1G7j1ELWtBGDoSsYkDhOZnalxHUtaTYrjQB7P0JeFsZx7Btnm85tdoO3GJ5JEmjOlflSEtf7rEXP8olt0yT+MpULlMCjYkDV/UbYOw8O4FEZqI2B1Qf5KNlZhMXX7gnoOTRL2qjOTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313286; c=relaxed/simple;
-	bh=avbkBuu+IeylLDazEvd0vZ3GdpIvrosWqQVh97Iqy/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O9VwlCTFD+nGBB4sJDi9hZslxUwxx5tbvtGnXx6RJZd4MjNIA9n11MofZK8oYii7Zj+pyF1H2J72ML2lxCWSkzeMgC4UD2BvGc/YnIGbVNuP9piJ8KDoBqiPsec5tvpHJ7OJ3OLtWG87yillxzu0CfF8QS+UC8Yr7qY+OoJCu+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=C3jR8ClV; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=PbKIZr1whktnbITD00APK/aUO0+aJL4weKLvHytG4m4=; b=C3jR8ClViDioxjAcrq1vPh4VfJ
-	+zSbxcQFf67GutFF1H4SRmvWbkN+HeMdWqk1yQSj6UcW3ufc+ZP0YIOTnI87iepjxkpfz+XLlNlbQ
-	wxFuWR6BkQjVOZhgOTRDomsOslmQPSdb0Qks2C3sjN0bg+nCc16Xok1DnZLuuoRmkzkWpRtO43iSZ
-	399OvgXEmVNQWhBzU0qjGmC2R9dLTz92HhFPDAjImRPcvq20HmyAH+QoZr/b6EH3dCQIeDttqcSLH
-	HNV1mK891h/TqC7Iojbw7Sz2Y2j1pO9XWJMEGFKTTRVVLrMxkuinOcWC9pQu0b0UfS3wDArICYu7I
-	Azk4JHMg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: devicetree@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	tony@atomide.com,
-	Rob Herring <robh@kernel.org>,
-	linux-pm@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	khilman@baylibre.com,
-	linux-omap@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v4 4/4] ARM: dts: ti/omap: use standard node name for twl4030 charger
-Date: Mon,  7 Oct 2024 17:01:20 +0200
-Message-Id: <20241007150120.1416698-5-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241007150120.1416698-1-andreas@kemnade.info>
-References: <20241007150120.1416698-1-andreas@kemnade.info>
+	s=arc-20240116; t=1728313303; c=relaxed/simple;
+	bh=rRVuIaOx8RNrteaDGFooPVCgbWZsVHEatmlbzj7fViY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOQzGm90b4ETSBGpeJBTK25Uaj4U4N/QLahaJ0zJ7GT/fh9wpxOouRdER7XC4r0xdLv3IHXSKDDh/6R3vTG3cs9k5KLZBRvv3EPz+X3Ld9/ZDh4CF64Bn06VPKD0LccerW5s/dZCLDkp2Eds44H+BEiv0jdQ6fo8zNCWaNWGKmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=EsG8/Azs; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7acd7d9dbefso475262685a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1728313300; x=1728918100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bInHqGw/7pXdDA3IXyTgOVdi79kStxfjp6yDL0daeE=;
+        b=EsG8/Azs6QNi2ZnSa0so8tY9ftg0gKXL7pk4qP9hzK5qrt0wUFXXRvdMYKCbCcRS9p
+         n49LNm/AILbZ/GDgD7o4iZrfiVTp10yzlTfOP1at0rgWo+Un3HbPw37hBXVX1npXym2E
+         75TORHgNOBV7807m/bcEecsmrYSnyysT6xOMVmgja6O3AN3nWzREdUH+c3z1WX1aeiaV
+         +TTkJPo6/GuAw6WGrxIcMID64yV8iz4PyH/ikIIDPUPoZyNs1ibCA2KoclqId9viUvGm
+         Z8QVkWCS1B8n6P26wYl0PK8tvNxHwCGz5xblLTJZSpJHo2+lb6k13l3kA07ltMsfvxmD
+         tJHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728313300; x=1728918100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4bInHqGw/7pXdDA3IXyTgOVdi79kStxfjp6yDL0daeE=;
+        b=bhKPcx3AkX4FRuwDnK48kUf9+Ml6+yT7WW1ZhLv9uw0EEyZF18hmK1yEpiJ9z2W77J
+         8nzFQDbVMeaaxnai2Cy62dXhuw16Hyq8wBtFKUh6Ty5MjbNY+l/XQ6mjQmvP9t3qw7B4
+         jILnfjNs32CUoWc2EYu9U9vS9VqY6mMnAjgio8Xze1rKqiMpP6dKWY5VMKKCphGbQdaR
+         dmqS3ACdwqPoYGqqT1TzVLVlxTtb88Sa0zy63VF2viW1zSDUQ2G/fqrPFAYQmak5xL5g
+         JcLXT7rIjtCCRJiOYwCPcKRU93fawPQUWKnYOrisZmm2eKuyINTs82Drx7OE91tAxTu3
+         YtPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0jKvJMV5NI/jYZbThdVbEH0/2DYpMeYHTizdThkajyZrCspD+1DTfue183/fzM+m0WOaByELlTqEIxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9asDdHt6TBvzG+S6jq8CYYfF9oRw3+RQbjA1sYI0GLcxfTCGf
+	Ri+GmgY+YJds7Yq4BdVcoAXJkLaToJzKio1AIe5s2AM4U3mb1PDT7VSryhvwhoQ=
+X-Google-Smtp-Source: AGHT+IEC12fI88Gp57MHDcshS4/IkrApM2kBYgZQIiBILAEfDwFMFN//oZi0JmEkR0VcJlcGa+25Vw==
+X-Received: by 2002:a05:620a:40cd:b0:7a9:b914:279c with SMTP id af79cd13be357-7ae6f3aecbamr1931318585a.0.1728313300551;
+        Mon, 07 Oct 2024 08:01:40 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7563619fsm264722085a.62.2024.10.07.08.01.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 08:01:39 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sxpEw-002Wvt-Te;
+	Mon, 07 Oct 2024 12:01:38 -0300
+Date: Mon, 7 Oct 2024 12:01:38 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Gowans, James" <jgowans@amazon.com>
+Cc: "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"rppt@kernel.org" <rppt@kernel.org>, "kw@linux.com" <kw@linux.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"Graf (AWS), Alexander" <graf@amazon.de>,
+	"will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>
+Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
+Message-ID: <20241007150138.GM2456194@ziepe.ca>
+References: <20240916113102.710522-1-jgowans@amazon.com>
+ <20240916113102.710522-6-jgowans@amazon.com>
+ <20241002185520.GL1369530@ziepe.ca>
+ <d6328467adc9b7512f6dd88a6f8f843b8efdc154.camel@amazon.com>
+ <e458d48a797043b7efc853fc65b9c4d043b12ed4.camel@infradead.org>
+ <1d331c55a299d414e49ba5eb6f46dccb525bf788.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d331c55a299d414e49ba5eb6f46dccb525bf788.camel@amazon.com>
 
-Use the established node name for the charger.
+On Mon, Oct 07, 2024 at 08:57:07AM +0000, Gowans, James wrote:
+> With the ARM SMMUv3 for example I think there are break-before-make
+> requirement, so is it possible to do an atomic switch of the SMMUv3 page
+> table PGD in a hitless way? 
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/twl4030.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The BBM rules are only about cached translations. If all your IOPTEs
+result in the same translation *size* then you are safe. You can
+change the radix memory storing the IOPTEs freely, AFAIK.
 
-diff --git a/arch/arm/boot/dts/ti/omap/twl4030.dtsi b/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-index a5d9c5738317a..07b9ca942e78d 100644
---- a/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-@@ -16,7 +16,7 @@ rtc {
- 		interrupts = <11>;
- 	};
- 
--	charger: bci {
-+	charger: charger {
- 		compatible = "ti,twl4030-bci";
- 		interrupts = <9>, <2>;
- 		bci3v1-supply = <&vusb3v1>;
--- 
-2.39.2
+BBM level 2 capable HW doesn't have those limitations either and
+everything is possible.
 
+Jason
 
