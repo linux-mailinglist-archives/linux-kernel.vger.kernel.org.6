@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-353242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBDC992B29
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:11:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD13992B2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4731A1F236B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848E4283FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D29A18BB90;
-	Mon,  7 Oct 2024 12:11:47 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA8E1BA285;
+	Mon,  7 Oct 2024 12:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t21ZNTTO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A917818B483;
-	Mon,  7 Oct 2024 12:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06A71D1F7B;
+	Mon,  7 Oct 2024 12:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303107; cv=none; b=cZlcLo/IdTXB9JwxxETY647x2aJfKmqt2K9tJOvxy68SKfOMhrnJ5Nme0NHtal5Vt8422SWIVHOqhjvb5AylY60GV+4k8Wjx1ixiTwuu/swHQweh0wdGR9GYBcFWvZu+BMjRAXPmYd586XW7xty5XUtKqCje3NoKa6ZVZoUaMzs=
+	t=1728303121; cv=none; b=MF+oE3zxE7qq1q/FBeJkSyNH13pxcu+6Jq195YY5yVR2rFHUMl1EQsg8BvooJJ1Ir3dap2HOhVUX+T/q/JyAkKJWxi3+HyJXXzk6htnyCS9KLxoifKcJQb/RA/4Nur9dNTNc3wt6zGOov/MJKKzuSLyNL675A4vDyYd+8COtMq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303107; c=relaxed/simple;
-	bh=hjsAVcqmqqdLHFbzTmYuIhUjB8PxqxLmKX3Au0tyLFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LF7gXitWwqfxUuj/6uXtXubN3zGTD9NtSYOW0ZoTKd/R5TFslcjhCjpO+GW0dK0BloBkkLLmAwQWQ4zwRtabtJjVZzX3fU5qu6/MSIbOeo8/8E++xH7C8Gpv7pn3+pOdNXqjA9EEzanZbmsQOJa6gKtPpE9KYrs/nUVASgyKhGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e3e4f65dso11884097b3.3;
-        Mon, 07 Oct 2024 05:11:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728303103; x=1728907903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NpiBUq04Dm+hijVqTOu3uyVD8U1/9dPTQc7Ed99SVnM=;
-        b=PTN8vguqi1rw4Gs5qWpETgjcoa7STwYuSBOSeXUdcN76m9GheHWszT8VIqT5xfD0li
-         uQDiReyX7J92845dmYMXGPcPg64ztt1Fq2i+1ezVL/tg1bABLebGgFBLeYQAuAA6mFWZ
-         aHHKfro9aMXfxUttl/V103yrysOnVwuP54pmtFFcXm5qDXoLFuMcrSN2ecIREs6alEnq
-         MJqwPApqhz0jdXDxd5LKSXkBYnxYwz7qafAosuJDL5QyTm5cmdLosr/pLu9stBWAqYcl
-         sJ5n3dKwNuTr6RalI3ZOJNHTg90qjnGkxCl/oR2uoM5n7E29bz1dRwgHuLTin5TIvzEf
-         4+tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSmoTekWPBmIR9wzLKV9YU9PX+aoSVrK+dMGDl99y8x+7VyqDB+nLw8Fc313C8ijbCoTdyNuxx/Sae@vger.kernel.org, AJvYcCWdQQD8mTrQI6j2kTgdFtOUmgeje44rzzG+dGmEb2Cl9C2Nf9MR3fdCcMuOevTnTU3pCzy9N5q728RpJlCkx1KAeqg=@vger.kernel.org, AJvYcCX8jlObPk3enVOgWPfhLstffaOXVvdaav2vDdbx+Ktu5zmf0VcazDg5dwWv852f41pZBmxjjETtve0QftSG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjyl8XOkYCLQVkqgDkyX/2wlX8vGFO8IV+D2IlnLLMu8xRhzp0
-	F4KLoiZJ8vkDl1Ul7skO4XlsdmrQ5k7CwHV3iTKj9Kzy93VEw1CMr63NAjav
-X-Google-Smtp-Source: AGHT+IHY4TbYjl4pvBVgfHxyk+JP7LX5/wgtBiM22KnuvhAWkpi0FbJrre25DfB8Tmoxfxo/4FrLGw==
-X-Received: by 2002:a05:690c:4a83:b0:6e3:b8f:59d1 with SMTP id 00721157ae682-6e30b8f5d5emr954017b3.31.1728303103514;
-        Mon, 07 Oct 2024 05:11:43 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93848cesm10228417b3.58.2024.10.07.05.11.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 05:11:42 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e3e4f65dso11883127b3.3;
-        Mon, 07 Oct 2024 05:11:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq7cP6UyHFNgl8b2CuXqxLmUikEQfVTQT7ZxZmxcgQiozBqJo4J7k2a39ugjzxN4Q66d4mAXsZf1XoXPMpm1t0jrI=@vger.kernel.org, AJvYcCUynxuDnPp92f+0W8qfGkTsUGLX3VOyd7vmnY/bWsXLeofvCEfUG3DamERulcpPdjEGFmPuwPKE0lqZ@vger.kernel.org, AJvYcCVWHc+8YozHVGHjPd8YZFxKnMEX1cxzOlHL0rko/Z61iTRc0qdzSvY5NYAYr1QzRy0aBBOqMst5jbet5vof@vger.kernel.org
-X-Received: by 2002:a05:690c:2e90:b0:6dd:ba22:d946 with SMTP id
- 00721157ae682-6e2c7017d04mr73653377b3.13.1728303102493; Mon, 07 Oct 2024
- 05:11:42 -0700 (PDT)
+	s=arc-20240116; t=1728303121; c=relaxed/simple;
+	bh=GBGf7gNPVrZgFa9G7rsgaUZW0YHGQ90+7nfsWjOtqg0=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OX22Cw4xMxvn01gQ/DrcwmgevttF6aklee6EicaEH7P2APUX+luIvIRDtkukoLfDSH+x3A138/nUjuUAdUV+fs8eOWeb4Cyp6u5HStnjmpO5jw3/64iPuV+gk7eUMup64EPuyDqW4GR9U+9OWps0ALVCrkAaZNOH/XFQh3MtynA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t21ZNTTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50553C4CEC6;
+	Mon,  7 Oct 2024 12:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728303120;
+	bh=GBGf7gNPVrZgFa9G7rsgaUZW0YHGQ90+7nfsWjOtqg0=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=t21ZNTTOBeOIaahalhQQpvgROj4yQF9usVoteoi6rgfX7eINgOIDe/LfRuBP4kiu0
+	 N4T+/2oVY7rU1HLbUfF95CQ2pFJP40mI2u+Nrt0Bn3pdpIYlx4FGAsqG7vSpUl/8yg
+	 ASBwh6GCMRlGHrto7i0YVoxJbnvnbxYacp+zJYWN1aAysTFD3vKa9TaTeZkO45Sor/
+	 KXY+5jmwZbCeB9U7IOB4a0fDWNrrNNP4//iMf4ipUpLugWrU/gbu9rlsGdb8hm1Sl0
+	 gYdu0wwFef/w7hF3twMSST+iw+mslMmxgqGlQg3cyJ9K6k2kFZ2WoppchutiP+OQOO
+	 gJzQSdRskYtOw==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v3 2/2] selftests/bpf: Augment send_signal test
+ with remote signaling
+In-Reply-To: <20241007103426.128923-3-puranjay@kernel.org>
+References: <20241007103426.128923-1-puranjay@kernel.org>
+ <20241007103426.128923-3-puranjay@kernel.org>
+Date: Mon, 07 Oct 2024 12:11:46 +0000
+Message-ID: <mb61po73wcdtp.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927201313.624762-1-sean.anderson@linux.dev> <20240927201313.624762-2-sean.anderson@linux.dev>
-In-Reply-To: <20240927201313.624762-2-sean.anderson@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Oct 2024 14:11:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUyPWt7bjwkVreRj-U6KUAt5p48CnF=E7ZeUpbTuyJS5Q@mail.gmail.com>
-Message-ID: <CAMuHMdUyPWt7bjwkVreRj-U6KUAt5p48CnF=E7ZeUpbTuyJS5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: salvator-x: Add SD/OE pin properties
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Adam Ford <aford173@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 10:13=E2=80=AFPM Sean Anderson <sean.anderson@linux=
-.dev> wrote:
-> Add SD/OE pin properties to the devicetree so that Linux can configure
-> the pin without relying on the OTP. This matches the register
-> configuration reported by Geert [1] as well as his analysis of the
-> schematic.
+Puranjay Mohan <puranjay@kernel.org> writes:
+
+> Add testcases to test bpf_send_signal_task(). In these new test cases,
+> the main process triggers the BPF program and the forked process
+> receives the signals. The target process's signal handler receives a
+> cookie from the bpf program.
 >
-> [1] https://lore.kernel.org/linux-arm-kernel/CAMuHMdUmf=3DBYrVWGDp4kjLGK=
-=3D66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com/
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> ---
+>  .../selftests/bpf/prog_tests/send_signal.c    | 133 +++++++++++++-----
+>  .../bpf/progs/test_send_signal_kern.c         |  35 ++++-
+>  2 files changed, 130 insertions(+), 38 deletions(-)
 >
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/send_signal.c b/tools=
+/testing/selftests/bpf/prog_tests/send_signal.c
+> index 6cc69900b3106..beb771347a503 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/send_signal.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/send_signal.c
+> @@ -8,17 +8,25 @@ static int sigusr1_received;
+>=20=20
+>  static void sigusr1_handler(int signum)
+>  {
+> -	sigusr1_received =3D 1;
+> +	sigusr1_received =3D 8;
+> +}
+> +
+> +static void sigusr1_siginfo_handler(int s, siginfo_t *i, void *v)
+> +{
+> +	sigusr1_received =3D i->si_value.sival_int;
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.13.
+This is incorrect for big-endian archs and I will change this to:
 
-Gr{oetje,eeting}s,
+     sigusr1_received =3D (int)(long long)i->si_value.sival_ptr;
 
-                        Geert
+This should work on all archs.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>  }
+>=20=20
+>  static void test_send_signal_common(struct perf_event_attr *attr,
+> -				    bool signal_thread)
+> +				    bool signal_thread, bool remote)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+[...]
+
+Thanks,
+Puranjay
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZwPQAxQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nXb9AP93TgrMYdaOsedUSTEZ8TBFBE1C8gE3
+uRC0PgWADRlOHwD/ekM6ka1QIfptrjottMYN9u/sU3g/YrKgZ+AsHXK0vgY=
+=xM09
+-----END PGP SIGNATURE-----
+--=-=-=--
 
