@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-354130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE44A993823
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A09F993826
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 22:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC941C214EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A931C2190E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 20:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A7F1DE895;
-	Mon,  7 Oct 2024 20:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170381DE4FA;
+	Mon,  7 Oct 2024 20:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2xhk//Ek"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XszoP9Nx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E91D8E1F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 20:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7423E1DE4E9;
+	Mon,  7 Oct 2024 20:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332558; cv=none; b=JOSrPhcg4oS2WjmdwqgcRQlLXpDUSAH9Qa7YXyVmAvqT17ulJ0QMwVltwuMmkm15Yuw9jpcXgg0c8SPdbRiNFeK4Gdu6uiWVHf53oSNzXCpHMT23ITN8L1EH5gmOEa75RFvW6fAe7z5KOuIZwOhb9HXfw5z58EXKFzjkmCjCouE=
+	t=1728332567; cv=none; b=Y/+Tbo7YpC2s+mhfDyx6Ir41oRECpffXjGC7OwfzfTlUUUl9aASZlW609cQxniwDkRaUWOIfAZwc26MYTdjWtd4GiTjaq0vqHMp4yz4ONOTRGr14j7swIeTv1+kY6T1IMyaHlVwnQPO9WLt+iNIfOk9JKalbVlZwHVIDyubhSBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332558; c=relaxed/simple;
-	bh=21qP7Tak30Olxg5P/qZkkhpMiiPnYGWRaPxCeAM+y1o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qb/K3F9JNDJiORhhKvN4JLX3M1nQXzT5hj6fUrU0OMLoq7NDLG3HanyNYTle5gsdXNd/hxF3FplpwzPVb2Oe4RxhqlnSJlzUtQ3GZQv5njucKQQOmMEpP2qot8hDxxeanYXq1GLU2vTh8HsHmji70pDivGEGInBcHwKQRZ1Of2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2xhk//Ek; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82cf3286261so186425639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 13:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728332556; x=1728937356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CR6hQb9CxfxGMdRoKEcbQoEJHNZRJy3CqaZVl8rk6E8=;
-        b=2xhk//EkJy+lYoE40NfNiaY8JMyEv3g/Gm7BN5SKCdwDnEnVND0SwwDN80Inkkd/BB
-         9DUdSJwxsRZOxlGywI7LfqwC5CljpXfhQQoxDR1JCS4AxeWQkV9p6pGpTB5Xe4LJDcaB
-         zf7hl6CA8XruUUWmV23Y+ostTaWPAV9RVXvFGVdRTklyodT3YtEs8yhNsEv6KqP0vH9o
-         Vzpg2Ha+wn1Tlbe7n6wh5qO9EhqiahsVE8JoC9ZN9lx2DvRyi5H6V+nataKQtzq8OncP
-         n2j7yc5mma5nPhQ7ag/Xyz3Fj1EEBEBM8WBJFffMiNYFZYqVQSFtzJI3R0k71NSibZR1
-         jEqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728332556; x=1728937356;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CR6hQb9CxfxGMdRoKEcbQoEJHNZRJy3CqaZVl8rk6E8=;
-        b=Bc8Si73+ZAiHmXI7nzsuyxXlCnf0SnNVtLjc7NgZpGHGwTqIJHKPNN/HYLILR+WERX
-         AoQhZTYEGqKw9I8FJpNSWMfN2Azms8HSDrvXdINr3ABFzQVesdqZm7XJ04wWPjSquAQR
-         a4RUrK98xh11GtwPg6nENhrH1EiZCHXSQl+ZEAFMjpYtaWVGs3OYyBVEtfxipBnneqFh
-         Gbosbd6C7z4ToCuc2vLWv7mecuKHctoLJGhsnWmmWaklPClrnuVkS+oimwlR/By61Bjc
-         NgvkH5s2FIZGl9bVKo1DDrNydu2TiADVGTzN85TCzgnCWC2bKXL+0uq4J2K/E6seu9rN
-         rWNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsr7z3Ony3nf6SmtCDGSELFO581XsGDtqHHJNou/DISXvC3OAyxe2c/M0V7XM8dn0riAFRaUKpg/740KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsjqKvYKNUQm16rJZ4RHo0s06pTcCWgHitrmhqXqHbQcBJ3GIk
-	nxS9JBhEGNzXI52VY8v8l3qB86+gEeeIOEw4gj/0K9PFjXKrXnV6QEm80Ji4LfM=
-X-Google-Smtp-Source: AGHT+IEAMVfOE5sPUtiSwm/TWfv2tfGIIhjiTnyU3vDHUtq0SM2wY34KGRRxJU7Br0YzNi0Fry8+GQ==
-X-Received: by 2002:a05:6602:610f:b0:82a:2053:e715 with SMTP id ca18e2360f4ac-834f7d93c3amr1217728039f.14.1728332556273;
-        Mon, 07 Oct 2024 13:22:36 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db86e86898sm605463173.61.2024.10.07.13.22.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 13:22:35 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Al Viro <viro@zeniv.linux.org.uk>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Kyle Fortin <kyle.fortin@oracle.com>, 
- Douglas Anderson <dianders@google.com>, 
- Christian Brauner <brauner@kernel.org>, 
- Christian Heusel <christian@heusel.eu>, Jan Kara <jack@suse.cz>, 
- Li Lingfeng <lilingfeng3@huawei.com>, Ming Lei <ming.lei@redhat.com>, 
- Riyan Dhiman <riyandhiman14@gmail.com>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Konstantin Khlebnikov <koct9i@gmail.com>
-In-Reply-To: <20241004171340.v2.1.I938c91d10e454e841fdf5d64499a8ae8514dc004@changeid>
-References: <20241004171340.v2.1.I938c91d10e454e841fdf5d64499a8ae8514dc004@changeid>
-Subject: Re: [PATCH v2] block: add partition uuid into uevent as "PARTUUID"
-Message-Id: <172833255467.162249.3695820190422916095.b4-ty@kernel.dk>
-Date: Mon, 07 Oct 2024 14:22:34 -0600
+	s=arc-20240116; t=1728332567; c=relaxed/simple;
+	bh=/xuJ2PAry2LqpmBgD3b47oNY0CjTeicFO2L4LKiuWug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlD5HpIWp5nNMzBGmFcP94O+q+P14DJp+45Au5nGV73aC4TNpaKCpD2b7iR6aMFDl5Z+g89R04psxOFAwp1bWaNAGYvTue1cOdeb5dNO7vRhqFJYK7XN0+ebtVirZLz/AuVYMJKz4vuAVLm3Dh0oafxD8bEcbtbqC4fkHHFW2Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XszoP9Nx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70202C4CEC6;
+	Mon,  7 Oct 2024 20:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728332567;
+	bh=/xuJ2PAry2LqpmBgD3b47oNY0CjTeicFO2L4LKiuWug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XszoP9NxjdT9p9NyyFpQ/Rp02MBeEqeMp/FTEfDogXJYJ6vVfKKeaM/voZHeyzCPC
+	 ahkdqgZD8k5QeCM9KKARaCd9AB/BdEI50+lNyySFeG2cWhWsEoj+4hOBS0/3A4AP+f
+	 jHui8bvG+nkEUPzCQZWBF+aVKp/B76eN918vVDb5z5m7lIU9yo/qBlskGdxETuD/Sh
+	 w1UOa2eL0UknUbdfdq8aZOuf+K4p1JjcJu0cL75HZ32XMgEYH8cexfVhxm/ybcKw+A
+	 WO67MIKjyhVm72eKGP+F6oUTFAqIR7TkfdYXtpGVvA9Hcw+ujPLngP+/OmemaBiRGp
+	 +CvOL4iP8CdJw==
+Date: Mon, 7 Oct 2024 22:22:40 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Xingyu Li <xli399@ucr.edu>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, dsahern@kernel.org, linux@weissschuh.net,
+	judyhsiao@chromium.org, James.Z.Li@dell.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: corrupted list in neigh_destroy
+Message-ID: <20241007202240.bsqczev75yzdgn3g@joelS2.panther.com>
+References: <CALAgD-7-Z+xbXwtvA9n9X2YE-B9f2bHFtyQxkX1uL+Yqd5zRuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAgD-7-Z+xbXwtvA9n9X2YE-B9f2bHFtyQxkX1uL+Yqd5zRuQ@mail.gmail.com>
 
-
-On Fri, 04 Oct 2024 17:13:43 -0700, Douglas Anderson wrote:
-> Both most common formats have uuid in addition to partition name:
-> GPT: standard uuid xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-> DOS: 4 byte disk signature and 1 byte partition xxxxxxxx-xx
+On Wed, Aug 28, 2024 at 04:34:39PM -0700, Xingyu Li wrote:
+> Hi,
 > 
-> Tools from util-linux use the same notation for them.
+> We found a bug in Linux 6.10 using syzkaller. It is possibly a
+> corrupted list bug.
+> The bug report is as follows, but unfortunately there is no generated
+> syzkaller reproducer.
+
+Please resend once you find a reproducer.
+
+> 
+> Bug report:
+> 
+> list_del corruption, ffff88802cfc0d80->next is NULL
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:53!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 PID: 4497 Comm: kworker/0:3 Not tainted 6.10.0 #13
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> Workqueue: events_power_efficient neigh_periodic_work
+> RIP: 0010:__list_del_entry_valid_or_report+0xc3/0x120 lib/list_debug.c:52
+> Code: 08 48 89 df e8 4e 01 96 fd 48 8b 13 4c 39 fa 75 62 b0 01 5b 41
+> 5c 41 5e 41 5f c3 48 c7 c7 60 5a a9 8b 4c 89 fe e8 dd ff 96 06 <0f> 0b
+> 48 c7 c7 c0 5a a9 8b 4c 89 fe e8 cc ff 96 06 0f 0b 48 c7 c7
+> RSP: 0018:ffffc90002ce7978 EFLAGS: 00010046
+> RAX: 0000000000000033 RBX: 0000000000000000 RCX: 31a71fdaa0dd1600
+> RDX: 0000000000000000 RSI: 0000000080000202 RDI: 0000000000000000
+> RBP: ffffc90002ce7ac8 R08: ffffffff8172e30c R09: 1ffff9200059ced0
+> R10: dffffc0000000000 R11: fffff5200059ced1 R12: dffffc0000000000
+> R13: ffff88802cfc0d80 R14: 0000000000000000 R15: ffff88802cfc0d80
+> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055dc1a4cee78 CR3: 000000000d932000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  __list_del_entry_valid include/linux/list.h:124 [inline]
+>  __list_del_entry include/linux/list.h:215 [inline]
+>  list_move_tail include/linux/list.h:310 [inline]
+>  ref_tracker_free+0x191/0x7b0 lib/ref_tracker.c:262
+>  netdev_tracker_free include/linux/netdevice.h:4058 [inline]
+>  netdev_put include/linux/netdevice.h:4075 [inline]
+>  neigh_destroy+0x317/0x570 net/core/neighbour.c:914
+>  neigh_periodic_work+0x3c6/0xd40 net/core/neighbour.c:1007
+>  process_one_work kernel/workqueue.c:3248 [inline]
+>  process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+>  worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+>  kthread+0x2eb/0x380 kernel/kthread.c:389
+>  ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__list_del_entry_valid_or_report+0xc3/0x120 lib/list_debug.c:52
+> Code: 08 48 89 df e8 4e 01 96 fd 48 8b 13 4c 39 fa 75 62 b0 01 5b 41
+> 5c 41 5e 41 5f c3 48 c7 c7 60 5a a9 8b 4c 89 fe e8 dd ff 96 06 <0f> 0b
+> 48 c7 c7 c0 5a a9 8b 4c 89 fe e8 cc ff 96 06 0f 0b 48 c7 c7
+> RSP: 0018:ffffc90002ce7978 EFLAGS: 00010046
+> RAX: 0000000000000033 RBX: 0000000000000000 RCX: 31a71fdaa0dd1600
+> RDX: 0000000000000000 RSI: 0000000080000202 RDI: 0000000000000000
+> RBP: ffffc90002ce7ac8 R08: ffffffff8172e30c R09: 1ffff9200059ced0
+> R10: dffffc0000000000 R11: fffff5200059ced1 R12: dffffc0000000000
+> R13: ffff88802cfc0d80 R14: 0000000000000000 R15: ffff88802cfc0d80
+> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055dc1a4cee78 CR3: 000000000d932000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > 
 > 
-> [...]
+> -- 
+> Yours sincerely,
+> Xingyu
 
-Applied, thanks!
-
-[1/1] block: add partition uuid into uevent as "PARTUUID"
-      commit: 74f4a8dc0dd8bf337edacb693383911b856f61e3
-
-Best regards,
 -- 
-Jens Axboe
 
-
-
+Joel Granados
 
