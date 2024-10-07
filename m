@@ -1,246 +1,396 @@
-Return-Path: <linux-kernel+bounces-354254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4AB993AC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:18:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16937993AB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66BA7B20A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:18:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7211F23EBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 23:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E59B1C3034;
-	Mon,  7 Oct 2024 23:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE701191F97;
+	Mon,  7 Oct 2024 23:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwhMWQRh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="egLonC1B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5C61C1ADA;
-	Mon,  7 Oct 2024 23:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E2A18BC3B;
+	Mon,  7 Oct 2024 23:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728342987; cv=none; b=NHKWs1lDwIYzbSg4V2BELnu53+2WZooi9ZLyZuMFgBuAZVKIimPp3TVNnznGOPBRRvZ2pfkbWMVR8Str/+HTV4lOWgx/UausWvO1UC2DBZ1Ct4yxqItSyBYZjcbkom8ZMyGAa1mfrEgpJBhpfqjoKd7f2RHFVUpGUEevHLrFkjE=
+	t=1728342975; cv=none; b=SpdnTGCuWeDvLkekJ/oZl/N7cJ82HceFFNkgthRZ62zFgCYyam2jw1DrvmtwmbMvHBgpzVJqXMct72yze4RT/3HAwyrbCBEcSTILBZO41PXaFC+ySt5U/F8R3QhXB612ozW6OBNQ9EQgUe0iZFT9Bo+Ljd4wPJYAZ4fmoDQm0g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728342987; c=relaxed/simple;
-	bh=DUb7kz4JTXYdL6/EMDIBmQrN8NitqplSXw+fsyqrMFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHOYcxiDX6mlY/x6eVIg+50eGnrZ0K4vq3HREpT+4i1wzNL5o2yonGKMuZPPiDzV+i6PnoK/Y+0/XMRBoq1DpVt+4PORuPv6s06UcCZj/QA2d0h/RkE//GeLZbLW/AgcjFfnEMkUEibxuvnWFgmAI8lxs1S+EfdWuzIq5MSY9ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwhMWQRh; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1728342975; c=relaxed/simple;
+	bh=OXoiarDQ/wZQh9c1DY7NZJoQbq5qxwtTSLb2/K7p9vg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MKuCZRAIRYVUzrOriui5Yn/hQgzWQlxjkB2BzA/77X6KuR7uZ6w/mXI7tzVUAlRx+970q2eWQznyL9v7cmlz1FRp7COf/fZP/GvdxFaM2LZ5dzEzsKAP4YmpFUfAt6YhVnSVRYOC3EGnCXEXufB8wUzo/n9FLnHK085uYVR91HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=egLonC1B; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728342986; x=1759878986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DUb7kz4JTXYdL6/EMDIBmQrN8NitqplSXw+fsyqrMFI=;
-  b=BwhMWQRhQzOCknkg0Q+4xLKc0tAZr8oEHkNoQxjBwEbg58jrpFJrW+y0
-   vXYMUQPwhoGllMBgqAzVEvpxKqt12af20Scyi2PZ2LIc2mUmlwxZfp8wC
-   yuqKTgv0AZWGvwd9l07Xn/snPtEDz+Ags1QmE5QScPzJyxWnaNvA3uWOx
-   yfG4gKc7hKC21xmIjvo1mciOptvOih9twP0zkR/3L6DNwDD9GmtOYB5w9
-   TQPD1Hv+MMzZgUn1GqIkk3PNexzMpxdFuLUoSs7Vb2rVd/ZsEHNYoqFn0
-   DLkb6P/C+Q395i8Rde5Y+/LruDmhKyaBndhidD1wIVBh0VWHZVgmtAPLJ
+  t=1728342974; x=1759878974;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=OXoiarDQ/wZQh9c1DY7NZJoQbq5qxwtTSLb2/K7p9vg=;
+  b=egLonC1Bs+JvqcxuYLqm21Ud3/NjVvKM7/cXIWYxo+ouLdlQREaIckKr
+   PPB7C2uCbvi+WolL6F56LbvHsUpqGkLhn1O39Bt2EG0FPvwdHbVyfzlci
+   UNnI4kizaQxdYGHNb65dTFBuwuzojMOXQgkzWEQlQ4AefLkR4wkx7nczf
+   bfnjAQvnO1LU0b6fW+voX1MlunPSWIYEtaHrz/K+bBl8WPMYOUp6sEXMv
+   YeTDqcfKC2OJd2dyHMpMJ1LOywI6TPb34gRd8c8zLvu/5bQ5QSv4J2jnw
+   0fTbuGEZX0K+YUUjUEG5X7CKVkNkcN14lQPkgJGbqkj5bbh26RfsBn5gZ
    g==;
-X-CSE-ConnectionGUID: tsgUourMTF2TnjL401mP+w==
-X-CSE-MsgGUID: soKaP/LEQwuzJ5PoJUs1cA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="50043024"
+X-CSE-ConnectionGUID: AbkELgYJR/OJDQ7HQQM0xA==
+X-CSE-MsgGUID: qj9FEI4gS6We1hZ0fNS6wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="38078847"
 X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
-   d="scan'208";a="50043024"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 16:16:26 -0700
-X-CSE-ConnectionGUID: WdcWUlizRpy4GVkqUpX3QQ==
-X-CSE-MsgGUID: imA9qnRfQd67i0hrQfr+LA==
+   d="scan'208";a="38078847"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 16:16:13 -0700
+X-CSE-ConnectionGUID: DhcaiU2SQNmdkSKk+kbcIA==
+X-CSE-MsgGUID: fRR9hNG+Spysj393Wiwd6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
-   d="scan'208";a="106479378"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 07 Oct 2024 16:16:22 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxwxf-0005eO-2j;
-	Mon, 07 Oct 2024 23:16:19 +0000
-Date: Tue, 8 Oct 2024 07:15:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: Re: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan
- configuration in dsa_user_set_wol
-Message-ID: <202410080616.wpZV4fAa-lkp@intel.com>
-References: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
+   d="scan'208";a="75634535"
+Received: from ldmartin-desk2.corp.intel.com (HELO localhost) ([10.125.110.112])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 16:16:09 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v4 00/28] DCD: Add support for Dynamic Capacity Devices
+ (DCD)
+Date: Mon, 07 Oct 2024 18:16:06 -0500
+Message-Id: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006231938.4382-1-pvmohammedanees2003@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALZrBGcC/4WPy07EMAxFf2WUNUGOkzqUFf+BWOTh0kjQVkmpG
+ I367ySVkAbEY3ktn3PtiyicExdxf7qIzFsqaZ5qMDcnEUY3PbNMsWaBgBoIjIwhyvW8MMq3pay
+ Z3auEEFU3ECoaoqigd4Wlz24KY0O/breFJfOQ3o/Wx6eax1TWOZ+PIzbVpn/2bUqCtMqTNso77
+ sxDmlZ+uQ3zYa+oAY2/o956gEioCbsrtF2y4f/tWBWDNRCMZdsr+q7QnwoDd4p+VOj2QOh9T8E
+ 7ivZase/7B4Sy1BeWAQAA
+To: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Navneet Singh <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ "Li, Ming" <ming4.li@intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>, 
+ Robert Moore <robert.moore@intel.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+ Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+ acpica-devel@lists.linux.dev
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728342968; l=13078;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=OXoiarDQ/wZQh9c1DY7NZJoQbq5qxwtTSLb2/K7p9vg=;
+ b=OIXwVAQ+2g0diR/ATNYjlq1WJGSxMRZ4G7mzX7Es2yd5P/qZ5jlB/Nh7jJ1Yyk4AYAEasFAI2
+ lmZZSVSM9eUBGM1Dw3sq9s50w4BviJbVXmp+O/lTe9BeLe/rK0SzMnH
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
-Hi Mohammed,
+A git tree of this series can be found here:
 
-kernel test robot noticed the following build errors:
+	https://github.com/weiny2/linux-kernel/tree/dcd-v4-2024-10-04
 
-[auto build test ERROR on net/main]
-[also build test ERROR on net-next/main linus/master v6.12-rc2 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Series info
+===========
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Anees/net-dsa-Fix-conditional-handling-of-Wake-on-Lan-configuration-in-dsa_user_set_wol/20241007-072229
-base:   net/main
-patch link:    https://lore.kernel.org/r/20241006231938.4382-1-pvmohammedanees2003%40gmail.com
-patch subject: [PATCH v2] net: dsa: Fix conditional handling of Wake-on-Lan configuration in dsa_user_set_wol
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241008/202410080616.wpZV4fAa-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410080616.wpZV4fAa-lkp@intel.com/reproduce)
+This series has 5 parts:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410080616.wpZV4fAa-lkp@intel.com/
+Patch 1-3: Add %pra printk format for struct range
+Patch 4: Add core range_overlaps() function
+Patch 5-6: CXL clean up/prelim patches
+Patch 7-26: Core DCD support
+Patch 27-28: cxl_test support
 
-All errors (new ones prefixed by >>):
+Background
+==========
 
-   In file included from net/dsa/user.c:8:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from net/dsa/user.c:8:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:28:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from net/dsa/user.c:8:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:28:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from net/dsa/user.c:8:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:28:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> net/dsa/user.c:1220:6: error: assigning to 'int' from incompatible type 'void'
-    1220 |         ret = phylink_ethtool_get_wol(dp->pl, w);
-         |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   16 warnings and 1 error generated.
+A Dynamic Capacity Device (DCD) (CXL 3.1 sec 9.13.3) is a CXL memory
+device that allows memory capacity within a region to change
+dynamically without the need for resetting the device, reconfiguring
+HDM decoders, or reconfiguring software DAX regions.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+One of the biggest use cases for Dynamic Capacity is to allow hosts to
+share memory dynamically within a data center without increasing the
+per-host attached memory.
 
+The general flow for the addition or removal of memory is to have an
+orchestrator coordinate the use of the memory.  Generally there are 5
+actors in such a system, the Orchestrator, Fabric Manager, the Logical
+device, the Host Kernel, and a Host User.
 
-vim +1220 net/dsa/user.c
+Typical work flows are shown below.
 
-  1213	
-  1214	static int dsa_user_set_wol(struct net_device *dev, struct ethtool_wolinfo *w)
-  1215	{
-  1216		struct dsa_port *dp = dsa_user_to_port(dev);
-  1217		struct dsa_switch *ds = dp->ds;
-  1218		int ret;
-  1219	
-> 1220		ret = phylink_ethtool_get_wol(dp->pl, w);
-  1221	
-  1222		if (ret != -EOPNOTSUPP)
-  1223			return ret;
-  1224	
-  1225		if (ds->ops->set_wol)
-  1226			return ds->ops->set_wol(ds, dp->index, w);
-  1227	
-  1228		return -EOPNOTSUPP;
-  1229	}
-  1230	
+Orchestrator      FM         Device       Host Kernel    Host User
 
+    |             |           |            |              |
+    |-------------- Create region ----------------------->|
+    |             |           |            |              |
+    |             |           |            |<-- Create ---|
+    |             |           |            |    Region    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create --->|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |             |           |            |              |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |-- Remove -->|- Release->|- Release ->|              |   |
+    |  Capacity   |  Extent   |   Extent   |              |   |
+    |             |           |            |              |   |
+    |             |           |     (Release Ignored)     |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |             |- Release->|- Release ->|              |
+    |             |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Destroy ---|
+    |             |           |            |   Region     |
+    |             |           |            |              |
+
+Implementation
+==============
+
+The series still requires the creation of regions and DAX devices to be
+closely synchronized with the Orchestrator and Fabric Manager.  The host
+kernel will reject extents if a region is not yet created.  It also
+ignores extent release if memory is in use (DAX device created).  These
+synchronizations are not anticipated to be an issue with real
+applications.
+
+In order to allow for capacity to be added and removed a new concept of
+a sparse DAX region is introduced.  A sparse DAX region may have 0 or
+more bytes of available space.  The total space depends on the number
+and size of the extents which have been added.
+
+Initially it is anticipated that users of the memory will carefully
+coordinate the surfacing of additional capacity with the creation of DAX
+devices which use that capacity.  Therefore, the allocation of the
+memory to DAX devices does not allow for specific associations between
+DAX device and extent.  This keeps allocations very similar to existing
+DAX region behavior.
+
+To keep the DAX memory allocation aligned with the existing DAX devices
+which do not have tags extents are not allowed to have tags.  Future
+support for tags is planned.
+
+Great care was taken to keep the extent tracking simple.  Some xarray's
+needed to be added but extra software objects were kept to a minimum.
+
+Region extents continue to be tracked as sub-devices of the DAX region.
+This ensures that region destruction cleans up all extent allocations
+properly.
+
+Some review tags were kept if a patch did not change.
+
+The major functionality of this series includes:
+
+- Getting the dynamic capacity (DC) configuration information from cxl
+  devices
+
+- Configuring the DC partitions reported by hardware
+
+- Enhancing the CXL and DAX regions for dynamic capacity support
+	a. Maintain a logical separation between hardware extents and
+	   software managed region extents.  This provides an
+	   abstraction between the layers and should allow for
+	   interleaving in the future
+
+- Get hardware extent lists for endpoint decoders upon
+  region creation.
+
+- Adjust extent/region memory available on the following events.
+        a. Add capacity Events
+	b. Release capacity events
+
+- Host response for add capacity
+	a. do not accept the extent if:
+		If the region does not exist
+		or an error occurs realizing the extent
+	b. If the region does exist
+		realize a DAX region extent with 1:1 mapping (no
+		interleave yet)
+	c. Support the event more bit by processing a list of extents
+	   marked with the more bit together before setting up a
+	   response.
+
+- Host response for remove capacity
+	a. If no DAX device references the extent; release the extent
+	b. If a reference does exist, ignore the request.
+	   (Require FM to issue release again.)
+
+- Modify DAX device creation/resize to account for extents within a
+  sparse DAX region
+
+- Trace Dynamic Capacity events for debugging
+
+- Add cxl-test infrastructure to allow for faster unit testing
+  (See new ndctl branch for cxl-dcd.sh test[1])
+
+- Only support 0 value extent tags
+
+Fan Ni's upstream of Qemu DCD was used for testing.
+
+Remaining work:
+
+	1) Allow mapping to specific extents (perhaps based on
+	   label/tag)
+	   1a) devise region size reporting based on tags
+	2) Interleave support
+
+Possible additional work depending on requirements:
+
+	1) Accept a new extent which extends (but overlaps) an existing
+	   extent(s)
+	2) Release extents when DAX devices are released if a release
+	   was previously seen from the device
+	3) Rework DAX device interfaces, memfd has been explored a bit
+
+[1] https://github.com/weiny2/ndctl/tree/dcd-region2-2024-10-01
+
+---
+Major changes in v4:
+- iweiny: rebase to 6.12-rc
+- iweiny: Add qos data to regions
+- Jonathan: Fix up shared region detection
+- Jonathan/jgroves/djbw/iweiny: Ignore 0 value tags
+- iweiny: Change DCD partition sysfs entries to allow for qos class and
+  additional parameters per partition
+- Petr/Andy: s/%par/%pra/
+- Andy: Share logic between printing struct resource and struct range
+- Link to v3: https://patch.msgid.link/20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com
+
+---
+Ira Weiny (14):
+      test printk: Add very basic struct resource tests
+      printk: Add print format (%pra) for struct range
+      cxl/cdat: Use %pra for dpa range outputs
+      range: Add range_overlaps()
+      dax: Document dax dev range tuple
+      cxl/pci: Delay event buffer allocation
+      cxl/cdat: Gather DSMAS data for DCD regions
+      cxl/region: Refactor common create region code
+      cxl/events: Split event msgnum configuration from irq setup
+      cxl/pci: Factor out interrupt policy check
+      cxl/core: Return endpoint decoder information from region search
+      dax/bus: Factor out dev dax resize logic
+      tools/testing/cxl: Make event logs dynamic
+      tools/testing/cxl: Add DC Regions to mock mem data
+
+Navneet Singh (14):
+      cxl/mbox: Flag support for Dynamic Capacity Devices (DCD)
+      cxl/mem: Read dynamic capacity configuration from the device
+      cxl/core: Separate region mode from decoder mode
+      cxl/region: Add dynamic capacity decoder and region modes
+      cxl/hdm: Add dynamic capacity size support to endpoint decoders
+      cxl/mem: Expose DCD partition capabilities in sysfs
+      cxl/port: Add endpoint decoder DC mode support to sysfs
+      cxl/region: Add sparse DAX region support
+      cxl/mem: Configure dynamic capacity interrupts
+      cxl/extent: Process DCD events and realize region extents
+      cxl/region/extent: Expose region extent information in sysfs
+      dax/region: Create resources on sparse DAX regions
+      cxl/region: Read existing extents on region creation
+      cxl/mem: Trace Dynamic capacity Event Record
+
+ Documentation/ABI/testing/sysfs-bus-cxl   | 120 +++-
+ Documentation/core-api/printk-formats.rst |  13 +
+ drivers/cxl/core/Makefile                 |   2 +-
+ drivers/cxl/core/cdat.c                   |  52 +-
+ drivers/cxl/core/core.h                   |  33 +-
+ drivers/cxl/core/extent.c                 | 486 +++++++++++++++
+ drivers/cxl/core/hdm.c                    | 213 ++++++-
+ drivers/cxl/core/mbox.c                   | 605 ++++++++++++++++++-
+ drivers/cxl/core/memdev.c                 | 130 +++-
+ drivers/cxl/core/port.c                   |  13 +-
+ drivers/cxl/core/region.c                 | 170 ++++--
+ drivers/cxl/core/trace.h                  |  65 ++
+ drivers/cxl/cxl.h                         | 122 +++-
+ drivers/cxl/cxlmem.h                      | 131 +++-
+ drivers/cxl/pci.c                         | 123 +++-
+ drivers/dax/bus.c                         | 352 +++++++++--
+ drivers/dax/bus.h                         |   4 +-
+ drivers/dax/cxl.c                         |  72 ++-
+ drivers/dax/dax-private.h                 |  47 +-
+ drivers/dax/hmem/hmem.c                   |   2 +-
+ drivers/dax/pmem.c                        |   2 +-
+ fs/btrfs/ordered-data.c                   |  10 +-
+ include/acpi/actbl1.h                     |   2 +
+ include/cxl/event.h                       |  32 +
+ include/linux/range.h                     |   7 +
+ lib/test_printf.c                         |  70 +++
+ lib/vsprintf.c                            |  55 +-
+ tools/testing/cxl/Kbuild                  |   3 +-
+ tools/testing/cxl/test/mem.c              | 960 ++++++++++++++++++++++++++----
+ 29 files changed, 3576 insertions(+), 320 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20230604-dcd-type2-upstream-0cd15f6216fd
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ira Weiny <ira.weiny@intel.com>
+
 
