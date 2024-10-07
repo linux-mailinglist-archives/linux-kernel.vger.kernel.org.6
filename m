@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-353973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064DC99356F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1017099352A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB89283AD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC351F2412F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9150C1DDA37;
-	Mon,  7 Oct 2024 17:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B619D1DD9CE;
+	Mon,  7 Oct 2024 17:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j7tcN/R2"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4641DD897;
-	Mon,  7 Oct 2024 17:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ePNugoc1"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A824912B143
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728323632; cv=none; b=jD1JPrdcy7nDM1PgKEub3E++i6OEdS9MuyiSmogUsXVPL1uGu3LOSu3hnULnT4N9DumoS3FvriThOdXmsZ3jkDvAZ2rNkHThV3prth+rBiijgzyeNx3XWUXXd4ZdSarkr3WWZaHPkVD1ZjJQG6aFiwCGf7MwW5e6MlZdBScvdD8=
+	t=1728322696; cv=none; b=sABREQxuW5xfIsXIbJmu7X/QDcyoDyVviLdhkY1KCm+10dYsmWifs8sVQ1r1haEv1nBeXO+ixwuevbmJjKitr6coj2gofSFuFVxaVQkgQc3tMDL2H3FVUsR/verRxdQoCGDoPQHX1TWIz/IC0M7bpKsu1eAjwufRGZQCpj73wzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728323632; c=relaxed/simple;
-	bh=owqZqe6SOcjF+x2nZEWaHQai9s/XpwQaG6SBFH1peuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXBFD8v865c8A+Y786k2fwKQ1BfOr3JGRA1MiktctlXPLq/ONcc9wmQyQ8C2ruf4QCVgUQtPsOTaMMuEiqm/DtN3tH6JSM84v4MCtipcjInBV8/BEU9hw2Nlekgl1bb3gS+Okqw5SAlkQitUeG1mJgvEaOmSxgaVIfB+4I0b6zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j7tcN/R2; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=e0zWvVAwuNjFVyvqZcLjrFil652es6+3ZXlaMDiTv9Y=;
-	b=j7tcN/R24zRx6XS8AZidhSws4nde4t98wWW9XX4xKYyEaudIM1hwKRYPXyT5FD
-	PH4Pv/uWHD+fYPfls6lIAkcT2c42BbHgD9TnWLlwfim6nfKd9wNUbUtXlpZEuZTY
-	UiT3DKskIEAJ75HvGvdtUmjoCc55EB6SAFT1pWtc39R9A=
-Received: from localhost (unknown [223.104.83.8])
-	by gzsmtp4 (Coremail) with SMTP id sygvCgCXrl5mHARnIWhxAw--.4001S3;
-	Tue, 08 Oct 2024 01:37:42 +0800 (CST)
-Date: Tue, 8 Oct 2024 01:37:42 +0800
-From: Melon Liu <melon1335@163.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux@armlinux.org.uk, lecopzer.chen@mediatek.com,
-	linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] ARM/mm: Fix stack recursion caused by KASAN
-Message-ID: <ZwQcZvU41vcD-Gkt@liu>
-References: <ZwNwXF2MqPpHvzqW@liu>
- <CACRpkdZwmjerZSL+Qxc1_M3ywGPRJAYJCFX7_dfEknDiKtuP8w@mail.gmail.com>
+	s=arc-20240116; t=1728322696; c=relaxed/simple;
+	bh=/k6vljXwBlgCjmZ3+FeBxgnPubYqyHVa/VgKHxklvOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QonQNblc7zTKrRM9hN4txCFKObuc7oGPOrCaCnUFcludVSCOlFYkXQiR0Ks+XLgVn5nnDiCf64ALaIOyNJorzB57C9b7OOyJm0ZHs+o1jHnKkf/vac2AGYu1te3E3gMjwWlqquMPDmGN+ejwRk709xRwr0GSoTNHMxeJTEG1zpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ePNugoc1; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4581cec6079so24101cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728322693; x=1728927493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QS16seDgTrfXYQ3DhtlLPe9kHa0/3e1Rh1j402yuupk=;
+        b=ePNugoc1yj/dc9bPt5kWLsVHYYr4CaEq4WDTr4Vx9VDqVy9yPxKm5MBCZY9ADm7c8t
+         Q7VCumDOy9AQJhdo5HDV0h3VNz/qlL3jGxRTVwnjEAMuIyLgW90XSClV5md4JIMMLs7S
+         ueYgf4HN/mMBMe9ic+75yTs1QdGi5pxO3rJJa0K73FLpJu1htrYobEFRGZDanHMDDShX
+         2RrneFS/5l4HY+Rn9rhMq014zn61Q0QD91lTr0MLhEr0NheX+ZFTEdK5iipOE767V9rN
+         mfKnzMneVe3YCBq4bmzBNLqrDqFhXHD16z+OaZx04leybCbSfvXvS9Mhd2eg0D5ZYkC9
+         NvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728322693; x=1728927493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QS16seDgTrfXYQ3DhtlLPe9kHa0/3e1Rh1j402yuupk=;
+        b=QURJbUhcsezB5je3Z/i7Q+AjJHOpKPYSakUAYMC6ChDM5yrokdQoZ339kEtaPrIxjb
+         3Sczhda501nOp4SDJbgLB5DGIGAW11w9Ye7IX+oGL54H8oDmiDHt1CDRD7gC+rwXGYbo
+         8jpvbglF0jt86TAP7nc2iBmQpq23Jfz17+R5VKwuHxZVeiyYw7hfrxb3Syx1KOikXwjV
+         /ZJAiVkAdVF0xm+BEFkXGhFyc0m6+G40yBdB/UEENmT7gH3n5BipWq943cbJ2Q8ayja2
+         ed3/GZGQtFzyQHj3og9Viix76KvHCJYjM5vQMYVGyfgbKcZBYrQwAlhWFkeToBFh3zsE
+         r5hw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+690OKtZHnCuRsYOnYNoRqZ7vO9YqOXJdtWW5uV7oEB0W7JHVj9TehoYLVFFErxeANQSuBNnbcX0e/+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdeNdOO9cQFp+amuGyKowa28tRWlPDyo7xKwDJ+sKDSb+A7m5t
+	LNim0on6Yfq7GbH/Cn1OSUbxs09/uWj42KKINXdyz2IzVrGM3myzL49w9FcK36UDdbg9QCgEp96
+	WObrsD1/wLBHN+yCJZLnieC5BpTbOhsJFTOLF
+X-Google-Smtp-Source: AGHT+IEpqvxvf+zPWcZiQ0lIWhuFlOh+jjsrdaovB5Fk7Ch8SA+B6A3r9V3OzIKYc/kDyDbDW9nioC5hsWFKF7dDsdQ=
+X-Received: by 2002:a05:622a:8611:b0:45c:9b41:248f with SMTP id
+ d75a77b69052e-45da98514dbmr6843251cf.25.1728322693424; Mon, 07 Oct 2024
+ 10:38:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZwmjerZSL+Qxc1_M3ywGPRJAYJCFX7_dfEknDiKtuP8w@mail.gmail.com>
-X-CM-TRANSID:sygvCgCXrl5mHARnIWhxAw--.4001S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtry5ArW3Cw43WFyftF47Jwb_yoWkWrc_ua
-	9Y9F17C345J3W7GwsYkFs3Zr4q9rn5K345GayDt39agFn7t39rCFs5AFZayws5WF45ur95
-	ZFs2qa4xtw1qgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjuOJ7UUUUU==
-X-CM-SenderInfo: ppho00irttkqqrwthudrp/1tbiNgJxIWcEDJjSDgAAsP
+References: <20240913173242.3271406-1-jmattson@google.com> <20240913173242.3271406-2-jmattson@google.com>
+ <20241007143019.GAZwPwe286itXE2Wj2@fat_crate.local>
+In-Reply-To: <20241007143019.GAZwPwe286itXE2Wj2@fat_crate.local>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 7 Oct 2024 10:38:01 -0700
+Message-ID: <CALMp9eSZX_fEy6=wWr=HY_6kDULE6-8_16cRGgfjoVhGguF7AQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Sandipan Das <sandipan.das@amd.com>, Kai Huang <kai.huang@intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Venkatesh Srinivas <venkateshs@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 12:25:38PM +0200, Linus Walleij wrote:
-> On Mon, Oct 7, 2024 at 7:25 AM Melon Liu <melon1335@163.com> wrote:
-> 
-> > When accessing the KASAN shadow area corresponding to the task stack
-> > which is in vmalloc space, the stack recursion would occur if the area`s
-> > page tables are unpopulated.
+On Mon, Oct 7, 2024 at 7:30=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrote=
+:
+>
+> On Fri, Sep 13, 2024 at 10:32:27AM -0700, Jim Mattson wrote:
+> > AMD's initial implementation of IBPB did not clear the return address
+> > predictor. Beginning with Zen4, AMD's IBPB *does* clear the return
+> > address predictor. This behavior is enumerated by
+> > CPUID.80000008H:EBX.IBPB_RET[bit 30].
 > >
-> > Calltrace:
-> >  ...
-> >  __dabt_svc+0x4c/0x80
-> >  __asan_load4+0x30/0x88
-> >  do_translation_fault+0x2c/0x110
-> >  do_DataAbort+0x4c/0xec
-> >  __dabt_svc+0x4c/0x80
-> >  __asan_load4+0x30/0x88
-> >  do_translation_fault+0x2c/0x110
-> >  do_DataAbort+0x4c/0xec
-> >  __dabt_svc+0x4c/0x80
-> >  sched_setscheduler_nocheck+0x60/0x158
-> >  kthread+0xec/0x198
-> >  ret_from_fork+0x14/0x28
+> > Define X86_FEATURE_AMD_IBPB_RET for use in KVM_GET_SUPPORTED_CPUID,
+> > when determining cross-vendor capabilities.
 > >
-> > Fixes: 565cbaad83d ("ARM: 9202/1: kasan: support CONFIG_KASAN_VMALLOC")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Melon Liu <melon1335@163.org>
-> 
-> Patch looks correct to me:
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Can you put the patch into Russell's patch tracker after some
-> time for review, if no issues are found, please?
-Ok.
+> > Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  arch/x86/include/asm/cpufeatures.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/=
+cpufeatures.h
+> > index cabd6b58e8ec..a222a24677d7 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -215,7 +215,7 @@
+> >  #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE        ( 7*32+23) /* Dis=
+able Speculative Store Bypass. */
+> >  #define X86_FEATURE_LS_CFG_SSBD              ( 7*32+24)  /* AMD SSBD i=
+mplementation via LS_CFG MSR */
+> >  #define X86_FEATURE_IBRS             ( 7*32+25) /* "ibrs" Indirect Bra=
+nch Restricted Speculation */
+> > -#define X86_FEATURE_IBPB             ( 7*32+26) /* "ibpb" Indirect Bra=
+nch Prediction Barrier without RSB flush */
+>
+> I see upstream
+>
+> #define X86_FEATURE_IBPB                ( 7*32+26) /* "ibpb" Indirect Bra=
+nch Prediction Barrier */
+>
+> Where does "without RSB flush" come from?
 
-Thanks!
-> 
-> Yours,
-> Linus Walleij
-
+Bad git hygiene. This should have been a 4 patch set, not a 3 patch
+set. Sigh. I'll send out v5.
 
