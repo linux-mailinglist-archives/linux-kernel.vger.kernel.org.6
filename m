@@ -1,158 +1,116 @@
-Return-Path: <linux-kernel+bounces-353552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFEE992F65
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56524992F68
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406881C22CDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE01628656C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C5B1D2F4B;
-	Mon,  7 Oct 2024 14:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B431D88D5;
+	Mon,  7 Oct 2024 14:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="ykDfl/CQ"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJZcZWx/"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A81D619F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 14:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591561D61B6;
+	Mon,  7 Oct 2024 14:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311293; cv=none; b=Aq0CJWa3Mmsq8c4DK5Re1/O/yLF2jlSQdWANaFDXDMzdZdYTA2CRH6WJZOeModTIq6r73x1m+E3vBRyWGMidieGTtX5tKuAfuW/H6I6bAtes6w8r/K9Nq7X/3v5TSizebMhDQc71yKPdFWqrEhfkJ07s9QPkHv78rkDPle/SLk8=
+	t=1728311365; cv=none; b=Y02A9P9AJseoOWzr0O2svicQyBFJLDSl5VyRJUdRUCjkBED/3KuM5U0inpOaH0HfShI+AbOoKfkToXjiz0d9OWRKoiZNmNYNlZdCUDqoZMdyXVcQ5cWPbUOlaPCDLSOYq/OlbVAIi943AtU9maSrKEvZdEpRUA00fgKcy37+VFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311293; c=relaxed/simple;
-	bh=n5hZzCJwspYA3Tn8kasI3971g8e/sruaIzeSn0j5T8I=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=V7o8VivDJp5oHwTNWFcdcHRRMpSzWzsi0KTC+kGNyYBSccwazlwZ4lt5cGvSGeiyeAtmtLtiw0/MbBzM94VAe+34CzXM/tUMjIIiNaum/Q62W4MG+Yu8W2ymubfl55LsSwjIHerccYPvKnBabd2yh1sHdU0W0VDJHraGCYfkIa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=ykDfl/CQ; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1728311365; c=relaxed/simple;
+	bh=W/RzfjYVv6DChxrW9f6IHL/wmpR8NAqJMEkuwZp3wyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Id+MkEw8bZJCgNdUAK1x9tQleAo+5XbOdOPiTbZ+Ao9CM0KmMVDDURWD422OJuwdIsH35sYocE0BL7MQo76dvu+by0ONO9XpJt/t1BfOQ1/zW2zyX6D6L6ryPVHNZjTDvC6240Rk822qFqKE/S3aI7q5CxsAeoWr/94fyy1q51M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJZcZWx/; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so3482433b3a.1;
+        Mon, 07 Oct 2024 07:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728311364; x=1728916164; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uNQxMPdLPQGiG6CFdOj3sCHGNid6tI7wiHJS+3jAN/I=;
+        b=AJZcZWx/pl09MPdlErGtQj1fkRDxdNIYUPkQndWkEGKCKmQNIauLLGvCpXZ1yIgu4C
+         nIOBPzaARsm9Jz9jU7KHlKHU/VgIFjpSmTmC2M0Yi8R2zgFmRru5h9yMuDVxac1sqpIA
+         D+W0usTg5pSmfzgS7XzM2vGHiL1enceYzlW62NOGKXKolOigoY81Q4EtuO3qoE/dCJsE
+         Dit710WfEPqkkOjjKTNlzGRLGHGM4yZis8N6+kkf6Shyn5T4Mh0qemolK6hhVwjcbuQC
+         raXIjnY1NrnZFocK3NaPtlYY52Az0QjuO+tczjcVKUtNGxdW3SzN29HL3zlkB5O73F/v
+         2lLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728311364; x=1728916164;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNQxMPdLPQGiG6CFdOj3sCHGNid6tI7wiHJS+3jAN/I=;
+        b=vloYyQkLH2dSptsp3LO00QC6xU7JvD2TWoXGy3WUNDnd0KlN+M0TPIm7fs+K3Mut8F
+         rNVmHzzD/YwlQmsX6QTbxmZ9qHw3LYumWIeSYLpJy7PAKs/f+qVRlKUXMwrsVbb737lf
+         KwRRiAiWgDFjnIs1RBdKXraNN25hBpX9HXvbRN+Hup2nZMpMfOJljzg/R00Ck777QZp+
+         o24bn6U8QSI8KhNNaGUz9ZdlVeywsvJVh+1ElKcPJiAWoqGpB5SivDgyDlVKr2ZvG5sI
+         bfVwlzeUux8l0K6ABoOOlCmAkayECp+Xdnqna4IJ6RC/KhCHcgDBxKtx4J1l9M/UGOrs
+         BttA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLT6IvV0yIV+VTLAIorVk2xyuspKSYMQt695pgqAVKpExfq+I56fV7W2RZyO06rLY2ISJUtmeH@vger.kernel.org, AJvYcCXr2V4ZU2SsScPWcEiCRKTRdq8aztRK3G4aI0m90UzkdzZh3zy4LC24tb3UMheGBL743/bcdLWdqQh160w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFDMjAN9Bat/hySA7Y0cWfLQaa85m12z1MmikYvkDipssPiT48
+	qrEdKnPNcr0yedCTog1hh+AYaYyIln6ZdAqZQ09xNNEm/ORlahhX
+X-Google-Smtp-Source: AGHT+IGIiRtkKKCUduaI8GCNJogac1D3SBdylmV9cioQC+jHWoCQyQ0/lcyIVAjkFoSJs+bM7fZq3w==
+X-Received: by 2002:a05:6a20:a12c:b0:1d4:f7b7:f20 with SMTP id adf61e73a8af0-1d6d3b011d7mr25611937637.21.1728311363591;
+        Mon, 07 Oct 2024 07:29:23 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:9c11:1d1b:c444:fe85? ([2409:8a55:301b:e120:9c11:1d1b:c444:fe85])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f68320ffsm5030385a12.46.2024.10.07.07.29.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 07:29:23 -0700 (PDT)
+Message-ID: <218513be-857b-4457-8bd8-c12e170233b7@gmail.com>
+Date: Mon, 7 Oct 2024 22:29:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1728311289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsGKgHfqizmTBsBA0G5SHeGmEvGU4wB4XCYFeRqbgFY=;
-	b=ykDfl/CQW53CP31cPAE9ksORAybUo4OcmpLeR9I7FI9spMbeuSysr6uH0mgHBwgHQ8O2pF
-	F6FHbgo9plUDm+TitrB+HjHBSmbnPqhAhWDc1Xzm9JowJan28UvP79BrkPOBfEfRS9iDh+
-	PA6Grv+cTywDmeBw83xmRj3lVxKshpYbDWBK74BucPrUPjYaG1Q7p3cdTOsuNLdCrjsfN0
-	K9u9SJ2DFQBFMBHeSLdTDyG1ZawIB14amW5HbniqfZCKkVqJCMF7EiPWV/kXcfgUGRolW0
-	aJArIvdrZKZaAuQETC4pWnI3pPjaLxrITLnqS7kAFMslytqEc3dSz5we6NPdzQ==
-Content-Type: multipart/signed;
- boundary=8fee40a3652e3dfc8b43c5412c165b14d35256cdef3a53e3f0d083829ec2;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Mon, 07 Oct 2024 16:28:07 +0200
-Message-Id: <D4PN7WCK7XHH.1BMR5J23UJH58@cknow.org>
-Cc: "Dragan Simic" <dsimic@manjaro.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] arm64: dts: rockchip: Fix reset-gpios prop on brcm
- BT nodes
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-References: <20241007105657.6203-2-didi.debian@cknow.org>
- <20241007105657.6203-6-didi.debian@cknow.org> <12534438.O9o76ZdvQC@diego>
-In-Reply-To: <12534438.O9o76ZdvQC@diego>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v19 09/14] net: rename skb_copy_to_page_nocache()
+ helper
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yunsheng Lin <linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>,
+ David Ahern <dsahern@kernel.org>
+References: <20241001075858.48936-1-linyunsheng@huawei.com>
+ <20241001075858.48936-10-linyunsheng@huawei.com>
+ <CAKgT0UeSbXTXoOuTZS918pZQcCVZBXiTseN-NUBTGt71ctQ2Vw@mail.gmail.com>
+ <c9860411-fa9c-4e1b-bca2-a10e6737f9b0@gmail.com>
+ <CAKgT0UfY5JtfqsFUG-Cj6ZkOOiWFWJ3w9=35c6c0QWbktKbvLg@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <CAKgT0UfY5JtfqsFUG-Cj6ZkOOiWFWJ3w9=35c6c0QWbktKbvLg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---8fee40a3652e3dfc8b43c5412c165b14d35256cdef3a53e3f0d083829ec2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 10/7/2024 12:18 AM, Alexander Duyck wrote:
 
-Hello :)
+...
 
-On Mon Oct 7, 2024 at 4:04 PM CEST, Heiko St=C3=BCbner wrote:
-> Am Montag, 7. Oktober 2024, 12:28:19 CEST schrieb Diederik de Haas:
-> > Except for some compatibles, the "brcm,bluetooth.yaml" binding doesn't
-> > allow the 'reset-gpios' property, so replace the invalid ones with the
-> > 'shutdown-gpios' property.
->
-> this probably needs more explanation in the commit message, because
-> by name I'd expect reset and shutdown being different functionalities.
->
-> But for these cases, things should be good, simply because when looking
-> at the bt_enable_h pinctrl, that pin really provides the shutdown
-> functionality.
+> 
+> I could probably live with sk_copy_to_skb_data_nocache since we also
+> refer to the section after the page section with data_len. The basic
+> idea is we are wanting to define what the function does with the
+> function name rather than just report the arguments it is accepting.
 
-I guess I forgot to add the reference to page 12 of the
-AzureWave-CM256SM datasheet (v1.9):
+Yes, looking more closely:
+skb_add_data_nocache() does memcpy'ing to skb->data and update skb->len
+only by calling skb_put(), and skb_copy_to_page_nocache() does
+memcpy'ing to skb frag by updating both skb->len and skb->data_len
+through the calling of skb_len_add().
 
-Pin 34 'BT_REG_ON': =20
-Used by PMU to power up or power down the internal
-regulators used by the Bluetooth section. Also, when
-deasserted, this pin holds the Bluetooth section in reset. This
-pin has an internal 200k ohm pull down resistor that is
-enabled by default. It can be disabled through programming.
-
-So my research was more extensive then I actually put in the commit
-message ... will fix that in v2.
-
-Cheers,
-  Diederik
-
-> > Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi  | 2 +-
-> >  arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi b/arch/a=
-rm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> > index 7381bb751852..100a2774bbb5 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> > @@ -686,9 +686,9 @@ bluetooth {
-> >  		clock-names =3D "lpo";
-> >  		device-wakeup-gpios =3D <&gpio0 RK_PC2 GPIO_ACTIVE_HIGH>;
-> >  		host-wakeup-gpios =3D <&gpio0 RK_PC3 GPIO_ACTIVE_HIGH>;
-> > -		reset-gpios =3D <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
-> >  		pinctrl-0 =3D <&bt_enable_h>, <&bt_host_wake_l>, <&bt_wake_h>;
-> >  		pinctrl-names =3D "default";
-> > +		shutdown-gpios =3D <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
-> >  		vbat-supply =3D <&vcc_wl>;
-> >  		vddio-supply =3D <&vcca_1v8_pmu>;
-> >  	};
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi b/arch/=
-arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> > index d09e6542e236..3e0cbfff96d8 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> > @@ -402,9 +402,9 @@ bluetooth {
-> >  		clock-names =3D "lpo";
-> >  		device-wakeup-gpios =3D <&gpio2 RK_PB2 GPIO_ACTIVE_HIGH>;
-> >  		host-wakeup-gpios =3D <&gpio2 RK_PB1 GPIO_ACTIVE_HIGH>;
-> > -		reset-gpios =3D <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-> >  		pinctrl-names =3D "default";
-> >  		pinctrl-0 =3D <&bt_host_wake_h &bt_reg_on_h &bt_wake_host_h>;
-> > +		shutdown-gpios =3D <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-> >  		vbat-supply =3D <&vcc_3v3>;
-> >  		vddio-supply =3D <&vcc_1v8>;
-> >  	};
-> >=20
+Perhaps skb_add_frag_nocache() might seems a better name for now, and
+the 'sk_' prefix might be done in the future if it does make sense.
 
 
---8fee40a3652e3dfc8b43c5412c165b14d35256cdef3a53e3f0d083829ec2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwPv+QAKCRDXblvOeH7b
-bjpAAPoDRG8CqEprwWSNF9T4Nmif/RnR5L2vAeBIJR/7Ev1U8AD9FU2ONvofOvPX
-qfDTpG14ILZTJRxkOMSPpttdMIjmMQ4=
-=90So
------END PGP SIGNATURE-----
-
---8fee40a3652e3dfc8b43c5412c165b14d35256cdef3a53e3f0d083829ec2--
 
