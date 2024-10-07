@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-353254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400BD992B40
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB073992B43
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714D01C22BBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082171C22C0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E001D3639;
-	Mon,  7 Oct 2024 12:13:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A45E1D3573;
-	Mon,  7 Oct 2024 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6321D270A;
+	Mon,  7 Oct 2024 12:13:14 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58E71C9B77;
+	Mon,  7 Oct 2024 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728303184; cv=none; b=Ug+0HxxQaBh7wNvba4ZaAvo1yZcx1HhX3fA5b7Og50GP1Ps4FnCLA7Yt42VIQtsqOORzupYMQIYhhLEqt7yTcruntBIn/j7haf0hvWlEO30THCD9pLvwWWleiuUQP2FZNb22bczr9Pmfea9rwoqsi3N8lG/S6kfUA2zAoMfLMWI=
+	t=1728303194; cv=none; b=hHF6YdCEN3YR+Q7W51ltTFggSPFPerlxdOJ/eW2i+chQTWW8VKXM+Zq7gMMPOXvPXMofen9fqyi2jBtT7a8m22CM/JgAjTTY5NVYTrlviXPKU4wT/ZAgKQ4c4bcoVelSq2dPNWCQJb68mBeVUXZlLmFEmSbU/InxzwqAxwEvzbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728303184; c=relaxed/simple;
-	bh=Lt4DvpBKXvxqLp2Z0KuIqfQIUuIV1MiRWlcLelmpREE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KOb4ijNQFn1tfKO2CzwxGZUyLtR3A8Q7F2qGYFZbHBszypAbm95Xui2GrpuRf5miAtGw1/qES78wqQfn0r2GeUD69c29IK9LMMASJstzNg2mtV30Uh0hFBZUXLPiIlpCwlva894xQtvc/f6574XXpd+1buAG0t8mlWeKgm9Waic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56F48FEC;
-	Mon,  7 Oct 2024 05:13:31 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 668163F640;
-	Mon,  7 Oct 2024 05:13:00 -0700 (PDT)
-From: Mark Rutland <mark.rutland@arm.com>
-To: stable@vger.kernel.org
-Cc: anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	james.morse@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org
-Subject: [PATCH 6.1 3/3] arm64: errata: Expand speculative SSBS workaround once more
-Date: Mon,  7 Oct 2024 13:12:49 +0100
-Message-Id: <20241007121249.548113-4-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241007121249.548113-1-mark.rutland@arm.com>
-References: <20241007121249.548113-1-mark.rutland@arm.com>
+	s=arc-20240116; t=1728303194; c=relaxed/simple;
+	bh=QnL0ougxUofvW1PtCFIwCAEXQQX8fyRXL7SN9war+Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7Q0lWQa05Uwz2anC6bIv+0pLtA6B8KbMcTfl6a+xqmBFnjR8XW+odLfW6j7oFklfO5A7TPGSHhKg5Yz/d1zqU+yLInR3BJcRdyS277D4G0/8W84H21Al4tY8rwLYTsAclPx5mlIClCVpK6QvhgQR9XGo+dl32BepiVFuhh9ju0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2e4d1c992so11906927b3.0;
+        Mon, 07 Oct 2024 05:13:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728303190; x=1728907990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3GLnBrZ5uAk1ruSrYKStYcqnLRtVcYLl+QgpdGzK8hM=;
+        b=Bg1oOMg6isI6JNE+rC+tz2W44AiNWZV9VuEFhfVN+i+SOyfGNF7WLknUoL0fp0PrWQ
+         BafVCobzY2W6j+6xIbrHAUxugOpGc3gzlRBHKq1YrHo13bGWg1q/HtgTmVYOmWs8pl/H
+         NpjXmXOshbPWQaC3uZ7Cv9KhGKmyZ/3WPP9+4/GwtUSW78nESqEpoweouAPFMo7I2Njg
+         PRmJhRi0zBTiISqwbMEoFHjxLnrfxDKYiJtZ1a8cwUx91jAqWMe7tn5ckfJE0aZvmMat
+         BDnoLTwQSCoqWUnnK8+N1//np0fxkjkxEJUYTZrKirr0jE2CozqmClbMbJmakfU6XqyI
+         A/IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWxLAAxveAZZA0sHUq+G0w2M2SaXbtPA85VOSAwKaxkwtuTr5nUGoA+lhwOhZLUhHSndq2n9L94vpy@vger.kernel.org, AJvYcCW74tkt8zgBbLFs8OeHqVDksv5lj1QXh4F6P1T7HcYAafzaltrEbB+Cjkqq886N4xD2d1Ore2N59Z2Ns6Q+WOVVZpw=@vger.kernel.org, AJvYcCX9k3dcrwj0UZwO5CbsULV3Aep138QKGogPFq+43Tl1BjaIMVdj7kPci5SNh3qoWwlJf38EPofieLEyzrL1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4cCSJxqbeSA41fcbqKy1OqLuY8qgq/nJI+UvuD1/CmNCE4GKG
+	eaR4A2BwYS/8PjF9v1G0wu1iuhmduSrersEQkg5Znh82P8pyg6oY+QabYkAD
+X-Google-Smtp-Source: AGHT+IEDQdgq8uYu090CL4BwWYN0uhV9BRecRo19GcJW12mW9q3naW5pAQQkItIS9rYq153XPLuz6g==
+X-Received: by 2002:a05:690c:6a07:b0:6e2:2e8e:7a20 with SMTP id 00721157ae682-6e2b5367f0cmr103457107b3.13.1728303190431;
+        Mon, 07 Oct 2024 05:13:10 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93e271fsm9976317b3.105.2024.10.07.05.13.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 05:13:10 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6dbc5db8a31so31992357b3.1;
+        Mon, 07 Oct 2024 05:13:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW2amnrTNnKi7ido+s87u3dlV753xsN9eEDDnZWt4P6IyHyPepBLjsmZGARsU2SpNYKp1r3rPkSww9LtuibFXc0tDo=@vger.kernel.org, AJvYcCWoDpwwCF4B4+nrD8XE8AXLePfK0gH9iGzbdqI69UbKjOBAW9rvVPJZfIsjvXK4LsLnCMavgeGf43Jp@vger.kernel.org, AJvYcCXfVokXNUOrHXUvvkgeDz4PEg9Wgsfy2epAI3I7tUIxmQFTNlvuN1qjjKwF17hPmCenjXeuZR/sxlY+59a8@vger.kernel.org
+X-Received: by 2002:a05:690c:6382:b0:64b:b7e:3313 with SMTP id
+ 00721157ae682-6e2c7c3d563mr77437277b3.13.1728303189364; Mon, 07 Oct 2024
+ 05:13:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240926180903.479895-1-sean.anderson@linux.dev>
+ <20240926180903.479895-2-sean.anderson@linux.dev> <CAMuHMdUz2boLeoaynsHHM_26XqNFCJhTLYx9+zEHCG+ZMRwKVg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUz2boLeoaynsHHM_26XqNFCJhTLYx9+zEHCG+ZMRwKVg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Oct 2024 14:12:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVCfb5AJcAMRTzDThPz5DzmduFwROob-Y2QO6P47Ry4HQ@mail.gmail.com>
+Message-ID: <CAMuHMdVCfb5AJcAMRTzDThPz5DzmduFwROob-Y2QO6P47Ry4HQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: salvator-xs: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 081eb7932c2b244f63317a982c5e3990e2c7fbdd ]
+On Fri, Sep 27, 2024 at 12:34=E2=80=AFPM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Sep 26, 2024 at 8:09=E2=80=AFPM Sean Anderson <sean.anderson@linu=
+x.dev> wrote:
+> > Add SD/OE pin properties to the devicetree so that Linux can configure
+> > the pin without relying on the OTP. This matches the register
+> > configuration reported by Geert [1], as well as my inspection of the
+> > schematic (which shows the SD/OE pin permanently tied high).
+> >
+> > [1] https://lore.kernel.org/linux-clk/CAMuHMdW9LMuQLuPEF-Fcs1E6Q7dDzY17=
+VZqu4awKDj5WSTRt=3DA@mail.gmail.com/
+> >
+> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>
+> Thanks for your patch!
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> There is no change in the output of
+>
+>     grep 10: /sys/kernel/debug/regmap/*-006a/registers
+>
+> before/after this patch, so
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> BTW, I applied the same patch to salvator-x.dtsi, and that seems to be
+> fine, too.
 
-A number of Arm Ltd CPUs suffer from errata whereby an MSR to the SSBS
-special-purpose register does not affect subsequent speculative
-instructions, permitting speculative store bypassing for a window of
-time.
+Thanks, will queue in renesas-devel for v6.13.
 
-We worked around this for a number of CPUs in commits:
+Gr{oetje,eeting}s,
 
-* 7187bb7d0b5c7dfa ("arm64: errata: Add workaround for Arm errata 3194386 and 3312417")
-* 75b3c43eab594bfb ("arm64: errata: Expand speculative SSBS workaround")
-* 145502cac7ea70b5 ("arm64: errata: Expand speculative SSBS workaround (again)")
+                        Geert
 
-Since then, a (hopefully final) batch of updates have been published,
-with two more affected CPUs. For the affected CPUs the existing
-mitigation is sufficient, as described in their respective Software
-Developer Errata Notice (SDEN) documents:
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-* Cortex-A715 (MP148) SDEN v15.0, erratum 3456084
-  https://developer.arm.com/documentation/SDEN-2148827/1500/
-
-* Neoverse-N3 (MP195) SDEN v5.0, erratum 3456111
-  https://developer.arm.com/documentation/SDEN-3050973/0500/
-
-Enable the existing mitigation by adding the relevant MIDRs to
-erratum_spec_ssbs_list, and update silicon-errata.rst and the
-Kconfig text accordingly.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20240930111705.3352047-3-mark.rutland@arm.com
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-[ Mark: fix conflict in silicon-errata.rst, handle move ]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
----
- Documentation/arm64/silicon-errata.rst | 4 ++++
- arch/arm64/Kconfig                     | 2 ++
- arch/arm64/kernel/cpu_errata.c         | 2 ++
- 3 files changed, 8 insertions(+)
-
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index 6451e9198fef7..e7b50babd0d5c 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -135,6 +135,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A710     | #3324338        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A715     | #3456084        | ARM64_ERRATUM_3194386       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A720     | #3456091        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A725     | #3456106        | ARM64_ERRATUM_3194386       |
-@@ -171,6 +173,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N2     | #3324339        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-N3     | #3456111        | ARM64_ERRATUM_3194386       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V1     | #3324341        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V2     | #3324336        | ARM64_ERRATUM_3194386       |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 2ef939075039d..1a62ef142a988 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1012,6 +1012,7 @@ config ARM64_ERRATUM_3194386
- 	  * ARM Cortex-A78C erratum 3324346
- 	  * ARM Cortex-A78C erratum 3324347
- 	  * ARM Cortex-A710 erratam 3324338
-+	  * ARM Cortex-A715 errartum 3456084
- 	  * ARM Cortex-A720 erratum 3456091
- 	  * ARM Cortex-A725 erratum 3456106
- 	  * ARM Cortex-X1 erratum 3324344
-@@ -1022,6 +1023,7 @@ config ARM64_ERRATUM_3194386
- 	  * ARM Cortex-X925 erratum 3324334
- 	  * ARM Neoverse-N1 erratum 3324349
- 	  * ARM Neoverse N2 erratum 3324339
-+	  * ARM Neoverse-N3 erratum 3456111
- 	  * ARM Neoverse-V1 erratum 3324341
- 	  * ARM Neoverse V2 erratum 3324336
- 	  * ARM Neoverse-V3 erratum 3312417
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 7640031e1b845..78aea409b092b 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -442,6 +442,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A715),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A725),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
-@@ -452,6 +453,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
-+	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N3),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
--- 
-2.30.2
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
