@@ -1,175 +1,118 @@
-Return-Path: <linux-kernel+bounces-353599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D858993022
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258A4993025
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 16:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF34E1C214C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3821F20EE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 14:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6F61D86EF;
-	Mon,  7 Oct 2024 14:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B91D90D7;
+	Mon,  7 Oct 2024 14:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX8L2U6u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="u/43ePR2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PGesNq7c"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BD1D7E35;
-	Mon,  7 Oct 2024 14:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780EB1D88D2;
+	Mon,  7 Oct 2024 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312874; cv=none; b=ZcLvrUnuPHbzIuUsJQrMAsJqUqJaIJpe5Wq6FnXNBUxsRLt6qUO4Iy1Nnd6K6ZvQyfRid2IziyarEKT2Vtvl4lRCivV4rM3lwbiaU4M8lJgWAYi1W0Fu85o4MLD1Wd4QCO1umiV+ottoKcPVD6Xk1J6OT/W5qAm3chyJX4Q9cCE=
+	t=1728312899; cv=none; b=b3I5BFLbgWEh0W0it331KFdc2aq8uhwFL+dBe1FXiIoQELgm1gj91ejwoCHHOt+fWxrAvfzlnblW1UhCYEDiRv0ErJ+jHdNRYrZYfEa9Bh9BLzyISWAb0TSPvx2xlNY8fT6f9sj4IiQOn9pRdqaZzMCtCC2Tc4lBnB05d9dvnK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312874; c=relaxed/simple;
-	bh=Fup7vjsNqIh2m2hxZl/CK4OuqCaLmi5YTomMTM3g1sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZJ7R7RoJ7bk49atTxsnstv/cquvh5eOIuMTjT4J3SSwzjB0EdkwP2cqCWR2cQmRWv8GxZlf5L378mqaD1Uil8jW9cU20MVhekuaqTzWvpnqIqmnqCBHJ0zWZETqmsLVlFBchRnrwL5/lKQAkPEamin0/VbKd8W3OfPwxROcLVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX8L2U6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3ACC4CECC;
-	Mon,  7 Oct 2024 14:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728312874;
-	bh=Fup7vjsNqIh2m2hxZl/CK4OuqCaLmi5YTomMTM3g1sc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OX8L2U6upEy2WgySjpgzRlGk02al/1x34rxf71D2gVL+XkxTgOnB9KRnYdLtDaot8
-	 CDoUjsEKpxABVqea5ivebJE38OVw4CKhyryqJbdK7Rz168lXYC6E3Rqr9Qz35EiTBe
-	 PzecnEj8eJivzohHIVz+tkgkkR/j4ZBCVtgGJA139DOQbYpSbFwhPR4YRI7/yjdIbq
-	 rCLqRQVawnCg7M1tEhmDKQ/aVVMJl1PkKOJSTMA8nuAY8unfgLTKPvOJwn9AMUyO0e
-	 7OMsc+fi2F+r1Bioc2uO2LbmxxizgjtUKpJy9wOK2f4q9IBzDTbAEMmSl0swjIhG/B
-	 Y+8R9zYF9eRvQ==
-Message-ID: <0d460226-4ea7-4a9b-a119-468343727996@kernel.org>
-Date: Mon, 7 Oct 2024 16:54:29 +0200
+	s=arc-20240116; t=1728312899; c=relaxed/simple;
+	bh=Chjdo4B4945DNyZFQ5W1A0sxa6Fj/cOk0C6uKPSllSU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:Subject:
+	 Content-Type; b=cNs2s/sEoAIDkbMUiS3YDgGK0F+BW+b1/ISl0A+ThRbRj0VGmgDKSgJMZIUYGSO+RL1i/Wg8V5bWOAyzTOCVSmrG6w2Dxo+UTZYrUGMQTKPcIV7+f5HN+2yO5GT7Lu4m+MeZVVAZE00eV6mkA8Yhl4GzxV9erO9o9M4Mq6dTASI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=u/43ePR2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PGesNq7c; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 711DC138024C;
+	Mon,  7 Oct 2024 10:54:56 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-12.internal (MEProxy); Mon, 07 Oct 2024 10:54:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-transfer-encoding:content-type
+	:content-type:date:date:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
+	 t=1728312896; x=1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMa
+	xhOidZj2O/c=; b=u/43ePR2Yj3tNsFZIekl1St3DhWeQTPJ2wmuqlP/tT02iyuV
+	UXLz/9owPRgxKE7JB2vfBLgcpoW/pzLpeHywuCa5gZ8qhnLG839tvunBObG70r+h
+	5K8L28ZK76WLSOsfpNDLeEoOJEnqN/Nu1kUIIGvGKhsYzwogTTcQXx+/EfnIM69Y
+	9X7wQ7WbSO3idpE9jqVR3pPe9vpVFzQ05G30aDxdbJS2yIqnmvTEfstr43700u8w
+	xZZEvWC2EkxU4ZGKlwvgMQAW+0kRLN204VEb+s18dJ6B1LGx9W8P5OlzXe12+/V4
+	BwR1r19bBtsi7CAvrrguOCACJg1K5prOaBBMtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728312896; x=
+	1728399296; bh=+zETDJVIuuQb6NDuacP4RzC0wFbiECMaxhOidZj2O/c=; b=P
+	GesNq7cqsklHQMavEWBalymh92VS5ZAu7KwUe8Zg0p6KCepttM5K68tu9k+JuOQq
+	Jxs+FqdMOLiEg5WxFwenidTbUSKRiDEz4n9sAJ2nRtziirCeE2k9GiTFln6IbmgF
+	nITxYrMgZiSfISZ0gZmUtLtQIyeWgZ8tEoEAZE4iOtndVj2oLQjTQsE3wbKZJpRj
+	/vLQoimfMQbZ00ChIm6q6q11N6yP8w1v9U703rzXDOZlAjgbvAx752q8pNKZH9HC
+	ttn2iaj+tgvFmKg0TES541u0kGMKto2c7qR9VbCjosKgbO//mm8F68YVot78j99Q
+	iMaW83fbTOZcVw/n17B/A==
+X-ME-Sender: <xms:P_YDZ2AamqeK6E2b_wGq0zz2mxp58JMVBo47sUxnGCqg4rKFOy2L6A>
+    <xme:P_YDZwiXxai1W-G06LPar51zlMN25nXvwqNSeimcLOQ0uCYyYZ9M2lOAkaEva-VoZ
+    idRJgESe2aN3rUbmGU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvledgkedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefoggffhf
+    fvvefkjgfutgfgsehtjeertdertddtnecuhfhrohhmpedflfhoshhhucfvrhhiphhlvght
+    thdfuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepueehtedufffffeevudevueejffefveeggfdvudeijeeuffethfehfeehlefflefh
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhosh
+    hhsehjohhshhhtrhhiphhlvghtthdrohhrghdpnhgspghrtghpthhtohepkedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesghhmrghilh
+    drtghomhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhesph
+    gruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtohepohhlvghgsehrvgguhhgrthdrtgho
+    mhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtth
+    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:P_YDZ5nWkoRcLmG-yYq1dMsFQbWSfmHHKOAW2T8UdMOqexJNNVXMig>
+    <xmx:P_YDZ0xBQifq1LlSisunHDivIR2g4iV0G2nvhKznwWPgZCVW3EeJdA>
+    <xmx:P_YDZ7TZM5RiEEJmOdGXHBOn9lwspsO0G8Rlajt70UxMvfKJBCJWxQ>
+    <xmx:P_YDZ_YFgvqRjeieNMxRcpmKgYshK6sVGPqd2KQ6w1kDnrbOSnpYfQ>
+    <xmx:QPYDZ0TzYscl_K3aEOQ-OqunpKHQq-leK7fPIzhVrq6nvxodWf07FRZM>
+Feedback-ID: i83e94755:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B40183020080; Mon,  7 Oct 2024 10:54:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-To: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
- Sherry Sun <sherry.sun@nxp.com>, Amitkumar Karwar
- <amitkumar.karwar@nxp.com>, Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
- "marcel@holtmann.org" <marcel@holtmann.org>,
- "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
- GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-References: <20241004113557.2851060-1-catalin.popescu@leica-geosystems.com>
- <DB9PR04MB8429B4535422D3AE07D8EE79927C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <3fa35cd2-e52c-4873-8a7f-db459b016a97@kernel.org>
- <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2b7f61a8-e91a-4b32-be1d-753a19e4d81f@leica-geosystems.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 07 Oct 2024 07:54:35 -0700
+From: "Josh Triplett" <josh@joshtriplett.org>
+To: brauner@kernel.org
+Cc: jlayton@kernel.org, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, luca.boccassi@gmail.com, oleg@redhat.com,
+ paul@paul-moore.com
+Message-Id: <2ab879f1-2938-4ece-a6b2-be34e4ad4c5d@app.fastmail.com>
+In-Reply-To: <20241004-signal-erfolg-c76d6fdeee1c@brauner>
+Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2024 14:58, POPESCU Catalin wrote:
->>>>
->>>> +  vcc-supply:
->>>> +    description:
->>>> +      phandle of the regulator that provides the supply voltage.
->>>> +
->>>> +  reset-gpios:
->>>> +    description:
->>>> +      Chip powerdown/reset signal (PDn).
->>>> +
->>> Hi Catalin,
->>>
->>> For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means that both wifi and BT controller will be powered on and off at the same time.
->>> Taking the M.2 NXP WIFI/BT module as an example, pin56(W_DISABLE1) is connected to the WIFI/BT chip PDn pin, we has already controlled this pin in the corresponding PCIe/SDIO controller dts nodes.
->>> It is not clear to me what exactly pins for vcc-supply and reset-gpios you describing here. Can you help understand the corresponding pins on M.2 interface as an example? Thanks.
-> 
-> Hi Sherry,
-> 
-> Regulators and reset controls being refcounted, we can then implement 
-> powerup sequence in both bluetooth/wlan drivers and have the drivers 
-> operate independently. This way bluetooth driver would has no dependance 
-> on the wlan driver for :
-> 
-> - its power supply
-> 
-> - its reset pin (PDn)
-> 
-> - its firmware (being downloaded as part of the combo firmware)
-> 
-> For the wlan driver we use mmc power sequence to drive the chip reset 
-> pin and there's another patchset that adds support for reset control 
-> into the mmc pwrseq simple driver.
-> 
->> Please wrap your replies.
->>
->> It seems you need power sequencing just like Bartosz did for Qualcomm WCN.
-> 
-> Hi Krzysztof,
-> 
-> I'm not familiar with power sequencing, but looks like way more 
-> complicated than reset controls. So, why power sequencing is recommended 
-> here ? Is it b/c a supply is involved ?
+Christian Brauner wrote:
+> struct pidfd_info {
+>	/* Let userspace request expensive stuff explictly. */
+>	__u64 request_mask;
+>	/* And let the kernel indicate whether it knows about it. */
+>	__u64 result_mask;
 
-Based on earlier message:
+I don't think it's necessary to have these two fields separate. The kernel should write to the same mask field userspace used.
 
-"For NXP WIFI/BT chip, WIFI and BT share the one PDn pin, which means
-that both wifi and BT controller will be powered on and off at the same
-time."
-
-but maybe that's not needed. No clue, I don't know the hardware. But be
-carefully what you write in the bindings, because then it will be ABI.
-
-Best regards,
-Krzysztof
-
+In theory there could be an operation to probe for *everything* the kernel understands, but in practice with a binary structure there's little point finding out about flags you don't know the corresponding structure bits for.
 
