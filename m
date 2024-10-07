@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-353650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D3C9930C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C97379930B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FAF0B2580F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:11:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28597B242A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A5B1D86C7;
-	Mon,  7 Oct 2024 15:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD291D54DC;
+	Mon,  7 Oct 2024 15:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OS+f84JE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H9Dq41oI"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ABD1D79BB;
-	Mon,  7 Oct 2024 15:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01012E75
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313790; cv=none; b=frpEeqg2mPuw691VxH/nmCYsdlhj0KBPnkkLc7CL4JAmYXpzMaZOFutHqpPkFGpdlcVC7XrKqYL6QB1yGLH29QoFCGmhhEABPBizuISO/koRP0kJxtWJoopyYwhOb4iNA3jFJasJo42MiH+D000a8kYo7wh0cp981XCObQajeNo=
+	t=1728313652; cv=none; b=RwBCJfOq9RctQ+leQTZ9jZyPj9G0668NFzxCjhRu4LcjGPDU64hnjMuYZ89USVqcAalAVlWSYQea1XgVmcjKioxnV7pghxYPsLPzIvQr/+2U9I++ZuNfWHPb7T39YziM6pQVDDN875SQAyezECkBLJREU9a4cn5TNf2KhiIgl6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313790; c=relaxed/simple;
-	bh=jjUrqSMvD+TNkk6dISyjVWCLL2O2l9uhCDaFAXlWcKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q1KdUQPeCTKwWvpVpOCdmQcqsrE87dWDeRv2c2smcj/z5ogf+g5BWs1os1EVRO2whWvW3Oa4BhfuiR7lynfsbwBLgU8LyFaQPGoG1ggWi3jeAzXlNMVJFTmwRvSA/IobJDsjEpzjRpzoGlkdcPuzTJyGNXbPt6OT7U7CQSwEtIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OS+f84JE; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728313790; x=1759849790;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jjUrqSMvD+TNkk6dISyjVWCLL2O2l9uhCDaFAXlWcKY=;
-  b=OS+f84JEVYwiaYFbAOJH/j0CylmIUBUIpGSY+W1CdUUzYem4q1jtbDTc
-   E2CHagbbxRDOz6sA0t5KjZUtlZw34Tgtj+whL3kHTc00C0vIR5+Ek1JOx
-   hRB4HhfbuCedRAi6G+HVle7oyPD2z34dWu7DjF1gYhqwwNZSS5I+eNB4S
-   Ye/ZZ7Iylp1GxYWJkf772YwJ7IISixKptW/MZPsGvc1zTR6oM1zBgATBn
-   bn/M0GZxA6iOik7NnzuGx4y2zDVxeX6VPqwsMZ8koLMSEMiW3Nmva0CsR
-   WY1zlM305MFY41MQbz60tzu61RDCdWFEwS22sfHdubO8XvDz2wK4qFJp7
-   g==;
-X-CSE-ConnectionGUID: MKQdVyOhR2qNA6dEK3fTcA==
-X-CSE-MsgGUID: Uf7BTGBXSGqg4usreYnMTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27346859"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="27346859"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 08:08:58 -0700
-X-CSE-ConnectionGUID: ewQNEzAwQ0GaSUbdLRDDZw==
-X-CSE-MsgGUID: VqR2QV4FQVKvxwDO3aRN1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="79494670"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 07 Oct 2024 08:08:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id EB25556D; Mon, 07 Oct 2024 18:08:53 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH v1 4/4] dmaengine: Unify checks in dma_request_chan()
-Date: Mon,  7 Oct 2024 18:06:48 +0300
-Message-ID: <20241007150852.2183722-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241007150852.2183722-1-andriy.shevchenko@linux.intel.com>
-References: <20241007150852.2183722-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1728313652; c=relaxed/simple;
+	bh=CMjkN2SHTY7amr7CLge69sH5Fs5Wd/yIexgmuDkS/ag=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iJJMBplXPthOZodT0hXmV/CjRjpisWOKzV+Hpgl8bIqFNxualagHwXZ5GjK7FToZidytsiwwP2K1JZRY7oBjKBeSJT+QGwsTMqP5fZQcq0UAWcwHq2ihrfByS0XItB+9u/YxuF0ALjFAXnY46z4d+LVYSpLtuLYi0MAvTSHytQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H9Dq41oI; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20b0afabe16so48406125ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728313650; x=1728918450; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfDahLBAo/4OnEgZIq5ijm172H35wJWJ5vmSa1v7E30=;
+        b=H9Dq41oI4r3cmrm5hqCB5coPRZFCh/cNiZO338JVOAQn7151Dq+vaScp9W1bTJqpWJ
+         0K/n6Sq7bXEeGWsNUU39CZ9lpi+2g/WHtceZWxQVSx0GuoOBXLaFFHTxKBkQxw8Inj6C
+         IIqeIEoeDwugipNE3UxU57VivH9W4mcZsoB1mnSwcRPePjseKJKV+WNZ1OS4aE/rnlYf
+         BwaSVE5kcrE5H6h7ZTSK8j+qHWSnBhKaCzk4zfvwmOREEa6BcoBiZWVWzAidSn0fN6MG
+         w4fyBF1jK3AE1IA1AGaRked/VO1GCVSBTJM+IKd5q+5Ghlpji5Geh3KTC/Io6wTbQm9I
+         kMNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728313650; x=1728918450;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfDahLBAo/4OnEgZIq5ijm172H35wJWJ5vmSa1v7E30=;
+        b=il4oH+vWrKzyya1p6ftvVtV50RS5PbuzvqmepyC++Zkq2bqKx/ewomqLDdE+bTzpUL
+         s+JsCbWWS9nH7kr3m5tqgJcFPdrgBueyPmjdB4uVwibE9e0OpRfaZOJ0WiqOBmYXQbQG
+         IDg+NWefz4M9CvvoeABEUnhAtXFaix5IkV7Is5YWQ83hnX4WAmUlfQz+iYGlGr0sDJAW
+         wGK7OUzPmtZRHPOU28xWR98qpiZY3mB4cXiRftmCzlKG6Bqm0ZXxNxQj1a2lfOFXki4H
+         mxpPXH2tXbg6bVI6pm+Hk47IZ5cMbKiUGjpK7PymQYWH5ZKrGbVZMVDgxoWz5iDG+/MU
+         xdOQ==
+X-Gm-Message-State: AOJu0Yyh/VIke7coJtO6Q3xj/ctPWa7ETdRFyOauzBHiKmihAgM8tyZ/
+	ZzgOakn97UwcwlSM8LBld44RKhPQ+eLiqzjevX4fWMCRtD8Pytqj7t2dYDiWqTdbr4rEimYbaer
+	pjw==
+X-Google-Smtp-Source: AGHT+IGZGeQzhhYh0+4F11B73SDuGkc3ScbkaQ93OWOqk2W9DcKliuRU+Lx9G00ON7I08zlPLwQB8+DshVQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:902:7885:b0:205:4fe5:8136 with SMTP id
+ d9443c01a7336-20be195b2f0mr244345ad.3.1728313649721; Mon, 07 Oct 2024
+ 08:07:29 -0700 (PDT)
+Date: Mon, 7 Oct 2024 08:07:28 -0700
+In-Reply-To: <ZwAeJ1RtReFiRiNd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20241003230105.226476-1-pbonzini@redhat.com> <ZwAeJ1RtReFiRiNd@google.com>
+Message-ID: <ZwP1kvgyIGIO_p0x@google.com>
+Subject: Re: [PATCH] KVM: x86/mmu: fix KVM_X86_QUIRK_SLOT_ZAP_ALL for shadow MMU
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Use firmware node and unify checks accordingly in dma_request_chan().
-As a side effect we get rid of the node dereferencing in struct device.
+On Fri, Oct 04, 2024, Sean Christopherson wrote:
+> On Thu, Oct 03, 2024, Paolo Bonzini wrote:
+> > +static void kvm_mmu_zap_memslot(struct kvm *kvm,
+> > +				struct kvm_memory_slot *slot)
+> >  {
+> >  	struct kvm_gfn_range range = {
+> >  		.slot = slot,
+> > @@ -7064,11 +7096,11 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
+> >  		.end = slot->base_gfn + slot->npages,
+> >  		.may_block = true,
+> >  	};
+> > +	bool flush;
+> >  
+> >  	write_lock(&kvm->mmu_lock);
+> > -	if (kvm_unmap_gfn_range(kvm, &range))
+> > -		kvm_flush_remote_tlbs_memslot(kvm, slot);
+> > -
+> > +	flush = kvm_unmap_gfn_range(kvm, &range);
+> 
+> Aha!  Finally figured out why this was bugging me.  Using kvm_unmap_gfn_range()
+> is subject to a race that would lead to UAF.  Huh.  And that could explain the
+> old VFIO bug, though it seems unlikely that the race was being hit.
+> 
+>   KVM_SET_USER_MEMORY_REGION             vCPU
+>                                          __kvm_faultin_pfn() /* resolve fault->pfn */
+>   kvm_swap_active_memslots();
+>   kvm_zap_gfn_range(APIC);
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/dma/dmaengine.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Copy+paste fail, this was supposed to be synchronize_srcu_expedited().
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index dd4224d90f07..758fcd0546d8 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -40,6 +40,8 @@
- #include <linux/dmaengine.h>
- #include <linux/hardirq.h>
- #include <linux/spinlock.h>
-+#include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/percpu.h>
- #include <linux/rcupdate.h>
- #include <linux/mutex.h>
-@@ -812,15 +814,13 @@ static const struct dma_slave_map *dma_filter_match(struct dma_device *device,
-  */
- struct dma_chan *dma_request_chan(struct device *dev, const char *name)
- {
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	struct dma_device *d, *_d;
- 	struct dma_chan *chan = NULL;
- 
--	/* If device-tree is present get slave info from here */
--	if (dev->of_node)
--		chan = of_dma_request_slave_channel(dev->of_node, name);
--
--	/* If device was enumerated by ACPI get slave info from here */
--	if (has_acpi_companion(dev) && !chan)
-+	if (is_of_node(fwnode))
-+		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
-+	else if (is_acpi_device_node(fwnode))
- 		chan = acpi_dma_request_slave_chan_by_name(dev, name);
- 
- 	if (PTR_ERR(chan) == -EPROBE_DEFER)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+>   kvm_mmu_zap_memslot();
+>                                         {read,write}_lock(&kvm->mmu_lock);
+>                                         <install SPTE>
+> 
+> KVM's existing memslot deletion relies on the mmu_valid_gen check in is_obsolete_sp()
+> to detect an obsolete root (and the KVM_REQ_MMU_FREE_OBSOLETE_ROOTS check to handle
+> roots without a SP).
+> 
+> With this approach, roots aren't invalidated, and so a vCPU could install a SPTE
+> using the to-be-delete memslot.
 
+This is wrong, I managed to forget kvm->srcu is held for the entire duration of
+KVM_RUN (except for the actual VM-Enter/VM-Exit code).  And the slot is retrieved
+before the mmu_invalidate_seq snapshot is taken.
 
