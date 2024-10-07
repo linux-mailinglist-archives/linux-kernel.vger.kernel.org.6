@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-353146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40BB992965
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:42:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA6D992968
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF301F242F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D3328409B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384CB1C878E;
-	Mon,  7 Oct 2024 10:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXtvUwVV";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXtvUwVV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C555D14AD17
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 10:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C61C8FB4;
+	Mon,  7 Oct 2024 10:42:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC5B14AD17;
+	Mon,  7 Oct 2024 10:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297727; cv=none; b=ibmMMrTBTohEfGi4AqcmMQas6p20VCox5alAXBedWGoqLy/hQd48ZiBXtVeZdTPT5551I2U/bW3DfnHVF6v9+qfqeEEx8h5subuP6MRzOURAujengzkvdeg/aQLNH78qcup6qhGVBcdY0SS3g45vZ5DIbp8eqjoIOZvrmrm9GR4=
+	t=1728297765; cv=none; b=qKX7z77Riog+sr762yRyKrpx/8e1+C2eCfyho4Tn47iPqi3xoSlzoonr28d0FYg7M7n9r2oiJ2u6vL2yUaHixOKlL3NBnZ0zLL6829/oCkPrDgus0VSD536kqj/aaqmWexGCGcEGDvVzccR9gidgT/9QHot8xqIiDFwqN7/KKkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297727; c=relaxed/simple;
-	bh=q2O1EWbb3H9OlvF18UvBExVCURf4mkffR8ncq7RjTQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l10C4GTCYRSNwTgL5JSwOkGkec8EXuuM8owPCngKM2iWVV/18B+ygL99r8d+aqt5kUY6b4fyDvuyKhwVL7aSZiJySL2N7JuNkP7yBW+FLhbBE/gHkOaTiw2ZOJG8UyXD7+Q65kpiFlREyVW/IASG+SLtXYLXSGRUZYt2prcUOkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXtvUwVV; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXtvUwVV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C4C8C21C0F;
-	Mon,  7 Oct 2024 10:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1728297723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=BD5PqP23e7/83Pok91rp0zgpvGvnOoNWAFujvQURO0Y=;
-	b=uXtvUwVVTWamdCCB5gkbPQvkslxeS+AD8S+d35rK1j18gHSNdXkZbY6KSMibb5uqLZ77k9
-	FN3V799o9L39Sf6Q/QXuu7pAmtrAnngIbO0BEn9k9X5vkbR5H65Vc/QMt8zqqBn7wmTMFq
-	t8KIn7KNpc3beG5wxA+k1bmoVvOEWXA=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=uXtvUwVV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1728297723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=BD5PqP23e7/83Pok91rp0zgpvGvnOoNWAFujvQURO0Y=;
-	b=uXtvUwVVTWamdCCB5gkbPQvkslxeS+AD8S+d35rK1j18gHSNdXkZbY6KSMibb5uqLZ77k9
-	FN3V799o9L39Sf6Q/QXuu7pAmtrAnngIbO0BEn9k9X5vkbR5H65Vc/QMt8zqqBn7wmTMFq
-	t8KIn7KNpc3beG5wxA+k1bmoVvOEWXA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C82D132BD;
-	Mon,  7 Oct 2024 10:42:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kbxuGPu6A2fJLAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Mon, 07 Oct 2024 10:42:03 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	xen-devel@lists.xenproject.org,
-	Niels Dettenbach <nd@syndicat.com>
-Subject: [PATCH] x86/xen: mark boot CPU of PV guest in MSR_IA32_APICBASE
-Date: Mon,  7 Oct 2024 12:42:01 +0200
-Message-ID: <20241007104201.15607-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728297765; c=relaxed/simple;
+	bh=JH57S4uvMEkOBCydwIZLIfePSx+J/9+QDPMg343I4Fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ukHmcbH4lk23RPPEhuGKyM/B3PCtTGXVkZovPx00ANfnP7aJnfp79Cpwq+Yv3Q7hXMHXNvXWgk5/8k1n6end7oD2hN9RarrY8aeWuMG0MXoWiokB5u6blJlOBYF7oh9w3xlpywRMlky8pcQgH3wlpW5Fle9DA7fiAFtpLWawc98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BF1CFEC;
+	Mon,  7 Oct 2024 03:43:12 -0700 (PDT)
+Received: from [10.1.26.21] (unknown [10.1.26.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E0623F64C;
+	Mon,  7 Oct 2024 03:42:40 -0700 (PDT)
+Message-ID: <e09f3682-ee0c-4abc-b387-5358bbdf6e79@arm.com>
+Date: Mon, 7 Oct 2024 11:42:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2] cpufreq/schedutil: Only bind threads if needed
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Qais Yousef
+ <qyousef@layalina.io>, Vincent Guittot <vincent.guittot@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-pm <linux-pm@vger.kernel.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+References: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
+ <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C4C8C21C0F
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Recent topology checks of the x86 boot code uncovered the need for
-PV guests to have the boot cpu marked in the APICBASE MSR.
+On 10/1/24 19:31, Rafael J. Wysocki wrote:
+> On Fri, Sep 27, 2024 at 10:59 AM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> Remove the unconditional binding of sugov kthreads to the affected CPUs
+>> if the cpufreq driver indicates that updates can happen from any CPU.
+>> This allows userspace to set affinities to either save power (waking up
+>> bigger CPUs on HMP can be expensive) or increasing performance (by
+>> letting the utilized CPUs run without preemption of the sugov kthread).
+>>
+>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> 
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> 
+> and I'm assuming that this will go in via tip.
 
-Fixes: 9d22c96316ac ("x86/topology: Handle bogus ACPI tables correctly")
-Reported-by: Niels Dettenbach <nd@syndicat.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/xen/enlighten_pv.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Peter, is that fine with you?
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 2c12ae42dc8b..d6818c6cafda 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1032,6 +1032,10 @@ static u64 xen_do_read_msr(unsigned int msr, int *err)
- 	switch (msr) {
- 	case MSR_IA32_APICBASE:
- 		val &= ~X2APIC_ENABLE;
-+		if (smp_processor_id() == 0)
-+			val |= MSR_IA32_APICBASE_BSP;
-+		else
-+			val &= ~MSR_IA32_APICBASE_BSP;
- 		break;
- 	}
- 	return val;
--- 
-2.43.0
+@Juri: I didn't add your (somewhat implied?) ACK on v2, so I'd be happy to
+get it on the dl_task_check_affinity() part.
+
+
+Regards,
+Christian
+
+
 
 
