@@ -1,81 +1,84 @@
-Return-Path: <linux-kernel+bounces-353452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6F7992E02
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2A7992E08
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC8C1F24183
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD6F1F242BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 13:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEF81D54F0;
-	Mon,  7 Oct 2024 13:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7285E1D47B3;
+	Mon,  7 Oct 2024 13:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1BuNAi8"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FILTEH8L"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7316A1BB6B8
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EFC1D417C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 13:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309429; cv=none; b=sWpeHuy/4N+YAi2gwf+yldvNQWZyqe80VLIkIOImSjQnKKirINPKqnrjQl6dAjTM/WhXSeuPrtXnJkxzVMavNZ8F3i3Ji1s4OjTpSwNeFFCj2FSb7TUvH2doPN9xsEKuXwUoRphHfma6qXbt5ShgSZW+mPUJRPHK+MyMkaatKIo=
+	t=1728309556; cv=none; b=JmqEHcohhYMLNLvYsxgISo7zVl2WSrjxG4xoSIL0l7zP0SLnVapESkY7zlbj/zs7w7iRQIWRMEs0K5A+Mw1F4D+SjynqLu/UGihbf3ERBTWfkmY9L0rquu0iBRbbo7EJgLgCVX3J1rOxRTeoQ2i+MY8sV6+AfVUHvL6nBRC1IIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309429; c=relaxed/simple;
-	bh=jdZwSfSFRJFy9qZJrZgzIxDZVe6RdEk5SqKgnjq3OaM=;
+	s=arc-20240116; t=1728309556; c=relaxed/simple;
+	bh=n4oG5LTAxLA3y2xDimyibVs2v/zqS3TxXWLrkbSEufY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgGPuUtRUs24cABRNK39YrYEgUnfnmxMIVJh+4DHTa6oysdvX9tTXCb+BBfCJN+eRe5LA9S4sUB5ICmMFA1pX7pZVBz50af9ZQtMaP0EcILcIe2SejUsVzh20OVpHasM9ZF3mnf/kKwEY8+q2sBmM68YkIaJF2hIu0CoTgHIN54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K1BuNAi8; arc=none smtp.client-ip=209.85.167.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmcEgXwp4bppuOw53jNSMD+WDOdVLIxKaxiiZek9ItSojC0HC6Wh3aAzltQs9z2vUsOE1GjIjr2OOXr1Y6hTh4edUK8eAZlgNhYwS5WrM2XppAXRdZXSqKGbAYoZHd9iLo21VoYyyve+xpfEqIZzdloHOa2ABCG9dOwT7Q1I/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FILTEH8L; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5398b589032so6601182e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:57:07 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac3f1287bso48009381fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 06:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728309426; x=1728914226; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728309552; x=1728914352; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DydHDHDcBTS5lv6Pt4bVw5nvC798N3+S6LMd9kNkT0Q=;
-        b=K1BuNAi88c9MdJJ1lS3X1SsPvWGvN/KLmr5VS25//wzixEFgbAglajFpb7dBixZA6q
-         Vv51OfgZRn9fQVY1r90a81Hp44+WAr2SjwZajEVv7Q+fZV+XMaJ0LUQ0ThyFHZtFyqHk
-         NusLzURUj8nb4myVdUz9iHJktBYcIWHBJBGZO5YL3vrXqdddtk9eGu1NXH5Eau8OuUWi
-         adBWa4GPXQg4m2WuYkCDlQv+F/UT9o/+FhEIT22D6PeYlQTpEghFRzLPyt+tAcbBgJs+
-         plwRie0besMJn4PSU3A0UlXtPhBhxMyB4Cxz/ytEMkQ1Z/hz6K9G0PLFTnPJOD9gM2ZT
-         OQmQ==
+        bh=1uBnw43piXXI7n4DTLKHOMAEK5UpUIcRTL2fHxKrp9w=;
+        b=FILTEH8LPbb4STNWT7CFXKXtPIRbS+Gn2hjkTcNRgw1QN8PZnXwbbynpchmzob3tbI
+         9n0DNJvRhkQshocgo+WkJxzqgAcwR8shQcXydsjVGxhUWHdK5SS5eqQf5ebKImpCExln
+         tNRNup+ug8UJUxaV3YE4OEgNvJumCdVvOuo7OPc18rcSkjSFO2IiKQD5ngBLcUA7TsMz
+         bXYdZPCejyT6IpR9ijnI+exv7B7jfxZTid/8slDBHmsru+yv1ulyBywuJq/u1DrTTgRp
+         tQL8cWi/JCc9KmU3RK9EAc/XeTN/NRsUfOSrMbjB5mnmBQmBk/KDMx4MBR9GG6AJRG+E
+         EhfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728309426; x=1728914226;
+        d=1e100.net; s=20230601; t=1728309552; x=1728914352;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DydHDHDcBTS5lv6Pt4bVw5nvC798N3+S6LMd9kNkT0Q=;
-        b=coqvZIB4cGo7IYEbDrexAdmQFXhFWQ9lLmZlKTcEt7AxPa3jMdJW9uPbosjMg/IYUG
-         LgOkwT8E65IN2NZGf5fdlrkygvAA36U7uIjrMWS6oL2r+EGkxj5jksXAL25G+1e3zCjc
-         Ycj7jzvbFQZBEZ70UFFsdgDcfF37bJscje3HObdBqgvtEe27Q0RfDCYrYZbHRqk1gNed
-         SVg4Hzd3VTjGu+jI2lKatX8Q5/rbDEKnDwlZz6BRhFX/78PK6VpKS2n+i8sFz7RboYe3
-         HD8x+T/Po/85oDPPkIWs/qen8NVVzRlDq6ifVxe+afvVVvxBjPRmawlgeEkUinURjvO3
-         SMaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRtreBmWDy7dFl4Xc06vf8i5pVTw1kh9uOWtPo59oBzFlPWGeC1c17JJV7oQl2uQuUcCR4JnRllBg2GGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzug0ilXLUg1EOTwBn72w2EnL3drkE2sna2myQUpTKsn+7SZi9n
-	5mp5FIjbJOYz2tt0IOm6hPBicF8QzAI7a8+jMPaQe2mTFXll4fzR/YaQApVAqbo=
-X-Google-Smtp-Source: AGHT+IG/Ek58MoJOU03WdW8qGwe1xPyDidYc/xrvDRO8GV/EcGa9nHZYMMFYrvPfBuqu9v5q1wcOFA==
-X-Received: by 2002:a05:6512:b29:b0:530:ab68:25c5 with SMTP id 2adb3069b0e04-539ab84e022mr6957139e87.2.1728309425054;
-        Mon, 07 Oct 2024 06:57:05 -0700 (PDT)
+        bh=1uBnw43piXXI7n4DTLKHOMAEK5UpUIcRTL2fHxKrp9w=;
+        b=RJpJs9SiA4VPc7LIrZmOWg0wFULOr1EEvnUyDvq3xQJ3VzpysJmpKovpi+Mz9fOA99
+         0tseWBNCKfj3jizLwIoSzJnGbjc5yl++aSQr9rV57HHt/Lh/bme3DD6YfU0ma4noSbt3
+         h6XS7PYwMU3wdx8US4nuM73ALTGsWqLvkz64DUcxlgc8N5Ys4rGCYXLNxmu1y2A5vFxE
+         o2H4Of+ealrzEh6sM9JprIHrFBwpAj+5ng+xLG6ibHqGtQ7oyDQVTWlKqRA0JZVlosOL
+         8ylQyON4TpfO+fUWp6J+8jyIF+KWqvyMXrKb32WgTffdhbjsjw5a+xfnIpTRJC6XZ5Cx
+         rDFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLNR+t38CDYLLxi9YDdepcD+sC6P+t939gVQrNP1Yf19uqEb4K+u/ijRf5VCYXzbiaFwmA7ff2+Bq2xYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY2d8h3OsDanvZT6IpfLSV14BFwavGr+LAHnQmAjoxwy3Jmpci
+	4xAoRHbBm4roxgOow3fgsMRgzY+LJ8hLlGSUXyX8oAuCdheafpqx7kinP+5j0PMFcXhiC6XdDDv
+	Tfa2lVzPI
+X-Google-Smtp-Source: AGHT+IFYsE5/TCR+Rx1O7DTrCu76UULZ5EhjsnIt4QmOaZn1KvQoOZfaRPVgfvAAqetrCt3ywPY3Rg==
+X-Received: by 2002:a2e:bc21:0:b0:2fa:d534:3ee7 with SMTP id 38308e7fff4ca-2faf3d724dfmr57178661fa.35.1728309552125;
+        Mon, 07 Oct 2024 06:59:12 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d2a3sm848229e87.165.2024.10.07.06.57.04
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9adcdd3sm7887201fa.69.2024.10.07.06.59.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:57:04 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:57:03 +0300
+        Mon, 07 Oct 2024 06:59:10 -0700 (PDT)
+Date: Mon, 7 Oct 2024 16:59:07 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v1 1/4] misc: fastrpc: Add CRC support using invokeV2
- request
-Message-ID: <bmg5em2f673vis6wwtjx6ibkhee7d3zocwesgoafsgt5jxbfqn@w73y6gmzbamj>
-References: <20241007084518.3649876-1-quic_ekangupt@quicinc.com>
- <20241007084518.3649876-2-quic_ekangupt@quicinc.com>
+To: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Cc: mhi@lists.linux.dev, quic_qianyu@quicinc.com, 
+	manivannan.sadhasivam@linaro.org, quic_vbadigan@quicinc.com, quic_krichai@quicinc.com, 
+	quic_skananth@quicinc.com, quic_mrana@quicinc.com, Slark Xiao <slark_xiao@163.com>, 
+	Mank Wang <mank.wang@netprisma.us>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+	Fabio Porcedda <fabio.porcedda@gmail.com>, "open list:MHI BUS" <linux-arm-msm@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] bus: mhi: host: pci_generic: Add support for QDU100
+ device
+Message-ID: <kukqsg4dpvfa2i53fssqsdihud3qy3w6le5srf2a7yiiwsbmob@se44vnmgbbye>
+References: <20241007091622.3497928-1-quic_vpernami@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,523 +87,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007084518.3649876-2-quic_ekangupt@quicinc.com>
+In-Reply-To: <20241007091622.3497928-1-quic_vpernami@quicinc.com>
 
-On Mon, Oct 07, 2024 at 02:15:15PM GMT, Ekansh Gupta wrote:
-> InvokeV2 request is intended to support multiple enhanced invoke
-> requests like CRC check, performance counter enablement and polling
-> mode for RPC invocations. CRC check is getting enabled as part of
-> this patch. CRC check for input and output argument helps in ensuring
-> data consistency over a remote call. If user intends to enable CRC
-> check, first local user CRC is calculated at user end and a CRC buffer
-> is passed to DSP to capture remote CRC values. DSP is expected to
-> write to the remote CRC buffer which is then compared at user level
-> with the local CRC values.
+On Mon, Oct 07, 2024 at 02:46:20PM GMT, Vivek Pernamitta wrote:
+> Add MHI controller configuration for QDU100 device
+> 
+> The Qualcomm X100 5G RAN Accelerator Card is designed to
+> enhance Open vRAN servers by offloading CPUs from intensive
+> 5G baseband functions.
+> 
+> Currently IP_SW1/2 channel support is not present in
+> mhi_net driver, will be supporting them in future.
 
-This doesn't explain why this is necessary. Why do you need to checksum
-arguments?
-
-Also, what if the DSP firmware doesn't support CRC? How should userspace
-know that?
+When? Can we get corresponding support as a part of the same patch
+series?
 
 > 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
+> 
+
+No empty lines between tags.
+
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> 
 > ---
->  drivers/misc/fastrpc.c      | 161 ++++++++++++++++++++++++------------
->  include/uapi/misc/fastrpc.h |   7 ++
->  2 files changed, 116 insertions(+), 52 deletions(-)
+> changs from V2:
+> - updated commit text.
 > 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 74181b8c386b..8e817a763d1d 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -573,13 +573,15 @@ static void fastrpc_get_buff_overlaps(struct fastrpc_invoke_ctx *ctx)
->  
->  static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
->  			struct fastrpc_user *user, u32 kernel, u32 sc,
-> -			struct fastrpc_invoke_args *args)
-> +			struct fastrpc_invoke_v2 *inv2)
->  {
->  	struct fastrpc_channel_ctx *cctx = user->cctx;
->  	struct fastrpc_invoke_ctx *ctx = NULL;
-> +	struct fastrpc_invoke_args *args = NULL;
-
-Why do you need to init to NULL if you are going to set it two lines
-below?
-
->  	unsigned long flags;
->  	int ret;
->  
-> +	args = (struct fastrpc_invoke_args *)inv2->inv.args;
-
-Why does it need a typecast?
-
->  	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
->  	if (!ctx)
->  		return ERR_PTR(-ENOMEM);
-> @@ -611,6 +613,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
->  	/* Released in fastrpc_context_put() */
->  	fastrpc_channel_ctx_get(cctx);
->  
-> +	ctx->crc = (u32 *)(uintptr_t)inv2->crc;
-
-Oh, but why? Also is it a user pointer or in-kernel data? If it's a
-user-based pointer, where is the accessiblity check? Why isn't it
-annotated properly?
-
->  	ctx->sc = sc;
->  	ctx->retval = -1;
->  	ctx->pid = current->pid;
-> @@ -1070,6 +1073,7 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
->  	struct fastrpc_invoke_buf *list;
->  	struct fastrpc_phy_page *pages;
->  	u64 *fdlist;
-> +	u32 *crclist;
->  	int i, inbufs, outbufs, handles;
->  
->  	inbufs = REMOTE_SCALARS_INBUFS(ctx->sc);
-> @@ -1078,6 +1082,7 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
->  	list = fastrpc_invoke_buf_start(rpra, ctx->nscalars);
->  	pages = fastrpc_phy_page_start(list, ctx->nscalars);
->  	fdlist = (uint64_t *)(pages + inbufs + outbufs + handles);
-> +	crclist = (u32 *)(fdlist + FASTRPC_MAX_FDLIST);
-
-I think we should rewrite this parsing somehow. Is the format of data
-documented somewhere?
-
->  
->  	for (i = inbufs; i < ctx->nbufs; ++i) {
->  		if (!ctx->maps[i]) {
-> @@ -1102,6 +1107,12 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
->  			fastrpc_map_put(mmap);
+> changes from V1:
+> - Changing naming convention from modem_qcom_qdu100*
+>   to mhi_qcom_qdu100*.
+> - Updated commit text.
+> - Fixed and corrected by passing mhi_pci_dev_info struct
+>   instead of mhi_controller_config.
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 60 ++++++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 9938bb034c1c..b9b7dd8d9411 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -245,6 +245,63 @@ struct mhi_pci_dev_info {
+>  		.channel = ch_num,		\
 >  	}
 >  
-> +	if (ctx->crc && crclist && rpra) {
-> +		if (copy_to_user((void __user *)ctx->crc, crclist,
-> +				FASTRPC_MAX_CRCLIST * sizeof(u32)))
-
-Oh, so it's a user pointer. Then u32* was completely incorrect.
-Also you are copying FASTRPC_MAX_CRCLIST elements. Are all of them
-filled? Or are we leaking some data to userspace?
-
-> +			return -EFAULT;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1137,13 +1148,12 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
->  
->  }
->  
-> -static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
-> -				   u32 handle, u32 sc,
-> -				   struct fastrpc_invoke_args *args)
-> +static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel, struct fastrpc_invoke_v2 *inv2)
-
-Please don't touch what doesn't need to be touched. You are replacing
-handle/sc/args with inv2, not touching the first line.
-
->  {
->  	struct fastrpc_invoke_ctx *ctx = NULL;
->  	struct fastrpc_buf *buf, *b;
-> -
-> +	struct fastrpc_invoke inv;
-> +	u32 handle, sc;
->  	int err = 0;
->  
->  	if (!fl->sctx)
-> @@ -1152,12 +1162,15 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
->  	if (!fl->cctx->rpdev)
->  		return -EPIPE;
->  
-> +	inv = inv2->inv;
-> +	handle = inv.handle;
-> +	sc = inv.sc;
->  	if (handle == FASTRPC_INIT_HANDLE && !kernel) {
->  		dev_warn_ratelimited(fl->sctx->dev, "user app trying to send a kernel RPC message (%d)\n",  handle);
->  		return -EPERM;
->  	}
->  
-> -	ctx = fastrpc_context_alloc(fl, kernel, sc, args);
-> +	ctx = fastrpc_context_alloc(fl, kernel, sc, inv2);
->  	if (IS_ERR(ctx))
->  		return PTR_ERR(ctx);
->  
-> @@ -1239,6 +1252,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  {
->  	struct fastrpc_init_create_static init;
->  	struct fastrpc_invoke_args *args;
-> +	struct fastrpc_invoke_v2 ioctl = {0};
-
-Why do you need to init it?
-
->  	struct fastrpc_phy_page pages[1];
->  	char *name;
->  	int err;
-> @@ -1248,7 +1262,6 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  		u32 namelen;
->  		u32 pageslen;
->  	} inbuf;
-> -	u32 sc;
->  
->  	args = kcalloc(FASTRPC_CREATE_STATIC_PROCESS_NARGS, sizeof(*args), GFP_KERNEL);
->  	if (!args)
-> @@ -1313,10 +1326,10 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	args[2].length = sizeof(*pages);
->  	args[2].fd = -1;
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE_STATIC, 3, 0);
-> -
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
-> -				      sc, args);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE_STATIC, 3, 0);
-> +	ioctl.inv.args = (u64)args;
-
-Can you pass it as is, without typecasts?
-
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (err)
->  		goto err_invoke;
->  
-> @@ -1357,6 +1370,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  {
->  	struct fastrpc_init_create init;
->  	struct fastrpc_invoke_args *args;
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	struct fastrpc_phy_page pages[1];
->  	struct fastrpc_map *map = NULL;
->  	struct fastrpc_buf *imem = NULL;
-> @@ -1370,7 +1384,6 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  		u32 attrs;
->  		u32 siglen;
->  	} inbuf;
-> -	u32 sc;
->  	bool unsigned_module = false;
->  
->  	args = kcalloc(FASTRPC_CREATE_PROCESS_NARGS, sizeof(*args), GFP_KERNEL);
-> @@ -1444,12 +1457,12 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  	args[5].length = sizeof(inbuf.siglen);
->  	args[5].fd = -1;
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE, 4, 0);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE, 4, 0);
->  	if (init.attrs)
-> -		sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE_ATTR, 4, 0);
-> -
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
-> -				      sc, args);
-> +		ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE_ATTR, 4, 0);
-
-if (init.attrs)
-    ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE_ATTR, 4, 0);
-else
-    ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE, 4, 0);
-
-> +	ioctl.inv.args = (u64)args;
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (err)
->  		goto err_invoke;
->  
-> @@ -1501,17 +1514,18 @@ static void fastrpc_session_free(struct fastrpc_channel_ctx *cctx,
->  static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
->  {
->  	struct fastrpc_invoke_args args[1];
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	int tgid = 0;
-> -	u32 sc;
->  
->  	tgid = fl->tgid;
->  	args[0].ptr = (u64)(uintptr_t) &tgid;
->  	args[0].length = sizeof(tgid);
->  	args[0].fd = -1;
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_RELEASE, 1, 0);
->  
-> -	return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
-> -				       sc, &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_RELEASE, 1, 0);
-> +	ioctl.inv.args = (u64)args;
-> +	return fastrpc_internal_invoke(fl, true, &ioctl);
->  }
->  
->  static int fastrpc_device_release(struct inode *inode, struct file *file)
-> @@ -1647,45 +1661,77 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
->  static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
->  {
->  	struct fastrpc_invoke_args args[1];
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	int tgid = fl->tgid;
-> -	u32 sc;
->  
->  	args[0].ptr = (u64)(uintptr_t) &tgid;
->  	args[0].length = sizeof(tgid);
->  	args[0].fd = -1;
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
->  	fl->pd = pd;
->  
-> -	return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
-> -				       sc, &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
-> +	ioctl.inv.args = (u64)args;
-> +	return fastrpc_internal_invoke(fl, true, &ioctl);
->  }
->  
-> -static int fastrpc_invoke(struct fastrpc_user *fl, char __user *argp)
-> +static int fastrpc_copy_args(struct fastrpc_invoke *inv)
->  {
->  	struct fastrpc_invoke_args *args = NULL;
-> -	struct fastrpc_invoke inv;
->  	u32 nscalars;
-> -	int err;
-> -
-> -	if (copy_from_user(&inv, argp, sizeof(inv)))
-> -		return -EFAULT;
->  
->  	/* nscalars is truncated here to max supported value */
-> -	nscalars = REMOTE_SCALARS_LENGTH(inv.sc);
-> +	nscalars = REMOTE_SCALARS_LENGTH(inv->sc);
->  	if (nscalars) {
->  		args = kcalloc(nscalars, sizeof(*args), GFP_KERNEL);
->  		if (!args)
->  			return -ENOMEM;
->  
-> -		if (copy_from_user(args, (void __user *)(uintptr_t)inv.args,
-> +		if (copy_from_user(args, (void __user *)(uintptr_t)inv->args,
-
-Wait... So inv->args is a user pointer? Then how can you assign a
-kernel-based pointer to the same field? I think you need to sanitize
-your structures. One is userspace-facing. It should be using userspace
-data pointers, etc. Another one is a kernel representation of the ioctl
-args. It might have a different structure, it shouldn't contain __user
-data, etc.
-
->  				   nscalars * sizeof(*args))) {
->  			kfree(args);
->  			return -EFAULT;
->  		}
->  	}
-> +	inv->args = args;
->  
-> -	err = fastrpc_internal_invoke(fl, false, inv.handle, inv.sc, args);
-> -	kfree(args);
-> +	return 0;
-> +}
-
-Looking at the rest of the code, I think the patch needs to be split.
-CRC is the minor issue at this point, please focus on getting existing
-data being handled correctly while refactoring the code to use new
-structure. I'd suggest seeing two struct definitions: one for the
-userspace and another one for the kernel space.
-
-> +
-> +static int fastrpc_invoke(struct fastrpc_user *fl, char __user *argp)
-> +{
-> +	struct fastrpc_invoke_v2 ioctl = {0};
-> +	struct fastrpc_invoke inv;
-> +	int err;
-> +
-> +	if (copy_from_user(&inv, argp, sizeof(inv)))
-> +		return -EFAULT;
-> +
-> +	err = fastrpc_copy_args(&inv);
-> +	if (err)
-> +		return err;
-> +
-> +	ioctl.inv = inv;
-> +	err = fastrpc_internal_invoke(fl, false, &ioctl);
-> +	kfree(inv.args);
-> +
-> +	return err;
-> +}
-> +
-> +static int fastrpc_invokev2(struct fastrpc_user *fl, char __user *argp)
-> +{
-> +	struct fastrpc_invoke_v2 inv2 = {0};
-> +	int err;
-> +
-> +	if (copy_from_user(&inv2, argp, sizeof(inv2)))
-> +		return -EFAULT;
-> +
-> +	err = fastrpc_copy_args(&inv2.inv);
-> +	if (err)
-> +		return err;
-> +
-> +	err = fastrpc_internal_invoke(fl, false, &inv2);
-> +	kfree(inv2.inv.args);
->  
->  	return err;
->  }
-> @@ -1694,6 +1740,7 @@ static int fastrpc_get_info_from_dsp(struct fastrpc_user *fl, uint32_t *dsp_attr
->  				     uint32_t dsp_attr_buf_len)
->  {
->  	struct fastrpc_invoke_args args[2] = { 0 };
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  
->  	/*
->  	 * Capability filled in userspace. This carries the information
-> @@ -1710,8 +1757,10 @@ static int fastrpc_get_info_from_dsp(struct fastrpc_user *fl, uint32_t *dsp_attr
->  	args[1].length = dsp_attr_buf_len * sizeof(u32);
->  	args[1].fd = -1;
->  
-> -	return fastrpc_internal_invoke(fl, true, FASTRPC_DSP_UTILITIES_HANDLE,
-> -				       FASTRPC_SCALARS(0, 1, 1), args);
-> +	ioctl.inv.handle = FASTRPC_DSP_UTILITIES_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(0, 1, 1);
-> +	ioctl.inv.args = (u64)args;
-> +	return fastrpc_internal_invoke(fl, true, &ioctl);
->  }
->  
->  static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
-> @@ -1798,10 +1847,10 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
->  static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *buf)
->  {
->  	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	struct fastrpc_munmap_req_msg req_msg;
->  	struct device *dev = fl->sctx->dev;
->  	int err;
-> -	u32 sc;
->  
->  	req_msg.pgid = fl->tgid;
->  	req_msg.size = buf->size;
-> @@ -1810,9 +1859,10 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
->  	args[0].ptr = (u64) (uintptr_t) &req_msg;
->  	args[0].length = sizeof(req_msg);
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MUNMAP, 1, 0);
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
-> -				      &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MUNMAP, 1, 0);
-> +	ioctl.inv.args = (u64)args;
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (!err) {
->  		dev_dbg(dev, "unmmap\tpt 0x%09lx OK\n", buf->raddr);
->  		spin_lock(&fl->lock);
-> @@ -1856,6 +1906,7 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  {
->  	struct fastrpc_invoke_args args[3] = { [0 ... 2] = { 0 } };
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	struct fastrpc_buf *buf = NULL;
->  	struct fastrpc_mmap_req_msg req_msg;
->  	struct fastrpc_mmap_rsp_msg rsp_msg;
-> @@ -1863,7 +1914,6 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  	struct fastrpc_req_mmap req;
->  	struct device *dev = fl->sctx->dev;
->  	int err;
-> -	u32 sc;
->  
->  	if (copy_from_user(&req, argp, sizeof(req)))
->  		return -EFAULT;
-> @@ -1906,9 +1956,10 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  	args[2].ptr = (u64) (uintptr_t) &rsp_msg;
->  	args[2].length = sizeof(rsp_msg);
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MMAP, 2, 1);
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
-> -				      &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MMAP, 2, 1);
-> +	ioctl.inv.args = (u64)args;
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (err) {
->  		dev_err(dev, "mmap error (len 0x%08llx)\n", buf->size);
->  		fastrpc_buf_free(buf);
-> @@ -1957,10 +2008,10 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
->  static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_mem_unmap *req)
->  {
->  	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	struct fastrpc_map *map = NULL, *iter, *m;
->  	struct fastrpc_mem_unmap_req_msg req_msg = { 0 };
->  	int err = 0;
-> -	u32 sc;
->  	struct device *dev = fl->sctx->dev;
->  
->  	spin_lock(&fl->lock);
-> @@ -1986,9 +2037,10 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
->  	args[0].ptr = (u64) (uintptr_t) &req_msg;
->  	args[0].length = sizeof(req_msg);
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MEM_UNMAP, 1, 0);
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
-> -				      &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MEM_UNMAP, 1, 0);
-> +	ioctl.inv.args = (u64)args;
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (err) {
->  		dev_err(dev, "unmmap\tpt fd = %d, 0x%09llx error\n",  map->fd, map->raddr);
->  		return err;
-> @@ -2011,6 +2063,7 @@ static int fastrpc_req_mem_unmap(struct fastrpc_user *fl, char __user *argp)
->  static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
->  {
->  	struct fastrpc_invoke_args args[4] = { [0 ... 3] = { 0 } };
-> +	struct fastrpc_invoke_v2 ioctl = {0};
->  	struct fastrpc_mem_map_req_msg req_msg = { 0 };
->  	struct fastrpc_mmap_rsp_msg rsp_msg = { 0 };
->  	struct fastrpc_mem_unmap req_unmap = { 0 };
-> @@ -2019,7 +2072,6 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
->  	struct device *dev = fl->sctx->dev;
->  	struct fastrpc_map *map = NULL;
->  	int err;
-> -	u32 sc;
->  
->  	if (copy_from_user(&req, argp, sizeof(req)))
->  		return -EFAULT;
-> @@ -2055,8 +2107,10 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
->  	args[3].ptr = (u64) (uintptr_t) &rsp_msg;
->  	args[3].length = sizeof(rsp_msg);
->  
-> -	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MEM_MAP, 3, 1);
-> -	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc, &args[0]);
-> +	ioctl.inv.handle = FASTRPC_INIT_HANDLE;
-> +	ioctl.inv.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MEM_MAP, 3, 1);
-> +	ioctl.inv.args = (u64)args;
-> +	err = fastrpc_internal_invoke(fl, true, &ioctl);
->  	if (err) {
->  		dev_err(dev, "mem mmap error, fd %d, vaddr %llx, size %lld\n",
->  			req.fd, req.vaddrin, map->size);
-> @@ -2096,6 +2150,9 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
->  	case FASTRPC_IOCTL_INVOKE:
->  		err = fastrpc_invoke(fl, argp);
->  		break;
-> +	case FASTRPC_IOCTL_INVOKEV2:
-> +		err = fastrpc_invokev2(fl, argp);
-> +		break;
->  	case FASTRPC_IOCTL_INIT_ATTACH:
->  		err = fastrpc_init_attach(fl, ROOT_PD);
->  		break;
-> diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-> index f33d914d8f46..406b80555d41 100644
-> --- a/include/uapi/misc/fastrpc.h
-> +++ b/include/uapi/misc/fastrpc.h
-> @@ -17,6 +17,7 @@
->  #define FASTRPC_IOCTL_MEM_MAP		_IOWR('R', 10, struct fastrpc_mem_map)
->  #define FASTRPC_IOCTL_MEM_UNMAP		_IOWR('R', 11, struct fastrpc_mem_unmap)
->  #define FASTRPC_IOCTL_GET_DSP_INFO	_IOWR('R', 13, struct fastrpc_ioctl_capability)
-> +#define FASTRPC_IOCTL_INVOKEV2		_IOWR('R', 14, struct fastrpc_invoke_v2)
->  
->  /**
->   * enum fastrpc_map_flags - control flags for mapping memory on DSP user process
-> @@ -80,6 +81,12 @@ struct fastrpc_invoke {
->  	__u64 args;
->  };
->  
-> +struct fastrpc_invoke_v2 {
-> +	struct fastrpc_invoke inv;
-> +	__u64 crc;
-> +	__u32 reserved[16];
+> +static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
+> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
+> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
+> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
+> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
+> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
+> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
+> +	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
+> +	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
+> +	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
+> +	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
 > +};
 > +
->  struct fastrpc_init_create {
->  	__u32 filelen;	/* elf file length */
->  	__s32 filefd;	/* fd for the file */
+> +static struct mhi_event_config mhi_qcom_qdu100_events[] = {
+> +	/* first ring is control+data ring */
+> +	MHI_EVENT_CONFIG_CTRL(0, 64),
+> +	/* SAHARA dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
+> +	/* Software channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
+> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
+> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
+> +	/* Software IP channels dedicated event ring */
+> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
+> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
+> +};
+> +
+> +static const struct mhi_controller_config mhi_qcom_qdu100_config = {
+> +	.max_channels = 128,
+> +	.timeout_ms = 120000,
+> +	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
+> +	.ch_cfg = mhi_qcom_qdu100_channels,
+> +	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
+> +	.event_cfg = mhi_qcom_qdu100_events,
+> +};
+> +
+> +static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+> +	.name = "qcom-lassen",
+> +	.fw = "qcom/lassen/xbl_s.melf",
+> +	.edl = "qcom/lassen/edl.mbn",
+> +	.edl_trigger = true,
+> +	.config = &mhi_qcom_qdu100_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.sideband_wake = false,
+> +};
+> +
+>  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
+>  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
+>  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
+> @@ -822,6 +879,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* NETPRISMA FCUN69 (SDX6X) */
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+>  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+> +	/* QDU100, x100-DU */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
+> +		.driver_data = (kernel_ulong_t)&mhi_qcom_qdu100_info },
+>  	{  }
+>  };
+>  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
 > -- 
 > 2.34.1
 > 
