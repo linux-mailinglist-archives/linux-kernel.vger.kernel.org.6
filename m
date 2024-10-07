@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-353610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108C8993043
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA50A99306C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D731C22FDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F121F23FB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A40F1D54E9;
-	Mon,  7 Oct 2024 15:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165A81D88D7;
+	Mon,  7 Oct 2024 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AbQ3gka7"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EbmcZEOL"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9E51D54E1
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56EA1D798C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 15:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313207; cv=none; b=gp2NTV1dXoC+w5ix+M6RT4ydQW6vie07EA0yf+Fdszl9Evjvz3HCLSIkB9+S+WpfLVDKC3DSXIYLIK+wWtdS3iRIofnUYeY8MNVMGqktTeSupYj+HJSZ+gBj8pe2JiENtLTLx9W+fqjxMBs+E+KK6Jm1mwpxPad+cgjRsrgdGEA=
+	t=1728313303; cv=none; b=cXdHl+FEs9q7iXYarq9abPe3ehxeARZEed+gS5H/65grUtfF5sduxPCdOGxCbByDhz7a8nx1PtKp3LVmj8hCTOCyyBRrXRrMmMHMuWr0tiwvIULbbl8KYuzxMMoLSnrt/NlwGfA2GajGUCLuANOafnANLyy/xzS3y1cDtcvEbK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313207; c=relaxed/simple;
-	bh=Kmt9cHJm8WwS3XspxjzVmwcEHGHmVBkZJdu4NDC3smo=;
+	s=arc-20240116; t=1728313303; c=relaxed/simple;
+	bh=Of3fTbfTUadI91Km6QSnlfHzLgvPLsVxjWD+yFvOV4w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gZh251Q8ywPQeQ/WmYCGQL26oRVMWDqHvQOuC13E/WzN4phn8eFZK9V0cjn+8gKD71+5LUPG4ekPa05nsLZEcI1+pi1VdT76DMiIRoMDWbmGDVTQEjEs0KwD01IZqrj4o0megFY7EsrncGb2smQKNv9Nq9B/AJonzb9zgF+cQ88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AbQ3gka7; arc=none smtp.client-ip=209.85.161.41
+	 To:Cc:Content-Type; b=sc53graPrVVxDUVswoYyPf+v4UyzRc/1bDYi8hF+1yBXCOuMh4MRf/+KIA3RHAOqTBP2qzUV+FyQkfe1sdZQGUgA/NnDynBDx4+wMrKgCnuhNn6D1EGM8tz31sqlpdBpx/EsJNQ+KpKmDNylzh5Of+rzqhU7C4Iw6dW8fR/px+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EbmcZEOL; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5e5b7d54ff8so104534eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:00:06 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e27a0d7819so352660b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 08:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728313205; x=1728918005; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1728313300; x=1728918100; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T0KwE80YUYePgxalt01KSjIBVcvG8O10aqSXbDz0ito=;
-        b=AbQ3gka7A0McnDohcQXIxVybxx+mssk805CSxaQG/2kIvzyQ5qeAvfgVIVqdZR/2BT
-         iYad8oSVhVrR8dO1v4CgjtHOcfPl8ejyJg82T0xm00wk/K9/b4wQPpAR+99AjIxlLxQj
-         f7uFM2YLZzeUqCKYEQ7kxeuYcORG2iNqafPDQ=
+        bh=5jAAFMBYKppMdRXJchSLw0rc6C6JnyAPVbXk9thx1g8=;
+        b=EbmcZEOLkHkClCAbOYu8+03DhEprBSh0oBirzogOJ0A79plhggIYNMNGQDU1es/WmM
+         QjTbSj4NLpG62tnDOS+XnDqAzMe+S/6Fcqrl3Skgr6uZ6lx28qXNICQTDr2uc9xO8CBv
+         VuYXc6fqgONntYqwSuiqzXhrEwu7VbEbowREI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313205; x=1728918005;
+        d=1e100.net; s=20230601; t=1728313300; x=1728918100;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T0KwE80YUYePgxalt01KSjIBVcvG8O10aqSXbDz0ito=;
-        b=GEZO1dLv7Eg2QVPFZjOcKqwjQB74cbvDBqCWj+c3EAlTfVQOiRhfZcGfCSZMiX1HhS
-         7TfHBqjzjm1f1oIVYWgaVC+x9dSP2ku5vdxha4J/eoayyL15R21Bj+G9yf54puZMzG66
-         YEEajMs3cYhNvWHs++SM9jgb+opDLszX01FJ2v9H3CX7PFhvXhPlkqyD6d2j4KKKAfic
-         8nzDIVWAIc3d1Xct5zvY8T1l2yIdpE7y2cwzuLMX9djrS+GDdVDu5xXN0ONCgXKkGhKm
-         F05AZuazZ6FJTOicdUrft7WbmknG61cMQMnUYPgip4gbsthG1Sja+PpPwHVy9xJ7BjjD
-         TnIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGF4f8W8WGvyW97V1as5yYXQrmVWZsC/JMG5wmw+2mtvKva98EdDOL3/6OhKkKKDQUFZZJ7RlW/5TcIec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBLkLMj1fxqQZ804UPy0y+hF4OAqiZYJSSdt7X3THJdwWKJbG2
-	3tXiVwg7Q1J2t6itfOVcmNpoSjB+LLKMmSwdLaogRucWVEJyzODwobL66GkQuhgIfiF1dHB1Lga
-	QSNpOHnsBEWB8qabe5GcGqok7ecSanUKnPL60
-X-Google-Smtp-Source: AGHT+IEgxSO+or+LT/iiFA/sF2fonUe9w7Iegy6X1aayhSdUynY7mkN/5hXV/JGVKok0IKxa3fAcXXlLQMR9UOr4eLM=
-X-Received: by 2002:a05:6870:1641:b0:27b:9f8b:277b with SMTP id
- 586e51a60fabf-287c22d93a8mr1797632fac.14.1728313205390; Mon, 07 Oct 2024
- 08:00:05 -0700 (PDT)
+        bh=5jAAFMBYKppMdRXJchSLw0rc6C6JnyAPVbXk9thx1g8=;
+        b=WtWWvLKoVdku3OY1smF+HHsvjmD2os/rSsWIzM91QoFLt3JEtLwZqXdZDsIdK1xTgN
+         eaGcRdueBTce6JSDP69dqt9dGhS+CAxuQc1KdI5yC3y/tuEFBO4iJnUZ8o9iqcwQszo/
+         7XiLUwuT8bw6VZ2NGbcBovX1bkgdcww7ETu9mbsCv8m//h45sSa5fVxFsh4DFBFkDEQs
+         9RANoTViZbqNERDjTHWyJVPY8W6ecRrLOZUkvwMBN+xsXEAXrK9+2oTqOKV25Ozqqidm
+         USR1gCFTE9ohA6pVLDYfxhiNoEGK4mQetPdGulnqY6gvINVSxcizYUVfy0bU5jxZ1VIi
+         azCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwRsaQKxKNienCq8EMErDoSKRt37jHIOnNl2NzYbonFnvc9A8SOwIthL5iV0P7Aiw+RRn84Rj/CyGLf7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw70tHQ2bVk/F08x/uPxoCuDrte33L6UXr8jmcDcL37y5HYrrrc
+	1JGYTUpKf5F/VUYtbHnIhIcS+vsLAH/s7SKwDQAtsVQKshSByGOYn70E3WfOhMdYTv5uXUvGhYE
+	anXiOQYwxPqBfQ1GiOn994X2mTHM1f4FvJHZV
+X-Google-Smtp-Source: AGHT+IFFTDkuljTZSSM+i7nA189OSRbRxsZF42ePZcfZwT24kjDKYTZ7AaE+3X0QfQ9LOodahDeCiX/tICNJikALAHw=
+X-Received: by 2002:a05:6870:d201:b0:27b:9f8b:7e49 with SMTP id
+ 586e51a60fabf-287c22913fdmr2397442fac.11.1728313300572; Mon, 07 Oct 2024
+ 08:01:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004163155.3493183-1-jeffxu@google.com> <20241004163155.3493183-2-jeffxu@google.com>
- <20241005202025.GB24353@redhat.com>
-In-Reply-To: <20241005202025.GB24353@redhat.com>
+References: <20241001002628.2239032-1-jeffxu@chromium.org> <20241001002628.2239032-2-jeffxu@chromium.org>
+ <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org> <CABi2SkUhcEY7KxuRX3edOHJZbo2kZOZfa0sWrcG2_T0rnvHCWQ@mail.gmail.com>
+ <51463.1728069102@cvs.openbsd.org>
+In-Reply-To: <51463.1728069102@cvs.openbsd.org>
 From: Jeff Xu <jeffxu@chromium.org>
 Date: Mon, 7 Oct 2024 08:00:00 -0700
-Message-ID: <CABi2SkWNy16VmXrnPtmE7njb8UzLF=z9J+Ym9titbT8Gw6g0=Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/1] exec: seal system mappings
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, 
-	ojeda@kernel.org, adobriyan@gmail.com, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, mike.kravetz@oracle.com, 
-	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
-	hch@lst.de, peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com, 
-	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, 
-	ardb@kernel.org, nathan_lynch@mentor.com, dsafonov@virtuozzo.com, 
-	Liam.Howlett@oracle.com, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, lorenzo.stoakes@oracle.com
+Message-ID: <CABi2SkXW9atWJLCDQboKwLoXCX7w9sgs7H3Wm4U2soG4cFLosw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mseal: update mseal.rst
+To: Theo de Raadt <deraadt@openbsd.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, keescook@chromium.org, 
+	corbet@lwn.net, jorgelo@chromium.org, groeck@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, jannh@google.com, sroettger@google.com, 
+	pedro.falcato@gmail.com, linux-hardening@vger.kernel.org, willy@infradead.org, 
+	gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
+	usama.anjum@collabora.com, surenb@google.com, merimus@google.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, enh@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 5, 2024 at 1:21=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> Sorry for the noise, forgot to mention...
->
-> On 10/04, jeffxu@chromium.org wrote:
-> >
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -1535,6 +1535,15 @@
-> >                       Permit 'security.evm' to be updated regardless of
-> >                       current integrity status.
-> >
-> > +     exec.seal_system_mappings =3D [KNL]
-> > +                     Format: { never | always }
-> > +                     Seal system mappings: vdso, vvar, sigpage, uprobe=
-s,
-> > +                     vsyscall.
-> > +                     This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPIN=
-GS_*
-> > +                     - 'never':  never seal system mappings.
-> > +                     - 'always': always seal system mappings.
-> > +                     If not specified or invalid, default is the KCONF=
-IG value.
->
-> perhaps the documentation should also mention that this new parameter has
-> no effect if CONFIG_64BIT=3Dn.
-Good point, I will add that.
+Hi Theo
 
-Thanks
-
+On Fri, Oct 4, 2024 at 12:11=E2=80=AFPM Theo de Raadt <deraadt@openbsd.org>=
+ wrote:
 >
-> Oleg.
+> Jeff Xu <jeffxu@chromium.org> wrote:
+>
+> > > > +   replacement with a new mapping with new set of attributes, or c=
+an
+> > > > +   overwrite the existing mapping with another mapping.
+> > > > +
+> > > > +   mprotect and pkey_mprotect are blocked because they changes the
+> > > > +   protection bits (RWX) of the mapping.
+> > > > +
+> > > > +   Some destructive madvise behaviors (MADV_DONTNEED, MADV_FREE,> =
++   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
+> > > > +   for anonymous memory, when users don't have write permission to=
+ the
+> > > > +   memory. Those behaviors can alter region contents by discarding=
+ pages,
+> > >
+> > > above is not a sentence but I don't know how to fix it.
+> > >
+> > Would below work ?
+> >
+> > Certain destructive madvise behaviors, specifically MADV_DONTNEED,
+> > MADV_FREE, MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK,
+> > MADV_WIPEONFORK, can pose risks when applied to anonymous memory by
+> > threads without write permissions. These behaviors have the potential
+> > to modify region contents by discarding pages, effectively performing
+> > a memset(0) operation on the anonymous memory.
+>
+>
+> In OpenBSD, mimmutable blocks all those madvise() operations.
+>
+>
+> I don't understand the sentence supplied above.  Is it saying that
+> mseal() solves that problem, or that mseal() does not solve that
+> problem.
+>
+Yes. The mseal solved the problem, I will modify the sentence to clarify th=
+at.
+thanks
+
+> I would hope it solves that problem.  But the sentence explains the
+> problem without taking a position on what to do.
 >
 
