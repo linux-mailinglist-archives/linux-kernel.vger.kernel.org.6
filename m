@@ -1,119 +1,97 @@
-Return-Path: <linux-kernel+bounces-353136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F13992946
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:34:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83A5992949
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 12:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095F428336F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2B21C22B83
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 10:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1221C7B95;
-	Mon,  7 Oct 2024 10:34:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83DD18B473;
-	Mon,  7 Oct 2024 10:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31231CACED;
+	Mon,  7 Oct 2024 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFPwZRZm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D71C6F47;
+	Mon,  7 Oct 2024 10:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297261; cv=none; b=VKZ4g0SZruwdE4ae3FjwNM70EfedP2yO0Fj45xh65xli4cZzCO7qHEFp9qw31P8xn1Y/YZ9HiHXbzsYRG2ksazhp0Mnn93AOiHIHqV2GlU+gtatyT/5fCwtr8LB5tw0+3JoQ8ILejSDBX9PXV4SycX9okSdi1j9DRcmqkfC3eJ4=
+	t=1728297287; cv=none; b=dtiAgI7iVKf3nuiskzRVNixtsxuxJvOvUR1zone4r6rGFF9Tu+1rtxutZBGNEt9hUmA5KZ+5hvdPbngJ0/4tisMToEb4Ups19OsMVKko9gsnd1Aoi+SvrVR12bqSUzedVb7MwK+fVxjRIpHGCFT5/gHNrm52auYm7WWQ+Ps2dSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297261; c=relaxed/simple;
-	bh=SRtgvXeFZSpW+RrYYS6tr8keYP5TXm0Uqjm9sx3J1M0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oa2GUQsWSog14GQgKs9AsZKue9NsT5VE8/Y3lb9KlgRLJ3budKq9HaFpc/nmU9MwkXFy1TKEE1wKN9BJ2pL0vToJ2mpZgfvDCL5YDoCOXITfPinaX5LZ702qE+rnV5sAUpj4LvR22kOBz1xSEiLOpidhNyvXG0yQpYqNCEye/Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81B13FEC;
-	Mon,  7 Oct 2024 03:34:48 -0700 (PDT)
-Received: from [10.96.9.194] (PW05HE0L.arm.com [10.96.9.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 040BA3F64C;
-	Mon,  7 Oct 2024 03:34:13 -0700 (PDT)
-Message-ID: <de82957b-eb1a-48b6-8f34-575045c62ed1@arm.com>
-Date: Mon, 7 Oct 2024 11:34:11 +0100
+	s=arc-20240116; t=1728297287; c=relaxed/simple;
+	bh=1Z/b65UcsJmcQt7YX5f+bjsqJtDw9xKDU55kb5tf9TI=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=YxksIB9XfqnIVmFjyY0kKYdEiqzEnxXtBQcnWd6iIkKslcGa2P7z3xG8hhrCdG5NmU3WGZsZ4tUVZQzU2bynPalJG8nmeaLuOrP3NaOmpwIfAbkOUkReeJD8vfas5Rpy5HjRmQVt167SWBEBRwQSsBfUJPC87a7uJSFZYifHubs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFPwZRZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C882C4CEC6;
+	Mon,  7 Oct 2024 10:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728297286;
+	bh=1Z/b65UcsJmcQt7YX5f+bjsqJtDw9xKDU55kb5tf9TI=;
+	h=From:To:Subject:Date:From;
+	b=bFPwZRZmADbUga6FKz94mVokC2Win9tqHAAU0HDZ3BK9UMXFphAi4ixaBEQDwAa3K
+	 nxWTAEbBpJYGp0Z08qVKQ4Sc6lrxDrGl19O1DSp+eBKKej2Z4cuJcnUkXlPByJGhU2
+	 DDJjzzQlbFczUIGZIFjbG9/lB8BukLFQdh0s1FoWjbiWhLib/uIpLm3ZMX4mU3DgJ/
+	 7JEZVMWNdNx8zW4Kq2nZE+ceRNXgxBD4zhKX9RZR0TAMuFTBJ9CFiWGHaUczDQ3Wgo
+	 /RxobnB4uLjm/3RtWqfk5TKi0Ob+ZRBqDVxQ3F5oaixL4XEQTuJsbaLsPXbqLMcaaf
+	 XC8ZvumkhWt9Q==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	puranjay12@gmail.com
+Subject: [PATCH bpf-next v3 0/2] Implement mechanism to signal other threads
+Date: Mon,  7 Oct 2024 10:34:24 +0000
+Message-Id: <20241007103426.128923-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/43] arm64: RME: Check for RME support at KVM init
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-8-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241004152804.72508-8-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/10/2024 16:27, Steven Price wrote:
-> Query the RMI version number and check if it is a compatible version. A
-> static key is also provided to signal that a supported RMM is available.
-> 
-> Functions are provided to query if a VM or VCPU is a realm (or rec)
-> which currently will always return false.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->
+This set implements a kfunc called bpf_send_signal_task() that is similar
+to sigqueue() as it can send a signal along with a cookie to a thread or
+thread group.
 
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> new file mode 100644
-> index 000000000000..418685fbf6ed
-> --- /dev/null
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -0,0 +1,50 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#include <linux/kvm_host.h>
-> +
-> +#include <asm/rmi_cmds.h>
-> +#include <asm/virt.h>
-> +
-> +static int rmi_check_version(void)
-> +{
-> +	struct arm_smccc_res res;
-> +	int version_major, version_minor;
-> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
-> +						     RMI_ABI_MINOR_VERSION);
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
-> +
-> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
-> +		return -ENXIO;
-> +
-> +	version_major = RMI_ABI_VERSION_GET_MAJOR(res.a1);
-> +	version_minor = RMI_ABI_VERSION_GET_MINOR(res.a1);
-> +
-> +	if (res.a0 != RMI_SUCCESS) {
-> +		kvm_err("Unsupported RMI ABI (v%d.%d) host supports v%d.%d\n",
+The send_signal selftest has been updated to also test this new kfunc under
+all contexts.
 
-minor nit: s/host supports/we want ? (or something similar)
+Changes in v3:
+v2: https://lore.kernel.org/all/20240926115328.105634-1-puranjay@kernel.org/
+- make the cookie u64 instead of int.
+- re use code from bpf_send_signal_common
 
-"host" could be confusing from a user perspective ?
+Changes in v2:
+v1: https://lore.kernel.org/bpf/20240724113944.75977-1-puranjay@kernel.org/
+- Convert to a kfunc
+- Add mechanism to send a cookie with the signal.
 
-Rest looks good to me
+Puranjay Mohan (2):
+  bpf: implement bpf_send_signal_task() kfunc
+  selftests/bpf: Augment send_signal test with remote signaling
 
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/trace/bpf_trace.c                      |  54 +++++--
+ .../selftests/bpf/prog_tests/send_signal.c    | 133 +++++++++++++-----
+ .../bpf/progs/test_send_signal_kern.c         |  35 ++++-
+ 4 files changed, 177 insertions(+), 46 deletions(-)
 
-Suzuki
+-- 
+2.40.1
+
 
