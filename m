@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-353967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549CD993557
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:48:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1723D99355A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 19:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFB42842D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0801F22B3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 17:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A85B1DDA0B;
-	Mon,  7 Oct 2024 17:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669AE1DD54A;
+	Mon,  7 Oct 2024 17:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mm8yUbHn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYq6L/BV"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4A71D7E52;
-	Mon,  7 Oct 2024 17:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76150156E4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Oct 2024 17:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728323278; cv=none; b=JMylX6OTmNar3okweT4rz7DxvcW1ELYgQavGPN1Q1OLjPsKylqOodoopCr7qV0mD5sz6BExmYyyYl+wvHV9iUbT6KDkhjZruRakTvUiICoJXNk2HgS5gYTqQFKZ5DTd2+a1blPoJnPTN0Am99SZbgxSBnbza926/8KVOgqX/mW8=
+	t=1728323356; cv=none; b=rolbhI1ZyfkjyUrlu9jV0IWpesRR2IqXHyAyQ2+77wbuDoNpBavuMTJTMGzHy5QEwRbdiouBFVShYFTCmeQLPwbiS/aXnQq1+PDLEbOEAinSbD+3IWh3SPVqn9YAXpB7ZQlIe8o+KMwUMUQAq8x0G/ADfl1j7Sr5pQaWjCKr4mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728323278; c=relaxed/simple;
-	bh=SRqPr4qhMn8zuFr8OhxsX6E3UszADQY+tQn2vxDgDmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IY3/Nlk/d9el27WqnUuI9ayt+AQlg3kLEi752FfHMRShkDB2bwzUt/z4ZmngcVWxVL52Bvj/CKTMePuvkJs2y1aG7Fv/nQQ6MiUzIM8KmxCV3rhUniDkecrMif+bCIgW5CVXTuUquVdxJIDrfmStgTzNud29ITyMFpTRCLQCFoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mm8yUbHn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95FE3C4CEC6;
-	Mon,  7 Oct 2024 17:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728323278;
-	bh=SRqPr4qhMn8zuFr8OhxsX6E3UszADQY+tQn2vxDgDmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mm8yUbHnbTojpzwDrQXC1bY4ZGlrOsIQOV7GFXK8PKcPqDpxmWz5HAzzW64UAE0Uj
-	 +zQoDRUdR6OtMVfJoyU+tORzbfnRxtXQe3C4o5BcdV2rGq3O3tyBZ8U3GAnStqQWGn
-	 UAXd0oB9VKsJ52kIpdokuW376ODD8Iz5wJWxp5G4AxiycUBqRMESV92ggM+ald6e58
-	 DjGyYkHewICwarWkGJNMCFaTIGH+Zxdpr7JJT2H11iMfA86/0iZouojTlRFlKhq8oC
-	 3oeWl5rdFogNaok8fpUHq5Uz9dx/WkbTY+BM5MraE0nVg105r1ei6c8eTNwpWcNX11
-	 Jy9MS+Z6Qxxug==
-Date: Mon, 7 Oct 2024 10:47:58 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
-Message-ID: <20241007174758.GE21836@frogsfrogsfrogs>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
- <ZwCk3eROTMDsZql1@casper.infradead.org>
+	s=arc-20240116; t=1728323356; c=relaxed/simple;
+	bh=+RFjh4DaD8GuFlHlEz3OwTe7B0oj9cRJI8XK9+fCTOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gksXEEC/rO0UsvTigLFUQBUELOo2JRq2YC1tqbf+D5V07VM5WLvE9UXuSeq9N3mQBmHd030x8ao/TjLVPzLPqaVLHBZ8RMZWJ/D9yYyZIrItYmVzQVPNQQvJ1OHsI0wtDjjXBV2kpSUnGVb3VjWIe3xgleg2UH9gnaQFsaITVEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYq6L/BV; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71def8af0d9so471458b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 10:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728323355; x=1728928155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xFIN27AG3WgjOnmH18Fk8WaAPf1pZ2KMgetkW6A+4t0=;
+        b=mYq6L/BVoDldDc85n24ZaF1etosfm8Jh+oNmZJJlLeL3lxyctB+l4baQhZ+/iWMAeK
+         E8oTrAI2UUFob3pIzHu8iDLkOtQOraZxXYjxWUOmAcDyRdR9MhJyagmpWTMAE61Yw0BT
+         SyYO95tvMeeBzT22C/n1gYnkhQyY6ggHNXQCHhj9SyiD63LlqussEEfFFvmrPeT1j0E3
+         5O1yqHHuCzizvuEd4z1oFhuRWagd5H+oLG36S2NO642mpapsVuADdDKxKNl8KBL5Nqhq
+         Vak/JQSPZYyMBAp1zrpPf8o+NC3X3D6qhnoBO4iXZs/CP2C8NmRsjyLFGVD47ZbWsYSj
+         Br6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728323355; x=1728928155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xFIN27AG3WgjOnmH18Fk8WaAPf1pZ2KMgetkW6A+4t0=;
+        b=Dztwoe89SXCu6aMRhv5dSnw2MMG09AYKjQPyAjjawpBAzqKQWiejN7gCy7lebbMnBc
+         eOGK/Og5bHE5PT6ti0EuZK+0zhRI1MVI1koPu9gkL6HGZcnBDjCgV4JJMoWZ6xmk7KeP
+         MGN4zqedTIZXAEjXyuRycMKnbVX8Z+HMNQHOBgwmIb93ET9ygPdXwvcz4l56wCLLv68M
+         ZuzgtOefhNd084b0/oAEpbvoVK1E/pJKulhY5RONjVwk1yFuNEbCXGdLtripW8+MG8Tm
+         dtscZfwpHPUMZHJrNTSxju0RWANgcn9gEO0lBxbDBSIVbHnV58tKhzrxb+YepdYfR97w
+         D6OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEgkLO7SACq+R4eBANl8mbJawESb4/p2QxDOEhCqE5QY4fYyDa7YGtFhkFbihAfMNzGWYXxsjfZjdgErA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGLmow8tTMe4kBOnqSdpWCUfYt4pp5rQumx3ZBSv5v8NwSRjTG
+	eK/45Q1mEt6YLfEGYl20Ey9kRaD2+7VZ10zimBgvIR/YJfzPYv3F
+X-Google-Smtp-Source: AGHT+IH236XZqVh5kSYznYvuShbIvj5woyfy5XKiXBwQQoAWzcu2Nl7W5TjR15p5S8ffsQdMMGim+g==
+X-Received: by 2002:a05:6a00:2e24:b0:71d:f744:67 with SMTP id d2e1a72fcca58-71df744011amr4789204b3a.7.1728323354725;
+        Mon, 07 Oct 2024 10:49:14 -0700 (PDT)
+Received: from dev.. ([2402:e280:214c:86:a843:852f:eac4:ff92])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cd0ae9sm4649923b3a.82.2024.10.07.10.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 10:49:14 -0700 (PDT)
+From: R Sundar <prosunofficial@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	imre.deak@intel.com,
+	ville.syrjala@linux.intel.com,
+	R Sundar <prosunofficial@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Subject: [PATCH linux-next] drm/i915/dp: use string choice helpers
+Date: Mon,  7 Oct 2024 23:18:57 +0530
+Message-Id: <20241007174857.85061-1-prosunofficial@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwCk3eROTMDsZql1@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 03:30:53AM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
-> > Introduce read_inline() function hook for reading inline extents. This
-> > is performed for filesystems such as btrfs which may compress the data
-> > in the inline extents.
+Use str_on_off string helpers for better readability and to fix cocci
+warning.
 
-Why don't you set iomap->inline_data to the uncompressed buffer, let
-readahead copy it to the pagecache, and free it in ->iomap_end?
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202410071252.cWILJzrH-lkp@intel.com/
+Signed-off-by: R Sundar <prosunofficial@gmail.com>
+---
 
-> This feels like an attempt to work around "iomap doesn't support
-> compressed extents" by keeping the decompression in the filesystem,
-> instead of extending iomap to support compressed extents itself.
-> I'd certainly prefer iomap to support compressed extents, but maybe I'm
-> in a minority here.
+Reported in linux repo:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-I'm not an expert on fs compression, but I get the impression that most
-filesystems handle reads by allocating some folios, reading off the disk
-into those folios, and decompressing into the pagecache folios.  It
-might be kind of amusing to try to hoist that into the vfs/iomap at some
-point, but I think the next problem you'd run into is that fscrypt has
-similar requirements, since it's also a data transformation step.
-fsverity I think is less complicated because it only needs to read the
-pagecache contents at the very end to check it against the merkle tree.
+cocci warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/i915/display/intel_dp.c:2243:6-9: opportunity for str_on_off(dsc)
 
-That, I think, is why this btrfs iomap port want to override submit_bio,
-right?  So that it can allocate a separate set of folios, create a
-second bio around that, submit the second bio, decode what it read off
-the disk into the folios of the first bio, then "complete" the first bio
-so that iomap only has to update the pagecache state and doesn't have to
-know about the encoding magic?
+vim +2243 drivers/gpu/drm/i915/display/intel_dp.c
 
-And then, having established that beachhead, porting btrfs fscrypt is
-a simple matter of adding more transformation steps to the ioend
-processing of the second bio (aka the one that actually calls the disk),
-right?  And I think all that processing stuff is more or less already in
-place for the existing read path, so it should be trivial (ha!) to
-call it in an iomap context instead of straight from btrfs.
-iomap_folio_state notwithstanding, of course.
+compile tested only.
 
-Hmm.  I'll have to give some thought to what would the ideal iomap data
-transformation pipeline look like?
+ drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Though I already have a sneaking suspicion that will morph into "If I
-wanted to add {crypt,verity,compression} to xfs how would I do that?" ->
-"How would I design a pipeine to handle all three to avoid bouncing
-pages between workqueue threads like ext4 does?" -> "Oh gosh now I have
-a totally different design than any of the existing implementations." ->
-"Well, crumbs. :("
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index fbb096be02ad..733619b14193 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -2475,7 +2475,7 @@ intel_dp_compute_config_link_bpp_limits(struct intel_dp *intel_dp,
+ 		    encoder->base.base.id, encoder->base.name,
+ 		    crtc->base.base.id, crtc->base.name,
+ 		    adjusted_mode->crtc_clock,
+-		    dsc ? "on" : "off",
++		    str_on_off(dsc),
+ 		    limits->max_lane_count,
+ 		    limits->max_rate,
+ 		    limits->pipe.max_bpp,
+-- 
+2.34.1
 
-I'll start that by asking: Hey btrfs developers, what do you like and
-hate about the current way that btrfs handles fscrypt, compression, and
-fsverity?  Assuming that you can set all three on a file, right?
-
---D
 
