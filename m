@@ -1,204 +1,118 @@
-Return-Path: <linux-kernel+bounces-353762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-353764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E56899326A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20085993268
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 18:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BDEFB251AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09571B28783
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 15:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22AF1DB34C;
-	Mon,  7 Oct 2024 15:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACAE1DA619;
+	Mon,  7 Oct 2024 15:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="rQ2qtdDH"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="IeN8f2L2"
+Received: from rcdn-iport-2.cisco.com (rcdn-iport-2.cisco.com [173.37.86.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550761D95A3;
-	Mon,  7 Oct 2024 15:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3CC1DA0E0;
+	Mon,  7 Oct 2024 15:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728316624; cv=none; b=l9Yy+D+0QiLxcaNSmKO0TssaKI1y42RCTqSd82fByrTRa8gv1xvRsq4I6a2pVVBq4P8VXWsrCN6E718nIgJqJfgOI1H7ulp5A3Wl32UJqYjf2/3uGhXML03A/jfoyx5o+uK315ECg7CXQUUY3Nyt8OTkS7a+0dNqo5E42jqJhSE=
+	t=1728316694; cv=none; b=sDOUp/30cNoEVmAptx51ZZS3CyNt0vJaRV/D+88/y+P8CPiJeMElIXQt5Dkgoh96LI6yyl+LRfNxr9hMim8vXDNZF1cEsqZcXadeY8/C7taUfxzyvUAf1uErszhtEVitMrbMrKmNxPe7pkVS8KQqouJwsT+hn9ckU+Y4fBrXbZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728316624; c=relaxed/simple;
-	bh=7s8rQAcIg97vHRkLNkkiG3T/6K73DTRu5PGFhizuEtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OWs7UEOEY5YKoHYIQaBprs/v2zRtAyM28N0Vt3Es7bGSBFB9jfvo3emF/P3IhT8nfKNJwvXIX+3JDPB9LTInPj49rY+RBvCJZX/gCfSAPk5scR3DzUIVrHwgx+QCsmILgSWXAqBw6JaCZXlfi+j6RRkl+nzmJ2Jkfcg0zrTpTSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=rQ2qtdDH; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1728316694; c=relaxed/simple;
+	bh=BoqOg2/3zHs1NXWmzV+CG2DI2MYPleJDLep1+J4Fons=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=f19yuxgh7bgnH3z7FTE7hnVs53NeyjGhfe/fytwvo4sp1iSvZmse0Z+b8rqs0jiar4dw2FfIaoEVw6Nv4VY8vcqG3Es/jyjmn/HE3IQnMm7NxHhh8RRS0rsckElVpg3G7SrNe8r8mbdLYV2Fq0Od7OcaAwm3MpKkwnyqQkrxRq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=IeN8f2L2; arc=none smtp.client-ip=173.37.86.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1728316622; x=1759852622;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GiJM5/3RB7kREr4++92FJZ3G6aQv+RCcdKcWV7SOVMk=;
-  b=rQ2qtdDHyrOfDpWi2gcjv13g/aLBmcVr6dDQ9OYEKNsoBNWqtzQWqTSr
-   +ndmZ3bTPv3FKZ673a+rXeWQFJiTb5HshPcGBjDXnjDPRR6/Xr5i+7ZDK
-   jPzmKoynjXpv7jaGDOcR04gzoLDHk52agtzubCh7gzf+iIZ6oMvTe0QwM
+  d=cisco.com; i=@cisco.com; l=249; q=dns/txt; s=iport;
+  t=1728316693; x=1729526293;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BoqOg2/3zHs1NXWmzV+CG2DI2MYPleJDLep1+J4Fons=;
+  b=IeN8f2L2YjsErn7mY1mMzckXC/PQ3WB1YhkNP/LKE1z00llcOssnfupa
+   as+r+QSs5a+RrjoWPz1C/vQKDOniGUoRj11+TOZfjd1ADjaRVWuR/mog1
+   6w8MfENIZ0wNUwOsFHGuJO24kCnc1huAX7BQdW1RTVJ0iCWapHYTVWClE
    s=;
+X-CSE-ConnectionGUID: eioXcUebSxqay6xPSMl9/Q==
+X-CSE-MsgGUID: jNpo82l/S3Of2YdDcLsUDw==
+X-IPAS-Result: =?us-ascii?q?A0A7AQCKAwRnl43/Ja1aHgEBCxIMggQLhBtClw+LcoxGh?=
+ =?us-ascii?q?V6Bfg8BAQEPRAQBAYNzgRQCihcCJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEFA?=
+ =?us-ascii?q?QEFAQEBAgEHBRQBAQEBAQEBATcFSYYIhlwBAQECATIBRgULUVaDGoJCIwIBr?=
+ =?us-ascii?q?XWCLIEB3jOBbBiBMIgxgQ2EBXCEdycbgUlEhH2FEIV3BIERkHeLaiWBIogli?=
+ =?us-ascii?q?CeIaUiBIQNZIQIRAVUTDQoLCQWJNYIDgSMpgWuBCoMLhSWBZwlgiEqBBy2BE?=
+ =?us-ascii?q?YEfOoICgTZKhUZHP4JLa045Ag0CN4IlgQiCVoVkQAMLGA1IESw1FBsGPm4Hs?=
+ =?us-ascii?q?hemY6B9hCKEb5xNGjODcgGmVy6HY5Blo0luhGaBZzqBW3AVgyNRGQ+OOsYPI?=
+ =?us-ascii?q?3ACBwsBAQMJhkiHQwEB?=
+IronPort-Data: A9a23:800wF6K4xazUqug/FE+Rh5UlxSXFcZb7ZxGr2PjKsXjdYENSgzEHy
+ 2FJXmqHbP+JM2f3c9x/PY20oEME78eAm4MwTAQd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
+ 63yUvGZcYZpCCWa/k79WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVrU0
+ T/Oi5eHYgP8g2Yrajt8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKqFIHvS3T
+ vr017qw+GXU5X8FUrtJRZ6iLyXm6paLVeS/oiI+t5qK23CulQRuukoPD8fwXG8M49m/c3+d/
+ /0W3XC4YV9B0qQhA43xWTEAe811FfUuFLMqvRFTvOTLp3AqfUcAzN1jDUYGNrAV8N1nGGhfq
+ +wgExUJP1e60rfeLLKTEoGAh+w5J8XteYdasXZ6wHSBUbAtQIvIROPB4towMDUY358VW62BI
+ ZBENHw2ME2ojx5nYj/7DLo5m+yoi2PybxVTqUmeouw85G27IAlZiuWzaoCEJo3XLSlTtkS+v
+ mWWpWC+OUo9OoauxRaO1mmRqvCayEsXX6pXTdVU7MVCn0aa7m8eEhsbUR28u/bRolG/XvpbK
+ koJ6m8xpLQ59ECsQZ/6RRLQiHuFvRdaRNdLD+Ag4gyXxYLQ4gCEFi4FSCJMbJots8pebTgr0
+ EKZt8nuCDds9aCOD3SQ6t+8rz+/PTYcN2IqfjIfQE0J7rHLpIA1kwKKTdt5FqOxpsP6FCu2w
+ D2QqiU6wbIJgqYj06S94ECCnDuwrZjFSQEd+AraRCSm4xl/aYrjYJangWU39t5aJ4qfC13Et
+ 38elo3GsKYFDIqGk2qGR+Bl8KyVC+itPTzbsVVSEpMa5y2k6iCzRbt15GA5HRI8WiobQgMFc
+ HM/qCsIu8UDZyPwMPIpC79dHfjG2kQJKDgcfqm8gi51SsEpLmevpXg2DWbJhjCFraTZufxmU
+ XttWZ33Vihy5GUO5GfeetrxJpdxl3BjlD+NH82gp/lluJLHDEOopX4+GAPmRogEAGms+W05L
+ /432xO29ihi
+IronPort-HdrOrdr: A9a23:LrCIna2a3k8Y7aoaJVt1XAqjBIkkLtp133Aq2lEZdPWaSKClfq
+ eV7ZAmPHDP5gr5NEtLpTnEAtjifZq+z+8R3WBuB9aftWDd0QPCEGgh1/qB/9SKIULDH4BmuJ
+ uIWpIOb+EYdWIbsS4/izPIaurJB7K8gcaVuds=
+X-Talos-CUID: 9a23:GC6Pamxt33wLkfIhPqwUBgUZG8cVeUDQxkzAOkapV3ZRc5iRGBiprfY=
+X-Talos-MUID: =?us-ascii?q?9a23=3Acq2sfw/rZSGPo3EB+kWqL9CQf8VO+6P+UkRKqs4?=
+ =?us-ascii?q?htZO1OQB7HyygoCviFw=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
 X-IronPort-AV: E=Sophos;i="6.11,184,1725321600"; 
-   d="scan'208";a="438881514"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 15:56:55 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:63359]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.198:2525] with esmtp (Farcaster)
- id dee9626c-3d64-4128-98b5-9eed2f937ae6; Mon, 7 Oct 2024 15:56:55 +0000 (UTC)
-X-Farcaster-Flow-ID: dee9626c-3d64-4128-98b5-9eed2f937ae6
-Received: from EX19D003UWC003.ant.amazon.com (10.13.138.173) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 7 Oct 2024 15:56:48 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D003UWC003.ant.amazon.com (10.13.138.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Mon, 7 Oct 2024 15:56:48 +0000
-Received: from email-imr-corp-prod-iad-all-1a-6ea42a62.us-east-1.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Mon, 7 Oct 2024 15:56:48 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1a-6ea42a62.us-east-1.amazon.com (Postfix) with ESMTPS id 4CFBD4027E;
-	Mon,  7 Oct 2024 15:56:43 +0000 (UTC)
-Message-ID: <e8f55fef-1821-408e-88ed-b25200ef66c9@amazon.co.uk>
-Date: Mon, 7 Oct 2024 16:56:42 +0100
+   d="scan'208";a="256229495"
+Received: from rcdn-l-core-04.cisco.com ([173.37.255.141])
+  by rcdn-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 07 Oct 2024 15:57:05 +0000
+Received: from sjc-ads-3421.cisco.com (sjc-ads-3421.cisco.com [171.68.249.119])
+	by rcdn-l-core-04.cisco.com (Postfix) with ESMTP id 2A621180001B4;
+	Mon,  7 Oct 2024 15:57:03 +0000 (GMT)
+From: Oleksandr Ocheretnyi <oocheret@cisco.com>
+To: mika.westerberg@linux.intel.com
+Cc: linux@roeck-us.net,
+	jdelvare@suse.de,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	wim@linux-watchdog.org,
+	wsa@kernel.org,
+	xe-linux-external@cisco.com
+Subject: [PATCH v3] iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit() call
+Date: Mon,  7 Oct 2024 08:57:02 -0700
+Message-Id: <20241007155702.3676667-1-oocheret@cisco.com>
+X-Mailer: git-send-email 2.35.6
+In-Reply-To: <05dba51b-7c3c-4455-9c97-09777e885fac@roeck-us.net>
+References: <05dba51b-7c3c-4455-9c97-09777e885fac@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-To: Ackerley Tng <ackerleytng@google.com>, Elliot Berman
-	<quic_eberman@quicinc.com>
-CC: <tabba@google.com>, <jgg@nvidia.com>, <peterx@redhat.com>,
-	<david@redhat.com>, <rientjes@google.com>, <fvdl@google.com>,
-	<jthoughton@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<zhiquan1.li@intel.com>, <fan.du@intel.com>, <jun.miao@intel.com>,
-	<isaku.yamahata@intel.com>, <muchun.song@linux.dev>,
-	<mike.kravetz@oracle.com>, <erdemaktas@google.com>, <vannapurve@google.com>,
-	<qperret@google.com>, <jhubbard@nvidia.com>, <willy@infradead.org>,
-	<shuah@kernel.org>, <brauner@kernel.org>, <bfoster@redhat.com>,
-	<kent.overstreet@linux.dev>, <pvorel@suse.cz>, <rppt@kernel.org>,
-	<richard.weiyang@gmail.com>, <anup@brainfault.org>, <haibo1.xu@intel.com>,
-	<ajones@ventanamicro.com>, <vkuznets@redhat.com>,
-	<maciej.wieczor-retman@intel.com>, <pgonda@google.com>,
-	<oliver.upton@linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-fsdevel@kvack.org>, James Gowans
-	<jgowans@amazon.com>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "Manwaring,
- Derek" <derekmn@amazon.com>
-References: <diqzzfnkswiv.fsf@ackerleytng-ctop.c.googlers.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <diqzzfnkswiv.fsf@ackerleytng-ctop.c.googlers.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 171.68.249.119, sjc-ads-3421.cisco.com
+X-Outbound-Node: rcdn-l-core-04.cisco.com
 
-Hi Ackerley,
+Hello Mika,
 
-On Thu, 2024-10-03 at 22:32 +0100, Ackerley Tng wrote:
-> Elliot Berman <quic_eberman@quicinc.com> writes:
-> 
->> On Tue, Sep 10, 2024 at 11:44:01PM +0000, Ackerley Tng wrote:
->>> Since guest_memfd now supports mmap(), folios have to be prepared
->>> before they are faulted into userspace.
->>>
->>> When memory attributes are switched between shared and private, the
->>> up-to-date flags will be cleared.
->>>
->>> Use the folio's up-to-date flag to indicate being ready for the guest
->>> usage and can be used to mark whether the folio is ready for shared OR
->>> private use.
->>
->> Clearing the up-to-date flag also means that the page gets zero'd out
->> whenever it transitions between shared and private (either direction).
->> pKVM (Android) hypervisor policy can allow in-place conversion between
->> shared/private.
->>
->> I believe the important thing is that sev_gmem_prepare() needs to be
->> called prior to giving page to guest. In my series, I had made a
->> ->prepare_inaccessible() callback where KVM would only do this part.
->> When transitioning to inaccessible, only that callback would be made,
->> besides the bookkeeping. The folio zeroing happens once when allocating
->> the folio if the folio is initially accessible (faultable).
->>
->> From x86 CoCo perspective, I think it also makes sense to not zero
->> the folio when changing faultiblity from private to shared:
->>  - If guest is sharing some data with host, you've wiped the data and
->>    guest has to copy again.
->>  - Or, if SEV/TDX enforces that page is zero'd between transitions,
->>    Linux has duplicated the work that trusted entity has already done.
->>
->> Fuad and I can help add some details for the conversion. Hopefully we
->> can figure out some of the plan at plumbers this week.
-> 
-> Zeroing the page prevents leaking host data (see function docstring for
-> kvm_gmem_prepare_folio() introduced in [1]), so we definitely don't want
-> to introduce a kernel data leak bug here.
-> 
-> In-place conversion does require preservation of data, so for
-> conversions, shall we zero depending on VM type?
-> 
-> + Gunyah: don't zero since ->prepare_inaccessible() is a no-op
-> + pKVM: don't zero
-> + TDX: don't zero
-> + SEV: AMD Architecture Programmers Manual 7.10.6 says there is no
->   automatic encryption and implies no zeroing, hence perform zeroing
-> + KVM_X86_SW_PROTECTED_VM: Doesn't have a formal definition so I guess
->   we could require zeroing on transition?
+> I suggest adding some #define for the magical number 8 so that it is
+> easier for anyone looking at this driver to figure out what it is doing.
 
-Maybe for KVM_X86_SW_PROTECTED_VM we could make zero-ing configurable
-via some CREATE_GUEST_MEMFD flag, instead of forcing one specific
-behavior. 
+Are the changes with #define NMI_NOW bit fine for you?
 
-For the "non-CoCo with direct map entries removed" VMs that we at AWS
-are going for, we'd like a VM type with host-controlled in-place
-conversions which doesn't zero on transitions, so if
-KVM_X86_SW_PROTECTED_VM ends up zeroing, we'd need to add another new VM
-type for that.
-
-Somewhat related sidenote: For VMs that allow inplace conversions and do
-not zero, we do not need to zap the stage-2 mappings on memory attribute
-changes, right?
-
-> This way, the uptodate flag means that it has been prepared (as in
-> sev_gmem_prepare()), and zeroed if required by VM type.
-> 
-> Regarding flushing the dcache/tlb in your other question [2], if we
-> don't use folio_zero_user(), can we relying on unmapping within core-mm
-> to flush after shared use, and unmapping within KVM To flush after
-> private use?
-> 
-> Or should flush_dcache_folio() be explicitly called on kvm_gmem_fault()?
-> 
-> clear_highpage(), used in the non-hugetlb (original) path, doesn't flush
-> the dcache. Was that intended?
-> 
->> Thanks,
->> Elliot
->>
->>>
->>> <snip>
-> 
-> [1] https://lore.kernel.org/all/20240726185157.72821-8-pbonzini@redhat.com/
-> [2] https://lore.kernel.org/all/diqz34ldszp3.fsf@ackerleytng-ctop.c.googlers.com/
-
-Best, 
-Patrick
+Best regards,
+Oleksandr
 
