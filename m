@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-352843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-352844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D3399251C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA3A99251E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 08:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C4E0B21A03
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B41D5B22209
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2024 06:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E15D15CD58;
-	Mon,  7 Oct 2024 06:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0AC15A862;
+	Mon,  7 Oct 2024 06:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcFsA7fy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxRzDPye"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AFE800;
-	Mon,  7 Oct 2024 06:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48716800;
+	Mon,  7 Oct 2024 06:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728283977; cv=none; b=hI5lv6Y6lgBrOK7aq/RsDe20KI52hWve/lRXLYxek7LzmIHhmWfBHACHQ/qmSWKW74wa4ND6nlmDfpv+X3YHH2cD1VYkw1N58HM0PcXvB1QFolTJSukxtvlDrqFyYJYG1IVVqx/pHnVx+w8oPkZuJMMLRPYLRHJ05dfqgJVD4nE=
+	t=1728283995; cv=none; b=s8pbnF0n5J9Gux8oyGk3LrykmNY5usqlSW+0tk+CP404yzvKsDoVbnXnATF//eVoJYetHGgPSEt/0h/uMmj0MhgFmJurtYM6LJVt39zy7wTwxV1S7zkRbuftr/qZyNVM9WvlHlfJvVo6qXennSTjz+2Zygdk4oWz0w6T0Ia8A8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728283977; c=relaxed/simple;
-	bh=YE/fwUsofTUlM2zFpCR08q2JU6CrcP0FnVxAVwLIhFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlT5bG3uA+/CztblIxLB8ck73rzoeEJXELYEJRwzT2y7qUqo4PvN05la0eAqmp8e82Ms0N2kKYhPmxekt/sNvSYCaQvuCDslYJ8c/5tcsgSVs5gF+KMpsVWAQTi7eYVFX6pgv8lV7mPbPIhNSRgGsf8aNIrcl2cj8m6sIUVwnqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcFsA7fy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F6DC4CEC6;
-	Mon,  7 Oct 2024 06:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728283977;
-	bh=YE/fwUsofTUlM2zFpCR08q2JU6CrcP0FnVxAVwLIhFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WcFsA7fy9qBFJGUBFM/FMs/bdGvoFUnSFk0f9f1S6N+a2juIwwi4wdshTtb/ReBLI
-	 0Z+zV53gLCqz+cGgAIZ1LtcH6Y5oBraY9VsySO5+bWS51J+S+4Cf/jE+3Es+qeoGZz
-	 PPm6vj2Efqhy15Pe+In4HDXcDb7X3s43mMQwsfsQJZcEtXO6U5l5dGperiZy1qU3Il
-	 9ZXx7m5T+QRRrAe+Qnt6EfJqIzGJnYSyUueVkW9Npq3n+4vGlo6ctEU1tXjnI1Apma
-	 7nsbG8QYvgj1PAWUOfy4Vijus/OO3samys4VYeW+YYBOHX4OGS6QduUd8q3vbzOo2i
-	 aWz3IUlKvarGQ==
-Date: Mon, 7 Oct 2024 08:52:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
-Message-ID: <jqiu42r5gegl7vf3tghoudwdliafv3jsvdscmbxxjonqzjxe2f@ogzdgyifnbx7>
-References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
- <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1728283995; c=relaxed/simple;
+	bh=MhoIs3jpZky22qoMXlfwHS5b1TYGEYKhWGXzdqB4OTE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Prj4QoqzOnUSBaIsj6Sx+NS4UCeOle/5hZwnsU2auMZ4poP5YoNAxIPlEy4r9oTDhW0bXUo1Ptj16KAd10FUqxcurCfUbbFlCGPiCwbnmHs5AEgdCJcMD0uqZm8IRYcmI1mqlzqgX3aR5tuGBcRur4lAZZs4WPfLh/n7zYADHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxRzDPye; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-287df15714cso676494fac.2;
+        Sun, 06 Oct 2024 23:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728283993; x=1728888793; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ceeahQe9wcl46lPcO7fUS/hyZJL8m6PhkmRtZJytXcI=;
+        b=PxRzDPyeDu/hzK/fqr3bsUz+H99wpkJs71bhs0+cfVWqekWFrV18NONWC8x8lD3hFf
+         QW6qwrzgwYB6wlMfdUyN/w8SD2ndjQ5swClZlOGLpmL4VkrS068rUhCQCCmd3D1tVc8H
+         p3yFd2kDh+OLMu8AxQaDAz6gcNsjW0wzlVLY7itZJuNQp2k0hNedG2k3PFjEnL1GTZf7
+         PPcgL5j25gZVNjQTx+uivcjnhdro5V9Wz+VCYiL20VvD2j0kb9SznYOc1OldKNBWu3xy
+         uHw9nt1v1KpWygsJUaDDdY7FIKl4QPiNfiBqu9R4OBiOpot50C0tv4ZGB5j9da5nH9q2
+         /XYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728283993; x=1728888793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ceeahQe9wcl46lPcO7fUS/hyZJL8m6PhkmRtZJytXcI=;
+        b=e1+lkI+9GlGg9JpY8I2cQX0lZnjfWxgK7Z3pwvfXT8GYEEoHv0lPTslRw5/fxury6e
+         Ht97XgPsZbzVG1jDn7W/Md+DNr5TNTSz8Vdbq5V7csOmfHMce3kvYfcVoVzSp19bre7t
+         DW1SMeDKLaNA13qKKmgI1UxBqOZhkOMIrPHO4E5ziThkUSEePBQD9JQBPEeE89YR9KkP
+         SPLBYkRkzp212iBr0XhMjIagrTOxzyhE8vXuG2rem45+IAGmTO6RY4zfMsMWJYa8wgM/
+         XKofL/cb/kgsjo6xY8Cop5NvD7+4pswOMiFOWtt5GIp1MiUOBsluKit8xWYNITbR1T65
+         MhtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2zpZfE6Vni54kdlAYv+K+nzLHqGOifc2GgFzOysQUOakr/75NWAYPaIFu2doc2p1hR9r5slnhWJd8hdA=@vger.kernel.org, AJvYcCXnpLt1YIRvbpCeBsnLbpZowWc3OSt85rQXyjp4Q7KcWR72VL2hovm8HTs1xzBmycizRYV8CsrA@vger.kernel.org
+X-Gm-Message-State: AOJu0YysxZjAaM7lXefGM1LfAa5Ui5/gd+pfcSRHlITPSaicN9zXdpHO
+	+QxnMDXE9opOVkPmihU4xcrmK7powPjQQQCiiBwBe5p7wSul4eEn
+X-Google-Smtp-Source: AGHT+IEpvg/fv2oPovXfNcR+vR0vuvo5MLzuioMarvk5onqXjaJ/QULoZRprNjdBZBm6qHzZvky/qg==
+X-Received: by 2002:a05:6870:168a:b0:287:7695:6a87 with SMTP id 586e51a60fabf-287c1d38d48mr6445913fac.10.1728283993195;
+        Sun, 06 Oct 2024 23:53:13 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c376cfsm3542555a12.61.2024.10.06.23.53.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 23:53:12 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: akpm@linux-foundation.org
+Cc: usama.anjum@collabora.com,
+	peterx@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] mm: remove the newlines, which are added for unknown reasons and interfere with bug analysis
+Date: Mon,  7 Oct 2024 15:53:07 +0900
+Message-Id: <20241007065307.4158-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
-> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
-> controller supports
->  * Serial/Dual/Quad data with
->  * PIO and DMA data read/write operation
->  * Configurable flash access timing
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->  .../bindings/spi/realtek,rtl9300-snand.yaml   | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
-> new file mode 100644
-> index 000000000000..c66aea24cb35
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/realtek,rtl9300-snand.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
-> +
-> +maintainers:
-> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
-> +
-> +description:
-> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It supports
-> +  typical SPI-NAND page cache operations in single, dual or quad IO mode.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - realtek,rtl9301-snand
-> +          - realtek,rtl9302b-snand
-> +          - realtek,rtl9302c-snand
-> +          - realtek,rtl9303-snand
-> +      - const: realtek,rtl9300-snand
-> +
-> +  reg:
-> +    items:
-> +      - description: SPI NAND controller registers address and size
-> +
+Looking at the source code links for mm/memory.c in the sample reports 
+in the syzbot report links [1].
 
-Also: why no clocks? Binding is supposed to be complete. If it cannot,
-you should explain it in the commit msg.
+it looks like the line numbers are designated as lines that have been 
+increased by 1. This may seem like a problem with syzkaller or the 
+addr2line program that assigns the line numbers, but there is no problem 
+with either of them.
 
-Best regards,
-Krzysztof
+In the previous commit d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC"), 
+when modifying mm/memory.c, an unknown line break is added to the very first 
+line of the file. However, the git.kernel.org site displays the source code 
+with the added line break removed, so even though addr2line has assigned 
+the correct line number, it looks like the line number has increased by 1.
 
+This may seem like a trivial thing, but I think it would be appropriate 
+to remove all the newline characters added to the upstream and stable 
+versions, as they are not only incorrect in terms of code style but also 
+hinder bug analysis.
+
+[1]
+
+https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
+https://syzkaller.appspot.com/bug?extid=fa43f1b63e3aa6f66329
+https://syzkaller.appspot.com/bug?extid=890a1df7294175947697
+
+Fixes: d61ea1cb0095 ("userfaultfd: UFFD_FEATURE_WP_ASYNC")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ mm/memory.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 2366578015ad..7dffe8749014 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1,4 +1,3 @@
+-
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  *  linux/mm/memory.c
+--
 
