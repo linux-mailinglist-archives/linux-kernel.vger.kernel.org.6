@@ -1,146 +1,112 @@
-Return-Path: <linux-kernel+bounces-355125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A459E9947AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:50:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA9E99479C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6161F22732
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED1C1C23C76
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89481DED4C;
-	Tue,  8 Oct 2024 11:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368391D935C;
+	Tue,  8 Oct 2024 11:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ppaYkq35"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OBm/oqIp"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790A61DE885;
-	Tue,  8 Oct 2024 11:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAD04C97;
+	Tue,  8 Oct 2024 11:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388203; cv=none; b=kipxpbBclrxqLt4oMChpz2sFwt6TXtnHZ2aKpOOBjekyEltfp3fCBgaOoAeAn9ut0hH+2ggTRbowv0qaBd1fSmAJPy6blfGW/oEEvaDdyGx3p+oSJOOhU/cDMuTb7fkoGSbRx4iYmH8j1fWLvlDrExvMbBk7jlFXCQSK0XfUFzU=
+	t=1728388041; cv=none; b=gUTFthd/RM1GVyDjJb9fKLdVAUTVohgGMZrCq2f2XYKwATjLAcl7N8UJP3ym9Yh4qGTbAgjleVhGw4rkbKK+Bj+pPvmSLMSVMqZFIwYyLe7SKxrs50N/G1MkzSl8uPlnIN210OkKHkvfcE3ZJQofKMGRKtuBCGVDSF+N1OXfohI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388203; c=relaxed/simple;
-	bh=pZcmBcG9FLKU1llHOrmXLZfBhX2yPux5vJpR9zTp4E4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=HdVAMWUYOPPwptk6NSrLcimh9CvUSXixNxLQ9OwKRP2h60IJZbz0aCkAuUDu7kWSJzORiQIU2yCPUTt7Wzb9th55ygnRWxrAM2LmZExbVbpl2zWj5/MOl8T/e3MPeIFRvndAv5VexO6DIhV4NThjJkVuPi222NNsJPOYrWJN1v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ppaYkq35; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4989AUt9017178;
-	Tue, 8 Oct 2024 13:49:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Mnz/aGX3LHgwwUDqxrcB+OMCoex8kw2JOndT63O5sNk=; b=ppaYkq35pSVCCZOO
-	ZX70CPTh+ekXk0cfAtiS5mxvyIsA8GOFSiYribiB+H1/5o7UGh+RuFfleUFljQ1h
-	Q0BfGYJ5rgXjEV0NYRZocHzrrM2UneS3Xd0ZjH6ntuUas79awc5VeCIXADx7ne7m
-	vzJd90ROddaj66ba72bMexPLeEtzauPkpug3Tf7FHH3vK4r+DYAiaHPCqCR6CAhu
-	l7ZUH5qyFGyWnAiZ2GSD5MjEyFMGPnUmsGb83Gr1u2lYXuHnr4ucoCz9xfH3z6UR
-	3gAUQMezlzvf/wqtl77AKxGbYJGm/3EErneUBoGWFasEOF+b8PuXooeiWYQtRpBE
-	PHphbw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 422xv7658w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 13:49:55 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A7D734004F;
-	Tue,  8 Oct 2024 13:49:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EEED52649E9;
-	Tue,  8 Oct 2024 13:46:37 +0200 (CEST)
-Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 8 Oct
- 2024 13:46:37 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-Date: Tue, 8 Oct 2024 13:46:08 +0200
-Subject: [PATCH 4/4] media: i2c: st-mipid02: remove parallel mbus format on
- sink pad
+	s=arc-20240116; t=1728388041; c=relaxed/simple;
+	bh=/y0f7YzkVyLWlST+5tehkw0EW7lI2XHxBGCE/ESVb40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chVjCevPpO5XEiesey1plN+Fz4KBFvwBHSxRnxNdcvSPlv1LTy0+jk0V8hZTq5C70mtijw1t1KHuoSc0Rlvf62+XiYltzz0AKHkG4ssURIv+ZEs6jzx78JJHSy66gbENT2en6dD5ELezucKW7729zRW8VrnkO+au/xlurmtzWoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OBm/oqIp; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bHJknnUwvn2irDVg9N3GrQUk2xrtJqkLpnVNrWGUTUg=; b=OBm/oqIpDPEwYJzGEEYmGHodos
+	4nb5iEN+li/o1811E+zuz4e13n8B5l0kVy64gH+itqqJ+6MMgIxz67I3vuppMSv/TLQkvUhtXu8f8
+	JdDJr2TK5JBVfDowKunhgzPeLGiIVyCzIqqfPnqCiw13Muj5k4NIF8el6/OETD8nLFgKJAWYJ1z9k
+	PlCw8baNajsnF9wvz2Fn32B4W5cgoJXG/oohqQuCvct/gqH2VMmy4CKIrwazuFtuIqNGB+ofJmlvv
+	ORv3ADQUSxQI9VmtfeU+LYQvN1FunfJN1Wc0TfQSv3lVbOzp0ObKeesgHdcQHjZvaWCNfrmcLir7P
+	d6g0NIig==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy8g6-00000005ggR-3zEE;
+	Tue, 08 Oct 2024 11:46:58 +0000
+Date: Tue, 8 Oct 2024 04:46:58 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Julian Vetter <jvetter@kalrayinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-sound@vger.kernel.org,
+	Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: Re: [PATCH v8 01/14] Consolidate IO memcpy/memset into iomap_copy.c
+Message-ID: <ZwUbsviaqFUtjKEQ@infradead.org>
+References: <20241008075023.3052370-1-jvetter@kalrayinc.com>
+ <20241008075023.3052370-2-jvetter@kalrayinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241008-st-mipid02-streams-v1-4-775c2d25cef9@foss.st.com>
-References: <20241008-st-mipid02-streams-v1-0-775c2d25cef9@foss.st.com>
-In-Reply-To: <20241008-st-mipid02-streams-v1-0-775c2d25cef9@foss.st.com>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-        Sylvain Petinot
-	<sylvain.petinot@foss.st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Alain
- Volmat <alain.volmat@foss.st.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008075023.3052370-2-jvetter@kalrayinc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-2X.. mbus formats are related to parallel interface and
-as such should not be acceptable on the sink pad of the bridge.
-Only keep their csi counterpart in 1X..
+On Tue, Oct 08, 2024 at 09:50:09AM +0200, Julian Vetter wrote:
+>  lib/iomap_copy.c         | 127 +++++++++++++++++++++++++++++++++++++++
 
-Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
----
- drivers/media/i2c/st-mipid02.c | 15 ---------------
- 1 file changed, 15 deletions(-)
-
-diff --git a/drivers/media/i2c/st-mipid02.c b/drivers/media/i2c/st-mipid02.c
-index 635b8a433d63..f08db3cfe076 100644
---- a/drivers/media/i2c/st-mipid02.c
-+++ b/drivers/media/i2c/st-mipid02.c
-@@ -68,9 +68,6 @@ static const u32 mipid02_supported_fmt_codes[] = {
- 	MEDIA_BUS_FMT_YUYV8_1X16, MEDIA_BUS_FMT_YVYU8_1X16,
- 	MEDIA_BUS_FMT_UYVY8_1X16, MEDIA_BUS_FMT_VYUY8_1X16,
- 	MEDIA_BUS_FMT_RGB565_1X16, MEDIA_BUS_FMT_BGR888_1X24,
--	MEDIA_BUS_FMT_RGB565_2X8_LE, MEDIA_BUS_FMT_RGB565_2X8_BE,
--	MEDIA_BUS_FMT_YUYV8_2X8, MEDIA_BUS_FMT_YVYU8_2X8,
--	MEDIA_BUS_FMT_UYVY8_2X8, MEDIA_BUS_FMT_VYUY8_2X8,
- 	MEDIA_BUS_FMT_Y8_1X8, MEDIA_BUS_FMT_JPEG_1X8
- };
- 
-@@ -140,12 +137,6 @@ static int bpp_from_code(__u32 code)
- 	case MEDIA_BUS_FMT_UYVY8_1X16:
- 	case MEDIA_BUS_FMT_VYUY8_1X16:
- 	case MEDIA_BUS_FMT_RGB565_1X16:
--	case MEDIA_BUS_FMT_YUYV8_2X8:
--	case MEDIA_BUS_FMT_YVYU8_2X8:
--	case MEDIA_BUS_FMT_UYVY8_2X8:
--	case MEDIA_BUS_FMT_VYUY8_2X8:
--	case MEDIA_BUS_FMT_RGB565_2X8_LE:
--	case MEDIA_BUS_FMT_RGB565_2X8_BE:
- 		return 16;
- 	case MEDIA_BUS_FMT_BGR888_1X24:
- 		return 24;
-@@ -177,16 +168,10 @@ static u8 data_type_from_code(__u32 code)
- 	case MEDIA_BUS_FMT_YVYU8_1X16:
- 	case MEDIA_BUS_FMT_UYVY8_1X16:
- 	case MEDIA_BUS_FMT_VYUY8_1X16:
--	case MEDIA_BUS_FMT_YUYV8_2X8:
--	case MEDIA_BUS_FMT_YVYU8_2X8:
--	case MEDIA_BUS_FMT_UYVY8_2X8:
--	case MEDIA_BUS_FMT_VYUY8_2X8:
- 		return MIPI_CSI2_DT_YUV422_8B;
- 	case MEDIA_BUS_FMT_BGR888_1X24:
- 		return MIPI_CSI2_DT_RGB888;
- 	case MEDIA_BUS_FMT_RGB565_1X16:
--	case MEDIA_BUS_FMT_RGB565_2X8_LE:
--	case MEDIA_BUS_FMT_RGB565_2X8_BE:
- 		return MIPI_CSI2_DT_RGB565;
- 	default:
- 		return 0;
-
--- 
-2.25.1
+On top of the previous comments:  this really should be iomem_copy.c
+instead.
 
 
