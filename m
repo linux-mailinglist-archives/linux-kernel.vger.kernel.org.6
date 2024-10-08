@@ -1,87 +1,54 @@
-Return-Path: <linux-kernel+bounces-355596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DF2995482
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6010299547F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528FA1C23FAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061421F26519
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570021E0DEB;
-	Tue,  8 Oct 2024 16:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF971E0DD6;
+	Tue,  8 Oct 2024 16:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSOUAmHI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8kqBqXo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F8E1E0DBF;
-	Tue,  8 Oct 2024 16:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C191DF745;
+	Tue,  8 Oct 2024 16:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728405368; cv=none; b=gv8EY77xY7nCqEN5ghFkV1YZ+p01n3t6qR5aOEGdE9sJl8dt1bpqrrF/3OqOyOL8YNJ23Thtvh0edonuhGZNQq+JRcfmj3nX0CWYyh4H7nBUhQVlEBX4lTR2npF3GNv/Vl0a+3IMuFWhFxmeFv85nSnbXDwW8vKQXtW/KkDo0Hk=
+	t=1728405321; cv=none; b=MhpJC+ISVfwljCuXL+b8TY4apBwKlwaTvYn2RXtfWUMglAr8dqVaGgVE9BGEd1SgMNwQvnIghhx847eEvappnru816h5VWgGD+RBxq0b65Qg6lZv3BzIVbPq5FeVd/zJwvSN/0qoRUurKoFID1hwXzYtlqHhchKsmUBdI2yTdns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728405368; c=relaxed/simple;
-	bh=oZcQukqGx5bUQm6yXcjn2BsYy0HPcJMlVrzSQquwZDI=;
+	s=arc-20240116; t=1728405321; c=relaxed/simple;
+	bh=d17yIPVx8tvq68r+q/1NE1q12eUk96uCe++BFPLzUM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3tztvLn2XqcXukVM/CXEBVhQeG1ocfMindx/BgUsJ5F3sf7flxdiYb0OPl6kpSF46rspwH6fE8H8ApyQBI+Y1WfnWExEOdjF5mvXEysW7yberwYBziSeeMTd059GvjLmQU/bbmgYGRKAvhWDODmbq8Xv+wsFOxOz9wgu3qKh6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSOUAmHI; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728405367; x=1759941367;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oZcQukqGx5bUQm6yXcjn2BsYy0HPcJMlVrzSQquwZDI=;
-  b=RSOUAmHI5nTeUeKt8OmsF0cfS/UEx1lgozrl6Vo7DaLOfSiR1B7wLuM6
-   CruhzKiGCGgLHXdB5ctYOvTSrlTVhC4EZRPcaqwXdjYJzd4zkSFS/0s26
-   ZQWJY5FOqd4723l0eaCcHJICQMWKwpWz9zx35zpdnwHA40bm5D0fHBccv
-   SjUAAWzYAVKy9sIUteA7OWx3FBxC7pQNxE4zbJ+xkIzMD3CXyxbqKQMgA
-   Tp/rf+QEL9hJngZcVdFBdQPVU45VzLAjfUVBho0TIkc6BUVll71vKiiYM
-   Ng5nLAqaNbrvRWcfZQtMG/GgBzU/fhukuJSfPZyqmWHW3nbIrvERnsNId
-   A==;
-X-CSE-ConnectionGUID: c9IifAZMQMGDZFnEsq3Dmg==
-X-CSE-MsgGUID: T/e09TbvRXqWeHJlnXjOAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27752786"
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="27752786"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:35:08 -0700
-X-CSE-ConnectionGUID: exbY07Q4S4ywNqgKJVohvg==
-X-CSE-MsgGUID: TeIMBjbkQ5SrMCPO3QSHbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="75998570"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Oct 2024 09:35:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 98EB220F; Tue, 08 Oct 2024 19:35:02 +0300 (EEST)
-Date: Tue, 8 Oct 2024 19:35:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v4 01/28] test printk: Add very basic struct resource
- tests
-Message-ID: <ZwVfNpg3yuLx3W6F@black.fi.intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv9K4g18QAjkTurvNsdCwr+dly5p7fEletTYek41cMAJuogG4mo7ESRMCxa4rpnuVW++51SbWKttTfuexht8LdcADdW45uT5Z6ctxvBazwD63zDLCCRepILyO69H3eXe2xsHmPFWWqEbRGnGtyW3fQTeUtc5BYyTh/uAyJlNs80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8kqBqXo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2836BC4CEC7;
+	Tue,  8 Oct 2024 16:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728405320;
+	bh=d17yIPVx8tvq68r+q/1NE1q12eUk96uCe++BFPLzUM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8kqBqXoqKpCHP94b46rBRry/USElkcI8Fm11nx/R6eQL5kem4JaiVg45QD041Him
+	 ebcIMOQDHWDLbnH5N0zlvBcyr5ywtaVuXb5VEhUC7viZUjO+gf3wX8s+yx/OtXWTVn
+	 IT/HvB9UMfzEbCFY5eeug3VkZGJpuYOARN9UpKp/GIWSgSZtSgKcYsbndT9toQ/aME
+	 tvnw/57/vwLet3hWP7X6m2k12o+w7OAjGO+NHgENbdVtWv6DF4ccK8PI0Zn4Sidttd
+	 9BDIkdkh9vCc8vtETpjsgRuUd0sLCy5L3slfa4WzGKakR0RXvqexIKBhntvBCBRN8V
+	 Byd1xcTQGcxEg==
+Date: Tue, 8 Oct 2024 17:35:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: linux@treblig.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] caif: Remove unused cfsrvl_getphyid
+Message-ID: <20241008163517.GB99782@kernel.org>
+References: <20241007004456.149899-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,22 +57,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241007004456.149899-1-linux@treblig.org>
 
-On Mon, Oct 07, 2024 at 06:16:07PM -0500, Ira Weiny wrote:
-> The printk tests for struct resource were stubbed out.  struct range
-> printing will leverage the struct resource implementation.
+On Mon, Oct 07, 2024 at 01:44:56AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> To prevent regression add some basic sanity tests for struct resource.
+> cfsrvl_getphyid() has been unused since 2011's commit
+> f36214408470 ("caif: Use RCU and lists in cfcnfg.c for managing caif link layers")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Good we start having them!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
