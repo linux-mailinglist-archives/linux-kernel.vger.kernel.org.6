@@ -1,121 +1,118 @@
-Return-Path: <linux-kernel+bounces-355950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9859959C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 168A49959C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92375B2402D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625EDB22E5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A499218D63;
-	Tue,  8 Oct 2024 22:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34370215033;
+	Tue,  8 Oct 2024 22:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPVx3ZA/"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FvTdkP+M"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7895F2185A4;
-	Tue,  8 Oct 2024 22:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9D4213EE2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 22:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728424911; cv=none; b=P/FU/Ui7I4vDw1JwIMqJPlLbJ6cbAmNRsOVs6FmYWWgPQW9cq8PGrYZCXZBKYqE1CggkLV9aQWbkieMTwCobOXESa1OY3WvS7TpneQa1GNO7Y8pCm3n3BIgi74yqLCt5Q7cTYTiOF3pzjQrO258F9pVsdrkDPNz0XqgFrRRTQPk=
+	t=1728424992; cv=none; b=SEIn/huJhzPdVeEbshacPJNiGODvoNL457UtzXBTvK6Gka36cnVHnRaUr5/iN1iHx11NgPofJ6cMWbPGSSjt1Dt0urmuT16kaGXuK6EIPyh5C7bs+ZNc7kVUZ//sfgRgxak7mvkQkxZwTT4RZnoVSmVIjRuj9h1Ljxp+3M2CUfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728424911; c=relaxed/simple;
-	bh=HxlKc/Ygqvx8mvscuPoL7nSKaG2WOPrulhDeOr5LOKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VLfs9wRG2iK28edQmsw+bsz9eiz3LvnjKrynZlupE0LPwpL+QjY3d0ftEwtFystlm3Q3lMLvuzSEiksfC/OuSV65zhnDyQFqHV6DFIvGf0FDTtNerltmjYmicomHWGRThgOUafCCprQCJIEZzDxFXE4iLcc3rljE5XKCUWRwp2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPVx3ZA/; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37ce8458ae3so5503591f8f.1;
-        Tue, 08 Oct 2024 15:01:49 -0700 (PDT)
+	s=arc-20240116; t=1728424992; c=relaxed/simple;
+	bh=BXAmuJ7ILq+rT+k8LO3lE0/nVu01ECozpjquJa006AM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CVReZ5DTXyxmqgFWx3FXBSkAyYfGeAYKM6A8ijuD9OTRx2VTw6NkrfcjzlGfpkUHOAr+QHZZlx0SemGWNTWPilHVzAkk00CianmyrBPqyEqploD+gpklkjhv1utkp0FDs44v6FBjLoPP9JCkRaOQgXUC2pm+by240WDl93BSSE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FvTdkP+M; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82cdb749598so260415039f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 15:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728424908; x=1729029708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9iT4t6likmZ6EV867VVWYvGZ/+8qv062JeJ0/JhHlhs=;
-        b=nPVx3ZA/kZkEjsHXqz6zmC52X4eB6pH9pQSQts1TDN1SigluJvg5Pk6JTwSaujl7Ld
-         XB9uZ4+XKqzCfgFve1NP66Cr4MzZ5vTurrEFFS/jpOR+iKR6WGBJJAIziSifXoB8Gws8
-         YjpaIsYqH7Jgy8C/0LsoxHRl0T3KmwLRXn9ulR7vXcJO3rW0YLm6YxSngosSiU64Ik9g
-         2q16lNllkDp9jf9CDuapeRDAHKW5mrVIEF+odgxjBn6ro91ah8j7+IBufr+t7gfev3j/
-         G2E1YrL6OpKX1FAhqNZz6IuRUco5Bao4/AvNGFAz8xuMRzR+UvN5rVVo7w9QoBiFEuUu
-         icvw==
+        d=linuxfoundation.org; s=google; t=1728424990; x=1729029790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8k/h1zc1if6v/PtO4/Z0OMrVugcpBclAQ9weFD2DFTs=;
+        b=FvTdkP+MnPJQYu87Gkf3KG7l+uMDDNd3Xz/q1cunLFadjCr5ckCZrAeCoTA9l+d1bs
+         p93dn09mo1Bpf9xB+pwBWoR/7helGIDcHFoq9/VrbbR3S7uC6hkEnyqogV2qvjYCKBft
+         3/G1VAEIVC1lDCQe8zMKr08TVAB64NULVpDFI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728424908; x=1729029708;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9iT4t6likmZ6EV867VVWYvGZ/+8qv062JeJ0/JhHlhs=;
-        b=ZAZRebO4r8EOsr15+YzLYDW2YEKXW5hx5CE2IFY2MPEPtvt2cRjgcqVQROJiL0CPvX
-         5GgrTUL2q9TMYJLkgJqqfCuFv/hv3vY4+iY5ATNERV1pvgpZr1wk9sEAVMYXU8MbbIMI
-         R+aNYtKl/lQa4+E3b3glrx+v7onAmZOW56Pn/bqPME/IN7Li0VgCRbv8KgYaknzrUJwj
-         QzG07HFUmTvAYsgFqRxKae2+jAuowcBXFP9jNOCnbGyXAF7xuIWAioq6/LLQR0iczJpS
-         VA4PFkD0onregFqUQMwzno5scfI+L/zthvYvAFtNZJjSZ5tEw07C2sTebN3Nrgv/NbN2
-         U9tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0wkrBvQbYO6hCWel9hfBP198YjhFJbTu1ZOpnZhXh1YMI1ri/d31hQ53WLU81Zn29iAxBZVTS2Z7Bk0/5DPjj@vger.kernel.org, AJvYcCXj1CBgmPLrIQhq3qq2C7rEQsX+1pzlRs+kyfd/zqs3FhgTHnqWDTmHcw8XqLXo3PeaHNef5jm5@vger.kernel.org, AJvYcCXzmVBU6n9TaxRayh7pucpbakmTHYdCoPg4dazNA5nbe0XlNw0Ky5Qznsk0H/ox8OdKZC2+JU8oJci73j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKMIhusjQZKV/DWEw3HCqtag9fxK1opf5c1yqQIAOHJbhenBfH
-	v71GZ2oBTQH+UI8TI6HlBtWUBE5E5678kLDDOpRCz8HiFtve8BL3
-X-Google-Smtp-Source: AGHT+IFPuRDk0r9ueLuuhxbfkB4+EacuR8rQLWAJFXyxwWdoKcIhBC6PRqkhwbzdF4UqaS2JoSH/mw==
-X-Received: by 2002:a5d:4e0e:0:b0:374:c8eb:9b18 with SMTP id ffacd0b85a97d-37d3aa570c3mr257037f8f.24.1728424907438;
-        Tue, 08 Oct 2024 15:01:47 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-44-97-22.cust.vodafonedsl.it. [2.44.97.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e5bbca1sm557062766b.5.2024.10.08.15.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 15:01:46 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	petrm@nvidia.com,
-	dw@davidwei.uk,
-	martin.lau@kernel.org
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: [PATCH] selftests: drivers: net: fix name not defined
-Date: Wed,  9 Oct 2024 00:01:33 +0200
-Message-ID: <20241008220137.274660-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1728424990; x=1729029790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8k/h1zc1if6v/PtO4/Z0OMrVugcpBclAQ9weFD2DFTs=;
+        b=ql3iQS5f/KsRHzTP6XEqQKGGdfAO8Mvh27xLZKW7Iwu/fEGlkYOEQWbtJY0DtTQshT
+         bL6OT1FotsGkJJm3TrfvGiplyU+YRcpGYl4AGBeqcZmFaaL1w7uyCCgGXHMPc0QcCyJa
+         CQh2qidGnWZhhBdvI1z7qeYpstWn6Ot0OkVKWBaRwPXD1XiGpGLd+bWMywQLNMRjVhlK
+         c3TcDYWRCVSWr0FFNloU+91b1DvVHZq7daIT4ZOlB26XDgPx7N1Kl6xnmK5rVPB7A86k
+         Wc793RDXMaceSIbVFmVRrDsnBFeZydLbIPP4+NzS5O/QHUOLKYYhIkyZjY+/Qkcs5ysC
+         /fOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCV9YlGZBN4qK74oovaX2Qrf2sF3l1nwAvmLngFVz03MN6N70UPb4h5RjRQWHOTmfgwYYbdasmOifsjKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmkDDH0dtqzzBnanL70bBRuLRbw9lIYGd1luE3q8Bt8uFvBqhm
+	9+Ma4Tszf1eBMj4g81HBRWKz5wU83gjO6ROF1QJe9YH3JsW3MhTeO36BchORL4ffWBxaUPgLgPL
+	Z
+X-Google-Smtp-Source: AGHT+IEbwfQqS1rnCN/fqKqbgzAthDXhnK25PIZwnEuU6F500jfrAspi+MkyW7GIBwdWt2QIv/P83g==
+X-Received: by 2002:a05:6e02:1a2c:b0:3a0:9a32:dedc with SMTP id e9e14a558f8ab-3a397cf78e6mr4402395ab.6.1728424990268;
+        Tue, 08 Oct 2024 15:03:10 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db7db303besm1461620173.107.2024.10.08.15.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 15:03:09 -0700 (PDT)
+Message-ID: <b1659a9a-66a4-4a07-a76a-31222bf8cfc5@linuxfoundation.org>
+Date: Tue, 8 Oct 2024 16:03:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241008115648.280954295@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This fix solves this error, when calling kselftest with targets "drivers/net":
+On 10/8/24 06:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.14 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-File "tools/testing/selftests/net/lib/py/nsim.py", line 64, in __init__
-  if e.errno == errno.ENOSPC:
-NameError: name 'errno' is not defined
+Compiled and booted on my test system. No dmesg regressions.
 
-The module errno makes available standard error system symbols.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- tools/testing/selftests/net/lib/py/nsim.py | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/net/lib/py/nsim.py b/tools/testing/selftests/net/lib/py/nsim.py
-index f571a8b3139b..1a8cbe9acc48 100644
---- a/tools/testing/selftests/net/lib/py/nsim.py
-+++ b/tools/testing/selftests/net/lib/py/nsim.py
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+import errno
- import json
- import os
- import random
--- 
-2.43.0
-
+thanks,
+-- Shuah
 
