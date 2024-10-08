@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-355929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F073995946
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ED999594A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE641C215E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 977701C21B54
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278C8213EFB;
-	Tue,  8 Oct 2024 21:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DDF212D24;
+	Tue,  8 Oct 2024 21:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h0AQh2VL"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DE4bGs5p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDBC17C7BE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B2213B2A5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728422949; cv=none; b=GvsUhXpQ3y+nbbprSWewFldSSuhXwZehKzZxSoSjHhmuXnhRJd8OF2yyOTgsEVOkYpKDPOFRpvI+EzRdahBOlcuO7PtGp9ssn7V6F6zumWSCDtTVIIgP5MmKQYoyI1OdUxjWkViGLUpLjFgw/TQvUCCXW8NHLAeZKu0ubHCiVjg=
+	t=1728423196; cv=none; b=uvb5cKl2sUBCVoIwRxs4yGITO7gLnR+jUTM75hrVaPnrkJRK+9RdAZYSwIN5b13XCZWlItKOqHkfmViL/9g4hHZUJLx0g8/Aa499IEo+Zzy8DDkH0zFe3p7npS7gRiQwi8h/XepV79dRgMu0YwKLbvlpnDqsZmTzxTKfT2EhfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728422949; c=relaxed/simple;
-	bh=+0JRHpcRkNGdImyqm6PACfdElpw2NkAms0S6ol8mB00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SaOAzSTX7t8yqV1xG1FRe4kWM22yFtxCLG1cO7tKRAEHCN1a3eJ38k0E1ff090lSUxhXrvLFOmrkvT70UYzEGQqbQoHrMVi+9otdnnXlWcabzV22UwPLrHASsr3lFmbN2xluxeANGAKYphpyPkdp2Sbv5A2bTbqKbJC/xi5RfYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h0AQh2VL; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a33a6c3102so886315ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 14:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728422946; x=1729027746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VX28x+DgIWJLaHF6qMvsQ3gLIdz53a0eTaZr8GrruRQ=;
-        b=h0AQh2VLhLbDPbjBJpB52Z0fxdBtJRhn5dA6+H31eAwgck4nJSgZbo9jdu6yGeg6H9
-         Ys8ZimCAvO4fhciBgyYtQZ9SLc4yC3i4fENIrKIu9fhGif4nUavr1772MMdlMRBuapOo
-         gbBCwiiMJTwGVqEJLXHt6folbRl/GP/qYcWp8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728422946; x=1729027746;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VX28x+DgIWJLaHF6qMvsQ3gLIdz53a0eTaZr8GrruRQ=;
-        b=uxRusJ5GRewksm4303TyKHsu5G+BGJxWklMYMJYc0LoHE6kbq6RqsOWAdvwLox/p3P
-         /lNjoVI5qoVoCY9rNvtH+8+2os43fw1QrvW9KVwQY9Mh+wCSB2gWdTC+KDbLTRQf3F94
-         WGHkBkiURFU0lksPe4Of5IaAYDX0lrmoFiKffDoffB+K8nLihqfL91Kk5r5A4PZ4iz76
-         BjgqsCW+aiKECJ2/FEkUC/PLxdmteqbZ3+jFB9pIGU2Yn6ZoZpCKhjQriZYKRxUvFeLH
-         VpKxac9zfbU472mUIIcUAq8q4luVqpckTzA0rhb+kNzKeg0B5Nw3qFoeTLZLRJLsZB09
-         Obkw==
-X-Gm-Message-State: AOJu0YyRjvuu3g8xSIhnXr2j3+FRaC6vvRTMNCvKhRGpxPeqE7iFGeCf
-	4DYy/tVcrSwgNHasJdeoGOZQ7lLPGHEzSxrW3+6hflPULmxXrHcvgw66g74drdY=
-X-Google-Smtp-Source: AGHT+IFyqjxd88/ufD4TKMFujnBg608E+xsQFuQtKm+QSLI+abRzN7hd7J1xg3ghgDMlBsa8Du104g==
-X-Received: by 2002:a05:6e02:1541:b0:39d:3c87:1435 with SMTP id e9e14a558f8ab-3a38aef1aabmr42801385ab.1.1728422946692;
-        Tue, 08 Oct 2024 14:29:06 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db6ec72df9sm1812143173.165.2024.10.08.14.29.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 14:29:05 -0700 (PDT)
-Message-ID: <cd1c25bc-8395-4dac-9f03-930a7e221a8b@linuxfoundation.org>
-Date: Tue, 8 Oct 2024 15:29:04 -0600
+	s=arc-20240116; t=1728423196; c=relaxed/simple;
+	bh=J7cLXuMv8ba9cmqFU2H9g2Ipa8K5iP0tE34MpOX6x7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n8a/T3wpGaS4zBH0BYVs/h3Hj3Bugbj5CQ4gtMQIuSESA2gnI6CKcZZG065hYO1J54PbkmEpJcl8HSEnIfM+Lvz+Sr1Gql8qF58JOQyKuJumZHDi0EHrks0YNopHG/Q6qV1xG4FcXJKSVlCX5Wr5qoZwHBk+0z6K+QRuOOuQnn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DE4bGs5p; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728423194; x=1759959194;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=J7cLXuMv8ba9cmqFU2H9g2Ipa8K5iP0tE34MpOX6x7A=;
+  b=DE4bGs5pE17qIyA8F+d1/i2IYzsgdpf9QSnUg/FStdMBuvkRaXaF1Jwm
+   9kVOnrUbRUQeLBAkJuXF/lWQpTmYVh0kjnId070Vf0deNxdwwZ7JRd2Vd
+   txpLc4nRDQ4RJIR9Gk0eH+R/Qd8zH6Rlzzg9Iodnj9hZu6PCYirBwQcLI
+   2aga9A8I7W1WGVo2MNcUMtAa80bnzmtWpou9JapLj2za90m65eOurOg2t
+   wsDEJGHaMd0gzSBslRenFxuI4GpxljZZ1VJN+wf9AUaLhGyc9nfJa92ea
+   RshBq5ffJkBJqH6UpemniNqM1fKotjvQ7LGJNi/+MlR24WpkHSdkEQzOq
+   g==;
+X-CSE-ConnectionGUID: tPrB6K4GQziuiZ/KgpmDEw==
+X-CSE-MsgGUID: h6yd8QE5RU6uGvkct9O+Bg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31562502"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="31562502"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 14:33:12 -0700
+X-CSE-ConnectionGUID: vfIBIlGaQFiwhy0BtdAkSA==
+X-CSE-MsgGUID: eAbxl3MYSZ2+HsPiSyMjLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="99349267"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Oct 2024 14:33:10 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syHpM-0008Ok-1b;
+	Tue, 08 Oct 2024 21:33:08 +0000
+Date: Wed, 9 Oct 2024 05:32:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Guillaume Nault <gnault@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>
+Subject: net/ipv4/inet_diag.c:1511:17: sparse: sparse: Using plain integer as
+ NULL pointer
+Message-ID: <202410090504.9CJsN8Ma-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] selftests/rseq: Fix mm_cid test failure
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241004004439.1673801-1-mathieu.desnoyers@efficios.com>
- <20241004004439.1673801-3-mathieu.desnoyers@efficios.com>
- <01153485-ea70-47f7-ab6b-2c17496ab8ff@linuxfoundation.org>
- <9c3a8650-c855-41d2-b500-6a72e45c057c@efficios.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <9c3a8650-c855-41d2-b500-6a72e45c057c@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/8/24 08:56, Mathieu Desnoyers wrote:
-> On 2024-10-04 21:18, Shuah Khan wrote:
->> On 10/3/24 18:44, Mathieu Desnoyers wrote:
->>> Adapt the rseq.c/rseq.h code to follow GNU C library changes introduced by:
->>>
->>> commit 2e456ccf0c34 ("Linux: Make __rseq_size useful for feature detection (bug 31965)")
->>>
->>> Without this fix, rseq selftests for mm_cid fail:
->>>
->>> ./run_param_test.sh
->>> Default parameters
->>> Running test spinlock
->>> Running compare-twice test spinlock
->>> Running mm_cid test spinlock
->>> Error: cpu id getter unavailable
->>>
->>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> CC: Boqun Feng <boqun.feng@gmail.com>
->>> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
->>> Cc: Shuah Khan <skhan@linuxfoundation.org>
->>> CC: Carlos O'Donell <carlos@redhat.com>
->>> CC: Florian Weimer <fweimer@redhat.com>
->>> ---
->>>   tools/testing/selftests/rseq/rseq.c | 109 +++++++++++++++++++---------
->>>   tools/testing/selftests/rseq/rseq.h |  10 +--
->>>   2 files changed, 76 insertions(+), 43 deletions(-)
->>>
->>
->> Looks good to me.
->>
->> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
->>
->> Peter, Ingo - let me know if you plan to take this through
->> one of your trees. Otherwise I will pick it up.
-> 
-> Hi Shuah,
-> 
-> I just discussed with Peter on IRC, and if you can pick up
-> this rseq selftest fix through your tree it would be very much
-> appreciated,
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5b7c893ed5ed0fc1cbe28c0e3296a6fb45698486
+commit: 223f55196bbdb182a9b8de6108a0834b5e5e832e inet_diag: allow concurrent operations
+date:   9 months ago
+config: hexagon-randconfig-r113-20241008 (https://download.01.org/0day-ci/archive/20241009/202410090504.9CJsN8Ma-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
+reproduce: (https://download.01.org/0day-ci/archive/20241009/202410090504.9CJsN8Ma-lkp@intel.com/reproduce)
 
-Thank you for checking. Looks like it doesn't apply to my tree.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410090504.9CJsN8Ma-lkp@intel.com/
 
-2e456ccf0c34 isn't in 6.12 yet?
+sparse warnings: (new ones prefixed by >>)
+>> net/ipv4/inet_diag.c:1511:17: sparse: sparse: Using plain integer as NULL pointer
 
-Also a couple things you could fix. Please cc linux-kselftest
-when you send the next revision with these fixed.
+vim +1511 net/ipv4/inet_diag.c
 
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-#114: FILE: tools/testing/selftests/rseq/rseq.c:110:
-+unsigned get_rseq_min_alloc_size(void)
+  1503	
+  1504	int inet_diag_register(const struct inet_diag_handler *h)
+  1505	{
+  1506		const __u16 type = h->idiag_type;
+  1507	
+  1508		if (type >= IPPROTO_MAX)
+  1509			return -EINVAL;
+  1510	
+> 1511		return !cmpxchg((const struct inet_diag_handler **)&inet_diag_table[type],
+  1512				NULL, h) ? 0 : -EEXIST;
+  1513	}
+  1514	EXPORT_SYMBOL_GPL(inet_diag_register);
+  1515	
 
-WARNING: Prefer 'fallthrough;' over fallthrough comment
-#221: FILE: tools/testing/selftests/rseq/rseq.c:218:
-+		case ORIG_RSEQ_FEATURE_SIZE:	/* Fallthrough. */
-
-thanks,
--- Shuah
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
