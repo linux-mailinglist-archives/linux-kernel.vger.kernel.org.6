@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-354441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEF3993D7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A14A993D82
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD66282EDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34DE1F24E4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4BD43165;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6003D4F8A0;
+	Tue,  8 Oct 2024 03:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxL/dM75"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74B740858;
 	Tue,  8 Oct 2024 03:30:29 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D602C6AF;
-	Tue,  8 Oct 2024 03:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728358229; cv=none; b=cJiKCFHaHyTKutlEPURLSxW/K4Y0h2Eh4dK1YfBBA4KrG62HWqStF506zP0MKi3/rHs1stK5863UnH5RPlSjHidJUpkUyb0LSoxKAsW4EqtBCvsuoLLv/DN12EeN8EzlcIbtZSxDtUYsfPM/ZNGbwxbzYwt8vFXH8gB3SRbIskM=
+	t=1728358229; cv=none; b=DDBXWMBTraChjauI90SLpZ9K31907PtIlqLFxhuHZDq6mL6Y7MHYu4eJ3CRQdIRtwiSCtVmKlGdc99XlrtQB8XZI6M4+F1aSIMg4eAIRbvM5sUxnjmMxl5pW+HOQEqN6A/7P+eKiy4gJBzbCeLCAqlDw858/vKcJzITsrVJJZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728358229; c=relaxed/simple;
-	bh=d997jFGxlGWOoY4LHGRUky9LqCDtC4czUFochV4TnUc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=geyI9bn523hhVN9ugyX+CtkK/A/xqwLQ8LUtAuTNW48v6MON8uxLxGbS4Qfy95k3XtzL/8ObwhI4pNzApDD6rGqJa+fqWYSJusG0f45FSq/3JBzi4HbG0UiE8lt+9NxOzQuSpb/cIi0UEmHTre3b11u9x11DpEuFUfP79Y/HRgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76704a750c29-dfc31;
-	Tue, 08 Oct 2024 11:30:24 +0800 (CST)
-X-RM-TRANSID:2ee76704a750c29-dfc31
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee86704a74e212-835e8;
-	Tue, 08 Oct 2024 11:30:24 +0800 (CST)
-X-RM-TRANSID:2ee86704a74e212-835e8
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: perex@perex.cz
-Cc: tiwai@suse.com,
-	zhujun2@cmss.chinamobile.com,
-	k.kosik@outlook.com,
-	xristos.thes@gmail.com,
-	wangdicheng@kylinos.cn,
-	kl@kl.wtf,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Sound:mixer:Remove unnecessary assignment of sprintf result in build_mixer_unit_ctl
-Date: Mon,  7 Oct 2024 20:30:22 -0700
-Message-Id: <20241008033022.11280-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	bh=PSOIf+TyBQF57TpOyMNELr/Rx8demt9hWhySbu/LsRs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=B6SZB5XmabmqWIUJBIU93al9pe1iClRF/5tdWKaTvFPPOWfGYXlM4vk5iMRn2yM1MvVMadUNJL6Bu5ldrnfLyJzYe606WWZRbHNm1ZYOEkJJ8JiRr3H98Z/DSMf5VE03HG4zFlzfq6YOeniifk1QpxJpGy7Dvu0b1jGorlFDny0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxL/dM75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F478C4CECC;
+	Tue,  8 Oct 2024 03:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728358229;
+	bh=PSOIf+TyBQF57TpOyMNELr/Rx8demt9hWhySbu/LsRs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=IxL/dM75Cv3V8A4ljrby9r3ouPy/31wVFYylG13rTWQHl8hVki9A/Ci9XSb2BzScJ
+	 QyJ2jbL+H1YAoOhxT1vcMdctzCMcQTdxuwOtl5qgGrXaDgpB+0lDKxoPYW6I1tInK2
+	 7ZkCy0LUlNo8zxRbA9tBUcMEnYVnFEAcOFLYICYqpaJG5AfNgHWE4BIuu0qQGMvVFQ
+	 uQggEH/s9sgD68hA2f7XTnizUeu9eeqwNKw7M8VuonGcUqfFycg8RkRPKmK694kxdo
+	 YAh/orE4txks1PLfJmBRkGCcyeS+/NktocqUYPrqTWNKFSF4P9YyBJQGW5TtzXAayN
+	 mPAvrRWAKWe5Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BFB3803262;
+	Tue,  8 Oct 2024 03:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next 1/2] libbpf: Add missing per-arch include path
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172835823300.66789.3704854116445399222.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 03:30:33 +0000
+References: <20240927131355.350918-1-bjorn@kernel.org>
+In-Reply-To: <20240927131355.350918-1-bjorn@kernel.org>
+To: =?utf-8?b?QmrDtnJuIFTDtnBlbCA8Ympvcm5Aa2VybmVsLm9yZz4=?=@codeaurora.org
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, bjorn@rivosinc.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ charlie@rivosinc.com
 
-Simplified code by removing redundant assignment of sprintf return value
+Hello:
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- sound/usb/mixer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This series was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 9945ae55b0d0..dea6cbd65667 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2224,7 +2224,8 @@ static void build_mixer_unit_ctl(struct mixer_build *state,
- 		len = get_term_name(state->chip, iterm, kctl->id.name,
- 				    sizeof(kctl->id.name), 0);
- 	if (!len)
--		len = sprintf(kctl->id.name, "Mixer Source %d", in_ch + 1);
-+		sprintf(kctl->id.name, "Mixer Source %d", in_ch + 1);
-+
- 	append_ctl_name(kctl, " Volume");
- 
- 	usb_audio_dbg(state->chip, "[%d] MU [%s] ch = %d, val = %d/%d\n",
+On Fri, 27 Sep 2024 15:13:52 +0200 you wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
+> 
+> libbpf does not include the per-arch tools include path, e.g.
+> tools/arch/riscv/include. Some architectures depend those files to
+> build properly.
+> 
+> Include tools/arch/$(SUBARCH)/include in the libbpf build.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,1/2] libbpf: Add missing per-arch include path
+    https://git.kernel.org/bpf/bpf-next/c/710fbca820c7
+  - [bpf-next,2/2] selftests: bpf: Add missing per-arch include path
+    https://git.kernel.org/bpf/bpf-next/c/19090f0306f1
+
+You are awesome, thank you!
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
