@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-355831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4FF9957B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A65919957B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F331C25D49
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6991C25CB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1774213EEE;
-	Tue,  8 Oct 2024 19:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547F213EE9;
+	Tue,  8 Oct 2024 19:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VbY89BOl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="25DGD5nN"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ED31E0DCC;
-	Tue,  8 Oct 2024 19:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023F013541B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728416040; cv=none; b=elNJjrDyMzd5j911i6bDLXHz75tkYeuExvCeJI6Ma51eF1NM39F+sGZvb+gnW869Q2YqSLf+hQTeIAvchtx6DThXYMDNBxe+Ge7hPX9cCWWwi9e+uxT8bPTqAGKGmbuXgJ71JsxgZ9utAd24uT3J5QRvLqShjlBdTArZmTwgcPM=
+	t=1728416090; cv=none; b=PQH3+ehtobUdClQPy73XubuPvLAZCfFkYu0XopQwIrWZRzqDfYnfpPdTOKQKUdhnum3l7+8RJrJAOeU5HUQu43TwkqEXEmVsu9htSzvBFz1om9d6fuNhkFBabUcCE8H15Dd7RiXYtuP1jjtxrSksSMultWKLCNtFFcgko7XXHoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728416040; c=relaxed/simple;
-	bh=R7lX7hmWbtKfbTxmwsEDTQSU3M/Gzi1ykOtb8mIqx6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=szTm5b80/016gkr5nn00Yf1aEyVSvHgpFnnePhz0nXzOFwpYbqa1E+09GfSVlBpr0DE5TTAxci0Fwp9O0k41RnaDIWzQ9Xk3sD3wia2NYCnbGsgGHa569nZ0DFB9OjYHwdne/11q+QHqB0ma0Y6TMwvKsUkgUUFs9EG7WHSAScA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VbY89BOl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498F8nmL029440;
-	Tue, 8 Oct 2024 19:33:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+2WSnJe8HoTfYxQjLcSXD2eQidI4p8n4po6soTTAppo=; b=VbY89BOlr3tVEk4c
-	s5Hu68Q3DJR7ZxYKD4Za+Ggsa38hZVqi/J31S0DMsGbbxBQQ//9uTwVJo76HzG5Y
-	ToCw6cZCAdZdQFCf14YAhXpquHrEnRuN6Z5f/cwb9bvMWBk409ViBpRapWkGFdbl
-	TV6jpc+HL28M1kjPB5E69LgFLAMSXir26ZaMdkEMaewvzQTrjuOEP9jvffFqlwXQ
-	/H/etzpo6y+ZTEUc0m+6+RsTpfewX5wlxmtoSeFF81+cqSYhY4mFP5dSo/173pnS
-	D03MSMk7JbnPsF7MeEhafno6Q8a8822yEQbsCpRDMqknDWKm1jcHEQzNx0kut3LN
-	nDQ+Ag==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424yj028s4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 19:33:35 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498JXYdY019638
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 19:33:34 GMT
-Received: from [10.216.57.107] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
- 12:33:26 -0700
-Message-ID: <79e60dea-8a40-48cc-aa0d-ae6e10c60355@quicinc.com>
-Date: Wed, 9 Oct 2024 01:03:22 +0530
+	s=arc-20240116; t=1728416090; c=relaxed/simple;
+	bh=a1eBAKb+IiIssJhkKo3Muao/vVP76nI3R2s5zzwX6xM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Am2yt7VX30vjrPV60wVCOUufDk69Bf59ONxpJzGC9SnjrmT3qyGwlH9C2FpPvdT/veZChdBQPKyaMMi/sMnvSBajrdsbXkTrMQQlpaXKvdsUlKSqs8Kk1KlX3Ybna/4qordvKoRRfYL5Ymj9wFZfA7iAqq9cnSHALp3PNcRe4/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=25DGD5nN; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c593d6b1cso8914175ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728416088; x=1729020888; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1eBAKb+IiIssJhkKo3Muao/vVP76nI3R2s5zzwX6xM=;
+        b=25DGD5nNm2uhbx6+iDK6cV/vKlbkYPPWpH5HZtColYhajAg1d7rdEL33TxWuUbs67T
+         6/pwl9Z7diXvoq/fls9F9mhDVkP4QMjYvRQHqSJGRUro73xKnuP//+EGwtOdzhVKBKit
+         /kZbLzZJokPFecL7a4aSOIP2fOXaA11zu+VU1s9vOY50vUOHpTK/8f+vnqYkFjZ4byRg
+         xsja9v/RPHej19QoqNXKEs0br+7lvNuMx9JcrR1vMAJ+9SOTrvpTA4ST2sMM/5Ei5gAs
+         M0AiUgae65TjxgR3qDG9muBc71cBtBYOryQvSMBhFPwMK+M60vRa/OeyGRAXYVAktRvI
+         /DZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728416088; x=1729020888;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a1eBAKb+IiIssJhkKo3Muao/vVP76nI3R2s5zzwX6xM=;
+        b=vDwJvm3PM8CVa6Ve57ObMj+MPr+72EgHacQBOBGrxcnTLQ6PIWwJdFuUV1h163rrIs
+         RUNjVTcrzKBlDfyed7jZeKv7zDE4xlFeMNtEXKnNp4DzXGt7gDeu4bMNPeMuQq8ySgC8
+         LAtGuZ11aYdbS1YoUFsj4m7HuRga8PRDEEbONfRbxOKgg6/dNq8DWyzpGi8+gphz4qBh
+         +oDZadd7qlMQUXUpPgYSyvHkbpykLVRx5O9GhV2RarxHeqItCi2Jyl0sXU2rZcNRNejd
+         lQO5CIe+h7nUAj2OaziQNd77AN6QJH7UXP9+tyfHaxs/OyIFMNmcPZC/9Rep5Irxm8jD
+         V9Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzfamjzkRFXW+Uw58pVSjJTM4RAW4aC4pM5t1z3bEpaDpNPvQ5iA43B09VQvXAa8o+42m5fKmWCNHHKDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+0l5Bl8Urqlvv4BAu187qziWy9+i3+sAUspMszBS6K73e/EZi
+	gB8tDosoK93OVdKXTgInG+zGBHSMfljAs0Kzja7I5KEoirD8B80TRcBbwilY7Y/Ojrk2vzx5sUI
+	HgAFB1iAbjJDGhdETE845wRqDRgBEQ1jzzzpe
+X-Google-Smtp-Source: AGHT+IHYkc33I6J5rJ3ZrK3WsR4R/63QF58VfSy7YbQLLmAS3xIFpM5nkuhj8nCvgdfxMN2NVwszrk1J6M+tUzweF3k=
+X-Received: by 2002:a17:902:e5c1:b0:207:7eaa:d6bb with SMTP id
+ d9443c01a7336-20c6374711fmr1457145ad.29.1728416088034; Tue, 08 Oct 2024
+ 12:34:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Bjorn Andersson <quic_bjorande@quicinc.com>, Andrew Lunn <andrew@lunn.ch>,
-        <netdev@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric
- Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Bhupesh Sharma
-	<bhupesh.sharma@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vsmuthu@qti.qualcomm.com>,
-        <arastogi@qti.qualcomm.com>, <linchen@qti.qualcomm.com>,
-        <john@phrozen.org>, Luo Jie
-	<quic_luoj@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Suruchi
- Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-        "Lei Wei (QUIC)"
-	<quic_leiwei@quicinc.com>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
- <Zv7ubCFWz2ykztcR@hu-bjorande-lv.qualcomm.com>
- <7f413748-905d-4250-ad57-fc83969aad28@quicinc.com>
- <zz7m5v5bqx76fk5pfjppnkl6toui6cz6vxavctqztcyyjb645l@67joksb6rfcz>
-Content-Language: en-US
-From: Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>
-In-Reply-To: <zz7m5v5bqx76fk5pfjppnkl6toui6cz6vxavctqztcyyjb645l@67joksb6rfcz>
+References: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
+ <20241008192910.2823726-1-snovitoll@gmail.com>
+In-Reply-To: <20241008192910.2823726-1-snovitoll@gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Tue, 8 Oct 2024 21:34:10 +0200
+Message-ID: <CANpmjNO9js1Ncb9b=wQQCJi4K8XZEDf_Z9E29yw2LmXkOdH0Xw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm, kasan, kmsan: copy_from/to_kernel_nofault
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, bpf@vger.kernel.org, 
+	dvyukov@google.com, glider@google.com, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
+	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com, 
+	vincenzo.frascino@arm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: m2aiipuVXMA_UfSRt18d3iSA9KjWWtWT
-X-Proofpoint-ORIG-GUID: m2aiipuVXMA_UfSRt18d3iSA9KjWWtWT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- bulkscore=0 mlxlogscore=908 mlxscore=0 adultscore=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080126
 
+On Tue, 8 Oct 2024 at 21:28, Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
+>
+> Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
+> memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
+> the memory corruption.
+>
+> syzbot reported that bpf_probe_read_kernel() kernel helper triggered
+> KASAN report via kasan_check_range() which is not the expected behaviour
+> as copy_from_kernel_nofault() is meant to be a non-faulting helper.
+>
+> Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
+> copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
+> kernel memory. In copy_to_kernel_nofault() we can retain
+> instrument_write() explicitly for the memory corruption instrumentation.
+>
+> copy_to_kernel_nofault() is tested on x86_64 and arm64 with
+> CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
+> kunit test currently fails. Need more clarification on it
+> - currently, disabled in kunit test.
+>
+> Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
+> Reviewed-by: Marco Elver <elver@google.com>
+> Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
+> Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+> v2:
+> - squashed previous submitted in -mm tree 2 patches based on Linus tree
+> v3:
+> - moved checks to *_nofault_loop macros per Marco's comments
+> - edited the commit message
+> v4:
+> - replaced Suggested-By with Reviewed-By: Marco Elver
 
-
-On 10/6/2024 12:00 AM, Bjorn Andersson wrote:
-> On Fri, Oct 04, 2024 at 07:47:15PM GMT, Kiran Kumar C.S.K wrote:
->>
->>
->> On 10/4/2024 12:50 AM, Bjorn Andersson wrote:
->>> On Thu, Oct 03, 2024 at 11:20:03PM +0530, Kiran Kumar C.S.K wrote:
->>>> On 10/3/2024 2:58 AM, Andrew Lunn wrote:
->>>>> On Thu, Oct 03, 2024 at 02:07:10AM +0530, Kiran Kumar C.S.K wrote:
-> [..]
->>> The only remaining dependency I was expecting is the qcom tree depending
->>> on the clock and netdev trees to have picked up the bindings, and for
->>> new bindings I do accept dts changes in the same cycle (I validate dts
->>> against bindings in linux-next).
->>>
->>
->> The only compile-time dependency from PCS driver to NSS CC driver is
->> with the example section in PCS driver's dtbindings file. The PCS DTS
->> node example definitions include a header file exported by the NSS CC
->> driver, to access certain macros for referring to the MII Rx/Tx clocks.
->> So, although there is no dependency in the driver code, a successful
->> dtbindings check will require the NSS CC driver to be available. Could
->> you suggest how such dependencies can be worked around? Would it be
->> acceptable to defer enabling the example node for dtbindings compilation
->> using its 'status' property, until the NSS CC driver is merged?
->>
-> 
-> You can avoid this dependency by making the example...an example.
-> 
-> By using just descriptive phandles you can present an example of the
-> client device without creating a dependency on the specific provider.
-> 
-
-Sure, will represent this as a descriptive phandle and nothing more. Thanks.
-
-> Regards,
-> Bjorn
+For future reference: No need to send v+1 just for this tag. Usually
+maintainers pick up tags from the last round without the original
+author having to send out a v+1 with the tags. Of course, if you make
+other corrections and need to send a v+1, then it is appropriate to
+collect tags where those tags would remain valid (such as on unchanged
+patches part of the series, or for simpler corrections).
 
