@@ -1,179 +1,178 @@
-Return-Path: <linux-kernel+bounces-355137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0309947DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:00:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B015E9947E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA962854C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695242834EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A2C1D90A9;
-	Tue,  8 Oct 2024 11:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE6B1D6DA3;
+	Tue,  8 Oct 2024 12:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+xcJE6K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XXx+LcZ6"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2084.outbound.protection.outlook.com [40.107.96.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDBA1D8DFB
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388792; cv=none; b=AT4Mw4FG+PAe6zdQybU9avvw8BuPn1a5QiOwnX2E79XBe8Tk3SjszdojjXGFRChmZQb8zKdFcAOMtYkhERCzf+Bdv/ZedUYpzVqDfTD9zgNkTiPs6BBPV0j4lsz7VwUi80FVy3hdNb4Donssr7PSLJlZ7de9oaKoxDxn/hDhBvU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388792; c=relaxed/simple;
-	bh=ibSI5cw70YlzypkcFvottxsO6l9I+7EejtPji06w3+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFgPqou5bJkXqOVfPdy8EjuToWe1oYLjBpAG3832pidpwTUUhXGjcxh2YwREti8G8wqd7iwvAuhfbElVhrQQT61wLK/j4ZXsSbstdNzfLZ5h3EMO687UxgOeDwFKBA90XhW7S3nHiYuZtzI9rRQYD5JPOoe2w4iwcyRhnEnh9I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+xcJE6K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728388790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iIFABVwlYN6z1gPY1Am/qwHJ+gGFXbVoWW3PcOPdoLQ=;
-	b=Q+xcJE6KdIqwVj0zTk/sDNTIKs5sHNt4Ds25rP27jcckVN9ViWqSYVoav+9KU2A+0gl6FU
-	4nnY+sadKF17zA3VEDIcYlfmRsVJC9m1pMU+cVo8WGBKy5FS4xpie1EVwPb3wbo9kbPlFa
-	9b8G0p7m+Hy4JE7DvJWzDcIwipMgfiM=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-eAi4rrf1NbqQXYPnb-k7rA-1; Tue, 08 Oct 2024 07:59:48 -0400
-X-MC-Unique: eAi4rrf1NbqQXYPnb-k7rA-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbc4ade39bso6924436d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:59:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728388788; x=1728993588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iIFABVwlYN6z1gPY1Am/qwHJ+gGFXbVoWW3PcOPdoLQ=;
-        b=A5aFLMBKIfAsu45Cn0EtNpbFrcqNvngHymErnigWP98GL1VeUKO0o1eWuvF765G1H8
-         leeOUMuhydTuN+o5vNL5JBlPAqDjYPM2dp+hdY8W0A9Di85FMfvoe1Ke09uJMlA4cS3H
-         me/qBk4bTx3ehB6HY80a3YNYOvY60Vy0sxj1SYz2wsxtA3SNGwOEc6bI1uX1VQiXApdQ
-         bbT/CN/zmAz0f86AM41KkWJkInYVPk8O3HmKHxx+4Ot5QEI106xqPWj0QgK2HwEfuyjY
-         g77WsfqlFwNZQuxhlQgBsWLBO8Jyr/8Vnh5GICb2NT+AXPBXT7IZeKbkbwr4fzzZl2Ou
-         zc6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW6ICXFGZ3SV3ll7dM1Lpn3+zdJQQKVC3f4A6XUqHcSC2ufAi1q0Es78kEoPByOzTrpCjwUsD14ufwvTGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlGo+reqP6iWRDj3dZ3lg/dP31ccZHzM+9Qgs+qp7B6ajS04+s
-	AYk65MuLlngqRRNym5wP89ZyoqQxStiLlH/6erhDs93Qg3PBKHPbTM0M9QFiaYUwioP2/Q0AQL6
-	ctnhdSoof7uMDjS/2v43vqaNd3ut9B7rgs5rpP0NiK7zIp76dBpEk/4PZmDUen4Dk1rXyFmoy6D
-	B7VJBsbbo2jZ2kMOJg2iWLh4zBIlD4rOCLRbgI
-X-Received: by 2002:a05:6214:4341:b0:6cb:3d9e:4f0f with SMTP id 6a1803df08f44-6cb9a2ed6a6mr239302386d6.1.1728388788051;
-        Tue, 08 Oct 2024 04:59:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyTU2oDPRA8pDwdxAwmkXFDkUDJtk+0gQ1yQnI6Iw1CeZllQSy0r3Wl4WVMcMUozYzPXRgfmAZg4oe2m9uSyE=
-X-Received: by 2002:a05:6214:4341:b0:6cb:3d9e:4f0f with SMTP id
- 6a1803df08f44-6cb9a2ed6a6mr239302016d6.1.1728388787608; Tue, 08 Oct 2024
- 04:59:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B9F18C916;
+	Tue,  8 Oct 2024 12:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728388820; cv=fail; b=UOHIPIe2hodgkanzUfktE6A7YKLfinJnbAbiWDFVboK/+Ncm0XUq3DzZ7/RHhbhU3D3sDKDyLnw8eP0wGDYuSBiqSmz1uNGOUvQPX2jGpSYSQx08qymDuaLj3B3ExrTvqkh3MV5I9XRxBAS2hxKa+DlIToTIql3aopAA2F2HAU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728388820; c=relaxed/simple;
+	bh=+F52ppeXgcbOS7sg6ezTMe9g453n5VSIoeMT0atQiwI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HOFZQkcsg3ft+uT3mMjFv2do4sfSXDGZ7imVAckHYgY7z5VMp4klydE/lHvKI9iLast5wnjeK/hGzMh3w9qhH+iMnMXOapEpolhsqCWZzFdU496wkXVmnLDE/XsBr+vhpP18A3YmzA1vg7B6vYjqoB/DU9Fk4YT9qkztRDH12NI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XXx+LcZ6; arc=fail smtp.client-ip=40.107.96.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZLZWx2dQxYhbOtpRKsWDSCIQwwsWQakq0Nn1JGUj7HfsghwXuKaN8MvxQGnEmaTX/LtRnVbeAngVdk97anE2Ist1x35mHGShtmlqmQbKglp1RXwdxD6Sa4oc0vJKXHIKW7QLR6z5jSDqoOwBKki+6Bm6OU7uq1n6zy1exb4euVlbFwclui82RfCbJU0dRSzFmiiOmmM1clMvU7ZtWkwNvQ3lwPNETE+j8KcNQbuI6zPe0HA10xWHjvx0oxRPZNx4b52ia5X2+4wgbJQxAgXr3TOnOKaJzABHIvbb2AR07SPfrriJevNDajMYNfzmbgMiPTrvUrO4TAZfBhlATbyvNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tsIvfBKQPgNURFKGFmRVwqe1gWO6syWD3Pl3oeHG24g=;
+ b=FcotGp7vRUMRL7volI3FfQBlwsoZTp5fXR0yHgnoRBTm3SnuZIahr5agOnAcUmy2Gh6tih2m3hF2RrVZtBDt5Z0y1xhNH3eBkzzvO5Ayli004867tNGB2ispyC2YGP79NgB6+FUnG+NzGyh7AOg0F9f9nK1PCBlJJU/an3LcXQwwt8E1LuhyscXxFdhIEAQPbpB80hbZepD4bIEqODdAQP10Ug4O11gN9A92T4CYzFPhOho73WFY6h6Kd9sj0wthSbDRF1qFfXjAHlihqU5kfiZPGivA4mp4xEHEQZqA7LF7Outa3nnofZo+1EOEJXiSZW/7ErqcOCEW9wZY5RzYTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tsIvfBKQPgNURFKGFmRVwqe1gWO6syWD3Pl3oeHG24g=;
+ b=XXx+LcZ6qnWEXrOHJ4YYhwu+nFDsnVyxEOW8pg75MW/FEkb45cRiJ1AMvXV86K5uDi1oApTSetvxgKaSq5MDFqeMBCuiF1Qrts8aWtrOCpu2S6FuA9IuFwBkubvbDS7S12e/Dzo6Cx/6faWUCWcQ/cvva1zMbtHKEQ+apWvX7zZkvTu/2azLG7pC6vvep8KURPc30mRiOpSQx+ZZnkL01HM9gCbR9tMgJUfoMd6h0QGGKuN8rATrzqA8AzgMPZppHjJvnlz9iLbu9BxsQZARX1fAsDVCuL9lQjLzCp/q1KpoMfdse4XCH6kOl1FBJr9GQLfZJr/+q4ShDhl84nHz2w==
+Received: from BY5PR17CA0004.namprd17.prod.outlook.com (2603:10b6:a03:1b8::17)
+ by MW4PR12MB7168.namprd12.prod.outlook.com (2603:10b6:303:22d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.24; Tue, 8 Oct
+ 2024 12:00:12 +0000
+Received: from CO1PEPF000044F5.namprd05.prod.outlook.com
+ (2603:10b6:a03:1b8:cafe::73) by BY5PR17CA0004.outlook.office365.com
+ (2603:10b6:a03:1b8::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23 via Frontend
+ Transport; Tue, 8 Oct 2024 12:00:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000044F5.mail.protection.outlook.com (10.167.241.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.13 via Frontend Transport; Tue, 8 Oct 2024 12:00:11 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 8 Oct 2024
+ 05:00:02 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 8 Oct 2024 05:00:02 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Tue, 8 Oct
+ 2024 04:59:59 -0700
+From: Yonatan Maman <ymaman@nvidia.com>
+To: <kherbst@redhat.com>, <lyude@redhat.com>, <dakr@redhat.com>,
+	<airlied@gmail.com>, <daniel@ffwll.ch>, <bskeggs@nvidia.com>,
+	<jglisse@redhat.com>, <dri-devel@lists.freedesktop.org>,
+	<nouveau@lists.freedesktop.org>
+CC: Yonatan Maman <Ymaman@Nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v4 0/2] drm/nouveau/dmem: Fix Vulnerability and Device Channels configuration
+Date: Tue, 8 Oct 2024 14:59:41 +0300
+Message-ID: <20241008115943.990286-1-ymaman@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819145417.23367-1-piliu@redhat.com> <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-In-Reply-To: <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Tue, 8 Oct 2024 19:59:35 +0800
-Message-ID: <CAF+s44RqwOXVQ_t=w922GAAdQAqx4H_EsccDmDd1h8qWAGvPBg@mail.gmail.com>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F5:EE_|MW4PR12MB7168:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f5d69eb-3674-4cae-7971-08dce790c345
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nXQPfLFHMA54TVwvdwPcPW3zR+1hZTXlVebjL+mCWFPNR2geL+UekNMDJknU?=
+ =?us-ascii?Q?Hh+tXlDII7fDdbmQOrVgrBpx3WPmBL566kRqOwzIqZMGnh6fsmWW/WbmeNfd?=
+ =?us-ascii?Q?QpLIBTdzuRPTryh+EGhv4Oe2iUwmw615+B1CbnD3nLXx4AGoEB3k507JSW9G?=
+ =?us-ascii?Q?LwKuHSD3cAp5NHVJ5RqDo61oblVgMVnehMe+XEQnjWjNsVKEozML3xVKDrpG?=
+ =?us-ascii?Q?OZXGTr6CGHtGFRhWdw1uAMVrirebodpBGYz3SYDUBePgZVuZOhX8Y42dXe1l?=
+ =?us-ascii?Q?SQ4DKmtu7tD3IpwjzGS8tQQfjwch7g+AL0NvgH9W2Qyp3yXX1+k0Es16OHO0?=
+ =?us-ascii?Q?0z7SZ+80TvlbRhS7X9IswiQRpLJ2uih0T0iwO4LssPFi8igpm9omr8PNnJgw?=
+ =?us-ascii?Q?VMot5s3eBeFG/F4lE0e5zV/Oc2h3qnG+0XD6GMKd4GCewaQp3GnVGZ8D4JCo?=
+ =?us-ascii?Q?x1pp5gR+CHcb4bkBEDZwrql7y9PxCOf9dEwfRwqjh4M/u9E3Q3l9kwPlvf0g?=
+ =?us-ascii?Q?ixR5dlXUA1Ccc3lgXd3XG34myN2D8B09STj+cO2sqEXFS1GSR5TngMYGl+DQ?=
+ =?us-ascii?Q?l5PpzBR/9nxthILfdy+M16Sgzbax/p3kpEZKZJLRdP7tFISJ5gKdO0wAP1BX?=
+ =?us-ascii?Q?pnp+PG6Ivhnw7k6ohm80UUCvwyHfi2Wk6QQ7QLf0XE4ZFajDTD3N/x1cnxKM?=
+ =?us-ascii?Q?J3Hv6dva6+dWlQf+yaZIhNQY/Hci09d5h37Eq4ZJ/5Jo/fCm3f5OdZEHtkT2?=
+ =?us-ascii?Q?8S86d5XK5llsjIDaC2PBESt/1ooSEBUQp7Ev4DgHaqJFmP0U7TRZolxDYKTP?=
+ =?us-ascii?Q?OvgkWE2t0LC2A2zgzdUiG9C9k9oe0wQG45CiNUFzN08+gRVEgHgSGOxsJk3Z?=
+ =?us-ascii?Q?1VHmnKaZLMOLnZod++/jUr+6uWjSHC0V/yyRulFZkiM24yfcPLVh19JFN5ze?=
+ =?us-ascii?Q?sOQMeFID2RdISWO+HQLqFIqihjfbrZAe2qr27Y7JrVu7Tf8zMpsSlas4KJzv?=
+ =?us-ascii?Q?Wt6egRciI6wK8d0AQajRAN1GWQ1oPo+7ns37cLMBs1tGqZPrm1LMQaPIJxe+?=
+ =?us-ascii?Q?Jr0lrdplQxwjJ/qkxN1+14OLcUpMeD03AdzvjdhHETMhWtLYCGFm9+c6vywR?=
+ =?us-ascii?Q?6Quh/j8TNPaBP4VzHqoxO6nsvjYszCgoZAgFD7RSsPE1YBdtgqMfe/1B81ge?=
+ =?us-ascii?Q?UvhmWUMQnYffgXaBIjvJ+eF8PwWr5KqJ8C0aMHLVr+9l28B/GQSttNmxxbHe?=
+ =?us-ascii?Q?EO5OSCgTp1q6tdkYeNPRLf6vpds9sKm4pOkGcODBKrL1AET24KCDTYwU2Xb4?=
+ =?us-ascii?Q?yr0N1g/sJASIRtlVeLzlXG8JEbTht6z/RTjMnr/NWSzWZYrL/uFmarfqR88V?=
+ =?us-ascii?Q?21d4Xa7JsUgnh3T94jj7+DlWnsXZ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 12:00:11.6247
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f5d69eb-3674-4cae-7971-08dce790c345
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7168
 
-On Thu, Aug 29, 2024 at 1:08=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-[...]
->
-> Thanks for putting this RFC together. This is useful work, and gives
-> us food for thought and discussion.
->
-> There are a few problems that become apparent when going through these ch=
-anges.
->
-> 1. Implementing UEFI entirely is intractable, and unnecessary.
-> Implementing the subset of UEFI that is actually needed to boot Linux
-> *is* tractable, though, but we need to work together to write this
-> down somewhere.
->   - the EFI stub needs the boot services for the EFI memory map and
-> the allocation routines
->   - GRUB needs block I/O
->   - systemd-stub/UKI needs file I/O to look for sidecars
->   - etc etc
->
+From: Yonatan Maman <Ymaman@Nvidia.com>
 
-I have created a git repo to hold the record for the current status.
-[https://github.com/rhkdump/kexec_uefi.git]
-And uefi_subset.md records the minimal requirement of uefi.
+This patch series addresses two critical issues in the Nouveau driver
+related to device channels, error handling, and sensitive data leaks.
 
-But I have a question about "GRUB needs block I/O", is it required? As
-I know, the kernel image e.g. UKI, zboot will be supported. But why
-should grub be supported too?
+- Vulnerability in migrate_to_ram: The migrate_to_ram function might
+  return a dirty HIGH_USER page when a copy push command (FW channel)
+  fails, potentially exposing sensitive data and posing a security
+  risk. To mitigate this, the patch ensures the allocation of a non-dirty
+  (zero) page for the destination, preventing the return of a dirty page
+  and enhancing driver security in case of failure.
 
-Thanks,
+- Privileged Error in Copy Engine Channel: An error was observed when
+  the nouveau_dmem_copy_one function is executed, leading to a Host Copy
+  Engine Privileged error on channel 1. The patch resolves this by
+  adjusting the Copy Engine channel configuration to permit privileged
+  push commands, resolving the error.
 
-Pingfan
+Changes since V3:
+- Fixed version according to Danilo Krummrich's comments.
 
-> I implemented a Rust 'efiloader' crate a while ago that encapsulates
-> most of this (it can boot Linux/arm64 on QEMU and boot x86 via GRUB in
-> user space **). Adding file I/O to this should be straight-forward -
-> as Lennart points out, we only need the protocol, it doesn't need to
-> be backed by an actual file system, it just needs to be able to expose
-> other files in the right way.
->
-> 2. Running the UEFI emulator on bare metal is not going to scale.
-> Cloning UART driver code and MMU code etc is a can of worms that you
-> want to leave closed. And as Lennart points out, there is other
-> hardware (TPM) that needs to be accessible as well. Providing a
-> separate set of drivers for all hardware that the EFI emulator may
-> need to access is not a tractable problem either.
->
-> The fix for this, as I see it, is to run the EFI emulator in user
-> space, to the point where the payload calls ExitBootServices(). This
-> will allow all I/O and memory protocol to be implemented trivially,
-> using C library routines. I have a crude prototype** of this running
-> to the point where ExitBootServices() is called (and then it crashes).
-> The tricky yet interesting bit here is how we migrate a chunk of user
-> space memory to the bare metal context that will be created by the
-> kexec syscall later (in which the call to ExitBootServices() would
-> return and proceed with the boot). But the principle is rather
-> straight-forward, and would permit us, e.g., to kexec an OS installer
-> too.
->
-> 3. We need to figure out how to support TPM and PCRs in the context of
-> kexec. This is a fundamental issue with verified boot, given that the
-> kexec PCR state is necessarily different from the boot state, and so
-> we cannot reuse the TPM directly if we want to pretend that we are
-> doing an ordinary boot in kexec. The alternative is to leave the TPM
-> in a state where the kexec kernel can access its sealed secrets, and
-> mock up the TCG2 EFI protocols using a shim that sits between the TPM
-> hardware (as the real TCG2 protocols will be long gone) and the EFI
-> payload. But as I said, this is a fundamental issue, as the ability to
-> pretend that a kexec boot is a pristine boot would mean that verified
-> boot is broken.
->
->
-> As future work, I'd like to propose to collaborate on some alignment
-> regarding a UEFI baseline for Linux, i.e., the parts that we actually
-> need to boot Linux.
->
-> For this series in particular, I don't see a way forward where we
-> adopt this approach, and carry all this code inside the kernel.
->
-> Thanks.
-> Ard.
->
+Yonatan Maman (2):
+  nouveau/dmem: Fix privileged error in copy engine channel
+  nouveau/dmem: Fix vulnerability in migrate_to_ram upon copy error
+
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_drm.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
 
 
