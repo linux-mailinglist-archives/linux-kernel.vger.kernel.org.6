@@ -1,84 +1,49 @@
-Return-Path: <linux-kernel+bounces-354992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91759945A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:43:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44038994597
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C4F283724
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8A8284312
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940461C2313;
-	Tue,  8 Oct 2024 10:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605351C2420;
+	Tue,  8 Oct 2024 10:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V0yWPpXq"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4oSGpxX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD7941A80
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728384185; cv=fail; b=mq/SAPsUgAo2Hhb45DTMoOsuSbgo0ygW/j/oAr0Pj4kjNXGA5YGnS4dM46YeIAvs0Zrsb1tGjYvVcpqumJtp7UkTJbDfBHhQz5phPEkAvVneQHXd43MKjbZ//Diw3ZiiagZq/iBQ0ybLO9KUi9TFNaLC34NUybF1HzRbYzotta0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728384185; c=relaxed/simple;
-	bh=p3kUZtsfcXwmV2UBmLTMpjVijuUfeSP4TQ/FEkeiDe0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uDy9Kk+C5xM5B9jQiNqtC6irliOrlVbi1tCEemiWTDgATRbdOlLb0nfvblLNLM1wlSwFG5rVTbxw0IFlKBfdf1sv0QrYbLvayGDH/erS66xuS/Xnf0bt1+pjluJILttm0CiMvftPILqqrSmu/IXzZn+ccZABfOoqglkj6OmF2Tw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V0yWPpXq; arc=fail smtp.client-ip=40.107.220.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cMzzyJ3UMXTInu1B2FKnYrJq4g6XqWHqArs8B0RILjwuRhUydiY63aiM9ZkDCiViwsLKJuWd/xEV6ukzND+MAvlGa8CEzUzbsHTa4dVx8TUBK71ArIJte/2Skg94Mt5sDcgkJrV7FA3fSDmnn3JQksPhZ3N4FmMNOxwOfvNPMkntKxA/nxC5Tud/PNddILGrlAwlHghZhgtksEGU8dHsAjknga+8Ln78wMcemBx8aagdG45aiHgRE6fY9ximqpeQxfJoklybar7Da+Cvr4Ply6yCcwOTbH65CLz/dm+JsIV6GI0FnIhcSZ6uUzN7Ls2O6iTgT6qB46BlhEv5twwHkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BpvugTu5VJxcN4v9VGPgnr1vbZmjzmYF5b8PA9baRHE=;
- b=bwUUUzLZyzfk7wOXcvGKJgWyTRKKiE7JtR3o4Ym4rd+gK2WUx+cXh3g/jjJFXeB9PWuqNf6DN+vyfQTyEhCaltueAkQvS2oEocCzyNb/zjxI0dwpxmRYfQEjYGlD7RXvKMvoJ+OqgPZvs5fQ68ZkjOAw67RpJDq233C0MWzvJRTowDyjOY8oKx1kPYoHSy3O8LGycnkR1FNe3GDot6k7D2z+/RqMpG2Zh2rZw1SqFo85gZ2dvcMm5v/kXQlTPBihO3Ia/sKPRl0Nip4yGcjMHMmpAyvuTwfYNRxa/DZRwLa7L2niymMTMeuOx+UlK+e+697cDonmGsHXE2QXU3th7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BpvugTu5VJxcN4v9VGPgnr1vbZmjzmYF5b8PA9baRHE=;
- b=V0yWPpXq52bg3Y8Aryay+cqNZKimId+seFy90oF+ISm9T97H75fyObmtiJpiRVEIOZ2ojdbvaze5l3UdUZ/sOhpllxEANoU4GeTrjAubQALMklQN2hNqu/raBov7g+iKTM7Pafu9zTHVobC1QmPvW8klAhOJJLegfVvyqPbxpog=
-Received: from PH7P221CA0072.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::10)
- by SJ1PR12MB6076.namprd12.prod.outlook.com (2603:10b6:a03:45d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Tue, 8 Oct
- 2024 10:43:01 +0000
-Received: from CY4PEPF0000E9D2.namprd03.prod.outlook.com
- (2603:10b6:510:328:cafe::2e) by PH7P221CA0072.outlook.office365.com
- (2603:10b6:510:328::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
- Transport; Tue, 8 Oct 2024 10:43:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000E9D2.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Tue, 8 Oct 2024 10:43:00 +0000
-Received: from BLR-L-DHSRIVAS.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Oct
- 2024 05:42:57 -0500
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <dheerajkumar.srivastava@amd.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-Subject: [PATCH 8/8] iommu/amd: Add documentation for AMD IOMMU debugfs support
-Date: Tue, 8 Oct 2024 16:10:35 +0530
-Message-ID: <20241008104035.4008-9-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241008104035.4008-1-dheerajkumar.srivastava@amd.com>
-References: <20241008104035.4008-1-dheerajkumar.srivastava@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991B91779B1;
+	Tue,  8 Oct 2024 10:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728384032; cv=none; b=oGJrajKvnA6Ho2JyD41yAAOn909bA37Li0cc0Za0Cs397C/lPJrbsPWjFb/hq3pJ7Ys/z/wkv7BtrY6o1gtSpCln9KPVoBU95Yt0ALdVEPzQq8C+52EH7fpmSvJVGmlqF+sGcGPLZK0wzelkwSUizTj5BT3RQQbTBgzHL9+U+G4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728384032; c=relaxed/simple;
+	bh=A0YhKsiXP2Xt18H5UHnW7+vMopAENwLVs835p9iWjjE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NPSa9u9DeMNqaGNJnCNsUVUzP9eVPjDuIAih8sV5O/Dbyr3ZNJExRnOowMJqbPGDrI28ozC1cGuDJgVmZEuYOJorLtNf3/6nGwlb72Z69t3clWq4LojxdEevVlNks4YZ2U2/3wlGZq4CUIYLPDYfan5xr2ZOttDWmqMiUA4wGCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4oSGpxX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D6AC4CEC7;
+	Tue,  8 Oct 2024 10:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728384032;
+	bh=A0YhKsiXP2Xt18H5UHnW7+vMopAENwLVs835p9iWjjE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=R4oSGpxXrm4k8oHsZEaPcGJ6huOlT3dJbsCtUHoIXhqTjr51iovBmkHz18fcmFBjJ
+	 5OvMzRAmRDz8a4WCZTfeqYKnrSevIB1DpgV80YkTY4v5W6LyDyu272OqC7m3G/nZ5z
+	 TxLPAi1HKTR9a2GhAXk+mdIcrDIFx0uMKr4YGAWYtaw38gYkFIOHo8/7c2qvaSyFwY
+	 UglkBV1lYd5u83fTEItQ8K+U70pMJFl+8+x4NRZuNwnPEglOoHmrtB2maHtd9rC5UL
+	 b5WD/ihkrLqHiKL+gGWBhpEeYdJenVAnh/7NshRPvaC42Dqvwb1Hd+E4q0Q6WoaaCN
+	 KhNqDvE9dE8gA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 728F83810938;
+	Tue,  8 Oct 2024 10:40:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,213 +51,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D2:EE_|SJ1PR12MB6076:EE_
-X-MS-Office365-Filtering-Correlation-Id: bcde736c-4a9f-46c5-f996-08dce785fb28
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2KEgHtcz+YL+odQiEIvOjyqq9LoqpDpS3pifdyfTf6ov2io7stOxaod+lM/i?=
- =?us-ascii?Q?Mcr23sXFV6R77AoFhkMV4IIDy2rCj2KH/c2/E8nuTbJqnMzfV5zRf5L+VALq?=
- =?us-ascii?Q?5xesKQgvdk5MoNxsZaMN9sMkAmuYtEWrkGXrD1Hq2ZK0N8kYFRG3K7ceGb/H?=
- =?us-ascii?Q?4OcuEEgfxX44hYCmZN+4+3GBJlK4IclfglqvP0VaY24Wfd3r34Q2R4omT05F?=
- =?us-ascii?Q?QJf1/7n4mBNSPzlz/x5AGPPA2o3FfCTixXB7QbZvUeeYJTtuydyLdckIYLG+?=
- =?us-ascii?Q?ZnhRpc0eZjUDC7C9aG7o///e2y0JO3vBi9sov1IYjLYAojc8WSSp35dh47Wn?=
- =?us-ascii?Q?nbsOFcQmKvVeoc9PVQJC9/7Widcarq7oDFIgvQDs8sXkE4M0MYkBXKBxj4WF?=
- =?us-ascii?Q?7P69m7vmiz6UBQj2Zeq9EcW2wD+845gL5+3KfQnxft45WLghzJxiqriUZ4BA?=
- =?us-ascii?Q?eJMu0gLQf9dElBQf2zvtfmMutKz8uR9d++c93LsztXOTzmMc+alfEMY1RDPx?=
- =?us-ascii?Q?4eDhbTyTp742h53NMtVkTii1mTF2A0VnfTSMsAZto+6/Eod8+SEcX0U5L/T4?=
- =?us-ascii?Q?Jc9tKmr1d2megLKXeQB2HIDOthnVgtE6pPUV+yVo7RMsAK3onk7SdMMhQ2Nt?=
- =?us-ascii?Q?t2VBNvAaSqPOx+ssFG8mfRagLSLx4prjPJDOdlNU7HwDwSrw1S03rpbI2phQ?=
- =?us-ascii?Q?6FjMJdghEz7fzoKFd+hi2X7NPWJZy3zr0e2pmpphBENDEhk2DQL3RgjR5KUP?=
- =?us-ascii?Q?9RwmexqfFvlzlgGF7HJ0ri8cxXB34tLOsOOOU1+4Fh9j/GJ3DzbWFIE4ahkP?=
- =?us-ascii?Q?GK3RvO1qZj7B+nBiwzYPCqul2rjvwO6kO7R8CZiSx0GI6JovKCkwkWRnQBzT?=
- =?us-ascii?Q?XKwXDz86HlPm3wtu7OmT0tq5hnMyie8eawKSWxWog6EEFCOHs4XosZSmJ6s0?=
- =?us-ascii?Q?/tpFZRqb7tfsSAYHh0x68Iue4oNM5itdV0PWqKTgyESXkBPOHzWPoxy/fecu?=
- =?us-ascii?Q?IkxgtRZck0TO2UoDpn0t2SDv7K5NnzUh3HSBRuVmw4Z3zBVVQFgd+Z0E9o9B?=
- =?us-ascii?Q?oSV+mjzT7DS0ggw93uf3fno/T9/jWkZpXUHOLPsN2AIVZ6MKZx8QFIXDs/ek?=
- =?us-ascii?Q?NsraNRGzD07svDAwQsOvZoXSjwHRu6/2EAD5hmglCEhfhpmMigYbUtqUIl3v?=
- =?us-ascii?Q?TyiCYlzsioCgmonxSFkGGfNveV/8cKAEKSdTabOiJVvtyhhFlAGlp3g+ltwk?=
- =?us-ascii?Q?bBLjndW5JS5zjAUOCcBdknlyDhaoIvPDPrcWq85wgDNmI5/aqAJhKV0SjvRj?=
- =?us-ascii?Q?9WhAi8zj/FytC4JyRNuIlCzbLDEFJYu1ojr8cU+QTbGG4WVLIFkK1jzWraLU?=
- =?us-ascii?Q?fLDTcsnbMGV1Ln4eaxtRVfvQ9a8x?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 10:43:00.8482
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcde736c-4a9f-46c5-f996-08dce785fb28
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6076
+Subject: Re: [PATCH net-next v4 0/3] net: fec: add PPS channel configuration
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172838403627.487135.12470699672942876836.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 10:40:36 +0000
+References: <20241004152419.79465-1-francesco@dolcini.it>
+In-Reply-To: <20241004152419.79465-1-francesco@dolcini.it>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: wei.fang@nxp.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, richardcochran@gmail.com, linux-imx@nxp.com,
+ francesco.dolcini@toradex.com, imx@lists.linux.dev, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 
-Add documentation describing how to use AMD IOMMU debugfs support to
-dump IOMMU data structures - IRT table, Device table, Registers (MMIO and
-Capability) and command buffer.
+Hello:
 
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
----
- Documentation/ABI/testing/debugfs-amd-iommu | 140 ++++++++++++++++++++
- 1 file changed, 140 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-amd-iommu
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/Documentation/ABI/testing/debugfs-amd-iommu b/Documentation/ABI/testing/debugfs-amd-iommu
-new file mode 100644
-index 000000000000..7acdb38bdf7b
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-amd-iommu
-@@ -0,0 +1,140 @@
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+		mmio register offset for iommu<x> to print corresponding mmio register
-+		of iommu<x>.
-+
-+		Example:
-+		$ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
-+
-+		Output:
-+		0x18
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio_dump
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains mmio register
-+		value at offset "/sys/kernel/debug/iommu/amd/iommu<x>/mmio".
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio_dump
-+
-+		Output:
-+		0x0003f48d
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+                capability register offset for iommu<x> to print corresponding capability
-+		register of iommu<x>.
-+
-+		Example:
-+		$ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability
-+
-+		Output:
-+		0x10
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability_dump
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains capability register
-+                value at offset "/sys/kernel/debug/iommu/amd/iommu<x>/capability".
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability_dump
-+
-+		Output:
-+		0x00203040
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This file is an output read only file that contains iommu<x> command
-+		buffer entries.
-+
-+		Examples:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+
-+		Output:
-+		CMD Buffer Head pointer register:0x00000b90 Tail pointer register:0x00000b90
-+		  0: 008350011000000100003c0000000000
-+		  1: 0000000030000005fffff0037fffffff
-+		  2: 008350011000000100003c0100000000
-+		  3: 0000000030000005fffff0037fffffff
-+		  4: 008350011000000100003c0200000000
-+		  5: 0000000030000005fffff0037fffffff
-+		  6: 008350011000000100003c0300000000
-+		  7: 0000000030000005fffff0037fffffff
-+		  8: 008350011000000100003c0400000000
-+		  9: 0000000030000005fffff0037fffffff
-+		 10: 008350011000000100003c0500000000
-+		 11: 0000000030000005fffff0037fffffff
-+		[...]
-+
-+What:		/sys/kernel/debug/iommu/amd/devid
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write file that takes device id user input.
-+		This input can be used for dumping iommu data structures like
-+		interrupt remapping table, device table etc.
-+
-+		Example:
-+		1.
-+		$ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+		2.
-+		$ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+What:		/sys/kernel/debug/iommu/devtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains device table entry for
-+		the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/devtbl
-+
-+		Output:
-+		DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
-+		0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
-+
-+What:		/sys/kernel/debug/iommu/devtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains IRT table valid entries
-+		for the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/irqtbl
-+
-+		Output:
-+		DeviceId 0000:01:00.0
-+		IRT[0000] 00000000000000200000000000000241
-+		IRT[0001] 00000000000000200000000000000841
-+		IRT[0002] 00000000000000200000000000002041
-+		IRT[0003] 00000000000000200000000000008041
-+		IRT[0004] 00000000000000200000000000020041
-+		IRT[0005] 00000000000000200000000000080041
-+		IRT[0006] 00000000000000200000000000200041
-+		IRT[0007] 00000000000000200000000000800041
-+		[...]
+On Fri,  4 Oct 2024 17:24:16 +0200 you wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Make the FEC Ethernet PPS channel configurable from device tree.
+> 
+> v3: https://lore.kernel.org/all/20240809094804.391441-1-francesco@dolcini.it/
+> v2: https://lore.kernel.org/all/20240809091844.387824-1-francesco@dolcini.it/
+> v1: https://lore.kernel.org/all/20240807144349.297342-1-francesco@dolcini.it/
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v4,1/3] dt-bindings: net: fec: add pps channel property
+    https://git.kernel.org/netdev/net-next/c/1aa772be0444
+  - [net-next,v4,2/3] net: fec: refactor PPS channel configuration
+    https://git.kernel.org/netdev/net-next/c/bf8ca67e2167
+  - [net-next,v4,3/3] net: fec: make PPS channel configurable
+    https://git.kernel.org/netdev/net-next/c/566c2d83887f
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
