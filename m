@@ -1,228 +1,132 @@
-Return-Path: <linux-kernel+bounces-354956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E8999452E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34894994537
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E741C23F55
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCD42833DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C331F192B98;
-	Tue,  8 Oct 2024 10:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01F21BFE1F;
+	Tue,  8 Oct 2024 10:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbH+UvdL"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c3lregHn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422CEEEC8;
-	Tue,  8 Oct 2024 10:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7B11AD401;
+	Tue,  8 Oct 2024 10:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728382674; cv=none; b=ux7c6DerfhvpuSbQZVcqKymojTDlKBg6E5UWQVrBiIRvqsO3KL46FI5m2cpFsMSwALTtSdHDBR3+O7RsodJxnN7A+ga/Zm3hdDvTKnv4tetgMywsv2clqnhsl+eNLuoFp8v8n56txJ7Xa1hoi4c5rlk48W2dkXRB54C2cirs63U=
+	t=1728382725; cv=none; b=JmEI5y6ycNt7QfdysmSDraoQqPfuh5AyUoENS5Q5i6qa3jJTHdlpZJfK7/E9uuvIuWnlUQKhQypaJz9LNECRbrzd+PCbPSfTnrJFTElNS4Kp/1WxfreqJWZLitKsgeYEeMxg93lqjjjYDIM7RtvEarw1ahDzMiaAGhedhJZ0b54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728382674; c=relaxed/simple;
-	bh=SFYF8/r/i06nkK3/m1NYik/yK1v1qRVIA7kXQjfjO/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gy4A1vWHZn3zHvq59jVvazUYT7t4Hf4YGaG3Olf3BPbOlm9UahUGtckA0uqmtGNQRQTxC2efzpbsZh+xBpDeHmuEumNsZRRFkDG8LpcaVqpEQM135dFCrK4JNRJnbK/cPPaoH6jwdospbFa/fPtCfYZhn6hJn1+We94pJR1hgAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbH+UvdL; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539973829e7so5414480e87.0;
-        Tue, 08 Oct 2024 03:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728382670; x=1728987470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nm7RsSOhPfPPwg70mqf7oHnrMTjRMeHo6UNAH6x59BU=;
-        b=kbH+UvdLbEFk7SEQLyPAKWk/3w2k0UKUeL7l23+2BxoymrAUFI1RCVe1ruU1xLU8Mg
-         iFZLstghLSbbimJyL6sL8qDqaOUYvdhOUdJhcQymZxbDOiVO1cYOQx2KksnsLJTCgYzB
-         HmV96D2Ib//G+U+ka0yHFKkFcQjm+gFIqhJLzVtKoEqBpRfLM9tqNuXr7SkdBoU6Jisa
-         7UOAw/+ICpNLbfcRHaCPbPbQrBatbyN4OhyYsYsj7AQeUTdlDiSfrdM/DJ/6H79cEe2T
-         BO7x0xEW7CFp7Ss+HLUmkP/UbFHrRfPIAkXTUUmOmPQeqDQlyvSJyyxQFRE4K+2879ni
-         /vjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728382670; x=1728987470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nm7RsSOhPfPPwg70mqf7oHnrMTjRMeHo6UNAH6x59BU=;
-        b=l7il8s12Z4JJeAIhif2mRRjSQpoVGFG0ZbMUpLRdEBKr5oyqKM44YiO7G2EwCpsPRZ
-         3yo95njbFQK21J0KQkRTOy7jLIhMvp7qVWzmz+L44SrqQD1Xs7/7vON5V87czXnid3jk
-         p8CmkwTij4utscOW6qb+aUe7VRPkM5ugCu/ybmUb6vQo20GnvM7UPIVN32RGnPen6aIE
-         wktSRgBecrb8H21pJIS4qONlQJwdWNevAtjPgsCsHf4nvVBJzKtNbUvA159oRSzsZQNf
-         XAmU3oVITlfDo5nGSnlFlBwYEvJY4ur7Bh627dsSYiAKZpylUMNBJVU7JwvGQTJlwf2h
-         TdWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6UFH6HgXW4Q2masBVQit1vsTgs2mFJfoySEVLyIodVH9Un1hyrkHzhsV5a2yEVyQkvSg=@vger.kernel.org, AJvYcCWLmzPp4IDHy95Qqc/SF9uAjaqH0iGeszWUrexTOwkMn7qJyXbPk5Blo6wEgJgi5S09dgpjJj9g2xUEPJ/4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQFFowcukXMB/RDXGoEXdJ7M3euDgXJMRA2maESDOmnv5FGV68
-	baNrO0gahSjpTJ547mBXzqomRiIbbmKZGaWfZ9yGCIo1wsj4XtJqEOueWOFtz4TEfH4bZDdOXxz
-	8lZHX2XMWhWna8tsoLiOtpACjP/c=
-X-Google-Smtp-Source: AGHT+IG9ul/fVGV3oF7muBBRZwCiXz8jJbGeHfwS4n+Cr+pqbGbkFWeiWoHTUm6aRcIwL3VIwsS52xrFtC7i+c+jZ9Q=
-X-Received: by 2002:a05:6512:138e:b0:539:9505:7e5 with SMTP id
- 2adb3069b0e04-539ab87e201mr7007245e87.36.1728382669868; Tue, 08 Oct 2024
- 03:17:49 -0700 (PDT)
+	s=arc-20240116; t=1728382725; c=relaxed/simple;
+	bh=u8xPnDu0qAYu6LejKWYoWWMdvK8gJRvYrhiJGpOdTLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=USFZyqxg1F6EZa77haswD1NOVwk/7SuUDGa7v6kbWJS3ftJTVnZILotFexI+v6uSCGmCddeS5iJuuaJBY4jZnSqUV4A4U13MDerhWbGWcv8/F9t9KtjR8gJTleCO6lfWAqtnHTUJjnil4yWE7wwwdJQ9yDHVO+5s7O78Hux6HYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c3lregHn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49896gcp004100;
+	Tue, 8 Oct 2024 10:18:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sqpFdTY+6jzDWQR097kkAMWTTO8iAiSE8pceKsB4sbM=; b=c3lregHnCu6sgvl0
+	IlAwZ2V8iFuSl5HXydolufxefzYRLOfjIfHvl1Y8ayfsOci9k8Uhxumg/Ka+D3Ec
+	IARenIIyvDYbyAKcQUATpms1qh7bU1nLbmkwGDX/pKxa9VNbE0QHrq+xh7S28aaU
+	hYh8utWbhkjaF3hZfRHC5XhXnulwaDbLTJxwGLXBEV9VGxzTsvB9GOUkRh5DG0sE
+	QE3CNZCpwzjLKRmGmF3ef3IkPkmKVeHKgGbWvSLybR+zSheqe9ELwrk8T2cawejk
+	LdAJvWdM697LCAUWcNN77d8KHBh5YMiTyvGfwx7j3rPaZf8AhGnY8MVk2vmx8hWB
+	OoB8aQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424ndy9vd5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 10:18:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498AIK0o006896
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 10:18:20 GMT
+Received: from [10.50.47.90] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
+ 03:18:13 -0700
+Message-ID: <5e8bac8a-8e6b-423c-8e13-b73db9a226fd@quicinc.com>
+Date: Tue, 8 Oct 2024 15:48:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007103426.128923-1-puranjay@kernel.org> <20241007103426.128923-2-puranjay@kernel.org>
- <CAEf4BzZMiwcMY3H9=qwpgCKQxDZmKHcmxEJtRhrTCgNar8YaXQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzZMiwcMY3H9=qwpgCKQxDZmKHcmxEJtRhrTCgNar8YaXQ@mail.gmail.com>
-From: Puranjay Mohan <puranjay12@gmail.com>
-Date: Tue, 8 Oct 2024 12:17:37 +0200
-Message-ID: <CANk7y0iz9SWLXFMbdhOp+1JBqaB6Qhyt6rKonQyE4vGLy=7hYw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: implement bpf_send_signal_task() kfunc
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 8, 2024 at 6:24=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Oct 7, 2024 at 3:34=E2=80=AFAM Puranjay Mohan <puranjay@kernel.or=
-g> wrote:
-> >
-> > Implement bpf_send_signal_task kfunc that is similar to
-> > bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
-> > send signals to other threads and processes. It also supports sending a
-> > cookie with the signal similar to sigqueue().
-> >
-> > If the receiving process establishes a handler for the signal using the
-> > SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
-> > si_value field of the siginfo_t structure passed as the second argument
-> > to the handler.
-> >
-> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> > ---
-> >  kernel/bpf/helpers.c     |  1 +
-> >  kernel/trace/bpf_trace.c | 54 ++++++++++++++++++++++++++++++++++------
-> >  2 files changed, 47 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > index 4053f279ed4cc..2fd3feefb9d94 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -3035,6 +3035,7 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUI=
-RE | KF_RCU | KF_RET_NULL)
-> >  #endif
-> >  BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_throw)
-> > +BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
-> >  BTF_KFUNCS_END(generic_btf_ids)
-> >
-> >  static const struct btf_kfunc_id_set generic_kfunc_set =3D {
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index a582cd25ca876..ae8c9fa8b04d1 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -802,6 +802,8 @@ struct send_signal_irq_work {
-> >         struct task_struct *task;
-> >         u32 sig;
-> >         enum pid_type type;
-> > +       bool has_siginfo;
-> > +       kernel_siginfo_t info;
->
-> group_send_sig_info() refers to this as `struct kernel_siginfo`, let's
-> use that and avoid unnecessary typedefs
->
-> >  };
-> >
-> >  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
-> > @@ -811,25 +813,43 @@ static void do_bpf_send_signal(struct irq_work *e=
-ntry)
-> >         struct send_signal_irq_work *work;
-> >
-> >         work =3D container_of(entry, struct send_signal_irq_work, irq_w=
-ork);
-> > -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work-=
->type);
-> > +       if (work->has_siginfo)
-> > +               group_send_sig_info(work->sig, &work->info, work->task,=
- work->type);
-> > +       else
-> > +               group_send_sig_info(work->sig, SEND_SIG_PRIV, work->tas=
-k, work->type);
->
-> There is lots of duplication while the only difference is between
-> providing SEND_SIG_PRIV and our own &work->info. So maybe let's just
-> have something like
->
-> struct kernel_siginfo *siginfo;
->
-> siginfo =3D work->has_siginfo ? &work->info : SEND_SIG_PRIV;
-> group_send_sig_info(work->sig, siginfo, work->task, work->type);
->
-> ?
->
-> >         put_task_struct(work->task);
-> >  }
-> >
-> > -static int bpf_send_signal_common(u32 sig, enum pid_type type)
-> > +static int bpf_send_signal_common(u32 sig, enum pid_type type, struct =
-task_struct *tsk, u64 value)
->
-> task? why tsk?
->
-> >  {
-> >         struct send_signal_irq_work *work =3D NULL;
-> > +       kernel_siginfo_t info;
-> > +       bool has_siginfo =3D false;
-> > +
-> > +       if (!tsk) {
-> > +               tsk =3D current;
-> > +       } else {
-> > +               has_siginfo =3D true;
->
-> nit: I find it less confusing for cases like with has_siginfo here,
-> for the variable to be explicitly assigned in both branches, instead
-> of defaulting to false and then reassigned in one of the branches
->
-> > +               clear_siginfo(&info);
-> > +               info.si_signo =3D sig;
-> > +               info.si_errno =3D 0;
-> > +               info.si_code =3D SI_KERNEL;
-> > +               info.si_pid =3D 0;
-> > +               info.si_uid =3D 0;
-> > +               info.si_value.sival_ptr =3D (void *)value;
-> > +       }
->
-> kernel test bot complains that this should probably be (void
-> *)(unsigned long)value (which will truncate on 32-bit archtes, but oh
-> well)
->
-> but can you please double check that it's ok to set
-> info.si_value.sival_ptr for any signal? Because si_value.sival_ptr is
-> actually defined inside __sifields._rt._sigval, which clearly would
-> conflict with _kill, _timer, _sigchld and other groups of signals.
->
-> so I suspect we'd need to have a list of signals that are OK accepting
-> this extra u64 value, and reject it otherwise (instead of silently
-> corrupting data inside __sifields
-
-I tried reading the man pages of sigqueue and it allows using all signals.
-
-To test it, I sent SIGCHLD to a process with si_value.sival_ptr using
-sigqueue() and it worked as expected.
-
-It shouldn't affect us as we are not populating all fields of
-__sifields anyway. For example if you send SIGCHLD using
-this new kfunc, there is no way to set _utime and _stime or even _pid
-and _uid, here only the signal number
-and this u64 value is relevant.
-
-I will make all the other suggested changes in the next version.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/7] clk: qcom: add Global Clock controller (GCC)
+ driver for IPQ5424 SoC
+To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>
+References: <20241004102342.2414317-1-quic_srichara@quicinc.com>
+ <20241004102342.2414317-5-quic_srichara@quicinc.com>
+ <1ac5e0e5-06c1-4930-8c03-f465d6e07848@quicinc.com>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <1ac5e0e5-06c1-4930-8c03-f465d6e07848@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: R4sxhw8CqABc2bubWh1F1geSuX3Npj5I
+X-Proofpoint-ORIG-GUID: R4sxhw8CqABc2bubWh1F1geSuX3Npj5I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080067
 
 
-Thanks,
-Puranjay
+> 
+> <snip>
+> 
+>> +
+>> +static const struct freq_tbl ftbl_gcc_qupv3_uart0_clk_src[] = {
+>> +    F(960000, P_XO, 10, 2, 5),
+>> +    F(4800000, P_XO, 5, 0, 0),
+>> +    F(9600000, P_XO, 2, 4, 5),
+>> +    F(16000000, P_GPLL0_OUT_MAIN, 10, 1, 5),
+>> +    F(24000000, P_XO, 1, 0, 0),
+>> +    F(25000000, P_GPLL0_OUT_MAIN, 16, 1, 2),
+>> +    F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
+>> +    F(64000000, P_GPLL0_OUT_MAIN, 12.5, 0, 0),
+>> +    { }
+>> +};
+>> +
+> 
+> There are few more frequencies got added to this table. Can we 
+> incorporate that as well?
+> 
+
+ok, yeah, since these patches are already reviewed, will send the
+additional updates here and also for dts etc in a separate series.
+
+Regards,
+  Sricharan
+
 
