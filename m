@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel+bounces-354936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC09944D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0182F9944D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A59B262C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4CA1F23A26
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B3018CBF1;
-	Tue,  8 Oct 2024 09:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F3918CC07;
+	Tue,  8 Oct 2024 09:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIq+O07B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DoPIMM05"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62D2173336;
-	Tue,  8 Oct 2024 09:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB4416EB42;
+	Tue,  8 Oct 2024 09:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728381028; cv=none; b=RYS3Knfdgg6942uduTs8mISwnyjGZqjf3denseD2BAioP8QASvmxXVXm7Epe7j9kwmqe21OiL0cnvyvUdgEsXLeR0FTZWBrUz21MoD/axwu1Ia/t96Au77h/X0/RGIgnnlTUT75kDPilPFSAQIfA9OlWH6Mpy4D7w92dkmvCBbE=
+	t=1728381173; cv=none; b=VOJZRIz0JowQ6n2kwiaUrmF3fbicr2K+xRWLv5f8AgKTJDZ/K9KqQvleilUHTWoK1MPoGwpIZBq87XRnhbHycsdZx9ZbdQcoNgW2X6Wn/lpkgACs+BwdX036s5E+GaZEo2WN6gSIwR0LRE7hveXD3k3A5KNwqEbbbKpbDqwTrz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728381028; c=relaxed/simple;
-	bh=XEm2ORiPKfTRSrw0KpulPUwOgoWHLL9ryCeASyTK1ec=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZA1fTjl2D5hJRi0AU1ozRNcyFnudB0n0mzvtkaRA1Y036+t7RW9MwhlTeXM9V+0Unc5xTzaDsxGAO+6wjvmtS0Xkxe8cypTDx+vdoXX2XaD9+zXq6uaXCqyhDKFRGCeE+WO3vI1V5OpeBk2M+sdGVi9/YMsNE1UZWxvztUihJXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIq+O07B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C444C4CEC7;
-	Tue,  8 Oct 2024 09:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728381026;
-	bh=XEm2ORiPKfTRSrw0KpulPUwOgoWHLL9ryCeASyTK1ec=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MIq+O07BVQWa6upj60nCwdO1Qt7nViDEdOxFbQm+bk1Aye7F78rmUZiEjFvQKgGTv
-	 ccujhfrgiLAfYrG16rAo3SoIi+G8UTvzlZ9x2yS8MyOFAJELNlX3Rdgu20NUxOIZaP
-	 mxw0g+xJ7a3JYLvvFwK1yPZhx4d95j5hjFroMI6cfxlcrRe4jM0Yh+YzWzmdHldyN3
-	 3hBm9eb5CaTpZ9rQjD9DXafrJC619vsIbUJYsb6icbKEEtbXTaGr2E7GLPwsofxeIE
-	 dc6Jb3bSIlVOr82+MZcq7fHIPKEobwE/7K3s4sk46PUztdtVocnChZBlWNbmnTdFvd
-	 LK2auw7HfBMtA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD203810938;
-	Tue,  8 Oct 2024 09:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728381173; c=relaxed/simple;
+	bh=5ICUhILdpfrxIIwr2tfTau2AQ1AHNhcAgTKAZF4zV9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJTwohEo34kcWoXGoohZxVq7kF1PpOTJaMvvgZJUN+NrSqrnb8mXg4IVAjuo85tGKZz1jWGKgIB0XM+H3GVCbIUf3VZ0lI5RgLN/Mq4JSBVNXbHmPVMuYrEi0nhRpQHtACfvd4GQTRw7iL5HWl6qZfPqHujTIG8hG8GPJPo+fc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DoPIMM05; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728381169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=S9QFJs3/7SCYKlhjm/bk9r+W0r0GmzkRfjIaRjfie8s=;
+	b=DoPIMM05m20Oj8L4eAhV9ugiuMHG6PsFStZfAk9YLS2FPIFQNk8KBS4t0ec1qdKYp9aDQV
+	Zb1QvkJ2QzJuYcQ2P+QW+TkV0k4RZoazWqd37qjRcUI85osSmsIpzyXQJ1MkzdPr2nSw6h
+	t5CpfV5K4fNJs0juN/AFEL7/tWVJg/E=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] scsi: fnic: Use vzalloc() instead of vmalloc() and memset(0)
+Date: Tue,  8 Oct 2024 11:51:53 +0200
+Message-ID: <20241008095152.1831-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +59,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 1/1] Documentation: networking: add Twisted Pair
- Ethernet diagnostics at OSI Layer 1
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172838103051.472898.7922396138133362766.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Oct 2024 09:50:30 +0000
-References: <20241004121824.1716303-1-o.rempel@pengutronix.de>
-In-Reply-To: <20241004121824.1716303-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, f.fainelli@gmail.com, maxime.chevallier@bootlin.com,
- kory.maincent@bootlin.com, lukma@denx.de, corbet@lwn.net,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux@armlinux.org.uk, Divya.Koppera@microchip.com
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+Use vzalloc() instead of vmalloc() followed by memset(0) to simplify the
+functions fnic_trace_buf_init() and fnic_fc_trace_init().
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Remove unnecessary unsigned long cast.
 
-On Fri,  4 Oct 2024 14:18:24 +0200 you wrote:
-> This patch introduces a diagnostic guide for troubleshooting Twisted
-> Pair  Ethernet variants at OSI Layer 1. It provides detailed steps for
-> detecting  and resolving common link issues, such as incorrect wiring,
-> cable damage,  and power delivery problems. The guide also includes
-> interface verification  steps and PHY-specific diagnostics.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> 
-> [...]
+Compile-tested only.
 
-Here is the summary with links:
-  - [net-next,v3,1/1] Documentation: networking: add Twisted Pair Ethernet diagnostics at OSI Layer 1
-    https://git.kernel.org/netdev/net-next/c/e793b86ae44e
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Remove unsigned long cast as suggested by Johannes Thumshirn
+- Link to v1: https://lore.kernel.org/linux-kernel/20241007115840.2239-6-thorsten.blum@linux.dev/
+---
+ drivers/scsi/fnic/fnic_trace.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index aaa4ea02fb7c..c2413e0e4eaa 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -485,7 +485,7 @@ int fnic_trace_buf_init(void)
+ 	}
+ 
+ 	fnic_trace_entries.page_offset =
+-		vmalloc(array_size(fnic_max_trace_entries,
++		vzalloc(array_size(fnic_max_trace_entries,
+ 				   sizeof(unsigned long)));
+ 	if (!fnic_trace_entries.page_offset) {
+ 		printk(KERN_ERR PFX "Failed to allocate memory for"
+@@ -497,8 +497,6 @@ int fnic_trace_buf_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_trace_buf_init;
+ 	}
+-	memset((void *)fnic_trace_entries.page_offset, 0,
+-		  (fnic_max_trace_entries * sizeof(unsigned long)));
+ 	fnic_trace_entries.wr_idx = fnic_trace_entries.rd_idx = 0;
+ 	fnic_buf_head = fnic_trace_buf_p;
+ 
+@@ -559,8 +557,7 @@ int fnic_fc_trace_init(void)
+ 	fc_trace_max_entries = (fnic_fc_trace_max_pages * PAGE_SIZE)/
+ 				FC_TRC_SIZE_BYTES;
+ 	fnic_fc_ctlr_trace_buf_p =
+-		(unsigned long)vmalloc(array_size(PAGE_SIZE,
+-						  fnic_fc_trace_max_pages));
++		vzalloc(array_size(PAGE_SIZE, fnic_fc_trace_max_pages));
+ 	if (!fnic_fc_ctlr_trace_buf_p) {
+ 		pr_err("fnic: Failed to allocate memory for "
+ 		       "FC Control Trace Buf\n");
+@@ -568,12 +565,9 @@ int fnic_fc_trace_init(void)
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
+ 
+-	memset((void *)fnic_fc_ctlr_trace_buf_p, 0,
+-			fnic_fc_trace_max_pages * PAGE_SIZE);
+-
+ 	/* Allocate memory for page offset */
+ 	fc_trace_entries.page_offset =
+-		vmalloc(array_size(fc_trace_max_entries,
++		vzalloc(array_size(fc_trace_max_entries,
+ 				   sizeof(unsigned long)));
+ 	if (!fc_trace_entries.page_offset) {
+ 		pr_err("fnic:Failed to allocate memory for page_offset\n");
+@@ -585,8 +579,6 @@ int fnic_fc_trace_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
+-	memset((void *)fc_trace_entries.page_offset, 0,
+-	       (fc_trace_max_entries * sizeof(unsigned long)));
+ 
+ 	fc_trace_entries.rd_idx = fc_trace_entries.wr_idx = 0;
+ 	fc_trace_buf_head = fnic_fc_ctlr_trace_buf_p;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.2
 
 
