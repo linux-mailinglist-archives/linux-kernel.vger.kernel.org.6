@@ -1,89 +1,113 @@
-Return-Path: <linux-kernel+bounces-354365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC28993C8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D5A993C4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3BEF1F24BF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17A71F24A56
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4BE1CA9C;
-	Tue,  8 Oct 2024 01:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6A617BD9;
+	Tue,  8 Oct 2024 01:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G+uJrtzP"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kaXrZnzG";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="afzjLtbp"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC05FEC4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 01:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21AB8460;
+	Tue,  8 Oct 2024 01:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728352602; cv=fail; b=DRftygw985Q7Bb9Z9YC4c7/J8ca9BnIcTgAJhQq2+6hdKqzpwJ2IYKw3GmZxO50cpAygGSj9DlHMGTJ/tNnrsM9osw+DSYruNHY8d57vF/tjo02iQLvMKAu3AmH5+aaB4mnUK6wcsNfpIo2QJ0Hg3EEjBOdx9Q2ZZW4D55tm/Sg=
+	t=1728351473; cv=fail; b=LmWp/bqqrdtKmvyFZGF/H4quhkBEzindh6B3SWgv+aGCdNnJi1vfi5VxvdfEukQrWiGKBGAFrViLP9SVpAXmOR+jT2MP9XByHoUk3WIpBnxlHlCtCzQ39mo6zak9Z3D8/SLFgz6sZ3CXt4745u4UqB/0UlbPhsmwfFtkvYXSKzs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728352602; c=relaxed/simple;
-	bh=eDgYg0RnkEckP4rQ2ZkRSgsKJNkJJ/lmHDroXLVcCMg=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=nInJk1rIlQujYBYyPcUf3e0FFYPYPWbZxwun49I5DIleQfp1jNevjRGC/IU3tSJI59Me4QevF1f4NvtVw2s9MvUvMbryNvOP73O7rQXsf90zX5lMsKKyA6LYwFa+ywU8C7PH/27mEEMhwE3DlvxdSyKNUnUwYVpFbKN/RKmMDPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G+uJrtzP; arc=fail smtp.client-ip=40.107.223.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1728351473; c=relaxed/simple;
+	bh=6rT3P11RQYU48nJpSe7NJ8iWVoGaiHVDKWrIJMjEwnY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rm8QLFV4P1+yG+MbObzL54ltIk5gllVboTlSHkFepdOSmB7U2A65FS34MoACExXnTmWrFAq5xjATLFwuxMesdshNigkc/4C+j0XdEiQaBfapUGGWaPmMJqxc7P3yBw2C9idDlvXnH/Gd/aZR1UCr/3/brKXtzceZC1qgKG2Hgac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kaXrZnzG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=afzjLtbp; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4981NiCb026420;
+	Tue, 8 Oct 2024 01:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=V+9OKG2oilZJdEEOW/PNXNvTlrK8dq98VC0RkC5+xxk=; b=
+	kaXrZnzGkzu1tWdE6YRn6RI3Z6pjmy6Jbbtpe+s7NIvIzNUvoNArn/4/CbBfc/c7
+	7KFYocQeMuMsGZ085+oTWzHUh8FCC4Hr7F68fKZKeH04kTA+XdqzS/oYhUScZsJu
+	/SxIkEw6iXJhjShX3IVc0vOPfwP4cgyq2TVQX2kBKNL3J6Ao3VX1tXIBiO5DTxlf
+	C1Z4FZK07xuhzbiKVpx8/g3bk3iSo0cI5b4i2Wl3v9aJqm0emY0HPfrjElTFX+qY
+	XF5xNXM6lq9W6G/dlYn6A5vnaiFHp/QJkAImQT38qrsA1gG+n8XTWYDtzliRjGUN
+	jwY8Eiac53EoP741udpdkA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42300dvreh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 08 Oct 2024 01:37:19 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4981PTYB012647;
+	Tue, 8 Oct 2024 01:37:18 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw6hqmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 08 Oct 2024 01:37:18 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xVy5DTi91J2qoHHS7BQHpsEb22Yyvuvn73SgYYeWq38tYQldNIcvnuWe8H0G+eDiTYNfKqb3HZ9+Q2/B0i6I4dPQGHV/54TDKmjUmiHXfMl1u4V/uFqv8UwspYVeVwcJ/YKkR5hVCUqjWbo9BV/LYzSVvs0N90hn0QKpgIH/b1/0wmBEhB0WUxAD8Fa2VhyN+uneBioEXjiyUUgY9sMSkY+OKGIudqDBBduiQS27Dw4fujthb56HAObkjsi2hAeHkXAD2f5rHlVTl6+9OBZqMAr9mbRIdpl7j64mtJiYCqwexlme/Dwas6SuaoQHOwMIyd2si7h/Cy2UQU/3PaxSHg==
+ b=CbVqceHXiwYCjmFLlCF1fhbhPM4B93IJ/URt1Hf17iQHX6Ai263d+CL0tmlz6WSSYmIy/ainBjn2hHjtfYz2UKXy4gB9PXxJTyE+O7001yo8YG+lfUs5YYDRtCiSG4RW+Lc7YkF1B09UGuOrouuDOBGV7Qn8DCE91rRqYVumu0/2TLJAs6mRCaUTtGtjQVFYiY8Cp7AGld7KYAddByUzVM2V1Z9rxYmy9dY+QN3ZUEmmP4xRkAmUu6/3kAGDFIrQw8IAsdQoemZSJ4053QkbFzRfIvo2MhbUUCKpXmSIbYZvSlM4z7EDhpW3lCgc5Ep+1A7oySrLM30hyesaN3z4OQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MBud6PGWDJ1/Sn/n/FP/FETjfS/CQqJgof6eORgWf30=;
- b=n4V+QNUkkeBI0aIouPQixOdQyWNBUpSkj5vw8TMaBklBiNd+6/LrrBBk8CT0iU1DIe/eXj7sfaS20iWU1In0c+e/WDLv31JPybSgW9DuPUyUnCfs9bVGWO4iWa75jEK4+09bUvz37quy+O6bGU/cV2HADoDBueIMb9Ofoa1w1pbYWvi3ITsce0zgGbgn3tXKdr4yMQNSJVU8V0N7oT+aOneKB/jKpD5FZYiPly9RY2bPtCyIox7iGJYnrJzmc1yaN9T2TX8DqVlDivp2Wg8OBHtB0Yz/QTk9T6AylrPzvhlVWjnx11K2bgb+ZxLRXMA1cUEZ9Pz9WPKj2plIFDv0dQ==
+ bh=V+9OKG2oilZJdEEOW/PNXNvTlrK8dq98VC0RkC5+xxk=;
+ b=vyOesJm/0Pttzm5qtRWHsoNYIY/JZhIWqEsTDQP5NmzIz0n6RwY1r6vDeCHJXVWpHlGGBW+F3JuzELB+5ZB6ufKHq8lPGlwvxfr2AoKeCP23AK1DVbgnvg7JbM4TDkaaK/rRB5ns2jZGwIWT72ZdZKUduTBhNFEecguzIKNR6YDZpAUVZdDYuWOBTcmhinsyElBU6a7t6d7s2ROKX5vqJE2CX1/LNTomSWdVadKvDj06hDsSu5q0l9EpaSXj9DYIWgAIKGpyJ1CzC/2sXYXGqXEOcsmhSVtm3AbUxkDvgtVA/o+K1BLkk6T10/9qPEIRDHWW1P3e2mgjmt1KGWrztg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MBud6PGWDJ1/Sn/n/FP/FETjfS/CQqJgof6eORgWf30=;
- b=G+uJrtzP2tvIjCQO82dHmErG+V35UmT6lDFyhUiS+0jN8C64PJ79KZ8JWifuWONJ+9hlf2ydiOJMYzvZ4J13jp3BPLONF2X1aJJTneVW2U1UXMSzHOxHhZHDa5Z/GiRH5Gu3+rvWSjOTJab0B8RJASHQThLgEoqSOSSp/dh0buc5VaPKv8+KFkFR6yfQajkMZKS+rL33shf5PnvSjhASPRfMH6ufOkTaOvT3NllUblWSyw6p1wyKBncrqYUSJK/W1Rp9T8Y7uPdeLWV2fLGDOGitAdwHUKnu9l5W1AaCJ6z4FLXIK1x1JZojGr69AAPyMchdZki/Qc0VAie9Kx9giw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- MN6PR12MB8567.namprd12.prod.outlook.com (2603:10b6:208:478::12) with
+ bh=V+9OKG2oilZJdEEOW/PNXNvTlrK8dq98VC0RkC5+xxk=;
+ b=afzjLtbp5TXrh7V6AqkTlxh6cwQiRsGFekrzB71OQhP+LYQ8+8Z66Exp9cqXRmTRbloktZIeIVzwvILGu1kQSG7iD0EmO/L9HLZl6bJaDpDB+dXeibniF9Vfv0xDsvaLnidxcoFT1lk+ffijTko4usw39jq6/SkNeH8i5mVERR8=
+Received: from MW6PR10MB7660.namprd10.prod.outlook.com (2603:10b6:303:24b::12)
+ by MN6PR10MB7489.namprd10.prod.outlook.com (2603:10b6:208:478::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
- 2024 01:56:36 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
- 01:56:35 +0000
-References: <87mskehjtc.fsf@nvdebian.thelocal>
- <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
- <87msk5our1.fsf@nvdebian.thelocal>
- <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
- <Zu3n3MmtdlEDaXnF@DUT025-TGLU.fm.intel.com>
- <9a3e62e0-cb62-4d73-9694-7be8893f7206@amd.com>
- <Zu3wV9FJSTs1E5Vx@DUT025-TGLU.fm.intel.com>
- <ZvKnDT_bdx_PhAcG@phenom.ffwll.local>
- <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
- <ZvP3pWjVviMdezuy@phenom.ffwll.local>
- <ZvP79hb-0HJMvhv-@phenom.ffwll.local>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Matthew Brost <matthew.brost@intel.com>, Felix Kuehling
- <felix.kuehling@amd.com>, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Philip.Yang@amd.com,
- akpm@linux-foundation.org, christian.koenig@amd.com
-Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
-Date: Tue, 08 Oct 2024 12:33:51 +1100
-In-reply-to: <ZvP79hb-0HJMvhv-@phenom.ffwll.local>
-Message-ID: <87msjfcq7l.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SY5P300CA0102.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:248::19) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+ 2024 01:37:15 +0000
+Received: from MW6PR10MB7660.namprd10.prod.outlook.com
+ ([fe80::41fa:92d3:28b9:2a15]) by MW6PR10MB7660.namprd10.prod.outlook.com
+ ([fe80::41fa:92d3:28b9:2a15%7]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
+ 01:37:14 +0000
+Message-ID: <f323f1f2-46da-40eb-8632-d0bf1e60ee82@oracle.com>
+Date: Mon, 7 Oct 2024 18:37:10 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
+To: Sean Christopherson <seanjc@google.com>,
+        David Hildenbrand <david@redhat.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org,
+        willy@infradead.org, markhemm@googlemail.com, viro@zeniv.linux.org.uk,
+        khalid@kernel.org, andreyknvl@gmail.com, luto@kernel.org,
+        brauner@kernel.org, arnd@arndb.de, ebiederm@xmission.com,
+        catalin.marinas@arm.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org,
+        rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com,
+        pcc@google.com, neilb@suse.de, maz@kernel.org,
+        David Rientjes <rientjes@google.com>
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com>
+ <8c7fbaf1-61a0-4f55-8466-1ab40464d9db@redhat.com>
+ <0a1678d8-0974-4783-a6f6-da85adfa1a34@intel.com>
+ <7c13be04-1d18-45bd-8cfc-f5d37bd39a8e@redhat.com>
+ <ZwQQOP89Dj5gvbaP@google.com>
+Content-Language: en-US
+From: Anthony Yznaga <anthony.yznaga@oracle.com>
+In-Reply-To: <ZwQQOP89Dj5gvbaP@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR05CA0033.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f::8) To MW6PR10MB7660.namprd10.prod.outlook.com
+ (2603:10b6:303:24b::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,572 +115,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN6PR12MB8567:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce06b63a-54e5-4138-24ee-08dce73c70a3
+X-MS-TrafficTypeDiagnostic: MW6PR10MB7660:EE_|MN6PR10MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 777ba442-7e4e-47c7-b2fa-08dce739bcaf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cXJ5amxOb1ZvR1IrVWFjR1p1VmJLTzViQTlOMnBEWExHV1grd0VmdnZNaTUz?=
- =?utf-8?B?UWxkK2ZwU080NXVTRFViSEEzb01nTENGelc0dzluYllTZ01YbHJiTjkzRDFG?=
- =?utf-8?B?bkFrRmlkKzhJTWZRdmFuSFk4c1hKVE13VmhxOG1zRzJYYzcranMwM0xmNHNn?=
- =?utf-8?B?TE1ScThOb3daWEdsM3NsVEQ4RysrZUd2MGpRSWRTbEJncHFjWFFPbTZQdUdO?=
- =?utf-8?B?NkhBRUZMMm05aFVRYWlXSmRRVlVtZ2QzMTFOVW9YekgxTUNBQytOZVdWbVh4?=
- =?utf-8?B?Q2dJMVllcitMM1B3K0FvSnowWTR5N2c0UkNGSVh1UnJLb2x6ZUYrcmJSWHFr?=
- =?utf-8?B?djV2SGFINzVKSWVxQlBNWTJuYmRSVkhRUnhURDJLNTBGQWV0QjRaMUwycGhI?=
- =?utf-8?B?bjFpcXhHQVFCYzVRQXVLWUp3MUdzc3JKRHpYNk1YU25vODhJbnFKTzV6Vmtm?=
- =?utf-8?B?UFRaM1hSQXY3Z0krcTFtZGdLNG1aVWJuTlZVbkFIa1ZrTmo3VkVKOWEveDFP?=
- =?utf-8?B?bmswSW1aNUNiVFB1VVdIL1RjNHZGTU5uVVJmWUFybThXYVluZ3NZaFMrdWdS?=
- =?utf-8?B?Q25oR1FCRnlRNTNkeG0xMXJmUVp6ZXdTemwwdjkwamlFVGl3bnFxV0NoOG5t?=
- =?utf-8?B?RGQ4c1E3TkliSkVBa3V5QXdxSURhTXhaUEI3TzNzWlA1WjJBYTUxc2JnTGNF?=
- =?utf-8?B?c1hvQys0amxEaUtpM29kNXIyWDlScFFjKzF1VSs1RW1VSkNzUnlXbUliYkhO?=
- =?utf-8?B?MVNUUW03Qms4QThQcTBSRE5JamswVURqekMwWTVxcEI0R1VYcHBQVjEyblRr?=
- =?utf-8?B?MGcwT3FacE5lR29tcXY2T0VDbFlsNi9sWk8rYVRYQS83UlRRRkhpRzl5NUpk?=
- =?utf-8?B?ck1PalFDWkFzdU94d1FLQlg5dlJ2OFhLZXphK3Nna3NmeElWMm9wTXhZNlp5?=
- =?utf-8?B?a09DbGZCOVlyZkJjWVJqbEtrUHVEazczQUozdmg2MU5rY3h4OWVsNEg1OW93?=
- =?utf-8?B?TlkvTlNqRXgrWlVNNWZyNTNTRHBLYXQ3ZkNlSk1yb0tqRDRaL2JlZ1NCVFBo?=
- =?utf-8?B?WVJKVU42emtpRWNhVTRSRTRYVTF6N0x5SHNTb0VzS3JjbElXUGVXMHdtV3h3?=
- =?utf-8?B?TmhxUVVzcDJIMGp2ZldQZnoxWHp2Y0pZeFJHOW5vNndtUkZjNWpOdzJOalBk?=
- =?utf-8?B?amFYbXRTd1g2U1BDQ1BjZWpNb3hNZldublZEV0t1RFQ4dEZDR290N0dRNDR0?=
- =?utf-8?B?L2kySEU5MUZ5d3FXSURCY0Q2Q3pEVVdQYk51a29WcWsxeWkxajRGT1dtMzIz?=
- =?utf-8?B?bFhpY0c4WnVEVFRVYUE4dmtzQU92TWlob3JqNlI5ZTI4c085MFNUL24zbk1q?=
- =?utf-8?B?a3BBeFFCR0N1WjkveEJrS2ZsZnkvNVdkWXpoYnM4aHlyQmVoeGRlajF1WGdJ?=
- =?utf-8?B?NkIwbUJsUXBvdnBPSS9QQ2Y2dVZPdjNuaWlBQXN5T3A4eG1yV1Z4Qks0Qzdq?=
- =?utf-8?B?SkM0eDlxeEZEc3NCdmxXRGtrMlR0ZXNSL3ZJWnQ0bG1OdFlveXU3TTUxeTNa?=
- =?utf-8?B?aFdKd09RakRxODZGSGFXQW1YcURGNDZuREM0cTNhRzVHdzhSOUNoYm9vZjNn?=
- =?utf-8?B?ZEZpem5sU2NQM0NjK0ZNQkFKemoyK3d0aU9UYllYL05QaXUwRXpjanNXNSt0?=
- =?utf-8?B?bkU4QVkyZnZ3dnc2NUxzVmgxM2VvSy9wVWE1TVZpSDJ5RTVTcmwyZ0ZnPT0=?=
+	=?utf-8?B?dkdoalYrcll0cTRHK2ZOM3dPdUpObk8rc0lzSU13dmhoTTRLcFNFQ2doZFdP?=
+ =?utf-8?B?WmF5bkJmL3pMVWdrYmxSbjJFUVlqWVVMdVV2VXFqcUVrNmdXazFrZ2V0TWdz?=
+ =?utf-8?B?ZFV0RFBabVJtM3d2Tlo3blp4WFEyb3pWME5MSmVSMUpBNlk4M29iQ2VIMVA4?=
+ =?utf-8?B?azlQM1BnWnNoYThjV1VtMkxyUVNjU0taWUJSWGxvRmFKcUhlbG5ZeVF2Q2Q3?=
+ =?utf-8?B?V0JGOEtwSTE3WnJ5SEozVXpXVTFqd1lMVkVKWCs0UG94TDh6aUtPaXRkVElC?=
+ =?utf-8?B?YXRRVDhZQ3hTWUhzQWg5Z0hhZzhXWnpsUXN1MnpKdDhpbEpXNHl4TUhRQllv?=
+ =?utf-8?B?QTdIWm1rY0FlUFdiSVV6STBaNUxJN0FrMjQ4QWZNQWM5OE9ncHlJc2Z2UzNq?=
+ =?utf-8?B?c1FtR3hEZEU4L1F1dTZEbzV4Z0JtNUpGMlhnTEgvWGpzVXN4VElra2hwWVRi?=
+ =?utf-8?B?S2t3NkY0amNOS0l3SzZDMHVFKy80QTZoeGtieUdsM3hYZjF6SUtVVmVSazFh?=
+ =?utf-8?B?VFUwWlNJTTh3NVAzOHBtVWRPZ1poeko1eXlVSlhTM0Z3Yk11U3cwSThyZGxN?=
+ =?utf-8?B?TldzbGhpVWhuUUgwNy9aakloWDk2cWxoVXNaSnRKSHVwWEZDQkJyTFJUTXRz?=
+ =?utf-8?B?d2pnRDllbVJUTDEyNk1DdVpnT21ERityNFJ0SUdpc2lDbFBkZ2FrNkRibzVa?=
+ =?utf-8?B?c0lUVTBkajg3MTA0VVlncDlpUnd5Y3dXNkJ6Vi9nSDNPTUlBekdvQllycmVw?=
+ =?utf-8?B?ZDhobmxKNml6MFNHSkVhdG9DYjdTU3NoK0UvWVlQSG9iN1FUM2ErZVRYSGsx?=
+ =?utf-8?B?Rmh2RGVOL1pCdnRnQUxMbHZYSFMwaEZrbStSelA4R1JONTFtRUdFWWJrMUwr?=
+ =?utf-8?B?RmJUNmE1UllKUU45UkZMRnB4UGM4andIcTNoSzl3V1o1Mk10RFg0dDZYZ2hG?=
+ =?utf-8?B?NGFRQ1NrUXU0Y2VvRE1TUnB2OWhzVXUxTzI4MWJlWk9rNzc1bmlNcE83aHFP?=
+ =?utf-8?B?YlE1ZFBZeHlsT0N5SXRqY0lma1d2czNpUURFdXpqU0lGK0tmcTE3US82SDRl?=
+ =?utf-8?B?a1JRWklTQ2QrSjNmZkpZd0xxdEdoSER6M0k1TVd4b0kveW95M0REa1NpeFla?=
+ =?utf-8?B?M3gyMEZrS3NIaU9uODNOTURmRnkyTGNqRnRzc0phbEYrSjUwUlBBYkFVL0Q5?=
+ =?utf-8?B?Z1ljdVFnZ2xXajQ5T1JlWkdYZ0tocG1UMXF5eEtFMkZwcmVmWkNkNzBXM2Yx?=
+ =?utf-8?B?a285d1N0eFVJNDhWcVNBYWZmbitGczVqa25wbkw0c2ttdGlUNmtOa2s2NW91?=
+ =?utf-8?B?cnhLSklNQTRzYkhRb0xaU2U0TStpdVFmV0lqOUxHelRWeUhrdlhFbnBSRHdM?=
+ =?utf-8?B?UEtHOTJzVExJSEtCV1VEamNTNGlhcHFYZ3hJZ2ZwUERTUEFLUFlRSXNzUGpS?=
+ =?utf-8?B?QzZZRGh3TmdhdFZkVzNteFNpZGR0S2NHMFNjRkZnaVA3SUo3TXpuMDNFSUxo?=
+ =?utf-8?B?UDhWbWliOFVManV6eXpuaGk0WkdKOXBxT0RTSjFaMTA5b1hnWktCa2haQ0NB?=
+ =?utf-8?B?cGVQYzR0WXlnQnAzV3dMUENEZzB5Z1kxTWJIbTMrZTIxQ01haXpxdSsrQWlt?=
+ =?utf-8?B?YkRLNEhWanVBTWNZUDdta1BYYTV6blI5dE9mS254YnU5OTBuOU5WWVVEL2FN?=
+ =?utf-8?B?eXFJSnM4WDlJRHV2K1hjckxnMzBDZDNvekllbC92SlovbUpZMmdXNC9BPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7660.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V0ZlVWN1TzQ1YVNBQks3c1dKY0RhZjVsUnRvRkcvdFJwLzF4ZTRwREViK1BS?=
- =?utf-8?B?MlVyOUVoWEZBTlpSTzlucXdBN1ZBNlNENmVrd3N5blVLdkNFcGhHdUVNKzMz?=
- =?utf-8?B?ZDUwaUtlY2FZZ1FndW5DMU0zZ1ljMFY1cTVoa1U4dEs2elhQQXFEUjhpMjdE?=
- =?utf-8?B?YVV3SE9RRXNMTmczTjZHSUVRVFRUdHNqSDczNnd3RVFmZG9Ob0pDQ05IMTR4?=
- =?utf-8?B?NjNQdnFUMStBbmVIcHAvQmZsVmtBdUwyUHZrWXdDUjVSVUtFUTRRMVp2UU44?=
- =?utf-8?B?THgxSjJvUjJoenVTUHBDSWdReWQ4TTBQQVNOSkJ6WVhsSnlHZnRrdmFmL2tv?=
- =?utf-8?B?dHhWZm40U1ZVZlN0N0h3QWVZSmJOek1jaDEraFVRb1JKZUJTRUJKTWw2UGd3?=
- =?utf-8?B?OUxIQ0VlZXNrM0NUc2o0WEE2Vk9xRk5EcGpGL3FiNFJhdlZkL0ttdzdtdEFv?=
- =?utf-8?B?VkRSOXpIQUlnRW5xeVdyeG0vaVJiVUI3ckpGYVI3YkNmcUxWMmxTZnU5eVpR?=
- =?utf-8?B?TWdWWjFsbi9EeHptV0ppV0Q4VkQwQ3VLaU5ldW44Z0d1Ujh0N29QWmYvWSth?=
- =?utf-8?B?SllHKzAvRHpiai9BenhHWjY1bXJnMzU2elF3Tm9qb21GdU1YYmdpL3VZbFFi?=
- =?utf-8?B?MWlXbHBqNXY2MXU5SGlBaTc2bWZGb2h5bkxWSWJaUGJkTGNEMG5OTHFiM2E1?=
- =?utf-8?B?WFVhMlM0VDF4aVY5MkY2RVBHTHVNR0xwSElSb1RtdTdNMm5SbmZ5Zk1TRzFw?=
- =?utf-8?B?L3hqZEIrejBlQWQ3dmJNNnB6V2oyN1BBbWJTMjNaTFV2dUhFWDd1UnRzbTVa?=
- =?utf-8?B?UlpsZTJZVXdMRWtzLzRSeGQxMnJaUWw2U2hqaXA1Um9ldUgxR1draENCVkJG?=
- =?utf-8?B?WUVCVWhHazI4YnQ0QU5ycTUvaU9mZjNvTmdBN3pFMThyemF2VWtTRlVwL0xh?=
- =?utf-8?B?K0k4RXcvMDd4anJIWFlXTnA3Q2dTaE9vdnRUNkJvMkc4cTBLZlprU1dNeWdS?=
- =?utf-8?B?UTRTQVhISDVEWlg1YkRLVTBERmpCWWZDd25nMWl6NWl4ME8yb0pvd2VONnRP?=
- =?utf-8?B?YVRvaUtSRk9CQlFJRUQ3OEVTakZaOUg0TnhJdFAzRU03TmR3WWdmMjhjR0Iw?=
- =?utf-8?B?bXpZVXdpZEpxeExjUXBzMHhXM2s1dWpsVU9HOW1CbldDRDFDelRPTkZwZGFr?=
- =?utf-8?B?Wjg0NFVuWTdqaG5vaFk4S09kS05TcUFpS0xjNmxxVEtDamdrRm5HVmx6WEcz?=
- =?utf-8?B?SC9lcWxidnJFYmgvZzZlNWdkSFB2UnRNUThXQWZmZWtDMnpWdUpMVlZuNGZv?=
- =?utf-8?B?REw1YmVQcUg3TnVSY0tlc2lSRFJ4THU3aTlVQUJ0ZExvdm9JdnUzaHF0bkRm?=
- =?utf-8?B?ZktmRlVQZEdidXhzU1QvbGpnSitYYnhmT0Y1MnVseXgxN0NPSWk2eGx5ZmVu?=
- =?utf-8?B?VXZxdXhuSjdJSEp3MUdDREtuc0QxQld3SEhuUktHNGNHYlhQcHZXK0JjZGZz?=
- =?utf-8?B?MkdxQXBocUcwdkErUm5xOHNDUnJyZDk5UGpvbFAvU1hnMDNCT1JuY1ZiK0Jr?=
- =?utf-8?B?anBlRHJ4TDR1dWcxeTFEZmdlNEdSa3ZRTDUrYkdkN2xGdjRGSDNBVDFTN3Jw?=
- =?utf-8?B?VUp6cEpSMnd3TXE5NkJjREpibXpyakNGdkk4UUxSOGVXZ25yc0R0ZVBIK1lD?=
- =?utf-8?B?RFlJS2lyeUxmaFN3U3ZYTnY1QS9PUXY0MHpLcnNQaDdWTnRIb2JYbmZMc2pS?=
- =?utf-8?B?OENhOFNiblNIbVNsbWtrQU9RUWNLYmR2UkZjTVVjRWV5amZIKzhJOFZtazk3?=
- =?utf-8?B?NG9rWmNyRkF5aU84Q3JFZi9zK2tJZVFpRUhjSVlWOUlSczRUQmZLQmFvR3do?=
- =?utf-8?B?VVJYME45T1FGblNkbXpNU1lOSEV0OVFsd3ZrdjIwTFcrTTl2ZGZZM2gxVkgy?=
- =?utf-8?B?NkNkMFh1TmwxUWVGcTVEb2Q3V3lpVExIcHBIcDNtZzNZS21jb0hjTmxPdVhN?=
- =?utf-8?B?aFNWeTFleVVJSjQ3MktnTmxnaldEa3d6SWR3bXJILzIyM0JEMGlUaktLcm9m?=
- =?utf-8?B?MTNLRy82ekNyaGtXTTBvYnFBTjliSkJHUzJhL3R2cWdQa09haU1Oc1gxRVV6?=
- =?utf-8?Q?aZDAyK6da4omhBpXYdYd4M7Mj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce06b63a-54e5-4138-24ee-08dce73c70a3
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+	=?utf-8?B?L2pVWkVrSDV6eUM4QVZwY2Mzai8yN1FPSU43Ny9YdmJJT3VsS0p6RWZ5WFk0?=
+ =?utf-8?B?T0tkM0l6RnBqSUYrYlM3U0I5TnFqWFpaN0lLT1ZpZ2Q3ZHFUQXVzM2l6SzJs?=
+ =?utf-8?B?VXNxck44QVkyTklDS1FSYjdnZlRzcTY4NlhDQWJ5ZFRVeTdEYjZua0NrZzFn?=
+ =?utf-8?B?ODA2cUlhbEdyRDRrWDdzNk1yY2Z5M0x3R0ZJQjlNODRFTWN2ZlJjWWFjdy9P?=
+ =?utf-8?B?c3c5Nld2QWtGVis5R21tQnVjTUJkb3dDMWFld0s4Um9MN3dmejc2WW50VzBM?=
+ =?utf-8?B?RU00YTM2Y052VW1vdnVLdzF1TVJ0TkZzcGdBMEVyTVRLSjdGcklYV0EvSGVP?=
+ =?utf-8?B?Qml4TW9jWTZJQk1aM3lVRDRGczJaSE1PZDB5V0xQcms5bG1DTjVRc2paMEhE?=
+ =?utf-8?B?OGE4WWxKNlZnMWVtQWhFUnVMT2hIRHpoUGtsTGdlaGJpVXBETnFmR1BidDVv?=
+ =?utf-8?B?Q3NEYjRYR0NxYis5STlWaHZJZnh5S2hLaFd1OStBZy8rRzZKNHVHOGx1UFNG?=
+ =?utf-8?B?WUtUOTR1bVo5cTJrcEpSa0dnSHh5eExHYTVGUVJGbkVpWGlCYkZIWndGSmZZ?=
+ =?utf-8?B?b0pGRm54UDZIMDRvS0hWYnRVcWM0dlhoWW96MGZ4Y0RnV25XdG9PUE1VaTRF?=
+ =?utf-8?B?ajBmQ2ROa1F5bENFdUxDSHVGdXptY1pvdTRzUU4yWW90ODZ5b1c4SVNvRWI2?=
+ =?utf-8?B?TEorRlNUb2haYWE0TEZOT3dhWFk3aVdEaVJIOFdHc2c5WlM5ZE11RmpsRUE1?=
+ =?utf-8?B?TUZCc0p2MDF2TTZySno1TDhrRmZBNExEalMrRXR6bHlMZHlHUThlU1hydjI5?=
+ =?utf-8?B?aWlaaVVCamZYRHZuSTd4VEJlUXo5RGkyVjg3ckRFM3Rwa3dCMFN6STQrTDZX?=
+ =?utf-8?B?Q2twQzYrcXE1cWN2OWNmdEc3Qmk2NDNyaUprcUxDTTkwQmtJc3ZJWXgvNUxB?=
+ =?utf-8?B?U0MyOTg4cXJ2MlFkSWIxbko3TGhmVTlXR0tscUtMK3NUbGE5dUhkSlBiZW1X?=
+ =?utf-8?B?S3VvKytsSHR2NnJ1aVptUmtFTlNhdzBhTEJ2dk9JWForNzVGU0ZtWEJDTm1Q?=
+ =?utf-8?B?d3VVYVZvTko3TEFmTjFHQXE5KyttNGs4QVlIVkZNT1hobTdsTFp4ck5ybThu?=
+ =?utf-8?B?b21rNnE4dzl0d2V0MjZmRjB5VUt4WmlKSC9EMm5EMDJ5NTU5VHFkZkhvdXVE?=
+ =?utf-8?B?M1gvWmRMUjVUNThsRExkWFIxTFMyVkpzZzFIV2pPS29TRjh4ZnRGNzY0eEhn?=
+ =?utf-8?B?Q1NHVHpCWDNSaHdvZE5wbEdHZHp6QytlYlRmdmxtTmdJTnd3THdrWlBZTTlu?=
+ =?utf-8?B?S3NFajc4Q3RuOUtPdlhCWE44WDhNVVYwTHJtNkVic3FXejNZMFE2NVI1VXVo?=
+ =?utf-8?B?RjlxYVdnczNlS2d3cm5xaTEwK205T2JBZldraThrUGx4K0I2OGNyQUk0Uk1B?=
+ =?utf-8?B?RU9HK2ZseFFYZUxOSG44V3F5Q01XUXV3dTlvY3UzMjBzTjdRVXBOS1hlWXNF?=
+ =?utf-8?B?eHh6bEcwSXF1dXBRVzYwM1ZVNmhtSW5YdnMrNFp3TXN5NFBHeWp1SU9rSWx4?=
+ =?utf-8?B?NWVzMWYydVJpa01ZdWpFaTQ5YzFZQ3pWSTM2c2E3U21pOG85a240RGMyNlRt?=
+ =?utf-8?B?eE5IZFEyNmJMeFk3d2hpUHh0ZVJxbDZKSUNVcisranBGTHQ5RzF3aW1CcVF4?=
+ =?utf-8?B?a3BmZnNici9vUXpyY0RoMHI2ZEo0SktuazJNbEkrZEovb3QrZE9KeExPZmR3?=
+ =?utf-8?B?ZnFIcXZIMzZ5VENGUWN5NGw4YkdmNVZUK0pmVTFxMGd3dlZjelZXRnRGdFNG?=
+ =?utf-8?B?OGNYRDVCZWwrcjFjL05ybGlyeG12RG1iY1hmamRoVDIvZWFOOFkxOVNQeWZ1?=
+ =?utf-8?B?UW01dHlQbWxUVlpUNG1IbjBhMllUVll6R3g5UzNDVFBGRzdRUm0yenpmbktr?=
+ =?utf-8?B?SVg5VnZndEUrM1VsSUFRYkhIRkZOdDM0NzlFYm15SlZiT3N0bU51YVVzcEE0?=
+ =?utf-8?B?VDN6QVkyUkQrRng2REJJdWZGaXluanIraWluaWhVUVlBeW1ONEg0M1RSNEtO?=
+ =?utf-8?B?Y2JaeFJjQUJuK0RPOXNWN1dNWDN6dUwxMVk0a2J5d2NLTkxOZSswYW1NU3ZF?=
+ =?utf-8?B?N1l6UjB2M09xQklCWFhRTWN0bVBlVzBBTWZOOU9DZUg1R1QyVk8xN3dkb3ZP?=
+ =?utf-8?B?b1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5tvpR5S4iXUFb/oBJg7GDs10TYRkVxbLH/GvyegqiwaAtXfVCTzeoiN/nOaC+ylyyZ2TA2UMaB2G5jFaDuQ2Qj6VVjtI+vBdc4r0nmM74tVPiuGN647vkUyUY/dlnSsJk/YgZEQTegJMsqc+qQej+9juPiBoiFC+CshRU2sBzuk32qut+6dXykS6cPVvsgZlGJ7r3FmXY3ecbMyLiqQjwK1uSdIpFW/h5zE0hynKOs5X0lA6sf7TDktbsv+lufvykS6J9WURn94xArsSGVJc6OcwyJhRFPrL8+b+K8HxCE4jbNQXFRZCYL7FowjM4YaWeu6Pg64Mba7iO/Gy0K4sYPAyfRqa1QKnrSK1i4MFvLXjIp082rZ16pdw5wtLFHxEGYL0L0lnoCWQ4BLC5MWQbgn4A4DlJUW8HWxgRvb77oj8Z8hf/nhDdbVkmbapbofACIQhCK7uFKP7eQNhFZRY3khLB3p8r5xZPGEc7ol1W1+uzVxz1gNgMHYegxKwDplSj+d9HHhgJQ6bnNUZlAeyOuRJ/uVN6qxWMfADsizP50hwOI1qMoNNEkDOrliz317yFgTV89EuBgL5biSC0Y8hcHIzbAL69M6x+dx+S+qzK2Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 777ba442-7e4e-47c7-b2fa-08dce739bcaf
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7660.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 01:56:35.6740
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 01:37:14.5735
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UmuKPo8fLCQgo05l5xTKuBSMml9ohYbOoCC58rEFoj9PNK/YOOReK+hwp2x1yIXPzrOX76QofrJF47ac9wfj4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8567
+X-MS-Exchange-CrossTenant-UserPrincipalName: Uk6AkJ40CkP/IcK4elR2tOmJ4m/o7jvfdmkuOJYB3v8i5gEu/7kP8NH4aNNPcJ2zkBpKJhIJiCZ8FU93ypKM3j2Wn42Zj17gmqi/ABuEGO4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB7489
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-07_16,2024-10-07_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410080008
+X-Proofpoint-GUID: i-YMaJG02LHTuvbzlmWLAhE7TsELpnvN
+X-Proofpoint-ORIG-GUID: i-YMaJG02LHTuvbzlmWLAhE7TsELpnvN
 
 
-Simona Vetter <simona.vetter@ffwll.ch> writes:
-
-> On Wed, Sep 25, 2024 at 01:44:37PM +0200, Simona Vetter wrote:
->> On Tue, Sep 24, 2024 at 04:42:19PM +0000, Matthew Brost wrote:
->> > On Tue, Sep 24, 2024 at 01:48:29PM +0200, Simona Vetter wrote:
->> > > On Fri, Sep 20, 2024 at 09:59:51PM +0000, Matthew Brost wrote:
->> > > > On Fri, Sep 20, 2024 at 05:50:10PM -0400, Felix Kuehling wrote:
->> > > > >=20
->> > > > > On 2024-09-20 17:23, Matthew Brost wrote:
->> > > > > > On Fri, Sep 20, 2024 at 04:26:50PM -0400, Felix Kuehling wrote=
-:
->> > > > > > > On 2024-09-18 11:10, Alistair Popple wrote:
->> > > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
->> > > > > > > >=20
->> > > > > > > > > On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Poppl=
-e wrote:
->> > > > > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
->> > > > > > > > > >=20
->> > > > > > > > > > I haven't seen the same in the NVIDIA UVM driver (out-=
-of-tree, I know)
->> > > > > > > > > Still a driver.
->> > > > > > > > Indeed, and I'm happy to answer any questions about our im=
-plementation.
->> > > > > > > >=20
->> > > > > > > > > > but theoretically it seems like it should be possible.=
- However we
->> > > > > > > > > > serialize migrations of the same virtual address range=
- to avoid these
->> > > > > > > > > > kind of issues as they can happen the other way too (i=
-e. multiple
->> > > > > > > > > > threads trying to migrate to GPU).
->> > > > > > > > > >=20
->> > > > > > > > > > So I suspect what happens in UVM is that one thread wi=
-ns and installs
->> > > > > > > > > > the migration entry while the others fail to get the d=
-river migration
->> > > > > > > > > > lock and bail out sufficiently early in the fault path=
- to avoid the
->> > > > > > > > > > live-lock.
->> > > > > > > > > >=20
->> > > > > > > > > I had to try hard to show this, doubt an actual user cou=
-ld trigger this.
->> > > > > > > > >=20
->> > > > > > > > > I wrote a test which kicked 8 threads, each thread did a=
- pthread join,
->> > > > > > > > > and then tried to read the same page. This repeats in lo=
-op for like 512
->> > > > > > > > > pages or something. I needed an exclusive lock in migrat=
-e_to_ram vfunc
->> > > > > > > > > for it to livelock. Without an exclusive lock I think on=
- average I saw
->> > > > > > > > > about 32k retries (i.e. migrate_to_ram calls on the same=
- page) before a
->> > > > > > > > > thread won this race.
->> > > > > > > > >=20
->> > > > > > > > >   From reading UVM, pretty sure if you tried hard enough=
- you could trigger
->> > > > > > > > > a livelock given it appears you take excluvise locks in =
-migrate_to_ram.
->> > > > > > > > Yes, I suspect you're correct here and that we just haven'=
-t tried hard
->> > > > > > > > enough to trigger it.
->> > > > > > > >=20
->> > > > > > > > > > > Cc: Philip Yang <Philip.Yang@amd.com>
->> > > > > > > > > > > Cc: Felix Kuehling <felix.kuehling@amd.com>
->> > > > > > > > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
->> > > > > > > > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
->> > > > > > > > > > > Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch=
+On 10/7/24 9:45 AM, Sean Christopherson wrote:
+> On Mon, Oct 07, 2024, David Hildenbrand wrote:
+>> On 07.10.24 17:58, Dave Hansen wrote:
+>>> On 10/7/24 01:44, David Hildenbrand wrote:
+>>>> On 02.10.24 19:35, Dave Hansen wrote:
+>>>>> We were just chatting about this on David Rientjes's MM alignment call.
+>>>> Unfortunately I was not able to attend this time, my body decided it's a
+>>>> good idea to stay in bed for a couple of days.
+>>>>
+>>>>> I thought I'd try to give a little brain
+>>>>>
+>>>>> Let's start by thinking about KVM and secondary MMUs.  KVM has a primary
+>>>>> mm: the QEMU (or whatever) process mm.  The virtualization (EPT/NPT)
+>>>>> tables get entries that effectively mirror the primary mm page tables
+>>>>> and constitute a secondary MMU.  If the primary page tables change,
+>>>>> mmu_notifiers ensure that the changes get reflected into the
+>>>>> virtualization tables and also that the virtualization paging structure
+>>>>> caches are flushed.
+>>>>>
+>>>>> msharefs is doing something very similar.  But, in the msharefs case,
+>>>>> the secondary MMUs are actually normal CPU MMUs.  The page tables are
+>>>>> normal old page tables and the caches are the normal old TLB.  That's
+>>>>> what makes it so confusing: we have lots of infrastructure for dealing
+>>>>> with that "stuff" (CPU page tables and TLB), but msharefs has
+>>>>> short-circuited the infrastructure and it doesn't work any more.
+>>>> It's quite different IMHO, to a degree that I believe they are different
+>>>> beasts:
+>>>>
+>>>> Secondary MMUs:
+>>>> * "Belongs" to same MM context and the primary MMU (process page tables)
+>>> I think you're speaking to the ratio here.  For each secondary MMU, I
+>>> think you're saying that there's one and only one mm_struct.  Is that right?
+>> Yes, that is my understanding (at least with KVM). It's a secondary MMU
+>> derived from exactly one primary MMU (MM context -> page table hierarchy).
+> I don't think the ratio is what's important.  I think the important takeaway is
+> that the secondary MMU is explicitly tied to the primary MMU that it is tracking.
+> This is enforced in code, as the list of mmu_notifiers is stored in mm_struct.
 >
->> > > > > > > > > > > Signed-off-by: Matthew Brost <matthew.brost@intel.co=
-m>
->> > > > > > > > > > > ---
->> > > > > > > > > > >    mm/memory.c         | 13 +++++++---
->> > > > > > > > > > >    mm/migrate_device.c | 60 ++++++++++++++++++++++++=
-+++++++--------------
->> > > > > > > > > > >    2 files changed, 50 insertions(+), 23 deletions(-=
-)
->> > > > > > > > > > >=20
->> > > > > > > > > > > diff --git a/mm/memory.c b/mm/memory.c
->> > > > > > > > > > > index 3c01d68065be..bbd97d16a96a 100644
->> > > > > > > > > > > --- a/mm/memory.c
->> > > > > > > > > > > +++ b/mm/memory.c
->> > > > > > > > > > > @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(stru=
-ct vm_fault *vmf)
->> > > > > > > > > > >    			 * Get a page reference while we know the page=
- can't be
->> > > > > > > > > > >    			 * freed.
->> > > > > > > > > > >    			 */
->> > > > > > > > > > > -			get_page(vmf->page);
->> > > > > > > > > > > -			pte_unmap_unlock(vmf->pte, vmf->ptl);
->> > > > > > > > > > > -			ret =3D vmf->page->pgmap->ops->migrate_to_ram(vm=
-f);
->> > > > > > > > > > > -			put_page(vmf->page);
->> > > > > > > > > > > +			if (trylock_page(vmf->page)) {
->> > > > > > > > > > > +				get_page(vmf->page);
->> > > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
->> > > > > > > > > > This is all beginning to look a lot like migrate_vma_c=
-ollect_pmd(). So
->> > > > > > > > > > rather than do this and then have to pass all this con=
-text
->> > > > > > > > > > (ie. fault_page) down to the migrate_vma_* functions c=
-ould we instead
->> > > > > > > > > > just do what migrate_vma_collect_pmd() does here? Ie. =
-we already have
->> > > > > > > > > > the PTL and the page lock so there's no reason we coul=
-dn't just setup
->> > > > > > > > > > the migration entry prior to calling migrate_to_ram().
->> > > > > > > > > >=20
->> > > > > > > > > > Obviously calling migrate_vma_setup() would show the p=
-age as not
->> > > > > > > > > > migrating, but drivers could easily just fill in the s=
-rc_pfn info after
->> > > > > > > > > > calling migrate_vma_setup().
->> > > > > > > > > >=20
->> > > > > > > > > > This would eliminate the whole fault_page ugliness.
->> > > > > > > > > >=20
->> > > > > > > > > This seems like it would work and agree it likely be cle=
-aner. Let me
->> > > > > > > > > play around with this and see what I come up with. Multi=
--tasking a bit
->> > > > > > > > > so expect a bit of delay here.
->> > > > > > > > >=20
->> > > > > > > > > Thanks for the input,
->> > > > > > > > > Matt
->> > > > > > > Thanks! Sorry, I'm late catching up after a vacation. Please=
- keep Philip,
->> > > > > > > Christian and myself in the loop with future patches in this=
- area.
->> > > > > > >=20
->> > > > > > Will do. Already have another local patch set which helps driv=
-ers dma
->> > > > > > map 2M pages for migrations if SRAM is physically contiguous. =
-Seems
->> > > > > > helpful for performance on Intel hardware. Probably post that =
-soon for
->> > > > > > early feedack.
->> > > > >=20
->> > > > > OK.
->> > > > >=20
->> > > > >=20
->> > > > > >=20
->> > > > > > Longer term I thinking 2M migration entries, 2M device pages, =
-and being
->> > > > > > able to install 2M THP on VRAM -> SRAM could be really helpful=
-. I'm
->> > > > > > finding migrate_vma_* functions take up like 80-90% of the tim=
-e in the
->> > > > > > CPU / GPU fault handlers on a fault (or prefetch) which doesn'=
-t seem
->> > > > > > ideal. Seems like 2M entries for everything would really help =
-here. No
->> > > > > > idea how feasible this is as the core MM stuff gets confusing =
-fast. Any
->> > > > > > input on this idea?
->> > > > >=20
->> > > > > I agree with your observations. We found that the migrate_vma_* =
-code was the
->> > > > > bottle neck for migration performance as well, and not breaking =
-2M pages
->> > > > > could reduce that overhead a lot. I don't have any specific idea=
-s. I'm not
->> > > > > familiar with the details of that code myself. Philip has looked=
- at this
->> > > > > (and some old NVidia patches from a few years ago) in the past b=
-ut never had
->> > > > > enough uninterrupted time to make it past prototyping.
->> > > > >=20
->> > > >=20
->> > > > Cool good to know this isn't some crazy idea. Doubt it happen anyt=
-ime
->> > > > soon as I need to get a working baseline in before anything then s=
-tart
->> > > > applying optimizations and help in get other features to get the d=
-esign
->> > > > complete. But eventually will probably try to look at this. May pi=
-ng
->> > > > Philip and Nvidia when I have time to dig in here.
-
-Apologies for my late reply here, I have just returned from vacation.
-
-We (Nvidia) are actively looking at this as we have the same bottle
-necks. Mostly I've been doing some clean-ups in MM to make compound
-ZONE_DEVICE pages possible.
-
->> > >=20
->> > > I think the big step will be moving hmm.c and migrate.c apis over fr=
-om
->> > > struct page to folios. That should also give us some nice benefits o=
-n the
->> > > gpu side, since instead of 4k pages to track we could allocate 2m gp=
-u
->> > > pages.
->> > >=20
->> >=20
->> > I think was thinking just encode the order in the migration PFN like H=
-MM
->> > does. Really only Nth order entry in the page array needs to be
->> > populated then - HMM populates every entry though which doesn't seem
->> > like that is required. Maybe having a folio API makes more sense?
->>=20
->> Both I'd say, as a first attempt at least. An array of folios, but only
->> populate the ones we need and jump over empty entries. A bit wasteful, b=
-ut
->> eh it's just allocations.
+> The 1:1 ratio probably holds true today, e.g. for KVM, each VM is associated with
+> exactly one mm_struct.  But fundamentally, nothing would prevent a secondary MMU
+> that manages a so called software TLB from tracking multiple primary MMUs.
 >
-> Ok thought some more, I think there's two things going on:
+> E.g. it wouldn't be all that hard to implement in KVM (a bit crazy, but not hard),
+> because KVM's memslots disallow gfn aliases, i.e. each index into KVM's secondary
+> MMU would be associated with at most one VMA and thus mm_struct.
 >
-> - spot contig memory sections so that the gpu side is more efficient and
->   can user bigger pagetables and stuff like that. this is what
->   hmm_range_fault does.
+> Pulling Dave's earlier comment in:
 >
-> - optimize the core mm book-keeping by working on folios instead of
->   individual pages. hmm_range_fault does not care because it doesn't grab
->   references or lock pages or do anything else interesting with them, the
->   entire synchronization is provided by mmu notifier retry loops. But the
->   migration code does do a lot of expensive stuff, so it would need that.
->   For hmm_range_fault it's probably not so important, so maybe we could
->   leave the folio conversion of that to later.
+>   : But the short of it is that the msharefs host mm represents a "secondary
+>   : MMU".  I don't think it is really that special of an MMU other than the
+>   : fact that it has an mm_struct.
 >
-> I think we need both, meaning:
-> - switch to folio, leave out entries as NULL for compound folios
-> - on top of compoung folios still track contig ranges so that the gpu sid=
-e
->   can additionally benefit when e.g. 2M pages are split into smaller
->   folios but happen to be contig
-
-Definitely I think the folio approach makes sense and I was prototpying
-a series to allow compound device private pages and to migrate
-them. However I got caught up on similar questions around migrate_vma_*
-API (specifically around whether to allow splitting/merging) so never
-got around to posting them. Probably the simple array based approach
-makes sense though.
-
-In any case to get something like that merged I'd been asked if we could
-fix the ZONE_DEVICE refcounting mess for DAX (as it was the only one
-still relying on the off-by-one refcounts for compound pages). The good
-news is that series[1] is getting close to merged, and as a side-effect
-it allows for compound ZONE_DEVICE pages so extending it to
-DEVICE_PRIVATE pages to allow THP migration shouldn't be too difficult
-and was going to be my next step once this was merged. So it's nice to
-know other people might care about this too.
-
-[1] - https://lore.kernel.org/linux-mm/cover.9f0e45d52f5cff58807831b6b86708=
-4d0b14b61c.1725941415.git-series.apopple@nvidia.com/
-
-> Cheers, Sima
+> and David's (so. many. Davids):
 >
->>=20
->> > > Once we have folios at the driver/core mm api level doing all the fa=
-ncy
->> > > thp stuff should be at least a well-contained problem. But I might b=
-e
->> > > dellusionally optimistic here :-)
->> >=20
->> > I think it contained in the sense is the DRM SVM layer just allocates =
-a
->> > THP or large continous device memory and hands it off to migrate layer
->> > and that layer does the right thing. The 'right thing' here I believe =
-is
->> > a decent amount of core MM work though.
->>=20
->> Yeah that's what I meant, once we have switched the interfaces to be
->> arrays of folios, where for larger folios we leave the entries in betwee=
-n
->> NULL and have some appropriate iterators, then the driver side is done
->> mostly.  The core mm side to actually make use of that will be fairly
->> gnarly though.
->> -Sima
->>=20
->> >=20
->> > Matt
->> >=20
->> > > -Sima
->> > >=20
->> > > >=20
->> > > > Matt
->> > > >=20
->> > > > > Regards,
->> > > > > =C2=A0 Felix
->> > > > >=20
->> > > > >=20
->> > > > > >=20
->> > > > > > Matt
->> > > > > >=20
->> > > > > > > Regards,
->> > > > > > >  =C2=A0 Felix
->> > > > > > >=20
->> > > > > > >=20
->> > > > > > > > > > > +				ret =3D vmf->page->pgmap->ops->migrate_to_ram(v=
-mf);
->> > > > > > > > > > > +				put_page(vmf->page);
->> > > > > > > > > > > +				unlock_page(vmf->page);
->> > > > > > > > > > > +			} else {
->> > > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
->> > > > > > > > > > > +			}
->> > > > > > > > > > >    		} else if (is_hwpoison_entry(entry)) {
->> > > > > > > > > > >    			ret =3D VM_FAULT_HWPOISON;
->> > > > > > > > > > >    		} else if (is_pte_marker_entry(entry)) {
->> > > > > > > > > > > diff --git a/mm/migrate_device.c b/mm/migrate_device=
-.c
->> > > > > > > > > > > index 6d66dc1c6ffa..049893a5a179 100644
->> > > > > > > > > > > --- a/mm/migrate_device.c
->> > > > > > > > > > > +++ b/mm/migrate_device.c
->> > > > > > > > > > > @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd=
-(pmd_t *pmdp,
->> > > > > > > > > > >    				   struct mm_walk *walk)
->> > > > > > > > > > >    {
->> > > > > > > > > > >    	struct migrate_vma *migrate =3D walk->private;
->> > > > > > > > > > > +	struct folio *fault_folio =3D migrate->fault_page =
-?
->> > > > > > > > > > > +		page_folio(migrate->fault_page) : NULL;
->> > > > > > > > > > >    	struct vm_area_struct *vma =3D walk->vma;
->> > > > > > > > > > >    	struct mm_struct *mm =3D vma->vm_mm;
->> > > > > > > > > > >    	unsigned long addr =3D start, unmapped =3D 0;
->> > > > > > > > > > > @@ -88,11 +90,13 @@ static int migrate_vma_collect_p=
-md(pmd_t *pmdp,
->> > > > > > > > > > >    			folio_get(folio);
->> > > > > > > > > > >    			spin_unlock(ptl);
->> > > > > > > > > > > -			if (unlikely(!folio_trylock(folio)))
->> > > > > > > > > > > +			if (unlikely(fault_folio !=3D folio &&
->> > > > > > > > > > > +				     !folio_trylock(folio)))
->> > > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
->> > > > > > > > > > >    								walk);
->> > > > > > > > > > >    			ret =3D split_folio(folio);
->> > > > > > > > > > > -			folio_unlock(folio);
->> > > > > > > > > > > +			if (fault_folio !=3D folio)
->> > > > > > > > > > > +				folio_unlock(folio);
->> > > > > > > > > > >    			folio_put(folio);
->> > > > > > > > > > >    			if (ret)
->> > > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
->> > > > > > > > > > > @@ -192,7 +196,7 @@ static int migrate_vma_collect_p=
-md(pmd_t *pmdp,
->> > > > > > > > > > >    		 * optimisation to avoid walking the rmap later=
- with
->> > > > > > > > > > >    		 * try_to_migrate().
->> > > > > > > > > > >    		 */
->> > > > > > > > > > > -		if (folio_trylock(folio)) {
->> > > > > > > > > > > +		if (fault_folio =3D=3D folio || folio_trylock(fol=
-io)) {
->> > > > > > > > > > >    			bool anon_exclusive;
->> > > > > > > > > > >    			pte_t swp_pte;
->> > > > > > > > > > > @@ -204,7 +208,8 @@ static int migrate_vma_collect_p=
-md(pmd_t *pmdp,
->> > > > > > > > > > >    				if (folio_try_share_anon_rmap_pte(folio, page=
-)) {
->> > > > > > > > > > >    					set_pte_at(mm, addr, ptep, pte);
->> > > > > > > > > > > -					folio_unlock(folio);
->> > > > > > > > > > > +					if (fault_folio !=3D folio)
->> > > > > > > > > > > +						folio_unlock(folio);
->> > > > > > > > > > >    					folio_put(folio);
->> > > > > > > > > > >    					mpfn =3D 0;
->> > > > > > > > > > >    					goto next;
->> > > > > > > > > > > @@ -363,6 +368,8 @@ static unsigned long migrate_dev=
-ice_unmap(unsigned long *src_pfns,
->> > > > > > > > > > >    					  unsigned long npages,
->> > > > > > > > > > >    					  struct page *fault_page)
->> > > > > > > > > > >    {
->> > > > > > > > > > > +	struct folio *fault_folio =3D fault_page ?
->> > > > > > > > > > > +		page_folio(fault_page) : NULL;
->> > > > > > > > > > >    	unsigned long i, restore =3D 0;
->> > > > > > > > > > >    	bool allow_drain =3D true;
->> > > > > > > > > > >    	unsigned long unmapped =3D 0;
->> > > > > > > > > > > @@ -427,7 +434,8 @@ static unsigned long migrate_dev=
-ice_unmap(unsigned long *src_pfns,
->> > > > > > > > > > >    		remove_migration_ptes(folio, folio, false);
->> > > > > > > > > > >    		src_pfns[i] =3D 0;
->> > > > > > > > > > > -		folio_unlock(folio);
->> > > > > > > > > > > +		if (fault_folio !=3D folio)
->> > > > > > > > > > > +			folio_unlock(folio);
->> > > > > > > > > > >    		folio_put(folio);
->> > > > > > > > > > >    		restore--;
->> > > > > > > > > > >    	}
->> > > > > > > > > > > @@ -536,6 +544,8 @@ int migrate_vma_setup(struct mig=
-rate_vma *args)
->> > > > > > > > > > >    		return -EINVAL;
->> > > > > > > > > > >    	if (args->fault_page && !is_device_private_page(=
-args->fault_page))
->> > > > > > > > > > >    		return -EINVAL;
->> > > > > > > > > > > +	if (args->fault_page && !PageLocked(args->fault_pa=
-ge))
->> > > > > > > > > > > +		return -EINVAL;
->> > > > > > > > > > >    	memset(args->src, 0, sizeof(*args->src) * nr_pag=
-es);
->> > > > > > > > > > >    	args->cpages =3D 0;
->> > > > > > > > > > > @@ -799,19 +809,13 @@ void migrate_vma_pages(struct =
-migrate_vma *migrate)
->> > > > > > > > > > >    }
->> > > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_pages);
->> > > > > > > > > > > -/*
->> > > > > > > > > > > - * migrate_device_finalize() - complete page migrat=
-ion
->> > > > > > > > > > > - * @src_pfns: src_pfns returned from migrate_device=
-_range()
->> > > > > > > > > > > - * @dst_pfns: array of pfns allocated by the driver=
- to migrate memory to
->> > > > > > > > > > > - * @npages: number of pages in the range
->> > > > > > > > > > > - *
->> > > > > > > > > > > - * Completes migration of the page by removing spec=
-ial migration entries.
->> > > > > > > > > > > - * Drivers must ensure copying of page data is comp=
-lete and visible to the CPU
->> > > > > > > > > > > - * before calling this.
->> > > > > > > > > > > - */
->> > > > > > > > > > > -void migrate_device_finalize(unsigned long *src_pfn=
-s,
->> > > > > > > > > > > -			unsigned long *dst_pfns, unsigned long npages)
->> > > > > > > > > > > +static void __migrate_device_finalize(unsigned long=
- *src_pfns,
->> > > > > > > > > > > +				      unsigned long *dst_pfns,
->> > > > > > > > > > > +				      unsigned long npages,
->> > > > > > > > > > > +				      struct page *fault_page)
->> > > > > > > > > > >    {
->> > > > > > > > > > > +	struct folio *fault_folio =3D fault_page ?
->> > > > > > > > > > > +		page_folio(fault_page) : NULL;
->> > > > > > > > > > >    	unsigned long i;
->> > > > > > > > > > >    	for (i =3D 0; i < npages; i++) {
->> > > > > > > > > > > @@ -838,7 +842,8 @@ void migrate_device_finalize(uns=
-igned long *src_pfns,
->> > > > > > > > > > >    		src =3D page_folio(page);
->> > > > > > > > > > >    		dst =3D page_folio(newpage);
->> > > > > > > > > > >    		remove_migration_ptes(src, dst, false);
->> > > > > > > > > > > -		folio_unlock(src);
->> > > > > > > > > > > +		if (fault_folio !=3D src)
->> > > > > > > > > > > +			folio_unlock(src);
->> > > > > > > > > > >    		if (is_zone_device_page(page))
->> > > > > > > > > > >    			put_page(page);
->> > > > > > > > > > > @@ -854,6 +859,22 @@ void migrate_device_finalize(un=
-signed long *src_pfns,
->> > > > > > > > > > >    		}
->> > > > > > > > > > >    	}
->> > > > > > > > > > >    }
->> > > > > > > > > > > +
->> > > > > > > > > > > +/*
->> > > > > > > > > > > + * migrate_device_finalize() - complete page migrat=
-ion
->> > > > > > > > > > > + * @src_pfns: src_pfns returned from migrate_device=
-_range()
->> > > > > > > > > > > + * @dst_pfns: array of pfns allocated by the driver=
- to migrate memory to
->> > > > > > > > > > > + * @npages: number of pages in the range
->> > > > > > > > > > > + *
->> > > > > > > > > > > + * Completes migration of the page by removing spec=
-ial migration entries.
->> > > > > > > > > > > + * Drivers must ensure copying of page data is comp=
-lete and visible to the CPU
->> > > > > > > > > > > + * before calling this.
->> > > > > > > > > > > + */
->> > > > > > > > > > > +void migrate_device_finalize(unsigned long *src_pfn=
-s,
->> > > > > > > > > > > +			unsigned long *dst_pfns, unsigned long npages)
->> > > > > > > > > > > +{
->> > > > > > > > > > > +	return __migrate_device_finalize(src_pfns, dst_pfn=
-s, npages, NULL);
->> > > > > > > > > > > +}
->> > > > > > > > > > >    EXPORT_SYMBOL(migrate_device_finalize);
->> > > > > > > > > > >    /**
->> > > > > > > > > > > @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_fin=
-alize);
->> > > > > > > > > > >     */
->> > > > > > > > > > >    void migrate_vma_finalize(struct migrate_vma *mig=
-rate)
->> > > > > > > > > > >    {
->> > > > > > > > > > > -	migrate_device_finalize(migrate->src, migrate->dst=
-, migrate->npages);
->> > > > > > > > > > > +	__migrate_device_finalize(migrate->src, migrate->d=
-st, migrate->npages,
->> > > > > > > > > > > +				  migrate->fault_page);
->> > > > > > > > > > >    }
->> > > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_finalize);
->> > >=20
->> > > --=20
->> > > Simona Vetter
->> > > Software Engineer, Intel Corporation
->> > > http://blog.ffwll.ch
->>=20
->> --=20
->> Simona Vetter
->> Software Engineer, Intel Corporation
->> http://blog.ffwll.ch
+>   : I better not think about the complexity of seconary MMUs + mshare (e.g.,
+>   : KVM with mshare in guest memory): MMU notifiers for all MMs must be
+>   : called ...
+>
+> mshare() is unique because it creates the possibly of chained "secondary" MMUs.
+> I.e. the fact that it has an mm_struct makes it *very* special, IMO.
+
+This is definitely a gap with the current mshare implementation. Mapping 
+memory
+
+that relies on an mmu notifier in an mshare region will result in the 
+notifier callbacks
+
+never being called. On the surface it seems like the mshare mm needs 
+notifiers that
+
+go through every mm that has mapped the mshare region and calls its 
+notifiers.
+
+
+>
+>>>> * Maintains separate tables/PTEs, in completely separate page table
+>>>>     hierarchy
+>>> This is the case for KVM and the VMX/SVM MMUs, but it's not generally
+>>> true about hardware.  IOMMUs can walk x86 page tables and populate the
+>>> IOTLB from the _same_ page table hierarchy as the CPU.
+>> Yes, of course.
+> Yeah, the recent rework of invalidate_range() => arch_invalidate_secondary_tlbs()
+> sums things up nicely:
+>
+> commit 1af5a8109904b7f00828e7f9f63f5695b42f8215
+> Author:     Alistair Popple <apopple@nvidia.com>
+> AuthorDate: Tue Jul 25 23:42:07 2023 +1000
+> Commit:     Andrew Morton <akpm@linux-foundation.org>
+> CommitDate: Fri Aug 18 10:12:41 2023 -0700
+>
+>      mmu_notifiers: rename invalidate_range notifier
+>      
+>      There are two main use cases for mmu notifiers.  One is by KVM which uses
+>      mmu_notifier_invalidate_range_start()/end() to manage a software TLB.
+>      
+>      The other is to manage hardware TLBs which need to use the
+>      invalidate_range() callback because HW can establish new TLB entries at
+>      any time.  Hence using start/end() can lead to memory corruption as these
+>      callbacks happen too soon/late during page unmap.
+>      
+>      mmu notifier users should therefore either use the start()/end() callbacks
+>      or the invalidate_range() callbacks.  To make this usage clearer rename
+>      the invalidate_range() callback to arch_invalidate_secondary_tlbs() and
+>      update documention.
+
+I believe if I implemented an arch_invalidate_secondary_tlbs notifier 
+that flushed all
+
+TLBs, that would solve the problem of ensuring TLBs are flushed before 
+pages being
+
+unmapped from an mshare region are freed. However, it seems like there 
+would be
+
+potentially be a lot more collateral damage from flushing everything 
+since the flushes
+
+would happen more often.
 
 
