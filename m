@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-355921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB2A9958F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:10:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C66D9958F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71BA21C2168C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FAD1F25721
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF801FA257;
-	Tue,  8 Oct 2024 21:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE356216428;
+	Tue,  8 Oct 2024 21:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY5ekdy4"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427DC213ED6
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="iMrmLS85"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DF5213ED6;
+	Tue,  8 Oct 2024 21:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728421792; cv=none; b=saOJHVyZzAFsUIu2X27MVLm2xOy5jxpuofern8khTQOzH6AUPUjnM9JoLd/pzKKH3HIVFXT5c7aANCRgVWWz3NDXyWXwOhu+C87aA7I+WzjANzLQhm9Za9z3xB9193SqMnHzkZRz4BCNKIfKcxByuCDdhUTs0jWS9EUPqTDAWDo=
+	t=1728421821; cv=none; b=PMSmSjTLLqTeT8NbtAGfebFPAqKmg2h+E7FxYNdRwA1Z02+iGtpvonocC5Y0p1R4m1LZ0R06B2ilaxIu/YWzJFdVC3O69B36ce7X/M4RmoTIgzJ0SrkNDUFd3LKTbEEzjy1v6N8X3M4C0aZRJcLIt1cB1GgO4bwCyhWrnfdYhMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728421792; c=relaxed/simple;
-	bh=hyWIP5eJKGtUp3spZH1Jx+5Ok2/SdHxINGcAzxM1fEg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhawnlhgvYKwh/jYFtPgi9Od0nSzJhoaXEsHtY0JVKincKFDv/xry/RCtyVPQk8hCUkoOfyuSkHkUKFBXf9yLnWZsc70AmRB1Z+k+C+yG5ZhLScL/9aWyx0KGuzmWrXqbI5nrSQ+jH8itCTgG9/oMmMaTDwxhwDHhyyj1CumpNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PY5ekdy4; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a994c322aefso39456866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 14:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728421789; x=1729026589; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qxjO03/VKF1ZdXNHu0b4MwlOXd+MaamBCo+HahwR+pM=;
-        b=PY5ekdy41T9aR9KQtUqBELBOi6WB8tSR6nNMmMnSu4/uzZABjxb3s9xtwndmrQxQGD
-         YdIgvKqJppqPJCUwU+rKYozHpGEhO46JBbOKFpuLWRe2axEhWJ8GGxKNooxqn9SWaXE6
-         iTQpv8QtLJf+MjAv2AQSJsZ6BgWDXmQlAx9a5sMpmyiTVAjRNq4G+j+woAQgXcQRugX0
-         jTlgD7gsDWnnllGLnno1U+A0wrPyeglx7zt4Nam20k3nqKJ0HREwGmGra7jUNxMpeJxS
-         iZqHgjqVipZ5r99ahcCyBdbfgb6qkqjuGi4Mdvz0aFTv00Mm2hnxSA+YK/nv21ySfR2W
-         KUVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728421789; x=1729026589;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qxjO03/VKF1ZdXNHu0b4MwlOXd+MaamBCo+HahwR+pM=;
-        b=IZ0Nx0Texu438ZU18RXRC9Ru2znTItmTnyxm+hUObifKl2PQcBOE85QB0rK21sGg8F
-         51bi2lFPUVWMrYB1ZFD4ZiBfopoYn7IvuQSmp4SfLdYFdwVR3nEY+EZvLiofgl6g+lJX
-         a6ZxzHv1nyHP66VO5P5KTylJd8ffv16dUeeSqpVEmhIJolCMq/o3PzABNrsRJ+ZF4iKF
-         TIpg5bGipTwuJZnYD2D+4jmyhkkFwE84dzw7TWyPwHXI/hACjAwcXHGNhNpEQ0XTN30A
-         vf4srGADDwa59Eg+9w/hmB37B8Fyxzb0Fa/Z1t45rpZGuv28+IZsehPbZ5eWDiqx0WT9
-         egWg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0qnMVgbomrrdlIpwZn8qzkDkZel8PGnJYm9Yo0frFzaZ02NStjhxqNFCW5NeR35psyKCYLWmbXgH0bIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdBtKtMkPtS9KqzdXwtbD/qyc9X5L9Ps5oWkLXqDv9Y7SJtvoI
-	2bV+ORYsQGKvqpCbQ37dLuYqqOhOrQmrVZoolq5UaLrJWMi5A49RsohNknQ5YQk7ToQyrcze+Ja
-	zGJHsBEbvBauP5L0oB3/UK50WHn27ezDp9xwoEg==
-X-Google-Smtp-Source: AGHT+IHuRG726U2Y6ZtAy1CX+xs4xcXsSCC/YjD4M9T74lVo8+Q7BfO44Qpxr38KfN/hQc1yWSyhN88MwVK11A8TaW4=
-X-Received: by 2002:a17:907:7e99:b0:a98:f44d:a198 with SMTP id
- a640c23a62f3a-a998b138451mr47590066b.1.1728421789412; Tue, 08 Oct 2024
- 14:09:49 -0700 (PDT)
+	s=arc-20240116; t=1728421821; c=relaxed/simple;
+	bh=lp34xle93S64JDLrFewD47jcAq158vsvHfk6XjoYYqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JRZIs3dROzz1LiAW0BOa7J/7flq55Wi33ml+cMCPq0hjdSKGd9UmiJPoRcy/Pb0YlAeqeRJkDXk8j8REiE5kxbftORTeBjkpWhP1AJChDHsFeF7rFO6g1cpK0fufnobcVPqYwfHm3uUH848swBK71eVVRYDZZ0CvPFBCv4OheoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=iMrmLS85; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1728421817; bh=lp34xle93S64JDLrFewD47jcAq158vsvHfk6XjoYYqs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iMrmLS853loo0HAldVopE0pLNxAhpMt24hXWKsvcwmLTsDeZSG04JOrEnQzzfggRM
+	 ofvMczhyer48zQmPTwav/TKFaxsM+EIr3gfFL4XT70bkSsmLLPGFNJ7WjavDMoMXCM
+	 XQj1sjDApUXfQPp+bZ9WnjJA9yXBjNE/hIClhpddnYP9KfkxP0YeMO/au0d56okYC/
+	 qkQxZSz5pjO76hqsBrUoSvDeO2xJn75o6Qu7EDdM0HN/Dudg+Kzas2c6zOezzHn4Bn
+	 5jvoz2IBa5x8DhtrRiA9lEciZ/UWnlwAI3PGdL4AtFfyu4jXOV5J2k9oDKeVFTwzPh
+	 mo8xWu4/HRz3OP9zDqYMRDBMRIlNnwV3+AIOeQdvulDyarO1aThWhkV5pAuVhXcUA+
+	 +pqKIRRBEC+v6oZ/v7kD2bDp0laVA6SrCU4fFKgDQefPxpu9jw3yMbYqwcIREvi0yc
+	 AuuImkurDVtHLpF1zlV80lmB3YzYkWGNusrV3ztK3u1DWiojUqrYdfoyuNTXhBHF0B
+	 CmQueOQvzubkRB4/wkqS/xyXAQS7QeAZB1u41plaYuyhn3uT/u1+TkUiBqlpaazMSU
+	 tkjLb6hx2PgM+lGKL6qNtLeILttuJOm75VODMsxHEkzkCRln8oiywPxcg1ftROmPM6
+	 J4Q+Tp55TrdaQoWq+2JNaWVc=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 0420C16B16D;
+	Tue,  8 Oct 2024 23:10:16 +0200 (CEST)
+Message-ID: <1b9afb20-d608-464c-ae6b-c535564b7e5a@ijzerbout.nl>
+Date: Tue, 8 Oct 2024 23:10:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003211139.9296-1-alex.vinarskis@gmail.com> <20241003211139.9296-4-alex.vinarskis@gmail.com>
-In-Reply-To: <20241003211139.9296-4-alex.vinarskis@gmail.com>
-From: Stefan Schmidt <stefan.schmidt@linaro.org>
-Date: Tue, 8 Oct 2024 23:09:38 +0200
-Message-ID: <CAEvtbuv1OUekj5=fzafJKby6jBiZ6BzgT4TrrihDNdiQQM_vQQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: Add support for X1-based Dell
- XPS 13 9345
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, robdclark@gmail.com, 
-	peterdekraker@umito.nl, Bryan.Kemp@dell.com, tudor.laurentiu.oss@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v8,09/12] drm/msm/a6xx: Add traces for preemption
+To: Antonino Maniscalco <antomani103@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20241003-preemption-a750-t-v8-9-5c6cb9f256e0@gmail.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241003-preemption-a750-t-v8-9-5c6cb9f256e0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Aleksandrs,
-
-[Again in plain text]
-
-On Thu, 3 Oct 2024 at 23:13, Aleksandrs Vinarskis
-<alex.vinarskis@gmail.com> wrote:
+Op 03-10-2024 om 18:12 schreef Antonino Maniscalco:
+> Add trace points corresponding to preemption being triggered and being
+> completed for latency measurement purposes.
 >
-> Initial support for Dell XPS 9345 13" 2024 (Codenamed 'Tributo') based
-> on X1E80100.
->
-> Working:
-> * Touchpad
-> * Keyboard (only post suspend&resume, i2c-hid patch required [1])
-> * Touchscreen
-> * eDP (low-res IPS, OLED) with brightness control
-> * NVME
-> * USB Type-C ports in USB2/USB3 (one orientation)
-> * WiFi
-> * GPU/aDSP/cDSP firmware loading (requires binaries from Windows)
-> * Lid switch
-> * Sleep/suspend, nothing visibly broken on resume
->
-> Not working:
-> * Speakers (WIP, pin guessing, x4 WSA8845)
-> * Microphones (WIP, pin guessing, dual array)
-> * Fingerprint Reader (WIP, USB MP with ptn3222)
-> * USB as DP/USB3 (WIP, PS8830 based)
-> * Camera (Likely OV01A10)
-> * EC over i2c
->
-> Should be working, but cannot be tested due to lack of hw:
-> * higher res IPS panel
->
-> [1] https://lore.kernel.org/all/20240925100303.9112-1-alex.vinarskis@gmail.com/
->
-> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> Tested-by: Rob Clark <robdclark@gmail.com>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
 > ---
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 863 ++++++++++++++++++
->  2 files changed, 864 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-
-Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org>
-
-regards
-Stefan Schmidt
+>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c |  6 ++++++
+>   drivers/gpu/drm/msm/msm_gpu_trace.h       | 28 ++++++++++++++++++++++++++++
+>   2 files changed, 34 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> index 21e333cb6342d33425eb96f97bcc853e9b041b36..6803d5af60cc8fb0f2a52ee160ffdbf0e8ef0209 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> @@ -7,6 +7,7 @@
+>   #include "a6xx_gpu.h"
+>   #include "a6xx_gmu.xml.h"
+>   #include "msm_mmu.h"
+> +#include "msm_gpu_trace.h"
+>   
+>   /*
+>    * Try to transition the preemption state from old to new. Return
+> @@ -174,6 +175,8 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
+>   
+>   	set_preempt_state(a6xx_gpu, PREEMPT_NONE);
+>   
+> +	trace_msm_gpu_preemption_irq(a6xx_gpu->cur_ring->id);
+> +
+>   	/*
+>   	 * Retrigger preemption to avoid a deadlock that might occur when preemption
+>   	 * is skipped due to it being already in flight when requested.
+> @@ -294,6 +297,9 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
+>   	 */
+>   	ring->restore_wptr = false;
+>   
+> +	trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id,
+> +		ring ? ring->id : -1);
+> +
+There is no need for the ternary operator. "ring" should be non-NULL, 
+otherwise the code would have already crashed.
+So the change can just be
+     trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id, ring->id);
+-- 
+Kees
 
