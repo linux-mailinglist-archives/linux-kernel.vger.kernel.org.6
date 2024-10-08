@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-355477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07F79952CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F2D9952CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7841B283966
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEC52880F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73B41E0DD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5A31E1047;
 	Tue,  8 Oct 2024 15:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h30EQ2ah"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fcz2s1hy"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B701E0E08
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7681E1020
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728399614; cv=none; b=qkxVdKDR1jq/18etEfl3hXkSkhC+N6/yztIusgCsgA4I638ZnfYav5eHaZ6pzXc8f1TkPP1u2frvxCfjrx9HwdIIazcSoy678sxYjyTQ165/6iVk4oNg11u3qsy4CZEpSzkEHSMrNTRBu9xEJFrKrwPljY6+0/xK/dmWXyXBAJE=
+	t=1728399614; cv=none; b=ZjCmfvIz2fZQsRxI+H7e29LH7fHP8GqK08Zx0LD9pwcolnH27JVNuxtkH+nmBfwGXAjTBwkAcDLxvlOH//677A/09n6vK394fy51FgYRfrRotV2VoAnFJ6HGe7wNVGQpdMD7JycyrM5MHaMwpv3lsAjq/vPz0pe/0lThL31c+aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728399614; c=relaxed/simple;
-	bh=SPz+2k6qAmFkLhvmwfbYfGq2M1+gsUFHn/p094yCMR0=;
+	bh=pvyPWsToTZtRlgvmX7LMTSxDbnGxM8D+iYsUDPJR3zI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=liDvLPNPy4cHEfByO9dQnEzGePF+mUiMgN0mYt1LHyEqR87jeaQ+iyiep5gU9uHNjT/YkVrUPTiw/uNaRTacWVW8swAXcmdh0G9cP9w91rH3dYKYJx5zjpF0ahpts+A+KtOC6oaINs39nXyt2fcLsyEBe3Vw/5p9eINbDfXbpS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h30EQ2ah; arc=none smtp.client-ip=209.85.161.44
+	 In-Reply-To:To:Cc; b=YymUB6kLyrz51MZsKN3SYRwGFUxwpnhNdxuvkHGyHwSEipP9EoKCO4viXz2NJVojfSHxbprbDeXSBuherbx7ddOxarCrwVIAxZjOeW5YujNRPLZlICXWRoDgUzXX27x5WwPhmU6yBjZelHOYI3tmwQhK0Q1YseheEbVTCUoHV8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fcz2s1hy; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5e7aec9e15fso2819540eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:00:11 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7afcf0625a9so10006385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728399610; x=1729004410; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1728399611; x=1729004411; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SAa0sba5ecosbF6x+jnpQXFs+AOj18qlbA6Xv2h7TnU=;
-        b=h30EQ2ahLw+54EH38sF9TlXatAqH4bCNN+T+5yTCFkUTJfQerA1rWtzg3zX4YeULsD
-         5qiz1EABP4KjtnYX1t1Q9tCD1ARSQEG7lYZR2fzRZTVc1tORJ/syX2j6zg0ewXe3Rx3U
-         nHXvrt4UK1vkz49EBYNz6qWwvMPHdOF37rHOU=
+        bh=uCWa9i1F2c8oRuwsqOTxWxy2qXb4GIjxtma/YuRpfzQ=;
+        b=fcz2s1hy66U4WVHN6J4+dFtg0LyAw46ZZ+oJgxpLstkeMnqTC937ed20jLqrYuud6z
+         oHQowi57h7/V5kUtW4me9b4CMbqXmFNeMb1caUJ3l/6HGMOSiZY+1Tz9EBrWFaBpCCO8
+         0bFh5SMRVFDhfRohOk7yFKq4gUaaLcFu8lqWg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728399610; x=1729004410;
+        d=1e100.net; s=20230601; t=1728399611; x=1729004411;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SAa0sba5ecosbF6x+jnpQXFs+AOj18qlbA6Xv2h7TnU=;
-        b=n7a7mBV/+T/+/nPHHvKd1BUWR279pTJIBnm29PGkbXNhr9C5uo6mxY7YZz6C4xEhLP
-         PZDbAeyXvS1bQ2E7o2MGBRi3ucOODYbuAY0B3Wd7E1PQo/vskMqMouqhJJk/FNanxD42
-         S6UpoDa5L0znDu27quacfL2iJBhr7YHIeapmTgZ1q916vULDc97tr4ZXVGTgzqBVtq8K
-         dRi5Ze3axzWNowVtN8JnW8CKUA7LbvmQEdc+oHNDSnaiKmmGV1uzUCdvVzlR0rAuwN7Q
-         sVR4lQ6rHb/XRDsd7CKOP0DSQdNyTh8t/55e469DekKoZRAIPBlsL3eeOlcVd6R2rFjg
-         sdXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmJNftjV+aMjo/3MGkg0tgwMMBtstu8GaDH5i52fhbqPZyLGxvvxr95OMOOZnyYnz9x8ClccsCF9pE6WA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ01ECgg1aFdNhC0suyumdVKAGurXUiFer3Dh4AisdUavlDljB
-	4y/KseKowQ6eagaExBhauA1wNqT63k1ZXcEqVJZtbOLh9qo8LaXbeZ8totrEeg==
-X-Google-Smtp-Source: AGHT+IHmKW/4ultjLfqxbrApmxornUzzwKpZiSN5cJiIHI/1zpG807eLBH18zRwyjwVVZQWDr2bxiA==
-X-Received: by 2002:a05:6871:520b:b0:277:e6f6:b383 with SMTP id 586e51a60fabf-287c1e16773mr9823991fac.24.1728399610142;
-        Tue, 08 Oct 2024 08:00:10 -0700 (PDT)
+        bh=uCWa9i1F2c8oRuwsqOTxWxy2qXb4GIjxtma/YuRpfzQ=;
+        b=vbai22H44HaQZ95Pz8vgBEudFxSD4tuVQZ8FXuz1yXqtaCy8+25qHPpG3euAWdHZEt
+         nc6XBqVQXDnyo790su7hj2Lwu72o50yY4uEuqvfdJ4Vu7o5ZMBOzLt6MYFyUkK6HGVGM
+         t4XB9JodcqldcPAnmIRsdtldG3geAYYzt3Tkg+sE86lJZbDbq48hcaSPVQBAwk/pi9pO
+         EQbAB/xkMwLgtDD6bb3kdGqvQOuulf9PhnsvuJiLmxmL6ldnxxBENP0jDPPymY9geVtm
+         w2PC4yY2R/Bh63IvOD/Zq4DaMHS75MsfX40hP4P06YXCUK1YFUNQTOVSCrIT5d10o95B
+         Fn2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNRjOyNWXdrNe+/zu+0e+sqyXix/oBA/eH0/9lM8nZSWNQ01aK/WThGSA5+difXIlO5Sfv6zq1khYPitc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoc3E+1JbSKsGQ27MwVg935wY35yFqSAtfqYHvT58K1ToKVyH4
+	dKAi+rW+ZXL7a4C36nSXDcizYKhrnvXJGbN1cRgzaaPug4N+Dlv3tXAPJ4oDhQ==
+X-Google-Smtp-Source: AGHT+IG5PsXIAlrZHuvZt4cgIpu7/vve2DpwC1FBFLl1/3rpAI6lcB69ZNNqDPmjs3XOrOpvCATW1Q==
+X-Received: by 2002:a05:620a:2952:b0:7ac:e869:b073 with SMTP id af79cd13be357-7ae6f49f5e8mr2806863885a.63.1728399611473;
+        Tue, 08 Oct 2024 08:00:11 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75762a36sm360886085a.124.2024.10.08.08.00.09
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75762a36sm360886085a.124.2024.10.08.08.00.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 08:00:09 -0700 (PDT)
+        Tue, 08 Oct 2024 08:00:10 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 08 Oct 2024 15:00:07 +0000
-Subject: [PATCH v2 1/2] media: uvcvideo: Support partial control reads
+Date: Tue, 08 Oct 2024 15:00:08 +0000
+Subject: [PATCH v2 2/2] media: uvcvideo: Add more logging to
+ uvc_query_ctrl()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,66 +75,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-uvc-readless-v2-1-04d9d51aee56@chromium.org>
+Message-Id: <20241008-uvc-readless-v2-2-04d9d51aee56@chromium.org>
 References: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
 In-Reply-To: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+ Sakari Ailus <sakari.ailus@linux.intel.com>
 X-Mailer: b4 0.13.0
 
-Some cameras, like the ELMO MX-P3, do not return all the bytes
-requested from a control if it can fit in less bytes.
-Eg: Returning 0xab instead of 0x00ab.
-usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
+If we fail to query the ctrl error code there is no information on dmesg
+or in uvc_dbg. This makes difficult to debug the issue.
 
-Extend the returned value from the camera and return it.
+Print a proper error message when we cannot retrieve the error code from
+the device.
 
-Cc: stable@vger.kernel.org
-Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_video.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/media/usb/uvc/uvc_video.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index cd9c29532fb0..f125b3ba50f2 100644
+index f125b3ba50f2..6efbfa609059 100644
 --- a/drivers/media/usb/uvc/uvc_video.c
 +++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -76,14 +76,29 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+@@ -111,8 +111,12 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+ 	error = *(u8 *)data;
+ 	*(u8 *)data = tmp;
  
- 	ret = __uvc_query_ctrl(dev, query, unit, intfnum, cs, data, size,
- 				UVC_CTRL_CONTROL_TIMEOUT);
--	if (likely(ret == size))
-+	if (ret > 0) {
-+		if (size == ret)
-+			return 0;
-+
-+		/*
-+		 * In UVC the data is represented in little-endian by default.
-+		 * Some devices return shorter control packages that expected
-+		 * for GET_DEF/MAX/MIN if the return value can fit in less
-+		 * bytes.
-+		 * Zero all the bytes that the device have not written.
-+		 */
-+		memset(data + ret, 0, size - ret);
-+		dev_warn(&dev->udev->dev,
-+			 "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-+			 uvc_query_name(query), cs, unit, ret, size);
- 		return 0;
+-	if (ret != 1)
+-		return ret < 0 ? ret : -EPIPE;
++	if (ret != 1) {
++		dev_err(&dev->udev->dev,
++			"Failed to query (%s) UVC error code control %u on unit %u: %d (exp. 1).\n",
++			uvc_query_name(query), cs, unit, ret);
++		return ret ? ret : -EPIPE;
 +	}
  
- 	if (ret != -EPIPE) {
- 		dev_err(&dev->udev->dev,
- 			"Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
- 			uvc_query_name(query), cs, unit, ret, size);
--		return ret < 0 ? ret : -EPIPE;
-+		return ret ? ret : -EPIPE;
- 	}
+ 	uvc_dbg(dev, CONTROL, "Control error %u\n", error);
  
- 	/* Reuse data[0] to request the error code. */
 
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
