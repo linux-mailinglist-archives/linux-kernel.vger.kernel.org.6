@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-355308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66AF995057
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824F399505F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B92C2828FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52B31C2487C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21B91DF97D;
-	Tue,  8 Oct 2024 13:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287211DF97A;
+	Tue,  8 Oct 2024 13:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BxVnlhrH"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PckD2QJ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ACA1DF736
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800F1DF745;
+	Tue,  8 Oct 2024 13:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394765; cv=none; b=OgajrBGC1Se86CFOGvTvx+X2I62VbO0CyP5k7rM5tn+zDubsZ4xudM0R+kma5c2wFg8tZ4TmmFE5lm6p1nBxA14aG12DTlTzjoIi3fvHKQqGAqpY/LOJo2h6DfK2tLTwfQ4QtND/oENmiIpJbk0wUY9FO/81L7PoARIVxBzNncs=
+	t=1728394802; cv=none; b=uyxCsFtD0wbEro6HquHl7W8lO6u3trfqsmako5iphsxrzWbtfhKjxhY8SWixJ0Q4UjprYbRLnLQ+OhHqvzixmKON+G7J9tF87iGWaM/0YS7rwgrvs/1zcqoovYorU5E4sUHIu85ci9hPXgUwyZXnNMlFVBXeJgwls39NiWZq5RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394765; c=relaxed/simple;
-	bh=GcPCv63lTlFkdYZ2GwPoXLbpfIQwWmxyEbkctDukntk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HqXxz3U5paPwo+stzesJ7N18co+BSzJs4kvaPf0d0vF0bCHwX2Maz7klUnJAQwUPAU6ZNuL0WS/XJScUAcautpMEkPfKrtz34HW1PHSknVv80RYAff4h0gFixhhBrZ/2SZRF8P1kdbi27cDGWlCWwOb148GarDlj09y5kUaMJBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BxVnlhrH; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9941a48ac8so400328066b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1728394761; x=1728999561; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GcPCv63lTlFkdYZ2GwPoXLbpfIQwWmxyEbkctDukntk=;
-        b=BxVnlhrHM2jPL78/kLZPAJskamoJWuLxwfQxXTfNfeZTc7tUG9eVBcjXPjn4StY6xH
-         QDS0p2AnBisVFZ/5qUoMPDzOSuZHkHLLjcUsy7d+pCNJz7sa0XrLPN+8eT5x1xPiziQR
-         PrrnBuB468d2/K8vhjOWxorzGpXOLAh1QvqTI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728394761; x=1728999561;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GcPCv63lTlFkdYZ2GwPoXLbpfIQwWmxyEbkctDukntk=;
-        b=pZhxhUuGvBI7rUCn3uQ8nDPJQeIOsZ3SWJIUbHOtP573Hg9o8Rpcz9VF9YW7SHQ0yt
-         F+fsKJ+wQHO9sQ5agzf0UgeROLJbynK5+2Cw8DN03BtaB7J0GfU6bgicNnXJN6KfWn7R
-         fZuuUBGYRUE+WDC+jCjp5qREhL1JN0xCig4ptr5vXWUafUF3YpSHhMsv10dYbczZfLdI
-         iZR+jRO3QfHXvVcZi1GygVVmLXZnSgC+CGdmMhqkps6R8URxyoWAGipuH7GVNS5zSE63
-         1puhJ+DZYaoYp3+m+KAoH8IjuzmmTwW2PtoB/l0E4wLvbDigj01MRHcfIBj4ZDm4kc/k
-         quNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7rxjtk3Mkmaz7fkramO8KgxfFwiJd9WiTMyl8tW9McNwd/EytNQzwR5ShnUXRJBr/ZSI4zEeeNus5NEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymtT23iJfrEKfau/OTqZEJWZ9FFA9ZZJArVfQicDtkKBqPDuqx
-	2vIMii/TDpCy+nkyNxZpPc5cvAYSn1vHBBPGXpkLHZald56tY/ZpseiTGzliZPgSg+1Qxvx+LT4
-	kBzEGUOp6QzySBeQzzAX9/JJK2G7/Yg9Ij+K/vQ==
-X-Google-Smtp-Source: AGHT+IGdJR4sHkDLpXK706MeQSJQA8wuiHX1WozZr72hURRz788pd/e+TCc9tNm3xWJ/iS5zYWJT8vj1i0hN7Rpw+bk=
-X-Received: by 2002:a17:907:6d20:b0:a99:3f6e:2da1 with SMTP id
- a640c23a62f3a-a993f6e2e6emr1016488366b.38.1728394761064; Tue, 08 Oct 2024
- 06:39:21 -0700 (PDT)
+	s=arc-20240116; t=1728394802; c=relaxed/simple;
+	bh=+Pn2LCQcgWM7VPBtdDVQGvXG7mqRqcOY7mWUeNaGsRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFoAbeQkUTErCGOGKKVdOHj29InXVmNuduTQyD4GK2l8vAIufcd2J6hCFO0qHzVjM1OD7WPHvm8IkYOkgmmoSfAAHM8oidL3sj6b5Q89cMt0WQ1hB9IM21Icc4jMDHR2vmPpVUyOUj5hBcE1ITh9DRkoorVua5uX/TboDYP6Hps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PckD2QJ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD992C4CED3;
+	Tue,  8 Oct 2024 13:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728394802;
+	bh=+Pn2LCQcgWM7VPBtdDVQGvXG7mqRqcOY7mWUeNaGsRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PckD2QJ8hwXMdRrnfzbjrtzjdeTXqOYz9x7mpFwWY1RdzEKa5uFfG5sGXJmPgPoJ5
+	 TGskjHa/2Drao3Ut1FkxtY9YvBh8iMDyIGanhHs3fmRNp2JCa5JnFyxyYXhSo0YszJ
+	 jpztaUnHJBdIxoyBBo28R6Q5v8c++2LTl4iE2RX9SajJrzW91xyQkyiJZzyRXUtEeq
+	 WsZUBMAwRnJNIIWGf1J1EPBR2V2dTAp1QwUIl8a2sq+qgXzDeqF3coWJeLDK8pDDPT
+	 mHG58pWeGf2DrauPB1vT0MAfET6RAH1kSALZZLs833WQFQ+6c4XzywuUrwF4FAYVDE
+	 ZYIdk8N+o0nqw==
+Date: Tue, 8 Oct 2024 15:39:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH 2/4] i2c: nomadik: support Mobileye EyeQ6H I2C controller
+Message-ID: <oxcxs6n7y4bw33yfgaacd2cayf7otfochvlaofva2kabzjim6h@d6pam3gciepl>
+References: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
+ <20241008-mbly-i2c-v1-2-a06c1317a2f7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240831093750.1593871-1-houtao@huaweicloud.com>
-In-Reply-To: <20240831093750.1593871-1-houtao@huaweicloud.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 8 Oct 2024 15:39:09 +0200
-Message-ID: <CAJfpegshz4_Cjj5imF9mpY=8JSGU1riBZJr0N0Jbb3ZaP9aubA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] virtiofs: fix the warning for kernel direct IO
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	"Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Benjamin Coddington <bcodding@redhat.com>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	houtao1@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241008-mbly-i2c-v1-2-a06c1317a2f7@bootlin.com>
 
-On Sat, 31 Aug 2024 at 11:38, Hou Tao <houtao@huaweicloud.com> wrote:
->
-> From: Hou Tao <houtao1@huawei.com>
->
-> Hi,
->
-> The patch set aims to fix the warning related to an abnormal size
-> parameter of kmalloc() in virtiofs. Patch #1 fixes it by introducing
-> use_pages_for_kvec_io option in fuse_conn and enabling it in virtiofs.
-> Beside the abnormal size parameter for kmalloc, the gfp parameter is
-> also questionable: GFP_ATOMIC is used even when the allocation occurs
-> in a kworker context. Patch #2 fixes it by using GFP_NOFS when the
-> allocation is initiated by the kworker. For more details, please check
-> the individual patches.
+On Tue, Oct 08, 2024 at 12:29:41PM +0200, Th=C3=A9o Lebrun wrote:
+> Add EyeQ6H support to the nmk-i2c AMBA driver. It shares the same quirk
+> as EyeQ5: the memory bus only supports 32-bit accesses. Avoid writeb()
+> and readb() by reusing the same `priv->has_32b_bus` flag.
+>=20
+> It does NOT need to write speed-mode specific value into a register;
+> therefore it does not depend on the mobileye,olb DT property.
+>=20
+> Refactoring is done using is_eyeq5 and is_eyeq6h boolean local
+> variables. Sort variables in reverse christmas tree to try and
+> introduce some logic into the ordering.
+>=20
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/i2c/busses/i2c-nomadik.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-no=
+madik.c
+> index ad0f02acdb1215a1c04729f97bb14a4d93f88456..ea511d3a58073eaedb6385002=
+6e05b59427a69c6 100644
+> --- a/drivers/i2c/busses/i2c-nomadik.c
+> +++ b/drivers/i2c/busses/i2c-nomadik.c
+> @@ -6,10 +6,10 @@
+>   * I2C master mode controller driver, used in Nomadik 8815
+>   * and Ux500 platforms.
+>   *
+> - * The Mobileye EyeQ5 platform is also supported; it uses
+> + * The Mobileye EyeQ5 and EyeQ6H platforms are also supported; they use
+>   * the same Ux500/DB8500 IP block with two quirks:
+>   *  - The memory bus only supports 32-bit accesses.
+> - *  - A register must be configured for the I2C speed mode;
+> + *  - (only EyeQ5) A register must be configured for the I2C speed mode;
+>   *    it is located in a shared register region called OLB.
+>   *
+>   * Author: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
+> @@ -1046,8 +1046,6 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *=
+priv)
+>  	struct regmap *olb;
+>  	unsigned int id;
+> =20
+> -	priv->has_32b_bus =3D true;
+> -
+>  	olb =3D syscon_regmap_lookup_by_phandle_args(np, "mobileye,olb", 1, &id=
+);
+>  	if (IS_ERR(olb))
+>  		return PTR_ERR(olb);
+> @@ -1070,13 +1068,15 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev=
+ *priv)
+> =20
+>  static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id =
+*id)
+>  {
+> -	int ret =3D 0;
+> -	struct nmk_i2c_dev *priv;
+> -	struct device_node *np =3D adev->dev.of_node;
+> -	struct device *dev =3D &adev->dev;
+> -	struct i2c_adapter *adap;
+>  	struct i2c_vendor_data *vendor =3D id->data;
+> +	struct device_node *np =3D adev->dev.of_node;
+> +	bool is_eyeq6h =3D of_device_is_compatible(np, "mobileye,eyeq6h-i2c");
+> +	bool is_eyeq5 =3D of_device_is_compatible(np, "mobileye,eyeq5-i2c");
 
-Applied, thanks.
+You should use match data, not add compatibles in the middle of code.
+That's preferred, scallable pattern. What you added here last time does
+not scale and above change is a proof for that.
 
-Miklos
+Best regards,
+Krzysztof
+
 
