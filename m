@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-354392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A09993CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749D0993CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB89B1F25E50
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0E91F25E47
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C78E1F60A;
-	Tue,  8 Oct 2024 02:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFfpv/Ma"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2F4125A9;
+	Tue,  8 Oct 2024 02:37:31 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CADD184D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 02:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE7F9EC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 02:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728354916; cv=none; b=UyldYbqrpK0faSSrapMc9urowPjlagU0aXqnX8PBNZ7YLIpG8mTQXhDYHT49gg1xqzlI27cIe7GOxdzQ3ngLWt3e4anxlyo8fgF5n4wJewcnUuW92OgOUOBDemPirrHyK7xpRHCQnnHaMngOYDWv4XXzft0ku3syt3MtyH4LUI0=
+	t=1728355051; cv=none; b=WrxeHqd2MXibrHpa70/2hk4UMgsjrINJKdCs3cxxE+C4y+E7gjFkY1QYlZt3ObZjJE3voiZCJDJ7g4lk2JTL/2xqwF4QucFvyuHSmj6PgwJ+2QXh/Gf4L0WUtCa43uQWWCuMcfP6nvymy/Y+T0u0Q+lWlJXTYKErM6dqdusmPI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728354916; c=relaxed/simple;
-	bh=C/W3IWDD87ZTgEdJdyokhTKbCHO3oRTnOxRDfwyVUhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KSoUcJOdxTmeoJAEa0s8AP2gkVZAvFffb5EVk4eW5XgBOpcIiC61oBGU/fvywAjZKlw+ayO2kB+1tCFSinyLeuokcNgNSXcqwL3YA6ZCY9qfrDT+VyJmj4q5U048GLz3A4Hzru/Imlb6UrWypQ6nkj9GxW4YBK6c0bVdDNKCstM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFfpv/Ma; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7e9f8d67df9so1784377a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 19:35:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728354915; x=1728959715; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaHHyDTZ0d5NaZSkzM6y1pMwvv24VCw6oN9ExhsOJRk=;
-        b=CFfpv/MaPbj+UMJU7bEh01kdVjQiftJwHOmmkTulOVUVPLY9i2qjQrWH/+I0vFlNfl
-         DD/sooCSgfjA5XbiaFtHx/UoXGyNPceaD8jlBFMLENBAUhjfP0p5jDm+prjIHsH5LnHy
-         0lC3nxob/gbYUpzE18WyawqM64A/iklozP1hlba0dQ+hohsVR3JFLNXfmzshQOGmddaF
-         nnnfcATpFMXPpxf2wgt9csusqPUrxSi7CzzIXGHROVogg3qDgy7hylwuvyPcTdDuJN4R
-         240tolQWUSswjMw25paBQkFDgSYGiHgGWFMRkpyfbD/EV6/z1WAdAEgVA5TRVZmFO2jw
-         Dwxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728354915; x=1728959715;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uaHHyDTZ0d5NaZSkzM6y1pMwvv24VCw6oN9ExhsOJRk=;
-        b=pEuKN43Y4BbfB2XWH/QjSy2XyyO3AwLB62etuOn5+BBhbdlK+/7nJlEksurndFGuPt
-         WE9iS+Xz2FWigOtNawyc+YuK/99odNWPwbJEJWMLL3K+uqlS2lirnbefjfhTjFudQqkn
-         mjQt1wVRyOpVCPsdjvO+qpf4K/FUYL5LJF38/AHRARx++ZvxxNjm0XHqViwvxmaB3QdF
-         E1+T4rE9/pA5/kkWRpZOdwJDBLQdssUlwutEoZkJka11Rs/NyhWMYt7JKpQLwqYbApIg
-         HBz1l/q9/qHmp7TV5GwJbVx2riwyOWzSxHsT7UvXRJAiAWPHurBAwfA7IN6HR/uBe2HY
-         26Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHevjrpLZo4ydJcX6Pwh+ydiBdPV5c9ieJReEWCVyPhJ9qjWS1QYlqLQa8IBYQhtRRM3m8o4kNuJe8Ae8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtRl4GL8IzT6bmD9NjlNUHbsLIBl3TxTE3tXQTUeFxmsEtJfCB
-	d3HT4FtxeqzJ/aEGf1TCVwQTTm4k1vgfRdiX9uqvRSbKNbr7BakG8ApTjF1ivDGPErbDlCJ8a9x
-	x+8Az8DB5wlaeVKxawspxxBPPH/s=
-X-Google-Smtp-Source: AGHT+IHYfukP36V0z2gYLJ/HbclCrt+viHg8RbDpyTrHSLRtEnGGEoCgvDAnqCHfZt3TprR9DvFLF75m59yFen0wrTc=
-X-Received: by 2002:a17:90a:640b:b0:2dd:5e86:8c2f with SMTP id
- 98e67ed59e1d1-2e1e626c37emr15952226a91.21.1728354914800; Mon, 07 Oct 2024
- 19:35:14 -0700 (PDT)
+	s=arc-20240116; t=1728355051; c=relaxed/simple;
+	bh=rlSX251k/H4FTCdqtOQU+ZbgSjEQytPivCAuN6W22Rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SdhXD4eIelIwfKVlhAPsQLPZiJPNYcQ54CQ5TaVLg+myWScKOM4Z/jur5RZ5WbEBcQr9+c0j6/xRU1xJ7zgpFkVJc6C8CSECVVuUfkibKNq8MyCy90rbnw3unxvJr1hxREhAW1wVeQwA1OWxH0mbZjyuHAsTrWr8dOKi4T50eHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XN0Y51C5Tz1ymps;
+	Tue,  8 Oct 2024 10:37:29 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id F23981A0188;
+	Tue,  8 Oct 2024 10:37:24 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Oct 2024 10:37:24 +0800
+Message-ID: <0bcace87-6678-f84b-dd46-c88b33f67b73@huawei.com>
+Date: Tue, 8 Oct 2024 10:37:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004142504.4379-1-aha310510@gmail.com> <202410071223.t0yF8vP8-lkp@intel.com>
- <20241007183052.9d87f42e19db5f9777dc8e77@linux-foundation.org>
-In-Reply-To: <20241007183052.9d87f42e19db5f9777dc8e77@linux-foundation.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Tue, 8 Oct 2024 11:35:03 +0900
-Message-ID: <CAO9qdTHUW+SRkLsxdO_PXKw7qGvXKCWfa1GtVYNrnyGWEUe0Mw@mail.gmail.com>
-Subject: Re: [PATCH] mm: swap: prevent possible data-race in __try_to_reclaim_swap
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] misc: apds990x: Fix missing pm_runtime_disable()
+Content-Language: en-US
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <samu.p.onkalo@nokia.com>,
+	<jic23@cam.ac.uk>, <akpm@linux-foundation.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240923035556.3009105-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240923035556.3009105-1-ruanjinjie@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Mon, 7 Oct 2024 13:06:49 +0800 kernel test robot <lkp@intel.com> wrote:
->
-> > Hi Jeongjun,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on akpm-mm/mm-everything]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Jeongjun-Park/mm-swap-prevent-possible-data-race-in-__try_to_reclaim_swap/20241004-222733
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> > patch link:    https://lore.kernel.org/r/20241004142504.4379-1-aha310510%40gmail.com
-> > patch subject: [PATCH] mm: swap: prevent possible data-race in __try_to_reclaim_swap
-> > config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241007/202410071223.t0yF8vP8-lkp@intel.com/config)
-> > compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410071223.t0yF8vP8-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202410071223.t0yF8vP8-lkp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> > >> mm/swapfile.c:203:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-> >      203 |         if (!folio_trylock(folio))
-> >          |             ^~~~~~~~~~~~~~~~~~~~~
-> >    mm/swapfile.c:254:9: note: uninitialized use occurs here
-> >      254 |         return ret;
->
-> This warning can't be correct?
+Ping.
 
-I think it's correct. Even if folio_trylock fails, the return value
-should be -nr_pages. Not initializing ret like in the v1 patch
-goes against the design purpose of the function.
-
-So I think it's right to apply the v2 patch that I sent you.
-
-Regards,
-Jeongjun Park
+On 2024/9/23 11:55, Jinjie Ruan wrote:
+> The pm_runtime_disable() is missing in probe error path,
+> so add it to fix it.
+> 
+> Fixes: 92b1f84d46b2 ("drivers/misc: driver for APDS990X ALS and proximity sensors")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/misc/apds990x.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/misc/apds990x.c b/drivers/misc/apds990x.c
+> index 6d4edd69db12..e7d73c972f65 100644
+> --- a/drivers/misc/apds990x.c
+> +++ b/drivers/misc/apds990x.c
+> @@ -1147,7 +1147,7 @@ static int apds990x_probe(struct i2c_client *client)
+>  		err = chip->pdata->setup_resources();
+>  		if (err) {
+>  			err = -EINVAL;
+> -			goto fail3;
+> +			goto fail4;
+>  		}
+>  	}
+>  
+> @@ -1155,7 +1155,7 @@ static int apds990x_probe(struct i2c_client *client)
+>  				apds990x_attribute_group);
+>  	if (err < 0) {
+>  		dev_err(&chip->client->dev, "Sysfs registration failed\n");
+> -		goto fail4;
+> +		goto fail5;
+>  	}
+>  
+>  	err = request_threaded_irq(client->irq, NULL,
+> @@ -1166,15 +1166,17 @@ static int apds990x_probe(struct i2c_client *client)
+>  	if (err) {
+>  		dev_err(&client->dev, "could not get IRQ %d\n",
+>  			client->irq);
+> -		goto fail5;
+> +		goto fail6;
+>  	}
+>  	return err;
+> -fail5:
+> +fail6:
+>  	sysfs_remove_group(&chip->client->dev.kobj,
+>  			&apds990x_attribute_group[0]);
+> -fail4:
+> +fail5:
+>  	if (chip->pdata && chip->pdata->release_resources)
+>  		chip->pdata->release_resources();
+> +fail4:
+> +	pm_runtime_disable(&client->dev);
+>  fail3:
+>  	regulator_bulk_disable(ARRAY_SIZE(chip->regs), chip->regs);
+>  fail2:
 
