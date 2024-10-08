@@ -1,67 +1,64 @@
-Return-Path: <linux-kernel+bounces-355336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2084C9950C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:57:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E789950CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01B51F234FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:57:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8148AB276C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9D51DF722;
-	Tue,  8 Oct 2024 13:57:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C151DF73A;
+	Tue,  8 Oct 2024 13:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D+1W7Quw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NSR4skyB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008826ADD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED71C26ADD;
+	Tue,  8 Oct 2024 13:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395859; cv=none; b=Bt42+fNsMd+H5I8nODQN93K0N6OTBMxMwP0K4pY/O99JeZA02yn81x6zuIIVg5sGvLsWDRz6K1EOLGlXOI4IcwZXhfpkauNvldgIOfP8eJSu4ruRdsUC6ZErD4JxwAv9u9NUOcGj2oVZ8WXN3X2CArad6xExZwoK0bYj0ShZQ24=
+	t=1728395870; cv=none; b=HX14u+EouBAOn1iEkZlarHLqFaWJbyH00jYILRfRmbEss1dS/rTmx7ZFw0iwUqQo6AaUSOHKrnVT8IbULjdk9aufgrRfI/otlhpMeSPGPC6rDeZy0+uiAHgVPV4gNl1bgW+M4FxM5MyTUU+peQr0Fxfk//wP6BkiGZnut3FEhZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395859; c=relaxed/simple;
-	bh=GCG1XMUAJ27htDvbNOl/slQ3+QUGG+0uIx4+wJfRwGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKpqfZrWmQzygp9xgRt9Pni4M/J6niQa4VNlp0yk9cedg9QgC1RxvlPI+yC1nd/gAYPYXIKColLOC5wtkjhKfTMGkCKCVMci7kiNM6Cx4G0oTgoFifNjJJGssK0yBYJDMYvqFel+akbT7LmKAu4g+p7RZyFjQf7/zx3RlLAbX28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syAiK-0004mB-0R; Tue, 08 Oct 2024 15:57:24 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syAiI-000NW2-9T; Tue, 08 Oct 2024 15:57:22 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syAiI-000Pdx-0b;
-	Tue, 08 Oct 2024 15:57:22 +0200
-Date: Tue, 8 Oct 2024 15:57:22 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 08/12] net: pse-pd: pd692x0: Add support for PSE
- PI priority feature
-Message-ID: <ZwU6QuGSbWF36hhF@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
- <20241002-feature_poe_port_prio-v1-8-787054f74ed5@bootlin.com>
- <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+	s=arc-20240116; t=1728395870; c=relaxed/simple;
+	bh=dgqlCo6djy+sBVeKf7V93rVMuP1WNL+lntFf1aIDEXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l3EQ8YaOGoMGNEuv3WNEhvAmGeqbUIuFahyMceZsHWbOLYPWeZzGF3GZPIQF3qkmBoV2xTKJ3SJrhIn7JxNT+N0yoVLERMWSiladez5A6YFsYF9+KXyzNLC18zJStfN66MOjwHYMjn6RljSmXkrI4M6ju2dshHXJ+gY9/sKfyC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D+1W7Quw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NSR4skyB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Oct 2024 15:57:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728395867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=mTGesulOIN7xlBlbtZ32fMZsDu5BhOC6CvYlt9xD1bU=;
+	b=D+1W7Quw7lLiMEY8/MtTDRpTY6pEUZA3Dr9todOncwQOdl/q5JSrJh/RXBs36SRKX4sOKH
+	sFnkA55e7EDqvTVH0IxfL+P5beZguYH60bwTg21/ZOrIE5tdfxQ0BHmjAN21Zt0NJ/J+PJ
+	FOfmyfxr1Ro43UaFvpm1WLMeRJwHZBYnLyFc8YUGt0suRotq6tUQJLIsxbEH8koR8YMbo2
+	83uwBadND09PRQxoBrCbfNp94CXaAnU0Me67hSqBtVmOH1TWuuRYg0oOvPGb6Gr8jp9KdH
+	dTnGVcBNW6QqhJtEqN5z3WPbDx7Tl/ZhFWiu+mDx7bdNxP9mtnEQ14zQ6dgMqQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728395867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=mTGesulOIN7xlBlbtZ32fMZsDu5BhOC6CvYlt9xD1bU=;
+	b=NSR4skyB8geCONZb73pvKel3gvlDpgqOybJRPAq/SUMMKfWowadZr8Pa8u14DiOqB60enu
+	xtaWn5baIx+PXdCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] alpha: Make thread_info::flags unsigned long.
+Message-ID: <20241008135745.Ndzf7UIa@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,50 +67,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2024 at 01:41:02AM +0200, Andrew Lunn wrote:
-> > +	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
-> > +	msg.sub[2] = id;
-> > +	/* Controller priority from 1 to 3 */
-> > +	msg.data[4] = prio + 1;
-> 
-> Does 0 have a meaning? It just seems an odd design if it does not.
+The users of thread_info::flags such as test_and_set_ti_thread_flag()
+expect 'flags' to be an unsigned long but alpha is defining an unsigned
+int here.
 
-0 is not documented. But there are sub-priority which are not directly
-configured by user, but affect the system behavior.
+Make thread_info::flags unsigned long.
 
-Priority#: Critical – 1; high – 2; low – 3
- For ports with the same priority, the PoE Controller sets the
- sub-priority according to the logic port number. (Lower number gets
- higher priority).
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/alpha/include/asm/thread_info.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Port priority affects:
-1. Power-up order: After a reset, the ports are powered up according to
- their priority, highest to lowest, highest priority will power up first.
-2. Shutdown order: When exceeding the power budget, lowest priority
- ports will turn off first.
-
-Should we return sub priorities on the prio get request?
-
-If i see it correctly, even if user do not actively configures priorities,
-they are always present. For example port 0 will have always a Prio
-higher than Port 10.
-
-Regards,
-Oleksij
+diff --git a/arch/alpha/include/asm/thread_info.h b/arch/alpha/include/asm/thread_info.h
+index 4a4d00b37986e..913e6ddb09d3e 100644
+--- a/arch/alpha/include/asm/thread_info.h
++++ b/arch/alpha/include/asm/thread_info.h
+@@ -16,7 +16,7 @@ struct thread_info {
+ 	struct pcb_struct	pcb;		/* palcode state */
+ 
+ 	struct task_struct	*task;		/* main task structure */
+-	unsigned int		flags;		/* low level flags */
++	unsigned long		flags;		/* low level flags */
+ 	unsigned int		ieee_state;	/* see fpu.h */
+ 
+ 	unsigned		cpu;		/* current CPU */
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.45.2
+
 
