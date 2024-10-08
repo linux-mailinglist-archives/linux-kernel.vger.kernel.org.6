@@ -1,115 +1,73 @@
-Return-Path: <linux-kernel+bounces-355674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7804A99558D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852AE99558E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE8B1C24C3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AACA1F25DD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5A1FAC5E;
-	Tue,  8 Oct 2024 17:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nu4OvjtI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70F61FA253;
+	Tue,  8 Oct 2024 17:22:58 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF61FAC4B;
-	Tue,  8 Oct 2024 17:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DA9433B5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728408127; cv=none; b=Yo373DTHetYdhh7Js5tTuRGvScUuRkNKRbwWL/YfYen9cV1Gwfx/tghgWpUai4pqDvEdlhWG6szeUc9Ow9T7hCvtUSA/SbXSEumLgqysrfmC5D7moJQS19kG9WwwEUG3wKJ29U0FuFoKTyBN4t0TBPLEwNrwwS6c5UBAQWcWBjk=
+	t=1728408178; cv=none; b=ZUSZZAOm9xe5seezsPebPFxnSLoxXU805ldTFMHP1H0xeSV27539unB+RuBTr9F+0Xe9M6JCAYrjtxgxCOX7TKGVqUiVyAehXif2S2sChe3dwIDvE03r88fx92mLzBHRKIoRNxUB1z88zGj+ReuLKzEWVPmM5R3SJKW7F4TJ5P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728408127; c=relaxed/simple;
-	bh=1bMYdO3pQcpZWDdsYwMovLeFjs0vbYhDIVKZ9zvB+2U=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=US1xjEPK1nB5qqtkvShXVdlLxqfNkhFP9Oxn5/BKg1U5e6GhRlo+SpHl/aCC76lyh4kOgheO5GJqENZXbWiMR+4xXerd3sPSyeIby/CzpsvswWeIT+KwcgiqJ/5HgOW2mAWcF+9DhvT5CueTmBSMt135D1oZk2i9jWzQAwzMYIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nu4OvjtI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1F0C4CECE;
-	Tue,  8 Oct 2024 17:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728408126;
-	bh=1bMYdO3pQcpZWDdsYwMovLeFjs0vbYhDIVKZ9zvB+2U=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Nu4OvjtIyqiL1qJSPDSdnvs4zAnDewEsZa4Vqx4GkQHqNOX+XC5D5e3avKpxBBZgL
-	 HmV7/jfsepvnMtyl4uWgDXBqiOULpuWO8MCtY7MiRN3svnAg/9ohbCqc9oFhEqb6Id
-	 mKImagEHTkADom6yqzsMcCRWFDQT/QznHXYfYJzzwbu96lDZif8UUANRGCAR1MytZZ
-	 GciP1PYndh4eBJajpmm6e6xNHkcbuoj4+PdLr7naeWrhaDCLjuawufYIrMgA73+7cY
-	 uUGpqHZ+bcePN8gzDoMmJG9TezP6Hn2Sd0TnGg8rtQZM1h+v3uNsSlH60Kj0dKXqgx
-	 BIqTnJWyH1OZQ==
-Date: Tue, 08 Oct 2024 12:22:06 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1728408178; c=relaxed/simple;
+	bh=sitovRrrUDpMVJTaHKBXXrXEAlGykN9z1Jy3ZQOv3kQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AkgzbuZPjzapE24g+5JvkME81qHgR2jo9HeaSHgXAtl17ofUUCy9Rf48BBNGGQUKF1aWNgFHKM86ABmRO5UWpoVlRnL6vZcIeqlb1oCW17805u8YcsDRKv1cTTVXCZStT2EoSHul6cPZD6x8y8w3wlSwAYmsSca6TF4/UV2cS8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70B8C4CEC7;
+	Tue,  8 Oct 2024 17:22:56 +0000 (UTC)
+Date: Tue, 8 Oct 2024 13:22:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Mike Rapoport <mike.rapoport@gmail.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ard
+ Biesheuvel <ardb@kernel.org>
+Subject: Re: reserve_mem command line option causing a reboot but not by the
+ kernel
+Message-ID: <20241008132259.52a5f274@gandalf.local.home>
+In-Reply-To: <20241006133233.32c8708c@rorschach.local.home>
+References: <20241006133233.32c8708c@rorschach.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, 
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Nuno Sa <nuno.sa@analog.com>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- dletchner@baylibre.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org
-In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-4-3d410944a63d@baylibre.com>
-References: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
- <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-4-3d410944a63d@baylibre.com>
-Message-Id: <172840812598.1881490.11957892692384833449.robh@kernel.org>
-Subject: Re: [PATCH v5 04/10] dt-bindings: iio: dac: adi-axi-dac: add
- ad3552r axi variant
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 6 Oct 2024 13:32:33 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Tue, 08 Oct 2024 17:43:36 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Add a new compatible and related bindigns for the fpga-based
-> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> 
-> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> mainly to reach high speed transfer rates using a QSPI DDR
-> (dobule-data-rate) interface.
-> 
-> The ad3552r device is defined as a child of the AXI DAC, that in
-> this case is acting as an SPI controller.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 56 ++++++++++++++++++++--
->  1 file changed, 53 insertions(+), 3 deletions(-)
-> 
+> I don't have time to debug further. Maybe I need to look at the legacy
+> grub code. I just found this interesting and decided to share. Perhaps
+> someone else might hit this too?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I found that one of my old test machines also uses legacy grub, and it too
+has the same issue.
 
-yamllint warnings/errors:
+It appears that grub does indeed search for "mem=" (without looking for
+something before it) in the kernel command line.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
-	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+  https://github.com/jezze/grub-legacy/blob/master/stage2/boot.c#L275
 
-doc reference errors (make refcheckdocs):
+Thus, "reserve_mem=" (or any other "mem=" option) cannot be used with legacy
+grub installs :-p
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-4-3d410944a63d@baylibre.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- Steve
 
