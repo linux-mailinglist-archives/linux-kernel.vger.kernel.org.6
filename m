@@ -1,146 +1,195 @@
-Return-Path: <linux-kernel+bounces-354899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3E6994444
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC63994449
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78AC0290F93
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A03290D5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1370F16EB76;
-	Tue,  8 Oct 2024 09:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9772317D366;
+	Tue,  8 Oct 2024 09:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngNLo/vm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOuJNJQ1"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9A416CD35;
-	Tue,  8 Oct 2024 09:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDC41684A4;
+	Tue,  8 Oct 2024 09:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728379710; cv=none; b=X+tPKVoofumyfxoPzqb5f9tOFB92rvPJREbS+D6SDzljeJEg+uI3JsQniVE+5Kg5kzBsOHMPxP69OxfxPJq0nAjQVkJX8Bujx4ERjxNDB/5/S+LKDUn0G4jT13vCnUgKXemNZ+PzOQ+maXv2JU/eBgNXCwq5HPmRoOb1kym6kx4=
+	t=1728379769; cv=none; b=iUsk00yMBp97q3vregSHH22whw1ARXO8Tk2198+x0ApJUzlxb09/RHTh4O1nhrY6b2KC8t8VvRqP9z6tVTTDAiGJ9wCpd7TagHnMjd3PFzv74//q/ug8YO57bgfq5u2TR4xNgsVX/bxI4iUnCWWDGH8cxEUvXFXqD1IVcS5hRvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728379710; c=relaxed/simple;
-	bh=JyelCuQCMPlZWVVTklLnqNbgbrlSJ9neBU08TXsuY4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qSwPSbvDoL/ixT2m7vDegLts4CPMRgB98X5zCQ9CCv2ePKA03G3gvnaQ1wvq5OgMMFqEQYyO6StXDnZG6B/TGc4HVAiWV3GeW09/Vslf2YmJq8zBgglNNGVXX6cwDdaLNNDsSWOXGYE6UnGb0MaxzBhB2HIp82cgvd3F3o4/PpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngNLo/vm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17DC4C4CEC7;
-	Tue,  8 Oct 2024 09:28:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728379710;
-	bh=JyelCuQCMPlZWVVTklLnqNbgbrlSJ9neBU08TXsuY4w=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ngNLo/vmUxyz/NwMkg/Qy4zbe09ET1XccIn7A72Fk+NnptO2e7PY2ThVkcnMfDOAn
-	 S56zVCe62heUVcPF9y3B9gkA06AYLcEoszMxWeaTZRU36oVLvykyHWXOwOaJayzQs3
-	 KRhTaCuQUFaSjZWMw64bt0HBEA8h99yxfwCy03Hzv2GmrgwSlVTa5ISUWoZ8Tvg7Eq
-	 JDqKfIQEd0woEP4tZvmaCKLPdaPQqgF7FhxJIU3Ol6/8SjvicYBdo0tW5AO41dbv8c
-	 x7/UMxy5pMm/t7IFVli6rU5nBTdRM6Vj3zzTmLEy47cM8GfjaZ/hSUYpUWKNpv+1Ri
-	 Vk9cIvUGBEoXg==
-Message-ID: <0cad37dd-772e-4dc2-9943-a473bf21d55a@kernel.org>
-Date: Tue, 8 Oct 2024 11:28:24 +0200
+	s=arc-20240116; t=1728379769; c=relaxed/simple;
+	bh=eWN/MaFojHAW9m6Ae/35VSjoROU+iItX2kOUEWuuCUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VkQyuc/lqfAkXLQVdjMGRTSjAteq3zGQsAkXeyN3va0AxSEctx5Xvt/W1Q8nJqINwRj9RelrRjRyrFPxlXZHgOWXDjVZ7dLGbH/yxWkQ53vCgRJzw9smVArCgbswwjWJOgD/8jCPddYwZM3f3LW2oUVnfmM04EwsLwqruvB+5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOuJNJQ1; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e232e260c2so45317427b3.0;
+        Tue, 08 Oct 2024 02:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728379765; x=1728984565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQNyfPSCVIG01EOy/uu8Bi4UqKVZ2bxP52ZD84vL7uY=;
+        b=ZOuJNJQ1j+p1fMtJQyTvmDmWMfF2Frot5crI9O8Feki239qg+ffxJURM4Pds9gz4us
+         Yg62N4cW4ZOQFcXPpeI4P8hpgiPJKWmzEKw9zGicLLvUHWKNoPtipaMEoNQ/EmEITiTy
+         CEdA6BqUn8tOhbVGPqG7I+jFPqzThXdS4+135rIbDR/9JA++NqmyrdRJVwp+Aj+0I/WU
+         4rlCq96u1y32sb3cr+mYugFUKfVHeMKJPyTMY1mh/6D1pQBzLqghRkR2AtpIm4vwBkOU
+         uaYYHqSlyTzp1qEH+vp+1OBDMsZYGiDNVth/qgUCdzi+lyu3wMXqvl1/psrGPrnyL7Ia
+         GW9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728379765; x=1728984565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UQNyfPSCVIG01EOy/uu8Bi4UqKVZ2bxP52ZD84vL7uY=;
+        b=az51IHs1YBYKsgtut4g2jt40l9sZCsHQZ5EXd8CG+58yxZthv4AcaZvns62sNLN33P
+         UN/VeDgM3DG10Tnm8Dp2e4ceis83q2ZI8BewhqT3dMTSeZoxsrm1oy4tUplGQHOnv0Bi
+         CLx092IMgdQLwWzri9wT7p0Foz+wjFmpv43XCmV2mtBmbpFYCzYES+BWmbZBViA7z0K7
+         Mub5sDFb26tLTHzRv3767L6lsMFjFJmb367HwoHCqs6iSYUacW9HRYZd01erTpB3xfSu
+         hHQ+wY+1iNEvjdJhDKaZAB+XsGVA5p4PCCifElE4r3tlMO7YGCYY2R8lcDztnF9CgqcK
+         GKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1LKIK+XPZMbJSHLPISNua4IfCYJ8ieROtSvYRUZMU387J0B8k+GohcQQx3JRel7sZUvHq5Bk+YXeMDZo=@vger.kernel.org, AJvYcCVWWuIGluCEmXq5eIbgSq6oIhXW0Preaad1P7VSGMkTDQToSkULu0YiaOY38lxX8K/pXgKrR+F0@vger.kernel.org
+X-Gm-Message-State: AOJu0YymDnObHd8qrbL1pDTi8wJZ48I5oUfrVyhGrrjEbEDh9giF7os2
+	/Lixq1mh6snyAn1FtX1QU0gaPpRl5HEzANTe4owF4P/rcmQLXbqY6R2hxRIg30+12NxcE1kFW4s
+	jPmqsQ3qc2YPocOdpB4H9RioJUlI=
+X-Google-Smtp-Source: AGHT+IEhq3KmwZVymDz4Fd++jHViv8z0hh+44qM6R8bbFsO1VjRYVuySILrif1O42D+aB2/WwvvxlKICDyBFTZBy9O8=
+X-Received: by 2002:a05:6902:1b87:b0:e26:2aa0:a3b0 with SMTP id
+ 3f1490d57ef6-e289392b426mr9499416276.45.1728379765172; Tue, 08 Oct 2024
+ 02:29:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] riscv: sophgo: dts: add power key for pioneer box
-To: Inochi Amaoto <inochiama@gmail.com>, Chen Wang <unicornxw@gmail.com>,
- aou@eecs.berkeley.edu, unicorn_wang@outlook.com, conor+dt@kernel.org,
- guoren@kernel.org, inochiama@outlook.com, krzk+dt@kernel.org,
- palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-References: <cover.1728350655.git.unicorn_wang@outlook.com>
- <12e65a99f1b52c52b7372e900a203063b30c74b5.1728350655.git.unicorn_wang@outlook.com>
- <aixuis25v56xwnc6zd2ost5yhho5soznpa2pf6fya6orvwwke4@6n3nhzrd7kio>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <aixuis25v56xwnc6zd2ost5yhho5soznpa2pf6fya6orvwwke4@6n3nhzrd7kio>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241008091817.977999-1-dillon.minfei@gmail.com> <PAXPR04MB85106420DA87BA00EF755A85887E2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB85106420DA87BA00EF755A85887E2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Dillon Min <dillon.minfei@gmail.com>
+Date: Tue, 8 Oct 2024 17:28:49 +0800
+Message-ID: <CAL9mu0K9YJT_tvpV6C01yhBgU2=eiD7Q4jUnnu1priBchA8mkQ@mail.gmail.com>
+Subject: Re: [PATCH v1] net: ethernet: fix NULL pointer dereference at fec_ptp_save_state()
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, 
+	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, 
+	"csokas.bence@prolan.hu" <csokas.bence@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/10/2024 07:18, Inochi Amaoto wrote:
-> On Tue, Oct 08, 2024 at 09:43:52AM +0800, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> There is a power button on the front panel of the pioneer box.
->> Short pressing the button will trigger the onboard MCU to
->> notify SG2042 through GPIO22 to enter the power-off process.
->>
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->> ---
->>  .../boot/dts/sophgo/sg2042-milkv-pioneer.dts      | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
->> index a3f9d6f22566..be596d01ff8d 100644
->> --- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
->> +++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
->> @@ -5,6 +5,9 @@
->>  
->>  #include "sg2042.dtsi"
->>  
->> +#include <dt-bindings/gpio/gpio.h>
-> 
-> Just move this include into sg204.dtsi. It seems you forgot to
+Hi Wei
 
-sg204.dtsi does not use this header, so why it should be there?
+Ok, Thanks, just ignore this patch.
 
-DTS does not differ here from C. You include only what is being directly
-used.
+Br.
 
-
-Best regards,
-Krzysztof
-
+On Tue, 8 Oct 2024 at 17:24, Wei Fang <wei.fang@nxp.com> wrote:
+>
+> > -----Original Message-----
+> > From: dillon.minfei@gmail.com <dillon.minfei@gmail.com>
+> > Sent: 2024=E5=B9=B410=E6=9C=888=E6=97=A5 17:18
+> > To: Wei Fang <wei.fang@nxp.com>; Shenwei Wang <shenwei.wang@nxp.com>;
+> > Clark Wang <xiaoning.wang@nxp.com>; davem@davemloft.net;
+> > edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> > u.kleine-koenig@baylibre.com; csokas.bence@prolan.hu
+> > Cc: imx@lists.linux.dev; netdev@vger.kernel.org; linux-kernel@vger.kern=
+el.org;
+> > Dillon Min <dillon.minfei@gmail.com>
+> > Subject: [PATCH v1] net: ethernet: fix NULL pointer dereference at
+> > fec_ptp_save_state()
+> >
+> > From: Dillon Min <dillon.minfei@gmail.com>
+> >
+> > fec_ptp_init() called at probe stage when 'bufdesc_ex' is true.
+> > so, need add 'bufdesc_ex' check before call fec_ptp_save_state(), else
+> > 'tmreg_lock' will not be init by spin_lock_init().
+> >
+> > run into kernel panic:
+> > [    5.735628] Hardware name: Freescale MXS (Device Tree)
+> > [    5.740816] Call trace:
+> > [    5.740853]  unwind_backtrace from show_stack+0x10/0x14
+> > [    5.748788]  show_stack from dump_stack_lvl+0x44/0x60
+> > [    5.753970]  dump_stack_lvl from register_lock_class+0x80c/0x888
+> > [    5.760098]  register_lock_class from __lock_acquire+0x94/0x2b84
+> > [    5.766213]  __lock_acquire from lock_acquire+0xe0/0x2e0
+> > [    5.771630]  lock_acquire from _raw_spin_lock_irqsave+0x5c/0x78
+> > [    5.777666]  _raw_spin_lock_irqsave from fec_ptp_save_state+0x14/0x6=
+8
+> > [    5.784226]  fec_ptp_save_state from fec_restart+0x2c/0x778
+> > [    5.789910]  fec_restart from fec_probe+0xc68/0x15e0
+> > [    5.794977]  fec_probe from platform_probe+0x58/0xb0
+> > [    5.800059]  platform_probe from really_probe+0xc4/0x2cc
+> > [    5.805473]  really_probe from __driver_probe_device+0x84/0x19c
+> > [    5.811482]  __driver_probe_device from
+> > driver_probe_device+0x30/0x110
+> > [    5.818103]  driver_probe_device from __driver_attach+0x94/0x18c
+> > [    5.824200]  __driver_attach from bus_for_each_dev+0x70/0xc4
+> > [    5.829979]  bus_for_each_dev from bus_add_driver+0xc4/0x1ec
+> > [    5.835762]  bus_add_driver from driver_register+0x7c/0x114
+> > [    5.841444]  driver_register from do_one_initcall+0x4c/0x224
+> > [    5.847205]  do_one_initcall from kernel_init_freeable+0x198/0x224
+> > [    5.853502]  kernel_init_freeable from kernel_init+0x10/0x108
+> > [    5.859370]  kernel_init from ret_from_fork+0x14/0x38
+> > [    5.864524] Exception stack(0xc4819fb0 to 0xc4819ff8)
+> > [    5.869650] 9fa0:                                     00000000
+> > 00000000 00000000 00000000
+> > [    5.877901] 9fc0: 00000000 00000000 00000000 00000000 00000000
+> > 00000000 00000000 00000000
+> > [    5.886148] 9fe0: 00000000 00000000 00000000 00000000 00000013
+> > 00000000
+> > [    5.892838] 8<--- cut here ---
+> > [    5.895948] Unable to handle kernel NULL pointer dereference at virt=
+ual
+> > address 00000000 when read
+> >
+> > Fixes: a1477dc87dc4 ("net: fec: Restart PPS after link state change")
+> > Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> > ---
+> >  drivers/net/ethernet/freescale/fec_main.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/freescale/fec_main.c
+> > b/drivers/net/ethernet/freescale/fec_main.c
+> > index 60fb54231ead..1b55047c0237 100644
+> > --- a/drivers/net/ethernet/freescale/fec_main.c
+> > +++ b/drivers/net/ethernet/freescale/fec_main.c
+> > @@ -1077,7 +1077,8 @@ fec_restart(struct net_device *ndev)
+> >       u32 rcntl =3D OPT_FRAME_SIZE | 0x04;
+> >       u32 ecntl =3D FEC_ECR_ETHEREN;
+> >
+> > -     fec_ptp_save_state(fep);
+> > +     if (fep->bufdesc_ex)
+> > +             fec_ptp_save_state(fep);
+> >
+> >       /* Whack a reset.  We should wait for this.
+> >        * For i.MX6SX SOC, enet use AXI bus, we use disable MAC @@ -1340=
+,7
+> > +1341,8 @@ fec_stop(struct net_device *ndev)
+> >                       netdev_err(ndev, "Graceful transmit stop did not =
+complete!\n");
+> >       }
+> >
+> > -     fec_ptp_save_state(fep);
+> > +     if (fep->bufdesc_ex)
+> > +             fec_ptp_save_state(fep);
+> >
+> >       /* Whack a reset.  We should wait for this.
+> >        * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
+> > --
+> > 2.25.1
+>
+> Hi Dillon,
+>
+> I have sent the same patch this morning.
+> https://lore.kernel.org/lkml/20241008061153.1977930-1-wei.fang@nxp.com/
 
