@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-355737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B6899563A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0675499563B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CF1C24F3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914681F26715
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB8F212643;
-	Tue,  8 Oct 2024 18:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85F212644;
+	Tue,  8 Oct 2024 18:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XKhitnH8"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="G+vbLI4M"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C981E0DA6
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C992220A5EF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411137; cv=none; b=fNwX2PKT/T4qz6In3eANrzQewwmNoLbKdXJcTcMKALxprRnWKVZr+it4QPbhu1bxepd9Rf7djwYAqaLRCU6FIdSVk2S1uWH4zQ6lt+50LFTMwpjzMfu0PqxcTPwB5ORFBBBo8tzPPuAUWSa6OCBZkTbirzkEkvAdfzW/f+HLJm4=
+	t=1728411157; cv=none; b=RWvOGSGlgh2LTPm8ATxMu21csVzZXF/aX1EO87oxdByl3YdD8/DnGq6gEWqJRlB0xCH2MhwWJPH0rrLx9m0q05lMSGpTOZ7nqA70xi8nDy0FRp90y7Rsi8dd+kD7Y6sZqz9JDoJeCrRzOVDHFev/8+uoITNj+0pevx6yAZQjY5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411137; c=relaxed/simple;
-	bh=vhTuNa6pMB03W6hOrEtrcOG4oqbqI2buTXqpaiOtkBY=;
+	s=arc-20240116; t=1728411157; c=relaxed/simple;
+	bh=KZtnorh+6De5MzRF06EfiOi8deC4jcrfngGuRSraIlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpQoX4yntvDQoaeRtedLQeRu7ERs+sQQOR5sqaNof2JpU+RnO2NlgvVREGrlGDTcyHaRqFbEzIf/mIJTh1iAkUogThBS84pu6s8IT2vKgAhoexzpMBUC00U/hhfOwRBP1HsdMkk4r2r17rGsQsioHoQToS4cKFLreFGzeqZivro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XKhitnH8; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c5fdd0fe3so26465ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:12:15 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=socp+A/iGm4aV2JMBWM7tomGGJd4YAzt1FUkcWiquKsANP9xjaptFyJDRhWZ7vqWrgj8Yp+Q3KL8o5CHD5i1S+dREd1d2kR0ClR+78ciOCfV4NgiZ5y++qkUYSHtl/PduxFKzTj4m77l2EsuRpZ8YVToGX6vdJiVB62bxrjfbBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=G+vbLI4M; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-45821eb62daso37788751cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:12:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728411135; x=1729015935; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZLNgHa4srZj0Mj779t5wUVINDT2m3pKrdkBQ7dK1eHE=;
-        b=XKhitnH8xx02Lx74q+kNI05rV4EM27pagjiY5lyI5FGWpmB7AYg2Y146oreAlf9gwC
-         jq+mpASdxGWDQcwz7ykMLY+y9aAkFTZTokqV0UgPSWdiy7rI2jRczjVw4x5rSdpd1rFA
-         7YskH287Eq8hOkFWs+WbPpXl55cCytrAIvX6aXgKv5ik8+RKDu8kQseAEycClJwngwC4
-         sBxkzPLUm7GWhs4SPH1vb8i9bec/JAkv6nAeiZCIyP2Rh72Gb0R7zBYNEWgJczRWKaX3
-         urcLoqJ+9ka9YIqWpXQbtWCAekVmhJvXtX8xw9gC1xttT3PpuBmEUDjiAsBRGeNIylE2
-         F1aw==
+        d=ziepe.ca; s=google; t=1728411154; x=1729015954; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n+daBNbE4A3/IkoAmsu5dUuddPR6v/H43OmoGOvQMFg=;
+        b=G+vbLI4MKwbljzKPnGln0fhAge825mcNXiXjQkBrbJNXrLOEMRdq9SnaoP4hBEqJFL
+         NM3FpUVsnp+3RoF/rIbIfV/5gbdtAVJTEUgB6KI8YCb8wgNjcCKks3IY4Obvd2dnIMtp
+         8OWQ1OQPzG/mnY92pAKdlHo8ZvbVr0A/KyzfS6XNXGCfmdLPHU9ahc/POq4v6PBq/Ohp
+         jGlzxgfHApbysJT6l0bnF0cobJDvtvfOwZ/RdtkRzTyvfIVu+LZT+EknI+Qp24IBwwnM
+         FU34IS8pv6prYjrhbrWpb9AzwJ/SYsRX7gY8eC6+SdkBsDzPKF5vKEMShoosf45CojSZ
+         5Qqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728411135; x=1729015935;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLNgHa4srZj0Mj779t5wUVINDT2m3pKrdkBQ7dK1eHE=;
-        b=cjwutDPiKsEfud2/AoGgaVbmEIBwI0s/R7MfnH/8VUnyZrpU1+BzJmXIkCP0MjLFmL
-         2HTSvl+O3CEFykMeJ8DuVr8xvKpYLDdSHfEfIyBMiL1kiZddiwEh2/K3VKgKMW22sklO
-         S7WiYtV5dqmrQnL8tFeCubG5d5sWZhWtiut2GY2Mvr9XtW9fziZiP5X2qyxHdgFrHydF
-         GKhIOJcWj6W6J+iX+7POHd9fHCHjNpqpGK4KJewDz39pg7bbwa9yKzET8Jkb7c9mkOGl
-         7YaGO80MgTHU7Bc/JcXzk0u2pEFBfAD/Ib72NFXO5ekjvpy5aX/ELk63O8HE7m177rHH
-         TlXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXM/VYJRIfVWxZalx1W4gyfag9GFSlikkyeGDpDOPeeXf4c0hdgmcseDhYA/kqkxJNv9pV+ZnNmOQGazTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxptTg2eSRtitQ9A01+a9HFplR38LF8Gk734DI1gtTm0ROUlhqW
-	yoci2znSh8JQw9qze20NYr6y8VNPoqafd5yAYEy7vgSvhPkbw9i2MmwbHthRbg==
-X-Google-Smtp-Source: AGHT+IFGbvMNhmGPIjWwxbX/N19uSMRxtazGFYqmRVyqrj+mjywXVsQ6bS22W3yESMUJOnNeL3nZ3w==
-X-Received: by 2002:a17:903:1212:b0:1ff:3b0f:d61d with SMTP id d9443c01a7336-20c62b11bf2mr219545ad.24.1728411135048;
-        Tue, 08 Oct 2024 11:12:15 -0700 (PDT)
-Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4a16esm7084074a12.85.2024.10.08.11.12.14
+        d=1e100.net; s=20230601; t=1728411154; x=1729015954;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n+daBNbE4A3/IkoAmsu5dUuddPR6v/H43OmoGOvQMFg=;
+        b=NqDmhgsrXfwxX6M8GCjOyo1RMhrdWGXsHmzPeqolXwH+6Yfax5SS9Qpy8vDs748Jhg
+         zHdtRhGSA5wkItW/3YA1l229n5p16l3WxuMoGSqq5ihrLv0rC8JXItMH97rxJxvzMP7n
+         GjX4T5zCKwXcWgDlVmz40l04mnPDj+nStKK51k88/x+6KZy2hGWXt0H6mfYeIo2n73ca
+         nTeMEzy5s+47lXeXvmw1GP1dQM6qlBQ9TVMI1nq52DhKmxt+rl19lxjbm+xndqPhbkNy
+         1kAafcYTb192xAUL9VRzlDr0TpVkY+RASkW10aFfk2HhtluVcJrkt/JpVA8wTPLGqXGq
+         7qqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgnmQX9mOT5BWvbMErjvej3F+WjYUygFy3dStLjCCF2evnvLmHxpfNUMPUP0vOfBIGyHDDILlo5wl/HU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZd/isurssNYZlrAcjEEUgMbBd4G6b5lRZCx68I2jlI3zVMJSG
+	EZcpZVt8f/GpYsnsIqWQZd/6MMwML2D2gNxCi524UH76xvKK4Zc5A+6TGqltxYw=
+X-Google-Smtp-Source: AGHT+IFZ7849aZEK7tygFhqWieCpfCpQYJY7F+nz/8tdd79wkaQ8EwIY9JISq9FkFonwvaH6jvNvDg==
+X-Received: by 2002:a05:622a:1a87:b0:458:5011:6671 with SMTP id d75a77b69052e-45d9badaf62mr199367281cf.39.1728411153683;
+        Tue, 08 Oct 2024 11:12:33 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da763fdbdsm38396711cf.82.2024.10.08.11.12.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 11:12:14 -0700 (PDT)
-Date: Tue, 8 Oct 2024 18:12:10 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Yu-Ting Tseng <yutingtseng@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 6/8] binder: allow freeze notification for dead nodes
-Message-ID: <ZwV1-svdRZCF2x2H@google.com>
-References: <20240926233632.821189-1-cmllamas@google.com>
- <20240926233632.821189-7-cmllamas@google.com>
- <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
- <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
- <CAH5fLgjnyKtXsnPbvCFz64BBRqvWPwh6reM-myWA9AEBKFhcJg@mail.gmail.com>
- <ZvbeCg5Ho6p-VU5o@google.com>
- <CAH5fLgjB-ia+UhE1P8gOxHTdjSJJ1=xKSS0c75AvGA91uo_fEw@mail.gmail.com>
+        Tue, 08 Oct 2024 11:12:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1syEhE-006qUW-Iy;
+	Tue, 08 Oct 2024 15:12:32 -0300
+Date: Tue, 8 Oct 2024 15:12:32 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Joerg Roedel <joro@8bytes.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] iommu/amd: Use atomic64_inc_return() in iommu.c
+Message-ID: <20241008181232.GD762027@ziepe.ca>
+References: <20241007084356.47799-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjB-ia+UhE1P8gOxHTdjSJJ1=xKSS0c75AvGA91uo_fEw@mail.gmail.com>
+In-Reply-To: <20241007084356.47799-1-ubizjak@gmail.com>
 
-On Mon, Sep 30, 2024 at 03:30:01PM +0200, Alice Ryhl wrote:
-> On Fri, Sep 27, 2024 at 6:32 PM Carlos Llamas <cmllamas@google.com> wrote:
-> >
-> > There are different ways to proceed with this dead node scenario:
-> >
-> > 1. return ESRCH
-> > 2. silently fail and don't allocate a ref->freeze
-> > 3. allocate a ref->freeze but don't notify the current state
-> > 4. allocate and send a "fake" state notification.
-> >
-> > I like 1 just because it is technically the correct thing to do from the
-> > driver's perspective. However, it does complicate things in userspace as
-> > we've discussed. Option 2, could work but it would also fail with EINVAL
-> > if a "clear notification" is sent later anyway. Option 3 changes the
-> > behavior of guaranteeing a notification upon success. Option 4 can cause
-> > trouble on how a "not-frozen" notification is handled in userspace e.g
-> > start sending transactions.
-> >
-> > As you can see there is no clear winner here, we have to compromise
-> > something and option #3 is the best we can do IMO.
+On Mon, Oct 07, 2024 at 10:43:31AM +0200, Uros Bizjak wrote:
+> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+> to use optimized implementation and ease register pressure around
+> the primitive for targets that implement optimized variant.
 > 
-> I am happy with both #3 and #4. I think #1 and #2 are problematic
-> because they will lead to userspace getting errors on correct use of
-> Binder.
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> ---
+>  drivers/iommu/amd/iommu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-After talking with userspace folks it seems that #3 would be their
-preferred approach. So this v2 patch it the way to go then!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Thanks,
-Carlos Llamas
+Jason
 
