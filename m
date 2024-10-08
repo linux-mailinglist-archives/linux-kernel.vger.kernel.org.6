@@ -1,100 +1,251 @@
-Return-Path: <linux-kernel+bounces-354947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93249994502
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:03:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D17A994504
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9492F1C22610
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FFC1F247FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D604518FDC9;
-	Tue,  8 Oct 2024 10:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ABC18E368;
+	Tue,  8 Oct 2024 10:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZspKtVr4"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gJ4asCny"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FAC18C93D;
-	Tue,  8 Oct 2024 10:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDB418C93D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728381811; cv=none; b=uy+arYzv7WfD/DbxBvhi1Ch1YHQlGvqP9YPR8PLFUO53sTZFw6d0J57XXfftUcEjSad5j8dToqfcr086K7psnZFZq6yHrvQdwxu6xdO4BwXdAYiSPx07+6PrVWbmGaPir9gNuXW25JzQaNj2pX6or3E0lo+gu4kmxIf6gEHkSLA=
+	t=1728381822; cv=none; b=llHqz+XXgFLKP9c2k7dtPi7JkPSVld7/qHjRXFAfFBL05tV5P/eiiHQAG2kZEypXItZE5b8N3eBn4PgXU1lmJkl/aJD4HNQpo2re86U9EJTgLqZJzEkF1M1i+XLEUnC4UzRLySexEhNtHW1EFEVHwGPuNnBwnvkqLl1vh6fUgvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728381811; c=relaxed/simple;
-	bh=G6UPXBCWZIToUxidHOl2NxFaDb6t5b8R/d+rhgiKuDI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ifS5nn6em/7vocNUrGJj+1VzQTuisB8yLBAi+4rd8y5KiIvmJyvjgGhR56cPzLRT6N0vxV2MzC2p/H5IIk3fb7tj3eVqXXcWkgrIF/4KM84kgX6n4cUzG35mZDjPjXQTVbCoaSjw/pd1fKmvppyZ6nH5YgQD9QsxO2UN6RMw6SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZspKtVr4; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DAD254000C;
-	Tue,  8 Oct 2024 10:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728381801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IVxPJv4WO7g3wfRjUaiplqBDEDVJijQhGxNVEhWUWKs=;
-	b=ZspKtVr4RYm6L/twttTXteM7haghR4dHWe1qpzjiDWjXI9J0A7iVVY5IDeK8CoSKMDzEJ0
-	vrYFUsKfFBIb9yl0gtsFRkx42TWsK8Q6B+cS6rIig4+kfHlxPBY/XzDMGRFpJyD5upCPv5
-	BOd4TTgsFvh4HPn5dPIex1KAVvs5dPJ0Kom52eoa5q116Kq0feyJYrljv51OEGuEjCyXMD
-	4+c2PuMONvsCE/4lemyIwfkBePWUmRJ+B480GrPq5/6kS0xJNsGuCKtb9VUbQ4EJfTI7K5
-	WOLGZe+3zJLplSj8/CNnHJmhdMcKYdIKOvv9V4McRlfOnxVP8lyfb0FVtqQoCQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] MIPS: mobileye: eyeq6h-epm6: Use eyeq6h in the board
- device tree
-In-Reply-To: <f7f6e582-6e68-4f45-b486-43132b896856@kernel.org>
-References: <20241008-eyq6h-dt-v1-1-b8a4df1e6a6c@bootlin.com>
- <f7f6e582-6e68-4f45-b486-43132b896856@kernel.org>
-Date: Tue, 08 Oct 2024 12:03:20 +0200
-Message-ID: <871q0qewt3.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1728381822; c=relaxed/simple;
+	bh=xwI00hdaImyHQMmmLntgTWXN3z9EYeYZ4nzyQyVtZfY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=PmxUhV56Pj/HFqdpKC1mM2tPfc8LFCJeqMdFjP0FaHcsL7JxCRk2JEVZY38wyf2Y1006f/dmMJMgBfQQj8+D3B1a4/2nPXFxa/9d+c2GF48tYEowygWM4MtTFmESmZKH8cb1Vx9ZUBdqDZlKNy/UpqbSyAVsOsdnluP7/3Bb0XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gJ4asCny; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241008100332euoutp02db2d05171117d1a2eab3d0f26405c303~8chn152Ja1489914899euoutp021
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:03:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241008100332euoutp02db2d05171117d1a2eab3d0f26405c303~8chn152Ja1489914899euoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728381812;
+	bh=Ah1poD1LaVugR6Rwd2dEgovTZI2JeFMt/pjyUWpvXUA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=gJ4asCnybYZWZqc5KUfcyG7zkJpasEyLTY2Kd0cRm5JaQV0obJqBC4zCAOoPsTc8O
+	 2BHAyLpx1B7HYbZLgwnQczLweberdp3poiTJGKILE64K4NAzehO6rhmL1Uw5U1GRmg
+	 KaBrPPbjbntmcrOcv27mM9maQfO0F5CDS4n+KBpY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241008100332eucas1p1fcfadb4269b1ba6ec360e8e300b6a1f0~8chnnNokU2196321963eucas1p1t;
+	Tue,  8 Oct 2024 10:03:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id B1.10.09620.47305076; Tue,  8
+	Oct 2024 11:03:32 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241008100332eucas1p12e84a156c835e719e6916331762c74b0~8chnUHZN01094710947eucas1p1L;
+	Tue,  8 Oct 2024 10:03:32 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241008100332eusmtrp17385cae033f463cc86742e6f423b6838~8chnTfNQG2642126421eusmtrp1b;
+	Tue,  8 Oct 2024 10:03:32 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-6e-67050374a83a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 2A.9B.14621.47305076; Tue,  8
+	Oct 2024 11:03:32 +0100 (BST)
+Received: from AMDC4942.home (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241008100331eusmtip1ba8eac577bc7bc637f885d7c48411246~8chmuue2_0568605686eusmtip1C;
+	Tue,  8 Oct 2024 10:03:31 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	m.szyprowski@samsung.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Michal Wilczynski
+	<m.wilczynski@samsung.com>
+Subject: [PATCH v2] mmc: sdhci-of-dwcmshc: Prevent stale command interrupt
+ handling
+Date: Tue,  8 Oct 2024 12:03:27 +0200
+Message-Id: <20241008100327.4108895-1-m.wilczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7olzKzpBg++ylqcfLKGzWLr71ns
+	Fpd3zWGzOPK/n9Fi2+cWNou1R+6yW6z/Op/J4uXlHmaLtln8FsfXhjtwebx5+ZLF43DHF3aP
+	xXteMnncubaHzWPzknqPvi2rGD0uNV9n9/i8SS6AI4rLJiU1J7MstUjfLoEr4/KpVUwF+3Uq
+	mrb2sDUw7lTpYuTkkBAwkTh+6Tp7FyMXh5DACkaJHdvPskE4Xxgl7s9exgrhfGaUWHVnOjNM
+	y5fzn5ghEssZJV7e3s8C4bxhlPh2/yAbSBWbgJHEg+XzwdpFBKYxSmyafwusilmgj1Fi0oyD
+	jCBVwgKhEvsuvAbrYBFQlTh6YzILiM0rYC+xY/ITRoh98hL7D55lhogLSpyc+QSshhko3rx1
+	NtgdEgInOCTads1lg2hwkXj3eQlUs7DEq+Nb2CFsGYnTk3tYIOx8iQdbP0E9VCOxs+c4lG0t
+	cefcL6A5HEALNCXW79KHCDtKnN3+GiwsIcAnceOtIMQJfBKTtoGCBSTMK9HRJgRRrSYxtacX
+	bum5FduYIGwPidNTZrOClAsJxEoc+807gVFhFpK/ZiH5axbCCQsYmVcxiqeWFuempxYb56WW
+	6xUn5haX5qXrJefnbmIEpqjT/45/3cG44tVHvUOMTByMhxglOJiVRHgj1jCmC/GmJFZWpRbl
+	xxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTAJtit//nOZr8OJuer+n7CY
+	s4pLrnHOKl1zVF91+fqEfXk6ITZ+k2Z+fXlLpl21LjLl7LSA41LRxfbdrnWd4a7LfG63esdM
+	Svk8wyYmml+l6If13/WXw2pZH2ZwRdb8OvYqeG7FU8mzGRd+BDX/TnhbEbZTIO3KyyAPuXUH
+	dsxdLPnH+uN/r95VjZXWO9z7vP5Nqsy68syhsYWPWXhdypLlGcV3Z//t+ckYup6xVP9R1MKm
+	6w8E9I/XaVvo6jKqTtlasKhNzp1vZbKdwNmSS/el9z6/7frr4/7SmGiriJu/E0vWnn3w0FG0
+	kX+/qcyMk1pLny5uCzL1r1l2lv/olSc2CrfFNHXmGE6rVmx3ZlJiKc5INNRiLipOBABCBfbA
+	wAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42I5/e/4Xd0SZtZ0g4WTuCxOPlnDZrH19yx2
+	i8u75rBZHPnfz2ix7XMLm8XaI3fZLdZ/nc9k8fJyD7NF2yx+i+Nrwx24PN68fMnicbjjC7vH
+	4j0vmTzuXNvD5rF5Sb1H35ZVjB6Xmq+ze3zeJBfAEaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmh
+	Z2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXcfnUKqaC/ToVTVt72BoYd6p0MXJySAiYSHw5
+	/4m5i5GLQ0hgKaPEvFMdbBAJGYlr3S9ZIGxhiT/Xutggil4xSjx8uR0swSZgJPFg+XxWkISI
+	wBxGib2bnoKNYhaYwChx59UxVpAqYYFgicW/djKD2CwCqhJHb0wG6+YVsJfYMfkJI8QKeYn9
+	B88yQ8QFJU7OfAJWwwwUb946m3kCI98sJKlZSFILGJlWMYqklhbnpucWG+oVJ+YWl+al6yXn
+	525iBMbHtmM/N+9gnPfqo94hRiYOxkOMEhzMSiK8EWsY04V4UxIrq1KL8uOLSnNSiw8xmgLd
+	N5FZSjQ5HxiheSXxhmYGpoYmZpYGppZmxkrivG6Xz6cJCaQnlqRmp6YWpBbB9DFxcEo1MDkz
+	HKhfu/6v+z4m1hrVQ2sXuwhdj09ZPO1A6yQL4e6XjCo9lsF8Sv8uJrq/1t8euD1gsX7yni9O
+	5Vt+1HwwKORac9bI/vCyExZlXX+TD20MC1qyRuz1KavAzGWNvPc4jWQD/i0vP73II8fK4cfZ
+	XVFs63pi52Yo3G1TLWfUkSuM3vW1bzX7hH8WMb0rJlXd3GAUX6T8W7Zba/dHQWa3xywzjt5S
+	e+phJv7+4OuID0LBs5POrHr2+0D3X3eXCTvKhFxDKq1fZPlv5dnncrOg6U2pxqXTRyUbo01t
+	bGu0/9r+2frmS8Px829aJsXUXe40zA/w6ro1/2jWG5OG+4KbUldPzZq3Y9vP5J5Jt4KFK5RY
+	ijMSDbWYi4oTAQQl7cIYAwAA
+X-CMS-MailID: 20241008100332eucas1p12e84a156c835e719e6916331762c74b0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241008100332eucas1p12e84a156c835e719e6916331762c74b0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241008100332eucas1p12e84a156c835e719e6916331762c74b0
+References: <CGME20241008100332eucas1p12e84a156c835e719e6916331762c74b0@eucas1p1.samsung.com>
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+While working with the T-Head 1520 LicheePi4A SoC, certain conditions
+arose that allowed me to reproduce a race issue in the sdhci code.
 
-> On 08/10/2024 11:18, Gregory CLEMENT wrote:
->> There is currently no eyeq6 compatible string defined in the binding
->> documentation. Only eyeq6h version is defined, so let's use it.
->> 
->> Note that there are actually no codes relying on eyeq6h; the purpose
->> of this patch is mainly to be coherent with the documentation.
->> 
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->>  arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->
-> That's a new platform, so you were supposed to make it warning free. I
-> think that dtbs_check were never really run here...
+To reproduce the bug, you need to enable the sdio1 controller in the
+device tree file
+`arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi` as follows:
 
-Yes my bad. Sorry for that I won't do it again.
+&sdio1 {
+	bus-width = <4>;
+	max-frequency = <100000000>;
+	no-sd;
+	no-mmc;
+	broken-cd;
+	cap-sd-highspeed;
+	post-power-on-delay-ms = <50>;
+	status = "okay";
+	wakeup-source;
+	keep-power-in-suspend;
+};
 
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+When resetting the SoC using the reset button, the following messages
+appear in the dmesg log:
 
-Thanks!
+[    8.164898] mmc2: Got command interrupt 0x00000001 even though no
+command operation was in progress.
+[    8.174054] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    8.180503] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+[    8.186950] mmc2: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+[    8.193395] mmc2: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+[    8.199841] mmc2: sdhci: Present:   0x03da0000 | Host ctl: 0x00000000
+[    8.206287] mmc2: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+[    8.212733] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x0000decf
+[    8.219178] mmc2: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+[    8.225622] mmc2: sdhci: Int enab:  0x00ff1003 | Sig enab: 0x00ff1003
+[    8.232068] mmc2: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[    8.238513] mmc2: sdhci: Caps:      0x3f69c881 | Caps_1:   0x08008177
+[    8.244959] mmc2: sdhci: Cmd:       0x00000502 | Max curr: 0x00191919
+[    8.254115] mmc2: sdhci: Resp[0]:   0x00001009 | Resp[1]:  0x00000000
+[    8.260561] mmc2: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[    8.267005] mmc2: sdhci: Host ctl2: 0x00001000
+[    8.271453] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr:
+0x0000000000000000
+[    8.278594] mmc2: sdhci: ============================================
 
->
-> Best regards,
-> Krzysztof
+I also enabled some traces to better understand the problem:
+
+     kworker/3:1-62      [003] .....     8.163538: mmc_request_start:
+mmc2: start struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+cmd_arg=0x0 cmd_flags=0x2e1 cmd_retries=0 stop_opcode=0 stop_arg=0x0
+stop_flags=0x0 stop_retries=0 sbc_opcode=0 sbc_arg=0x0 sbc_flags=0x0
+sbc_retires=0 blocks=0 block_size=0 blk_addr=0 data_flags=0x0 tag=0
+can_retune=0 doing_retune=0 retune_now=0 need_retune=0 hold_retune=1
+retune_period=0
+          <idle>-0       [000] d.h2.     8.164816: sdhci_cmd_irq:
+hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x10000
+intmask_p=0x18000
+     irq/24-mmc2-96      [000] .....     8.164840: sdhci_thread_irq:
+msg=
+     irq/24-mmc2-96      [000] d.h2.     8.164896: sdhci_cmd_irq:
+hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x1
+intmask_p=0x1
+     irq/24-mmc2-96      [000] .....     8.285142: mmc_request_done:
+mmc2: end struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+cmd_err=-110 cmd_resp=0x0 0x0 0x0 0x0 cmd_retries=0 stop_opcode=0
+stop_err=0 stop_resp=0x0 0x0 0x0 0x0 stop_retries=0 sbc_opcode=0
+sbc_err=0 sbc_resp=0x0 0x0 0x0 0x0 sbc_retries=0 bytes_xfered=0
+data_err=0 tag=0 can_retune=0 doing_retune=0 retune_now=0 need_retune=0
+hold_retune=1 retune_period=0
+
+Here's what happens: the __mmc_start_request function is called with
+opcode 5. Since the power to the Wi-Fi card, which resides on this SDIO
+bus, is initially off after the reset, an interrupt SDHCI_INT_TIMEOUT is
+triggered. Immediately after that, a second interrupt SDHCI_INT_RESPONSE
+is triggered. Depending on the exact timing, these conditions can
+trigger the following race problem:
+
+1) The sdhci_cmd_irq top half handles the command as an error. It sets
+   host->cmd to NULL and host->pending_reset to true.
+2) The sdhci_thread_irq bottom half is scheduled next and executes faster
+   than the second interrupt handler for SDHCI_INT_RESPONSE. It clears
+   host->pending_reset before the SDHCI_INT_RESPONSE handler runs.
+3) The pending interrupt SDHCI_INT_RESPONSE handler gets called, triggering
+   a code path that prints: "mmc2: Got command interrupt 0x00000001 even
+   though no command operation was in progress."
+
+To solve this issue, we need to clear pending interrupts when resetting
+host->pending_reset. This ensures that after sdhci_threaded_irq restores
+interrupts, there are no pending stale interrupts.
+
+The behavior observed here is non-compliant with the SDHCI standard.
+Place the code in the sdhci-of-dwcmshc driver to account for a
+hardware-specific quirk instead of the core SDHCI code.
+
+Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+---
+v2:
+ - instead of modifying SDHCI core code, only modify th1520 specific
+   reset
+
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index 8999b97263af..8fd80dac11bf 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -852,6 +852,14 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 
+ 	sdhci_reset(host, mask);
+ 
++	/* The T-Head 1520 SoC does not comply with the SDHCI specification
++	 * regarding the "Software Reset for CMD line should clear 'Command
++	 * Complete' in the Normal Interrupt Status Register." Clear the bit
++	 * here to compensate for this quirk.
++	 */
++	if (mask & SDHCI_RESET_CMD)
++		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
++
+ 	if (priv->flags & FLAG_IO_FIXED_1V8) {
+ 		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+ 		if (!(ctrl_2 & SDHCI_CTRL_VDD_180)) {
+-- 
+2.34.1
+
 
