@@ -1,157 +1,169 @@
-Return-Path: <linux-kernel+bounces-355531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A9B995393
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:44:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A105995390
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8D2286B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2D821C25651
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67BA1E0B9E;
-	Tue,  8 Oct 2024 15:44:28 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6021E04B7;
+	Tue,  8 Oct 2024 15:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mULsRLzl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BW7f9OAl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9423218C327;
-	Tue,  8 Oct 2024 15:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F59F1DF27C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728402268; cv=none; b=NPilWDZw+2iDn7/NB4wGr1w1gq5OXZeCn/NuavRKb+vReHSMr93CW7I96/gSuVF7+8GuzC0TITyU4/EimhgElGwfvtjb7Lhe8+d62ZbA8m7dBBbozXp1ko/TKQDXKXmjStQ+ddhoypwXE76n/+4mJ892dwxfrTiUfNPH8ct96KU=
+	t=1728402267; cv=none; b=Ziw3JvXyREtARfrpSpmyGJaoJuXpZbB671ajj0grN5aaaXgNfxDpnC4QBAMM7o/VlnKL4TW+QdEjoghjQk5rW4vileRJxUW8+o2LO/VulNCUGAg2Rz8VcL0P24vW4dAB5z4srg7gNOng2j/YImLou7ETrRUbtM1RwxlDWyM85LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728402268; c=relaxed/simple;
-	bh=j2O2vvbQsRzozuJK5x8FZ7BszygrUj3FutD9s91tQs4=;
+	s=arc-20240116; t=1728402267; c=relaxed/simple;
+	bh=6WHc8l5PXiXyl+BCglLihi2gw5Q/FBDZdw0prfcRlck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjWfB+AWtRxhr/9oj1NRZv+93ZBEB1M2zU2es4BZyJfu+0Fb5HbLpD9KbFpkA1Ep/GuFP2Uq1AGCTWX7ujh7xwJCE7qcFncc6MuucSvjmJjxYYTqeFbBkfNvMX0zbmaKWaJlp/BryPzLfm07VVFUH3XOn0DW+sDGWjGFcDcZ3IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=53202 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1syCNo-008k9X-1n; Tue, 08 Oct 2024 17:44:22 +0200
-Date: Tue, 8 Oct 2024 17:44:18 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Amedeo Baragiola <ingamedeo@gmail.com>, Roopa Prabhu <roopa@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/qmsOYhU9vpnvlKYRpeQiZ9EZyS0586KQuA6EMqRRDcmqrYY/jNcWfm5FSoZ/K9FqY9Kme8ohJdY5wZWlX/noht3fnBgojp64fzewmcoptyT0mT1BNGlLRX5dnhJjCfD1tem3rlHWV/jaJ/j/V2WETk50EVyQ9AIZURgGNBkwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mULsRLzl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BW7f9OAl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Oct 2024 17:44:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728402263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ki/Pm8DAl/VsGvfQevprKrdSizkHUE7BtC51sJT0UL0=;
+	b=mULsRLzlVO/2gPKHcHPooEqXsvCde8R0N9EnuYHEUVv1l0UlR5mvUezWfQT8eFhwdhmHuq
+	Yf2BpSbob1iTkJImsoETiuGGMR6zMMh+SNpOTAwRX7Jdy/qU3wOMOHm1pydvMjt0YnWJl5
+	TzzEaHRgjTOnJL00GSOzQsTR8ZvqHsn9TgjMjywARetkA7Yl990Zo2HYAQ3YdB+LypU/09
+	BECaAsMLmvhc80/W7uO/vlU6NyDy3zeapyz2EcUFQBUO/zxdhfXHemdaprjDKii5nlicOp
+	mhvQuxZzdk05Ihf8mupXhD3f7n6zDx2ddO3MdAdGMdmG35HB+4nW3KjmOvGezQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728402263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ki/Pm8DAl/VsGvfQevprKrdSizkHUE7BtC51sJT0UL0=;
+	b=BW7f9OAlqLl2hIfIk03b6exdcPSoCF9PWwNuMwqokDL2fu61XWQYjDaGjBcMQZhjcpvUjY
+	eLsRi6UgwPr/feCw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: x86-cpuid@lists.linux.dev, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
-Message-ID: <ZwVTUt_ie0sMsjbk@calendula>
-References: <20241005014514.1541240-1-ingamedeo@gmail.com>
- <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
- <ZwVCC3DYWw0aiOcJ@calendula>
- <8f285237-757b-4637-a76d-a35f27e4e748@blackwall.org>
+Subject: Re: [ANNOUNCE] x86-cpuid-db: Release v2.0
+Message-ID: <ZwVTVO2FcH95WFBp@lx-t490>
+References: <ZwU0HtmCTj2rF2T8@lx-t490>
+ <55f755e9-2712-47d5-82d5-d6e685969461@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <8f285237-757b-4637-a76d-a35f27e4e748@blackwall.org>
-X-Spam-Score: -1.8 (-)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <55f755e9-2712-47d5-82d5-d6e685969461@citrix.com>
 
-On Tue, Oct 08, 2024 at 05:45:44PM +0300, Nikolay Aleksandrov wrote:
-> On 08/10/2024 17:30, Pablo Neira Ayuso wrote:
-> > Hi Nikolay,
-> > 
-> > On Sat, Oct 05, 2024 at 05:06:56PM +0300, Nikolay Aleksandrov wrote:
-> >> On 05/10/2024 04:44, Amedeo Baragiola wrote:
-> >>> Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack input hook for promisc packets")
-> >>> a second argument (promisc) has been added to br_pass_frame_up which
-> >>> represents whether the interface is in promiscuous mode. However,
-> >>> internally - in one remaining case - br_pass_frame_up checks the device
-> >>> flags derived from skb instead of the argument being passed in.
-> >>> This one-line changes addresses this inconsistency.
-> >>>
-> >>> Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
-> >>> ---
-> >>>  net/bridge/br_input.c | 3 +--
-> >>>  1 file changed, 1 insertion(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> >>> index ceaa5a89b947..156c18f42fa3 100644
-> >>> --- a/net/bridge/br_input.c
-> >>> +++ b/net/bridge/br_input.c
-> >>> @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool promisc)
-> >>>  	 * packet is allowed except in promisc mode when someone
-> >>>  	 * may be running packet capture.
-> >>>  	 */
-> >>> -	if (!(brdev->flags & IFF_PROMISC) &&
-> >>> -	    !br_allowed_egress(vg, skb)) {
-> >>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
-> >>>  		kfree_skb(skb);
-> >>>  		return NET_RX_DROP;
-> >>>  	}
-> >>
-> >> This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
-> >> is found it will always drop the traffic after this patch (w/ promisc) if it
-> >> doesn't pass br_allowed_egress(). It would've been allowed before, but current
-> >> situation does make the patch promisc bit inconsistent, i.e. we get
-> >> there because of BR_FDB_LOCAL regardless of the promisc flag.
-> >>
-> >> Because we can have a BR_FDB_LOCAL dst and still pass up such skb because of
-> >> the flag instead of local_rcv (see br_br_handle_frame_finish()).
-> >>
-> >> CCing also Pablo for a second pair of eyes and as the original patch
-> >> author. :)
-> >>
-> >> Pablo WDYT?
-> >>
-> >> Just FYI we definitely want to see all traffic if promisc is set, so
-> >> this patch is a no-go.
-> > 
-> > promisc is always _false_ for BR_FDB_LOCAL dst:
-> > 
-> >         if (dst) {
-> >                 unsigned long now = jiffies;
-> > 
-> >                 if (test_bit(BR_FDB_LOCAL, &dst->flags))
-> >                         return br_pass_frame_up(skb, false);
-> > 
-> >                 ...
-> >         }
-> > 
-> >         if (local_rcv)
-> >                 return br_pass_frame_up(skb, promisc);
-> > 
-> >>> -	if (!(brdev->flags & IFF_PROMISC) &&
-> >>> -	    !br_allowed_egress(vg, skb)) {
-> >>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
-> > 
-> > Then, this is not equivalent.
-> > 
-> > But, why is br_allowed_egress() skipped depending on brdev->flags & IFF_PROMISC?
-> > 
-> > I mean, how does this combination work?
-> > 
-> > BR_FDB_LOCAL dst AND (brdev->flags & IFF_PROMISC) AND BR_INPUT_SKB_CB(skb)->vlan_filtered
-> 
-> The bridge should see all packets come up if promisc flag is set, regardless if the
-> vlan exists or not, so br_allowed_egress() is skipped entirely.
+Hi Andrew,
 
-I see, but does this defeat the purpose of the vlan bridge filtering
-for BR_FDB_LOCAL dst while IFF_PROMISC is on?
+On Tue, 08 Oct 2024, Andrew Cooper wrote:
+>
+> On 08/10/2024 2:31 pm, Ahmed S. Darwish wrote:
+> > to:
+> >
+> >     /*
+> >      * Leaf 0x0
+> >      * Maximum standard leaf number + CPU vendor string
+> >      */
+> >
+> >     struct leaf_0x0_0 {
+> >         ...;
+> >     };
+> >
+> >     /*
+> >      * Leaf 0x7
+> >      * Extended CPU features enumeration
+> >      */
+> >
+> >     struct leaf_0x7_0 {
+> >         ...;
+> >     };
+> >
+> >     struct leaf_0x7_1 {
+> >         ...;
+> >     };
+> >
+> > Overall, this removes ambiguity for IDs like 0x16, and improves kernel
+> > code greppability (x86 PQ pending).
+>
+> So what does leaf 0xd with 62 subleaves look like.  Do we really have
+> one number in hex, and one in decimal?
 
-> As I commented separately the patch changes that behaviour and
-> suddenly these packets (BR_FDB_LOCAL fdb + promisc bit set on the
-> bridge dev) won't be sent up to the bridge.
+Hmmm, good point...
 
-I agree this proposed patch does not improve the situation.
+For now, if we grep the generated C linux header for all the structures
+that are not subleaf 0, we get:
 
-> I think the current code should stay as-is, but wanted to get your
-> opinion if we can still hit the warning that was fixed because we
-> can still hit that code with a BR_FDB_LOCAL dst with promisc flag
-> set and the promisc flag will be == false in that case.
+    $ grep -E 'struct leaf_0x[0-9a-f]+_[^0]' cpuid-bitfields.h
 
-Packets with BR_FDB_LOCAL dst are unicast packets but
-skb->pkt_type != PACKET_HOST?
+    struct leaf_0x7_1 {
+    struct leaf_0x7_2 {
+    struct leaf_0xd_1 {
+    struct leaf_0xd_2 {
+    struct leaf_0xf_1 {
+    struct leaf_0x10_1 {
+    struct leaf_0x10_3 {
+    struct leaf_0x12_1 {
+    struct leaf_0x12_2 {
+    struct leaf_0x14_1 {
+    struct leaf_0x17_1 {
+    struct leaf_0x1d_1 {
+    struct leaf_0x23_1 {
+    struct leaf_0x23_3 {
+    struct leaf_0x80000020_1 {
+    struct leaf_0x80000020_2 {
+    struct leaf_0x80000020_3 {
+
+We do indeed have an encodings for leaves with large dynamic number of
+valid subleaves, through "array=":
+
+    darwi@lx ~/x86-cpuid-db (main)> git grep array=
+
+    db/xml/leaf_04.xml:  <subleaf id="0" array="32">
+    db/xml/leaf_0b.xml:  <subleaf id="0" array="2">
+    db/xml/leaf_0d.xml:  <subleaf id="2" array="62">
+    db/xml/leaf_10.xml:  <subleaf id="1" array="2">
+    db/xml/leaf_12.xml:  <subleaf id="2" array="30">
+    db/xml/leaf_17.xml:  <subleaf id="1" array="3">
+    db/xml/leaf_18.xml:  <subleaf id="0" array="32">
+    db/xml/leaf_1b.xml:  <subleaf id="0" array="32">
+    db/xml/leaf_1f.xml:  <subleaf id="0" array="6">
+    db/xml/leaf_8000001d.xml:  <subleaf id="0" array="32">
+    db/xml/leaf_80000026.xml:  <subleaf id="0" array="4">
+
+But the generators don't deal with that (yet), and that's why they're
+also not in the generated CSV/header files.
+
+I'm going through the Linux x86 PQ now, so it's a nice opportunity to
+see how something like "struct leaf_0x0_0x0" looks within the rest of
+the kernel code...  I'll also ping Thomas to see if he has any feedback
+on the topic.
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
