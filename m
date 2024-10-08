@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-355154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE84994856
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC985994889
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E36F283A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D471F27B62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525B51DE4CB;
-	Tue,  8 Oct 2024 12:11:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849FF1CF297;
-	Tue,  8 Oct 2024 12:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42DC1DA60C;
+	Tue,  8 Oct 2024 12:13:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA291DE3C1;
+	Tue,  8 Oct 2024 12:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728389516; cv=none; b=qT4UXyfDj14vQsnQ8HQEewcYzTqAaDf06sK9uL44v8OB/ERtmUEHmzCK4J0nKzvsChkyZk9/bN8elaaMp59OakVcF2splJnR6AlYbK6xhuubpy3KlM+0kvZefJN5+yD9ZSzbG2+FnO2ejN9Cv9Zt6TnvP3rH64AcZQHECT8XdAs=
+	t=1728389629; cv=none; b=T7jT0FIAUa1pS3moGx/HWirEsdZX3c2644kzLwskGuvSVtsXfxc8resrps3d3W/EkXZFtOx5O5x6pDWQFqwwjby239IcFkgFuadLU2hqmSS/QEuxY6r853mcv6wbZcn5akE09tKFq8fmCSCLvhutY8kybdCxV0BwN532iuICoLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728389516; c=relaxed/simple;
-	bh=dtox1i7aL8aeULYxlgyJkmX3+4u0wBN20TMKNgfa4Xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UgfchdDrRvERd7sIg76CBjbPoWoRYW394MXsPyvnJ+QltLK3aytYiL+D5dx54mhYaUtqgw5YrGIWgMDIFpXHElfSudtLYoBejOdPzkavtEhsaAY/Ul9XayczjKcKl+2dWFCjOC1/T3bPA2eMglZ8/fetcgGaqj8zPGNDnZ6N8+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74E9ADA7;
-	Tue,  8 Oct 2024 05:12:23 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFDC23F73F;
-	Tue,  8 Oct 2024 05:11:51 -0700 (PDT)
-Message-ID: <10bb6bbf-b7d0-4da5-8f30-0990748493f0@arm.com>
-Date: Tue, 8 Oct 2024 13:11:49 +0100
+	s=arc-20240116; t=1728389629; c=relaxed/simple;
+	bh=wEbV/QzaN2bQIxKJnfGzPG4juvL36fx0LANBaOI3IZw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DfU/jM89HwJN8M25lD7HfyeO4idVYwTJO1u+07SQNo+mdmeK9b1aXacQ6v64SgpWtpFFBJXb22/xdUCARKXZax212Eu/S9iZ3C39O6KqW7LJ/Ma+UTTcjrtuqGMHFY/Miwx0N4dZh8XT4EfV3OzVwdFPglvJtxImLXwylYbtAgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNFKk5SPvz4f3k6W;
+	Tue,  8 Oct 2024 20:13:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 78B3F1A0568;
+	Tue,  8 Oct 2024 20:13:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+8fzIQVnSZoUDg--.44667S4;
+	Tue, 08 Oct 2024 20:13:41 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	libaokun@huaweicloud.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: [PATCH] ext4: WARN if a full dir leaf block has only one dentry
+Date: Tue,  8 Oct 2024 20:11:52 +0800
+Message-Id: <20241008121152.3771906-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG: "iommu: Retire bus ops" breaks omap-iommu and omap3isp
-To: Jason Gunthorpe <jgg@nvidia.com>, "H. Nikolaus Schaller"
- <hns@goldelico.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Christoph Hellwig <hch@lst.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lu Baolu <baolu.lu@linux.intel.com>, Jerry Snitselaar <jsnitsel@redhat.com>,
- Joerg Roedel <jroedel@suse.de>, tony Lindgren <tony@atomide.com>,
- Andreas Kemnade <andreas@kemnade.info>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-media@vger.kernel.org
-References: <A7C284A9-33A5-4E21-9B57-9C4C213CC13F@goldelico.com>
- <20241007121543.GM1365916@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241007121543.GM1365916@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+8fzIQVnSZoUDg--.44667S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrykKr17KF43Aw4fCF4rKrg_yoW8ZFWfpF
+	4aqwn0yr42qFs09FnrCa4YvrnIk39xuF1DWrZxW34jvryqqr1SqFZrKr1FvF1rtrW8W3Z5
+	XF12gr90k3yIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xx
+	MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VU1oUDtUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAKBWcE7QQQOwAAsv
 
-On 07/10/2024 1:15 pm, Jason Gunthorpe wrote:
-> On Sun, Oct 06, 2024 at 09:40:00AM +0200, H. Nikolaus Schaller wrote:
->> Hi,
->>
->> I found that the camera on our OMAP3 based system (GTA04) stopped working with v6.8-rc1.
->> There was no bug in the camera driver but the OMAP3 ISP (image signal processor) emits
->>
->> [   14.963684] omap3isp 480bc000.isp: failed to create ARM IOMMU mapping
->> [   15.010192] omap3isp 480bc000.isp: unable to attach to IOMMU
->> [   15.023376] omap3isp 480bc000.isp: isp_xclk_set_rate: cam_xclka set to 24685714 Hz (div 7)
->> [   15.065399] omap3isp: probe of 480bc000.isp failed with error -12
->>
->> Deeper analyses lead to this patch breaking operation. It is not fixed up to v6.12-rc1.
->>
->> What seems to happen (in 6.8-rc1 code):
->>
->> - omap_iommu_probe() passes &omap_iommu_ops to iommu_device_register()
->> - iommu_device_register() stores the ops in iommu->ops (only)
->> - __iommu_probe_device tries to read the ops from some fw_spec but not iommu->ops
-> 
-> Maybe like this?
-> 
-> @@ -1233,6 +1233,12 @@ static int omap_iommu_probe(struct platform_device *pdev)
->                  err = iommu_device_register(&obj->iommu, &omap_iommu_ops, &pdev->dev);
+From: Baokun Li <libaokun1@huawei.com>
 
-Nope, just s/&pdev->dev/NULL/ here. Apologies for overlooking this.
+The maximum length of a filename is 255 and the minimum block size is 1024,
+so it is always guaranteed that the number of entries is greater than or
+equal to 2 when do_split() is called. So unless ext4_dx_add_entry() and
+make_indexed_dir() or some other functions are buggy, 'split == 0' will
+not occur.
 
-Thanks,
-Robin.
+Setting 'continued' to 0 in this case masks the problem that the file
+system has become corrupted, even though it prevents possible out-of-bounds
+access. Hence WARN_ON_ONCE() is used to check if 'split' is 0, and if it is
+then warns and returns an error to abort split.
 
->                  if (err)
->                          goto out_sysfs;
-> +               /*
-> +                * omap has a DT reprensetation but can't use the common DT
-> +                * code. Setting fwnode to NULL causes probe to be called for
-> +                * every device.
-> +                */
-> +               obj->iommu.fwnode = NULL;
->                  obj->has_iommu_driver = true;
->          }
-> 
-> Jason
+Suggested-by: Theodore Ts'o <tytso@mit.edu>
+Link: https://lore.kernel.org/r/20240823160518.GA424729@mit.edu
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/ext4/namei.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 790db7eac6c2..08d15cd2b594 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2000,8 +2000,17 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
+ 	else
+ 		split = count/2;
+ 
++	if (WARN_ON_ONCE(split == 0)) {
++		/* Should never happen, but avoid out-of-bounds access below */
++		ext4_error_inode_block(dir, (*bh)->b_blocknr, 0,
++			"bad indexed directory? hash=%08x:%08x count=%d move=%u",
++			hinfo->hash, hinfo->minor_hash, count, move);
++		err = -EFSCORRUPTED;
++		goto out;
++	}
++
+ 	hash2 = map[split].hash;
+-	continued = split > 0 ? hash2 == map[split - 1].hash : 0;
++	continued = hash2 == map[split - 1].hash;
+ 	dxtrace(printk(KERN_INFO "Split block %lu at %x, %i/%i\n",
+ 			(unsigned long)dx_get_block(frame->at),
+ 					hash2, split, count-split));
+@@ -2043,10 +2052,11 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
+ 	return de;
+ 
+ journal_error:
++	ext4_std_error(dir->i_sb, err);
++out:
+ 	brelse(*bh);
+ 	brelse(bh2);
+ 	*bh = NULL;
+-	ext4_std_error(dir->i_sb, err);
+ 	return ERR_PTR(err);
+ }
+ 
+-- 
+2.46.1
+
 
