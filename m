@@ -1,104 +1,87 @@
-Return-Path: <linux-kernel+bounces-355701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDC09955D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:39:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257F39955D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5C11C255A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425AE1C25420
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0771C20B1FD;
-	Tue,  8 Oct 2024 17:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5640920ADFB;
+	Tue,  8 Oct 2024 17:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wG+lyD59"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DHDV2LrI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEA420A5F9;
-	Tue,  8 Oct 2024 17:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39F6206962;
+	Tue,  8 Oct 2024 17:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728409150; cv=none; b=oX/GZ8lI/m7ZSF9r4Te1vdpMrYRoPH/uTMY+EBQXL2dcAENQmvZkH7rShC8PwkvAIuP/EJJghHolEaH/yeoVl3fMaT1vo+y7/DUVWI9mK7WrOSuHVvssJjhLsOboMWaErNlm1XH3kMWfTQ4JmqNa4vk4oFbqMzoe6KWXKPp4/7E=
+	t=1728409149; cv=none; b=PwMuvt5dVXSSknXmNbYGesg3D+cFc0eeATUFKJR5w25Oxmsp2en157kwUC6lRyUWD2+t+ge7Gh2Bf1OIUtt1mF8V+nadYeq56UeBB7xRe3xHlFcBn3b7T2ii0VQkJln3/NaMLCsKKO9xJs3zgHo8CkmakvrSTspijZLZpWtc31s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728409150; c=relaxed/simple;
-	bh=pVPoeLSwAAk+MhP2w215fgYvfbRl4QXVRIy24FVFU0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5Ym8BV7teEZSF28mq6SiR7OadIQPpTEvkHvpNcYsHzvAb4GZHg1i8+DA8srYua2GN5XWqe406IJu1D0C91U0RDtM6yNm5Q+ylkQfEbQdJSKgfFg6seRPt6dbkn90ol+AW7nFp4gq9covCSi9ZKWi4HgvbZxYGYThOr9gwVN3tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wG+lyD59; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XNNYL56WLzlgTWP;
-	Tue,  8 Oct 2024 17:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1728409138; x=1731001139; bh=VaCy1d6oT42CbA25Y6wFA1tH
-	oxNRupG+1o0LjdZp+XY=; b=wG+lyD59i/sC8Kk0iQQFuI8i8rNant2FyKuJpUIA
-	JdCVSEvTQsusxvuvtfqN7NkPd5ZSIITRDy6LjpWLJ0xTzUdf9zmdYlADhqUyDpTQ
-	hvDLBrLGjtM+IXXD4aQSc5RiWg1u6JqQmWdbKu9ZxNbIgHN4LljFiAySyE1ZkY4p
-	NMr/WGyLAKclUHjidpq52Ki36vSW82suWiHXY6oWcKGS0lTghQKzzi97nCaZNAvF
-	hhKKsc/u0osQ7fDjA52OrwYD7wLej6bIkWXu4uaEMlXEWQn7AjfS0RYrRLRGOY3p
-	2qvNsipIf3CnjQ1gf0wImqn7XH6UxhAH2eNq4eI0yOZURw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id XdEfBOYOx29x; Tue,  8 Oct 2024 17:38:58 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XNNYB1SGJzlgTWK;
-	Tue,  8 Oct 2024 17:38:53 +0000 (UTC)
-Message-ID: <7b3b29ee-8e2d-476b-8edd-290c3f00dc85@acm.org>
-Date: Tue, 8 Oct 2024 10:38:51 -0700
+	s=arc-20240116; t=1728409149; c=relaxed/simple;
+	bh=LeNmQrCvMNToDiO8+U1mr3Y/hn1bq2qDwFPHijzQuOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRpv7H0garhs1exO+4+tOGRXHlEqokOY2AV2TLnVXzhIuIG00jVL0NZYAE2l8babRI2TRJxw4Ly4+wROLRzVH3eMCc652kcuasdi99KT25amkhqQReuSmA25A3xtTPuoH/1gvvPj1SvjTF01Jx4XjCSOzpB5veU5yCzi6icBAF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DHDV2LrI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=LeNmQrCvMNToDiO8+U1mr3Y/hn1bq2qDwFPHijzQuOA=; b=DHDV2LrIIQAjuxu4quq9XxH46o
+	+a5Kg93/BhPUz3F9q7f8t50MkOgIP1DTLW3DU6OFzSyGK8Q0dVmpvfhOKPErC45Q9Eo58KKDuOxHh
+	di55iWcvYcx0HACbiD/NL/amMGbyIgMO3yST6fmC4eCVv/URiVSR5+/6ODRq2BBFNv6j1r4NLAT0l
+	3ommyHCh4yW4qVxGnmgDfIEacshrGs6n4HyYtxIQn3Js1ifFrCy1cSPDGA2H6di1GO0udaxbr+h/d
+	H205lD65Imt6q8G0/p6mlGikpjWoWqKGcCXucMavT7cqGgKLaD5BDzUROzq4Jg603CML2WdiqW4U/
+	edq7GUiw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syEAm-00000002qRG-0gZ3;
+	Tue, 08 Oct 2024 17:39:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 93E47300599; Tue,  8 Oct 2024 19:38:59 +0200 (CEST)
+Date: Tue, 8 Oct 2024 19:38:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: Futex hash_bucket lock can break isolation and cause priority
+ inversion on RT
+Message-ID: <20241008173859.GE17263@noisy.programming.kicks-ass.net>
+References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: ufs-mediatek: configure individual LU queue
- flags
-To: ed.tsai@mediatek.com, peter.wang@mediatek.com,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Stanley Jhu <chu.stanley@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: wsd_upstream@mediatek.com, chun-hung.wu@mediatek.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20241008065950.23431-1-ed.tsai@mediatek.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241008065950.23431-1-ed.tsai@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
 
-On 10/7/24 11:59 PM, ed.tsai@mediatek.com wrote:
-> +static void ufs_mtk_config_scsi_dev(struct scsi_device *sdev)
-> +{
-> +	struct ufs_hba *hba = shost_priv(sdev->host);
-> +
-> +	dev_dbg(hba->dev, "lu %llu scsi device configured", sdev->lun);
-> +	if (sdev->lun == 2)
-> +		blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, sdev->reqeust_queue);
-> +}
+On Tue, Oct 08, 2024 at 04:22:26PM +0100, Juri Lelli wrote:
+> Does this report make any sense? If it does, has this issue ever been
+> reported and possibly discussed? I guess it’s kind of a corner case, but
+> I wonder if anybody has suggestions already on how to possibly try to
+> tackle it from a kernel perspective.
 
-There are no block drivers in the upstream kernel that set
-QUEUE_FLAG_SAME_FORCE. An explanation is missing from the patch
-description why this flag is set from the UFS driver instead of by
-writing the value "2" into /sys/class/block/$bdev/queue/rq_affinity.
-Additionally, an explanation is missing why QUEUE_FLAG_SAME_FORCE is
-set but QUEUE_FLAG_SAME_COMP not.
+Any shared lock can cause such havoc. Futex hash buckets is just one of
+a number of very popular ones that's relatively easy to hit.
 
-Bart.
+I do have some futex-numa patches still pending, but they won't
+magically sure this either. Userspace needs help at the very least.
 
