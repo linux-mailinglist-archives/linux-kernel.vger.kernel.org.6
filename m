@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-355435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2034299523B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026B899524A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485A41C23088
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3231287D79
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8836D1DFE25;
-	Tue,  8 Oct 2024 14:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoMBk8ic"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543361E00A1;
+	Tue,  8 Oct 2024 14:47:08 +0000 (UTC)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690EE1DFE26;
-	Tue,  8 Oct 2024 14:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7C81DF755;
+	Tue,  8 Oct 2024 14:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728398805; cv=none; b=ZEDdr6IbpIsh7ftXjmjQUfClMU9aSZaQzfK7teMZhPDOPa2ZeVPMXaYS8wtZkmTNEAWyXahf6l5MjgKuYMdK2+n5MklMHoY+QHTivKVrnCcaYxUpxE+ClLwxPLXlLPKMwXmw31+aiC8/rJW5l6aF1gD1sBDqrYG7bYB9cKeUN1M=
+	t=1728398827; cv=none; b=ntEKgEdQ75MMAsPdrxQBBbrCft1+SwRNkv8f0UT5LM2ksFKjF1/LjDZ6p5rqZED75ti8CdyFMidwxqdJwvslrqoG8II1mW5TwD78tSm7hwNSJ6p8Bacj/CrW5+3n04GTY11YB4OqZM84IKQ/w+PeZxrvGR0yZ0IDmia9YN04BlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728398805; c=relaxed/simple;
-	bh=t7reYDaFo9Rda3OtxbSUU+NHXihYmWlZHjWEb2HEvCI=;
+	s=arc-20240116; t=1728398827; c=relaxed/simple;
+	bh=Y+zb33rVNjC2YbQs4WVewPjUBmIgniiq3rKNIeCtAQg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UOiAGNecU+3fSAN8L42S4RO8CSywmROdf9mQTivJrDv7JYvHiK/iz0i23s5HGTuZkbPxrqM/n8Gn8898SDH4rZ5S0WuXSkSM5NwC/ZAANGlL3UMmA1yLL+tC1/7oSV88B6KewLF2DtUDBeAd6SnMGDGHl7yscXL726fJ4978/6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DoMBk8ic; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=a+mlLkA0n0z598C6fkjjyncJ2s9es9irCfuQr5r0obeCP8lbMK2XrP4sYNtYppgAqAh4Q4/ngtgDMBLSCRRGYbXLQQrlQOTSxpLPMqZ3JucvIKUnJDlo0VgSrXes1ckHtjnMlkVwUxVO06W+uh2CjF2Q5YKSPvk3wIdVyc6CEbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37ccd81de57so3837954f8f.0;
-        Tue, 08 Oct 2024 07:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728398802; x=1729003602; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7reYDaFo9Rda3OtxbSUU+NHXihYmWlZHjWEb2HEvCI=;
-        b=DoMBk8icnc+Wr2jUB+FRiPK0/fR5/45Og5MRe6JJ9kacf2slgqqVunOMoQn0zK4m1G
-         pdgw9ngZI1hP70Moe0qxInWQ9QidHZJOBMBRLsXtW79wBv15otrAC2jkf/vbtxoijVxe
-         U8TVjNnlTuQ5SFWj//njmRripVlMjH5PkzkgGSgjarwdRvi2rPRslvXkq/qbHXZeXllf
-         BTyrrs5FC1tqUqbj6s/Diq/h3ioZiuBDZ/J3NfXQ072uTLxvRZLJuaqI+1185JtZF3Ne
-         hhLi8vsGe29RIRxeGCQe4W196WOzfp2v+DyfTHrOIsIICAovR/XAD48qwGOqG7bZlvTB
-         MFmA==
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e28e4451e0bso1479174276.0;
+        Tue, 08 Oct 2024 07:47:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728398802; x=1729003602;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t7reYDaFo9Rda3OtxbSUU+NHXihYmWlZHjWEb2HEvCI=;
-        b=fXo570f7jLktppZbsITC5CrYeEH3suM71MeQIqkDGuBIC2Xq13ONDT+z/FhaL4lrlO
-         a14dqIOkmrEdsIKgcLGjDgVEDyM7ESv+LqJ7vD93H1mzZboTGYHZuCpIGYNcLgT8aqY6
-         SnrCibNRLLfEZWo0kVoDGli9smwgsQ+jML++fc2q4TsVoBm4JLvaE4m4EAjPouyELaNM
-         D61Pp2dnJCgCbvfB4Tb8kjTx+Z6Y1apTwjKZM+vNprgHV+9/o6KuBkfHsulMP/fJ4yfF
-         utOYfSm6Y1J29i2WXfnX+UhfX9k5hXFlmt5WHrICxiHU6aPxtfgcPmJq1MGfBgaSsAvq
-         vrBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVn8wBQYHo501Y9BvX56uVg8Phw7i469BKjs2Blm0p9ggdbe4TbRMcCngQdXZf42f4O5ZcDzniwuHuIJYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn3Mjbk0AzRcsZjEaEShA9zIJCcun1S7bPFk7XtcM0mSHlFCr7
-	lxBeC8S/zYJE3YWC4FTXe8ir72mnCQ54UreS8el8NoegHVkQw9A5o42sKyHCARg8naq4ASs1LUe
-	8/aQ7pB8Mh7lRWTRRXkKi8NEOCdYzuQ==
-X-Google-Smtp-Source: AGHT+IGYqMUH6jKO/1Woi4hQyrtWTYGBGZhGwOBCJp6MTHUHRAC7eEDLVWrplsSBgQIt9v9QmGw3GM6S0i3wfPLLfWE=
-X-Received: by 2002:a5d:6d0f:0:b0:374:c613:7c58 with SMTP id
- ffacd0b85a97d-37d29351dd9mr2851644f8f.29.1728398801519; Tue, 08 Oct 2024
- 07:46:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728398823; x=1729003623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T5tpkiwx88FstrMnILDOBEQgP7OPo4qJyWyTH6XGvRU=;
+        b=iHOrF0+MjPxqBtLrQWQwV12f3ZLd1d69YbkPMTiJquEVprARh4M4/CSLZJT0lnC5iT
+         7DtZcebT5YbI1cuqHBosOqKOGvakuX0ALEAAlfYUyrw0OZNOMUhErgust/W7X20IOhBR
+         Z6BMwHg3U7Vc6FwFxgJ6twjGD9RtSPeKC9Axea/DVWhnp6QCHhpzlTidW4EEOCwkuka6
+         Px/+C4WaJQnl4El3rtrE7a10BYWu/KC5VgJGlp9HXGfSuLtc6QLY+DeYDdnryr5yKuNZ
+         k+GLO5qxUS7fS+tOXVm++dJFyZenGvDxUlEaUMQPjKNpT03WJXLkPkEiHwElkeAclbo8
+         TgRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMv5l4K6+4pZdN30z/hwZ/Qo+Tp8pbvJcclie2RgP55F21xBrCt1KvR5VYo7YEyQycZjQHOfzhIytH@vger.kernel.org, AJvYcCVT4ZyhCql4BA39NaM7FaXm37nvlcDDFdn37CBR8x9LBag9C6uSGOw4PGKo7p7R4td7MI2vOxeYsh6x@vger.kernel.org, AJvYcCWH3zzwo/7ROcDacGklkRqco5iC308CblmwL4BT9g2UU0aknkZ+qzsJri9nA7po/KyCZVxhAS1qabEpyPkVVMtjwSs=@vger.kernel.org, AJvYcCWpBbUhW4a9hHRyL54xf6kitb/7Cfxs3GlEyN2kqqiT/MhqDCi9/uzCt0+nARnqSxgKKalXdy1H16M=@vger.kernel.org, AJvYcCXlJRVjWvnd3H79BQrFm967SzjksjKMnwQP7Wezd3QjaIJ4OxdWO0TX7U7qIlRTn8a2VLMXeqN/2fJT@vger.kernel.org, AJvYcCXwyebo0+QwS843ex+ksJwkeV3WFauxREmdJ/7nzko2XyjCiEnN8MkCQSECNJ9VvYcqoyCTLLMQVjcVcPpO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd5YPrQqh2MetPZmHjhjGp2yLG71d+P2Mpzk6PKDhJuerSQ2cR
+	UJzXB8enjcmOZ6GpOHvcPr/DrAc3hu4B7XBCBNZAd27FhOIK7zURwA+70iAU
+X-Google-Smtp-Source: AGHT+IFlFWCicYCbRCtgun2HTOedWzJ/rIDScEBfLYhC3O+ChUgJABpyQ+DpaCSgOEirqxGjfq0pWw==
+X-Received: by 2002:a05:6902:1b06:b0:e25:e358:cb4c with SMTP id 3f1490d57ef6-e289393eb3dmr11578229276.40.1728398823173;
+        Tue, 08 Oct 2024 07:47:03 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e28a593b359sm1369503276.1.2024.10.08.07.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 07:47:01 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e20a8141c7so48085387b3.0;
+        Tue, 08 Oct 2024 07:47:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUctkYi9VK4uCrc3fvujAdJYbxfO/cQvSAS1JsM7UYXI2oqwWQPhcL40LLu9FScdtB7hMd6rNz1Uch3/vBcjlAQJWQ=@vger.kernel.org, AJvYcCUs2u48/B7FQX7K/EFLHIGykBIcLg+dsUZ5yvGmIEF7A1dDUMU2lwOkDmQHP+7GPjq7IrUa8ImXop4=@vger.kernel.org, AJvYcCUznzZj31bFfZ7osiuz4m1eYFRo5tFY00t+VSj0lHs/IhUNJWf1QhJGkvnMLfHF7UofNLxR55Ww1sBZ@vger.kernel.org, AJvYcCVDPC2wyqHL9/7M3LDDP/SJoRe9U2jZL7Y3vip02IPI9n8u8DvLqrCCtZqOdbkXFotRWf5rZHznnHcf@vger.kernel.org, AJvYcCWImSDe+FCKgui4y+oU5o1B2jbA+NYjzCCxxUSP/C70XEpLBIoUala90nocvkJLSM9fuv4L9k4lgD7c@vger.kernel.org, AJvYcCXMJv2J48znTfgPCOJIDcGoQvC5cseAfzv/bHo5HaLanrMnseSLopqqwkAWSrPcni7wO9Hdnruwbg9wBElU@vger.kernel.org
+X-Received: by 2002:a05:690c:fd1:b0:6e2:f32:bd2c with SMTP id
+ 00721157ae682-6e2c72f6ac7mr126767947b3.29.1728398821134; Tue, 08 Oct 2024
+ 07:47:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909184936.32489-3-stuart.a.hayhurst@gmail.com> <nycvar.YFH.7.76.2410080855470.20286@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2410080855470.20286@cbobk.fhfr.pm>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Tue, 8 Oct 2024 15:46:29 +0100
-Message-ID: <CALTg27=U4bR6shPcQKz5vCm6uYWn68-5=hv0Mm4hAc+9BLK4bQ@mail.gmail.com>
-Subject: Re: [PATCH v4 RESEND] HID: corsair-void: Add Corsair Void headset
- family driver
-To: Jiri Kosina <jikos@kernel.org>
-Cc: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-8-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240822152801.602318-8-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Oct 2024 16:46:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWcCGMf0At7=DN_PydZyriiOcpR=YQAqw-xsARSVF6Wyg@mail.gmail.com>
+Message-ID: <CAMuHMdWcCGMf0At7=DN_PydZyriiOcpR=YQAqw-xsARSVF6Wyg@mail.gmail.com>
+Subject: Re: [PATCH 07/16] reset: rzg2l-usbphy-ctrl: Get reset control array
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
+	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com, 
+	ulf.hansson@linaro.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> As we alreay have general CONFIG_HID_CORSAIR, I think it'd make sense for
-> this driver to be encapsulated under this config option as well (it'd also
-> follow the general practice of HID subsystem, that the drivers are divided
-> per vendor) -- i.e. link hid-corsair-void into the final hid-corsair.ko
-> whenever CONFIG_HID_CORSAIR is selected.
+On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Would you be willing to make that small change, and resubmit for final
-> merge?
+> Before accessing the USB area of the RZ/G3S SoC the PWRRDY bit of the
+> SYS_USB_PWRRDY register need to be cleared. When USB area is not used the
+> PWRRDY bit of the SYS_USB_PWRRDY register need to be set. This register i=
+s
+> in the SYSC controller address space and the assert/de-assert of the
+> signal handled by SYSC_USB_PWRRDY was implemented as a reset signal.
+>
+> The USB modules available on the RZ/G3S SoC that need this bit set are:
+> - USB ch0 (supporting host and peripheral mode)
+> - USB ch2 (supporting host mode)
+> - USBPHY control
+>
+> As the USBPHY control is the root device for all the other USB channels
+> (USB ch0, USB ch1) add support to set the PWRRDY for the USB area when
+> initializing the USBPHY control. As this is done though reset signals
+> get the reset array in the USBPHY control driver.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Sure that makes sense, but I'm not sure how to do that exactly. Is
-there an example anywhere?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Stuart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
