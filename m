@@ -1,70 +1,120 @@
-Return-Path: <linux-kernel+bounces-354313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9AA993BA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:21:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1580B993BB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B666B238A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C7FB24095
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53348F6C;
-	Tue,  8 Oct 2024 00:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F1C17578;
+	Tue,  8 Oct 2024 00:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIJaIsVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wbsyNrvx"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A03F6AA1;
-	Tue,  8 Oct 2024 00:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B0F8BE7
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 00:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728346884; cv=none; b=h0BKHwFa2j4K/I1q87xq2uQIhgbCHRchVdZGqNB3Dc1s275kXFjdqohKqAR8YjBM+Mu4gpZQlBgWGhZz+G+aEzTRnOn/OSuMYgpCwG6MP6b1ahYax2fSUVfCf1NgXzYKbxSBu3iZ9UfPTMsk8BdxZ6dH8ebd69zNvqcSlQu93po=
+	t=1728347003; cv=none; b=EAIo49EWFe/6yo7pOeL8CiK3w3MKJ+XqdJEQ2Zuf8WIrcE0JYC0Gyoq8FJ+2zgy0jengly7vaJu14lDv7rdjMqI1F7DlEx8/KBSGVIrevnPtfK3u7yWaa0L5dwQdmPTuSLiIbUyHJtv77WcPF+dvXKiRYw+zLXpUZA4aXefb/Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728346884; c=relaxed/simple;
-	bh=KR2Ypbof7fqw9S7256Ff1zDPZlQAMxBLEB5g0hsgCZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V99i9hDteo5FlSQhV/oXTH5M52CYOALkbUoXrPd/jv8pVPf/irtnDwxVQvBuVu085deG+cHeqfzVgG1jV/gZjDGUnfWbBTlHGwnLsvDDZWtqdBA/c5FR/lzcuIZTdi7beGmsvzATpD13aASFETjP7chUaZ5MCHeHraRgLJVCoqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIJaIsVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25CA7C4CEC6;
-	Tue,  8 Oct 2024 00:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728346883;
-	bh=KR2Ypbof7fqw9S7256Ff1zDPZlQAMxBLEB5g0hsgCZo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZIJaIsVJ34+zdvuDnp7Dl5OPRS+eCx1i1ukMtkrah40cZotU6y8j/g+TEThMc+tCe
-	 b7pE/vOVrW586WGd/3bDUrjo/01jyylT1aW4pMy0B2EeUg37dk8/tvHkwm66Nvu931
-	 mpdoUBMIcEpWR4Aik/MWyafpQLMIGxUOzjS7t2AaMdPkhU3HYf8YOzo8wIxrvsCoCZ
-	 2llvApPIA+HH40GNRXRXcXrXy6NAg9bMjuHLfgDE+lQj02pxS8dit2uKmyi86WBQLu
-	 i5he+pxrUwEvMYEs0RbZF6VnhVEaEbORc1g1HM+3aPXa7shG3nhGEavMTewubOzxyd
-	 yv7fm8sWXMu/Q==
-Date: Mon, 7 Oct 2024 17:21:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
- chunkeey@gmail.com
-Subject: Re: [PATCH net] net: ibm: emac: mal: add dcr_unmap to _remove
-Message-ID: <20241007172122.6624c1ec@kernel.org>
-In-Reply-To: <20241007203923.15544-1-rosenp@gmail.com>
-References: <20241007203923.15544-1-rosenp@gmail.com>
+	s=arc-20240116; t=1728347003; c=relaxed/simple;
+	bh=yKSSj/r7jgPw6xuaAJhixABfHrtlzD4kgzlbPv3j/NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ABUUgr6npFiOoyMM0D19k55Suj7xotHSRFcsH5U6eJB1OPoQIYutFzGfKKat7JHBYT4j0cA/TpebWVouMBsLjQol8PsrTPiD+1AVJT+P5w3G/FZ+5R/cbsuo2Z93J3o2HfUD1VtZJ+2GQMXAhOciFg/Vyi+by0z5ADnsvLteNEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wbsyNrvx; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CE81F2C0E30;
+	Tue,  8 Oct 2024 13:23:11 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728346991;
+	bh=ozBedJwE7B5aaCVTf9u+TgJiSQkiIsTVggaCg8eyvJI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wbsyNrvxc6ugse0g65Uf1DEoSWIs0XGSxUPq1f2yRIqBI3uKAEA8kWRjrE3fb8AB9
+	 la03c8kdaTvwiu+58nia5TkRa4TpYaAMFSMwqmLKqqOuMBok7xYOsY8QO9Vzd65cF0
+	 +mSGW99QY9icdUjhJmifnTj1duxh1lAV5DK56Y+jU/1/V63g9DXIVEAH3t96GG+Y7D
+	 5B5iVkEHtjIu1bI2S2zjQTautfdTpgz9Kgoh6XB7e53VqG7MeJC2tu/Ed/au7TPjgd
+	 VW4wAWQvv7e+qLpjPLA0gczk7EdtyW/fTKmU6RjpPy8Ax4RT75eLhQ0nPQ2e/alDA2
+	 ccoJwOj9ZPg5w==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67047b6f0000>; Tue, 08 Oct 2024 13:23:11 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 7822313ED7B;
+	Tue,  8 Oct 2024 13:23:11 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 73950280B51; Tue,  8 Oct 2024 13:23:11 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 0/3] Realtek SPI-NAND controller
+Date: Tue,  8 Oct 2024 13:23:04 +1300
+Message-ID: <20241008002308.1149983-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=67047b6f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=63fhtx2pClmO-oMQzGgA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Mon,  7 Oct 2024 13:39:23 -0700 Rosen Penev wrote:
-> Fixes: 1ff0fcfcb1a6 ("ibm_newemac: Fix new MAL feature handling")
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+This series adds support for the SPI-NAND flash controller on the RTL9300
+family of SoCs.
 
-I'll fix this one when applying but please make sure there is no empty
-lines between tags in the future.
+There are 2 physical chip selects which are called SPI_MST_CS0 and SPI_MS=
+T_CS1
+in the datasheet. Via some pin-strapping these can be assigned to either =
+the
+SPI-NOR controller or the SPI-NAND controller. Which means you can end up=
+ with
+the following permutations
+
+  SPI-Flash
+  Boot Model SPI_MST_CS0 SPI_MST_CS1
+  ---------- ----------- -----------
+  NOR x1     NOR-CS0     X
+  NOR x2     NOR-CS0     NOR-CS1
+  NAND x1    NAND-CS0    X
+  NAND x2    NAND-CS0    NAND-CS1
+  NOR+NAND   NOR-CS0     NAND-CS0
+
+Chris Packham (3):
+  dt-bindings: spi: Add realtek,rtl9300-snand
+  mips: dts: realtek: Add SPI NAND controller
+  spi: spi-mem: Add Realtek SPI-NAND controller
+
+ .../bindings/spi/realtek,rtl9300-snand.yaml   |  69 +++
+ MAINTAINERS                                   |   6 +
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |  14 +
+ drivers/spi/Kconfig                           |  11 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-realtek-rtl-snand.c           | 402 ++++++++++++++++++
+ 6 files changed, 503 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9300=
+-snand.yaml
+ create mode 100644 drivers/spi/spi-realtek-rtl-snand.c
+
+--=20
+2.46.2
+
 
