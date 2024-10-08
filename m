@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-355585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489F499545B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65E1995462
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65E31F26A7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F1CEB25297
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFE71E0488;
-	Tue,  8 Oct 2024 16:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ntaS+xUF"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1962C1E0DFF;
+	Tue,  8 Oct 2024 16:26:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AC81DF241
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B31E0B6F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404769; cv=none; b=RzdQ3JAGXVJr4sTz9jQdPxIQC8FffATzmIDn2yAbBUjT0yofCUbozrBUeNjT3y2+w6l/SPJrcXvnfRfYB8etptjzwGt4ZW/TmAo0HeU7f+KmbboOPZAlmBDXBs2D4cGeX44m8OvdupOpUwVsR+buV2HwdD7BDdXxovwmLmsE9ic=
+	t=1728404810; cv=none; b=DGZSIJ+xmhvwsJWL+EGXPkx67nFPgvMotyaZhQXVisL0R8ba6pugXFfQRFR4te0xrKwJWrozYNfva36/ndfexXRbbwoI1zRWRc587nVS2dHD6luV8jTmxDeAiTVQ2VtuSx6pwgHuJuoYGZ7KuHcTHsxGxALxWEgHhQh4JhD3+t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404769; c=relaxed/simple;
-	bh=0pbwWg3Pts4fZk3o2buLENaA8gdALMFvOFJvpAibZy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=edVh+YDMj/vcMy38WVOiDCyT9/11BXpB/lRbX7H8Hcr00TwvlSbB3HXTHpqBa/xugGST9bh+L7fH1DEPled4aaBwuybWQ/WE+Lrtxw3LsBUV5Jc0UJ1dtbx6AQE8zwdJlcdGjRieRzJ8gFmPcrRjYW7YbVn8N5L24U6SaG5X2wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ntaS+xUF; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <988d7c7d-dedd-4ceb-ad8a-9a9962b7bb0c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728404766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqUxlflk7LSIOE/nIYBpnpZcHrExrT5UAZ6hZitSDnE=;
-	b=ntaS+xUFVtV0CxaH/tjycK2u+IRAPDjlEIk3hqWN4hl7y0mib1cxQdbM4i78Et2pwy67gp
-	JcKHTRKKd3D8NrZRT0WuEhAfubjhjfP3mrmlET4kCshJjpflElftk2tRpFZK1vgm/r8CHB
-	D0kUh2YcZMpbt4y2h3Xo998rr0DVJsA=
-Date: Wed, 9 Oct 2024 00:25:54 +0800
+	s=arc-20240116; t=1728404810; c=relaxed/simple;
+	bh=16jmV6QrV7ugvLP+a5JbgEoIuyzmF2r5BsIMwyFMCnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7MCRa0EPu3Gkm4tthq96TTf3gLVi8LkYSuAxLKL6fZs9BrWNo1K/wJeiKgTVEd5ixsyhRmHpwkLfvIF0GInkM3yDHmvt5ufO2nDFEK3f2V/5W1QWkhWvrpP1ibcCRjquQeDGFia9yq2eurhwuxW1EE/dpASOYXB27bI+spsPxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syD2i-0000MN-2d; Tue, 08 Oct 2024 18:26:36 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syD2g-000PKD-3O; Tue, 08 Oct 2024 18:26:34 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syD2f-000RzO-3D;
+	Tue, 08 Oct 2024 18:26:34 +0200
+Date: Tue, 8 Oct 2024 18:26:33 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 09/12] net: pse-pd: tps23881: Add support for
+ PSE PI priority feature
+Message-ID: <ZwVdOQGzbglxtq5H@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-9-787054f74ed5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] Docs/mm: Fix a mistakes for pfn in page_tables.rst
-To: Pengyu Zhang <zpenya1314@gmail.com>
-Cc: corbet@lwn.net, rppt@kernel.org, linus.walleij@linaro.org,
- fmdefrancesco@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241008161050.14732-1-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zenghui Yu <zenghui.yu@linux.dev>
-In-Reply-To: <20241008161050.14732-1-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241002-feature_poe_port_prio-v1-9-787054f74ed5@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-s/mistakes/mistake/ in the Subject line.
-
-On 2024/10/9 00:10, Pengyu Zhang wrote:
-> The documentation incorrectly calculate the pfn value as 0x3fffff,
-> which should be 0x3ffff instead.It is obtained by right-shifting
-                                  ^
-Add a space.
-
-> 0xffffc000 by 14 bits.
+On Wed, Oct 02, 2024 at 06:28:05PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> This patch corrects the value to prevent any potential confusion
-> for developers referencing this document.
+> This patch extends the PSE callbacks by adding support for the newly
+> introduced pi_set_prio() callback, enabling the configuration of PSE PI
+> priorities. The current port priority is now also included in the status
+> information returned to users.
 > 
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->  Documentation/mm/page_tables.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/mm/page_tables.rst b/Documentation/mm/page_tables.rst
-> index be47b192a596..e7c69cc32493 100644
-> --- a/Documentation/mm/page_tables.rst
-> +++ b/Documentation/mm/page_tables.rst
-> @@ -29,7 +29,7 @@ address.
->  With a page granularity of 4KB and a address range of 32 bits, pfn 0 is at
->  address 0x00000000, pfn 1 is at address 0x00001000, pfn 2 is at 0x00002000
->  and so on until we reach pfn 0xfffff at 0xfffff000. With 16KB pages pfs are
-> -at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3fffff.
-> +at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3ffff.
->  
->  As you can see, with 4KB pages the page base address uses bits 12-31 of the
->  address, and this is why `PAGE_SHIFT` in this case is defined as 12 and
+>  drivers/net/pse-pd/tps23881.c | 57 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
 
-Reviewed-by: Zenghui Yu <zenghui.yu@linux.dev>
+....
+> 
+>  static const char fw_parity_name[] = "ti/tps23881/tps23881-parity-14.bin";
+> @@ -1106,6 +1162,7 @@ static int tps23881_i2c_probe(struct i2c_client *client)
+>  	priv->pcdev.dev = dev;
+>  	priv->pcdev.types = ETHTOOL_PSE_C33;
+>  	priv->pcdev.nr_lines = TPS23881_MAX_CHANS;
+> +	priv->pcdev.pis_prio_max = 1;
+
+This controller supports 1 bit and 3 bit prios, it will be good to know
+why 1 bit mode is used.
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
