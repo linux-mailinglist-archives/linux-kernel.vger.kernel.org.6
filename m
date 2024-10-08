@@ -1,85 +1,74 @@
-Return-Path: <linux-kernel+bounces-355664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A44D995576
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B539A995579
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09EE61C259B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627261F230E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864C01F9ABE;
-	Tue,  8 Oct 2024 17:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE13B1FAC21;
+	Tue,  8 Oct 2024 17:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoRiJjCy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k10D60D0"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6B31F9AAA;
-	Tue,  8 Oct 2024 17:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ECC1F9AAA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728407851; cv=none; b=edg4AkrUvpor8Tw9l3txT3G1RHhg+rmjXMWG+2hY+A8IbpLtThu2vNxWZRjHF297KMsNMAT0cqD5MAtqRUIgo5oQwITUbrXMxpNbST1PBcAHK/bieLLx4xQosz8rf+7pHGIlDi/l/XG+nyoRfTYNCKv9DE0gFHfBClDDXyisARY=
+	t=1728407865; cv=none; b=ECV8UqDoMrVXVe6WgLHhyD8sAbWUP79h9Cwp3K7zmuYgnGIvXBCZSGsTkVkBjMhO7OBHLoUBGkEwJSIySpXuNFgLK4KFo6PMn167lENhy4UYdedBEOVYESgaLA4LXCVfTAsPt5Wp5cp+isXXgjtFKVhsXVK2zf9Uh/jrUCWCzFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728407851; c=relaxed/simple;
-	bh=CZvDc2Cw2sFbq09Uga+bN5k0/TSuwUv2X5A5/C2KSto=;
+	s=arc-20240116; t=1728407865; c=relaxed/simple;
+	bh=Ps5cJj07MBxdw2t2Ls0qfwrulW/cQctChxb69XEQadM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gHbdsySbRGONhHMxsuMv0GRYOLm4WkndWx/+RV77+uaDvXgzqw5xyPzbK/ym7258KoM5NLrpIe6LJwZuYmqUb/68TW40dqJbaABjpBEs/WZ82EQeTiBJfKoyCnp9pdDEk/x5Ryezkpahtg1n7pH4Mt1BS8RqT3luVfmcCSA52Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FoRiJjCy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39172C4CEC7;
-	Tue,  8 Oct 2024 17:17:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728407850;
-	bh=CZvDc2Cw2sFbq09Uga+bN5k0/TSuwUv2X5A5/C2KSto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FoRiJjCy0SNrGHvyUsA43lXrG7+F0hygEk2ya+5XZJEixRI+7TNY+IoNidftqiPtw
-	 UVCrGjzitwGArS58KcpRJXh/fxs9BuBwjgyXG6V63LxNF81fu2KJurJkZTSv+pqBEs
-	 +6+K5HsXa55Yqtvy1Q62l6Vwp64ZHH/lc17JzKWhJ/5BHiBEChVmBM4mrZ9Yw/yWuG
-	 7iRw2Ykki7frU4WXNryDLjdBO+uLIuQmR4K6Dfzq8JbRUSV5rUAAifebY84NMIdShm
-	 wirI0vBarnpoRwkkHeWqndn7MFEfHL2R3vpMdnX6I8/bQSxLckOShAYEKV8F3bVWem
-	 r8DsFKSnQ7D/A==
-Date: Tue, 8 Oct 2024 10:17:28 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Wardenjohn <zhangwarden@gmail.com>
-Cc: mbenes@suse.cz, jikos@kernel.org, pmladek@suse.com,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
-Message-ID: <20241008171728.ue3pmqivppryhf2h@treble>
-References: <20241008014856.3729-1-zhangwarden@gmail.com>
- <20241008014856.3729-2-zhangwarden@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=atHiZfpUGXdawZ1dMm2Dzeem/aHfOjzPlC5k7D5fT0tNXzUZ4t4rKdL4P1SpF3M07W/sYvjJF6bydHKeOvit9d5RG0tLVTeZeU++7+6joxEDT111oU6+9Ul9aImUS/qfr70IxDelgBh45/+WIwoyOzln7jiyr3ngysy7Xq0PhME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k10D60D0; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 8 Oct 2024 13:17:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728407861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k7QSeq9fcGY8+cZKZEYETRsQs5JfTFZ3971RNFbqB6c=;
+	b=k10D60D0g/qFiOLyPg6vUp9kt93iYF+OvOX6BihHli3wHkdKGwZjGWWTIE7rbbzwwockFF
+	AyEnTPlkyN95iHqlBiXuxZOkZCjzzkbXeWTQ5I/1H7W6dot5CWBhq5hFosuo2i7GBhKRLT
+	HDaRoJb/t90HgOteB4JMNvn/Mh1mCVI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+Subject: Re: [PATCH resend v3] bcachefs: Fix NULL pointer dereference in
+ bch2_opt_to_text
+Message-ID: <xgfwrw3g55wjjceznwgji7szahceaq6pojxkp4edurpbyniirh@idt7cobdxxxa>
+References: <20241005130229.9290-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008014856.3729-2-zhangwarden@gmail.com>
+In-Reply-To: <20241005130229.9290-1-pvmohammedanees2003@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 08, 2024 at 09:48:56AM +0800, Wardenjohn wrote:
-> Add "stack_order" sysfs attribute which holds the order in which a live
-> patch module was loaded into the system. A user can then determine an
-> active live patched version of a function.
+On Sat, Oct 05, 2024 at 06:32:29PM GMT, Mohammed Anees wrote:
+> This patch adds a bounds check to the bch2_opt_to_text function to prevent
+> NULL pointer dereferences when accessing the opt->choices array. This
+> ensures that the index used is within valid bounds before dereferencing.
+> The new version enhances the readability.
 > 
-> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
-> 
-> means that livepatch_1 is the first live patch applied
-> 
-> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-> 
-> means that livepatch_module is the Nth live patch applied
-> 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Suggested-by: Miroslav Benes <mbenes@suse.cz>
-> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+> Reported-and-tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-
--- 
-Josh
+Sorry for missing this before, applied
 
