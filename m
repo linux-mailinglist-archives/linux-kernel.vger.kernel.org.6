@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-355887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30BC995861
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F0C995860
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B0D1F24D96
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD301F246E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343E0217338;
-	Tue,  8 Oct 2024 20:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27B216453;
+	Tue,  8 Oct 2024 20:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="IReFh1kE"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nP6zLf64"
 Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F46C216438
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F74215F55
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728419191; cv=none; b=cmmHRPKIqDMITjzxp+XSjKBLKwKHORHfDIjfPU/bUI65FgNd+RmDkGnSCr1iVuxYuxe+3aPiiLc+v+XEzMzPvbFQF5nt8ZCjN/aLaYFiT4EOsrkG7dcyrJ3BwA4MPaz3JosgqmgdPXhD2lnJPunpzbpRKE2fUdA31N3RPwIR+Hs=
+	t=1728419190; cv=none; b=TCtS8DQFGCkEQLVLnN58NY3a6XlQJA4P4Zr2cQaBC61oRieJadTXYN5T8BWu3MsL7z4enpW8g7RWVfEL2Fwlss4xzFcCattqr6JZI9lPRdtcrDpn5L4w1w6U9l+TfTOKUvBV3PqeNd6SG5BSoEjMAqwgNXVax8rwEIF5IjU2TwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728419191; c=relaxed/simple;
-	bh=v5+WlhCYp3nmMU6WLvuEwiSxxIt3K6XhnsHw3qlIlT0=;
+	s=arc-20240116; t=1728419190; c=relaxed/simple;
+	bh=LZHlm7CjWTjn4ZVlwuP1XH0lQQa9FSrmpnkGHu9aEDw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ujbMxMGJvhSNMmvpnimPho7gPw3uNk5i2q2wMGoPnJvGtOxQnZs4CK1t84B5TP7JBNyVyj9d+exu8S2wc7aD7w+4KhAPLuNreXDehCOmhyzntdKjZPHUsiMnIrIo/hXVLC5VYfLuVw28CCh00v6FE8iYblY1pC6pvJS9U9HOkm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=IReFh1kE; arc=none smtp.client-ip=199.89.1.11
+	 MIME-Version; b=F2uE5gNDW/JeP8U1rsM2zsRIz5KWHqhuk629JHlQ/ZW2pCm1f010dZwiyHa+yRzM+1Z04AqUfioWH7SF3+KpJ5KKjq4bVy4vJZnBwwrPcDkgmsHiNzQCCXMrC+cgFdcWZvjVi7gZmxMaIE9FNILKZBkp1WT6zCUP5rTiBUbK3ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nP6zLf64; arc=none smtp.client-ip=199.89.1.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XNSGW1tDfz6ClY9f;
-	Tue,  8 Oct 2024 20:26:27 +0000 (UTC)
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XNSGV5q9Lz6ClY9d;
+	Tue,  8 Oct 2024 20:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1728419184; x=1731011185; bh=/XeIP
-	NRcpqtMH6mznQch4+Ar5ZL668QdZHfyJcueCk8=; b=IReFh1kEfvONVFrHKdhiP
-	fhOhxi2UjzpZtTkq2ZdU5aUT+Vi2icWTQqk8kfIq3Ij5PSN09lrEvHOp4RdNqW/c
-	kixO0xqvjbfHOVjaOmgMQHWKTn8/UTWhIS6soWVvjWfYZFPVgqUjBuPkysRRd8r2
-	WtpgPKuUWJDIFAfqDQ0bmulvz7YOZZGq+WItKQIp+OTo23ME74v1KZ6imfZl5voa
-	kki7uJOxDehj3q/m1F1yoluxn01Ca+Ya//m6DfBmeukwd+7aVjXSmA/6dwdbxWBL
-	amIg0quXRCbbQe/0fSihXDqlR4p7Dfa7TIALa1Z39ynkuHrC39B2OUWYZiY0aJkz
-	Q==
+	:received:received; s=mr01; t=1728419184; x=1731011185; bh=MyUaP
+	bvugmKd3NVvycIqSqhXcIEjEkyEltEdZjwCUac=; b=nP6zLf64ncxoqFuow88JG
+	PVz/1BU/VJ0/+eAKkW0zzH1vKaMXqfNnI+SbvKfnQnW3rPvLOt1klprltNo9c0Sg
+	jNqnd8L6Gbk6qsksxWUNcq+M6nAkaxfiUH2wU8fV7vMcoVJBkkkrEF3Sjv9RQ/sP
+	ajKN4yd1zEb4Ht7QqtAXvScPla4VlogqMUI8jtIAH/fjHgEZEaLYc3bO1kw/U5Ft
+	dMtxLERx2QBPC9ozZ9IejIWwTCggADUl8ehPHUyTHn2NHFj/zpvcCpPh3KgJDCmw
+	vugGMRrqC7i8xVZYdPJ+U3QhPo/oygIhpWCRXBWRceiPPuEhiM64BEuW8tzgx7Uh
+	w==
 X-Virus-Scanned: by MailRoute
 Received: from 008.lax.mailroute.net ([127.0.0.1])
  by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id bK9icmbkKRjo; Tue,  8 Oct 2024 20:26:24 +0000 (UTC)
+ id n9sqEiyXRz1i; Tue,  8 Oct 2024 20:26:24 +0000 (UTC)
 Received: from bvanassche.mtv.corp.google.com (unknown [104.135.204.82])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XNSGP6cdsz6ClY9P;
-	Tue,  8 Oct 2024 20:26:21 +0000 (UTC)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XNSGQ4TP7z6ClY9Q;
+	Tue,  8 Oct 2024 20:26:22 +0000 (UTC)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Russell King <linux@armlinux.org.uk>,
 	linux-kernel@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Subject: [PATCH v2 03/22] LoongArch: Switch to irq_set_nr_irqs()
-Date: Tue,  8 Oct 2024 13:25:42 -0700
-Message-ID: <20241008202601.3737326-4-bvanassche@acm.org>
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 04/22] powerpc/cell: Switch to irq_get_nr_irqs()
+Date: Tue,  8 Oct 2024 13:25:43 -0700
+Message-ID: <20241008202601.3737326-5-bvanassche@acm.org>
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 In-Reply-To: <20241008202601.3737326-1-bvanassche@acm.org>
 References: <20241008202601.3737326-1-bvanassche@acm.org>
@@ -77,32 +76,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Use the irq_set_nr_irqs() function instead of the global variable
+Use the irq_get_nr_irqs() function instead of the global variable
 'nr_irqs'. This patch prepares for changing 'nr_irqs' from an exported
 global variable into a variable with file scope.
 
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- arch/loongarch/kernel/irq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/cell/axon_msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/kernel/irq.c b/arch/loongarch/kernel/irq.c
-index d129039b368b..80946cafaec1 100644
---- a/arch/loongarch/kernel/irq.c
-+++ b/arch/loongarch/kernel/irq.c
-@@ -92,9 +92,9 @@ int __init arch_probe_nr_irqs(void)
- 	int nr_io_pics =3D bitmap_weight(loongson_sysconf.cores_io_master, NR_C=
-PUS);
+diff --git a/arch/powerpc/platforms/cell/axon_msi.c b/arch/powerpc/platfo=
+rms/cell/axon_msi.c
+index 28dc86744cac..d243f7fd8982 100644
+--- a/arch/powerpc/platforms/cell/axon_msi.c
++++ b/arch/powerpc/platforms/cell/axon_msi.c
+@@ -112,7 +112,7 @@ static void axon_msi_cascade(struct irq_desc *desc)
+ 		pr_devel("axon_msi: woff %x roff %x msi %x\n",
+ 			  write_offset, msic->read_offset, msi);
 =20
- 	if (!cpu_has_avecint)
--		nr_irqs =3D (64 + NR_VECTORS * nr_io_pics);
-+		irq_set_nr_irqs(64 + NR_VECTORS * nr_io_pics);
- 	else
--		nr_irqs =3D (64 + NR_VECTORS * (nr_cpu_ids + nr_io_pics));
-+		irq_set_nr_irqs(64 + NR_VECTORS * (nr_cpu_ids + nr_io_pics));
-=20
- 	return NR_IRQS_LEGACY;
- }
+-		if (msi < nr_irqs && irq_get_chip_data(msi) =3D=3D msic) {
++		if (msi < irq_get_nr_irqs() && irq_get_chip_data(msi) =3D=3D msic) {
+ 			generic_handle_irq(msi);
+ 			msic->fifo_virt[idx] =3D cpu_to_le32(0xffffffff);
+ 		} else {
 
