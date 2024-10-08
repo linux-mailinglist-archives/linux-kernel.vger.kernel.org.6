@@ -1,133 +1,167 @@
-Return-Path: <linux-kernel+bounces-355549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5E09953ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2109953F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60C61C24B7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F141F235EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554751E0B95;
-	Tue,  8 Oct 2024 15:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1261E0DBC;
+	Tue,  8 Oct 2024 16:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jbKL+uWD"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eS5Rh8Fh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3PvX3x1z"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9221DFE00;
-	Tue,  8 Oct 2024 15:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11442040;
+	Tue,  8 Oct 2024 16:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403182; cv=none; b=a6VIEnUu67QjMj/iob/iHzJUZyFGUqVmq3Gpmcu9kt42T4mILfC08M9MeK7mfGa5EE0iK8dEyXVsmxo9iwYbve2Gr1Nv2sGwu5IqJQoOv0u+PcnH7urxQZhwZOp7XingRMa9bD4rtL/q03IEek7HDuRdmUym93KxbFJ0/ckh7Aw=
+	t=1728403235; cv=none; b=KBWe7ZQ/edMMrdcH2ah1sFS6yLPqSYM5RemtAoWwpaL4TY5jeCHSnVI1A5bOcDnov6JzxBO5FcdI7r7QhVeE9wszgCnWJxUr5KxMAePjN1Yqaiz06olnWVaRYWrw08v9TzxFZ4avNuQNvAc7qZpzwSxTALmyMQJXqIn5vAoX2q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403182; c=relaxed/simple;
-	bh=dSIwuYhnmxNKFqrxfUY7yxSnMVVqhRf8Z4WOU75Xuz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhEr1cDGI6FlR4EsEvsKIZiNqJZFqsbaJljoN9yfAhgQqBrZ6e6V01wElLrITOkRIU5CwQ91EzONfL0gg3mTtYM2d6B97Tw5uVAgL+w985Ux/eazOkHo7t8WfUXxNAKfobbrLz5B/tVa8MVfXPF91bdl0yU04sWlVB6yv1rawrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jbKL+uWD; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BksZbOewQMA8NpDRXf1fW7zXP4s6rrlvXiCuKc9WvfA=; b=jbKL+uWDIjOCie5P4hfOCTgZiO
-	SlT2GO0qigTJ/I6DzdwznQaTZNBpUhvuoHr4TZ8YpUNv84DzRbU1q1RAb2x+rEs+svdFkwuqFyyeC
-	jRira2qZjAGdAYV+4fbtlSNPKoM0dU6EEgizr1WcRenGV5n+zHHRKHZ1sKvIbDmOHeR5A0X8hoFvU
-	nIXrV4gBQJI6qbnEYoCH1tfOVnjfeXiVA7l7iw6ZJWO+quBGZ2M5dlKBpctaGLBrYLtPX2UPKjNST
-	a4sMHHCMgkg5GFmF+v5uRFrJMriXQ0uzq0dA+YZrSvxHlAtX792mPNreZPak8mHL64HHdSK7+1kOw
-	5+L0mWdw==;
-Received: from [187.57.199.212] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1syCcT-006cjs-Vz; Tue, 08 Oct 2024 17:59:30 +0200
-Message-ID: <46c259c2-5503-4a63-94ae-96660e5ce0eb@igalia.com>
-Date: Tue, 8 Oct 2024 12:59:24 -0300
+	s=arc-20240116; t=1728403235; c=relaxed/simple;
+	bh=EHe+qHWiZeJKDtdvme+SoICmyhSuGm1KAYVwrxrOBak=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=a5RdOURpvIYCsrk+H8C9eOJ1y8N5Rf1K+W3acINVLw7TtolkFS3/44klhleCNCbaDQ1KKtIGCgMKdeRH4LCb9hPrILTYoT67CPT/1yBPoi7JZovREdJEn3T7DT8tfjnBXvFWI1tQFuHFgWT7yvTm5TQDmxNzHyslX0k5IDaOyD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eS5Rh8Fh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3PvX3x1z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Oct 2024 16:00:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728403232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nVFZSY/it/5yRpT48QavbslXbhdX6LTo6lZzonud1Dc=;
+	b=eS5Rh8FhKo2lPKcs9RlNYV2h7v0qAxMwI5Irnbm5n7x1LhA9cgLyWBQz0bNqbNRFaLDQ2F
+	t9FQ6IvRKJJl234lQi/1o4mUByJMNzMN8QnXb7vjDpPdXMTOw82OP1BD7v4gErktBUAjII
+	dsWe9Z0XQK78JPlMrQoCH75M63LafG07B8RdiuxwLbTbCMCpmmAQ+f645PKf/kVZv0GkCG
+	baCYZAh8sQaP5V6j7Fd06f3fl5CLv3WQPej1m9EjZWCl2rAR8pOy82vQ0PCL2+3J4IU4mf
+	jpA0zY5oePDZQgylId2Z1T2fimbLaTmnobCItooCa8xoAglroysbZ19yu0FIYA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728403232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nVFZSY/it/5yRpT48QavbslXbhdX6LTo6lZzonud1Dc=;
+	b=3PvX3x1zyk++cUYFqbmAfdC2mJOZnDSB+D0phTHkDGH/wX7SmVIqyjpJILeaP7H23pZTz9
+	BvB+o5g34VVa1/AA==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/urgent] irqchip/sifive-plic: Unmask interrupt in plic_irq_enable()
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20241003084152.2422969-1-namcao@linutronix.de>
+References: <20241003084152.2422969-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Futex hash_bucket lock can break isolation and cause priority
- inversion on RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-rt-users <linux-rt-users@vger.kernel.org>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
-References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
- <98b3dcb0-8b64-45a5-9531-16aeb010c052@igalia.com>
- <20241008155129.z7ZZVzW3@linutronix.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241008155129.z7ZZVzW3@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <172840323152.1442.13111325496403210240.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Em 08/10/2024 12:51, Sebastian Andrzej Siewior escreveu:
-> On 2024-10-08 12:38:11 [-0300], André Almeida wrote:
->> Em 08/10/2024 12:22, Juri Lelli escreveu:
->>
->> [...]
->>
->>> Now, of course by making the latency sensitive application tasks use a
->>> higher priority than anything on housekeeping CPUs we could avoid the
->>> issue, but the fact that an implicit in-kernel link between otherwise
->>> unrelated tasks might cause priority inversion is probably not ideal?
->>> Thus this email.
->>>
->>> Does this report make any sense? If it does, has this issue ever been
->>> reported and possibly discussed? I guess it’s kind of a corner case, but
->>> I wonder if anybody has suggestions already on how to possibly try to
->>> tackle it from a kernel perspective.
->>>
->>
->> That's right, unrelated apps can share the same futex bucket, causing those
->> side effects. The bucket is determined by futex_hash() and then tasks get
->> the hash bucket lock at futex_q_lock(), and none of those functions have
->> awareness of priorities.
-> 
-> almost. Since Juri mentioned PREEMPT_RT the hb locks are aware of
-> priorities. So in his case there was a PI boost, the task with the
-> higher priority can grab the hb lock before others may however since the
-> owner is blocked by the NIC thread, it can't make progress.
-> Lifting the priority over the NIC-thread would bring the owner on the
-> CPU in order to drop the hb lock.
-> 
+The following commit has been merged into the irq/urgent branch of tip:
 
-Oh that's right, thanks for pointing it out!
+Commit-ID:     6b1e0651e9ce8ce418ad4ff360e7b9925dc5da79
+Gitweb:        https://git.kernel.org/tip/6b1e0651e9ce8ce418ad4ff360e7b9925dc5da79
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Thu, 03 Oct 2024 10:41:52 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 08 Oct 2024 17:49:21 +02:00
 
->> There's this work from Thomas that aims to solve corner cases like this, by
->> giving apps the option to instead of using the global hash table, to have
->> their own allocated wait queue:
->> https://lore.kernel.org/lkml/20160402095108.894519835@linutronix.de/
->>
->> "Collisions on that hash can lead to performance degradation
->> and on real-time enabled kernels to unbound priority inversions."
-> 
-> This is correct. The problem is also that the hb lock is hashed on
-> several things so if you restart/ reboot you may no longer share the hb
-> lock with the "bad" application.
-> 
-> Now that I think about it, of all things we never tried a per-process
-> (shared by threads) hb-lock which could also be hashed. This would avoid
-> blocking on other applications, your would have to blame your own threads.
-> 
+irqchip/sifive-plic: Unmask interrupt in plic_irq_enable()
 
-So if every process has it owns hb-lock, every process has their own 
-bucket? It would act just like a linked list then?
+It is possible that an interrupt is disabled and masked at the same time.
+When the interrupt is enabled again by enable_irq(), only plic_irq_enable()
+is called, not plic_irq_unmask(). The interrupt remains masked and never
+raises.
 
->>> Thanks!
->>> Juri
-> 
-> Sebastian
+An example where interrupt is both disabled and masked is when
+handle_fasteoi_irq() is the handler, and IRQS_ONESHOT is set. The interrupt
+handler:
+
+  1. Mask the interrupt
+  2. Handle the interrupt
+  3. Check if interrupt is still enabled, and unmask it (see
+     cond_unmask_eoi_irq())
+
+If another task disables the interrupt in the middle of the above steps,
+the interrupt will not get unmasked, and will remain masked when it is
+enabled in the future.
+
+The problem is occasionally observed when PREEMPT_RT is enabled, because
+PREEMPT_RT adds the IRQS_ONESHOT flag. But PREEMPT_RT only makes the problem
+more likely to appear, the bug has been around since commit a1706a1c5062
+("irqchip/sifive-plic: Separate the enable and mask operations").
+
+Fix it by unmasking interrupt in plic_irq_enable().
+
+Fixes: a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask operations")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20241003084152.2422969-1-namcao@linutronix.de
+---
+ drivers/irqchip/irq-sifive-plic.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index 0b730e3..36dbcf2 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -126,16 +126,6 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
+ 	}
+ }
+ 
+-static void plic_irq_enable(struct irq_data *d)
+-{
+-	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
+-}
+-
+-static void plic_irq_disable(struct irq_data *d)
+-{
+-	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
+-}
+-
+ static void plic_irq_unmask(struct irq_data *d)
+ {
+ 	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
+@@ -150,6 +140,17 @@ static void plic_irq_mask(struct irq_data *d)
+ 	writel(0, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+ }
+ 
++static void plic_irq_enable(struct irq_data *d)
++{
++	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
++	plic_irq_unmask(d);
++}
++
++static void plic_irq_disable(struct irq_data *d)
++{
++	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
++}
++
+ static void plic_irq_eoi(struct irq_data *d)
+ {
+ 	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
 
