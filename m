@@ -1,186 +1,103 @@
-Return-Path: <linux-kernel+bounces-354640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E10994083
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:06:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449F4994085
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E377228709A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DBF1F262D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B31FEFC7;
-	Tue,  8 Oct 2024 07:15:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD056208A7;
-	Tue,  8 Oct 2024 07:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD8B200108;
+	Tue,  8 Oct 2024 07:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHnww3WP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57440208A7;
+	Tue,  8 Oct 2024 07:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728371752; cv=none; b=kRmxn1q8eKzshqq4buVPBdiL9T5+RRz3YdAdaVCeqOwmNSLCJ8hKRnQEWwn7X3OkKWnLEZESzLTYbuwPrkmQ/ZJQyqq8ISHak4/ll7MSFQOD7G96hPHG1R0+MkOm/Sb70+gS/K3hQHccVEgOezWCHX4W4JUdgdc7C5SN+jl0bMA=
+	t=1728371755; cv=none; b=EU8avcF6EKQaTq//EjQETrRQMJ4lUSnZtA9RzTn1ZnfBDpC9df3v+fpSIB57yF0GJyua0RpVY0mZWozJq1zThRg0F0AJsTxnVOhDMSmHrwo1d+6xk1eSpfiD7Ze2YM+kRrXSKh41lziK5+sr6vw7CBXECpfFr6UmqRU1FBqRfUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728371752; c=relaxed/simple;
-	bh=oi/8zp+0aSjNDBG76jA78EC8mE4ZPQHPRYOB5TypZ+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KhO0/UMPAHjRw6/KP0ZuIMYmhTIBWdd7SDC2nfSEqSUyqBe3MUx0CMRnPs9aUWbopp1DOy7gpnfetW0Fu/z8ohBn4EZJFY5R/YXdQuTtmWGGTbFCNF3Whvv3/Bn8a9C2AJkCGv+n/LP+YWoXz83gJ5Mg/SQ4kyfyCM3dv6zMt8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C747DDA7;
-	Tue,  8 Oct 2024 00:16:19 -0700 (PDT)
-Received: from [10.163.38.160] (unknown [10.163.38.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0C1A3F640;
-	Tue,  8 Oct 2024 00:15:45 -0700 (PDT)
-Message-ID: <e563980c-9ae9-478e-89a3-819c7dadf85b@arm.com>
-Date: Tue, 8 Oct 2024 12:45:42 +0530
+	s=arc-20240116; t=1728371755; c=relaxed/simple;
+	bh=Kj9xot+Cc5gXKsItGYymzN0HhpTgvCvZ2UPo9Mfh0eY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HDh1k/PbolWt6qR9arGEphzqr6r2CEFBvoVPyyBemD+pQWpCSbg4eFfo8+QQTYybB+KBRyfGKXXwS4G0QSZxeBvypNChObvixCMZ+ttRtO3B8z0tHGcd3oV1lmh28x6q+UJvl4V6F86VAoUlPcV29CwTvFh2fgUXs5INRXvtc10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHnww3WP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95795C4CECC;
+	Tue,  8 Oct 2024 07:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728371755;
+	bh=Kj9xot+Cc5gXKsItGYymzN0HhpTgvCvZ2UPo9Mfh0eY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=iHnww3WPpKHuxyiog2qMUFN45L/GLVeUObWK6ckRnmOVfm0fkXYm7qNJpUftLwU29
+	 7dexTiLS9P1inQT7g+G/WTdsLf0UpxSKOlQTIIFecf7oxnZd+cQYxo46HdIUsVLmKh
+	 /EEZNJRQV/ieEQ1tosIgbp7DvyMDj/o+RLYZmcBHqFTKhuMYb4EXreQvGDM/n0Xfz5
+	 5KvRDm1j4ybLwvf2JU5/d8pM5SvthjKGyuQR2JYGit6nGVpfS1iI6QRWYV/LUZYWnH
+	 6u/7CMrPhxuqP+g8K1OOv7ZYhLlTNqvgLxF7twuT+p7ZRLUOy0+et6fBU0eejpc//R
+	 IQ029XqdhbRvA==
+Date: Tue, 8 Oct 2024 09:15:52 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+cc: bentiss@kernel.org, guanwentao@uniontech.com, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, zhanjun@uniontech.com
+Subject: Re: [PATCH v2] HID: multitouch: Add quirk for HONOR MagicBook Art
+ 14 touchpad
+In-Reply-To: <43824FB10AAAE5DD+20241007040803.205047-1-wangyuli@uniontech.com>
+Message-ID: <nycvar.YFH.7.76.2410080915450.20286@cbobk.fhfr.pm>
+References: <43824FB10AAAE5DD+20241007040803.205047-1-wangyuli@uniontech.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/2] arm64: Support AT_HWCAP3
-To: Mark Brown <broonie@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <kees@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Yury Khrustalev <yury.khrustalev@arm.com>,
- Wilco Dijkstra <wilco.dijkstra@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <20241004-arm64-elf-hwcap3-v2-0-799d1daad8b0@kernel.org>
- <20241004-arm64-elf-hwcap3-v2-2-799d1daad8b0@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241004-arm64-elf-hwcap3-v2-2-799d1daad8b0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 7 Oct 2024, WangYuli wrote:
 
-
-On 10/5/24 01:56, Mark Brown wrote:
-> We have filled all 64 bits of AT_HWCAP2 so in order to support discovery of
-> further features provide the framework to use the already defined AT_HWCAP3
-> for further CPU features.
+> It sometimes after reboot change output from Touchpad to Mouse,
+> evtest show it output from "TOPS0102:00 35CC:0104 Touchpad"
+> to "TOPS0102:00 35CC:0104 Mouse",and it works as A mouse.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Like GLO-GXXX, as a workaround, it is possible to call
+> MT_QUIRK_FORCE_GET_FEATURE to force set feature in mt_set_input_mode
+> for such special touchpad device.
+> 
+> Link: https://gitlab.freedesktop.org/libinput/libinput/-/issues/1040
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
 > ---
->  Documentation/arch/arm64/elf_hwcaps.rst | 6 +++---
->  arch/arm64/include/asm/cpufeature.h     | 3 ++-
->  arch/arm64/include/asm/hwcap.h          | 6 +++++-
->  arch/arm64/include/uapi/asm/hwcap.h     | 4 ++++
->  arch/arm64/kernel/cpufeature.c          | 6 ++++++
->  5 files changed, 20 insertions(+), 5 deletions(-)
+>  drivers/hid/hid-multitouch.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
-> index 694f67fa07d196816b1292e896ebe6a1b599c125..dc1b11d6d1122bba928b054cd1874aad5073e05c 100644
-> --- a/Documentation/arch/arm64/elf_hwcaps.rst
-> +++ b/Documentation/arch/arm64/elf_hwcaps.rst
-> @@ -16,9 +16,9 @@ architected discovery mechanism available to userspace code at EL0. The
->  kernel exposes the presence of these features to userspace through a set
->  of flags called hwcaps, exposed in the auxiliary vector.
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 99812c0f830b..a1e0c3db3d4c 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -2082,6 +2082,11 @@ static const struct hid_device_id mt_devices[] = {
+>  		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+>  			0x347d, 0x7853) },
 >  
-> -Userspace software can test for features by acquiring the AT_HWCAP or
-> -AT_HWCAP2 entry of the auxiliary vector, and testing whether the relevant
-> -flags are set, e.g.::
-> +Userspace software can test for features by acquiring the AT_HWCAP,
-> +AT_HWCAP2 or AT_HWCAP3 entry of the auxiliary vector, and testing
-> +whether the relevant flags are set, e.g.::
->  
->  	bool floating_point_is_present(void)
->  	{
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 3d261cc123c1e22ac7bc9cfcde463624c76b2084..38e7d1a44ea38ab0a06a6f22824ae023b128721b 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -12,7 +12,7 @@
->  #include <asm/hwcap.h>
->  #include <asm/sysreg.h>
->  
-> -#define MAX_CPU_FEATURES	128
-> +#define MAX_CPU_FEATURES	192
->  #define cpu_feature(x)		KERNEL_HWCAP_ ## x
->  
->  #define ARM64_SW_FEATURE_OVERRIDE_NOKASLR	0
-> @@ -438,6 +438,7 @@ void cpu_set_feature(unsigned int num);
->  bool cpu_have_feature(unsigned int num);
->  unsigned long cpu_get_elf_hwcap(void);
->  unsigned long cpu_get_elf_hwcap2(void);
-> +unsigned long cpu_get_elf_hwcap3(void);
->  
->  #define cpu_set_named_feature(name) cpu_set_feature(cpu_feature(name))
->  #define cpu_have_named_feature(name) cpu_have_feature(cpu_feature(name))
-> diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
-> index a775adddecf25633e87d58fb9ac9e6293beac1b3..3b5c50df419ee94193a4d9e3a47516eb0739e89a 100644
-> --- a/arch/arm64/include/asm/hwcap.h
-> +++ b/arch/arm64/include/asm/hwcap.h
-> @@ -159,17 +159,21 @@
->  #define KERNEL_HWCAP_SME_SF8DP2		__khwcap2_feature(SME_SF8DP2)
->  #define KERNEL_HWCAP_POE		__khwcap2_feature(POE)
->  
-> +#define __khwcap3_feature(x)		(const_ilog2(HWCAP3_ ## x) + 128)
+> +	/* HONOR MagicBook Art 14 touchpad */
+> +	{ .driver_data = MT_CLS_VTL,
+> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+> +			0x35cc, 0x0104) },
 > +
->  /*
->   * This yields a mask that user programs can use to figure out what
->   * instruction set this cpu supports.
->   */
->  #define ELF_HWCAP		cpu_get_elf_hwcap()
->  #define ELF_HWCAP2		cpu_get_elf_hwcap2()
-> +#define ELF_HWCAP3		cpu_get_elf_hwcap3()
->  
->  #ifdef CONFIG_COMPAT
->  #define COMPAT_ELF_HWCAP	(compat_elf_hwcap)
->  #define COMPAT_ELF_HWCAP2	(compat_elf_hwcap2)
-> -extern unsigned int compat_elf_hwcap, compat_elf_hwcap2;
-> +#define COMPAT_ELF_HWCAP3	(compat_elf_hwcap3)
-> +extern unsigned int compat_elf_hwcap, compat_elf_hwcap2, compat_elf_hwcap3;
->  #endif
->  
->  enum {
-> diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
-> index 055381b2c61595361c2d57d38be936c2dfeaa195..3dd4a53a438a14bfb41882b2ab15bdd7ce617475 100644
-> --- a/arch/arm64/include/uapi/asm/hwcap.h
-> +++ b/arch/arm64/include/uapi/asm/hwcap.h
-> @@ -124,4 +124,8 @@
->  #define HWCAP2_SME_SF8DP2	(1UL << 62)
->  #define HWCAP2_POE		(1UL << 63)
->  
-> +/*
-> + * HWCAP3 flags - for AT_HWCAP3
-> + */
-> +
->  #endif /* _UAPI__ASM_HWCAP_H */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 718728a85430fad5151b73fa213a510efac3f834..7221636b790709b153b49126e00246cc3032a7bc 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -103,6 +103,7 @@ static DECLARE_BITMAP(elf_hwcap, MAX_CPU_FEATURES) __read_mostly;
->  				 COMPAT_HWCAP_LPAE)
->  unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
->  unsigned int compat_elf_hwcap2 __read_mostly;
-> +unsigned int compat_elf_hwcap3 __read_mostly;
->  #endif
->  
->  DECLARE_BITMAP(system_cpucaps, ARM64_NCAPS);
-> @@ -3499,6 +3500,11 @@ unsigned long cpu_get_elf_hwcap2(void)
->  	return elf_hwcap[1];
->  }
->  
-> +unsigned long cpu_get_elf_hwcap3(void)
-> +{
-> +	return elf_hwcap[2];
-> +}
-> +
->  static void __init setup_boot_cpu_capabilities(void)
->  {
->  	/*
-> 
+>  	/* Ilitek dual touch panel */
+>  	{  .driver_data = MT_CLS_NSMU,
+>  		MT_USB_DEVICE(USB_VENDOR_ID_ILITEK,
 
-LGTM, but just curious do you have a upcoming feature to be added
-in AT_HWCAP3 soon ?
+Applied, thanks.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+-- 
+Jiri Kosina
+SUSE Labs
+
 
