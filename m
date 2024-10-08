@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-356041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF553995B63
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:08:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC9F995B6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 042F2B23D77
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABF11C21D67
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE77216446;
-	Tue,  8 Oct 2024 23:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897C62178EB;
+	Tue,  8 Oct 2024 23:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mHzdjsHg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eONwHUSy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50231D0F44
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8778173336;
+	Tue,  8 Oct 2024 23:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728428917; cv=none; b=WeTttqMq4SpEAGndswzWu3AknPuaWdW/nTJErlUEEepQ7U3vACU2sdBamW+EGxJtkMhCU+ZQSzyNus9LMPLz75cFnmM+I1DxHhwEQKLcjGd1e/95p1ZZlp2bsgAdZ8f9TA+LrHn3zp8MbrrPaly+at4BuucX8CrlA/mfhuLDNS0=
+	t=1728429124; cv=none; b=dJWnYPv29qXVkAtWl+SOaTKq1UePCpVZu2KTZ4eAu3jwTbqScqRLsrJN20dCOXL8N5j/LAnMHjI1LEXvTIvDCMWBDkLgdFQ9PLWeTnITB34HnvrzrxI7XJ9K/Y6eAHdYruY70rLhbqqFWARmHSl5t3gtWCtOerT8zvCTz3GjYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728428917; c=relaxed/simple;
-	bh=FoVKTD3zrmoWGWg+wvfB+nxWvWGc06CtDz8PpdFUSfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELyCoS1qkNvaUDkGnY/RM5+PlpILJik3VeS6WJQGhD8scDRmQCh+7bRFVQOSUksMx/yXJtgzTtlj88E+Jsj9uC3qjhcf+3UxX7gEaX90V7rFY9MYInQKTgDMtbxfZSsS088zTBRPpDJL9KTvHx1IYvAqbJ63j6E2wuwWmguCudY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mHzdjsHg; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728428916; x=1759964916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FoVKTD3zrmoWGWg+wvfB+nxWvWGc06CtDz8PpdFUSfU=;
-  b=mHzdjsHgd7r3QOwwjvVPsfUFLlrxBfAgac3hPG/hzUq/rE8D/33d2Wbt
-   1Iy5JvckQLqAYgKWhMz5BJcCQeP9sFD47m1TGSziUK309FkHbFGKVOL1D
-   jHEhrpwRxJ+tJMLVpqFRjxo/Qw5LKj1N9r+rwXm5o/EEePWKkKRUtWzRr
-   zg/vOqtgYaJ6A/yR01wXNVPbsk/dpI6dDZDVN3TLuuzkNXzG3g5+YWhjh
-   ucVDvrQd37itMaamrx9EjkpFO1BreKTk/sNTti8aNYJGWPUxCcNdSS+o7
-   1+aJ456yZ//wlR9XvA3JI+CtgP3NlthrUsxs5qPpfjRJQAHZU47/jmsXI
-   Q==;
-X-CSE-ConnectionGUID: fRHzqJv/SrOtLYyfVLawag==
-X-CSE-MsgGUID: lzvvWAkTT7Sf88wJzW7bKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31388601"
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="31388601"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:08:35 -0700
-X-CSE-ConnectionGUID: h6NX9e0uQgaLK5/FJs61hQ==
-X-CSE-MsgGUID: +qWONnZzR7S3A3d/jVIUJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="76032910"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:08:34 -0700
-Date: Tue, 8 Oct 2024 16:08:33 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v5 40/40] x86/resctrl: Add python script to move resctrl
- code to /fs/resctrl
-Message-ID: <ZwW7cWgXJmfW8AQP@agluck-desk3.sc.intel.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-41-james.morse@arm.com>
+	s=arc-20240116; t=1728429124; c=relaxed/simple;
+	bh=Bki+M28Uxgy/me7xvfPv7pJjxyUy06JPfx4V50qSkoU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=pKcSgRkNAZqIVE90knHhidOfDYxEpbVMGqhf5IdAKEWj1fgt9Eod+9xW5Mdmxl8le9SmnHtEgV1WpkJkDg5wongB/hIfOLGzbTF4Bot9hzqkAGUOGECU6vjf6a4lY5MQiaGGA9z9D+pkZY6zev+JdqT1l67t67ykhs7U/xI9/Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eONwHUSy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47898C4CEC7;
+	Tue,  8 Oct 2024 23:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728429124;
+	bh=Bki+M28Uxgy/me7xvfPv7pJjxyUy06JPfx4V50qSkoU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=eONwHUSy/QglbYsCbdw2Rwy/P6GtWCWP95d3T9XiyozzzzjSkWKtFIRGPqoTYdt6T
+	 a5MVWrbDT3WxfgHTdp2HCkZA5DbWXAgYBWtJ6D28RbhXTAgA/zKWGLLrhl4A1dZZs8
+	 B/QAeWabS7AccKyKwepAUe909Rpk2qfr0sE7sJtdpKqZvnxBIBZLeLmwns0nsDDrUz
+	 i9YX6Np+9iZ8u9HLAudlI6lTqbrCVc9EPz5fZV2dtdPQSD2PinMwxS0S7hLaHUFbKl
+	 wza/yFRmshcoYyi98P/kda2wsf3s/V/NOyNB4FlBvlkyltWCQ5ykKIlXyrrxheuD6f
+	 MYGhWVScEIuqg==
+Message-ID: <ccd372f2754e80d6c01e38a9596bed34.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004180347.19985-41-james.morse@arm.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cb1e0119-6e3e-4fd2-92ea-3fec18f5843d@roeck-us.net>
+References: <20240718210513.3801024-1-sboyd@kernel.org> <ba88a29c-f05e-4ca3-82d1-0a634613caee@roeck-us.net> <4216b852-11a2-41ae-bb01-5f9b578ee41b@roeck-us.net> <879831a8-2039-4cdb-bce2-aefdeb7ab25f@linuxfoundation.org> <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org> <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net> <4a8abb5f501279de7907629f4dd6be24.sboyd@kernel.org> <3e1de608-008c-4439-acd2-647a288dcdc0@roeck-us.net> <cd31493888acc2b64a4986954dfa43ae.sboyd@kernel.org> <cb1e0119-6e3e-4fd2-92ea-3fec18f5843d@roeck-us.net>
+Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with struct clk_parent_data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J.Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Guenter Roeck <linux@roeck-us.net>, Shuah Khan <skhan@linuxfoundation.org>
+Date: Tue, 08 Oct 2024 16:12:02 -0700
+User-Agent: alot/0.10
 
-On Fri, Oct 04, 2024 at 06:03:47PM +0000, James Morse wrote:
-> +functions_to_move = [
-> +	# common
-> +	"pr_fmt",
-> +
-> +	# ctrlmon.c
-> +	"rdt_parse_data",
-> +	"(ctrlval_parser_t)",
-> +	"bw_validate",
-> +	"parse_bw",
-> +	"cbm_validate",
-> +	"parse_cbm",
-> +	"get_parser",
-> +	"parse_line",
-> +	"rdtgroup_parse_resource",
-> +	"rdtgroup_schemata_write",
-> +	"show_doms",
-> +	"rdtgroup_schemata_show",
-> +	"smp_mon_event_count",
-> +	"mon_event_read",
-> +	"rdtgroup_mondata_show",
-> +
-> +	# internal.h
-> +	"MBM_OVERFLOW_INTERVAL",
-> +	"CQM_LIMBOCHECK_INTERVAL",
-> +	"cpumask_any_housekeeping",
-> +	"rdt_fs_context",
-> +	"rdt_fc2context",
-> +	"mon_evt",
-> +	"mon_data_bits",
-> +	"rmid_read",
-> +	"resctrl_schema_all",
-> +	"resctrl_mounted",
-> +	"rdt_group_type",
-> +	"rdtgrp_mode",
-> +	"mongroup",
-> +	"rdtgroup",
-> +	"RFTYPE_FLAGS_CPUS_LIST",
+Quoting Guenter Roeck (2024-10-03 21:52:09)
+> On 10/3/24 17:42, Stephen Boyd wrote:
+> >=20
+> > Can you please describe how you run the kunit test? And provide the qemu
+> > command you run to boot arm64 with acpi?
+> >=20
+>=20
+> Example command line:
+>=20
+> qemu-system-aarch64 -M virt -m 512 \
+>       -kernel arch/arm64/boot/Image -no-reboot -nographic \
+>       -snapshot \
+>       -bios /opt/buildbot/rootfs/arm64/../firmware/QEMU_EFI-aarch64.fd \
+>       -device virtio-blk-device,drive=3Dd0 \
+>       -drive file=3Drootfs.ext2,if=3Dnone,id=3Dd0,format=3Draw \
+>       -cpu cortex-a57 -serial stdio -monitor none -no-reboot \
+>       --append "kunit.stats_enabled=3D2 kunit.filter=3Dspeed>slow root=3D=
+/dev/vda rootwait earlycon=3Dpl011,0x9000000 console=3DttyAMA0"
+>=20
+> That works fine for me. Configuration is arm64 defconfig plus various
+> debug and kunit options. I built the efi image myself from sources.
+> The root file system is from buildroot with modified init script.
+> kunit tests are all built into the kernel and run during boot.
 
-Something goes wrong with moving the RFTYPE_* defines. A new copy
-shows up in fs/resctrl/internal.h but the old copy isn't removed from
-arch/x86/kernel/cpu/resctrl/internal.h
+Thanks. I figured out that I was missing enabling CONFIG_ACPI. Here's my
+commandline
 
--Tony
+./tools/testing/kunit/kunit.py run --arch=3Darm64 \
+	--kunitconfig=3Ddrivers/of \
+	--qemu_args=3D"-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd -smp 2" \
+	--kconfig_add=3D"CONFIG_ACPI=3Dy" \
+	--kernel_args=3D"earlycon=3Dpl011,0x9000000"
+
+Now I can boot and reproduce the failure, but there's another problem.
+ACPI disables itself when it fails to find tables.
+
+ ACPI: Unable to load the System Description Tables
+
+This calls disable_acpi() which sets acpi_disabled to 1. This happens
+before the unit test runs, meaning we can't reliably use 'acpi_disabled'
+as a method to skip.
+
+The best I can come up with then is to test for a NULL of_root when
+CONFIG_ARM64 and CONFIG_ACPI are enabled, because the tests
+intentionally don't work when both those configs are enabled and the
+'of_root' isn't populated. In all other cases the 'of_root' missing is a
+bug. I'll probably make this into some sort of kunit helper function in
+of_private.h and send it to DT maintainers.
+
+---8<----
+diff --git a/drivers/of/of_kunit_helpers.c b/drivers/of/of_kunit_helpers.c
+index 287d6c91bb37..a1330e183230 100644
+--- a/drivers/of/of_kunit_helpers.c
++++ b/drivers/of/of_kunit_helpers.c
+@@ -36,6 +36,9 @@ int of_overlay_fdt_apply_kunit(struct kunit *test, void *=
+overlay_fdt,
+ 	int ret;
+ 	int *copy_id;
+=20
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi rejects overlays");
++
+ 	copy_id =3D kunit_kmalloc(test, sizeof(*copy_id), GFP_KERNEL);
+ 	if (!copy_id)
+ 		return -ENOMEM;
+diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+index c85a258bc6ae..6cca43bf8029 100644
+--- a/drivers/of/of_test.c
++++ b/drivers/of/of_test.c
+@@ -38,6 +38,8 @@ static int of_dtb_test_init(struct kunit *test)
+ {
+ 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+ 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE");
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi doesn't populate a root node on ACPI system=
+s");
+=20
+ 	return 0;
+ }
+diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+index 19a292cdeee3..3e7ac97a6796 100644
+--- a/drivers/of/overlay_test.c
++++ b/drivers/of/overlay_test.c
+@@ -64,6 +64,8 @@ static void of_overlay_apply_kunit_cleanup(struct kunit *=
+test)
+=20
+ 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+ 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for root node");
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi rejects overlays");
+=20
+ 	kunit_init_test(&fake, "fake test", NULL);
+ 	KUNIT_ASSERT_EQ(test, fake.status, KUNIT_SUCCESS);
 
