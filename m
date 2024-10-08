@@ -1,151 +1,194 @@
-Return-Path: <linux-kernel+bounces-354363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B17993C83
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:51:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D693E993C89
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558C21C20AD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CE228597E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E8717BD9;
-	Tue,  8 Oct 2024 01:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A514D18EB1;
+	Tue,  8 Oct 2024 01:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdZ01VkP"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuPDNyIZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C555725776;
-	Tue,  8 Oct 2024 01:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88617BD9;
+	Tue,  8 Oct 2024 01:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728352301; cv=none; b=WoMsxJ836o7IrxTg0mpgCoXKWaX0VEXhG33kxg5+78S1rabu1e4K/XjxOAULhNONObXYK/IsKjDyvRhfRlg/EttWwEROlQlm4M4wYJT5ix6LXlSP6UZrh5/ms67eFTsATXHozjNSC2CLviEbxv6Do2k+kMg+OTRFqUf3qDNyHaM=
+	t=1728352407; cv=none; b=d0K71i85umaJLO2BfA1LxlQ/asiHGkmicxJY9QMxuFyopzUhcCizEZT7ow2AaTMyYeEcCUBlN9wHOB/HMJywgbx/XRtAXIHZ8vmBWnKTbtSEBPCH+O0ZF48jETfJy8NyzqKW6HHAPHAQDl0PtuNYq7NXUz0qo1QB3630Ut93uT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728352301; c=relaxed/simple;
-	bh=KUcfKhY1OuJjjtPFVm5auF2wbUcjl7/PSnpHOJHFgMw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=UuI5TRK69/FkZnyifRnieRmNs73YeFPRMPE4qo7ACukGvZuE5UNI54Fo6o/glg9PEBKiqNxUmq35x0Ld01vbt8tDbTYV74YP9h2WnIM8dPIWKPtXYcFqB0Vi4itW4t2zbhKYCMPTdvi/hpgO1S//YPaj++NaB7AoLPcC9TAyMjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdZ01VkP; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b86298710so42801285ad.1;
-        Mon, 07 Oct 2024 18:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728352299; x=1728957099; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8jQgQOaevtctAFwb5fQqnwEAqxzOh1/EbEy9uWGmGA=;
-        b=hdZ01VkP9S6LYaipu7INrlskP7us8yXxl09fkTHKnngJiY9fC4DCoMgKnwxF7NkUD3
-         YYkcgIX5fvYUhu1NxHO+MoUBsm+U2IO5hGJRH0wdCRaZBPt31qdBa0SeyfN4X99eNoPy
-         2R+dlDkkFhayttALZb0r8HxQQacS3x7uOf+5QVJzguWSC+k9jGMsnaNIdbrphltaZvkY
-         I+ElxeraweCCDantyk6N5o2QfD62CG5hWAJM+gH9upyc5SPvpr2R8QhE2b9Vlt5QLoBJ
-         EFmpjkyDdlrLIWZVdmj40JAo6hS7IZpKmnmIXd6aZ0Ic9CJPqK+D+zhfgrn9Y8j9r1Y3
-         qlLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728352299; x=1728957099;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+8jQgQOaevtctAFwb5fQqnwEAqxzOh1/EbEy9uWGmGA=;
-        b=Al63vHLUcKXWwZdlcCQCd3hlDLxfIjUet4t3Cl+qj1skO3VLGqnfE5v7TFHsJYIQvl
-         in6d52yZ06DzLNjxJCeQ/PBUlg9G47I8+AzNyqyqt9jj3sZ5Hu/FVtB9jNo3C8n4bcig
-         2bEcmbi0DNdZxeINbNOChqtWqLIQ7Xq4sXkqTAIyHBqmLIhpnelwNeaUSyxya1mF7jPm
-         g912DitYeAuGJ7bT0yfa7cWcG52egQ7rncyusQ49T7wPvN1XU7u1d/T4ZamXxi+3H7L/
-         St02uBmpqJNazUCAJIcCljLGPcefbUr36ABwd7B+/74OiJA0FrOOmfCEzRY/DnHZXxkR
-         v/vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6FW8jhans+KCl5uzPLcpGjqmLUgNYp6naCUYYF1k2C5uYlzL80QDX+iSsCgSoMETyeG2Ba2H/2c5JLvQ=@vger.kernel.org, AJvYcCVA5rJZ5lqy2r3LI1Rf/SxxNdfYifpguNXSLLan9borFXb5/YDxsHnpIGFlZ4QdaL0B8bA1hjHlvKoN/9NMvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwPiPj1xxQ/omOo+Z+UNDowDHO77QWS3ATRBM45ALeUVaXKIuN
-	BUn4wyX3umN1ACJL/bkYkFRmZhfWc4zrwyX4Sxa2+PIFCzvfd+vP
-X-Google-Smtp-Source: AGHT+IHXD6o6/e9xfm8vAvANjXTsFusBkRQIqUbK26nJ0RrhKbccLQ5rwERm4EI/mvxVV45beesioA==
-X-Received: by 2002:a17:902:f604:b0:20b:9d96:622c with SMTP id d9443c01a7336-20bfdf800e1mr190206355ad.8.1728352299092;
-        Mon, 07 Oct 2024 18:51:39 -0700 (PDT)
-Received: from smtpclient.apple ([205.204.117.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138afc95sm46222325ad.2.2024.10.07.18.51.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2024 18:51:38 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1728352407; c=relaxed/simple;
+	bh=Rc7CnsI6RvQdOn72xXl706cH5XE2Cg/LBLP1X5p9uF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hpYFVJYYzKEttbAFXWEtILCX9HXzugpOcz2pdRsMiYVmzjtgOn1ZM5AB3mQQ2FHcsthFu79KpX1maushRUGAy4jcR7tbY5HlcadJhIf92R+ljLjNZlbRYua0p9M4hTDPwOo30yDSOPDZj+s0c+1pEqP2jHuz+HGrehk7FLCO6m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuPDNyIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCDFAC4CEC6;
+	Tue,  8 Oct 2024 01:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728352406;
+	bh=Rc7CnsI6RvQdOn72xXl706cH5XE2Cg/LBLP1X5p9uF8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HuPDNyIZII5wmGzkwVHjjAuYYWrQwwHaJ2iV9DJk41iGsRvXW2r0AqC5ilkHW7TR9
+	 27pUk/Qo0N9SiVeEGyrTUitC3s1aVrDqlxVDG3Lepq4AX/7kpNLUVB4V0G9FzIPpcB
+	 cbCXTfwFatNsYD4HwVHPS9kJrlAgIFSfIiN7bWQ17OYd6MSjB7Gn5ZRBaTLIX7Xn/o
+	 vyxMHpD8dCQxJl7+4ZKR36RonnGNC6CG++MpxOqGH66RhbuPrm9Gx1xy8vlRugZnkC
+	 q+psTLdAxJk1TtxQZYYTS5zLXsWVbcERXiP/39/iRakQKRLKaovS7Az9bYuzzIFe1R
+	 soohROAQHQyQg==
+Message-ID: <29e6cea2-b315-49f1-8956-c70f123289de@kernel.org>
+Date: Mon, 7 Oct 2024 20:53:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] selftests: livepatch: add test case of stack_order sysfs
- interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <20241007173909.klwdxcui6slmod2a@treble>
-Date: Tue, 8 Oct 2024 09:51:25 +0800
-Cc: Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] platfom/x86: asus-wmi: revert ROG Ally quirks
+To: Luke Jones <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
  linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5D4255CE-1AA3-41BB-A6CA-784E60560333@gmail.com>
-References: <20241007141139.49171-1-zhangwarden@gmail.com>
- <20241007173909.klwdxcui6slmod2a@treble>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+Cc: platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ corentin.chary@gmail.com
+References: <20240926095344.1291013-1-luke@ljones.dev>
+ <5c21455c-c688-4287-a4ad-d047efa180eb@redhat.com>
+ <e8107624-cb9c-4eaf-9760-073424b38b3c@app.fastmail.com>
+ <d7e2a19c-f65f-4064-b945-62173075f5cc@app.fastmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <d7e2a19c-f65f-4064-b945-62173075f5cc@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/7/2024 19:03, Luke Jones wrote:
+> 
+> 
+> On Sun, 6 Oct 2024, at 8:48 AM, Luke Jones wrote:
+>> Hi Hans,
+>>
+>> On Sun, 6 Oct 2024, at 3:37 AM, Hans de Goede wrote:
+>>> Hi Luke,
+>>>
+>>> On 26-Sep-24 11:53 AM, Luke D. Jones wrote:
+>>>> The ASUS ROG Ally (and Ally X) quirks that I added over the last year
+>>>> are not required. I worked with ASUS to pinpoint the exact cause of
+>>>> the original issue (MCU USB dev missing every second resume) and the
+>>>> result is a new MCU firmware which will be released on approx 16/10/24.
+>>>
+>>> First of all let me say that it is great that you have gotten Asus
+>>> to come up with a fixed firmware, thank you.
+>>>
+>>> With that said I believe that it is way too early to revert these quirks,
+>>> users are usually not great at installing BIOS updates and that assumes
+>>> this will be handled as part of a BIOS update, if it requires running
+>>> a separate tool then the chances of users not installing the update
+>>> will likely be even worse.
+>>>
+>>> So IMHO for now we should keep these quirks around to avoid regressions
+>>> for users who don't have the MCU update.
+>>
+>> I wasn't sure how best to handle it, mostly the intention was to
+>> publicise things. In any case the quirks don't affect the new FW update
+>> at all and most folks won't ever notice.
+>>
+>>> Related, have you seen this series:
+>>>
+>>> https://lore.kernel.org/platform-driver-x86/20240922172258.48435-1-lkml@antheas.dev/
+>>>
+>>> that seems to fix the same issue ?
+>>
+>> The history of that is here
+>> https://lore.kernel.org/linux-pm/20240919171952.403745-1-lkml@antheas.dev/#t
+>>
+>>> And it does so in another, arguably better way.
+>>
+>> It is a variation of the many many things I've tried while building a
+>> comprehensive set of data for ASUS to work with. You can achieve a
+>> similar thing with only s2idle_pm callbacks and Mario's patches to
+>> export the DSM screen-off as an external symbol. Better is subjective
+>> since it still fails to fix the initial reason this work ever started -
+>> fixing the Ally - unless delays are added.
+>>
+>>> Although unfortunately as patch 3/5 shows just calling the global
+>>> "display off" callback before suspending devices is not enough
+>>> fixing things still requires inserting a sleep using a DMI quirk :|
+>>
+>> This is because the issue can only be fully fixed in FW. What is
+>> happening here is just another variation of the quirk and the things I
+>> mentioned above. It gets worse with different compiler such as clang,
+>> or different kernel config, or even distro. The cause of issues is that
+>> a particular signal the MCU is waiting on may not occur and that
+>> becomes wildly unpredictable depending on kernel config, compiler etc.
+>>
+>> Even Windows can have the issue we have here.
+>>
+>>> Still that series including the DMI quirk might be a cleaner way
+>>> to deal with this and if that is merged then dropping the quirks
+>>> from asus-wmi makes sense.
+>>
+>> All of this is fully negated by the coming firmware. Having said that,
+>> *if* there are any issues with these patches then those issues will
+>> never come to light with the new MCU FW either as it fixes the root
+>> cause of the issues seen.
+>>
+>> The mentioned patches achieve a similar result to using Mario's s2idle
+>> callback patches and using those in s2idle_pm_ops. But as seen above,
+>> the timing issue becomes apparent - and this is fixed only by using
+>> fixed FW.
+> 
+> Hi Mario,
+> 
+> I am now wondering if there is some merit still in upstreaming your original series plus the asus-wmi patch based on those. The benefit for asus-wmi is that it is cleaned up a lot, and the delay can be reduced.
+> 
+> I can likely achieve the same thing using the CSEE calls manually but shifting to the s2idle_pm callback for suspend since the main thing is just ensuring device recovery with no regard for powersave.
+> 
+> The main reason for this consideration now is due to requiring some form of it to remain for a while as Hans requests. I already know from testing that there is zero negative effect on the coming MCU update and most users won't notice at all, but I would very much like to improve the current hack.
+> 
 
-Hi, Josh.
-> On Oct 8, 2024, at 01:39, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->=20
-> On Mon, Oct 07, 2024 at 10:11:39PM +0800, Wardenjohn wrote:
->> Add test case of stack_order sysfs interface of livepatch.
->>=20
->> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
->> ---
->> .../testing/selftests/livepatch/test-sysfs.sh | 24 =
-+++++++++++++++++++
->> 1 file changed, 24 insertions(+)
->>=20
->> diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh =
-b/tools/testing/selftests/livepatch/test-sysfs.sh
->> index 05a14f5a7bfb..81776749a4e3 100755
->> --- a/tools/testing/selftests/livepatch/test-sysfs.sh
->> +++ b/tools/testing/selftests/livepatch/test-sysfs.sh
->> @@ -19,6 +19,7 @@ check_sysfs_rights "$MOD_LIVEPATCH" "enabled" =
-"-rw-r--r--"
->> check_sysfs_value  "$MOD_LIVEPATCH" "enabled" "1"
->> check_sysfs_rights "$MOD_LIVEPATCH" "force" "--w-------"
->> check_sysfs_rights "$MOD_LIVEPATCH" "replace" "-r--r--r--"
->> +check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
->> check_sysfs_rights "$MOD_LIVEPATCH" "transition" "-r--r--r--"
->> check_sysfs_value  "$MOD_LIVEPATCH" "transition" "0"
->> check_sysfs_rights "$MOD_LIVEPATCH" "vmlinux/patched" "-r--r--r--"
->> @@ -131,4 +132,27 @@ livepatch: '$MOD_LIVEPATCH': completing =
-unpatching transition
->> livepatch: '$MOD_LIVEPATCH': unpatching complete
->> % rmmod $MOD_LIVEPATCH"
->>=20
->> +start_test "sysfs test stack_order read"
->> +
->> +load_lp $MOD_LIVEPATCH
->> +
->> +check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
->> +check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
->=20
-> At the very least this should load more than one module so it can =
-verify
-> the stack orders match the load order.
->=20
-> --=20
-> Josh
+I'm totally fine with that.  As you have the asus-wmi patch based on 
+those that worked best would you mind dropping it all together as a 
+series to all 3 mailing lists (linux-pm/dri-devel/platform-x86?
 
-I got it. And I found more test modules in =
-selftests/livepatch/test_modules
+I double checked and my 3 patches apply cleanly still on 6.12-rc2.
 
-I will fix this problem with the modules inside.
+> One other consideration though is that I've found it pretty difficult to get some kind of safe HID request done through asus-wmi to fetch the MCU FW version and disable this quirk based on that, but I could possibly go in the other direction and have the hid-asus-* drivers find the asus-ally driver data and flip a switch to on/off these quirks. That would apply only for suspend/resume and not the reboot fix though.
 
-Thank you!
+I think once the hid-asus drivers land you can export a symbol that 
+provides that information of the firmware version.  asus-wmi can have a 
+dependency on those drivers and call that symbol and then make decisions 
+on the quirks based on it.
 
-Regards.
-Wardenjohn.
+> 
+> 
+>> Kind regards,
+>> Luke.
+>>
+>>> Regards,
+>>>
+>>> Hans
+>>>
+>>>
+>>>
+>>>
+>>>> All users should update to MCU FW as soon as released to:
+>>>> - Ally 1: v319
+>>>> - Ally X: v313
+>>>>
+>>>> Luke D. Jones (3):
+>>>>    Revert "platform/x86: asus-wmi: ROG Ally increase wait time, allow MCU
+>>>>      powersave"
+>>>>    Revert "platform/x86: asus-wmi: disable USB0 hub on ROG Ally before
+>>>>      suspend"
+>>>>    platfom/x86: asus-wmi: cleanup after Ally quirk reverts
+>>>>
+>>>>   drivers/platform/x86/asus-wmi.c | 39 +--------------------------------
+>>>>   1 file changed, 1 insertion(+), 38 deletions(-)
+>>>>
+> 
 
 
