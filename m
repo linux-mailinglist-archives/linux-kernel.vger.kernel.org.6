@@ -1,105 +1,89 @@
-Return-Path: <linux-kernel+bounces-354874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0559943DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3999C99441A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05BA1C247A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CEB1C21AAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81917BEAC;
-	Tue,  8 Oct 2024 09:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hl9pAJpY"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E040016C854;
+	Tue,  8 Oct 2024 09:22:17 +0000 (UTC)
+Received: from mailout1.hostsharing.net (mailout1.hostsharing.net [83.223.95.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A51178384
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D98F1422A8;
+	Tue,  8 Oct 2024 09:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378734; cv=none; b=DixjjSZdu4podDM0N6u52dmCY+AdLDAg31I6wYFrnOnLhfOWEVB3IaU31e0WFtNpupY/NHyQs614IRvjZ/YTjnXvBm74Txq1sHsltbEFTm+r67z3gqf1se0VkC/yrolcLRhxB4t2Nc6hMeutTFR8m07zijK3KYaSjiVJvgwliKA=
+	t=1728379337; cv=none; b=XE0TWHpkMMHsgOP8LaECXd+dRxvd1g30Tgv9VDuPpQ/iZbYOQOMG0FDQdVrBNLhdktnNqJdfIAqXGQhqm/KlG4COJMvMZvJfJYRYgueQwZd7rFzs5GJAooS3GHjx8h5c4K5rBw5w2mhpG1g8FzsP8y6YMtsEaV1Gh5F2yaNVx60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378734; c=relaxed/simple;
-	bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BWFBH3V6QfP4VBZD11jKeHUarrpEUum4Z1PN/ixRXRNyLIbdC4p3Q0b24eK3fvXo5v8o2VpqpLnk4rAdqQKTDB+qsGQAY8sTXrSW+IXL9oZWwHMm7JGCFF36yxf8MGv5ii28P9mfcbtm7lD3QZzdxKP1dnc19qfNY5cAceXfcYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hl9pAJpY; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so69489821fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728378731; x=1728983531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
-        b=hl9pAJpY0OMPoMPkT7x5fnU2Hc8B6zbOcLs6m5ueHzuUebAtQgCHTXN7vtw7UEVw04
-         fwqtRafXO0gImfVeJTFL918TVIgUE65xoMc0LOG/LNbteAM2RgFRObJpozJejnKpOIDv
-         bOBrcm+HDcvri/38HG/xIgCt6bZyDQA2Wx1RthPkECVA3crNg5JW2enQpFOY2/ZhhT+i
-         xa08LO1PhKbUa4YdV2kez3P3ZFMWsUBwM/p2grz1j+NqQyKNfML90eM8UN16aR0ipjA8
-         cprRIdRjfBqwaCDE6rE4iMjzZ4rdRrh/AEzHVAEoddEimYEnv8fksD1JZcSvrTm5biju
-         rzdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728378731; x=1728983531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
-        b=wtPOagMHfO3gCu5CN8kJDL/CEzSKmrRO2TRNMlQt0bYhN8a3rlfq4BNGiU8nUFYWYN
-         q5Bv1PzF8ZyKW/TbqOt262XUOvbnYJLq1Idq0KasKypgLACsA+xfBxnozzoq5r9QptRo
-         eyl6/ucj/hHThxOOq7suxZCXy98h9LfjTn7+OTCuvGuHzOa+qbwDkSdmh1Z1+C6+NBoY
-         gMd8aevKQugDLAl2oJVrbxlCQ3ft+2v1gjE7uyjsajM1I8AACOpTHMdvCymA+sz8UUnr
-         DDHSDh3GDHwaJ/h5Yz/BfXGzqSPy10MrbBYqlyMYABNH9XJD0IWsIjMAt6yVlyeyyRYD
-         mMUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeYxhGn2Jk/l8/UOmFu1DpWqDwSzEaPQyLfXEod69NFWc9IMrV0M+8B11/uqL5mo6j9SiBG/5NYdNYs9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9dGTebwTcIt/pIEsBGDSHUcv93Gv0XxTLsPmGfn3hDZfbJuxt
-	fHPTW99LrGvvF6bUt5/hDstV39hUxb7QjFyCa4p7Wtfg+8B4H16FoB/5mXAqWcOSpqABmy5kTBn
-	YjWxyy6FKgJ8TDXN4So4sKdcA+UwubzxPXbDVag==
-X-Google-Smtp-Source: AGHT+IHcBA2jTE1QM6JyuIGCT7tc+Sb9Dr7eXCmaROonw0Ss9mIeMA8MiXWox+luFXYNnTEtJ3oq3bBdjFrsUAeO2LQ=
-X-Received: by 2002:a2e:e01:0:b0:2fa:cdac:8732 with SMTP id
- 38308e7fff4ca-2faf3d70720mr73174491fa.30.1728378730928; Tue, 08 Oct 2024
- 02:12:10 -0700 (PDT)
+	s=arc-20240116; t=1728379337; c=relaxed/simple;
+	bh=sx2bYHHOLMoqNBBAD2+N3p3EeNsNG2rOO0solnU55E4=;
+	h=Message-ID:In-Reply-To:References:From:Date:Subject:To:Cc; b=ig9p6vvmYx2fH86Nw4K+TqgoSlHPuOJMqgqafAWwg7noMNbEMHVSscofnvSYaJP5ZfqZobDuI1UNzUVCFcZk8GxVB7oQVhf65VySytSWZOpW9vVNuU9vw3ElTpox2r2jIVhheJvn52k0dOVx/0s1Ix9sUciwV3xpR+rui0eColA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=83.223.95.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by mailout1.hostsharing.net (Postfix) with ESMTPS id 2013D101917BB;
+	Tue,  8 Oct 2024 11:13:12 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by h08.hostsharing.net (Postfix) with ESMTPSA id DA15C602DD59;
+	Tue,  8 Oct 2024 11:13:11 +0200 (CEST)
+X-Mailbox-Line: From 89d99476b2b57bcd3e306996ec4a60db1706253f Mon Sep 17 00:00:00 2001
+Message-ID: <89d99476b2b57bcd3e306996ec4a60db1706253f.1728378559.git.lukas@wunner.de>
+In-Reply-To: <20241008172926.0b995ea7@canb.auug.org.au>
+References: <20241008172926.0b995ea7@canb.auug.org.au>
+From: Lukas Wunner <lukas@wunner.de>
+Date: Tue, 8 Oct 2024 11:12:01 +0200
+Subject: [PATCH cryptodev-2.6] crypto: doc - Fix akcipher title reference
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ad82005d-729d-4165-afa5-61ca82382bc5@app.fastmail.com> <20241008084744.30819-1-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241008084744.30819-1-exxxxkc@getgoogleoff.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 8 Oct 2024 11:11:59 +0200
-Message-ID: <CACRpkdaPBH1CE0YXGMKUDQWyJQTZvkYgnW=UTO2uxWmBvecu9g@mail.gmail.com>
-Subject: Re: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
-To: Karl Chan <exxxxkc@getgoogleoff.me>
-Cc: arnd@arndb.de, andersson@kernel.org, catalin.marinas@arm.com, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, konradybcio@kernel.org, 
-	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mturquette@baylibre.com, robh@kernel.org, sboyd@kernel.org, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 10:49=E2=80=AFAM Karl Chan <exxxxkc@getgoogleoff.me>=
- wrote:
+Stephen reports a documentation build warning for "make htmldocs"
+introduced by recent commit 6b34562f0cfe ("crypto: akcipher - Drop
+sign/verify operations").
 
-> Also Other linksys ipq5018 based rotuer is capable of booting arm64.maybe=
- i could rip the
-> uboot from those rotuer and flash it to ea9350 v3 but i dont have another=
- linksys ipq5018
-> based rotuer.
+The commit renamed a paragraph title in a header file, but neglected to
+amend the title reference in the API documentation.  Fix it.
 
-It's maybe scary to reflash U-Boot.
+Fixes: 6b34562f0cfe ("crypto: akcipher - Drop sign/verify operations")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/all/20241008172926.0b995ea7@canb.auug.org.au/
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
+ Documentation/crypto/api-akcipher.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But you can boot a "new" U-Boot from U-Boot, so if you can compile a
-U-Boot with the proper hardware support and the RMR quirk, you should
-be able to boot that, and then use that to boot Linux into 64bit mode.
+diff --git a/Documentation/crypto/api-akcipher.rst b/Documentation/crypto/api-akcipher.rst
+index 6f47cc70eca0..ca1ecdd4a7d3 100644
+--- a/Documentation/crypto/api-akcipher.rst
++++ b/Documentation/crypto/api-akcipher.rst
+@@ -8,7 +8,7 @@ Asymmetric Cipher API
+ ---------------------
+ 
+ .. kernel-doc:: include/crypto/akcipher.h
+-   :doc: Generic Public Key API
++   :doc: Generic Public Key Cipher API
+ 
+ .. kernel-doc:: include/crypto/akcipher.h
+    :functions: crypto_alloc_akcipher crypto_free_akcipher crypto_akcipher_set_pub_key crypto_akcipher_set_priv_key crypto_akcipher_maxsize crypto_akcipher_encrypt crypto_akcipher_decrypt
+-- 
+2.43.0
 
-Yours,
-Linus Walleij
 
