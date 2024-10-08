@@ -1,175 +1,168 @@
-Return-Path: <linux-kernel+bounces-354850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6409799437C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5380D994374
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DED31F258CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7780F1C23617
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDF61DE886;
-	Tue,  8 Oct 2024 09:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pFkUD8SQ"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF75F1D90A9;
+	Tue,  8 Oct 2024 09:00:31 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F9A1D460F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077671D2B14
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378033; cv=none; b=a0qTY0DzdEzh8ycPWvKIUG/2UBtkIQvBpqVKwDJ4QtUEEY0xmOZn7CKb3uX0f/RXJpjJKRd8VCGtTerAXcq6f1Owc4To5Lt5WzP+XRHIiwGJFoWRuXezg+e54BcLt6dmeu8j59vC4vaOKp4EhbD5cnt+OK/GjVy+2eDlxWMS1BM=
+	t=1728378030; cv=none; b=tbJ1NzdSIfzHuphZrFhNhraBXmGLMSezStojuJqIK/1Lolkc0FAAOMgbrrxW8DKUZkT/GPLSc6qE40UGBj4hDJDHyc6ifgMWlzut77jLFdbi/LD8lZm8SefWQ+5ULC+wSFwyqCCydNnURpBcz3m9+7ASwC0iLRh7eWeyDm/xXsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378033; c=relaxed/simple;
-	bh=FhSSUbYjEIvtsOA30smmw3DQZNhLSc6w/jfUrv5pJGQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bOtDObe/k6kjn7RKZwzefpfMZszqIFTdGe/PELRX+ad0gSf4FR19PFuUBhYWynm5TfNntx7c4Dn/KUDf+oCBDFblWAYDwBeJRQbtIOcKipZ6NlGO7IZ+38jAmv/yuC/TEY+UGE62F3mcdwUA7f6Lxf9sFYfOD712BTvIOpvway4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pFkUD8SQ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8e8d65709so524834a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728378029; x=1728982829; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WqvSXxv/sXZh4YDTgQXsf5TmgeATsSUVXTwwhzFav38=;
-        b=pFkUD8SQrF7dN4wJxVAAqXAxjByuPm8DaBRY+Uvs4Rtz9HX0L+1/n9XHe/lIyMvRIz
-         73mxxAyfJqobbHEQLKBuyIDgwisHIqLMTHolUDnZS7zDWdnQKXZAh9RFw+9JZEPm2XAK
-         2sD4cvUdxqkJUDvFYP9cyyS0JOF9vdELJhgEN7B+NxRPK6PSaeOChXGMZ3dJqoaHFCcW
-         jAfDTsJYlh8VxecJ9R5F6ZfrPTeazxRsrK9E9TJOdKLyKoWuex+cAEBbvp9tDesPkG19
-         EnKIrHY1aaeTkXsK9sKz0SJlMTkRwFa3vVLvjbj6jXMK/t2f3Z0T5rRzdmuTsnoIXV9x
-         uw7w==
+	s=arc-20240116; t=1728378030; c=relaxed/simple;
+	bh=uHR1R80Adv/3OX5IIqsonPHDhsdT1S7T6yIqAFdBMl8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d9Pjh15JaXeqLQv1sRkiJuxzJMoM2Wlrn8LUxfJOZUwVhDJm8V+Xs+tX9E6L9/FeXljgrMRrAXXLMpRf3w6400hnBxQtLHFqh2Cep5QJJV0c1gS451tc0BjbUlAYZRi2eevsYxu3M9wLeC40+S5V1V/Nloo1M4NsU1M2Nk/TqRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a388c0e4b9so10984355ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:00:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728378029; x=1728982829;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WqvSXxv/sXZh4YDTgQXsf5TmgeATsSUVXTwwhzFav38=;
-        b=lbDAT7ANtgUlPeJQOqSKsyi7kONHl/p55LWjeUHF3YuprbkwIug+ZLvmDbDc0bEpK/
-         HGPxXBE99ZUCMCBgiTxpULjJ+7lGNPK9OX1rCMw/ZQC1cwtL1YBaI89am6waaIdHcv70
-         rzfl1GAVs5PIIOdX/RE7kp6prMm1nDejJ+OUHslgcD56i3Tj6TuCRCxMAtgfQlgcNjGy
-         fiDbew12OxGELsvsMfmGVHbX8pNE7yNcdheUSjaQHl04zJ/l2xK8f+5NB/4uPKFX97g3
-         XcIZ1eNFPHx3lUYul9a5huznn1C621pGkKGM0fwyNKdbII38GzS0LvQNqj/X843493+g
-         I6Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVjHgDqc3LZRMoK+6Oghp9y+u4XbUfEPRGI4D5qxdEaIsl/MvrHBrynl+hcAJWE/J71x2DEj6IhKnwk2vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEWF8leU7WOtev7WNM+vuK4OWfNUUXIjqdiDWvmfetvdeHYKM1
-	oO0W/3u1MlwPVdiSWi6T3dqgI4vbd0j+6G+Qcqjnf/I0DvcD25d9cT70ywdvMl0=
-X-Google-Smtp-Source: AGHT+IFnyQZ00WTesS7K+tvwWCInNJHE2ElAD+QHyyO9zbJNo147gVcQXc2DQgTrdqZeOoQgnFBBVg==
-X-Received: by 2002:a17:907:a4d:b0:a80:f54c:ad68 with SMTP id a640c23a62f3a-a991bce2e1cmr668029966b.2.1728378028617;
-        Tue, 08 Oct 2024 02:00:28 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994e6e571asm294701166b.85.2024.10.08.02.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 02:00:28 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 08 Oct 2024 11:00:06 +0200
-Subject: [PATCH v3 6/6] thermal: sun8i: Use scoped device node handling to
- simplify error paths
+        d=1e100.net; s=20230601; t=1728378027; x=1728982827;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j94wRKw6nS2yrDFlGU+jZw1Tw/r3v8/FcnZfF7tvw/A=;
+        b=Ivors/Ts5BWfPRK9yCsZbBHZZf3luIh7mJJSe1Lt3qMgHf7sF+61+4c541FQ3TfrOD
+         Jkje77ZE0FDYrQTYH4gRIKRd0Oe16L/HAfIM7ur21W02137q4UnyX7zdkt2lGutN+V8P
+         cv+te2sA/171k7tc87I1ht9zOR83kttj2Zs1rxeDRyUFHsQ7c+xxZZBQzx4ONKpxlQE8
+         tlwpYeEXSTGqG5akNR1RxI4u0ke0v8uQWW/CeAnPx2praE7+hdt3/nk3fRKogUJ/9AV4
+         z5o+Xg01bXaOOjj4T+e21WjuaeIrRhUB9iSWStp1Ud1+j+v7TLJkmkmrmv53z1AUJl3w
+         1OVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlihB51XCU4J8F/o6WobB7WrKZu3nP3b+RixEmFrUbS3kklJFNCzum5g56WsnhD/mHYhtSpsnv1mmRQww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykC9o1mQMvTZc1xKEQJSoSmHRW/IMFHjS7HsDHbKo6dRxW3sfA
+	ooSkdPOzeR1ejngdB9yQb7VfMyGo1R1DYQbUmmiN1F7OlR++enLJWT3iMriIYCadX4dZq7JgdWd
+	2faRUqxgRTq0xANCBUXW5qvHGmo0SOy0kJpzJ5y8dweqluocghn8L2h0=
+X-Google-Smtp-Source: AGHT+IEMi3ia6FJ6/yZhkhWx5b/zE0neag648rPPZpWk7fdw+owYWsZZSCv8yj75cuLjdGzrri77lTm1veH2N1XWoVEycsXMxy4u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-b4-cleanup-h-of-node-put-thermal-v3-6-825122398f71@linaro.org>
-References: <20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org>
-In-Reply-To: <20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- Chen-Yu Tsai <wenst@chromium.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1794;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=FhSSUbYjEIvtsOA30smmw3DQZNhLSc6w/jfUrv5pJGQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnBPSfE1YKQx6eHCEVnRKeY3oZT2E67IuVgGqTh
- yKvFuSWE12JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZwT0nwAKCRDBN2bmhouD
- 1//PD/0a92e+IdVlo1Rd94IpF461K36Nbu2qEwIl8Z7fifaGiJu7QHKtVmk47ZohZ6B8ygJYuXm
- T0qST14kdxL/AXy/Y23FX+h7AETR5L4omrqBZwsIcD6EeX1ap7QKpE9Ir8kjlTurpPf4N9XRvEP
- ZhxUCifgdhjpf5bHjGF69fW8S76we++KAKPCJJXV2YZ7NEM0TL6zbkJvcuOXsVXtMnmqZohB/Dn
- 3SjUZKT2nWWBEZAJLm++7ll2iXeue5bZReaf55ifDGSEGvht2vQonR3dTnaHAC8NMTsdlOHBIVv
- +MAN3obefMgGDXwMlSlxI4DME6H+LSJ/PUzba99CpgbLug+WFpRGodxXjNBEfJWlG2sNGWYWdd4
- NuciO0D92ILoNmqk2paqYfM+BW9yanrVfIusWnDfzPt4iwUupv7/9+C+vSYkaMCRbo1Z8EyLy8O
- ot2Yoe91ibgcUCIjXx1o04tJ2JzP1rZFx4guOdjJvHMvvG/ZTKXcUiQ/SIkMupPathCMA2jCdwz
- wlXL5F8KSRRw0s5MaPGsrMh20yBKEgblq8+vPrNkJ8Lf8Oes9PFuNLTEqjJJgJEw9KgoL36/2zG
- lVpIywoGSVHcPjAotUE9tFiDT4q4ibyUp7Qt9HdKh5yTFk0qOmu3YaDG9gQer/pxcvTE/OjrctQ
- iYfmhRS9ItI4tAA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-Received: by 2002:a05:6e02:2189:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a375bd2324mr137101675ab.21.1728378027047; Tue, 08 Oct 2024
+ 02:00:27 -0700 (PDT)
+Date: Tue, 08 Oct 2024 02:00:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6704f4ab.050a0220.1e4d62.0089.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in restore_regulatory_settings (3)
+From: syzbot <syzbot+e10709ac3c44f3d4e800@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+Hello,
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+syzbot found the following issue on:
+
+HEAD commit:    3840cbe24cf0 sched: psi: fix bogus pressure spikes from ag.=
+.
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D169ff527980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df95955e3f7b5790=
+c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3De10709ac3c44f3d4e=
+800
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14310d8058000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D119ff527980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
+b34a89c2a/non_bootable_disk-3840cbe2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/55888d19e055/vmlinux-=
+3840cbe2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f6b8ca10a019/bzI=
+mage-3840cbe2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+e10709ac3c44f3d4e800@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+Unexpected user alpha2: =EF=BF=BD=EF=BF=BD
+WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 is_user_regdom_saved ne=
+t/wireless/reg.c:440 [inline]
+WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 restore_alpha2 net/wire=
+less/reg.c:3424 [inline]
+WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 restore_regulatory_sett=
+ings+0x3c0/0x1e50 net/wireless/reg.c:3516
+Modules linked in:
+CPU: 0 UID: 0 PID: 1338 Comm: kworker/0:3 Not tainted 6.12.0-rc1-syzkaller-=
+00114-g3840cbe24cf0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
+.3-2~bpo12+1 04/01/2014
+Workqueue: events_power_efficient crda_timeout_work
+RIP: 0010:is_user_regdom_saved net/wireless/reg.c:440 [inline]
+RIP: 0010:restore_alpha2 net/wireless/reg.c:3424 [inline]
+RIP: 0010:restore_regulatory_settings+0x3c0/0x1e50 net/wireless/reg.c:3516
+Code: 88 44 24 1c e9 95 01 00 00 e8 ac 4f 84 f6 90 0f b6 35 34 5c 6e 0f 0f =
+b6 15 4d 5c 6e 0f 48 c7 c7 00 e6 28 8d e8 31 44 45 f6 90 <0f> 0b 90 90 4c 8=
+b 35 d5 e0 df 04 4d 85 f6 0f 84 85 00 00 00 4c 89
+RSP: 0000:ffffc90002cdfaa0 EFLAGS: 00010246
+RAX: 75bf7dfc993e6800 RBX: 0000000000000000 RCX: ffff8880003c4880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90002cdfba8 R08: ffffffff8155daa2 R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffffffff8ff07980
+R13: ffffffff815e9c86 R14: ffffc90002cdfb40 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd4b8ff8760 CR3: 0000000011d4a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ crda_timeout_work+0x27/0x50 net/wireless/reg.c:542
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- drivers/thermal/sun8i_thermal.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-index 3203d8bd13a8fc2a9e5a59b3547cefc2440542c6..22674790629a7b549d1ce618998ff51f6553613e 100644
---- a/drivers/thermal/sun8i_thermal.c
-+++ b/drivers/thermal/sun8i_thermal.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/bitmap.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/interrupt.h>
-@@ -348,19 +349,18 @@ static void sun8i_ths_reset_control_assert(void *data)
- 
- static struct regmap *sun8i_ths_get_sram_regmap(struct device_node *node)
- {
--	struct device_node *sram_node;
- 	struct platform_device *sram_pdev;
- 	struct regmap *regmap = NULL;
- 
--	sram_node = of_parse_phandle(node, "allwinner,sram", 0);
-+	struct device_node *sram_node __free(device_node) =
-+		of_parse_phandle(node, "allwinner,sram", 0);
- 	if (!sram_node)
- 		return ERR_PTR(-ENODEV);
- 
- 	sram_pdev = of_find_device_by_node(sram_node);
- 	if (!sram_pdev) {
- 		/* platform device might not be probed yet */
--		regmap = ERR_PTR(-EPROBE_DEFER);
--		goto out_put_node;
-+		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 
- 	/* If no regmap is found then the other device driver is at fault */
-@@ -369,8 +369,7 @@ static struct regmap *sun8i_ths_get_sram_regmap(struct device_node *node)
- 		regmap = ERR_PTR(-EINVAL);
- 
- 	platform_device_put(sram_pdev);
--out_put_node:
--	of_node_put(sram_node);
-+
- 	return regmap;
- }
- 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.43.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
