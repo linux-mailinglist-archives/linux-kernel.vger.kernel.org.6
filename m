@@ -1,153 +1,179 @@
-Return-Path: <linux-kernel+bounces-355136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF809947DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0309947DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF2E1C2452F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA962854C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C1C1DDC35;
-	Tue,  8 Oct 2024 11:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A2C1D90A9;
+	Tue,  8 Oct 2024 11:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9mxOjv/"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+xcJE6K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB111DE2AD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDBA1D8DFB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388783; cv=none; b=ORnXgEGdFglJkZwLUweARvH8YGMvK5nlE2u7hokCrIkA5Zbfw2l67PJIbGc/40dCdTGyNwm3bWZzgzHdfym3vSGW8xN8S391g5MLWicjuAU2ySKX56UVCNCNsm+0vObZhyuDB4wVvES/Py9h2IA8VdLESZR/GKO4xzNmA6MVONs=
+	t=1728388792; cv=none; b=AT4Mw4FG+PAe6zdQybU9avvw8BuPn1a5QiOwnX2E79XBe8Tk3SjszdojjXGFRChmZQb8zKdFcAOMtYkhERCzf+Bdv/ZedUYpzVqDfTD9zgNkTiPs6BBPV0j4lsz7VwUi80FVy3hdNb4Donssr7PSLJlZ7de9oaKoxDxn/hDhBvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388783; c=relaxed/simple;
-	bh=Pz0SOGoJf/49jFAJMh+Bk3CmUi5Zcem4IPFeloGvAno=;
+	s=arc-20240116; t=1728388792; c=relaxed/simple;
+	bh=ibSI5cw70YlzypkcFvottxsO6l9I+7EejtPji06w3+8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyrbP8j8UYyh8KNqs9U+Bsu0Rs/PrJUeHtyWP+knCC6zpAYvGpa8LvyECTA4L/KwIf26PkMqvexwnRwYYzaqW4yjwhYnQrnV3GwBb0le9PbvdkLy/aPJ3z/TtoIIgWkiYcJGmEe2WCnevi+gWvVQYx6VBrNuGvGlDhUfrKwKaGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9mxOjv/; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb1dd2886so236055e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728388779; x=1728993579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rOcmgkPNRf0kvEERDZQRUet6h/8Mc0E/vBAaBKPRt98=;
-        b=q9mxOjv/ckqWMuYa7NT0EzMZ33Yw1LirjuKjrLTZnvUcKv3eQWcP0lB3JRpe1hlY47
-         KR6rsOn0DQP+sHpBO9yWlnhXL5hRKDMG8LQgk2/BJg2/ovw6XZ5c7j7Uw8ezwK9r0Q7V
-         xGJeLnKMLcm+KOu+MRvcLYbdieQtAneKcKhy5HhzTtAaf4qrVQe43vTSTr8zre1N6SZC
-         6wtxwo47/xIJuLj1D+SPvY4NTVsMobr+xkZWHB1f1icoPAHMfxu83bmWuJyDC8b2S0Pc
-         5z3j+0zeGssIkaDQYv4eFt5QEEWr58lYSYpWuUVHs2DXqDwM6GsdSJBQr0VbwthFlXPa
-         vgDw==
+	 To:Cc:Content-Type; b=iFgPqou5bJkXqOVfPdy8EjuToWe1oYLjBpAG3832pidpwTUUhXGjcxh2YwREti8G8wqd7iwvAuhfbElVhrQQT61wLK/j4ZXsSbstdNzfLZ5h3EMO687UxgOeDwFKBA90XhW7S3nHiYuZtzI9rRQYD5JPOoe2w4iwcyRhnEnh9I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+xcJE6K; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728388790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iIFABVwlYN6z1gPY1Am/qwHJ+gGFXbVoWW3PcOPdoLQ=;
+	b=Q+xcJE6KdIqwVj0zTk/sDNTIKs5sHNt4Ds25rP27jcckVN9ViWqSYVoav+9KU2A+0gl6FU
+	4nnY+sadKF17zA3VEDIcYlfmRsVJC9m1pMU+cVo8WGBKy5FS4xpie1EVwPb3wbo9kbPlFa
+	9b8G0p7m+Hy4JE7DvJWzDcIwipMgfiM=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-eAi4rrf1NbqQXYPnb-k7rA-1; Tue, 08 Oct 2024 07:59:48 -0400
+X-MC-Unique: eAi4rrf1NbqQXYPnb-k7rA-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbc4ade39bso6924436d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:59:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728388779; x=1728993579;
+        d=1e100.net; s=20230601; t=1728388788; x=1728993588;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rOcmgkPNRf0kvEERDZQRUet6h/8Mc0E/vBAaBKPRt98=;
-        b=PNc87JhtZXLQ2GEm1eD4TDvx8qdPv7YAtFjmtJXr2t+OS64h3zbUhuTb8Hf3ibVEA1
-         JLKCyrU2cn6ZLBP5uCoBxja3tJ4IMZjWBE4Qtkk5oMfque+WHcl4ZxkE8d5EZtZXoXTu
-         bZJkQ2Uc7LqyBrYwc/sGX6cNS8+nIR1kU+ZY83ipeYikNMIZD9XOnZJ7IZ3NPSSMdJb2
-         qK2wHrlcTwlX7a8awOgMGa419+33HJ4OvHinQeXtcs84kJ9mK3gLoywOWhFdPfTWI0hg
-         kDtVqEOKO2+W4SIkPhAdsI4ZsfYdCLyoeH9IA9R1TcA3qXbPE1Z4kKfQrb3X5ZioCHFV
-         xPAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtSWSu5t4sWMSyd+1u16tEeszZgbvxkH9gHTFDRt6qSZYSD7TzYJBqWSMy1G++sWiB9owfPB+DGRgim2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVxp05q9ATzXTNVhBzG438UYURanmLULgJywiFLSdvhynAowNy
-	jSkRClA3XyHyU3qdEIP2OSjBdo0iftLzZrlpUVP5xNjedhpPcD1rN9Qh67N4l9XdcWBPwbRZ598
-	OKjzpS4i1pR4/ufy41egkDGW5ub2ehJBrhxq1
-X-Google-Smtp-Source: AGHT+IF/exW7Z8cqHE69JpNvFhXfSFn/gK+3++BaPSqwc/mLNvI2MIZL+YrUa/fxP6y1gQB3mQOVrQuly8TPYna1emM=
-X-Received: by 2002:a05:600c:3d93:b0:42c:b0b0:513a with SMTP id
- 5b1f17b1804b1-42fc83dee2emr4432795e9.2.1728388778507; Tue, 08 Oct 2024
- 04:59:38 -0700 (PDT)
+        bh=iIFABVwlYN6z1gPY1Am/qwHJ+gGFXbVoWW3PcOPdoLQ=;
+        b=A5aFLMBKIfAsu45Cn0EtNpbFrcqNvngHymErnigWP98GL1VeUKO0o1eWuvF765G1H8
+         leeOUMuhydTuN+o5vNL5JBlPAqDjYPM2dp+hdY8W0A9Di85FMfvoe1Ke09uJMlA4cS3H
+         me/qBk4bTx3ehB6HY80a3YNYOvY60Vy0sxj1SYz2wsxtA3SNGwOEc6bI1uX1VQiXApdQ
+         bbT/CN/zmAz0f86AM41KkWJkInYVPk8O3HmKHxx+4Ot5QEI106xqPWj0QgK2HwEfuyjY
+         g77WsfqlFwNZQuxhlQgBsWLBO8Jyr/8Vnh5GICb2NT+AXPBXT7IZeKbkbwr4fzzZl2Ou
+         zc6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW6ICXFGZ3SV3ll7dM1Lpn3+zdJQQKVC3f4A6XUqHcSC2ufAi1q0Es78kEoPByOzTrpCjwUsD14ufwvTGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlGo+reqP6iWRDj3dZ3lg/dP31ccZHzM+9Qgs+qp7B6ajS04+s
+	AYk65MuLlngqRRNym5wP89ZyoqQxStiLlH/6erhDs93Qg3PBKHPbTM0M9QFiaYUwioP2/Q0AQL6
+	ctnhdSoof7uMDjS/2v43vqaNd3ut9B7rgs5rpP0NiK7zIp76dBpEk/4PZmDUen4Dk1rXyFmoy6D
+	B7VJBsbbo2jZ2kMOJg2iWLh4zBIlD4rOCLRbgI
+X-Received: by 2002:a05:6214:4341:b0:6cb:3d9e:4f0f with SMTP id 6a1803df08f44-6cb9a2ed6a6mr239302386d6.1.1728388788051;
+        Tue, 08 Oct 2024 04:59:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyTU2oDPRA8pDwdxAwmkXFDkUDJtk+0gQ1yQnI6Iw1CeZllQSy0r3Wl4WVMcMUozYzPXRgfmAZg4oe2m9uSyE=
+X-Received: by 2002:a05:6214:4341:b0:6cb:3d9e:4f0f with SMTP id
+ 6a1803df08f44-6cb9a2ed6a6mr239302016d6.1.1728388787608; Tue, 08 Oct 2024
+ 04:59:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007135508.3143756-1-joychakr@google.com> <20241007135508.3143756-2-joychakr@google.com>
- <c98ece5f-c105-41ca-af1a-bddc61893071@kernel.org> <CAOSNQF148N5meoFZkbGKoMXMZ62kf=JOV+1r0GCsep3DPP_Lrw@mail.gmail.com>
- <1bc2c476-9d7b-4c87-924b-ecaed0f721de@kernel.org>
-In-Reply-To: <1bc2c476-9d7b-4c87-924b-ecaed0f721de@kernel.org>
-From: Joy Chakraborty <joychakr@google.com>
-Date: Tue, 8 Oct 2024 17:29:23 +0530
-Message-ID: <CAOSNQF0b--3o5bseU05Eu3a2zDiTTYfbnQNONFo3imw3HnaONA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: dwc3: Add binding for USB Gen2 de-emphasis
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240819145417.23367-1-piliu@redhat.com> <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+In-Reply-To: <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+From: Pingfan Liu <piliu@redhat.com>
+Date: Tue, 8 Oct 2024 19:59:35 +0800
+Message-ID: <CAF+s44RqwOXVQ_t=w922GAAdQAqx4H_EsccDmDd1h8qWAGvPBg@mail.gmail.com>
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 4:53=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Thu, Aug 29, 2024 at 1:08=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
 >
-> On 08/10/2024 12:23, Joy Chakraborty wrote:
-> > On Mon, Oct 7, 2024 at 8:26=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >>
-> >> On 07/10/2024 15:55, Joy Chakraborty wrote:
-> >>> PIPE4 spec defines an 18bit de-emphasis setting to be passed from
-> >>> controller to the PHY.
-> >>> TxDeemph[17:0] is split as [5:0] C-1, [11:6] C0, [17:12] C+1 for 3 ta=
-p
-> >>> filter used for USB Gen2(10GT/s).
-> >>>
-> >>> Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 12 ++++++++++=
-++
-> >>>  1 file changed, 12 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/D=
-ocumentation/devicetree/bindings/usb/snps,dwc3.yaml
-> >>> index 1cd0ca90127d..a1f1bbcf1467 100644
-> >>> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-> >>> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-> >>> @@ -190,6 +190,18 @@ properties:
-> >>>        - 1 # -3.5dB de-emphasis
-> >>>        - 2 # No de-emphasis
-> >>>
-> >>> +  snps,tx_gen2_de_emphasis_quirk:
-> >>
-> >> No underscores.
-> >
-> > Ack, will fix it with a follow up patch.
-> >
-> >>
-> >>> +    description: When set core will set Tx de-emphasis for USB Gen2
-> >>
-> >> And why it cannot be implied by compatible?
-> >
-> > As per my understanding these are tuning coefficients for de-emphasis
-> > particular to a platform and not the dwc3 controller, hence should not
-> > be a controller compatible.
+[...]
 >
-> Platforms must have specific compatible, so this should be implied by
-> compatible.
+> Thanks for putting this RFC together. This is useful work, and gives
+> us food for thought and discussion.
+>
+> There are a few problems that become apparent when going through these ch=
+anges.
+>
+> 1. Implementing UEFI entirely is intractable, and unnecessary.
+> Implementing the subset of UEFI that is actually needed to boot Linux
+> *is* tractable, though, but we need to work together to write this
+> down somewhere.
+>   - the EFI stub needs the boot services for the EFI memory map and
+> the allocation routines
+>   - GRUB needs block I/O
+>   - systemd-stub/UKI needs file I/O to look for sidecars
+>   - etc etc
+>
 
-Maybe I am using the word "platform" incorrectly here, what I
-understand is that the same controller(in a chip) when used on 2
-different physical form factors might need different deemphasis
-coefficient values to be passed to its Phy. Someone could correct me
-from the USB link stand point if I am mistaken here.
+I have created a git repo to hold the record for the current status.
+[https://github.com/rhkdump/kexec_uefi.git]
+And uefi_subset.md records the minimal requirement of uefi.
 
-Thanks
-Joy
+But I have a question about "GRUB needs block I/O", is it required? As
+I know, the kernel image e.g. UKI, zboot will be supported. But why
+should grub be supported too?
 
+Thanks,
+
+Pingfan
+
+> I implemented a Rust 'efiloader' crate a while ago that encapsulates
+> most of this (it can boot Linux/arm64 on QEMU and boot x86 via GRUB in
+> user space **). Adding file I/O to this should be straight-forward -
+> as Lennart points out, we only need the protocol, it doesn't need to
+> be backed by an actual file system, it just needs to be able to expose
+> other files in the right way.
 >
-> > Similar to the property defined right above this definition which is
-> > from PIPE3 spec for USB Gen1.
+> 2. Running the UEFI emulator on bare metal is not going to scale.
+> Cloning UART driver code and MMU code etc is a can of worms that you
+> want to leave closed. And as Lennart points out, there is other
+> hardware (TPM) that needs to be accessible as well. Providing a
+> separate set of drivers for all hardware that the EFI emulator may
+> need to access is not a tractable problem either.
+>
+> The fix for this, as I see it, is to run the EFI emulator in user
+> space, to the point where the payload calls ExitBootServices(). This
+> will allow all I/O and memory protocol to be implemented trivially,
+> using C library routines. I have a crude prototype** of this running
+> to the point where ExitBootServices() is called (and then it crashes).
+> The tricky yet interesting bit here is how we migrate a chunk of user
+> space memory to the bare metal context that will be created by the
+> kexec syscall later (in which the call to ExitBootServices() would
+> return and proceed with the boot). But the principle is rather
+> straight-forward, and would permit us, e.g., to kexec an OS installer
+> too.
+>
+> 3. We need to figure out how to support TPM and PCRs in the context of
+> kexec. This is a fundamental issue with verified boot, given that the
+> kexec PCR state is necessarily different from the boot state, and so
+> we cannot reuse the TPM directly if we want to pretend that we are
+> doing an ordinary boot in kexec. The alternative is to leave the TPM
+> in a state where the kexec kernel can access its sealed secrets, and
+> mock up the TCG2 EFI protocols using a shim that sits between the TPM
+> hardware (as the real TCG2 protocols will be long gone) and the EFI
+> payload. But as I said, this is a fundamental issue, as the ability to
+> pretend that a kexec boot is a pristine boot would mean that verified
+> boot is broken.
 >
 >
-> Best regards,
-> Krzysztof
+> As future work, I'd like to propose to collaborate on some alignment
+> regarding a UEFI baseline for Linux, i.e., the parts that we actually
+> need to boot Linux.
 >
+> For this series in particular, I don't see a way forward where we
+> adopt this approach, and carry all this code inside the kernel.
+>
+> Thanks.
+> Ard.
+>
+
 
