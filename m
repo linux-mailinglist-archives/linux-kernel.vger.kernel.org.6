@@ -1,90 +1,111 @@
-Return-Path: <linux-kernel+bounces-355309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B7299505C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CB4995076
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708931C23862
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C121C24C5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF19D1DF72E;
-	Tue,  8 Oct 2024 13:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778B61DF279;
+	Tue,  8 Oct 2024 13:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTfg6/sX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B8BWrc0H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461FF1DF25E;
-	Tue,  8 Oct 2024 13:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDD31D362B;
+	Tue,  8 Oct 2024 13:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394801; cv=none; b=hcO5qD+G6vKZDu14q0bObmf3mZE0YT1KVtE5hTe7iqEPMtw3utjzKCwfrCrmD1ao2WaGIlzC3SVrznWCt/PPg42pWLrxVC8qpSLHtBrwpJ4QpvFTcYzpKRtOo6kanhvvyG6E5TZj2hY6x0eey/rvdn3Rfo7983zoYA2Mht2qNoE=
+	t=1728394922; cv=none; b=gSDVz4IIZxlmE5MGQ5Y2QvNdkr/yrKQlCZ6dclcszCNzuhu8y5oGzl5oxNdj5uG6m1k505P1GwCfenV+00qxI6rjCBbXbwh9H0Sc3FG4bF0Vp6p9I2Cy+hw7pMfJTBZFBaVw8AmH/CTpvTxpD9etU8P6T1zYq13xc/RTJMJd3E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394801; c=relaxed/simple;
-	bh=F9YQQkqbHNcwgfVQyUpy1C+NloEUAj4v8A/JWR2xuAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XPClkI8/QiADLeDo2boaTEIMlIuFJDrUhenEY9nvMkzrkF9d80h4VI9LgwIEY0zUp13OIWugq3Ox7ppo+BEuMlgWF2yacWjQVbXRJqznMuav+mAScOJhmy0ZaB1j0hUmCIVj8TbNoV7ml6HaWqqY/Wv2KA1R7vUmRbOOvSeci9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTfg6/sX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011BCC4CEC7;
-	Tue,  8 Oct 2024 13:39:59 +0000 (UTC)
+	s=arc-20240116; t=1728394922; c=relaxed/simple;
+	bh=PLTW4wEi44inD24SGOxcygZQ8NsHLs+KSu6NJQ0Niyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bv8u3WT7HcNvOCxTHAnaM1ZoHPBtKpYDfMYSVB3fJOF6RLEPTHtQoMjUHkqTqlRTb07EzBkREStU5FZBFQSySqeNiI4bHp1xM9HmvZV+ba/ioTJYf7G2ejJ9Q2RN6tx4K3Om+QkOq6DXqKctvMCbO13FFCP1GoW756GskHVGXAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B8BWrc0H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B46B5C4CEC7;
+	Tue,  8 Oct 2024 13:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728394800;
-	bh=F9YQQkqbHNcwgfVQyUpy1C+NloEUAj4v8A/JWR2xuAg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kTfg6/sXBD2y1/18g0sEw3yDVNToVFwRuusLRBZv9aXHBImEJjaM6Cd/BPRl9gmsA
-	 35GW6M/leNtyGkoSrdIe0zlEOkxmpAzAMjcQ7/YZkmV82t95PB8DnQkHNaR+zCvcqV
-	 oMrEDVox5Dd5TC8HpyE4G4VedvR1pWSXXa757E3rtcaCVJemUmbgiHDPMoG5McdXNN
-	 GylOOLKwBC/K9pwi4y2jFy98P5TZdqc9bCWpU5jcmYQRDbWzDCnnuyrlCMUnjJq9ra
-	 tv+QqtlubIOQRLJGg+0iFarx3erQ7CJe6iWJgsw0g3oukGcvmBFoKdbGyvqZHGOYMq
-	 a0rStKiCSPbvg==
-Date: Tue, 8 Oct 2024 06:39:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>,
- <Jonathan.Cameron@Huawei.com>, <helgaas@kernel.org>, <corbet@lwn.net>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <alex.williamson@redhat.com>, <gospo@broadcom.com>,
- <michael.chan@broadcom.com>, <ajit.khaparde@broadcom.com>,
- <somnath.kotur@broadcom.com>, <andrew.gospodarek@broadcom.com>,
- <manoj.panicker2@amd.com>, <Eric.VanTassell@amd.com>,
- <vadim.fedorenko@linux.dev>, <horms@kernel.org>, <bagasdotme@gmail.com>,
- <bhelgaas@google.com>, <lukas@wunner.de>, <paul.e.luse@intel.com>,
- <jing2.liu@intel.com>
-Subject: Re: [PATCH V7 4/5] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20241008063959.0b073aab@kernel.org>
-In-Reply-To: <20241002165954.128085-5-wei.huang2@amd.com>
-References: <20241002165954.128085-1-wei.huang2@amd.com>
-	<20241002165954.128085-5-wei.huang2@amd.com>
+	s=k20201202; t=1728394922;
+	bh=PLTW4wEi44inD24SGOxcygZQ8NsHLs+KSu6NJQ0Niyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B8BWrc0HIy0mUEVmvruHx9Wg4rdjAjooMw9gKa0BsYGeyQPy5nVG/mJO19OAeqUTr
+	 RZvlalK+CCdOUrzeF2LVsqGJPps2pF7umzScMSogqyAoM0EPgrgRCbLooKirBI9dA+
+	 WUp/WqunEg2rmMr+l96oVjppKcokvacmlF5oGdm97YycsNq9uW5JZ2ji6VDRoEOmgl
+	 Gr6mo9tJmksNFGKD3Ip4xD9gEeuOuhJPa+WOlsKgC6pR+o2tXGw5UMSz+wW9TkNqgQ
+	 eb67xO/bt1HeuBx3rqMtsbVhVw+3yWpZxs2qGW0Z9ZctlAjM3oFjWTv898DG7Ha0f/
+	 YAbv5AFYnQ29g==
+Date: Tue, 8 Oct 2024 15:41:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alain Volmat <alain.volmat@foss.st.com>
+Cc: Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 12/15] dt-bindings: media: addition of stm32mp25
+ compatible of DCMIPP
+Message-ID: <lu252oltrh6bftg2e4hpthazd4r3lwbd75mboezhz7f4bbfdip@w5k4jx6oyyzx>
+References: <20241008-csi_dcmipp_mp25-v1-0-e3fd0ed54b31@foss.st.com>
+ <20241008-csi_dcmipp_mp25-v1-12-e3fd0ed54b31@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241008-csi_dcmipp_mp25-v1-12-e3fd0ed54b31@foss.st.com>
 
-On Wed, 2 Oct 2024 11:59:53 -0500 Wei Huang wrote:
-> +	if (netif_running(irq->bp->dev)) {
-> +		rtnl_lock();
-> +		err = netdev_rx_queue_restart(irq->bp->dev, irq->ring_nr);
-> +		if (err)
-> +			netdev_err(irq->bp->dev,
-> +				   "rx queue restart failed: err=%d\n", err);
-> +		rtnl_unlock();
-> +	}
-> +}
-> +
-> +static void __bnxt_irq_affinity_release(struct kref __always_unused *ref)
-> +{
-> +}
+On Tue, Oct 08, 2024 at 01:18:14PM +0200, Alain Volmat wrote:
+> Addition of the stm32mp25 compatible for the DCMIPP.
 
-An empty release function is always a red flag.
-How is the reference counting used here?
-Is irq_set_affinity_notifier() not synchronous?
-Otherwise the rtnl_lock() should probably cover the running check.
+"Add"
+See submitting patches.
+
+> The stm32mp25 distinguish with the stm32mp13 by the fact that:
+>  - supports also csi inputs in addition to parallel inputs
+>  - requires an addition csi clock to be present
+> 
+> The commit also adds access-controllers, an optional property that
+
+"Add", see submitting patches.
+
+> allows a peripheral to refer to one or more domain access controller(s).
+> 
+> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> ---
+>  .../devicetree/bindings/media/st,stm32-dcmipp.yaml | 53 +++++++++++++++++++---
+>  1 file changed, 47 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml b/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
+> index 87731f3ce7bd..bda28fef0b78 100644
+> --- a/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
+> +++ b/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
+> @@ -10,9 +10,40 @@ maintainers:
+>    - Hugues Fruchet <hugues.fruchet@foss.st.com>
+>    - Alain Volmat <alain.volmat@foss.st.com>
+>  
+> +allOf:
+
+Please put allOf: like in example schema, so after required:.
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+
+Best regards,
+Krzysztof
+
 
