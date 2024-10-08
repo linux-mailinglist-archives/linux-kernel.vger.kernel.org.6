@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-355558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA4E995407
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:07:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF930995409
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9ED71C2494B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:07:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47AD2B2753F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6601E0DBD;
-	Tue,  8 Oct 2024 16:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188BA1E0DCE;
+	Tue,  8 Oct 2024 16:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="h56sa1Ts"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QqXhyUKv"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92764A8F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3967284A35
 	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403667; cv=none; b=RfHBrzXS83mB7LiUeqygDic1z1M5VNFphXTo6dVS2QYI77+QyKiBOIgR/UcQIpyFORW9jBLWwVJYBtWXC3IdA0F1jdLFQ5YDEfwcRwzro+F29oRXDKWoJB74/0sD+yHRsxbCmlMiBKKOvTNIw/64Oz6G+3uVHnSFGnannTdK5IA=
+	t=1728403668; cv=none; b=C59qPCZDToMU4ksgXWnWesMvB88M3bDQRhaq/GJTGKr4jmYo4wrXUEGYdtDGbbgbODqgrZVKMpRmqNYm0RVIgjLBmjoHZrCMKFfW8hvnkNS6W45D4jTT1+ZCPgcV5eeLgTjbLnxzQxmOqdpEH49robSJvCbM0TgzjVsBsO87IkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403667; c=relaxed/simple;
-	bh=Q02JvgZpEw0CKuh5bAD1hiL/2cF0mICLfBLjEWGs5gQ=;
+	s=arc-20240116; t=1728403668; c=relaxed/simple;
+	bh=SLpYYIhwuRweVEWtXaaExUucJuJAaFTutEyzIFc19Ys=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C79+PzYl7UfOS2PpLNVyAI5l9l+E3xn3zApi7KuFC0DLuRokHwYKukEMqA/6EP/7qCJo0ibZgx5311aZFZlgkaULOWWcEtL09PN5oKjCxUPfEfjAmgdSddIyLm3Y/MWXNbiDj4PdMLy784mnW+CG9p6U5+pYZsHBd7CvKvj1DWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=h56sa1Ts; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=CDbgtvHG/v94o2UmwC3w/gFTaaNkZue3IzJwbe8VuLO1ArVysQbNO/yFLr9bZU1oPpql3gGU/lTtOE8SAETHyumKM6beLw3PeLX81S06zlO+kpBILUpO2P+ET00PRIq18bikoGr/D1ov5IPW3kjePVwpmQF/+7RqNuUy8NiilLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QqXhyUKv; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso5866575e87.0
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb2191107so52396345e9.1
         for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 09:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728403663; x=1729008463; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728403664; x=1729008464; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7iY6njGfqCiqj2LmxQwsaHq5nfhgm8YldXS56w+mUoc=;
-        b=h56sa1Tskxg5I3S6Fy4HQpTHJg8yN4Yqhr8yhawzctt+Hou7joCBgiZOH9midx0iNB
-         zgFLVNYTjw7oqZjK+14lflFyFruv1UlXaOW7CAjGEkvNqmCsC27ijWCjgqEO7D2WN+Ra
-         bkVIRzyGmh9tZxIVtaU3g59W79ZDez0Pz0VbJS2eion4QHbEWrzPxBoKeBo/glfTO05N
-         c3ilkThHcUJwId6rF6PLglnR2TiZjzqM6eLcuQTM3Vd7WPjFZpIO1hTMqqPM9n2f/TFB
-         D/pFrsfhxZZcDRFwVXYpbXWB4+odKTjASdKaREk0ciGDVYj+Filmb+8ThdAcm7L/w0sh
-         pqKA==
+        bh=xDbgGqNHBzRgP8skRhDRSOpGwGytoSrr7Q6T0y3qesI=;
+        b=QqXhyUKvmcZ6S6JtErEvLORzY+4WmK1uRkocfnFV/qQjMZDG/LkmbJPL0wGgSsquX+
+         UMSMaBlzb3bpfdfhDMsS/UzNGiwq02iZGn0c8bcwaScoMI6F1wGfaPI13GsRP3lbgWe6
+         DFDxJExcTawlfOp3z8Oso2/aXE1qByI1p/fXtWCTufZ4qNP6LNNPzC+rBDATCxxfUZbn
+         S4BTg+f6f30qXz/rTJMcijaLulROfN+vH94L8IKN3fL79r2WmwL3Pflvtf5Ah/G75M/M
+         2nFpWWhlcM3f52pa3BmH7Xyt5m+pHyDTzInefCfh3fB5Q3ejcBq005qHkTGm9t29selF
+         zpaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728403663; x=1729008463;
+        d=1e100.net; s=20230601; t=1728403664; x=1729008464;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7iY6njGfqCiqj2LmxQwsaHq5nfhgm8YldXS56w+mUoc=;
-        b=KjDhkWK1MkfZjNkKWNH2FgXFWtpN0xpf9xax3tWmVR0NOQvNdicyqhG0fR72NUctI2
-         G6TTk0TSFY9uwFtUF8KwAJ+ZhY908YhnkkwONKcVuSLXqHeQwp3NtxWhPax5eVapyrh5
-         cr1GJrkOsGjciClBQCMzFOu6ZeY63Mvaole4AGsM66smkzOrM//tZlxhyG1Oa2zUgaTG
-         nQXK0mF0EtOv+b6D2c/nfUO9KQ8vTd9Vyfc0QNFf9wYfRS3TQ7aVnWtmzvMTrsLm+ON1
-         ljmmVJyOy33foq/03tIE4WaI1nsEBxhdZBREzWsog3ykuJhFXDvpfbLjMHRYMAGCRma/
-         3ppA==
-X-Gm-Message-State: AOJu0Yw0jDlMLlZKwIztrDe1QFb8mJY7wFeI5zhK16qoXF6rWL6AfuqG
-	aVf87rEF19dAVXgHC54kcNkypuBOghg+fb2vpmFEJBp2VfiCsrdU+rinsRrjAYg=
-X-Google-Smtp-Source: AGHT+IEK+i7AarbSnC/AqQomD1+MfurzcjNVvb8QbEYHSrEJIyP77gYrO3OXePZiXZs9A7BSH5Dh0Q==
-X-Received: by 2002:a05:6512:6c6:b0:539:94e2:a0ce with SMTP id 2adb3069b0e04-539ab9e7f85mr9040976e87.59.1728403663364;
-        Tue, 08 Oct 2024 09:07:43 -0700 (PDT)
+        bh=xDbgGqNHBzRgP8skRhDRSOpGwGytoSrr7Q6T0y3qesI=;
+        b=wpQ9u2XUdymbYFyZ6CDoPB2NewrGC7Su1fGwGdy72m+SJBJgTBbRlQjrz6v7u0fBCA
+         Qtn2LdGw+FYw2k/FwiEafBbb3EZqXbR9d7sugNO8zIByPwGFONnkZ25pr76z2YcrO2Ls
+         o4H1bcNt5zCsH1yzNLT/CHhcwr/TTlWg7OzEI1gpAREKKWAa4vzPjRLK1CErXegzdfRt
+         4ZdHN8GN6nfvyzlKh2Zk5vwkPi4jrU3DxqAxHXOrUUdc7wj9MyeJyDuTRs0IxFPyiQl+
+         9Neju2KqpvRuaXT0Ze2VX5UbUpOlhiHvRq4jd/+MvPmO5q2VBXAYMTfDiqIOqiSwVbSQ
+         hwCg==
+X-Gm-Message-State: AOJu0YzE2d+4i785bFNGZlI0h+gVFBgrzYEzUL8q4iO1GjahRuiRnsJD
+	lZgcFQ3tEoE2Q9tReZJdmdC8qbC9xf6Y5gAdaC3vclHio8khNL428rRVjZFB0z8=
+X-Google-Smtp-Source: AGHT+IGXf5QLoPw16k9d991f5pOjDzBf+dRdwCs0K8OQU+2mi8LSHFPyk3LIsmXp9D0e6YZQzkEVNw==
+X-Received: by 2002:a05:600c:4f15:b0:426:554a:e0bf with SMTP id 5b1f17b1804b1-42f85ac0af7mr128799175e9.16.1728403664475;
+        Tue, 08 Oct 2024 09:07:44 -0700 (PDT)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:41f2:4244:ce34:c273])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86a20537sm131509375e9.15.2024.10.08.09.07.42
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86a20537sm131509375e9.15.2024.10.08.09.07.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 09:07:42 -0700 (PDT)
+        Tue, 08 Oct 2024 09:07:43 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 08 Oct 2024 18:07:01 +0200
-Subject: [PATCH v2 1/3] regulator: core: do not silently ignore provided
- init_data
+Date: Tue, 08 Oct 2024 18:07:02 +0200
+Subject: [PATCH v2 2/3] regulator: core: add callback to perform runtime
+ init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,122 +77,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-regulator-ignored-data-v2-1-d1251e0ee507@baylibre.com>
+Message-Id: <20241008-regulator-ignored-data-v2-2-d1251e0ee507@baylibre.com>
 References: <20241008-regulator-ignored-data-v2-0-d1251e0ee507@baylibre.com>
 In-Reply-To: <20241008-regulator-ignored-data-v2-0-d1251e0ee507@baylibre.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3322; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=Q02JvgZpEw0CKuh5bAD1hiL/2cF0mICLfBLjEWGs5gQ=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnBVjKhV/lugejOqzcQ69eCAtrcHGHIGd7GNR+b
- wGYCNiHpVeJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZwVYygAKCRDm/A8cN/La
- hdFoEACGy2v2KWidDFR5bxRYY2ju/lOgqS22utl6spsvCDY5CrhC7/lm4z5giUf/r+0o/5qN+uT
- DbggD8QDO9/qnYHTvDHAQ76dDkqlOC0EbCeeRLmvuOQ9qrKKGs8GNoXxVrAmIV+85essvqUut+m
- eaQUdn10DaixWmxe7uSdmOmLCyY/rzHI3vamJg5BQnp+gIm+9tT8rTU3YrxJuvodMeUahE1hN+L
- sjutF/KdIL+4PjdkIC7vqw27hFydjHSOYikmQWPhmPBkhUxf74jzsiFjn+d3xuPqRwQKDYJFBH6
- xxjS683z1VYcXgJrE5EVwOcZF6KbLxP9+3BTmD3zzSrwTkoM1H2AdrVDk0s9TplK/ey8TwH1fEj
- pVJGMg0Cf6p6dNkz8NLYRot5cQJxklh+vkf8ZE4V44nXmayla7Ckn/xxv4+ABzkVi3VkdNiRp+i
- udqTqeiBdxjmpU1hdrcVAgzYcaLChhJAoek6LdVuHRJfNN9tDjzj5tWMeO0BNF3pMKgtT4e0AoK
- h7Zh8+jXcwQd0x8DiR67UKxj1i/7v9ip60fJPtloQcxsZayNGX1Ya9PIS6deEqnA5/Ljsd3f51c
- ehhVyD6RUu17IbclnppLbAKopZv0itYgNNVf9p4NGTcsNKVOSMevwrH3wK81w8u4B42oZdjZmW+
- zhIZUnVtDVuUMSw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1560; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=SLpYYIhwuRweVEWtXaaExUucJuJAaFTutEyzIFc19Ys=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnBVjLCQGgCHGjYMW07hkUpd8/1wsZMwG2DyQqm
+ 9ahPocghOSJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZwVYywAKCRDm/A8cN/La
+ hakcD/9MpkrwSCOdq50efCzV2yjgLNTwlu4tEX+4aJGvg+62GIfQ24VWjNB/+eCiDcbkoHOhPtJ
+ RrMfm692x+OXYXwmlcKigsFiGYjVakMSzwaesI/WyP7F+JSY8BYY6310gfM6oVaS4fIolkrkQtj
+ CyVcGIs4OF5Mt9IajLJ14vPLp5AtMggjR3GTK6kk8sYQtLudud5kQUYlqrymoHU7467IxAMBY4c
+ wuzCkbkA1+f4gihDoQ3oDHJlTMXHgXVc3paNI0/jKopbDp3cAfmP/F1ZKu0qphI+pLyBCZWeN9z
+ sEYLTAeIp0QupbZ+rAWOHbSdqTrF5mDhC/qhoZwveVz5PKNxXacks1RnJ3gkoCP1vBHseKTlsYj
+ 4gdaKOusA5mnKkSanHQjJiu5zw53Aw4UvytHlKiNrr+6OzH+VjOYkZUtStUxTzkW2x5kdgNuGpj
+ JWzqkWj0gHwZukq4b2o/PNUl2Pi4vtyH5OFbXueRRu3o3LwCOc3VY0EGZ2HjRjw29NsYuTh6PhV
+ FdT4EIihqmcZaMwB426loSAfM2JMqNJkA3bIJAh9GAQTEB1xiNViOOoSFbFMmHhvFTNWn6rjnds
+ pnH48R+jeObUnC9jEpYB9W4Rq7FshcxfOIZbanSzHhWUJkY/zCt6CULRfQcDMunTE+L3YuW37Ve
+ j5qzStF/TsAmV0Q==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On DT platforms, if a regulator init_data is provided in config, it is
-silently ignored in favor of the DT parsing done by the framework, if
-of_match is set.
+Provide an initialisation callback to handle runtime parameters.
+The idea is similar to the regulator_init() callback, but it provides
+regulator specific structures, instead of just the driver specific data.
 
-of_match is an indication that init_data is expected to be set based on DT
-and the parsing should be done by the regulator framework.
-
-If the regulator provider passed init_data it must be because it is useful
-somehow, in such case of_match should be clear.
-
-If the driver expects the framework to initialize this data on its
-own, it should leave init_data clear.
-
-Warn if both init_data and of_match are set, then default to the provided
-init_data.
+As an example, this allows the driver to amend the regulator constraints
+based on runtime parameters if necessary.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/regulator/core.c | 57 +++++++++++++++++++++++++++++-------------------
- 1 file changed, 34 insertions(+), 23 deletions(-)
+ drivers/regulator/core.c         | 6 ++++++
+ include/linux/regulator/driver.h | 2 ++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index d0b3879f2746..a58a9db3d9c7 100644
+index a58a9db3d9c7..f8b5d596f59d 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -5681,32 +5681,43 @@ regulator_register(struct device *dev,
- 		goto clean;
+@@ -5758,6 +5758,12 @@ regulator_register(struct device *dev,
+ 		goto wash;
  	}
  
--	init_data = regulator_of_get_init_data(dev, regulator_desc, config,
--					       &rdev->dev.of_node);
--
--	/*
--	 * Sometimes not all resources are probed already so we need to take
--	 * that into account. This happens most the time if the ena_gpiod comes
--	 * from a gpio extender or something else.
--	 */
--	if (PTR_ERR(init_data) == -EPROBE_DEFER) {
--		ret = -EPROBE_DEFER;
--		goto clean;
--	}
-+	if (config->init_data) {
-+		/*
-+		 * Providing of_match means the framework is expected to parse
-+		 * DT to get the init_data. This would conflict with provided
-+		 * init_data, if set. Warn if it happens.
-+		 */
-+		if (regulator_desc->of_match)
-+			dev_warn(dev, "Using provided init data - OF match ignored\n");
- 
--	/*
--	 * We need to keep track of any GPIO descriptor coming from the
--	 * device tree until we have handled it over to the core. If the
--	 * config that was passed in to this function DOES NOT contain
--	 * a descriptor, and the config after this call DOES contain
--	 * a descriptor, we definitely got one from parsing the device
--	 * tree.
--	 */
--	if (!cfg->ena_gpiod && config->ena_gpiod)
--		dangling_of_gpiod = true;
--	if (!init_data) {
- 		init_data = config->init_data;
- 		rdev->dev.of_node = of_node_get(config->of_node);
++	if (regulator_desc->init_cb) {
++		ret = regulator_desc->init_cb(rdev, config);
++		if (ret < 0)
++			goto wash;
++	}
 +
-+	} else {
-+		init_data = regulator_of_get_init_data(dev, regulator_desc,
-+						       config,
-+						       &rdev->dev.of_node);
-+
-+		/*
-+		 * Sometimes not all resources are probed already so we need to
-+		 * take that into account. This happens most the time if the
-+		 * ena_gpiod comes from a gpio extender or something else.
-+		 */
-+		if (PTR_ERR(init_data) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto clean;
-+		}
-+
-+		/*
-+		 * We need to keep track of any GPIO descriptor coming from the
-+		 * device tree until we have handled it over to the core. If the
-+		 * config that was passed in to this function DOES NOT contain a
-+		 * descriptor, and the config after this call DOES contain a
-+		 * descriptor, we definitely got one from parsing the device
-+		 * tree.
-+		 */
-+		if (!cfg->ena_gpiod && config->ena_gpiod)
-+			dangling_of_gpiod = true;
- 	}
- 
- 	ww_mutex_init(&rdev->mutex, &regulator_ww_class);
+ 	if ((rdev->supply_name && !rdev->supply) &&
+ 		(rdev->constraints->always_on ||
+ 		 rdev->constraints->boot_on)) {
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index f230a472ccd3..d2f4427504f0 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -365,6 +365,8 @@ struct regulator_desc {
+ 	int (*of_parse_cb)(struct device_node *,
+ 			    const struct regulator_desc *,
+ 			    struct regulator_config *);
++	int (*init_cb)(struct regulator_dev *,
++		       struct regulator_config *);
+ 	int id;
+ 	unsigned int continuous_voltage_range:1;
+ 	unsigned n_voltages;
 
 -- 
 2.45.2
