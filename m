@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-354587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294D1993F7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:34:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90053993F66
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEED41F252F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86DA9B238DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412B11C1737;
-	Tue,  8 Oct 2024 06:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2828198A20;
+	Tue,  8 Oct 2024 06:51:15 +0000 (UTC)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD10216BE23;
-	Tue,  8 Oct 2024 06:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577E6189F59;
+	Tue,  8 Oct 2024 06:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370320; cv=none; b=cuutEa6cQjE7VXcvQxI8NkZRauY/VrVsjsB3AeoVHLWRVaexkuzmUKz0SNjIwiouYoYriWMfhAwa+DF3mEWS1hMDBN6tVHeCJpN1h3/RtOXEEEg8P7GA/k80XqLP3CWzss2SJDdP5rxmSEEG/sdAY871CJerzNLL8q8GN5abfNM=
+	t=1728370275; cv=none; b=C5yaAAmo09LmMMJQBSdLQEN5m2i4K/GwUeUPaEGZl0kJVZlhGcLV53OuilAL1vgUhyR2TxCnQ/I8FgnwZ6nWC7P8LcfFaVo6eDIFW6sZZXAR5p/YrBxpQA9mun0HNfmW9S+avK0Xpn4wvsjL7osIeemy5aMkKVz3eHDDagsRwsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370320; c=relaxed/simple;
-	bh=GUvhzlzFzjridXdFhrrGBeRXP9UI7+yDU7tLFIai60w=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=A76Lq/IN4241AiHM/7dulnIj2Hs0l9IWl4JY/LxNc4TO1SgFATRmItXJd6yGxOTqA7EwpCni7vgxVfri+RZo3am3diF9vR8nzrU16eMhfg4eNcaIBtXVhzaK0nMImzF4NBBOHjtrPRHDizi7VYYRst6aKf0pPCmmj9KAAJyt/pA=
+	s=arc-20240116; t=1728370275; c=relaxed/simple;
+	bh=aBhMMc0z1xLqYQUA9NZ2tp+ctsltxUmNbPPcVsphsmk=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=UQQqOpfiDCL3w70i7Usd00ZRtQr8OTvzLZ2du+zrYtJap6NuwjNLSDWeGLKzEUh3JVfLj1dUyvIiXSw+wwnNo5ARpzJg/vLMQHvq8ATNajlTzAdbSk6HQMLoCOjuWyXYJ9q4K2MIVCQRZhPH5God0f666ZTBnkIn3rT4earq/wU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3D9A5200269;
-	Tue,  8 Oct 2024 08:51:05 +0200 (CEST)
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C57F200081;
+	Tue,  8 Oct 2024 08:51:06 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 03EA1200222;
-	Tue,  8 Oct 2024 08:51:05 +0200 (CEST)
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 22A74202309;
+	Tue,  8 Oct 2024 08:51:06 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 55889183B721;
-	Tue,  8 Oct 2024 14:51:03 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7ACB9183B725;
+	Tue,  8 Oct 2024 14:51:04 +0800 (+08)
 From: Shengjiu Wang <shengjiu.wang@nxp.com>
 To: shengjiu.wang@gmail.com,
 	Xiubo.Lee@gmail.com,
@@ -49,9 +49,9 @@ To: shengjiu.wang@gmail.com,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ASoC: fsl_xcvr: enable interrupt of cmdc status update
-Date: Tue,  8 Oct 2024 14:27:52 +0800
-Message-Id: <1728368873-31379-2-git-send-email-shengjiu.wang@nxp.com>
+Subject: [PATCH 2/2] ASoC: fsl_xcvr: reset RX dpath after wrong preamble
+Date: Tue,  8 Oct 2024 14:27:53 +0800
+Message-Id: <1728368873-31379-3-git-send-email-shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1728368873-31379-1-git-send-email-shengjiu.wang@nxp.com>
 References: <1728368873-31379-1-git-send-email-shengjiu.wang@nxp.com>
@@ -62,40 +62,245 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-This enables the interrupt to be asserted when there
-is a change in Capabilities data structure / Latency
-request of the CMDC Status register.
+Below preamble error means wrong preamble of IEC958 received,
+the channel order may be wrong at the moment.
+
+FSL_XCVR_IRQ_PREAMBLE_MISMATCH
+FSL_XCVR_IRQ_UNEXP_PRE_REC
+FSL_XCVR_IRQ_M_W_PRE_MISMATCH
+FSL_XCVR_IRQ_B_PRE_MISMATCH
+
+All above errors may cause channel swap, to avoid such issues,
+need to reset the DMAC path.
 
 Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- sound/soc/fsl/fsl_xcvr.c | 4 ++++
- sound/soc/fsl/fsl_xcvr.h | 1 +
- 2 files changed, 5 insertions(+)
+ sound/soc/fsl/fsl_xcvr.c | 90 ++++++++++++++++++++++++++++++++++------
+ sound/soc/fsl/fsl_xcvr.h |  4 ++
+ 2 files changed, 81 insertions(+), 13 deletions(-)
 
 diff --git a/sound/soc/fsl/fsl_xcvr.c b/sound/soc/fsl/fsl_xcvr.c
-index beede7344efd..9e24d6462c01 100644
+index 9e24d6462c01..1e0bfd59d511 100644
 --- a/sound/soc/fsl/fsl_xcvr.c
 +++ b/sound/soc/fsl/fsl_xcvr.c
-@@ -1265,6 +1265,10 @@ static irqreturn_t irq0_isr(int irq, void *devid)
- 		dev_dbg(dev, "DMA write request\n");
- 		isr_clr |= FSL_XCVR_IRQ_DMA_WR_REQ;
+@@ -53,6 +53,8 @@ struct fsl_xcvr {
+ 	struct snd_aes_iec958 rx_iec958;
+ 	struct snd_aes_iec958 tx_iec958;
+ 	u8 cap_ds[FSL_XCVR_CAPDS_SIZE];
++	struct work_struct work_rst;
++	spinlock_t lock; /* Protect hw_reset and trigger */
+ };
+ 
+ static const struct fsl_xcvr_pll_conf {
+@@ -663,7 +665,10 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ {
+ 	struct fsl_xcvr *xcvr = snd_soc_dai_get_drvdata(dai);
+ 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
+-	int ret;
++	unsigned long lock_flags;
++	int ret = 0;
++
++	spin_lock_irqsave(&xcvr->lock, lock_flags);
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+@@ -675,7 +680,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 FSL_XCVR_EXT_CTRL_DPTH_RESET(tx));
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Failed to set DPATH RESET: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		if (tx) {
+@@ -687,7 +692,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 						   FSL_XCVR_ISR_CMDC_TX_EN);
+ 				if (ret < 0) {
+ 					dev_err(dai->dev, "err updating isr %d\n", ret);
+-					return ret;
++					goto release_lock;
+ 				}
+ 				fallthrough;
+ 			case FSL_XCVR_MODE_SPDIF:
+@@ -696,7 +701,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 FSL_XCVR_TX_DPTH_CTRL_STRT_DATA_TX);
+ 				if (ret < 0) {
+ 					dev_err(dai->dev, "Failed to start DATA_TX: %d\n", ret);
+-					return ret;
++					goto release_lock;
+ 				}
+ 				break;
+ 			}
+@@ -707,14 +712,14 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 FSL_XCVR_EXT_CTRL_DMA_DIS(tx), 0);
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Failed to enable DMA: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		ret = regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_IER0,
+ 					 FSL_XCVR_IRQ_EARC_ALL, FSL_XCVR_IRQ_EARC_ALL);
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Error while setting IER0: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		/* clear DPATH RESET */
+@@ -723,7 +728,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 0);
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Failed to clear DPATH RESET: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		break;
+@@ -736,14 +741,14 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 FSL_XCVR_EXT_CTRL_DMA_DIS(tx));
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Failed to disable DMA: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		ret = regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_IER0,
+ 					 FSL_XCVR_IRQ_EARC_ALL, 0);
+ 		if (ret < 0) {
+ 			dev_err(dai->dev, "Failed to clear IER0: %d\n", ret);
+-			return ret;
++			goto release_lock;
+ 		}
+ 
+ 		if (tx) {
+@@ -754,7 +759,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 					 FSL_XCVR_TX_DPTH_CTRL_STRT_DATA_TX);
+ 				if (ret < 0) {
+ 					dev_err(dai->dev, "Failed to stop DATA_TX: %d\n", ret);
+-					return ret;
++					goto release_lock;
+ 				}
+ 				if (xcvr->soc_data->spdif_only)
+ 					break;
+@@ -768,17 +773,20 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
+ 				if (ret < 0) {
+ 					dev_err(dai->dev,
+ 						"Err updating ISR %d\n", ret);
+-					return ret;
++					goto release_lock;
+ 				}
+ 				break;
+ 			}
+ 		}
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
++		break;
  	}
-+	if (isr & FSL_XCVR_IRQ_CMDC_STATUS_UPD) {
-+		dev_dbg(dev, "CMDC status update\n");
-+		isr_clr |= FSL_XCVR_IRQ_CMDC_STATUS_UPD;
+ 
+-	return 0;
++release_lock:
++	spin_unlock_irqrestore(&xcvr->lock, lock_flags);
++	return ret;
+ }
+ 
+ static int fsl_xcvr_load_firmware(struct fsl_xcvr *xcvr)
+@@ -1198,6 +1206,34 @@ static const struct regmap_config fsl_xcvr_regmap_cfg = {
+ 	.cache_type = REGCACHE_FLAT,
+ };
+ 
++static void reset_rx_work(struct work_struct *work)
++{
++	struct fsl_xcvr *xcvr = container_of(work, struct fsl_xcvr, work_rst);
++	struct device *dev = &xcvr->pdev->dev;
++	unsigned long lock_flags;
++	u32 ext_ctrl;
++
++	dev_dbg(dev, "reset rx path\n");
++	spin_lock_irqsave(&xcvr->lock, lock_flags);
++	regmap_read(xcvr->regmap, FSL_XCVR_EXT_CTRL, &ext_ctrl);
++
++	if (!(ext_ctrl & FSL_XCVR_EXT_CTRL_DMA_RD_DIS)) {
++		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
++				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS,
++				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS);
++		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
++				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET,
++				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET);
++		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
++				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS,
++				   0);
++		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
++				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET,
++				   0);
++	}
++	spin_unlock_irqrestore(&xcvr->lock, lock_flags);
++}
++
+ static irqreturn_t irq0_isr(int irq, void *devid)
+ {
+ 	struct fsl_xcvr *xcvr = (struct fsl_xcvr *)devid;
+@@ -1269,6 +1305,29 @@ static irqreturn_t irq0_isr(int irq, void *devid)
+ 		dev_dbg(dev, "CMDC status update\n");
+ 		isr_clr |= FSL_XCVR_IRQ_CMDC_STATUS_UPD;
+ 	}
++	if (isr & FSL_XCVR_IRQ_PREAMBLE_MISMATCH) {
++		dev_dbg(dev, "Preamble mismatch\n");
++		isr_clr |= FSL_XCVR_IRQ_PREAMBLE_MISMATCH;
++	}
++	if (isr & FSL_XCVR_IRQ_UNEXP_PRE_REC) {
++		dev_dbg(dev, "Unexpected preamble received\n");
++		isr_clr |= FSL_XCVR_IRQ_UNEXP_PRE_REC;
++	}
++	if (isr & FSL_XCVR_IRQ_M_W_PRE_MISMATCH) {
++		dev_dbg(dev, "M/W preamble mismatch\n");
++		isr_clr |= FSL_XCVR_IRQ_M_W_PRE_MISMATCH;
++	}
++	if (isr & FSL_XCVR_IRQ_B_PRE_MISMATCH) {
++		dev_dbg(dev, "B preamble mismatch\n");
++		isr_clr |= FSL_XCVR_IRQ_B_PRE_MISMATCH;
++	}
++
++	if (isr & (FSL_XCVR_IRQ_PREAMBLE_MISMATCH |
++		   FSL_XCVR_IRQ_UNEXP_PRE_REC |
++		   FSL_XCVR_IRQ_M_W_PRE_MISMATCH |
++		   FSL_XCVR_IRQ_B_PRE_MISMATCH)) {
++		schedule_work(&xcvr->work_rst);
 +	}
  
  	if (isr_clr) {
  		regmap_write(regmap, FSL_XCVR_EXT_ISR_CLR, isr_clr);
+@@ -1415,11 +1474,16 @@ static int fsl_xcvr_probe(struct platform_device *pdev)
+ 			fsl_xcvr_comp.name);
+ 	}
+ 
++	INIT_WORK(&xcvr->work_rst, reset_rx_work);
++	spin_lock_init(&xcvr->lock);
+ 	return ret;
+ }
+ 
+ static void fsl_xcvr_remove(struct platform_device *pdev)
+ {
++	struct fsl_xcvr *xcvr = dev_get_drvdata(&pdev->dev);
++
++	cancel_work_sync(&xcvr->work_rst);
+ 	pm_runtime_disable(&pdev->dev);
+ }
+ 
 diff --git a/sound/soc/fsl/fsl_xcvr.h b/sound/soc/fsl/fsl_xcvr.h
-index 882428592e1a..ce27b13698e7 100644
+index ce27b13698e7..c72cb05184df 100644
 --- a/sound/soc/fsl/fsl_xcvr.h
 +++ b/sound/soc/fsl/fsl_xcvr.h
-@@ -165,6 +165,7 @@
- 					 FSL_XCVR_IRQ_MUTE | \
+@@ -166,6 +166,10 @@
  					 FSL_XCVR_IRQ_FIFO_UOFL_ERR | \
  					 FSL_XCVR_IRQ_HOST_WAKEUP | \
-+					 FSL_XCVR_IRQ_CMDC_STATUS_UPD |\
+ 					 FSL_XCVR_IRQ_CMDC_STATUS_UPD |\
++					 FSL_XCVR_IRQ_B_PRE_MISMATCH |\
++					 FSL_XCVR_IRQ_M_W_PRE_MISMATCH |\
++					 FSL_XCVR_IRQ_PREAMBLE_MISMATCH |\
++					 FSL_XCVR_IRQ_UNEXP_PRE_REC |\
  					 FSL_XCVR_IRQ_ARC_MODE)
  
  #define FSL_XCVR_ISR_CMDC_TX_EN		BIT(3)
