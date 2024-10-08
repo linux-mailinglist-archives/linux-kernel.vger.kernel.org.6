@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-354847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5380D994374
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C35994384
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7780F1C23617
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE721F26808
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF75F1D90A9;
-	Tue,  8 Oct 2024 09:00:31 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6691D0E34;
+	Tue,  8 Oct 2024 09:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XFtsB8tI"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077671D2B14
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98E613A88A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378030; cv=none; b=tbJ1NzdSIfzHuphZrFhNhraBXmGLMSezStojuJqIK/1Lolkc0FAAOMgbrrxW8DKUZkT/GPLSc6qE40UGBj4hDJDHyc6ifgMWlzut77jLFdbi/LD8lZm8SefWQ+5ULC+wSFwyqCCydNnURpBcz3m9+7ASwC0iLRh7eWeyDm/xXsA=
+	t=1728378095; cv=none; b=g/v+anM5dz7+mEag42cAsJEm2tf+rd/qkBwJ5gFVJkGVO8xQ5vyrXPBQlv0fPBROcmCeK/MVirCbACAyrYP9FoLpabydEqgrCaLsdvOetDvs5EOPo+yEe+uG7DjY4o2TUiZGFSqPyuj75q1y9PcyOeVJjgeWnsexdCkInvUHERU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378030; c=relaxed/simple;
-	bh=uHR1R80Adv/3OX5IIqsonPHDhsdT1S7T6yIqAFdBMl8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d9Pjh15JaXeqLQv1sRkiJuxzJMoM2Wlrn8LUxfJOZUwVhDJm8V+Xs+tX9E6L9/FeXljgrMRrAXXLMpRf3w6400hnBxQtLHFqh2Cep5QJJV0c1gS451tc0BjbUlAYZRi2eevsYxu3M9wLeC40+S5V1V/Nloo1M4NsU1M2Nk/TqRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a388c0e4b9so10984355ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:00:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728378027; x=1728982827;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j94wRKw6nS2yrDFlGU+jZw1Tw/r3v8/FcnZfF7tvw/A=;
-        b=Ivors/Ts5BWfPRK9yCsZbBHZZf3luIh7mJJSe1Lt3qMgHf7sF+61+4c541FQ3TfrOD
-         Jkje77ZE0FDYrQTYH4gRIKRd0Oe16L/HAfIM7ur21W02137q4UnyX7zdkt2lGutN+V8P
-         cv+te2sA/171k7tc87I1ht9zOR83kttj2Zs1rxeDRyUFHsQ7c+xxZZBQzx4ONKpxlQE8
-         tlwpYeEXSTGqG5akNR1RxI4u0ke0v8uQWW/CeAnPx2praE7+hdt3/nk3fRKogUJ/9AV4
-         z5o+Xg01bXaOOjj4T+e21WjuaeIrRhUB9iSWStp1Ud1+j+v7TLJkmkmrmv53z1AUJl3w
-         1OVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlihB51XCU4J8F/o6WobB7WrKZu3nP3b+RixEmFrUbS3kklJFNCzum5g56WsnhD/mHYhtSpsnv1mmRQww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykC9o1mQMvTZc1xKEQJSoSmHRW/IMFHjS7HsDHbKo6dRxW3sfA
-	ooSkdPOzeR1ejngdB9yQb7VfMyGo1R1DYQbUmmiN1F7OlR++enLJWT3iMriIYCadX4dZq7JgdWd
-	2faRUqxgRTq0xANCBUXW5qvHGmo0SOy0kJpzJ5y8dweqluocghn8L2h0=
-X-Google-Smtp-Source: AGHT+IEMi3ia6FJ6/yZhkhWx5b/zE0neag648rPPZpWk7fdw+owYWsZZSCv8yj75cuLjdGzrri77lTm1veH2N1XWoVEycsXMxy4u
+	s=arc-20240116; t=1728378095; c=relaxed/simple;
+	bh=a2Lka12I+944SR7l+lXTUahOT32pJduQSO1CNn7GJL4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GBdrABXs3WznCySVsNVvvkNGQ1xjVhcvcdEwYhsFtILLPDmgjE36M7LQSsPiwSGif5s3v5aYAI+HzlzOcq6TCBpK0MjaI4JKVUXJX2zl+VKsXPUgVzgUGuZByvkeQzBML7jaJla6VKRV1FgXsM5rze13JlHWXxpTN3iFhyZEd8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XFtsB8tI; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49891J3v120985;
+	Tue, 8 Oct 2024 04:01:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728378079;
+	bh=0oTotaH4I4rxhhRb8VxxetmOMUWnu5ssBNn0TEWG5w8=;
+	h=From:To:CC:Subject:Date;
+	b=XFtsB8tIqLTiYQz8CAat9Gx2JGzg4Ci93mb9JDPSHni/5bdwABCMtcAJAzIXb9RLd
+	 6Lvp0BN1N0dnz5ocisfR39WpeQYrwmhgs+BO1zv7SzPonAnRuZuQI34f2oKstSVwqg
+	 L2k6wAzY+ytr72qdifi/n+8bjs7TGo0jW/tTu3jE=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49891JDZ004532
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Oct 2024 04:01:19 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Oct 2024 04:01:19 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Oct 2024 04:01:19 -0500
+Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.123])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49891Fwh069830;
+	Tue, 8 Oct 2024 04:01:15 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <baojun.xu@ti.com>, <13564923607@139.com>, <13916275206@139.com>,
+        <navada@ti.com>, <v-hampiholi@ti.com>, <m-shrivastava1@ti.com>,
+        <sakshi@ti.com>, <sandeepk@ti.com>, <robinchen@ti.com>,
+        <alsa-devel@alsa-project.org>, Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v5] MAINTAINERS: update entries in TEXAS INSTRUMENTS LOW/MIDDLE-POWER AUDIO AMPLIFIER (ASoC/HDA) DRIVERS and add entries for haptic driver
+Date: Tue, 8 Oct 2024 17:01:08 +0800
+Message-ID: <20241008090109.48-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2189:b0:3a0:8c68:7705 with SMTP id
- e9e14a558f8ab-3a375bd2324mr137101675ab.21.1728378027047; Tue, 08 Oct 2024
- 02:00:27 -0700 (PDT)
-Date: Tue, 08 Oct 2024 02:00:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6704f4ab.050a0220.1e4d62.0089.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in restore_regulatory_settings (3)
-From: syzbot <syzbot+e10709ac3c44f3d4e800@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+Due to internal re-org, Kevin is no longer mnaintaining audio driver.
+Due to job change, drop entries for the audio converter and add
+entries for both haptics drivers and middle-power audio amplifier
+drivers. Add audio converter, set the Status as Supported. So far, the
+Software maintainer has not been confirmed. Once the maintainer was
+confimred, the guy will update his mail into audio converter section.
 
-syzbot found the following issue on:
-
-HEAD commit:    3840cbe24cf0 sched: psi: fix bogus pressure spikes from ag.=
-.
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D169ff527980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df95955e3f7b5790=
-c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3De10709ac3c44f3d4e=
-800
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14310d8058000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D119ff527980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
-b34a89c2a/non_bootable_disk-3840cbe2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/55888d19e055/vmlinux-=
-3840cbe2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f6b8ca10a019/bzI=
-mage-3840cbe2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+e10709ac3c44f3d4e800@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-Unexpected user alpha2: =EF=BF=BD=EF=BF=BD
-WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 is_user_regdom_saved ne=
-t/wireless/reg.c:440 [inline]
-WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 restore_alpha2 net/wire=
-less/reg.c:3424 [inline]
-WARNING: CPU: 0 PID: 1338 at net/wireless/reg.c:442 restore_regulatory_sett=
-ings+0x3c0/0x1e50 net/wireless/reg.c:3516
-Modules linked in:
-CPU: 0 UID: 0 PID: 1338 Comm: kworker/0:3 Not tainted 6.12.0-rc1-syzkaller-=
-00114-g3840cbe24cf0 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
-.3-2~bpo12+1 04/01/2014
-Workqueue: events_power_efficient crda_timeout_work
-RIP: 0010:is_user_regdom_saved net/wireless/reg.c:440 [inline]
-RIP: 0010:restore_alpha2 net/wireless/reg.c:3424 [inline]
-RIP: 0010:restore_regulatory_settings+0x3c0/0x1e50 net/wireless/reg.c:3516
-Code: 88 44 24 1c e9 95 01 00 00 e8 ac 4f 84 f6 90 0f b6 35 34 5c 6e 0f 0f =
-b6 15 4d 5c 6e 0f 48 c7 c7 00 e6 28 8d e8 31 44 45 f6 90 <0f> 0b 90 90 4c 8=
-b 35 d5 e0 df 04 4d 85 f6 0f 84 85 00 00 00 4c 89
-RSP: 0000:ffffc90002cdfaa0 EFLAGS: 00010246
-RAX: 75bf7dfc993e6800 RBX: 0000000000000000 RCX: ffff8880003c4880
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90002cdfba8 R08: ffffffff8155daa2 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffffffff8ff07980
-R13: ffffffff815e9c86 R14: ffffc90002cdfb40 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd4b8ff8760 CR3: 0000000011d4a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- crda_timeout_work+0x27/0x50 net/wireless/reg.c:542
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v5:
+ - | Reported-by: kernel test robot <lkp@intel.com>
+   | Closes: https://lore.kernel.org/oe-kbuild-all/202410021557.FByBO9Dp-lkp@intel.com/
+v4:
+ - Add Touch Screen support
+v3:
+ - Add Audio converter section
+ - Set the section of LOW/MIDDLE-POWER AUDIO AMPLIFIER as Supported
+v2:
+ - Add the detailed information of the maintained drivers.
+---
+ MAINTAINERS | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a097afd76ded..ecc987548088 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22901,25 +22901,42 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/davinci-mcasp-audio.yaml
+ F:	sound/soc/ti/
+ 
+-TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS
++TEXAS INSTRUMENTS LOW/MIDDLE-POWER AUDIO AMPLIFIER (ASoC/HDA) & HAPTICS DRIVERS
+ M:	Shenghao Ding <shenghao-ding@ti.com>
+-M:	Kevin Lu <kevin-lu@ti.com>
+ M:	Baojun Xu <baojun.xu@ti.com>
+ L:	linux-sound@vger.kernel.org
+-S:	Maintained
++S:	Supported
++F:	Documentation/devicetree/bindings/input/ti,drv260x.yaml
++F:	Documentation/devicetree/bindings/input/ti,drv266x.yaml
+ F:	Documentation/devicetree/bindings/sound/tas2552.txt
++F:	Documentation/devicetree/bindings/sound/tas5720.txt
+ F:	Documentation/devicetree/bindings/sound/ti,tas2562.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tas2770.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tas27xx.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas5086.txt
++F:	Documentation/devicetree/bindings/sound/ti,tas57xx.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas5805m.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tpa6130a2.yaml
++F:	drivers/input/misc/drv2*.c
++F:	include/sound/tas2*.h
++F:	include/sound/tas5086.h
++F:	include/sound/tpa6130a2-plat.h
++F:	sound/pci/hda/tas2781_hda_i2c.c
++F:	sound/soc/codecs/tas2*.*
++F:	sound/soc/codecs/tas5*.*
++F:	sound/soc/codecs/tpa6130a2.*
++
++TEXAS INSTRUMENTS AUDIO Converter (ASoC) and Touch Screen DRIVERS
++L:	linux-sound@vger.kernel.org
++S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/ti,pcm1681.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm3168a.yaml
++F:	Documentation/devicetree/bindings/sound/ti,pcm6240.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320*.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320adcx140.yaml
+-F:	include/sound/tas2*.h
++F:	drivers/input/touchscreen/tsc2*.*
+ F:	include/sound/tlv320*.h
+-F:	include/sound/tpa6130a2-plat.h
+-F:	sound/pci/hda/tas2781_hda_i2c.c
+ F:	sound/soc/codecs/pcm1681.c
+ F:	sound/soc/codecs/pcm1789*.*
+ F:	sound/soc/codecs/pcm179x*.*
+@@ -22929,9 +22946,8 @@ F:	sound/soc/codecs/pcm3060*.*
+ F:	sound/soc/codecs/pcm3168a*.*
+ F:	sound/soc/codecs/pcm5102a.c
+ F:	sound/soc/codecs/pcm512x*.*
+-F:	sound/soc/codecs/tas2*.*
++F:	sound/soc/codecs/pcm6240.*
+ F:	sound/soc/codecs/tlv320*.*
+-F:	sound/soc/codecs/tpa6130a2.*
+ 
+ TEXAS INSTRUMENTS DMA DRIVERS
+ M:	Peter Ujfalusi <peter.ujfalusi@gmail.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+base-commit: 87d6aab2389e5ce0197d8257d5f8ee965a67c4cd
+-- 
+2.34.1
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
