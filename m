@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-355286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6DE994FBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:29:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE738994FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7807A286F7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCDD1F24D00
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6812A1DFD9F;
-	Tue,  8 Oct 2024 13:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266F1DFE12;
+	Tue,  8 Oct 2024 13:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFo3AS22"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxLyBMtr"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA7B1DFD98
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A1D1DFE04
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394060; cv=none; b=eMjh59qAqaUVZF62PccGgxLIqURwZdaghEFYXvK5mpmqaEKLwuo270TpGRDiztY93hy9wd2o5FXFUgmiWUiGmbrmZpZVDXPt+BeP5zpJKKHKHwz3nSumk3zPe8w3bYVgvwIpne60qZuiDP13ow9MlZnHuN0HTptKKRXs82+VYvo=
+	t=1728394066; cv=none; b=q8FbigBrLe+WNIap/+xr/Ad/PG/Ph/ZFwEJQOyBdSLxtqBz4q6+UhMtul7S7777T6R2JLE8cDtuJiBE2ZLnuKRsMzfvo8UZ7FdN/WYEwIgJLm8w8KbsDvjqGFNP/+G57c464WtCbJGcbipkQGvooJJ/Gg5D45yI196/mbo1AZRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394060; c=relaxed/simple;
-	bh=Bp3mbK4KZ0jqXLqKYBElrTRE/rqK5KnHPN+iml/dRno=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J2Gf9CB+CshMXgF8R8JKI7CsRfzftRPYvgvviayCrcitPobBICd57brdM2ThSeicHDJE/pU6+oTtyPsGBkXzB77DcloteNU1nV0ja9sHhggHjAsdPd7bfvx02QcGi6OPrzPi6E9KQZU3zv+qXjEmjWyMo6ya/k/YU9KNirmv9BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFo3AS22; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1728394066; c=relaxed/simple;
+	bh=RDpHGhSEvFOpamT3cqCVwtWJZyTuxOm1879+DAAi6Iw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kUNS5HqH8qM9SfhiKA7gJv6C/1l5qufdBfmXtbkFP0RIbYdFCSJfOpbgf8rOwMf5EDC0cGGa3qXRYtBmuolY3HF5YO/F/P95/i6RxAAzO3QeQhiT9qH2aK1xX7Xq2vCd5mzqbh/yf563jseuXYQiFKUyvuaU92EIBCpCubHcgew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxLyBMtr; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea24595bccso251670a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:27:39 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e284844d5fso511187a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728394059; x=1728998859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GNRTK4GY4M/5SnKSdR40yf4xxmnZc4ktxUmJ5/TaZVA=;
-        b=QFo3AS22ZIzAyyeSQfRNapVSbfkqYy0ugh5ZHqjsk45gIH7NFv45FcA67Xg9xTNtDD
-         RDrgr/NFZTND3B1P1buKNnNPI6PT2YJD28E0/XsUsTdc9QxTbyKEXDl1XN4+E+x/lYE5
-         DzZHZKsiRrwi7bqO1IQyIXoeA9mTiXNhYP7rJJKe71CYO53zkv79yo2tejZ8mAYZ4EG6
-         Ttno4SybzpVIbohM9uPPV1w11ui28rky9wf01DFvljNsC9bKK8zcAsvi5JrYqCJoOG/f
-         J45znBO92ZCCbB0taYFcM/wsFRcd1FmdmBeEkZX6zflNrOHItUrkO5LyK9s5TDLg09ht
-         xcTQ==
+        d=gmail.com; s=20230601; t=1728394064; x=1728998864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iORC/3+gFiV4oQN4Aw7kbFgz84yNOuZ0Gq1M6ocZ+00=;
+        b=ZxLyBMtr329L6sxzo35GxCYuk31zjxpgXmzGXUVL88tNsyJf717//x6KLRNlIbwTW+
+         GNsxOkfqcq119uBeHk9mwldgs74NG12RZ7lp1DwAuZpYLgfJlHoMu8/K2A2YKnvTy26J
+         X1pAnJfJ1QPPaT0xaqg9awrTUw74uF3iQbjb04GZbXE2V9nmKEM0yypshRoBGFMpAXPL
+         HrFkw5SogYCPNXdNJI3MDAEgbiHQMaVDNbABkm5QQXz8231MrxrzigXigBZxo1WBnNXz
+         9iMJ21r0Yvjlf/npHl8XDbpf9OWFhWBV94iJN1NrWXFWUn1yxnVqwoMwWg7TknZO6Itt
+         mp7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728394059; x=1728998859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GNRTK4GY4M/5SnKSdR40yf4xxmnZc4ktxUmJ5/TaZVA=;
-        b=t1z3gQf15Degc+5Ponsc0AJ02YDrqgpZ/oDzJPftFoyUw1J5lonnGm5FKjt3wAU9Og
-         ea7dPquvlJM40iQdzc62vnIaK5CMoZlPxxHidIX/g7JGCv8qhANBAj909VY8bBlkJaT7
-         aa+GF6Ck4+3Paw88y99/KRsd14cy/TLxAUbaKFc7Xr99ttGCM54uD9yzT7vTj3BkiF0w
-         poT7syA9VY6y7vFEn95YUfk0k0DlSGeD3yVhWXZkZjF69nXD2B2r9MoEdfy0g5ohpzDI
-         pSeVwGi/B0cJLPAQIUV/hBXx76NQArYQrTIrBZqmcejzCgKh/GQlZEBfXiqJvOEqHgc5
-         Wm6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8nXTyRHZG/O3y62dx9hGzpUVPX2vmSL5+8K9BKRQrulU/adEZwZ0AxFUU15hSkBuylJxj/WzUEsJYFhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjjKYCWQir9DrE8QtDioaBCIps0vE015ftzIYA6D4j6u6ZykUG
-	WgdAoLz9El2XfL/SeLUTSAZY6P+SyWYvo9b5R3J5NqIaZHuocOq4
-X-Google-Smtp-Source: AGHT+IEPBSY9n6qD6ZyvnmB52+tWd6fPMTLLVgOtWzgpTHXZv6NjkRb9kArISqSlxpL+qPUzVtYrRA==
-X-Received: by 2002:a05:6a20:c886:b0:1cc:da34:585e with SMTP id adf61e73a8af0-1d6dfaee214mr21301979637.46.1728394058567;
-        Tue, 08 Oct 2024 06:27:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728394064; x=1728998864;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iORC/3+gFiV4oQN4Aw7kbFgz84yNOuZ0Gq1M6ocZ+00=;
+        b=wbrR/4W0MVaDC0a0py0GtPVCUt0YR43HDtiZhHRhKFOVfuEGqHMshkOqZmanUCd4uI
+         HWweFNn7nlPeHBhZNdN470fqdTb67Qcuat00wfuXgsincsG/s95q/GhmZpLtgRnjo+oi
+         RPBE0bFFj4vZN5yfrx+y3KQisFOo21wEyU9XdAsqODeuof3h7r/XxEv8nmcZflWpDAB6
+         JahF8pscQVAkq6pK3I6XonfkMlJSyIRFgUnlxstBiB+hZ9LOgiFS34VTK+HYmSgpXs51
+         JolG/1hBD5Elh6Sk1D5Gy7wRklRe4eHbeWvcVD+vewPt0DzuZU4hNrmmcRAOV0DgwXxC
+         yx6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzRjF+WipA/8h/rpZnE6q1QUMQfH2MRY3LaNpVh0dqNAC72HIvzhyq2DPi/C/eUiU4GSa89RlSjBnGkZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbdRjmk3o+YoL4H2VPVyO5LnHBGjUcistxtOjIv0+97Z+PGE3O
+	LiME7ft0QVzAlIUSj/VI29l8eRZSnbrahydf7uvTyX6Mh6IGjs7t
+X-Google-Smtp-Source: AGHT+IFUSmB5qj013ukPWcd2PnqbxEbtyk9xGORICVlDGwgM/Alk+7OzaNIs/iU7kZlzw9YIiIXvNQ==
+X-Received: by 2002:a17:90b:360f:b0:2d8:8175:38c9 with SMTP id 98e67ed59e1d1-2e1e626c076mr18806026a91.20.1728394064555;
+        Tue, 08 Oct 2024 06:27:44 -0700 (PDT)
 Received: from dw-tp.ibmuc.com ([171.76.87.188])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20af4655dsm7628992a91.27.2024.10.08.06.27.33
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20af4655dsm7628992a91.27.2024.10.08.06.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 06:27:37 -0700 (PDT)
+        Tue, 08 Oct 2024 06:27:43 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-mm@kvack.org,
@@ -78,12 +80,13 @@ Cc: linux-mm@kvack.org,
 	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
 	Donet Tom <donettom@linux.vnet.ibm.com>,
 	LKML <linux-kernel@vger.kernel.org>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	Sachin P Bappalige <sachinpb@linux.ibm.com>
-Subject: [RFC 1/2] cma: Fix CMA_MIN_ALIGNMENT_BYTES during early_init
-Date: Tue,  8 Oct 2024 18:57:18 +0530
-Message-ID: <c1e66d3e69c8d90988c02b84c79db5d9dd93f053.1728386179.git.ritesh.list@gmail.com>
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [RFC 2/2] fadump: Make fadump reserve_dump_area_start CMA aligned in case of holes
+Date: Tue,  8 Oct 2024 18:57:19 +0530
+Message-ID: <7950c20ae9f771a39eb0c0d568beb8681fee0209.1728386179.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <c1e66d3e69c8d90988c02b84c79db5d9dd93f053.1728386179.git.ritesh.list@gmail.com>
+References: <c1e66d3e69c8d90988c02b84c79db5d9dd93f053.1728386179.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,72 +95,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-During early init CMA_MIN_ALIGNMENT_BYTES can be PAGE_SIZE,
-since pageblock_order is still zero and it gets initialized
-later during paging_init() e.g.
-paging_init() -> free_area_init() -> set_pageblock_order().
+Consider cma alignment into account while calculating base address for
+fadump memory allocation. Physical memory ranges can have holes and
+fadump_locate_reserve_mem() tries to find a suitable base address.
+If CMA is enabled and fadump nocma is false then we need to consider
+CMA_MIN_ALIGNMENT_BYTES for reserve_dump_area_start.
 
-One such use case is -
-early_setup() -> early_init_devtree() -> fadump_reserve_mem()
+For e.g. in case of below memory layout, the most suitable base address
+is 0x00000501000000 for crashkernel=4097M which is 16M (order 8) aligned
+as expected by CMA_MIN_ALIGNMENT_BYTES on PPC64 during early boot
+(when pageblock_order is still not initialized)
 
-This causes CMA memory alignment check to be bypassed in
-cma_init_reserved_mem(). Then later cma_activate_area() can hit
-a VM_BUG_ON_PAGE(pfn & ((1 << order) - 1)) if the reserved memory
-area was not pageblock_order aligned.
+~ # cat /proc/iomem
+00000000-1fffffff : System RAM
+100000000-1ffffffff : System RAM
+300000000-3ffffffff : System RAM
+500200000-9001fffff : System RAM
 
-Instead of fixing it locally for fadump case on PowerPC, I believe
-this should be fixed for CMA_MIN_ALIGNMENT_BYTES.
+~ # dmesg |grep -Ei "fadump|cma"
+fadump: Reserved 4112MB of memory at 0x00000501000000 (System RAM: 25088MB)
+fadump: Initialized 0x101000000 bytes cma area at 20496MB from 0x1010002a8 bytes of memory reserved for firmware-assisted dump
+Kernel command line: root=/dev/vda1 console=ttyS0 nokaslr slub_max_order=0 norandmaps noreboot crashkernel=4097M fadump=on disable_radix=no debug_pagealloc=off
+Memory: 21246656K/25690112K available (31872K kernel code, 4544K rwdata, 17280K rodata, 9216K init, 2212K bss, 218432K reserved, 4210688K cma-reserved)
 
-<stack trace>
-==============
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10010
-flags: 0x13ffff800000000(node=1|zone=0|lastcpupid=0x7ffff) CMA
-raw: 013ffff800000000 5deadbeef0000100 5deadbeef0000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: VM_BUG_ON_PAGE(pfn & ((1 << order) - 1))
-------------[ cut here ]------------
-kernel BUG at mm/page_alloc.c:778!
-
-Call Trace:
-__free_one_page+0x57c/0x7b0 (unreliable)
-free_pcppages_bulk+0x1a8/0x2c8
-free_unref_page_commit+0x3d4/0x4e4
-free_unref_page+0x458/0x6d0
-init_cma_reserved_pageblock+0x114/0x198
-cma_init_reserved_areas+0x270/0x3e0
-do_one_initcall+0x80/0x2f8
-kernel_init_freeable+0x33c/0x530
-kernel_init+0x34/0x26c
-ret_from_kernel_user_thread+0x14/0x1c
-
-Reported-by: Sachin P Bappalige <sachinpb@linux.ibm.com>
+Reported-by: Sourabh Jain <sourabhjain@linux.ibm.com>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- include/linux/cma.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/fadump.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 9db877506ea8..20abc6561bcd 100644
---- a/include/linux/cma.h
-+++ b/include/linux/cma.h
-@@ -5,6 +5,7 @@
- #include <linux/init.h>
- #include <linux/types.h>
- #include <linux/numa.h>
-+#include <linux/minmax.h>
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index a612e7513a4f..15ea9c80bc03 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -512,6 +512,10 @@ static u64 __init fadump_locate_reserve_mem(u64 base, u64 size)
+ 	phys_addr_t mstart, mend;
+ 	int idx = 0;
+ 	u64 i, ret = 0;
++	unsigned long align = PAGE_SIZE;
++
++	if (IS_ENABLED(CONFIG_CMA) && !fw_dump.nocma)
++		align = CMA_MIN_ALIGNMENT_BYTES;
 
- #ifdef CONFIG_CMA_AREAS
- #define MAX_CMA_AREAS	CONFIG_CMA_AREAS
-@@ -17,7 +18,8 @@
-  * -- can deal with only some pageblocks of a higher-order page being
-  *  MIGRATE_CMA, we can use pageblock_nr_pages.
-  */
--#define CMA_MIN_ALIGNMENT_PAGES pageblock_nr_pages
-+#define CMA_MIN_ALIGNMENT_PAGES \
-+	(1ULL << min_not_zero(MAX_PAGE_ORDER, pageblock_order))
- #define CMA_MIN_ALIGNMENT_BYTES (PAGE_SIZE * CMA_MIN_ALIGNMENT_PAGES)
+ 	mrngs = reserved_mrange_info.mem_ranges;
+ 	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE,
+@@ -520,7 +524,7 @@ static u64 __init fadump_locate_reserve_mem(u64 base, u64 size)
+ 			 i, mstart, mend, base);
 
- struct cma;
+ 		if (mstart > base)
+-			base = PAGE_ALIGN(mstart);
++			base = ALIGN(mstart, align);
+
+ 		while ((mend > base) && ((mend - base) >= size)) {
+ 			if (!overlaps_reserved_ranges(base, base+size, &idx)) {
+@@ -529,7 +533,7 @@ static u64 __init fadump_locate_reserve_mem(u64 base, u64 size)
+ 			}
+
+ 			base = mrngs[idx].base + mrngs[idx].size;
+-			base = PAGE_ALIGN(base);
++			base = ALIGN(base, align);
+ 		}
+ 	}
+
 --
 2.46.0
 
