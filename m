@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-355519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A47699536C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8A0995371
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0322A284A3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FC71F2368A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D057818C327;
-	Tue,  8 Oct 2024 15:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E67B1E00A9;
+	Tue,  8 Oct 2024 15:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QznOkguB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7KS5E0mm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDPxO4xK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE94C225D7
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E4F84E18;
+	Tue,  8 Oct 2024 15:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728401557; cv=none; b=GUto6HKJ+ywygppC93urAPBLFdhEyLzzzKTf5wQ5YzSbThHabzewvLr6zoYY67VM7OCvg5oWxFGQ24GBdWubdvID2lpOoFAxPynsFfsxhX8bq7sR9TVIeQfzPRzPt0Nr/a1g4HObiaYMJWc+Spp/LHU2r5epUjrQwIku/3l9UGw=
+	t=1728401586; cv=none; b=UuWyU+QYW9H8tTrjlJaJ7ZUiz99xUCJOFijNmu/CP97KZzxouFk4qKukNQc3ePSI78IUnnvKbK/CKi463UTAnnbolP+CXWxi8/FpEu5Gwkz5aB1Y+ChePToBjpwwjVHlvPk8Roj12i3AWeof44IzLQGgNZ9ovDGnJ+hjkRam+kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728401557; c=relaxed/simple;
-	bh=ppJPaRCKwQA0kgyTZmF/QDHXaIjQnLk0VBaXJ6KQgtw=;
+	s=arc-20240116; t=1728401586; c=relaxed/simple;
+	bh=ouKxO2/IjmSZBjM+1Fc7/vlcAqQ4Vq4MlFM+ug7u5Ls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKng+paVF/y1Opw8rDc5Lj2LcnrER/za/C93D0pxFvUvURGFcjmrG5i+i7L4Aru+X4vavJlN46DfyZ02ezo7AOdJoFLlg7Y4q8g3Zl0wxmFOCzxerf/F+5vyl4UPTPGI+a3IJ/SNj2WKE+mv3/sbqteO5wRylujRfUctEmIc7AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QznOkguB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7KS5E0mm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Oct 2024 17:32:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728401554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XMqIs6oIguO8hqz7gtUdwCEP0ZaOEHzmt5wh9mf3P6A=;
-	b=QznOkguBInzUNZ3uD7qpRKevfcyNcJMjbdp5kb+ts5sdvGZbxN4rpLAxOywWHnPFfT3R4J
-	xZZbKIg+ZKf0WTAMnBA5YiHmPutijaD/uzFH3XUA6TXy9KE8u5Mg9Fkz016QEm4L9a7Xer
-	8NEv5gaXNYZn/1J4aeE9IHLmNc3NhCLdq3/b/T2aSwFSkW38sPMKRFK3zi6aSFZlh8JiC9
-	FbKCixEmJ2uPyFLgW94+Etj6WtOP5lJob+uFiRNNWMVq+w9KP+iT4Lqh/UQYzLlh/aLae8
-	CaaQMRqCeH+rVebcPcFB1SoT4ck/VvXF4yKrIZ8dd8FUWfAeXNVq2uEa13F+zg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728401554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XMqIs6oIguO8hqz7gtUdwCEP0ZaOEHzmt5wh9mf3P6A=;
-	b=7KS5E0mmTXkH7DZGUJS6EO+Rc7PRBxKp8glCxoxiuZCh4IETAbATePq1SZNuWzBcI25l2M
-	qxiRZz1qiF9lh8BQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
-	efault@gmx.de
-Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
-Message-ID: <20241008153232.YwZfzF0r@linutronix.de>
-References: <20241007074609.447006177@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAVgI/wm+C43h29NGuMjGPRvS3/Cds21x3uPi0jJ7ycDRTpbIpsd22eegEzcNqfGPqVtsv74vpqrLUe+RHa5Rosa0n0MrAdsfv+5AeqH1Uc0jfQTrc6JqJBhnmG3nMMu5m5aVuQ1Ile1VhkN6NNLQgPX0VQsnnzehLUkM7yzr5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDPxO4xK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46229C4CEC7;
+	Tue,  8 Oct 2024 15:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728401586;
+	bh=ouKxO2/IjmSZBjM+1Fc7/vlcAqQ4Vq4MlFM+ug7u5Ls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FDPxO4xKf5YTLi8ThQ5IZbwJ0MIuwcFrt1RTRpClUWqh3vmZaEuRd7txTc4759o9Y
+	 w1aIsLD0U6dwsSG3ZtFIw0+BfkdWsnhsN8keW436leHeHRL2UAWOdN1IsxMSzbYHJk
+	 /QE9RukogSs8D39YaxIrEssFYKJBmOQCcDXGRuPQn+S5p8ApWd3HlOuczSnjJ9hPBi
+	 pGxKZsOKoMtvhyBzg5D/tivcnnuBtMTqTUvlOjR9d8Vwvqzbo540Qvjvf+YoxdDAQk
+	 rZ+qz4acRRW8zGVEXbSwdsCyh7thp9luSLkkVwDcEW/GMu2SYIVNvuLE+c0V3bJFiR
+	 DnieADb2SODyQ==
+Date: Tue, 8 Oct 2024 16:33:00 +0100
+From: Lee Jones <lee@kernel.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org,
+	hdegoede@redhat.com, jelle@vdwaa.nl, jikos@kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org, onitake@gmail.com, pavel@ucw.cz, cs@tuxedo.de
+Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO
+Message-ID: <20241008153300.GA11264@google.com>
+References: <20240927124152.139099-1-wse@tuxedocomputers.com>
+ <20241002125243.GC7504@google.com>
+ <4bfc188c-0873-490f-bfef-119c7fa74be5@tuxedocomputers.com>
+ <20241003075927.GI7504@google.com>
+ <8874c084-20b2-44d8-9a0d-67aedad4b456@tuxedocomputers.com>
+ <20241007125813.GA17897@google.com>
+ <86936252-f3b6-46c2-9244-ce0cfebf3c42@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,38 +66,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241007074609.447006177@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <86936252-f3b6-46c2-9244-ce0cfebf3c42@tuxedocomputers.com>
 
-On 2024-10-07 09:46:09 [+0200], Peter Zijlstra wrote:
-> Hi!
->=20
-> During LPC Thomas reminded me that the lazy preemption stuff was not ther=
-e yet.
->=20
-> So here goes, robot says it builds, and I checked both a regular and PREE=
-MPT_RT
-> build boots and can change the mode.
->=20
-> Please have a poke.
+On Mon, 07 Oct 2024, Werner Sembach wrote:
 
-While comparing this vs what I have:
-- need_resched()
-  It checked both (tif_need_resched_lazy() || tif_need_resched()) while
-  now it only looks at tif_need_resched().
-  Also ensured that raw_irqentry_exit_cond_resched() does not trigger on
-  lazy.=20
-  I guess you can argue both ways what makes sense, just noting=E2=80=A6
+> 
+> Am 07.10.24 um 14:58 schrieb Lee Jones:
+> > On Fri, 04 Oct 2024, Werner Sembach wrote:
+> > 
+> > > Am 03.10.24 um 09:59 schrieb Lee Jones:
+> > > > On Wed, 02 Oct 2024, Werner Sembach wrote:
+> > > > 
+> > > > > Hi,
+> > > > > 
+> > > > > Am 02.10.24 um 14:52 schrieb Lee Jones:
+> > > > > > On Fri, 27 Sep 2024, Werner Sembach wrote:
+> > > > > > 
+> > > > > > > Hi,
+> > > > > > > first revision integrating Armins feedback.
+> > > > > > > 
+> > > > > > > Stuff I did not yet change and did not comment on previously:
+> > > > > > > - Still have to ask Christoffer why the mutex is required
+> > > > > > > - Still using acpi_size instad of size_t in the util functions, because the value is put directly into a struct using acpi_size
+> > > > > > > - Error messages for __wmi_method_acpi_object_out still in that method because they reference method internal variables
+> > > > > > > 
+> > > > > > > Let me know if my reasoning is flawed
+> > > > > > Use `git format-patch`'s --annotate and --compose next time please.
+> > > > > > 
+> > > > > I did but --compose does not automatically insert the subject line, that's
+> > > > > why i copied it but forgot to change it to 0/1
+> > > > > 
+> > > > > Sorry for the flawed subject line
+> > > > And the missing diff-stat?
+> > > > 
+> > > Also not automatically created by git send-email --compose. is there a flag
+> > > I'm not aware of?
+> > As above.  I use "--annotate --compose".  See if that works.
+> > 
+> nope, the cover letter has no change summary with these options
 
-- __account_cfs_rq_runtime() and hrtick_start_fair()
-  Both have a resched_curr() instead of resched_curr_lazy(). Is this on
-  purpose?
+Oh, my mistake.  I'm getting confused with `git send-email`.
 
-This is actually the main difference (ignoring the moving the RT bits
-and dynamic-sched). The lazy-resched is slightly different but it should
-do the same thing.
-I have also tracing and riscv bits which I port tomorrow, test and add
-to your pile.
+You want this:
 
-Sebastian
+  `mkdir patches && git format-patch --cover-letter -M -o patches`
+
+-- 
+Lee Jones [李琼斯]
 
