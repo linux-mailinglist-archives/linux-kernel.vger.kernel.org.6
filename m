@@ -1,199 +1,137 @@
-Return-Path: <linux-kernel+bounces-355404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DC19951BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:32:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7169951BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8990D1F23217
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D9521C25808
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2CB1E048F;
-	Tue,  8 Oct 2024 14:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FO47RH/K"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF59A1E0DED;
+	Tue,  8 Oct 2024 14:30:46 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238691DE2A2;
-	Tue,  8 Oct 2024 14:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555111DE2A2;
+	Tue,  8 Oct 2024 14:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397838; cv=none; b=VcyQ7E8ZoLoiTvSLWHoDZbo04XgISb/wIo6Qa5wdBbrIZpnyt5tXrUYfQhxy1Zp8RR56JWs5woVN6L2X9dCLg0DfGprhE57GFKhfSkIlwI5mbNpM3ZCqKqSOVImK18FlCNBMzPYLUjK+VOLEB4Ulh+jlZhdpPfL10+X6233j6sg=
+	t=1728397846; cv=none; b=Zi5LWK1hR4KMoPdUQi4kxFo3HmFkZkejvRS7WsVkeFCWo4Y340MIB9wEz660O0Z4m1hTJduoy0A2NxmFqNFyivgQlXmMz+NFjMYLtz6j19AhucMLK+NRWsCedmdjwrJcDXoAh00koc1/lyYKMxiM6w0FijMerTHlMyDbdyfEBAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397838; c=relaxed/simple;
-	bh=hspAm430uzdvSH4Kl/q5TvcGCMWGpbYrsXeWH0f1rI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qATr/knTZZSf7pkYgQIw0AeLRRCFEz7p91ir8z1jlUDJMsaAgEmr6lNoh4QsV5dLUXgYmUD5o4q3X/EFnCqa/tSq9fta84oFkAcapwqhAl9l7ynhUOTcnecTqQnXWmEGerPkKiIxddSqdKoaK64kmR1FoOyg0EbYv4mhr5EOMXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FO47RH/K; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fada911953so62270171fa.0;
-        Tue, 08 Oct 2024 07:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728397835; x=1729002635; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=y5wloPm3zI6pE7+25nJ8Izbhf7i5ZCY51yuv7kxCWg8=;
-        b=FO47RH/KMw6qvtI2Ai3QbGaiFWTAdEPesY9Xu6vC8C7LfdnNOuHMuF+bmX/SrbeKZq
-         FrKIBxHBDhNyVIpzvkeDp9iQasOlZuaqvxALHjUvcnI39D9QrqcfeMbBmW/Z/m40kBKN
-         2wePqFlQ9MAJd8HZ5C3i9WLw7grL4AardRwnq5B1O1Wf44HeINuBgK3QPtSIvxUKDgKU
-         dd5dNazhFeTpAh/DYhI2nYka2TorxNqPtbk1GnMUHEKLjAymgwEaI4bOChAjc/16JGLM
-         y7wJODH/5rXP+D1esHRgYOeOvX+/2n3qzaSFLQNPbU7OtQ8euzN82O0asC+3GaNyspIT
-         o8zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728397835; x=1729002635;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y5wloPm3zI6pE7+25nJ8Izbhf7i5ZCY51yuv7kxCWg8=;
-        b=CaAKm5QJG6ue5o9wWp8ABrh5TzSuKa+OsNsFFJk7NzQvCDkz0pPRejPxMz6/IFI12j
-         DxbKo1es4wPCZvoxfZqA0YripMeJErwDITpiA4s8Qaa0w+bcBqeAicPgKycBs3sUBhC9
-         knOVcIGQKWb7BKBBxnUnR3fu3qx1uh56LWSrn7u07BKqLo6uobWs591xmDmpm574rJtv
-         OZl9RFxsJpLK3ftg8szEd2mWer/H4g0EBAla04vAu2BmmsuX+hqAysbV4Vk0LU8IfpSU
-         UUovICm0vA3pTJLVtopSNO/jrxNZAe2zHWhgjq9q7M5BZI8e5Ovg6Sol+l+/oqKW8QHk
-         Jihw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmActB/wr3V6nQuDjoxhSqubmWRhAHz6eKnRPkrFrsuSOB0r3x52fgBY2V0Vmzcc6Dn8GorLS6ZuWa0HT6@vger.kernel.org, AJvYcCWpOh2zFKV2t94rIQ/QdNHGhVq/z5o9CdrkvUksRmiPERIzCamv36HvjND0HrzyP59ZY4ctRLh1McR/pITFv2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDUwZFWmg3Bh7lOiU5XOI2jZ9Y39GhK3hosjouoRlVyq5aWK4o
-	ISCapsN7V8GRhubaXjvb1ICBhsodj2gBtbINEZi0OAc6M43cwmkskWoXVH+P9BKHIxGHbkh7kTX
-	NKpky8WR+s49gFXOORYUQc/2bC1okig==
-X-Google-Smtp-Source: AGHT+IFzs+laApkArKBrSxFxCRNylUn3Nj48GCJ/1NaW50SkB7uL6TrU5Wfpbme/dCZbYwgUbvEkhgz3ggmKQHOoByo=
-X-Received: by 2002:a2e:a590:0:b0:2f2:b5c6:ccca with SMTP id
- 38308e7fff4ca-2fb0def340cmr11623171fa.14.1728397834847; Tue, 08 Oct 2024
- 07:30:34 -0700 (PDT)
+	s=arc-20240116; t=1728397846; c=relaxed/simple;
+	bh=i51JtwopsuEOuZ9GwW2Cc+uwa+xFhCmxbKyOy+E0zZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TBKZ0KjqcVOdgLdUIJkLUoFrZfb0WWBoTKBnAmukIrFitLO8bdKD8vc9XP0MSMINyOz07ucSFCktUwD18QmYu8T4q8+olH9LW9VF8E3lSoj3vc77VF4GIuSWRZoUwTgTUZTtGgY2dj3sC/PgoKMa2AOCnrwmpoCcGkzo6UZEnMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=40278 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1syBET-008caQ-3f; Tue, 08 Oct 2024 16:30:39 +0200
+Date: Tue, 8 Oct 2024 16:30:35 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Amedeo Baragiola <ingamedeo@gmail.com>, Roopa Prabhu <roopa@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
+Message-ID: <ZwVCC3DYWw0aiOcJ@calendula>
+References: <20241005014514.1541240-1-ingamedeo@gmail.com>
+ <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6703b264.050a0220.49194.0502.GAE@google.com> <tencent_29BA32BBF933AC9EDA1B074B621BEF259308@qq.com>
- <CABBYNZKiNBxqZbS7hcBrpiwHRRwAe9gXvHWNvi63qBfykR=SVg@mail.gmail.com>
-In-Reply-To: <CABBYNZKiNBxqZbS7hcBrpiwHRRwAe9gXvHWNvi63qBfykR=SVg@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 8 Oct 2024 10:30:22 -0400
-Message-ID: <CABBYNZJeFv3a=WuKpN0=6KwvELtWXOoRn9HrGhxnVVg_TVaa-Q@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_core: remove acl hdr handle error message
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com, 
-	johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000fa20fa0623f7fa82"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
+X-Spam-Score: -1.9 (-)
 
---000000000000fa20fa0623f7fa82
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Nikolay,
 
-On Tue, Oct 8, 2024 at 10:12=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Edward,
->
-> On Tue, Oct 8, 2024 at 6:47=E2=80=AFAM Edward Adam Davis <eadavis@qq.com>=
- wrote:
+On Sat, Oct 05, 2024 at 05:06:56PM +0300, Nikolay Aleksandrov wrote:
+> On 05/10/2024 04:44, Amedeo Baragiola wrote:
+> > Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack input hook for promisc packets")
+> > a second argument (promisc) has been added to br_pass_frame_up which
+> > represents whether the interface is in promiscuous mode. However,
+> > internally - in one remaining case - br_pass_frame_up checks the device
+> > flags derived from skb instead of the argument being passed in.
+> > This one-line changes addresses this inconsistency.
 > >
-> > Syzbot reported a uninit-value in hci_rx_work.This is because l2cap did=
-n't
-> > execute the corresponding connection request to call l2cap_send_cmd() o=
-r
-> > l2cap_do_send(), and ultimately called hci_add_acl_hdr() to set hdr->ha=
-ndle.
->
-> What are you talking about here, what these functions have to do with
-> a local handle variable?
->
-> > Therefore, when calling the thread callback function hci_rx_work() to c=
-all
-> > hci_acldata_packet, hdr->handle should not be used directly.
->
-> It is not being used directly, the handle is a local variable which
-> get assigned:
->
->     handle =3D __le16_to_cpu(hdr->handle);
->
-> If what you are saying is that there is no guarantee that skb->len >=3D
-> HCI_ACL_HDR_SIZE then we probably want to replace skb_pull with
-> skb_pull_data.
->
-> > Reported-and-tested-by: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotma=
-il.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D6ea290ba76d8c1eb1ac2
-> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
 > > ---
-> >  net/bluetooth/hci_core.c | 3 +--
+> >  net/bridge/br_input.c | 3 +--
 > >  1 file changed, 1 insertion(+), 2 deletions(-)
 > >
-> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > index d6976db02c06..20605a7f3f4e 100644
-> > --- a/net/bluetooth/hci_core.c
-> > +++ b/net/bluetooth/hci_core.c
-> > @@ -3791,8 +3791,7 @@ static void hci_acldata_packet(struct hci_dev *hd=
-ev, struct sk_buff *skb)
-> >                 l2cap_recv_acldata(conn, skb, flags);
-> >                 return;
-> >         } else {
-> > -               bt_dev_err(hdev, "ACL packet for unknown connection han=
-dle %d",
-> > -                          handle);
-> > +               bt_dev_err(hdev, "ACL packet for unknown connection han=
-dle");
-> >         }
-> >
-> >         kfree_skb(skb);
-> > --
-> > 2.43.0
-> >
+> > diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+> > index ceaa5a89b947..156c18f42fa3 100644
+> > --- a/net/bridge/br_input.c
+> > +++ b/net/bridge/br_input.c
+> > @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool promisc)
+> >  	 * packet is allowed except in promisc mode when someone
+> >  	 * may be running packet capture.
+> >  	 */
+> > -	if (!(brdev->flags & IFF_PROMISC) &&
+> > -	    !br_allowed_egress(vg, skb)) {
+> > +	if (!promisc && !br_allowed_egress(vg, skb)) {
+> >  		kfree_skb(skb);
+> >  		return NET_RX_DROP;
+> >  	}
 >
+> This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
+> is found it will always drop the traffic after this patch (w/ promisc) if it
+> doesn't pass br_allowed_egress(). It would've been allowed before, but current
+> situation does make the patch promisc bit inconsistent, i.e. we get
+> there because of BR_FDB_LOCAL regardless of the promisc flag.
 >
-> --
-> Luiz Augusto von Dentz
+> Because we can have a BR_FDB_LOCAL dst and still pass up such skb because of
+> the flag instead of local_rcv (see br_br_handle_frame_finish()).
+>
+> CCing also Pablo for a second pair of eyes and as the original patch
+> author. :)
+>
+> Pablo WDYT?
+>
+> Just FYI we definitely want to see all traffic if promisc is set, so
+> this patch is a no-go.
 
-#syz test
+promisc is always _false_ for BR_FDB_LOCAL dst:
 
---=20
-Luiz Augusto von Dentz
+        if (dst) {
+                unsigned long now = jiffies;
 
---000000000000fa20fa0623f7fa82
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="v1-0001-Bluetooth-hci_core-Fix-not-checking-skb-length-on.patch"
-Content-Disposition: attachment; 
-	filename="v1-0001-Bluetooth-hci_core-Fix-not-checking-skb-length-on.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m20jfd430>
-X-Attachment-Id: f_m20jfd430
+                if (test_bit(BR_FDB_LOCAL, &dst->flags))
+                        return br_pass_frame_up(skb, false);
 
-RnJvbSBjZGEwMTM1Njk3ZDg2ZGU4YTJkNzMyZGYxN2UwZmE0OTdjMmYwMmZmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMdWl6IEF1Z3VzdG8gdm9uIERlbnR6IDxsdWl6LnZvbi5kZW50
-ekBpbnRlbC5jb20+CkRhdGU6IFR1ZSwgOCBPY3QgMjAyNCAxMDoxNjo0OCAtMDQwMApTdWJqZWN0
-OiBbUEFUQ0ggdjFdIEJsdWV0b290aDogaGNpX2NvcmU6IEZpeCBub3QgY2hlY2tpbmcgc2tiIGxl
-bmd0aCBvbgogaGNpX2FjbGRhdGFfcGFja2V0CgpUaGlzIGZpeGVzIG5vdCBjaGVja2luZyBpZiBz
-a2IgcmVhbGx5IGNvbnRhaW5zIGFuIEFDTCBoZWFkZXIgb3RoZXJ3aXNlCnRoZSBjb2RlIG1heSBh
-dHRlbXB0IHRvIGFjY2VzcyBzb21lIHVuaW5pdGlsaXplZC9pbnZhbGlkIG1lbW9yeSBwYXN0IHRo
-ZQphY3R1YWwgc2tiLT5kYXRhLgoKU2lnbmVkLW9mZi1ieTogTHVpeiBBdWd1c3RvIHZvbiBEZW50
-eiA8bHVpei52b24uZGVudHpAaW50ZWwuY29tPgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX2NvcmUu
-YyB8IDEzICsrKysrKysrKy0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDQg
-ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0b290aC9oY2lfY29yZS5jIGIvbmV0
-L2JsdWV0b290aC9oY2lfY29yZS5jCmluZGV4IGIyZjhmOWM1YjYxMC4uZDVmOTE3MDc2ZTBlIDEw
-MDY0NAotLS0gYS9uZXQvYmx1ZXRvb3RoL2hjaV9jb3JlLmMKKysrIGIvbmV0L2JsdWV0b290aC9o
-Y2lfY29yZS5jCkBAIC0zNzY1LDE4ICszNzY1LDIyIEBAIHN0YXRpYyB2b2lkIGhjaV90eF93b3Jr
-KHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKIC8qIEFDTCBkYXRhIHBhY2tldCAqLwogc3RhdGlj
-IHZvaWQgaGNpX2FjbGRhdGFfcGFja2V0KHN0cnVjdCBoY2lfZGV2ICpoZGV2LCBzdHJ1Y3Qgc2tf
-YnVmZiAqc2tiKQogewotCXN0cnVjdCBoY2lfYWNsX2hkciAqaGRyID0gKHZvaWQgKikgc2tiLT5k
-YXRhOworCXN0cnVjdCBoY2lfYWNsX2hkciAqaGRyOwogCXN0cnVjdCBoY2lfY29ubiAqY29ubjsK
-IAlfX3UxNiBoYW5kbGUsIGZsYWdzOwogCi0Jc2tiX3B1bGwoc2tiLCBIQ0lfQUNMX0hEUl9TSVpF
-KTsKKwloZHIgPSBza2JfcHVsbF9kYXRhKHNrYiwgc2l6ZW9mKCpoZHIpKTsKKwlpZiAoIWhkcikg
-eworCQlidF9kZXZfZXJyKGhkZXYsICJBQ0wgcGFja2V0IHRvbyBzbWFsbCIpOworCQlnb3RvIGRy
-b3A7CisJfQogCiAJaGFuZGxlID0gX19sZTE2X3RvX2NwdShoZHItPmhhbmRsZSk7CiAJZmxhZ3Mg
-ID0gaGNpX2ZsYWdzKGhhbmRsZSk7CiAJaGFuZGxlID0gaGNpX2hhbmRsZShoYW5kbGUpOwogCi0J
-QlRfREJHKCIlcyBsZW4gJWQgaGFuZGxlIDB4JTQuNHggZmxhZ3MgMHglNC40eCIsIGhkZXYtPm5h
-bWUsIHNrYi0+bGVuLAotCSAgICAgICBoYW5kbGUsIGZsYWdzKTsKKwlidF9kZXZfZGJnKGhkZXYs
-ICJsZW4gJWQgaGFuZGxlIDB4JTQuNHggZmxhZ3MgMHglNC40eCIsIHNrYi0+bGVuLAorCQkgICBo
-YW5kbGUsIGZsYWdzKTsKIAogCWhkZXYtPnN0YXQuYWNsX3J4Kys7CiAKQEAgLTM3OTcsNiArMzgw
-MSw3IEBAIHN0YXRpYyB2b2lkIGhjaV9hY2xkYXRhX3BhY2tldChzdHJ1Y3QgaGNpX2RldiAqaGRl
-diwgc3RydWN0IHNrX2J1ZmYgKnNrYikKIAkJCSAgIGhhbmRsZSk7CiAJfQogCitkcm9wOgogCWtm
-cmVlX3NrYihza2IpOwogfQogCi0tIAoyLjQ2LjEKCg==
---000000000000fa20fa0623f7fa82--
+                ...
+        }
+
+        if (local_rcv)
+                return br_pass_frame_up(skb, promisc);
+
+> > -	if (!(brdev->flags & IFF_PROMISC) &&
+> > -	    !br_allowed_egress(vg, skb)) {
+> > +	if (!promisc && !br_allowed_egress(vg, skb)) {
+
+Then, this is not equivalent.
+
+But, why is br_allowed_egress() skipped depending on brdev->flags & IFF_PROMISC?
+
+I mean, how does this combination work?
+
+BR_FDB_LOCAL dst AND (brdev->flags & IFF_PROMISC) AND BR_INPUT_SKB_CB(skb)->vlan_filtered
+
+> >  		kfree_skb(skb);
+> >  		return NET_RX_DROP;
+> >  	}
 
