@@ -1,249 +1,142 @@
-Return-Path: <linux-kernel+bounces-355826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB8499579C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2878B9957A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DC128ACD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:28:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C770D1F268D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13298213EED;
-	Tue,  8 Oct 2024 19:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5693213EE7;
+	Tue,  8 Oct 2024 19:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I88iF8oG"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UIwU5yFg"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE191E0DCC;
-	Tue,  8 Oct 2024 19:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F0C20CCFD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728415704; cv=none; b=kznmgG0AKlfCAzQ1KqeVp2F4GRqpq3JeUaAM2JDEisnfJCYvE8MwG53J/1YHpxZ4wwg7Zq7Gf2V07pnPcevb4jv2z7AOc8tWsZDJVSow642blrW6WFrG96a+Fo6SFX4xnS9H+fdOBJQpHEjl25eS18UElpk68F/BTxVqTuUgsAU=
+	t=1728415817; cv=none; b=imR6pGX96+nMM2BaMc1sR36wd+xFf5OACdywEla4Dol6cGriLYmSAMaitC00bpOyzndB/w/kVKBXM0ka4r6iiWW2LdjJW62XLw9ythn0iIvz5HudkNlZ8grlqeWsFGk4N4wtcFCW5ul89koQBRaYqhnB/FnWKK/5sNuiRSNM4og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728415704; c=relaxed/simple;
-	bh=mah6H/whdiV6xjgfX3wDOws0rxmB0h2kpbnCzErC0Tw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mGu1HnN/E1xDjZrbXWrwIoe5ITs5f9dvuEi+4fvb1O2iq0lc/blhp63uar5BZSBRmfg68aRIwKDqXBQJn21u9PBjqAOS7emAe0BBva56vBtZPam5NCF0QUJv4XI6MZqel7vfwIhXBi/3FYcENTPe55zz8NSxbDc1AnM405+i9oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I88iF8oG; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d325beee2so503371f8f.2;
-        Tue, 08 Oct 2024 12:28:22 -0700 (PDT)
+	s=arc-20240116; t=1728415817; c=relaxed/simple;
+	bh=i02dTDaEPMSaL7Z/bKJlJnWAWdq0QL8dv8eDCHe+D5Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SDgADTThiFqD7AdXpE3vRhh5qmqzJ2TpFCJdKw5+s1Vo9IX7WzWvgG8ufvGzVstQC90VwPgQD1lc1F5QH6hx78ricb4RH7tv1QoYCQU5Eqke3syU508bkg6yQZJcfsx4M24w7l/7oUWT9ayrbh/EFU/QRbDbmXpl+GzqM+e20kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UIwU5yFg; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e163641feb9so420075276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:30:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728415701; x=1729020501; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4YU80h+e3WqJR9RRP2zzYoIrqiryuhlMCUmmaZXckb4=;
-        b=I88iF8oGYyhWjqkjWJ1hXRPIu8XH5Beqyknqygqdlb/AbU/1Ogah3hCchWDtylFQTX
-         YAnxoRg7fTzoEwy/QU5lOPVZja8yrWWZHZM+KGf40ulkz/g1NeLgntstfqc0lx/TO3ae
-         gRM/fBI6B1vfHEpu2wSzOMDwN8sU0eTXzP3kBN7Me6YXeJYo2cTSYjisgPvPE/7wkWjW
-         fvgZ98oPu28InNTCkwPbGsg5f7Z3eTSzHo5AVOwbh2AMsAiQR0RtgU5bqc0V9XZMXbwg
-         KOZsuJT/mL+e2QODdQ/dpi+L+EP8F+2KH9JB269DEBOh+Aw0HSIErKBFxpAEjjpwTzJX
-         FJeQ==
+        d=google.com; s=20230601; t=1728415815; x=1729020615; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPlkG7ZoRlkbHr9vPUwi8+LWYYFCuq+IrymeH+44AKA=;
+        b=UIwU5yFgsMUQJwNCpx1R7rpIhIAgxbFTTJu+vxcmwAsY7ZKqgzmrqB8xgiBkOsFCE2
+         /3jjw5rh7I/62TbNuL1ABPkFYNxS/nr2Afmh6DShg337D8GrWrBcEabum9Aqd2KlZXLW
+         07qphvO8jb2GqLRYFtZXJJ9Z+ECC/ATMhU6wsEHtLWAKvufuauReEqxjqFXtzzEoy8Ra
+         mvkdIocZU6pP3a1dXP2e1XMluxLMxvD7Y4nmBia/y/q8fO3bJCdjCHidaB4daVy/HIPt
+         hA2106BR4knvJ+sgeXOJ8qGI1mTEPRMhCdpLYcJKBIwLdHOgU0zjKltm7Myr/k7D6KGz
+         ELlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728415701; x=1729020501;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4YU80h+e3WqJR9RRP2zzYoIrqiryuhlMCUmmaZXckb4=;
-        b=RH9OxR6ctXcKoHdnUOT1lrWlU4pXOZTCtroGTWl/6/cqBQhxhaxVubsAfZrVaEZIbB
-         wSDi0GTA4E6VR920bi0eXOXzdXd8YxTbV1ebdmbe1kISHvy2nW/4JhfC5iwmopEPLFer
-         qLSGLusDA0V8Vy7o7QbxXhCYw38iLQjUlFrLJXIO2NeEK8No+1LtELDU+KsD0VIBSBu9
-         4UvIEp/JkIX8H/zi0JYVl0mO7zyEk5EuI1AonYCySkwC9tWAMnHdYBxxKxWvHB5qTZuN
-         hYuGedh2cPQWYB4DT6n/MZE5cJQkhm41WyXqzYL33y3eZkRpgUzmhFvVwiVjFm9VTUXR
-         zd5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVkIam63STtonwz5E0LXmp+VxrIPYr4QFGd1Kp6oz4Yse+WREn7V9lqP+pK/PzYirFa4toyqzfPMqfbMpgF@vger.kernel.org, AJvYcCXrbxqxv9BYgvOWadPDuLNHPsOJJ1A35FmDFpLpNlxhAKDDunnU2Hm+xspZpkOFR3nan18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsd3tvNaF0Olfl21tQNYEuCGF2PP4W98/DjFa0Sr1YpMBi5Y5
-	luldxlwUo6FVzXvM4K6fFeBqUrIgdC1GM+hSPISpMdUUZdiEyK5AaQc+6aR2
-X-Google-Smtp-Source: AGHT+IF+l2nCX8ohR0udWzU8vUvvwxVBA+1g+7Q7QLi0/L6ruBDHyuNFJFp5VVyOjrIYQ/Vkpg4eAw==
-X-Received: by 2002:a05:6000:4590:b0:374:ca16:e09b with SMTP id ffacd0b85a97d-37d0e6dad03mr8291114f8f.9.1728415700750;
-        Tue, 08 Oct 2024 12:28:20 -0700 (PDT)
-Received: from work.. ([94.200.20.179])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d39ea2eacsm181675f8f.15.2024.10.08.12.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 12:28:20 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: elver@google.com
-Cc: akpm@linux-foundation.org,
-	andreyknvl@gmail.com,
-	bpf@vger.kernel.org,
-	dvyukov@google.com,
-	glider@google.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryabinin.a.a@gmail.com,
-	snovitoll@gmail.com,
-	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
-	vincenzo.frascino@arm.com
-Subject: [PATCH v4] mm, kasan, kmsan: copy_from/to_kernel_nofault
-Date: Wed,  9 Oct 2024 00:29:10 +0500
-Message-Id: <20241008192910.2823726-1-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
-References: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1728415815; x=1729020615;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPlkG7ZoRlkbHr9vPUwi8+LWYYFCuq+IrymeH+44AKA=;
+        b=f47VCoXYX6AwlOQpQMCJq7webcs5RzW4DsOTUiizHTieZ0I/WvSgOs6m5pf8N0NOLK
+         CFNoFrdluonC3M2qvmrJ2z3PY+nNy7pCX8CCT0Z7GE7BOcbZtuzg1zTtJ5fXwSU/e4eo
+         V2oVSmb6pCppwmR4RqwRhmPMrcNS2mwtawDRCF0hvnKRj94/aq5x2GByzj0lRaT7vFxY
+         I3Ir/Sa62CgaINGZvglV9kfSrfDligL0AKc5zEkIR3YUgpr5EKC1AAbpEV0YsICHIlFS
+         VjhHHq3ktH68m+RXetaqNawuu783h2XX08hcNUmjTGKPrOpwoDrR9/yAeG/Ik4g8ACLO
+         y4jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMVpi+ZqWqX+j1OqCS5lwGSM1SLJVzAO06uedeg4P6IbTJnloBHs9gcZ8fLcs49vxY+71MDhcRMb7f5GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOISY4s6x7E7LaqmxQ6dc5KI/tA0lABi0liVz8lWJvKFNME+Ph
+	5RZTAqkRxhPSqoiYw5voLyCWSGF0N2srXQZYjxXvQi0FE/wGYdUcvLPiFDM3Lb3FX15edP9b/1b
+	3Cw==
+X-Google-Smtp-Source: AGHT+IFES2vX7FGCe5EWWJU/+OHopxi8E9cAc1VIHr9YudNnvp5Ss8FEVKKEmYVcxwyacMvNG/vZGf7wOOo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:2d1a:0:b0:e28:e97f:5397 with SMTP id
+ 3f1490d57ef6-e28fe4604a9mr320276.3.1728415814755; Tue, 08 Oct 2024 12:30:14
+ -0700 (PDT)
+Date: Tue, 8 Oct 2024 12:30:13 -0700
+In-Reply-To: <diqzwmiosqfs.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <diqzzfnkswiv.fsf@ackerleytng-ctop.c.googlers.com> <diqzwmiosqfs.fsf@ackerleytng-ctop.c.googlers.com>
+Message-ID: <ZwWIRW7zoX2PBsnF@google.com>
+Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
+ guest_memfd mmap
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: quic_eberman@quicinc.com, tabba@google.com, roypat@amazon.co.uk, 
+	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
+	fvdl@google.com, jthoughton@google.com, pbonzini@redhat.com, 
+	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
+	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
+	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
+	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
+	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
+	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
+	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
+	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
+Content-Type: text/plain; charset="us-ascii"
 
-Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
-memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
-the memory corruption.
+On Thu, Oct 03, 2024, Ackerley Tng wrote:
+> Ackerley Tng <ackerleytng@google.com> writes:
+> 
+> > Elliot Berman <quic_eberman@quicinc.com> writes:
+> >> From x86 CoCo perspective, I think it also makes sense to not zero
+> >> the folio when changing faultiblity from private to shared:
+> >>  - If guest is sharing some data with host, you've wiped the data and
+> >>    guest has to copy again.
+> >>  - Or, if SEV/TDX enforces that page is zero'd between transitions,
+> >>    Linux has duplicated the work that trusted entity has already done.
+> >>
+> >> Fuad and I can help add some details for the conversion. Hopefully we
+> >> can figure out some of the plan at plumbers this week.
+> >
+> > Zeroing the page prevents leaking host data (see function docstring for
+> > kvm_gmem_prepare_folio() introduced in [1]), so we definitely don't want
+> > to introduce a kernel data leak bug here.
+> 
+> Actually it seems like filemap_grab_folio() already gets a zeroed page.
+> 
+> filemap_grab_folio() eventually calls __alloc_pages_noprof()
+> -> get_page_from_freelist()
+>    -> prep_new_page()
+>       -> post_alloc_hook()
+> 
+> and post_alloc_hook() calls kernel_init_pages(), which zeroes the page,
+> depending on kernel config.
+> 
+> Paolo, was calling clear_highpage() in kvm_gmem_prepare_folio() zeroing an
+> already empty page returned from filemap_grab_folio()?
 
-syzbot reported that bpf_probe_read_kernel() kernel helper triggered
-KASAN report via kasan_check_range() which is not the expected behaviour
-as copy_from_kernel_nofault() is meant to be a non-faulting helper.
+Yes and no.  CONFIG_INIT_ON_ALLOC_DEFAULT_ON and init_on_alloc are very much
+hardening features, not functional behavior that other code _needs_ to be aware
+of.  E.g. enabling init-on-alloc comes with a measurable performance cost.
 
-Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
-copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
-kernel memory. In copy_to_kernel_nofault() we can retain
-instrument_write() explicitly for the memory corruption instrumentation.
+Ignoring hardening, the guest_memfd mapping specifically sets the gfp_mask to
+GFP_HIGHUSER, i.e. doesn't set __GFP_ZERO.
 
-copy_to_kernel_nofault() is tested on x86_64 and arm64 with
-CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
-kunit test currently fails. Need more clarification on it
-- currently, disabled in kunit test.
+That said, I wouldn't be opposed to skipping the clear_highpage() call when
+want_init_on_alloc() is true.
 
-Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
-Reviewed-by: Marco Elver <elver@google.com>
-Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
-Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
-v2:
-- squashed previous submitted in -mm tree 2 patches based on Linus tree
-v3:
-- moved checks to *_nofault_loop macros per Marco's comments
-- edited the commit message
-v4:
-- replaced Suggested-By with Reviewed-By: Marco Elver
----
- mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
- mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
- mm/maccess.c            | 10 ++++++++--
- 3 files changed, 52 insertions(+), 2 deletions(-)
-
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index a181e4780d9d..5cff90f831db 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -1954,6 +1954,32 @@ static void rust_uaf(struct kunit *test)
- 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
- }
- 
-+static void copy_to_kernel_nofault_oob(struct kunit *test)
-+{
-+	char *ptr;
-+	char buf[128];
-+	size_t size = sizeof(buf);
-+
-+	/* Not detecting fails currently with HW_TAGS */
-+	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
-+
-+	ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+	OPTIMIZER_HIDE_VAR(ptr);
-+
-+	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
-+		/* Check that the returned pointer is tagged. */
-+		KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN);
-+		KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
-+	}
-+
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(&buf[0], ptr, size));
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(ptr, &buf[0], size));
-+	kfree(ptr);
-+}
-+
- static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(kmalloc_oob_right),
- 	KUNIT_CASE(kmalloc_oob_left),
-@@ -2027,6 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(match_all_not_assigned),
- 	KUNIT_CASE(match_all_ptr_tag),
- 	KUNIT_CASE(match_all_mem_tag),
-+	KUNIT_CASE(copy_to_kernel_nofault_oob),
- 	KUNIT_CASE(rust_uaf),
- 	{}
- };
-diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-index 13236d579eba..9733a22c46c1 100644
---- a/mm/kmsan/kmsan_test.c
-+++ b/mm/kmsan/kmsan_test.c
-@@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
- 	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
- }
- 
-+static void test_copy_from_kernel_nofault(struct kunit *test)
-+{
-+	long ret;
-+	char buf[4], src[4];
-+	size_t size = sizeof(buf);
-+
-+	EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
-+	kunit_info(
-+		test,
-+		"testing copy_from_kernel_nofault with uninitialized memory\n");
-+
-+	ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
-+	USE(ret);
-+	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
-+}
-+
- static struct kunit_case kmsan_test_cases[] = {
- 	KUNIT_CASE(test_uninit_kmalloc),
- 	KUNIT_CASE(test_init_kmalloc),
-@@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
- 	KUNIT_CASE(test_long_origin_chain),
- 	KUNIT_CASE(test_stackdepot_roundtrip),
- 	KUNIT_CASE(test_unpoison_memory),
-+	KUNIT_CASE(test_copy_from_kernel_nofault),
- 	{},
- };
- 
-diff --git a/mm/maccess.c b/mm/maccess.c
-index 518a25667323..3ca55ec63a6a 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
- 	return true;
- }
- 
-+/*
-+ * The below only uses kmsan_check_memory() to ensure uninitialized kernel
-+ * memory isn't leaked.
-+ */
- #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
- 	while (len >= sizeof(type)) {					\
--		__get_kernel_nofault(dst, src, type, err_label);		\
-+		__get_kernel_nofault(dst, src, type, err_label);	\
-+		kmsan_check_memory(src, sizeof(type));			\
- 		dst += sizeof(type);					\
- 		src += sizeof(type);					\
- 		len -= sizeof(type);					\
-@@ -49,7 +54,8 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
- 
- #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
- 	while (len >= sizeof(type)) {					\
--		__put_kernel_nofault(dst, src, type, err_label);		\
-+		__put_kernel_nofault(dst, src, type, err_label);	\
-+		instrument_write(dst, sizeof(type));			\
- 		dst += sizeof(type);					\
- 		src += sizeof(type);					\
- 		len -= sizeof(type);					\
--- 
-2.34.1
-
+Also, the intended behavior (or at least, what  intended) of kvm_gmem_prepare_folio()
+was it would do clear_highpage() if and only if a trusted entity does NOT zero
+the page.  Factoring that in is a bit harder, as it probably requires another
+arch hook (or providing an out-param from kvm_arch_gmem_prepare()).  I.e. the
+want_init_on_alloc() case isn't the only time KVM could shave cycles by not
+redundantly zeroing memory.
 
