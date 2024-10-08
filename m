@@ -1,85 +1,66 @@
-Return-Path: <linux-kernel+bounces-355325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C979950B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:53:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CB59950B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883B3B220BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E211C24FC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490F1DFD80;
-	Tue,  8 Oct 2024 13:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCCD1DF995;
+	Tue,  8 Oct 2024 13:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="V+pRK6MX"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="CSW8mm42"
+Received: from smtpdh16-2.aruba.it (smtpdh16-2.aruba.it [62.149.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630EF1DF274;
-	Tue,  8 Oct 2024 13:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA101DF72E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395571; cv=none; b=WyjRsFfHtlcw+ECnhygMrMN4rjZ0ApxhlRF0SsuIIhJFcAjqaaczMQ83jr2URUuDsW1QPtOEhksD4u3qO3xIK1QqcdEe3mkGPvomcB7Tb52m808GxRYsxgXSlYMAQwr1rzFDaGka8/vcfo/t1MLoEWcZujBzE1jPKzpZ4HOCLUY=
+	t=1728395629; cv=none; b=cbNHjzCwEzricceJJq9MUnGdZt90G5s/q8VWys2HtozLH3FC5dSil4Uk6yNbyQJDkUb6ZxqpaKfsVxpeWLL6JWYxn26NjqTXOXFMhvm/+6WCn2PO0ufFdnHGt1WehJxjfSLkVItI8XnUhC5dFwQf8/MG206Zs4vzqE+5E3Ul+4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395571; c=relaxed/simple;
-	bh=FurOAuuDNyUm/lojkmHDOe6nk3DPDbcIuia0hHtIFVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PY1PBE2ib/c0YPQCulNWEZCjJFGqkJtBnxU89E8U10xrm/UrUO2yZ6I1p3++K7VW0TLFI7t18M2b1TxLfjL4zUDPnhUJLION1ILto/xTwx27ajBHUPdoNcSYYG1VI5WUAEzFzzJKcU31xumwQcwhjeHPboplS825E9st/cHCwOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=V+pRK6MX; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728395561;
-	bh=FurOAuuDNyUm/lojkmHDOe6nk3DPDbcIuia0hHtIFVU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V+pRK6MX3xsgw8mxC5ocgt9ecpxOaeYcizHJSHxGqKPMB55/9+VVRyH9/BYKf0/WU
-	 XCehtZvwFLdGZX/66cztTUcV4wgveUeHlWDezPzi/wkbZchF1sV+l1th68dF/+I6aK
-	 llRpK/GzhQa6Pgsq+ofQZL/XxPGJ1rjsQSt7Q8ApI5LeDq7tlRP08bG20BL8U8e0pe
-	 yGz5e3/I1IgzfXIHWgrKByaJzrdjcVMQ9p2MMDjR1M0KPzpLVis9Zsq411lu97IUu9
-	 cUmQLDT4zwhuwsGaE3W5RGABiDB9Dknne7FMg+T+41f8OLi3mgqe7puL+Qafdu257a
-	 FO7e4tun0B3mw==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNHX8539XzLqn;
-	Tue,  8 Oct 2024 09:52:40 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkmm@lists.linux.dev
-Subject: [RFC PATCH v3 0/4] sched+mm: Track lazy active mm existence with hazard pointers
-Date: Tue,  8 Oct 2024 09:50:30 -0400
-Message-Id: <20241008135034.1982519-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1728395629; c=relaxed/simple;
+	bh=CYhA1GI4rn88rQyo9rf4G11UGZijDVHRnPuIiZQG99U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ftNWeopnTJAujU7oNFLxFLNQ7lVnmyNjp8fXFMkaHaBDMwswfkXf83O6OT3qWyv1RxdL9bcXHllOhhTmJfNlossSg3zQsq8LerRifu8DuM+SMq8n+Qd/YPRR/Nma4eHRDRRilgYtGlXkqtIKCF77Zv/hNRGClf5b0Va/G1QXL6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=CSW8mm42; arc=none smtp.client-ip=62.149.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from polimar.homenet.telecomitalia.it ([79.0.204.227])
+	by Aruba Outgoing Smtp  with ESMTPSA
+	id yAbisgixkbsngyAbisUWTp; Tue, 08 Oct 2024 15:50:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1728395435; bh=CYhA1GI4rn88rQyo9rf4G11UGZijDVHRnPuIiZQG99U=;
+	h=From:To:Subject:Date:MIME-Version;
+	b=CSW8mm42rTdjwdVzWi+CoTAhs4rinHIujdKLQNBlrkSAm0WE8Rwgu4DthOmw98XWO
+	 SsF2/rkP8RV5yxskoGQmuDBm2pMS4L0O1Ru6luVxHrrXODKYjFmRduSS3icFXChjeX
+	 lSmbfP8F6nFPRW3J/3jSG/dTS6D5mpSSZxvWy6je/9teZ49VGgQpD06u/GSCZEty2j
+	 ve95iLMz7dfJVzdRn1Uu8X8HwwFogxVKehCZE+uy/N3RyJp3iN5u1tINI9CkXuKntw
+	 pfCBaEfPItYKB73ez1CH3XxOgEl7j2ts1pq2nBm94LZSWQnwIXecYS2cfygrQkxvGJ
+	 guWYd8t0uafIg==
+From: Rodolfo Giometti <giometti@enneenne.com>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Greg KH <greg@kroah.com>,
+	corbet@lwn.net,
+	Hall Christopher S <christopher.s.hall@intel.com>,
+	Mohan Subramanian <subramanian.mohan@intel.com>,
+	tglx@linutronix.de,
+	andriy.shevchenko@linux.intel.com,
+	Dong Eddie <eddie.dong@intel.com>,
+	N Pandith <pandith.n@intel.com>,
+	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
+	Zage David <david.zage@intel.com>,
+	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>,
+	Rodolfo Giometti <giometti@enneenne.com>
+Subject: [RFC 0/3] Add PPS generators
+Date: Tue,  8 Oct 2024 15:50:30 +0200
+Message-Id: <20241008135033.3171915-1-giometti@enneenne.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,93 +68,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfF/Qmdr6G8T33AgGhZuLqIgqQz6VWokfj+tGnhGFC4PfJu79EaLzZB+rVVOvtP1QDUqgYOx/eGmlCTmDa/50DCowPWXfKgC72pnHV/VPiQEu5w+/tAs1
+ bUjkybR5QItOtyKjgt+3G+nFVxBU8pC2+B/upeTBulRXru6baf5lQbVTKxQLR5UYvBYBOWUFRq/m+7/AjYJ065UcPdrjXi7DTCk6+6QzoAjB0rhge2p+YetE
+ YS5KT/pdkgjxOMDcqJT7vnoaPJ2gZnCdRy9TtUUVMYVBmDqLstUhioGhLYNzyoaYZUNkbK8or6w/cQGOBK2ruh4ygFuzZT3WfgBGLq/3WLrvsmlGdVcrrDGk
+ 2PAe762rrTRvQU7WhNPqbKxr+OBglRo8Z82IDYicvOuxlHqfL2thoTZXMqhJYPdRh/9aoio7CFUpKfOzooJZUxQf65n9sRlh+heH08GNCYi3XGT7rzO8r1zE
+ IhI6apaSpt1CDMEn0F9o0RwIIR3nJQgXrIW7EDkay7R/B1Wzf7cT4+YQV593+y3EsnDnWzQoQTQcKCPnqziaFGiUg0iPCFwUL1pfE0/Z7CHtnOcZ/e/FN/fy
+ gFldGCjUfGfw0CmnTPPeQnV/Saf0VHgMhabwPftwQ/Dbmm3SdkRlRr5RlG0sc5FK9WVGrH5zGlL8exKiYzUDtLVkjje9NyzoBVDMGLwOyVhgnlPDjSyCy965
+ M5W4B0FgqMSE8HxMQFu6XgzSf+y8UfMI
 
-[
-  I'm posting a v3 taking care of feedback from Peter Zijlstra and Paul
-  E. McKenney in case it can be useful to try hazard pointers with other
-  use-cases, or for further benchmarking of active mm tracking impact.
-]
+PPS generators are special hardware which are able to produce PPS
+(Pulse Per Second) signals.
 
-Hazard pointers appear to be a good fit for replacing refcount based lazy
-active mm tracking.
+This RFC patchset adds the class pps-gen to the kernel in order to get
+feedback useful to produce a well-thought-out and well-defined
+interface for these devices.
 
-Highlight:
+Rodolfo Giometti (3):
+  drivers pps: add PPS generators support
+  Documentation pps.rst: add PPS generators documentation
+  Documentation ABI: add PPS generators documentaion
 
-will-it-scale context_switch1_threads
-
-nr threads (-t)     speedup
-     1                -0.2%
-     2                +0.4%
-     3                +0.2%
-     6                +0.6%
-    12                +0.8%
-    24                +3%
-    48               +12%
-    96               +21%
-   192               +28%
-   384                +4%
-   768                -0.6%
-
-This series applies on top of v6.11.1.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: John Stultz <jstultz@google.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: maged.michael@gmail.com
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: rcu@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: lkmm@lists.linux.dev
-
-Mathieu Desnoyers (4):
-  compiler.h: Introduce ptr_eq() to preserve address dependency
-  Documentation: RCU: Refer to ptr_eq()
-  hazptr: Implement Hazard Pointers
-  sched+mm: Use hazard pointers to track lazy active mm existence
-
- Documentation/RCU/rcu_dereference.rst |  38 +++++-
- Documentation/mm/active_mm.rst        |   9 +-
- arch/Kconfig                          |  32 -----
- arch/powerpc/Kconfig                  |   1 -
- arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
- include/linux/compiler.h              |  63 ++++++++++
- include/linux/hazptr.h                | 165 ++++++++++++++++++++++++++
- include/linux/mm_types.h              |   3 -
- include/linux/sched/mm.h              |  68 ++++-------
- kernel/Makefile                       |   2 +-
- kernel/exit.c                         |   4 +-
- kernel/fork.c                         |  47 ++------
- kernel/hazptr.c                       |  51 ++++++++
- kernel/sched/sched.h                  |   8 +-
- lib/Kconfig.debug                     |  10 --
- 15 files changed, 358 insertions(+), 166 deletions(-)
- create mode 100644 include/linux/hazptr.h
- create mode 100644 kernel/hazptr.c
+ Documentation/ABI/testing/sysfs-pps-gen |  44 ++++
+ Documentation/driver-api/pps.rst        |  40 ++++
+ drivers/pps/Makefile                    |   3 +-
+ drivers/pps/generators/Kconfig          |  19 +-
+ drivers/pps/generators/Makefile         |   4 +
+ drivers/pps/generators/pps_gen-dummy.c  |  83 +++++++
+ drivers/pps/generators/pps_gen.c        | 283 ++++++++++++++++++++++++
+ drivers/pps/generators/sysfs.c          |  89 ++++++++
+ include/linux/pps_gen_kernel.h          |  57 +++++
+ include/uapi/linux/pps_gen.h            |  35 +++
+ 10 files changed, 655 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-pps-gen
+ create mode 100644 drivers/pps/generators/pps_gen-dummy.c
+ create mode 100644 drivers/pps/generators/pps_gen.c
+ create mode 100644 drivers/pps/generators/sysfs.c
+ create mode 100644 include/linux/pps_gen_kernel.h
+ create mode 100644 include/uapi/linux/pps_gen.h
 
 -- 
-2.39.2
+2.34.1
+
 
