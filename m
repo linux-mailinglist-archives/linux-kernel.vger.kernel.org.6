@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-355469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCAA9952AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0349E9952B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569CB1C248F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3522C1C20AAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139D71E04BC;
-	Tue,  8 Oct 2024 14:58:56 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534461E0494;
+	Tue,  8 Oct 2024 14:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r9CRYLuq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C0B1E048F;
-	Tue,  8 Oct 2024 14:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CF01E0490;
+	Tue,  8 Oct 2024 14:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728399535; cv=none; b=IUuF2dJhRH5Wqui5lgz/6JmJtJW9p8V9OX7pJfscB9nX2juEverrA8aVVoLCz9FHnSjvInW4iN8Bww6bVbT5DzMtbR8NtYOxD7d/cCutedE04xZSSpHRDXjyN1G976RVOiQKpIs+Hwjoulu+Dy2laAxwwaLOrXuFBd8LBBIS3q0=
+	t=1728399587; cv=none; b=XuLwVarJmHbCoq4iEktgXg7qPRzHbzAa+EaRd2kh25bDNMDGegy1vdXWZL07LxjBinSIpRCUCnxzny1IT5JAK29gOA7aNRq/th+uZVRUx8Fqyga6yCtMEA3elLHocvvEmEhdTdwyEytNn0lUGvXYPuIGIc5+QNHdqWAra7NWoUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728399535; c=relaxed/simple;
-	bh=zrWGygvQBUL7a2EN6+LnCQGkKYNWAs3HpdTwqR5/d70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tmoJ+n+YngQUJBsq2d91mR5XNZlpGhbUjGW4upQ2D1yL+MJA6ECuNsSB93/9ZJr0WLJ3QbIqdD5KDodo3oOccuSqNOndq/QvpKL5fp6Gjd9KAMvXViXmdu9Z0gcT4/cW8jodBkNoew0nSebRMMzzQ5Vmq3QBn9gSb4IX25iB3yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dbc5db8a31so42417467b3.1;
-        Tue, 08 Oct 2024 07:58:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728399532; x=1729004332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jxaihGwbTtAV9yGq87IxyRn8GIrOBfrfil37CC7c/NQ=;
-        b=hhGxLQt0R1cxaBQaqjxTFHT3cDxZpSYvtzEQNlQWEjjCp5C/hKMYWZq09qPQ4VOz1d
-         mg/Bn7IjROfhuAmBK8+AiomP8+CBRXHQkEU+hMvfC3GFJEiShaEZzwM3ovRGrrXRvbLY
-         YichVJWSqYMM1rvSfbxUB1Q3QLlzScKKYh21GgRLbvmOfWeblMiF+krEuk7U7KLBT6An
-         J5DvnoIdnDcRa3rpEPsvbszaWyE4m+lCIWQd9uJBYisHZHRitoyPoRiq1N4PjUtY26zL
-         8P6U4q4VAJtXmyvNWYVnPO3KebFXNoS5ygeoKtPyv7u6XhCpCvDY4Qpdc9SevneKFpgC
-         5oKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5ccvIe/GXNB5NaRh58XhXZdHGLwP27k6uQhBEtnRrCO39CHaULEdHUVCK4MOt618f+gy0NmVkotpc@vger.kernel.org, AJvYcCUYRYWOFbaV/OIX5AhGNyAIsFZxBXvW3+Nyde5VykztBB1B0JAB2AXTZgyZLhIX5/CsJHZRtmHPGuXd@vger.kernel.org, AJvYcCVntCnSVHzETvFLjeuyFaZMksxl7ZqbG1eZmp+AVrobnslobqIaxzaXtGmkHPe6nLen/JbS5eCi7NBm@vger.kernel.org, AJvYcCW2N+FwI5Us6xyU0DIrO30+w3PSDS8ShFoY5Hi4amNcla5PQ0RM+1eMVed+eo/UDAakNKwtKb+k5N8=@vger.kernel.org, AJvYcCWXRAN0iWQn+AVg4X06eTM8FX1dXqft+CNV6fkL/PsCFlto5aVxiLjqY3Zyr1N/BfwewFOEmpYBz+MOctsX@vger.kernel.org, AJvYcCXQOqGYGriZsaM3JlSMT3aLdNlqs0FuNtBCwg0F2uK/PW7uMklLinf+xMwvf1toVUFhr9xGBaLcJQYpd8CKcKsGaWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykXuJh/ZO44G8tS1lZd7e16g8rj/lvbayctsO0NI8ycQx7QC8C
-	tup09y1FnFtrV0rFfB+3UAZ4+302SbjYx8r07At9/TglAp4z2B+TZ8g3BWLw
-X-Google-Smtp-Source: AGHT+IFWIt/u7wkiU0jOcdn4ibdsrZQxSY97tAAH+g+0nqX4I9GXtpSP7Th3hjduesev7xoDBYkfHA==
-X-Received: by 2002:a05:690c:4806:b0:6d4:72b7:177e with SMTP id 00721157ae682-6e30de96dfbmr29771297b3.5.1728399532566;
-        Tue, 08 Oct 2024 07:58:52 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93d4260sm14679987b3.84.2024.10.08.07.58.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 07:58:50 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e314136467so6424957b3.0;
-        Tue, 08 Oct 2024 07:58:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUSEb/35OzjQf+2wFf3za8UtVJNNGVpRrxgsmUaFnAw7929ZUmSYEN9RoNyEWmSZjaXq6hwy+AVlC5/Vmrpr1LtAQQ=@vger.kernel.org, AJvYcCUg/blnHTiuA4nV0oA1cx/oe4I/qeNWsD6AqS2LQq8j0xuHHi1zYN614v1j9A7pJIzLBP04RaQG0Dg=@vger.kernel.org, AJvYcCVajalgFzRe0sjs/AFRoPnZjxuO2BmMhDWtQfi0nbPf18NUpFi0jiAUsojc8bZWrRr6GPuEXqbwsgx5@vger.kernel.org, AJvYcCVd+fvHbaGL47jtcwF/yGYXS3M7d2nn6RqInaSyzzxfZMk0GATeqvL+nG8yrhsXn/hI90U1ntdczOcI@vger.kernel.org, AJvYcCVnqwbkzAdGRV6ETOA31NvIrGUwa2Awn9mlSsi60yc0QmyZukpnlbixp9XrUiNBuJSNl/4gW+MlgKM8@vger.kernel.org, AJvYcCW4Wv85p/nUH2qRpxeA8PLtKfsmcR942eSWAMo/vzdBkntk5aXJbTZotuKrzzLp8JKS5YsEm4OsKT+WcYgk@vger.kernel.org
-X-Received: by 2002:a05:690c:a88:b0:664:74cd:5548 with SMTP id
- 00721157ae682-6e30de97175mr30204477b3.1.1728399529367; Tue, 08 Oct 2024
- 07:58:49 -0700 (PDT)
+	s=arc-20240116; t=1728399587; c=relaxed/simple;
+	bh=7222kW1vYZGn0bygoHz5Dp7kuC06E7SBQ6UwpZbJ4kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLuW4JqcJEE1eoUqkYANuYARSapb0gHAH/e0ioqq93SUSSaVCIdGCBlTovrMzI34/BPuJ3vdxYjADK6wOTPnZJEdjzbKo6/LQsQzXpMYTO7I3GibTfdl2J7TCCyrDc1+47AGS0+RSodtoxleDhWo+2LSvIStwYqQaMd5g4An9Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r9CRYLuq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498AnhDi003703;
+	Tue, 8 Oct 2024 14:59:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=BQI8GJBzvYzMZY9guzB38AAkQep
+	hutvxTMxerY22j98=; b=r9CRYLuq87IoMuZlkQ0Ni4dlH5oab8oUZHdJ1O7eW/f
+	ASY5wTgBmrRdV197eKYTzRIgFr9QF/X/3sGswuCcNpP4Ra/xeM/rqwS7VZxYkOmc
+	FEOukCnltW7eFV5Iw1RtzWtn+BYigF7m66Uv12aF2Yf65bknIsb/IWpigr3apkpT
+	fP6/5nmpiI8n5/dTZAbyLf7Md7VQAfeKilpLeNbpwAHp2lkfFbpelSgIrDv0Dqt1
+	L6b6y2EFRDszfq1Bb+GSYImWr34yTiNS8khAMGgSk+R+OjdHtNwo/v+WwPvZ4T7+
+	OKNMuUWTzzK5Ar+C4fVeDFQEEQDZP3sk4gYojXB9i9Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4253axshkh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:59:00 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 498EwxvT020967;
+	Tue, 8 Oct 2024 14:59:00 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4253axshkc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:58:59 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 498Ccg58011524;
+	Tue, 8 Oct 2024 14:58:58 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5xn1k8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:58:58 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 498EwsmQ53805504
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Oct 2024 14:58:54 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 963E92005A;
+	Tue,  8 Oct 2024 14:58:54 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AFF592004B;
+	Tue,  8 Oct 2024 14:58:53 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  8 Oct 2024 14:58:53 +0000 (GMT)
+Date: Tue, 8 Oct 2024 16:58:52 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH] ftrace: Make ftrace_regs abstract from direct use
+Message-ID: <20241008145852.27223-E-hca@linux.ibm.com>
+References: <20241007204743.41314f1d@gandalf.local.home>
+ <20241007205458.2bbdf736@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-12-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240822152801.602318-12-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Oct 2024 16:58:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTxeE1SRKrUatjZ7VE=4JHs_OrFZJ85VsdVanewc1-Tw@mail.gmail.com>
-Message-ID: <CAMuHMdWTxeE1SRKrUatjZ7VE=4JHs_OrFZJ85VsdVanewc1-Tw@mail.gmail.com>
-Subject: Re: [PATCH 11/16] dt-bindings: phy: renesas,usb2-phy: Document RZ/G3S
- phy bindings
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007205458.2bbdf736@gandalf.local.home>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rpCzCkGFqxcT_39UaFTAgq0pycf5z52K
+X-Proofpoint-GUID: r9NhdoWBAoOlbu5hPW1yGJhlEeNksSe2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-08_13,2024-10-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=9 clxscore=1011 suspectscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=9 priorityscore=1501
+ impostorscore=0 spamscore=9 mlxlogscore=101 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080096
 
-On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Document the RZ/G3S PHY bindings. The RZ/G3S USB PHY is almost identical
-> with the RZ/G2L USB PHY. The difference is that there is a hardware
-> limitation on the max burst size used when the BUS master interface
-> issues a transfer request for RZ/G3S that is configured though PHY
-> registers.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Oct 07, 2024 at 08:54:58PM -0400, Steven Rostedt wrote:
+> On Mon, 7 Oct 2024 20:47:43 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> #define arch_ftrace_get_regs(fregs)	({ &arch_ftrace_regs(fregs)->regs; })
+> 
+> I may send a v2 (tomorrow).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Could you also write against which tree this patch is?
+It doesn't apply on top of Linus' master branch.
 
