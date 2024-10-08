@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-355343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9DD9950F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:04:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF059950EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 252B3B24B2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7381F25918
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE01A1DF987;
-	Tue,  8 Oct 2024 14:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E720C1DFD89;
+	Tue,  8 Oct 2024 14:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBAuS3bw"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdrjUR3W"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1D21DF733
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1911DF74E;
+	Tue,  8 Oct 2024 14:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396080; cv=none; b=BNYy5KaL5kjDkzP5thLbkTmq05/eKEHZ0HewP0x+47wtmiZxV+kKGjvXUwVNOAA68F3dHakzHJq2OUvAu6dSxIlOW/L1+pNu8IHpi1QqkkQyL/vfJ4ePSwbTwV7epIfq/7kmqPtNDZNSuGyyhOiVhOtw4f19h9Ao93bkFCyH26c=
+	t=1728396100; cv=none; b=Hvh650WCkjqZkCv/WOGADko/y5rGHVFdlsm88M6cTf969yG2tL4jBQhqRuEWPCj0ZOlqZACQjtHy9yxhfyCYBiSgULeIvvgcnPZFxQE55rthpaqR67LQrZkS0qBe3O4YIrqPwJj5vbQdKFx4QnrFyEVNaWOWmLj5cqqIPnrRBB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396080; c=relaxed/simple;
-	bh=mmoCWWBPMNWN5Pi3PCZomIL/c01m10Ls09k6EAKhgOQ=;
+	s=arc-20240116; t=1728396100; c=relaxed/simple;
+	bh=vygMF4CiAZmlxLrVHu+CXHlWf4sk4EWH2pXeTvqXogg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aVydYqPS0U4rIPYVubegWO3iBQyKZ0uFNUXgasC1qEGMGJrGDoXKXuQe255EslBkntR4eaRWHq6dhVNLGftpmlqiPsVtV8n6VDR6DbMRgoWm6nmlYdPMaW0SsAOVHlKoHVKLS9X/AI6kIK3DYVP3Dqd2WQDRc1/FrgT5G3ehsEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBAuS3bw; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e25d405f238so4939456276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:01:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=el8qE2W9XupzpFq5xWRRqonsEtJVcGLuq+jm22CWVv2zZEtcX3fn6wnnMYJ/sAjWgPCm5uPqogjffwvqunVmY47Y9asGkNsE8d0qzhKJVjQArIqveqQihhlhE3w1a3+s771E3Xeb0hRdsIpGW5g34HaUEfH7eK9WAk/ogspra+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdrjUR3W; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e02ceccd0so135930b3a.0;
+        Tue, 08 Oct 2024 07:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728396077; x=1729000877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QE44MjvjGlXQo09X4aaBHeiy26kXCM/N88w8ksHxsYY=;
-        b=MBAuS3bw5xb8b7v/CDwLubK8FowYK+3HfFrFV2cGSbysjONNHUxJVJMwMeMiCd4W1Y
-         YEfnoj2vE3gQpgz6Da2apn8VA7NPp64x9HLDyTr7IR5le6svttU7oHqiBMDbGgBRIztK
-         +tTYm84a9XKFeHbMpMIuw1SGW8gT6OsyQo2rzwAA3NQCG90bAlA7tVW2g0ckPUhAV7eZ
-         VQQrpVZgXJvaZZhs0VfVrWxZGLvFsWTgtCFKXFSelOc+/sQSSkrBcH8pcgcyGrlsxiyQ
-         V+ontU2i5HePpgvd0LpXqW0O4ZCU3HMgsjiIunqUOCbRIzmvjUsKwB840lkRcnGXNnsB
-         ZH+A==
+        d=gmail.com; s=20230601; t=1728396098; x=1729000898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vygMF4CiAZmlxLrVHu+CXHlWf4sk4EWH2pXeTvqXogg=;
+        b=UdrjUR3W84fEcOleEC+qlT+pq0oH3ZxRhhnH/nyuTE76Xg3dYogQvvvwHUx5zauU+n
+         MysbdHNNtQxEckIyO3GXEJYEYgycuE++o49WLsjoGFEtFYNXYzZ3cZc2ySzR/izGl8eK
+         b5H/BYVPjuSZ9gDIGTO90jwLjwi5lLg8tIbgTOAA5FF0zQrJKsq59GpyrAj7ru3NBtK7
+         IuvTta/mlBy/mfdpUxKHHwMMxJSnjOCx7V9izCZ+GSr3J7JN0HcMiKqOBzM6FxzQ7rLR
+         LNw1dK+1zxy4ftdR7mZQuknSe+V0N2oQ0mX9kMMNqSFYWcNSIdS973626KwfVHr+w4DN
+         9+vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396077; x=1729000877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QE44MjvjGlXQo09X4aaBHeiy26kXCM/N88w8ksHxsYY=;
-        b=TmV9XuQVweS7KIXRwkt1d+kMV4M6QKUl7A7ETnltaTRP1vjOtx8kXPUin+uv/bQEyn
-         VQmZxY6C2JFAEA+EJTLhBWpQIUmkOLoQ3xS19ULb3kqqg1rCcNJ32mPT5s+R4SwuiPYR
-         o53ngIjvlWQ3xbAQiNTWdUy6I6adTuV948LiQ2VinyHtjl2R/fXoWNvaspkmxmyXcSl7
-         ZLrOLT1FtlpQ6STyLBOizClmWKxKKxtpD63H3kxouMVIpylh/HlQm/GxVo9cm5Ke9TXo
-         DQkRvf4arhyDn62LSJJXgYNqd8hR0kdRhM3eXzBNnDgCgaTqPfOtyfaq2R6AvhgBLitx
-         Dduw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjNTDkZPAwBXF0YYTydJfsdeN8GiMKtxO7Mv7Anv6r0RbvOg9MesiE+8FVDN0onewhwsKGnG5CZU6cMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLqJ2oyRV96ubIEKf4k8MJVPmEN4EzT/nOqYfFKfHCm3BoM+Lm
-	PV3PwFBZ0FBj0amuE0cfl08OD96LMNxtKwcm8qQVgycrZENEMHexVpMCUGfKf7v2JmsuSuEH/lw
-	PHHlPAkQDFNFphMNoKzWZXdpqh6K2IXu4ZC/Vaw==
-X-Google-Smtp-Source: AGHT+IGTV6VC/pNSzGY+RUb51i/BTSuNpuC7jBoq5cv/Bck9LWu2cuxkJriYebercZ+lkwSPCxUa4kcq1oYG0RIOv+c=
-X-Received: by 2002:a05:6902:727:b0:e25:c6a3:797d with SMTP id
- 3f1490d57ef6-e28936c984amr13384867276.6.1728396076638; Tue, 08 Oct 2024
- 07:01:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728396098; x=1729000898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vygMF4CiAZmlxLrVHu+CXHlWf4sk4EWH2pXeTvqXogg=;
+        b=GWSZ/hqbFnnL3WmWbDD0tgAQCqGSgEv2ia03Ir1IBOAbv8hSvSJ25SV3fMLpdK1zgY
+         /DmQTtXI3JoL6nmHY3ajjhR1qVIHrAymiqJMHsxWSjna87CR3Cyp/4OFBXyjwqGY86ZL
+         TJSXPlNvVk/7VcSHoJLikURYXUWimlACO+XlcA1XJX1+oGOCcKcU48+sGZCI1uFoI6+U
+         5rHMwn5ZIFpBoTQ1GT6BTuECjxOXGFvlcekfZ/ptv/puZt5LkGyF0iZ+GPHh8Pw8iA7w
+         ADubcgy+4KHUF1Z3Gi/IBly9cG5QHCY6QYu5S3ngwo0T84bI/0cInpXxe1qhPklsQbyc
+         GD9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVA0ONxvf2kTTW7bBxTRkHsLew1su5px14n0BByufSo2qBdojajtTTF/Idx7SWJkcmEE6axttBMEeg7Na0=@vger.kernel.org, AJvYcCVmG8M/UoTSpE9+Bdsx5sdO5QPYKqKAUPhzut54LWmMf3UJEFEWOhviLbJbqJcU4QnGRP2N51ufOeE7aw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY5JTfzYi42i7+CMrlPksLlcs3861tnoawbap8FCmwVWttfoUS
+	CM2ylb3IyYGIXYMtnBg93bxPHOT1gKA18EjebcLnc8+hCzhC0oPRLO3Kw8l0V4r53s86ZIS6Bn7
+	h+Z80UfFcRLZ1mNC71klpArNNIN4=
+X-Google-Smtp-Source: AGHT+IFpyQag4WFuyK3Tmtf4D7nw0Mi0p5TYGkzcHuX6stOGq//NWWnhTZfxXk+Rcvlx/R1FXfSJAp6jNVXnIb4Mgxo=
+X-Received: by 2002:a05:6a00:ace:b0:70b:705f:dda7 with SMTP id
+ d2e1a72fcca58-71de243f079mr9947820b3a.4.1728396098124; Tue, 08 Oct 2024
+ 07:01:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006135530.17363-1-quic_spuppala@quicinc.com> <20241006135530.17363-2-quic_spuppala@quicinc.com>
-In-Reply-To: <20241006135530.17363-2-quic_spuppala@quicinc.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Oct 2024 16:00:39 +0200
-Message-ID: <CAPDyKFpXh0vZrK6PU2V+y92Q_+y6Q2+VUEONXiBrqAp_qqp_jA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 1/2] mmc: core: Add vendor hook to control
- reprogram keys to Crypto Engine
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com, 
-	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com, 
-	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
+References: <20241001102839.77211fb8@canb.auug.org.au> <20241008095652.2247c731@canb.auug.org.au>
+ <20241008-gastarbeiter-empfehlen-8226a842fbc7@brauner>
+In-Reply-To: <20241008-gastarbeiter-empfehlen-8226a842fbc7@brauner>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 8 Oct 2024 16:01:24 +0200
+Message-ID: <CANiq72=MGrrAPfFymAS+M_svLQ84JeczDkc8B5wqtRGzEVpg7Q@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
+ rust-fixes tree
+To: Christian Brauner <brauner@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 6 Oct 2024 at 15:55, Seshu Madhavi Puppala
-<quic_spuppala@quicinc.com> wrote:
+On Tue, Oct 8, 2024 at 2:39=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
 >
-> Add mmc_host_ops hook avoid_reprogram_allkeys to control
-> reprogramming keys to Inline Crypto Engine by vendor as some
-> vendors might not require this feature.
->
-> Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-> Co-developed-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> ---
->  drivers/mmc/core/crypto.c | 8 +++++---
->  drivers/mmc/host/sdhci.c  | 6 ++++++
->  include/linux/mmc/host.h  | 7 +++++++
->  3 files changed, 18 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/core/crypto.c b/drivers/mmc/core/crypto.c
-> index fec4fbf16a5b..4168f7d135ff 100644
-> --- a/drivers/mmc/core/crypto.c
-> +++ b/drivers/mmc/core/crypto.c
-> @@ -14,9 +14,11 @@
->
->  void mmc_crypto_set_initial_state(struct mmc_host *host)
->  {
-> -       /* Reset might clear all keys, so reprogram all the keys. */
-> -       if (host->caps2 & MMC_CAP2_CRYPTO)
-> -               blk_crypto_reprogram_all_keys(&host->crypto_profile);
-> +       if (host->ops->avoid_reprogram_allkeys && !host->ops->avoid_reprogram_allkeys()) {
-> +               /* Reset might clear all keys, so reprogram all the keys. */
-> +               if (host->caps2 & MMC_CAP2_CRYPTO)
-> +                       blk_crypto_reprogram_all_keys(&host->crypto_profile);
+> I rebased the rust bindings onto v6.12-rc2. So this conflict will go away=
+.
 
-Don't you even need to call this once, during the first initialization
-of the card?
+We are moving `AlwaysRefCounted` in `rust-next`, and the new code in
+your branch uses it, so `next-20241008` does not build.
 
-> +       }
->  }
->
+I can add a temporary re-export that we can clean up later on our
+side, or I can drop the move for another time (it is not a big deal),
+or we can put your branch on top of / into `rust-next`.
 
-[...]
-
-Kind regards
-Uffe
+Cheers,
+Miguel
 
