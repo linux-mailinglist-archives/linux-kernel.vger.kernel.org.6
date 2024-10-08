@@ -1,218 +1,115 @@
-Return-Path: <linux-kernel+bounces-354500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED63993E59
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:31:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CE4993E60
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47EB528473C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9F51C22AA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABCA13D260;
-	Tue,  8 Oct 2024 05:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D4B13B2A8;
+	Tue,  8 Oct 2024 05:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EBY8Fxmr"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lH1Bl53d"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BC813CA8D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A699537E9;
+	Tue,  8 Oct 2024 05:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728365480; cv=none; b=Jtfx8hlSQ4uNnYsKwLUlSXWx0ehxWqWMauYkJt50oVxiCaheKxCHwzspoufDQDUbXlGKLUbEso7ZWNLh5XXJyYMUYP1LeGpVOqlataTQaG9ELYNh/lt9CEA27DSi8xaVylXT3sVmcRhcc/ws50lAbU8VqhLGudINvRkesllQNv4=
+	t=1728365731; cv=none; b=MPBPX6v0fi1vf7V+tccUfg7B+xPvWIy1p7e5Ye0zGqX57NDZe0SY9dS+lfoiOQYbdnUQ86GnLt8xOhAI0UI3J8QtDsYhX3A1eJa/DeFPvj3TOYTC74tvgsWe66JUmjOmKExiEOaBEZ5sfbqxG9AxKxfeT+jfKsl61SxV9fOLFOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728365480; c=relaxed/simple;
-	bh=WDw/cRG2gSxhXGHDjYT4x9DddR4Abt4s4iFvVabTMDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPaxxYR+rDlNRm+usnM6oX3rNEMIqXDb2qpXnqsruhBiW1GdZkOxmoJ7CbAX/h7MwCYvgogwapWCuOZr2SgSHe/eAbP+6t8DXrnscgYIKw3onWdIA5r+BUuAKrUvCWRWJ7Egk83f9pDqdimAg5GYa4zZzuVV/WRvbg+GeTizW14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EBY8Fxmr; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ba8d92af9so38901515ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728365478; x=1728970278; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YVWWt1mcV86CG5um5aUopa5TS6G5mg+pb0D64jrI0rI=;
-        b=EBY8Fxmr9zJQlF5ZtGZX1wTNaZ5k/AmvJoWfR0BTseXn10cvgJKwDO+jS+//rXnPK5
-         fMj6fV2whRiubeOrK7vemA1AcDV8/Fg18D/N5BJw1EzNiowC0/il1Rd1DOR6KLqlaLtt
-         OxmEUwOXg0cdqht0AgkY8bk4ENW7WI2ebNEUxid4nE6aov5pecGmGjDZjwzoU1ZayXos
-         RnUhL2MtMvw3XQLgwe5NnHHHAQU4jbpotaqJ2KN7P2BBgf9nqLxZR04NEUobUb1Vkzrf
-         TkalhvTJJeKVNUPLLXyIAGQwQzteT74/nSD2KHDAadMaWckVHKc4y6/94+GjBYwO3PAe
-         jLsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728365478; x=1728970278;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVWWt1mcV86CG5um5aUopa5TS6G5mg+pb0D64jrI0rI=;
-        b=tGaroN/VaHvTwLzkEULZ3hHRpJSKPvrEj+ryg6q6JzxAZWRfjpeKkQf25tPLqWMMS7
-         Dl1vJ8DW0J+PKAEEOBXB8FoyHlMrZqoe5vjd0dM/ZYWz9qsYoQ7utt7d66xog/2YvWFP
-         3gx2Lc51A7rixxHC+9xtbinvrt9hHTnm1WKC0oLm50XfR4Wr0CnjI9DhKAh+Pd7QK1H8
-         BLsHTXvYL3pU+xBpK7bew9CrkviNVK1VHwjLT/BTvPQ+GvrwNiSfgmpAZZ0nknyosRLX
-         Z+KdbXLGo0eV809VvvE/gi6WA3iZS7gyMTjE33Hk3ctLnJ13i1ncfnhm9XVrgOcSOpVu
-         4TYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdaVTk6+liVcyfrms8laR/APRahMoXmXyIjqzleZ1RL1tQka50nwAvo+M2gRPDqU3La+wJS9s3CjrB9gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFaqmXn471q/afl3RwmcrkR3m8tteK82BbuCiJN67yzYQVsv2P
-	7mH2S2ynIzP6pD7koyiY/1YPNv9yB1HfgnhwOXPPGviaXg4a21XF4Kqw7Dx9948=
-X-Google-Smtp-Source: AGHT+IGthWcJ/4TKf5GSv621dnUUfPBgutAW7rucqDwxG39GX8eeue8mfmIeD0tAu25NcYxCwQyqlA==
-X-Received: by 2002:a17:902:d4cd:b0:20b:7731:e3f8 with SMTP id d9443c01a7336-20bfe00b926mr216344355ad.26.1728365478346;
-        Mon, 07 Oct 2024 22:31:18 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c1393a292sm48470455ad.173.2024.10.07.22.31.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 22:31:18 -0700 (PDT)
-Date: Mon, 7 Oct 2024 22:31:14 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Zong Li <zong.li@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
- on clone
-Message-ID: <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
-References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
- <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
- <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
- <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com>
- <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
+	s=arc-20240116; t=1728365731; c=relaxed/simple;
+	bh=12iFWAGuYqVegUKv2XvUqypjHAcv15i5//z9v97RCAo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=US9V2kTDAwO8Fw4pYzYdAqPSerJ7VU73T/vFiLk6D3Z+FrOqx7zCwGQQPRUDHCKcL07hxzUwsTCmBF+Zwuv8z5LU/QYZsb/mbGcNGI11BE+h+fnQQ7SZ0Gf3KLfuXAoJoGRWfPOY9qHPNfc0ByuXrgv62HDfbu42WpDWpjcCWGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lH1Bl53d; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1b2a8f8c853711ef88ecadb115cee93b-20241008
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=HS3tPk/Ro6nvmssbl8jCPjzSSvvRaPxaiNB1dtDOYN4=;
+	b=lH1Bl53dwG8Y/L4XLrJ4PMjMskDwc5eiOQPXkaQ0yYdHVdCMfMXrAOpILxdTE6HFMq5jDF9+aodFfDmkzhl9g1CqJybM2RzVQkn3YjK02+2zOyZztDjt6tFPl1nVwbJ3y2L2jMxM+p5VIDarpOLqd4fdnW1i+ilXiaxrZpvg07I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:f5ec6e57-1606-4014-a009-ed0f0e67b9a6,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:470a7426-5902-4533-af4f-d0904aa89b3c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1b2a8f8c853711ef88ecadb115cee93b-20241008
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 720692166; Tue, 08 Oct 2024 13:35:19 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 8 Oct 2024 13:35:18 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 8 Oct 2024 13:35:18 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Seiya Wang <seiya.wang@mediatek.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>, Chunfeng Yun
+	<chunfeng.yun@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
+ Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH] arm64: dts: mediatek: mt8195: Fix dtbs_check error for tphy
+Date: Tue, 8 Oct 2024 13:35:14 +0800
+Message-ID: <20241008053514.6800-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
+Content-Type: text/plain
+X-MTK: N
 
-On Tue, Oct 08, 2024 at 01:16:17PM +0800, Zong Li wrote:
->On Tue, Oct 8, 2024 at 7:30 AM Deepak Gupta <debug@rivosinc.com> wrote:
->>
->> On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
->> >On Wed, Oct 2, 2024 at 12:20 AM Deepak Gupta <debug@rivosinc.com> wrote:
->> >>
->> >> Userspace specifies CLONE_VM to share address space and spawn new thread.
->> >> `clone` allow userspace to specify a new stack for new thread. However
->> >> there is no way to specify new shadow stack base address without changing
->> >> API. This patch allocates a new shadow stack whenever CLONE_VM is given.
->> >>
->> >> In case of CLONE_VFORK, parent is suspended until child finishes and thus
->> >> can child use parent shadow stack. In case of !CLONE_VM, COW kicks in
->> >> because entire address space is copied from parent to child.
->> >>
->> >> `clone3` is extensible and can provide mechanisms using which shadow stack
->> >> as an input parameter can be provided. This is not settled yet and being
->> >> extensively discussed on mailing list. Once that's settled, this commit
->> >> will adapt to that.
->> >>
->> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> >> ---
->> >>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
->>
->> ... snipped...
->>
->> >> +
->> >> +/*
->> >> + * This gets called during clone/clone3/fork. And is needed to allocate a shadow stack for
->> >> + * cases where CLONE_VM is specified and thus a different stack is specified by user. We
->> >> + * thus need a separate shadow stack too. How does separate shadow stack is specified by
->> >> + * user is still being debated. Once that's settled, remove this part of the comment.
->> >> + * This function simply returns 0 if shadow stack are not supported or if separate shadow
->> >> + * stack allocation is not needed (like in case of !CLONE_VM)
->> >> + */
->> >> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
->> >> +                                          const struct kernel_clone_args *args)
->> >> +{
->> >> +       unsigned long addr, size;
->> >> +
->> >> +       /* If shadow stack is not supported, return 0 */
->> >> +       if (!cpu_supports_shadow_stack())
->> >> +               return 0;
->> >> +
->> >> +       /*
->> >> +        * If shadow stack is not enabled on the new thread, skip any
->> >> +        * switch to a new shadow stack.
->> >> +        */
->> >> +       if (is_shstk_enabled(tsk))
->> >
->> >Hi Deepak,
->> >Should it be '!' is_shstk_enabled(tsk)?
->>
->> Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFORK, it was returning
->> 0 anyways. And in the case of CLONE_VM (used by pthread), it was not doing the right thing.
->
->Hi Deepak,
->I'd like to know if I understand correctly. Could I know whether there
->might also be a risk when the user program doesn't enable the CFI and
->the kernel doesn't activate CFI. Because this flow will still try to
->allocate the shadow stack and execute the ssamowap command. Thanks
+The u3phy1 node in mt8195.dtsi was triggering a dtbs_check error.
+The error message was:
+  t-phy@11e30000: 'power-domains' does not match any of the regexes:
+    '^(usb|pcie|sata)-phy@[0-9a-f]+$', 'pinctrl-[0-9]+'
+Fix this issue by dropping 'power-domains' of u3phy1 node.
 
-`shstk_alloc_thread_stack` is only called from `copy_thread` and  allocates and
-returns non-zero (positive value) for ssp only if `CLONE_VM` is specified.
-`CLONE_VM` means that address space is shared and userspace has allocated
-separate stack. This flow is ensuring that newly created thread with separate
-data stack gets a separate shadow stack as well.
+Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and evaluation board")
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-Retruning zero value from `shstk_alloc_thread_stack` means that, no need to
-allocate a shadow stack. If you look at `copy_thread` function, it simply sets
-the returned ssp in newly created task's task_struct (if it was non-zero).
-If returned ssp was zero, `copy_thread` doesn't do anything. Thus whatever is
-current task settings are that will be copied over to new forked/cloned task.
-If current task had shadow stack enabled, new task will also get it enabled at
-same address (to be COWed later).
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index ade685ed2190..1c6f08dde31c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -1920,7 +1920,6 @@ u3phy1: t-phy@11e30000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0 0 0x11e30000 0xe00>;
+-			power-domains = <&spm MT8195_POWER_DOMAIN_SSUSB_PCIE_PHY>;
+ 			status = "disabled";
+ 
+ 			u2port1: usb-phy@0 {
+-- 
+2.45.2
 
-Any task get shadow stack enabled for first time using new prctls (see prctl
-patches).
-
-So only time `ssamoswap` will be exercised will be are
-- User issues enabling `prctl` (it'll be issued from loader)
-- fork/clone happens
-
-In both cases, it is guarded against checks of whether cpu supports it and task
-has shadow stack enabled.
-
-Let me know if you think I missed any flow.
-
->
->> Most of the testing has been with busybox build (independent binaries0 driven via buildroot
->> setup. Wondering why it wasn't caught.
->>
->> Anyways, will fix it. Thanks for catching it.
->>
->> >
->> >> +               return 0;
->> >> +
->> >> +       /*
 
