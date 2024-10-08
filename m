@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-354711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B2099418C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:27:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE87994191
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E861C24679
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083B71F27B99
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE121E2605;
-	Tue,  8 Oct 2024 07:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0D31E2830;
+	Tue,  8 Oct 2024 07:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MM0rVwn3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="AW3gkuYC"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4EC1E1A09;
-	Tue,  8 Oct 2024 07:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9155D1E2821
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728373911; cv=none; b=LA5ABgCzBbvM29bztWrb9OnAovS0xZD9CNi7ValHfuVA3QmWmVdfLBfaWvvu5ULH6C84HjOGg0v3WNOQHlixr5WTiPaEu/+DZpPeGVeJIWDgpFO6QKBQsDL4LhP3Z10f7W3O98SRRKvAcXbjG3Q8mi2Kydo43urGfOuX7HwaSvk=
+	t=1728373917; cv=none; b=cM298sYDK+Gvrq51VdOF+o1XgQySF3lQtswYqFIQbhMYKRw/X4qwth16aNypAMApks4suhy74AZAbcStweyTk5tN5bOrxc7gjF93XadvRoFWfy+an92A4vTjYunZ/1M+WDYeAjRCUIYHo6JUAW1WS+bYF6OGBbY1m2eKdngYA+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728373911; c=relaxed/simple;
-	bh=uEXaQKrRikUA6bCkNomJAeg5V99x0e8HgUGv90BG0PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dotxuGOK+IEFZAEFtYfmafhGWObjV15GCnyiEI5ZXu2T33KM8hj5MMDFvTDKu0bmhldAa3i2o5je2Fcbitr5Roo/KSLmb/G/XU//zMKildy3unCCL9MGKkuUWqdHJnacWy1+OT6iDSTTXP4QoX5i/4KkB/daZLlXsYNHNk2prLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MM0rVwn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC3C4CEC7;
-	Tue,  8 Oct 2024 07:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728373911;
-	bh=uEXaQKrRikUA6bCkNomJAeg5V99x0e8HgUGv90BG0PA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MM0rVwn3r4/3A2eGN9DSGcI1XKhwb/6SkgaNDatEQyGOdFg2+BUIJ3tXMWmkjm+RD
-	 6WSNd1kgfy2bI3WUQ9R5H/z/1MQoUTe6NiT2eq2BSSK6kszLOEbJb3oxI4pUSCL/RD
-	 ooDKzml5P+yIf2X2pR2wzjrCA8yAUubLQbQ9IBbLdvj316zGstf2lRhuBuRUNEILHo
-	 5KQY5zGr9k7TVliVArMbm4voBHzM4yQFlB/TAOEEstzr2bJaJEr8TRb5OkG/5lA4Q/
-	 5kci8l9V+R/2/kswimHNXHGHiJrKyxnC+FiF4B3JRq3B+VpCEm9cbGbumnrKiWDmcq
-	 VdpVZJdcEofPg==
-Date: Tue, 8 Oct 2024 09:51:46 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: ad7380: remove voltage
- reference for supplies
-Message-ID: <yjfkbmcwu5rtpvzynvcki7slmrr6ia6ng6zuxdti6nzpljvudy@klfcpocgww3k>
-References: <20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com>
- <20241007-ad7380-fix-supplies-v1-1-badcf813c9b9@baylibre.com>
+	s=arc-20240116; t=1728373917; c=relaxed/simple;
+	bh=v89Trsi7SQvRJw0wTpV5EI7wlR5UDgvXEV3fUyW9w78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=knHIlGBoPtX+wkkPN01/ZUZzJOtIdz+6Jb/UTXrIfpIcjcmSLjczKdCwO6o0Ry9JfZDqgMrTc6LuJjSn2WmmxkNUnai7Z4/ZRHfTWXVHGLq5zWfIL0Xg0TDAPd0ct3ukp9ev8JwD/sZOVAihAG17zmRpVreHzC47BR2PF5c/U6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=AW3gkuYC; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cc8782869so54456205e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 00:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1728373914; x=1728978714; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KlYY3K3HC3a/CGEPLuJ09kBVSKmQ9xsYiFCNrU9twF0=;
+        b=AW3gkuYCQ6vOT1Jn04alFy25pkH3BBkVwudDlJrknjmW6JYp8y3h3MJ3s7CgxIkaMI
+         BF2imcPCkhTA+tmZsMxmEIjUR1kFRJmc5+lZSF+gmL7KNAkn7WjLE/hnwZ1Z3suMS9WB
+         B0fNOAbmM38I624DTEtYLDCUUBAhooctl2oinWKeH5jx51+sUvigz21Auf8vOUWaz1nd
+         MgLdoy86Dm81p3jOIJOMQXb5yvaYXVXC878SIUh48wENhdj6cqpOs8RV/uyVSP0+zWtc
+         FLbbmQ/r/CjAdE3iHs18s/W+0YWaoWGPOhbIWpx6eLtMw/GXflNTHzsumqG4q+wT4GZW
+         rhcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728373914; x=1728978714;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KlYY3K3HC3a/CGEPLuJ09kBVSKmQ9xsYiFCNrU9twF0=;
+        b=vuugLBKIxFZBNVVEgwrkFS2i1bN74pVk8pLscl/E6zGL8VRo8g2HDGAWEbz6w3xLCR
+         hSF8RFkuyjjqwbJh9FFJsOLXOVFuetJbZF4Uw4iJQt8+LTS0P+BmlrdUHL4e0ZWPUlEM
+         cQbl08BoV3yNuDIPfeLrt7eABoyQ9hvL3xD4zaSK0t8QRjij5xrDRVKeioGBaPlwS9mT
+         jayXLTBmO4AYkoBSZKrqmldMYciwbpuiswMIlQL/XWTzDGbKFCPEcbInY6YNNlX+oS/b
+         LYUQY6SF/vqxk7b2xf85jMvX5wFDgJJvlJ1W/5VqUV10odPw/2I0a6Kyn99on7lf8CoP
+         wOTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWirsmDFHhB0vLHEddMy8uM7f9gSA9VcjgPHKBO3z73fCqWUVL+7tnykX3SCfidbawyaenspujhMgvtPyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz07eClBuWPizYqJlWWIKfsYumYtCNrTeD25FPMcDof8dYy40IY
+	Hl4kqCkxMFRnw+WrYcgnqL3Nxpuua3dSc+9zMYTt90rAyM8QsSV/b/ZIoQybX3Q=
+X-Google-Smtp-Source: AGHT+IEhp5R1Yt+tZjJi2fQ9CxGOWVtmRo8DSNdX4sO7gq4VOLAgv39ttch8j+3FuqNhz1X667+Kwg==
+X-Received: by 2002:a05:600c:215:b0:42c:b74c:d8c3 with SMTP id 5b1f17b1804b1-42f85b64a17mr96712845e9.32.1728373913811;
+        Tue, 08 Oct 2024 00:51:53 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:2089:55b1:87be:76d4? ([2001:67c:2fbc:1:2089:55b1:87be:76d4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f9384f648sm39404205e9.20.2024.10.08.00.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 00:51:52 -0700 (PDT)
+Message-ID: <2d1a404e-c45d-4ea6-9f95-87364d3f34be@openvpn.net>
+Date: Tue, 8 Oct 2024 09:51:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007-ad7380-fix-supplies-v1-1-badcf813c9b9@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 01/24] netlink: add NLA_POLICY_MAX_LEN macro
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Donald Hunter <donald.hunter@gmail.com>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ sd@queasysnail.net, ryazanov.s.a@gmail.com
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-1-37ceffcffbde@openvpn.net> <m2msjkf2jn.fsf@gmail.com>
+ <20241004063855.1a693dd1@kernel.org>
+ <e09ea6b5-fe0c-4f90-8943-83aa410ccc1f@openvpn.net>
+ <20241007085337.2ffff440@kernel.org>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+In-Reply-To: <20241007085337.2ffff440@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 05:45:44PM +0200, Julien Stephan wrote:
-> Voltages may not bo valid for future compatible parts, so remove them and
-> remove useless description
+On 07/10/24 17:53, Jakub Kicinski wrote:
+> On Mon, 7 Oct 2024 12:04:22 +0200 Antonio Quartulli wrote:
+>>> Or we could check if len(self.checks) <= 1 early and throw our hands up
+>>> if there is more, for now?
+>>
+>> We already perform the same check in the 'else' branch below.
+>> It'd be about moving it at the beginning of the function and bail out if
+>> true, right?
+>>
+>> Should I modify this patch and move the check above?
 > 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> index bd19abb867d9..72c51b3de97b 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> @@ -55,17 +55,9 @@ properties:
->    spi-cpol: true
->    spi-cpha: true
->  
-> -  vcc-supply:
-> -    description: A 3V to 3.6V supply that powers the chip.
-> -
-> -  vlogic-supply:
-> -    description:
-> -      A 1.65V to 3.6V supply for the logic pins.
-> -
-> -  refio-supply:
-> -    description:
-> -      A 2.5V to 3.3V supply for the external reference voltage. When omitted,
-> -      the internal 2.5V reference is used.
+> I just sent the refactor patch, that seemed easier than explaining ;)
 
-This is valid description. I would say all of them are useful, not
-useless.
+Great, thanks :-)
 
-Best regards,
-Krzysztof
 
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
