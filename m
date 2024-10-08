@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-355841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7E29957D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:46:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873F79957D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531ABB224FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DA01C21CAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0009D213EEE;
-	Tue,  8 Oct 2024 19:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F657213EF1;
+	Tue,  8 Oct 2024 19:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ik4UzACq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MasVL4ZT"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E52F9C0;
-	Tue,  8 Oct 2024 19:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A54F9C0;
+	Tue,  8 Oct 2024 19:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728416806; cv=none; b=gCGc3C7+ldpXBpyq0YXM82UXQaRoXgLb0YLqxkhaS8+AEepfcQ8hUlPMIb59rcW5HRX7ipM4URtd5tC5VnwZRL7FA0YXAwwGTTaNN5w/3snKKDEHqLmmnvhqeyuEQwCN/ymK32lPnhmUe11cJv3dF2hT2z1DT1nxnGMFowxn6Eo=
+	t=1728416869; cv=none; b=EcBsqKAuM2eMnApaWD7aBQTXuDaoNbOUen9AQtx1vVn9u9g2JMiKyuAPKj/R+GEfPM1OVJquLgmx9TDVIZbA8D0GqsPpO4SDkFecYBvLbXfOfcZVyiEoCDhJm3xeV/sXR9EQD6PpFU55OUCNVjn61KofMYGoyVMab3MS8PC/yR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728416806; c=relaxed/simple;
-	bh=vTQ93XUpOUKF6OTPDRe2FpgaOt0EU8TN1/c5J7zUW7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q7Jc6y6E0ibNnUDUKdHYPxIRZDNYxDRTmV+Qft2/p1U4UqmZI299ynzMs6ki3KaepodLq/IIdVGJgoHvqQZMmnYB2o6R6XUEuSLN1WorU0HGTCQKZ0w4q9BnPJ8IbNTLxc6ZbeAt+JZWwIROykyNKBbn9v/vnyFxOm6s1HyRVtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ik4UzACq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498ET5Mu025622;
-	Tue, 8 Oct 2024 19:46:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=UTKztLeRZ5Zeh58cINrurW5qOVBYrEVcmjr
-	tJ5gkR7Q=; b=ik4UzACqPZpfNhW7zZMJW1DEPlLZaW2uqeASEb3PbABTzgTWnNn
-	PGfPflEKVENUoI5SV9FV+wy2Pvx21gtjl+9R44kdGisZXfhfBR9jrOyjZ1zHUY4R
-	2IziO9caZAF4zyollAIvXieWfKC4TZhZiuZqIpbq5p2piD3wnMuuFMBZY8Vi7XiB
-	6poJfb06y24mmTWmdqg/SyYy2EsvmYlRDjCEsVjMcl5X2YsG+Wrl3ll/gMtv+z5G
-	9eraEJWgZQQ85PjNArLN4k7Mk+GIt2rjxdih08ZFxFijBSNbSjOxRjkSobltKxeA
-	iDljb1MyACGNYzQOAFerFgYQHkEolfeNrIw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4252wssk93-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 19:46:40 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 498JedqQ004700;
-	Tue, 8 Oct 2024 19:46:40 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 424xwbpp9v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 19:46:40 +0000
-Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 498Jf3Ui005037;
-	Tue, 8 Oct 2024 19:46:40 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-uchalich-lv.qualcomm.com [10.81.89.1])
-	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 498JkdSG011613
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 19:46:39 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4184210)
-	id B878039C; Tue,  8 Oct 2024 12:46:39 -0700 (PDT)
-From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Unnathi Chalicheemala <quic_uchalich@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@quicinc.com
-Subject: [PATCH] soc: qcom: llcc: Add per slice counter and common llcc slice descriptor
-Date: Tue,  8 Oct 2024 12:46:36 -0700
-Message-Id: <20241008194636.3075093-1-quic_uchalich@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728416869; c=relaxed/simple;
+	bh=qDJdjgvBxlmyVwz9YKp2AfHFXEDTQTI1gRsclBG6xzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XFlZiOTHz0XtT3uHumNWg3jnJENaHAIp84Svg8Ez2bOOzdyAFl6H0s4LCAlCMIFpwrD3MVaIoGExraQNIbZ+EHjWf++G9MEZau8z2dGlvxUnH+fP0PTXI+TgeKmA7v0Tz+0XPEzYb7N5l+CFExxiKaBO1sRjCZal/jSmwxlHtzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MasVL4ZT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so61318065e9.3;
+        Tue, 08 Oct 2024 12:47:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728416866; x=1729021666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KX2jK4fDHxCD6QAvAd7J88cTq2gGBD9moCY5ZB/GroA=;
+        b=MasVL4ZTk6OlUKYA4capu+rrY0fu7zlbnnkCD47ldo52WbwEu9BBgpTq3qhZR9Evcq
+         A/HyyMBgfwGwOsnJ60Uo09dHeq8nbyj+SXaznmrqWDW7eSvrGBkOCIKmjItzttLkZUnC
+         wipTL/N9QcN81kxoHLfMH5QqOYWHy2QpDRCeSCk3Nn7CYqeyO5MBKR3UqVMQrbLPC2SO
+         iOwcSxgAJY6LTAtR3j6d8Hhn7d3M9fa5WhjSzXlhwI+nR8Ek3Lis/lzm/jDZMZSnJ41j
+         XWiRkqjzPRKOj9TLzX8dor0XEpFCBFC+87td3hUlyVZIVNd1fHKPbMbWqFtlqu1Z4CUj
+         /2Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728416866; x=1729021666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KX2jK4fDHxCD6QAvAd7J88cTq2gGBD9moCY5ZB/GroA=;
+        b=Pus9muiIk/G2p3UBo4NyJZlr6RFoxXkDQ4L5+dVQAiedSMAv0oxjftSnYLuzE7WeUC
+         sNs3epKR1jjfP/n7BVwvxkwkFN8zqaKmMkhlntXxE5md5lfhE0qn2CnLuOIRJ7J5YT4t
+         /zGCvd4uoHK8pVwx71XurPHj5/vRBX0JRySWaGM2QmzxtuUbTL58rtvw3DrsY9ctMy5N
+         VF4q3JzSJuddnpzHURtY2mdhHk1hw/DYpusb9n3blMplBQ5EAAQDiBAmO0k+w3q9q55Z
+         a1FPJlOfG5K7wLFRAlJI181bzE/EJ/FSw7FTFJqRC3ZWIa9ioiZXVRGzNPmJyf3dcM6r
+         egJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLg1puJn2h2y+nppA8uaZ1UiXZg580acCtQpSNPJhwyEkK1x1j+AAbIN7XOzYdksl2prSkqCJ@vger.kernel.org, AJvYcCWT251p+171o+iiYWqy1B/zV69xuj2Txk/a1knGa4fl9D9Uqa/GQVlDTGMJ/YYYWpD8uz5q5WrSgRdpcuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpRb/qzWcWRo8MqzVfsRQonA5tHkP9M3fhh8Xea6N+YN2ufgKo
+	8Pr5q7h2vaxzUY/+1jyJL+Ipy31+SQFIlrw4silrLnWe0Dsi64oZ
+X-Google-Smtp-Source: AGHT+IGIsLcDHZALgGF/PKsHz7uZEcdiCBkMKGPXJ7q00CgMg+2wXt6A/f0f7BKVJa/a8GOd5fJIOg==
+X-Received: by 2002:a05:600c:350c:b0:42c:ac9f:b505 with SMTP id 5b1f17b1804b1-42f85af0486mr135152845e9.31.1728416865485;
+        Tue, 08 Oct 2024 12:47:45 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86a20595sm136526145e9.14.2024.10.08.12.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 12:47:45 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH v3] net: phy: Validate PHY LED OPs presence before registering
+Date: Tue,  8 Oct 2024 21:47:16 +0200
+Message-ID: <20241008194718.9682-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,203 +86,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mQFo6onQZ8gFcNkKp9opHcySav8pY819
-X-Proofpoint-GUID: mQFo6onQZ8gFcNkKp9opHcySav8pY819
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1011 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080127
 
-Introduce atomic per-slice counter to keep track of the
-activate/deactivate count per slice and a common llcc slice
-descriptor to maintain accurate count.
+Validate PHY LED OPs presence before registering and parsing them.
+Defining LED nodes for a PHY driver that actually doesn't supports them
+is redundant and useless.
 
-In case a client driver calls llcc_slice_getd more than once,
-it will get the same descriptor for given use case. And if two
-client drivers are voting for same slice, this count variable
-will help track enable/disable of slice accurately.
+It's also the case with Generic PHY driver used and a DT having LEDs
+node for the specific PHY.
 
-Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+Skip it and report the error with debug print enabled.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/soc/qcom/llcc-qcom.c       | 50 +++++++++++++++++++++---------
- include/linux/soc/qcom/llcc-qcom.h |  4 +++
- 2 files changed, 40 insertions(+), 14 deletions(-)
+Changes v3:
+- Make condition more readable
+Changes v2:
+- Use phydev_dbg instead of warn
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index 8fa4ffd3a9b5..0cb4fd18fd2c 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -813,7 +813,6 @@ static struct llcc_drv_data *drv_data = (void *) -EPROBE_DEFER;
- struct llcc_slice_desc *llcc_slice_getd(u32 uid)
- {
- 	const struct llcc_slice_config *cfg;
--	struct llcc_slice_desc *desc;
- 	u32 sz, count;
- 
- 	if (IS_ERR(drv_data))
-@@ -826,17 +825,10 @@ struct llcc_slice_desc *llcc_slice_getd(u32 uid)
- 		if (cfg->usecase_id == uid)
- 			break;
- 
--	if (count == sz || !cfg)
-+	if (count == sz || !cfg || IS_ERR_OR_NULL(drv_data->desc))
- 		return ERR_PTR(-ENODEV);
- 
--	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
--	if (!desc)
--		return ERR_PTR(-ENOMEM);
--
--	desc->slice_id = cfg->slice_id;
--	desc->slice_size = cfg->max_cap;
--
--	return desc;
-+	return &drv_data->desc[count];
- }
- EXPORT_SYMBOL_GPL(llcc_slice_getd);
- 
-@@ -847,7 +839,8 @@ EXPORT_SYMBOL_GPL(llcc_slice_getd);
- void llcc_slice_putd(struct llcc_slice_desc *desc)
- {
- 	if (!IS_ERR_OR_NULL(desc))
--		kfree(desc);
-+		WARN(atomic_read(&desc->refcount), " Slice %d is still active\n",
-+					desc->slice_id);
- }
- EXPORT_SYMBOL_GPL(llcc_slice_putd);
- 
-@@ -923,6 +916,12 @@ int llcc_slice_activate(struct llcc_slice_desc *desc)
- 		return -EINVAL;
- 
- 	mutex_lock(&drv_data->lock);
-+	if ((atomic_read(&desc->refcount)) >= 1) {
-+		atomic_inc_return(&desc->refcount);
-+		mutex_unlock(&drv_data->lock);
-+		return 0;
-+	}
-+
- 	if (test_bit(desc->slice_id, drv_data->bitmap)) {
- 		mutex_unlock(&drv_data->lock);
+ drivers/net/phy/phy_device.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 499797646580..e4a1d0e74e47 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -3421,6 +3421,16 @@ static int of_phy_leds(struct phy_device *phydev)
+ 	if (!leds)
  		return 0;
-@@ -937,6 +936,7 @@ int llcc_slice_activate(struct llcc_slice_desc *desc)
- 		return ret;
- 	}
  
-+	atomic_inc_return(&desc->refcount);
- 	__set_bit(desc->slice_id, drv_data->bitmap);
- 	mutex_unlock(&drv_data->lock);
- 
-@@ -963,6 +963,12 @@ int llcc_slice_deactivate(struct llcc_slice_desc *desc)
- 		return -EINVAL;
- 
- 	mutex_lock(&drv_data->lock);
-+	if ((atomic_read(&desc->refcount)) > 1) {
-+		atomic_dec_return(&desc->refcount);
-+		mutex_unlock(&drv_data->lock);
-+		return 0;
++	/* Check if the PHY driver have at least an OP to
++	 * set the LEDs.
++	 */
++	if (!(phydev->drv->led_brightness_set ||
++	      phydev->drv->led_blink_set ||
++	      phydev->drv->led_hw_control_set)) {
++		phydev_dbg(phydev, "ignoring leds node defined with no PHY driver support\n");
++		goto exit;
 +	}
 +
- 	if (!test_bit(desc->slice_id, drv_data->bitmap)) {
- 		mutex_unlock(&drv_data->lock);
- 		return 0;
-@@ -976,6 +982,7 @@ int llcc_slice_deactivate(struct llcc_slice_desc *desc)
- 		return ret;
+ 	for_each_available_child_of_node_scoped(leds, led) {
+ 		err = of_phy_led(phydev, led);
+ 		if (err) {
+@@ -3430,6 +3440,7 @@ static int of_phy_leds(struct phy_device *phydev)
+ 		}
  	}
  
-+	atomic_dec_return(&desc->refcount);
- 	__clear_bit(desc->slice_id, drv_data->bitmap);
- 	mutex_unlock(&drv_data->lock);
- 
-@@ -1020,7 +1027,7 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
- 	u32 attr1_val;
- 	u32 attr0_val;
- 	u32 max_cap_cacheline;
--	struct llcc_slice_desc desc;
-+	struct llcc_slice_desc *desc;
- 
- 	attr1_val = config->cache_mode;
- 	attr1_val |= config->probe_target_ways << ATTR1_PROBE_TARGET_WAYS_SHIFT;
-@@ -1165,8 +1172,11 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
- 	}
- 
- 	if (config->activate_on_init) {
--		desc.slice_id = config->slice_id;
--		ret = llcc_slice_activate(&desc);
-+		desc = llcc_slice_getd(config->usecase_id);
-+		if (PTR_ERR_OR_ZERO(desc))
-+			return -EINVAL;
-+
-+		ret = llcc_slice_activate(desc);
- 	}
- 
- 	return ret;
-@@ -1183,6 +1193,12 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev,
- 	sz = drv_data->cfg_size;
- 	llcc_table = drv_data->cfg;
- 
-+	for (i = 0; i < sz; i++) {
-+		drv_data->desc[i].slice_id = llcc_table[i].slice_id;
-+		drv_data->desc[i].slice_size = llcc_table[i].max_cap;
-+		atomic_set(&drv_data->desc[i].refcount, 0);
-+	}
-+
- 	for (i = 0; i < sz; i++) {
- 		ret = _qcom_llcc_cfg_program(&llcc_table[i], cfg);
- 		if (ret)
-@@ -1331,6 +1347,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- 	llcc_cfg = cfg->sct_data;
- 	sz = cfg->size;
- 
-+	drv_data->desc = devm_kzalloc(dev, sizeof(struct llcc_slice_desc) * sz, GFP_KERNEL);
-+	if (IS_ERR_OR_NULL(drv_data->desc)) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
- 	for (i = 0; i < sz; i++)
- 		if (llcc_cfg[i].slice_id > drv_data->max_slices)
- 			drv_data->max_slices = llcc_cfg[i].slice_id;
-diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-index 9e9f528b1370..5eca861e2837 100644
---- a/include/linux/soc/qcom/llcc-qcom.h
-+++ b/include/linux/soc/qcom/llcc-qcom.h
-@@ -60,10 +60,12 @@
-  * struct llcc_slice_desc - Cache slice descriptor
-  * @slice_id: llcc slice id
-  * @slice_size: Size allocated for the llcc slice
-+ * @refcount: Counter to track activate/deactivate slice count
-  */
- struct llcc_slice_desc {
- 	u32 slice_id;
- 	size_t slice_size;
-+	atomic_t refcount;
- };
- 
- /**
-@@ -126,6 +128,7 @@ struct llcc_edac_reg_offset {
-  * @bitmap: Bit map to track the active slice ids
-  * @ecc_irq: interrupt for llcc cache error detection and reporting
-  * @version: Indicates the LLCC version
-+ * @desc: Array pointer of llcc_slice_desc
-  */
- struct llcc_drv_data {
- 	struct regmap **regmaps;
-@@ -140,6 +143,7 @@ struct llcc_drv_data {
- 	unsigned long *bitmap;
- 	int ecc_irq;
- 	u32 version;
-+	struct llcc_slice_desc *desc;
- };
- 
- #if IS_ENABLED(CONFIG_QCOM_LLCC)
++exit:
+ 	of_node_put(leds);
+ 	return 0;
+ }
 -- 
-2.34.1
+2.45.2
 
 
