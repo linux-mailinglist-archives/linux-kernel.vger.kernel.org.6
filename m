@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-355486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DC0995309
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:11:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DBE99530E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 393AB2887C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C105B230AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A541E008C;
-	Tue,  8 Oct 2024 15:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B891E008C;
+	Tue,  8 Oct 2024 15:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ue6QjAXQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOB8vn8M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A9B1DFE00;
-	Tue,  8 Oct 2024 15:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3856B1DFD84;
+	Tue,  8 Oct 2024 15:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400314; cv=none; b=lYTTYajwLDdo+nJiPbfPQ0ahZLfob+e6udP/6NPWkyL9MMg/DjUFEwmtJtozx4FVilZhYl9hMykqEbcw3UEA9z9DEOWiAFuPmP55OAkXJ7j1qumWoKGnECAHiWRA79WNivh3bO9t09QaclbJ7CCotigviXuAEUBWloouJVd6DEw=
+	t=1728400432; cv=none; b=dNhIXqVY61PPGJ3gxFDAdWXV6cOyakhl9ljKQI0CmToESaIMbScjafR4Tkt5fB1fxS8vaWjcs3vK+p+83Ze4ZCzqsIskHHsK/GlybJkDUkglVFrwD2TcYo7GnO4t7Kb/ItqX6wBkcsXLHgB2YOeBxjou/SDHSuhfhysiu0F84fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400314; c=relaxed/simple;
-	bh=EG/hsmu1NdfLzRH0AKiGNL3bmjSZ16slJjmMBXd3twA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S4asM9NPM2EB7Mrvc33JaVtqoFExnSoQ8yA03pOrd4FNrq33OiuK/xXBbms5ny2uOg46UdasE7z9cyonLLqfzQqBoI3J6txPKBdyjyHjjmxuDWfByuRPUDRDVx5l7zH+Oc1FTtVObOQ/Qaf7ARDM+F1fxDMbxsvSxwFxWDSYDCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ue6QjAXQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C52C4AF1A;
-	Tue,  8 Oct 2024 15:11:53 +0000 (UTC)
+	s=arc-20240116; t=1728400432; c=relaxed/simple;
+	bh=RaxqMyiV7n8pTDKGMindcS0hrojM1IZNbUWaYp1cp34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBFR+OSaze9q9J0nrQdDLjBaXEAz/GHbsFXBTXOhA746ohxHqXfa+1lmyGjftIFKkeEs/N752PSQ3xgfnxYsIrCnjhS66E3kaCASQaCpsSaQvnshjWTyGJzAKQyPCueePmTgcmv3bSAeJ84MmYBcHGKebw1DgU/pK2uEpEXjIjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOB8vn8M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23A53C4FE96;
+	Tue,  8 Oct 2024 15:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728400313;
-	bh=EG/hsmu1NdfLzRH0AKiGNL3bmjSZ16slJjmMBXd3twA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ue6QjAXQLUyLTavUMBoSaScVcwxxwp0dMpl3QVAbA+PXvABSN/CE7Z3Lo4LS0oV1T
-	 TFrmCKd/6L4Ww2h4V+Rlp9riOrUCxX01BjNQ27LlUWgT2YklNeaXiZCzwn3jcrtcdj
-	 jMXgfu7L2OwPNzhUrJ5HEy78KlmI2voKUClXkYPoqlno8bd+lZ1dDjbTWNSJAs6K7+
-	 zMwRafE9R2wNMott0RLqTxKPyOUUJqneGKP45IuVwcNE+foSivhWjH12kUN6w89yXF
-	 3lRHVwQHF6PXsfB0FGaes/a8vq+raciAYRAFH5j7mllcGTFcKzMdfPA5An2PfsgxZk
-	 AdxesZmH0C0UA==
-Date: Tue, 8 Oct 2024 08:11:52 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: <netdev@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
- <pabeni@redhat.com>, <yuehaibing@huawei.com>, <horms@kernel.org>,
- <linux-kernel@vger.kernel.org>, <petrm@nvidia.com>
-Subject: Re: [PATCH net-next v4 0/2] ethtool: Add support for writing
- firmware
-Message-ID: <20241008081152.772df3e8@kernel.org>
-In-Reply-To: <20241001124150.1637835-1-danieller@nvidia.com>
-References: <20241001124150.1637835-1-danieller@nvidia.com>
+	s=k20201202; t=1728400431;
+	bh=RaxqMyiV7n8pTDKGMindcS0hrojM1IZNbUWaYp1cp34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GOB8vn8MM0fQ1Yzw42fQ815SS4enmVBSTs86VzkBAAni1P2iuDRI1CvTw7nF7QUK5
+	 0O9mzE9PF+eaPoCBBQjElsETSjUw6oVjRGU5ccQgEGfMdGj0+B/73/UpYIsXpVRSSC
+	 wUNSIxUcjS+fYha7TJCyfR+3Xj3UOIKuPKwqGQgBuhaOa7L5FjO1Nm0Vp6u49J2o4k
+	 P72wyCFqo/Lvc44GxClzEtAc5I+bHg+0+R3dYYfCJp1tNqCPFrvd3Rv93ErfksK+3n
+	 Vzir4FMATlL3IdtrgZKKuQhDWheeD6ghAGToGRjF49JZZ85ljHpoHrEpuEL9RSkSqi
+	 2fFsDTD2TYtKQ==
+Date: Tue, 8 Oct 2024 09:13:48 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>
+Cc: hch@lst.de, dlemoal@kernel.org, cassel@kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matias =?iso-8859-1?Q?Bj=F8rling?= <matias.bjorling@wdc.com>
+Subject: Re: [PATCH 0/2] nvme: add rotational support
+Message-ID: <ZwVMLIt4iFX9MUjV@kbusch-mbp>
+References: <20241008145503.987195-1-m@bjorling.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241008145503.987195-1-m@bjorling.me>
 
-On Tue, 1 Oct 2024 15:41:48 +0300 Danielle Ratson wrote:
-> Patchset overview:
-> Patch #1: preparations
-> Patch #2: Add EPL support
+On Tue, Oct 08, 2024 at 04:55:01PM +0200, Matias Bjørling wrote:
+> From: Matias Bjørling <matias.bjorling@wdc.com>
+> 
+> Enable support for NVMe devices that identifies as rotational.
 
-Would you mind reposting?
-I'm worried people who may need to review this didn't pay attention,
-plus NIPA build testing got wedged on Rust code during the merge window
-so we got no testing coverage of this set :(
--- 
-pw-bot: cr
+Thanks, this looks good to me.
+
+I still hope to see nvmet report this. It would be great to test this
+with HDD backed nvme-loop target.
 
