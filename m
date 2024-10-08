@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-355527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3ACB99538B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5917699538D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082391C255E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201C1286894
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B811E04AD;
-	Tue,  8 Oct 2024 15:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38041E0B6B;
+	Tue,  8 Oct 2024 15:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="cPAfuUkc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hfeK1qwO"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q11gW83x"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83341E00A9;
-	Tue,  8 Oct 2024 15:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93751E00A9;
+	Tue,  8 Oct 2024 15:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728402201; cv=none; b=e07ccf7HOvQBp71v2He4p/WTYrbr+49+NUHKimW5USzK/xQUtrYTpTcFf9yOxuZtnW+CnrN8gg8mOJiJPhN3ugxnr45EkYOjRe0L7yVvnrG6ubLy6pYVklhgnvIqf/2GwLQC3bVee+IhuZUv9V5JxdmOxFESnUNDooi3dy0iD8Q=
+	t=1728402212; cv=none; b=MnqvTeDAcxmjAlvx4nde7QsTV9MRnCLIZmyNt/S/taQDJvaJsr775gwUbt+OArWxzNEW2FzbpW4ELnT9+eNt/Vnbs6R7+MFP18liHxqhaRbpBcBwo4HvPf0WCTl9IbGHherjtWpXyFnUIDNMMXA0LsOWNera+mVt5H/NxnC+MPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728402201; c=relaxed/simple;
-	bh=9mNUR//WLomUufq6ZYZd4Vozf2qdmnKZrcApWjWbgAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkTv2IyQHmAnRV7y0cf4RqB7PNL1LbJMxXeTHnpyO5YOz+Cd/BVn0CsjgCa9X77PBdaPXAd40VPdsfhb2+6wJMfFipMHWoHVv9uIEZ30CllEUMDUSspXnR0r6PmrnRhYzkJrjUlFhRrXFFTW/FfjWznZb9IgJveD1S+rBSjbp1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=cPAfuUkc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hfeK1qwO; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailflow.phl.internal (Postfix) with ESMTP id C86A3200305;
-	Tue,  8 Oct 2024 11:43:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 08 Oct 2024 11:43:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1728402198; x=1728409398; bh=EUPKgSfRUy
-	jHwxQ+sn33QCfQ7lcWLFnbH9jyuETITqI=; b=cPAfuUkc0VcVyY4uBhDzEJ/JA2
-	nK1SN31l49ZH9PTwFMUywsd3qbqNkBkkRtqK6AFaqae5URdzlFXw9rHEY5KHRoxA
-	hDbr+fqFOgSWr2Ol2NFR+Wl0Dobb5eT8vhGGZ2ZmVjBOLPCo7moSILbiasghL4l1
-	iRCdIfVJ2H71DcaDV6sXHgZUpNFBM9p2pDr38D0DbmwLK7M1iSEYshq9e9xQbiY3
-	zvtUdxcQjeeg5okQ1d0k53ml6n9Eqn42YZ60DVQJ4MDn96H4J4PL3xq1elbbvQQy
-	JCu/UrCMy8L3+nK2WBHEPqkuwK7eJDyiHdghY9jUb0MZYkBx4kBx0NE/sJvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728402198; x=1728409398; bh=EUPKgSfRUyjHwxQ+sn33QCfQ7lcW
-	LFnbH9jyuETITqI=; b=hfeK1qwOMPklSgf/8SBwgHrcc7fbFKVlcSRahfvb4V2t
-	9jIPk+WehSF+l1rXMPvovKugOJJ0nTBLa7ifhNQyx1hK+MEpKyCYHb71Fy0iQYFo
-	BW5rRs6s/fizkvYZb5b+VQLz5jyLs83V+x+KTYmci3jnxBYCy9l6oRSftn6xKltn
-	BEbS7W8C37a8m2izclfdk2pDiW9jGJx5b1ZpIJ2SiL4dCparoqKaMos5UQqiso8K
-	pgXs0Tl2DYa0Pr7ITVYC5Po1DQsk8slknxDmi/KgPIU3tGFZPnZrp53/5coWLSwJ
-	+FAF3xn4V+DGBO639zqPwh5gifIcgOySYQmY7NMJTg==
-X-ME-Sender: <xms:FlMFZ7CeRD9hUS8vcA_9pfS2Ls7CMRc_xNpoXB9bk4rj0AFnLBs3XA>
-    <xme:FlMFZxjN_8jg7c-TPMaboYvSndpmDNtvVyEZdWHCLnTAhiwPa_Obga-kowpHsUXOf
-    ARRj2Eju50mAw>
-X-ME-Received: <xmr:FlMFZ2k7rkBxaRr5wLo2JwOfLynow63ZEfWMpNFRAhcyLyqksxe8OCDGtKsm0T_-hYknsmTP8GmegNTPh4qU2_aXW5sa5TFPKOoW1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefuddgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedvkedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepghhiohhmvghtthhisegvnhhnvggvnhhnvgdrtghomh
-    dprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopegthhhrihhsthhoph
-    hhvghrrdhsrdhhrghllhesihhnthgvlhdrtghomhdprhgtphhtthhopehsuhgsrhgrmhgr
-    nhhirghnrdhmohhhrghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepthhglhigsehlih
-    hnuhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhk
-    oheslhhinhhugidrihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:FlMFZ9wNPyvF2gp9rDn6Z5lVOCugVHSrlYTWJIqb1kWyVewMtJnjEg>
-    <xmx:FlMFZwRTYNtUigWc3xf5N7-YLphOIHVkRNWOR18ay3tnnv2AQ1dySg>
-    <xmx:FlMFZwaNL3MQnpgICI8tTsgJWeWf51VtUnMz4OwI9uPFmxTfgu4nyA>
-    <xmx:FlMFZxQBGGzLbuteKIligpGXX6Gt6IwO0XsXhe0RgU4EnhmePs1Akg>
-    <xmx:FlMFZ8qx5lK-R4qDtq4iGOzlVxGaBM-Sj6GxmpQtjBDDEdM0yN9a2kmg>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Oct 2024 11:43:17 -0400 (EDT)
-Date: Tue, 8 Oct 2024 17:43:16 +0200
-From: Greg KH <greg@kroah.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net,
-	Hall Christopher S <christopher.s.hall@intel.com>,
-	Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	Dong Eddie <eddie.dong@intel.com>, N Pandith <pandith.n@intel.com>,
-	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
-	Zage David <david.zage@intel.com>,
-	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
-Subject: Re: [RFC 2/3] Documentation pps.rst: add PPS generators documentation
-Message-ID: <2024100850-stunned-curve-2ba4@gregkh>
-References: <20241008135033.3171915-1-giometti@enneenne.com>
- <20241008135033.3171915-3-giometti@enneenne.com>
+	s=arc-20240116; t=1728402212; c=relaxed/simple;
+	bh=brHLlY72/GncTnEuBgT8e226cpJvC5KqmOW0N8WnbLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lq0wuLSxcPlsjxENCD5Zl0/d3lfJdEG6GNWwZRJyWAv+r0nDM5cHHSKqDFfKGO7kEq5FGKXd3Qhoovj8y9E6BT1gcT2C7gwngKo38dhioQwCuwU70gTSscBiFusV6PmtQFHp8aUVfWS8w0ElJm8AWVFHiV63pvsLXF4Td498tas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q11gW83x; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50a0bf4d4b8so1685621e0c.2;
+        Tue, 08 Oct 2024 08:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728402210; x=1729007010; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsNjO1HOPCQFWV2E8M3vz66X/+fWZEsDvarBeVLdydA=;
+        b=Q11gW83xrrEX6B+qoU+/zV+RZtEzmxA+rzk9AYTMbud7Y8kPBlASuK3PwABMJLZp3a
+         R6arUhY0VQedrQGXhC6zKTNDQIcDlM/RUFfB3eowezRFEX+dgepOOPjyggBAJsytwdEG
+         Cwh8RZ4dX+tKwYDQSIk8Yey5W48iWESe8NabFZW9djp83vXjkLXD11rUj/IN6/4EhMud
+         iN2B3ms1W8pNaOTOk+Z1kHh1Ws/lyyhst//MENvGPQcJ+kVONEzDucspqAJEvt6Cq1Eo
+         nW4ONI96O1yG59ZUsNhq2d0RgViH2egWE7T25RvwVOO5opVEAOuylDNbvW8Ci/wyjI0L
+         KwcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728402210; x=1729007010;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QsNjO1HOPCQFWV2E8M3vz66X/+fWZEsDvarBeVLdydA=;
+        b=tAJPf25wDKC4xGPGV8JwPeYptEghqQ4rRzMx3zKtryYKq9UDSJ524DpJl9kkMILv1y
+         WDcqXyNeMFqASKgz/iNk5ptSMyHFSCYiBKsfUtSjh+T4dX6pAlnDT9cqqqcgS1kUL2rP
+         c/6+jmzAfSYjU+zkL+KH2FMfnMmnXD9DDKvNwPtws4utPalTlIbviY8TkEtiBsrbrsnS
+         t601JhrbDxLTdVgDm4ECIRH/oEU6EFtZesa+7KbVa8jgZZDv7ye4poDoGJ+k36F4rGRx
+         mOsUOfJzt+Ksx3RCGPfXFMB7AGpMfnQOkp9zzCRUh+9tzSpae9tpxEHuSliWgV50k/iO
+         9HaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5p4EIoAQPAcchiJ+aiTY+XPiOijvJi+HYMKd9AxIb3/9hSkOnR/ZiWMn/UZC2lXt4cVHLXX5d/nwvdgk=@vger.kernel.org, AJvYcCXCW+HsmIp2lKExgkwbIxmZ3YrPjDQsXjVRgbQ5O/YsCDR+ntHsLx6N0Nbz6C8OVvJyVCsXt56Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YztwF3i3dEX2K4K4WcZhs0NDcCsHWvShtCArqKNFPUEDB35zh6V
+	CiZ5FwRQNoDQ8YkMq1zIG52XTd7HTjA1NBP2FZPB51E5k6uDDCdKtNnpd3q8w9U2OvKiivrjK18
+	uOXBC0tPhnafXuGoNFRAsYSCXh9rY0w==
+X-Google-Smtp-Source: AGHT+IENMVPLWqbIiJCBonkG/yvO/XS8srG6VQJqZeMk6pUio0yBGJab8roG+JjwjeZMfaeMCfXVJXtbQhdK9IdS13A=
+X-Received: by 2002:a05:6122:91d:b0:50a:318:b39d with SMTP id
+ 71dfb90a1353d-50c8543a748mr10364358e0c.2.1728402209777; Tue, 08 Oct 2024
+ 08:43:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008135033.3171915-3-giometti@enneenne.com>
+References: <20241006163832.1739-1-kdipendra88@gmail.com> <20241008132024.GN32733@kernel.org>
+In-Reply-To: <20241008132024.GN32733@kernel.org>
+From: Dipendra Khadka <kdipendra88@gmail.com>
+Date: Tue, 8 Oct 2024 21:28:18 +0545
+Message-ID: <CAEKBCKMrtLm1j3dU+H12Oy8635Ra2bZ6eFfxdixTvYwSEEyaJQ@mail.gmail.com>
+Subject: Re: [PATCH net v3 0/6] octeontx2-pf: handle otx2_mbox_get_rsp errors
+To: Simon Horman <horms@kernel.org>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, maxime.chevallier@bootlin.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 08, 2024 at 03:50:32PM +0200, Rodolfo Giometti wrote:
-> This patch adds some examples about how to register a new PPS
-> generator in the system, and how to manage it.
-> 
-> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
-> ---
->  Documentation/driver-api/pps.rst | 40 ++++++++++++++++++++++++++++++++
+Hi Simon,
 
-All of this can go into the .c file and autogenerated there, no need for
-a separate .rst file that will quickly get out-of-date.
+On Tue, 8 Oct 2024 at 19:05, Simon Horman <horms@kernel.org> wrote:
+>
+> On Sun, Oct 06, 2024 at 04:38:31PM +0000, Dipendra Khadka wrote:
+> > This patch series improves error handling in the Marvell OcteonTX2
+> > NIC driver. Specifically, it adds error pointer checks after
+> > otx2_mbox_get_rsp() to ensure the driver handles error cases more
+> > gracefully.
+> >
+> > Changes in v3:
+> > - Created a patch-set as per the feedback
+> > - Corrected patch subject
+> > - Added error handling in the new files
+> >
+> > Dipendra Khadka (6):
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_common.c
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_ethtool.c
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in cn10k.c
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dmac_flt.c
+> >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dcbnl.c
+> >
+> >  drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c   |  5 +++++
+> >  .../net/ethernet/marvell/octeontx2/nic/otx2_common.c |  4 ++++
+> >  .../net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c  |  5 +++++
+> >  .../ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c   |  9 +++++++++
+> >  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 10 ++++++++++
+> >  .../net/ethernet/marvell/octeontx2/nic/otx2_flows.c  | 12 ++++++++++++
+> >  6 files changed, 45 insertions(+)
+>
+> Thanks for bundling this up in a patch-set.
+>
+> For reference, it does seem that the threading of this patchset is broken.
+> Perhaps there was some option you passed to git send-email that caused
+> this. In any case, please look into this for future submissions.
+>
+> Also, please use ./scripts/get_maintainer.pl patch_file to generate
+> the CC list for patches.
+>
+> Lastly, b4 can help with both of the above.
 
-thanks,
+Sure, thanks for this.
+Do I have to send all the patches again with v4 with the new changes
+to the few patches and the same old unchanged patches?
 
-greg k-h
+Best Regard,
+Dipendra Khadka
 
