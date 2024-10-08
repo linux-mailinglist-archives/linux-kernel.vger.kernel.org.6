@@ -1,91 +1,119 @@
-Return-Path: <linux-kernel+bounces-355706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940AB9955E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979519955E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C21C25BAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:42:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998B61C2596E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7C420B1EB;
-	Tue,  8 Oct 2024 17:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5835620ADED;
+	Tue,  8 Oct 2024 17:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgMhxGZq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="N9XvX3s8"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51C220B1E0;
-	Tue,  8 Oct 2024 17:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CE020ADE7;
+	Tue,  8 Oct 2024 17:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728409326; cv=none; b=HqxzbUVsGIqvPq+BKmTZRirUNog3UNKREIWkeAVI6QDe4EaMQiSVSALxBkjDg5FrfAYIL44opNhCmKyXIS+YtF+nJ7sOqC6IqRH2zwlgs5ZPF2EKaOTTEWzgXktQeIrpufNbMfWkcqBkMtI1L+bT95DYZgh3FqxW7OBKavdTY+U=
+	t=1728409358; cv=none; b=nKCJhvagWOX1Kj74Z34VXXtM0nuQ9RSmyrPbSFNqRVXHfHqqRwCZPU3s2Xb3rjyhDtXYLYR1Eu+NssiqvHvdMLZlIcxBTEWCdEXDLDfV/xmFeFKg4SCgxdtM2AO573ctpezi1qQvIxNh2jziSOcsRQGLv3YzWekeMbsluQfs0p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728409326; c=relaxed/simple;
-	bh=eNUS50KcHF91ZvltzMFX+z0qLcRzb93tuIxwqHyfZpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=damn1i46QETqC2w3a+jf0/Y6Eg109EtQ4nTQs+atYxW42CXqYiUEsm/+MmqPwAXcyM1OThTYO2EjZ2Yaq6YVLEx/SdrnT00vDyVzJ99Ye6k6hxy6AJblTKyvko2rcTzGGPNPBkcc1zDRXxO9dyoPKeRYYLbqloAH8NZci31MId0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgMhxGZq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DA0C4CECE;
-	Tue,  8 Oct 2024 17:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728409326;
-	bh=eNUS50KcHF91ZvltzMFX+z0qLcRzb93tuIxwqHyfZpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RgMhxGZqsRMqT4paQFe4UnOpNo4+bdRdiHLVDYBcHzRLR/O2gLnNDAJYM21iT1Pqd
-	 XIL2Ab3hIPmZon4pTVVs5CemIRJUd9Rx06YvJmFJMb6Zx9PP0oVZmCw/gQfXqzDt2A
-	 Zg+6T4DjbXXILdcZsIx+fbG2hB5uPDtCRzFEULjRuwwzsRcR5xVSJBCh7hJQe/OtMs
-	 k9Nft7nq4p8xA+nSeUIb+wpVTzCmgxQuh+gxZhA0kyVzEoIFy1Uf1IZbGkyLSkm7x4
-	 AwjfOuhpmGVZD4Fg03JxeJe3nGPOG7vuhaRH/4Dx6wXXaRM0IqkPyLmuUNWP3+4/hr
-	 f1dDdFYwxBtzQ==
-Date: Tue, 8 Oct 2024 18:42:01 +0100
-From: Will Deacon <will@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Yang Shi <yang@os.amperecomputing.com>, nicolinc@nvidia.com,
-	james.morse@arm.com, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
- calculation for 32-bit sid size
-Message-ID: <20241008174201.GB11091@willie-the-truck>
-References: <20241004180405.555194-1-yang@os.amperecomputing.com>
- <20241008133458.GA10474@willie-the-truck>
- <20241008151506.GC762027@ziepe.ca>
+	s=arc-20240116; t=1728409358; c=relaxed/simple;
+	bh=Q0g58HqaOxFLx9hSEYKxy3f3Vj1QxlCfdqMvR4YEnDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jpaD8CCIuvrLNzwr/FaZmLlIWaolsGcAS0jzQ+Jc6QHVdhLrk5baVtq2mLNVBNWJDzM5sKIc7oE3Juae80pUUwn93Q286m/9NfSvUmTSsC7gqli5oi3qBYd+WEydlHJWfPUxxAGMohI91ge/uBqqE1yM/FnSyQn8MWHg4R7qWzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=N9XvX3s8; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XNNdS4vhbzlgTWP;
+	Tue,  8 Oct 2024 17:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1728409351; x=1731001352; bh=JZhci7ma0ai9ive6gkNamfTH
+	wDVRA3njSn1SwC/E96M=; b=N9XvX3s8soO5sMEkAdmxItaDHdgrKxW2hTbYaEOL
+	mzlIhD8VviJN79VbqITDTqIuK5YXmx3olER6VDQwqhu/8e2+m26VhWBi75e2ZGYp
+	Lt8er3qNvXrnXklccJ57YcAu8aCijgsWbC3z1iaSeLpiFMWtBxk0jf73KHsvS2JX
+	gY0kpOue0Ds/hnD+7He7IccpooDuxad0oeeTOJTMUZJx4Ia+GJZmE1iYP37i1ePP
+	gPrC3UkvM451uiRfPhwk+28TV+awDgrccHkTRT9y36PQNsECg7TeyBbFDuPkVEW9
+	AG8zb2iZaYfb45N5JgVKGweQMCIXwJIMruIROwFIjWzNew==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id gT6BVE5RkjYH; Tue,  8 Oct 2024 17:42:31 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XNNdH2mCzzlgTWK;
+	Tue,  8 Oct 2024 17:42:27 +0000 (UTC)
+Message-ID: <66d8938c-3bf8-49c3-b42a-e2c32f1d1338@acm.org>
+Date: Tue, 8 Oct 2024 10:42:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008151506.GC762027@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: ufs: core: check asymmetric connected lanes
+To: SEO HOYOUNG <hy50.seo@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+ kwangwon.min@samsung.com, kwmad.kim@samsung.com, sh425.lee@samsung.com,
+ quic_nguyenb@quicinc.com, cpgs@samsung.com, h10.kim@samsung.com,
+ junwoo80.lee@samsung.com, wkon.kim@samsung.com
+References: <CGME20241008062836epcas2p2caa5c41cf8fe4d1bfe5d923633ea2618@epcas2p2.samsung.com>
+ <20241008063842.82769-1-hy50.seo@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241008063842.82769-1-hy50.seo@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 08, 2024 at 12:15:06PM -0300, Jason Gunthorpe wrote:
-> On Tue, Oct 08, 2024 at 02:34:58PM +0100, Will Deacon wrote:
-> 
-> > This all looks a bit messy to me. The architecture guarantees that
-> > 2-level stream tables are supported once we hit 7-bit SIDs and, although
-> > the driver relaxes this to > 8-bit SIDs, we'll never run into overflow
-> > problems in the linear table code above.
-> 
-> My original point was about the confidential compute position (sigh)
-> that the untrusted hypverisor should not corrupt the driver.
-> 
-> So your statement is architecturally true, but we never check that
-> IDR0_ST_LVL_2LVL is set if IDR1_SIDSIZE > 2**7, and so we can get into
-> this situation where the hypervisor could trigger some kind of bad
-> behavior.
-> 
-> > So I'm inclined to take Daniel's one-liner [1] which just chucks the
-> > 'ULL' suffix into the 2-level case. Otherwise, we're in a weird
-> 
-> I think you should take it and let better be for the CC crowd.
+On 10/7/24 11:38 PM, SEO HOYOUNG wrote:
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 24a32e2fd75e..1381eb7d506a 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -4540,6 +4540,14 @@ static int ufshcd_get_max_pwr_mode(struct ufs_hba *hba)
+>   		return -EINVAL;
+>   	}
+>   
+> +	if (pwr_info->lane_rx != pwr_info->lane_tx) {
+> +		dev_err(hba->dev, "%s: asymmetric connected lanes. rx=%d, tx=%d\n",
+> +			__func__,
+> +				pwr_info->lane_rx,
+> +				pwr_info->lane_tx);
+> +		return -EINVAL;
+> +	}
+> +
+>   	/*
+>   	 * First, get the maximum gears of HS speed.
+>   	 * If a zero value, it means there is no HSGEAR capability.
+> @@ -8579,7 +8587,8 @@ static int ufshcd_device_params_init(struct ufs_hba *hba)
+>   		hba->dev_info.f_power_on_wp_en = flag;
+>   
+>   	/* Probe maximum power mode co-supported by both UFS host and device */
+> -	if (ufshcd_get_max_pwr_mode(hba))
+> +	ret = ufshcd_get_max_pwr_mode(hba);
+> +	if (ret)
+>   		dev_err(hba->dev,
+>   			"%s: Failed getting max supported power mode\n",
+>   			__func__);
 
-Heh. I wish them luck! :p
+I see two independent changes in the above patch. Should this patch
+perhaps be split into two patches?
 
-Will
+Thanks,
+
+Bart.
 
