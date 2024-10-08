@@ -1,381 +1,139 @@
-Return-Path: <linux-kernel+bounces-355836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70289957C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:42:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F689957CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40390B2360F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BFC1C20D7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00275213ECA;
-	Tue,  8 Oct 2024 19:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338621500A;
+	Tue,  8 Oct 2024 19:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iV9gi4K3"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010033.outbound.protection.outlook.com [52.101.69.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e/eiE22c"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D521E0DCC;
-	Tue,  8 Oct 2024 19:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728416512; cv=fail; b=pmrzGsSGkzRF1epfWBa7K89Qtkf2lHjMNeQ0WL0Fm7oRLOkBrRA1kT39/NTCKk6h5oBsNEkwodKKhSWyZbuC2+pR/dmztFWM0iJd2WJRjhROAvKYaD1sfEpW8g6GVpbQ9Tup4dn8Nn6Uvp1ayJjNV7/ueq/cUQ2ZjGjWYSGXc5o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728416512; c=relaxed/simple;
-	bh=w4m+C3MA+uF99iaYqBpHoN8HtNlLgOwjLrQS1SWbCDg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XKlCQhT3ry7p8+GWFSiipcwftqE1a2qmlWSEIeyAlcM4CysYut3/wrvCyN/UJmvlDW6GdhOMFKVVf2BwbsurLiKVb6nVT8bj+HQVRxevtW1Ll1B+mO6J06JBAGkWhZ6gU/On1HQWRyZNIepvMaZR1IhKsrlFGDgRqYxOD19vFRY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iV9gi4K3; arc=fail smtp.client-ip=52.101.69.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SyvkddGhVIUq+NJHWhIE39hGASP2ix8DbuiMETw2zCGv+Udj/v95EoSjcYr6KsGmgFrGHhmit96u0RMmw2iA6ioL+G0WfSyZsCiGMyM3F3Zcz5AyaZfnzRvPC5rYLIwrUP/hD++7fnzGZAGoS3tvMjjFnT91q4Lz2zpUED7Fo72nSgBFiryOCdx5AC/4u+gMr/0cFRKfCpUOWPjI/CcLnbz7VFz0QP2ciBpbgXo/ZgqwOZ0GZ+ny5xnYx5ekKxjfU8fMcpYSnALmGSHR1IPUp7bcepdAAbKkJ7uya5NoAFy3+ZZy7gPdg6AStyiQkIedc9bQkcWJvqcDG3zmkul6iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mQqM2YdVVqMejLuSUwuShuQnVSs+FR7EYfdGkIIsH3Q=;
- b=VTWaADAdMml3oVBI2+cQPPzLrMwWlMgJAX8jMD17uItSQ7jM+7r9OuueN2n+vV6DkB0iTPJNprAVlfJbvm9Cn77AU7q291gjQGslGzLt/5rxEmUx3ZRUbnXfXrTJsw0tF2RR6IOCLljdu4mL8fvmNE9sRY3rHCK5FYXIdRJD1jp8JB6ivaGER3t94rn0+UWEr5kP1G9MPjQjAIbRelcqLoGO9TiGUsndXhVVNG3pKFGRmM+OhjrbXlPMf/Rtzd6I8SKwXmj2QsMcsBv0VLMOFyYi1vFjMESEsof9stLMxtILiSL4V8XJnYO5yDIA61GaQjU+7WgTeH/xB7FeRKaPAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mQqM2YdVVqMejLuSUwuShuQnVSs+FR7EYfdGkIIsH3Q=;
- b=iV9gi4K35QvRz3tKp5i999ROLCNGYKknYVIbkRcaAdiq1gdD228E3PvhkOx9/WsdzD+7fnB0H8lXV4UvadWIHcUNbA9VK1+RnOIXFSuRDQzlRkVB49guM91Da57lKKhr5/O3IFRJzeFJoq/sIMfmoCUu9pnOZhK92Vpwh5VcVWnDRevtriGVyHy9HyfAia1ZoumiJ5m36Ng+3hHHtu5rbSk1t2Qa/WtG84sDIibS8t29fKuKG/5NstX+M4OR2KfBgSfbYGWXE1j78E1Q8USi6zsC0hseic6qJ8Tfm9HlmaBKYbyd7WmQ7Pcx+yWFp4uiv0luuJqtlEr632yaN1mpvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM0PR04MB7138.eurprd04.prod.outlook.com (2603:10a6:208:19e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Tue, 8 Oct
- 2024 19:41:47 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8026.019; Tue, 8 Oct 2024
- 19:41:47 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: u.kleine-koenig@baylibre.com
-Cc: Frank.Li@nxp.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	festevam@gmail.com,
-	francesco@dolcini.it,
-	imx@lists.linux.dev,
-	jun.li@nxp.com,
-	kernel@pengutronix.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	marex@denx.de,
-	p.zabel@pengutronix.de,
-	pratikmanvar09@gmail.com,
-	robh@kernel.org,
-	s.hauer@pengutronix.de,
-	shawnguo@kernel.org,
-	xiaoning.wang@nxp.com
-Subject: [PATCH v8 1/1] pwm: imx27: workaround of the pwm output bug when decrease the duty cycle
-Date: Tue,  8 Oct 2024 15:41:23 -0400
-Message-Id: <20241008194123.1943141-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR03CA0010.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::20) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB45213ED9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728416541; cv=none; b=YXTkilqf1lrWzdqfK6t7Kfc+APYADu2XTNOPPGIGYdTTF1imSVPD3o6O5qCMKCNPIQu7ayg2yDmsKjIdyRVvwKGIxc9YdOW8sMIvg7YowXVfFTBMLDtm4SKxrnzDSlm0veks/iUaI88lPdoUVqGKy7ELo8ysBvlsaL7zoPafXwo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728416541; c=relaxed/simple;
+	bh=lFhTMzC9ORLMqoRTjpZ6veDLc7aVhr/WeQGwgTd9GPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+NtZ4GluZsMKOdTXPlc1ldQ6qk4GYcW4SzsM8rThw9VpAXeulqtoSDQqiqBe48kOMO3NJVeQQ6+MJEMMimY8TyGtvz1XDvgGiBRcDgFpsaYDKkqHXXXFmG+MGgfzFfwDoR4i1WS0Bj6P37sQ8N/YnBkQgdancHz3rbwCyMRsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e/eiE22c; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37ccfba5df5so3874930f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728416538; x=1729021338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ztVVxm7jB9ef2OrCWlXv+wilSMfWclaP+y3yiehlVbA=;
+        b=e/eiE22cIJdkIQ8iLFVYr88Aan09oXzRwqd/W3cUdl65Zb51ARrRbYZFn1zyOfpP53
+         TnWo1sdtHGdTwf87kQPl5uB24f0LLyErO8Hg/gPc6wxpmqszbuVzRo8ynC96dw8Dqo21
+         e5nkKaTjWb6BScyh7WrrRabpnfNUPRlLx7NdjRl5UPybGBX1b3rj3aXEkglVsvE/4OHR
+         CANW75vi1fMLGupJDv3Z451hrUXP0tY4XFV42pbQW5anc573VQyjb4dx9h/YC5BP1RAs
+         yd9Yt23G+CwY0/20I4WJXLRis4ah5uDEcmWrvpUJNj0Z4dSvjdXoyAaORwxNgriHjEmj
+         W7CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728416538; x=1729021338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ztVVxm7jB9ef2OrCWlXv+wilSMfWclaP+y3yiehlVbA=;
+        b=C0KlP0rkLy/L0Oxdtva//MzEh58aJn+c982NP/r+h9dWcQo3+32jtFNLcx9P/HzuRi
+         UV8wIcchYATZbh6potb3MKRtR1itOyQkjiyBM8IKQUYP7sKdjr2gb4rUmLBPEp0ZY7zu
+         68v1XaF08TD+zzy8k0I4L9xTVuELiS5PTVDweucurjzhrAaJrl1Ukc7Xw089EdkFIzco
+         SN8k3tMQ6eg/13fJzhM9OCja2xkzL+qFlwEG2H3+IfpoMtNi9DO8J0GvljoGjk1vdTHN
+         WXBqIJRWhi/pkNFXtMvmCpZn/pdweDzwG38pVidNEBfY/1+mKLNH835JNurh7qVpSI7u
+         qZtg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+s782KAJH0cRhNoOS8FwWrS15Ec67R0EW9APcmKOfncsiXtgGFly5Lb/BzDBVt+qsN+QHtyicJuoXCow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyisbSJ6iRlGmhJvk0h97K6L6hHnmlmPwBvE2nZQFDjHXYD/ImY
+	/fg4wOurne+UKA/Wz21hJ7lK/zFRGbPVRxcH9CIpMuqw79fM8PL+l501G0HPdIn0vmCw62WmpLI
+	gISVS29DdpsuUCmOZbkWaNNcf0HhpLoWLo1of
+X-Google-Smtp-Source: AGHT+IFKhUFF3WNNTqlJrPLbMTLLVQI7WWrZ92xfITFsK6a9htkf5fdYkPlN2t3yWnT5FJDTTlAF2/N3Ch6veoWI5bQ=
+X-Received: by 2002:a5d:6112:0:b0:374:b9a7:5ed6 with SMTP id
+ ffacd0b85a97d-37d3a9d7dd4mr6614f8f.22.1728416537596; Tue, 08 Oct 2024
+ 12:42:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM0PR04MB7138:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49d15dd0-39f0-46d1-4986-08dce7d13e9d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l5Vn3kgd1gryaNCc50ug3RCpHmpX08VASDwSsCe5OUlNOJNRc/mmYMdkHaJH?=
- =?us-ascii?Q?473aHteaLNgz+nEn8N/GX4zHVRNCTNDo7qYhefLc2sbOWDDJ5h+Hp5nnZA3z?=
- =?us-ascii?Q?TFmh8GbU8yiOI5euDsN1VzDbYY4ETceBXSDFTx5V+eqCJGS6HnKdCyyqg30q?=
- =?us-ascii?Q?NxxOwNQea1r8xdJNah87p2LTOXsY7gySWOVI7GzApJNeEyqzLxT0FCrVmyF4?=
- =?us-ascii?Q?EXrGyJCuxTVpZRzyU7Tg514R6hWEei0dJcZZFmJi+DnqG6SflT1A8kxdFuYh?=
- =?us-ascii?Q?TFG2DHRMZjwvSqlmnd9y5gX9rPd4F18gD27JjrWSnPg0D7zkDikzmpVPKKR9?=
- =?us-ascii?Q?dxJyGsNLMNMFDnScFKdpUHHaYesv1YWsSZeIIwXZKu+CZHTDAo7jXZJYw2iD?=
- =?us-ascii?Q?2s5v16IgdVAkTmm5voJvRON/1SX85YUlo6JvtYeWoKXhgbK0uLeq9/U/BNjs?=
- =?us-ascii?Q?j8BDjhzHE3sYPhgKNOMcl3lhM6oWhyLw04MSEzHrMlY7daiiyDaiM7jFyQs4?=
- =?us-ascii?Q?9khEXC4lM/l9nk//mjIQEXSt27WJeTJwbu1lY0z+BQ6EyZyUZo8xs9d7GIXD?=
- =?us-ascii?Q?RWyn1dqIDzT366frW7+degYTWVheWoWd7PKJLysgN9Bn4GEl8dzvztwNBL6v?=
- =?us-ascii?Q?0MKO2Nca6JiSiaQ+nGf1GM3oyQiFfZK2pXy0xTsoM5GntXMY/yR31hvbUl3a?=
- =?us-ascii?Q?nTfxdzzYq9r0uXMBlG49n/SXFzs3/mD7qZATQnvDySxee2kNmYQyRkOwMYQ9?=
- =?us-ascii?Q?ht9DU7oJyrGh+DwCHvX22IsxDOpAoCgefuwH84gPEhNkWHG19UGdPmbG/tBO?=
- =?us-ascii?Q?uTSkNutR6+CGOEiiJsh7awy92KRTh8HESZlSB6ycF/w9u128DQxxi23p1AF/?=
- =?us-ascii?Q?heQp0dSij+baTejv2VBSccVbQXD9OnZ+LuU+cXHEiU6JBxNM1GORc0bNvCkn?=
- =?us-ascii?Q?h+dBEVvF/Umgz/47xUaVoslRIxWrmJBxnBYq5wpCSAt1SwbgozMPYhyCDjgB?=
- =?us-ascii?Q?pTA59Be1hXy+EQUqrr8A9FFkdacRY2cSMOsmSBNNia9t7MTFjl6hhobqAO+5?=
- =?us-ascii?Q?oWcSjDJsFBOpqk+HjIMNb7RxmAZ05Qv1ZhZ9FRBMt3FocYqlpWKOHSFGFpMO?=
- =?us-ascii?Q?VsGmw+BiNRVdGuh0mEVZDmRySQxXnF2JFYbrYgOQlGCKrQ8qHtikm7m86aEs?=
- =?us-ascii?Q?X3R8iHHeWAII4wX/rC6HADzV/3kKs52e03gY28El5fDjnOrlkRQOYQJTgMXx?=
- =?us-ascii?Q?fdi8A9oF4JX1I13OijhhtpTxCn8hW2vEwfchHzucuBrcd3wYsG0/RpgYLIPS?=
- =?us-ascii?Q?rnmIn0beypyJ3lIoACG09kksWvfzALpvjx9tzC4Urzt00A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+wGXK1VAsLLSDkyiHyHjV5J8mvICS3IrkdNLFtttEuizbEnYwIVFdWrTwskq?=
- =?us-ascii?Q?AkDKAeQwg61S2OFG32xKEztdXMrjEfqt59a+8b+6vfLbYTJGWGpnl5UtJir3?=
- =?us-ascii?Q?j76QYBfQISnPQcBQZyJiWA8o2xcHMDVcCxTfaADWwv/YR2elrt/GUSJ7jIfK?=
- =?us-ascii?Q?X4gnpqVq7gkUFryzf0Pk8IjduCpzQLxsb8g6V8zx4tRy0B2Uk6upqrcHJROq?=
- =?us-ascii?Q?U5ROr7PNb9SG+jEEI7YrSH1Jd9WDC3ZDiKejsfWbN3w8AaYw789M9s3Zsi7d?=
- =?us-ascii?Q?VODJ2bInLsYDrdNjUjFJybHwJeOswNCIB+mm6DxAMlUPMhNpexFmHDgQl5Dh?=
- =?us-ascii?Q?ZhIrkPOG4OZ6/xckHsOOkMgw5QlOIBYueJK+yyiHt5wzv3uZfO525XklRKjr?=
- =?us-ascii?Q?vcKgGZInSUVQx21ZCUVfk60zSo4PHX1gytrU1ueqQLNyjXS75apJz5IQIu9b?=
- =?us-ascii?Q?QKrt9cr+3bsVwHyUn9Fk3XETvygMiLXSXXk7EQRBO4x78IQSvnYxvaArY6CE?=
- =?us-ascii?Q?hT29m8FuSW9ueseloP3EaBcB+dX8AqKlRknaE+s0I/KKdCy82ZmsbMskdbY7?=
- =?us-ascii?Q?FELWWotTTJQWIJqtNh4rjRc2vm1Y4VXTq67aWtuMmKRpEipl4RO4mN0TVKQt?=
- =?us-ascii?Q?kMFI5dQwdIJcMclKRbeahzX1O36mvVDBiUAclBe/DWdq0B00/Prgq/org1tU?=
- =?us-ascii?Q?147bmBm+84p08jS8/z87b151IGm7lR00hPupseEb2WAmuCU65/2JHHNdDXXv?=
- =?us-ascii?Q?eorbN8S1UdOsU1yz/JZjqWulvHPdOhUKjuNwkLfWO7wfXMxct2rLmCqEqEwu?=
- =?us-ascii?Q?G2GjbUHFf+HiaNQVEctJQbpBtudK9momrpxR1CoFEICHG0iNQW4MW2HOoObP?=
- =?us-ascii?Q?sKgoZ1VGIOScwtLLLqknslVkqbGDYnp3gVbCZXv/fUEQrViB1lewZRxBwZlF?=
- =?us-ascii?Q?JOniGh12gQ6pjW0Y5KdFCJ/d9GJJV9VrAnxalc25l4ACDRrujXY+X1NY1OH2?=
- =?us-ascii?Q?BoyoDlFTSy34j1EU8L5maAW3ln4tb+dkisXUQfLc0RhHEvNxAFc+EEGnWy6v?=
- =?us-ascii?Q?2U1gs5QLlNUBneVrO4lzPXzLBKiZGYGjtGlRyqJDTEU/tplWckATS7CVksE3?=
- =?us-ascii?Q?x0RFDmO3p/9R6CfBmTvwyfcjFaDBAX9F0tHEM2jODROCFc+59PH8KbxhblJG?=
- =?us-ascii?Q?fQmhK04QmQJNGuLoShQPaoWc9SspQdjyLvua7sP3+wO1LC4qO/9uVoQ2PF/+?=
- =?us-ascii?Q?sEzRNxXo/AW+IFLeOia1amXoaA1tmvjwLMP6N26Od7TB19euVdZ+rfPTff9/?=
- =?us-ascii?Q?AI/+bfLxrY2P93xEh4rs2dZlL3ptF0Oe3TcnF5ltDDBlr1HEcAkRoRbD3FJG?=
- =?us-ascii?Q?AxAQJdCRYy7ka1UwvVVDf/lnfWLu6k5pu2cjgSXCz6zzyHr4FcUBl0G75ORI?=
- =?us-ascii?Q?7gcghmJiLC0KcghdcZh/aCFyrLC0FY/12f4tsrtnwRPrGyVN72UEjCp48wtd?=
- =?us-ascii?Q?afRZNLQ0CsMylcXhRJf5ZqVeY8SnGc5mcEwklLZOOMpva9fi9PKbmxdGWiFa?=
- =?us-ascii?Q?RWwnDT2X4xrZQhv2fZkc4s9OfT2QWOcKTJREnIWf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49d15dd0-39f0-46d1-4986-08dce7d13e9d
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 19:41:47.2000
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EduocVXZREFp5/voTMZB4IgUuErB+/74+OqT5x8ac0o2IQ0mtjt5ZKB91aQRWnC/e+TgsHmMOo5gv8bcbWhKCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7138
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com> <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 8 Oct 2024 21:42:05 +0200
+Message-ID: <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+On Tue, Oct 8, 2024 at 9:00=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> On Wed, Oct 9, 2024 at 2:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> > index 057305eae85c..08d5b7177ea8 100644
+> > --- a/scripts/Makefile.compiler
+> > +++ b/scripts/Makefile.compiler
+> > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD=
+_EXTMOD))/).tmp_$$$$
+> >  # automatically cleaned up.
+> >  try-run =3D $(shell set -e;              \
+> >         TMP=3D$(TMPOUT)/tmp;              \
+> > +       export RUSTC_BOOTSTRAP=3D1;       \
+>
+>
+> try-run is not Rust-specific.
+>
+> Is there any reason why you did not add it
+> to __rustc-option?
+>
+>
+> __rustc-option =3D $(call try-run,\
+>        RUSTC_BOOTSTRAP=3D1 $(1) $(2) $(3) --crate-type=3Drlib
+> $(srctree)/rust/probe.rs --out-dir=3D$$TMP,$(3),$(4))
 
-Implement workaround for ERR051198
-(https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
+I had an explanation for this in the commit message, but it looks like
+it got lost when I rewrote it for v2. Anyway, the reason is that I'd
+have to modify both __rustc-option and rustc-option-yn to do that, and
+putting it here seemed more future-proof against making the same
+mistake in any rustc-* commands added in the future.
 
-PWM output may not function correctly if the FIFO is empty when a new SAR
-value is programmed
+But I realize that it's not clear-cut. I'm happy to move it if you prefer,
+or perhaps add a try-run-rust. Let me know what you think.
 
-Description:
-  When the PWM FIFO is empty, a new value programmed to the PWM Sample
-  register (PWM_PWMSAR) will be directly applied even if the current timer
-  period has not expired. If the new SAMPLE value programmed in the
-  PWM_PWMSAR register is less than the previous value, and the PWM counter
-  register (PWM_PWMCNR) that contains the current COUNT value is greater
-  than the new programmed SAMPLE value, the current period will not flip
-  the level. This may result in an output pulse with a duty cycle of 100%.
+> I guess it is still suspicious because the top-level Makefile
+> exports RUCTC_BOOTSTRAP.
 
-Workaround:
-  Program the current SAMPLE value in the PWM_PWMSAR register before
-  updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
-  register. This will ensure that the new SAMPLE value is modified during
-  a non-empty FIFO, and can be successfully updated after the period
-  expires.
+Moving the declaration of RUSTC_BOOTSTRAP to the top of the Makefile
+seems to fix it. I guess moving it is probably a better solution than
+adding it in scripts/Makefile.compiler.
 
-Write the old SAR value before updating the new duty cycle to SAR. This
-avoids writing the new value into an empty FIFO.
+Not that I really understand why that is. The existing invocations are
+in scripts/Makefile.kasan which is invoked after RUSTC_BOOTSTRAP is
+declared.
 
-This only resolves the issue when the PWM period is longer than 2us
-(or <500kHz) because write register is not quick enough when PWM period is
-very short.
 
-Reproduce steps:
-  cd /sys/class/pwm/pwmchip1/pwm0
-  echo 2000000000 > period     # It is easy to observe by using long period
-  echo 1000000000 > duty_cycle
-  echo 1 > enable
-  echo       8000 > duty_cycle # One full high pulse will be seen by scope
-
-Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
-Reviewed-by: Jun Li <jun.li@nxp.com>
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Chagne from v7 to v8
-- combine Uwe's diagram and errata document.
-- use old period
-- use udelay(3 * period / 1000)
-- Only apply workaround when PWM enabled.
-
-Change from v6 to v7
-- Add continue write for < 500hz case to try best to workaround this
-problem.
-
-Change from v5 to v6
-- KHz to KHz
-- sar to SAR
-- move comments above if
-
-Change from v4 to v5
-- fix typo PMW & If
-- using imx->mmio_base + MX3_PWMSAR
-
-Change from v3 to v4
-- none, wrong bump version number
-Change from v2 to v3
-- simple workaround implement.
-- add reproduce steps.
-
-Change from v1 to v2
-- address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
-  About disable/enable pwm instead of disable/enable irq:
-  Some pmw periphal may sensitive to period. Disable/enable pwm will
-increase period, althouhg it is okay for most case, such as LED backlight
-or FAN speed. But some device such servo may require strict period.
-
-- address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
-  Using official errata number
-  fix typo 'filp'
-  add {} for else
-
-I supposed fixed all previous issues, let me know if I missed one.
----
- drivers/pwm/pwm-imx27.c | 98 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 96 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-index 9e2bbf5b4a8ce..0375987194318 100644
---- a/drivers/pwm/pwm-imx27.c
-+++ b/drivers/pwm/pwm-imx27.c
-@@ -26,6 +26,7 @@
- #define MX3_PWMSR			0x04    /* PWM Status Register */
- #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
- #define MX3_PWMPR			0x10    /* PWM Period Register */
-+#define MX3_PWMCNR			0x14    /* PWM Counter Register */
- 
- #define MX3_PWMCR_FWM			GENMASK(27, 26)
- #define MX3_PWMCR_STOPEN		BIT(25)
-@@ -219,10 +220,12 @@ static void pwm_imx27_wait_fifo_slot(struct pwm_chip *chip,
- static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 			   const struct pwm_state *state)
- {
--	unsigned long period_cycles, duty_cycles, prescale;
-+	unsigned long period_cycles, duty_cycles, prescale, period_us, tmp;
- 	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
- 	unsigned long long c;
- 	unsigned long long clkrate;
-+	unsigned long flags;
-+	int val;
- 	int ret;
- 	u32 cr;
- 
-@@ -263,7 +266,98 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		pwm_imx27_sw_reset(chip);
- 	}
- 
--	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+	val = readl(imx->mmio_base + MX3_PWMPR);
-+	val = val >= MX3_PWMPR_MAX ? MX3_PWMPR_MAX : val;
-+	cr = readl(imx->mmio_base + MX3_PWMCR);
-+	tmp = NSEC_PER_SEC * (u64)(val + 2) * MX3_PWMCR_PRESCALER_GET(cr);
-+	tmp = DIV_ROUND_UP_ULL(tmp, clkrate);
-+	period_us = DIV_ROUND_UP_ULL(tmp, 1000);
-+
-+	/*
-+	 * ERR051198:
-+	 * PWM: PWM output may not function correctly if the FIFO is empty when
-+	 * a new SAR value is programmed
-+	 *
-+	 * Description:
-+	 * When the PWM FIFO is empty, a new value programmed to the PWM Sample
-+	 * register (PWM_PWMSAR) will be directly applied even if the current
-+	 * timer period has not expired.
-+	 *
-+	 * If the new SAMPLE value programmed in the PWM_PWMSAR register is
-+	 * less than the previous value, and the PWM counter register
-+	 * (PWM_PWMCNR) that contains the current COUNT value is greater than
-+	 * the new programmed SAMPLE value, the current period will not flip
-+	 * the level. This may result in an output pulse with a duty cycle of
-+	 * 100%.
-+	 *
-+	 * Consider a change from
-+	 *     ________
-+	 *    /        \______/
-+	 *    ^      *        ^
-+	 * to
-+	 *     ____
-+	 *    /    \__________/
-+	 *    ^               ^
-+	 * At the time marked by *, the new write value will be directly applied
-+	 * to SAR even the current period is not over if FIFO is empty.
-+	 *
-+	 *     ________        ____________________
-+	 *    /        \______/                    \__________/
-+	 *    ^               ^      *        ^               ^
-+	 *    |<-- old SAR -->|               |<-- new SAR -->|
-+	 *
-+	 * That is the output is active for a whole period.
-+	 *
-+	 * Workaround:
-+	 * Check new SAR less than old SAR and current counter is in errata
-+	 * windows, write extra old SAR into FIFO and new SAR will effect at
-+	 * next period.
-+	 *
-+	 * Sometime period is quite long, such as over 1 second. If add old SAR
-+	 * into FIFO unconditional, new SAR have to wait for next period. It
-+	 * may be too long.
-+	 *
-+	 * Turn off the interrupt to ensure that not IRQ and schedule happen
-+	 * during above operations. If any irq and schedule happen, counter
-+	 * in PWM will be out of data and take wrong action.
-+	 *
-+	 * Add a safety margin 1.5us because it needs some time to complete
-+	 * IO write.
-+	 *
-+	 * Use writel_relaxed() to minimize the interval between two writes to
-+	 * the SAR register to increase the fastest PWM frequency supported.
-+	 *
-+	 * When the PWM period is longer than 2us(or <500kHz), this workaround
-+	 * can solve this problem. No software workaround is available if PWM
-+	 * period is shorter than IO write. Just try best to fill old data
-+	 * into FIFO.
-+	 */
-+	c = clkrate * 1500;
-+	do_div(c, NSEC_PER_SEC);
-+
-+	local_irq_save(flags);
-+	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
-+
-+	if (duty_cycles < imx->duty_cycle && (cr & MX3_PWMCR_EN)) {
-+		if (period_us < 2) { /* 2us = 500 kHz */
-+			/* Best effort attempt to fix up >500 kHz case */
-+			udelay(3 * period_us);
-+			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-+			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-+		} else if (val < MX3_PWMSR_FIFOAV_2WORDS) {
-+			val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
-+			/*
-+			 * If counter is close to period, controller may roll over when
-+			 * next IO write.
-+			 */
-+			if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
-+			    val + c >= period_cycles)
-+				writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-+		}
-+	}
-+	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-+	local_irq_restore(flags);
-+
- 	writel(period_cycles, imx->mmio_base + MX3_PWMPR);
- 
- 	/*
--- 
-2.34.1
-
+Alice
 
