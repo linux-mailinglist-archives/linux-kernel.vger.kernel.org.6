@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-355249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220A4994E78
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:17:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA909994E2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 681CBB2BDDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081201C2527C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE931DF265;
-	Tue,  8 Oct 2024 13:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AAKLZgdF"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38071DF25D;
+	Tue,  8 Oct 2024 13:13:07 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947561DE4CD;
-	Tue,  8 Oct 2024 13:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA711DE88F;
+	Tue,  8 Oct 2024 13:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393151; cv=none; b=ato5m8cc7tk1QFiYs8oACd3dj70pvyLLoIzvU7ggh8E+LYJIdLUvHM9Q9dVI9I2y0gi8dzFKj+lDbnqE5lwfsx/yPeVSZMoymYxQ8ZU8Bc2fcUYEJ4hMdotcENcmAmeqgIzP9iVMVG3GrAqhEUcQ4WEsKwm2au59e1aXrTxvMww=
+	t=1728393187; cv=none; b=RscnbGFEhKpKqVqW+w4SnhaNjNIb1fwgBF0fNjt6Santtr2XBEk6lK487lqJU7Chq7hF0OHliOswxD0NQ2HHHaX5SZZ3UV+uWZia4ahNzruUOCircTECdv8tYcVPAoO4OJ7go0h0WPbk1R3XXcWJiNkkIhHfGy9c2VBf+5AQNzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393151; c=relaxed/simple;
-	bh=XNJg90BcPtOh5bOTDEKFgeZnHPnV0Mgej+wWmD0tL+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R0MfiIv2V8tTaOzBtJZ86XKI/qd/j3/bdtk87bzvTC9HdBFQLmePwZebiI7Ko7TEqCKAZlPi82zSKSHxfdir+FWsmn3IeJ0y2X9guphxTTz0pkimLNkhd2DvYHaehb+aVEN9X17rNLtO8RqPPkBvtGuFjC9Cg+WCtyD258tjsWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AAKLZgdF; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728393146; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=L2tMYa++LilgFGUn5qa+f4HeMfwMqFzOdCyNTGH96cU=;
-	b=AAKLZgdF83PdF5jp4cbgn0tYkATeuuTSGnoZOj681gis+wRNNY9VHPp3TLoyfVnBvci23PieHXLwzgt0C/Rolztz3xS+saWLqpnidMFkzAXypfApfwbWDjZTfnBPZ2vFIF+ORX4fGmvKescmKJZylEORkX2kfU0hjh9Y0DY0jjI=
-Received: from 192.168.2.29(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGfRSit_1728393144)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Oct 2024 21:12:25 +0800
-Message-ID: <9774de2b-2bd6-443e-b502-2c1dd3ccf0a8@linux.alibaba.com>
-Date: Tue, 8 Oct 2024 21:12:23 +0800
+	s=arc-20240116; t=1728393187; c=relaxed/simple;
+	bh=kWolaxy9BFb65skdKEyMGtyjqIelsjI/f70XBk08Rcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wz6oBAns9Lc8zIMOJxN9UAd+umvIu2fH2Q9b83V9WqgkOdCCkR2jX689o0vsbssHl7lNvmklgDleXDyAWntCS5cYDL6SRpI3SWyR214zrUDZv09U7OL2OBFFpgRnZlIomSgeXHs0eGBjZablCzxwdNfjUstbDbhZGW/gZJGVXr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syA1L-000000000AX-1fe6;
+	Tue, 08 Oct 2024 13:12:59 +0000
+Date: Tue, 8 Oct 2024 14:12:55 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v2] net: phy: Validate PHY LED OPs presence
+ before registering
+Message-ID: <ZwUv15SUVhRukqVr@makrotopia.org>
+References: <20241004183312.14829-1-ansuelsmth@gmail.com>
+ <851ebd20-0f7a-438d-8035-366964d2c4d8@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Allison Karlitskaya <allison.karlitskaya@redhat.com>,
- Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
- <ZwUcT0qUp2DKOCS3@infradead.org>
- <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
- <ZwUkJEtwIpUA4qMz@infradead.org>
- <ca887ba4-baa6-4d7d-8433-1467f449e1e1@linux.alibaba.com>
- <ZwUr2HthVw9Hc1ke@infradead.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <ZwUr2HthVw9Hc1ke@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <851ebd20-0f7a-438d-8035-366964d2c4d8@lunn.ch>
 
-
-
-On 2024/10/8 20:55, Christoph Hellwig wrote:
-> On Tue, Oct 08, 2024 at 08:33:27PM +0800, Gao Xiang wrote:
->> how about
->> int get_tree_bdev_flags(struct fs_context *fc,
->> 		int (*fill_super)(struct super_block *,
->> 				  struct fs_context *), bool quiet)
->>
->> for now? it can be turned into `int flags` if other needs
->> are shown later (and I don't need to define an enum.)
+On Tue, Oct 08, 2024 at 03:08:32PM +0200, Andrew Lunn wrote:
+> > +	/* Check if the PHY driver have at least an OP to
+> > +	 * set the LEDs.
+> > +	 */
+> > +	if (!phydev->drv->led_brightness_set &&
+> > +	    !phydev->drv->led_blink_set &&
+> > +	    !phydev->drv->led_hw_control_set) {
 > 
-> I'd pass an unsigned int flags with a clearly spellt out (and
-> extensible) flags namespae.
+> I think this condition is too strong. All that should be required is
+> led_brightness_set(). The rest can be done in software.
 
-okay, got it.
+Some drivers do not offer led_brightness_set().
+See for example
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/realtek.c#n1303
 
-Thanks,
-Gao Xiang
+Afaik there aren't any drivers which only offer led_blink_set(), that
+would indeed be a bit weird. But only offering led_hw_control_set() is a
+(rather sad) reality.
 
