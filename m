@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-354814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527329942E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:55:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFAC9942EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 836B21C20F3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E80284A3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF1C1E25EC;
-	Tue,  8 Oct 2024 08:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UzTcEQGH"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DC6178CF6;
+	Tue,  8 Oct 2024 08:43:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA7313A878
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8A13AA47
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728376818; cv=none; b=prKMf0VZm9RpeLh9Glrdt7EcbI3tCDnXuPDYvo9vvqxHL4YNgrtKy/sr62WAi9/l3KCmz17k4fL2Vp9pZ/Qzp8jiKbrpf93DsRLTb6jfrGdpj8/XjXEAinCzvN9irYsKZi/Uiv6Zx+kZu4yjWC3x6Vo6dZr2fOXBt2n4nDAUpJU=
+	t=1728376985; cv=none; b=gfPL3GaykdOWvdGSfs1sTVBqYj5I2CCF5RwNQrfGdoIiEMhiP6kdcNP3d+xJx9PAy1DNqU0Bwmytxt5DREgFlybN8IsXP+4UEpp5gOAu3d1HunYwLm7JH7vKOPOXi3usMx4upOKOJlNbFGXpI3UmwB+7VoYAyVcKZxGx/WGMl6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728376818; c=relaxed/simple;
-	bh=FzO0G0Ihvstak33UPEIf4QOP6EIQSNPAXjFfigDGriw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfs1peQVLGhiTXPrIb4xdayzrhMOE42SkwGPLtJlot1kwyT8aAd+CAHqqM1RRKBmdulGK+16djb/b4gvpwZ4E26NbhvqT8CXPCAPglhJowv+MkKCtVFPW7iKEqCyj5EVzW5Up4hQM1VwaDDf/6UsSxK+LjyP9sCgO/ScItlkAvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UzTcEQGH; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd3419937so3224154f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728376815; x=1728981615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GzYc/0q2hqE5im4fm8nspzo+WjyiW8AYNygdA9wNAkY=;
-        b=UzTcEQGHso2u1rrS7QNk2VsAiL+RT3t43RzR36uoEBE9YHReneBEqNTwd7BB+daqnP
-         X8KOuGBilNeWRM3StbdY0UsGVMUFApNd7TfvbraEUxqpAE3rc2keKJr4eQ5qe6VGhFQq
-         +TkFe+2hahpC5QqG02iwX+yfiG0aJdWbQ675Al8J/RuWHuQeWXGfLAVDf/NQbZm/wgwa
-         92A0vZqlFQ29wUabdBH45f36ru/qcmNhTHtibr6tv7EkVuZgslhuBZZ2CDnNhhM58H50
-         P9N+cFeWi1HxfGatOObIMSExFYdVY7Dqxn5rB9qrKgqSZ3nwwgMv4LZHmFMiubilD95F
-         YTrA==
+	s=arc-20240116; t=1728376985; c=relaxed/simple;
+	bh=WlKEQjsIZXvP+MqHhNtD7QBSr9iZ9S5Dnqi5AAZN05I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y/yizlu33AdOqq4KU23RHyUTH2W0v7/K8YSSMYnrNgZ7lD0Lbrn6VhWENMazbx9jIxlP98qKX+ZtjH/kCCfpCPmCsdCMNQmFBSmZXC6z6DgpK904oSizUyI3Hgt7yWD8j9pBwqi1jGLr2B/N1PzIbULcb+cM4Kfe8k6JYIYR8JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a19665ed40so39835405ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:43:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728376815; x=1728981615;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728376983; x=1728981783;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzYc/0q2hqE5im4fm8nspzo+WjyiW8AYNygdA9wNAkY=;
-        b=kKqkb4PdTbb1vLTIxdt7qsZ9saLVVMI/mFeZIb5dhOpy6xCF1BO5dkyp554WYdRQw3
-         3qu4DcRMKD95MA9jfeflt4ohq/pOAFSV/QVnYcdlWfxf4bqq/WJPGYjFyVTEVJTXAO9A
-         17LnEfyFmxWP+6fUyzD7z+SujerIZVGFsNXYKd+Kh5V2Wfapecoc3/BVNCgZgxHlrwQG
-         HI0CGcK61IBg3G70lYDfnRHDAeBw9NC2gGxuV5QgGfzFzXdkLhv678wRXYMIDgNJa75X
-         byPw3XEQDM4tEKZiuAgPeHEkr4AXT+qmvP0smWsrd67HbsjB6wGzjYec7ePQoK3qvyCT
-         wAOw==
-X-Gm-Message-State: AOJu0YxjwEqJabSDAUcGe/059fcdf79b7AIqwjDB0IIQprO1Z5q5bk2w
-	xjm+pJvHzQ4324eTam1sJujm7sIezGA5dECsG8BgjxMVWsHac44FXYWtHbH9h+39gXO25wCr4pF
-	6
-X-Google-Smtp-Source: AGHT+IGk1HTWqD+EsgM8s7iUh86EKp1j2hMdK55RiGbbiCvBIGG/pW6cak86eougntqoT1nhvbyEjA==
-X-Received: by 2002:adf:f252:0:b0:37c:d21a:3d61 with SMTP id ffacd0b85a97d-37d0eafa544mr7358455f8f.39.1728376814817;
-        Tue, 08 Oct 2024 01:40:14 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7465:5d50:9d67:2279:9c84? ([2a10:bac0:b000:7465:5d50:9d67:2279:9c84])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a20595sm118895465e9.14.2024.10.08.01.40.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 01:40:14 -0700 (PDT)
-Message-ID: <c579b5a0-2cab-4a33-b246-1e978154462c@suse.com>
-Date: Tue, 8 Oct 2024 11:40:13 +0300
+        bh=gVS7fVKH71Pe8fCQ0Gmt8UDN3roCi4HGtPl5gMiYBCw=;
+        b=O1XzsYxqcjd5Q5QLpTE9vD5J4HZbha5xJ8rfKX2Iq9kBWjltdAesXrf/9cVBsCEAN8
+         7CL/n7D3miVxLX1NC/tvg+dy+P64o4ArAFBKoip0GOnvutkUChVAfeY7LhOpEvHJzKO/
+         yj6gxD/32mI6yzBfY0dxbO9GjbzluMjEtkg9S4v1EbBhflNkW3mEgsZP+4ikzJ2/jCVy
+         uS+50xfoCU1Me+PoHDOKNM2moSlP9ppY0u1SykGs60N7hI4hdjZzgE3gpLHQX1TABk81
+         S1NhZL0aE82IMdHOScsiSA4kxaSGZ1jZlry1/0dG6FIxeI+HmOj1jp3sxVoKy06onjGC
+         WFgA==
+X-Forwarded-Encrypted: i=1; AJvYcCV74E2Gih7dp0gxsHqvbSZD73Jl1rCwyaem7ho156SHog8uupAaIudVJPzCicUlX70SzE1CqeOwg+tR2NU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBTyHHaJ6KfTY5ozvQZbim5RkwdGc4N4KsW6HHTr0ahFkvKYFk
+	/R0FPy1hRzHs43jPacoa4AF1UovWgRiuBkSWmRR9m1FaBRI2qX/cY8ySwn6/78GVE7t5Dk0PBfE
+	14sQP4g6wGckQLoKQsfTLpKgLkRyIdCzobfEbZnbP6Azu+MzAe5ZrvJ4=
+X-Google-Smtp-Source: AGHT+IESTZbom871uQ+CoDIEKTNpyDbqRog3FH6w1KkzIBYyio92XHoOeJntYRpQKOQLJq+XZRNOtpp4hxIcrguae0Kq4CtaquDu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 07/34] x86/bugs: Remove md_clear_*_mitigation()
-To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20240912190857.235849-1-david.kaplan@amd.com>
- <20240912190857.235849-8-david.kaplan@amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240912190857.235849-8-david.kaplan@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:870a:0:b0:39f:325f:78e6 with SMTP id
+ e9e14a558f8ab-3a38ae3fa4amr17042185ab.0.1728376983353; Tue, 08 Oct 2024
+ 01:43:03 -0700 (PDT)
+Date: Tue, 08 Oct 2024 01:43:03 -0700
+In-Reply-To: <670429f6.050a0220.49194.0517.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6704f097.050a0220.1e4d62.0087.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] WARNING in push_jmp_history
+From: syzbot <syzbot+7e46cdef14bf496a3ab4@syzkaller.appspotmail.com>
+To: 42.hyeyoo@gmail.com, akpm@linux-foundation.org, andrii@kernel.org, 
+	ast@kernel.org, bpf@vger.kernel.org, cl@linux.com, daniel@iogearbox.net, 
+	eddyz87@gmail.com, feng.tang@intel.com, haoluo@google.com, 
+	iamjoonsoo.kim@lge.com, john.fastabend@gmail.com, jolsa@kernel.org, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	martin.lau@linux.dev, penberg@kernel.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
+commit d0a38fad51cc70ab3dd3c59b54d8079ac19220b9
+Author: Feng Tang <feng.tang@intel.com>
+Date:   Wed Sep 11 06:45:34 2024 +0000
 
-On 12.09.24 г. 22:08 ч., David Kaplan wrote:
-> The functionality in md_clear_update_mitigation() and
-> md_clear_select_mitigation() is now integrated into the select/update
-> functions for the MDS, TAA, MMIO, and RFDS vulnerabilities.
-> 
-> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+    mm/slub: Improve redzone check and zeroing for krealloc()
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11ddbb80580000
+start commit:   c02d24a5af66 Add linux-next specific files for 20241003
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13ddbb80580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ddbb80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e46cdef14bf496a3ab4
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b82707980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f4c327980000
 
-I think the previous 4 patches are better replaced with the series that 
-Daniel Sneddon has sent: 
-20240924223140.1054918-1-daniel.sneddon@linux.intel.com
+Reported-by: syzbot+7e46cdef14bf496a3ab4@syzkaller.appspotmail.com
+Fixes: d0a38fad51cc ("mm/slub: Improve redzone check and zeroing for krealloc()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
