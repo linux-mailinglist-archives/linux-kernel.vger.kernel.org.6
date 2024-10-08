@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-355669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5E399557F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FCA99558A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244A41F25F12
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761051F2637B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4F11FA240;
-	Tue,  8 Oct 2024 17:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A81FAC3A;
+	Tue,  8 Oct 2024 17:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O9GbM27K"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP7dPyVZ"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327881E1A08;
-	Tue,  8 Oct 2024 17:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6C31FA24F;
+	Tue,  8 Oct 2024 17:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728408006; cv=none; b=Rn25ZCbpbyRh54CSPTNraWdmmzdQ7Rr70A/o34Rfyk9dYZJuXOkHy9KKKILVyNC3VHMwApQWMgtZaG+bpvar0GDqB2B0G8uICmfdQQSNDYJMbEaNLt686dodd6Jlt7vBLHhM3nk6MqzLkZwIZHV2Jmv8pljDEKbz4woD8+TxPDI=
+	t=1728408124; cv=none; b=tat1woaGUWUBOsvVDyjaM7dJFeo/olUVrQY8524dA9gTduHBG3MtcDiUfLQAW4kokJCzHkiJorpazbztsQWlHoIWkcDHu1yYI4QywGDcJ/cJC7yRGvHXvkdhE6ysdGLsdl5ZUtzmc8VBYLNRYQknFZoKA2Rqb2ehCCVGJPjPVTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728408006; c=relaxed/simple;
-	bh=V4zdqUC6VB1LXKRGgJUj/RJKtO246Elyw+hwclk5nik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jkk/Zkk9R9bT3blpT6NBKQJdORnoyJzZ7MI7wUKTyiNq8wv3Pu8xMLoNeoefOidPrzbcuJ8LlYM9zyGc9oRPbY9MLcEd4pBRv//7D5/M/xMJDhb1KFtNzGO5LrOGyuAc5UG62r3rqa93PIDUW0kkb6l+nr6gV5Ediv+DWVihzBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O9GbM27K; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0844540006;
-	Tue,  8 Oct 2024 17:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728408001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dq0/sc4JpzgfCBB0HQCf5pqmInt6zBed91zJbKhlDwg=;
-	b=O9GbM27K1fmfdiJxxGVRU3ymaoYMzq41KRPUN6VlG7+YMkBhXbh/QD575GoEeIP3wfQidf
-	WjM7+S/1yY4gT4JqmAeU0fLJ7jy0b915Kxj5aDBNLc2UyK6cDx8XPRCjaSpNcAq1NoD+6Y
-	y2L5z4DCs41SyD/dtkOeS/5OR60DfoVTwM9cd46+jNjoUojumFLyrtEPmUDDSx1Tz9XM+7
-	KJstTty7+cxPugNxMCBiniC8hx/Anhwtp8ulmrZWlGUbwY0Pj8mjKby8DVJVJjJqYyDbFr
-	6ru5MMVljLOafVEjG4V7BkY9jeND66nkaarvdPsQWvHONiyMeQ/Ev1hEbJVhcw==
-Date: Tue, 8 Oct 2024 19:19:58 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
- get and set phy configuration
-Message-ID: <20241008191958.712a2f51@device-21.home>
-In-Reply-To: <ZwVmQXVJMmkIbY1D@shell.armlinux.org.uk>
-References: <ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
-	<20241007123751.3df87430@device-21.home>
-	<6bdaf8de-8f7e-42db-8c29-1e8a48c4ddda@lunn.ch>
-	<20241007154839.4b9c6a02@device-21.home>
-	<b71aa855-9a48-44e9-9287-c9b076887f67@lunn.ch>
-	<20241008092557.50db7539@device-21.home>
-	<f1af0323-23f5-44fd-a980-686815957b5a@lunn.ch>
-	<20241008165742.71858efa@device-21.home>
-	<ZwVPb1Prm_zQScH0@shell.armlinux.org.uk>
-	<20241008184102.5d1c3a9e@device-21.home>
-	<ZwVmQXVJMmkIbY1D@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728408124; c=relaxed/simple;
+	bh=mZsL7LGzO3t6j2s7+X4u2FtI7RkpmZfDmUCmVZFMIv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jK+NgB+GvW5a1WBueBkvBj51FIl/nToPU4i1b3uqlaNLfeckn9e7lcOVLiDnt0hkhcyG8gBdGIZrG57RzkOha3ggXH/G3GM1//35/9M6VVDJQvTmTi0XILYNqkQsqtXBj2fFTNAKnY0c6EHx/5KC086xSxCtuNfA4cJjm984VTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP7dPyVZ; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d43657255so927919666b.0;
+        Tue, 08 Oct 2024 10:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728408122; x=1729012922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mZsL7LGzO3t6j2s7+X4u2FtI7RkpmZfDmUCmVZFMIv0=;
+        b=kP7dPyVZZ1EZomhiDsPv6g17o2xG9ZTbLgWmvwv6iV9MbV0JnfScU7N9CNSrmSDnWH
+         /6cfjbtgHCI6asoC/jKaeEtr8o2pEOqyG6wYQNRSlrporpy5yNdfXzzvANhATICul588
+         E9LJtSDJoKYbdcdpEA0Cmrif5SDw4nxzE5swJjG/YPKlg8UJT934eiuhqfbsuBrXiHrB
+         BAr4HQsfegJRzw08rD3dtUBM6tbQCSV5uVrL0TdeOG68S1BZBxYaMi4XPs//LOci1TYx
+         nP57CTJWPl0KInrIyLRrzT+pWnK1wpoGYgxRWr18DK0F3VaixQdZf4tHAJ1o/PTqx3YH
+         hGIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728408122; x=1729012922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mZsL7LGzO3t6j2s7+X4u2FtI7RkpmZfDmUCmVZFMIv0=;
+        b=VWt1rbqd3Py5ROQt75uyDWBolR7V08Q/Qvftd69B17df+8IHoIeKQ6fl00dIr2Ub42
+         522mUJY1MWQfq8XNmavgDZdkd/Es3B4tiTht8u0S89ZM6gYNg6Zgfyvr7RA7MGaYci3/
+         BIXSc3ZYsQ1GCnb8eWcq1T5s3rJMHDplrY8sIRDWitZD0RehOwvEbuGbFOt8ldSFyCai
+         98cHBfPLey/BMbTqb1wPNVQYUfs169nrjBXfouU8cQXhPphFc4DriC6AAF9g0cgYERhh
+         3cpAudY68klzsRSkpFZOPAOi+nZKDDS/pXgKI+cz+UOTgsftVfE7KFfShvFDKxfzRMY/
+         Ms6w==
+X-Forwarded-Encrypted: i=1; AJvYcCULFAFJSUtCmVl7uG4Gj45wGQ1caCllCc0SKNOCwUWw4SWBU7jYzKx6uhWLUNVML29Z5wGQPPLtNdrRdVHp@vger.kernel.org, AJvYcCXqW7laMmXoABPNNdSqQ0tUqDgRhj148qOGRbsRRkDwEWaUoPQR4netrVevOi4hG3hjbqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPsWdSaviSiF5efXI4mOhQbO+GpLYjgbS/hsTRK48P7XUHYCcn
+	RxkTtTnloHJ/PPJ6qwdyAOCwJXqksvjSQq/tGgt4iS9sPMJbg+V1uMakw2LQ7CERH/XjGHjv/Qd
+	C4vCUeBzEenag/yYPFImV7imukEQ=
+X-Google-Smtp-Source: AGHT+IF/9aIhaEes5EXW3dE0CQQ9NT7bJLLGfAIQF5Oe+fCTp9Jd2kOhV4oFI8j3JbgumFrpnd8Thx+Hp5lvvGrJkWM=
+X-Received: by 2002:a17:907:868e:b0:a99:462c:8728 with SMTP id
+ a640c23a62f3a-a99462c8b7fmr1129165666b.3.1728408121283; Tue, 08 Oct 2024
+ 10:22:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20241007164648.20926-1-richard120310@gmail.com>
+ <3be8b6307e7576e5a654f42414a1f0f45a754901.camel@gmail.com>
+ <CAEf4BzbpxXqNLa02r0=xw-bHzDoO5BELHqX+Ux35Hh7XRNY92w@mail.gmail.com> <b7c4b77e22bd8005ad5758706ddefe878f949d94.camel@gmail.com>
+In-Reply-To: <b7c4b77e22bd8005ad5758706ddefe878f949d94.camel@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 8 Oct 2024 10:21:47 -0700
+Message-ID: <CAEf4BzYTuOJ88FR6oN1KDbM5bWuiYo7eVdrrn0FLziuzi3B_Fg@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Fix integer overflow issue
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: I Hsin Cheng <richard120310@gmail.com>, martin.lau@linux.dev, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Oct 2024 18:05:05 +0100
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+On Tue, Oct 8, 2024 at 2:49=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com>=
+ wrote:
+>
+> On Mon, 2024-10-07 at 20:42 -0700, Andrii Nakryiko wrote:
+>
+> [...]
+>
+> > Not sure what Eduard is suggesting here, tbh. But I think if this
+> > actually can happen that we have a non-loaded BPF program in one of
+> > those struct_ops slots, then let's add a test demonstrating that.
+>
+> Given the call chain listed in a previous email I think that such
+> situation is not possible (modulo obj->gen_loader, which I know
+> nothing about).
+>
+> Thus I suggest to add a pr_warn() and return -EINVAL or something like
+> that here.
+>
 
-> > What I mean is the ability for users to see, from tools like ethtool,
-> > that the MCBin doubleshot's eth0 and eth1 interfaces have 2 ports
-> > (copper + sfp), and potentially allow picking which one to use in case
-> > both ports are connected.
-> > 
-> > There are mutliple devices out-there with such configurations (some
-> > marvell switches for example). Do you not see some value in this ?  
-> 
-> Many PHYs that have two media facing ports give configuration of the
-> priority between the two interfaces, and yes, there would definitely be
-> value in exposing that to userspace, thereby allowing userspace to
-> configure the policy there.
+That's what confused me :) If it's impossible, there is no need to
+handle it, we know the FD has to be there. So I'd just not change
+anything.
 
-Great !
-
-> This would probably be more common than the two-PHY issue that we're
-> starting with - as I believe the 88e151x PHYs support exactly the same
-> thing when used with a RGMII host interface. The serdes port becomes
-> available for "fiber" and it is only 1000base-X there.
-
-True, I've seen several setups with this so far indeed, as well as with
-PHYs from other vendors.
-
-> I was trying to work out what the motivation was for this platform.
-
-It also turns out that the MCBin is one of the only boards that has a
-permanent spot on my desk, as it's a pretty nice platform to experiment
-with various PHY aspects.
-
-> 
-> Sorry if you mentioned it at NetdevConf and I've forgotten it all,
-> it was quite a while ago now!
-
-No worries :)
-
-> 
-> Thanks!
-
-Thanks for your feedback on that whole topic,
-
-Maxime 
-
+> > Worst case of what can happen right now is the kernel rejecting
+> > struct_ops loading due to -22 as a program FD.
+> >
+> > pw-bot: cr
+>
+> [...]
+>
 
