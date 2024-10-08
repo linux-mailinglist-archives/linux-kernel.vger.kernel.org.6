@@ -1,82 +1,88 @@
-Return-Path: <linux-kernel+bounces-354823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CB5994304
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06B399430D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 716E0283149
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4979F1F29682
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594691C2309;
-	Tue,  8 Oct 2024 08:48:57 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E701C231E;
-	Tue,  8 Oct 2024 08:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7E1D07BA;
+	Tue,  8 Oct 2024 08:50:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118F177102
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377337; cv=none; b=M2gsC6QKp8EIqQc1pQ+GahZIoh8OyvqNMxoDafuwHINsZUw68psmP7ll4jiO0Mb4H8paAvkbLtElvDgh8NKOEPZSGEsdx5MzbLQdZhOsNXyzEOWEvJvQm1orOtnfwvTw2+iS/mQmhWUWKE0G+yuELm4bWsh+Kbn7RPhCX8C+1hM=
+	t=1728377405; cv=none; b=J2X2iB9qQJJfrY+a3tnVpVZWq21BE/3D6okQfzQRanwV8dNzfv18yAOk1s1B64LQFylaicjtd6ECEgt0vofLJf9lYFqpXW9I1hMwVp4IikOBroOAabyLK0fYMHgXSBXQYXpjuYH8CG0H4LgQt6mClZ6DywdmK4ZUXTI1ozZfS+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377337; c=relaxed/simple;
-	bh=NCPYzTGYfBLkgRBCCxhfCOO94oU9WxQTrSRTThzoqoU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=EzKjx2KzPXdE/eVoxNcUeJ5T0zq3iiCMRBvkP7KkW/ChiWZjh8WruFI9q/v9sU1G9IHIu+OuevQOMlUp6S3sVdT4pR3a5vYlZEh43My3HzPsv5lSaTu5T3C/oPcLjhxBOpojcciChA6+xeGScbPuQEHKi25hdZOwUNpOy1wQ8Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86704f1eee9c-1ded5;
-	Tue, 08 Oct 2024 16:48:46 +0800 (CST)
-X-RM-TRANSID:2ee86704f1eee9c-1ded5
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee86704f1ed85a-94cf6;
-	Tue, 08 Oct 2024 16:48:46 +0800 (CST)
-X-RM-TRANSID:2ee86704f1ed85a-94cf6
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: wim@linux-watchdog.org
-Cc: linux@roeck-us.net,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] drivers/pcwd_pci:Fix the wrong format specifier
-Date: Tue,  8 Oct 2024 01:48:44 -0700
-Message-Id: <20241008084844.13751-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728377405; c=relaxed/simple;
+	bh=U1ovfypYMIhQmtiZi2K/KRO7l4WfNQM2nK8I2rd0ucQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZeJ2YKoOJd29oI8uwwantPtvSzum+gEsse7fu9Aa5+PlpwyEnvzgyVAsIwsAKGW1OwdFEs/aVf0crZRxhgFI0YJ/dLc8Og9j99hVFhvG6o+qFQ84BgZaIFsIwaqPMC2AyS+PsVkmHQplRCf2E6b2JyAVrGmFIe8zWDQ2wIW8kkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aad3fa5edso448579339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:50:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728377403; x=1728982203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CBvKpDn9GrRhj3YxBgIM7qO8I2+gyEgbuwpf8yiHtBI=;
+        b=D1C+Jez7nXIn2EI1U1voWRD3NxBdxzxeESy4bzsp6abAqQjrAoOYYFI4L8wwg7Azrp
+         Ed5X02HmZHi+rdN0bq6YJ80iTcIyt6IuTm9n41h7Us5+kAqDlGCht7tfb6jSNYc4xI+W
+         hwRX5+d+9V/f2NjhmyAPfG8267SuzIX9ZApGR4dRzn0kYQzvs0SH0mos0ymCvwsB8qb9
+         /z2imtKlNe6HnsFH2sClkOS5vXGXbuM0XXOKsbSJQJEz+iSRfvudhG2+itO+ZdbSfCWq
+         BiIEhSvL06tp4Hc4nuvHdUx+WU0LyB1sN7s9Spq4Ay5B1HRu1CsksFe8ajSmCUVEXExg
+         pxVw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9FX7mBKad1591Tay+EYAJ91iZen+BaUFcjm4k2JTxOpiIDf36Ggos03zocdlQRmVDG4jh8lD3Abehidc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf/gfAjYKfOx0Kx+9Ykp4/QuW6wxKn5n8j8ZaUktinaY4p3Lda
+	pNZ0CAc2gWp71MyefB0FlQq2I3K75k3TJkCS1dH6qXpFGl7f5u1BZKBFE5OVBjIYUDsNXAshjBq
+	x3sXleCApd0UNf1Vnr91fdIhFAhATT6IhZf9yQXzivHmyapJwPWcrqB8=
+X-Google-Smtp-Source: AGHT+IFA6pdilpZEWRCu6RFnLR3T1nvedPKJLWW8oYyLLPhmY98zuXMLzPfqjW9gE8T0n/whKpmWeJNjitTfQE05EeLoE0Z6Wp7c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:20c5:b0:3a0:9244:1916 with SMTP id
+ e9e14a558f8ab-3a375a9e8famr137522615ab.11.1728377403354; Tue, 08 Oct 2024
+ 01:50:03 -0700 (PDT)
+Date: Tue, 08 Oct 2024 01:50:03 -0700
+In-Reply-To: <feacd590-f315-4cfc-a8c6-eb664cc6350b@126.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6704f23b.050a0220.1e4d62.0088.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
+From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zhaomzhao@126.com
+Content-Type: text/plain; charset="UTF-8"
 
-The format specifier of "int" in printf() should be "%d", not
-"%u".
+Hello,
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/watchdog/pcwd_pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/watchdog/pcwd_pci.c b/drivers/watchdog/pcwd_pci.c
-index a489b426f2ba..3672e7f23b39 100644
---- a/drivers/watchdog/pcwd_pci.c
-+++ b/drivers/watchdog/pcwd_pci.c
-@@ -230,7 +230,7 @@ static void pcipcwd_show_card_info(void)
- 	got_fw_rev = send_command(CMD_GET_FIRMWARE_VERSION, &fw_rev_major,
- 								&fw_rev_minor);
- 	if (got_fw_rev)
--		sprintf(fw_ver_str, "%u.%02u", fw_rev_major, fw_rev_minor);
-+		sprintf(fw_ver_str, "%d.%02d", fw_rev_major, fw_rev_minor);
- 	else
- 		sprintf(fw_ver_str, "<card no answer>");
- 
--- 
-2.17.1
+Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=140617d0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1105a327980000
 
+Note: testing is done by a robot and is best-effort only.
 
