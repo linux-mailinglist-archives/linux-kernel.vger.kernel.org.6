@@ -1,412 +1,211 @@
-Return-Path: <linux-kernel+bounces-355115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EED8994787
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:43:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81DE994789
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC6A1F22B6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590B61F22D22
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB361DE3AF;
-	Tue,  8 Oct 2024 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E971D362B;
+	Tue,  8 Oct 2024 11:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZptZMtV2"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H5rZzCog"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E38D1D1757;
-	Tue,  8 Oct 2024 11:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E9B1D2F58
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728387784; cv=none; b=rDixLAKNg/ZS7xxMLUzQ+jFaZnr7TbX2ykkwncPoN0cycnD+DMpgSCXbJjoMAqvJD/sqApt+PH+MCmKrBxG4CZ65w5QDxT/1J1U5L5F2Ffpru0/IL7iZVtIKVFtboFbfUctdVgCFtbqWI0AuEFDEk0JSQJ8iwZifAQ/31fn3loI=
+	t=1728387839; cv=none; b=BCzpzocAhhiSPIlv7xe7NxrCBKT+CW3RZwOT3OEnsSa5SINYsO2ZLKNOrbeltk8+Q+7PqdZ2HA1jCRkK6pgQMH7SKmmhIoTFI7POv4r7Ab1EhSuFsBH6g79WSagyT3jGX9hnh27+q6iFhWdXyOVDWeRTq/U7rE5su8RffilAUqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728387784; c=relaxed/simple;
-	bh=0elVgKqRhFsVKBsPu9083FGtCApHiUaSuzP/nHJLHRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ubrTGeAiHlAGr9I067O2+ggJFJO67atEpNY+99w2eVeKLMGBjN2ZtnVWFfzamXav+tOOUe4v9qv4Kb9On7dmcx843kh+WBWMIHc9smHtym0Se9rAF/rJDH3UV7SxGEEnBEnRPuY1ZC7deYaxnNdfDXelwYT0TtOFxzNU8Yo/5co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZptZMtV2; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50792ed3ad9so1640035e0c.3;
-        Tue, 08 Oct 2024 04:43:02 -0700 (PDT)
+	s=arc-20240116; t=1728387839; c=relaxed/simple;
+	bh=zBXQMo+hM07ISY9mj7NP1MH4OBDtnawZVDrwzKCnAzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gO/JGkDUT/mX1m+BwNzX4lvcCZWV0I7kxQ+ClCNVM7XsYUasL5arNQQGp+Pl4tUjLoFrkVgYfVADFGzx/RNXkQFEpjhyKDF6kYvWAWtN2rTJe2+fCmwgSBy7kQb9JKdJNHz3YLCH6HNyQyLSRF+kn9tL+pBXnzFEkY5MM/peGmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H5rZzCog; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398e3f43f3so6321612e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728387781; x=1728992581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDuZQevw0MOR5xTDiOihfOGLpC9wy/PdUZmugq87unA=;
-        b=ZptZMtV2iiSs+NLQ7zX+CkU+xAbLWe5I2ImwMj4E5tySTa7nbyoloTTWy/eO0smE+H
-         pP4yKs5il8aX9cEz7nK245x/bJ9Z6Zezm6orFyydEGwFGU0oLmVff/nR7jmFKEN30bDw
-         EHdbDT3GVvY8kPo9eCv0R1k7KFf+butLSK+WoJ5a6TNkxpBRHxJ+gCtUoHeFS8HwCUv9
-         g5wRU6pg5JCBxelnPxtf/3YV5gNTvidYh+o/YBSyAaUY23w9iA6Sh27VPxKgXCz34S2B
-         wReNrZQLEcr0+aToX7ZvlRBkzBmCE3H9+2fpDXlUWUJJ/Dg37vFfkJbXYeBYY7M24gSh
-         3c7w==
+        d=linaro.org; s=google; t=1728387836; x=1728992636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZEbLtJwY4BWNq5AUUgxIr2eH5iz7eEs893mPnqpT/g=;
+        b=H5rZzCoglvsytILw/YD/s3urTa2QSNm+qaIx16pbEbVSERup97JooTcYVGOpGBpoab
+         47PPHREj7QhaF7OFfbLCRuzpuDgH4iPfcn+ox29GS8ot1tD6JhdwBwPTyofvIj4F/B2P
+         ScgVh0MKjELuk7SC08ooZlIkBRJHmXeFohyexPbbbfkWIkrLKbUwsfLSLnW9h+f76W4z
+         igw3IVlj2s1D9f0C0xLLGVZJImbRTa38HPOUZtnIDCsmGLEHEb60ihZ8uE4fqe2bwyca
+         tejrAvBe1UdEJ2QPMR970JO2x/V81JTC8QMW05/Hpa8pmTS6fgisWrfUX3hIDN6KLXdm
+         V9Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728387781; x=1728992581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HDuZQevw0MOR5xTDiOihfOGLpC9wy/PdUZmugq87unA=;
-        b=wi4xvfaYsW9nqC3HB47sQ3HCdTm/4Ni3s5/tOHPoA37H3joyum/qjAh0CE5dQ1af4J
-         vn1H6/xdfjXm6VpE3Z/BJiEk1NJp7CLfuKvIsctQSVyfX78BqzLGwtonv2N6w9NK4zPt
-         THdxKYzuACxVXL7O9EeoUUhCiJYksHgsw73cJ5RSBQXrNeZCr0XE1xmHxwMG+5IC8xIA
-         tWHWon4bX02Tp6vrsqW3wWILtOoYt1oT9FQDH5KQCKecp4OZwU290uF5R8GfJqc/qYFI
-         eYB77MfJw5BNAXwsMN2jLbsI9dmHIbDePkHi4hKOql6JwtT5mJ94v995bv1f6uhmRDb2
-         kCdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWer28u534Fef7TvI+Mnu/6bpewRUEs72d/GNivR8Mez7HEy+uVIUFJxHgRHtBqA4ighIJgV9EFZry6wQ=@vger.kernel.org, AJvYcCUYjB07N3K7T8k+5Rtpy9JqA1/0Gq3CvJP1ohy8vBD5BrUssktBtctuo8LMmnOQkYL486AZI29zpMC3skQ=@vger.kernel.org, AJvYcCWuk+sBNmWSzzoVaBbsEcu0ih4siMrIcpe/NjTHJIGWEZwHERPLr3zUwPyc5ILpOUmQC9RYbXzNmJR9kfbjC3S/csg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBGXg4SjiaiskETSesBYyYhe7hI/hmmWF2hqwKsLhremNAzWNQ
-	84SHOhEUVOaID8Ef2YcobeGYIYzZH+JBSgktRxu838/Ny3unLBSDqZ7zqJekQODBRQT55KHEpFy
-	VF6WIC6x043hhEeIghejqjFMJ7jGyvw==
-X-Google-Smtp-Source: AGHT+IGiM+QZ1IzvpkH+Ft3l9J1hattVJoqEA+6OoPB9OiGqLtsnDU7az/RMhuTpegkyGf0sWYOxFycY8PG7SXsP3RU=
-X-Received: by 2002:a05:6122:3198:b0:4f2:ea44:fd2b with SMTP id
- 71dfb90a1353d-50c852eef61mr10804054e0c.0.1728387780987; Tue, 08 Oct 2024
- 04:43:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728387836; x=1728992636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oZEbLtJwY4BWNq5AUUgxIr2eH5iz7eEs893mPnqpT/g=;
+        b=BZsTvhbZpCbcYLbECqlwQwv5nc2UM9pJK6R783et00/HH6zr+XYax6lm0spr/d91k0
+         e4rlV0gogWXlLkwg9DKWU7dM+uDimV/4MJ9C+/GnpES0cgqzd68FytI3KMq631TvnXna
+         mJQ51VmmdBqlKKQNH+wqQxIHb2Pcgs9xtLWhky8fiMt/b/gO3Vd1hQxV+tEgBfb+7YWi
+         WG3fsIjeE2mGmTH4EYGYLUOOl1JxA4GBWWD7uva3ImxqHk9PfL6M+uWegPfHdkxPoWrN
+         ORWxiynoOa2smyYw9+rLpZl1BVcgE+nCa9YnCnMdP1MmqVa3tgEqNBRPlp3kJQEvQfAJ
+         7cAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXn7qVPqsjeGCmIehZqvtY+VkiHeWwNFbyQAeaiePUD16bzPMSUEnmTb8iPqtNEiO4EEGwhWbn0hVzIRPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR8O+p0Oacr31Es26OekUK7N2/FQDOMPUR4PAHIbNBT9Nkrww+
+	7jBKsRvY/EKFDRmDYZtpMMd82bmKHrvMJkPM316Uq2YSoRQ8UrkYekLMetaWekM=
+X-Google-Smtp-Source: AGHT+IFRmk8nWaWReszOVxOJdsqYxPAYN9CRreBKrrphj5YabLesxtoOk1jlIBv6qgKrPV3VYMhaNQ==
+X-Received: by 2002:a05:6512:4026:b0:539:9f52:9e4 with SMTP id 2adb3069b0e04-539ab9e40eemr7285600e87.48.1728387836010;
+        Tue, 08 Oct 2024 04:43:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d168sm1178132e87.142.2024.10.08.04.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 04:43:55 -0700 (PDT)
+Date: Tue, 8 Oct 2024 14:43:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: qcom: scm: Add check for NULL-pointer
+ dereference
+Message-ID: <4j7qx24xwxo4l4bfagjob2pb2taadqlc22gxeiwjttfwrtqua7@eheozhig65gm>
+References: <20240920181317.391918-1-quic_wasimn@quicinc.com>
+ <zxzjrnmoun6fm2tzrx6eaxbvy5kddvld7hezknt7k7mvfcqw5a@u3fgfo5yqw4q>
+ <ZwTvsyUv+ajI5suH@hu-wasimn-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241007184839.190519-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241007202137.GK14766@pendragon.ideasonboard.com>
-In-Reply-To: <20241007202137.GK14766@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 8 Oct 2024 12:42:34 +0100
-Message-ID: <CA+V-a8trD-td-zRGvMtfxry+VZ3fAVM9464aqSiBpkNiuBz_EQ@mail.gmail.com>
-Subject: Re: [PATCH v4 10/17] media: rzg2l-cru: Simplify handling of supported formats
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwTvsyUv+ajI5suH@hu-wasimn-hyd.qualcomm.com>
 
-Hi Laurent,
+On Tue, Oct 08, 2024 at 02:09:15PM GMT, Wasim Nazir wrote:
+> On Sat, Oct 05, 2024 at 09:46:26PM -0500, Bjorn Andersson wrote:
+> > On Fri, Sep 20, 2024 at 11:43:17PM GMT, Wasim Nazir wrote:
+> > > Avoid NULL pointer dereference while using any qcom SCM calls.
+> > > Add macro to easy the check at each SCM calls.
+> > > 
+> > 
+> > We already have a way to deal with this in the general case. Client
+> > drivers should call qcom_scm_is_available() before calling the scm
+> > interface.
+> My intention is to check all corner cases and provide proper error logs
+> wherever the check fails.
+> 
+> There is no active case/example where it is failing but irrespective of
+> client (using qcom_scm_is_available()) or driver using any SCM calls,
+> want to add this check so that we don't need to fall into case
+> where we need debugging of NULL check and error logs are enough
+> to detect the problem.
+> > 
+> > Unfortunately your commit message makes it impossible to know if you're
+> > referring to a case where this wasn't done, or isn't possible, or if
+> > you've hit a bug.
+> > 
+> > > Changes in v2:
+> > > - Cleanup in commit-message
+> > 
+> > This goes below the '---', by the diffstat. I don't know why you don't
+> > have a diffstat, please figure out how to make your patches looks like
+> > everyone else's.
+> 
+> Will make this correction in next patch.
+> > 
+> > > 
+> > > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> > > 
+> > > diff --git a/drivers/firmware/qcom/qcom_scm-legacy.c b/drivers/firmware/qcom/qcom_scm-legacy.c
+> > > index 029e6d117cb8..3247145a6583 100644
+> > > --- a/drivers/firmware/qcom/qcom_scm-legacy.c
+> > > +++ b/drivers/firmware/qcom/qcom_scm-legacy.c
+> > > @@ -148,6 +148,9 @@ int scm_legacy_call(struct device *dev, const struct qcom_scm_desc *desc,
+> > >  	__le32 *arg_buf;
+> > >  	const __le32 *res_buf;
+> > > 
+> > > +	if (!dev)
+> > > +		return -EPROBE_DEFER;
+> > 
+> > -EPROBE_DEFER only makes sense to the caller during probe. In all other
+> > cases this is an invalid error value.
+> 
+> I am returning EPROBE_DEFER so that any probe can use the return value
+> to retry while at non-probe place it can be treated as normal failure
+> (-ve value return).
+> Please let me know if anything better can be used at this place.
 
-Thank you for the review.
+Just drop it. This adds no benefits. If SCM has probed, then __scm->dev
+is set. If it was not probed, then the code already oopsed by
+dereferencing NULL __scm call.
 
-On Mon, Oct 7, 2024 at 9:21=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Mon, Oct 07, 2024 at 07:48:32PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Refactor the handling of supported formats in the RZ/G2L CRU driver by
-> > moving the `rzg2l_cru_ip_format` struct to the common header to allow
-> > reuse across multiple files and adding pixelformat and bpp members to i=
-t.
-> > This change centralizes format handling, making it easier to manage and
-> > extend.
-> >
-> > - Moved the `rzg2l_cru_ip_format` struct to `rzg2l-cru.h` for better
-> >   accessibility.
-> > - Added format, datatype and bpp members to `rzg2l_cru_ip_format` struc=
-t
-> > - Dropped rzg2l_cru_formats
-> > - Introduced helper functions `rzg2l_cru_ip_code_to_fmt()`,
-> >   `rzg2l_cru_ip_format_to_fmt()`, and
-> >   `rzg2l_cru_ip_index_to_fmt()` to streamline format lookups.
-> > - Refactored the `rzg2l_cru_csi2_setup` and format alignment functions
-> >   to utilize the new helpers.
->
-> The general rule is once change, one patch. Bundling multiple changes
-> together makes review more difficult. A bullet list of changes in a
-> commit message is a sign you're bundling too many changed together.
->
-Agreed, I will henceforth take care.
+> > 
+> > > +
+> > >  	cmd = kzalloc(PAGE_ALIGN(alloc_len), GFP_KERNEL);
+> > >  	if (!cmd)
+> > >  		return -ENOMEM;
+> > [..]
+> > > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > [..]
+> > > @@ -387,7 +397,7 @@ static int qcom_scm_set_boot_addr(void *entry, const u8 *cpu_bits)
+> > >  	desc.args[0] = flags;
+> > >  	desc.args[1] = virt_to_phys(entry);
+> > > 
+> > > -	return qcom_scm_call_atomic(__scm ? __scm->dev : NULL, &desc, NULL);
+> > > +	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+> > 
+> > I don't think you understand why this is written the way it is.
+> Here I am removing this check as before reaching here __scm variable is
+> already checked for validity.
 
-> You can still group related changes together when it makes sensor. For
-> instance moving rzg2l_cru_ip_format to rzg2l-cru.h and adding the
-> rzg2l_cru_ip_code_to_fmt() & co helper functions can be one patch.
->
-Agreed, I will split this up.
+No, it wasn't (or somebody removed too much of the context)
 
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    | 20 +++++-
-> >  .../platform/renesas/rzg2l-cru/rzg2l-ip.c     | 36 ++++++++--
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 67 ++++++-------------
-> >  3 files changed, 69 insertions(+), 54 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/dri=
-vers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > index 4fe24bdde5b2..39296a59b3da 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > @@ -62,6 +62,20 @@ struct rzg2l_cru_ip {
-> >       struct v4l2_subdev *remote;
-> >  };
-> >
-> > +/**
-> > + * struct rzg2l_cru_ip_format - CRU IP format
-> > + * @code: Media bus code
-> > + * @format: 4CC format identifier (V4L2_PIX_FMT_*)
-> > + * @datatype: MIPI CSI2 data type
-> > + * @bpp: bytes per pixel
-> > + */
-> > +struct rzg2l_cru_ip_format {
-> > +     u32 code;
-> > +     u32 format;
-> > +     u32 datatype;
-> > +     u8 bpp;
-> > +};
-> > +
-> >  /**
-> >   * struct rzg2l_cru_dev - Renesas CRU device structure
-> >   * @dev:             (OF) device
-> > @@ -144,10 +158,12 @@ int rzg2l_cru_video_register(struct rzg2l_cru_dev=
- *cru);
-> >  void rzg2l_cru_video_unregister(struct rzg2l_cru_dev *cru);
-> >  irqreturn_t rzg2l_cru_irq(int irq, void *data);
-> >
-> > -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format)=
-;
-> > -
-> >  int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru);
-> >  void rzg2l_cru_ip_subdev_unregister(struct rzg2l_cru_dev *cru);
-> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_d=
-ev *cru);
-> >
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
-t code);
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 forma=
-t);
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_index_to_fmt(u32 index)=
-;
-> > +
-> >  #endif
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/driv=
-ers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > index 7b006a0bfaae..fde6f4781cfb 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> > @@ -6,17 +6,21 @@
-> >   */
-> >
-> >  #include <linux/delay.h>
-> > -#include "rzg2l-cru.h"
-> >
-> > -struct rzg2l_cru_ip_format {
-> > -     u32 code;
-> > -};
-> > +#include <media/mipi-csi2.h>
-> > +
-> > +#include "rzg2l-cru.h"
-> >
-> >  static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] =3D {
-> > -     { .code =3D MEDIA_BUS_FMT_UYVY8_1X16, },
-> > +     {
-> > +             .code =3D MEDIA_BUS_FMT_UYVY8_1X16,
-> > +             .format =3D V4L2_PIX_FMT_UYVY,
-> > +             .datatype =3D MIPI_CSI2_DT_YUV422_8B,
-> > +             .bpp =3D 2,
-> > +     },
-> >  };
-> >
-> > -static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsi=
-gned int code)
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
-t code)
-> >  {
-> >       unsigned int i;
-> >
-> > @@ -27,6 +31,26 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_i=
-p_code_to_fmt(unsigned int c
-> >       return NULL;
-> >  }
-> >
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_format_to_fmt(u32 forma=
-t)
-> > +{
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++) {
-> > +             if (rzg2l_cru_ip_formats[i].format =3D=3D format)
-> > +                     return &rzg2l_cru_ip_formats[i];
-> > +     }
-> > +
-> > +     return NULL;
-> > +}
-> > +
-> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_index_to_fmt(u32 index)
-> > +{
-> > +     if (index >=3D ARRAY_SIZE(rzg2l_cru_ip_formats))
-> > +             return NULL;
-> > +
-> > +     return &rzg2l_cru_ip_formats[index];
-> > +}
-> > +
-> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_d=
-ev *cru)
-> >  {
-> >       struct v4l2_subdev_state *state;
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index de88c0fab961..ceb9012c9d70 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -300,21 +300,10 @@ static void rzg2l_cru_initialize_axi(struct rzg2l=
-_cru_dev *cru)
-> >       rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
-> >  }
-> >
-> > -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *inpu=
-t_is_yuv,
-> > -                              struct v4l2_mbus_framefmt *ip_sd_fmt, u8=
- csi_vc)
-> > +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, u8 csi_vc,
-> > +                              u32 csi2_datatype)
->
-> I would pass the rzg2l_cru_ip_format pointer (make it const) to this
-> function instead of csi2_datatype.
->
-OK.
+> > 
+> > >  }
+> > > 
+> > [..]
+> > > @@ -1986,6 +2113,13 @@ static int qcom_scm_probe(struct platform_device *pdev)
+> > >  	/* Let all above stores be available after this */
+> > >  	smp_store_release(&__scm, scm);
+> > > 
+> > > +	__scm->reset.ops = &qcom_scm_pas_reset_ops;
+> > > +	__scm->reset.nr_resets = 1;
+> > > +	__scm->reset.of_node = pdev->dev.of_node;
+> > > +	ret = devm_reset_controller_register(&pdev->dev, &__scm->reset);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > 
+> > Why did this move?
+> &qcom_scm_pas_reset_ops is the first ops which might use __scm, so moving its
+> registration below smp_store_release(&__scm, scm) so that __scm is set
+> before utilizing in reset-ops.
 
-> >  {
-> > -     u32 icnmc;
-> > -
-> > -     switch (ip_sd_fmt->code) {
-> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > -             icnmc =3D ICnMC_INF(MIPI_CSI2_DT_YUV422_8B);
-> > -             *input_is_yuv =3D true;
-> > -             break;
-> > -     default:
-> > -             *input_is_yuv =3D false;
-> > -             icnmc =3D ICnMC_INF(MIPI_CSI2_DT_USER_DEFINED(0));
-> > -             break;
-> > -     }
-> > +     u32 icnmc =3D ICnMC_INF(csi2_datatype);
-> >
-> >       icnmc |=3D (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
-> >
-> > @@ -328,17 +317,20 @@ static int rzg2l_cru_initialize_image_conv(struct=
- rzg2l_cru_dev *cru,
-> >                                          struct v4l2_mbus_framefmt *ip_=
-sd_fmt,
-> >                                          u8 csi_vc)
-> >  {
-> > -     bool output_is_yuv =3D false;
-> > -     bool input_is_yuv =3D false;
-> > +     const struct v4l2_format_info *src_finfo, *dst_finfo;
-> > +     const struct rzg2l_cru_ip_format *cru_ip_fmt;
-> >       u32 icndmr;
-> >
-> > -     rzg2l_cru_csi2_setup(cru, &input_is_yuv, ip_sd_fmt, csi_vc);
-> > +     cru_ip_fmt =3D rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
-> > +     rzg2l_cru_csi2_setup(cru, csi_vc, cru_ip_fmt->datatype);
-> > +
-> > +     src_finfo =3D v4l2_format_info(cru_ip_fmt->format);
-> > +     dst_finfo =3D v4l2_format_info(cru->format.pixelformat);
-> >
-> >       /* Output format */
-> >       switch (cru->format.pixelformat) {
-> >       case V4L2_PIX_FMT_UYVY:
-> >               icndmr =3D ICnDMR_YCMODE_UYVY;
-> > -             output_is_yuv =3D true;
-> >               break;
-> >       default:
-> >               dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
-> > @@ -347,7 +339,7 @@ static int rzg2l_cru_initialize_image_conv(struct r=
-zg2l_cru_dev *cru,
-> >       }
-> >
-> >       /* If input and output use same colorspace, do bypass mode */
-> > -     if (output_is_yuv =3D=3D input_is_yuv)
-> > +     if (v4l2_is_format_yuv(src_finfo) && v4l2_is_format_yuv(dst_finfo=
-))
->
-> I think this should be
->
->         if (v4l2_is_format_yuv(src_finfo) =3D=3D v4l2_is_format_yuv(dst_f=
-info))
->
-Agreed.
+So scm->reset should have been prepared before smp_store_release() and
+only devm_reset_controller_register() should be moved after
+smp_store_release().
 
-> >               rzg2l_cru_write(cru, ICnMC,
-> >                               rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR=
-);
-> >       else
-> > @@ -810,35 +802,15 @@ int rzg2l_cru_dma_register(struct rzg2l_cru_dev *=
-cru)
-> >  /* -------------------------------------------------------------------=
-----------
-> >   * V4L2 stuff
-> >   */
-> > -
-> > -static const struct v4l2_format_info rzg2l_cru_formats[] =3D {
-> > -     {
-> > -             .format =3D V4L2_PIX_FMT_UYVY,
-> > -             .bpp[0] =3D 2,
-> > -     },
-> > -};
-> > -
-> > -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format)
-> > -{
-> > -     unsigned int i;
-> > -
-> > -     for (i =3D 0; i < ARRAY_SIZE(rzg2l_cru_formats); i++)
-> > -             if (rzg2l_cru_formats[i].format =3D=3D format)
-> > -                     return rzg2l_cru_formats + i;
-> > -
-> > -     return NULL;
-> > -}
-> > -
-> >  static u32 rzg2l_cru_format_bytesperline(struct v4l2_pix_format *pix)
-> >  {
-> > -     const struct v4l2_format_info *fmt;
-> > -
-> > -     fmt =3D rzg2l_cru_format_from_pixel(pix->pixelformat);
-> > +     const struct rzg2l_cru_ip_format *fmt;
-> >
-> > +     fmt =3D rzg2l_cru_ip_format_to_fmt(pix->pixelformat);
-> >       if (WARN_ON(!fmt))
-> > -             return -EINVAL;
-> > +             return 0;
->
-> This change isn't described in the commit message.
->
-I'll make this as a separate patch.
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > >  	irq = platform_get_irq_optional(pdev, 0);
+> > >  	if (irq < 0) {
+> > >  		if (irq != -ENXIO)
+> > > --
+> > > 2.46.1
+> > >
+> 
+> Regards,
+> Wasim
 
-> >
-> > -     return pix->width * fmt->bpp[0];
-> > +     return pix->width * fmt->bpp;
-> >  }
-> >
-> >  static u32 rzg2l_cru_format_sizeimage(struct v4l2_pix_format *pix)
-> > @@ -849,7 +821,7 @@ static u32 rzg2l_cru_format_sizeimage(struct v4l2_p=
-ix_format *pix)
-> >  static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
-> >                                  struct v4l2_pix_format *pix)
-> >  {
-> > -     if (!rzg2l_cru_format_from_pixel(pix->pixelformat))
-> > +     if (!rzg2l_cru_ip_format_to_fmt(pix->pixelformat))
->
-> Here you're calling rzg2l_cru_ip_format_to_fmt(), and just below the
-> function calls rzg2l_cru_format_bytesperline(), which calls
-> rzg2l_cru_format_from_pixel() again. Store the pointer here, drop the
-> rzg2l_cru_format_bytesperline() function, and just write
->
->         pix->bytesperline =3D pix->width * fmt->bpp;
->
-Agreed, I'll update it as mentioned above.
-
-> below. I would also inline rzg2l_cru_format_sizeimage() in this function
-> as there's a single caller.
->
-OK, I'll update it as above.
-
-Cheers,
-Prabhakar
+-- 
+With best wishes
+Dmitry
 
