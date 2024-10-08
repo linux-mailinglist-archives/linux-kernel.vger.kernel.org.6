@@ -1,411 +1,237 @@
-Return-Path: <linux-kernel+bounces-354577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53302993FD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B89E993FD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A5F1F221D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55258285B8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B0D1E1051;
-	Tue,  8 Oct 2024 06:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D1E1E1311;
+	Tue,  8 Oct 2024 06:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8EnWQ2A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/Pi982Y"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9091E1043;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DEF190693;
 	Tue,  8 Oct 2024 06:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370082; cv=none; b=FQw1d2+mp9UMq0rlvu94U6GmmesBa5SBeiwzeuy+Y4cKQHnU2hKI9C35hpxQHS8IICJYTwbCKdD/4CtkOgPpkp9nKenUAP65Dnu2j9a0iDKnoIpOuhDMwUJx7wl+i6KJheZ9QdYnEymfav8BRFCWHkH5a2k6KnEWCu81u2amXRE=
+	t=1728370083; cv=none; b=XJB0BZARHywReSSF+FnnwQYG9pZ5X7eCSNZNwHnBM/6Bftd9oC//rELkzYyq9GM3qH1KmlDUW5bj8ayddrpamoEbxedeJTk3EZH8zByd2P3CbeI8QkZ3No1r49j+oO1rGj1WOt86LAJdqOKmFxHH5zP8denFwHFSdmcgPld7bqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370082; c=relaxed/simple;
-	bh=Mbgwhoc9G0FhvtIAp4sG22Waln7fe2R1Jvj7pLDy4Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcvomPEKsIt95tTN6h8cZt1qhasX9evrn3MXGF9v8JDePJQzxOFJ5T02fPuNTK5/YLNKfMi09H9hm8Yl1dGGdecTyZnq5h6vo0XxNr1SPoDG9uVLyWcqKMI0AZE03D4hZr8/uC+oYbl+j1HhBoVaj4nfbdcCN84awlpNzESesvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8EnWQ2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1866C4CEC7;
-	Tue,  8 Oct 2024 06:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728370081;
-	bh=Mbgwhoc9G0FhvtIAp4sG22Waln7fe2R1Jvj7pLDy4Y8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m8EnWQ2AeXnGL39qcc6FjGTfN4vo5BIvvMoQSPv027tsf3sREIGrR2rjXS07lNPCA
-	 dOyNtTs+BTUwQyhmn7OqbEKvw4u/ANd6+37JSHts+mkwgIKES2rP5A0JJGo1dNUA1I
-	 MLyXefms2c/g37MdACC/5Rzqp+W9bFITQcmwTblajvAylppT/dgh99STcOXRMvweCD
-	 Ck0qJ2c8jv02W/XMXDrXJ5Xq6uu30sDMjEUR9kg8PNiW+09yQwB7ulRFVvP/4VtY7R
-	 tItkUJ6xvygfVM430M+yuWe46qWpmY47lkBw29fta0ck6eiQz8WYS+sYeGCU2nH3zw
-	 WNtT+d5dwyn7A==
-Date: Tue, 8 Oct 2024 08:47:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, 
-	conor+dt@kernel.org, arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-Message-ID: <ct35b7sagblf4zl2k2jqjqis4z4yc5ct2japdeaytk4yfhmypn@2sgmhpe5v35z>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1728370083; c=relaxed/simple;
+	bh=nZxlAHCneqI4e9kizI/zUm3syFU19pKGY6jXXH6YS2U=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=gl+hzwvcWlyhgI7Gp6ynt7Bzk8uYJiwLZh1IByKVYngAuyZzZP7MWNAPUJDmWJlfLvSKId2C68P8ELYWRp7rODaqxqLUi3e1rkkQkrywWUm935ZqyBOpYhLsumd+4m3jBUFyrLMIQ0rBt4U3GH5uCgvat8jFopeOFdMgAGsMylk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/Pi982Y; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99422c796eso372973266b.3;
+        Mon, 07 Oct 2024 23:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728370080; x=1728974880; darn=vger.kernel.org;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eE1okYUSWvc/i7hAwavz2PLjVoOSwFE1NDuC+jJpWRA=;
+        b=f/Pi982Ya0q5CSsYXiUYg+7nBP3PknOR8TiWks6yH3ShbK2n6IJvFUzxNg6S+rzEZq
+         PZZ2LiQxJX4AdiHIqbJcYYPjj4Tb4EvRWpulp+Ml+q/+hfu2m/JQxPzluAIyTMlXCZc7
+         E+1TnHoz4UDuQ5iUno2blpI0QXmNfgUDPpsjk5AL2knjHmHxMMg/MpXhNvTk5r188zcq
+         k4JZferKF9JdO3wpliaCgANRJVEBdM8dnYmWk78zaED6IQt4+Dzf5/IOhdlvmPQqsSpx
+         YxFp+jFyCWFwU2W2li11iTYtLmBXIikjw3sSnUKRmA86kxdlpnNJyZNP/VwfXnXoh5mi
+         9NGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728370080; x=1728974880;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eE1okYUSWvc/i7hAwavz2PLjVoOSwFE1NDuC+jJpWRA=;
+        b=qasbNI8SB4csq+km/ntac3cq4ImeK5A9pOcbabTHSfdG2UWkhySfI5rWw1v3BkYdDF
+         ucBcBatCz/OkYNIQSB0pQ/JptyfWPzFpL5GZrVLW7HU8eT1BhUdnwgzGRr8oS4cNn0Jy
+         mOpJfxJ8YJDLGqfCFKEoo/htLVtHFoBHhiy9aST33tXLvO9jPSWm1leCjUfGBiOtmjhz
+         zkv6Xc4CHFfxVwHTV9hp35RJCljP6QcP3SCdrIRJDdbyjcVFjrDlaLshAT+JkgVzkDbf
+         TsHZ2O2BtheSwTnWAOQ7MJ316W8dR0vWwdhSKQwkj/KWacFgzRvVc+Zjepey/tSVpOpV
+         GwjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUOGlAMT1sfGXgsGYBc+dVg0aK2Td4iugnyUqgBDTrzWC45AC3Fi2QqUe0bSCvkjPOm/8ESS0176s=@vger.kernel.org, AJvYcCWyDG65zt7yEgRE5PJHPfdQqMTW+lx2rZOcSIojYbh9yb4xi8G9tdUVJFQHk97lhws5UIOxE77uLjTrRmc=@vger.kernel.org, AJvYcCXYk2MXYKPZOVYlVNEA4OVQeX4BbtPwzwFj/XlfC0fprRf5uzY0JrpgPfsw/GtedTxTqMKh1J8F9v+VUw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwftbEFM7aCvXKBCiPJI65l33NCmzpWWzJKVRKkkngato7NNHU0
+	QmzTIo3gF3BR4J7A6Mb5b5cmAKkmdYh56ekPIJD760tHVw6kjHQR0Cdzz3pf
+X-Google-Smtp-Source: AGHT+IHtEBTVI46CFdHFcpaPNZLxbeoPvvh9qTxtbOFekOmKVpWMl94atwJTw3JljWSF6HHx8qfVog==
+X-Received: by 2002:a17:907:c14:b0:a99:5560:a84f with SMTP id a640c23a62f3a-a995560a972mr541153766b.31.1728370079698;
+        Mon, 07 Oct 2024 23:47:59 -0700 (PDT)
+Received: from localhost (host-79-18-120-72.retail.telecomitalia.it. [79.18.120.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e7b0ee9sm465987166b.155.2024.10.07.23.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 23:47:59 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007061023.1978380-2-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8a5f6f12c2cb6989cef1d09957fc0f6f7a512b26.camel@gmail.com>
+References: <20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com> <20241007-iio-read-avail-release-v2-5-245002d5869e@gmail.com> <8a5f6f12c2cb6989cef1d09957fc0f6f7a512b26.camel@gmail.com>
+Subject: Re: [PATCH v2 5/7] iio: inkern: copy/release available info from producer
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
+To: Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?q?S=C3=A1?= <noname.nuno@gmail.com>, Paul Cercueil <paul@crapouillou.net>, Peter Rosin <peda@axentia.se>, Sebastian Reichel <sre@kernel.org>
+Date: Tue, 08 Oct 2024 08:47:58 +0200
+Message-ID: <172837007815.3337.5869213289160447430@njaxe.localdomain>
+User-Agent: alot/0.11
 
-On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
-> Document the various memory buses that can be monitored and scaled by
-> the memory latency governor hosted by the QCOM SCMI Generic Extension
-> Protocol v1.0.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-> 
-> v3:
-> * Restructure the bindings to mimic IMX [Christian]
-> 
->  .../bindings/firmware/arm,scmi.yaml           |   1 +
->  .../bindings/firmware/qcom,scmi-memlat.yaml   | 246 ++++++++++++++++++
->  .../dt-bindings/firmware/qcom,scmi-memlat.h   |  22 ++
->  3 files changed, 269 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
->  create mode 100644 include/dt-bindings/firmware/qcom,scmi-memlat.h
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 54d7d11bfed4..1d405f429168 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -24,6 +24,7 @@ description: |
->  
->  anyOf:
->    - $ref: /schemas/firmware/nxp,imx95-scmi.yaml
-> +  - $ref: /schemas/firmware/qcom,scmi-memlat.yaml
->  
->  properties:
->    $nodename:
-> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
-> new file mode 100644
-> index 000000000000..0e8ea6dacd6a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
-> @@ -0,0 +1,246 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/firmware/qcom,scmi-memlat.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SCMI Memory Bus nodes
-> +
-> +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
-> +
-> +description:
-> +  This binding describes the various memory buses that can be monitored and scaled
+Quoting Nuno S=C3=A1 (2024-10-07 17:15:13)
+> On Mon, 2024-10-07 at 10:37 +0200, Matteo Martelli wrote:
+> > Consumers need to call the read_avail_release_resource after reading the
+> > available info. To call the release with info_exists locked, copy the
+> > available info from the producer and immediately call its release
+> > callback. With this change, users of iio_read_avail_channel_raw() and
+> > iio_read_avail_channel_attribute() must free the copied avail info after
+> > calling them.
+> >=20
+> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> > ---
+> > =C2=A0drivers/iio/inkern.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 64 +++++++++++++++++++++++++++++++++-----------
+> > =C2=A0include/linux/iio/consumer.h |=C2=A0 4 +--
+> > =C2=A02 files changed, 50 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> > index
+> > 7f325b3ed08fae6674245312cf8f57bb151006c0..cc65ef79451e5aa2cea447e168007=
+a447ffc0d91
+> > 100644
+> > --- a/drivers/iio/inkern.c
+> > +++ b/drivers/iio/inkern.c
+> > @@ -760,9 +760,25 @@ static int iio_channel_read_avail(struct iio_chann=
+el *chan,
+> > =C2=A0     if (!iio_channel_has_available(chan->channel, info))
+> > =C2=A0             return -EINVAL;
+> > =C2=A0
+> > -     if (iio_info->read_avail)
+> > -             return iio_info->read_avail(chan->indio_dev, chan->channe=
+l,
+> > -                                     =C2=A0=C2=A0=C2=A0 vals, type, le=
+ngth, info);
+> > +     if (iio_info->read_avail) {
+> > +             const int *vals_tmp;
+> > +             int ret;
+> > +
+> > +             ret =3D iio_info->read_avail(chan->indio_dev, chan->chann=
+el,
+> > +                                     =C2=A0=C2=A0 &vals_tmp, type, len=
+gth, info);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +
+> > +             *vals =3D kmemdup_array(vals_tmp, *length, sizeof(int), G=
+FP_KERNEL);
+> > +             if (!*vals)
+> > +                     return -ENOMEM;
+> > +
+>=20
+> Not a big deal but I would likely prefer to avoid yet another copy. If I'm
+> understanding things correctly, I would rather create an inkern wrapper A=
+PI like=20
+> iio_channel_read_avail_release_resource() - maybe something with a smalle=
+r name :).
+> Hence, the lifetime of the data would be only controlled by the producer =
+of it. It
+> would also produce a smaller diff (I think). I just find it a bit confusi=
+ng that we
+> duplicate the data in here and the producer also duplicates it on the ->r=
+ead_avail()
+> call. Another advantage I see is that often the available data is indeed =
+const in
+> which case no kmemdup_array() is needed at all.
 
-Drop "This binding" and describe the hardware/firmware, not binding.
 
-Also, not wrapped according to Linux coding style.
+If I understand correctly your suggestion you would leave the inkern
+iio_channel_read_avail() untouched, then add a new inkern wrapper, something
+like iio_channel_read_avail_release_resource(), that would call the produce=
+r's
+read_avail_release_resource(). The consumer would invoke this new wrapper i=
+n its
+own read_avail_release_resource() avoiding the additional copy. The call st=
+ack
+would look something like the following:
+
+iio_read_channel_info_avail() {
+    consumer->read_avail() {
+        iio_read_avail_channel_raw() {
+            iio_channel_read_avail() {
+                producer->read_avail() {
+                    kmemdup_array();
+                }
+            }
+        }
+    }
+
+    iio_format_list();
+
+    consumer->read_avail_release_resource() {
+        iio_read_avail_channel_release_resource() {
+            producer->read_avail_release_resource() {
+                kfree();
+            }
+        }
+    }
+}
 
 
-> +  by memory latency governor running on the CPU Control Processor (SCMI controller).
-> +
-> +properties:
-> +  protocol@80:
-> +    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        const: 0x80
-> +
-> +    patternProperties:
-> +      '^memory-[0-9]$':
-> +        type: object
-> +        unevaluatedProperties: false
-> +        description:
-> +          The list of all memory buses that can be monitored and scaled by the
-> +          memory latency governor running on the SCMI controller.
-> +
-> +        properties:
-> +          qcom,memory-type:
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2]
-> +            description: |
-> +              Memory Bus Identifier
-> +              0 = QCOM_MEM_TYPE_DDR
-> +              1 = QCOM_MEM_TYPE_LLCC
-> +              2 = QCOM_MEM_TYPE_DDR_QOS
+I was going with the simpler solution you described, but my concern with it=
+ was
+that the info_exists_lock mutex would be unlocked between a iio_channel_rea=
+d_avail()
+call and its corresponding iio_channel_read_avail_release_resource() call.
+To my understanding, this could potentially allow for the device to be
+unregistered between the two calls and result in a memleak of the avail buf=
+fer
+allocated by the producer.
 
-You need to describe these. Why "Quality of service" should be a separate
-bus?
+However, I have been trying to reproduce a similar case by adding a delay
+between the consumer->read_avail() and the
+consumer->read_avail_release_resources(), and by unbinding the driver during
+that delay, thus with the info_exists_lock mutex unlocked. In this case the
+driver is not unregistered until the iio_read_channel_info_avail() function
+completes, likely because of some other lock on the sysfs file after the ca=
+ll of
+cdev_device_del() in iio_device_unregister().
 
-To me it looks like you are re-defining interconnects.
+Are there are other cases in which the device could be unregistered between=
+ the
+two calls? If the info_exists_lock mutex is not necessary for this read_ava=
+il()
+flow then I could switch it to the simpler solution without the additional =
+consumer
+copy, but at that point I would question why the info_exists_lock mutex is =
+being
+locked in iio_read_avail_channel_raw().
 
-> +
-> +          freq-table-hz:
-> +            items:
-> +              items:
+For some additional context see also my previous conversation with Jonathan=
+ on
+the subject [1]. I followed Jonathan's suggestion to keep the implementation
+simple by letting the consumer to always copy the producer buffer, but I co=
+uld
+also consider different solutions.
 
-" - items:"
-no?
+Regarding the release function names being too long, I totally agree and I =
+would also
+shorten the iio_info read_avail_release_resource() callback if that remains
+clear: something like read_avail_release_res() or just read_avail_release()?
 
-> +                - description: Minimum frequency of the memory bus in Hz
-> +                - description: Maximum frequency of the memory bus in Hz
-> +
-> +        patternProperties:
-> +          '^monitor-[0-9]$':
-> +            type: object
-> +            unevaluatedProperties: false
-> +            description:
-> +              The list of all monitors detecting the memory latency bound workloads using
-> +              various counters.
-> +
-> +            properties:
-> +              qcom,compute-type:
-> +                description:
-> +                  Monitors of type compute perform bus dvfs based on a rudimentary CPU
-> +                  frequency to memory frequency map.
+Link: https://lore.kernel.org/linux-iio/20240810105411.705cb225@jic23-huawe=
+i/ [1]
 
-I don't understand why you need to describe what type of monitor the
-SCMI has. Commit msg is pretty vague, so does not help me, either.
+>=20
+> - Nuno S=C3=A1
+>=20
+>=20
 
-> +                type: boolean
-> +
-> +              qcom,ipm-ceil:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                description:
-> +                  Monitors having this property perform bus dvfs based on the same
-> +                  rudimentary table but the scaling is performed only if the calculated
-> +                  IPM (Instruction Per Misses) exceeds the given ceiling.
-> +
-> +              cpus:
-> +                $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                description:
-> +                  Should be a list of phandles to CPU nodes (as described in
-> +                  Documentation/devicetree/bindings/arm/cpus.yaml).
-> +
-> +              operating-points-v2: true
-> +              opp-table:
-> +                type: object
-> +
-> +            required:
-> +              - cpus
-> +              - operating-points-v2
-> +
-> +            oneOf:
-> +              - required: [ 'qcom,compute-type' ]
-> +              - required: [ 'qcom,ipm-ceil' ]
-> +
-> +        required:
-> +          - qcom,memory-type
-> +          - freq-table-hz
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/firmware/qcom,scmi-memlat.h>
-> +
-> +    firmware {
-> +        scmi {
-> +            compatible = "arm,scmi";
-> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
-> +            mbox-names = "tx", "rx";
-> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            protocol@80 {
-> +                reg = <0x80>;
-> +
-> +                memory-0 {
-> +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
-> +                    freq-table-hz = /bits/ 64 <200000000 4224000000>;
-> +
-> +                    monitor-0 {
-> +                        qcom,ipm-ceil = <20000000>;
-> +                        cpus = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                &CPU8 &CPU9 &CPU10 &CPU11>;
-
-Labels are lowercase.
-
-> +                        operating-points-v2 = <&memory0_monitor0_opp_table>;
-> +
-> +                        memory0_monitor0_opp_table: opp-table {
-> +                            compatible = "operating-points-v2";
-> +
-> +                            opp-999000000 {
-> +                                opp-hz = /bits/ 64 <999000000 547000000>;
-> +                            };
-> +
-> +                            opp-1440000000 {
-> +                                opp-hz = /bits/ 64 <1440000000 768000000>;
-> +                            };
-> +
-> +                            opp-1671000000 {
-> +                                opp-hz = /bits/ 64 <1671000000 1555000000>;
-> +                            };
-> +
-> +                            opp-2189000000 {
-> +                                opp-hz = /bits/ 64 <2189000000 2092000000>;
-> +                            };
-> +
-> +                            opp-2516000000 {
-> +                                opp-hz = /bits/ 64 <2516000000 3187000000>;
-> +                            };
-> +
-> +                            opp-3860000000 {
-> +                                opp-hz = /bits/ 64 <3860000000 4224000000>;
-> +                            };
-> +                        };
-> +                    };
-> +
-> +                    monitor-1 {
-> +                        qcom,compute-type;
-> +                        cpus = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                        operating-points-v2 = <&memory0_monitor1_opp_table>;
-> +
-> +                        memory0_monitor1_opp_table: opp-table {
-> +                            compatible = "operating-points-v2";
-> +
-> +                            opp-1440000000 {
-> +                                    opp-hz = /bits/ 64 <1440000000 200000000>;
-> +                            };
-> +
-> +                            opp-2189000000 {
-> +                                    opp-hz = /bits/ 64 <2189000000 768000000>;
-> +                            };
-> +
-> +                            opp-2516000000 {
-> +                                    opp-hz = /bits/ 64 <2516000000 1555000000>;
-> +                            };
-> +
-> +                            opp-3860000000 {
-> +                                    opp-hz = /bits/ 64 <3860000000 4224000000>;
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +
-> +                memory-1 {
-> +                    qcom,memory-type = <QCOM_MEM_TYPE_LLCC>;
-> +                    freq-table-hz = /bits/ 64 <300000000 1067000000>;
-> +
-> +                    monitor-0 {
-> +                        qcom,ipm-ceil = <20000000>;
-> +                        cpus = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                        operating-points-v2 = <&memory1_monitor0_opp_table>;
-> +
-> +                        memory1_monitor0_opp_table: opp-table {
-> +                            compatible = "operating-points-v2";
-> +
-> +                            opp-999000000 {
-> +                                opp-hz = /bits/ 64 <999000000 300000000>;
-> +                            };
-> +
-> +                            opp-1440000000 {
-> +                                opp-hz = /bits/ 64 <1440000000 466000000>;
-> +                            };
-> +
-> +                            opp-1671000000 {
-> +                                opp-hz = /bits/ 64 <1671000000 600000000>;
-> +                            };
-> +
-> +                            opp-2189000000 {
-> +                                opp-hz = /bits/ 64 <2189000000 806000000>;
-> +                            };
-> +
-> +                            opp-2516000000 {
-> +                                opp-hz = /bits/ 64 <2516000000 933000000>;
-> +                            };
-> +
-> +                            opp-3860000000 {
-> +                                opp-hz = /bits/ 64 <3860000000 1066000000>;
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +
-> +                memory-2 {
-> +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR_QOS>;
-> +                    freq-table-hz = /bits/ 64 <QCOM_DDR_LEVEL_AUTO QCOM_DDR_LEVEL_PERF>;
-> +
-> +                    monitor-0 {
-> +                        qcom,ipm-ceil = <20000000>;
-> +                        cpus = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                        operating-points-v2 = <&memory2_monitor0_opp_table>;
-> +
-> +                        memory2_monitor0_opp_table: opp-table {
-> +                            compatible = "operating-points-v2";
-> +
-> +                            opp-2189000000 {
-> +                                opp-hz = /bits/ 64 <2189000000>;
-> +                                opp-level = <QCOM_DDR_LEVEL_AUTO>;
-> +                            };
-> +
-> +                            opp-3860000000 {
-> +                                opp-hz = /bits/ 64 <3860000000>;
-> +                                opp-level = <QCOM_DDR_LEVEL_PERF>;
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/firmware/qcom,scmi-memlat.h b/include/dt-bindings/firmware/qcom,scmi-memlat.h
-> new file mode 100644
-> index 000000000000..7ae8d8d5623b
-> --- /dev/null
-> +++ b/include/dt-bindings/firmware/qcom,scmi-memlat.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +#ifndef __DT_BINDINGS_QCOM_SCMI_VENDOR_H
-> +#define __DT_BINDINGS_QCOM_SCMI_VENDOR
-> +
-> +/* Memory IDs */
-> +#define QCOM_MEM_TYPE_DDR	0x0
-> +#define QCOM_MEM_TYPE_LLCC	0x1
-> +#define QCOM_MEM_TYPE_DDR_QOS	0x2
-
-Use decimal.
-
-> +
-> +/*
-> + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
-> + *
-> + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
-> + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
-
-What is "%"?
-
-> + */
-> +#define QCOM_DDR_LEVEL_AUTO	0x0
-> +#define QCOM_DDR_LEVEL_PERF	0x1
-
-Decimal.
-
-> +
-> +#endif /* __DT_BINDINGS_QCOM_SCMI_VENDOR_H */
-> -- 
-> 2.34.1
-> 
+Thanks,
+Matteo Martelli
 
