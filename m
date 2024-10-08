@@ -1,98 +1,143 @@
-Return-Path: <linux-kernel+bounces-355741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79ECD995647
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AE9995652
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BC41F26984
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC13D28355E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D454320CCEF;
-	Tue,  8 Oct 2024 18:17:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C204212D1A;
+	Tue,  8 Oct 2024 18:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="D1ANaV2f"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6061E0DEF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDC721265C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411420; cv=none; b=q+YalNLy/l7lmi4sv+x/YRPBMt6hCcbRbQeIcF6GT63A1kuO+Tn5JAnOSQcp0dyDIanK/g8ZpFwS6pGVT5CeO7Gjw5CsVDnEimDzK5jlppnMfcvoduVKZ+XNZDDVH0eLuM89IQW2cvEaKhPtQfW9X0XaUvStkLl6rlCfQI5Af9M=
+	t=1728411570; cv=none; b=AO2uDwLQo0/vWJM3Ci63e2z43+bzu2GmZ37opG2ijB1OBqAs6WowXCxXE4UMjRWULlE4lsZuNIT5EtPtxodrS1y+FFgK+WWuFDAcxA/ntfnRDqcdJ29iIxaAjd8++4JnEWjBarGPNmtDlsY0EM8Be9xKeYZAyRQcRi88cvxYZYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411420; c=relaxed/simple;
-	bh=FdJh+eWwVUKcL+l64mIZ4oy6x8ebxWu+9Tnhw9K8wBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n8C5zcoU8ZJ74dOzkDrsPNo/p4hotd1IrNo1LH2KZUgc7bwuWSiGzuqa6vrkNtxwsYh9udFrDvc/PhovOOP0TU1FkSum8PgggoiDdMbJrZn0BmaBnvmwXDylKvtWcdIaB+70stT4cbge/34z5rXNlo+RBHcdGhRftZjRk4NFQaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1349BC4CEC7;
-	Tue,  8 Oct 2024 18:16:58 +0000 (UTC)
-Date: Tue, 8 Oct 2024 14:17:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Mike Rapoport <mike.rapoport@gmail.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ard
- Biesheuvel <ardb@kernel.org>
-Subject: Re: reserve_mem command line option causing a reboot but not by the
- kernel
-Message-ID: <20241008141702.31bae0ee@gandalf.local.home>
-In-Reply-To: <20241008132259.52a5f274@gandalf.local.home>
-References: <20241006133233.32c8708c@rorschach.local.home>
-	<20241008132259.52a5f274@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728411570; c=relaxed/simple;
+	bh=9eYP7A5/N0DO/nX/nAr52PXSj6ehjX4WQjbyfcs0Zi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuXzKVQE5vFbUfwVoSPIt7fyLRDMo4/vwEw9DXhvYYz6p2uws9Bo8jcYQU4CmWsqpc3GtpeKce0fhcXH6Js7hCjc8xYlPPaoqbaP7quJF3C8PwEYN9cxvsaPx1JoYtiI8vJlOK7LTLzBde3Mtf+BXfhGFeGA4rJ3AQUE4efsSy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=D1ANaV2f; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b90ab6c19so63569775ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1728411568; x=1729016368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KCz1Qc+MHmm+VZJW/bV/ivnW5CrYlGd/Q98fG900he0=;
+        b=D1ANaV2f9CAjU9BMJi6MXuGQPoQgcV6RE8hOsqul+qOW0CVrJYkVZZNwDLo/lZxfX5
+         2d1xCt2a2evdBBG8T/0eEHWYAcJssoGoyx3ahsGSUQNjQ7vwFpLiwB2TMJUJjE7gF+tk
+         2CzyqZZBJxOBIFFlgTk7Hj82RsDX0bYMpWtss=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728411568; x=1729016368;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KCz1Qc+MHmm+VZJW/bV/ivnW5CrYlGd/Q98fG900he0=;
+        b=iSOFOyqIqQRSBIlNHhnibnQOLe7VqrCfXMf4O6AYH9zz0+MF7qZqX60IEucSUHpIAp
+         TeQdDYlnfN9rag6bvI20GYDHLG6NKAF+ZF5EUdc2UzIoAqjAYtHIIjKj3g7S0bnd0uvR
+         5i4UtEoKNNlWh3212G6T7VhjTCeLTpX8r+vZmPbwng9Bevju+lCDoME8wRiOnxsCS5SS
+         2oNiiE+Z5HB9CqbYuDqprjVVqeyoasE+ivp3E/VXd0OOZEZffBvLEgYKiX7F7AA3q8Bu
+         MjDIhFADvGPofcuB2WNS6cBrI+XETPp1fyQNANTIkLeqEQdh8IsAxwb5lUKRKhVXIc9B
+         fqBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV3FRpZaODtIewl13rDHSYwtXZ1W9Xh5ntbtXpyDv0qjtB5DZ0Oab4aLMhWFJ3t/XbhDFGQeEmQAZcjyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyajDW1HAndUceM1xqSHaJKVYfNapP3JuCH+mUAITXdNRgzhOD
+	vvg7QMXWjkWFHLCFkmHbRuHOUqxBWNY+K8CN3ic4D9UxrnYX9L4FrkqyTkK1IuA=
+X-Google-Smtp-Source: AGHT+IG3n+8BjvNyfdOQ41CtWB50a+df5hMGC6hZK0ik2wYeBjEF5HII03Wx0Fx78I6sx8mNTwMEPw==
+X-Received: by 2002:a17:902:db02:b0:20b:ba72:37c with SMTP id d9443c01a7336-20bfea542c6mr268194995ad.48.1728411568581;
+        Tue, 08 Oct 2024 11:19:28 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c1393997fsm58485815ad.179.2024.10.08.11.19.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 11:19:27 -0700 (PDT)
+Date: Tue, 8 Oct 2024 11:19:24 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v4 5/9] net: napi: Add napi_config
+Message-ID: <ZwV3rOFhsEyVoNtR@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241001235302.57609-1-jdamato@fastly.com>
+ <20241001235302.57609-6-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001235302.57609-6-jdamato@fastly.com>
 
-On Tue, 8 Oct 2024 13:22:59 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> It appears that grub does indeed search for "mem=" (without looking for
-> something before it) in the kernel command line.
+On Tue, Oct 01, 2024 at 11:52:36PM +0000, Joe Damato wrote:
+> Add a persistent NAPI config area for NAPI configuration to the core.
+> Drivers opt-in to setting the persistent config for a NAPI by passing an
+> index when calling netif_napi_add_config.
 > 
->   https://github.com/jezze/grub-legacy/blob/master/stage2/boot.c#L275
+> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
+> (after the NAPIs are deleted).
 > 
-> Thus, "reserve_mem=" (or any other "mem=" option) cannot be used with legacy
-> grub installs :-p
+> Drivers which call netif_napi_add_config will have persistent per-NAPI
+> settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
+> 
+> Per-NAPI settings are saved in napi_disable and restored in napi_enable.
+> 
+> Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  .../networking/net_cachelines/net_device.rst  |  1 +
+>  include/linux/netdevice.h                     | 32 ++++++++
+>  net/core/dev.c                                | 79 +++++++++++++++++--
+>  net/core/dev.h                                | 14 ++++
+>  4 files changed, 119 insertions(+), 7 deletions(-)
 
-But it only looks at the first instance of "mem=". So I added "testmem=16G"
-to the command line (giving lots of memory to fool grub, and the kernel
-fixes it after the decompression) before the "reserve_mem", and now I can
-use "reserve_mem" on this test box (and it preserves the memory across
-boots!).
+[...]
+  
+> +/**
+> + * netif_napi_add_config - initialize a NAPI context with persistent config
+> + * @dev: network device
+> + * @napi: NAPI context
+> + * @poll: polling function
+> + * @weight: the poll weight of this NAPI
 
-           <...>-2378    [000] dN.1.   124.665568: clear_local_APIC <-disable_local_APIC
-           <...>-2378    [000] dN.1.   124.665569: mcheck_cpu_clear <-native_stop_other_cpus
-           <...>-2378    [000] dN.1.   124.665569: mce_intel_feature_clear <-native_stop_other_cpus
-           <...>-2378    [000] dN.1.   124.665569: lmce_supported <-mce_intel_feature_clear
-           <...>-2378    [000] dN.1.   124.665570: lapic_shutdown <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665570: clear_local_APIC <-lapic_shutdown
-           <...>-2378    [000] dN.1.   124.665570: restore_boot_irq_mode <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665571: native_restore_boot_irq_mode <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665571: disconnect_bsp_APIC <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665572: hpet_disable <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665572: iommu_shutdown_noop <-native_machine_shutdown
-           <...>-2378    [000] dN.1.   124.665572: native_machine_emergency_restart <-__do_sys_reboot
-           <...>-2378    [000] dN.1.   124.665572: tboot_shutdown <-native_machine_emergency_restart
-           <...>-2378    [000] dN.1.   124.665573: machine_real_restart <-native_machine_emergency_restart
-           <...>-2378    [000] dN.1.   124.665573: _raw_spin_lock <-machine_real_restart
-           <...>-2378    [000] dN.1.   124.665574: preempt_count_add <-_raw_spin_lock
-           <...>-2378    [000] dN.2.   124.665574: rtc_cmos_write <-machine_real_restart
-           <...>-2378    [000] dN.2.   124.665576: _raw_spin_unlock <-machine_real_restart
-           <...>-2378    [000] dN.2.   124.665577: preempt_count_sub <-_raw_spin_unlock
-           <...>-2378    [000] dN.1.   124.665577: load_trampoline_pgtable <-machine_real_restart
-           <...>-2378    [000] dN.1.   124.665578: __flush_tlb_all <-machine_real_restart
-           <...>-2378    [000] dN.1.   124.665578: native_flush_tlb_global <-__flush_tlb_all
-
-But this machine did find a bug in the code where I need to send out a fix for.
-
--- Steve
+For anyone following along, I noticed this unnecessary bit of kdoc
+left in from a previous revision and will remove it when submitting
+v5.
 
