@@ -1,151 +1,128 @@
-Return-Path: <linux-kernel+bounces-355006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE809945F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1B19945FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CBE1C22C6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713521C23C11
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8DA1CEE90;
-	Tue,  8 Oct 2024 10:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2823E18C91B;
+	Tue,  8 Oct 2024 11:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iGCQ6NPv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FeR81S44"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18E81C9B77;
-	Tue,  8 Oct 2024 10:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE343C0C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385187; cv=none; b=FrrUNS6+UbVTmJVbc1aVhq6+9ao+kMe0At8mKWoHGgHYqoSaw+ck7M7UTPCfydJKhm8r7fxX2CXRzwOHXEgxP8YESLOPfAtncDktDPLfMsSSmu6l32+wZu2zwvdLDbfFsf1X7HVDpQ81rKqdJips5QNQ7Zw5jInQ0/XoJrpHz5I=
+	t=1728385338; cv=none; b=XVycHCbJyeMt5Q3VbkCERlLQg5r5e8AHFZWpWfEaY2BR05EAe9iK7D4fRXCBafoegI4y1QOsedZAI98eOY0kEk2fd5DIsU82BTpcYwEBYIj6MnuW/kykKtPVP5MvDyVi5ASUafsmVY/+gG82KngRdO5moVXrAqeRXF2DSxWX77s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385187; c=relaxed/simple;
-	bh=zeUqvI7SPlfEDQRc680LktQNkR1koKFBn87cj8I1z5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QLmIgnSPDNZuCHXK5+ySxTS8MBo/+hYxeUJkqI6ohreUzbw2HJLdKS4l9QwQ5dJhuHi0Fzj2zRM5wIZUCU5eYro3QE50OUPx59CPU3Qrb2cdAkPcNDAmywuXHwmqe6h+8z85ec8b4XXTNCByVPd5J3S9WWk5xE4JC0IgDl3KUKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iGCQ6NPv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4989Juau020507;
-	Tue, 8 Oct 2024 10:59:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	4A8DJyWg8LQ+N4AyllITtSSlkQcxiPJBfcJryBouwNw=; b=iGCQ6NPvXDS1rNyW
-	E6O4S/UM3bGpjThxzuzn/CT/+jJ5uwSI3upOn+Bb8jK2LW5jWYz2kFkUvN02mBrh
-	uX1QuXrwtxrStlfiBwxMRs72vBeVtNcyeIWBuJYzaM89/nxj9ZtIEJuTJjdJ28Hp
-	y/InN8D+QBpDvKjuA2Nk/3UI0IlGPVgBhY4pTJY4WlPASG5UMwLiZnR841fzs6Yt
-	j07YJRa2I1S0N5VVNmG3jqW2bfq1liE2o0QN+1Biie09Io4NTJXXir6ii9N1y/vf
-	LNLPRV+rPMj/OOFEwgZvozygUwyn/O4aVF/7Se+L+RlJF3SemQg871GrZpK6Seac
-	FmZkuA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42520hggw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 10:59:38 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 498Awb8d021450;
-	Tue, 8 Oct 2024 10:59:37 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42520hggw4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 10:59:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4989FaVT011516;
-	Tue, 8 Oct 2024 10:59:37 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5xkx7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 10:59:37 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 498AxXN542271164
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Oct 2024 10:59:33 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2B5BE2004D;
-	Tue,  8 Oct 2024 10:59:33 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 57AEC20043;
-	Tue,  8 Oct 2024 10:59:32 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.179.3.110])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue,  8 Oct 2024 10:59:32 +0000 (GMT)
-Date: Tue, 8 Oct 2024 12:59:30 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: "Marc Hartmayer" <mhartmay@linux.ibm.com>
-Cc: Cornelia Huck <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "Martin
- K. Petersen" <martin.petersen@oracle.com>,
-        Robin Murphy
- <robin.murphy@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Halil Pasic
- <pasic@linux.ibm.com>
-Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix dma_parm pointer not set up
-Message-ID: <20241008125930.33578456.pasic@linux.ibm.com>
-In-Reply-To: <875xq3yo97.fsf@linux.ibm.com>
-References: <20241007201030.204028-1-pasic@linux.ibm.com>
-	<875xq3yo97.fsf@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0olIk7itJFa692_e9qiWOsWSRvlhRHRt
-X-Proofpoint-ORIG-GUID: ZOgQRSixwEq07pQDdsufZ9psI2fkElxs
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1728385338; c=relaxed/simple;
+	bh=9MxQ225oguJtsavv+etB/Z6eXIUd0XesGeecYxJ8FbI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WbCzjlkzAuYLhx2gu8cuKwAZdDh0M77Gguty/dkuEWbG9DeNZXfXyGgFjbMYUmreEs6gJ4VmLsCShGofZndnbM+1PB+hF2HQY4BD35+BJJynXgQXMiVc0deJtUOG8E2lx6BjNubudengny39RKtYNAnKSGjd4izrNbtbxjZJ90w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FeR81S44; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728385334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2yF7irZ6YJEKS7gOO+JHbJiJfvjGEpJhpY5c39nJXI8=;
+	b=FeR81S4402La3HRpJyZgmMzp+AnjpCUpoLmeKlOxBX1ps5Hi6fnJxZxbWK+3KKDho8m0aH
+	h3Lurjm88idrTt/YRj4w8F0q3/406ZJKmzbMK/J0w7FC6QFIwgyr9VvuHQZXyFZJojY29D
+	Sl95MQxWb53XcVqyqGsFX4NrCaUA6OY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-08_09,2024-10-08_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- mlxlogscore=647 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080066
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v2] scsi: fnic: Use vzalloc() instead of vmalloc() and
+ memset(0)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <596a6bd4-88b3-4836-94ec-b2930c9b0062@wdc.com>
+Date: Tue, 8 Oct 2024 13:02:01 +0200
+Cc: Satish Kharat <satishkh@cisco.com>,
+ Sesidhar Baddela <sebaddel@cisco.com>,
+ Karan Tilak Kumar <kartilak@cisco.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2D16B4A0-DC8F-4448-93B1-508FD9F92774@linux.dev>
+References: <20241008095152.1831-2-thorsten.blum@linux.dev>
+ <596a6bd4-88b3-4836-94ec-b2930c9b0062@wdc.com>
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 08 Oct 2024 10:47:48 +0200
-"Marc Hartmayer" <mhartmay@linux.ibm.com> wrote:
+On 8. Oct 2024, at 12:25, Johannes Thumshirn wrote:
+> On 08.10.24 11:53, Thorsten Blum wrote:
+>> Use vzalloc() instead of vmalloc() followed by memset(0) to simplify =
+the
+>> functions fnic_trace_buf_init() and fnic_fc_trace_init().
+>>=20
+>> Remove unnecessary unsigned long cast.
+>>=20
+>> Compile-tested only.
+>>=20
+>> Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
+>> Changes in v2:
+>> - Remove unsigned long cast as suggested by Johannes Thumshirn
+>> - Link to v1: =
+https://lore.kernel.org/linux-kernel/20241007115840.2239-6-thorsten.blum@l=
+inux.dev/
+>> ---
+>>  drivers/scsi/fnic/fnic_trace.c | 14 +++-----------
+>>  1 file changed, 3 insertions(+), 11 deletions(-)
+>>=20
+>> diff --git a/drivers/scsi/fnic/fnic_trace.c =
+b/drivers/scsi/fnic/fnic_trace.c
+>> index aaa4ea02fb7c..c2413e0e4eaa 100644
+>> --- a/drivers/scsi/fnic/fnic_trace.c
+>> +++ b/drivers/scsi/fnic/fnic_trace.c
+>> @@ -485,7 +485,7 @@ int fnic_trace_buf_init(void)
+>>   }
+>>=20
+>>   fnic_trace_entries.page_offset =3D
+>> - vmalloc(array_size(fnic_max_trace_entries,
+>> + vzalloc(array_size(fnic_max_trace_entries,
+>>     sizeof(unsigned long)));
+>=20
+> Sorry for not having spotted it earlier, but all those=20
+> vzalloc(array_size(foo, bar)); calls can be turned into vcalloc(foo, =
+bar);
 
-> > Closes: https://bugzilla.linux.ibm.com/show_bug.cgi?id=209131  
-> 
-> I guess, this line can be removed as it’s internal only.
+No worries, but removing the unsigned long casts actually doesn't work:
 
-checkpatch.pl complains about the Reported-by if I do. 
+drivers/scsi/fnic/fnic_trace.c:559:27: error: incompatible pointer to =
+integer conversion assigning to 'unsigned long' from 'typeof =
+(vzalloc_noprof(size_mul(((1UL) << 12), fnic_fc_trace_max_pages)))' (aka =
+'void *') [-Wint-conversion]
+  559 |         fnic_fc_ctlr_trace_buf_p =3D
+      |                                  ^
+  560 |                 vzalloc(array_size(PAGE_SIZE, =
+fnic_fc_trace_max_pages));
+      |                 =
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
 
-It does not complain about
-Closes: N/A
-but if I read the process documentation correctly if the report
-is not available on the web Closes should be omitted:
-"""
-Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:
-----------------------------------------------------------------------
+I'll submit a v3.
 
-The Reported-by tag gives credit to people who find bugs and report them and it
-hopefully inspires them to help us again in the future. The tag is intended for
-bugs; please do not use it to credit feature requests. The tag should be
-followed by a Closes: tag pointing to the report, unless the report is not
-available on the web.
-"""
-
-So I guess I have to make peace with getting checkpatch warnings when I
-give credits to the reporter for reports not available on the web.
-
-Regards,
-Halil
+Thanks,
+Thorsten=
 
