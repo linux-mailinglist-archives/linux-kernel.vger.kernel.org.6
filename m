@@ -1,95 +1,181 @@
-Return-Path: <linux-kernel+bounces-354834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF14994325
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02670994332
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF328CE8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2412428D9BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76EB1DEFF0;
-	Tue,  8 Oct 2024 08:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0921DF27A;
+	Tue,  8 Oct 2024 08:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JwPa/CRV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2pun7Sf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5976C1D07A3;
-	Tue,  8 Oct 2024 08:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597A213AA45;
+	Tue,  8 Oct 2024 08:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377690; cv=none; b=tHjJ8zRrrph2+nqNVs01XQ259mQAvlQR9CJT1bd+mKl+n8q+QvrvMAXxJ+iycUBdKd2lTju9P/U4wGSQjX1h1fCqBZ/ZOkz9JIj32O9QT1/xVNrY4sKt+ak4n4IbCWQkr5q3xIBEk8/6M5nTeRQQVZDl56scHfG5lyaIbPEgBAs=
+	t=1728377707; cv=none; b=FAjrrVeEjQCdFlQpwd9MGra8s6xMZ/tYVVeb38TMEnn2O8dwEyTcho1HEFKwJoRzRj6kswbqr2JfpWF5iuCDNt7sLZs09RXUZTXTog/5k5S5SVwg2WOLr8wlAI4Ugwb8y3eXvYRNsj9gBnWQy1ABYUvx6XbuQRKQ7epsvAf8E68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377690; c=relaxed/simple;
-	bh=AWG6oEPgkDnw7LKNBFVWOBnbxOnDKzU9e0dST5ZmFXE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=j820SWmRjdwxSIWPOXI/0aBcKf2a/aFOSFgBUV2XgCIyO7vMepjdgEvb965mD8OfW6pYVyPLFGtLVRxKMkxb6BL6N4/705fTUCNA5eaVB2BZqXZBpnfXZ/gPjll+PubOziDd5oS0nKkx9Y8RgZqBI8/fXrGz9jFgo7bHVBCeIM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JwPa/CRV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728377686;
-	bh=AWG6oEPgkDnw7LKNBFVWOBnbxOnDKzU9e0dST5ZmFXE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JwPa/CRVOdDORLtFLtBLkIoZG3BujChD2qm5GonXu+9uVQo3g+8ZfJhWpeF/Q81L9
-	 zAObKF9dVyXkXtUy5ksZfdiwcwOz+xQzGG3Oii989v8/CLf/QWKqQXTxICHkLxvCQr
-	 sVHC7UwJz6C9Yzo7Yktu6tWupi+yLfQqB6/Z0hwjHt63JsXVuOwe7kBsDVdLdaAWZk
-	 6cYv3+/UMNzTYdAvMrmSGQQwxujLIWqq9klc4WxB8rnySOf3l/TXPKbSkYwZ7Mf46I
-	 DIPrsPHSgpiNVNsXK0U2zXyRVR0rrdOiuvoaYbBiBmmuVfCf6x1gmvsV8F8GW53oF9
-	 c4fwmLwDEyWmw==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B45FC17E10C2;
-	Tue,  8 Oct 2024 10:54:45 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>, 
- Enric Balletbo i Serra <eballetbo@kernel.org>, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>
-In-Reply-To: <20240909-i2c-delay-v1-0-4b406617a5f5@chromium.org>
-References: <20240909-i2c-delay-v1-0-4b406617a5f5@chromium.org>
-Subject: Re: [PATCH 0/4] arm64: dts: mt8183: Add i2c-scl-internal-delay-ns
-Message-Id: <172837768568.33038.2488434052434863943.b4-ty@collabora.com>
-Date: Tue, 08 Oct 2024 10:54:45 +0200
+	s=arc-20240116; t=1728377707; c=relaxed/simple;
+	bh=dzsCD0bOgufP2zzatT6Djh1eOmuug+qqhpBIirk2fkI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YROpnApXez2FUa05CNEClwl6I+isFQwskkGCxJIfol7XJ34qwEx0BIV4CVKweoBwbcS+DKDyeL6d3K9d+wAyXRyhR3GfLrVth9HkG1U9EHhgqJMlE2QjRuuEFbBFYNx/APYxj3t1yYSfdDVaYW4+IAtcwyw2A2oNiqHvCBU/qr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2pun7Sf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D05C4CEC7;
+	Tue,  8 Oct 2024 08:55:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728377707;
+	bh=dzsCD0bOgufP2zzatT6Djh1eOmuug+qqhpBIirk2fkI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b2pun7Sfw15Ull7ICokZ0OX86X5Q/VjK9Nqp5eEmmQqGrDoGFC5/r7zTb+gYZDiRZ
+	 lEdPXvfAseOteH8yCIdg39lij/ALnjGz1EYaB0QJa8f4qDe7t9eHLmt30LdTsUqU/B
+	 WbWpiiYHespUcN21yFrnFEgfkMmHdjsZE6JYHIV3edFJrV4HjdqVpdBXMUM6bCKwdy
+	 pZh2WVxmwW8plf+5lo3LvVpuxpUmxwjQc0ZRHyYRfrfkEbiClkhnQnqSId/FG43aJl
+	 EGKq1NwGrYu4qiHd+VY7ZB1JmDCTH7YGNg2zL1o36+sZ1OILfb5DCJqWSUdhwYgtqR
+	 6qNLTX6qBZgXA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sy5zk-001IA4-J4;
+	Tue, 08 Oct 2024 09:55:04 +0100
+Date: Tue, 08 Oct 2024 09:55:04 +0100
+Message-ID: <86v7y355zr.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: <lpieralisi@kernel.org>,
+	<guohanjun@huawei.com>,
+	<sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>,
+	<rafael@kernel.org>,
+	<lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+In-Reply-To: <20241008082429.33646-1-zhengzengkai@huawei.com>
+References: <20241008082429.33646-1-zhengzengkai@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, 09 Sep 2024 07:29:02 +0000, Hsin-Te Yuan wrote:
-> Add i2c-scl-internal-delay-ns for each device.
+On Tue, 08 Oct 2024 09:24:29 +0100,
+Zheng Zengkai <zhengzengkai@huawei.com> wrote:
 > 
+> According to GTDT Table Structure of ACPI specification, the result of
+> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
+> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
+
+There is no such language in the spec. It simply says "Offset to the
+Platform Timer Structure[] array from the start of this table".
+
+> in function acpi_gtdt_init(), so the condition of the "invalid timer
+> data" check will never be true, remove the EINVAL error check branch
+> and change to void return type for acpi_gtdt_init() to simplify the
+> function implementation and error handling by callers.
+
+And ACPI tables are well known to be always correct, right?
+
 > 
+> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
+> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
+> not be called with parameter platform_timer_count set to NULL and we
+> can explicitly initialize the integer variable which is used for storing
+> the number of platform timers by caller to zero, so there is no need to
+> do null pointer check for platform_timer_count in acpi_gtdt_init(),
+> remove it to make code a bit more concise.
+> 
+> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> ---
+> Changes in v2:
+> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
+> 
+> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+> ---
+>  drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
+>  drivers/clocksource/arm_arch_timer.c |  6 ++----
+>  include/linux/acpi.h                 |  2 +-
+>  3 files changed, 11 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> index c0e77c1c8e09..7fe27c0edde7 100644
+> --- a/drivers/acpi/arm64/gtdt.c
+> +++ b/drivers/acpi/arm64/gtdt.c
+> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
+>   * @table:			The pointer to GTDT table.
+>   * @platform_timer_count:	It points to a integer variable which is used
+>   *				for storing the number of platform timers.
+> - *				This pointer could be NULL, if the caller
+> - *				doesn't need this info.
+> - *
+> - * Return: 0 if success, -EINVAL if error.
+>   */
+> -int __init acpi_gtdt_init(struct acpi_table_header *table,
+> +void __init acpi_gtdt_init(struct acpi_table_header *table,
+>  			  int *platform_timer_count)
+>  {
+> -	void *platform_timer;
+>  	struct acpi_table_gtdt *gtdt;
+>  
+>  	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>  	acpi_gtdt_desc.gtdt = gtdt;
+>  	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
+>  	acpi_gtdt_desc.platform_timer = NULL;
+> -	if (platform_timer_count)
+> -		*platform_timer_count = 0;
+>  
+>  	if (table->revision < 2) {
+>  		pr_warn("Revision:%d doesn't support Platform Timers.\n",
+>  			table->revision);
+> -		return 0;
+> +		return;
+>  	}
+>  
+>  	if (!gtdt->platform_timer_count) {
+>  		pr_debug("No Platform Timer.\n");
+> -		return 0;
+> +		return;
+>  	}
+>  
+> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> -		pr_err(FW_BUG "invalid timer data.\n");
+> -		return -EINVAL;
+> -	}
+> -	acpi_gtdt_desc.platform_timer = platform_timer;
+> -	if (platform_timer_count)
+> -		*platform_timer_count = gtdt->platform_timer_count;
+> -
+> -	return 0;
+> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
 
-Applied to v6.12-next/dts64, thanks!
+And now you are trusting something that potentially points to some
+unexpected location, blindly using it. It is bad enough that the
+current checks are pretty poor (no check against the end of the
+table for the first timer entry), but you are making it worse.
 
-[1/4] arm64: dts: mt8183: fennel: add i2c2's i2c-scl-internal-delay-ns
-      https://git.kernel.org/mediatek/c/5bbddfd0
-[2/4] arm64: dts: mt8183: burnet: add i2c2's i2c-scl-internal-delay-ns
-      https://git.kernel.org/mediatek/c/3d3bc7cb
-[3/4] arm64: dts: mt8183: cozmo: add i2c2's i2c-scl-internal-delay-ns
-      https://git.kernel.org/mediatek/c/02586956
-[4/4] arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-delay-ns
-      https://git.kernel.org/mediatek/c/65b99309
+	M.
 
-Cheers,
-Angelo
-
-
+-- 
+Without deviation from the norm, progress is not possible.
 
