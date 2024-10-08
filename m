@@ -1,142 +1,91 @@
-Return-Path: <linux-kernel+bounces-354840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F83B994334
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195C8994335
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483BF1F22DE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A33F28E76A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96181DF96E;
-	Tue,  8 Oct 2024 08:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFB613C80C;
+	Tue,  8 Oct 2024 08:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JtcB8O/l"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Zykpkf0S"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D178C18BC03
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16055166F29;
+	Tue,  8 Oct 2024 08:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377736; cv=none; b=mNLAOU40Xag2+UHmzXVM9w7DZNaoSHL8obJvA7eouZyb6TGtcCVD6j5lTzxo/6FS7Oymnm9Q0ow++eRS3VyKID61LRgRJy5Tb/AmWjpd4yZNpAkxzeH1kHw/Jb2utOfZnGoom/pf+8spOs8vxDtkuz+SB7A1rqQZbYNQTX6nq6Y=
+	t=1728377733; cv=none; b=FJIxgpGQsxi4vGtVJglQYqVuxoPUdw6z6qvQM1RZFIO89l+P3WjvmVAN91IC4eJbK8bfW7KNlmwqRjd0vamsXqd6DnfC/aeP+iV/o6rISG8r0YqtVSp+AhVcZFeCjlb5tUItV3EAYujUiD6svkWvBO6Q6lFkh7oDXwJqpspa76s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377736; c=relaxed/simple;
-	bh=dmkMffEeGWhREFpipHghIfPsN7DWC8TeziPMMD8P7Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q3aPqkRiK+FiWDBxrec6vqoQQmSdvmyP6MHLm5YawhYEM6UtddYA4AJtejkq6lXQ0iKgi4E0K5qp9GEdqdyrsewXlKt8/1f5+lC2fknaQz/01FWNnhr8/A71/3To/9DiHZL9eFUHkJWjtYaCnvtj9N6rSJGG2sPHae74uz2aaHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JtcB8O/l; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 56AF2FF80A;
-	Tue,  8 Oct 2024 08:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728377725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X2J2kZz9XVQBtjS6G6EvCariDJ3hTXnxYgwv1j+Fa0w=;
-	b=JtcB8O/llg/5QP86K1t+19Ewr2z92DZa5seey/ztVjdg2NouCwZwjHasybz7L6F5piBgTe
-	16Gjp173ZX06TfRVBifaOQ8I10L+pUjs4bO3r4DMuZ+o9ICSQkI+dsYCHV8+EWj0gItxBp
-	MbXwj2DUdQn3FXTMulXteL6lGcNpeblGkKTD8u8yR4Jz1LMst/1SPYq+aePDnLBfQu/O3l
-	oKre/abPfEt87jQkj9KP3iV1N5otY9242mOHoPyzqxOrgPe8w9UqM5suhgnZc5hxae+zPs
-	HU0Q0t22JXXA6xfPhK2SX6zL8RnitH1mA6eoybSGGa8vU8bXaj52JuDjbzpeHw==
-Date: Tue, 8 Oct 2024 10:55:23 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
- leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH 1/2] mtd: spi-nand: Add fixups for read retry
-Message-ID: <20241008105523.1647f2ca@xps-13>
-In-Reply-To: <CAAyq3SaZKMqJrv7caVwO0+u+nk8JWZ8qTRHdUqQOfQhx9gBF7Q@mail.gmail.com>
-References: <20240905055333.2363358-1-linchengming884@gmail.com>
-	<20240905055333.2363358-2-linchengming884@gmail.com>
-	<20241001114039.67bab21e@xps-13>
-	<CAAyq3SbP4kSW47ZaT7V9ZzeHauj_EwfU5GPipZjNK6j69qm7Vw@mail.gmail.com>
-	<20241007103331.55f37dcb@xps-13>
-	<CAAyq3SaZKMqJrv7caVwO0+u+nk8JWZ8qTRHdUqQOfQhx9gBF7Q@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728377733; c=relaxed/simple;
+	bh=rvjGmFEsoc0/TUD1jfFG2aFMzQUg4L/iSKC6A+/Qo7E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BKekP5vizKY3FYhI0+vDIMsher1yOpgVDzpOEVcshi0T6ysyt4nXe0/ymr+uZTl+qE3g1hW+PkBxVJZ5vxMJqmGLO6EjXJTN/J/+yVYsC4r98H6qrx6/7t1qz/fEQFNxbH8PFkJA6x/TtwB2nGW8vdKcAlWYtMX2gRw12oZLEow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Zykpkf0S; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728377730;
+	bh=rvjGmFEsoc0/TUD1jfFG2aFMzQUg4L/iSKC6A+/Qo7E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Zykpkf0SnNylPL05nhtlqxHronlK952S9bxwc2slA0PKGVnU0lDmZMFov/NJULfoT
+	 mZPDh/f9R3kWqGn13jrZzlUq6UZyqGPrEeJugWlIqs+nvrdyVAYunFUhKBV7PvfA19
+	 10l52WpC4JQTuXUt2nwpKKNYJ0gBB8MBMr5wOeBTmgwH45bq4bGnrLsjjf0i39Lk7C
+	 hFPKv1tX6l1fyxooUt72qsgFX4ny+lXUBiQcK1exeqvjtLeenDLNdMNkVj6hP4Ggsq
+	 B5mtsHJKzARmWnE1PWIl2soqTE1btxukiSy6MVTrFag+CVnUf/rtNqOXRGcaA7uWUJ
+	 X184jTVamDxHg==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AEE9F17E10C2;
+	Tue,  8 Oct 2024 10:55:29 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, Ben Ho <Ben.Ho@mediatek.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20240909-eeprom-v1-0-1ed2bc5064f4@chromium.org>
+References: <20240909-eeprom-v1-0-1ed2bc5064f4@chromium.org>
+Subject: Re: [PATCH 0/2] Fix the address of eeprom of mt8183-kukui
+Message-Id: <172837772966.33303.10861074513601839928.b4-ty@collabora.com>
+Date: Tue, 08 Oct 2024 10:55:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi,
+On Mon, 09 Sep 2024 08:33:45 +0000, Hsin-Te Yuan wrote:
+> The address of eeprom should be 50. The fixed commit in krane one is
+> older than the rest, so split it for backporting.
+> 
+> 
 
-linchengming884@gmail.com wrote on Tue, 8 Oct 2024 14:25:25 +0800:
+Applied to v6.12-next/dts64, thanks!
 
-> Hi Miquel,
->=20
-> Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=
-=887=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:33=E5=AF=AB=E9=81=93=
-=EF=BC=9A
-> >
-> > Hi Cheng Ming,
-> > =20
-> > > > > @@ -325,7 +373,8 @@ static const struct spinand_info macronix_spi=
-nand_table[] =3D {
-> > > > >                                             &update_cache_variant=
-s),
-> > > > >                    SPINAND_HAS_QE_BIT,
-> > > > >                    SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-> > > > > -                                  mx35lf1ge4ab_ecc_get_status)),
-> > > > > +                                  mx35lf1ge4ab_ecc_get_status),
-> > > > > +                  SPINAND_FIXUPS(&read_retry_fixups)),
-> > > > >       SPINAND_INFO("MX35UF1GE4AC",
-> > > > >                    SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY,=
- 0x92, 0x01),
-> > > > >                    NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1=
-), =20
-> > > >
-> > > > I expect a patch targeting the core first, and then the changes in =
-the
-> > > > Macronix driver. =20
-> > >
-> > > Got it, so do you prefer that we switch to using flags instead? =20
-> >
-> > Not necessarily, did I?
-> >
-> > ...
-> > =20
->=20
-> Using a flag instead of fixups allows this patch to target the core first,
-> and reduces changes in the Macronix driver.
+[1/2] arm64: dts: mt8183: krane: Fix the address of eeprom at i2c4
+      https://git.kernel.org/mediatek/c/d7f3e27b
+[2/2] arm64: dts: mt8183: kukui: Fix the address of eeprom at i2c4
+      https://git.kernel.org/mediatek/c/c2f1aa44
 
-Propose what ever you think is best. You can also look at how it is
-done in raw NAND. But always include the core changes first, please.
-It is not related to how you implement it.
-
->=20
-> > > > >       const struct spinand_manufacturer *manufacturer;
-> > > > >       void *priv;
-> > > > > +     int read_retries; =20
-> > > >
-> > > > Any reason to keep this variable signed? =20
-> > >
-> > > No, we can simply change from int to u8. =20
-> >
-> > Just unsigned int is fine.
-> > =20
->=20
-> Sure, thanks!
->=20
-> > Thanks,
-> > Miqu=C3=A8l =20
->=20
-> Thanks,
-> Cheng Ming Lin
+Cheers,
+Angelo
 
 
-Thanks,
-Miqu=C3=A8l
 
