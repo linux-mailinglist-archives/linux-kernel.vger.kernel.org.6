@@ -1,79 +1,102 @@
-Return-Path: <linux-kernel+bounces-354554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8E7993FB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6437E993FBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DB528439B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD881F256F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6281DF969;
-	Tue,  8 Oct 2024 06:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6161DF989;
+	Tue,  8 Oct 2024 06:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="beukEH7X"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dxDLcK24"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE00514A0B8;
-	Tue,  8 Oct 2024 06:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1691F16EB42;
+	Tue,  8 Oct 2024 06:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368954; cv=none; b=a2RyPfNDNqHJDNfbGoc2LctTfFDuiY7AmxeOJdKWteIdPr/UWsGw58b7881KzPXUR1jIqBlWESKEB51INu77OB3M6Y6CpOytg5fGD4GN+4ne0UWCer43opFy7+GfaAbnnobOEoz+LquUbz1Xe7OFQ1mTSxn82bvi3rR6b6sV9TA=
+	t=1728368972; cv=none; b=jNiXF+MmEp2qMxPsyoGmDEfGFIjEcIyQhgoK2FTiWYbJZekrGxncclwUqzCZ/FWr+IFQedT3HVgb79/XfN+/drSpl7h+3bFGv+jNOaFD7Mv3dmDgxY9slkCF4o9olzdPMF13YCGoEVSokoDQkKAGnlFebOV0iGCE6SUH8SOnm90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368954; c=relaxed/simple;
-	bh=BWGakp8jbxH9ePVwnsRB+ePsR8jJQenV0Mc/y8WuZCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sT2P5q1RbUQ/YZ89lvZ3+i5uaDht+FcIcuNHXaZNVCBTo8s2oZ+oiLPewx+7n5Yosqvkh3m+/F58rvqG1T8JDWv7wMRrSu3/dT5ck9QfS5fjP3SCnMU6LAsZxWv2QWjCDZFBNWzbKgpcB98yiiv5lZhNh3yYRrGGcl6WUVFnSj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=beukEH7X; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BWGakp8jbxH9ePVwnsRB+ePsR8jJQenV0Mc/y8WuZCo=; b=beukEH7XjFhBT5Mspc90DShBuH
-	wt63I8GQ9F5lWs7LnpWsRNBkhPTKgdICUahANeCxnKuCpOKOGgJ36NVgW5yzssUAI2IAyuMSwy/2Y
-	BcZhr2lYT2mxiXSjbsB2S+KYW1/jMjhkGgGGFtzi0GAL1MFRqVDh0EtucortqGJivdXJhSye/0CLR
-	FBnq4quaci6po31FGFzo0+x66XyBSimSzfFhPvSi1ycBd8Tt1gdhMRAFsyo8krqfolMgfy6tDMn9w
-	plePAodPK3TU3ItfYz9HAM9jUfkyAx1vcYS03QmCz0PuKtdQpHizmU55OvaF19MZw4TUr96PLGrX4
-	Wn8tTOMw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy3iZ-00000004eyP-2ork;
-	Tue, 08 Oct 2024 06:29:11 +0000
-Date: Mon, 7 Oct 2024 23:29:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Tejun Heo <tj@kernel.org>,
-	axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
-Message-ID: <ZwTRN4RPKjRIgMAF@infradead.org>
-References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
- <20240930085302.1558217-2-yukuai1@huaweicloud.com>
- <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
- <ce2b9ed1-cf74-1d50-a72a-23733c0d1db0@huaweicloud.com>
- <ZwS8lwQ_fN2HY93p@infradead.org>
- <8aab9d5d-ed45-dc38-085b-e6ed67d0b3c6@huaweicloud.com>
+	s=arc-20240116; t=1728368972; c=relaxed/simple;
+	bh=A+XGWibJ5wCrMh61FWIyGIproZa6J8qxhLcDAG1RBQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Eo1u1nMZa/7OUICLwy298oreTObPgTMqDrLPfJk7G/UBccneh8Nd0Krvpidvd6v0aJ7Ij5LuVCUUhlw093UstXsufvYaBP989fW5Q/zo+j21Zlz08RkZG9Dzj67O8xxTuLlOkyL7841E41BDFU5564jCbitpulzDdJz7l1TVagI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dxDLcK24; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728368967;
+	bh=IsQ+J2Ndan5azomYips/VhPYX5BYOhyuF7G1A+/FGU0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=dxDLcK24zmebYiYL0lA4LfvEyOo+pA9kn3oP7KHhiUY02PGCBCX4mmt844wTOy+xc
+	 icrWRsJshObaXdSLZS/RVlHVRMNNT6ZTZuuLaLyosxg5jKpWI+X1Ztj78BiLqo8Trw
+	 yhkqhiLVCJDg7+UdBHFfZDzR4akU8QCrzVaobpYR7uaesS0LwCnOe73WBwhNcTTER3
+	 Tzt0Fbw6Pt/wWT+xyIMC0Y93cq/Moc3XOcRS6TDfuHEGuk9/bQVj2CwJCJCc6AqS3m
+	 dUe14ijJAf3/ep4ZwAwv5d1bejLBSX75Y5GdJ2LMOH1zmh08IQSprNsIZFnUx1MVgY
+	 jsB4PwOde6ptg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XN5hk1N0Vz4wb0;
+	Tue,  8 Oct 2024 17:29:26 +1100 (AEDT)
+Date: Tue, 8 Oct 2024 17:29:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Linux Crypto List
+ <linux-crypto@vger.kernel.org>
+Cc: Lukas Wunner <lukas@wunner.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the crypto tree
+Message-ID: <20241008172926.0b995ea7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8aab9d5d-ed45-dc38-085b-e6ed67d0b3c6@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; boundary="Sig_/TKdfoFQeWsZjzjQG8m9Jph0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Oct 08, 2024 at 02:24:45PM +0800, Yu Kuai wrote:
-> Yes, but this name is not major and minor(for example, sda instead of
-> 8:0), Tejun was probably talking about major and minor name field.
+--Sig_/TKdfoFQeWsZjzjQG8m9Jph0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I don't really want to add that as it is a horrible user interface.
+Hi all,
 
+After merging the crypto tree, today's linux-next build (htmldocs)
+produced this warning:
+
+include/crypto/akcipher.h:1: warning: 'Generic Public Key API' not found
+
+Introduced by commit
+
+  6b34562f0cfe ("crypto: akcipher - Drop sign/verify operations")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TKdfoFQeWsZjzjQG8m9Jph0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcE0UYACgkQAVBC80lX
+0Gx2Jgf/WDUiJIcjrFaksEaWx9KdSvYBu8riWCF5SU5pejpslre9D5fmcb+g3Mni
+RuqjNHjSxLqm/cO1PQjSWjyJhy6MVZtXKa0a0jlDxKHZx1KZfLepRMgUHh4oCKL2
+GYZcVG9fCT9nZdWeHesgtehw9mmu1KUkzVasD4dPUXm4nkEeL/VQtXHOyl1hssHZ
+3h9L7kRJE5gA5k6Y0NJPyDPxlNjXayNpYCEmC0/3h69KzPEkMWNWfKdxrotx0gDB
+o9J+61AEKytmqa+4ZtxrHiDkVy322U85EA8iErgcZTWanJK6o3b+ffUnbEcJDqia
+9rp+JPbMrz+otMlPkRznOA56vUYcbA==
+=Xrjb
+-----END PGP SIGNATURE-----
+
+--Sig_/TKdfoFQeWsZjzjQG8m9Jph0--
 
