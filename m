@@ -1,256 +1,674 @@
-Return-Path: <linux-kernel+bounces-355356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB3C995119
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:08:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BD099511C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D683D282B18
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:08:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1D31F27508
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1C61E04AE;
-	Tue,  8 Oct 2024 14:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhXUDw8q"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6361A1DFD81;
+	Tue,  8 Oct 2024 14:07:28 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58741E00A5
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1384C97;
+	Tue,  8 Oct 2024 14:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396392; cv=none; b=BeXauu9tzZW2A13nBdJibDgqKGbYDtrvuop9hM6WH3mtdVmPUjbRoHw5HKKQpK4aLP1T98CjUL6VgtDNi6N6wdv51wY4P/5mGOREVS9Pe+5ZvHdzeOTidI0WUDOqsTSDNk8fRjwso1xfzpu1jCOHVfPPmcSI8he8TtxqSn5JTsg=
+	t=1728396447; cv=none; b=qJcAh/A4dMowAS1d5XU6/4PhJ1WSneph3v0cKC1GXqnRpt1KXrBhkT5srA1zPZIP/HAi5lu9Ckv2cBrjwzXW5NVqJulAqeYtsRF9ymPiRLONwhyjjH2HYOb2KUNoHZN6SKMb00vf0MTHo30N0Djgb72fYKFBVfZMfvfJ+HHpxCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396392; c=relaxed/simple;
-	bh=BXOGQA6mvWgbyjnw+Dpeyg4FhDykouyx7I2lmxPK/Ew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vh+k9iT4N8VDM7ZdoQY4Z6LpGa9kgLnXls8/A2aoHiQ0ADt3Jg6XiT8UGgV1kW4cHZHkFqT4coJVlilBiTwT5dt7D3lDiCU8FimcpbQwKbPYXox80x8aY8KFvdKR2WV8lDRIYyLjQH78rPhQS4lIo1GAeP1pcLMngA3UvJtwupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hhXUDw8q; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso81089861fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728396389; x=1729001189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L4YJLWqBXYOC24Bw1ONw1fQX4wAbzBRC8sG3hZFWAGE=;
-        b=hhXUDw8q+LurIQb/aMpbB4bQG3TczdP5UW2OjmCLSmRbnfetN1Ic2XGU06YJ/Kuj0L
-         eP6el9zIYqeSM8Xt5t8qyDI9/lfbUh2lyVsNnsHP9+5I2Td8kpGIwxOYHwtWMnST1nDc
-         cds+vTD/YXivX3Vn1InTfL6sbGsEMpRQ8bj60nvq1V2zkE9rxUlOrWKKZxatqdA6EXg+
-         EYKl/Sk/zU5f/gA+rLbfFj1CzONtMol7f1RsQK2IuuJPUj2nYcohe4UEh7O3X42i5R9k
-         /jEh1W7y3qMyYSDu06aPGuFPdvTREvpHgrFYUr5+XOZZIbgyU6aVuh+ToFJypSF2pAEt
-         b4wg==
+	s=arc-20240116; t=1728396447; c=relaxed/simple;
+	bh=A322TLvDuBc6q3IvYSaYDY+JSLyk0a/pzMibgCmncNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6eH5L09TbZ2QdNw9melG8R/MX90WJ4aHYR0vCQleC4PEnVDatASp2IPaKjJ7DMjn4mRmpzAEd85jt4ywHAtssajVrUY7ig1MgGW1WP5gG7wMQPvyYouPH9/iPJYD/1LOguj7g5ZTGbOKCox68J9pMhR7NBOlk1o99sWBZFt2M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c883459b19so6643362a12.2;
+        Tue, 08 Oct 2024 07:07:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396389; x=1729001189;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L4YJLWqBXYOC24Bw1ONw1fQX4wAbzBRC8sG3hZFWAGE=;
-        b=STuLHyxpbmi/LllGOlxUk+pkqKWxu/CH0mMxdGK6YT8g3KmW3oQKwvI/U1bYi5G4w3
-         KNX5z6Jm1IEV4P1twUyyGqWk+FWusA0lb7/hX3DU5nFEFnoYxZLefMaWg1Bge6SHRytW
-         nxxQGpXRQHCZbe3rya3u1O33KBJqjsOOswsjiATr1iGDt14WXrqJuIcZJAJ4KIvwH4xX
-         M1ocSZC8Z8rR3xztYe31W9VPbQwXZ5dCZWOJo1N/kNTIKN/d3ZbFHrRvl9GKPS+YquE2
-         yOO1J9nno6aC5Z+1B12OkVWNL6iEMns+Exj3pEHpP+ftyMNAQJz5w3rQzg0CunL1+fHy
-         GIhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrwA6PPLWaYuEaxEPbv5CR7N05G9MJ8+7SDyCXzEie5j0jFyxnPB4YbMc0cL9jPlbncAF3r1Nj5XeUQtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYKH8jmgF1sYmfVrhgHXlqWV4A8PMs17TTYLBHLU6oC6FQ6vwn
-	SvdCyOGHxS82MPzj5A0wVmBkXlUQwwnR9QSCLQ2Y8918K2EnxbuO8eygsbyW/fY=
-X-Google-Smtp-Source: AGHT+IEtXKRVvXCTBO+Hn+2lXi+dDepJNjwT3ZoxXz/aKFuaRDewqMiBd/3inniqYPigQyAxPcFhvw==
-X-Received: by 2002:a05:651c:1545:b0:2f7:712d:d08 with SMTP id 38308e7fff4ca-2faf3c2978amr107548661fa.23.1728396388703;
-        Tue, 08 Oct 2024 07:06:28 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994787fa61sm377678766b.169.2024.10.08.07.06.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 07:06:28 -0700 (PDT)
-Message-ID: <7dd6132f-52c2-4f0a-8eec-26791f250111@linaro.org>
-Date: Tue, 8 Oct 2024 15:06:27 +0100
+        d=1e100.net; s=20230601; t=1728396444; x=1729001244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZtZvBOjDjjOKrZe3zcEiruk4g5UhQ5of6IUEjbKhDU=;
+        b=h9ehswTSGK+LOntnezUBccLDyB8z8MN4Qt1iQGMfBzei7+azwXkMgDk3lE95Wzjo1K
+         wFI84RTUCLLFbPIyjBJKOWzI2r1D3omrTQBAraRZLsGKwVN6flpLU3Tf/oOersiNwMT6
+         FSeT/25RUAN23njU1SNuQHY0HF450zWm7n/D3d1QAojcfL46KB0CiOjZP9N11RZxXgGI
+         RecQMmhx9comxO/3CVtylJc1W9L50oaQLBEAFf88eFmKKTdqYW0dYjFvq4G3T86Ew2Ld
+         s1dSAlTvBLGzgIDeNWTzfkjO+6eeR8EBSitOivjBD/ZyKCYmlviM+tJ7PR+Jh5Jtio72
+         QuAA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8n7qHDqYfAvV5beIhRApK6yJ7op1eO7tPP5ukOKhsqfIye944trbjIAC11sONbQvvt+9GG0QI@vger.kernel.org, AJvYcCUQtnq43ds83nEHxMSYS8EUzFL5/udrKiLQKEmDYWlyy7qui6EXFU6dCCyLYH2el2/g5Don2w5n7InOzpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgX75TzGDK7uSisOsHAFikKuiKQUeuEvY7C9aSnUCfmHmHvmDF
+	4kmWiMGKaFQazumHWyTPOQpjV1oFHlUGgfGiOFW9wESnjSkXMO7p
+X-Google-Smtp-Source: AGHT+IFrHnTsL7P5fCjNM7OeH3Pgj6fE4kG4d1uv2IPt3Ek1mSUbmvABXEMHAkBoo6A+IYj06weYSg==
+X-Received: by 2002:a05:6402:234b:b0:5c2:8249:b2d3 with SMTP id 4fb4d7f45d1cf-5c8d2e75c6amr15479743a12.26.1728396443083;
+        Tue, 08 Oct 2024 07:07:23 -0700 (PDT)
+Received: from gmail.com ([2620:10d:c092:500::7:e36b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05be8d2sm4366479a12.53.2024.10.08.07.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 07:07:21 -0700 (PDT)
+Date: Tue, 8 Oct 2024 15:07:19 +0100
+From: Breno Leitao <leitao@debian.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, rmikey@meta.com,
+	kernel-team@meta.com, horms@kernel.org,
+	"open list:NETWORKING [IPv4/IPv6]" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: Optimize IPv6 path in ip_neigh_for_gw()
+Message-ID: <ZwU8l8KSnVPIC5yU@gmail.com>
+References: <20241004162720.66649-1-leitao@debian.org>
+ <2234f445-848b-4edc-9d6d-9216af9f93a3@kernel.org>
+ <20241004-straight-prompt-auk-ada09a@leitao>
+ <759f82f0-0498-466c-a4c2-a87a86e06315@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Depeng Shao <quic_depengs@quicinc.com>, krzk+dt@kernel.org,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, todor.too@gmail.com, rfoss@kernel.org, conor+dt@kernel.org
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
- <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
- <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
- <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
- <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
- <6eadc285-f413-4bf0-8795-59ff19c734da@linaro.org>
- <6562a958-47e9-4a49-b235-fe8deba3c051@linaro.org>
- <cab95caa-9ffb-446a-858b-342939e80811@mleia.com>
- <4e94106d-5ca9-485b-8c51-c18dcd4e64b0@linaro.org>
- <b779182f-a963-400a-8fc1-2468710082d2@linaro.org>
- <a0f66292-fb97-40ae-9fb1-d79160e70bb3@quicinc.com>
- <53d2b30d-6480-41eb-8dc8-7b3970ad82ef@quicinc.com>
- <2b5f4043-1e23-446a-aba4-96e40fb8d197@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <2b5f4043-1e23-446a-aba4-96e40fb8d197@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <759f82f0-0498-466c-a4c2-a87a86e06315@redhat.com>
 
-On 08/10/2024 14:50, Vladimir Zapolskiy wrote:
-> Hi Depeng.
-> 
-> On 9/30/24 12:26, Depeng Shao wrote:
->> Hi Bryan,
->>
->> On 9/25/2024 11:40 PM, Depeng Shao wrote:
->>> Hi Vladimir, Bryan,
->>>
->>> On 9/18/2024 7:16 AM, Vladimir Zapolskiy wrote:
->>>> Hi Bryan,
->>>>
->>>> On 9/18/24 01:40, Bryan O'Donoghue wrote:
->>>>> On 13/09/2024 06:06, Vladimir Zapolskiy wrote:
->>>>>> On 9/13/24 01:41, Bryan O'Donoghue wrote:
->>>>>>> On 12/09/2024 21:57, Vladimir Zapolskiy wrote:
->>>>>>>>> 3. Required not optional in the yaml
->>>>>>>>>
->>>>>>>>>         => You can't use the PHY without its regulators
->>>>>>>>
->>>>>>>> No, the supplies shall be optional, since it's absolutely 
->>>>>>>> possible to
->>>>>>>> have
->>>>>>>> such a board, where supplies are merely not connected to the SoC.
->>>>>>>
->>>>>>> For any _used_ PHY both supplies are certainly required.
->>>>>>>
->>>>>>> That's what the yaml/dts check for this should achieve.
->>>>>>
->>>>>> I believe it is technically possible by writing an enormously complex
->>>>>> scheme, when all possible "port" cases and combinations are listed.
->>>>>>
->>>>>> Do you see any simpler way? Do you insist that it is utterly needed?
->>>>>
->>>>> I asked Krzysztof about this offline.
->>>>>
->>>>> He said something like
->>>>>
->>>>> Quote:
->>>>> This is possible, but I think not between child nodes.
->>>>> https://elixir.bootlin.com/linux/v6.11-rc7/source/Documentation/
->>>>> devicetree/bindings/example-schema.yaml#L194
->>>>>
->>>>> You could require something in children, but not in parent node. For
->>>>> children something around:
->>>>> https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/
->>>>> devicetree/bindings/net/qcom,ipa.yaml#L174
->>>>>
->>>>> allOf:
->>>>>      - if:
->>>>>          required:
->>>>>            - something-in-parent
->>>>>        then:
->>>>>          properties:
->>>>>            child-node:
->>>>>              required:
->>>>>                - something-in-child
->>>>>
->>>>> I will see if I can turn that into a workable proposal/patch.
->>>>>
->>>>
->>>> thank you for pushing my review request forward.
->>>>
->>>> Overall I believe making supply properties as optional ones is
->>>> sufficient,
->>>> technically straightforward and merely good enough, thus please let me
->>>> ask you to ponder on this particular variant one more time.
->>>>
->>>
->>> So, we are discussing two things.
->>>
->>> 1# Use separate supplies for each CSI block, looks like there is no
->>> doubt about it anymore. So, I will update it just like based on 
->>> suggestion.
->>>
->>> csiphyX-vdda-phy-supply
->>> csiphyX-vdda-pll-supply
->>>
->>> Then I will need below items in the required list if they are required.
->>> required:
->>>     - csiphy0-vdda-phy-supply
->>>     - csiphy0-vdda-pll-supply
->>>     - csiphy1-vdda-phy-supply
->>>     - csiphy1-vdda-pll-supply
->>> ...
->>>     - csiphy7-vdda-phy-supply
->>>     - csiphy7-vdda-pll-supply
->>>
->>> 2# Regarding the CSI supplies, if they need to be making as optional?
->>> Looks like there is no conclusion now.
->>>
->>> @Bryan, do you agree with this?
->>>
->>
->> I'm preparing the new version patches, and will send out for reviewing
->> in few days. I will follow Vladimir's comments if you have no response,
->> it means making supply properties as optional one, so they won't be
->> added to the required list.
->>
-> 
-> Recently I published the change, which moves regulator supplies from CSID
-> to CSIPHY, I believe it makes sense to base the SM8550 change and 
-> regulators
-> under discussion on top of the series:
-> 
-> https://lore.kernel.org/all/20240926211957.4108692-1- 
-> vladimir.zapolskiy@linaro.org/
-> 
-> Note, that SM8250 regulators are not changed, however their names are 
-> wrong,
-> the correction shall be a separate change later on...
-> 
-> Next, I developed my opinion regarding the supply regulator property names:
-> 
-> 1) voltage supply regulator property names match the pattern "*v*-supply",
->     and the most common name is "vdd*-supply", the match to the pattern 
-> shall
->     be preserved,
-> 2) also it would be much better and it will exclude any confusion, if 
-> SoC pin
->     names are put into the name, like it is done in a multitude of similar
->     cases.
-> 
-> So, in my opinion for SM8550 CAMSS a proposed set of voltage supply 
-> regulator
-> names should be this one:
-> 
-> - vdda-csi01-0p9-supply
-> - vdda-csi01-1p2-supply
-> - vdda-csi23-0p9-supply
-> - vdda-csi23-1p2-supply
-> - vdda-csi46-0p9-supply
-> - vdda-csi46-1p2-supply
-> - vdda-csi57-0p9-supply
-> - vdda-csi57-1p2-supply
+Hello Paolo,
 
-So I communicated to Depeng to take the patch for the regulators but, I 
-still don't think the above is the right way to do this.
+On Tue, Oct 08, 2024 at 12:51:05PM +0200, Paolo Abeni wrote:
+> On 10/4/24 19:37, Breno Leitao wrote:
+> > On Fri, Oct 04, 2024 at 11:01:29AM -0600, David Ahern wrote:
+> > > On 10/4/24 10:27 AM, Breno Leitao wrote:
+> > > > Branch annotation traces from approximately 200 IPv6-enabled hosts
+> > > > revealed that the 'likely' branch in ip_neigh_for_gw() was consistently
+> > > > mispredicted. Given the increasing prevalence of IPv6 in modern networks,
+> > > > this commit adjusts the function to favor the IPv6 path.
+> > > > 
+> > > > Swap the order of the conditional statements and move the 'likely'
+> > > > annotation to the IPv6 case. This change aims to improve performance in
+> > > > IPv6-dominant environments by reducing branch mispredictions.
+> > > > 
+> > > > This optimization aligns with the trend of IPv6 becoming the default IP
+> > > > version in many deployments, and should benefit modern network
+> > > > configurations.
+> > > > 
+> > > > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > > ---
+> > > >   include/net/route.h | 6 +++---
+> > > >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/include/net/route.h b/include/net/route.h
+> > > > index 1789f1e6640b..b90b7b1effb8 100644
+> > > > --- a/include/net/route.h
+> > > > +++ b/include/net/route.h
+> > > > @@ -389,11 +389,11 @@ static inline struct neighbour *ip_neigh_for_gw(struct rtable *rt,
+> > > >   	struct net_device *dev = rt->dst.dev;
+> > > >   	struct neighbour *neigh;
+> > > > -	if (likely(rt->rt_gw_family == AF_INET)) {
+> > > > -		neigh = ip_neigh_gw4(dev, rt->rt_gw4);
+> > > > -	} else if (rt->rt_gw_family == AF_INET6) {
+> > > > +	if (likely(rt->rt_gw_family == AF_INET6)) {
+> > > >   		neigh = ip_neigh_gw6(dev, &rt->rt_gw6);
+> > > >   		*is_v6gw = true;
+> > > > +	} else if (rt->rt_gw_family == AF_INET) {
+> > > > +		neigh = ip_neigh_gw4(dev, rt->rt_gw4);
+> > > >   	} else {
+> > > >   		neigh = ip_neigh_gw4(dev, ip_hdr(skb)->daddr);
+> > > >   	}
+> > > 
+> > > This is an IPv4 function allowing support for IPv6 addresses as a
+> > > nexthop. It is appropriate for IPv4 family checks to be first.
+> > 
+> > Right. In which case is this called on IPv6 only systems?
+> > 
+> > On my IPv6-only 200 systems, the annotated branch predictor is showing
+> > it is mispredicted 100% of the time.
+> 
+> perf probe -a ip_neigh_for_gw; perf record -e probe:ip_neigh_for_gw -ag;
+> perf script
+> 
+> should give you an hint.
 
-I will take a pass at constructing something in the schema to capture 
-the case where a regulator is required if and only if it is instantiated.
+Thanks. That proved to be very useful.
 
-May not be possible with our current syntax/tools but is 100% how the 
-hardware works so IMO is the right thing to try to do.
+As I said above, all the hosts I have a webserver running, I see this
+that likely mispredicted. Same for this server:
 
----
-bod
+	# cat /sys/kernel/tracing/trace_stat/branch_annotated | grep ip_neigh_for_gw
+	 correct incorrect  %        Function                  File              Line
+	       0    17127 100 ip_neigh_for_gw                route.h              393
+
+It is mostly coming from ip_finish_output2() and tcp_v4. Important to
+say that these machine has no IPv4 configured, except 127.0.0.1
+(localhost).
+
+Output of `perf script`:
+
+	curl 3284017 [020] 342043.646674: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3284017 [020] 342043.646720: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3286356 [026] 342055.690384: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3288713 [032] 342103.631991: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3288713 [032] 342103.632039: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3289126 [021] 342115.725482: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3291018 [030] 342163.627633: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3291018 [030] 342163.627673: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3291256 [031] 342175.683527: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3293421 [025] 342223.618198: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3293421 [025] 342223.618239: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3293659 [034] 342235.695019: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3295399 [012] 342283.632642: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3295399 [012] 342283.632691: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3295746 [001] 342295.712436: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3298603 [020] 342343.608814: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3298603 [020] 342343.608858: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3299252 [032] 342355.693816: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3303255 [033] 342403.616685: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3303255 [033] 342403.616729: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3304989 [011] 342415.740580: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3312952 [035] 342463.633808: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3312952 [035] 342463.633859: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3314546 [032] 342475.766762: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
+
+	curl 3321983 [006] 342523.654221: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	curl 3321983 [006] 342523.654262: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_unicast_reply+0x3fc 
+		 tcp_v4_send_reset+0x668 
+		 tcp_v4_rcv+0xcdf 
+		 ip_protocol_deliver_rcu+0x10e 
+		 ip_local_deliver_finish+0x97 
+		 ip_local_deliver+0x43 
+		 ip_rcv+0x35 
+		 process_backlog+0x1b8 
+		 __napi_poll+0x30 
+		 net_rx_action+0x180 
+		 __kprobes_text_end+0xf2 
+		 __local_bh_enable_ip+0xeb 
+		 __dev_queue_xmit+0xc18 
+		 ip_finish_output2+0x63a 
+		 ip_output+0x73 
+		 __ip_queue_xmit+0x504 
+		 __tcp_transmit_skb+0xcfe 
+		 tcp_connect+0xa1d 
+		 tcp_v4_connect+0x463 
+		 __inet_stream_connect+0x5b 
+		 inet_stream_connect+0x36 
+		 __sys_connect+0x8d 
+		 __x64_sys_connect+0x16 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_connect+0x4b (/usr/lib64/libc.so.6)
+			       0 [unknown] ([unknown])
+
+	isc-net-0000 3323932 [025] 342535.718587: probe:ip_neigh_for_gw: ()
+		 ip_finish_output2+0x150 
+		 ip_output+0x73 
+		 ip_send_skb+0x15 
+		 udp_send_skb+0xd2 
+		 udp_sendmsg+0xaa7 
+		 __x64_sys_sendmsg+0x338 
+		 do_syscall_64+0xc2 
+		 entry_SYSCALL_64_after_hwframe+0x4b 
+		    __libc_sendmsg+0x4d (/usr/lib64/libc.so.6)
 
 
