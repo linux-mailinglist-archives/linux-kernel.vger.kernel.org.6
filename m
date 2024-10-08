@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-354400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBA6993D10
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:51:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0251E993D1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BDC1C21F0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0480284B2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B270B2AE77;
-	Tue,  8 Oct 2024 02:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C293D2AE93;
+	Tue,  8 Oct 2024 02:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R8R8Kn7x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXSs93Gf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58431EA85
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 02:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630091EA85;
+	Tue,  8 Oct 2024 02:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728355894; cv=none; b=AnywMiVdKES6NatO4ykIwz3WfwQC0YlU6sF/rK/9CBb8aTdPjwZOpuETgJxDw/9AOxhq5ptRBEane3UFVGB4ks4X8AjwpqK8AXsRK04DOBUPjxBbl9f4Dzu8FEuSOx8Xrh93D4hmeXuj/qua8AIF9VDpuOQ/jUdHH3VWbKXz6rU=
+	t=1728356139; cv=none; b=nIjpZTZwpnNmybSHDNv8T0SHT/g4ZXnHB6a7YIltbv8p8pDUrG7NBou/pvg3AqnGZKd1rHeQRhBKMKjgXwB0VV+Q+HE8miBc8mEB24cJ6zWka9I09TAZuH5ymDdz+QcF2TND03+0WngZARXFopZMCumpzjbQt/y0gLwG/CDq6ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728355894; c=relaxed/simple;
-	bh=fLMDCQsubowFDRbzB3GNMUKP1kvwbKmtntwMRelY1Ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYsYudko/4NZaRe5XADvrxMu5hCD8Xub9mzO5SxiSrZD13veF4WM3rXMgPAtPsXTIg+oIjots6KDrP98pRzoLHNdEB67+huwf6p1hubDeYCsCjz1ADOF7cvXjFv9aTfFb+YoxcB8/ziqvvH09IRXKWKmVlO1qUBR32ZUU7BFXC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R8R8Kn7x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728355891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M4sFhYYgaf5zWGjjw37V+FmIhrEBzr4NtQ/62b1VBOU=;
-	b=R8R8Kn7x6EhOW6Hb0s80a82qjl59Gj09uAMIIiOQ/uxyoMLheWrYs1it3dJHjO9aW58WT3
-	U0pNqnO2F26ypbcEWMz6lagVEUVbDoA5PTx+nw3TX9ACefjrP0n3K/thrfP17K+etjL6gv
-	z441CipZ2jF3Rqd4V1VH2K9ppTHhv30=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-LXHGr7v-NlK8-QbT2n1pJQ-1; Mon, 07 Oct 2024 22:51:30 -0400
-X-MC-Unique: LXHGr7v-NlK8-QbT2n1pJQ-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e18a72bf94so6850373a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 19:51:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728355889; x=1728960689;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4sFhYYgaf5zWGjjw37V+FmIhrEBzr4NtQ/62b1VBOU=;
-        b=g0qI9P+oxPtpKhNj2TsLSsQyNxslExWPypD+HrU7Iq6X7p240P/mbn/+aJQaxW64BW
-         ieeWdSmCEtOzVGhZ8AZkWA901A5lXCujts8hHOwvCzJF2XkH9DwI7/id67L48c+LrVFN
-         TKz9OF/bdVkLkRmXjHbv/9BMnqfbAPcfiD/kfw5eUsGkfWQ90ujmlRrWT2EyFwls85Ka
-         zeS5OCbsuENfOZN3tLC98FNLM9wsFYBUbBLHd0mJ21EXzaPfrF2Q0XPl0oKupqURlJa7
-         NytL4UurKszabVY6z0hVHKC1CvpwBBIy6jDkS+U4BeGtXGSQhEPKwBZtUJ+51r6Jolrw
-         5cfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgarS14Ms+XU1i95/k/GVVUqHhrCtThVL/IRIyWGCEKZ4UwTSBgC14+G8jEpboncai5Gm3rcWme64ZH+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJNBIBKL8gx1kJoYckVLEXMGLuf9VOJljWWEvla+TbnVrF5l1w
-	AwzJRjVS5/7PWh2Set73sbEciS/FPYZAC8sq2IX3cPXyyU126cVl6+ueCIiHZ3qZSqJcA8piJ9A
-	GOs89c5jVUVyv7VNrgONMojjWF1d8CSRGn0eIrx/uGMmfR/C4wTv26ngIJqJ1aQ==
-X-Received: by 2002:a17:90a:3d81:b0:2d8:8d60:a198 with SMTP id 98e67ed59e1d1-2e1e6366bd6mr19154107a91.37.1728355888979;
-        Mon, 07 Oct 2024 19:51:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1a155oDsYUskhbrb04GQtySwR7IiTCMTLOrXqEs3PGt+CLIahMwaNAu0NiGjx/qhM6odUKA==
-X-Received: by 2002:a17:90a:3d81:b0:2d8:8d60:a198 with SMTP id 98e67ed59e1d1-2e1e6366bd6mr19154081a91.37.1728355888658;
-        Mon, 07 Oct 2024 19:51:28 -0700 (PDT)
-Received: from [192.168.68.54] ([103.210.27.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0f9c7csm6264516a91.38.2024.10.07.19.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 19:51:28 -0700 (PDT)
-Message-ID: <01f08a52-3b96-4384-b9cf-aa74ea1d5faf@redhat.com>
-Date: Tue, 8 Oct 2024 12:51:20 +1000
+	s=arc-20240116; t=1728356139; c=relaxed/simple;
+	bh=WrTkIHMFfCLO7jqg+VNb+B5jnuWf8ahndb3hKGIOY6I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O0rycBnwYI2n3rFHwqb4OMVhYPDD6f4+2CRHSZzMxeOLnigCzn4bkR34W2Xxn8+Db8v1XjktpimQqtnI8aIbJNXfmFTgX/lSr0zPZEg/dcE+dQhPZQDH70F08F/QLIy6b8bZZP+yq6jkhNj2mk8YxBAX8kcRr5YlANHeFsSU2eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXSs93Gf; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728356138; x=1759892138;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=WrTkIHMFfCLO7jqg+VNb+B5jnuWf8ahndb3hKGIOY6I=;
+  b=YXSs93GfLQKKaxL5kc33gRuOOVD1xEMSE9onx5cGDcFldPljru3WMpD3
+   xbTErDzStd9hNEGjfu8Luqe2aAD9ST9gjOR46sbilumq7kUiNuxZw5qhN
+   uxsXzk06uRu0nLty4q0vY5ut1VMU/Gj4Vg7RgaqL4Ax38twarrV8JpLOT
+   3gfNt695ZZ3NSeswFzz4zhAoVS/DjO9MhpiMQ7v1VZIXb0bKK1/zjbOQp
+   PF7ja0ztdL2rNnQ7l62hRJhqlMY9DNRxhMxBjgEFycCEzOFURDtuBRVFi
+   rUz3mkPegDbJOJzA6Ivr2l+dTcZjquTwmrHnprt4TyiHXwyVasOiwJMzp
+   A==;
+X-CSE-ConnectionGUID: PkS58HQOTaG90o9N1XSgGg==
+X-CSE-MsgGUID: fH3GrCUfT9KdtuTLKPtaig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27337176"
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="27337176"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 19:55:37 -0700
+X-CSE-ConnectionGUID: FVD5BrfKRZiiCM7wq3s7Jw==
+X-CSE-MsgGUID: umiBusvhQ3a+WEwvaZXVZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="99018084"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 19:55:33 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,  "David
+ Hildenbrand" <david@redhat.com>,  Davidlohr Bueso <dave@stgolabs.net>,
+  "Jonathan Cameron" <jonathan.cameron@huawei.com>,  Dave Jiang
+ <dave.jiang@intel.com>,  Alison Schofield <alison.schofield@intel.com>,
+  Vishal Verma <vishal.l.verma@intel.com>,  Ira Weiny
+ <ira.weiny@intel.com>,  Alistair Popple <apopple@nvidia.com>,  Bjorn
+ Helgaas <bhelgaas@google.com>,  Baoquan He <bhe@redhat.com>,  Philip Li
+ <philip.li@intel.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+In-Reply-To: <ZwPsYqkLF0eWUb9e@smile.fi.intel.com> (Andy Shevchenko's message
+	of "Mon, 7 Oct 2024 17:12:50 +0300")
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+	<ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+	<874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+	<ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+	<87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZwPsYqkLF0eWUb9e@smile.fi.intel.com>
+Date: Tue, 08 Oct 2024 10:52:00 +0800
+Message-ID: <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/11] arm64: Enforce bounce buffers for realm DMA
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-8-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241004144307.66199-8-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-On 10/5/24 12:43 AM, Steven Price wrote:
-> Within a realm guest it's not possible for a device emulated by the VMM
-> to access arbitrary guest memory. So force the use of bounce buffers to
-> ensure that the memory the emulated devices are accessing is in memory
-> which is explicitly shared with the host.
-> 
-> This adds a call to swiotlb_update_mem_attributes() which calls
-> set_memory_decrypted() to ensure the bounce buffer memory is shared with
-> the host. For non-realm guests or hosts this is a no-op.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> v3: Simplify mem_init() by using a 'flags' variable.
-> ---
->   arch/arm64/kernel/rsi.c |  1 +
->   arch/arm64/mm/init.c    | 10 +++++++++-
->   2 files changed, 10 insertions(+), 1 deletion(-)
-> 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+> On Fri, Sep 06, 2024 at 09:07:41AM +0800, Huang, Ying wrote:
+>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+>> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+>> >> Huang, Ying wrote:
+>> >> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+>
+> [..]
+>
+>> >> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+>> >> > > message.
+>> >> > 
+>> >> > Emm... It appears that it's a common practice to include "Cc" in the
+>> >> > commit log.
+>> >> 
+>> >> Yes, just ignore this feedback, it goes against common practice. Cc list
+>> >> as is looks sane to me.
+>> >
+>> > It seems nobody can give technical arguments why it's better than just keeping
+>> > them outside of the commit message. Mantra "common practice" nowadays is
+>> > questionable.
+>> 
+>> Cc list is used by 0day test robot to notify relevant developers and
+>> maintainers in addition to the author when reporting regressions.  That
+>> is helpful information.
+>
+> I'm not objecting Cc email tags, I'm objecting having them in the commit messages!
+> Can you explain, how useful they are when they are placed as part of commit message
+> bodies?
 
+The result of regression bisection is the first bad commit.  Where we
+use the Cc list in commit message to help find out whom we should send
+the report email to.
+
+--
+Best Regards,
+Huang, Ying
 
