@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-355248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A746994E10
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:12:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFF1994E5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CFA1F2264B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:12:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48844B23341
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDFE1DF25E;
-	Tue,  8 Oct 2024 13:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16CD1DF26D;
+	Tue,  8 Oct 2024 13:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMs1DL3t"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBVDWWgF"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383AA1DEFCE;
-	Tue,  8 Oct 2024 13:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E151DE4CD;
+	Tue,  8 Oct 2024 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393125; cv=none; b=gWFl3Itne3WNW8V4SX4acqmvtWLfNxx4kYrUM1r01QbVTEZ56TYbYTp9HP8wxa6YZRW73YKyPjzpqA/ljIXDhQmVGr2Nv1iIitqirDaWg/S8z5b7tsdP22DRMPsgh6YZmS+CVADMAVU1RpboyjLtZvopoPsCjgqFl5ytUlHeeQo=
+	t=1728393058; cv=none; b=CAemjhLoPnq90gEZkJ45yz/QAGcj1RgJfXOw6OeujzLmZPmYt1aqE0f8I2HiVGJcFwcwH1SRlrB/7BTMSRwLq4I3CgF5hBRry1HVznabxTW7QpJSLxh4Ru0eEo2stSgC4OumpRQXrV+9eG6XuzXxUX1R7QNhJ90eWc7MD6cZ04w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393125; c=relaxed/simple;
-	bh=Ux4suNlclXCbFSHhA7Y3I7wnHny/O30HsQjFba72H7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt2YXzifqe7fi9TULltfZPi6ofrLIvXz2aPKLjiBLfuVnlODnGwHo4sXhPPBxKx6v4V0BPPYWW/Myu/bGKvwKonITan0u2ucunIR4TgXzDVB/xl82uzuDeWBIKdt2bOV4PmDZ7oxnxnwNI9RvnXUwj/LWO49kC07sB8xAIDPdUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMs1DL3t; arc=none smtp.client-ip=209.85.222.173
+	s=arc-20240116; t=1728393058; c=relaxed/simple;
+	bh=tY4N1IuuWaKx0TQWzes5g60+uBIn2G6WmEWkTSqvueU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V5+tmBJDU0TJtnUGrVWF5Jc91blx+IVNpZ6cjaCMs9ytetGzv2SCKecvQaecKhdoPrwUnWmkqhjODXzqIwZwqXlqNx47SAf6bLJh7s5mskCIMOGSt6AeC5REgxGruh/UrzTTHevWADQgxNuoA94WXHPK9iKxugqezYEY4LE0+aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBVDWWgF; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a99e8d5df1so568151585a.2;
-        Tue, 08 Oct 2024 06:12:02 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e25f3748e0so56337867b3.0;
+        Tue, 08 Oct 2024 06:10:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728393122; x=1728997922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMYkHMwdVkbSLMxGZAZds8bTSvf1VBR7G7Hyvo2bDKo=;
-        b=JMs1DL3tBbnmYZ0sVJ1w7nEI8asZ1DdfhWJ+t8fYMEp1vbtuVWcDF44lNSJOtUaATS
-         Mktjgpz4cAx9nndxWtWBqKpWhFiRbvkxySGifO2IO0jXHx2j9TpXFgFkJpS0suKl+1PM
-         Ju0Lo3pub2nAMGv8NnypL3PZDWl0nK7oX5m5sDMESGGcVeMsV8tSa5jINHv+P5Pi4r4c
-         DnoPd5K4UalJ9EPu33b/clUrkKd4om09C5UcdKHLoFcEaCx3EF1kmYkn7e7P7TIi+no2
-         vK9/GOp+oPL72d0sEMdEDlS0qQFOYbv+EwRVP2L3terXbhq/Uxke/UIApK/Dehs9C1Xv
-         lXdA==
+        d=gmail.com; s=20230601; t=1728393055; x=1728997855; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1X88XkNaciEBMOOukkde66JRe9dk6pAw1yAJWCuM2g=;
+        b=TBVDWWgFYRmsoxBQy4D4e1/v2BKL0LqCj5SmXvy2ndNHxl+5ml4+GoZ+u/coJ9h48T
+         PuEGP/0SeDqjfgWoQko6iPCGT9RAp1Cs5KyV4i4GKsaZF+4nYZfbeRl3Ux4dpO3hNpMD
+         tgx90kpmrBOwwIJU6rUFvRaEQza37pH15LiS2zXRvLxpPerd9cMxKOAj+DgFXRqVq78+
+         YQ3a9JuiM8QPl935NDKEog1gcD8iSqbNj4AzkNlqkNcsiCAkWK5po7nF2sC9MwS+5mz1
+         114q/6t5ShXP4iJp0FXBLzia3aj4l5JfRspK3TPNruUjZ6pFZ2K3u2rRdObE7BKPgKz7
+         LIXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728393122; x=1728997922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KMYkHMwdVkbSLMxGZAZds8bTSvf1VBR7G7Hyvo2bDKo=;
-        b=HiRNt07REPaTbbxqS3brNUEa+lVMm8CoCCKrjzDHGtPwOJp1H/A231q083kmjz0YD4
-         /gaNpAfCdUu7YGpSwbbGbe80TkjMZgTlVTM21QmEJUWPwv8OutMmqfo0fGNBKHQDEkT4
-         65eEKjH/N2ALxbsnaUrKztyX4HF08pAkkXliZR9acyKgRIf3+2k2D9dOMe1qM6P0hVYU
-         A4B5yEv5119bU6JJBUZF57OyiRZ8nZWmdkDNbEliqoDEjZuFgitvxD80qMNAJ325fxXM
-         7FjeeEUw2ci+6PG9uBMB/XNI6lHbcIIib6TjhC+MSBOpiKvS7TpWbM0QNDCr6b2e8dA8
-         N5YA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY9S3pqTAfU3Htkp3KQXZq+O0wPAWhjbqqHGuY5xTAtLvMJYWnn81IBZg/6+YqkKBKxD8Qob1VWKmcTKpjdF4=@vger.kernel.org, AJvYcCWwAQ3TqR/hBUYi/Db1br3tm9rgteoWehb83FRAOhdMrb++rYmPJFXzPanuOewJsr2JkqBJG1IsbPxtPbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4eLV4xLO6DXtlf5+70VHmO5Tsznhhj9rksQIw07Mt+auaLc/t
-	CvrkU29vvQIHBABVpZAlqdvzqtbVCiyWYwFMyPkKJJ8r4LRrEdkL
-X-Google-Smtp-Source: AGHT+IGsWTvqPZueDUbUsaCDXQY0K9BJDQnEBOl7ormRevhhHgRvlWLX1J+0XIrR/GM5eBOE1MGz0A==
-X-Received: by 2002:a05:620a:394e:b0:7ac:de4d:9129 with SMTP id af79cd13be357-7ae6f44cd21mr2452591985a.31.1728393121978;
-        Tue, 08 Oct 2024 06:12:01 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75760e8dsm351608585a.108.2024.10.08.06.12.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 06:12:01 -0700 (PDT)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 028621200068;
-	Tue,  8 Oct 2024 09:12:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Tue, 08 Oct 2024 09:12:01 -0400
-X-ME-Sender: <xms:oC8FZ-jDRw0l2DoP-MufIWAa8ZDImBhPBq6VYI96yBfgcDo5R73uyA>
-    <xme:oC8FZ_D1ZjNS2hUHqEvvbbNppgEzJE79yOkyVFH8AFykCfnd1X1XRZRgfH6-x8HCg
-    K5BYmDWSBn0ltaGaQ>
-X-ME-Received: <xmr:oC8FZ2GvbDS45Yik065MTTNvjSVclGb5zvi-shYlHGbf-YX1R5A8_M7GxRE_3A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefuddgiedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdehpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhg
-    rgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopeifvggushhonhgrfhesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphht
-    thhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhope
-    gsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhn
-    uggsohhrghesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlse
-    hgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:oC8FZ3Q-Jwj-0e9an1ZpLoMcZPB1dgpOTs-csIQCNXTGQq0JFsM33Q>
-    <xmx:oC8FZ7yTBSIMoAob86McNaSjbv32jgNjjyPfZ1uikJ_UcHyJq5nwQQ>
-    <xmx:oC8FZ15rUTm2Ix5bdB98l6jretZZ5TSV-DMbsf_UEbtu89SW-3H5yQ>
-    <xmx:oC8FZ4y8Zn8fwQDDoDLmATgTymsviq_7EG8UhFDj4yv6DFylXUd7jQ>
-    <xmx:oC8FZ3jc5M02a071o9q4oZRrCTAPPN_RK3DM-1dFe_qe7hT1vV32TOVe>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Oct 2024 09:12:00 -0400 (EDT)
-Date: Tue, 8 Oct 2024 06:10:39 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v9 07/29] rust: alloc: add module `allocator_test`
-Message-ID: <ZwUvT4Zsg-1Dww8b@boqun-archlinux>
-References: <20241004154149.93856-1-dakr@kernel.org>
- <20241004154149.93856-8-dakr@kernel.org>
+        d=1e100.net; s=20230601; t=1728393055; x=1728997855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a1X88XkNaciEBMOOukkde66JRe9dk6pAw1yAJWCuM2g=;
+        b=X5xpea4Myj4xjZL1TR9MxMVTdGLg2lBgWgrliN6mUHJu8ZPFXWGaskxzcAgunQp1fp
+         AAmpp7B6pTWTxW6v7fHyC0jqd5fq9xaozozI66z+WcWXPCqnfa6ANkL5RrEyQf3t3ef3
+         50+u4q9BTEFGdZnvDLpG8ITF4pEsMeg94WYx3pjsIixbWb9VZqhoT+F/Dys5Lnqb+GrA
+         JVQgpk4sXVWC/k/KSXWyGmntAxBibtfElTjySh5e9CnqSBQ3F93yjoeKGUX6tLaVkXZr
+         GDisk59r1P7MPfSzHOjk8CDwKnX9g2XA6Txni30cB7Y4Nv7yLPQ+24Vo0psLL0lTLwjH
+         DVOw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Q5uEi01BEn13E7S65ZZSeAK+K8JWN0LuMFDPHCWLrGHdpZlW6iI4zO5ZOThw8NNVG9Z8af9J3p5bdbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMQ26iKhkxdDBX/caOW1SluOva/7eT09CTU2+PGKrDaoFlSau1
+	Tu2H9Fl6XvfXjtBEBS+gXerKa9e9CaqKFMV9Dhsu/yReAg1hbK/0KHZYBjxOb61EwZfbcgBekkS
+	GLcOn4foS8rWcMnvhA1zdybjv93w=
+X-Google-Smtp-Source: AGHT+IEKytZnckel6sjSADs+X5jQ0julszOHP4P+Snh8nCjHTLBsuYxtKV1YmAxX1xpSIa+Qc65AYHVMCWU4EKOHSUs=
+X-Received: by 2002:a05:690c:12:b0:6b2:28c3:b706 with SMTP id
+ 00721157ae682-6e2c728a23amr121961527b3.34.1728393055291; Tue, 08 Oct 2024
+ 06:10:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004154149.93856-8-dakr@kernel.org>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com> <20241008-parkraum-wegrand-4e42c89b1742@brauner>
+In-Reply-To: <20241008-parkraum-wegrand-4e42c89b1742@brauner>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Tue, 8 Oct 2024 14:10:43 +0100
+Message-ID: <CAMw=ZnSEwOXw-crX=JmGvYJrQ9C6-v40-swLhALNH0DBPLoyXQ@mail.gmail.com>
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, christian@brauner.io, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 04, 2024 at 05:41:11PM +0200, Danilo Krummrich wrote:
-> `Allocator`s, such as `Kmalloc`, will be used by e.g. `Box` and `Vec` in
-> subsequent patches, and hence this dependency propagates throughout the
-> whole kernel.
-> 
-> Add the `allocator_test` module that provides an empty implementation
-> for all `Allocator`s in the kernel, such that we don't break the
-> `rusttest` make target in subsequent patches.
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc.rs                |  9 +++++++--
->  rust/kernel/alloc/allocator_test.rs | 19 +++++++++++++++++++
->  2 files changed, 26 insertions(+), 2 deletions(-)
->  create mode 100644 rust/kernel/alloc/allocator_test.rs
-> 
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index 91b2a26faf3d..f8ddc8d96da9 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -2,12 +2,17 @@
->  
->  //! Extensions to the [`alloc`] crate.
->  
-> -#[cfg(not(test))]
-> -#[cfg(not(testlib))]
-> +#[cfg(not(any(test, testlib)))]
->  pub mod allocator;
->  pub mod box_ext;
->  pub mod vec_ext;
->  
-> +#[cfg(any(test, testlib))]
-> +pub mod allocator_test;
-> +
-> +#[cfg(any(test, testlib))]
-> +pub use self::allocator_test as allocator;
-> +
->  /// Indicates an allocation error.
->  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
->  pub struct AllocError;
-> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-> new file mode 100644
-> index 000000000000..4785efc474a7
-> --- /dev/null
-> +++ b/rust/kernel/alloc/allocator_test.rs
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#![allow(missing_docs)]
-> +
-> +use super::{AllocError, Allocator, Flags};
-> +use core::alloc::Layout;
-> +use core::ptr::NonNull;
-> +
-> +pub struct Kmalloc;
-> +
-> +unsafe impl Allocator for Kmalloc {
-> +    unsafe fn realloc(
-> +        _ptr: Option<NonNull<u8>>,
-> +        _layout: Layout,
+On Tue, 8 Oct 2024 at 14:06, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Oct 08, 2024 at 01:18:20PM GMT, luca.boccassi@gmail.com wrote:
+> > From: Luca Boccassi <luca.boccassi@gmail.com>
+> >
+> > A common pattern when using pid fds is having to get information
+> > about the process, which currently requires /proc being mounted,
+> > resolving the fd to a pid, and then do manual string parsing of
+> > /proc/N/status and friends. This needs to be reimplemented over
+> > and over in all userspace projects (e.g.: I have reimplemented
+> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> > requires additional care in checking that the fd is still valid
+> > after having parsed the data, to avoid races.
+> >
+> > Having a programmatic API that can be used directly removes all
+> > these requirements, including having /proc mounted.
+> >
+> > As discussed at LPC24, add an ioctl with an extensible struct
+> > so that more parameters can be added later if needed. Start with
+> > returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> > optionally.
+> >
+> > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> > ---
+> > v9: drop result_mask and reuse request_mask instead
+> > v8: use RAII guard for rcu, call put_cred()
+> > v7: fix RCU issue and style issue introduced by v6 found by reviewer
+> > v6: use rcu_read_lock() when fetching cgroupid, use task_ppid_nr_ns() to
+> >     get the ppid, return ESCHR if any of pid/tgid/ppid are 0 at the end
+> >     of the call to avoid providing incomplete data, document what the
+> >     callers should expect
+> > v5: check again that the task hasn't exited immediately before copying
+> >     the result out to userspace, to ensure we are not returning stale data
+> >     add an ifdef around the cgroup structs usage to fix build errors when
+> >     the feature is disabled
+> > v4: fix arg check in pidfd_ioctl() by moving it after the new call
+> > v3: switch from pid_vnr() to task_pid_vnr()
+> > v2: Apply comments from Christian, apart from the one about pid namespaces
+> >     as I need additional hints on how to implement it.
+> >     Drop the security_context string as it is not the appropriate
+> >     metadata to give userspace these days.
+> >
+> >  fs/pidfs.c                                    | 88 ++++++++++++++++++-
+> >  include/uapi/linux/pidfd.h                    | 30 +++++++
+> >  .../testing/selftests/pidfd/pidfd_open_test.c | 80 ++++++++++++++++-
+> >  3 files changed, 194 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index 80675b6bf884..15cdc7fe4968 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -2,6 +2,7 @@
+> >  #include <linux/anon_inodes.h>
+> >  #include <linux/file.h>
+> >  #include <linux/fs.h>
+> > +#include <linux/cgroup.h>
+> >  #include <linux/magic.h>
+> >  #include <linux/mount.h>
+> >  #include <linux/pid.h>
+> > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+> >       return poll_flags;
+> >  }
+> >
+> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
+> > +{
+> > +     struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
+> > +     size_t usize = _IOC_SIZE(cmd);
+> > +     struct pidfd_info kinfo = {};
+> > +     struct user_namespace *user_ns;
+> > +     const struct cred *c;
+> > +     __u64 request_mask;
+> > +
+> > +     if (!uinfo)
+> > +             return -EINVAL;
+> > +     if (usize < sizeof(struct pidfd_info))
+> > +             return -EINVAL; /* First version, no smaller struct possible */
+> > +
+> > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
+> > +             return -EFAULT;
+> > +
+> > +     c = get_task_cred(task);
+> > +     if (!c)
+> > +             return -ESRCH;
+> > +
+> > +     /* Unconditionally return identifiers and credentials, the rest only on request */
+> > +
+> > +     user_ns = current_user_ns();
+> > +     kinfo.ruid = from_kuid_munged(user_ns, c->uid);
+> > +     kinfo.rgid = from_kgid_munged(user_ns, c->gid);
+> > +     kinfo.euid = from_kuid_munged(user_ns, c->euid);
+> > +     kinfo.egid = from_kgid_munged(user_ns, c->egid);
+> > +     kinfo.suid = from_kuid_munged(user_ns, c->suid);
+> > +     kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
+> > +     kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
+> > +     kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
+> > +     put_cred(c);
+> > +
+> > +#ifdef CONFIG_CGROUPS
+> > +     if (request_mask & PIDFD_INFO_CGROUPID) {
+> > +             struct cgroup *cgrp;
+> > +
+> > +             guard(rcu)();
+> > +             cgrp = task_cgroup(task, pids_cgrp_id);
+> > +             if (!cgrp)
+> > +                     return -ENODEV;
+>
+> Afaict this means that the task has already exited. In other words, the
+> cgroup id cannot be retrieved anymore for a task that has exited but not
+> been reaped. Frankly, I would have expected the cgroup id to be
+> retrievable until the task has been reaped but that's another
+> discussion.
+>
+> My point is if you contrast this with the other information in here: If
+> the task has exited but hasn't been reaped then you can still get
+> credentials such as *uid/*gid, and pid namespace relative information
+> such as pid/tgid/ppid.
+>
+> So really, I would argue that you don't want to fail this but only
+> report 0 here. That's me working under the assumption that cgroup ids
+> start from 1...
+>
+> /me checks
+>
+> Yes, they start from 1 so 0 is invalid.
+>
+> > +             kinfo.cgroupid = cgroup_id(cgrp);
+>
+> Fwiw, it looks like getting the cgroup id is basically just
+> dereferencing pointers without having to hold any meaningful locks. So
+> it should be fast. So making it unconditional seems fine to me.
 
-The `old_layout` parameter is missing here.
-
-Regards,
-Boqun
-
-> +        _flags: Flags,
-> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> +        panic!();
-> +    }
-> +}
-> -- 
-> 2.46.1
-> 
+There's an ifdef since it's an optional kernel feature, and there's
+also this thing that we might not have it, so I'd rather keep the
+flag, and set it only if we can get the information (instead of
+failing). As a user that seems clearer to me.
 
