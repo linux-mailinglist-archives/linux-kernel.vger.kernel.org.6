@@ -1,106 +1,74 @@
-Return-Path: <linux-kernel+bounces-355599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9BD995491
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9B7995490
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BD9282CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C611E1F268AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B066F1E0E1E;
-	Tue,  8 Oct 2024 16:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215121E0DEB;
+	Tue,  8 Oct 2024 16:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EuwGGFX2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMSaxAzK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C1D1E0E04;
-	Tue,  8 Oct 2024 16:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7911B1E0DBB;
+	Tue,  8 Oct 2024 16:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728405437; cv=none; b=um7p8GOmXR4bsTUGcmejuhUm9M65W6r521Oh6M5DeLkYf1WC7lmEnJlyvAaXKuvxDdc7ZVYOffuvrRIXhn3jrcnVrelA+e7NCWoYQW7Q4bUsFe2nS8ATQwZd1xYrCU+tRJgWjn3bQGTGhur0bSQi+lqw4Gj8N5LP0zUqXqHceG4=
+	t=1728405433; cv=none; b=UDvpjRbmXONIt4o7dhSGnlPgoIGokczf+5JLwBmQlw7smPljhv5C5/8KDCIuD6qppEL9rOSsau2HZnRHkZ41NsyG3s9NDiozgrVMUcFUJVrnFtzU/83Sx2j1oMjuVpSQmOD6SwF0nvx0H0vwdSkGaviw0tBI5LXVNIP+Th5+YMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728405437; c=relaxed/simple;
-	bh=I0eecJ1H6p39j89P52KD9UBoB62EIuYihHp66Ej7wHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ox66tqVIB4/R772ctTI93Bc5oDqrcboXvjoY8d3BBJmod17iQ3li4BVk+339VloXMAiuxffeHXzhae/FDCDRUs0A2pxOr4R8mNC8wqCIDqG2TDM21pSvxjB0GE11qKNCR+uPNG4Lqa27chdgjuRD+8wLYSrNv621GVrqUvepNaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EuwGGFX2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=pAwcdPyDTWI0IXx2YvTOKN936XNdh4Q1YXTzNk6IMP0=; b=EuwGGFX2Nr6WjkjncN9Iw8jvmB
-	oy+l0QizqUs+FGN9+GxzBkEmxxjsqsk0WvHb/nuTYjY/sQc/1fLhJ5GWsWVRZlQE2H/cDiLaCFZJg
-	gQzTV7EtWBNOaaMye40hV1zrxgKFLTnCjhsZjLIn/TBXvyXO4OCD9UG8Vblms0rEX/giL7okr4XQr
-	1xR7eDenFhs5brX3c0gHIKwSQ6NitlXCV8m/M33399F6Vb+4VxH8yEB8XL6UASR8a0bmb3ptU6lf3
-	iz9Q0PjG0Rw2R58NWIqPGUK1qQi5BDcJSkWqpVjHJlxO+NH4Z9PnnpXvnFDFJp+8vhxdSA8wtN7L3
-	KA7RJfQQ==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syDCs-00000002jZk-3lIX;
-	Tue, 08 Oct 2024 16:37:08 +0000
-Message-ID: <5e1ef8a0-f063-4166-9d93-cf047cdd2792@infradead.org>
-Date: Tue, 8 Oct 2024 09:37:00 -0700
+	s=arc-20240116; t=1728405433; c=relaxed/simple;
+	bh=Et7/X+kGjmeCGGVKG9k0uplKblXWJ8NNGdWbvurdZuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTlspa6ari2+Zr+Gx6wI+Fdl7yi6npxvm3xraAmXXL9xQb0eZvdI5UzyjVRY47Y1RFjsiowC6DhBBJA3Iba1cFYpORlBXyJrwbERasdMQLRb6h9jxy9/yAZ1lr6LG4ZN1ebaq1PGQCr6s9i8Y++EJH+/OlBIrbMeP79SVFXN6hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eMSaxAzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F01C4CEC7;
+	Tue,  8 Oct 2024 16:37:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728405433;
+	bh=Et7/X+kGjmeCGGVKG9k0uplKblXWJ8NNGdWbvurdZuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eMSaxAzK3AZUhTWcbPCMtJo75D2sWr/XmCPgl0xgtZutHoR3GJD5bevVXMk+Hbc28
+	 VY3EbemjGUwjewXc2u7mgj7wB06gG3236sVuKZMaoqU4pSD6WYVSihMmNH+91VOfAp
+	 XPdNGOkFkMuNFf0vgy7mbvFVkaZtOqobG5lQOQSpQkXjGdNxfyvdCN0MEpfH+Uzwa8
+	 BWqYXwml+vnU8Pxx8JhJvc/9HsGeLBNOErq2hekJ1OdTIhK3MT+M6UrpcUEsPbzU99
+	 Z16fsgj6csYIH4pKyQ0VZ9KONKO0a3u/bsr1pu+PiPtukWC6wUoO6Btk4qH8WBlIkx
+	 bZPWrHk1Xlkvw==
+Date: Tue, 8 Oct 2024 17:37:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: linux@treblig.org
+Cc: ayush.sawal@chelsio.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] chelsio/chtls: Remove unused chtls_set_tcb_tflag
+Message-ID: <20241008163709.GC99782@kernel.org>
+References: <20241007004652.150065-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mseal.rst additional fix
-To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
- corbet@lwn.net
-Cc: jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com,
- sroettger@google.com, pedro.falcato@gmail.com,
- linux-hardening@vger.kernel.org, willy@infradead.org,
- gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
- deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com,
- merimus@google.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- enh@google.com
-References: <20241008040942.1478931-2-jeffxu@chromium.org>
- <20241008041804.1481453-1-jeffxu@chromium.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241008041804.1481453-1-jeffxu@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007004652.150065-1-linux@treblig.org>
 
-
-
-On 10/7/24 9:18 PM, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
+On Mon, Oct 07, 2024 at 01:46:52AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Change "overwrite" to overwrites"
+> chtls_set_tcb_tflag() has been unused since 2021's commit
+> 827d329105bf ("chtls: Remove invalid set_tcb call")
 > 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> ---
->  Documentation/userspace-api/mseal.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Remove it.
 > 
-> diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
-> index 41102f74c5e2..54bbcce330ec 100644
-> --- a/Documentation/userspace-api/mseal.rst
-> +++ b/Documentation/userspace-api/mseal.rst
-> @@ -97,7 +97,7 @@ Blocked mm syscall for sealed mapping
->     The first set of syscalls to block is munmap, mremap, mmap. They can
->     either leave an empty space in the address space, therefore allowing
->     replacement with a new mapping with new set of attributes, or can
-> -   overwrite the existing mapping with another mapping.
-> +   overwrites the existing mapping with another mapping.
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-No, that one is correct as is.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
->  
->     mprotect and pkey_mprotect are blocked because they changes the
->     protection bits (RWX) of the mapping.
-
--- 
-~Randy
 
