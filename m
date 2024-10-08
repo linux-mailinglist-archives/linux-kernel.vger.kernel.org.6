@@ -1,142 +1,246 @@
-Return-Path: <linux-kernel+bounces-355796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F9F995735
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B219B995740
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13723B23B22
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:54:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BE51F2398E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DEE2139A2;
-	Tue,  8 Oct 2024 18:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18742212F12;
+	Tue,  8 Oct 2024 18:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAOlpNRA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UmQzCTiE"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38A62940F;
-	Tue,  8 Oct 2024 18:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40E72940F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728413647; cv=none; b=MRrnlULtKvzvcVg6YvEaX3fAUp2nEXEi8vEzXZk6YWaT3ooKmcmfzHAsB2JcU1DsrZpRzQI+x43Al+++dcRVpIt/dmgXJVyPNvNZ9Iyuf11RvNFpC/ew/Zi8uYfwLtGBErALt9ROuUqjiu+5U5YMXOL9HwjaYtjbkamHTk2B+Ik=
+	t=1728413745; cv=none; b=R8lPdJLh4VgH2Vm4arGWgmgt+/1sXaVD6JT+NphimpoLqdyWahRUpVtZK2GN+ZkBv9Mn5NorrrWk5rZe15puuxG0XAxyzbYr4HyKW9rgWLQZnmama2j87lSyjrQax0HVVfStLVCCFCvhH6hUSSXl3ygFk7r+zoq03doZcJPw9Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728413647; c=relaxed/simple;
-	bh=h5XNHyLM5x5mf5OV0VbyisufQLtBjHA4YCB/OczQTBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnYrTB5Y4ke/b481WD9OmhMFL/Wc3aHrznYUZ73DGjWSeV4YMzG55V/pgXr4whBPziASnP+2eGj7F3eBvORkcTxER7ijhhaqwdf+TL2Iru6rWEnAum+YCL7u4PSmfvto937S9pnXuhcyyKWNicML5XeZ1shz+rf7g2DvHXiETbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAOlpNRA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6BC1C4CEC7;
-	Tue,  8 Oct 2024 18:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728413647;
-	bh=h5XNHyLM5x5mf5OV0VbyisufQLtBjHA4YCB/OczQTBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jAOlpNRA7ia5PouXs1+Nmn31Uu/BWU76H9AwNLYk99zif5OJnVCRdyeinFBKqerTY
-	 fpRabns0T32mX5ZbeHpQCRa5wghqeaQLZbMmsLBCSgFFwr19/hKBe/6iFcAZ+o/ZZ4
-	 iMNkb3VuAwKTV5ECw2AIA8SgwXsrxu0Wy9zbKjGPbExsi+/XIKM4EJFVPB8Ozk61Hm
-	 2vFKjXr4duYJEFX1nw+nxnUD8htUFz5SiNYjPNaT59vBlfERIz3a9RBXh71zZjEmE7
-	 W3M/Anmpws3XNlt8TiBW4Ifq/fE1i/kq4p6gA1TLQfrxsK87ZFQQ1tQhLL8KjGdfmp
-	 zEYgJEprDNL7g==
-Received: by pali.im (Postfix)
-	id 8544F82D; Tue,  8 Oct 2024 20:54:00 +0200 (CEST)
-Date: Tue, 8 Oct 2024 20:54:00 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and
- NFSD_MAY_BYPASS_GSS_ON_ROOT
-Message-ID: <20241008185400.qahsedto7iukiumk@pali>
-References: <>
- <ZwLN6RtYwVIkUfaL@tissot.1015granger.net>
- <172825279728.1692160.16291277027217742776@noble.neil.brown.name>
+	s=arc-20240116; t=1728413745; c=relaxed/simple;
+	bh=+zuhLaxH9MmxnkDZXqnMzRfjUJivSeLI1ztnsjHJ5mE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ARw2TvecprB3mVXQSfiL8qpOZe++0lmqUUfcBwNStI/YwewVyptAXPG2QNXP7pj8iYqPiaSBkvt/0VrgA6Y/P3yiLeswlAx5cBNw3B+sIRuT6RLQpgI7XyvLf888n01sRVPZFPKvxDE/w5opbUp5TWiIkoMIgiQqHke0eqonfIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UmQzCTiE; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a376e3acfbso31165ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728413743; x=1729018543; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FnBCtRlvEx3ZKIt/UV9o5i8b/79eZCcmuHkTA48mAfs=;
+        b=UmQzCTiEgO+WyYpkvO0JaqcyOl2G1S1fPdT0jO1Mjf/awX8uOars1PL1mdh2ZdCBYu
+         XO1jqqaThNm08ZW0/aOdVJWXLStKRJLCNXnVimYcb79SUJ+RU6IodBzYx0lBvQTgoUBg
+         kW33VNO7njYfTY6AguoQ6s1KX00ajrTyMYBFPWUFAAsR9fqk8G/o6+pdEU0qze0CXTsG
+         +qpJ0BcYJNWgkJ8/36i3+a2DKax/nFYqZrrSv4N7AZvjNiObM8FvOVkJexYvsGWTXMnm
+         h8yE8tgIWY51hVAOwGOAch4N/PfcnjPJiSSUBdxJ+MAoWyjVscvIsHz+XBUxU9HdmKPm
+         bqIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728413743; x=1729018543;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FnBCtRlvEx3ZKIt/UV9o5i8b/79eZCcmuHkTA48mAfs=;
+        b=bwGTOqy6ftUgXjvsyiKIpXV31oIQ8yhkyxm/23tc3ievLEdivs3VfNBBLI13xzKwja
+         2L4MlmkfTGJTKqgxhuzNpW2jUJvq9lE6rZM3n2XuFf2oj5wZkV5oPZnfuaIrEgaYS2ag
+         C3tckjbvJciKeBFeWxl30nRbVNCbdJdNn2scBQg5MFyEE92r58fQrp11DbtP1OvXva6G
+         mdjyxqykpE7anX70p04x6Mwi5v1UP4kKSkez/32HEAO+1fCtpkGa1Tlw1WTNAFNp093E
+         T5eFWmyoePBHn5CVXG/JhLeMo82ejZRuUeaVshrQC2cExAKhw2Xtui5HU2F+Y12BRn/H
+         tj6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWNIkKIgjlpYm9BkcJ0uCxpVoif3guby6E5+soCzV6/wu+WyOHE+RLkAcbGXrrNVFiUYAUYH00938MvRmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc0BXTgjJLGu2FoIiX5LN4vCEsj7dBzbszLHA+1YND4/co41zY
+	Bjpf0VUgL+UQfwYGQVGBYTZLn1C2r9zMSC92eu/TJZ2FEPHSTzXhBtYsmsIe4VdDOEPhIpXaj19
+	zu3N/Irf1ffHtQJm5Rn2+wO59YidUzgsfG6ly
+X-Google-Smtp-Source: AGHT+IH/0K+Hh1kTZmNc2d0CWTKQ0Np/4Ebdm2nSCPe2jK8tHK1iZNr8MYgQ36taTxrkopLBhO7nNhPZkGx5VNN7Ih8=
+X-Received: by 2002:a05:6e02:1fe3:b0:3a3:690e:ba29 with SMTP id
+ e9e14a558f8ab-3a396fec592mr467335ab.28.1728413742524; Tue, 08 Oct 2024
+ 11:55:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <172825279728.1692160.16291277027217742776@noble.neil.brown.name>
-User-Agent: NeoMutt/20180716
+References: <20241001171950.233723-1-irogers@google.com>
+In-Reply-To: <20241001171950.233723-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 8 Oct 2024 11:55:29 -0700
+Message-ID: <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Leo Yan <leo.yan@linux.dev>, 
+	Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday 07 October 2024 09:13:17 NeilBrown wrote:
-> On Mon, 07 Oct 2024, Chuck Lever wrote:
-> > On Fri, Sep 13, 2024 at 08:52:20AM +1000, NeilBrown wrote:
-> > > On Fri, 13 Sep 2024, Pali Rohár wrote:
-> > > > Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
-> > > > only GSS, but bypass any authentication method. This is problem specially
-> > > > for NFS3 AUTH_NULL-only exports.
-> > > > 
-> > > > The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-> > > > section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-> > > > authentication. So few procedures which do not expose security risk used
-> > > > during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
-> > > > client mount operation to finish successfully.
-> > > > 
-> > > > The problem with current implementation is that for AUTH_NULL-only exports,
-> > > > the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
-> > > > attempts which confuse NFS3 clients, and make them think that AUTH_UNIX is
-> > > > enabled and is working. Linux NFS3 client never switches from AUTH_UNIX to
-> > > > AUTH_NONE on active mount, which makes the mount inaccessible.
-> > > > 
-> > > > Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementation
-> > > > and really allow to bypass only exports which have some GSS auth flavor
-> > > > enabled.
-> > > > 
-> > > > The result would be: For AUTH_NULL-only export if client attempts to do
-> > > > mount with AUTH_UNIX flavor then it will receive access errors, which
-> > > > instruct client that AUTH_UNIX flavor is not usable and will either try
-> > > > other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
-> > > > 
-> > > > This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports if
-> > > > client attempts to mount it with other auth flavor (e.g. with AUTH_NULL for
-> > > > AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
-> > > 
-> > > The MAY_BYPASS_GSS flag currently also bypasses TLS restrictions.  With
-> > > your change it doesn't.  I don't think we want to make that change.
-> > 
-> > Neil, I'm not seeing this, I must be missing something.
-> > 
-> > RPC_AUTH_TLS is used only on NULL procedures.
-> > 
-> > The export's xprtsec= setting determines whether a TLS session must
-> > be present to access the files on the export. If the TLS session
-> > meets the xprtsec= policy, then the normal user authentication
-> > settings apply. In other words, I don't think execution gets close
-> > to check_nfsd_access() unless the xprtsec policy setting is met.
-> 
-> check_nfsd_access() is literally the ONLY place that ->ex_xprtsec_modes
-> is tested and that seems to be where xprtsec= export settings are stored.
-> 
-> > 
-> > I'm not convinced check_nfsd_access() needs to care about
-> > RPC_AUTH_TLS. Can you expand a little on your concern?
-> 
-> Probably it doesn't care about RPC_AUTH_TLS which as you say is only
-> used on NULL procedures when setting up the TLS connection.
-> 
-> But it *does* care about NFS_XPRTSEC_MTLS etc.
-> 
-> But I now see that RPC_AUTH_TLS is never reported by OP_SECINFO as an
-> acceptable flavour, so the client cannot dynamically determine that TLS
-> is required.  So there is no value in giving non-tls clients access to
-> xprtsec=mtls exports so they can discover that for themselves.  The
-> client needs to explicitly mount with tls, or possibly the client can
-> opportunistically try TLS in every case, and call back.
-> 
-> So the original patch is OK.
+On Tue, Oct 1, 2024 at 10:19=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> The path detection for "Setup struct perf_event_attr" test is brittle
+> and leads to the test frequently not running. Running shell tests is
+> reasonably robust, so make the test a shell test. Move the test files
+> to reflect this.
 
-So if the original patch is also OK, you can choose which one you like
-more. Original V1 restrict bypass to only GSS. V2 allows bypass for any
-non-null/unix methods.
+Ping.
 
-Let me know if something more is needed for this change.
+I think this is worthwhile cleanup for the attributes test. It should
+avoid problems like:
+https://lore.kernel.org/lkml/ZroNTkdA8XDFaDks@x1/
+
+Thanks,
+Ian
+
+> Ian Rogers (3):
+>   perf test: Add a shell wrapper for "Setup struct perf_event_attr"
+>   perf test: Remove C test wrapper for attr.py
+>   perf test: Move attr files into shell directory where they are used
+>
+>  tools/perf/Makefile.perf                      |   5 +-
+>  tools/perf/perf.c                             |   2 -
+>  tools/perf/tests/Build                        |   1 -
+>  tools/perf/tests/attr.c                       | 218 ------------------
+>  tools/perf/tests/builtin-test.c               |   1 -
+>  tools/perf/tests/shell/attr.sh                |  22 ++
+>  tools/perf/tests/{ =3D> shell}/attr/README      |   0
+>  tools/perf/tests/{ =3D> shell}/attr/base-record |   0
+>  .../tests/{ =3D> shell}/attr/base-record-spe    |   0
+>  tools/perf/tests/{ =3D> shell}/attr/base-stat   |   0
+>  .../tests/{ =3D> shell}/attr/system-wide-dummy  |   0
+>  .../tests/{ =3D> shell}/attr/test-record-C0     |   0
+>  .../tests/{ =3D> shell}/attr/test-record-basic  |   0
+>  .../{ =3D> shell}/attr/test-record-branch-any   |   0
+>  .../attr/test-record-branch-filter-any        |   0
+>  .../attr/test-record-branch-filter-any_call   |   0
+>  .../attr/test-record-branch-filter-any_ret    |   0
+>  .../attr/test-record-branch-filter-hv         |   0
+>  .../attr/test-record-branch-filter-ind_call   |   0
+>  .../attr/test-record-branch-filter-k          |   0
+>  .../attr/test-record-branch-filter-u          |   0
+>  .../tests/{ =3D> shell}/attr/test-record-count  |   0
+>  .../tests/{ =3D> shell}/attr/test-record-data   |   0
+>  .../{ =3D> shell}/attr/test-record-dummy-C0     |   0
+>  .../tests/{ =3D> shell}/attr/test-record-freq   |   0
+>  .../attr/test-record-graph-default            |   0
+>  .../attr/test-record-graph-default-aarch64    |   0
+>  .../{ =3D> shell}/attr/test-record-graph-dwarf  |   0
+>  .../{ =3D> shell}/attr/test-record-graph-fp     |   0
+>  .../attr/test-record-graph-fp-aarch64         |   0
+>  .../attr/test-record-group-sampling           |   0
+>  .../tests/{ =3D> shell}/attr/test-record-group1 |   0
+>  .../tests/{ =3D> shell}/attr/test-record-group2 |   0
+>  .../{ =3D> shell}/attr/test-record-no-buffering |   0
+>  .../{ =3D> shell}/attr/test-record-no-inherit   |   0
+>  .../{ =3D> shell}/attr/test-record-no-samples   |   0
+>  .../tests/{ =3D> shell}/attr/test-record-period |   0
+>  .../{ =3D> shell}/attr/test-record-pfm-period   |   0
+>  .../tests/{ =3D> shell}/attr/test-record-raw    |   0
+>  .../{ =3D> shell}/attr/test-record-spe-period   |   0
+>  .../attr/test-record-spe-period-term          |   0
+>  .../attr/test-record-spe-physical-address     |   0
+>  .../attr/test-record-user-regs-no-sve-aarch64 |   0
+>  .../test-record-user-regs-old-sve-aarch64     |   0
+>  .../attr/test-record-user-regs-sve-aarch64    |   0
+>  .../perf/tests/{ =3D> shell}/attr/test-stat-C0  |   0
+>  .../tests/{ =3D> shell}/attr/test-stat-basic    |   0
+>  .../tests/{ =3D> shell}/attr/test-stat-default  |   0
+>  .../{ =3D> shell}/attr/test-stat-detailed-1     |   0
+>  .../{ =3D> shell}/attr/test-stat-detailed-2     |   0
+>  .../{ =3D> shell}/attr/test-stat-detailed-3     |   0
+>  .../tests/{ =3D> shell}/attr/test-stat-group1   |   0
+>  .../{ =3D> shell}/attr/test-stat-no-inherit     |   0
+>  tools/perf/tests/{ =3D> shell/lib}/attr.py      |   0
+>  tools/perf/tests/tests.h                      |   1 -
+>  tools/perf/util/evsel.c                       | 122 +++++++++-
+>  tools/perf/util/util.h                        |   7 -
+>  57 files changed, 142 insertions(+), 237 deletions(-)
+>  delete mode 100644 tools/perf/tests/attr.c
+>  create mode 100755 tools/perf/tests/shell/attr.sh
+>  rename tools/perf/tests/{ =3D> shell}/attr/README (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/base-record (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/base-record-spe (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/base-stat (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/system-wide-dummy (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-C0 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-basic (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-any (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-any=
+ (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-any=
+_call (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-any=
+_ret (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-hv =
+(100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-ind=
+_call (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-k (=
+100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-branch-filter-u (=
+100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-count (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-data (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-dummy-C0 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-freq (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-graph-default (10=
+0%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-graph-default-aar=
+ch64 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-graph-dwarf (100%=
+)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-graph-fp (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-graph-fp-aarch64 =
+(100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-group-sampling (1=
+00%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-group1 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-group2 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-no-buffering (100=
+%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-no-inherit (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-no-samples (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-period (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-pfm-period (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-raw (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-spe-period (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-spe-period-term (=
+100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-spe-physical-addr=
+ess (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-user-regs-no-sve-=
+aarch64 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-user-regs-old-sve=
+-aarch64 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-record-user-regs-sve-aar=
+ch64 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-C0 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-basic (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-default (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-detailed-1 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-detailed-2 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-detailed-3 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-group1 (100%)
+>  rename tools/perf/tests/{ =3D> shell}/attr/test-stat-no-inherit (100%)
+>  rename tools/perf/tests/{ =3D> shell/lib}/attr.py (100%)
+>
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
