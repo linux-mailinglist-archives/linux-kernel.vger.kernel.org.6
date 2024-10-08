@@ -1,107 +1,164 @@
-Return-Path: <linux-kernel+bounces-355817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC79995785
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4BA6995786
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D37B23B75
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258A928A0D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85882139D7;
-	Tue,  8 Oct 2024 19:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E97212EFD;
+	Tue,  8 Oct 2024 19:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gLwORhLF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMsor15u"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D01E0E1F;
-	Tue,  8 Oct 2024 19:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5BA1F472B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728414991; cv=none; b=s/kjqy8aADM6sD23AExG4V5kbwST3jvmkh4WxA+xjJlArhToQnulAv1BYcKh7PGQ3k0h5IOsfkJ6Czt93QyaWxTUm7utUkjLfBZqs06SqhqVSP47C7a/41d7B1Gt9Slg7Y2Qeo4u1Tev83RbEm/uDkJgxv73mF4ldT6IsuSvw+E=
+	t=1728414998; cv=none; b=jRatHa1mvOpRYoxaOIJ69HLRxST7n2z/omK+7UKNA6zRANzAnLmgrTDHCwAU5elThGyv0BMKpTC8CJD4oZlCIgKJVK2xsHV/rpVbBTHoEZcl2mbJ06yEYFlsJbdmpU5kkRgHoz7v1R32JMCGuP3uw0aZ4A9Q1RjLU7jZ+RKB2O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728414991; c=relaxed/simple;
-	bh=lYbyo+A+uUJ7b3hd8/KN6hpCmPCBCTCSQ+I7ufCu12k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TB6OQ2v4Dt+/6LHQcRtj0GyiPIKUXAK3TvWRzYomOHH5aqHOBc6W13kbvkuNK6pUpm6ZRiRbWl/xrj7PDFAOfe/eHMjHs+c3Eh+oHPO8ZwIpDcd/u0fNfHezvuc1RVYwRPOqLuHMeZVSWjWlBPHnpHmVfRz5AKwDGQgnh1B2M7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gLwORhLF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 313BB40E015F;
-	Tue,  8 Oct 2024 19:16:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KZszS8Uy29l7; Tue,  8 Oct 2024 19:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728414980; bh=VFyob7KPVxpSAJVJAnRtwFGOUftj7P0e2hmVXC4ret0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gLwORhLFkmCNRDnLV9Gx6d0Ffcj9bVIP/eB5jAIiyaezkVHYG+WjPn9V40am9ydu8
-	 kbGibNmcQ8OzGQmY8X33KsvtoJzfKfs+p85hTgQiTMd0mpOlQP3e1Rz91R1+D22QRh
-	 y+clQ77ffa4krajH9AcY/BQRnQ47ozWP+Ea9iE8EAzCLhR/EOwMBrBELEJsNTiEtkw
-	 d2XTTpUxaF9DZdVlUBGOaCieUgtp1wm/w/K/pvoL7qfI7LzEFGlZmmfn4MRgSCymYN
-	 ajSMK/HUmR6Sa/5DGbFmlnP9nVuUiFzaas/izJoqjPpMVWg9u4cTVEQUq+NDuntN4L
-	 KbHf1VQbfMC4hMgIyyVgS66xj/LA/n0NBnRtV9VT8hmg7HFP5CYtyYNGtusScjHp2B
-	 vd4g5Vii63Yl3pszajKWQ7AXNCk7KyLNa1dCs7Tw56d6GFVNrf+0QCeaKXB482wUy+
-	 /WLp97ILQP8i4GDeHxKMznWqeWv5rsGQ3Ot8R7n8u9HolaffWrIk8V8VT+ZpPqi9FM
-	 OQzVXyqwZ7EnquG0EdbOuT2VZi0t1eG06vFIpLCLNdPj/KmTxZs5SCHzbEH2xmxRzY
-	 8d3j0h4AfK9gayi0qrRcDMWuD0bZiPmP5S785RPbMPDnS95Goz0dmTHYWYqRfWwg2f
-	 vShBGqdl8of/Kqrrkl96mmAM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BE4D740E0263;
-	Tue,  8 Oct 2024 19:16:02 +0000 (UTC)
-Date: Tue, 8 Oct 2024 21:15:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org
-Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
-Message-ID: <20241008191556.GNZwWE7EsxceGh4HM4@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1728414998; c=relaxed/simple;
+	bh=YceFv62VB2PaAbJZ3O8Mb0rPDwzm/Q3npZBYOgM2RxM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PkovC8DVDu8HJiJ9qULpXAOOKjTbtc3CzzT2Qxuf/4tSeVDn+y4RFKImX0PLqh+h8RbJTMSq+q2gQmvB8EQDPeSosv1AQzwCiQPYxiXuKC7bEEQzfNnYBb6RFE/5sGZjVmx8ra/AjyIEQakQklV+tsktizsUFq+WbwVeikb9a5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NMsor15u; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71dfccba177so126874b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728414996; x=1729019796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7qu86Ysicdsx9sM/yuAIgyD1+rSLH54SdSYbKdh/+U=;
+        b=NMsor15usH6mhHdSybffmkmgUrGsowI7c3IpsfwUfpxynaB420g7yprxIIsbPe44wk
+         g9XRDJsYb0zuSmIpBcAdi26TXNBnCSIAULszFUt8nxUARJ+zZ4pzlwhikE8fEKL+V8BC
+         ThY9n5ARIWFesvtOoHW4z7JkJeWHnPsA+bEgZuAr7OUFzl8wtx0j1PmYSm2aY1MWs5bI
+         aXo9ZFeiAv/2WjtyHzXYDzgDVk97qW5DCIwGmgVzb/9Q50cWNfSZv7qdyCatAWDildon
+         7jLOg2gHiRQkZUVggYcZAmJ9uQIIq7ik4JJPrp+eenKXie51DjC2n8jy04dcKHJ4zZlW
+         nFOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728414996; x=1729019796;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z7qu86Ysicdsx9sM/yuAIgyD1+rSLH54SdSYbKdh/+U=;
+        b=GoQxtpv4vkrvZQkn8vTYyefa1+nRSYXpC0HKhjra3hchgruU+vAPj2qxFOp6ZLd+mo
+         70/MXYPq2TJp0qRMcSrkVkFsY97oEQHCG2sVqgbSszHYXUSEXnK065NLW/tGBvi6c3y1
+         wYaTrl6UKas/jGXwzM/RaYFX6CDjiI+CYIWNQ9+nvltQm6vSz273AD1uGcgQPVFoNce2
+         Hmjch8YxK9dzsvGZO8kzFZpNx/pIOqNh+iphLUDaqt+t0Iuo9abHY75G7kwtiKwcSBek
+         M5LA7HH34vHagvsO/CPrbYkA1jcW9oW6AmMg9dVCZw/uflgn+VIuRDIAo/Yc0FUYEHj2
+         I4lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP/XG4zSqKrj765RjYzqDY/8ih1mgQpNF0D2ZFmisTE9GfSdf/RVroyQUsLfnGq1dtwqr4w/zS6nmBRxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymyLqqlQJ+ZMENXb+04vuBreo6/KLPNzBtz7iFPPkbXRMBQEh1
+	WiBXqKlwwRI0MI0YtiXulZdIyQJVDFopwGH2RE2g4MPL7Co6MU7X
+X-Google-Smtp-Source: AGHT+IG11rsBrtdL3pEggLyoVCWr0nW6/pa+HBU7JaoO06ddPz9+dy2vVAYCq5o1iTlk25NJF+qmtw==
+X-Received: by 2002:a05:6a00:c94:b0:71d:fbc9:e5b2 with SMTP id d2e1a72fcca58-71e1d6d2014mr169431b3a.14.1728414995947;
+        Tue, 08 Oct 2024 12:16:35 -0700 (PDT)
+Received: from advait-kdeneon.. ([2405:201:1e:f1d5:c7a7:6c1f:8104:8963])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dfea52097sm4650939b3a.103.2024.10.08.12.16.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 12:16:35 -0700 (PDT)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	leo.liu@amd.com,
+	sathishkumar.sundararaju@amd.com,
+	saleemkhan.jamadar@amd.com,
+	sonny.jiang@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH-next v3] drm/amdgpu: Cleanup shift coding style
+Date: Wed,  9 Oct 2024 00:46:23 +0530
+Message-Id: <20241008191623.8171-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 05:06:52PM +0530, Neeraj Upadhyay wrote:
-> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-> index cd44e120fe53..ec038be0a048 100644
-> --- a/arch/x86/boot/compressed/sev.c
-> +++ b/arch/x86/boot/compressed/sev.c
-> @@ -394,6 +394,7 @@ void do_boot_stage2_vc(struct pt_regs *regs, unsigned long exit_code)
->  				 MSR_AMD64_SNP_VMSA_REG_PROT |		\
->  				 MSR_AMD64_SNP_RESERVED_BIT13 |		\
->  				 MSR_AMD64_SNP_RESERVED_BIT15 |		\
-> +				 MSR_AMD64_SNP_SECURE_AVIC_ENABLED |	\
->  				 MSR_AMD64_SNP_RESERVED_MASK)
->  
->  /*
+Improves the coding style by updating bit-shift
+operations in the amdgpu_jpeg.c driver file.
+It ensures consistency and avoids potential issues
+by explicitly using 1U and 1ULL for unsigned
+and unsigned long long shifts in all relevant instances.
 
-Shouldn't this hunk be in the last patch of the series, after all the sAVIC
-enablement has happened?
 
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+v1->v2: address review comments
+https://lore.kernel.org/lkml/CAJ7bepJrm9tJJMSZXz0B_94y8817X4oFpwnrTmUHeagOFgVL7g@mail.gmail.com/
+v2->v3: update changelog and add additional 1U cleanups
+https://lore.kernel.org/lkml/CADnq5_OgZvTgUDvDqDikoUh28jTRm2mOAVV6zAEtWE9RHTFkyA@mail.gmail.com/
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+index 95e2796919fc..995bc28b4fe6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
+@@ -47,7 +47,7 @@ int amdgpu_jpeg_sw_init(struct amdgpu_device *adev)
+ 		adev->jpeg.indirect_sram = true;
+ 
+ 	for (i = 0; i < adev->jpeg.num_jpeg_inst; i++) {
+-		if (adev->jpeg.harvest_config & (1 << i))
++		if (adev->jpeg.harvest_config & (1U << i))
+ 			continue;
+ 
+ 		if (adev->jpeg.indirect_sram) {
+@@ -73,7 +73,7 @@ int amdgpu_jpeg_sw_fini(struct amdgpu_device *adev)
+ 	int i, j;
+ 
+ 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
+-		if (adev->jpeg.harvest_config & (1 << i))
++		if (adev->jpeg.harvest_config & (1U << i))
+ 			continue;
+ 
+ 		amdgpu_bo_free_kernel(
+@@ -110,7 +110,7 @@ static void amdgpu_jpeg_idle_work_handler(struct work_struct *work)
+ 	unsigned int i, j;
+ 
+ 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
+-		if (adev->jpeg.harvest_config & (1 << i))
++		if (adev->jpeg.harvest_config & (1U << i))
+ 			continue;
+ 
+ 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j)
+@@ -357,7 +357,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
+ 	if (!adev)
+ 		return -ENODEV;
+ 
+-	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
++	mask = (1ULL << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
+ 	if ((val & mask) == 0)
+ 		return -EINVAL;
+ 
+@@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
+ 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
+ 			ring = &adev->jpeg.inst[i].ring_dec[j];
+ 			if (ring->sched.ready)
+-				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
++				mask |= 1ULL << ((i * adev->jpeg.num_jpeg_rings) + j);
+ 		}
+ 	}
+ 	*val = mask;
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
