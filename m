@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-354976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC8999456C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD7C994571
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B96C28692D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547B2287047
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F6A1CDFDA;
-	Tue,  8 Oct 2024 10:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13691C3301;
+	Tue,  8 Oct 2024 10:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwX6e7Lj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fTrCiN9C"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00F1CB308;
-	Tue,  8 Oct 2024 10:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6421C1AAD;
+	Tue,  8 Oct 2024 10:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728383373; cv=none; b=p+Kla33yRCeau29L8wkcCcrk2DYCf669wsIKM2i9/QfWiQhq0RKMq+dVFoKn4kh4t8SwNRjAk+xpDXmNbU8rCZLiWQkbsJ7UCNCgCK7ksrl2EVNGjqjDfPVeJ7c1YRc8lAJ+rUL7kUEwenlFGN4Vik501IPtZwt2awSn5lum1pc=
+	t=1728383393; cv=none; b=sqUIl6Dam1EPTZTfLRGaLxrTN4q800EYHaPJvXYr1w3zwpF/FJe2yDhzVhGZua4CGx+OrhybbWsoW/unMpiuWFeombCmP+kO8Rj0FaxW6CvQ+xaKC4kHi0l/oNsA1yy89PGH0MM0VD8ACxi1Mc/p+1mKfvTqIhcyWawc3lmNFvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728383373; c=relaxed/simple;
-	bh=r6uqx0gKzPJlQTnJfU80WZi/CjkKIp2ytA8teYg3T4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ln0S092mkda2ihgErE3r/+Dw1AYVSxU9rYkMJ4IZQjeYVtdumBAM3Rxj7jhvyRUj0pgJxSzO3mr8z6tQk0IJoab6a2V8ASBGQrKa7eadsAz2ZIOLqf9K38HEB0AXMmxgtaKXNCq2NrrDyt5EdKScCcQTCHl5lcuLrxwchDCTFTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwX6e7Lj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91C1C4CEC7;
-	Tue,  8 Oct 2024 10:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728383372;
-	bh=r6uqx0gKzPJlQTnJfU80WZi/CjkKIp2ytA8teYg3T4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwX6e7LjdGFMW4ZkZgiEBpTLMqqIOX+ATRyulL2aZFJDHiTuBoF4o4JvneLbRrW6S
-	 ur+UM8QSxwZXgdJeIKD0nTtiN9mXgz+z9if/L38DwR1Y08fjwMhHB/pN6jfRpY/3JR
-	 Yj/Wvb20obNLHveykP5AwmtYg2wQ4fhcPjfKwiihnJTr/UqBpm08yO3N4FM3UzVCzh
-	 HgRl0j7T9fLWvGST3nJ8bYjhmPHVUYMQj9oHfJ3qpIKT5EcwRCnMvualHgOd3nPGt7
-	 sbtzOgnQeP0rHfGBsINPGGh+gSdu6QaTl54XL4ZytkxT7DaPSnndgE598gmf2UCboW
-	 xBAqqpGGd/EsA==
-Date: Tue, 8 Oct 2024 11:29:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Mihai Sain <mihai.sain@microchip.com>, nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: atmel-quadspi: Print the controller version and
- used irq
-Message-ID: <ZwUJiAj_ZVztLvS5@finisterre.sirena.org.uk>
-References: <20241008083226.51163-1-mihai.sain@microchip.com>
- <1c525e43-d71c-4c4a-a8ac-96627cd6ea7e@linaro.org>
+	s=arc-20240116; t=1728383393; c=relaxed/simple;
+	bh=l7tS8eWROa3MwcAh1tj1sjbMaiNYkKpHNBzM7AHJTh0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n1kMFI/le0jqYz2Y5deXInb4nBOHFLQPIXaMpuBlVKyIZzZ1TBBwDKbLhKjwR0oRHpAvNZj/PZmz9gGpRi3mh2qT4gi380lfoh1ziR3KsoQhXKeAvfLY7Unedke5tKYUPQU6f4Srt4GBeY1sx7xfbJRZ+eLTIwQyf9LQIac+jq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fTrCiN9C; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 33384E000B;
+	Tue,  8 Oct 2024 10:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728383382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4UBiSkAGEqIlk6OGBJi+SQVIzbv8Yq+NGeKs31Ac9wc=;
+	b=fTrCiN9C+ENCif56EMf+WWlzWHIjkQ5yIq5T5mlg2OYzryTwD0X0Q0qfQLDPL2Z7ZGxp1m
+	dM8svdZn7t/7JMIgzriua+lwzJka4q7OWDbfQ/fMviTpjU5nkxe9aay64aBGcgj1lXvrEi
+	QKUiTg3KL7pQ+Xq9wvtDV9UgmFEywTqJ6geIY82+R6ubynKFbsk6h7jS9MA4LXREze5xFf
+	1dQUyVvwOTE0xWpYbqn2dDF/FBqV/xy05R0fgq7aM/2L4onbi0pP1Mhn2gMCMyEsX3dWe9
+	JhkyT+pGfoiPylw6EhesSD9rQgGwuW5zxPqcOAK+SZ9ULhem+4etDpVRBApA3Q==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH 0/4] i2c: nomadik: support >=1MHz & Mobileye EyeQ6H
+ platform
+Date: Tue, 08 Oct 2024 12:29:39 +0200
+Message-Id: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/tCwxRMHdmQqa9TN"
-Content-Disposition: inline
-In-Reply-To: <1c525e43-d71c-4c4a-a8ac-96627cd6ea7e@linaro.org>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJMJBWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNz3dyknErdTKNkXSMz82TLFBMLoyRLAyWg8oKi1LTMCrBR0bG1tQA
+ WVGuPWgAAAA==
+X-Change-ID: 20241007-mbly-i2c-267c9d482b90
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Hi,
 
---/tCwxRMHdmQqa9TN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+First two patches are about adding Mobileye EyeQ6H support to the
+Nomadik I2C controller driver, in the same vein as was done a few
+months ago for EyeQ5.
+ - dt-bindings wise, it is only a new compatible. EyeQ6H does NOT
+   require the same mobileye,olb custom prop as EyeQ5.
+ - driver wise, we are again on a 32bit memory bus, so reuse
+   the .has_32b_bus flag.
 
-On Tue, Oct 08, 2024 at 10:34:39AM +0100, Tudor Ambarus wrote:
-> On 10/8/24 9:32 AM, Mihai Sain wrote:
+Next two patches are about supporting higher speeds (fast-plus and
+high-speed).
+ - Fix computation of the bus rate clock divider (BRCR). It picks the
+   smallest divider that gives a bus rate above target. Switch to
+   picking the largest divider that gives a bus rate below target.
+ - Then support high SM (speed-mode) values. This is not much work.
 
-> > Add support to print the controller version and used irq
-> > similar to other at91 drivers (spi, twi, usart).
+It works on EyeQ6H HW just fine. 1MHz has been tested but not 3.4MHz
+because HW doesn't support it. The theory is there, and BRCR
+computation has been checked to be valid with 3.4MHz clocks.
 
-> > +	dev_info(&pdev->dev, "AT91 QSPI Controller version %#x (irq %d)\n",
-> > +		 atmel_qspi_read(aq, QSPI_VERSION), irq);
+DTS patches are not provided because they depend on the platform's clock
+series [0]. Lore being down at the moment, see Patchwork [1].
 
-> This pollutes the console. Better to add a dev_dbg if you care.
-> And irq number doesn't bring too much value as you can see it in dt,
-> isn't it?
+Have a nice day,
+Théo
 
-The objective of bringing the various AT91 drivers into consistency does
-seem useful so if this isn't OK for this driver we should probably
-update the other drivers as well.  Ensuring that people can get at the
-IP version does feel useful, I guess it could also be a sysfs thing?
+[0]: https://lore.kernel.org/lkml/20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com/
+[1]: https://patchwork.kernel.org/project/linux-clk/cover/20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com/
 
---/tCwxRMHdmQqa9TN
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Théo Lebrun (4):
+      dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
+      i2c: nomadik: support Mobileye EyeQ6H I2C controller
+      i2c: nomadik: fix BRCR computation
+      i2c: nomadik: support >=1MHz speed modes
 
------BEGIN PGP SIGNATURE-----
+ .../devicetree/bindings/i2c/st,nomadik-i2c.yaml    |  6 +-
+ drivers/i2c/busses/i2c-nomadik.c                   | 65 ++++++++++------------
+ 2 files changed, 35 insertions(+), 36 deletions(-)
+---
+base-commit: 6f1cfa7816af8b3286140f1b0476200d5e914eb9
+change-id: 20241007-mbly-i2c-267c9d482b90
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcFCYUACgkQJNaLcl1U
-h9DDOAf/Y8OAs67WdyBhy6znpd9MnCRbd2ynn7x0IFVnQeaOcNPJFreZ5D81G9DO
-G2dEOU68qbHH7LCNDDUEcNre1C95gQpAFVWg7zVeLcRR7iXOSgYMjybkQp8A9jEM
-w8RucD9+/6SHS/y3mEflYgtRk8QnbA/1Gu0cVhM6606Y8sxXQKmiDEEEIXqoSzp6
-Oz9LVdlk1GYyGFflv7eTTvy1CVey8xOOVYQBpjohmXxzYUqhrNNw+ef7tUsHDued
-k7jyRfC7ndsYamet7RzQFrMVXvP1TJxcgYcAkv/CDdSB8LUyTpq7+vSc/zEVpbD7
-onHIdDe8ZvRplwY2vgOHjYDzW0gc6Q==
-=4Gul
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
 
---/tCwxRMHdmQqa9TN--
 
