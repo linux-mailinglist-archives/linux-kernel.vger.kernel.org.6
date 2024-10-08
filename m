@@ -1,197 +1,116 @@
-Return-Path: <linux-kernel+bounces-355553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462299953FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:03:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1AC995401
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D50285292
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4A71C23F2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735311E0B68;
-	Tue,  8 Oct 2024 16:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBD81DF241;
+	Tue,  8 Oct 2024 16:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfKbZvJM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="LwhcxvxC"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEB9224F0;
-	Tue,  8 Oct 2024 16:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD7E224F0;
+	Tue,  8 Oct 2024 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403424; cv=none; b=PQWi+ALYvnaD4NC6tOjnX5/0xbcelJJEXWNkGk8s4M5uKGfk6H3z3VyJJuggDdv88VlaNxunoMNVNwom5R7SqfSg8YvL4xh9bRhRU5itokyH7wi23m0blZT0gUyx4gTPFEuOmDx0zVwD1+IfDeQcinAOmyqveypSNd0vrQDYHjk=
+	t=1728403526; cv=none; b=DHDu8gqZQOaOLyxlwKvKbg0SUD3AIemT0ef4voFtGf7l913Q50L59lVlMFtNtvT3frvAl9YWBiG+nOmDGBjkdMDXrd5qoaPWDrMUFKaSu5jeNQrCFxyztWQ2cT4qWqcaP4gKI6S0opI4i2uE+b2032sBHk6t5HS9P7j4sbD3hPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403424; c=relaxed/simple;
-	bh=eHRLnuNFNnHx6cpCghjA5SPciicevOMZ7FhMNyIl5sI=;
+	s=arc-20240116; t=1728403526; c=relaxed/simple;
+	bh=W66HPaI7vCTTXRg0sHOI+UJgtuGeaYK/rqCGihZVcsI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K3I0nz3u5/t96ewnhjTgXuRb3LajkvSSK/9DsGRZ8ENHoDI1HboWSSB4loUl/aFb32nFyBEcQqBwhSYi2Y1qq8FE74D56d8ODYvsACLZ4KKjpBiI7awkdED1P2vjO5M//C5Q4lkqpbEIKxd9ul/Do3mI1WogBCizdk6MuRPDdr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfKbZvJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B907C4CEC7;
-	Tue,  8 Oct 2024 16:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728403424;
-	bh=eHRLnuNFNnHx6cpCghjA5SPciicevOMZ7FhMNyIl5sI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BfKbZvJMcOs5B5kSc8RKqyHkp0S1j46iq5NBNTC9Fg9mfS0B5QFJ9cql+NI/w9FFd
-	 aABcV4NwA8wLKfnVwN4HUNII1k2mu249fJxJDGorzhGH2DwtQI0g8WbtXP3A0ikpwH
-	 N+eLg5KEHoPZscD2S0v9qSnUvCygyxnSXgP8c/UourRLt3XEWZXZuR78lS+awDVPK2
-	 kE2esUoq0xl/vF1pnLx6WvcQNzleHIn5e0+U63aZz2i0tPj6OqPdxH0U+ByhwParQK
-	 GvSfU4MQWcp6skazfzHitEaNW9hMisJn5xP9zIaAHkKR1hfgdPE3+GIPKgV8mrgxpb
-	 7kRWTeg8sV+AQ==
-Message-ID: <fc17ef3d-7895-4ee8-bfa0-d31dd45f2f2c@kernel.org>
-Date: Tue, 8 Oct 2024 18:03:36 +0200
+	 In-Reply-To:Content-Type; b=rO/nWgaM6TcAo7xEFycP0GfCRg2zmEUQpFa+hCdtiBzd2QnQj0x3cIlvwNePOqPaHrF1AVP/G0nwYw5eF5B9087tncKTkJRGmk0/oeaaIK8Oz9kln73yHgDyys0CiA6nS3KYnHgvBzxW69lCoRFJOh6poQhTnOO7iA9PEfi0GJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=LwhcxvxC; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso37006535e9.0;
+        Tue, 08 Oct 2024 09:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1728403523; x=1729008323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uyg5938XUdbci+Id2jSlJ3QKaymXAYrdG/rjhrWuEI8=;
+        b=LwhcxvxC5sMbd/k1VRshfwpJNoD63Na1G8wJXsXtkTedlG9LrDK4npmpNK2jW9kn9s
+         fspvB/TQfDx1abpEeplNgD7AUBjFnP2W4U/oIuaahlT7pbCjptil0UcTsr9z3MPYYj8K
+         3vJ+R+JUmul/NzRckwbYYXcv3T2NoHLOgz4a2qlUek96WoltuG5LwbRxD4b4MgJBcAjg
+         Q545SckHpijt0+zi6mox2RqDTNzceciVhUVDnANvhdUABATC38i0rxk6ShNjhiap5D49
+         /GuU8AzM60mOnkNkiv1+cC9LgbZmGkQx2JCvwFfn8kcGK3ajIqLCs7myLZwyJpUqaSXV
+         18Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728403523; x=1729008323;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyg5938XUdbci+Id2jSlJ3QKaymXAYrdG/rjhrWuEI8=;
+        b=CQG7Ti7L10hVy2ECEXgNDSBkjVIlAqtdWa/LXj9rEJCjLMy5mIgFYNBbfPhcwc+jMc
+         wsbTI7Xyn1KUBqAXyrUV0CBnLJIWXrhVnDyilAAFFACXezd8N7z16xkChdUQ/Wf5/j/z
+         JcGSHDU0ZJBp7xwrZANr3b/6NPMdNJCvRpQ3ddCd147vYJ6Ict83PcBDuPexaEweDPeH
+         xMJthF1sbbucye4uKf/lAQcrCEA3h+vAIYiXAPIQvJ/asdA8T8sRtzbEPo23mLoVzBrD
+         VTvPiFvKv9Gz5V1TMVsvN//AMSua90EUMRc+cHUCfdcyvg6oxPTMRWT2pJcHYgiXY2aB
+         A1xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJlzt1I2vA3ulbuOEmSTps9Ph/NnQd3lhZyM6xEhYpvBFbGXuklpqnjIhHExELkUTUjnhFuKY3@vger.kernel.org, AJvYcCXJn3KaXAupa621k3jAsBt2iGmKZeTWIbmbhxoR8SvPChOJq+bYd9ML8E7C8GaNvgwwUvan7FYZG0sMSnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLU+Auj5CMfQrTKrLMsXJb2pUzgKVXGiHPzV5XjzMJ2HOjrWyw
+	bSq9xj2Ux9UceQ66vkblVGJFJndoonp8LjEHxSm378KtJ0kBX+8=
+X-Google-Smtp-Source: AGHT+IHI3HNkUhkt+2Et79RsDlbHBNOOu28DFhEn8C0r9PruI3pYmDHi7Vz5GxFuYkTpi1aT6S9+/g==
+X-Received: by 2002:a05:600c:1391:b0:42c:bd5a:9471 with SMTP id 5b1f17b1804b1-42f94c18e42mr24494485e9.16.1728403522574;
+        Tue, 08 Oct 2024 09:05:22 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4723.dip0.t-ipconnect.de. [91.43.71.35])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4304efc442esm19349255e9.1.2024.10.08.09.05.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 09:05:21 -0700 (PDT)
+Message-ID: <62aeeca9-ab16-48e2-b529-1587556bf19d@googlemail.com>
+Date: Tue, 8 Oct 2024 18:05:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] i2c: nomadik: support Mobileye EyeQ6H I2C controller
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-References: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
- <20241008-mbly-i2c-v1-2-a06c1317a2f7@bootlin.com>
- <oxcxs6n7y4bw33yfgaacd2cayf7otfochvlaofva2kabzjim6h@d6pam3gciepl>
- <D4QI63B6YQU5.3UPKA7G75J445@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D4QI63B6YQU5.3UPKA7G75J445@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241008115648.280954295@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 08/10/2024 16:43, Théo Lebrun wrote:
-> Hello Krzysztof,
-> 
-> On Tue Oct 8, 2024 at 3:39 PM CEST, Krzysztof Kozlowski wrote:
->> On Tue, Oct 08, 2024 at 12:29:41PM +0200, Théo Lebrun wrote:
->>> Add EyeQ6H support to the nmk-i2c AMBA driver. It shares the same quirk
->>> as EyeQ5: the memory bus only supports 32-bit accesses. Avoid writeb()
->>> and readb() by reusing the same `priv->has_32b_bus` flag.
->>>
->>> It does NOT need to write speed-mode specific value into a register;
->>> therefore it does not depend on the mobileye,olb DT property.
->>>
->>> Refactoring is done using is_eyeq5 and is_eyeq6h boolean local
->>> variables. Sort variables in reverse christmas tree to try and
->>> introduce some logic into the ordering.
->>>
->>> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
->>> ---
->>>  drivers/i2c/busses/i2c-nomadik.c | 22 +++++++++++-----------
->>>  1 file changed, 11 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
->>> index ad0f02acdb1215a1c04729f97bb14a4d93f88456..ea511d3a58073eaedb63850026e05b59427a69c6 100644
->>> --- a/drivers/i2c/busses/i2c-nomadik.c
->>> +++ b/drivers/i2c/busses/i2c-nomadik.c
->>> @@ -6,10 +6,10 @@
->>>   * I2C master mode controller driver, used in Nomadik 8815
->>>   * and Ux500 platforms.
->>>   *
->>> - * The Mobileye EyeQ5 platform is also supported; it uses
->>> + * The Mobileye EyeQ5 and EyeQ6H platforms are also supported; they use
->>>   * the same Ux500/DB8500 IP block with two quirks:
->>>   *  - The memory bus only supports 32-bit accesses.
->>> - *  - A register must be configured for the I2C speed mode;
->>> + *  - (only EyeQ5) A register must be configured for the I2C speed mode;
->>>   *    it is located in a shared register region called OLB.
->>>   *
->>>   * Author: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
->>> @@ -1046,8 +1046,6 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *priv)
->>>  	struct regmap *olb;
->>>  	unsigned int id;
->>>  
->>> -	priv->has_32b_bus = true;
->>> -
->>>  	olb = syscon_regmap_lookup_by_phandle_args(np, "mobileye,olb", 1, &id);
->>>  	if (IS_ERR(olb))
->>>  		return PTR_ERR(olb);
->>> @@ -1070,13 +1068,15 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *priv)
->>>  
->>>  static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
->>>  {
->>> -	int ret = 0;
->>> -	struct nmk_i2c_dev *priv;
->>> -	struct device_node *np = adev->dev.of_node;
->>> -	struct device *dev = &adev->dev;
->>> -	struct i2c_adapter *adap;
->>>  	struct i2c_vendor_data *vendor = id->data;
->>> +	struct device_node *np = adev->dev.of_node;
->>> +	bool is_eyeq6h = of_device_is_compatible(np, "mobileye,eyeq6h-i2c");
->>> +	bool is_eyeq5 = of_device_is_compatible(np, "mobileye,eyeq5-i2c");
->>
->> You should use match data, not add compatibles in the middle of code.
->> That's preferred, scallable pattern. What you added here last time does
->> not scale and above change is a proof for that.
-> 
-> I would have used match data if the driver struct had a .of_match_table
-> field. `struct amba_driver` does not. Are you recommending the approach
-> below?
-> 
-> I don't see how it brings much to the driver but I do get the scaling
-> issue as the number of support compatibles increases. This is a fear
-> based on what *could* happen in the future though.
+Am 08.10.2024 um 14:01 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.14 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-You still have adev->dev.of_node, which you can use for matching in
-probe. See for example of_match_device() (and add a note so people will
-not convert it to device_get_match_data() blindly).
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Best regards,
-Krzysztof
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
