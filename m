@@ -1,122 +1,184 @@
-Return-Path: <linux-kernel+bounces-355938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2635B995974
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B015995977
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE51528423C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046261F21CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9E220ADF0;
-	Tue,  8 Oct 2024 21:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6299B216426;
+	Tue,  8 Oct 2024 21:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bUkvS+aX"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHJBA7lP"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAACA194A4B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5E614A82;
+	Tue,  8 Oct 2024 21:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728424238; cv=none; b=kggNtBr9gi7ENGf0N15/UtOnu4WSLIz4Wf4w7YuCmO6KhdzqB80+NCz85a2Ubw4wH3Akc8piFL4pGvVXRs5C537n5RwEJmMV4xK2mWKGPfLh3Q3mPeCYDwH5BIQYeX9P3lJhAG3IAH16GR99IKPYqUBrPzH/mSNXtdPL1SbksQI=
+	t=1728424522; cv=none; b=RPXuK5mBgnJP6QwKJfyP8vYuLS4KT5avjDTksCsl6cjzuCCDCd8SYQ2XW1A41VQ8BvawHaOadRzLPIsRPFYX/kZAijwPgUIuxITizPaCC9tTsiVL2RlisQMTNiAqyoIdnBEFJDbtZVKyp1c4QY+YN6+ItyxY20dRa/isb2emtGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728424238; c=relaxed/simple;
-	bh=Iqje6EWpPEn8D42gRQnfAepziD04Y5SoxxzHbH/QF6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L3/ao8csbzZjSFCeZvgzG58S6hwWZylAcWSdXInjhiDUBiLxq6LITUMg5BQ8T21XPsjaKq749i/68w2+ZeSE5G6ieyGrMa4m4dN9/FG+FOTjNNGHdtyLgbmPj558TZCuatfjzRjUyvZUcfTQEtbKoxnKi3WidkuI+DFtyIwvUw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bUkvS+aX; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a1a3090f93so20154815ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 14:50:35 -0700 (PDT)
+	s=arc-20240116; t=1728424522; c=relaxed/simple;
+	bh=W+9IY9LvQ2FdsLivElEZAxYzLCEMLOTPRTTp4h8pVUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/X58rYN/aqg9mUjnsYhJXDZ+zwDgPhVn5/8sitU/TydUsZl1nf3nDfsw4aX+mrL+FZJHS0nmfcZulh2lV2Y+dag+wCKe6OEFLY3WlW5hAHWSVu/3kEksR1vFBK/GBtE5wrhfGpbuK66OzZ50CEc9jNJvvdWXOmEt1O+clJ52Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHJBA7lP; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbc40d9fa0so6988426d6.3;
+        Tue, 08 Oct 2024 14:55:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728424235; x=1729029035; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h4kIYoVybwY5oCfCX6nUbuZCgO9vStiTi85PSAC7K80=;
-        b=bUkvS+aX7m1xeimPuMsyta7hkDBQ6C6RzhIrginZfT4BqQIHTtYzM6BeSX0SmmjVQk
-         eOYZFp+5k9OztigGbXiGJsNUq5HFLWAtp2AWPnI4Cv5bmDoC2c8VJjeE+hGBCl0rqUiP
-         WF0FCFO1Dyw3Peo2QesX4gi5XWflo00Q2nAVc=
+        d=gmail.com; s=20230601; t=1728424520; x=1729029320; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEkYiKryFotjPtytS297RDOyprMAcbzHxWXUdSzZWQM=;
+        b=KHJBA7lPsfOQg3J9R7H3weFlUnhn3QuicN+w222bIzRXX5bGWgLbSRUeX1GszBYzYV
+         HX/V0E0T+sfTIZlq416yDRmaqiJvf38oTFfYOuxgGJ8xRLks/tGb6qt/dDbzmO1Xb6xa
+         B6X3ohHULYYFEH5Z+iU4bWlmXQ5blY2g17dDdcNb7AMm0c91y9R4EWu2MyE9EBY6uY28
+         ozS/dF0x2ErTQ31lV94MFXKUwY6xvHxH/20ungWK/vBLQ0HSmUUTSqTV1dqGy5UoY+yE
+         4bdJzaxzhVGPtfxyetnB6qRk3jm/bI0Wgz3IJiuoi8PAptoyYkm66PuyvDwIdoWl0vq4
+         wZGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728424235; x=1729029035;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h4kIYoVybwY5oCfCX6nUbuZCgO9vStiTi85PSAC7K80=;
-        b=cQmO2nPUPeDgXG33mBspxF7V6Y5r3oTlGT2Hlwqh6t9/4I5X4rN5BvLJx45h8AcbXl
-         RdYZlRu3U9b2ReXFhd85YGugP//07pqaavym5DodVpw4bqugiYednd6XLzlhOKFZ6m/Y
-         8Rtm91+viLRwI8c+XeDfgWuAZ1CrlQrlxEkHQ61wwBHxUnU3usjUHN2JlBF0Yp97jIg2
-         N1MLe7ddrX6yi4+aZclcaFhGzkCNzfdfF6tr3o3GhBUL6m+lU4l6Gr4M38M/LUc3WGv4
-         MRyYSL1EgHLiilMGffTrae6rJopOSBrxaqbOC/19GlNB8Nar1x66w5w3vFd+GeG7zyqO
-         SMVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Qcab9P/7cGCyH/ZuJVTTSy7kVJbx+uRAh3VAJ4xRtsHzAcBLi2+TVnu+ppbUcnGZrn7z0ci5kN6xSXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuVRj2lqnZ1ZK2j1y7Unm0ssQ3RiEV1YJJ2UwGIzDCUHqMvjlv
-	DeYJ5WACqEsY2Wv7EKwQ1Kbk/e6dv0UZ+fkQ6D+De6PlaX8dS+upTyDtSbSbTYk=
-X-Google-Smtp-Source: AGHT+IE4mDv9oOLC+DbOrP4btguo7lo7rD5XZ/nuEUQcWCy7kUVGwLTqx0VDDeSxhqPYY7SA34Asyw==
-X-Received: by 2002:a05:6e02:b47:b0:3a0:beb4:e402 with SMTP id e9e14a558f8ab-3a397cd8bcemr2852325ab.1.1728424234956;
-        Tue, 08 Oct 2024 14:50:34 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a396975214sm1204025ab.9.2024.10.08.14.50.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 14:50:34 -0700 (PDT)
-Message-ID: <4564d4e0-6384-4b84-a330-fdd6a026c9d6@linuxfoundation.org>
-Date: Tue, 8 Oct 2024 15:50:33 -0600
+        d=1e100.net; s=20230601; t=1728424520; x=1729029320;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dEkYiKryFotjPtytS297RDOyprMAcbzHxWXUdSzZWQM=;
+        b=GxQueqOVkohBSwC7dAlBQrHdygC+0wsl3ZvQHKPWfKaqFsmRDgx5lGGzr0L+MSK5B4
+         3RTQIYJfYcISABDlvC7R4LfQTs6KevpOz1XlO76x3VueSzEgv1r9VRNLtLNy1+4+SVbG
+         gTvW+kanV9VrL7vMRMvT1hCc4FGMG6JNBRbShgSwaLRVANuEUO2Fz1q9swFPh+Qfrnis
+         LBYfxtmmtUQZ7MOZXNU3FzXB+3OWuFVZGjbEBGoFKpSSvmrtKEKpLSmcCy5KLkwTgXN5
+         f1nLP+LUgmY0TK4vbn36y3UnmIdJZt58NMCn9L6+M7qlj9sHLXSGpv5Fib6VIMAtCFH2
+         A0sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwmmdMNDHahS3lvZuLautOIm3oiMiJx4YsQI7tEHYrQf/t4bPbLR9setXnSWMOY25C4yUAaNA8LAc88qg=@vger.kernel.org, AJvYcCX5cE/ffX7JmX0TNOaujY3faIjgJXcAo1wUB1hQPE/x5Ia3FU20nKOqKzZQo/N2MIR4VMgUGu2V/PPkV3aLgGE=@vger.kernel.org, AJvYcCX9ih26PFQLQSd1Pd6B2rdUlZRkLkmaqgtkN7topJk8JpJpfk26L7o+KucAhGpu5xLeRK+XrKUE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjAEkYzHLXbUlZGjpd8xcWGJ11vEaNtJHazGiNgAvNRc9OU50n
+	B29WPqvQI5KUposgw9M6r2NbHNafiFcUMGJn5kLbXedw5Uyui7wVOLRvSA==
+X-Google-Smtp-Source: AGHT+IEF/NkQAgcCJkU2mKbr8QRToXoHjVTdnjcIoApyIGZnBhAJmpONJ+nMP7+hi14bodf+sSJ7ow==
+X-Received: by 2002:a05:6214:3bc6:b0:6cb:c6d2:3567 with SMTP id 6a1803df08f44-6cbc942ef1bmr7188786d6.3.1728424520104;
+        Tue, 08 Oct 2024 14:55:20 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cd0f4sm39395566d6.8.2024.10.08.14.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 14:55:19 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BE60B1200086;
+	Tue,  8 Oct 2024 17:55:18 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Tue, 08 Oct 2024 17:55:18 -0400
+X-ME-Sender: <xms:RqoFZ4wam08Rr0GML4Hev5lh_UDbnxMvyPcMq1hZSJiTkTD-74gqTg>
+    <xme:RqoFZ8Qx6mdOEq0w76zQ0_R9bAtVgcyXPb3OcIFZ02hcmzjwkV5KeCRHLooROmYYy
+    FjJQyCrVvQwfahyuA>
+X-ME-Received: <xmr:RqoFZ6WgfXfSmhz0P4eNxiktUJTq5xqj9WgvWinfCq6kRVGAV7T3Y86hg9sEYw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefvddgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
+    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvtddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtg
+    hpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishesghhmrghilhdrtgho
+    mhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    nhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqd
+    hfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhk
+    rghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuh
+    hmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:RqoFZ2gQ0TEEkQUBMgfp9ZwzSbUFanO2ci19QSNJTuCvtDFAXKyXRg>
+    <xmx:RqoFZ6Aw5ZZA-6RHmo8Yw8imcA2M5zfcQdin6oTajsrw06Y8nlVTXw>
+    <xmx:RqoFZ3IQrD3rQRD0dpXzoEQlx7oiv33RNN9oBSCQj8xWAHq2fuFo9g>
+    <xmx:RqoFZxD-vlARtrv5WkI-4F3Y6672emLUjJ4JDX889iD4Rc51iTDJPg>
+    <xmx:RqoFZ6xZBRlR2jbGmyyzuJFRzBzy2t416UB_uQxST-x98KMKTcK65_m_>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Oct 2024 17:55:18 -0400 (EDT)
+Date: Tue, 8 Oct 2024 14:53:56 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, anna-maria@linutronix.de,
+	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
+Message-ID: <ZwWp9C2X_QIrTJEq@boqun-archlinux>
+References: <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
+ <ZwPT7HZvG1aYONkQ@boqun-archlinux>
+ <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
+ <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
+ <ZwPsdvzxQVsD7wHm@boqun-archlinux>
+ <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
+ <ZwRq7PzAPzCAIBVv@boqun-archlinux>
+ <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
+ <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
+ <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: vDSO: Explicitly include sched.h
-To: Yu Liao <liaoyu15@huawei.com>, shuah@kernel.org
-Cc: xiexiuqi@huawei.com, Jason@zx2c4.com, christophe.leroy@csgroup.eu,
- broonie@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241008023332.19902-1-liaoyu15@huawei.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241008023332.19902-1-liaoyu15@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
 
-On 10/7/24 20:33, Yu Liao wrote:
-> The previous commit introduced the use of CLONE_NEWTIME without including
-> <sched.h> which contains its definition.
+On Tue, Oct 08, 2024 at 07:16:42PM +0200, Andrew Lunn wrote:
+> On Tue, Oct 08, 2024 at 03:14:05PM +0200, Miguel Ojeda wrote:
+> > On Tue, Oct 8, 2024 at 2:13 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> > >
+> > > As far as i see, might_sleep() will cause UAF where there is going to
+> > > be a UAF anyway. If you are using it correctly, it does not cause UAF.
+> > 
+> > This already implies that it is an unsafe function (in general, i.e.
+> > modulo klint, or a way to force the user to have to write `unsafe`
+> > somewhere else, or what I call ASHes -- "acknowledged soundness
+> > holes").
+> > 
+> > If we consider as safe functions that, if used correctly, do not cause
+> > UB, then all functions would be safe.
 > 
-> Add an explicit include of <sched.h> to ensure that CLONE_NEWTIME
-> is correctly defined before it is used.
-> 
-> Fixes: 2aec90036dcd ("selftests: vDSO: ensure vgetrandom works in a time namespace")
-> Signed-off-by: Yu Liao <liaoyu15@huawei.com>
-> ---
-> Changes in v2:
-> - Include <sched.h> instead of <linux/sched.h>
-> 
-> v1: https://lore.kernel.org/all/20240919111841.20226-1-liaoyu15@huawei.com/
-> 
->   tools/testing/selftests/vDSO/vdso_test_getrandom.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-> index 72a1d9b43a84..ddf37e3ab18b 100644
-> --- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-> +++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-> @@ -11,6 +11,7 @@
->   #include <string.h>
->   #include <time.h>
->   #include <unistd.h>
-> +#include <sched.h>
->   #include <signal.h>
->   #include <sys/auxv.h>
->   #include <sys/mman.h>
+> From what i hear, klint is still WIP. So we have to accept there will
+> be bad code out there, which will UAF. We want to find such bad code,
 
-Thank you. Applied to linux-kselftest fixes for next rc.
+If you don't believe in klint, then we need to mark might_sleep() as
+unsafe, as I already explain a million times, might_sleep() is unsafe
+without the klint compile time check. You have to accept that an unsafe
+function should really be marked as unsafe. And yes, in this way, all
+sleep functions would be marked as unsafe as well (or we could mark all
+preemption disable function as unsafe), but still an unsafe function is
+unsafe.
 
-thanks,
--- Shuah
+Again, as Miguel mentioned, we can only mark might_sleep() because sleep
+in atomic context is an ASH, not because it's really safe.
+
+> and the easiest way to find it at the moment is to make it UAF as
+> fast as possible. might_sleep() does that, __might_sleep() does not,
+> and using neither is the slowest way.
+> 
+
+might_sleep() is useful because it checks preemption count and task
+state, which is provided by __might_sleep() as well. I don't think
+causing UAF helps we detect atomic context violation faster than what
+__might_sleep() already have. Again, could you provide an example that
+help me understand your reasoning here?
+
+Regards,
+Boqun
+
+> 	Andrew
 
