@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-355766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED759956BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6959956BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914671F23319
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335CC1F264EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9176A215035;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC9A21502D;
 	Tue,  8 Oct 2024 18:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="joKeo7mX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BOWb547T"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FBD213EDB
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E972141D0
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412543; cv=none; b=nN6JM/b1bq4mYROWbbSv1jsh6FlBw97iNEZRXf3QdmDMZX/HGGTd9nOYRcIUJQSbBIOA0KcDvRnQzsMmJ51NLzrLKIoYchYCBr0cLaZBIk57GJJJFLk4kPzCWMC6LxIt4UxhTKJODXIazm78Jd6Tm/mrb1TNhexrrc4AoO8j3CM=
+	t=1728412543; cv=none; b=W+cjHUHNthoqlaYS+zW4uKZD70yOkhftzBDdzTm+J2mMoiNvmfumQaXev9TdAJRnhnyda3ZX3poz3iU0B5f3zqc6B8/W8f+ki8I004eFAZh5MztPSOi16p9xTEFGbJ3AbIOTHGDZ8X9h4lzNxEhLMTWqpr6NurmI4sDiNAFs9FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728412543; c=relaxed/simple;
-	bh=/JJZCwajkVb0QLSNq1aYtA8Fx0IU33m7ID0rexUyFaY=;
+	bh=9NC942Tnu9eotfuiQ8yTEZBW0BsoN3zsxEknTk/dLpA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YQNv6CsjyzyEGzb3pn3jmsNF1N5znn6kHYMMqAGPSoS+J4Y+4MXbS0CNv6MjU+HnooLUi303SAfaPf5zwpmms/AdGKuIVYyK++ekJMmxyLekrtGZlY3OJlJwx9E7LX2EGaHlrKZFhyLh18TPQMsBVsG1BVF9QVBTi0vy52kPrfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=joKeo7mX; arc=none smtp.client-ip=192.198.163.9
+	 MIME-Version; b=g3E7RrGEMvPhhIxMWIPtH0wuHmn3O3UUDai37zbIYLgvzCwaIiRlxi38ebfGF102oZD3tM6v54Ayxfb0RaSWCiKCXMcOu3fNRRF7BKHYgbziLYtCUmp/1KD6Au8c+CtBgoGQWRT3M2GgxFc7RBEtuyRiPpXcoYk4YTKumOqA2HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BOWb547T; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728412541; x=1759948541;
+  t=1728412542; x=1759948542;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/JJZCwajkVb0QLSNq1aYtA8Fx0IU33m7ID0rexUyFaY=;
-  b=joKeo7mXVXJDqhOIHOFTsllLkQ762cVCNJxIpAKoTZuxiUunuKmcdD1g
-   drnH24uNxX3s01niojed0jhNAuCZyKh821CV0w2ibGtxcY3KK4Aw0PNPN
-   6ltHaIzxnXlRD9ow2tz19w6+bczgXTMTb03lWFW5242P59DzhOkIO1/iB
-   pcymGoovdyuGl7iyA4ibCUJlh8DOwf+fukb0F5VdwQx23yR9Y+GBUqT7l
-   SPWSQdIxLyHHXgsDEXHFj6Ix9n/WvezsJOJyTUAl7lv1s4j2zFhOT2PBx
-   +nFe15UQi6trrinLaRefKUXFe+TR1Yv2k6dyrDKwhW+1Hbgikmie0Mz5Q
-   g==;
-X-CSE-ConnectionGUID: i/pXcpqURJCGhhmAbKW1Rg==
-X-CSE-MsgGUID: bAqiaAe/ToKdCKL2u5dcrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38295355"
+  bh=9NC942Tnu9eotfuiQ8yTEZBW0BsoN3zsxEknTk/dLpA=;
+  b=BOWb547TP/V0TvNa2disxv7ByD0NIVvQaI6tQj8RFmlcMnlQhpM5UTA+
+   1T1eL7/22i03PwlbvecRFfVoG2xel/6govgohqjPNKjk/6d9tn7TPzJiD
+   RDxxVwpq8VO7NYnLHHJADJqG0Vh774jsK1FBJeQQMRbfqlWXlv7B2kHbV
+   Z37AtwVlitx1YkuGqx3ndPj3k9+cB/FgA9gcb6RzuRDy5RpfYjVfg7lGG
+   1l/7ykaSVmoR8ySThBlEtoYRklC+hsm4t/OhwQBwoeWr4hwXFXSFvvjJj
+   iD4baZojPwlhOe0FTR+XlLJL7msiu9+a7qA0SeT99T6ZRQPALCQDlMEmh
+   Q==;
+X-CSE-ConnectionGUID: qU8ep5+4Tn+tsk2k/oMbLA==
+X-CSE-MsgGUID: q5dZcY8VTXyJbvZ2+bdEdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38295365"
 X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="38295355"
+   d="scan'208";a="38295365"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 11:35:40 -0700
-X-CSE-ConnectionGUID: m3qTCs16TxumPMmgGt5IFQ==
-X-CSE-MsgGUID: wQYexEUqQ5+vLU9t7EOaLQ==
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 11:35:42 -0700
+X-CSE-ConnectionGUID: 1sJW7vDLTn64kfNX0ZMYPg==
+X-CSE-MsgGUID: k5K8oGCjTxiFbh0EcnRngQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="80530917"
+   d="scan'208";a="80530929"
 Received: from ldmartin-desk2.corp.intel.com (HELO ldmartin-desk2.intel.com) ([10.125.110.138])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 11:35:39 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 11:35:40 -0700
 From: Lucas De Marchi <lucas.demarchi@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org,
@@ -67,9 +67,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Ian Rogers <irogers@google.com>,
 	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
 	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: [PATCH 3/5] perf: Add pmu get/put
-Date: Tue,  8 Oct 2024 13:34:59 -0500
-Message-ID: <20241008183501.1354695-4-lucas.demarchi@intel.com>
+Subject: [PATCH 4/5] perf/dummy_pmu: Tie pmu to device lifecycle
+Date: Tue,  8 Oct 2024 13:35:00 -0500
+Message-ID: <20241008183501.1354695-5-lucas.demarchi@intel.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241008183501.1354695-1-lucas.demarchi@intel.com>
 References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
@@ -81,182 +81,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If a pmu is unregistered while there's an active event, perf will still
-access the pmu via event->pmu, even after the event is destroyed. This
-makes it difficult for drivers like i915 that can be unbound from the
-HW.
-
-	BUG: KASAN: use-after-free in exclusive_event_destroy+0xd8/0xf0
-	Read of size 4 at addr ffff88816e2bb63c by task perf/7748
-
-i915 tries to cope with it by installing a event->destroy, but that is
-not sufficient: if pmu is released by the driver, it will still crash
-since event->pmu is still used.
-
-Moreover, even with that use-after-free fixed by adjusting the order in
-_free_event() or delaying the free by the driver, kernel still oops when
-closing the event fd related to a unregistered pmu: the percpu variables
-allocated on perf_pmu_register() would already be released. One such
-crash is:
-
-	BUG: KASAN: user-memory-access in _raw_spin_lock_irqsave+0x88/0x100
-	Write of size 4 at addr 00000000ffffffff by task perf/727
-
-	CPU: 0 UID: 0 PID: 727 Comm: perf Not tainted 6.12.0-rc1-DEMARCHI-dxnf+ #9
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS unknown 2/2/2022
-	Call Trace:
-	 <TASK>
-	 dump_stack_lvl+0x5f/0x90
-	 print_report+0x4d3/0x50a
-	 ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-	 ? kasan_addr_to_slab+0xd/0xb0
-	 kasan_report+0xe2/0x170
-	 ? _raw_spin_lock_irqsave+0x88/0x100
-	 ? _raw_spin_lock_irqsave+0x88/0x100
-	 kasan_check_range+0x125/0x230
-	 __kasan_check_write+0x14/0x30
-	 _raw_spin_lock_irqsave+0x88/0x100
-	 ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-	 _atomic_dec_and_raw_lock_irqsave+0x89/0x110
-	 ? __kasan_check_write+0x14/0x30
-	 put_pmu_ctx+0x98/0x330
-
-The fix here is to provide a set of get/put hooks that drivers can
-implement to piggy back the perf's pmu lifecycle to the driver's
-instance lifecycle.  With this, perf_pmu_unregister() can be called by
-the driver, which is then responsible for freeing the resources.
+Allow to unregister the PMU from perf with active events. When driver is
+being accessed perf keeps a reference that when released triggers the
+device cleanup.
 
 Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 ---
- include/linux/perf_event.h | 12 ++++++++++++
- kernel/events/core.c       | 37 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 44 insertions(+), 5 deletions(-)
+ kernel/events/dummy_pmu.c | 56 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 41 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index fb908843f209..d6983dbf5a45 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -561,6 +561,17 @@ struct pmu {
- 	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
- 	 */
- 	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
-+
-+	/*
-+	 * Optional: get a reference. Typically needed by PMUs that are bound to a device
-+	 * that can be hotplugged, either physically or through sysfs' bind/unbind. When provided,
-+	 * pmu::put() is mandatory and it's driver responsibility to call perf_pmu_free() when
-+	 * resources can be released.
-+	 */
-+	struct pmu *(*get)		(struct pmu *pmu);
-+
-+	/* Optional: put a reference. See pmu::get() */
-+	 void (*put)			(struct pmu *pmu);
- };
- 
- enum perf_addr_filter_action_t {
-@@ -1104,6 +1115,7 @@ extern void perf_event_itrace_started(struct perf_event *event);
- 
- extern int perf_pmu_register(struct pmu *pmu, const char *name, int type);
- extern void perf_pmu_unregister(struct pmu *pmu);
-+extern void perf_pmu_free(struct pmu *pmu);
- 
- extern void __perf_event_task_sched_in(struct task_struct *prev,
- 				       struct task_struct *task);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 6395dbf67671..bf5b8fc8979e 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5319,8 +5319,24 @@ static void perf_pending_task_sync(struct perf_event *event)
- 	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
+diff --git a/kernel/events/dummy_pmu.c b/kernel/events/dummy_pmu.c
+index cdba3a831e4a..c07e111bff01 100644
+--- a/kernel/events/dummy_pmu.c
++++ b/kernel/events/dummy_pmu.c
+@@ -49,6 +49,11 @@ static struct dummy_device *pmu_to_device(struct dummy_pmu *pmu)
+ 	return container_of(pmu, struct dummy_device, pmu);
  }
  
-+static void pmu_module_put(struct pmu **ppmu)
++static struct dummy_pmu *pmu_to_dummy(struct pmu *pmu)
 +{
-+	struct pmu *pmu = *ppmu;
-+	struct module *module = pmu->module;
-+
-+	if (pmu->put)
-+		pmu->put(pmu);
-+
-+	module_put(module);
-+
-+	/* Can't touch pmu anymore/ */
-+	*ppmu = NULL;
++	return container_of(pmu, struct dummy_pmu, base);
 +}
 +
- static void _free_event(struct perf_event *event)
+ static ssize_t dummy_pmu_events_sysfs_show(struct device *dev,
+ 					   struct device_attribute *attr,
+ 					   char *page)
+@@ -92,18 +97,9 @@ static const struct attribute_group *attr_groups[] = {
+ 	NULL,
+ };
+ 
+-static void dummy_pmu_event_destroy(struct perf_event *event)
+-{
+-	struct dummy_pmu *pmu = event_to_pmu(event);
+-	struct dummy_device *d = pmu_to_device(pmu);
+-
+-	kref_put(&d->refcount, device_release);
+-}
+-
+ static int dummy_pmu_event_init(struct perf_event *event)
  {
-+	struct module *module;
-+
- 	irq_work_sync(&event->pending_irq);
- 	irq_work_sync(&event->pending_disable_irq);
- 	perf_pending_task_sync(event);
-@@ -5374,7 +5390,8 @@ static void _free_event(struct perf_event *event)
- 		put_ctx(event->ctx);
+ 	struct dummy_pmu *pmu = event_to_pmu(event);
+-	struct dummy_device *d = pmu_to_device(pmu);
  
- 	exclusive_event_destroy(event);
--	module_put(event->pmu->module);
-+
-+	pmu_module_put(&event->pmu);
+ 	if (!pmu->registered)
+ 		return -ENODEV;
+@@ -121,10 +117,6 @@ static int dummy_pmu_event_init(struct perf_event *event)
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
  
- 	call_rcu(&event->rcu_head, free_event_rcu);
- }
-@@ -11512,10 +11529,12 @@ static int perf_event_idx_default(struct perf_event *event)
+-	/* Event keeps a ref to maintain PMU allocated, even if it's unregistered */
+-	kref_get(&d->refcount);
+-	event->destroy = dummy_pmu_event_destroy;
+-
  	return 0;
  }
  
--static void free_pmu_context(struct pmu *pmu)
-+void perf_pmu_free(struct pmu *pmu)
+@@ -195,10 +187,29 @@ static void dummy_pmu_event_del(struct perf_event *event, int flags)
+ 	dummy_pmu_event_stop(event, PERF_EF_UPDATE);
+ }
+ 
++static struct pmu *dummy_pmu_get(struct pmu *pmu)
++{
++	struct dummy_device *d = pmu_to_device(pmu_to_dummy(pmu));
++
++	kref_get(&d->refcount);
++
++	return pmu;
++}
++
++static void dummy_pmu_put(struct pmu *pmu)
++{
++	struct dummy_device *d = pmu_to_device(pmu_to_dummy(pmu));
++
++	kref_put(&d->refcount, device_release);
++}
++
+ static int device_init(struct dummy_device *d)
  {
- 	free_percpu(pmu->cpu_pmu_context);
-+	free_percpu(pmu->pmu_disable_count);
- }
-+EXPORT_SYMBOL_GPL(perf_pmu_free);
+ 	int ret;
  
- /*
-  * Let userspace know that this PMU supports address range filtering:
-@@ -11749,6 +11768,11 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 		goto free_pdc;
- 	}
- 
-+	if (WARN_ONCE((!!pmu->get) ^ (!!pmu->put), "Can not register a pmu with only get or put defined.\n")) {
-+		ret = -EINVAL;
-+		goto free_pdc;
-+	}
++	if (WARN_ONCE(d->pmu.name, "Cannot re-register pmu.\n"))
++		return -EINVAL;
 +
- 	pmu->name = name;
+ 	d->pmu.base = (struct pmu){
+ 		.attr_groups	= attr_groups,
+ 		.module		= THIS_MODULE,
+@@ -209,6 +220,8 @@ static int device_init(struct dummy_device *d)
+ 		.start		= dummy_pmu_event_start,
+ 		.stop		= dummy_pmu_event_stop,
+ 		.read		= dummy_pmu_event_read,
++		.get		= dummy_pmu_get,
++		.put		= dummy_pmu_put,
+ 	};
  
- 	if (type >= 0)
-@@ -11855,8 +11879,8 @@ void perf_pmu_unregister(struct pmu *pmu)
+ 	d->pmu.name = kasprintf(GFP_KERNEL, "dummy_pmu_%u", d->instance);
+@@ -217,12 +230,22 @@ static int device_init(struct dummy_device *d)
  
- 	mutex_unlock(&pmus_lock);
- 
--	free_percpu(pmu->pmu_disable_count);
--	free_pmu_context(pmu);
-+	if (!pmu->put)
-+		perf_pmu_free(pmu);
- }
- EXPORT_SYMBOL_GPL(perf_pmu_unregister);
- 
-@@ -11890,6 +11914,9 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 		BUG_ON(!ctx);
- 	}
- 
-+	if (pmu->get)
-+		pmu->get(pmu);
-+
- 	event->pmu = pmu;
- 	ret = pmu->event_init(event);
- 
-@@ -11926,7 +11953,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 	}
- 
+ 	ret = perf_pmu_register(&d->pmu.base, d->pmu.name, -1);
  	if (ret)
--		module_put(pmu->module);
-+		pmu_module_put(&pmu);
+-		return ret;
++		goto fail;
  
- 	return ret;
+ 	d->pmu.registered = true;
+ 	pr_info("Device registered: %s\n", d->pmu.name);
+ 
+ 	return 0;
++
++fail:
++	/*
++	 * See device_release: if name is non-NULL, dummy_pmu was registered
++	 * with perf and needs cleanup
++	 */
++	kfree(d->pmu.name);
++	d->pmu.name = NULL;
++
++	return ret;
  }
+ 
+ static void device_exit(struct dummy_device *d)
+@@ -237,7 +260,10 @@ static void device_release(struct kref *ref)
+ {
+ 	struct dummy_device *d = container_of(ref, struct dummy_device, refcount);
+ 
+-	kfree(d->pmu.name);
++	if (d->pmu.name) {
++		perf_pmu_free(&d->pmu.base);
++		kfree(d->pmu.name);
++	}
+ 	kfree(d);
+ }
+ 
 -- 
 2.46.2
 
