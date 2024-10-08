@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-355416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB399951F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:38:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C62B9951E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1581C21ED0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D30283986
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053851E0B7E;
-	Tue,  8 Oct 2024 14:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4341E00A2;
+	Tue,  8 Oct 2024 14:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O7pvYWal"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmUog/XW"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0B51E0B67
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33BA1DFE17;
+	Tue,  8 Oct 2024 14:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728398205; cv=none; b=DjZsV2vP98js+vYL9rHQvOrXinQItgocFGAjV4vVlkfIbKsx5Q1GMLSSpu+8i1xDaIf3l7V+LeumYhbIiy2HG4nF9O6qvgYiOOv24Ek5x+rgpi0PP8ipPOG8zJj8OurBkwtfrrgmcH8ORn2ybIgZEASUlow/oljeM9OPRGUb3Fo=
+	t=1728398179; cv=none; b=nWL4YamAYOBUMnVel+vkt2OycmsrM6gfmDlH2MbpFl2FLspuMV3NuJE2XJdkQ7LtK5GSI7sjcBMsOtRY7gvHqtU/sjKqiBg5Wa4yVKd+HnzoP3qvqklI3ixi0GqDU70YSG9JLtSPUlWxetsufsAFYWbnMEfhRPqmLnOXOLScy1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728398205; c=relaxed/simple;
-	bh=eiBVahTw3pcHmt4RBSpt/Ftosqh8bsjEAx9y76i535g=;
+	s=arc-20240116; t=1728398179; c=relaxed/simple;
+	bh=gxxx5O9eecv163qWQ61f/5In0s1MkC0h2hYsYBgpd4o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JCHo4cmGt+9vDKu5EmoUIY2QsR0XQD/2z2qb0vRFbZgZpAYpoKs3kyy+CDmdSpXMsjL7Nh0OUMvnljqTkG337Qx+9o5iqppsXVH3pTqBgsNXaT1O7GzD51579cGR7WjBd+y+ZJ3BV3aMkalwzeNCuYKPTrcjrQ685PrVq7wyBgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O7pvYWal; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e25cc9c93a9so5289473276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:36:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=S/zO1Y80mmqXqTMlScSxEJVGhXux7CI3+0h3l1ITSR0pAxNutZWEtYPlD1L1ILqXY4Obv1k3kDD/b0fs47HVIWiJ+KR5gxwzJvwngpKZV88XMLkADWzqKt4dbEa4UHxZDAO+MsCJysGykz8ZvJ6j3ZtlKUC9Gu0oF4qBFkqm5KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmUog/XW; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5398df2c871so6110679e87.1;
+        Tue, 08 Oct 2024 07:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728398203; x=1729003003; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNZzKdQArnf8YLwkRp6tlekOryWYH/w6bCKp6uUyEzA=;
-        b=O7pvYWal1CQuQPyMAlI9M5wjRm5JpV8qaGz/lzrwimGIvOjOqNbURh/flZ1I2Gnur+
-         nCF7RtdhvxgZWXeBsv79k8vax4TvhJaPkjVMFkChzamdn1aoEcis74x3RnXALYYMbPMD
-         zJ8FQZDApzgfoLB2zmowj23o6gSu6zg7KwwlSWpk6w/P0E0rhUIFIlg+wcwJehk33Dxt
-         VwBs8kKOQ8vfcelQl/BKdCJ8nGrGBVv1AeEBJs/nrf6c4eUUQh/zq78Gi2n7M8LJvIA4
-         7uUOCn5+o5pY2u4DNFjLcfBTW7WgnjSGp1qZxqBXMdf7BdbKFVDp+x1xQVQdTVuWjKBx
-         ahjA==
+        d=gmail.com; s=20230601; t=1728398176; x=1729002976; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RAzASSCUQ2aUVsiLqBLU+OR2T2BBF/GKBA/6/Hrht2Y=;
+        b=nmUog/XWxHE98vP1aRBWOdqqiTdra1AWS575jFpoHyM53Y6e7zQN/FcquPeBMs14bf
+         aPuy8kgYFX4JqI1OEv6cuEYAJkv41Tv58BA3MLW378DfwBfALhXp0zSiXBDrK6w7hoW3
+         SG9RMRTkD8IVJ42W+dtP+a6tAMQEg1rJYKi/saiMrSfX5FJsZrQrmOEKrYBQV59PGzpI
+         IgXkUWLLJ3LOEIu4wlQNrUJEkpUiZ7oLKlMCMO5E3EhblLMHa1t47qP28WXxD19DHR4I
+         rTKc3hWJ5y8llNFRd5BhofZh2BWz/9wUnCLGFOznXC6rfN+BioUMPiQDaJZ7Ke4/hRW4
+         NwVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728398203; x=1729003003;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WNZzKdQArnf8YLwkRp6tlekOryWYH/w6bCKp6uUyEzA=;
-        b=WOCD9bq9I3xyrWvz5BP1Kap5V8VQHJTS0uSnbgEFpUBCciIxo3GU8zuOAAqSyKcuOb
-         Nc8XqDSt6qNK/xLfeQ+T4XaI6mMCqp3YucA8IHI8GNyfrlRkCqipSdko4KfZPI4I16UU
-         Sfj1e1C4paH4PYDcKzHorxXRJJJZYb0MG7dQusr+CJ0SpBANGr5vSgIalp2XZy68hYW3
-         lLLHBP+Q2YYzNRBL8zg220BLAe7zhDCcfQsEDx3k2HKxDvDs1BXl5Sn2jNf3KVV+TiJJ
-         G+41G8hCn8CemxCEPgYABWsptwDw+GYptXleQdmUMlL0BjLck2+lJhzHchwK1jN+RcNi
-         97Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1HPQpv7mcH9jZTerNk74EvOkBVQuo49uMRLssfUsRq4D+D1L/GMxVMU+FyRqH8PPD7xGMFt2H+nFJv4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTD2WB7zZlIRdhxXKseY3Y224eY6v5YfgpmfcpwkIGJdqmI3B4
-	Y3mI2FdDpnUyEk5TSru3CufNnRgBgyYboPBYKzNw5L8+k7n7LjnepsRIrGIceOdWMyXA54LY7cx
-	9niKx0OyiD0iVYJ+L1a+ZN4ajvUQndnRw2dLyqA==
-X-Google-Smtp-Source: AGHT+IGpk0fkikZLIUB8Xv1LRK1/jbL/DWVujOUGdacoTm8NQ+nTWOMi8y8fhtWL/4PN4fQZf2hYlGAC3o0z4YwCACg=
-X-Received: by 2002:a05:6902:a86:b0:e28:eee6:1cf with SMTP id
- 3f1490d57ef6-e28eee60288mr1785573276.48.1728398203049; Tue, 08 Oct 2024
- 07:36:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728398176; x=1729002976;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RAzASSCUQ2aUVsiLqBLU+OR2T2BBF/GKBA/6/Hrht2Y=;
+        b=cYrnuD6RbOItIqsgKi4Co2aWslD+EwsN3jUQhNiAtOp6qvExTX6N9+ftVK+/AZGwiH
+         JxTsDcZhuTt+TMDo2KtZsyRGE6t6Bto6S4ayh9f47KEolDx1AVBt2hYdXjWNsFGdVY8G
+         +6HtqRc7CWHDRV6iq1c0e+aLo/dS3rthVgz3OLWpP0xe3ME93FK+H67o0MNpAIqiQ2mP
+         3EY3L+6H9cWtEnM4/hw3HSRIBRgXupPWhFZhnEBgzymHGSDH5MxhWC8ByX3HiUEKa0/4
+         BPEu3CoBjRl3COPCGOinc3kVND830H7LjlrvpDM/jCSBPiG1GXFF9v6aduIhwNK6R6mR
+         jjvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJtH3awfDZ/nC626VnAxYOHkTfVIoH3kIfaoPqDVOK+deP8D57oWriGhIVI7f1VE1Nc88=@vger.kernel.org, AJvYcCUbgGK+kyLacPBfXwZh6DEUgiTVHXLqk+aXtuYMPOhFH+/s+wGhu0dOB7i0wxyaju3rnxRqg/5J97wWBAJ+OeU=@vger.kernel.org, AJvYcCV2rCp5g1JppC/inIrPY76DYPlOaZ2xdBwksr4sgPt/Jd/MlJKupA6Ss8yv/s7PmIv0dqsyysSJTTA=@vger.kernel.org, AJvYcCV9IJ38l6X5LroDzXttFFINdkD3yzgOGnA1lfHoX1xiWG07l8nircOfoo/CsvDyIKP8qCEoSAbLz9hRx0Fi@vger.kernel.org, AJvYcCVWn6u/U1hLaeP8nOPLa/UO6ryUAre4UzB1KTNdeCyAeBTsUrbB955DjqJ/0egzzQSkzPZFeRObE6bh@vger.kernel.org, AJvYcCVZr08z2eEiFB9qZZQPQKg8EQQs1YfSFER4TatCiaj9fipOsjvktYDR35dyW9iYDSkA8vsM9JAdwBB0i5AJ@vger.kernel.org, AJvYcCVzdyFAcpZ+cokUng73bgS8Mm6UjHR1k2FuWrlvxUoysZiXou+QER3OJJFz/rCqDionXvoGGH39/cyMTa34HNMNVA==@vger.kernel.org, AJvYcCW2ura4tB0AkWNuocgWJ/GET8txWB1PrLflKqFDMyIXRUY+r7qInkWU7DBBDWFKZ3mASs4deA9mHlQuCU4b@vger.kernel.org, AJvYcCXOwPz5SHzaAEeTdRy4S8wp0rdekZ+too4VPiu6TVIcNiu1UZgMWkMEqQIw9/6EEkH6qPERZIuOt1AOmQ==@vger.kernel.org, AJvYcCXRdDe3dubXYb9lSLHe
+ HJulIH3EjKyZ63P0AScc+aR+KbyToGrF5T8LxAHKUceMsS0bCo0zyrlwIn5B@vger.kernel.org
+X-Gm-Message-State: AOJu0YzliAqJ64I6yuE+5ZCA/YTG3cGnD2sjQRftKzH5Y0Ebmv6K1Sl/
+	C4xahBG5gp7Vs51HXDV0eE5S8WzB4cq5Df6LvATxzE6KbikHc3Na75TCB4u8MbFmIeHdl+CRyiR
+	6oNV9T++a/Dw7Kxvp+mbzH/8JrA==
+X-Google-Smtp-Source: AGHT+IFk7uSGpMKxSJMgul6omDcmQyMQl5Zy1l8C5NVTbpCgjnnjxrxdxyhpPaT355keXYtQRCu422aiN8olYIcP4XU=
+X-Received: by 2002:a05:6512:3085:b0:539:8a9a:4e56 with SMTP id
+ 2adb3069b0e04-539ab8c6fb8mr8574397e87.53.1728398175714; Tue, 08 Oct 2024
+ 07:36:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com> <20240930095449.1813195-12-pierre-henry.moussay@microchip.com>
-In-Reply-To: <20240930095449.1813195-12-pierre-henry.moussay@microchip.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Oct 2024 16:36:00 +0200
-Message-ID: <CAPDyKFquF3nj3BxRqc418xC9_fFasHipDePdXsSBFLJwrO-UKQ@mail.gmail.com>
-Subject: Re: [linux][PATCH v2 11/20] dt-bindings: mmc: cdns: document
- Microchip PIC64GX MMC/SDHCI controller
-To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240925150059.3955569-30-ardb+git@google.com>
+ <20240925150059.3955569-35-ardb+git@google.com> <CAFULd4ZNwfPZO-yDjrtT2ANV509HeeYgR80b9AFachaVW5zqrg@mail.gmail.com>
+ <CAMzpN2j4uj=mhdi7QHaA7y_NLtaHuRpnit38quK6RjvxdUYQew@mail.gmail.com> <CAMj1kXF3_Hj9j2f_cBtwTFWvEmB0UoEs_cGkRiWc4AErDx0ftQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXF3_Hj9j2f_cBtwTFWvEmB0UoEs_cGkRiWc4AErDx0ftQ@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Tue, 8 Oct 2024 10:36:03 -0400
+Message-ID: <CAMzpN2jWRV8-JzM2FjSvSz+VoDrNVeEJPgF7N5ksLaADHpnHsA@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/28] x86: Define the stack protector guard symbol explicitly
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 30 Sept 2024 at 11:55, <pierre-henry.moussay@microchip.com> wrote:
+On Fri, Oct 4, 2024 at 9:15=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wro=
+te:
 >
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> On Sat, 28 Sept 2024 at 15:41, Brian Gerst <brgerst@gmail.com> wrote:
+> >
+> > On Wed, Sep 25, 2024 at 2:33=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com>=
+ wrote:
+> > >
+> > > On Wed, Sep 25, 2024 at 5:02=E2=80=AFPM Ard Biesheuvel <ardb+git@goog=
+le.com> wrote:
+> > > >
+> > > > From: Ard Biesheuvel <ardb@kernel.org>
+> > > >
+> > > > Specify the guard symbol for the stack cookie explicitly, rather th=
+an
+> > > > positioning it exactly 40 bytes into the per-CPU area. Doing so rem=
+oves
+> > > > the need for the per-CPU region to be absolute rather than relative=
+ to
+> > > > the placement of the per-CPU template region in the kernel image, a=
+nd
+> > > > this allows the special handling for absolute per-CPU symbols to be
+> > > > removed entirely.
+> > > >
+> > > > This is a worthwhile cleanup in itself, but it is also a prerequisi=
+te
+> > > > for PIE codegen and PIE linking, which can replace our bespoke and
+> > > > rather clunky runtime relocation handling.
+> > >
+> > > I would like to point out a series that converted the stack protector
+> > > guard symbol to a normal percpu variable [1], so there was no need to
+> > > assume anything about the location of the guard symbol.
+> > >
+> > > [1] "[PATCH v4 00/16] x86-64: Stack protector and percpu improvements=
+"
+> > > https://lore.kernel.org/lkml/20240322165233.71698-1-brgerst@gmail.com=
+/
+> > >
+> > > Uros.
+> >
+> > I plan on resubmitting that series sometime after the 6.12 merge
+> > window closes.  As I recall from the last version, it was decided to
+> > wait until after the next LTS release to raise the minimum GCC version
+> > to 8.1 and avoid the need to be compatible with the old stack
+> > protector layout.
+> >
 >
-> PIC64GX is compatible with cdns,sd4hc without any additional feature
+> Hi Brian,
 >
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> I'd be more than happy to compare notes on that - I wasn't aware of
+> your intentions here, or I would have reached out before sending this
+> RFC.
+>
+> There are two things that you would need to address for Clang support
+> to work correctly:
+> - the workaround I cc'ed you on the other day [0],
+> - a workaround for the module loader so it tolerates the GOTPCRELX
+> relocations that Clang emits [1]
+>
+>
+>
+> [0] https://lore.kernel.org/all/20241002092534.3163838-2-ardb+git@google.=
+com/
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/commit=
+/?id=3Da18121aabbdd
 
-Applied for next, thanks!
+The first patch should be applied independently as a bug fix, since it
+already affects the 32-bit build with clang.
 
-Kind regards
-Uffe
+I don't have an environment with an older clang compiler to test the
+second patch, but I'll assume it will be necessary.  I did run into an
+issue with the GOTPCRELX relocations before [1], but I thought it was
+just an objtool issue and didn't do more testing to know if modules
+were broken or not.
 
+Brian Gerst
 
-> ---
->  Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
-> index 6c40611405a0..ee3a838f7f06 100644
-> --- a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
-> @@ -15,6 +15,7 @@ properties:
->        - enum:
->            - amd,pensando-elba-sd4hc
->            - microchip,mpfs-sd4hc
-> +          - microchip,pic64gx-sd4hc
->            - socionext,uniphier-sd4hc
->        - const: cdns,sd4hc
->
-> --
-> 2.30.2
->
+[1] https://lore.kernel.org/all/20231026160100.195099-6-brgerst@gmail.com/
 
