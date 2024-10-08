@@ -1,102 +1,87 @@
-Return-Path: <linux-kernel+bounces-356035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D07995B43
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027D0995B4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45512B20D3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF901F24202
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7FC216446;
-	Tue,  8 Oct 2024 23:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F335215F47;
+	Tue,  8 Oct 2024 23:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="YQLOBc51"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kATOozmZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF71E00A9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4F1D0F44
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728428447; cv=none; b=KCakhgD1iteL9glRihg3yO1j8+vJ899B9YMFYNpjW7errtRhdjL4UR7MXzhyNpLRpSIU7U6VDX4lk2kVpUcIMlaH0S5O0QlmImY3q7jOWO0xJfTyD1NoMjNJcBnrqTk9xJY2eI/4RH/G9TptDbWxqMqkrOOX0VN12Q49npofJ3I=
+	t=1728428617; cv=none; b=efBjiSQnKPqaZ3+2BXM6ilFfpF1SV7jkH/SgLUZnkLPdvsKbl+3GFKqazd82hhTDNgG0lqKaKTc/nQjX3qR4g4+c6feByQpC/jbIJQixwkFMSBYJkMde8BDbu6bxgTE8glDVpApSiCQJU/n4/BszC/2F299U0ZuK6YimY7yvsp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728428447; c=relaxed/simple;
-	bh=Cv9bt1/ACmXKfPrd1pnpAyP9ihknxRE9I28Y+VS6+30=;
+	s=arc-20240116; t=1728428617; c=relaxed/simple;
+	bh=5hvxAlPWX0LyqgToI+agMcWwCHEqYCMYgWeLZB2yhfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PP6luUBnuec47HPcPmkafgS2YJ3bjphPvlWeLJnY1EBlZ0MsKiEQkb0COH1EnP6qGPSwUKa/ODRTeH4xIcbi4ElfxMH2Z9MZiXBQu3/5FPUhVNtO9XpHN7AacvdruHkrfpao6zeUb0v5P+UV4xKULiKV513/jMVod/HFszliI64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=YQLOBc51; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e9fd82f1a5so2183221a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 16:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728428445; x=1729033245; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ggxo0hJfdXuejdLNmnLqT0CDSeWl04Q3c4Lz2CofDmo=;
-        b=YQLOBc51BrDsa1a5zeZzhXbRKGZ5irqLhOgdc/hmUd9w5d7iIka5OT42Ufj12XGNQn
-         w14jV71B1hEqQEZ2uKff7lRNYe4iYHoAygRifNLxhf+aQgcD9BrnFOhCIF2BvZ/X0ir8
-         9kmzHqn6McUQy+o4m10Sg0iQshAnDFVOyNv6w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728428445; x=1729033245;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ggxo0hJfdXuejdLNmnLqT0CDSeWl04Q3c4Lz2CofDmo=;
-        b=wqFRewowWpCZl3E85EF+GPe7S6aY6XuerafrCo7JSZrYEQ2HZn2hdf3d7nmfzX6JjE
-         jH9a/ZQ/gyvKcHRftrvnj11WgNKJwU4Lwuon9/vi5uoMLTZIx8/2cg2R14NCTPWTZyk7
-         DvBRgUzaRUTN/43FXjs+NGXoU73yDnC3VJIAglbISKZYYi4A/N+nLVWvc7b8NZQYhYmx
-         Evz3J7F5+Jw1+GwIaObovldKs8aRv98Xsvy52WU92PIO9zxMxe4DWnB22SLt05fqpQKr
-         0Qq5ijXe51G0OjZV+vKBjPURz1DsxMJ56rFzY6SVv4WT4ywz4Gvptk4Gww6NWp22N/B9
-         Toyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+MdkqiFros6Kxjas+MPOK94cCIBsN+0N/O3XNsaGuB0bUJp+q0mGDoP2ITM1K4jVBPk3fmOE3XfaM4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg6+e1w/CxZ1uyAY+oYFP2XWht/pbv24quciNyi7U3bjGCn/Y7
-	4RaeGU0590BQbHb3winiV/8iWLSS0DIw+s2PeN+24uFoiUja6e0VStZzC4hCuhQ=
-X-Google-Smtp-Source: AGHT+IGtCrR4i+f9TZK+BjFld4tVhwASIHDB0qyCNXIxMvlRm4zwHXJPO5kJdqKf8BskWqoStbzm9w==
-X-Received: by 2002:a17:90a:eb18:b0:2e2:9de2:8563 with SMTP id 98e67ed59e1d1-2e2a253be6amr559916a91.32.1728428445240;
-        Tue, 08 Oct 2024 16:00:45 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a571fe8asm128302a91.34.2024.10.08.16.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 16:00:44 -0700 (PDT)
-Date: Tue, 8 Oct 2024 16:00:41 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v4 6/9] netdev-genl: Support setting per-NAPI
- config values
-Message-ID: <ZwW5md5SlrxBeVCN@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20241001235302.57609-1-jdamato@fastly.com>
- <20241001235302.57609-7-jdamato@fastly.com>
- <ZwV3_3K_ID1Va6rT@LQ3V64L9R2>
- <20241008151934.58f124f1@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=COhe44qbpXDfkY9B2c0c9qD5lP2UnBOUb7O8SwmnZg81e6pKApfRFm7y+kjWSiz9JVtIkzY9PARrL9mNt4/L8iw6TeWP6tgW3qU4IS8AL6W+vTyaROmCeXekMiqS8aczr1K+ey032cf0lVfhyJ0nGwqwr0IKDcab+DKog+41838=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kATOozmZ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728428616; x=1759964616;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5hvxAlPWX0LyqgToI+agMcWwCHEqYCMYgWeLZB2yhfk=;
+  b=kATOozmZzavrmJ8xAzbqDy2qVeVvWaqF3ixV5qJRB/Om1fLDp2u6UP63
+   ISJ8BqK2gpQ+ZjsyM8iTBiILCoKicQhqEf9GrecU3PDfNUPW3FSVETHb9
+   VsYMMZgHgSm1F9SYChPRz7jaL8fASP4g2lWeciuz3Ul4Mtyth0gBrzAIY
+   Y35xgxs+Zdb0TzFzmJPy+Y2uqHzOAfzJRus6EDop6DofWiyQem6cvfSfZ
+   lnz77Cvjhc9bvf+7nywmMpAnE7ZoKzXdrjuXnO+LmfCPzJuYNmF5J4mup
+   hutfuppOtG83v2jaxdfv8y3MuQtys5ubKlNEfvZl2rpzP8AMcjNiSCvl3
+   Q==;
+X-CSE-ConnectionGUID: aKZkL00kRna0A0DO/WmcOQ==
+X-CSE-MsgGUID: XnMyIzVLQ0KCa4TubqLWrw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="53090136"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="53090136"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:03:35 -0700
+X-CSE-ConnectionGUID: JttidmRFQFexSFY7Kms96Q==
+X-CSE-MsgGUID: K/OPJ4aMRwaZy1nerDvmAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="106860738"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:03:35 -0700
+Date: Tue, 8 Oct 2024 16:03:33 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Subject: Re: [PATCH v5 38/40] fs/resctrl: Add boiler plate for external
+ resctrl code
+Message-ID: <ZwW6RbkNIml07hbg@agluck-desk3.sc.intel.com>
+References: <20241004180347.19985-1-james.morse@arm.com>
+ <20241004180347.19985-39-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,45 +90,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008151934.58f124f1@kernel.org>
+In-Reply-To: <20241004180347.19985-39-james.morse@arm.com>
 
-On Tue, Oct 08, 2024 at 03:19:34PM -0700, Jakub Kicinski wrote:
-> On Tue, 8 Oct 2024 11:20:47 -0700 Joe Damato wrote:
-> > Noticed this while re-reading the code; planning on changing this
-> > from NLA_S32 to NLA_U32 for v5.
+On Fri, Oct 04, 2024 at 06:03:45PM +0000, James Morse wrote:
+> Add Makefile and Kconfig for fs/resctrl. Add ARCH_HAS_CPU_RESCTRL
+> for the common parts of the resctrl interface and make X86_CPU_RESCTRL
+> select this.
 > 
-> Make sure you edit the spec, not the output. Looks like there may be 
-> a problem here (napi-id vs id in the attributes).
+> Adding an include of asm/resctrl.h to linux/resctrl.h allows the
+> /fs/resctrl files to switch over to using this header instead.
 
-I'm not sure I follow this part, sorry if I'm just missing something
-here.
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 4b7e370e71ac..973fddf7e9a3 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -7,10 +7,9 @@
+>  #include <linux/kernfs.h>
+>  #include <linux/fs_context.h>
+>  #include <linux/jump_label.h>
+> +#include <linux/resctrl.h>
+>  #include <linux/tick.h>
 
-I was referring to NETDEV_A_NAPI_DEFER_HARD_IRQS which in RFCv4 is
-listed as NLA_S32 (in this patch):
+internal.h already has a #include of <linux/resctrl.h> it doesn't need
+another one.
 
-static const struct nla_policy netdev_napi_set_nl_policy[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT + 1] = {
-     [NETDEV_A_NAPI_ID] = { .type = NLA_U32, },
-     [NETDEV_A_NAPI_DEFER_HARD_IRQS] = { .type = NLA_S32 },
-
-However, in the yaml spec (patch 2/9):
-
-+      -
-+        name: defer-hard-irqs
-+        doc: The number of consecutive empty polls before IRQ deferral ends
-+             and hardware IRQs are re-enabled.
-+        type: u32
-+        checks:
-+          max: s32-max
-
-So the type is u32 but with a "checks" to match what happens now in
-sysfs.
-
-That's why I mentioned changing NLA_S32 to NLA_U32.
-
-Am I missing something? Not sure what you meant by "napi-id vs id" ?
-
-> Make sure you run: ./tools/net/ynl/ynl-regen.sh -f
-> and the tree is clean afterwards
-
-OK, will do.
+-Tony
 
