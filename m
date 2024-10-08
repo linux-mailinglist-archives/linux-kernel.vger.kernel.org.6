@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-355548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F699953EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5E09953ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DE7BB26096
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60C61C24B7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADAD1E0B99;
-	Tue,  8 Oct 2024 15:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554751E0B95;
+	Tue,  8 Oct 2024 15:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTC8A38+"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jbKL+uWD"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982021DFE00;
-	Tue,  8 Oct 2024 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9221DFE00;
+	Tue,  8 Oct 2024 15:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403166; cv=none; b=IC4ceXM13DB/et5zL8sKQSZCgjohqintKbLSeugOZnetXq8DYZ3o3jzMR/HC/saZxEkAlczjp+ZcZ8WAS2Omh2dH8LjSggApDLVxoO+nYx3IPgiO39F3hmiu54ofkIPvBt20f85WpVFhVRoAggs8um8MY6aAtiaTSekj85cosMo=
+	t=1728403182; cv=none; b=a6VIEnUu67QjMj/iob/iHzJUZyFGUqVmq3Gpmcu9kt42T4mILfC08M9MeK7mfGa5EE0iK8dEyXVsmxo9iwYbve2Gr1Nv2sGwu5IqJQoOv0u+PcnH7urxQZhwZOp7XingRMa9bD4rtL/q03IEek7HDuRdmUym93KxbFJ0/ckh7Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403166; c=relaxed/simple;
-	bh=6DJwM/LnvjD9C2bnMM/ha1h2dbvHNieWsmvJMPgzlV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PfTIz424MG8aTEc7Z8QHHlXhSjNrPziNcOL4zwAhPVHG7dDcBISjnrtO0BF2b4rl1a5fyR6A48ATUeIidyyOpTeAjouSCcnIgcGJ7DLI23h0J24A0s1N4lo1bJP31+AAlH8Dv6rNkTmC672QbPtjI3R9UEVqTBkp1FXQGIv8WBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTC8A38+; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53997328633so7718819e87.3;
-        Tue, 08 Oct 2024 08:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728403163; x=1729007963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yzYpjetz4XROYOG9r48tBi9Okr5Oaql6hR8lKZwZDY8=;
-        b=gTC8A38+wp92mBFXJJDJikLZuVn26mlARz7xEDnS3WZvuvaNI/7JeG5X2CVoT2xzR9
-         tdee8BEMd578YxbXfblTpFXiZ6K9HMoVEYYA+k9m1THzZ3cpcioUCdY5Qil7gqZQvZ2W
-         9H9+Z6gOBOmGKrJiURlRHb5FQZ9vYlJw8oOjpVjuPWcX1fZcMcOxd08FqVFwaMz7+BSB
-         pLFwIN3jrJGXHQmhySORoGmhOS8WaxVb3Kkb3/S4GPH11nTJ8mTyfhU77/h0vb5XnAMS
-         4ZRVX9GejE76OF6Nsm59Lqh3fntVBqDHZnwNaVLURsRWYRyzKrQK9BP8wNWLkLlsa1nu
-         PGiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728403163; x=1729007963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yzYpjetz4XROYOG9r48tBi9Okr5Oaql6hR8lKZwZDY8=;
-        b=l2s6OXPFeE7bfKS7VlWB4kImg/6o2AbfhZQQdWJSZZTTctXOOoXwpJaBivGi0LUPxt
-         JCZFKrl5m5eANpCrvD5sFsQPmcebTqs3739pjucsmIuDWBdqJT29a3eoNGDB5HMYSeLe
-         eRy8p9cDE9IWKRi+wuAq3KdtiETdAQKI90m9bKEq/sFxWyFzDQ6Aazp+4dwoEolqOYho
-         Ns6bWGioEnw47cZZVjzSufPm5fu0cxgO+wCVKHPWxc0exdNe0fd3C/scJ7Nd7wK0iMWB
-         q2HVn3kgZJG9V+dxU1PYDI1FwKCs1NYxCB9dBCIq6eawr0ffD5cstgCPmqrKXUZZ2LJa
-         8Ubg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdBc2xoJT6C97cQawPpb3EwjhuK0ivUFcuRe02NMMA5h0lp47UKjv7bqgmbR4huTyQ2E79ERHmgDVm@vger.kernel.org, AJvYcCV/X7d9q3hnqW9fPVH6yx+UfinGqQ5l2p+Ts57FwRfc5FOwnwb9wb9wd0rJ4nMj5N8OOlc5j2v+Ff5h@vger.kernel.org, AJvYcCVJFQTpc3x63NYVkmL5bzFEojv21bY4H1R+rfnIEMnG0gC4bR1gy4yWT42rXdQ2U7HgwgRHqMgavSno@vger.kernel.org, AJvYcCWSJ9jn/im1gyBKjyUYDIim752r9qwQB637KJ/IWqmRVGXQcLGamSSdkSdgbKpNwYa7bafU4CcbrjTTeOxY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuwQFsNIkbQ7NZLasY0H4f5DG+RFH7fZ1ejSUOmVWrJWBQXQt5
-	Cbt5nk5QX/cEZeueZz1Q0h57AZ+EB1IQRSUzoXXb0cO+jw7UnWUo7MkIa6dKvecSzMJ3Nqbg/hd
-	BOJo72SGsF9s9G+sGG/ldaWBrtBU=
-X-Google-Smtp-Source: AGHT+IF8PajqB+hvsPzsTQ4JpQY64kIdB3uepGNXxpTbt6Zi8IofIi4esCHWPwV/vDgQcbEfUK5ajoGDuZ4pNFghfp8=
-X-Received: by 2002:a05:6512:b29:b0:530:ab68:25c5 with SMTP id
- 2adb3069b0e04-539ab84e022mr10495835e87.2.1728403162256; Tue, 08 Oct 2024
- 08:59:22 -0700 (PDT)
+	s=arc-20240116; t=1728403182; c=relaxed/simple;
+	bh=dSIwuYhnmxNKFqrxfUY7yxSnMVVqhRf8Z4WOU75Xuz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UhEr1cDGI6FlR4EsEvsKIZiNqJZFqsbaJljoN9yfAhgQqBrZ6e6V01wElLrITOkRIU5CwQ91EzONfL0gg3mTtYM2d6B97Tw5uVAgL+w985Ux/eazOkHo7t8WfUXxNAKfobbrLz5B/tVa8MVfXPF91bdl0yU04sWlVB6yv1rawrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jbKL+uWD; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BksZbOewQMA8NpDRXf1fW7zXP4s6rrlvXiCuKc9WvfA=; b=jbKL+uWDIjOCie5P4hfOCTgZiO
+	SlT2GO0qigTJ/I6DzdwznQaTZNBpUhvuoHr4TZ8YpUNv84DzRbU1q1RAb2x+rEs+svdFkwuqFyyeC
+	jRira2qZjAGdAYV+4fbtlSNPKoM0dU6EEgizr1WcRenGV5n+zHHRKHZ1sKvIbDmOHeR5A0X8hoFvU
+	nIXrV4gBQJI6qbnEYoCH1tfOVnjfeXiVA7l7iw6ZJWO+quBGZ2M5dlKBpctaGLBrYLtPX2UPKjNST
+	a4sMHHCMgkg5GFmF+v5uRFrJMriXQ0uzq0dA+YZrSvxHlAtX792mPNreZPak8mHL64HHdSK7+1kOw
+	5+L0mWdw==;
+Received: from [187.57.199.212] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1syCcT-006cjs-Vz; Tue, 08 Oct 2024 17:59:30 +0200
+Message-ID: <46c259c2-5503-4a63-94ae-96660e5ce0eb@igalia.com>
+Date: Tue, 8 Oct 2024 12:59:24 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004140922.233939-1-antoniu.miclaus@analog.com>
- <20241004140922.233939-6-antoniu.miclaus@analog.com> <CAHp75VeaYBGTA7sN7SefsyMj09kaJLBoMz4=hf0GpxiXtF65+Q@mail.gmail.com>
- <CY4PR03MB3399684E3021A1261DC5195B9B7E2@CY4PR03MB3399.namprd03.prod.outlook.com>
-In-Reply-To: <CY4PR03MB3399684E3021A1261DC5195B9B7E2@CY4PR03MB3399.namprd03.prod.outlook.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 8 Oct 2024 18:58:46 +0300
-Message-ID: <CAHp75Ve1SgiY3dRuET=9icvy7W6kmZukbNcG1B0Le6+qKaB0JQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] iio: adc: ad485x: add ad485x driver
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Sa, Nuno" <Nuno.Sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>, Mike Looijmans <mike.looijmans@topic.nl>, 
-	Marius Cristea <marius.cristea@microchip.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>, 
-	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>, "Bogdan, Dragos" <Dragos.Bogdan@analog.com>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Futex hash_bucket lock can break isolation and cause priority
+ inversion on RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-rt-users <linux-rt-users@vger.kernel.org>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
+References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
+ <98b3dcb0-8b64-45a5-9531-16aeb010c052@igalia.com>
+ <20241008155129.z7ZZVzW3@linutronix.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241008155129.z7ZZVzW3@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 8, 2024 at 2:37=E2=80=AFPM Miclaus, Antoniu
-<Antoniu.Miclaus@analog.com> wrote:
+Em 08/10/2024 12:51, Sebastian Andrzej Siewior escreveu:
+> On 2024-10-08 12:38:11 [-0300], André Almeida wrote:
+>> Em 08/10/2024 12:22, Juri Lelli escreveu:
+>>
+>> [...]
+>>
+>>> Now, of course by making the latency sensitive application tasks use a
+>>> higher priority than anything on housekeeping CPUs we could avoid the
+>>> issue, but the fact that an implicit in-kernel link between otherwise
+>>> unrelated tasks might cause priority inversion is probably not ideal?
+>>> Thus this email.
+>>>
+>>> Does this report make any sense? If it does, has this issue ever been
+>>> reported and possibly discussed? I guess it’s kind of a corner case, but
+>>> I wonder if anybody has suggestions already on how to possibly try to
+>>> tackle it from a kernel perspective.
+>>>
+>>
+>> That's right, unrelated apps can share the same futex bucket, causing those
+>> side effects. The bucket is determined by futex_hash() and then tasks get
+>> the hash bucket lock at futex_q_lock(), and none of those functions have
+>> awareness of priorities.
+> 
+> almost. Since Juri mentioned PREEMPT_RT the hb locks are aware of
+> priorities. So in his case there was a PI boost, the task with the
+> higher priority can grab the hb lock before others may however since the
+> owner is blocked by the NIC thread, it can't make progress.
+> Lifting the priority over the NIC-thread would bring the owner on the
+> CPU in order to drop the hb lock.
+> 
 
-...
+Oh that's right, thanks for pointing it out!
 
-> > > +       bool pn_status[AD485X_MAX_LANES][AD485X_MAX_IODELAY];
-> >
-> > Why bool and not bitmap? I think I already asked this, but I don't
-> > remember what you answered.
->
-> Both ` iio_backend_chan_status` and `ad4851_find_opt` require bool as
-> input parameter.
+>> There's this work from Thomas that aims to solve corner cases like this, by
+>> giving apps the option to instead of using the global hash table, to have
+>> their own allocated wait queue:
+>> https://lore.kernel.org/lkml/20160402095108.894519835@linutronix.de/
+>>
+>> "Collisions on that hash can lead to performance degradation
+>> and on real-time enabled kernels to unbound priority inversions."
+> 
+> This is correct. The problem is also that the hb lock is hashed on
+> several things so if you restart/ reboot you may no longer share the hb
+> lock with the "bad" application.
+> 
+> Now that I think about it, of all things we never tried a per-process
+> (shared by threads) hb-lock which could also be hashed. This would avoid
+> blocking on other applications, your would have to blame your own threads.
+> 
 
-test_bit() and family returns bool. So, what's the issue with that?
+So if every process has it owns hb-lock, every process has their own 
+bucket? It would act just like a linked list then?
 
---=20
-With Best Regards,
-Andy Shevchenko
+>>> Thanks!
+>>> Juri
+> 
+> Sebastian
 
