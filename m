@@ -1,208 +1,146 @@
-Return-Path: <linux-kernel+bounces-355710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0F09955EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:43:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEC69955F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373281C25112
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38A61C259D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C62020ADC6;
-	Tue,  8 Oct 2024 17:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCA620CCD7;
+	Tue,  8 Oct 2024 17:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RfgJ/9BD"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4zB1Ocpr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF411E0488
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355B320CCD5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728409425; cv=none; b=f9EXrgyhEWaqzrzQiOrj1HWATjMfuVjH+Lp3lmbYwOCKIjIbBPyhKQQ5dZFE8Yt/6Qi5dX065/rkOJwuehK7soUIVqOgvQOziE06C+rKNGIH1wiQf0xlZB/HL1/U4G+2I+LtOjMIjLAjgdn/bvt67LJimO9Pzuiekxev639HFWI=
+	t=1728409613; cv=none; b=SA/gy8JozCkF+khXaGCHfWoAW2Bw+YPNBst2Y8kcqAyx1REQCL1eBsb/KW58Nc3yUjEJDc2Vw5hqgdaMhTVS6yKhaBM8yOqxDVNkSTSqyHVyK6ghsNQXyMGc6o5q0On6KWJpq7pWkG/rZzPyt0k/4Vd0f3ahz/YRPIwpWMZCAqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728409425; c=relaxed/simple;
-	bh=ZG0nNXZuDONSmZRpr+5HQxd5/vf87bFyGemBi+O4hDU=;
+	s=arc-20240116; t=1728409613; c=relaxed/simple;
+	bh=4X3HDuD2VnWtaf+tW+I5S2mqufTmgR/niQRbWK6L8T4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9SN/3Rr0Y0Yu/cPjg7AxGEknUVh0BaIDZHT5xplcIrpe/di2kWQ0c0DwKOGTtcedN8H75WNRL3UgEkjY1udUxxkTzl8ud7CqqKx2ZfB2awl7j2kC6x+97y8U76XiPiuUH+VcGyCW+fVufzqNsZQ3iQd6mBPlBd3lE1bL++iJxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RfgJ/9BD; arc=none smtp.client-ip=209.85.128.54
+	 To:Cc:Content-Type; b=bfvXX+5a0DH66Ve1DuNkiL4+khjS0vUhpBFMxkdSPLHQpAxTR9Xrw2XWopAysU/T9HfXZmHetWLHVCXyvawxiIo/GVGNvxfo9Bc97Q1KaKmqMmapn6ueUbMxWJcX20/ouC+tOrMAKlGYEaReVQeeqXZgcKva5VfLNddj4yghdks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4zB1Ocpr; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1dd2886so25015e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 10:43:43 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so28495e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 10:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728409422; x=1729014222; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728409610; x=1729014410; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2BN6kXGTY/bXLsaB4MDLmcxb9JIYWOPiKBiUBPzfzhs=;
-        b=RfgJ/9BDmph29KaGhm1IIqSNwQKnNM6CJgD6WbvXOIAjW8UBE0qVkHixZr/Qbjr0xH
-         BA2IPzErMBxotG/Hds35LD/U+E/2CsLUVJhgzUEBQ1hXnonmxMl/JZW5ByT5h5XpfSJL
-         9dmTy3DZA3g4d0Hi15GhEH+kO31rOs/lUc9Z8SjRjMbm9to9XLZMs4oP9DSLnOQdIjwK
-         6rvexc5oG3vkpUz2WAX71JOFIbUZPFQtIzevyx3srh5MK7ajdjwPKg2IobhSjuvsNeVY
-         SclZE9SF1wp+fYSecqMQf6KwgI+lJqcHlt6fhvRhjiJv0S4CjHykQw9vEQHsCQgYP/FV
-         xgLQ==
+        bh=JvhMia/mJ061vWokn+L348+3EuZws0Igoktfqv3fLi0=;
+        b=4zB1OcprxZq8kUkV4SrVY6no0n5qoaNba0zZ1Wz4ud6E75s06pNCPw3Y+TvjF2Z6st
+         /961XbXB+vY42AYJddh6yNUwK7cLBSEfKYpPHoZo42JOZApN6LIQ3rA4RUstVad7Yyyb
+         inet7uLyyOR2jXfX/ask4rkSN7gNhEs9b8eudnaS91KRgELQT+wqPvuNv9x/UI1Pegbx
+         ojULNVRjj4gtyJVQOorV4wd35qqPB85U+w/Wq2veqJlzRFSm8w/7Nr24Bt3NxnsiPCK4
+         5N0z8dCE8Bxe7vks8s8Wp60tu41qBsyWv1w9I70dDC+kuOB+ftTPJzt4g57A8iJgH2et
+         MfMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728409422; x=1729014222;
+        d=1e100.net; s=20230601; t=1728409610; x=1729014410;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2BN6kXGTY/bXLsaB4MDLmcxb9JIYWOPiKBiUBPzfzhs=;
-        b=pQZ7VEeAwy3vEHlAcO4FYiw7qANgZRsLcjaa5gdVq3eaCcMfvYPDMzrWJmJSLDPDEH
-         fLjr1HCri8KuaGfRrI6Xo3w2EhzK2X4xSOxBmm9ofr4GwyIeRAVj9GbPYMj5YWy+6p+h
-         2eA21ya8ujhy69lFOPZocXG+Gp+QKLok4NOzTbdRKHkLL2zasopM9t2e0bhDq54QepzX
-         XouFn6Sd8l/kp2LaeVtUXWfBmury7uHj6wT8hXhZ3T3+DBBk67IwCYm44V0y7SO4uums
-         PnXLD5VpdodcuIVQ4e5vMi7XLYZ46/EFV8rwmst45o26+E0frQXlrWYEqUrkehmDhEJs
-         ykpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRRQrdVGPyNC5EUDdKjwpz5VmgCh/DXNysm9z8h/cStQ2SR2x8wyVkF852+fmgtixHMALkBJQ352dNCMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQbd4xe3Nw1oPju4mEBZh+aL2uZCg2QT6TPPzAAddOhGwyvci
-	Tg5QYA+EyBT4AXQL5BRXU+mhirgRagffQ3eAWCG54gyGCPpWQ7/0LQhwWiPeDsX7lggiU/OPDy1
-	lxRFSEDOAOu3+b76VJSn7kZuJgfng6amQfOS3
-X-Google-Smtp-Source: AGHT+IH9DMeqDkPeSNyDAOapvfTWm3xo8gfSpMdKSRuFd5l6IQ8Il0u6xIwpPm1k4AiXM89vENBa9VvwzyB3JvCfRVI=
-X-Received: by 2002:a05:600c:4e15:b0:42b:a8fc:3937 with SMTP id
- 5b1f17b1804b1-43058d74578mr85355e9.4.1728409421996; Tue, 08 Oct 2024 10:43:41
- -0700 (PDT)
+        bh=JvhMia/mJ061vWokn+L348+3EuZws0Igoktfqv3fLi0=;
+        b=ukoN3UXfJVHhXm3/iSjMGhSic76vwc5RLkAlSmVtqenpezwttNXrlv7mS/I/1wIDso
+         TVPzUHd/JbvfgvDPx/cIn3hMeZOWml6CmzgDCTGDk99kE3TDZHNbffyN9mmv8oDvH8y3
+         oXYoC8lbpoN0fP453oohQuGo+GyyogMk8s3ofEM4p9GwKi1bAHr6MjjAD/Ui6xDTIbch
+         veQvTYFLbbakyuLVvjdFtukKSBZ8Y56iK9f2eS3QwMhh2sj5FtmGujiwCYEaTY2V4/V2
+         YSVnhhOfn7GTfxSEFLEwEqXzs3kLJMsh4TO5QWVqHpRlHb0KYQFWDrmenL+6OzpWg4op
+         UtJg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/5xIIA37XA4+MrPiTA3waCVt+atAkyG330IKfDvJ69Ngh5TxhnzYgQGV32nz4r95/y3ReIJdSbBHtK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7UcsK60ldJi+IjsvD3zuM3wYNLd+hz0VCdEWsLOAhOSXjfgTf
+	08uj9csGDgAlhgM9DMqmGLkM5U/99NxDYU/LRb6rKENF5fucXMJtDaicSmrgNAtBTeK2k4PEfnA
+	mflSVRCMeD7KHJ1ATTyjnLlpYlOkT8WaPAFDb
+X-Google-Smtp-Source: AGHT+IGQnxUu7S8sNprAY4+irLZJ3ENfCBPUtxKDr44Y0O32/q5eFiDbTpcEReOVOk7pxJi5i1xxWZIhi8Fss/s7Cvw=
+X-Received: by 2002:a05:600c:34cb:b0:42f:808e:52e6 with SMTP id
+ 5b1f17b1804b1-43058d748a2mr104025e9.6.1728409601402; Tue, 08 Oct 2024
+ 10:46:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
-In-Reply-To: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+References: <20241008-cfi-fix-llvm-gate-v1-1-32d47459eee4@google.com>
+In-Reply-To: <20241008-cfi-fix-llvm-gate-v1-1-32d47459eee4@google.com>
 From: Matthew Maurer <mmaurer@google.com>
-Date: Tue, 8 Oct 2024 10:43:29 -0700
-Message-ID: <CAGSQo02oVWxazut2nyh-9K9gK+937zKCfYMBkT4EQE2CddvZtg@mail.gmail.com>
-Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+Date: Tue, 8 Oct 2024 10:46:29 -0700
+Message-ID: <CAGSQo03ZOppScZT_1DuWYsnveKvYHdc-K_djHi=AB4CKjAbgyQ@mail.gmail.com>
+Subject: Re: [PATCH] cfi: fix conditions in HAVE_CFI_ICALL_NORMALIZE_INTEGERS
 To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Cc: Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for catching this - I had a specialized toolchain enabled which
-didn't exercise the `RUSTC_BOOTSTRAP` issue, and without an unexpected
-failure, didn't see the `--out-dir` flag conflict after I got the
-request to add it.
+This makes sense, as some folks have a Rust compiler they know has the
+fix, but build system detection for it isn't there yet. This lets them
+override availability if needed.
+
+That said, we should definitely be sure to get this back to a
+non-configurable toggle once the LLVM version detection is in.
 
 Reviewed-By: Matthew Maurer <mmaurer@google.com>
 
-
-On Tue, Oct 8, 2024 at 10:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+On Tue, Oct 8, 2024 at 10:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
 rote:
 >
-> Fix a few different compiler errors that cause rustc-option to give
-> wrong results.
+> The CFI_ICALL_NORMALIZE_INTEGERS option is incompatible with KASAN
+> because LLVM will emit some constructors when using KASAN that are
+> assigned incorrect CFI tags. These constructors are emitted due to use
+> of -fsanitize=3Dkernel-address or -fsanitize=3Dkernel-hwaddress that are
+> respectively passed when KASAN_GENERIC or KASAN_SW_TAGS are enabled.
+> However, the KASAN_HW_TAGS option relies on hardware support for MTE
+> instead and does not pass either flag. (Note also that KASAN_HW_TAGS
+> does not `select CONSTRUCTORS`.)
 >
-> If KBUILD_RUSTFLAGS or the flags being tested contain any -Z flags, then
-> the error below is generated. The RUSTC_BOOTSTRAP environment variable
-> is added to fix this error.
+> Additionally, the option is configured to have a prompt and gated behind
+> EXPERT. The previous method for a user override of the option did not
+> actually work. This is expected to be temporary, as I intend to add a
+> precise detection check for 6.13 - I did not included that here to avoid
+> adding a RUSTC_LLVM_VERSION config in a fix.
 >
->         error: the option `Z` is only accepted on the nightly compiler
->         help: consider switching to a nightly toolchain: `rustup default =
-nightly`
->         note: selecting a toolchain with `+toolchain` arguments require a=
- rustup proxy;
->               see <https://rust-lang.github.io/rustup/concepts/index.html=
->
->         note: for more information about Rust's stability policy, see
->               <https://doc.rust-lang.org/book/appendix-07-nightly-rust.ht=
-ml#unstable-features>
->         error: 1 nightly option were parsed
->
-> The probe may also fail incorrectly with the below error message. To fix
-> it, the /dev/null argument is replaced with a new rust/probe.rs file
-> that doesn't need even the core part of the standard library.
->
-> error[E0463]: can't find crate for `std`
->   |
->   =3D note: the `aarch64-unknown-none` target may not be installed
->   =3D help: consider downloading the target with `rustup target add aarch=
-64-unknown-none`
->   =3D help: consider building the standard library from source with `carg=
-o build -Zbuild-std`
->
-> The -o and --out-dir parameters are altered to fix this warning:
->
->         warning: ignoring --out-dir flag due to -o flag
->
-> I verified that the Kconfig version of rustc-option doesn't have the
-> same issues.
->
-> Fixes: c42297438aee ("kbuild: rust: Define probing macros for rustc")
+> Fixes: 4c66f8307ac0 ("cfi: encode cfi normalized integers + kasan/gcov bu=
+g in Kconfig")
 > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> Changes in v2:
-> - Add `export` to RUSTC_BOOTSTRAP.
-> - Fix error about core being missing.
-> - Fix warning about -o flag.
-> - Link to v1: https://lore.kernel.org/r/20241008-rustc-option-bootstrap-v=
-1-1-9eb06261d4f7@google.com
-> ---
->  rust/probe.rs             | 7 +++++++
->  scripts/Makefile.compiler | 5 +++--
->  2 files changed, 10 insertions(+), 2 deletions(-)
+>  arch/Kconfig | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/rust/probe.rs b/rust/probe.rs
-> new file mode 100644
-> index 000000000000..bf024e394408
-> --- /dev/null
-> +++ b/rust/probe.rs
-> @@ -0,0 +1,7 @@
-> +//! Nearly empty file passed to rustc-option by Make.
-> +//!
-> +//! The no_core attribute is needed because rustc-option otherwise fails=
- due to
-> +//! not being able to find the core part of the standard library.
-> +
-> +#![feature(no_core)]
-> +#![no_core]
-> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-> index 057305eae85c..08d5b7177ea8 100644
-> --- a/scripts/Makefile.compiler
-> +++ b/scripts/Makefile.compiler
-> @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_E=
-XTMOD))/).tmp_$$$$
->  # automatically cleaned up.
->  try-run =3D $(shell set -e;              \
->         TMP=3D$(TMPOUT)/tmp;              \
-> +       export RUSTC_BOOTSTRAP=3D1;       \
->         trap "rm -rf $(TMPOUT)" EXIT;   \
->         mkdir -p $(TMPOUT);             \
->         if ($(1)) >/dev/null 2>&1;      \
-> @@ -76,7 +77,7 @@ ld-option =3D $(call try-run, $(LD) $(KBUILD_LDFLAGS) $=
-(1) -v,$(1),$(2),$(3))
->  # __rustc-option
->  # Usage: MY_RUSTFLAGS +=3D $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS=
-),-Cinstrument-coverage,-Zinstrument-coverage)
->  __rustc-option =3D $(call try-run,\
-> -       $(1) $(2) $(3) --crate-type=3Drlib /dev/null --out-dir=3D$$TMPOUT=
- -o "$$TMP",$(3),$(4))
-> +       $(1) $(2) $(3) --crate-type=3Drlib $(srctree)/rust/probe.rs --out=
--dir=3D$$TMP,$(3),$(4))
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 8af374ea1adc..2632de28c05a 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -852,8 +852,9 @@ config CFI_ICALL_NORMALIZE_INTEGERS
+>           This option is necessary for using CFI with Rust. If unsure, sa=
+y N.
 >
->  # rustc-option
->  # Usage: rustflags-y +=3D $(call rustc-option,-Cinstrument-coverage,-Zin=
-strument-coverage)
-> @@ -86,4 +87,4 @@ rustc-option =3D $(call __rustc-option, $(RUSTC),\
->  # rustc-option-yn
->  # Usage: flag :=3D $(call rustc-option-yn,-Cinstrument-coverage)
->  rustc-option-yn =3D $(call try-run,\
-> -       $(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=3Drlib /dev/null -=
--out-dir=3D$$TMPOUT -o "$$TMP",y,n)
-> +       $(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=3Drlib $(srctree)/=
-rust/probe.rs --out-dir=3D$$TMP,y,n)
+>  config HAVE_CFI_ICALL_NORMALIZE_INTEGERS
+> -       def_bool !GCOV_KERNEL && !KASAN
+> -       depends on CFI_CLANG
+> +       bool "Are normalized CFI tags for integers available?"
+> +       default !GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS
+> +       depends on EXPERT || (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW=
+_TAGS)
+>         depends on $(cc-option,-fsanitize=3Dkcfi -fsanitize-cfi-icall-exp=
+erimental-normalize-integers)
+>         help
+>           Is CFI_ICALL_NORMALIZE_INTEGERS supported with the set of compi=
+lers
 >
 > ---
 > base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-> change-id: 20241008-rustc-option-bootstrap-607e5bf3114c
+> change-id: 20241008-cfi-fix-llvm-gate-115e48d6acc9
 >
 > Best regards,
 > --
