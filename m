@@ -1,160 +1,280 @@
-Return-Path: <linux-kernel+bounces-355840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE209957D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:45:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7E29957D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5C51F2577A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:45:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531ABB224FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7486E213EF6;
-	Tue,  8 Oct 2024 19:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0009D213EEE;
+	Tue,  8 Oct 2024 19:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="tKWegZ3X"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ik4UzACq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478EC213EE0
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E52F9C0;
+	Tue,  8 Oct 2024 19:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728416724; cv=none; b=ZJGD+WEWUHNJdLqsP3nh5axLOOUO/JGFcVPTPC64FulyG7jVJqlF6gBjHPbS9R1nHmGiSXMj7Y2vfv0w3ImXJ0oSegZWtFu/vnC8ROXFpKT3uwiFzuB3WrV7pk8gvNqaiup3bGaA+OnqNpONu7E1kU5eSefSAlX3B9jclNEJtAc=
+	t=1728416806; cv=none; b=gCGc3C7+ldpXBpyq0YXM82UXQaRoXgLb0YLqxkhaS8+AEepfcQ8hUlPMIb59rcW5HRX7ipM4URtd5tC5VnwZRL7FA0YXAwwGTTaNN5w/3snKKDEHqLmmnvhqeyuEQwCN/ymK32lPnhmUe11cJv3dF2hT2z1DT1nxnGMFowxn6Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728416724; c=relaxed/simple;
-	bh=ASdWfVJPzlxahRt/zRGst+ZQIgxfx9y3/wjpoGFPtyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DufTuuaVinvlFdWUm2KechUaDrHb0wk89hnUTNGvOYTMij+S/IwjXDYa6dCeX3eoHA7stXZpoRyAdV8znADPe1fsM5X/JjTrR2hh6A4lcYwCtZXYZE3Le5R0ZcwV6XJlnY4OiNpi+/eNiAgX8ys57Mhc4i6XZMH6NSEP8tcXcGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=tKWegZ3X; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7afc67e9447so13743785a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1728416722; x=1729021522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KyOFo3K+fAZ65UEhLUHR8F6Og9mXsgjDoyxIBEdD5YY=;
-        b=tKWegZ3XdENW6VtKxQUIdyNpGj22XPGIhYVMlr/i8bpB+zjWQAxkfm+VwdXLyUkzpV
-         SHOxKzPC43Vo08dfjJeSVwv/1HhjND+GbrLBsQr3mi9AWbi7hxAEBaEM5+aw9Lxb8hY4
-         LrypzevC+sqHFxCzQPAM5vvBgwPsD6++LQgnEsOlBD9yuw/8nAAtjKR7uEFWT+vWlzfB
-         VKvdyZ4am8h3Z8keofW7Rt4XWH5wFL4yoCOT06roKQktGQcBUBRJ9Kc8pJEQcy8v59Ej
-         amIQ6Qmy2k/Mgl85qTnVatMgv6WgbHkIaawyYMEoM2t+ww0kLPld8pb9VryZaslYslBi
-         KPQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728416722; x=1729021522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyOFo3K+fAZ65UEhLUHR8F6Og9mXsgjDoyxIBEdD5YY=;
-        b=oBlvdwovlin60viy7dh000NZYaL32rmDJQNZVh4YGAurGCjNf3LVh9kBJWa0RyY9uQ
-         zlh3drgfjwoJROM3nAM6uCH89nTRlvUivjB+A6Kib45MePxQ+e5S9mhKqhDTFAlchHfZ
-         Jv1mIU7VwnusIEOkaRcPe+jJxdW90B/354wP4FaxUG4dbjEY0N3SHts/YdQeQZGwPuti
-         gPe3zBBAU9ELFNpiIl89DXNnlAc4AGQq4dgTwibKOwjS97XWzkIMljOuonVrwde/2qgU
-         yVsGvCQhb2RrlsKGVFxUQUF+nwsBWw7Wy648/LB2+A0N5ttnSQgPzXC82XkZ+3R7H/On
-         pV6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwkV3NfonF5g65DwrfEWiJWgaq3IYjZ5ERiOxcNT86f6ulWkB41nHELuXW1STU8OUr+79xTW9RHGPNqn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdrgSmJ3kfoXJigxGJzy/PzX5AXUe7F9MMPlr5j69KbpWeN64U
-	HK14Cye77kRm0HGC+10CYpXB7X6Na0RcjZzZUaGVFEy7gyWyI8KWCyHEhab3GI0=
-X-Google-Smtp-Source: AGHT+IH6XWnL5kwtHfTkxIDRb5j2x0rPOC89uj1NPmyIh5ioBCIwJgkV9Nl3E7AGtUXJH2g6+ElCWA==
-X-Received: by 2002:a05:620a:2415:b0:7a9:9f44:3f8 with SMTP id af79cd13be357-7affaf938demr42461885a.5.1728416721987;
-        Tue, 08 Oct 2024 12:45:21 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afcea7f657sm41246785a.0.2024.10.08.12.45.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 12:45:21 -0700 (PDT)
-Date: Tue, 8 Oct 2024 15:45:12 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-cxl@vger.kernel.org,
-	x86@kernel.org, linux-mm@kvack.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, osalvador@suse.de,
-	gregkh@linuxfoundation.org, rafael@kernel.org,
-	akpm@linux-foundation.org, dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com, alison.schofield@intel.com,
-	rrichter@amd.com, terry.bowman@amd.com, lenb@kernel.org,
-	dave.jiang@intel.com
-Subject: Re: [PATCH 1/3] memory: extern memory_block_size_bytes and
- set_memory_block_size_order
-Message-ID: <ZwWLyOkQ8kfAoZjg@PC2K9PVX.TheFacebook.com>
-References: <20241008044355.4325-1-gourry@gourry.net>
- <20241008044355.4325-2-gourry@gourry.net>
- <039e8c87-c5da-4469-b10e-e57dd5662cff@redhat.com>
- <ZwVG8Z3GRYLoL_Jk@PC2K9PVX.TheFacebook.com>
- <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
- <ZwVOE6JRS8Fd9_a8@PC2K9PVX.TheFacebook.com>
- <670582254a5db_2e172294fe@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1728416806; c=relaxed/simple;
+	bh=vTQ93XUpOUKF6OTPDRe2FpgaOt0EU8TN1/c5J7zUW7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q7Jc6y6E0ibNnUDUKdHYPxIRZDNYxDRTmV+Qft2/p1U4UqmZI299ynzMs6ki3KaepodLq/IIdVGJgoHvqQZMmnYB2o6R6XUEuSLN1WorU0HGTCQKZ0w4q9BnPJ8IbNTLxc6ZbeAt+JZWwIROykyNKBbn9v/vnyFxOm6s1HyRVtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ik4UzACq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498ET5Mu025622;
+	Tue, 8 Oct 2024 19:46:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=UTKztLeRZ5Zeh58cINrurW5qOVBYrEVcmjr
+	tJ5gkR7Q=; b=ik4UzACqPZpfNhW7zZMJW1DEPlLZaW2uqeASEb3PbABTzgTWnNn
+	PGfPflEKVENUoI5SV9FV+wy2Pvx21gtjl+9R44kdGisZXfhfBR9jrOyjZ1zHUY4R
+	2IziO9caZAF4zyollAIvXieWfKC4TZhZiuZqIpbq5p2piD3wnMuuFMBZY8Vi7XiB
+	6poJfb06y24mmTWmdqg/SyYy2EsvmYlRDjCEsVjMcl5X2YsG+Wrl3ll/gMtv+z5G
+	9eraEJWgZQQ85PjNArLN4k7Mk+GIt2rjxdih08ZFxFijBSNbSjOxRjkSobltKxeA
+	iDljb1MyACGNYzQOAFerFgYQHkEolfeNrIw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4252wssk93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 19:46:40 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 498JedqQ004700;
+	Tue, 8 Oct 2024 19:46:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 424xwbpp9v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 19:46:40 +0000
+Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 498Jf3Ui005037;
+	Tue, 8 Oct 2024 19:46:40 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-uchalich-lv.qualcomm.com [10.81.89.1])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 498JkdSG011613
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 19:46:39 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4184210)
+	id B878039C; Tue,  8 Oct 2024 12:46:39 -0700 (PDT)
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Unnathi Chalicheemala <quic_uchalich@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@quicinc.com
+Subject: [PATCH] soc: qcom: llcc: Add per slice counter and common llcc slice descriptor
+Date: Tue,  8 Oct 2024 12:46:36 -0700
+Message-Id: <20241008194636.3075093-1-quic_uchalich@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670582254a5db_2e172294fe@iweiny-mobl.notmuch>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mQFo6onQZ8gFcNkKp9opHcySav8pY819
+X-Proofpoint-GUID: mQFo6onQZ8gFcNkKp9opHcySav8pY819
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 spamscore=0 mlxscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1011 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080127
 
-On Tue, Oct 08, 2024 at 02:04:05PM -0500, Ira Weiny wrote:
-> Gregory Price wrote:
-> > On Tue, Oct 08, 2024 at 05:02:33PM +0200, David Hildenbrand wrote:
-> > > On 08.10.24 16:51, Gregory Price wrote:
-> > > > > > +int __weak set_memory_block_size_order(unsigned int order)
-> > > > > > +{
-> > > > > > +	return -ENODEV;
-> > > > > > +}
-> > > > > > +EXPORT_SYMBOL_GPL(set_memory_block_size_order);
-> > > > > 
-> > > > > I can understand what you are trying to achieve, but letting arbitrary
-> > > > > modules mess with this sounds like a bad idea.
-> > > > > 
-> > > > 
-> > > > I suppose the alternative is trying to scan the CEDT from inside each
-> > > > machine, rather than the ACPI driver?  Seems less maintainable.
-> > > > 
-> > > > I don't entirely disagree with your comment.  I hummed and hawwed over
-> > > > externing this - hence the warning in the x86 machine.
-> > > > 
-> > > > Open to better answers.
-> > > 
-> > > Maybe an interface to add more restrictions on the maximum size might be
-> > > better (instead of setting the size/order, you would impose another upper
-> > > limit).
-> > 
-> > That is effectively what set_memory_block_size_order is, though.  Once
-> > blocks are exposed to the allocators, its no longer safe to change the
-> > size (in part because it was built assuming it wouldn't change, but I
-> > imagine there are other dragons waiting in the shadows to bite me).
-> 
-> Yea I think this is along the idea I had.  But much clearer.
-> 
-> Ira
-> 
+Introduce atomic per-slice counter to keep track of the
+activate/deactivate count per slice and a common llcc slice
+descriptor to maintain accurate count.
 
-Dan seems to think I can just extern without EXPORT, so let me see if I can
-get that working first.  Then I'll see if I can add a lock bit.
+In case a client driver calls llcc_slice_getd more than once,
+it will get the same descriptor for given use case. And if two
+client drivers are voting for same slice, this count variable
+will help track enable/disable of slice accurately.
 
-I'll see if i can make an arch_advise call that does away with some of the
-ifdef spaghetti.
+Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+---
+ drivers/soc/qcom/llcc-qcom.c       | 50 +++++++++++++++++++++---------
+ include/linux/soc/qcom/llcc-qcom.h |  4 +++
+ 2 files changed, 40 insertions(+), 14 deletions(-)
 
-> > 
-> > So this would basically amount to a lock-bit being set in the architecture,
-> > beyond which block size can no longer be changed and a big ol' splat
-> > can be generated that says "NO TOUCH".
-> > 
-> > > Just imagine having various users of such an interface ..
-> > 
-> > I don't wanna D:
-> > 
-> > > 
-> > > -- 
-> > > Cheers,
-> > > 
-> > > David / dhildenb
-> > > 
-> 
-> 
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index 8fa4ffd3a9b5..0cb4fd18fd2c 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -813,7 +813,6 @@ static struct llcc_drv_data *drv_data = (void *) -EPROBE_DEFER;
+ struct llcc_slice_desc *llcc_slice_getd(u32 uid)
+ {
+ 	const struct llcc_slice_config *cfg;
+-	struct llcc_slice_desc *desc;
+ 	u32 sz, count;
+ 
+ 	if (IS_ERR(drv_data))
+@@ -826,17 +825,10 @@ struct llcc_slice_desc *llcc_slice_getd(u32 uid)
+ 		if (cfg->usecase_id == uid)
+ 			break;
+ 
+-	if (count == sz || !cfg)
++	if (count == sz || !cfg || IS_ERR_OR_NULL(drv_data->desc))
+ 		return ERR_PTR(-ENODEV);
+ 
+-	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
+-	if (!desc)
+-		return ERR_PTR(-ENOMEM);
+-
+-	desc->slice_id = cfg->slice_id;
+-	desc->slice_size = cfg->max_cap;
+-
+-	return desc;
++	return &drv_data->desc[count];
+ }
+ EXPORT_SYMBOL_GPL(llcc_slice_getd);
+ 
+@@ -847,7 +839,8 @@ EXPORT_SYMBOL_GPL(llcc_slice_getd);
+ void llcc_slice_putd(struct llcc_slice_desc *desc)
+ {
+ 	if (!IS_ERR_OR_NULL(desc))
+-		kfree(desc);
++		WARN(atomic_read(&desc->refcount), " Slice %d is still active\n",
++					desc->slice_id);
+ }
+ EXPORT_SYMBOL_GPL(llcc_slice_putd);
+ 
+@@ -923,6 +916,12 @@ int llcc_slice_activate(struct llcc_slice_desc *desc)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&drv_data->lock);
++	if ((atomic_read(&desc->refcount)) >= 1) {
++		atomic_inc_return(&desc->refcount);
++		mutex_unlock(&drv_data->lock);
++		return 0;
++	}
++
+ 	if (test_bit(desc->slice_id, drv_data->bitmap)) {
+ 		mutex_unlock(&drv_data->lock);
+ 		return 0;
+@@ -937,6 +936,7 @@ int llcc_slice_activate(struct llcc_slice_desc *desc)
+ 		return ret;
+ 	}
+ 
++	atomic_inc_return(&desc->refcount);
+ 	__set_bit(desc->slice_id, drv_data->bitmap);
+ 	mutex_unlock(&drv_data->lock);
+ 
+@@ -963,6 +963,12 @@ int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&drv_data->lock);
++	if ((atomic_read(&desc->refcount)) > 1) {
++		atomic_dec_return(&desc->refcount);
++		mutex_unlock(&drv_data->lock);
++		return 0;
++	}
++
+ 	if (!test_bit(desc->slice_id, drv_data->bitmap)) {
+ 		mutex_unlock(&drv_data->lock);
+ 		return 0;
+@@ -976,6 +982,7 @@ int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+ 		return ret;
+ 	}
+ 
++	atomic_dec_return(&desc->refcount);
+ 	__clear_bit(desc->slice_id, drv_data->bitmap);
+ 	mutex_unlock(&drv_data->lock);
+ 
+@@ -1020,7 +1027,7 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
+ 	u32 attr1_val;
+ 	u32 attr0_val;
+ 	u32 max_cap_cacheline;
+-	struct llcc_slice_desc desc;
++	struct llcc_slice_desc *desc;
+ 
+ 	attr1_val = config->cache_mode;
+ 	attr1_val |= config->probe_target_ways << ATTR1_PROBE_TARGET_WAYS_SHIFT;
+@@ -1165,8 +1172,11 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
+ 	}
+ 
+ 	if (config->activate_on_init) {
+-		desc.slice_id = config->slice_id;
+-		ret = llcc_slice_activate(&desc);
++		desc = llcc_slice_getd(config->usecase_id);
++		if (PTR_ERR_OR_ZERO(desc))
++			return -EINVAL;
++
++		ret = llcc_slice_activate(desc);
+ 	}
+ 
+ 	return ret;
+@@ -1183,6 +1193,12 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev,
+ 	sz = drv_data->cfg_size;
+ 	llcc_table = drv_data->cfg;
+ 
++	for (i = 0; i < sz; i++) {
++		drv_data->desc[i].slice_id = llcc_table[i].slice_id;
++		drv_data->desc[i].slice_size = llcc_table[i].max_cap;
++		atomic_set(&drv_data->desc[i].refcount, 0);
++	}
++
+ 	for (i = 0; i < sz; i++) {
+ 		ret = _qcom_llcc_cfg_program(&llcc_table[i], cfg);
+ 		if (ret)
+@@ -1331,6 +1347,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+ 	llcc_cfg = cfg->sct_data;
+ 	sz = cfg->size;
+ 
++	drv_data->desc = devm_kzalloc(dev, sizeof(struct llcc_slice_desc) * sz, GFP_KERNEL);
++	if (IS_ERR_OR_NULL(drv_data->desc)) {
++		ret = -ENOMEM;
++		goto err;
++	}
++
+ 	for (i = 0; i < sz; i++)
+ 		if (llcc_cfg[i].slice_id > drv_data->max_slices)
+ 			drv_data->max_slices = llcc_cfg[i].slice_id;
+diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+index 9e9f528b1370..5eca861e2837 100644
+--- a/include/linux/soc/qcom/llcc-qcom.h
++++ b/include/linux/soc/qcom/llcc-qcom.h
+@@ -60,10 +60,12 @@
+  * struct llcc_slice_desc - Cache slice descriptor
+  * @slice_id: llcc slice id
+  * @slice_size: Size allocated for the llcc slice
++ * @refcount: Counter to track activate/deactivate slice count
+  */
+ struct llcc_slice_desc {
+ 	u32 slice_id;
+ 	size_t slice_size;
++	atomic_t refcount;
+ };
+ 
+ /**
+@@ -126,6 +128,7 @@ struct llcc_edac_reg_offset {
+  * @bitmap: Bit map to track the active slice ids
+  * @ecc_irq: interrupt for llcc cache error detection and reporting
+  * @version: Indicates the LLCC version
++ * @desc: Array pointer of llcc_slice_desc
+  */
+ struct llcc_drv_data {
+ 	struct regmap **regmaps;
+@@ -140,6 +143,7 @@ struct llcc_drv_data {
+ 	unsigned long *bitmap;
+ 	int ecc_irq;
+ 	u32 version;
++	struct llcc_slice_desc *desc;
+ };
+ 
+ #if IS_ENABLED(CONFIG_QCOM_LLCC)
+-- 
+2.34.1
+
 
