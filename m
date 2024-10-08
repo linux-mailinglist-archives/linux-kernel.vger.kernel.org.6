@@ -1,174 +1,123 @@
-Return-Path: <linux-kernel+bounces-355867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28F3995832
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:10:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209D499582F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA78A1C214C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F661F21BDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40BB21500B;
-	Tue,  8 Oct 2024 20:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Plcn63EZ"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67400215004;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F6E2141DF;
 	Tue,  8 Oct 2024 20:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jcPr1h1R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02558213EFB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728418235; cv=none; b=qKKT1nWxKrxW4g/O4bBNmwE6S4kpJtpnr/+afLY/zOijGBCQEblr2T7H18t7Uk9pZMUFY36zo4rWuJOu2xH0G8PySifwl5jZ2nsPEsTh0L05i/W/32Jar6QvxTeONJMUikvpbg3cpY9qBKGqsK5hfwJKSp+f/9P2XTHLM+8/y4I=
+	t=1728418232; cv=none; b=EEHXAeKvx7ReaUhKG1W7yK5WiUNvxkJT9b0U0qpKWk5jlKerTsXPNBs8sXqBYJiYUKW+5/deR1+n1DfVYwGuw85MN14jugQO9cGkLpp4/wUVNgThMfADpa0kVHllbvJO4jfOm6kz68jVEdnQmVWsaC+Ls9ny/bNjsNZGIaGmuYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728418235; c=relaxed/simple;
-	bh=UEMKj7kRB7tqUYFlf30UBuHxuafQPA3Qs+l3nsYVLNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f23p9cZhjaLBXb7j32DW1W3svhkvtqb3BVrg0BRQEJitfF3UqtL5447rpa5092OGINqHCMF522csin7l92rIl7kjTFvw/nnBNLKz12AWSZcIxsH1IhV758OfvaHSRvVCFXoH+nxGPRSC84OU40n8p3q1HmwOTcVdRUU4TSoVodo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Plcn63EZ; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-50c9fb5751cso1341667e0c.0;
-        Tue, 08 Oct 2024 13:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728418232; x=1729023032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MeEJHtxRHcXi4zyu7WwEc8HIW+uF9Cr+P8a8iQW7oN8=;
-        b=Plcn63EZ6KNVyir49o3HuDpkiuSCSHTcyRha0KK3qzKacfM26nieSCYMOZ/XIn/LoB
-         8SlPghe4h7vPR75RHPvBnUgREpB/9oqlVY0/oIKHLcJWZjsnGn9Zl1VeFX6PrxYd5COO
-         QCMbU34fvPkD/cWigxBPViPpfqu00VFPrbWIKFEcdhzXl9towzE3aFVFAAch+txxIqie
-         72NMhuWSUlXd5VrHFKk3ZzTej6fbwwhhthaE0z4nD43SxYdcDQ0z/uAbV9/DvjAvpR+0
-         S4SOJg6miCMKnoVWIEC9ycqrfeQbJk5ifcgGBeGov+Zllt7i4PUkF0JNpv6maeUeel0n
-         N20Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728418232; x=1729023032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MeEJHtxRHcXi4zyu7WwEc8HIW+uF9Cr+P8a8iQW7oN8=;
-        b=RPHESYjiMzfZyBI4SVV3+yjjARcOFwkM3J9iHxCVZip8VG4vC5L3iqumLdlvD9+J8t
-         ZpwcteCHgSjCbzIhB4ROSNK6+1FI3LOVpdL5mOdTxWvxhaf/HEyHvX5LEvmZEydsCPyi
-         1lbyMMYqdgJYby25nAbPRgTx0MZdsI0gtSYo57xifPBzDK3S5to78RM7Nl7RZ4O/A9Ro
-         wcYs70rZnwH0rQBuXoyg2O/SOKu+V02xZjRYKHq9rS+t6uR1ixMf0u8uDwW7P0ABKyIX
-         ZYkF1HTOB4y2k5jmza237wJKt9yRuuOrErg6t//BY+wVZXtgNvlaBfphl+vctDEyuaHB
-         4jXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWeJPEYpfsC+74pqIk7zbvu5Tb991EW593Qv+Bquf5vfPG3LpM8TG9lx0N1yLKRgHyFaxESUp9pCmaoOLK@vger.kernel.org, AJvYcCVq+bjt8pZ43EhWf0HshMEK2Xd7BGg+/pi0jaj9ZDRhDjpCxUtIn448xuOVGVk8Ffom1NzgNh9BWfVj@vger.kernel.org, AJvYcCX2uo2/c4uGvuUG4b3Gt3WL7KU/Yg2Vi6zde03nMIIgAB+r9iX03eRVamuuSTJaOXwfsrIhoU2I1ia8jqPylWYrqXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygbiPUu/RIyB6X++CmPKUBxG3vJQVDRu06ha6HHBcUlojePDhv
-	brgh7R11F9X7QoUySOWnMRHM/KuI9NxLHSEzUWbuXIAB0A+zUKCJeEO3rJRaBeTITZ2H9QR1ebH
-	ePYgalhit7FgWrePe3ziwLAibTHs=
-X-Google-Smtp-Source: AGHT+IH90LturO9Tma+PYndfVfk0hJJIxw/7re7JRVJvCcXQBbwdLQXgKd6tkyOlHw8Pz4mJWLnEuGwi6NFBDGnjWtg=
-X-Received: by 2002:a05:6122:29c8:b0:50a:baa0:6396 with SMTP id
- 71dfb90a1353d-50cf0c83765mr85840e0c.11.1728418232191; Tue, 08 Oct 2024
- 13:10:32 -0700 (PDT)
+	s=arc-20240116; t=1728418232; c=relaxed/simple;
+	bh=q2xoNqMJNqDn8F+cJmfgQ+xPZG8EqIivYnaaQoRudho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VVbkHOFafTHFXdIUp7apToeCiO/jzPUdlAmCyZ17s5F1NnQCWBYcTLWqv/+8UWHXbiTQnlkEsdPLDwKjZ2IEt39N4yEOeFRxJQtflU80G92v7bhXwAfUWMdYxrttUK9eOcHp7buH4iojSv1VlEQibXkkxvF/hpk+HT1ROjrLXs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jcPr1h1R; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728418231; x=1759954231;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=q2xoNqMJNqDn8F+cJmfgQ+xPZG8EqIivYnaaQoRudho=;
+  b=jcPr1h1RoMgxAWWLKpTsXUkwVJM1jsBt3skGMDJ6Q/OobeLdTe8W4GY5
+   5Uak0qSljZdL4VDyr6cBRqk4+IokiQVqjF7t06NrLJu1X3/42V7IEAtuv
+   MphASoMp4xAf81l8cifqTmRFKF86zE8Y8+xnakpmGIjjMpW65BpzXynWK
+   ksiziEY/wIVct5QSa0JZVghJCrF7MrA2XOSVxZzrjBENGZrIpwK+/pLyt
+   TKtofM+0Zkm6QymeibdV+eDrIGa3T1MhJ3hpnrO0a3z4gCVEZUkBY1/9u
+   wo0ggIrWcrw9zeD6USyrIgMDFpbcXFYl8uCQI0/HE8IU2DUqiKguIcdV2
+   g==;
+X-CSE-ConnectionGUID: S3zdOB6eSTWBFOoEEurcXQ==
+X-CSE-MsgGUID: LTUCZcEPR6epq/5Or8qWEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31549803"
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="31549803"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 13:10:31 -0700
+X-CSE-ConnectionGUID: IOLLLd7FQmy9jUU9OaBpfQ==
+X-CSE-MsgGUID: OmPw/QJ+QYG7EndN9XZnjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="76332658"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 13:10:30 -0700
+Received: from [10.212.24.252] (kliang2-mobl1.ccr.corp.intel.com [10.212.24.252])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 2129420B5782;
+	Tue,  8 Oct 2024 13:10:29 -0700 (PDT)
+Message-ID: <3b65fd68-8f5b-4029-8dbd-46c0b2cc34c7@linux.intel.com>
+Date: Tue, 8 Oct 2024 16:10:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008164935.335043-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB11346A1726BCE1687C6AFF519867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469ABB6393E0A6451034A4867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113469ABB6393E0A6451034A4867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 8 Oct 2024 21:10:05 +0100
-Message-ID: <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf/x86/rapl: Move the pmu allocation out of CPU
+ hotplug
+To: Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+ mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: Oliver Sang <oliver.sang@intel.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+References: <20240913171033.2144124-1-kan.liang@linux.intel.com>
+ <875xq2tv05.ffs@tglx>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <875xq2tv05.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Biju,
 
-On Tue, Oct 8, 2024 at 6:33=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
-> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > Sent: Tuesday, October 8, 2024 6:19 PM
-> > Subject: RE: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
-> >
-> > Hi Prabhakar,
-> >
-> > > -----Original Message-----
-> > > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > > Sent: Tuesday, October 8, 2024 5:50 PM
-> > > Subject: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
-> > >
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Add OPP table for RZ/V2H(P) SoC.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> > > ---
-> > > v1->v2
-> > > - Set opp-microvolt to 800000 for frequencies below 1.1GHz
-> > > ---
-> > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41 ++++++++++++++++++++=
-++
-> > >  1 file changed, 41 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/=
-boot/dts/renesas/r9a09g057.dtsi
-> > > index 1ad5a1b6917f..4bbe75b81f54 100644
-> > > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
-> > >             clock-frequency =3D <0>;
-> > >     };
-> > >
-> > > +   /*
-> > > +    * The default cluster table is based on the assumption that the =
-PLLCA55 clock
-> > > +    * frequency is set to 1.7GHz. The PLLCA55 clock frequency can be=
- set to
-> > > +    * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and addit=
-ionally can be
-> > > +    * clocked to 1.8GHz as well). The table below should be overridd=
-en in the board
-> > > +    * DTS based on the PLLCA55 clock frequency.
-> > > +    */
-> > > +   cluster0_opp: opp-table-0 {
-> > > +           compatible =3D "operating-points-v2";
-> > > +
-> > > +           opp-1700000000 {
-> > > +                   opp-hz =3D /bits/ 64 <1700000000>;
-> > > +                   opp-microvolt =3D <900000>;
-> >
-> > Not sure CA-55 can change voltage from 800mV to 900mV??
-> > Based on Power Domain Control, it needs to be in AWO mode for changing =
-the PD_CA55 voltage.
-> >
-> > The manual says OD voltage is 0.9V and ND voltage is 0.8V.
-> >
-> > Is 1.7GHZ is ND or OD?
->
-> {1.7,1.6,1.5 GHz} is enabled when VDD09_CA55 is at 0.9 V
-> and for 1.1 GHz it is 0.8V.
->
-> Maybe when you do /2, /4, /8 using dividers, the voltage may be still
-> the same??
->
-I think you are right when BOOTPLLCA[1:0] pins are set to 1.7GHz the
-VDD09_CA55 is at 0.9 V, further dividing the clock shouldnt affect the
-voltage levels at the PMIC output.
 
-Geert, please let me know if my understanding is incorrect.
+On 2024-10-08 12:33 p.m., Thomas Gleixner wrote:
+> On Fri, Sep 13 2024 at 10:10, kan liang wrote:
+>> +static void __init init_rapl_pmu(void)
+>> +{
+>> +	struct rapl_pmu *pmu;
+>> +	s32 rapl_pmu_idx;
+>> +	int cpu;
+>> +
+>> +	cpus_read_lock();
+>> +
+>> +	for_each_cpu(cpu, cpu_online_mask) {
+> 
+> How is that supposed to work, when not all CPUs are online when
+> init_rapl_pmus() is invoked?
+> 
 
-Cheers,
-Prabhakar
+RAPL is a module. The module_init() is called during do_initcalls(),
+which is after the smp_init(). The cpu_online_mask has been setup in the
+smp_init().
+
+I also patched the kernel to double check. The cpu_online_mask indeed
+shows all the online CPUs.
+
+[    7.021212] smp: Brought up 1 node, 48 CPUs
+[    7.021212] smpboot: Total of 48 processors activated (211200.00
+BogoMIPS)
+... ...
+[   16.557323] RAPL PMU: rapl_pmu_init: cpu_online_mask 0xffffffffffff
+
+
+Thanks,
+Kan
 
