@@ -1,187 +1,325 @@
-Return-Path: <linux-kernel+bounces-354513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1FC993E7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:53:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D872993E7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA3A1F21794
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3619B215EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB6313B2B8;
-	Tue,  8 Oct 2024 05:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB713E8A5;
+	Tue,  8 Oct 2024 05:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PPkLGAEO"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tn/5I3pX"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502D323A0
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728366767; cv=fail; b=XknqjzxfdbGcfLOUGqFM9D0INRzBPvvS7V+SXCARSYR6dPiuAQemahJxQczs/uDGyaQ5DD1rm2iGOSY6vlxDX6rO9vzMlOuT2wAvKjnBchM6wZgdP0++1LShsxDOo6sXeovf+m/CHZDmmh6fWYMVDpeGzyMN4gDPZlE49lyOMmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728366767; c=relaxed/simple;
-	bh=2kuqNkXtNE72GNK8yh0d0TJohtrYSQIBoqFqu1zD4Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o6IsUGXNSkz8r/9PJJ6X16IQ5kV7czjV6mntMLo9JxQbhGvAo+rP8vp7IkHdt+LJ+fCrCOb3a7pOft79M2ssQOVFyNVZ6s6s947GqyI+Amap7nLIkf+MuLVQFId2HVJEcv83SW8qPFvyWDmTayn9M9bXQ/BSWPIp/xEYdFeW8qU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PPkLGAEO; arc=fail smtp.client-ip=40.107.92.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=paJ6YTnojdlATER4dZBHDAlOxPjj6OT4Lml6K2jCtDFGPmZAT0svZjusBM8A6LXlhsOimAU/QBr5IXggxU4It15iKW67oEKwZF6aupz3TL2fmSM3+kHOsX0y/mTZPqPdyxfPFMxSGE6HXS/l8Q7qU6foZUhN/S8zuL6N1uX/bXnTszPXjeF6SOuUEaTHmNARNpz4ja3TDDLoSHAhjTpY3cYyCGSvCmS7LqOGz9gv58GpuFPRC4u+TUtl+ojJKCS3XJp2OMvIHNf58+hz2R0n/aO6kD1Gm4ElPQ4dcAO9GkFa77/b5lJhHg6agnPH+xUnz/hTEFK8TXz2fqJ1e7afHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8HtaP2k51IMbkZJuz8VRPbm4Ki6sGuYejJ7hp6ia59Q=;
- b=UMkA+zbv7QlG+7T4CYwkFBZUI+pHs94TQxTcYJApYL+5hdD9HpAGoTVkJ3APsexC3lH7vUTqQVDuLqceo7rJAVtBNCGU38s5Iy6t7ACSedzYtZUO/TzzdTCU3wgO48YI8+4bHnC2bRHffonPq/jVdEA//zw+McH+KitZieO2ZYBKWr2/w5sYTPjgOdECba9KywYyR0eXmLjPgZ/H+h1k/cNyY8oLspmWP5iX5UKiTKnfatN3tipNubD6Qz6SzVeFUhGfKb5eDy5GjUOgnvcHcuFJ+2SG2k1QwAsOLpL5F9QlNqwQUl5KyOol0VIOb42fcAYSh+7gwRMoJtSuCmElvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8HtaP2k51IMbkZJuz8VRPbm4Ki6sGuYejJ7hp6ia59Q=;
- b=PPkLGAEO5eG/t34VLr8usO4UJoK357mowWLxzdlFTkLD6MveL6h999Fw9wSk/Ujk6QhiOhlJoZNRxaxmv/JjLxomJjdYZEWRLlH1bx959cHCO+xWHhbI36XtIIc8nTCm/4AlWuhoQ2iHMVNq6hoenUE50VcWOOmaXNl80iotEyw=
-Received: from BL1PR13CA0015.namprd13.prod.outlook.com (2603:10b6:208:256::20)
- by DS0PR12MB9059.namprd12.prod.outlook.com (2603:10b6:8:c5::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
- 2024 05:52:43 +0000
-Received: from BN2PEPF000044A7.namprd04.prod.outlook.com
- (2603:10b6:208:256:cafe::70) by BL1PR13CA0015.outlook.office365.com
- (2603:10b6:208:256::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16 via Frontend
- Transport; Tue, 8 Oct 2024 05:52:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN2PEPF000044A7.mail.protection.outlook.com (10.167.243.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Tue, 8 Oct 2024 05:52:42 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Oct
- 2024 00:52:42 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Oct
- 2024 00:52:42 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 8 Oct 2024 00:52:41 -0500
-Message-ID: <c6db82a0-7658-e840-0d1c-c748ed298e77@amd.com>
-Date: Mon, 7 Oct 2024 22:52:35 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355B762D2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728366923; cv=none; b=l8xJE7bnaLCsRWnua9Ahsa7GZShgPXbXqxAlwRSi3vTnSJ3WRBXpp0MALEWYbYOH2a4VtgXNqD0IM50t20kwlFCKm8hYIXMWK+AEnEVTCYW+svI3+Xt6cqIzlc4I8EIchNs/bAGAgxxpG4aX7kVmHzqyhNpGPp1c6dTiZDcSvSw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728366923; c=relaxed/simple;
+	bh=avEFguux3S9vM8mNPwIIXP3BTk6hCqea7FvB/rVtqrk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIkchh1B5V0PZejTdlGqgYhf4pU6lq0+zMLStQV61WAKz94sHZKqmeDlqF7rOrxquECRCkM2Y9WuspeXUyposHrmF0sz0b8ymIwykOkK8LLn7KX0BX3SYSZ/15pxaGoyfoTj/GzTN94A2pZ050zM54kQr6G24L0YdtB9pcbHl+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tn/5I3pX; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c5b628b7cso1425ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728366921; x=1728971721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PEML1acWheRJ5mGKtc1GLEU++PB7wEH7HBYQKEb9NvM=;
+        b=Tn/5I3pXMEHEzBilaaN6k2jxmiddpEWN9mDH0v5LTqeZdiEIeo1GICMmKU7Oxx5yJi
+         4lR/F+wAegK/k0oaMoPwfUZ6X8rgdxrVRaotyvFr3CrHUVHpFvFkPtl2yJ1p2AAPn8Si
+         AA74/oNiugbj/b0LCYOl+PxaWfY3TTSiVvj/0+ylXQLnuyDp8ZJ6eDlk3F991ZVv2m13
+         70Wbq7ww7qCo9CAPirzo2S3wMPTn+RC/GhRt+S30cRs3iKurzgu2EiezJDO8raQJc1k4
+         7OSX2EEFS0l+wEZAc0dcKFVY3x0x6Ug3sln+QZ/Vx8W1XZ0wb4iqaYglE11M5zdoZ4Wa
+         D2/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728366921; x=1728971721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PEML1acWheRJ5mGKtc1GLEU++PB7wEH7HBYQKEb9NvM=;
+        b=jnK56U4aqp3YQBsNtmsSldG6C80gUAg13yS91tNE4/OUI21KVtfy+MbGM5qL/iihJ7
+         HCO5krznTToGhne/uci3h7b2LFREmkYsiPcd9a+fkdVJX+SrTiyLmYhx5gNiBzziZLNA
+         bO2rToDRalHZwGcSvepZyPisha2F/9Lc9Sicq6UnuSxthNsUC9lkJHOnAYHdpT6QfXMf
+         xJ6MlYqLHNUdzlJc+SQIeXfnrFwN88kbR4zgTEGXYq/QPlmRbMEFEb3qPfO/lxop+E2F
+         4aWH2e5xFSHDC6PPEWqS/9MP5YTOP4HAAG62bYvNWV9g2p4eoLxVjItaBMpn9YcOVusi
+         AfeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrUo5N9QdAH3ws5SpEb1bK4zhQGPNXAVzdTS+9t3+2uhdqzVD4XVPYIci9isZbU6NawgAghNRuTjuoInY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8+VQlQcgkeZ66NG+69IcyXnCGcWy4r8lKXTT0wFGI95ahI2an
+	C2vS6eZDm2nT8LXFknItfKeheQtTqL/D8kiFYpsjXvM0JFdV3FemUAHC+GX3Rj6qE0ptBsRWet6
+	l7z05XHPICgTW9s3djoeadyHj03s+gAgpwx3h
+X-Google-Smtp-Source: AGHT+IFBqK5Obh7o1Mvkbq2D+3L4js7HVmAzdZIa1jnn8hA6ZsmChJx0GIsPZbbQH2y/mfxBtFaUIsZMvAcerar88Mk=
+X-Received: by 2002:a17:902:ea06:b0:206:ae0b:bfcb with SMTP id
+ d9443c01a7336-20c50243a9amr1923155ad.28.1728366920473; Mon, 07 Oct 2024
+ 22:55:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3 08/11] accel/amdxdna: Add suspend and resume
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>, Narendra Gutta
-	<VenkataNarendraKumar.Gutta@amd.com>, Xiaoming Ren <xiaoming.ren@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-9-lizhi.hou@amd.com>
- <fd84e624-a534-26a1-a434-3c8390bbb311@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <fd84e624-a534-26a1-a434-3c8390bbb311@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A7:EE_|DS0PR12MB9059:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53973d87-56f2-4c02-6d62-08dce75d6d1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eW8yenM2T1lCTGltK1h6ZS9zY0NzdlVjQU5BUjhQOWdqVE1vODZJN1FSVnNT?=
- =?utf-8?B?cjJFZllJbWJlWmFsbGphQ3ppc3l5amFNMHgxOWNBaTMxT25UUVNUTjhhS0tj?=
- =?utf-8?B?TEdvYklFQ2ZqektVMzBvaGlSeHQ3Qk5ueWsrbFZqYVZ2NTBYN2crMWJqR0w3?=
- =?utf-8?B?bjRxdlFtNVQ0OTkrR2FjSlBYalZEM2dnZVluSWlsV0ExajR2Rm8zMHBxQW40?=
- =?utf-8?B?SjZSdFc0ak1FTExoY1VkNXl2U3BIMDUzNFFxbkZZbHNWR0EyM1d0ZjlBa1ds?=
- =?utf-8?B?YktDTEhDclowc09HeEM1dG9vVkVSbXhjUHVNS2xqbzJIek9hTGFSb0RVSVJt?=
- =?utf-8?B?N2FYeFNPaXAwTDhGV1g0VXVHOGhTeTFoUmRZZVhYZ3ViU01mV3NvUXI0RmQw?=
- =?utf-8?B?SEtCY01LNEZFcGtwejd2UEEwL3BXQmZIM1ZUMzFrWE14T3VUc2diY214V0wr?=
- =?utf-8?B?NnVSOURnbGpoSjFidmRyeFd0VkVSdGpMRm05RHprUEVjY3RHZXZvS3Q0VERu?=
- =?utf-8?B?L2lVNHZxWHZML0UxbDI4d0J5cTErZW5LbFA0U0tlbEtZd1NSWWM3SlNnZHdi?=
- =?utf-8?B?cWFKNW14dGYwR3cxeU1SSTVsa3FRbEZaVktrY2xUdGEvWjRlclJ3NytWSVN5?=
- =?utf-8?B?VzNQYjI2VUw1d2I0ZzlpQ3BJSGxFZWdmR0NQUW5tcU9JbVhnMHl2M0FMZ096?=
- =?utf-8?B?TkxpRGdxTWxCOWRxTkNHSHlCeTc2alVUSzFLTDkvbmNaMXRtcVpCN0RIUDN5?=
- =?utf-8?B?b0lBeS85WUJHSjBkWEhGUng0VzdYcVcxRkhGY0Uxa2RseTVHYmNrcTQzamVm?=
- =?utf-8?B?ZXZ5dW1QYzBBaW5OdFV0ZjVKOGQrU0VPWlluYnJYbDZqa3o4SVpoelIzTXZP?=
- =?utf-8?B?ZHdxMVVCUklaMHB3SmNuOTlvRjNhTEZZenJUU1ZBeFMxOXd4RCs4STJHRGl0?=
- =?utf-8?B?ckpTY1JCNEpld3JQdGpkYzFFVUNHcDJGMGM0QUNSVDdWVytjQ1MxOHkxMUta?=
- =?utf-8?B?a3F0OXlnRUlNeFlNNkR5TVUxdFczNHNJeXVycXN5dk9lWkgxbW9qZWMzbEVz?=
- =?utf-8?B?aDNTT3VnR25LaC9rUkRwQTY1Y3RjTGVjNmY1UDNNdGlOODgzZlBhVEpBTlJw?=
- =?utf-8?B?VUhNUTRXSmRQUE1FT3dBV3hic0RtNDB5WTY5TjRlQzN5VDY3QkZlV0VhZFd5?=
- =?utf-8?B?cUNPd3REUFQ3dkZlMHlTL0VxaGg4NFA2MzZXSWNjK241cWNwdHFKckFUOVQw?=
- =?utf-8?B?RFlZZXpQSGlMVGZlRGRXTExMRFFnRVROTmJSQldzTWpCZVZ6emRBbm4yaFcv?=
- =?utf-8?B?ajk4TCt3MmpGZXArdkw5UUN4VG85U3lJK1AwLzdvN0lvc1hqSDJiQy9aNCtv?=
- =?utf-8?B?QUxtVzlXTE9GTER1aXc1dGNqbXB1NTFzK2lNVkZKandabm5mU2JudThjVDhM?=
- =?utf-8?B?dFM5VHE2NUFNZndHM3h3ajNZMTdUdjZ0alVHZ3RRK0J0QnpUS25ITWhYaUNT?=
- =?utf-8?B?K1FsdWo5R1dKZkg3UE5XNm56c3dTS2t3TWwxSTNFVWMxSjUrQjhQT1BpNU9v?=
- =?utf-8?B?UjBaZi9TaDcrY0U3M2RPY2pMU1pEdjZ1ZFdWOXkwS0Z2ZnRuUllUSDVNbXBB?=
- =?utf-8?B?WG5JNWM4U2w4a3NORWY3ZkF2cVlsMExwNGt4Q0FsQVZyWk16U0hVWkdIczBF?=
- =?utf-8?B?andneFZDT09Dc3JBZytaTUk4RytPTXNFZzNRRVBGZTVvNDBMalYwVlEzSEw1?=
- =?utf-8?B?T3JKTW80ZWRwbjRJMFRDbS81N3hsZEw1MEZlanVsNUQxdStHM3NRODYwWVNn?=
- =?utf-8?Q?iVUWf+5nAWdd9+/kFb0M7CMNTWmEayJFKWmRo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 05:52:42.7409
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53973d87-56f2-4c02-6d62-08dce75d6d1a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9059
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com> <20240913084712.13861-2-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20240913084712.13861-2-dapeng1.mi@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 7 Oct 2024 22:55:07 -0700
+Message-ID: <CAP-5=fVFe30xEt6JAg6rUTsAKZpg=7LBSQJSBd=BZszwufjFFw@mail.gmail.com>
+Subject: Re: [Patch v5 1/6] perf x86/topdown: Complete topdown slots/metrics
+ events check
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 10/4/24 11:08, Jeffrey Hugo wrote:
-> On 9/11/2024 12:06 PM, Lizhi Hou wrote:
->> +static int amdxdna_rpmops_suspend(struct device *dev)
->> +{
->> +    struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
->> +    int ret;
->> +
->> +    mutex_lock(&xdna->dev_lock);
->> +    WARN_ON(!list_empty(&xdna->client_list));
+On Thu, Sep 12, 2024 at 10:21=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel.=
+com> wrote:
 >
-> This feels weird. Can you explain?
+> It's not complete to check whether an event is a topdown slots or
+> topdown metrics event by only comparing the event name since user
+> may assign the event by RAW format, e.g.
+>
+> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
+>
+>  Performance counter stats for 'sleep 1':
+>
+>      <not counted>      instructions
+>      <not counted>      cpu/r400/
+>    <not supported>      cpu/r8300/
+>
+>        1.002917796 seconds time elapsed
+>
+>        0.002955000 seconds user
+>        0.000000000 seconds sys
+>
+> The RAW format slots and topdown-be-bound events are not recognized and
+> not regroup the events, and eventually cause error.
+>
+> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
+> to detect whether an event is topdown slots/metrics event by comparing
+> the event config directly, and use these two helpers to replace the
+> original event name comparisons.
+>
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/evlist.c  |  8 ++---
+>  tools/perf/arch/x86/util/evsel.c   |  3 +-
+>  tools/perf/arch/x86/util/topdown.c | 48 +++++++++++++++++++++++++++++-
+>  tools/perf/arch/x86/util/topdown.h |  2 ++
+>  4 files changed, 55 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util=
+/evlist.c
+> index cebdd483149e..79799865a62a 100644
+> --- a/tools/perf/arch/x86/util/evlist.c
+> +++ b/tools/perf/arch/x86/util/evlist.c
+> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const s=
+truct evsel *rhs)
+>         if (topdown_sys_has_perf_metrics() &&
+>             (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_=
+group(rhs))) {
+>                 /* Ensure the topdown slots comes first. */
+> -               if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->na=
+me, "uops_retired.slots"))
+> +               if (arch_is_topdown_slots(lhs))
+>                         return -1;
+> -               if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->na=
+me, "uops_retired.slots"))
+> +               if (arch_is_topdown_slots(rhs))
+>                         return 1;
+>                 /* Followed by topdown events. */
+> -               if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->=
+name, "topdown"))
+> +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metr=
+ics(rhs))
+>                         return -1;
+> -               if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->=
+name, "topdown"))
+> +               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metr=
+ics(rhs))
+>                         return 1;
+>         }
+>
+> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/=
+evsel.c
+> index 090d0f371891..181f2ba0bb2a 100644
+> --- a/tools/perf/arch/x86/util/evsel.c
+> +++ b/tools/perf/arch/x86/util/evsel.c
+> @@ -6,6 +6,7 @@
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+>  #include "linux/string.h"
+> +#include "topdown.h"
+>  #include "evsel.h"
+>  #include "util/debug.h"
+>  #include "env.h"
+> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *e=
+vsel)
+>             strcasestr(evsel->name, "uops_retired.slots"))
+>                 return false;
+>
+> -       return strcasestr(evsel->name, "topdown") || strcasestr(evsel->na=
+me, "slots");
+> +       return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(ev=
+sel);
+>  }
+>
+>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/uti=
+l/topdown.c
+> index 3f9a267d4501..49f25d67ed77 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -32,6 +32,52 @@ bool topdown_sys_has_perf_metrics(void)
+>  }
+>
+>  #define TOPDOWN_SLOTS          0x0400
+> +bool arch_is_topdown_slots(const struct evsel *evsel)
+> +{
 
-The driver uses auto suspend. When there is opened client, auto suspend 
-is held. So the client list should not be empty here.  The WARN_ON is 
-kind of assert and  can be removed.
+Perhaps: assert(evsel__find_pmu(evsel)->is_core);
 
+> +       if (evsel->core.attr.config =3D=3D TOPDOWN_SLOTS)
+> +               return true;
+> +
+> +       return false;
+> +}
+> +
+> +static int compare_topdown_event(void *vstate, struct pmu_event_info *in=
+fo)
+> +{
+> +       int *config =3D vstate;
+> +       int event =3D 0;
+> +       int umask =3D 0;
+> +       char *str;
+> +
+> +       if (!strcasestr(info->name, "topdown"))
+> +               return 0;
+> +
+> +       str =3D strcasestr(info->str, "event=3D");
+> +       if (str)
+> +               sscanf(str, "event=3D%x", &event);
+> +
+> +       str =3D strcasestr(info->str, "umask=3D");
+> +       if (str)
+> +               sscanf(str, "umask=3D%x", &umask);
+> +
+> +       if (event =3D=3D 0 && *config =3D=3D (event | umask << 8))
+> +               return 1;
+> +
+> +       return 0;
+> +}
+> +
+> +bool arch_is_topdown_metrics(const struct evsel *evsel)
+> +{
+> +       struct perf_pmu *pmu =3D evsel__find_pmu(evsel);
+> +       int config =3D evsel->core.attr.config;
+> +
+> +       if (!pmu || !pmu->is_core)
+> +               return false;
+> +
+> +       if (perf_pmu__for_each_event(pmu, false, &config,
+> +                                    compare_topdown_event))
+> +               return true;
+> +
+> +       return false;
+> +}
+
+
+Doing a linear search over every event is painful perf_pmu__have_event
+will try to binary search. The search rejects all events without
+"topdown" in their name, it then sees if the event code is 0 and the
+event|umask match the sysfs/json event. Is there ever a case the
+"topdown" string isn't at the beginning of the string? If it is it
+should be possible to binary search to the start of the topdown
+events.
+
+Strictly you shouldn't hard code the config positions of event and
+umask, they are in the format list:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmu.h?h=3Dperf-tools-next#n113
+There is code doing similar to this here:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n2285
+but it avoids the scanf, uses formats...
+It seems reasonable this code should reject all non-zero configs
+before searching all core PMU events. It could also use
+perf_pmu__name_from_config. So:
+```
+bool evsel__is_topdown_metric_event(const struct evsel *evsel)
+{
+   struct perf_pmu *pmu;
+   const char *name_from_config;
+
+   if (evsel->core.attr.config & 0xFF !=3D 0) /* All topdown events have
+an event code of 0. */
+     return false;
+
+  pmu  =3D evsel__find_pmu(evsel);
+  if (!pmu || !pmu->is_core)
+     return false;
+
+  name_from_config =3D perf_pmu__name_from_config(pmu, config);
+  return name_from_config && !strcasestr(name_from_config, "topdown);
+}
+```
+We could tweak perf_pmu__name_from_config to be pased a  "filter". In
+this case the filter would skip events without topdown in their name,
+without doing a config comparison.
+
+If later we change perf_pmu__name_from_config to say sort events in a
+list by config, then this code could take advantage of that. Perhaps
+for now there should just be an optional "prefix" that can be used to
+binary search to the events.
+```
+  name_from_config =3D perf_pmu__name_from_config(pmu, config,
+/*prefix=3D*/"topdown");
+```
 
 Thanks,
+Ian
 
-Lizhi
-
+>  /*
+>   * Check whether a topdown group supports sample-read.
+> @@ -44,7 +90,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
+>         if (!evsel__sys_has_perf_metrics(leader))
+>                 return false;
 >
->> +    ret = amdxdna_dev_suspend_nolock(xdna);
->> +    mutex_unlock(&xdna->dev_lock);
->> +
->> +    XDNA_DBG(xdna, "Runtime suspend done ret: %d", ret);
->> +    return ret;
->> +}
->> +
+> -       if (leader->core.attr.config =3D=3D TOPDOWN_SLOTS)
+> +       if (arch_is_topdown_slots(leader))
+>                 return true;
+>
+>         return false;
+> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/uti=
+l/topdown.h
+> index 46bf9273e572..1bae9b1822d7 100644
+> --- a/tools/perf/arch/x86/util/topdown.h
+> +++ b/tools/perf/arch/x86/util/topdown.h
+> @@ -3,5 +3,7 @@
+>  #define _TOPDOWN_H 1
+>
+>  bool topdown_sys_has_perf_metrics(void);
+> +bool arch_is_topdown_slots(const struct evsel *evsel);
+> +bool arch_is_topdown_metrics(const struct evsel *evsel);
+>
+>  #endif
+> --
+> 2.40.1
+>
 
