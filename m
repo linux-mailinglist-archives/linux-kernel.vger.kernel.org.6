@@ -1,78 +1,120 @@
-Return-Path: <linux-kernel+bounces-354579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C14993FD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:42:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401B5993F75
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF4B1F241EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C390285A0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDD21E133D;
-	Tue,  8 Oct 2024 06:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035AA1C1AC4;
+	Tue,  8 Oct 2024 06:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hphEndy5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBkDpF66"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A945C190693;
-	Tue,  8 Oct 2024 06:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5D61FD8;
+	Tue,  8 Oct 2024 06:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370096; cv=none; b=gbe0H8lQjRy1WthlC158AMBn36gzM+EU863OzNBO5go4vbimp6xd2V+7xkMf1H0Rg0on0wkLVKVPRr3+4Ya0g/Sr+DAjhW+CElgwE0yoNY9yf1Bo7gUYZ08Dh+J1U4T9eRa+waAN35BVQXW3v2dwK4VI435S0yOznEwoHf+1jpk=
+	t=1728370142; cv=none; b=VaY4nuutIscqpJQPh2fF5QWYNjYGnUTUgm7rB1+qMd1TavHuwIzaTVOfsN9zoZbpsFjK/tSepOPbIDU4aW8WmmnFQ75cMNx/PHKbNZLmS4v1ySZLzEjHigGSROCh9UEE/4+iwxq2t0SsvsjNvszLtFzNxgnuBlmrx7f1/OhAUgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370096; c=relaxed/simple;
-	bh=Y9uXHn5MjiPMxjCdOgm/9GRcWyxpGpZmyN00gYTz/3g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KiuUOd8Up7LW5BQO1ocBXNfE1gI+pE4WUC0v4oioqGDUGZo7ItSjUGDIzLk/vvm0aFCwLF5Wj6bGDxE4h3zuMafmF1mkdk4L4op3rgeNL8ba3mJZVDD8hEd6Jjt/vDCq4lnv0wRFyO56BkG9/lYkrQjMnv5+0LWBYREcmUUx5DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hphEndy5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E1FC4CEC7;
-	Tue,  8 Oct 2024 06:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728370096;
-	bh=Y9uXHn5MjiPMxjCdOgm/9GRcWyxpGpZmyN00gYTz/3g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=hphEndy56HRVVjDupSe4sQb+X9gyDFNsQmxsdbgoqMu16zVdcu7/phDB1ik1IYaqL
-	 RjY2NAWH8g20lJgbDDt+L8SY8/mCxiDTxbGoVh7KGEH0AapvTyjLB/yO0p4hV9zwDh
-	 ITXKUB7urzybJYuPnT0Zk90W7h/qnrGIPTonVYEpS5ZcyINlmmHy9ciBU8v2U9qwl9
-	 LBYPcHhuemzkn5RF2MBXmwHATvRLfQCs1uvZk20IyyAwx6EtgFHU8qguOUYovqtuky
-	 oSElSebLM9hdPLPKqU0KfhTrjcfEPP/ofiB5f2W19WCzpGeNCepTY7xGyE24hbNRGa
-	 DLcoFWoDI8RAg==
-Date: Tue, 8 Oct 2024 08:48:13 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Bastien Nocera <hadess@hadess.net>
-cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    "Peter F . Patel-Schneider" <pfpschneider@gmail.com>, 
-    =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@riseup.net>, 
-    Nestor Lopez Casado <nlopezcasad@logitech.com>
-Subject: Re: [PATCH] HID: logitech-hidpp: Remove feature_type from
- hidpp_root_get_feature()
-In-Reply-To: <20240916115532.1806755-1-hadess@hadess.net>
-Message-ID: <nycvar.YFH.7.76.2410080848020.20286@cbobk.fhfr.pm>
-References: <20240916115532.1806755-1-hadess@hadess.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1728370142; c=relaxed/simple;
+	bh=KX1KemK6vAcVYH5Eaw2EjT3hX3hBhAeZ+/YotAsZvjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sfR5jSVv4MwzxoBWUqFtqdIA+FagyB9bb+mtAGBKN3mX2+7hjw6erSooQCq2KFCDH5AXLEcZ2FrwawVCLypVWCHqgWZrebwdl/t6sOyV3sqXIpjWIeKlh0qgR2Xuhb2oihMQTnlBsvIDp6J1GzB/Cyoa0rm7baSjYL7Z62DOEXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBkDpF66; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e06acff261so3605592a91.2;
+        Mon, 07 Oct 2024 23:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728370140; x=1728974940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfl4qQhX9QMVV3uwb2SRS/81iBbiwsb1hHtN57rwHmc=;
+        b=iBkDpF66E9JncXaBGHYCEvGgqpnQpFeSBG73Ks9EQg+W79eJVXWCM5ZfGmy2PJOxwr
+         FuzSyNIQsXqCJ5qDDqpLeCWbvAnNgMLLr2Ai4mtAV5Wp7XgFUUY3DLHJiNwW7ht+N7QM
+         rjOj0ZTGTrk3vB3Zvp9HvWpmqhdv89RW9zTpvqpzSKBRUqc86NJ2EHwV/NMoSD6QAiC5
+         uwXsVyLvfc3Uf5CPfWZ6GCFUxkA5oni1FyN1VEz5ODOQPaPcsVaaeBN3YKIbCrhrYtvo
+         Hace3W4NN5OxNcFUL6evk5Mn2L/r70sxIl1cl/mx4qjiQxoTt6K6Cu3Y0LBuUm1NC1of
+         N1oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728370140; x=1728974940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yfl4qQhX9QMVV3uwb2SRS/81iBbiwsb1hHtN57rwHmc=;
+        b=Oq8I+IRofxweisG5hyCIaTHpcRTi9eCJyQewQH/p8wGlhsYlo+5vo9o1P0/JZa45Sf
+         KjUxkFjSF8aa5JUuxTK0XafDMjhYgxSzJf/x3E65PvrytXvaNC+QwSLG+Yb+nF+m8M9h
+         GNNEJR9UOuTAfIShqZ7ISmd48bTn2XFAfjEaQShrwPXqZIQ+Lq60AsliK0bKHCOPo9iZ
+         pfnppPf+k5EqqLW8vBtRy6SsM/jYvdioDVHfTReV64yfk+e55L4TWur+woOq5Mesf2mb
+         aYIwHw0Fgsza4j+xMgInL2/DP3rM0FXBlMCo8BHYR2hNk/j/eiuRHWwd0cLrex/3O9Ck
+         mnHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUULmEcILzjITtXTHjNL4WDeDsSS0vm5GR8eb7Fj4gTyJFfWPHiw4ciuJKYiGud8ohu2L1xZkxAMAN2xPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/ab+EP87BpZnRqbyvR+8hrdTvlr9cId7WTOEA2+6MsrZIQ6c+
+	W3D9T4/zAwthrTpijDocew0MDHSp9DonaiW9gwxdjKPdiUVBAl9i8PBTLYT+SW0ciQ==
+X-Google-Smtp-Source: AGHT+IFht93QqQHn/HTgDwxhRTKsY8u7HCeAAWbib2WR5bL5pmMsCYPG9kXr1Jf2CfYAcHsftLqpEw==
+X-Received: by 2002:a17:90b:4b87:b0:2c9:6a38:54e4 with SMTP id 98e67ed59e1d1-2e1e63edf3bmr14558507a91.41.1728370139804;
+        Mon, 07 Oct 2024 23:48:59 -0700 (PDT)
+Received: from VM-213-92-pri.localdomain ([14.116.239.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85c905esm8480588a91.17.2024.10.07.23.48.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 23:48:59 -0700 (PDT)
+From: iamhswang@gmail.com
+X-Google-Original-From: haisuwang@tencent.com
+To: linux-btrfs@vger.kernel.org
+Cc: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	wqu@suse.com,
+	boris@bur.io,
+	linux-kernel@vger.kernel.org,
+	iamhswang@gmail.com,
+	Haisu Wang <haisuwang@tencent.com>
+Subject: [PATCH] btrfs: fix the length of reserved qgroup to free
+Date: Tue,  8 Oct 2024 14:48:46 +0800
+Message-ID: <20241008064849.1814829-1-haisuwang@tencent.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sep 2024, Bastien Nocera wrote:
+From: Haisu Wang <haisuwang@tencent.com>
 
-> Nobody uses that variable after it gets assigned, so this saves us from
-> having to declare it in the first place.
-> 
-> Signed-off-by: Bastien Nocera <hadess@hadess.net>
+The dealloc flag may be cleared and the extent won't reach the disk
+in cow_file_range when errors path. The reserved qgroup space is
+freed in commit 30479f31d44d ("btrfs: fix qgroup reserve leaks in
+cow_file_range"). However, the length of untouched region to free
+need to be adjusted with the region size.
 
-Applied to hid.git#for-6.13/logitech, thanks.
+Fixes: 30479f31d44d ("btrfs: fix qgroup reserve leaks in cow_file_range")
+Signed-off-by: Haisu Wang <haisuwang@tencent.com>
+---
+ fs/btrfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index b0ad46b734c3..5eefa2318fa8 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1592,7 +1592,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+ 		clear_bits |= EXTENT_CLEAR_DATA_RESV;
+ 		extent_clear_unlock_delalloc(inode, start, end, locked_folio,
+ 					     &cached, clear_bits, page_ops);
+-		btrfs_qgroup_free_data(inode, NULL, start, cur_alloc_size, NULL);
++		btrfs_qgroup_free_data(inode, NULL, start, end - start + 1, NULL);
+ 	}
+ 	return ret;
+ }
 -- 
-Jiri Kosina
-SUSE Labs
+2.39.3
 
 
