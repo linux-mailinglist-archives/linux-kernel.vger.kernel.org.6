@@ -1,88 +1,78 @@
-Return-Path: <linux-kernel+bounces-355756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BEBF995696
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC65995697
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4259F1C2162F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FC71F25C4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3F6212EE1;
-	Tue,  8 Oct 2024 18:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89103212D2D;
+	Tue,  8 Oct 2024 18:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvj01IXe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2256220B1E5;
-	Tue,  8 Oct 2024 18:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730B487BF;
+	Tue,  8 Oct 2024 18:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412360; cv=none; b=Qe7AYX56iSzM7/BaoyX5wsqROFt6Zy0z8Y+ziYaL4NI6B5NnGCNoUcjorz/nOawz0XfcS/kdaxp/pPPTtlrb9VY+EaMAeizgFszMcNuxNKpdAFfKcqHyJxuYkuqFBLaEzuMGGZh5CkebilED5XC+2bWxXfnp3T/UFYsprmxVF0A=
+	t=1728412368; cv=none; b=kdgnluYEV6m09XWr9l9vHI8XndexGTZhrxOETNSdgU3LYPZL71fAj2/caXcPYjyQj1BULLAQS0N+y8qT+ClvrEvl4DqMuIPw8nHYYPJivxAbEhuGcNMjPbZ+m680juB2rzXeQ6tdhNcQHSTRK1aIzLdsXsoEIUSdI0UOKKxRxJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728412360; c=relaxed/simple;
-	bh=0FfDYnXMTG/JsCokRVjwyaALkft25mZFiJ+o6dDSIAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FkmghwhtOeH6FNsKboxnnIpfQuP0L+1NUvpVrlTyoOZuSVZYIF7QIMEsxw8uIlbH2Nl/oXuxB9TGpKfmaXfngHFILhoDtmv5n6iWMErXAl4ns7+6GLPlm18SOrO1yXrWRk+mldBt+5XmnwPJrQC9bIHpEiOExqqYyb2ihQUXu8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68393C4CECE;
-	Tue,  8 Oct 2024 18:32:39 +0000 (UTC)
-Date: Tue, 8 Oct 2024 14:32:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] ring-buffer: Do not have boot mapped buffers hook to CPU
- hotplug
-Message-ID: <20241008143242.25e20801@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728412368; c=relaxed/simple;
+	bh=EZcXyQnK92mhEIojwW1omtIJwUnP3T0fmnE4nmCzEWc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=n/+1l6XG/Mxz0VQMYtogkAicoC2FozY657YA+MDVzl4cmDrODeXlf5cJxyf4cCSm6+HYB9KABJZ4l6Z4qSQBa4fFZcNnxp07xBwj1JYkiMUa0e9pK0wk5txK4heMWTKTOnmu4tPAuzzDRI8PC+ISiKqs79d/3lfaofTIrPHlteQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvj01IXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA36C4CEC7;
+	Tue,  8 Oct 2024 18:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728412367;
+	bh=EZcXyQnK92mhEIojwW1omtIJwUnP3T0fmnE4nmCzEWc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=nvj01IXe/Gb+5ThCrqZhOWW1T2JUyhvLfNqY672J2I86xbtjlzgveEnwIfW4smmSE
+	 SQESRod91SOPcji67t30GjFwAlS8L4K/2FcRCnYZUJnEhkkAX1T5qb/eoZeHpqvr23
+	 JwzyAOSMmwwKVRQyQsdkkB0CY8vCr84MQONfeLKymIKxstkLmmzYWxI14F3zPqRwLD
+	 7TCzhz/ne+hBemDHpisw2hoaiOKNuwdHVvCU41kJOghHr11cNWXkR1CrguGZl39OVP
+	 GmRgsvaGMOYbq++05ih609DIddG5tJfhe+i0y3tMVG3wyQOUWWWTbJPaQjBzKG4Pjj
+	 R3xje/w6SU8pA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FAE3810938;
+	Tue,  8 Oct 2024 18:32:53 +0000 (UTC)
+Subject: Re: [GIT PULL] perf tools fixes for v6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241008135549.988547-1-acme@kernel.org>
+References: <20241008135549.988547-1-acme@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241008135549.988547-1-acme@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
+X-PR-Tracked-Commit-Id: e934a35e3cc1fe0bfb1bc771e64f3ba6e70c40e2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b2760b839044132c29234b648aa4f6a2877de234
+Message-Id: <172841237167.640621.9516345254030033808.pr-tracker-bot@kernel.org>
+Date: Tue, 08 Oct 2024 18:32:51 +0000
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Monakov <amonakov@ispras.ru>, Ilkka Koskinen <ilkka@os.amperecomputing.com>, James Clark <james.clark@linaro.org>, Yang Jihong <yangjihong@bytedance.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+The pull request you sent on Tue,  8 Oct 2024 10:55:49 -0300:
 
-The boot mapped ring buffer has its buffer mapped at a fixed location
-found at boot up. It is not dynamic. It cannot grow or be expanded when
-new CPUs come online.
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
 
-Do not hook fixed memory mapped ring buffers to the CPU hotplug callback,
-otherwise it can cause a crash when it tries to add the buffer to the
-memory that is already fully occupied.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b2760b839044132c29234b648aa4f6a2877de234
 
-Fixes: be68d63a139bd ("ring-buffer: Add ring_buffer_alloc_range()")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Thank you!
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 77dc0b25140e..fb04445f92c3 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2337,9 +2337,12 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
- 	if (!buffer->buffers[cpu])
- 		goto fail_free_buffers;
- 
--	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
--	if (ret < 0)
--		goto fail_free_buffers;
-+	/* If already mapped, do not hook to CPU hotplug */
-+	if (!start) {
-+		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-+		if (ret < 0)
-+			goto fail_free_buffers;
-+	}
- 
- 	mutex_init(&buffer->mutex);
- 
 -- 
-2.45.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
