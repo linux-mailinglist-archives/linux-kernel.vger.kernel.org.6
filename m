@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-355485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE31995306
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D145C9952F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF621F25FBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725DA1F237DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295101E0082;
-	Tue,  8 Oct 2024 15:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAD1DFE0D;
+	Tue,  8 Oct 2024 15:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="JfPyUFGZ";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="qJH6i1q7"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LNjdwfg4"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C783BDF71;
-	Tue,  8 Oct 2024 15:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C7E1DE4FC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400277; cv=none; b=HhdCz+R0zEAbiFCt9NuWNks84roYtU+Y7mIK94ftN1fIvLGbN7xU9PQhTSQantcc0QOrHocfv0Q3B1b/Rts6iblXFMeFY7HNr/1Y+xi/fHfCX7GSLgR5e7+ddBsZwURT3uvU71Mw7KGIi1qWpAYMlXJCX7Ylb41URMG4Kj0FMRo=
+	t=1728399993; cv=none; b=IlLNyShIQr6SHzAMs8bHiSAHDthpgD5Eo1TGn+KgzxYKIybjKbCdoT+zNfJo4jmWduf3dNXdup0dbso9Trd3A18cd9LKkkZO0YWHnmOaonn87FcXGqKXnh96CfRMri6ITQ6F6X5eqJlfOYTlCgZVeowKn5l44DeNIOoiet0fHAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400277; c=relaxed/simple;
-	bh=/O8v0DQ2GVRzc48m8wAHNCHFIAtYmj1AJQd9V2qu9/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ltCc9FS+o/4wI1UBcZowMkPtm4SS7QEJHcmZOveLMiOp/910LlgV38kgcMsOeeuT2SHDAKz0W/eYFqe/XxHYVJW6eOpLYmivw/thCcLfAR7aTBdkKbIHfzuvswl8AfXfXgwqOjwieJ5WkzyJg/6wstVPEwLXa5MwsQjuh5l8F30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=JfPyUFGZ; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=qJH6i1q7; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id E4C061FEC;
-	Tue,  8 Oct 2024 14:55:23 +0000 (UTC)
+	s=arc-20240116; t=1728399993; c=relaxed/simple;
+	bh=N83QClFj6vSbJUe35YQ6xzEaQoaubcuiXwjOBMZHnWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BcqOSOJacqCTzwk70XedPjkdzHDD+HkfFDTB1wwp4vGQI5VshB/3QdEC55CipwjqFU/8LvCh0ac6TRP68eau/I9xEGufb4N06qJyBXP/BdMhaB8vjCC52GVSWlZovRvd+I551n16JJbgnjVQyjXHv2SxI7OW7/3pneYgZi4szfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LNjdwfg4; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53995380bb3so6982701e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1728399324;
-	bh=P9vUqHOsu28vLeBNL5YkhZnY7tqCTNGqt+mdS6UqDeI=;
-	h=From:To:CC:Subject:Date;
-	b=JfPyUFGZhpUK9bCQ/Zeq9DiFMkeq/58YGLmgKl1Re5YNkSGbf1M1OKEQQGr2jS/FQ
-	 irH0qDUSakbUSPjsNtDyQQ8Do26jLyTjss1SaIrzHVNVTO5K7Awx9UBi9m5Msv2lsQ
-	 ElH7FqjFJNF3zf2VrpjJGwqFrypKZwKPtPQCtXlg=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A0341217E;
-	Tue,  8 Oct 2024 15:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1728399779;
-	bh=P9vUqHOsu28vLeBNL5YkhZnY7tqCTNGqt+mdS6UqDeI=;
-	h=From:To:CC:Subject:Date;
-	b=qJH6i1q7qiz1eLhjGnBNNn4uObWDmFJiy7C9aosAeMohhSdq4hEyP986qWSKcfuUQ
-	 OjQ1W2o82oU62csX5vO09ryO1oL5UgCsH9LfzXdqwMhoF8MU8Dy+BYiqsEnegjbaeM
-	 YSoceNUpg4az02YsAmyxIiicuCujI/d5LO98w9tU=
-Received: from ntfs3vm.localdomain (192.168.211.199) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 8 Oct 2024 18:02:59 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <torvalds@linux-foundation.org>
-CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ntfs3: bugfixes for 6.12
-Date: Tue, 8 Oct 2024 18:02:47 +0300
-Message-ID: <20241008150247.6972-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.34.1
+        d=linaro.org; s=google; t=1728399990; x=1729004790; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N83QClFj6vSbJUe35YQ6xzEaQoaubcuiXwjOBMZHnWU=;
+        b=LNjdwfg42wjhY9KRjUx2je5rkUPX1SSqIQs+8E5RQqwfH/NH+uptIXCsfueCYBMzL4
+         dPs3JBiZFwNGO9QMw22bXGfBxUPbtIkORHbPNGBHtcgGZ7pqzGF6yWU4+/r+EDggNuyJ
+         mOzkdKbChc04rLwwVcdbuGbEkCV/WlE0rK1514IdG0fglrLks9bBKLayoZB9HblSyImG
+         96xXahvt3bWdwEig2T0ri2sKv62VkDx4/uP+d29IDovxVxW3oUHNBa4/b0NV5qOH/4j7
+         jApJbe7E8mbThy5BmJIs9tP+zP0QqT016sscInldrcJtdQ0sEjHoD2ypUEdg1ZOIJUT5
+         klqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728399990; x=1729004790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N83QClFj6vSbJUe35YQ6xzEaQoaubcuiXwjOBMZHnWU=;
+        b=c/auaj5P0x9slas2jT/XngKq2uyN018ZmwxZ1gg8wb0h//aiSBF5G+b2iAQp45bbxu
+         XkTUP+mycj9+HbdlZWJvPyP1RdT4kLuyud/z9pCjl9NLkVbxvFVdJjDn6l2okARxGoTK
+         iG95YeHvDoqBbrpetMxSA+OUU9VrqKjv0DTbRt0H0JXuzrkcjRLKuK0RhRC8UCRjRHPE
+         z1XIBS+HjuxkpJdy3FcBj6paWenhAMR/nWigfb2cxhWTpYxTaJWKIZCG8IXe62ZGFFpn
+         wtUS/wJlfWgJoxJMnzw9sQe+GtJewprf7Sq0NbGSG1ufM5eEfl6p/zE9Snq7P7ZVX2Wa
+         lRTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQpAWeDWMUjLVuX67TGjKfJvXFC6lZJfr+9yZXJjhBvhIBxj3sUx6f09xe2bi2+K4Lt/mE1O4VkKmXp30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ3LJ6YtXlUcAE82tdFDeOhSBHn13f7AAqV916c2DtoOb0mo4R
+	i/EPuz25Z38k3Tl7oA4EdmrpzQrMI/R1sQiJeWEy/yVfbLAPz33GaCmS5zbN+5VEJIkP8IoAr/c
+	JsANj+VpqPBD8QfPi0rbwxgpF9bltOVNDNC/SKw==
+X-Google-Smtp-Source: AGHT+IHPUH95vercgubmJyozHmL7N08Yp+6zUsDN+9h5501JG4VP8+DOvKWh9h17WjKnR/vaEzMRsx87YDdNZDb1P4k=
+X-Received: by 2002:a05:6512:1387:b0:530:daeb:c1d4 with SMTP id
+ 2adb3069b0e04-539ab85c0fcmr8672320e87.12.1728399989667; Tue, 08 Oct 2024
+ 08:06:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+References: <8235497b-421c-4af7-90e4-95ad4e271ead@tuxedocomputers.com>
+In-Reply-To: <8235497b-421c-4af7-90e4-95ad4e271ead@tuxedocomputers.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Oct 2024 17:05:52 +0200
+Message-ID: <CAPDyKFrT6-nes784c9rCtqdJZ0nCFS3O5X=600OB6trbz2yJ2w@mail.gmail.com>
+Subject: Re: sdhci_pci module is blocking low power s0ix sleep with GL9767
+To: Georg Gottleuber <ggo@tuxedocomputers.com>
+Cc: victor.shih@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 
-Please pull this branch containing ntfs3 code for 6.12.
++ Ben
 
-New:
-	implement fallocate for compressed files;
-	add support for the compression attribute;
-	optimize large writes to sparse files.
-Fixed:
-	fix several potential deadlock scenarios;
-	fix various internal bugs detected by syzbot;
-	add checks before accessing NTFS structures during parsing;
-	correct the format of output messages.
-Refactored:
-	replace fsparam_flag_no with fsparam_flag in options parser;
-	remove unused functions and macros.
+On Thu, 26 Sept 2024 at 17:31, Georg Gottleuber <ggo@tuxedocomputers.com> wrote:
+>
+> Hello,
+>
+> I have a problem with s0ix sleep on a laptop with GL9767 SD card reader.
+>
+> The device is a TUXEDO InfinityBook Pro 14 Gen9 Intel laptop and
+> consumes 6 watts in s2idle (not reaching s0ix). If I blacklist sdhci_pci
+> in /etc/modprobe.d/blacklist.conf then the device sleeps with 1.2 watts
+> (this is not super good, but OK). Unfortunately unloading and reloading
+> does not work either. Once the module has been loaded, the high power
+> consumption remains, even after a rmmod.
+>
+> I tested this behavior with linux mainline 6.11,
+> 6.11.0-rc7-next-20240909. Kernel mmc/next does not work either.
+>
+> In an AMD device (InfinityBook Pro 14 Gen9 AMD), however, the same card
+> reader sleeps without any problems.
+>
+> Link https://bugzilla.kernel.org/show_bug.cgi?id=219284
+>
+> Any ideas?
 
-All changed code was in linux-next branch at least week (New/Refactored
-changes much longer).
+I am sorry, but I don't have any useful suggestions at this point. We
+need some help from the guys from Genesys Logic.
 
-Regards,
-Konstantin
+>
+> Kind regards
+> Georg Gottleuber
 
-----------------------------------------------------------------
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.12
-
-for you to fetch changes up to 48dbc127836a6f311414bc03eae386023d05ed30:
-
-  fs/ntfs3: Format output messages like others fs in kernel (2024-10-01 12:19:09 +0300)
-
-----------------------------------------------------------------
-Andrew Ballance (1):
-      fs/ntfs3: Check if more than chunk-size bytes are written
-
-Diogo Jahchan Koike (1):
-      ntfs3: Change to non-blocking allocation in ntfs_d_hash
-
-Dr. David Alan Gilbert (1):
-      fs/ntfs3: Remove unused al_delete_le
-
-Konstantin Komarov (20):
-      fs/ntfs3: Do not call file_modified if collapse range failed
-      fs/ntfs3: Optimize large writes into sparse file
-      fs/ntfs3: Separete common code for file_read/write iter/splice
-      fs/ntfs3: Fix sparse warning for bigendian
-      fs/ntfs3: Fix warning possible deadlock in ntfs_set_state
-      fs/ntfs3: Fix sparse warning in ni_fiemap
-      fs/ntfs3: Refactor enum_rstbl to suppress static checker
-      fs/ntfs3: Stale inode instead of bad
-      fs/ntfs3: Add rough attr alloc_size check
-      fs/ntfs3: Make checks in run_unpack more clear
-      fs/ntfs3: Implement fallocate for compressed files
-      fs/ntfs3: Add support for the compression attribute
-      fs/ntfs3: Replace fsparam_flag_no -> fsparam_flag
-      fs/ntfs3: Rename ntfs3_setattr into ntfs_setattr
-      fs/ntfs3: Fix possible deadlock in mi_read
-      fs/ntfs3: Additional check in ni_clear()
-      fs/ntfs3: Sequential field availability check in mi_enum_attr()
-      fs/ntfs3: Fix general protection fault in run_is_mapped_full
-      fs/ntfs3: Additional check in ntfs_file_release
-      fs/ntfs3: Format output messages like others fs in kernel
-
-Thorsten Blum (1):
-      fs/ntfs3: Use swap() to improve code
-
-lei lu (1):
-      ntfs3: Add bounds checking to mi_enum_attr()
-
- fs/ntfs3/attrib.c             |  96 +++++++++++++++++++---
- fs/ntfs3/attrlist.c           |  53 ------------
- fs/ntfs3/file.c               | 185 +++++++++++++++++++++++++++++++-----------
- fs/ntfs3/frecord.c            |  97 ++++++++++++++++++----
- fs/ntfs3/fslog.c              |  19 ++++-
- fs/ntfs3/inode.c              |  20 +++--
- fs/ntfs3/lib/lzx_decompress.c |   3 +-
- fs/ntfs3/lznt.c               |   3 +
- fs/ntfs3/namei.c              |  10 +--
- fs/ntfs3/ntfs_fs.h            |  10 +--
- fs/ntfs3/record.c             |  31 ++++---
- fs/ntfs3/run.c                |   8 +-
- fs/ntfs3/super.c              |  70 ++++++++--------
- fs/ntfs3/xattr.c              |   2 +-
- 14 files changed, 410 insertions(+), 197 deletions(-)
+Kind regards
+Uffe
 
