@@ -1,96 +1,114 @@
-Return-Path: <linux-kernel+bounces-355861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3ED99581F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFE9995823
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1D51C212D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACDE81F22B75
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065E72141DA;
-	Tue,  8 Oct 2024 20:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4032215005;
+	Tue,  8 Oct 2024 20:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hSXtQEJg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="azKDdbcS"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A2A20CCF7;
-	Tue,  8 Oct 2024 20:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728418061; cv=none; b=VFZkHi4sGmjShF3uE1k4xjRVNpqvL1yhc8mjDGkAFRBJRgspoj/vJZcwvapgHkhW4HQsEMbnVd07fHIgwfeE4Ve2cZGiSAyRc12yXxt2qW/HletmAWIz76cYrBQ/Wemm3/1hQqrDm8gMyb8SHL8NL3xesUWruQuFCqPfviPRVGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728418061; c=relaxed/simple;
-	bh=M1e/aMUtLM4yFFAbvRZq+IyGYuj6ViTOuvgsS/hjb1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DZ0KUqY4AZw+ksajnaLbnrszCpFswmF7TKWvVM4ELKiy/1uICy+tv2X/kQdODScbA5J11haPSX8liwQMiu66OFWcAazLyu4tFi0tw3gw07l8b7mQDCAU62SlEjUd6jC5BpyloAlp5wF/3rQG44ABHmqpElsBlIJzSeocJDkk2TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hSXtQEJg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728418055;
-	bh=zd+ax9z0iRo6xrmQG0tkM50wwVj66gplEWX+gx0h/cU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hSXtQEJgvgYn3HoVRtyvAQDftljAkMBweG9BabXa0xglQllLfh2wTmLoTZfApCmzj
-	 OWHBlUNy36kiKPAmOaJ1h21IipAV71P0LkjPEQqR9NhWZ1GRZS7/zeOO0UNSWD9Lfj
-	 kC2ilV/N4AHqbfZ5mexkhS9TiYaByjEkJ8Qgq6vEzjnIq4BbfcA7IL/qhbCj8PZ9Xs
-	 w99/6TZRmNS0nFsPnr8XCqcBJfXQ72rqvDSbHEAGNCTFS2Fwut/QnqJBjya0Ewfep/
-	 RZxfzMDQA8YQUVJm8Id8PpH9iDqyhXGfOxbpBFGaMZP2aW55nIkpXWIuKNjvGlRjQ7
-	 ZkekgkQpthGZw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2553213EDF;
+	Tue,  8 Oct 2024 20:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728418141; cv=fail; b=iLWNUK8U7BRj7IBNkEI9YOCq8EoFx6cbhK5twvzTBim0Ouu6NQty6WFNYreyaxR7fs07lZXi0cgkSYK9FhIRSehk36kp4NRsxubUBmz8mMtFoyM40g2QUZyD7M4bZ3CTnWztgRfIyaBf6JCv0u1wof+gCvFo+pGo/806TdNFIl0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728418141; c=relaxed/simple;
+	bh=biyN8fZcl4L/ZAt5IxImhVwgiwH5PHm0a+LUEe5g8JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDxCRcd/0KT8J4LQUWyAoG9Dib1dXtT4OyMGc5zRP/5XvpRf7h8WYRzbwtzSONBgBD3Pjz/80jHx0lG7z91L7VcO7eFAODfWIn2Y8DwH5l//CVIkjL8VG60+f3pTxZYToHffgh+mm/EtamGK3qm6+LsGMnFWzF8UjLrthr+NjVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=azKDdbcS; arc=fail smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (80-248-247-191.cust.suomicom.net [80.248.247.191])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNRrl2X88z4x3J;
-	Wed,  9 Oct 2024 07:07:35 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 07:07:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Chinner <david@fromorbit.com>, Carlos@web.codeaurora.org,
-	"Maiolino <cem"@kernel.org, "Darrick J. Wong" <djwong@kernel.org>
-Cc: <linux-xfs@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: adding Carlos and Darrick as contacts for the xfs tree
-Message-ID: <20241009070735.166eb5e9@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4XNRtH6C6Tz49Q3N;
+	Tue,  8 Oct 2024 23:08:55 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1728418136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A8RNetjppGXHuuTuS1zTBTCmn7pmNM0hlisQvQX0tOU=;
+	b=azKDdbcSMiaHqZe3v0KQNxDFWvl809OkpKhLUIYAXYmZG5z4aNvCzC4YFoYbzwWe1KehH2
+	sUSni/rtohL6cn/DvOIhrE955E8GGxMt8nRwbfoCt6F+WbvAabYYCTwRSbh+oYBCbvK1BA
+	YEDFEk77jbrnV9lmo9ZUHZOYJmvU8zAVzQEEZqHO6Tz/PKcf3RvXhWhjNI3ubdkGW9m/YK
+	eHbCkvRh3AfTv5pWZw8PbYw0rioCodzz+RyunckRZgiUu//sF6JBP77T9KRCEs23BQ2dv2
+	PGCDQYAmup4v18O9d9H3rhmcBhCAjarh3jhMQxxumQIUGil17GfE2btH/kEvKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1728418136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A8RNetjppGXHuuTuS1zTBTCmn7pmNM0hlisQvQX0tOU=;
+	b=njNqN3tjEptd/QvqruKR1ovC0x5oJY2g9xXgvWxFBrbtetxFUzhDFNqNbr0rRWRQ46KJzN
+	7dKM+wfS5AupkOkEjIq4BhMboNHsLcbWflaKgYjygVd3EsLOMvz4rfqtn471yEhAsaB05Y
+	HJZcxndpO2sbzvUiAu1c981m20Yfa8gE+UZnovoherZejyyNbMKI0cNU55XPvrEzK5cq3w
+	9QTentcJvBhUQ7mLSW1wrAdp7NtneeJTB86mroDifA9cfcfHs9/nqN+4OxslhYaWKN+dmK
+	xpFW+2dB7jxH82px6u7TY2MmvHqL91uJEMuYYAc26Srks5Xca3hdu6gLoER/Vw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1728418136; a=rsa-sha256;
+	cv=none;
+	b=Gnvy92aXAfjnqmUjN1QP2g098SqZfm9Dy9DvI46kSyYxRNmFgGrn5abzjtG4Rj4H9hq9nu
+	GIuPYnxzGmy8C/cCM/AdSPYgkfN05LjYYJBQYDWPntiFw45qeD1SbVXAGMbNPewQLGM94f
+	iAddXJsqsxMSik2USnrDc7RlQstlsQx/kewtnERi6nVFe+birSUck/yrSUuvV+7dqUmWx9
+	MlNy+CzkC6FwFSPiIXoLuKiEO6Ra9063iO721K+uctRKWKZaDGa6uxyrot8jEJWeqlJ6l4
+	bOOpnP8HuqDsek9J4gv4NliwKPV0wA2Hcaq+7V4iTcoiEXtnX+T3pQ8VQnBtig==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id DB9C4634CA9;
+	Tue,  8 Oct 2024 23:08:53 +0300 (EEST)
+Date: Tue, 8 Oct 2024 20:08:53 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] media: uvcvideo: Support partial control reads
+ and minor changes
+Message-ID: <ZwWRVXnNhq3q3o5r@valkosipuli.retiisi.eu>
+References: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9DdGHV.z+Ul_/EQryf6Hsh3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
 
---Sig_/9DdGHV.z+Ul_/EQryf6Hsh3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 08, 2024 at 03:00:06PM +0000, Ricardo Ribalda wrote:
+> Some cameras do not return all the bytes requested from a control
+> if it can fit in less bytes. Eg: returning 0xab instead of 0x00ab.
+> Support these devices.
+> 
+> Also, now that we are at it, improve uvc_query_ctrl() logging.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Hi all,
+For both:
 
-I have added Carlos and Darrick as contacts for linux-next problems with
-the xfs tree.  I hope that makes sense.
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9DdGHV.z+Ul_/EQryf6Hsh3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcFkQcACgkQAVBC80lX
-0GzgtAf/Q1szFw6B7M5/tAvthhy12BJ+Okh25cZ/z34JFvXRnXIbU5cDJTbM6k6T
-Muzq3V3ri/izaQLBYZSjhbq3VpnUiwk1Q9G+OGPQHUIf/7B0NbcmtchadMqiM2VI
-qRZCdpANLkp340/M6fmU0dmJ9wuBnpiV4f4vNoCe+EcJiAZRT+lbLTd2qtfioCHD
-2nGMEV0Sz8CtqM2jkfv+3EysZl43gYMFCzSzLaiY/DwPWpdtYW7Mlo0BNR3vr/vX
-qUXYcpSai/JfUnjdSzXFjBdsPHCDdK+3IJrOoD9gpWApHBTbDOJRPofMqiUDZOYE
-s00w68wy/+zwwBrCgn0ujjC1Cv3b3Q==
-=V/Vz
------END PGP SIGNATURE-----
-
---Sig_/9DdGHV.z+Ul_/EQryf6Hsh3--
+-- 
+Sakari Ailus
 
