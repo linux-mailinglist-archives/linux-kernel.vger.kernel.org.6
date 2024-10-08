@@ -1,66 +1,91 @@
-Return-Path: <linux-kernel+bounces-355332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CB59950B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563FE9950B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E211C24FC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B671F22975
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCCD1DF995;
-	Tue,  8 Oct 2024 13:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24371DFD8F;
+	Tue,  8 Oct 2024 13:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="CSW8mm42"
-Received: from smtpdh16-2.aruba.it (smtpdh16-2.aruba.it [62.149.155.101])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LtITutnp"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA101DF72E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9031DF279;
+	Tue,  8 Oct 2024 13:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395629; cv=none; b=cbNHjzCwEzricceJJq9MUnGdZt90G5s/q8VWys2HtozLH3FC5dSil4Uk6yNbyQJDkUb6ZxqpaKfsVxpeWLL6JWYxn26NjqTXOXFMhvm/+6WCn2PO0ufFdnHGt1WehJxjfSLkVItI8XnUhC5dFwQf8/MG206Zs4vzqE+5E3Ul+4Q=
+	t=1728395572; cv=none; b=kvg/rOQ6zRYDCkVGW8P2+q477mkXAii7zoQZ2Fht77WboXt1OvpEd8jLWbJT0p2TDmzadqFB0CmHKTWRQhGkcclSvf3mT7uQ9wuykW0bwAJRNpjyKMH4c6JA49cyqvcArI0vMbPcDiXvBon4yUwhqzuqWzZCPfPQGDw2W7YimRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395629; c=relaxed/simple;
-	bh=CYhA1GI4rn88rQyo9rf4G11UGZijDVHRnPuIiZQG99U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ftNWeopnTJAujU7oNFLxFLNQ7lVnmyNjp8fXFMkaHaBDMwswfkXf83O6OT3qWyv1RxdL9bcXHllOhhTmJfNlossSg3zQsq8LerRifu8DuM+SMq8n+Qd/YPRR/Nma4eHRDRRilgYtGlXkqtIKCF77Zv/hNRGClf5b0Va/G1QXL6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=CSW8mm42; arc=none smtp.client-ip=62.149.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from polimar.homenet.telecomitalia.it ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id yAbisgixkbsngyAbisUWTp; Tue, 08 Oct 2024 15:50:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1728395435; bh=CYhA1GI4rn88rQyo9rf4G11UGZijDVHRnPuIiZQG99U=;
-	h=From:To:Subject:Date:MIME-Version;
-	b=CSW8mm42rTdjwdVzWi+CoTAhs4rinHIujdKLQNBlrkSAm0WE8Rwgu4DthOmw98XWO
-	 SsF2/rkP8RV5yxskoGQmuDBm2pMS4L0O1Ru6luVxHrrXODKYjFmRduSS3icFXChjeX
-	 lSmbfP8F6nFPRW3J/3jSG/dTS6D5mpSSZxvWy6je/9teZ49VGgQpD06u/GSCZEty2j
-	 ve95iLMz7dfJVzdRn1Uu8X8HwwFogxVKehCZE+uy/N3RyJp3iN5u1tINI9CkXuKntw
-	 pfCBaEfPItYKB73ez1CH3XxOgEl7j2ts1pq2nBm94LZSWQnwIXecYS2cfygrQkxvGJ
-	 guWYd8t0uafIg==
-From: Rodolfo Giometti <giometti@enneenne.com>
-To: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Greg KH <greg@kroah.com>,
-	corbet@lwn.net,
-	Hall Christopher S <christopher.s.hall@intel.com>,
-	Mohan Subramanian <subramanian.mohan@intel.com>,
-	tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	Dong Eddie <eddie.dong@intel.com>,
-	N Pandith <pandith.n@intel.com>,
-	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
-	Zage David <david.zage@intel.com>,
-	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>,
-	Rodolfo Giometti <giometti@enneenne.com>
-Subject: [RFC 0/3] Add PPS generators
-Date: Tue,  8 Oct 2024 15:50:30 +0200
-Message-Id: <20241008135033.3171915-1-giometti@enneenne.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728395572; c=relaxed/simple;
+	bh=ruHajFuAP+9RCH6285NJzkwm+MUgE21IicKMAn8zEWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JFXEIri7yPfXLWUUVGH88xgoX/1z6D890tGLj69Rv+H5OkzKDTUhmahD//Z6AWYFu3Em4Oc4U9/78AhS0SDkaTOSB7RNoXrYNMeMqS6tKlmr9d5TbRtTePU2yG7AW4zK/mxjEBSOpSE4b46WU73/TxpkExBgT5tqpIfVo8iSO10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LtITutnp; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728395561;
+	bh=ruHajFuAP+9RCH6285NJzkwm+MUgE21IicKMAn8zEWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LtITutnpgtMp+C31zbrNesLxnf5B4k6XtwV8rHMbjoI0AAVE6gW+o+wi5mUtCkwar
+	 Ga57E27euyLob/B6qOuupcvTmjgOcIIXfFLr+b0/ycaUgq34HFGeWkG+30IY/OvYQl
+	 NtqKnB1ArwD7ms3LYC446z5H5ihWusKxOvh9HM4Sf90OOJa29PjrdcDhTPFQZZaplZ
+	 QNc2KdnFDVBg5Xmdeo3dpG6TnmZse20WHqosPv+be60G3vRxnRYZBjG8g9NlNBBtP7
+	 D9ichiqHRmRyCVDonzZX7nmCcCU31tnjxH4MBfropSezGXysozpRBQa++c1cHbWoYU
+	 4aECQfjirUreg==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNHX91sCszM4s;
+	Tue,  8 Oct 2024 09:52:41 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev,
+	Gary Guo <gary@garyguo.net>,
+	Nikita Popov <github@npopov.com>,
+	llvm@lists.linux.dev
+Subject: [RFC PATCH v3 1/4] compiler.h: Introduce ptr_eq() to preserve address dependency
+Date: Tue,  8 Oct 2024 09:50:31 -0400
+Message-Id: <20241008135034.1982519-2-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241008135034.1982519-1-mathieu.desnoyers@efficios.com>
+References: <20241008135034.1982519-1-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,45 +93,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfF/Qmdr6G8T33AgGhZuLqIgqQz6VWokfj+tGnhGFC4PfJu79EaLzZB+rVVOvtP1QDUqgYOx/eGmlCTmDa/50DCowPWXfKgC72pnHV/VPiQEu5w+/tAs1
- bUjkybR5QItOtyKjgt+3G+nFVxBU8pC2+B/upeTBulRXru6baf5lQbVTKxQLR5UYvBYBOWUFRq/m+7/AjYJ065UcPdrjXi7DTCk6+6QzoAjB0rhge2p+YetE
- YS5KT/pdkgjxOMDcqJT7vnoaPJ2gZnCdRy9TtUUVMYVBmDqLstUhioGhLYNzyoaYZUNkbK8or6w/cQGOBK2ruh4ygFuzZT3WfgBGLq/3WLrvsmlGdVcrrDGk
- 2PAe762rrTRvQU7WhNPqbKxr+OBglRo8Z82IDYicvOuxlHqfL2thoTZXMqhJYPdRh/9aoio7CFUpKfOzooJZUxQf65n9sRlh+heH08GNCYi3XGT7rzO8r1zE
- IhI6apaSpt1CDMEn0F9o0RwIIR3nJQgXrIW7EDkay7R/B1Wzf7cT4+YQV593+y3EsnDnWzQoQTQcKCPnqziaFGiUg0iPCFwUL1pfE0/Z7CHtnOcZ/e/FN/fy
- gFldGCjUfGfw0CmnTPPeQnV/Saf0VHgMhabwPftwQ/Dbmm3SdkRlRr5RlG0sc5FK9WVGrH5zGlL8exKiYzUDtLVkjje9NyzoBVDMGLwOyVhgnlPDjSyCy965
- M5W4B0FgqMSE8HxMQFu6XgzSf+y8UfMI
 
-PPS generators are special hardware which are able to produce PPS
-(Pulse Per Second) signals.
+Compiler CSE and SSA GVN optimizations can cause the address dependency
+of addresses returned by rcu_dereference to be lost when comparing those
+pointers with either constants or previously loaded pointers.
 
-This RFC patchset adds the class pps-gen to the kernel in order to get
-feedback useful to produce a well-thought-out and well-defined
-interface for these devices.
+Introduce ptr_eq() to compare two addresses while preserving the address
+dependencies for later use of the address. It should be used when
+comparing an address returned by rcu_dereference().
 
-Rodolfo Giometti (3):
-  drivers pps: add PPS generators support
-  Documentation pps.rst: add PPS generators documentation
-  Documentation ABI: add PPS generators documentaion
+This is needed to prevent the compiler CSE and SSA GVN optimizations
+from using @a (or @b) in places where the source refers to @b (or @a)
+based on the fact that after the comparison, the two are known to be
+equal, which does not preserve address dependencies and allows the
+following misordering speculations:
 
- Documentation/ABI/testing/sysfs-pps-gen |  44 ++++
- Documentation/driver-api/pps.rst        |  40 ++++
- drivers/pps/Makefile                    |   3 +-
- drivers/pps/generators/Kconfig          |  19 +-
- drivers/pps/generators/Makefile         |   4 +
- drivers/pps/generators/pps_gen-dummy.c  |  83 +++++++
- drivers/pps/generators/pps_gen.c        | 283 ++++++++++++++++++++++++
- drivers/pps/generators/sysfs.c          |  89 ++++++++
- include/linux/pps_gen_kernel.h          |  57 +++++
- include/uapi/linux/pps_gen.h            |  35 +++
- 10 files changed, 655 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-pps-gen
- create mode 100644 drivers/pps/generators/pps_gen-dummy.c
- create mode 100644 drivers/pps/generators/pps_gen.c
- create mode 100644 drivers/pps/generators/sysfs.c
- create mode 100644 include/linux/pps_gen_kernel.h
- create mode 100644 include/uapi/linux/pps_gen.h
+- If @b is a constant, the compiler can issue the loads which depend
+  on @a before loading @a.
+- If @b is a register populated by a prior load, weakly-ordered
+  CPUs can speculate loads which depend on @a before loading @a.
 
+The same logic applies with @a and @b swapped.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Acked-by: "Paul E. McKenney" <paulmck@kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
+Cc: Nikita Popov <github@npopov.com>
+Cc: llvm@lists.linux.dev
+---
+Changes since v0:
+- Include feedback from Alan Stern.
+---
+ include/linux/compiler.h | 63 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2df665fa2964..75a378ae7af1 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -186,6 +186,69 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 	__asm__ ("" : "=r" (var) : "0" (var))
+ #endif
+ 
++/*
++ * Compare two addresses while preserving the address dependencies for
++ * later use of the address. It should be used when comparing an address
++ * returned by rcu_dereference().
++ *
++ * This is needed to prevent the compiler CSE and SSA GVN optimizations
++ * from using @a (or @b) in places where the source refers to @b (or @a)
++ * based on the fact that after the comparison, the two are known to be
++ * equal, which does not preserve address dependencies and allows the
++ * following misordering speculations:
++ *
++ * - If @b is a constant, the compiler can issue the loads which depend
++ *   on @a before loading @a.
++ * - If @b is a register populated by a prior load, weakly-ordered
++ *   CPUs can speculate loads which depend on @a before loading @a.
++ *
++ * The same logic applies with @a and @b swapped.
++ *
++ * Return value: true if pointers are equal, false otherwise.
++ *
++ * The compiler barrier() is ineffective at fixing this issue. It does
++ * not prevent the compiler CSE from losing the address dependency:
++ *
++ * int fct_2_volatile_barriers(void)
++ * {
++ *     int *a, *b;
++ *
++ *     do {
++ *         a = READ_ONCE(p);
++ *         asm volatile ("" : : : "memory");
++ *         b = READ_ONCE(p);
++ *     } while (a != b);
++ *     asm volatile ("" : : : "memory");  <-- barrier()
++ *     return *b;
++ * }
++ *
++ * With gcc 14.2 (arm64):
++ *
++ * fct_2_volatile_barriers:
++ *         adrp    x0, .LANCHOR0
++ *         add     x0, x0, :lo12:.LANCHOR0
++ * .L2:
++ *         ldr     x1, [x0]  <-- x1 populated by first load.
++ *         ldr     x2, [x0]
++ *         cmp     x1, x2
++ *         bne     .L2
++ *         ldr     w0, [x1]  <-- x1 is used for access which should depend on b.
++ *         ret
++ *
++ * On weakly-ordered architectures, this lets CPU speculation use the
++ * result from the first load to speculate "ldr w0, [x1]" before
++ * "ldr x2, [x0]".
++ * Based on the RCU documentation, the control dependency does not
++ * prevent the CPU from speculating loads.
++ */
++static __always_inline
++int ptr_eq(const volatile void *a, const volatile void *b)
++{
++	OPTIMIZER_HIDE_VAR(a);
++	OPTIMIZER_HIDE_VAR(b);
++	return a == b;
++}
++
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+ 
+ /**
 -- 
-2.34.1
+2.39.2
 
 
