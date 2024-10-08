@@ -1,73 +1,102 @@
-Return-Path: <linux-kernel+bounces-355487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DBE99530E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF33199530F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C105B230AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B001C24952
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B891E008C;
-	Tue,  8 Oct 2024 15:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DD91E0082;
+	Tue,  8 Oct 2024 15:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOB8vn8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XKe4SP9T"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3856B1DFD84;
-	Tue,  8 Oct 2024 15:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6D1DFDAB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400432; cv=none; b=dNhIXqVY61PPGJ3gxFDAdWXV6cOyakhl9ljKQI0CmToESaIMbScjafR4Tkt5fB1fxS8vaWjcs3vK+p+83Ze4ZCzqsIskHHsK/GlybJkDUkglVFrwD2TcYo7GnO4t7Kb/ItqX6wBkcsXLHgB2YOeBxjou/SDHSuhfhysiu0F84fY=
+	t=1728400488; cv=none; b=oOvFPMmQsABi7TxjjumTKifQqCMTc5pSDA9Jrr5einM5BIctXzdZkdoo8/d6/BgymECHkZIwNTXwLg1qlXnk/Q7isQVDxsBdxvIzmtGfl9Gg5onEKcKlYwwjNNn7Ou7IVoEwYv7vJ1i6ajp/tVzQ+7rRuTRYo09svbsn5bsD8zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400432; c=relaxed/simple;
-	bh=RaxqMyiV7n8pTDKGMindcS0hrojM1IZNbUWaYp1cp34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBFR+OSaze9q9J0nrQdDLjBaXEAz/GHbsFXBTXOhA746ohxHqXfa+1lmyGjftIFKkeEs/N752PSQ3xgfnxYsIrCnjhS66E3kaCASQaCpsSaQvnshjWTyGJzAKQyPCueePmTgcmv3bSAeJ84MmYBcHGKebw1DgU/pK2uEpEXjIjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOB8vn8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23A53C4FE96;
-	Tue,  8 Oct 2024 15:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728400431;
-	bh=RaxqMyiV7n8pTDKGMindcS0hrojM1IZNbUWaYp1cp34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GOB8vn8MM0fQ1Yzw42fQ815SS4enmVBSTs86VzkBAAni1P2iuDRI1CvTw7nF7QUK5
-	 0O9mzE9PF+eaPoCBBQjElsETSjUw6oVjRGU5ccQgEGfMdGj0+B/73/UpYIsXpVRSSC
-	 wUNSIxUcjS+fYha7TJCyfR+3Xj3UOIKuPKwqGQgBuhaOa7L5FjO1Nm0Vp6u49J2o4k
-	 P72wyCFqo/Lvc44GxClzEtAc5I+bHg+0+R3dYYfCJp1tNqCPFrvd3Rv93ErfksK+3n
-	 Vzir4FMATlL3IdtrgZKKuQhDWheeD6ghAGToGRjF49JZZ85ljHpoHrEpuEL9RSkSqi
-	 2fFsDTD2TYtKQ==
-Date: Tue, 8 Oct 2024 09:13:48 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>
-Cc: hch@lst.de, dlemoal@kernel.org, cassel@kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	s=arc-20240116; t=1728400488; c=relaxed/simple;
+	bh=4CMzWwyBbEA/QGOzl5yCwg8tfyMMe4rT+UxbNkCq54E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PTiDEFkmQUcQqJD4DCuZFbw5kBMI0kwU0cEIALAjjjZCkVMMlIh/VDSaDsivop6nC59OcUf3/2Z4gQQmCdhjMSWGQDNMC+sxqMLdg9U29PeGVyTso9sxYJWAk8iUoicvfu0x4S+DYnx5oxozU2i2lstUTHLqDAphQAtYu1sEBdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XKe4SP9T; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728400484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gBl8or4Ji2nkkiH+xf10UJGYzYgFHK0HBHx4Lx5YdmE=;
+	b=XKe4SP9TUVXTWw/pUtOsHX9ZQXpgCl/Q2Mv86E/e0VzhRpe5wXEDXYRLm7Ri2IE6D7q/Ol
+	vB0V93lDp+3fFKfq2Y/JopIwxZpAprH9xR1M/7WMwQdqGkeHqp7HI1x3yyRfO57iurowAH
+	yzbRxN28YwosyUI4JMI53EpCf9FkaYg=
+From: Wen Yang <wen.yang@linux.dev>
+To: Joel Granados <j.granados@samsung.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
+	Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
 	linux-kernel@vger.kernel.org,
-	Matias =?iso-8859-1?Q?Bj=F8rling?= <matias.bjorling@wdc.com>
-Subject: Re: [PATCH 0/2] nvme: add rotational support
-Message-ID: <ZwVMLIt4iFX9MUjV@kbusch-mbp>
-References: <20241008145503.987195-1-m@bjorling.me>
+	Wen Yang <wen.yang@linux.dev>
+Subject: [RESEND PATCH v4 0/5] sysctl: encode the min/max values directly in the table entry
+Date: Tue,  8 Oct 2024 23:14:03 +0800
+Message-Id: <cover.1726907948.git.wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241008145503.987195-1-m@bjorling.me>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 08, 2024 at 04:55:01PM +0200, Matias Bjørling wrote:
-> From: Matias Bjørling <matias.bjorling@wdc.com>
-> 
-> Enable support for NVMe devices that identifies as rotational.
+Many modules use these additional static/global variables (such as
+two_five_five, n_65535, ue_int_max, etc.) in the boundary checking of
+sysctl, and they are read-only and never changed.
 
-Thanks, this looks good to me.
+Eric points out: "by turning .extra1 and .extra2 into longs instead of
+keeping them as pointers and needing constants to be pointed at somewhere
+.. The only people I can see who find a significant benefit by
+consolidating all of the constants into one place are people who know how
+to stomp kernel memory."
 
-I still hope to see nvmet report this. It would be great to test this
-with HDD backed nvme-loop target.
+This patch series achieves direct encoding values in table entries and still
+maintains compatibility with existing extra1/extra2 pointers.
+Afterwards, we can remove these unnecessary static variables progressively and
+also gradually kill the shared const array.
+
+v3: https://lore.kernel.org/all/cover.1726365007.git.wen.yang@linux.dev/
+v2: https://lore.kernel.org/all/tencent_143077FB953D8B549153BB07F54C5AA4870A@qq.com/
+v1: https://lore.kernel.org/all/tencent_95D22FF919A42A99DA3C886B322CBD983905@qq.com/
+
+Wen Yang (5):
+  sysctl: add helper functions to extract table->extra1/extra2
+  sysctl: support encoding values directly in the table entry
+  sysctl: add kunit test code to check the min/max encoding of sysctl
+    table entries
+  sysctl: delete mmap_rnd_bits_{min/max} and
+    mmap_rnd_compat_bits_{min/max} to save 16 bytes
+  sysctl: delete six_hundred_forty_kb to save 4 bytes
+
+ fs/proc/proc_sysctl.c  |  29 +-
+ include/linux/mm.h     |   4 -
+ include/linux/sysctl.h |  64 ++++-
+ kernel/sysctl-test.c   | 581 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sysctl.c        |  45 ++--
+ mm/mmap.c              |   4 -
+ 6 files changed, 677 insertions(+), 50 deletions(-)
+
+-- 
+2.25.1
+
 
