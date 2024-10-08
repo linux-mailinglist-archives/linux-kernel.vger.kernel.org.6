@@ -1,216 +1,887 @@
-Return-Path: <linux-kernel+bounces-355182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FF19949A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:26:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8679949BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A390228100D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:26:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14BC6B2666E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4C11DF26A;
-	Tue,  8 Oct 2024 12:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649CC1DE8BA;
+	Tue,  8 Oct 2024 12:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="QOoMRLiz"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iV+4IeeZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869D1DF263;
-	Tue,  8 Oct 2024 12:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34081E485;
+	Tue,  8 Oct 2024 12:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390281; cv=none; b=KE9IRNktpWtw0WTb8P6fz0WmmUE5nQJg70/1ye1mVe3h4j4+1KCGXn1A7SNKcLt/jcpt873df8L3xVpwPQwsnn062gzVetil+gMUP3hi4VBS8tK7nxWyteGAO1JGlgxEV5Nb8jsAQRo5fqLTPmF7QOVJCCNZ8r2ulBX397AIFsk=
+	t=1728390334; cv=none; b=ZvhiW3uotZKbDMajePc/feYUIfRysq9yHj29bVk+1nT7eKwjjMwzECkNdMZ+FH5nksB0q8TdIcgtoL5GCT7m2eXCPI+8OjBFs/KamHF2Zl0xMfb9dlRnt0t20zBZgsSba/wQKMTuhzw1V+xnfy9tPI17ZxReXqq2ojWNA4E4FCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390281; c=relaxed/simple;
-	bh=0s+4gHJr9qsvPt6+u0tXhbgzW2NNJIE8kSyNOUIzW3A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=oQ6kNT+sLVIw1iHGq9KXqUBQ82i3XtFjjquisGPKDyHRojz8icnk9yMltUDxhV4UjjGQR8PnIQSWecJLVHHgS2+7NT6txrc9lCoJOO3tNSQBV0eVXGWDfVG+fK4a6EVUfuJBbR3dsSbBmDWU3lPP0h8LZfBOYb8FUt3J7IMm9Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=QOoMRLiz; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from [127.0.0.1] (unknown [176.200.169.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8F35E20151;
-	Tue,  8 Oct 2024 14:24:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1728390269;
-	bh=D8AB0p6sVH9uqIa4vDHSPPZOfrBdwOjdjHP353g3wjU=; h=From:To:Subject;
-	b=QOoMRLizYBPw4sJrPYKC2gIq6ugUHH1BkI1sdixcS/CTVapi+JqAs12XMW/STzZy0
-	 kvzSpYjm+uUArDMpX9TDsZbPz3g4Pxss49UtvuNP2C8KxuMKlaKbl7FHHlX3HjwkLy
-	 lgzdIu65kQ2aotc6mgtsAPIZOdKknjmNqha8RQMC40PhvrYUPTs/kn2gR3rlZVhuRb
-	 IfAx8OkF/kVbgqgi+w61CYJZRWauYTCRlth5QlEifgsRBil1UPmHts0qadYiwZZ2nk
-	 KnRv1qenox4WIbwNEkEMmrqh0OITnVLhqYbrwXeMSzogV7u3Y5gIos0/uoZzczHQzD
-	 +rdIzQx1SDHmA==
-Date: Tue, 08 Oct 2024 14:24:27 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Adam Ford <aford173@gmail.com>, Peng Fan <peng.fan@nxp.com>
-CC: "S.J. Wang" <shengjiu.wang@nxp.com>,
- "abelvesa@kernel.org" <abelvesa@kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>,
- "shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mark Brown <broonie@kernel.org>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Subject: =?US-ASCII?Q?Re=3A_clk=5Fimx8mp=5Faudiomix=5Fruntime=5Fres?=
- =?US-ASCII?Q?ume_Kernel_panic_regression_on_v6=2E12?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHCN7xLzYVBB=+EkD14xYqGJDR6BRUO7hxBZGOtvzCFLp_kXdg@mail.gmail.com>
-References: <20241007132555.GA53279@francesco-nb> <PAXPR04MB84596824B2DFDF20E005F173887E2@PAXPR04MB8459.eurprd04.prod.outlook.com> <PAXPR04MB845980EE67F1B99C9AC9D0DF887E2@PAXPR04MB8459.eurprd04.prod.outlook.com> <CAHCN7xLzYVBB=+EkD14xYqGJDR6BRUO7hxBZGOtvzCFLp_kXdg@mail.gmail.com>
-Message-ID: <84371A37-9C3D-44AF-8796-7427B39DC3D4@dolcini.it>
+	s=arc-20240116; t=1728390334; c=relaxed/simple;
+	bh=ehDpW5CvlEyzXc7lJpxVxKDMLwH2gUBmzIJEiC12Ofk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uXDdptReiMRD+aoixcRVMO3ai6y9ezSHtR6l7YJfFPeCCqKbRqLRe8ESavss4ngn722HBCVaYFYh+Aao1INuv6oddsr1YvIDb1YG+Fd47xAm7YXHQspo0vMG/OHbYEWDlGAf/YO+PqTz5C119JspmFG1AVFomQSr7B0YedzGIA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iV+4IeeZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4988kPle005200;
+	Tue, 8 Oct 2024 12:25:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d1qCkclHmiO8zSzLYRCvC9gCPXg9PoHqfj4FK/HhTuE=; b=iV+4IeeZbnkkIEvA
+	pPEzRt3wjpiKVNh3YOyEfh9ZtMpu5cm4l1QtJrjex+NVuOMNURNkoozeqa7TkOXy
+	eaz0kiIn3ldkYJRrUGpb57pfXzbr+kH4KjQRxR1/O22BYP55+FD7gJoiUn9fKIUn
+	wQsPG/sDfH4QETNvocins/ntaEryWRqvnmA+BRLVOXSFcZbKbrdu637pHwZrb60o
+	JGKLSNI6B10QOKspFwBz7AYLmWxd49HVEOU0B3iWr1JF7kmHFopg66lAJLQXResY
+	Aqvwxlyyr6ptplItzzohDk8p+EsJC+RY5XVFdXq2XOi/hNcsQAqhiHGgZHgLO6vO
+	s6qT7A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424ndya81t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 12:25:14 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498CPDZT011182
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 12:25:13 GMT
+Received: from [10.110.37.37] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
+ 05:25:12 -0700
+Message-ID: <d88264f3-29ed-449b-9971-501ce7e1da99@quicinc.com>
+Date: Tue, 8 Oct 2024 05:25:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/22] drm/msm/dpu: Configure CWB in writeback encoder
+To: <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        <quic_abhinavk@quicinc.com>, "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-16-7849f900e863@quicinc.com>
+ <b9e50652-4556-4eed-a013-8e417eccdb69@linaro.org>
+ <866ef212-a00e-48c4-9cf1-d1d4ee78d0ae@quicinc.com>
+ <a58abb00-f941-48e0-b2a0-3c401e5220a7@linaro.org>
+ <4e0ccd07-fdd1-4e92-bda7-ea6ec9d54c80@linaro.org>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <4e0ccd07-fdd1-4e92-bda7-ea6ec9d54c80@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KKsa5J9UDyySCcvAqG6lVhN1SNL1Antr
+X-Proofpoint-ORIG-GUID: KKsa5J9UDyySCcvAqG6lVhN1SNL1Antr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080078
 
-Il 8 ottobre 2024 14:19:15 CEST, Adam Ford <aford173@gmail=2Ecom> ha scritt=
-o:
->On Tue, Oct 8, 2024 at 3:51=E2=80=AFAM Peng Fan <peng=2Efan@nxp=2Ecom> wr=
-ote:
+
+
+On 10/8/2024 1:00 AM, Neil Armstrong wrote:
+> Hi,
+> 
+> On 01/10/2024 09:37, neil.armstrong@linaro.org wrote:
+>> Hi,
 >>
->> > Subject: RE: clk_imx8mp_audiomix_runtime_resume Kernel panic
->> > regression on v6=2E12
->> >
->> > > Subject: clk_imx8mp_audiomix_runtime_resume Kernel panic
->> > regression on
->> > > v6=2E12
->> > >
->> > >
->> > > Is it now back?
->> >
->> > With tag: next-20240930, I need see this issue on i=2EMX8MP-EVK board=
-=2E
+>> On 30/09/2024 21:19, Jessica Zhang wrote:
+>>>
+>>>
+>>> On 9/30/2024 7:17 AM, neil.armstrong@linaro.org wrote:
+>>>> On 25/09/2024 00:59, Jessica Zhang wrote:
+> 
+> <snip>
+> 
+>>>>
+>>>> When running igt-test on QRD8650, I get:
+>>>> # IGT_FRAME_DUMP_PATH=$PWD FRAME_PNG_FILE_NAME=pwet /usr/libexec/ 
+>>>> igt- gpu-tools/kms_writeback -d
+>>>
+>>> Hi Neil,
+>>>
+>>> Thanks for reporting this. Unfortunately, I'm not able to recreate 
+>>> this on the MTP8650.
+>>>
+>>> How many/which non-WB outputs are you testing with?
 >>
->> Sorry, typo=2E I not see issue on my board=2E
->
->I tested RC1 on the Beacon board and didn't see any issues, but I can
->try testing linux-next when I have some time=2E
->
-
-I forgot to mention that the issue is not systematic as it was in the orig=
-inal report=2E
-
-And it was reproduced on v6=2E12-rc2, not with -next=2E
-
-Francesco=20
-
-
->adam
+>> Here's the modetest output:
+>> ==================><====================================================
+>> Encoders:
+>> id    crtc    type    possible crtcs    possible clones
+>> 32    103    DSI    0x00000007    0x00000005
+>> 34    0    TMDS    0x00000007    0x00000006
+>> 37    0    Virtual    0x00000007    0x00000007
 >>
->> Regards,
->> Peng=2E
+>> Connectors:
+>> id    encoder    status        name        size (mm)    modes    encoders
+>> 33    32    connected    DSI-1              71x157        1    32
+>>    modes:
+>>      index name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot
+>>    #0 1080x2400 144.00 1080 1100 1102 1122 2400 2420 2422 2440 394225 
+>> flags: ; type: preferred, driver
+>>    props:
+>>      1 EDID:
+>>          flags: immutable blob
+>>          blobs:
 >>
->> >
->> > Regards,
->> > Peng=2E
->> >
->> > >
->> > > [    4=2E012850] SError Interrupt on CPU2, code 0x00000000bf000002 =
+>>          value:
+>>      2 DPMS:
+>>          flags: enum
+>>          enums: On=0 Standby=1 Suspend=2 Off=3
+>>          value: 0
+>>      5 link-status:
+>>          flags: enum
+>>          enums: Good=0 Bad=1
+>>          value: 0
+>>      6 non-desktop:
+>>          flags: immutable range
+>>          values: 0 1
+>>          value: 0
+>>      4 TILE:
+>>          flags: immutable blob
+>>          blobs:
+>>
+>>          value:
+>> 35    0    disconnected    DP-1               0x0        0    34
+>>    props:
+>>      1 EDID:
+>>          flags: immutable blob
+>>          blobs:
+>>
+>>          value:
+>>      2 DPMS:
+>>          flags: enum
+>>          enums: On=0 Standby=1 Suspend=2 Off=3
+>>          value: 0
+>>      5 link-status:
+>>          flags: enum
+>>          enums: Good=0 Bad=1
+>>          value: 0
+>>      6 non-desktop:
+>>          flags: immutable range
+>>          values: 0 1
+>>          value: 0
+>>      4 TILE:
+>>          flags: immutable blob
+>>          blobs:
+>>
+>>          value:
+>>      36 subconnector:
+>>          flags: immutable enum
+>>          enums: Unknown=0 VGA=1 DVI-D=3 HDMI=11 DP=10 Wireless=18 
+>> Native=15
+>>          value: 0
+>> ==================><====================================================
+>>
+>> and dri state:
+>> ==================><====================================================
+>> # cat /sys/kernel/debug/dri/0/state
+>> plane[43]: plane-0
+>>      crtc=crtc-0
+>>      fb=106
+>>          allocated by = [fbcon]
+>>          refcount=2
+>>          format=XR24 little-endian (0x34325258)
+>>          modifier=0x0
+>>          size=1080x2400
+>>          layers:
+>>              size[0]=1080x2400
+>>              pitch[0]=4352
+>>              offset[0]=0
+>>              obj[0]:
+>>                  name=0
+>>                  refcount=1
+>>                  start=0010102d
+>>                  size=10444800
+>>                  imported=no
+>>      crtc-pos=1080x2400+0+0
+>>      src-pos=1080.000000x2400.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=1
+>>      sspp[0]=sspp_0
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=1080x2400+0+0
+>>      dst[0]=1080x2400+0+0
+>> plane[49]: plane-1
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_1
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[55]: plane-2
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_2
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[61]: plane-3
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_3
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[67]: plane-4
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_8
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[73]: plane-5
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_9
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[79]: plane-6
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_10
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[85]: plane-7
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_11
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[91]: plane-8
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_12
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> plane[97]: plane-9
+>>      crtc=(null)
+>>      fb=0
+>>      crtc-pos=0x0+0+0
+>>      src-pos=0.000000x0.000000+0.000000+0.000000
+>>      rotation=1
+>>      normalized-zpos=0
+>>      color-encoding=ITU-R BT.601 YCbCr
+>>      color-range=YCbCr limited range
+>>      color_mgmt_changed=0
+>>      stage=0
+>>      sspp[0]=sspp_13
+>>      multirect_mode[0]=none
+>>      multirect_index[0]=solo
+>>      src[0]=0x0+0+0
+>>      dst[0]=0x0+0+0
+>> crtc[103]: crtc-0
+>>      enable=1
+>>      active=1
+>>      self_refresh_active=0
+>>      planes_changed=1
+>>      mode_changed=0
+>>      active_changed=0
+>>      connectors_changed=0
+>>      color_mgmt_changed=0
+>>      plane_mask=1
+>>      connector_mask=1
+>>      encoder_mask=1
+>>      mode: "1080x2400": 144 394225 1080 1100 1102 1122 2400 2420 2422 
+>> 2440 0x48 0x0
+>>      lm[0]=0
+>>      ctl[0]=2
+>> crtc[104]: crtc-1
+>>      enable=0
+>>      active=0
+>>      self_refresh_active=0
+>>      planes_changed=0
+>>      mode_changed=0
+>>      active_changed=0
+>>      connectors_changed=0
+>>      color_mgmt_changed=0
+>>      plane_mask=0
+>>      connector_mask=0
+>>      encoder_mask=0
+>>      mode: "": 0 0 0 0 0 0 0 0 0 0 0x0 0x0
+>> crtc[105]: crtc-2
+>>      enable=0
+>>      active=0
+>>      self_refresh_active=0
+>>      planes_changed=0
+>>      mode_changed=0
+>>      active_changed=0
+>>      connectors_changed=0
+>>      color_mgmt_changed=0
+>>      plane_mask=0
+>>      connector_mask=0
+>>      encoder_mask=0
+>>      mode: "": 0 0 0 0 0 0 0 0 0 0 0x0 0x0
+>> connector[33]: DSI-1
+>>      crtc=crtc-0
+>>      self_refresh_aware=0
+>>      max_requested_bpc=0
+>>      colorspace=Default
+>> connector[35]: DP-1
+>>      crtc=(null)
+>>      self_refresh_aware=0
+>>      max_requested_bpc=0
+>>      colorspace=Default
+>> connector[42]: Writeback-1
+>>      crtc=(null)
+>>      self_refresh_aware=0
+>>      max_requested_bpc=0
+>>      colorspace=Default
+>> resource mapping:
+>>      pingpong=103 # # # # # # # # # -
+>>      mixer=103 # # # # # -
+>>      ctl=# # 103 # # #
+>>      dspp=# # # #
+>>      dsc=# # # # # #
+>>      cdm=-
+>>      cwb=# # # #
+>> ==================><====================================================
+>>
+>> I pasted all the kms_writeback log, I have nothing more.
+>>
+>> If I specify `--run-subtest dump-valid-clones` I get:
+>> ==================><====================================================
+>> IGT_FRAME_DUMP_PATH=$PWD FRAME_PNG_FILE_NAME=out.png /usr/libexec/igt- 
+>> gpu-tools/kms_writeback -d --run-subtest dump-valid-clones
+>> [   33.250236] Console: switching to colour dummy device 80x25
+>> IGT-Version: 1.29-1.28 (aarch64) (Linux: 6.12.0-rc1-00022- 
+>> ge581f752bf79 aarch64)
+>> Using IGT_SRANDOM=1709054789 for randomisation[   33.256171] [IGT] 
+>> kms_writeback: executing
+>>
+>> Opened device: /dev/dri/card0
+>> [   33.360023] [IGT] kms_writeback: starting subtest dump-valid-clones
+>> Starting subtest: dump-valid-clones
+>> [   34.063316] [drm:dpu_encoder_virt_atomic_disable:1314] [dpu 
+>> error]enc32 timeout pending
+>> [   34.244272] Unable to handle kernel NULL pointer dereference at 
+>> virtual address 0000000000000010
+>> [   34.253385] Mem abort info:
+>> [   34.256328]   ESR = 0x0000000096000006
+>> [   34.260272]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [   34.265816]   SET = 0, FnV = 0
+>> [   34.269043]   EA = 0, S1PTW = 0
+>> [   34.272332]   FSC = 0x06: level 2 translation fault
+>> [   34.277430] Data abort info:
+>> [   34.280460]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>> [   34.286170]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> [   34.291438]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [   34.296975] user pgtable: 4k pages, 48-bit VAs, pgdp=00000008824fc000
+>> [   34.303673] [0000000000000010] pgd=08000008dc4e0003, 
+>> p4d=08000008dc4e0003, pud=08000008dd4af003, pmd=0000000000000000
+>> [   34.314647] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+>> [   34.321144] Modules linked in: snd_soc_wsa884x q6prm_clocks 
+>> q6apm_dai q6apm_lpass_dais snd_q6dsp_common q6prm 8021q garp mrp stp 
+>> llc usb_f_fs libcomposite qrtr_mhi snd_q6apm rpmsg_ctrl fastrpc apr 
+>> qrtr_smd rpmsg_char snd_soc_hdmi_codec ath12k mac80211 libarc4 mhi 
+>> panel_visionox_vtdr6130 qcom_pd_mapper goodix_berlin_spi ucsi_glink 
+>> pmic_glink_altmode pci_pwrctl_pwrseq pci_pwrctl_core typec_ucsi 
+>> aux_hpd_bridge qcom_battmgr nb7vpq904m wcd939x_usbss 
+>> goodix_berlin_core crct10dif_ce phy_qcom_eusb2_repeater msm sm3_ce sm3 
+>> qcom_q6v5_pas sha3_ce hci_uart sha512_ce sha512_arm64 leds_qcom_lpg 
+>> ocmem qcom_pil_info qcom_q6v5 qcom_pbs btqca ipa btbcm drm_exec 
+>> qcom_sysmon pwrseq_qcom_wcn snd_soc_sc8280xp led_class_multicolor 
+>> snd_soc_qcom_sdw qrtr qcom_common gpu_sched snd_soc_wcd939x 
+>> drm_dp_aux_bus qcom_spmi_temp_alarm snd_soc_qcom_common 
+>> qcom_glink_smem snd_soc_wcd939x_sdw rtc_pm8xxx drm_display_helper 
+>> pinctrl_sm8650_lpass_lpi regmap_sdw cfg80211 bluetooth qcom_pon 
+>> pmic_glink ecdh_generic pdr_interface phy_qcom_qmp_combo ecc rfkill
+>> [   34.321268]  nvmem_qcom_spmi_sdam qcom_stats spi_geni_qcom 
+>> pwrseq_core i2c_qcom_geni aux_bridge phy_qcom_snps_eusb2 dispcc_sm8550 
+>> drm_kms_helper gpi soundwire_qcom snd_soc_lpass_va_macro 
+>> pinctrl_lpass_lpi snd_soc_wcd_mbhc snd_soc_lpass_tx_macro 
+>> snd_soc_lpass_rx_macro snd_soc_lpass_wsa_macro llcc_qcom 
+>> snd_soc_lpass_macro_common slimbus snd_soc_wcd_classh mdt_loader 
+>> qcom_pdr_msg qcrypto gpucc_sm8650 icc_bwmon qmi_helpers authenc 
+>> phy_qcom_qmp_ufs libdes soundwire_bus ufs_qcom nvmem_reboot_mode 
+>> phy_qcom_qmp_pcie typec qcom_rng rmtfs_mem socinfo fuse drm backlight 
+>> ipv6
+>> [   34.464862] CPU: 5 UID: 0 PID: 513 Comm: kms_writeback Tainted: G 
+>> S                 6.12.0-rc1-00022-ge581f752bf79 #2
+>> [   34.475812] Tainted: [S]=CPU_OUT_OF_SPEC
+>> [   34.479905] Hardware name: Qualcomm Technologies, Inc. SM8650 QRD (DT)
+>> [   34.486667] pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS 
+>> BTYPE=--)
+>> [   34.493880] pc : dpu_encoder_helper_phys_setup_cwb+0xb8/0x1ec [msm]
+>> [   34.500441] lr : dpu_encoder_helper_phys_setup_cwb+0x88/0x1ec [msm]
+>> [   34.506969] sp : ffff800085fc37e0
+>> [   34.510437] x29: ffff800085fc3810 x28: ffffb8c93c953068 x27: 
+>> ffff5af315c90880
+>> [   34.517826] x26: ffff5af359c55780 x25: ffff800085fc3878 x24: 
+>> ffff5af35a956e80
+>> [   34.525217] x23: 0000000000000000 x22: ffff5af355dc2080 x21: 
+>> ffff5af35a956e80
+>> [   34.532607] x20: ffff5af315c90880 x19: ffff5af315c90c80 x18: 
+>> 0000000000000001
+>> [   34.539997] x17: 0000000000000018 x16: ffffb8c95c9c8c64 x15: 
+>> 0000000000000038
+>> [   34.547385] x14: 0000001971602a24 x13: 00000000000000e1 x12: 
+>> 000000000000000b
+>> [   34.554774] x11: 0000000000000000 x10: e7125de8a27ae014 x9 : 
+>> 5aef79bd13b1e2a7
+>> [   34.562162] x8 : ffff5af355dc2718 x7 : 0000000000000004 x6 : 
+>> ffff5af356374d98
+>> [   34.569550] x5 : 0000000000000002 x4 : ffff800085fc37f8 x3 : 
+>> ffff5af315c90950
+>> [   34.576938] x2 : 0000000000000002 x1 : 0000000000000000 x0 : 
+>> 0000000000000001
+>> [   34.584328] Call trace:
+>> [   34.586905]  dpu_encoder_helper_phys_setup_cwb+0xb8/0x1ec [msm]
+>> [   34.593075]  dpu_encoder_helper_phys_cleanup+0x328/0x3c4 [msm]
+>> [   34.599165]  dpu_encoder_phys_wb_disable+0x80/0xac [msm]
+>> [   34.604713]  dpu_encoder_virt_atomic_disable+0xb4/0x160 [msm]
+>> [   34.610711]  disable_outputs+0x108/0x32c [drm_kms_helper]
+>> [   34.616351]  drm_atomic_helper_commit_modeset_disables+0x1c/0x4c 
+>> [drm_kms_helper]
+>> [   34.624110]  msm_atomic_commit_tail+0x188/0x514 [msm]
+>> [   34.629396]  commit_tail+0xa4/0x18c [drm_kms_helper]
+>> [   34.634570]  drm_atomic_helper_commit+0x17c/0x194 [drm_kms_helper]
+>> [   34.640990]  drm_atomic_commit+0xb8/0xf4 [drm]
+>> [   34.645690]  drm_mode_atomic_ioctl+0xad4/0xd88 [drm]
+>> [   34.650889]  drm_ioctl_kernel+0xc0/0x128 [drm]
+>> [   34.655564]  drm_ioctl+0x218/0x49c [drm]
+>> [   34.659697]  __arm64_sys_ioctl+0xac/0xf0
+>> [   34.663804]  invoke_syscall+0x48/0x10c
+>> [   34.667755]  el0_svc_common.constprop.0+0xc0/0xe0
+>> [   34.672648]  do_el0_svc+0x1c/0x28
+>> [   34.676117]  el0_svc+0x34/0xd8
+>> [   34.679330]  el0t_64_sync_handler+0x120/0x12c
+>> [   34.683864]  el0t_64_sync+0x190/0x194
+>> [   34.687699] Code: 910063e1 f8607822 f8607861 b9401042 (b9401021)
+>> [   34.694014] ---[ end trace 0000000000000000 ]---
+>> ==================><====================================================
+> 
+> Anything I can try to get past the crash ?
+
+Hey Neil,
+
+Sorry for the late reply -- I was able to recreate this error using a 
+clean IGT build. Looks like the NULL dereference is coming from looping 
+through rt_pp_list.
+
+I'm already planning to drop this in the v3, but for now can you try 
+applying this change and seeing if it fixes the NULL dereference for you:
+
+@@ -2166,7 +2172,7 @@ void dpu_encoder_helper_phys_setup_cwb(struct 
+dpu_encoder_phys *phys_enc,
+         struct dpu_kms *dpu_kms;
+         struct dpu_global_state *global_state;
+         struct dpu_hw_blk *rt_pp_list[MAX_CHANNELS_PER_ENC];
+-       int num_pp, rt_pp_idx[MAX_CHANNELS_PER_ENC];
++       int num_pp;
+
+         if (!phys_enc || !phys_enc->hw_wb || !dpu_enc->cwb_mask)
+                 return;
+@@ -2191,24 +2197,6 @@ void dpu_encoder_helper_phys_setup_cwb(struct 
+dpu_encoder_phys *phys_enc,
+                 return;
+         }
+
+-       for (int i = 0; i < num_pp; i++) {
+-               struct dpu_hw_pingpong *hw_pp = 
+to_dpu_hw_pingpong(rt_pp_list[i]);
 -
->> > -
->> > > SError
->> > > [    4=2E012862] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
->> > tainted
->> > > 6=2E12=2E0-rc2-0=2E0=2E0-devel-00004-g8b1b79e88956 #1
->> > > [    4=2E012869] Hardware name: Toradex Verdin iMX8M Plus WB on
->> > > Dahlia Board (DT)
->> > > [    4=2E012872] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -
->> > SSBS
->> > > BTYPE=3D--)
->> > > [    4=2E012877] pc :
->> > clk_imx8mp_audiomix_runtime_resume+0x38/0x48
->> > > [    4=2E012891] lr : pm_generic_runtime_resume+0x2c/0x44
->> > > [    4=2E012897] sp : ffff8000821cb740
->> > > [    4=2E012899] x29: ffff8000821cb740 x28: ffff8000793c48d8 x27:
->> > > ffff8000793c48c0
->> > > [    4=2E012908] x26: ffff0000c0ec90f4 x25: 0000000000000000 x24:
->> > > 0000000000000000
->> > > [    4=2E012916] x23: 0000000000000000 x22: ffff0000c1bef180 x21:
->> > > 0000000000000000
->> > > [    4=2E012923] x20: ffff0000c0a73000 x19: ffff0000c0ecbc10 x18:
->> > > ffffffffffffffff
->> > > [    4=2E012930] x17: 3030303064623033 x16: 2f7375622e303030 x15:
->> > > 756e285472656c6c
->> > > [    4=2E012937] x14: ffff800081267458 x13: 6d692c6c73664361 x12:
->> > > 0000000000000000
->> > > [    4=2E012944] x11: 00353333333d4d55 x10: ffff8000818020ae x9 :
->> > > 0000000000000008
->> > > [    4=2E012951] x8 : 0000000000000008 x7 : 0000000000000000 x6 :
->> > > ffff0000c5bf2080
->> > > [    4=2E012958] x5 : ffff800081f10000 x4 : ffff800080c182e8 x3 :
->> > > ffff0000c0ee7088
->> > > [    4=2E012965] x2 : 0000000000000000 x1 : 0000000000000004 x0 :
->> > > ffff800081f10300
->> > > [    4=2E012973] Kernel panic - not syncing: Asynchronous SError
->> > Interrupt
->> > > [    4=2E012976] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
->> > tainted
->> > > 6=2E12=2E0-rc2-0=2E0=2E0-devel-00004-g8b1b79e88956 #1
->> > > [    4=2E012982] Hardware name: Toradex Verdin iMX8M Plus WB on
->> > > Dahlia Board (DT)
->> > > [    4=2E012985] Call trace:
->> > > [    4=2E012988]  dump_backtrace+0xd0/0x120
->> > > [    4=2E012998]  show_stack+0x18/0x24
->> > > [    4=2E013005]  dump_stack_lvl+0x60/0x80
->> > > [    4=2E013013]  dump_stack+0x18/0x24
->> > > [    4=2E013019]  panic+0x168/0x350
->> > > [    4=2E013025]  add_taint+0x0/0xbc
->> > > [    4=2E013029]  arm64_serror_panic+0x64/0x70
->> > > [    4=2E013034]  do_serror+0x3c/0x70
->> > > [    4=2E013039]  el1h_64_error_handler+0x30/0x54
->> > > [    4=2E013046]  el1h_64_error+0x64/0x68
->> > > [    4=2E013050]  clk_imx8mp_audiomix_runtime_resume+0x38/0x48
->> > > [    4=2E013059]  __genpd_runtime_resume+0x30/0x80
->> > > [    4=2E013066]  genpd_runtime_resume+0x114/0x29c
->> > > [    4=2E013073]  __rpm_callback+0x48/0x1e0
->> > > [    4=2E013079]  rpm_callback+0x68/0x80
->> > > [    4=2E013084]  rpm_resume+0x3bc/0x6a0
->> > > [    4=2E013089]  __pm_runtime_resume+0x50/0x9c
->> > > [    4=2E013095]  pm_runtime_get_suppliers+0x60/0x8c
->> > > [    4=2E013101]  __driver_probe_device+0x4c/0x14c
->> > > [    4=2E013108]  driver_probe_device+0x3c/0x120
->> > > [    4=2E013114]  __driver_attach+0xc4/0x200
->> > > [    4=2E013119]  bus_for_each_dev+0x7c/0xe0
->> > > [    4=2E013125]  driver_attach+0x24/0x30
->> > > [    4=2E013130]  bus_add_driver+0x110/0x240
->> > > [    4=2E013135]  driver_register+0x68/0x124
->> > > [    4=2E013142]  __platform_driver_register+0x24/0x30
->> > > [    4=2E013149]  sdma_driver_init+0x20/0x1000 [imx_sdma]
->> > > [    4=2E013163]  do_one_initcall+0x60/0x1e0
->> > > [    4=2E013168]  do_init_module+0x5c/0x21c
->> > > [    4=2E013175]  load_module+0x1a98/0x205c
->> > > [    4=2E013181]  init_module_from_file+0x88/0xd4
->> > > [    4=2E013187]  __arm64_sys_finit_module+0x258/0x350
->> > > [    4=2E013194]  invoke_syscall=2Econstprop=2E0+0x50/0xe0
->> > > [    4=2E013202]  do_el0_svc+0xa8/0xe0
->> > > [    4=2E013208]  el0_svc+0x3c/0x140
->> > > [    4=2E013215]  el0t_64_sync_handler+0x120/0x12c
->> > > [    4=2E013222]  el0t_64_sync+0x190/0x194
->> > > [    4=2E013228] SMP: stopping secondary CPUs
->> > > [    4=2E013237] Kernel Offset: disabled
->> > > [    4=2E013239] CPU features: 0x00,00000000,00200000,4200420b
->> > > [    4=2E013243] Memory Limit: none
->> > > [    4=2E316721] ---[ end Kernel panic - not syncing: Asynchronous =
-SError
->> > > Interrupt ]---
->> > >
->> > >
->> > > Francesco
->>
+-               for (int j = 0; j < ARRAY_SIZE(dpu_enc->hw_cwb); j++) {
+-                       hw_cwb = dpu_enc->hw_cwb[i];
+-
+-                       /*
+-                        * Even CWB muxes must take input from even 
+real-time
+-                        * pingpongs and odd CWB muxes must take input 
+from odd
+-                        * pingpongs
+-                        */
+-                       if (hw_pp->idx % 2 == hw_cwb->idx % 2) {
+-                               rt_pp_idx[i] = enable ? hw_pp->idx : 
+PINGPONG_NONE;
+-                               break;
+-                       }
+-               }
+-       }
+-
+         /*
+          * The CWB mux supports using LM or DSPP as tap points. For now,
+          * always use LM tap point
+@@ -2220,7 +2208,13 @@ void dpu_encoder_helper_phys_setup_cwb(struct 
+dpu_encoder_phys *phys_enc,
+                 if (!hw_cwb)
+                         continue;
 
-Hello,
+-               cwb_cfg.pp_idx = rt_pp_idx[i];
++               if (enable) {
++                       struct dpu_hw_pingpong *hw_pp =
++                                       to_dpu_hw_pingpong(rt_pp_list[i]);
++                       cwb_cfg.pp_idx = hw_pp->idx;
++               } else {
++                       cwb_cfg.pp_idx = PINGPONG_NONE;
++               }
+
+
+Thanks,
+
+Jessica Zhang
+
+> 
+> Thanks,
+> Neil
+> 
+>>
+>> Neil
+>>
+>>>
+>>> Also, can you share the IGT debug logs?
+>>>
+>>> FWIW, I haven't had the chance to test with DP yet so that might be 
+>>> why you're hitting this issue and I'm not.
+>>>
+>>> Thanks,
+>>>
+>>> Jessica Zhang
+>>>
+>>>> [ 2566.668998] Console: switching to colour dummy device 80x25
+>>>> IGT-Version: 1.29-1.28 (aarch64) (Linux: 6.12.0-rc1-00022- 
+>>>> ge581f752bf79 aarch64)
+>>>> [ 2566.674859] [IGT] kms_writeback: executing
+>>>> Using IGT_SRANDOM=1709057323 for randomisation
+>>>> Opened device: /dev/dri/card0
+>>>> [ 2566.741375] [IGT] kms_writeback: starting subtest dump-writeback
+>>>> Starting subtest: dump-writeback
+>>>> Subtest dump-writeback: SUCCESS (0.305s)[ 2567.053189] [IGT] 
+>>>> kms_writeback: finished subtest dump-writeback, SUCCESS
+>>>>
+>>>> [ 2567.064505] [IGT] kms_writeback: starting subtest dump-valid-clones
+>>>> Starting subtest: dump-valid-clones
+>>>> [ 2567.762793] Unable to handle kernel NULL pointer dereference at 
+>>>> virtual address 0000000000000010
+>>>> [ 2567.771919] Mem abort info:
+>>>> [ 2567.774888]   ESR = 0x0000000096000006
+>>>> [ 2567.778831]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>>> [ 2567.784371]   SET = 0, FnV = 0
+>>>> [ 2567.787601]   EA = 0, S1PTW = 0
+>>>> [ 2567.790942]   FSC = 0x06: level 2 translation fault
+>>>> [ 2567.796044] Data abort info:
+>>>> [ 2567.799083]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>>>> [ 2567.804793]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>>> [ 2567.810057]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>>> [ 2567.815600] user pgtable: 4k pages, 48-bit VAs, 
+>>>> pgdp=00000008d60cf000
+>>>> [ 2567.822290] [0000000000000010] pgd=08000008d6049003, 
+>>>> p4d=08000008d6049003, pud=080000089397e003, pmd=0000000000000000
+>>>> [ 2567.833254] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+>>>> [ 2567.839747] Modules linked in: snd_soc_wsa884x q6prm_clocks 
+>>>> q6apm_lpass_dais snd_q6dsp_common q6apm_dai q6prm 8021q garp mrp stp 
+>>>> llc usb_f_fs libcomposite qrtr_mhi snd_soc_hdmi_codec ath12k 
+>>>> mac80211 libarc4 mhi panel_visionox_vtdr6130 snd_q6apm 
+>>>> pci_pwrctl_pwrseq pci_pwrctl_core rpmsg_ctrl apr fastrpc qrtr_smd 
+>>>> rpmsg_char wcd939x_usbss nb7vpq904m qcom_pd_mapper goodix_berlin_spi 
+>>>> goodix_berlin_core ucsi_glink typec_ucsi pmic_glink_altmode 
+>>>> aux_hpd_bridge qcom_battmgr leds_qcom_lpg msm ocmem drm_exec 
+>>>> hci_uart qcom_pbs gpu_sched led_class_multicolor btqca 
+>>>> phy_qcom_eusb2_repeater btbcm qcom_spmi_temp_alarm drm_dp_aux_bus 
+>>>> phy_qcom_qmp_combo crct10dif_ce bluetooth drm_display_helper sm3_ce 
+>>>> ecdh_generic aux_bridge sm3 snd_soc_sc8280xp pwrseq_qcom_wcn sha3_ce 
+>>>> snd_soc_qcom_sdw rtc_pm8xxx qcom_pon ecc nvmem_qcom_spmi_sdam 
+>>>> sha512_ce qcom_stats spi_geni_qcom snd_soc_qcom_common sha512_arm64 
+>>>> pwrseq_core i2c_qcom_geni cfg80211 drm_kms_helper dispcc_sm8550 gpi 
+>>>> ipa snd_soc_lpass_va_macro snd_soc_lpass_tx_macro soundwire_qcom
+>>>> [ 2567.839860]  pinctrl_sm8650_lpass_lpi snd_soc_lpass_wsa_macro 
+>>>> snd_soc_lpass_rx_macro rfkill slimbus phy_qcom_snps_eusb2 
+>>>> pinctrl_lpass_lpi gpucc_sm8650 snd_soc_lpass_macro_common 
+>>>> qcom_q6v5_pas qcom_pil_info qcom_q6v5 qcrypto authenc icc_bwmon 
+>>>> qcom_sysmon qcom_common qrtr qcom_glink_smem phy_qcom_qmp_pcie 
+>>>> mdt_loader libdes llcc_qcom ufs_qcom phy_qcom_qmp_ufs pmic_glink 
+>>>> snd_soc_wcd939x rmtfs_mem pdr_interface snd_soc_wcd939x_sdw 
+>>>> regmap_sdw qcom_pdr_msg snd_soc_wcd_mbhc qmi_helpers 
+>>>> snd_soc_wcd_classh soundwire_bus typec nvmem_reboot_mode qcom_rng 
+>>>> socinfo fuse drm backlight ipv6
+>>>> [ 2567.983445] CPU: 5 UID: 0 PID: 554 Comm: kms_writeback Tainted: G 
+>>>> S                 6.12.0-rc1-00022-ge581f752bf79 #2
+>>>> [ 2567.994390] Tainted: [S]=CPU_OUT_OF_SPEC
+>>>> [ 2567.998483] Hardware name: Qualcomm Technologies, Inc. SM8650 QRD 
+>>>> (DT)
+>>>> [ 2568.005244] pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS 
+>>>> BTYPE=--)
+>>>> [ 2568.012455] pc : dpu_encoder_helper_phys_setup_cwb+0xb8/0x1ec [msm]
+>>>> [ 2568.019009] lr : dpu_encoder_helper_phys_setup_cwb+0x88/0x1ec [msm]
+>>>> [ 2568.025532] sp : ffff80008939b7e0
+>>>> [ 2568.028999] x29: ffff80008939b810 x28: ffffcbcb66f26068 x27: 
+>>>> ffff37ad962cb080
+>>>> [ 2568.036388] x26: ffff37ad9887ed80 x25: ffff80008939b878 x24: 
+>>>> ffff37ad43642a80
+>>>> [ 2568.043775] x23: 0000000000000000 x22: ffff37ad42812080 x21: 
+>>>> ffff37ad43642a80
+>>>> [ 2568.051163] x20: ffff37ad962cb080 x19: ffff37ad962c8080 x18: 
+>>>> 0000000000000001
+>>>> [ 2568.058552] x17: 000000040044ffff x16: ffffcbcbb0fc8c64 x15: 
+>>>> 00003d08ffff9c00
+>>>> [ 2568.065939] x14: 00000013519b2832 x13: ffff37ad9d392200 x12: 
+>>>> 000000000000000b
+>>>> [ 2568.073325] x11: ffff37ad40dc56c0 x10: ffff37ad9d392200 x9 : 
+>>>> ffff37afbe7bba80
+>>>> [ 2568.080712] x8 : ffff37ad42812718 x7 : 0000000000000004 x6 : 
+>>>> ffff37ad989ac798
+>>>> [ 2568.088098] x5 : 0000000000000002 x4 : ffff80008939b7f8 x3 : 
+>>>> ffff37ad962cb150
+>>>> [ 2568.095480] x2 : 0000000000000002 x1 : 0000000000000000 x0 : 
+>>>> 0000000000000001
+>>>> [ 2568.102868] Call trace:
+>>>> [ 2568.105446]  dpu_encoder_helper_phys_setup_cwb+0xb8/0x1ec [msm]
+>>>> [ 2568.111608]  dpu_encoder_helper_phys_cleanup+0x328/0x3c4 [msm]
+>>>> [ 2568.117692]  dpu_encoder_phys_wb_disable+0x80/0xac [msm]
+>>>> [ 2568.123233]  dpu_encoder_virt_atomic_disable+0xb4/0x160 [msm]
+>>>> [ 2568.129224]  disable_outputs+0x108/0x32c [drm_kms_helper]
+>>>> [ 2568.134858]  drm_atomic_helper_commit_modeset_disables+0x1c/0x4c 
+>>>> [drm_kms_helper]
+>>>> [ 2568.142614]  msm_atomic_commit_tail+0x188/0x514 [msm]
+>>>> [ 2568.147894]  commit_tail+0xa4/0x18c [drm_kms_helper]
+>>>> [ 2568.153065]  drm_atomic_helper_commit+0x17c/0x194 [drm_kms_helper]
+>>>> [ 2568.159482]  drm_atomic_commit+0xb8/0xf4 [drm]
+>>>> [ 2568.164176]  drm_mode_atomic_ioctl+0xad4/0xd88 [drm]
+>>>> [ 2568.169369]  drm_ioctl_kernel+0xc0/0x128 [drm]
+>>>> [ 2568.174039]  drm_ioctl+0x218/0x49c [drm]
+>>>> [ 2568.178165]  __arm64_sys_ioctl+0xac/0xf0
+>>>> [ 2568.182271]  invoke_syscall+0x48/0x10c
+>>>> [ 2568.186217]  el0_svc_common.constprop.0+0xc0/0xe0
+>>>> [ 2568.191109]  do_el0_svc+0x1c/0x28
+>>>> [ 2568.194576]  el0_svc+0x34/0xd8
+>>>> [ 2568.197788]  el0t_64_sync_handler+0x120/0x12c
+>>>> [ 2568.202321]  el0t_64_sync+0x190/0x194
+>>>> [ 2568.206157] Code: 910063e1 f8607822 f8607861 b9401042 (b9401021)
+>>>> [ 2568.212484] ---[ end trace 0000000000000000 ]---
+>>>>
+>>>> Neil
+>>>>
+>>>>> +                rt_pp_idx[i] = enable ? hw_pp->idx : PINGPONG_NONE;
+>>>>> +                break;
+>>>>> +            }
+>>>>> +        }
+>>>>> +    }
+>>>>> +
+>>>>> +    /*
+>>>>> +     * The CWB mux supports using LM or DSPP as tap points. For now,
+>>>>> +     * always use LM tap point
+>>>>> +     */
+>>>>> +    cwb_cfg.input = INPUT_MODE_LM_OUT;
+>>>>> +
+>>>>> +    for (int i = 0; i < MAX_CHANNELS_PER_ENC; i++) {
+>>>>> +        hw_cwb = dpu_enc->hw_cwb[i];
+>>>>> +        if (!hw_cwb)
+>>>>> +            continue;
+>>>>> +
+>>>>> +        cwb_cfg.pp_idx = rt_pp_idx[i];
+>>>>> +
+>>>>> +        hw_cwb->ops.config_cwb(hw_cwb, &cwb_cfg);
+>>>>> +    }
+>>>>> +}
+>>>>> +
+>>>>>   void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys 
+>>>>> *phys_enc,
+>>>>>                          const struct msm_format *dpu_fmt,
+>>>>>                          u32 output_type)
+>>>>> @@ -2557,6 +2630,14 @@ enum dpu_intf_mode 
+>>>>> dpu_encoder_get_intf_mode(struct drm_encoder *encoder)
+>>>>>       return INTF_MODE_NONE;
+>>>>>   }
+>>>>> +unsigned int dpu_encoder_helper_get_cwb(struct dpu_encoder_phys 
+>>>>> *phys_enc)
+>>>>> +{
+>>>>> +    struct drm_encoder *encoder = phys_enc->parent;
+>>>>> +    struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(encoder);
+>>>>> +
+>>>>> +    return dpu_enc->cwb_mask;
+>>>>> +}
+>>>>> +
+>>>>>   unsigned int dpu_encoder_helper_get_dsc(struct dpu_encoder_phys 
+>>>>> *phys_enc)
+>>>>>   {
+>>>>>       struct drm_encoder *encoder = phys_enc->parent;
+>>>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/ 
+>>>>> drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+>>>>> index e77ebe3a68da..d7a02d1f8053 100644
+>>>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+>>>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+>>>>> @@ -1,6 +1,6 @@
+>>>>>   /* SPDX-License-Identifier: GPL-2.0-only */
+>>>>>   /*
+>>>>> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights 
+>>>>> reserved.
+>>>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All 
+>>>>> rights reserved.
+>>>>>    * Copyright (c) 2015-2018 The Linux Foundation. All rights 
+>>>>> reserved.
+>>>>>    */
+>>>>> @@ -331,6 +331,12 @@ static inline enum dpu_3d_blend_mode 
+>>>>> dpu_encoder_helper_get_3d_blend_mode(
+>>>>>       return BLEND_3D_NONE;
+>>>>>   }
+>>>>> +/**
+>>>>> + * dpu_encoder_helper_get_cwb - get CWB blocks mask for the DPU 
+>>>>> encoder
+>>>>> + * @phys_enc: Pointer to physical encoder structure
+>>>>> + */
+>>>>> +unsigned int dpu_encoder_helper_get_cwb(struct dpu_encoder_phys 
+>>>>> *phys_enc);
+>>>>> +
+>>>>>   /**
+>>>>>    * dpu_encoder_helper_get_dsc - get DSC blocks mask for the DPU 
+>>>>> encoder
+>>>>>    *   This helper function is used by physical encoder to get DSC 
+>>>>> blocks mask
+>>>>> @@ -400,6 +406,14 @@ int dpu_encoder_helper_wait_for_irq(struct 
+>>>>> dpu_encoder_phys *phys_enc,
+>>>>>    */
+>>>>>   void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys 
+>>>>> *phys_enc);
+>>>>> +/**
+>>>>> + * dpu_encoder_helper_phys_setup_cwb - helper to configure CWB muxes
+>>>>> + * @phys_enc: Pointer to physical encoder structure
+>>>>> + * @enable: Enable CWB mux
+>>>>> + */
+>>>>> +void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys 
+>>>>> *phys_enc,
+>>>>> +                       bool enable);
+>>>>> +
+>>>>>   /**
+>>>>>    * dpu_encoder_helper_phys_setup_cdm - setup chroma down sampling 
+>>>>> block
+>>>>>    * @phys_enc: Pointer to physical encoder
+>>>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/ 
+>>>>> drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+>>>>> index 882c717859ce..e88c4d91041f 100644
+>>>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+>>>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+>>>>> @@ -1,6 +1,6 @@
+>>>>>   // SPDX-License-Identifier: GPL-2.0-only
+>>>>>   /*
+>>>>> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights 
+>>>>> reserved.
+>>>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All 
+>>>>> rights reserved.
+>>>>>    */
+>>>>>   #define pr_fmt(fmt)    "[drm:%s:%d] " fmt, __func__, __LINE__
+>>>>> @@ -342,6 +342,8 @@ static void dpu_encoder_phys_wb_setup(
+>>>>>       dpu_encoder_helper_phys_setup_cdm(phys_enc, dpu_fmt, 
+>>>>> CDM_CDWN_OUTPUT_WB);
+>>>>> +    dpu_encoder_helper_phys_setup_cwb(phys_enc, true);
+>>>>> +
+>>>>>       dpu_encoder_phys_wb_setup_ctl(phys_enc);
+>>>>>   }
+>>>>>
+>>>>
+>>>
+>>
+> 
+
 
