@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-355588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938B799546B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:27:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBBF995494
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5F42827B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0551C25299
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBB71E0DC6;
-	Tue,  8 Oct 2024 16:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npHcg7G8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5AD1E0DF4;
+	Tue,  8 Oct 2024 16:37:34 +0000 (UTC)
+Received: from mx2.qrator.net (mx2.qrator.net [178.248.233.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677F96F2F3;
-	Tue,  8 Oct 2024 16:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951781EA73;
+	Tue,  8 Oct 2024 16:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.248.233.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404863; cv=none; b=NFnfit+x3rIdVo08HIPaA32PE14MgGn0Sx0L1ygdoUvMbj23aZ+1C6N3ogS3gEiX9xv2fgtK4+4yLIlYRdasoz8qpk5gmWfUEjvRHPVoXYFfBNqhm8tTj+9CbFiz+XiK9gJfJepAwb8aeEgJITCWoQVjWNxC3r62K7cvZJZaxGE=
+	t=1728405453; cv=none; b=hYzF/tlTRPvjuhlMr9yW42iE+1Jd1Sb7AOBT4xtKeFmsIYH3LMNxEyT9V6NOn25vt/OLAxA1eG7WTLkbJwwIishx2BahgbCkqE3qkBYpPSaycCOIqO3UOwnv8jJGX7P5TsLpPCdesQUSKyWu9Q0zqRfD2GYWfDHhUxAbwWc3VLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404863; c=relaxed/simple;
-	bh=zWC1pggc7OwVOj3ZzpCupZ+Awrq6EYrzUUSPwO2P6s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYjyI6KfWzBR3d4TDCHg5wh53pscAy/+Bm3xF86qVDhg4VBKzkd679yfczN6hPDdSbRi3fL1zgwCUA8XCUljXnPjVFiAxwKcnnMRpLhGwwS5QgQcA04XQjORhcGGHzaUdikYpttFWgxIgjqSCdD1kModXNAOW0MI5r7PkiZnWVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npHcg7G8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C959BC4CEC7;
-	Tue,  8 Oct 2024 16:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728404863;
-	bh=zWC1pggc7OwVOj3ZzpCupZ+Awrq6EYrzUUSPwO2P6s4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=npHcg7G8v9mNQd/hWqnog6AFImMftyLySMr1I5ZN089a/f4FxKnHTH5lg0vHYX8e9
-	 3T3rg5gc/MtSAVeU4w+d2q0E+jPlyKa2Xw3AXkC0Q8kk3HHRnRemykH+XNo/xtgOZD
-	 iJqTByGKAXoT2N3o4rhss2c+KPcwS9TMl31jw+Ht6PgNjgt/cs/sqcVbMfXf/k1ujl
-	 5gQsCU9xlUt37BjDpiBOrOQxJW+DeivRvXIU93ZIX02g0PllJ9RPlYrW2h9QvhvWpc
-	 6NJnvHQM4sxSec8Om4c+2X7N5F109YCfdydpZxkrdh2Jz84iDpyeHHoig0W2iQyUFU
-	 waIaX4RXw3k2w==
-Date: Tue, 8 Oct 2024 17:27:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ze Huang <18771902331@163.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/3] Add initial support for Canaan Kendryte K230
- pinctrl
-Message-ID: <20241008-backboned-helium-167d99aac110@spud>
-References: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
- <CACRpkdYk9aCp7mdWJJTT-1cwNZC4RN_eB6v5rducDY5MGJ_dbg@mail.gmail.com>
- <20241001-stratus-overplay-96266c33ca89@spud>
- <6a1a3e38-0c6b-4d79-a101-b3292a2ab3be@163.com>
+	s=arc-20240116; t=1728405453; c=relaxed/simple;
+	bh=ZM8tgqo57AOggPQwWEmlAFE7qFEUdZe0KUF0xOef7uU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BVGF5YfV/Lclg1sMhqjtOl0eA7sngfbKwfTPFkrkbuOfAhq0eQfFQmnbp/oVrUn8DvaiKiGgyZTkuF2Gmxurq3xb/SZQ3rbciIjFryDm6nuUTOg8K09oDhC16KGP5MFNEOMi+u4ONRRD5cDHV2CvYu1CMAngBqbONHpHLPWF9QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qrator.net; spf=pass smtp.mailfrom=qrator.net; arc=none smtp.client-ip=178.248.233.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qrator.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qrator.net
+Received: from localhost.localdomain (unknown [10.127.0.1])
+	by mx2.qrator.net (Postfix) with ESMTP id 8090724A0853;
+	Tue,  8 Oct 2024 19:28:59 +0300 (MSK)
+From: Alexander Zubkov <green@qrator.net>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	green@qrator.net,
+	horms@kernel.org,
+	linux@treblig.org
+Subject: [PATCH net-next] Fix misspelling of "accept*" in net
+Date: Tue,  8 Oct 2024 18:27:57 +0200
+Message-ID: <20241008162756.22618-2-green@qrator.net>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="spWZWIgtfKtTVugF"
-Content-Disposition: inline
-In-Reply-To: <6a1a3e38-0c6b-4d79-a101-b3292a2ab3be@163.com>
+Content-Transfer-Encoding: 8bit
 
+Several files have "accept*" misspelled as "accpet*" in the comments.
+Fix all such occurrences.
 
---spWZWIgtfKtTVugF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexander Zubkov <green@qrator.net>
+---
+ drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c | 4 ++--
+ drivers/net/ethernet/natsemi/ns83820.c                        | 2 +-
+ include/uapi/linux/udp.h                                      | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-On Tue, Oct 08, 2024 at 04:31:35PM +0800, Ze Huang wrote:
-> On 10/1/24 8:32 PM, Conor Dooley wrote:
-> > On Tue, Oct 01, 2024 at 02:27:25PM +0200, Linus Walleij wrote:
-> > > On Thu, Sep 26, 2024 at 5:58=E2=80=AFPM Ze Huang <18771902331@163.com=
-> wrote:
-> > >=20
-> > > > This patch series introduces support for the pinctrl driver of the =
-Canaan
-> > > > K230 SoC. The K230 SoC features 64 IO pins, each of which can be co=
-nfigured
-> > > > for up to five different functions.
-> > > >=20
-> > > > The controller manages the entire pin configuration and multiplexing
-> > > > through a single register, which control features such as schmitt t=
-rigger,
-> > > > drive strength, bias pull-up/down, input/output enable, power sourc=
-e, and
-> > > > mux mode.
-> > > >=20
-> > > > The changes have been tested on CanMV-K230-V1.1 board.
-> > > >=20
-> > > > The pin function definition can be found here [1], and most of the =
-DTS data
-> > > > was converted from the vendor's code [2].
-> > > Bindings ACKed and patches look good to I applied patch
-> > > 1 & 2 to the pin control tree.
-> > >=20
-> > > Please funnel patch 3 through the SoC tree.
-> > >=20
-> > > > prerequisite-message-id: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF=
-809@qq.com>
-> > > > prerequisite-patch-id: 704efc6e76814e1877748959d7319d558c8386c1
-> > > > prerequisite-patch-id: c2144cf468c57b856830a61615ba6ba501e8ec58
-> > > > prerequisite-patch-id: ced4a01ccd8ddab2fd308d543ddf47bd1641518a
-> > > > prerequisite-patch-id: f8b983b301d0c14f1448b9e4c321262a509e061e
-> > > > prerequisite-patch-id: 834b65b6a2b037daed5cffc6a41963622568dc9c
-> > > > prerequisite-patch-id: 2401703b57448c9ea2c3dc7650b4502491a28944
-> > > I don't know about all this stuff but neither bindings or code seems
-> > > to contain anything that won't compile so I just assume that any of t=
-hese
-> > > dependencies are purely for patch 3/3 and I nothing blocks me
-> > > merging patches 1 & 2 so I just went ahead with that.
-> > Yah, this should all be cos I haven't yet applied
-> > https://lore.kernel.org/all/tencent_22BA0425B4DF1CA1713B62E4423C1BFBF80=
-9@qq.com/
-> > as I am waiting for a clock driver to be sorted out.
->=20
-> Thank you very much for your time in reviewing and helping fix the bug!
-> Indeed, only patch 3 really depends on the previous patches. We are now
-> working on clock driver. Should we deal with patch 3 after that?
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+index 455a54708be4..96fd31d75dfd 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+@@ -342,8 +342,8 @@ static struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
+ {
+ 	struct sk_buff *skb;
+ 
+-	/* Allocate space for cpl_pass_accpet_req which will be synthesized by
+-	 * driver. Once driver synthesizes cpl_pass_accpet_req the skb will go
++	/* Allocate space for cpl_pass_accept_req which will be synthesized by
++	 * driver. Once driver synthesizes cpl_pass_accept_req the skb will go
+ 	 * through the regular cpl_pass_accept_req processing in TOM.
+ 	 */
+ 	skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req)
+diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+index 998586872599..bea969dfa536 100644
+--- a/drivers/net/ethernet/natsemi/ns83820.c
++++ b/drivers/net/ethernet/natsemi/ns83820.c
+@@ -2090,7 +2090,7 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
+ 	 */
+ 	/* Ramit : 1024 DMA is not a good idea, it ends up banging
+ 	 * some DELL and COMPAQ SMP systems
+-	 * Turn on ALP, only we are accpeting Jumbo Packets */
++	 * Turn on ALP, only we are accepting Jumbo Packets */
+ 	writel(RXCFG_AEP | RXCFG_ARP | RXCFG_AIRL | RXCFG_RX_FD
+ 		| RXCFG_STRIPCRC
+ 		//| RXCFG_ALP
+diff --git a/include/uapi/linux/udp.h b/include/uapi/linux/udp.h
+index 1a0fe8b151fb..d85d671deed3 100644
+--- a/include/uapi/linux/udp.h
++++ b/include/uapi/linux/udp.h
+@@ -31,7 +31,7 @@ struct udphdr {
+ #define UDP_CORK	1	/* Never send partially complete segments */
+ #define UDP_ENCAP	100	/* Set the socket to accept encapsulated packets */
+ #define UDP_NO_CHECK6_TX 101	/* Disable sending checksum for UDP6X */
+-#define UDP_NO_CHECK6_RX 102	/* Disable accpeting checksum for UDP6 */
++#define UDP_NO_CHECK6_RX 102	/* Disable accepting checksum for UDP6 */
+ #define UDP_SEGMENT	103	/* Set GSO segmentation size */
+ #define UDP_GRO		104	/* This socket can receive UDP GRO packets */
+ 
+-- 
+2.46.0
 
-Yeah, send patch 3 to me when you're done with the clock driver.
-
---spWZWIgtfKtTVugF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwVdegAKCRB4tDGHoIJi
-0vM+AQDUK2jfSUbjSUKTs2s9LIlWGezF+H00zfOJ/3xz2cu8JgEA19Je82HcT04j
-Q32XZouXgVHrbuSNLIV/YZmruchA6g8=
-=VNFz
------END PGP SIGNATURE-----
-
---spWZWIgtfKtTVugF--
 
