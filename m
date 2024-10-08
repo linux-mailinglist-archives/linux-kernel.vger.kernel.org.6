@@ -1,213 +1,226 @@
-Return-Path: <linux-kernel+bounces-356022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581B4995B0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1EE995B0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FE01F23D20
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B4E1F22A39
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E440B218584;
-	Tue,  8 Oct 2024 22:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F54192B98;
+	Tue,  8 Oct 2024 22:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+4NUAGP"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cL20ExjE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8778221503B;
-	Tue,  8 Oct 2024 22:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E8A21503B;
+	Tue,  8 Oct 2024 22:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728427455; cv=none; b=qdk6ABpWOn1LCn4+ZOw2WJssf87aaPRbQ/iAyhr1Js5l9PBwEtp5ZdaE1WOynbhvRKvijKMZ5pgG/a/1+jjJIvfW9WoOWnPAgRqes9Bo4orqJuNNh2SrdpHfY3XEcIvDALMukF28fsVhxkScFjnuKfAW85WmpFlYIcMGfkOUjs4=
+	t=1728427518; cv=none; b=XOZal/GeHrzTeVdRxZ5RawwSseSw/PcDI1jW3jWMETe7O+hoKnHepB3rII5xkGRA0UWiNCIVw7wMELFmCKHrqIjb9nzgfPkpkRXiKEQjL3MXiEUdfsptrwb/XQCCGiK7d15r1YrZhjn65cBeVuLTIqtqJu7RJ+ENHKxHCnxFuyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728427455; c=relaxed/simple;
-	bh=/FRhju6OZTXPmsTdnMH8o1bOozrFFjuoN85+xzVaq2E=;
+	s=arc-20240116; t=1728427518; c=relaxed/simple;
+	bh=Gk580rjiDxgF7YwO5s3wxuTmM7IrxPdN+2ai82g118U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7KEodmc6EDIfM2DPtdWjphGiMshQonUfC8q1nv0pDwNW4rlxw8+InGmkoAalHXESoKKVcO/flRe50UeKHrysG2zYHI9IIPUoHrF/vYe3ziqpO2cBLbGuCqov6jdjDDo87bOA/Av/ZsR8eny+CAgLCbujRLtqXlZ7px7s+1ga3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+4NUAGP; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4582f9abb43so41795341cf.2;
-        Tue, 08 Oct 2024 15:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728427452; x=1729032252; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RqgiQbZha4FLfEseXSQzK7NvkT/59J//hj+63erYNfQ=;
-        b=g+4NUAGPdTx18bExxntdvsvU/e44bGAHT9ZrDXRDKJQErPZlst29Lb87bhBWI2HKNA
-         0gUJJ8lS6Ng0+U06bKIhlFawDxI/StF2UvJ/UL7oGKN7GSK32zUFeKuspKHEEIqqzmib
-         29XV4pMrm6ppmKdh2sPxTPgYA/ChOSgqbcaMm59zrC57yxGmVeEdZdTmjnEemyxxzzSD
-         C86PgGAMNGwINMClXhEYIblGUL2M2N1lBuD2TBE9BS38yvGj7D/T9Hw7OoT/aFWCykn8
-         /dXN7IpG/Uu51l95NBACln+6n0dpRm/oeynL1MJe6O3Bp223LxnGNaV2Yn0oL4q8/ZYF
-         Aucw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728427452; x=1729032252;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RqgiQbZha4FLfEseXSQzK7NvkT/59J//hj+63erYNfQ=;
-        b=VL6wVBruW4hH5E7o834weVWXnVMNCvCm+LbOA9q7Skjm/J3GW2RxO2/La0NzBwU8kI
-         ZvJSFWz2bpAwR29Nxdn4xz7Ot5ECEWfiUkPhznJu5kxqBHPaTkE5JSoAFHLe+KYjVQwN
-         ZcOgVMfx5qlFpC0FXsfQRpyetBFQwuLDqDa9KTmyTdPiWsD25Ad3IhfxB50MejWyMOWv
-         hddMD3rPOhgXAUPaUVDiIpn/MOeG0dlGS9CdDlehD9dzE1xC8B97xg9E4gHmQ+5bDg0I
-         d3Uh0Jn8g+DiCaVBxDOdRKcOcyxuUPgy49rYVjsd5trDb9t0LjNz+E0vtRpSo69o3oWL
-         niMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDJxmVq/Z4ssm2MU7YHB7o1dfEUamJZMzgtYrSaOAItbbjREWzKttZOJ8A9j9kKzAO0aM/Jv4uy5fOUZUIlns=@vger.kernel.org, AJvYcCVQAZdhDyxKmAo6UZOWlE2phqa8fUOyhUnykq9HTl4ZOJnRUFCpyEl4hFK2rP+IiYIUZbAjU9iH@vger.kernel.org, AJvYcCX9AM/nI/ktRzYI2k+7+TjLqPIfstJ1B126POn2pScOgD6IVg7OF7xQDFkw9gbQOxswvHvqUp18EfyHBx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+VTRL1Fwz6Kon4q6NncY4sMpFJSmFyMt6148NnXR9emA/aV22
-	RuFc1EjDRbLGnc14EYocXW7Prercdy0sBhhsy7FsqXnymyiJe926
-X-Google-Smtp-Source: AGHT+IFRhQDWVAzs6gHbC0s4ucr7t2+ntbhqLuufaTyWmm0uy2soT0GvyU5CtpvXOzNcwAP8GF3uzQ==
-X-Received: by 2002:a05:622a:1f18:b0:45d:9236:89f2 with SMTP id d75a77b69052e-45f9f994740mr6346581cf.2.1728427452407;
-        Tue, 08 Oct 2024 15:44:12 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afce5892ffsm60230485a.45.2024.10.08.15.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 15:44:12 -0700 (PDT)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8840E1200066;
-	Tue,  8 Oct 2024 18:44:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Tue, 08 Oct 2024 18:44:11 -0400
-X-ME-Sender: <xms:u7UFZ5KIPPxzWPR-PhWShF9O32Ni2Z8qkud6hjD0DQORQ2RnLNouig>
-    <xme:u7UFZ1JuB5MCVaNguSGppi6FBKnZYCTCvX0aj3zFbG7V5KzzqJcFkKhqUDhXE1nGf
-    rSmCYGgX3GzAi7PaA>
-X-ME-Received: <xmr:u7UFZxv9Pw6ZiZ_OMDf9itShdc312qYzQl5Brmf3Jmw_6BawWvx_MiCFrjX4ZQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefvddgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
-    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvtddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtg
-    hpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishesghhmrghilhdrtgho
-    mhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    nhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqd
-    hfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhk
-    rghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuh
-    hmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:u7UFZ6ZybJIzDKgLRLCR73JzP5FB0T2YKeIvuHteDkk9q_K9fnIJYw>
-    <xmx:u7UFZwa5eahnWS1huXUgcxjdQZK-WsUhOlZyVlRfZAbOhst568pARg>
-    <xmx:u7UFZ-DHfV5oAXienUrEcsAAT0o2dvfD_D8sAET00csJks27x5PKMg>
-    <xmx:u7UFZ-brPjKhEuh2tNGTFMYFXg8bN9s4EohnbsL1eCB29w_E0Ei0qA>
-    <xmx:u7UFZ8rhc-HbVL00hIDfZDJ8-3YMRKJJ2arw94Xru5Dti1nkAJ_Hu_qI>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Oct 2024 18:44:11 -0400 (EDT)
-Date: Tue, 8 Oct 2024 15:42:49 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <ZwW1aUGqEj6i4ywb@boqun-archlinux>
-References: <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
- <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
- <ZwRq7PzAPzCAIBVv@boqun-archlinux>
- <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
- <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
- <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
- <ZwWp9C2X_QIrTJEq@boqun-archlinux>
- <32e97ba4-a47b-488a-b098-725faae21d7d@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSFvG4a+WKcrmmCiCvUdwSwlOqkXyiXLkptpXI2QFcCrh0SmBc2Wxl+nVZA1LAHti4enKrv2tLU9fGj6Auxv8Q3GyFm/CnjonOH3GPGWdKlpwhBnUDcwfa6rf3qBhEX0++5sIqSg8oETXZaZcA1nxxR6hwIIfNk9jVvx9rHTlaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cL20ExjE; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728427517; x=1759963517;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gk580rjiDxgF7YwO5s3wxuTmM7IrxPdN+2ai82g118U=;
+  b=cL20ExjE8m/hxlNSNsdCT5L35kcmgGfQ7HDj3frsosHdqfeR7QhvGFUN
+   +8ycFziWvSN9pCQdqbNVq/ek/dl7tREDUNZnMSNCpc04hE7TWJjatUp/t
+   seC+WfI9jG8gLwTicuByG/XfK1WKVMls5YUrIaNvLc0chv1QydsOGaZVu
+   WjO0nSBtJXFRSW8BCRYUheaUQ5KBlNpT70fo/ddOCd2XkQ3BhJZxLpoTQ
+   7OfHmshCNo8vkUtPzL+zpT9jwU118YNZ2i4K1TOAXokWRz2nEAdBaT0w6
+   3R7ZlVqUVWRxl2WwmogMa9opiab5PM+7cvXxDwjSDg5MovLgk+SU2pfSj
+   A==;
+X-CSE-ConnectionGUID: zeQ+MD4KRwemeZTfjefxPQ==
+X-CSE-MsgGUID: ATPG0/bPR/2FfmgFTjw1qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27810501"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="27810501"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 15:45:16 -0700
+X-CSE-ConnectionGUID: xhvqv0qXQxOYbkci+1Si9w==
+X-CSE-MsgGUID: taWMAtFRRgiW0/f99iXx3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="99368575"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Oct 2024 15:45:12 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syIx4-0008Rq-19;
+	Tue, 08 Oct 2024 22:45:10 +0000
+Date: Wed, 9 Oct 2024 06:45:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Hugh Dickins <hughd@google.com>, Oleg Nesterov <oleg@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Ben Hutchings <bwh@kernel.org>,
+	Willy Tarreau <w@1wt.eu>, Rik van Riel <riel@redhat.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] mm: Enforce a minimal stack gap even against
+ inaccessible VMAs
+Message-ID: <202410090632.brLG8w0b-lkp@intel.com>
+References: <20241008-stack-gap-inaccessible-v1-1-848d4d891f21@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <32e97ba4-a47b-488a-b098-725faae21d7d@lunn.ch>
+In-Reply-To: <20241008-stack-gap-inaccessible-v1-1-848d4d891f21@google.com>
 
-On Wed, Oct 09, 2024 at 12:26:00AM +0200, Andrew Lunn wrote:
-> On Tue, Oct 08, 2024 at 02:53:56PM -0700, Boqun Feng wrote:
-> > On Tue, Oct 08, 2024 at 07:16:42PM +0200, Andrew Lunn wrote:
-> > > On Tue, Oct 08, 2024 at 03:14:05PM +0200, Miguel Ojeda wrote:
-> > > > On Tue, Oct 8, 2024 at 2:13 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > >
-> > > > > As far as i see, might_sleep() will cause UAF where there is going to
-> > > > > be a UAF anyway. If you are using it correctly, it does not cause UAF.
-> > > > 
-> > > > This already implies that it is an unsafe function (in general, i.e.
-> > > > modulo klint, or a way to force the user to have to write `unsafe`
-> > > > somewhere else, or what I call ASHes -- "acknowledged soundness
-> > > > holes").
-> > > > 
-> > > > If we consider as safe functions that, if used correctly, do not cause
-> > > > UB, then all functions would be safe.
-> > > 
-> > > From what i hear, klint is still WIP. So we have to accept there will
-> > > be bad code out there, which will UAF. We want to find such bad code,
-> > 
-> > If you don't believe in klint
-> 
-> I did not say that. It is WIP, and without it i assume nothing is
-> detecting at compile time that the code is broken. Hence we need to
-> find the problem at runtime, which is what might_sleep() is all about.
-> 
-> > might_sleep() is useful because it checks preemption count and task
-> > state, which is provided by __might_sleep() as well. I don't think
-> > causing UAF helps we detect atomic context violation faster than what
-> > __might_sleep() already have. Again, could you provide an example that
-> > help me understand your reasoning here?
-> 
-> > > while (1) {
-> > >     <reader>                        <updater>
-> > >     rcu_read_lock();
-> > >     p = rcu_dereference(gp);
-> > >     mutex_lock(&lock)
-> > >     a = READ_ONCE(p->a);
-> > >     mutex_unlock(&lock)
-> > >     rcu_read_unlock();
-> > > }
-> 
-> The mutex lock is likely to be uncontested, so you don't sleep, and so
-> don't trigger the UAF. The code is clearly broken, but you survive.
-> Until the lock is contested, you do sleep, RCU falls apart, resulting
-> in a UAF.
-> 
-> Now if you used might_sleep(), every time you go around that loop you
-> do some of the same processing as actually sleeping, so are much more
-> likely to trigger the UAF.
-> 
-> might_sleep() as you pointed out, is also active when
-> CONFIG_DEBUG_ATOMIC_SLEEP is false. Thus it is also going to trigger
-> the broken code to UAF faster. And i expect a lot of testing is done
-> without CONFIG_DEBUG_ATOMIC_SLEEP and CONFIG_PROVE_LOCKING.
-> 
+Hi Jann,
 
-Hmm.. but that means we need to quickly detect UAF and track down to the
-source, right? In a build without CONFIG_DEBUG_ATOMIC_SLEEP and
-CONFIG_PROVE_LOCKING, may I assume memory sanitizer is also not
-available? Then how do we detect UAF relatively quickly? Or memory
-sanitizer is in fact relatively cheap, so it can still be enabled,
-what's the configuration of netdev CI/testing?
+kernel test robot noticed the following build errors:
 
-Regards,
-Boqun
+[auto build test ERROR on 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b]
 
-> Once klint is completed, and detects all these problems at compile
-> time, we can then discard all this might_sleep stuff. But until then,
-> the faster code explodes, the more likely it is going to be quickly
-> and cheaply fixed.
-> 
-> 	Andrew
+url:    https://github.com/intel-lab-lkp/linux/commits/Jann-Horn/mm-Enforce-a-minimal-stack-gap-even-against-inaccessible-VMAs/20241008-065733
+base:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+patch link:    https://lore.kernel.org/r/20241008-stack-gap-inaccessible-v1-1-848d4d891f21%40google.com
+patch subject: [PATCH] mm: Enforce a minimal stack gap even against inaccessible VMAs
+config: parisc-randconfig-r072-20241009 (https://download.01.org/0day-ci/archive/20241009/202410090632.brLG8w0b-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241009/202410090632.brLG8w0b-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410090632.brLG8w0b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/mmap.c: In function 'expand_upwards':
+>> mm/mmap.c:1069:39: error: 'prev' undeclared (first use in this function)
+    1069 |                 if (vma_is_accessible(prev))
+         |                                       ^~~~
+   mm/mmap.c:1069:39: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/prev +1069 mm/mmap.c
+
+  1036	
+  1037	#if defined(CONFIG_STACK_GROWSUP)
+  1038	/*
+  1039	 * PA-RISC uses this for its stack.
+  1040	 * vma is the last one with address > vma->vm_end.  Have to extend vma.
+  1041	 */
+  1042	static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
+  1043	{
+  1044		struct mm_struct *mm = vma->vm_mm;
+  1045		struct vm_area_struct *next;
+  1046		unsigned long gap_addr;
+  1047		int error = 0;
+  1048		VMA_ITERATOR(vmi, mm, vma->vm_start);
+  1049	
+  1050		if (!(vma->vm_flags & VM_GROWSUP))
+  1051			return -EFAULT;
+  1052	
+  1053		/* Guard against exceeding limits of the address space. */
+  1054		address &= PAGE_MASK;
+  1055		if (address >= (TASK_SIZE & PAGE_MASK))
+  1056			return -ENOMEM;
+  1057		address += PAGE_SIZE;
+  1058	
+  1059		/* Enforce stack_guard_gap */
+  1060		gap_addr = address + stack_guard_gap;
+  1061	
+  1062		/* Guard against overflow */
+  1063		if (gap_addr < address || gap_addr > TASK_SIZE)
+  1064			gap_addr = TASK_SIZE;
+  1065	
+  1066		next = find_vma_intersection(mm, vma->vm_end, gap_addr);
+  1067		if (next && !(next->vm_flags & VM_GROWSUP)) {
+  1068			/* see comments in expand_downwards() */
+> 1069			if (vma_is_accessible(prev))
+  1070				return -ENOMEM;
+  1071			if (address == next->vm_start)
+  1072				return -ENOMEM;
+  1073		}
+  1074	
+  1075		if (next)
+  1076			vma_iter_prev_range_limit(&vmi, address);
+  1077	
+  1078		vma_iter_config(&vmi, vma->vm_start, address);
+  1079		if (vma_iter_prealloc(&vmi, vma))
+  1080			return -ENOMEM;
+  1081	
+  1082		/* We must make sure the anon_vma is allocated. */
+  1083		if (unlikely(anon_vma_prepare(vma))) {
+  1084			vma_iter_free(&vmi);
+  1085			return -ENOMEM;
+  1086		}
+  1087	
+  1088		/* Lock the VMA before expanding to prevent concurrent page faults */
+  1089		vma_start_write(vma);
+  1090		/*
+  1091		 * vma->vm_start/vm_end cannot change under us because the caller
+  1092		 * is required to hold the mmap_lock in read mode.  We need the
+  1093		 * anon_vma lock to serialize against concurrent expand_stacks.
+  1094		 */
+  1095		anon_vma_lock_write(vma->anon_vma);
+  1096	
+  1097		/* Somebody else might have raced and expanded it already */
+  1098		if (address > vma->vm_end) {
+  1099			unsigned long size, grow;
+  1100	
+  1101			size = address - vma->vm_start;
+  1102			grow = (address - vma->vm_end) >> PAGE_SHIFT;
+  1103	
+  1104			error = -ENOMEM;
+  1105			if (vma->vm_pgoff + (size >> PAGE_SHIFT) >= vma->vm_pgoff) {
+  1106				error = acct_stack_growth(vma, size, grow);
+  1107				if (!error) {
+  1108					/*
+  1109					 * We only hold a shared mmap_lock lock here, so
+  1110					 * we need to protect against concurrent vma
+  1111					 * expansions.  anon_vma_lock_write() doesn't
+  1112					 * help here, as we don't guarantee that all
+  1113					 * growable vmas in a mm share the same root
+  1114					 * anon vma.  So, we reuse mm->page_table_lock
+  1115					 * to guard against concurrent vma expansions.
+  1116					 */
+  1117					spin_lock(&mm->page_table_lock);
+  1118					if (vma->vm_flags & VM_LOCKED)
+  1119						mm->locked_vm += grow;
+  1120					vm_stat_account(mm, vma->vm_flags, grow);
+  1121					anon_vma_interval_tree_pre_update_vma(vma);
+  1122					vma->vm_end = address;
+  1123					/* Overwrite old entry in mtree. */
+  1124					vma_iter_store(&vmi, vma);
+  1125					anon_vma_interval_tree_post_update_vma(vma);
+  1126					spin_unlock(&mm->page_table_lock);
+  1127	
+  1128					perf_event_mmap(vma);
+  1129				}
+  1130			}
+  1131		}
+  1132		anon_vma_unlock_write(vma->anon_vma);
+  1133		vma_iter_free(&vmi);
+  1134		validate_mm(mm);
+  1135		return error;
+  1136	}
+  1137	#endif /* CONFIG_STACK_GROWSUP */
+  1138	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
