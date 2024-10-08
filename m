@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-355874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB97995848
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5560C995859
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D49289642
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0961F24F5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B12215004;
-	Tue,  8 Oct 2024 20:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D721500F;
+	Tue,  8 Oct 2024 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wbf8mIAj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPpNZf+E"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D1A2905;
-	Tue,  8 Oct 2024 20:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB631E104B;
+	Tue,  8 Oct 2024 20:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728418849; cv=none; b=JRMocdY0Zw0yiwqL30FvLRYu9z/ahu700OP/RnZLk/RTG+/DbVw+V5luwnW3fY07yBqRlxQYFWG0mCAGlK2uTPTBQswCBRPUegtyYkLFw0CXl19q2XBrozkRnUSyTRZaxEhZSRpDLma0elkV+874xX2/cM8lE9qnYHLMtvaX45M=
+	t=1728419143; cv=none; b=MQjxruaHgccjlRRmHvopJUe+vOmxHboP9apN6xc7/EG3G/D74bm/FIUVZAJgLRfWZN3aPq8Pe10UHJH9zEkOjeXLLNFTktzp7NIl4NSXrZl5iXD/0FImj3DNGVd2C9OeYHsMNo7tOzn7x+w2uaPP57ZdKOmSssyQpOqyfGrfmJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728418849; c=relaxed/simple;
-	bh=a+CvXQsfvb9W0/UUGySvxVG4bRVf92+QlgygJfurKFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KIciiZ5tyHExU6wn7gHGhDWk0owz4UW5CdoOKJWs13WdUYCvKp33X/t89e06YujyRyiDRyNP0il8vpLDNf9ZNpqhkakVg+Tob4C031IoELn+S9Ag+AfPCschvLHu8qdCLDBCFdUrDaHJDnTbaIvj0I7HK1JW1M8Im04IgvO1bDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Wbf8mIAj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728418845;
-	bh=ZUAX+nMXdMMBK4bJn355F73977ikaUcKeALd46qz2xY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Wbf8mIAjsqtp36GLo5CP94iicjq7qVPy8TK4dHOd7qGl8jcY3cKLtdpmIPyfDYily
-	 URWMOTji1xfbzZLsKgOETBP1UybpQZUM0oBNGadXxriCoPMIsM01tkqodIea0wrd2D
-	 7iIADOUVyZHzJmOtpahF+KIOI9f96PoLgGUjehujrqyUd8+ME3uYKKFARTEG2lOwFq
-	 Gnmsgbyv+QYvJNOIHdYDHM7LwGhMTuIhd4SZyoMgQMbTZcbsFiip2ehoZ3oflPLcsd
-	 VEQSndDCQ1FjMvLq1bS5FDsyZZRwiOCiLvmRUFQ2qYlhByiQVMBRwYnB9ckdUkUMva
-	 oyoPYu7t8z7NQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNS7x0M1kz4wnr;
-	Wed,  9 Oct 2024 07:20:44 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 07:20:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the mmc tree
-Message-ID: <20241009072044.67f195b0@canb.auug.org.au>
+	s=arc-20240116; t=1728419143; c=relaxed/simple;
+	bh=+62GWsOwVBdhRHetxkZdgjXnt+BdlwrrCAhsBRIYUmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XV90/hhH2CaZVVPyV7a0Cr2I75v+eBI8WahwO5tUrA5SbTgY6aEmwz358H9Iq5qsFyrYBxf7/mBt0Xtbh+d00trQGH6ESuo/gQyx35w2yqoG7lEl6/iQMmZui/ewjEPliVgL73IU3RWMTz1AZ3gXBupikmtJmRTy5mu5g/xWAGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPpNZf+E; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b1134a6b0so5534735ad.2;
+        Tue, 08 Oct 2024 13:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728419142; x=1729023942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHFfcjP7e63aVrsj9S3xIwQfv9rNqIN8h79VM6VgqSw=;
+        b=jPpNZf+E+Ac1WEHNIfTAuemRNix4FZx3ZWvNFAN5gIbjD5FmOFus48t6ArZ6bnxZAk
+         Agyg55Bo0nMGsQqxURj1qrJ55lEtVdC5TUj6WfSufiLKD9sKovvlWpcvbhAOWZJnPAde
+         vlbXJB05cl2A4uBUaxdlSE90Cq5eKW3aysgSCAsrirWlr5n4js59JsygxLTumgevHeTb
+         Ipt90xtfJphyl1cHLhoZOR+vblxU/eo+p0pICbJRly9/TvyoGZ7zRmn6EsBXiC/0wejC
+         MMBV2a+bQTHCGDajaRzJHvLcoLhV92kld/ab/dOhGjTmXOE1RNnRzaiUx+evF7Gjf0gi
+         PJKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728419142; x=1729023942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fHFfcjP7e63aVrsj9S3xIwQfv9rNqIN8h79VM6VgqSw=;
+        b=MaJlVmUuwthcAZ52zEUOnL/OENGkPCzg4lNDUzQEl9Lkp0lq8ESeNrrcxCVBDOAmjC
+         CC4rhTowUac5Igp+Zzn6W1WgMShs2rEFhMI9jSw/s5RdWtgYuM9U5r8PuVMfmimaQlvC
+         qjmUqo7B7QoDKK+heAWo/ISfaQM3HZHNOZpb3OVhO+f1cZWhbyp2Ux7+GxbbRy9E2kcS
+         ZBeNeUMUV4JwhJGQZtrE731nLFZvh3Oj02kPCwGFNhAXZPuYIuK2Wkk4g3w8ainyDrtz
+         +dyd8RvOQ7L9zYPFNVFVPUEsz6jQPTAG7Q6sYM2RMK3dRqy1ZpmfYmOhkKd4VZSEL1vR
+         j4sw==
+X-Forwarded-Encrypted: i=1; AJvYcCW09hCO6DC0th2dJx2Ym+uHP/fWniJ2Fllks07N1OosvkgIzCWDqhVmuVFPXTczWbOsNmIkzoRT/CqUWHkmMQ==@vger.kernel.org, AJvYcCXRiKhvLFUmmQD/JBor/Ump5YxX7ZVaMhZ6GogTlztSwEBGH1mvIA9ag4w8U71d40n13eT/5qxWSMoMlXwn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6wwXyMYST8MLFlu3oOlTcReMmiUK/um+UU1QsDj/23aIElt45
+	bqkKLK+wUUZwONHcFxnGmRjZwMOzvXuA1vbt+1U4ifiWrf09PF97
+X-Google-Smtp-Source: AGHT+IFODThhy7hNypCxLh2wteGm9CvuNfcjriQqFrwNXwNktxCk0xzdBP2KCGYk7wxShucokLRKTA==
+X-Received: by 2002:a17:903:18a:b0:20b:7a2d:c543 with SMTP id d9443c01a7336-20c6358f83cmr1687775ad.0.1728419141603;
+        Tue, 08 Oct 2024 13:25:41 -0700 (PDT)
+Received: from ice.. ([171.76.85.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c62f11757sm1054145ad.19.2024.10.08.13.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 13:25:41 -0700 (PDT)
+From: Nihar Chaithanya <niharchaithanya@gmail.com>
+To: shaggy@kernel.org
+Cc: jfs-discussion@lists.sourceforge.net,
+	skhan@linuxfoundation.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nihar Chaithanya <niharchaithanya@gmail.com>,
+	syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
+Subject: [PATCH] jfs: add a check to prevent array-index-out-of-bounds
+Date: Wed,  9 Oct 2024 01:51:38 +0530
+Message-Id: <20241008202137.8577-1-niharchaithanya@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TR000JQqvI7yc5729qgWj3n";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/TR000JQqvI7yc5729qgWj3n
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When the value of lp is 1 at the end of the iteration in the for loop,
+lp is modified in the next iteration to a negative value.
+Add a check to prevent this condition.
 
-Hi all,
+Reported-by: syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=412dea214d8baa3f7483
+Tested-by: syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
+Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
+---
+ fs/jfs/jfs_dmap.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Commit
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index 5713994328cb..3ebb2dfdd0b3 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -2911,6 +2911,12 @@ static void dbAdjTree(dmtree_t *tp, int leafno, int newval, bool is_ctl)
+ 		 */
+ 		tp->dmt_stree[pp] = max;
+ 
++		/* check to prevent negative value of lp on the
++		 * next iteration.
++		 */
++		if (lp == 1)
++			break;
++
+ 		/* parent becomes leaf for next go-round.
+ 		 */
+ 		lp = pp;
+-- 
+2.34.1
 
-  14b473254d60 ("mmc: sh_mmcif: correctly report success when obtaining DMA=
- channels")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TR000JQqvI7yc5729qgWj3n
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcFlB0ACgkQAVBC80lX
-0GwPhQf9G2/SfbOyjZ4W62YiiC73u5jdlghFkstXNRBJo7NsHsncwFvLaDMJu5Bb
-SE17VBz97FKTJRl2/M99smdcnZK+svNmXlBSQJtgYy8iRFvBhzTBfDU/CqC6R/5e
-gB/FYDmdPuRvQAg+Z759Frq7qoTdrFy8Q4dgoTuJROu1bJmtSinCj6w+oxu8HAcG
-FlLzNo3whZHL3csK0frdCAsaOEdkZuJ1yjgBqIUoRHNvcVy8EEEicdGXMUE0TSSr
-10XEuPw6UbgQs81SMu2N+JBoReEU91xPvEUqdP3QVoFVNbbSEunmfG9OlJznmPRv
-PtA4rkYO/D6f8FmIotJt0WVKv5jrIw==
-=EQ/M
------END PGP SIGNATURE-----
-
---Sig_/TR000JQqvI7yc5729qgWj3n--
 
