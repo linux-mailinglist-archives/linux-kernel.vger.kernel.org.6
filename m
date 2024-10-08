@@ -1,106 +1,193 @@
-Return-Path: <linux-kernel+bounces-354492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A02993E39
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:14:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB11993E44
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73ED1286086
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31161F24652
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9810113D52B;
-	Tue,  8 Oct 2024 05:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920F813B2A8;
+	Tue,  8 Oct 2024 05:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f7eXYb48"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="lx6Wwt6p"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74D613AD37;
-	Tue,  8 Oct 2024 05:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF2A537E9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728364421; cv=none; b=F5SZvN8zZT6Nuk5DbNODX+MxkHz5ClbtY68j+0gcmhRB/wDEMQa0YuWM9LwarGMi2xSYfi0oCBmsqjZUC55u6AD583ezVI0IRSfzr1qpg3u17AyU1OhjJJ/FwzFsygInxKlK8Jnu1VsE28biTOlkC+37cg3F8+GIkyEqQsVJjME=
+	t=1728364591; cv=none; b=EfhVtoWnOwS2aB6DzMD4k24FszcDEi21vHSEhyt1dTKRJE2caPi+qlTtB0oQ4M2XOE6wdvriWf5/dl2qGl/iIYLzWHpbdUO3YTv4FZ85KsEZNsI5D6B+gSLSTaQ6CLS7jqM+XZPwcTFGVZ4V+4pW91oLKp2SCX6RPL61EI2Zf6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728364421; c=relaxed/simple;
-	bh=666mmuV7IOu85rjREQk7r9Lew8v/JlZ/Qt2XWadUR9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m0VTnPHmlgpnldmLrBeQ5d5R6ZZ//Dhfi2P0KYO9DcdZJUZeqJZe+BXg01sinXW1rVaR7gjCjIi+dkk6zIBCwywPS4jeFWyVdnY4f4uBfWamoKrPD/FahK94I9P9Nxp4qIhN8AQlb82wrrfozVhvLQlnoFlNzOw5VtoV0ddjYTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f7eXYb48; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728364414;
-	bh=i6LNvXjnCnJzf8XDg8jnUsuyvofZyiWKtQoL3PGWkqs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f7eXYb48ofvIpMwZvW8ZKxEELKZVHOxr4KMBgRtC9v9kx80ZmFJQ7UXYI50pxthxW
-	 ccsPzR4HVFpGC+ihRh+GDOGMP2PyQ63H7XfeD9D7tDP0/kRF5qwcXVXbpZIs7kkKSx
-	 NWc3exx6K82j63I8PVchGrY/zI6cQuhXIkaaHX2IKAaL/fNAShQ2orYVT7a6ebMBSG
-	 HNVwfKRKMU+41REC7fEllp+FtrrrPIjjaYktE300VaTlD/en/vzt7XivBgofph5Lr+
-	 e7eB8V5ytIk/BVIBHiooYc8dT0WdFvkSszzRooEnyH11EDtf0FNwpN+xSyOMg3bnuH
-	 ZyvwQSv8SPPlA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XN41B5sHYz4wnw;
-	Tue,  8 Oct 2024 16:13:34 +1100 (AEDT)
-Date: Tue, 8 Oct 2024 16:13:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Message-ID: <20241008161334.483211e9@canb.auug.org.au>
+	s=arc-20240116; t=1728364591; c=relaxed/simple;
+	bh=J+sL/JH0w5uxfdfZLeo2CgWwLFTpOCgCJ9fT9v9s7sA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Egk16o/kFiAHIdLMnRxwf0dXVC35vzLRpzCr3qsSYHINSmZZc44n6QUP64isZtEYkOmQJm3lon7B4BROUxKb6MxNlZVfsI2huqn/BHjeoFWagENc6Tzui6sHDztS+wRD38GzJSfHC9hlLfU52FTVjeloVlmNo5vH1m3G02TvG0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=lx6Wwt6p; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82cd872755dso238060539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:16:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1728364589; x=1728969389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w4w/TdKOPPfwgKMj85c6/te+TDmMrhbBdxi4k1LLIvc=;
+        b=lx6Wwt6pfemKtg/RtsUkh6zDXx+AMz2u0XC29jh3q6XGNRXDJyCEhkRdOgYFcDPU61
+         dn5uW6y9KwHovP3mgvRj5hzQFEeGkq5yruXm/xei0zfQDP4mdl50KJRLL0Bm5FvNYvtS
+         9XLj30EwxrVfPGWLG1GU6+Hg5eu3rXJX7VFRHw8A5+8iMWithntSRSsM8op0l5wdQw8H
+         K43UnN/dnkjJxgJgdutFmFW6zcsc9OplF9dUy/TKgk/d5/je/a2QFJKGDfF/hf/7aXL2
+         dSBX913GuMhdeFvJ3um/fUKbVwq3sVok8iu2Go4mTHtEj9rTWXSpuJE0ViHCjC8nT23q
+         HHTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728364589; x=1728969389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w4w/TdKOPPfwgKMj85c6/te+TDmMrhbBdxi4k1LLIvc=;
+        b=t9saRtXnoUzf9qHfzA99dC7QLadlFPTkfN3ixUFtzuk4sURqGwdfpf0ZPUuQnzPgZ4
+         2ff7NQ1H68YE6lWGjfp3O78ZTtwg3zQU1o+g2rP8kwJjPi+kHYYtX7BF2iA4mOp6iwBt
+         5XKPkxePTdV5CiM0+v9ksv6IdNn2YdhoUntqzGe/4kU1leqhhU8hUqbuTjNLPEr3IRsp
+         ZJfiVm7A01am7yMK1R8kduZwcn5av43ehfIQ15hA/itSKJsDa66SqyofkCuvBRmM8ZQR
+         3j/7unPTTpHbaq5vTu/Byz5yqtdNMardHFOjzrDkNyDezpDBOS4KxzWJj7yLxhP44Nhs
+         cDiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEPdTKjfuMTEOtDsNI1DscQzLXkDvST0FDDQhyDTj8Zh1GmyesWF3yM0xLod6JQqPvXe1JYtqmC5C4WtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx/1wbQ8SdIrWuh+oopiAGENXflh/x0IlQmH5oCIMBkBrcUPH/
+	4cx9FiYmjP0EHaaTSJkh8Itav0NDRoZuY0mNDntY5+tNTCRlpjU2pR1k597QLQ7r9hxFLwLFsMG
+	e5wH1GPuwV1cDeQ4JmNl8MAX69rrYDuD10vQM/A==
+X-Google-Smtp-Source: AGHT+IHj+3nyjDRUlzo6HU3+Ye4UA98AMbnjv3+zlmAvnKbqvLOrOys0YnN7vCUlZP6Nh+cnnTYFiH4anmDFOKj+zMw=
+X-Received: by 2002:a05:6602:14c1:b0:82a:2143:8 with SMTP id
+ ca18e2360f4ac-834f7d65974mr1658309439f.10.1728364589159; Mon, 07 Oct 2024
+ 22:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/I4uSr6JCD=m7+46+T3U2+hP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/I4uSr6JCD=m7+46+T3U2+hP
-Content-Type: text/plain; charset=US-ASCII
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
+ <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com> <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com>
+In-Reply-To: <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 8 Oct 2024 13:16:17 +0800
+Message-ID: <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
+Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
+ on clone
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Oct 8, 2024 at 7:30=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> wr=
+ote:
+>
+> On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
+> >On Wed, Oct 2, 2024 at 12:20=E2=80=AFAM Deepak Gupta <debug@rivosinc.com=
+> wrote:
+> >>
+> >> Userspace specifies CLONE_VM to share address space and spawn new thre=
+ad.
+> >> `clone` allow userspace to specify a new stack for new thread. However
+> >> there is no way to specify new shadow stack base address without chang=
+ing
+> >> API. This patch allocates a new shadow stack whenever CLONE_VM is give=
+n.
+> >>
+> >> In case of CLONE_VFORK, parent is suspended until child finishes and t=
+hus
+> >> can child use parent shadow stack. In case of !CLONE_VM, COW kicks in
+> >> because entire address space is copied from parent to child.
+> >>
+> >> `clone3` is extensible and can provide mechanisms using which shadow s=
+tack
+> >> as an input parameter can be provided. This is not settled yet and bei=
+ng
+> >> extensively discussed on mailing list. Once that's settled, this commi=
+t
+> >> will adapt to that.
+> >>
+> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> >> ---
+> >>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
+>
+> ... snipped...
+>
+> >> +
+> >> +/*
+> >> + * This gets called during clone/clone3/fork. And is needed to alloca=
+te a shadow stack for
+> >> + * cases where CLONE_VM is specified and thus a different stack is sp=
+ecified by user. We
+> >> + * thus need a separate shadow stack too. How does separate shadow st=
+ack is specified by
+> >> + * user is still being debated. Once that's settled, remove this part=
+ of the comment.
+> >> + * This function simply returns 0 if shadow stack are not supported o=
+r if separate shadow
+> >> + * stack allocation is not needed (like in case of !CLONE_VM)
+> >> + */
+> >> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+> >> +                                          const struct kernel_clone_a=
+rgs *args)
+> >> +{
+> >> +       unsigned long addr, size;
+> >> +
+> >> +       /* If shadow stack is not supported, return 0 */
+> >> +       if (!cpu_supports_shadow_stack())
+> >> +               return 0;
+> >> +
+> >> +       /*
+> >> +        * If shadow stack is not enabled on the new thread, skip any
+> >> +        * switch to a new shadow stack.
+> >> +        */
+> >> +       if (is_shstk_enabled(tsk))
+> >
+> >Hi Deepak,
+> >Should it be '!' is_shstk_enabled(tsk)?
+>
+> Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFORK,=
+ it was returning
+> 0 anyways. And in the case of CLONE_VM (used by pthread), it was not doin=
+g the right thing.
 
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi Deepak,
+I'd like to know if I understand correctly. Could I know whether there
+might also be a risk when the user program doesn't enable the CFI and
+the kernel doesn't activate CFI. Because this flow will still try to
+allocate the shadow stack and execute the ssamowap command. Thanks
 
-drivers/pinctrl/pinctrl-aw9523.c: In function 'aw9523_probe':
-drivers/pinctrl/pinctrl-aw9523.c:988:17: error: label 'err_disable_vregs' u=
-sed but not defined
-  988 |                 goto err_disable_vregs;
-      |                 ^~~~
-
-Caused by commit
-
-  8498e6b2b852 ("Merge branch 'devel' into for-next")
-
-I have used the pinctrl tree from next-20241004 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/I4uSr6JCD=m7+46+T3U2+hP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEv34ACgkQAVBC80lX
-0Gyz6gf9GSkQ/cGcnFHeDnLYGeoyuOMoZL3v5AehVgme150Dm4WYeuamfKoSdI5K
-6D89rVBls6zW20BmlNPWLCp6Oly/j4hGiCeUsjqorwhiq1+zHXn+0J4/CMqQZPf4
-Vzc45T48Iv7QuUw3fvQ6i9MM8w4ZI0pHpAFQTj+kEoTx/Ipy78ZPW0WQBqXIO7Za
-Fc6J0KAmh1RJ7FAcX3aCpcxYOXZBay+tRPfwzIaY6bcZRlMHyxD7M7MEX3Xjno7V
-zzWl27+FMEkPl2tcs2iTrJCzDDKxljoJIgY59GBq2MxzCwX2U37cm5nPU3la1G8a
-AZVpAnPGFg963ICu7GEOu2Q+/I7IfA==
-=2q+e
------END PGP SIGNATURE-----
-
---Sig_/I4uSr6JCD=m7+46+T3U2+hP--
+> Most of the testing has been with busybox build (independent binaries0 dr=
+iven via buildroot
+> setup. Wondering why it wasn't caught.
+>
+> Anyways, will fix it. Thanks for catching it.
+>
+> >
+> >> +               return 0;
+> >> +
+> >> +       /*
 
