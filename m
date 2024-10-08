@@ -1,239 +1,179 @@
-Return-Path: <linux-kernel+bounces-355319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CE89950A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:50:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C979950B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13191F21060
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883B3B220BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D31DF96E;
-	Tue,  8 Oct 2024 13:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490F1DFD80;
+	Tue,  8 Oct 2024 13:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MrXuKXHh"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="V+pRK6MX"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78AD1DF722
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630EF1DF274;
+	Tue,  8 Oct 2024 13:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395413; cv=none; b=l3wNRNJDzh/zTv2Bsyp17zU93nC9BAppOOJlJuqWDifk7vVKrAZlBqqcno/yZaysps+Wr2dq8iBGrXrsekzJOMbntpElohyT207Tzpq3p7fRH7qqBWX0nxLlC6gQRNZ2ptpBJYiy/ZvTLU00n4IQ6F/jNqhNCb5kbkib1hU3p+o=
+	t=1728395571; cv=none; b=WyjRsFfHtlcw+ECnhygMrMN4rjZ0ApxhlRF0SsuIIhJFcAjqaaczMQ83jr2URUuDsW1QPtOEhksD4u3qO3xIK1QqcdEe3mkGPvomcB7Tb52m808GxRYsxgXSlYMAQwr1rzFDaGka8/vcfo/t1MLoEWcZujBzE1jPKzpZ4HOCLUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395413; c=relaxed/simple;
-	bh=VlikFOOadkZ0FXGNOiqEJI3JCeW2l+bF3hf/oo4lAtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDsZFYj73l6KnGBvRnpq88uAimQuHTqyC6xRqzyNcz8ed9C7uhDSMvLIeFhjG2CPEYe+pLtVKVI5SqlfQgR2tg9srouHuLDKCwQr60VRFKfFcEXvg5+36DbtqVPftHMem7OMehaTvNdQJLUzuH0qH1MBTisLNGrPJQ8I1t19TQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MrXuKXHh; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398bc32bd9so627273e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728395410; x=1729000210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WpfdK0DkSLSW2fAjRxdwV8F/aWadlnjGjQ8QBOWzH/4=;
-        b=MrXuKXHh3mN/uRnW4sDK9jQT8B4hXgwY1k3dKUFxViPw4wFXmsBaIA7zLxp5UsN+nd
-         wZzZhFlMglTx9/ge2Lj4bs7suP+eoZYXA7Eif6e0Rt7Yz5uqePfOJjrHPqjhBCAL33Lt
-         QWvVU1ftBg3dMyWCiMCyGJLQMJc10KUid2EuJbELJeqEEHAve+qJVKqozwTQzlhaLCQR
-         jIkAYfHpkwvHYrmHILKVCM2QKoThKQhQ9CidZ2HxOXluPN4nS5hTIn3G+bcl+Yv6klA+
-         Je312ZEojkify6kwzS0Zu1aFVCRKkjrvZioMY7U4B61ojE7YIikPcNb00qQWVfurfqpy
-         eSUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728395410; x=1729000210;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WpfdK0DkSLSW2fAjRxdwV8F/aWadlnjGjQ8QBOWzH/4=;
-        b=MSHr+3FeRtmtCXdxECwSqxZks5JwjxV/h2wfpMg8kt+776WB74quYAjjDYmbx6wbPq
-         gHyGKSUysKCRFNNawQDWztT+zPolUvoRoP3QUhRLrM9pyu4qqyF7efMkmHLJIuDKNbiQ
-         111saNfP6mCKXDU6YeHa+7KbMn/wM54p89Y1dErTKRTl23UD9ObvGOIDl1D5VQRutf5E
-         4QVaPBmvCPumEBQ1l5htFzKDIzkepc5b15aCal4Zlugj1pBrlH+Ieo4of/cuSfI39Dea
-         d5B9FCffuHMptQQX31NCn61mdyNX/K86DyyhYcaOnQ3hkhu+VSTPS43qnBHBOqotNXxy
-         hNHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVQus1nCARJUKUV3+kOmOZNp2AugVsqIl8REWAF89pgz4N47uSLzy/CsbGdIQ15OWggP3P4pg9JxmQTBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVi6T6gC383QKiS8IVtknB1yfS9Lgwvm4GKtDCGqgwzqmKLNB4
-	XAWn8+Gco/pnxsPm1i74xSIUwaZsjiGge6QWp2NV0nsmYJrdmMgfm8a7S97ET/0=
-X-Google-Smtp-Source: AGHT+IGGDDy/C3JNq8sdXqLgFX4dPMMWga1oSVN0B8s30L1lSj5q2xVN4nsf1rKLRKkvbZcCirzniA==
-X-Received: by 2002:a05:6512:158e:b0:536:7c0d:e54c with SMTP id 2adb3069b0e04-539ab9ec64cmr2040832e87.9.1728395409820;
-        Tue, 08 Oct 2024 06:50:09 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec84f7sm1219959e87.92.2024.10.08.06.50.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 06:50:09 -0700 (PDT)
-Message-ID: <2b5f4043-1e23-446a-aba4-96e40fb8d197@linaro.org>
-Date: Tue, 8 Oct 2024 16:50:08 +0300
+	s=arc-20240116; t=1728395571; c=relaxed/simple;
+	bh=FurOAuuDNyUm/lojkmHDOe6nk3DPDbcIuia0hHtIFVU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PY1PBE2ib/c0YPQCulNWEZCjJFGqkJtBnxU89E8U10xrm/UrUO2yZ6I1p3++K7VW0TLFI7t18M2b1TxLfjL4zUDPnhUJLION1ILto/xTwx27ajBHUPdoNcSYYG1VI5WUAEzFzzJKcU31xumwQcwhjeHPboplS825E9st/cHCwOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=V+pRK6MX; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728395561;
+	bh=FurOAuuDNyUm/lojkmHDOe6nk3DPDbcIuia0hHtIFVU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V+pRK6MX3xsgw8mxC5ocgt9ecpxOaeYcizHJSHxGqKPMB55/9+VVRyH9/BYKf0/WU
+	 XCehtZvwFLdGZX/66cztTUcV4wgveUeHlWDezPzi/wkbZchF1sV+l1th68dF/+I6aK
+	 llRpK/GzhQa6Pgsq+ofQZL/XxPGJ1rjsQSt7Q8ApI5LeDq7tlRP08bG20BL8U8e0pe
+	 yGz5e3/I1IgzfXIHWgrKByaJzrdjcVMQ9p2MMDjR1M0KPzpLVis9Zsq411lu97IUu9
+	 cUmQLDT4zwhuwsGaE3W5RGABiDB9Dknne7FMg+T+41f8OLi3mgqe7puL+Qafdu257a
+	 FO7e4tun0B3mw==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNHX8539XzLqn;
+	Tue,  8 Oct 2024 09:52:40 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: [RFC PATCH v3 0/4] sched+mm: Track lazy active mm existence with hazard pointers
+Date: Tue,  8 Oct 2024 09:50:30 -0400
+Message-Id: <20241008135034.1982519-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, krzk+dt@kernel.org,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, todor.too@gmail.com, rfoss@kernel.org, conor+dt@kernel.org
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
- <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
- <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
- <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
- <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
- <6eadc285-f413-4bf0-8795-59ff19c734da@linaro.org>
- <6562a958-47e9-4a49-b235-fe8deba3c051@linaro.org>
- <cab95caa-9ffb-446a-858b-342939e80811@mleia.com>
- <4e94106d-5ca9-485b-8c51-c18dcd4e64b0@linaro.org>
- <b779182f-a963-400a-8fc1-2468710082d2@linaro.org>
- <a0f66292-fb97-40ae-9fb1-d79160e70bb3@quicinc.com>
- <53d2b30d-6480-41eb-8dc8-7b3970ad82ef@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <53d2b30d-6480-41eb-8dc8-7b3970ad82ef@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Depeng.
+[
+  I'm posting a v3 taking care of feedback from Peter Zijlstra and Paul
+  E. McKenney in case it can be useful to try hazard pointers with other
+  use-cases, or for further benchmarking of active mm tracking impact.
+]
 
-On 9/30/24 12:26, Depeng Shao wrote:
-> Hi Bryan,
-> 
-> On 9/25/2024 11:40 PM, Depeng Shao wrote:
->> Hi Vladimir, Bryan,
->>
->> On 9/18/2024 7:16 AM, Vladimir Zapolskiy wrote:
->>> Hi Bryan,
->>>
->>> On 9/18/24 01:40, Bryan O'Donoghue wrote:
->>>> On 13/09/2024 06:06, Vladimir Zapolskiy wrote:
->>>>> On 9/13/24 01:41, Bryan O'Donoghue wrote:
->>>>>> On 12/09/2024 21:57, Vladimir Zapolskiy wrote:
->>>>>>>> 3. Required not optional in the yaml
->>>>>>>>
->>>>>>>>         => You can't use the PHY without its regulators
->>>>>>>
->>>>>>> No, the supplies shall be optional, since it's absolutely possible to
->>>>>>> have
->>>>>>> such a board, where supplies are merely not connected to the SoC.
->>>>>>
->>>>>> For any _used_ PHY both supplies are certainly required.
->>>>>>
->>>>>> That's what the yaml/dts check for this should achieve.
->>>>>
->>>>> I believe it is technically possible by writing an enormously complex
->>>>> scheme, when all possible "port" cases and combinations are listed.
->>>>>
->>>>> Do you see any simpler way? Do you insist that it is utterly needed?
->>>>
->>>> I asked Krzysztof about this offline.
->>>>
->>>> He said something like
->>>>
->>>> Quote:
->>>> This is possible, but I think not between child nodes.
->>>> https://elixir.bootlin.com/linux/v6.11-rc7/source/Documentation/
->>>> devicetree/bindings/example-schema.yaml#L194
->>>>
->>>> You could require something in children, but not in parent node. For
->>>> children something around:
->>>> https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/
->>>> devicetree/bindings/net/qcom,ipa.yaml#L174
->>>>
->>>> allOf:
->>>>      - if:
->>>>          required:
->>>>            - something-in-parent
->>>>        then:
->>>>          properties:
->>>>            child-node:
->>>>              required:
->>>>                - something-in-child
->>>>
->>>> I will see if I can turn that into a workable proposal/patch.
->>>>
->>>
->>> thank you for pushing my review request forward.
->>>
->>> Overall I believe making supply properties as optional ones is
->>> sufficient,
->>> technically straightforward and merely good enough, thus please let me
->>> ask you to ponder on this particular variant one more time.
->>>
->>
->> So, we are discussing two things.
->>
->> 1# Use separate supplies for each CSI block, looks like there is no
->> doubt about it anymore. So, I will update it just like based on suggestion.
->>
->> csiphyX-vdda-phy-supply
->> csiphyX-vdda-pll-supply
->>
->> Then I will need below items in the required list if they are required.
->> required:
->>     - csiphy0-vdda-phy-supply
->>     - csiphy0-vdda-pll-supply
->>     - csiphy1-vdda-phy-supply
->>     - csiphy1-vdda-pll-supply
->> ...
->>     - csiphy7-vdda-phy-supply
->>     - csiphy7-vdda-pll-supply
->>
->> 2# Regarding the CSI supplies, if they need to be making as optional?
->> Looks like there is no conclusion now.
->>
->> @Bryan, do you agree with this?
->>
-> 
-> I'm preparing the new version patches, and will send out for reviewing
-> in few days. I will follow Vladimir's comments if you have no response,
-> it means making supply properties as optional one, so they won't be
-> added to the required list.
-> 
+Hazard pointers appear to be a good fit for replacing refcount based lazy
+active mm tracking.
 
-Recently I published the change, which moves regulator supplies from CSID
-to CSIPHY, I believe it makes sense to base the SM8550 change and regulators
-under discussion on top of the series:
+Highlight:
 
-https://lore.kernel.org/all/20240926211957.4108692-1-vladimir.zapolskiy@linaro.org/
+will-it-scale context_switch1_threads
 
-Note, that SM8250 regulators are not changed, however their names are wrong,
-the correction shall be a separate change later on...
+nr threads (-t)     speedup
+     1                -0.2%
+     2                +0.4%
+     3                +0.2%
+     6                +0.6%
+    12                +0.8%
+    24                +3%
+    48               +12%
+    96               +21%
+   192               +28%
+   384                +4%
+   768                -0.6%
 
-Next, I developed my opinion regarding the supply regulator property names:
+This series applies on top of v6.11.1.
 
-1) voltage supply regulator property names match the pattern "*v*-supply",
-    and the most common name is "vdd*-supply", the match to the pattern shall
-    be preserved,
-2) also it would be much better and it will exclude any confusion, if SoC pin
-    names are put into the name, like it is done in a multitude of similar
-    cases.
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
 
-So, in my opinion for SM8550 CAMSS a proposed set of voltage supply regulator
-names should be this one:
+Mathieu Desnoyers (4):
+  compiler.h: Introduce ptr_eq() to preserve address dependency
+  Documentation: RCU: Refer to ptr_eq()
+  hazptr: Implement Hazard Pointers
+  sched+mm: Use hazard pointers to track lazy active mm existence
 
-- vdda-csi01-0p9-supply
-- vdda-csi01-1p2-supply
-- vdda-csi23-0p9-supply
-- vdda-csi23-1p2-supply
-- vdda-csi46-0p9-supply
-- vdda-csi46-1p2-supply
-- vdda-csi57-0p9-supply
-- vdda-csi57-1p2-supply
+ Documentation/RCU/rcu_dereference.rst |  38 +++++-
+ Documentation/mm/active_mm.rst        |   9 +-
+ arch/Kconfig                          |  32 -----
+ arch/powerpc/Kconfig                  |   1 -
+ arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
+ include/linux/compiler.h              |  63 ++++++++++
+ include/linux/hazptr.h                | 165 ++++++++++++++++++++++++++
+ include/linux/mm_types.h              |   3 -
+ include/linux/sched/mm.h              |  68 ++++-------
+ kernel/Makefile                       |   2 +-
+ kernel/exit.c                         |   4 +-
+ kernel/fork.c                         |  47 ++------
+ kernel/hazptr.c                       |  51 ++++++++
+ kernel/sched/sched.h                  |   8 +-
+ lib/Kconfig.debug                     |  10 --
+ 15 files changed, 358 insertions(+), 166 deletions(-)
+ create mode 100644 include/linux/hazptr.h
+ create mode 100644 kernel/hazptr.c
 
-Comments, corrections and objections are always welcome.
-
---
-Best wishes,
-Vladimir
+-- 
+2.39.2
 
