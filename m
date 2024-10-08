@@ -1,160 +1,146 @@
-Return-Path: <linux-kernel+bounces-355357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BFB995187
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:25:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED8E99512B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 429A5B2B838
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771C41C225E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671971E0B80;
-	Tue,  8 Oct 2024 14:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E061DFD8A;
+	Tue,  8 Oct 2024 14:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Idx/PBi5"
-Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wc3D3wf0"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B11E0B7B;
-	Tue,  8 Oct 2024 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA01DE2AE;
+	Tue,  8 Oct 2024 14:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396411; cv=none; b=UByPb3TZcrc0v3GuDc6+JgqNNVuCqArlg37T7Vl56vnJ8y0fRPLVJDUHtwjdNHI/UXj5ydUS9qZp6bS4RhNTrMyajrmlcfTsyRjry7FjapGLlaR0iIpZc+g5LUNyVBR2oglLai9uzxDV30m4coq5kVDU0GBwCOJ4Q965nCydOK0=
+	t=1728396770; cv=none; b=dbmpmeEv/kttJJbxXMOYRS35v+g01FAOCfYWIBOjog4DOy+NGydyG1RCDmt9NrnHop6UcGgQibSGzZF4BY7VJc21/Va43tshFmL55H5QHApMnRLNyoDTcIPgWOnYBmcUR5C+jhFFD9zWoAoxin+NsCY64ca+06R8uJ4HFM/C4x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396411; c=relaxed/simple;
-	bh=M1/Sjq3NcDepOzCF9wITVLr3J5m3rG69mFkBGOp6egg=;
+	s=arc-20240116; t=1728396770; c=relaxed/simple;
+	bh=VN+23OGSRe3TLXKsTZXjE0+pZHihoPb280D7ZXFQgTg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MKhip2CAWzPW5UYkM7rap01ydde9EWUkuTerdRiwcjYGq0cnMQ1PyfWSWcB0UGSnjnRH4TOywPSBcZ2Y7OD+orVLz5yRghPiba5nFpei1w6y6UzOBmFbQbp+Fg21FMcQZcXELZ0cvUZ6Z+icRa7pOenUiYh3nI1ev1ErhSeXams=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Idx/PBi5; arc=none smtp.client-ip=209.85.219.196
+	 To:Cc:Content-Type; b=iJKlI4NGj4dtQefeLdhcO0vXc73m/cuKrI3rOylnFxQ7jR20V263XZLtyZ+WY2WGGjFKgOjoK0cy4EHEnK4akLdI5AMfQ+tH9EbOSxQdg1GI4F+K+5BY2f0yWO5OD+4JWFeZVJvfFc8OYaV5vk/RotCu1RzX7k0g+fm3E9PTmc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wc3D3wf0; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e026a2238d8so5062020276.0;
-        Tue, 08 Oct 2024 07:06:49 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fad6de2590so85620361fa.0;
+        Tue, 08 Oct 2024 07:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728396409; x=1729001209; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728396767; x=1729001567; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DFh9FYDjJJWN00wYCTddg6rfe9TPYl9D/R6XfDxh2j8=;
-        b=Idx/PBi5bTfTVcFEpD3a7w9DrJ+8QZYcQcVHouOW4gM3gS8l1IFAYNMpgPw8cgEeKM
-         05Tb3IqxLtKct8UWKzBAeD8xnUOF9Rz5kmGJM4tOmHc7U6GPrS8k1Gw1r2I9Wbw6BvbS
-         ps28qOqHUvqu1wLfQPzUbzXksgVl17J+Nwjn0MdgdZ9qeDHwYHU2C314oSINSCdotaJ3
-         l5hzL2qUo+qoLNdpNX1WI8ph4g8lM3bsW5SWBpfVI9+vMg/SKaYLbeQgBATvojac3Sc4
-         Ujn1yGFUAcqsZV+U8N/+yONcMNTho1ho0RhLBZAARKB+4czfGt7gdRqDvPQomwvcKzWb
-         offQ==
+        bh=2B0fzHptHo71AcgtfObGHnQOdYmdH7Q5eKq0oziWRJQ=;
+        b=Wc3D3wf0r+IcuRr/d+gCM+12HeOnMqE5ztYLb8c8dryVVPwjcZxIQoGtjPEpa/dtCo
+         BMoe26H2YNm/3+NH49ZLD+nPeZ2A08+2f9A1/uHJP6/XbZfrNbxIurZ+B67gqvgb+oKH
+         6slGeOCwSdaKz6GbIi/dZmr8jO1/RmXDK+CuFaorwfgMB87Wbmb+ZMKJy2mQ3ft+JDjm
+         Se6kDCZPGDmZsLNKvJnLXLlaicGkVnesKOIAY2nqnCTyDhzfMZqWl2wlB2DTTEeNpM3z
+         daOuSYp0tjXsZ2bQDO1MqEpo69C6SBqoMePlZ+lwyLsePgHRreGFJvZj8MDBnGV1v/7M
+         2SrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396409; x=1729001209;
+        d=1e100.net; s=20230601; t=1728396767; x=1729001567;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DFh9FYDjJJWN00wYCTddg6rfe9TPYl9D/R6XfDxh2j8=;
-        b=Z0pDaB2syOBSZ5XqAF+gl6z0qZCmyePaSjAme7KBRn4vlgiqBsX40kTfPx7HYzfKHo
-         OjH4QArGkp/ApD6fOZ1Sp4euC7FZaA3CTFojYfcAj+cIKNnm4D3cUf4h59aASEKQWwvD
-         DNmSwB8cfhLbEDv2Z2f4w9p4f7BSVrGk/0ZbzgMIaGaPQWn+xnUDNTFO7SYvcLlVOAwr
-         7DIUei8peKRedkcVzR0gx6C3+bULfbp4zJ7mDLh9ADw8Cmwt4HIA9rapQNISGreiej5M
-         6N1KQ7/vSildtTLfyAnY716g7dq4kbXVFVDfoxW2WISIzKGuYihG/b9spxomru6PESPo
-         zOyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUluci8XosAVlbxGzY4EWsUTngaynxZoQcHSFKHal9skUOgvPfvoguyk1VFVcHCSpx/BdUWgMxUw6bBcjA=@vger.kernel.org, AJvYcCX7Vtjo1PpYr4oOn4tgy4GMVHC9swvg2BZivGo94aO//j+wgu65sSWojqP68xGExSjhL3MSfOJD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV6wp3uynXSu4kUj9ADw1IHy4DCPWGuiTF8JkMgveuZeLh/nd7
-	aTlYHsdn0H5mNWr0WWU23mCVrWG1d2HvQ4SM4JpiH4rvdt+R7yda7CSvwKCmjGGBq0A9D39ryM0
-	aehIT0oXtKsmzFirhshberC7QJa0=
-X-Google-Smtp-Source: AGHT+IE0RKvXvWbz8OAl0KUTSbrG71BLL8AIi1KT2+IEAPrUfc2wYCLwDM9oT8ECLh6NAQR2TxyRPi3N+tn52e1jWFo=
-X-Received: by 2002:a05:6902:2511:b0:e26:796:e19d with SMTP id
- 3f1490d57ef6-e28937e44dfmr12818400276.32.1728396409070; Tue, 08 Oct 2024
- 07:06:49 -0700 (PDT)
+        bh=2B0fzHptHo71AcgtfObGHnQOdYmdH7Q5eKq0oziWRJQ=;
+        b=FdQderyDolzXuE4JbW/ALDylzpTeBQ/jHZImshRKZxhJ9ZAVoHH1uNjEhbcEIUQ5Mo
+         zR5BgDbhjzqLWXdanYvk9++7U/mZuRxqlYGb6jHroyL7wfXELOKjiOKteDFMYlDH+RNr
+         8k4YqGqCpgJN41u/7f00uJbsfuMh8zf8zdo6fHAq6FibzXe4vnci1sYg7jKkQD/3nnhg
+         THlZsBG83EbUDl6bmwlfls9LhB+tHN9ik2NfrzrijNCh63ATBRHtti1LQeb0bSIzaRoW
+         GS4BjsZiD3Za6zsu87lpQoWpidxuSA9U9joOTzFnt95nofmcer848Oaa9GWi6YFnfWSt
+         qJWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUERq24W38+CnBGA+3neUmZAi5xnx4DHdpLAhwWT3pX2xyc3QiC/NZFvE+3R4aMqzUB7HXOANZpkho375XO@vger.kernel.org, AJvYcCVbjY8vZQOLDZA9APOFBJZH9vGhxQfQY4JkB3/r1gBlOfeDo+N0kPKLI20ts9NHCKQPbnMrglV9Xj0+ZVx5gio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTWlRIqU1WtJcng5MSGruq/NWIWNHETLjuSN+36zqN/OS5mKdk
+	c9gyA5TKy3LcreJGsWKZSkYt00GW9AG+MQqwNha40wd3Q/CM8X4Y39u9oP3+XpRhUxOchofKoAc
+	9jKwMrX6vQqgsWFKa8hgKmfjz0qQ=
+X-Google-Smtp-Source: AGHT+IHDEuVIECQhFAK12xvKwiUsRet4wNR898rcskXU+FN8rTIKwotfuCKGQ39nYWUcQMf6Xl1CuuwDZ43nP4L17Z8=
+X-Received: by 2002:a05:651c:1a0c:b0:2fa:fdd1:be23 with SMTP id
+ 38308e7fff4ca-2fafdd1bf8cmr52226571fa.28.1728396766967; Tue, 08 Oct 2024
+ 07:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006065616.2563243-1-dongml2@chinatelecom.cn>
- <20241006065616.2563243-9-dongml2@chinatelecom.cn> <20241008122845.GK32733@kernel.org>
-In-Reply-To: <20241008122845.GK32733@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 8 Oct 2024 22:06:44 +0800
-Message-ID: <CADxym3YWsVvfp9ygvnGTp8Qi8vMXRzB=FmcoYbafTO7he_eVUw@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 08/12] net: vxlan: use kfree_skb_reason() in vxlan_xmit()
-To: Simon Horman <horms@kernel.org>
-Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
+References: <6703b264.050a0220.49194.0502.GAE@google.com> <tencent_29BA32BBF933AC9EDA1B074B621BEF259308@qq.com>
+In-Reply-To: <tencent_29BA32BBF933AC9EDA1B074B621BEF259308@qq.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Tue, 8 Oct 2024 10:12:34 -0400
+Message-ID: <CABBYNZKiNBxqZbS7hcBrpiwHRRwAe9gXvHWNvi63qBfykR=SVg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_core: remove acl hdr handle error message
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com, 
+	johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 8:28=E2=80=AFPM Simon Horman <horms@kernel.org> wrot=
-e:
+Hi Edward,
+
+On Tue, Oct 8, 2024 at 6:47=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> w=
+rote:
 >
-> On Sun, Oct 06, 2024 at 02:56:12PM +0800, Menglong Dong wrote:
-> > Replace kfree_skb() with kfree_skb_reason() in vxlan_xmit(). Following
-> > new skb drop reasons are introduced for vxlan:
-> >
-> > /* no remote found for xmit */
-> > SKB_DROP_REASON_VXLAN_NO_REMOTE
-> > /* packet without necessary metatdata reached a device is in "eternal"
-> >  * mode.
-> >  */
-> > SKB_DROP_REASON_TUNNEL_TXINFO
+> Syzbot reported a uninit-value in hci_rx_work.This is because l2cap didn'=
+t
+> execute the corresponding connection request to call l2cap_send_cmd() or
+> l2cap_do_send(), and ultimately called hci_add_acl_hdr() to set hdr->hand=
+le.
+
+What are you talking about here, what these functions have to do with
+a local handle variable?
+
+> Therefore, when calling the thread callback function hci_rx_work() to cal=
+l
+> hci_acldata_packet, hdr->handle should not be used directly.
+
+It is not being used directly, the handle is a local variable which
+get assigned:
+
+    handle =3D __le16_to_cpu(hdr->handle);
+
+If what you are saying is that there is no guarantee that skb->len >=3D
+HCI_ACL_HDR_SIZE then we probably want to replace skb_pull with
+skb_pull_data.
+
+> Reported-and-tested-by: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail=
+.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D6ea290ba76d8c1eb1ac2
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  net/bluetooth/hci_core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> nit: metadata
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index d6976db02c06..20605a7f3f4e 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -3791,8 +3791,7 @@ static void hci_acldata_packet(struct hci_dev *hdev=
+, struct sk_buff *skb)
+>                 l2cap_recv_acldata(conn, skb, flags);
+>                 return;
+>         } else {
+> -               bt_dev_err(hdev, "ACL packet for unknown connection handl=
+e %d",
+> -                          handle);
+> +               bt_dev_err(hdev, "ACL packet for unknown connection handl=
+e");
+>         }
 >
->      Flagged by checkpatch.pl --codespell
->
-> >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > Reviewed-by: Simon Horman <horms@kernel.org>
->
-> ...
->
-> > diff --git a/include/net/dropreason-core.h b/include/net/dropreason-cor=
-e.h
->
-> ...
->
-> > @@ -439,11 +441,17 @@ enum skb_drop_reason {
-> >        * entry or an entry pointing to a nexthop.
-> >        */
-> >       SKB_DROP_REASON_VXLAN_ENTRY_EXISTS,
-> > +     /** @SKB_DROP_REASON_VXLAN_NO_REMOTE: no remote found for xmit */
-> > +     SKB_DROP_REASON_VXLAN_NO_REMOTE,
-> >       /**
-> >        * @SKB_DROP_REASON_IP_TUNNEL_ECN: skb is dropped according to
-> >        * RFC 6040 4.2, see __INET_ECN_decapsulate() for detail.
-> >        */
-> >       SKB_DROP_REASON_IP_TUNNEL_ECN,
-> > +     /** @SKB_DROP_REASON_TUNNEL_TXINFO: packet without necessary meta=
-tdata
-> > +      * reached a device is in "eternal" mode.
-> > +      */
-> > +     SKB_DROP_REASON_TUNNEL_TXINFO,
->
-> nit: ./scripts/kernel-doc would like this to be formatted as follows.
->      And metadata is misspelt.
+>         kfree_skb(skb);
+> --
+> 2.43.0
 >
 
-Hello, thanks for reminding me. It seems that there is no
-more comment on this series, and I'll send a V6 now to
-fix this problem.
 
-Thanks!
-Menglong Dong
-
->         /**
->          * @SKB_DROP_REASON_TUNNEL_TXINFO: packet without necessary metad=
-ata
->          * reached a device is in "eternal" mode.
->          */
->         SKB_DROP_REASON_TUNNEL_TXINFO,
->
-> >       /**
-> >        * @SKB_DROP_REASON_LOCAL_MAC: the source MAC address is equal to
-> >        * the MAC address of the local netdev.
-> > --
-> > 2.39.5
-> >
+--=20
+Luiz Augusto von Dentz
 
