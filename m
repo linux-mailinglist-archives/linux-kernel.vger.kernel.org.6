@@ -1,129 +1,213 @@
-Return-Path: <linux-kernel+bounces-354996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843289945BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:46:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797AC9945C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 432BC287463
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:46:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBBC1F2184C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2861D2200;
-	Tue,  8 Oct 2024 10:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2580E1C75F8;
+	Tue,  8 Oct 2024 10:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jhxig615"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DqiSeIi5"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A741D0496;
-	Tue,  8 Oct 2024 10:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7F1B4F39
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728384335; cv=none; b=Gebc35VuXm3JfCo2zueicki0DhYMxUIAVNYTwX6Eqt5u76p1WfHacUfRcilXTs4XpOXGiKzJACpQeJ2ZMusM5e5yQCHFcdS3GfeFN0PsbweJ8CTIRWFNLH1z1Q0FtXR9mnfKZO1RnzDgIn7gXuaP1N2Yz666ncsKPH95WWXzhqw=
+	t=1728384424; cv=none; b=NbEf+cNKvtZV3Tm9I2y9U5yS23bMjbGDNeJIzP7eVeGWPHHdAvlOT3xQzZ/QN57MOAuhMG6o6FeqXoRlYS0PR31AYSy34Qapv+FqKNorHiaHSr8TigDsEMuLp+KPWR7tGSD6xT3PKkjRKEUbrpEZYBD8N/7zgekwnhGMOA0L0Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728384335; c=relaxed/simple;
-	bh=/Wy3bEmK+Z2Csvv6DBysE2rgjF97bye9ch+Y+NPQ9vw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mzD0U6XyT+aDrrs44BWn/4hQ5X6ZG01rS5VE+1qvSGneM33CuwDfmScKfDXCJmUSsvtwulKd35Mx+RCIgAMV7r48iv02yDtDpZVYtHCzEoXHn7W+h/gviKe/4Bntt+vPzD2AUp5B7wlv99gw0BxpHggCN0faPDdQM+Ik5ynn0co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jhxig615; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728384333; x=1759920333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/Wy3bEmK+Z2Csvv6DBysE2rgjF97bye9ch+Y+NPQ9vw=;
-  b=Jhxig6155VgLoVHiV3ffcYVcb/b0Hidf0r3dHRkeNA/WGQynCbG2Y/Et
-   8GM+MA5CYdFCwhKBEiEnjbScY99VtGilO9+D2c3Jvi6d9JmVHmGRtSFs0
-   fx7ZyrK2GZPlVsJgQHziXrxNd2yeLaDvLV493zLlOFWur2ewtcOf6No08
-   v+bCDQc2is+lwy6b1zoARgUY/gYXCBl6Rej3OH2OAGXmhuu7lr8Z5FomH
-   pOaVEjCCR1/FL0jyld4O6CIvB0mQH2V3dDgXqMrVgrclucNoCQCnmCwyu
-   iJ8VCTIlyBMIqy+mRIo9WTRQHXc4Kkbq9qJ/RUCaezK5R/RA9l3apHyws
-   Q==;
-X-CSE-ConnectionGUID: //8ed1ffRfyYemUtHGDcXw==
-X-CSE-MsgGUID: S7ooEgGTTuK/J5/CRAtZYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="45033839"
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="45033839"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 03:45:31 -0700
-X-CSE-ConnectionGUID: h4kYvybrTwmALhhG/u1m0A==
-X-CSE-MsgGUID: jIdiX7nLSFCzVuXbVVVpjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="76166929"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.88])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 03:45:30 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 2/2] KVM: x86: Fix a comment inside __kvm_set_or_clear_apicv_inhibit()
-Date: Tue,  8 Oct 2024 23:45:14 +1300
-Message-ID: <e462e7001b8668649347f879c66597d3327dbac2.1728383775.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1728383775.git.kai.huang@intel.com>
-References: <cover.1728383775.git.kai.huang@intel.com>
+	s=arc-20240116; t=1728384424; c=relaxed/simple;
+	bh=BTK1twW5R9PAw75WIcXBsshF/UQ2BRp7G3EWibEwO6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DohSL7hdE9JuihqdHThtJoeU++bw/1CbJYVgB9QQ3Bn3+zGRWM+jec68nj8BRKzDVXkIw7sHv4e6O0Oxrnnl+mUPQji1YmXEgBH7PDAgnCCxaAQ3IPRtgNPvrSrRQtjIBNv8Jqldk126kIDwVFePt4HW/YnYX6hAN8GEgKSXqD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DqiSeIi5; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2d2447181so28474837b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 03:47:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728384422; x=1728989222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TD+ghPU2ZLooa9x0HWTILmd0XsXwmDoPDULmRLdUyoc=;
+        b=DqiSeIi5Qkc7IQ0IH8U4uyl5Bcry9anKZmcRthCIYHp4n8uWVW8qrR3XGnrTW+Ktwu
+         uyNhWunn4TEwu9Mo6ybFqQCX5x04fv8ZozckFrAT1X9YhBGbdHxv/FYyYDInEzZ/5gF4
+         w5mQH+nZ+ggPexLKlO3gcQ0+Kd7ZJ4wL5KeDvhaP10VDF1FKQ3sJq0/kREQatlrZXpk0
+         2dYdWKKgnPrjJK0DTJ54dJw9RQvx3693gtZGYyhBs+m9GfCuL5LGmLQJ8YkEVm6SaCHp
+         xvu1Atp8IHgU/BiYKFh1MVj0ioLsPqB9rXtq64sQ5BlsR3LTAcoJqLgHVHF931V6HvgF
+         64fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728384422; x=1728989222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TD+ghPU2ZLooa9x0HWTILmd0XsXwmDoPDULmRLdUyoc=;
+        b=gB/kckvrLx7zsf9+j0hj8jSZlYkgTeJdtdrGLid75E4UWHFaTdFzN/nuqyUrugRp/j
+         yCYINDTCXu6ol+ccAvjOPJyuIwzJkpDKltcmbBGfs4GJi2+0iIjYYHdGkTgrCrNxBlYn
+         1HhpAjsiANnat7MbR74/NEnlVZ7ZRywcDyryiu5CbADfx5Qo4J/BLHssRIczja3KvF4N
+         Ua0S13y+WbLqC1CN8OEQIZJSZMOSn2Be0nT33I0wj9xIaz1Kr1ndmK6M/6Ufn/zic7Hm
+         zY972xskvwra/MfmM/6S3KzwOQ6qbJJxvbKUSdEbONUQt3He00CDHU7Rr5C4ZpZPmgdB
+         vh5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkubqH8rqQpiySuTtYirqRVwmmL29CmVdGrOA42v+uSWtElOhcOaUXTlnj1fejLGtwtFR2jCLKwvfBSL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0rGyVRJZcDvxB0eRBIH+piIk0O8k9TmKvV4QfbHRR3D0MCJ/E
+	LNo135WItv1WDHIYhDWFBU9mDllF+J4iqEPpvqQRYM6gtCjymyuDL2RuDA2RGcAVckWvV7FDB5W
+	AvAMpan+nepEx6Z80ik0WbqDZxikqJBGvZBmlaw==
+X-Google-Smtp-Source: AGHT+IECP10UjEJdYbc48ykgN+rdUK38iSJ8CKS1U/S3BZgrH0DuUNb4uJosYAr3Ei6C8lCvYX9wCfuCS4n0ARKeuYQ=
+X-Received: by 2002:a05:690c:ec1:b0:686:1240:621a with SMTP id
+ 00721157ae682-6e2c728a26emr122806547b3.31.1728384421737; Tue, 08 Oct 2024
+ 03:47:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
+ <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l> <b900d558-8ab0-436f-87bd-7a3d83e3dea0@quicinc.com>
+In-Reply-To: <b900d558-8ab0-436f-87bd-7a3d83e3dea0@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 8 Oct 2024 13:46:44 +0300
+Message-ID: <CAA8EJpr9pOc4i983ZoiwffTVNyJzH=6ka=m-k=BAT92d3K-OXA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators load/mode setting
+To: Rakesh Kota <quic_kotarake@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_kamalw@quicinc.com, quic_jprakash@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Change svm_vcpu_run() to vcpu_enter_guest() in the comment of
-__kvm_set_or_clear_apicv_inhibit() to make it reflect the fact.
+On Tue, 8 Oct 2024 at 12:39, Rakesh Kota <quic_kotarake@quicinc.com> wrote:
+>
+>
+>
+> On 10/7/2024 1:37 AM, Dmitry Baryshkov wrote:
+> > On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
+> >> The UFS driver expects to be able to set load (and by extension, mode)
+> >> on its supply regulators. Add the necessary properties to make that
+> >> possible.
+> >>
+> >> While at it, UFS rails have different voltage requirement for UFS2.x
+> >> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
+> >> There can be case where the voltage set by bootloader is overridden
+> >> by HLOS client.
+> >>
+> >> To prevent above issue, add change to remove voltage voting support
+> >> for dedicated UFS rails.
+> >
+> > add change to remove smth doesn't sound correct to me.
+> > Please don't depend on the bootloader and describe hardware > configura=
+tion. If there can be two types of IDP boards and you can not
+> > identify the voltage via other means, please create something like
+> > qcm6490-idp-ufs3.dts. Please add proper Fixes tags.
+> > Last, but not least, as Bjorn wrote, please split into two patches.
+> >
+> sure, i will split the change into two.
+>
+> Since we can=E2=80=99t differentiate IDP boards based on UFS versions whi=
+le
+> loading the DT and we have only single board ID for the IDP's, it=E2=80=
+=99s not
+> possible to create separate UFS-based DT files like qcm6490-idp-ufs3.dts
+> and ufs2.dtsi... etc.
 
-When one thread updates VM's APICv state due to updating the APICv
-inhibit reasons, it kicks off all vCPUs and makes them wait until the
-new reason has been updated and can be seen by all vCPUs.
+It is definitely possible to create a second DT file. And upstream
+doesn't have board IDs (not to mention that nothing stops you from
+using another board ID for IDP with a different UFS revision. Qualcomm
+owns the board ID registry.)
 
-There was one WARN() to make sure VM's APICv state is consistent with
-vCPU's APICv state in the svm_vcpu_run().  Commit ee49a8932971 ("KVM:
-x86: Move SVM's APICv sanity check to common x86") moved that WARN() to
-x86 common code vcpu_enter_guest() due to the logic is not unique to
-SVM, and added comments to both __kvm_set_or_clear_apicv_inhibit() and
-vcpu_enter_guest() to explain this.
+>
+> And also UFS driver does not vote for voltage on UFS rails & they just
+> vote on load only.
+> Hence to support both UFS 2.x and 3.x, we need to remove the voltage
+> min/max voting. if add the min and max voltages in DT, then those
+> initial voltage set by bootloader is overridden by regulator
+> framework with min voltage specified in DT.
 
-However, although the comment in __kvm_set_or_clear_apicv_inhibit()
-mentioned the WARN(), it seems forgot to reflect that the WARN() had
-been moved to x86 common, i.e., it still mentioned the svm_vcpu_run()
-but not vcpu_enter_guest().  Fix it.
+Yes, this is correct. Regulator framework should know min and max
+voltages. Once the voltage is in the specified range, the UFS driver
+doesn't have to cast a particular vote on it.
 
-Note after the change the first line that contains vcpu_enter_guest()
-exceeds 80 characters, but leave it as is to make the diff clean.
+So, dropping the regulator min/max is still NAKed.
 
-Fixes: ee49a8932971 ("KVM: x86: Move SVM's APICv sanity check to common x86")
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/kvm/x86.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Note: Bootloader have capability to detect the UFS version (where as
+> HLOS does not have that capability)
+>
+> Thank you for quick review!!
+> >>
+> >> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> >> ---
+> >>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
+> >>   1 file changed, 8 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boo=
+t/dts/qcom/qcm6490-idp.dts
+> >> index 84c45419cb8d..8a4df9c2a946 100644
+> >> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> >> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> >> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
+> >>                      regulator-name =3D "vreg_l6b_1p2";
+> >>                      regulator-min-microvolt =3D <1140000>;
+> >>                      regulator-max-microvolt =3D <1260000>;
+> >> +                    regulator-allow-set-load;
+> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
+LPM RPMH_REGULATOR_MODE_HPM>;
+> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> >>              };
+> >>
+> >>              vreg_l7b_2p952: ldo7 {
+> >>                      regulator-name =3D "vreg_l7b_2p952";
+> >> -                    regulator-min-microvolt =3D <2400000>;
+> >> -                    regulator-max-microvolt =3D <3544000>;
+> >> +                    regulator-allow-set-load;
+> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
+LPM RPMH_REGULATOR_MODE_HPM>;
+> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> >>              };
+> >>
+> >> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
+> >>
+> >>              vreg_l9b_1p2: ldo9 {
+> >>                      regulator-name =3D "vreg_l9b_1p2";
+> >> -                    regulator-min-microvolt =3D <1200000>;
+> >> -                    regulator-max-microvolt =3D <1304000>;
+> >> +                    regulator-allow-set-load;
+> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
+LPM RPMH_REGULATOR_MODE_HPM>;
+> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> >>              };
+> >>
+> >> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
+> >>                      regulator-name =3D "vreg_l10c_0p88";
+> >>                      regulator-min-microvolt =3D <720000>;
+> >>                      regulator-max-microvolt =3D <1050000>;
+> >> +                    regulator-allow-set-load;
+> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
+LPM RPMH_REGULATOR_MODE_HPM>;
+> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> >>              };
+> >>
+> >> --
+> >> 2.34.1
+> >>
+> >
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index afd70c274692..7b347e564d10 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -10606,11 +10606,11 @@ void __kvm_set_or_clear_apicv_inhibit(struct kvm *kvm,
- 	if (!!old != !!new) {
- 		/*
- 		 * Kick all vCPUs before setting apicv_inhibit_reasons to avoid
--		 * false positives in the sanity check WARN in svm_vcpu_run().
-+		 * false positives in the sanity check WARN in vcpu_enter_guest().
- 		 * This task will wait for all vCPUs to ack the kick IRQ before
- 		 * updating apicv_inhibit_reasons, and all other vCPUs will
- 		 * block on acquiring apicv_update_lock so that vCPUs can't
--		 * redo svm_vcpu_run() without seeing the new inhibit state.
-+		 * redo vcpu_enter_guest() without seeing the new inhibit state.
- 		 *
- 		 * Note, holding apicv_update_lock and taking it in the read
- 		 * side (handling the request) also prevents other vCPUs from
--- 
-2.46.0
 
+
+--=20
+With best wishes
+Dmitry
 
