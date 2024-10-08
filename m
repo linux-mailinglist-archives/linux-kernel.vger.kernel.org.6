@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-355918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAD39958E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4699958EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD0E283D56
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C50D1C216B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DDD215F46;
-	Tue,  8 Oct 2024 21:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E469A215F68;
+	Tue,  8 Oct 2024 21:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qn/gkifS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HEIpgQim"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C81E0B8C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BAB1DFE33
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728421528; cv=none; b=juGth/5Zm0hGeOAlsEnjgSW+cjrI1D/zhHWsh6auodgi67qKoO20/F9WcmHAO+oaNq5HpEcNHLaK4h3m/2nlSfakhKGFrog7actnHrOkGdakddQkCBolavd8EmaKA5TYCe9dlfth+UGZPC4FiV2P88yxb6z+ijHh2Rfc1CEJ7BA=
+	t=1728421657; cv=none; b=eUyo//Llf86bqJEhyIdAPLwXDlprvsiK5YH9XA5uI/SiIHXxQP0Rb6vVj2fiQxmCqltvS+0KaXOu73hUkem+G0y+G2JwnX9HrTbwPS5j3EMr4MZnIQ5aALyZWYLVjD8BtAzqrq+o4hFn8T809C3TubE2sy1z5UDqAXYT6TNejAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728421528; c=relaxed/simple;
-	bh=A5zKkNnRv/TK4FdPtPKqZcWK5HvI13mYFfVc5IiNyg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNyLAwHmaPSbSsRbHzh1awjyKDxVOxw2n42onu2VrAXatUzje1gd2su7c9RdMo3VQkuKubzG2ujDLk7QVOGmVxqCGrWMXI05KJ99u6pvUSWiHsLt/ecTWkFiJtx1//F5M+tm/gUt4nip4/GF9FWPQicZDSKQZPliucRBb8vV1kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qn/gkifS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728421526; x=1759957526;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=A5zKkNnRv/TK4FdPtPKqZcWK5HvI13mYFfVc5IiNyg0=;
-  b=Qn/gkifSh7bBjNU1twbE0pZoz2cZwwZhafYkyWE3CKvED40a7uEiQ9e6
-   i1bbv+tDi25xbXgD/MVKc7CPsviowme6tvDrgYek9qTmOpJbS2Xl9Ie49
-   WDjtpZsWfkUKwKPHm6b6leF7pnditxzfF5rdnFok1j3TPmFhQDIBdU3IE
-   cXvS5xcDKK4J10UY4l8BMhhozXEhKQSlUoZbY9vvY+3ksszUYst2RW7/T
-   RI10XqVfCdpKn5OgrL88Cyf5ntqOhUEgVcrHyFgzdfKgBUUmSY8/6QfJ+
-   o+Y/f4/Y6jLzeRyZ6qZqNoxZN20aDzGIr+GlKaL46C7kGuHbN/8wX+SBR
-   g==;
-X-CSE-ConnectionGUID: O2hJpiCtSQa6lyiW29FVgw==
-X-CSE-MsgGUID: kREafrlNQf+NOvE+qU7puw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31448646"
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="31448646"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 14:05:25 -0700
-X-CSE-ConnectionGUID: QysLVHgRTJqydKkD7xUWuw==
-X-CSE-MsgGUID: Fmrrd6zvTxSo2XdbbolwHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="76245972"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 14:05:25 -0700
-Received: from [10.212.24.252] (kliang2-mobl1.ccr.corp.intel.com [10.212.24.252])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 5791420B5782;
-	Tue,  8 Oct 2024 14:05:24 -0700 (PDT)
-Message-ID: <ed3c066f-5040-4573-a91f-3ee95014c951@linux.intel.com>
-Date: Tue, 8 Oct 2024 17:05:22 -0400
+	s=arc-20240116; t=1728421657; c=relaxed/simple;
+	bh=hdvV/f1cM1SqYCQ/KfHtJVVSe64ByztDzTP3QqDV7WA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CY4re2g0PNYPOet2mL+goO47yQtEPoLNaE/mN4304ldtE4TmerctBDjEeHgLA7a2osG1uBuUzHN9ZOtCikQBCS/L7DP0QTVEgE2QcohbutQCcq3zJAmlgHxwf8Nw+iw1jsgF/0TNNQKrX5mJ/Qn3aBeMuVzJcYlHjtuZgbue6S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HEIpgQim; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53995380bb3so7495224e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 14:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728421654; x=1729026454; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPQRQfiAaozI/z8/sXF+QKwWgYWvasAFIgnN8L6VyCM=;
+        b=HEIpgQim5hjt5TMOItndmOyuCgbei+QbaBYg8sLzxWKCVqZ6cabLCgdKPfFXA+Fv8P
+         xOLFv2rbCpvDSOGhUkIjoVJDB7zTYPjJthzGzjDUENE481oPrPUppTxmuzWJ/sZqazIR
+         2vbTHH2cbMuXkOnA/X+6xDafVL8DhhAQid92O74+3mmnYxfmWBtt9XeSYH+xGzPHrmZu
+         BnDQlitBRLDbyNnSTDedbXYVyg3XonLj9L10carZ7WOULD5iyZug/lfaVOFDVIOyKIj9
+         WjZH2OHeSsoMqiy4yaaswzDBsm7xpQ8Hiy3xWFoD+EroPbUns5IplJg58R436MgaMzA/
+         ZQQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728421654; x=1729026454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rPQRQfiAaozI/z8/sXF+QKwWgYWvasAFIgnN8L6VyCM=;
+        b=j6uicwT3vSZFa/YrzaoOMbSe3OQms9ZEaRcZdltkLSe6qMPNNLNL+BBo4oeSfFVvd0
+         fUGH/n7Bo9rPjofkD/cIdXC8rUPaoSXHl9yopoGCVSduEmYriILnIh9ImoQU0C+n31Pl
+         lFeKb45SL2bUIQi2ldaapU9Y+wYDYMdjhZ3lDl8sIJGTlXWMb07jV4qdTRYLle0JswqB
+         gqq6yxo06r8vhDG69WoSwUDiL1KaTgiYkSGaMawtTsYE2qCN7SgUZ1b1ZwVBdq54JeS+
+         AMuysfZ+Szqzg3/Dj0aT0ggKZN7jDV68jVDW16a1IIOlEcPW+UUIDZPSOMTaOxJ50M2P
+         TCwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWc0Pr91USgZDSXDCY/8a4sX7kMm/Jcw+VCRQQ+npNg/Gl1OO/jRuUJ1QDAP8ikMg00Gy4GAmGY8AOB+VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBwFvUfFsHF5Oxh0OX43RT1xDV7+4oDGYqr9W9OYucUCmXtdhY
+	0aD7MRlQB1+UmPh9fLT8zaBQMMdm73beinvpVFQ0zBWdgoDGEknec4iI5l1crgWtSKVqO66Rtr0
+	6nFolcekgfM//CyYto3RX6HF52swX1+szsOYmYw==
+X-Google-Smtp-Source: AGHT+IGCIm/ilo7jFS7ECpSD9Zg8i59jrDUKgSV4ZD+C+UPhwmq5Gv/wNp6MXOE8WHCNQydPNcrwj8Sg8rgorL4F61k=
+X-Received: by 2002:a05:6512:6ca:b0:539:94c4:d9cb with SMTP id
+ 2adb3069b0e04-539c48e2719mr72011e87.31.1728421653605; Tue, 08 Oct 2024
+ 14:07:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf/x86/rapl: Move the pmu allocation out of CPU
- hotplug
-To: Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
- mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: Oliver Sang <oliver.sang@intel.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-References: <20240913171033.2144124-1-kan.liang@linux.intel.com>
- <875xq2tv05.ffs@tglx> <3b65fd68-8f5b-4029-8dbd-46c0b2cc34c7@linux.intel.com>
- <87ploas5rb.ffs@tglx> <87msjes56x.ffs@tglx>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <87msjes56x.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241003211139.9296-1-alex.vinarskis@gmail.com> <20241003211139.9296-2-alex.vinarskis@gmail.com>
+In-Reply-To: <20241003211139.9296-2-alex.vinarskis@gmail.com>
+From: Stefan Schmidt <stefan.schmidt@linaro.org>
+Date: Tue, 8 Oct 2024 23:07:23 +0200
+Message-ID: <CAEvtbut-boW2nrbUTXFkvZ8N7qA_OtNz0dMPzRq0OYu4oF+jmg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: arm: qcom: Add Dell XPS 13 9345
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, robdclark@gmail.com, 
+	peterdekraker@umito.nl, Bryan.Kemp@dell.com, tudor.laurentiu.oss@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello Aleksandrs,
 
+[Again in plain text]
 
-On 2024-10-08 4:36 p.m., Thomas Gleixner wrote:
-> On Tue, Oct 08 2024 at 22:23, Thomas Gleixner wrote:
->> On Tue, Oct 08 2024 at 16:10, Kan Liang wrote:
->>> On 2024-10-08 12:33 p.m., Thomas Gleixner wrote:
->>>> On Fri, Sep 13 2024 at 10:10, kan liang wrote:
->>>>> +static void __init init_rapl_pmu(void)
->>>>> +{
->>>>> +	struct rapl_pmu *pmu;
->>>>> +	s32 rapl_pmu_idx;
->>>>> +	int cpu;
->>>>> +
->>>>> +	cpus_read_lock();
->>>>> +
->>>>> +	for_each_cpu(cpu, cpu_online_mask) {
->>>>
->>>> How is that supposed to work, when not all CPUs are online when
->>>> init_rapl_pmus() is invoked?
->>>>
->>>
->>> RAPL is a module. The module_init() is called during do_initcalls(),
->>> which is after the smp_init(). The cpu_online_mask has been setup in the
->>> smp_init().
->>>
->>> I also patched the kernel to double check. The cpu_online_mask indeed
->>> shows all the online CPUs.
->>>
->>> [    7.021212] smp: Brought up 1 node, 48 CPUs
->>> [    7.021212] smpboot: Total of 48 processors activated (211200.00
->>> BogoMIPS)
->>> ... ...
->>> [   16.557323] RAPL PMU: rapl_pmu_init: cpu_online_mask 0xffffffffffff
->>
->>  1) Start your kernel with maxcpus=2 (not recommended, but ...)
->>  2) Load the module
->>  3) Online the rest of the CPUs from userspace
->>
->> If your machine has more than one die you might be surprised...
-
-Thanks. I will find a 2 sockets machine and give it a try.
-
-> 
-> You can make this work because the new topology code allows you to
-> retrieve the possible number of cores/dies/packages even when they have
-> not been onlined yet. 
+On Thu, 3 Oct 2024 at 23:12, Aleksandrs Vinarskis
+<alex.vinarskis@gmail.com> wrote:
 >
+> Document the X1E80100-based Dell XPS 13 9345 laptop, platform
+> codenamed 'Tributo'/'Tributo R'.
+>
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index 5cb54d69af0b..7c01fe30dabc 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -1058,6 +1058,7 @@ properties:
+>        - items:
+>            - enum:
+>                - asus,vivobook-s15
+> +              - dell,xps13-9345
+>                - lenovo,yoga-slim7x
+>                - microsoft,romulus13
+>                - microsoft,romulus15
+> --
+> 2.43.0
 
-Actually, I think the possible CPU mask should be good enough here. The
-init_rapl_pmu() just intends to allocate the space for a pmu in each die.
+Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org>
 
-The worst case of using a possible mask is that some space may be
-wasted, when there is no online CPUs on a die. But it should be an
-unusual case. It should be harmless.
-
-Thanks,
-Kan
+regards
+Stefan Schmidt
 
