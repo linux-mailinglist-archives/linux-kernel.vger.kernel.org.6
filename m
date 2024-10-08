@@ -1,152 +1,97 @@
-Return-Path: <linux-kernel+bounces-355225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3819F994C9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:56:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215C2994D56
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15111F21DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:56:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBB2B23493
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDE71DEFFC;
-	Tue,  8 Oct 2024 12:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BE61DF278;
+	Tue,  8 Oct 2024 12:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kVs9Gj79"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AB41DEFF3;
-	Tue,  8 Oct 2024 12:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Dvdd+DbJ"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA971DED48;
+	Tue,  8 Oct 2024 12:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392116; cv=none; b=AdB3Z1VOayJUy9uMtVb1ns4UBOrz1VavGY3G1oSMZ866sRcENT+qv7XFS7YbGAGvzgTYKLjIm83wKpsQqusa3D4UEewoAePHTZ+D+rbZ2cPtzhBd9qcrC5zcQIKEZY/uiQa2nqWqwbeN2rDDtptPT6v9zeGwdIcp9h1I2duMc34=
+	t=1728392151; cv=none; b=hUhdyiMuzXD74jrPpYrBzBDIWgENt/frG5B+uvfAdyJia5st22A5fg1qHRxZE4M4n9DmeeHeYpYtI2G5j4QApQWn4oFadmO7OSlrersea7BeJdCsYxYjo97vfTWv/jvEbb1CfQOOn7xOYg/Xz+ugqDqHpi8mCwssormnpW8tFhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392116; c=relaxed/simple;
-	bh=l/b19yHhRgowD8uZbq6v6nd8mEoqlnR2l3DgywaCr+k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m2qseMmCCPEFyh28nlxxpu16fGs3K5RRQUIsuEuV2j1Bbwmek4DTCw2zFFewQFv+JFlGmXMKYvGsKO3LTpULJENCBmZvkb2WPbRT0rxJRwVSQVCbs2O5jWQJCpO8dT/S33eWMig4jTSgJVpgVdnXr0TdbZKJDmSbpUxKQd+w8HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kVs9Gj79; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4984Sbkm008697;
-	Tue, 8 Oct 2024 12:55:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fgmdtKlode30qWQkEogieWVhsRaELfprkiUceOphRvQ=; b=kVs9Gj79jI1cZTEv
-	oL+mPYKT28MdNx+ceE/8oxO/MliFHCgtm5uzcPVfx3ZDVV0bAubLOpxCtf+dPOtn
-	C8nihZFxTlVEB/uvh506KrDHM+1r1ON27SMpbExq3m6BomutSqr0fDd7bTtIvWMT
-	M3/taqdDxoBqteYsY1zeZzOEOSiughmlNycly9KEL+u+hAUzCxsJGZW+LhvRJahZ
-	rfg6xvyAnlZvB9OcEtmak2rqJONzyjiH+i0836929AqG61KNyW43+qQRPovZhLSu
-	N9w2IEM2vs2Ccs0g1l4gQS0FK5qS2SDrxXEn5jF3cwGMhLjJfIfXhgkAlpcxvASR
-	rkDxzA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424wrc1a8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 12:55:00 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498CsxOV026523
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 12:54:59 GMT
-Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 8 Oct 2024 05:54:55 -0700
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bibekkum@quicinc.com>
-Subject: [PATCH v16 5/5] iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
-Date: Tue, 8 Oct 2024 18:24:10 +0530
-Message-ID: <20241008125410.3422512-6-quic_bibekkum@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1728392151; c=relaxed/simple;
+	bh=/5xfWdgh2ER9sUkHCPGC/gPqejv7wgXxQHfq4+0kyq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTRvroT8om8gj1VGL7qYcPC+5YHNI92RoQu4jLvCA1j4zvzdWBm4z4cTFpeoyg8oVVT/J1nSEnN2vYkZIqEQN8WEp+oUDOcHrvS6GeowXnDaFSa/PjYPwkHOLH6xTmDWbgjG8nRUZ422pYXkelUAOejV25eP9v7H+rrR4vdlr80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Dvdd+DbJ; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=sBxE/BZZv+MRIC0aIc47q5oUjnJ0WxSpN0dr4sEd480=;
+	b=Dvdd+DbJJSbPGq34LPp2yWzQrIZPGurxQPWToSFncsELaB4TVqImY9lPFGsDDr
+	FsdzsvgfkhDyhsvQCe6K2IMGV1LYPOHrcGMMZz/vJ9zQqchKqdPwJ9nc4l4mQf6L
+	JsAvjAsLNv4eD3IYhQkd217osr2j8q2E1haCjjWx7yHzY=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAnntWpKwVnm+HXAQ--.19970S3;
+	Tue, 08 Oct 2024 20:55:07 +0800 (CST)
+Date: Tue, 8 Oct 2024 20:55:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 0/7] arm64: dts: freescale: imx95: add various nodes
+Message-ID: <ZwUrqVjbYbZk1Ld/@dragon>
+References: <20240903-imx95-dts-new-v2-0-8ed795d61358@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tbrYY9ZAs0jOHVCenqJBWH9BW1rFzCEn
-X-Proofpoint-ORIG-GUID: tbrYY9ZAs0jOHVCenqJBWH9BW1rFzCEn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- impostorscore=0 suspectscore=0 mlxscore=0 clxscore=1015 spamscore=0
- adultscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-imx95-dts-new-v2-0-8ed795d61358@nxp.com>
+X-CM-TRANSID:Mc8vCgAnntWpKwVnm+HXAQ--.19970S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw1rAw1rAw1Dtr4UGrWfZrb_yoWkJrb_ur
+	4ru3WUtr48tw4xGrZ8Jw4jva9FgFW5Cry5G3WYqF1xJ3sxXFn8JrZrCr4rArs5KFsI9F9r
+	Aw18Ja9IqFWagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnvApUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgVyZWcE2BT3FgAAse
 
-Add ACTLR data table for qcom_smmu_500 including
-corresponding data entry and set prefetch value by
-way of a list of compatible strings.
+On Tue, Sep 03, 2024 at 03:17:45PM +0800, Peng Fan (OSS) wrote:
+> Per scmi binding doc update and i.MX extenstion supported, add the nodes
+> in imx95.dtsi.
+> Enable cpuidle for A55
+> Add anamix temperature thermal zone
+> Add lpi2c[5,6] i2c nodes and sub-nodes
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v2:
+> - Use generic node name "gpio" for gpio controller in patch 7
+> - Link to v1: https://lore.kernel.org/r/20240902-imx95-dts-new-v1-0-a1f798f4f746@nxp.com
+> 
+> ---
+> Peng Fan (7):
+>       arm64: dts: freescale: imx95: set max-rx-timeout-ms
+>       arm64: dts: freescale: imx95: add bbm/misc/syspower scmi nodes
+>       arm64: dts: freescale: imx95: update a55 thermal trip points
+>       arm64: dts: freescale: imx95: add anamix temperature thermal zone and cooling node
+>       arm64: dts: freescale: imx95: enable A55 cpuidle
+>       arm64: dts: freescale: imx95-19x19-evk: add nxp,ctrl-ids property
+>       arm64: dts: freescale: imx95-19x19-evk: add lpi2c[5,6] and sub-nodes
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+May I ask you to drop "freescale: " from the prefix?  "imx95: " is good
+enough to tell the scope.
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 2d2c1e75632c..dd4fb883ebcd 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -25,8 +25,31 @@
-
- #define CPRE			(1 << 1)
- #define CMTLB			(1 << 0)
-+#define PREFETCH_SHIFT		8
-+#define PREFETCH_DEFAULT	0
-+#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
-+#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
-+#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
- #define GFX_ACTLR_PRR		(1 << 5)
-
-+static const struct of_device_id qcom_smmu_actlr_client_of_match[] = {
-+	{ .compatible = "qcom,adreno",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-gmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-smmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,fastrpc",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-mdss",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-venus",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sm8550-mdss",
-+			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
-+	{ }
-+};
-+
- static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
- {
- 	return container_of(smmu, struct qcom_smmu, smmu);
-@@ -640,6 +663,7 @@ static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
- 	.impl = &qcom_smmu_500_impl,
- 	.adreno_impl = &qcom_adreno_smmu_500_impl,
- 	.cfg = &qcom_smmu_impl0_cfg,
-+	.client_match = qcom_smmu_actlr_client_of_match,
- };
-
- /*
---
-2.34.1
+Shawn
 
 
