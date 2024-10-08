@@ -1,133 +1,243 @@
-Return-Path: <linux-kernel+bounces-355859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A6599581A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:06:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C98995834
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222EA1C2100A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B391C2157F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EFA213EFB;
-	Tue,  8 Oct 2024 20:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA76215012;
+	Tue,  8 Oct 2024 20:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lx05XM1T"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Nyj9iPE1"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3BA20CCF7;
-	Tue,  8 Oct 2024 20:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB68521500C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417961; cv=none; b=rgXQy8Jvg3wKFh+k97xNzvkqWaxuEGWw7TlUC6rUmL7ojnNgarcqCLzNS1J0W+z2xZOvWd5UIdiP9h3MWTJZp/j7gn4ubUkTNrRuXBtaVGkNNNL3l+uV3BVPmc5OQF49a+DuskM6w9oPp+Kfef65ueq+LfH7YHO/IukHTSK08WM=
+	t=1728418250; cv=none; b=adHQ5hkAYxUPDMOxRunQkUJvT1e3g8oHvWECfnTDvPv8QOnuNgeK7v3YOIIgznkjDbXkdJ4+KEsrWWzZwjE9AC/djo25Q7tUsjiuI1e59TRWOvG6jzmF7dTrcHZBULBnWWPfm6WzGE5g3ToV5G/pToAyDBCKS2bYJDV8Wfq8IXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417961; c=relaxed/simple;
-	bh=/2LRT6rx/fg7HOwvg68EGsALMws7VjpMk4XSbWJJpqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rOHByh+YMbu24vfY33TSonAiFA4RlzYgiQVIVIgoPsLwVA8G7g1R5aiTLB9OxcuBS5cqbd/IYczsYCxgUuvklSsfUYgHttByPJqeo8luDbcwZVrvN6uPOgemRuj2B5LChfdxvvhYSzgmE6s1Xs9X2+fNiRD27221ffUPP/z2px0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lx05XM1T; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71dec222033so555551b3a.0;
-        Tue, 08 Oct 2024 13:05:59 -0700 (PDT)
+	s=arc-20240116; t=1728418250; c=relaxed/simple;
+	bh=E7zPAoCmwBqBdf7PBNrujyJalnwi15pZnyEj/jpf2DQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VM8WXO4bJnaqgRwBHp6F32NIUW4xlJjXuEQt3iGigoUaBrI4fVWlGGxdfMHpcNUiboOO12pwwG2ImgJJsk43IDgH7z1dPUHcW93hACXwr2D6Anj3ejK+vdY2lyKeYP2NzNVNGs228iiLFSVFtk/DtFVXYfoxx4oEx75K8uPZQUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Nyj9iPE1; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728417959; x=1729022759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNLhV/obBfV40j9AIYreSsSZrsBabbm+koEaj8DEnPg=;
-        b=Lx05XM1TgXQVlbLarb0TcQRBYcnZ/NuTHkDQr2mSAYZW0Itv2jfKsdwpzIubEvcYpt
-         vGJHBInQj6JiCEGpAIIXu/LClmYQn+axAMbAxHD1dlDzGdRRY6G0M/iZlJghHafA3PZc
-         h6KycaXRAymBpiYUHw/980N+b21OnyNo6PFDD9oQ9E/K6N81EOYA322TDV94pJZB3Y0E
-         9H7DTsetAu16F8Lzk/LedjgCdxBpFIJtHBlAZxPfQouv5vVx0D6LO3do+9hmOEyU8hGf
-         xlA28jmrrVavXDKFTdjwSYGZ3yN5S5J2yRTaOziHgT+15Yi5B+jddoaiJvlchKYrHml9
-         F96w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728417959; x=1729022759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GNLhV/obBfV40j9AIYreSsSZrsBabbm+koEaj8DEnPg=;
-        b=MEzB459mnY8EJVe+cbrU5DPUkCZKelJgJthq9j9NP/3L/rn6zapuxNf+wPEwN1iA1I
-         VPxkaXOoqOvFG9P1jHmFph27Cldpkt4EykddAAgrBKC9uD+mpH2mBVFwF6FaaSQI+6cc
-         Fh4MdX2yc4lvbWEEaCZivZiyPlnop5AIgO+v47rtTKKiuRnR32j8Cos9lJjHZuEccctT
-         JqaFRqGzbJe4m4r1FoMvDzlsS40/jCl1mxncBfjnd0VsWJ/MkwQXHZ6+RHV3k0Bz9UIf
-         QlVbqi/k19gmCfr8Lf14A2gkdB4dfTSanbQGVeS5Qc14lJivFT21cI5eBkIzXs5cyvSg
-         wFkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUjFSrq6X5BUGQD1A2rW9BQfg5kAUnRws6W8Iwvrg3+WULBPXH2K0iNecRQYn3MC3eI/t+X4xoBvhgj8KSIl8=@vger.kernel.org, AJvYcCWMCSciGGHvumG/jufH/dBuKHI6KNsZ3dcLsp9K0TpbaThZJDd/tymhUhhYfcfWhgsoZxmBQaq2c568mmeK@vger.kernel.org, AJvYcCXCurrSw94J+q7+xPnjLXgwvHvRduwAgE09QRI3QWxUfsAyd/DzOJ2d101HcweypjFvjjF04YwOjx7wx6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5+NBdQVwAid/58yEm8ePLnoYWzCqTR2HXXW/Qnke7rFNaWQkV
-	boFZTCLUfrhXmMUujjtkTqTrTLSoRwtVJPA4y9EXTLYUPxapVKgnxj93KWTcEj2hKJqI4Jj1eHv
-	BViBoDM/jzdOozapJemiejG8joFA=
-X-Google-Smtp-Source: AGHT+IFJuqOSZA7x4j93VIfPJHv4wC9JoTNS9GyZG8yUMsy8M1eJjTt8R9XiQgwCfMHSHPLUeZjQ5XLSX+lYJF1zKeU=
-X-Received: by 2002:a05:6a00:3e28:b0:714:2051:89ea with SMTP id
- d2e1a72fcca58-71e1db6491amr31019b3a.1.1728417958992; Tue, 08 Oct 2024
- 13:05:58 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1728418250; x=1759954250;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BVMFzVxR0Kuh6OmNjVYTpAPSyJ3Xe7jNg3d6jsZiecE=;
+  b=Nyj9iPE1HcWCbuZDdOalYjZCWe8sbzcaQ5WluUWA3Glb3U3g5xOajPhu
+   rqzKjvOgN74i2I8TASuISLGfUnllK9THXDHxKkKeyHCOnL2i8SBEzA0Nk
+   XZufF1svBL+fAXoCwNXOcIYwQ/SE00r99q5evKrWVDO0UeywlnKDTEk26
+   c=;
+X-IronPort-AV: E=Sophos;i="6.11,187,1725321600"; 
+   d="scan'208";a="686074039"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 20:10:45 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:1906]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.8.31:2525] with esmtp (Farcaster)
+ id bc1728f2-b0d2-4007-a03a-d2d583554258; Tue, 8 Oct 2024 20:10:42 +0000 (UTC)
+X-Farcaster-Flow-ID: bc1728f2-b0d2-4007-a03a-d2d583554258
+Received: from EX19D007EUA004.ant.amazon.com (10.252.50.76) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 8 Oct 2024 20:10:39 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
+ EX19D007EUA004.ant.amazon.com (10.252.50.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 8 Oct 2024 20:10:38 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Tue, 8 Oct 2024 20:10:38 +0000
+Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com [10.253.79.181])
+	by email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com (Postfix) with ESMTPS id 82532A0309;
+	Tue,  8 Oct 2024 20:10:34 +0000 (UTC)
+From: Fares Mehanna <faresx@amazon.de>
+To: <rppt@kernel.org>
+CC: <akpm@linux-foundation.org>, <ardb@kernel.org>, <arnd@arndb.de>,
+	<bhelgaas@google.com>, <broonie@kernel.org>, <catalin.marinas@arm.com>,
+	<david@redhat.com>, <faresx@amazon.de>, <james.morse@arm.com>,
+	<javierm@redhat.com>, <jean-philippe@linaro.org>, <joey.gouly@arm.com>,
+	<kristina.martsenko@arm.com>, <kvmarm@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <mark.rutland@arm.com>, <maz@kernel.org>,
+	<nh-open-source@amazon.com>, <oliver.upton@linux.dev>, <ptosi@google.com>,
+	<rdunlap@infradead.org>, <rkagan@amazon.de>, <shikemeng@huaweicloud.com>,
+	<suzuki.poulose@arm.com>, <tabba@google.com>, <will@kernel.org>,
+	<yuzenghui@huawei.com>
+Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use it
+Date: Tue, 8 Oct 2024 20:06:32 +0000
+Message-ID: <20241008200632.52082-1-faresx@amazon.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <ZvZZ0eQ2NUq3GWSj@kernel.org>
+References: <ZvZZ0eQ2NUq3GWSj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-rustc-option-bootstrap-v1-1-9eb06261d4f7@google.com>
- <CANiq72k-Z88A+Bk6q4M5dnVW74L7u85Bqdo0ptSdvVaD6BR3_A@mail.gmail.com> <CAK7LNAQU8m=QrEXS2h_0Q8UNqqTmkud18zc8RM6LVPsKYM5z3w@mail.gmail.com>
-In-Reply-To: <CAK7LNAQU8m=QrEXS2h_0Q8UNqqTmkud18zc8RM6LVPsKYM5z3w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 8 Oct 2024 22:05:46 +0200
-Message-ID: <CANiq72mCuqCE3fA2jgaaA4fyj1kNzYm61C2600vAf0CT5=JP0A@mail.gmail.com>
-Subject: Re: [PATCH] Kbuild: add RUSTC_BOOTSTRAP to rustc-option
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 8, 2024 at 8:45=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> Really?
->
-> $(shell ...) inherits env variables in my understanding.
+> > Hi,
+> > 
+> > Thanks for taking a look and apologies for my delayed response.
+> > 
+> > > Having a VMA in user mappings for kernel memory seems weird to say the
+> > > least.
+> > 
+> > I see your point and agree with you. Let me explain the motivation, pros and
+> > cons of the approach after answering your questions.
+> > 
+> > > Core MM does not expect to have VMAs for kernel memory. What will happen if
+> > > userspace ftruncates that VMA? Or registers it with userfaultfd?
+> > 
+> > In the patch, I make sure the pages are faulted in, locked and sealed to make
+> > sure the VMA is practically off-limits from the owner process. Only after that
+> > I change the permissions to be used by the kernel.
+> 
+> And what about VMA accesses from the kernel? How do you verify that
+> everything that works with VMAs in the kernel can deal with that being a
+> kernel mapping rather than userspace?
 
-I mean the Make-exported variables (not the external environment),
-i.e. `RUSTC_BOOTSTRAP=3D1` that we export in the main `Makefile`. Those
-are not exported into the `shell` function.
+I added `VM_MIXEDMAP` if the secret allocation is intended for kernel usage,
+this should make the VMA special and prevent a lot of operations like VMA merging.
+Maybe the usage of `VM_MIXEDMAP` is not ideal and we can introduce a new kernel
+flag for that. But I'm not aware of a destructive VMA operation from kernel side
+while the VMA is marked special, mixed-map and sealed.
 
-However, it turns out this changes in GNU Make 4.4 in commit
-98da874c4303 ("[SV 10593] Export variables to $(shell ...) commands"):
+> > > This approach seems much more reasonable and it's not that it was entirely
+> > > arch-specific. There is some plumbing at arch level, but the allocator is
+> > > anyway arch-independent. 
+> > 
+> > So I wanted to explore a simple solution to implement mm-local kernel secret
+> > memory without much arch dependent code. I also wanted to reuse as much of
+> > memfd_secret() as possible to benefit from what is done already and possible
+> > future improvements to it.
+> 
+> Adding functionality that normally belongs to userspace into mm/secretmem.c
+> does not feel like a reuse, sorry.
 
-    * WARNING: Backward-incompatibility!
-      Previously makefile variables marked as export were not exported
-to commands
-      started by the $(shell ...) function.  Now, all exported variables ar=
-e
-      exported to $(shell ...).  If this leads to recursion during
-expansion, then
-      for backward-compatibility the value from the original
-environment is used.
-      To detect this change search for 'shell-export' in the .FEATURES vari=
-able.
+Right, because the mapping in user virtual space most of the operations belongs
+to userspace yes. I thought this way would be easier to demonstrate the approach
+for RFC.
 
-And indeed:
+> The only thing your actually share is removal of the allocated pages from
+> the direct map. And hijacking userspace mapping instead of properly
+> implementing a kernel mapping does not seem like proper solution.
 
-    export A :=3D .PHONY: a
-    $(shell echo $$A)
-    a: ; @echo exported
+Also we get:
+1. PGD is private when creating new process.
+2. Existing kernel-secret mappings for given process will be cloned on fork(),
+   so no need to keep track of them to be cloned on fork().
+3. No special handling for context switching.
 
-Gives:
+> > Keeping the secret pages in user virtual addresses is easier as the page table
+> > entries are not global by default so no special handling for spawn(). keeping
+> > them tracked in VMA shouldn't require special handling for fork().
+> > 
+> > The challenge was to keep the virtual addresses / VMA away from user control as
+> > long as the kernel is using it, and signal the mm core that this VMA is special
+> > so it is not merged with other VMAs.
+> > 
+> > I believe locking the pages, sealing the VMA, prefaulting the pages should make
+> > it practicality away of user space influence.
+> > 
+> > But the current approach have those downsides: (That I can think of)
+> > 1. Kernel secret user virtual addresses can still be used in functions accepting
+> >    user virtual addresses like copy_from_user / copy_to_user.
+> > 2. Even if we are sure the VMA is off-limits to userspace, adding VMA with
+> >    kernel addresses will increase attack surface between userspace and the
+> >    kernel.
+> > 3. Since kernel secret memory is mapped in user virtual addresses, it is very
+> >    easy to guess the exact virtual address (using binary search), and since
+> >    this functionality is designed to keep user data, it is fair to assume the
+> >    userspace will always be able to influence what is written there.
+> >    So it kind of breaks KASLR for those specific pages.
+> 
+> There is even no need to guess, it will appear on /proc/pid/maps
 
-    $ make-4.3
-    make: 'a' is up to date.
+Yeah but that is easily fixable, however the other issue stays the same unless
+I allocated bigger chunk from userspace and moved away from VMA tracking.
 
-    $ make-4.4.1
-    exported
+> > 4. It locks user virtual memory away, this may break some software if they
+> >    assumed they can mmap() into specific places.
+> > 
+> > One way to address most of those concerns while keeping the solution almost arch
+> > agnostic is is to allocate reasonable chunk of user virtual memory to be only
+> > used for kernel secret memory, and not track them in VMAs.
+> > This is similar to the old approach but instead of creating non-global kernel
+> > PGD per arch it will use chunk of user virtual memory. This chunk can be defined
+> > per arch, and this solution won't use memfd_secret().
+> > We can then easily enlighten the kernel about this range so the kernel can test
+> > for this range in functions like access_ok(). This approach however will make
+> > downside #4 even worse, as it will reserve bigger chunk of user virtual memory
+> > if this feature is enabled.
+> > 
+> > I'm also very okay switching back to the old approach with the expense of:
+> > 1. Supporting fewer architectures that can afford to give away single PGD.
+> 
+> Only few architectures can modify their direct map, and all these can spare
+> a PGD entry.
+> 
+> > 2. More complicated arch specific code.
+> 
+> On x86 similar code already exists for LDT, you may want to look at Andy's
+> comments on old proclocal posting:
+> 
+> https://lore.kernel.org/lkml/CALCETrXHbS9VXfZ80kOjiTrreM2EbapYeGp68mvJPbosUtorYA@mail.gmail.com/
 
-Cheers,
-Miguel
+Ah I see, so no need to think about architectures that can't spare a PGD. thanks!
+I read the discussion and LDT is x86 specific and I wanted to start with aarch64.
+
+I'm still thinking about the best approach for aarch64 for my next PoC, aarch64
+track two tables in TTBR0/TTBR1, what I'm thinking of is:
+1. Have kernel page table per process, with all its PGD entries shared other than
+   a single PGD for kernel secret allocations.
+2. On fork, traverse the private PGD part and clone existing page table for the
+   new process.
+3. On context switching, write the table to TTBR1, thus the kernel will have
+   access to all secret allocations per this process.
+
+This will move away from user vaddr and VMA tracking, with the expense of each
+architecture will support it on its own way.
+
+Does that sound more decent?
+
+Thank you!
+Fares.
+
+> > Also @graf mentioned how aarch64 uses TTBR0/TTBR1 for user and kernel page
+> > tables, I haven't looked at this yet but it probably means that kernel page
+> > table will be tracked per process and TTBR1 will be switched during context
+> > switching.
+> > 
+> > What do you think? I would appreciate your opinion before working on the next
+> > RFC patch set.
+> > 
+> > Thanks!
+> > Fares.
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
