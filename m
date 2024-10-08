@@ -1,157 +1,86 @@
-Return-Path: <linux-kernel+bounces-355814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAB099577B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:15:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9285A99577F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734491F27739
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15AB7B2344B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53000213ED4;
-	Tue,  8 Oct 2024 19:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TVABWEmg"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57532139D7;
+	Tue,  8 Oct 2024 19:15:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E6212F12
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712D813541B;
+	Tue,  8 Oct 2024 19:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728414918; cv=none; b=XQQG2gyisgJE3+oIYVvcG/kY3/cShq7PipumyIwUFWPPqUbjSn9oJ1H1Kzt5rt8sRNuKHXi2/AzwPK/JXfoVIG2XJvK9Dytp5rGJswhud0yH+rsos5cKzP9MjkNNFprex13wu/eVWcPMssQmy2Chv46X+4wph6JuiBZ37n0SYn4=
+	t=1728414950; cv=none; b=LtG/Wjp4Uc1vVS5t5XPYiAbD8r8sMVAOzbnySfraZ1nkiGIj53tAkLo0AtRQr9ff2IW1aQeA5bpR7V+sQGkuxiYjmLNjKkAaZS4fivLL2ErfdSd9Qrh+nOWximJobScay14aGyieNDpA7wVTWSA7bXWV9RgGcqIGrbe+gn+nTRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728414918; c=relaxed/simple;
-	bh=uxyP+G90T5Z46UyueTr78UUAWQH9McOja+2QMJkzsjo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BAzNqghd65pxRSFkQdKXAUQePteqygWBPm1rnlrhwqLM0jy3/RbFurem/oe6sr/HAP3mV3WJCwa6JlPyD/P5UD/JJLxlXcuir0wLd2jEYcBLhstcOD9ES5e8MZta/zELLJqhbC3+gj38qobX8YsWKezlUpZV6YjgmR1Oy52xa7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TVABWEmg; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e28d223794so101580097b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728414916; x=1729019716; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YWbK2GHs6Abt2fMXMTJtF7ITQZREFcgTyAL1OTvzEzA=;
-        b=TVABWEmgeKWNqz2u08Pkp1gUdchyWC4pOMRb305o/80extUUoRcHH9MghK/1XKn4Xr
-         vktC59fTJokMt/j9iRe+ecZx4lomdBDBuN9/jfWPiE2cQwlOi7oQwOrsFfuc/UEkhoGk
-         XIrwBLBQklBqalecrVhW4t5YDZxxSQYCxoEqW2nEGqZ8UJIb6hd1+bGQ3nQPtu+e+hge
-         qZ5BndgSPy58Rb64XFqrkbyKUmolGwGGYZgZDI6/QX52CGSlSSfuZVgtHclX2ErcjERF
-         c5Da0u9N/MCeEXTEcuPKwn+K4iXn8l94WwoLCxPUjdFXlTWr7z6B4c1qvypPJ02XlL7f
-         xuUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728414916; x=1729019716;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YWbK2GHs6Abt2fMXMTJtF7ITQZREFcgTyAL1OTvzEzA=;
-        b=LbmdBVR3A95ae6s2ztAYkppySF3fVlipHHL/SnmRUtImFCsLypLdwHVIxNaElpBwzV
-         3jCSiqywciCjTSKjj3xgM/vmcnyupWWhIfxYW6u/ee97Jsi9sUvsUvV7oE6QEi0TURA5
-         8Z9Npb/ZWwDztEpRF5FcEALWXqA4IsnM7Q+3dE8FTK2e0yi1hmteznKUbqsm9dulxQ2f
-         FNyjLJTv8NAFqhvwGmsbpwLwqBBVvaOazvJf3KqhuiCi19+ifFtrENkTHea3genQJ0ur
-         epde5bLlh3EVTxSPcklAk+aW9TevTXTEStiwpt5DKilM/3it9PKOgirtbnTguhtc5YJ2
-         sX0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV3A9IYZlzAzY0uoREV4PlXHFxofJ7QJkY+D4T2BLi1PxUT5pslGhjI6kC1MBHDQBFpYebTn8/B4lEMTq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRn4um6Ff+38KAzPJr+NKGqc27e0Y4c0MnnH8nAoYZvQXAny6c
-	VUCwJALSbWfkIpjA8QltyzFxMxnNDMKDoiphyKg+YaHH6OtCdw4gac8Q/Zk2VRX49FMnY7CGE2Y
-	ApA==
-X-Google-Smtp-Source: AGHT+IHxscgrbZUbpRMZFTv0mtM0fh4IXzW81h1gMKWUpeG/Fr+LBw21kX62SIQc+671mmmchltyWE1KylY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:20a3:b0:6e3:b08:92c7 with SMTP id
- 00721157ae682-6e321fb7d24mr7937b3.0.1728414915807; Tue, 08 Oct 2024 12:15:15
- -0700 (PDT)
-Date: Tue, 8 Oct 2024 12:15:14 -0700
-In-Reply-To: <ZvbJ7sJKmw1rWPsq@google.com>
+	s=arc-20240116; t=1728414950; c=relaxed/simple;
+	bh=O8MjuzFLVlk/VicWstQS6pFfK2YteU+f/iH5wcaRa7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d+3aJHLOO1wBuYuKh8jxdXXSWsN2BLapM2k/CP28Tz2wjINpri7H1kZtOFKQnqwX6M/qufRcpl5WSRndgX9vfiv6lA7aTcgXOy3tUbwRnEahSNYh4cEl46GAtnks2R+On5d3XU99gZhOpOjh0V93gE9vXUvndqM6YqjcTV9wYzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F50EC4CEC7;
+	Tue,  8 Oct 2024 19:15:45 +0000 (UTC)
+Date: Tue, 8 Oct 2024 15:15:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH] ftrace: Make ftrace_regs abstract from direct use
+Message-ID: <20241008151548.6a721c20@gandalf.local.home>
+In-Reply-To: <8e99826f-b38a-4cb3-ba5e-a20512248853@csgroup.eu>
+References: <20241007204743.41314f1d@gandalf.local.home>
+	<20241007205458.2bbdf736@gandalf.local.home>
+	<8e99826f-b38a-4cb3-ba5e-a20512248853@csgroup.eu>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
- <ZuOCXarfAwPjYj19@google.com> <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
- <Zva4aORxE9ljlMNe@google.com> <ZvbB6s6MYZ2dmQxr@google.com> <ZvbJ7sJKmw1rWPsq@google.com>
-Message-ID: <ZwWEwnv1_9eayJjN@google.com>
-Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
- interesting change
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org, sagis@google.com, 
-	chao.gao@intel.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024, Sean Christopherson wrote:
-> On Fri, Sep 27, 2024, Sean Christopherson wrote:
-> > On Fri, Sep 27, 2024, Sean Christopherson wrote:
+On Tue, 8 Oct 2024 08:24:22 +0200
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-...
-
-> > > Oh, right, I forgot about that.  I'll tweak the changelog to call that out before
-> > > posting.  Hmm, and I'll drop the Cc: stable@ too, as commit b64d740ea7dd ("kvm:
-> > > x86: mmu: Always flush TLBs when enabling dirty logging") was a bug fix, i.e. if
-> > > anything should be backported it's that commit.
+> >> +
+> >> +struct ftrace_regs;
+> >> +#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+> >> +  
 > > 
-> > Actually, a better idea.  I think it makes sense to fully commit to not flushing
-> > when overwriting SPTEs, and instead rely on the dirty logging logic to do a remote
-> > TLB flush.
+> > I just realized I can simplify it with:
+> > 
+> > #define arch_ftrace_get_regs(fregs)	({ &arch_ftrace_regs(fregs)->regs; })  
 > 
-> Oooh, but there's a bug.
+> Is it possible to write it as a static inline function to enforce type 
+> checking ?
 
-Nope, there's not.
+Will do. Thanks,
 
-> KVM can tolerate/handle stale Dirty/Writable TLB entries when dirty logging,
-> but KVM cannot tolerate stale Writable TLB entries when write- protecting for
-> shadow paging.  The TDP MMU always flushes when clearing the MMU- writable
-> flag (modulo a bug that would cause KVM to make the SPTE !MMU-writable in the
-> page fault path), but the shadow MMU does not.
-> 
-> So I'm pretty sure we need the below, and then it may or may not make sense to have
-> a common "flush needed" helper (outside of the write-protecting flows, KVM probably
-> should WARN if MMU-writable is cleared).
-> 
-> ---
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index ce8323354d2d..7bd9c296f70e 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -514,9 +514,12 @@ static u64 mmu_spte_update_no_track(u64 *sptep, u64 new_spte)
->  /* Rules for using mmu_spte_update:
->   * Update the state bits, it means the mapped pfn is not changed.
->   *
-> - * Whenever an MMU-writable SPTE is overwritten with a read-only SPTE, remote
-> - * TLBs must be flushed. Otherwise rmap_write_protect will find a read-only
-> - * spte, even though the writable spte might be cached on a CPU's TLB.
-> + * If the MMU-writable flag is cleared, i.e. the SPTE is write-protected for
-> + * write-tracking, remote TLBs must be flushed, even if the SPTE was read-only,
-> + * as KVM allows stale Writable TLB entries to exist.  When dirty logging, KVM
-> + * flushes TLBs based on whether or not dirty bitmap/ring entries were reaped,
-> + * not whether or not SPTEs were modified, i.e. only the write-protected case
-> + * needs to precisely flush when modifying SPTEs.
->   *
->   * Returns true if the TLB needs to be flushed
->   */
-> @@ -533,8 +536,7 @@ static bool mmu_spte_update(u64 *sptep, u64 new_spte)
->          * we always atomically update it, see the comments in
->          * spte_has_volatile_bits().
->          */
-> -       if (is_mmu_writable_spte(old_spte) &&
-> -             !is_writable_pte(new_spte))
-> +       if (is_mmu_writable_spte(old_spte) && !is_mmu_writable_spte(new_spte))
-
-It took me forever and a day to realize this, but !is_writable_pte(new_spte) is
-correct, because the logic is checking if the new SPTE is !Writable, it's *not*
-checking to see if the Writable bit is _cleared_.  I.e. KVM will flush if the
-old SPTE is read-only but MMU-writable.
-
-That said, I'm still going to include this change, albet with a drastically
-different changelog.  Checking is_mmu_writable_spte() instead of is_writable_pte()
-is still desirable, as it avoids unnecessary TLB flushes in the rare case where
-KVM "refreshes" a !Writable SPTE.  Of course, with the other change to not clobber
-SPTEs when prefetching, that scenario becomes even more rare, but it's still worth
-doing, especially since IMO it makes it more obvious when KVM _does_ need to do a
-remote TLB flush (before dropping mmu_lock).
+-- Steve
 
