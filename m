@@ -1,133 +1,165 @@
-Return-Path: <linux-kernel+bounces-355129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFC99947BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:52:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FFB9947C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4036A1F22BD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D270F1C24FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420331DEFF1;
-	Tue,  8 Oct 2024 11:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B3HrFDwd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90D51DD54F;
+	Tue,  8 Oct 2024 11:51:33 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CE0176FA7;
-	Tue,  8 Oct 2024 11:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0C1D7E50
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388218; cv=none; b=L43l0CCoir4RqVAo40be5PdbQ4bvyRbd7L3ZTZGVBlSnDuIxHFbOwAtQylUY/svw1NhwVYUoGtRb32EJ9LuNeoXUcFl+xOkZCCFq+Nc6yWaWCViDzwam3tJZE8dN/8i56JFhYj2KeFDWNi6u3Y/Wf+jzFEQ5SVO7YeHYN40DgLM=
+	t=1728388293; cv=none; b=RWOKzx+Pj8Y3xObla5sO+Ero6mvLU4+vZOeWibRUId/2FFn6ui7Aq39ozaZrX4e0k/op3v2C1fYUD8KdYrt50OQ5oNfU+dk9IF/bG5OWIrZwVSXqs29K4rbsNolqVvZJ4PaYgfxn3ogp+JuviOfB2m7m3ncK7g4iRXTq6Bb3KPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388218; c=relaxed/simple;
-	bh=bXOLVYsX/WP08jCi/ZnDwBulgCqnkfkpGIP3JkBkVNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DC67vYM/Brp1t7e+UDsLNptimj8N0LP3gSiiQTzY/BHXRBPjo5BDCgV7GlxI1iGgGts3cc5FcGICxyVozmXfcwRKomAMPprLzP/Kuc6gY0mIqykF859Fz1ZCRidOkPN40mWT7wmqSIsxoVJ+mB/iLphuZFIoA4K7GnVXf9ahIRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B3HrFDwd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498AJcd4032601;
-	Tue, 8 Oct 2024 11:50:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=sPQhgvelRG0K77jbWvixmaTlvuL
-	6bVrJguWhLBuE/bo=; b=B3HrFDwdw0qtGeouTk2Bzir7hkZtMLnG7xgryTSpnHc
-	HH3cAF+jdo+xZo1AtfqChL08kWFPhwo9VCBR49XVNozr7Y7LT40svws6Bz3tQuV9
-	nQTIetyFsj3BLY2nQo/VFTSQSTMf8ZplcopMqnL9cTzjhEecEcW0t5zXE6wiemRs
-	+JmMs6rqfMIlQWezcTfiDS9fh7YRBpWpRHWH3C2MRYqQ+rZ/lKf5FnwFAFGRGeIc
-	vNuVin+CDm5w/T3Ls9vpM7o6bI2rh8UiCM83Ea4dPrZSA2K8yEqJ4FCbs1t7qFe5
-	loz4Fj9RBLfk9mJSLMPQAwJGKEZL5rtJ/llCSHUZgiw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4252vpgdkt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 11:50:10 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 498Bo93o015899;
-	Tue, 8 Oct 2024 11:50:09 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4252vpgdkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 11:50:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4989x2iv022851;
-	Tue, 8 Oct 2024 11:50:08 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423h9juw8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 11:50:08 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 498Bo54C49480108
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Oct 2024 11:50:05 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0094A20043;
-	Tue,  8 Oct 2024 11:50:05 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B8C8120040;
-	Tue,  8 Oct 2024 11:50:04 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  8 Oct 2024 11:50:04 +0000 (GMT)
-Date: Tue, 8 Oct 2024 13:50:03 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Cornelia Huck <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marc Hartmayer <mhartmay@linux.ibm.com>
-Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix dma_parm pointer not set up
-Message-ID: <20241008115003.7472-G-hca@linux.ibm.com>
-References: <20241007201030.204028-1-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007201030.204028-1-pasic@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: lXuzBf918RgHmyYBbn9kgtgUNeYxgvnc
-X-Proofpoint-GUID: rBXwCyasaV23gVF_2VnZKQ8z3XPyrKkS
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1728388293; c=relaxed/simple;
+	bh=nSJQXKojb11FRD7CjZoS0RHG2kV4sHEUr0oJZCAZxuo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=N6dqVVtBa6coU1b+HgDP3JD/TVzj386o0Lpb+rH9B9kjQ4NjtIGXzvhn1+5wVtc8Nh5fv0phh20wzzesK5BslFyxKXOuwWsjshxPZJVEgvNoDTUx55/PIGApJKufLqbrb3x7PcUce1Rc0ieVtomCMaiDUP/RfzClyyzZi5taXJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf28c74efso652992339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:51:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728388291; x=1728993091;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HFsP843Ovwu3dUFXwHHSKedyHO1oIz1Y6/uLi2CAMGA=;
+        b=J09omvNojlR52ZlMvMQ50+mkwlblqf1MQtrLAlCuS84hUW2+9TJ2nuAxH0VwJ8hgvk
+         B3RFJDKvnbWCTvrNqBnOtU4iVOwPP4FXhQ3ziCiWTHq6zAA/JMJCm/78OWVJdd5fQ0vl
+         het+HXoAf7uPOALwq5okKSZyt+A6IGrHY+GynUwrX8LEr+J7u6n2y7MhMHE4bLIk2m1y
+         v8rwFKyR+fDzTxUrMGER/yz1UaAR2jQ3DgaS0S5mpRCFSQE34G60NKmgkQvoIpxehWtp
+         NOr/kSWyWXFtoZ1JxXS6kiuTbdjic4Iapx9Xumly1e/hTuKbpOAmFKCLzRtvKlwTKRU9
+         9DRQ==
+X-Gm-Message-State: AOJu0YwOwWljLwO3MtbxEmYNCD6bSN4zUHg+b2J4bmnXN7WB+mrQB+fe
+	Pvs4+/6VrC3gaanIzsF4poz5A/qRPKg1IsWPIou70mvLM7a1v1ZoEveEH96j6dzyYO9MWInBwnK
+	cdNug2RYdc3BPdchFIwmg0qKV8Oc0PUfQKxW2ez9Wl8rJVnjfOzx9Zow=
+X-Google-Smtp-Source: AGHT+IECwLY6Ybq2fg7N/YFdl7sOUiaJ7wmCSMQRo5cHIyCmAWBBCWND5pAJk/rP7oH/UAgTrmH/P86dpvuaZQKnH7p+c/LiZ7T+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-08_10,2024-10-08_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
- bulkscore=0 adultscore=0 mlxlogscore=859 suspectscore=0 clxscore=1011
- malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410080072
+X-Received: by 2002:a05:6e02:16c9:b0:3a2:6ce9:19c6 with SMTP id
+ e9e14a558f8ab-3a375be2ec4mr115963205ab.25.1728388290860; Tue, 08 Oct 2024
+ 04:51:30 -0700 (PDT)
+Date: Tue, 08 Oct 2024 04:51:30 -0700
+In-Reply-To: <000000000000657ecd0614456af8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67051cc2.050a0220.840ef.0001.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 07, 2024 at 10:10:30PM +0200, Halil Pasic wrote:
-> At least since commit 334304ac2bac ("dma-mapping: don't return errors
-> from dma_set_max_seg_size") setting up device.dma_parms is basically
-> mandated by the DMA API. As of now Channel (CCW) I/O in general does not
-> utilize the DMA API, except for virtio. For virtio-ccw however the
-> common virtio DMA infrastructure is such that most of the DMA stuff
-> hinges on the virtio parent device, which is a CCW device.
-> 
-> So lets set up the dma_parms pointer for the CCW parent device and hope
-> for the best!
-> 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> Fixes: 334304ac2bac ("dma-mapping: don't return errors from dma_set_max_seg_size")
-> Reported-by: "Marc Hartmayer" <mhartmay@linux.ibm.com>
-> Closes: https://bugzilla.linux.ibm.com/show_bug.cgi?id=209131
-> Reviewed-by: Eric Farman <farman@linux.ibm.com>
-> ---
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Applied, thanks!
+***
+
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+Author: leon@kernel.org
+
+On Mon, Oct 07, 2024 at 06:44:02PM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 5f8ca04fdd3c66a322ea318b5f1cb684dd56e5b2
+> Author: Chiara Meiohas <cmeiohas@nvidia.com>
+> Date:   Mon Sep 9 17:30:22 2024 +0000
+> 
+>     RDMA/device: Remove optimization in ib_device_get_netdev()
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16db2327980000
+> start commit:   c4a14f6d9d17 ipv4: ip_gre: Fix drops of small packets in i..
+> git tree:       net
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15db2327980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11db2327980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11eca3d0580000
+> 
+> Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+> Fixes: 5f8ca04fdd3c ("RDMA/device: Remove optimization in ib_device_get_netdev()")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index e029401b5680..0b7e5245ffbc 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -2061,19 +2061,14 @@ void ib_dispatch_event_clients(struct ib_event *event)
+ 	up_read(&event->device->event_handler_rwsem);
+ }
+ 
+-static int iw_query_port(struct ib_device *device,
+-			   u32 port_num,
+-			   struct ib_port_attr *port_attr)
++static int iw_query_port(struct ib_device *device, u32 port_num,
++			 struct ib_port_attr *port_attr,
++			 struct net_device *netdev)
+ {
+ 	struct in_device *inetdev;
+-	struct net_device *netdev;
+ 
+ 	memset(port_attr, 0, sizeof(*port_attr));
+ 
+-	netdev = ib_device_get_netdev(device, port_num);
+-	if (!netdev)
+-		return -ENODEV;
+-
+ 	port_attr->max_mtu = IB_MTU_4096;
+ 	port_attr->active_mtu = ib_mtu_int_to_enum(netdev->mtu);
+ 
+@@ -2096,7 +2091,6 @@ static int iw_query_port(struct ib_device *device,
+ 		rcu_read_unlock();
+ 	}
+ 
+-	dev_put(netdev);
+ 	return device->ops.query_port(device, port_num, port_attr);
+ }
+ 
+@@ -2134,13 +2128,27 @@ int ib_query_port(struct ib_device *device,
+ 		  u32 port_num,
+ 		  struct ib_port_attr *port_attr)
+ {
++	struct net_device *netdev = NULL;
++	int ret;
++
+ 	if (!rdma_is_port_valid(device, port_num))
+ 		return -EINVAL;
+ 
++	if (rdma_protocol_iwarp(device, port_num) ||
++	    rdma_protocol_roce(device, port_num)) {
++		netdev = ib_device_get_netdev(device, port_num);
++		if (!netdev)
++			return -ENODEV;
++	}
++
+ 	if (rdma_protocol_iwarp(device, port_num))
+-		return iw_query_port(device, port_num, port_attr);
++		ret = iw_query_port(device, port_num, port_attr, netdev);
+ 	else
+-		return __ib_query_port(device, port_num, port_attr);
++		ret = __ib_query_port(device, port_num, port_attr);
++	if (netdev)
++		dev_put(netdev);
++	return ret;
++
+ }
+ EXPORT_SYMBOL(ib_query_port);
+ 
 
