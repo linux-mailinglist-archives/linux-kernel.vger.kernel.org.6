@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-354344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBCA993C52
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:39:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D79993C59
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EF4285A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A1EEB22C7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5571C182C5;
-	Tue,  8 Oct 2024 01:39:18 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C5A182C5;
+	Tue,  8 Oct 2024 01:41:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47CF847C;
-	Tue,  8 Oct 2024 01:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89D81388;
+	Tue,  8 Oct 2024 01:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728351558; cv=none; b=i8LdcxU5eUMxgE8EWui3m1oyFsLNvBtOcj52LUBai+AulpC70qfCy/O6CjFVmyLdXstFL7aW31ugjZp/unQEpc4dxMJFY5OcD4Ea1fqaP/xkb8TBPyJhLMij1hj0yRduzofySrXSPksJfYO/6DX09LviPsa9hQ5Fg7RyV98hWZM=
+	t=1728351661; cv=none; b=YwBq3iLXJiC04VOAASr8XJzxRmQX4/aGzs0lkFkg487NFROEDy5Ein19GRgap9emnF+yj5kD8iKhe6RhhBChjaJJbJfcWISXU350m/K0bv13mBUL/eHs183jm+lRVFWexBmCi6++Edntsv+KpX2eeSqNzwm+NhqbGx8a+qRuBEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728351558; c=relaxed/simple;
-	bh=wf2Lk/u9Se+Kcp5yXHCsaN6ltR5VnIG48k8hdAiZD/0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=kUF3pz2tA0ffNeA3JWw/DtikFw1DB+h2aZSLGGV9A32Kb6e4QCy6rOhRjU4EvKklCmu+xwaRfbicXghnzkPI25aVEFe9vGijCPw12ebcr+lc1DblUYooLEUg1/k4aUq51zyzxa2E7YKLsVi3tgFkSLJyn5V29bQr6AyYTaMu+yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XMzFP15bPz4f3jXb;
-	Tue,  8 Oct 2024 09:38:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E72631A0359;
-	Tue,  8 Oct 2024 09:39:05 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMg4jQRnCSfqDQ--.20439S3;
-	Tue, 08 Oct 2024 09:39:05 +0800 (CST)
-Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
-To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
- <20240930085302.1558217-2-yukuai1@huaweicloud.com>
- <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ce2b9ed1-cf74-1d50-a72a-23733c0d1db0@huaweicloud.com>
-Date: Tue, 8 Oct 2024 09:39:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1728351661; c=relaxed/simple;
+	bh=h5lJ0P06Cn7OUBUvyXHzRCji3AK93vlCWS0mhFiNtC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y0ssIEmmHvldkeHw8PevZrvI7scNlLErlE/YazgvZ2f0d5LNQNdRTv11b/m1MV0oi3nkF+jkiSSPZOYJlpGWCIuxFXQEQW65Wr1NpGG0fz09/H5dpzqhPbmKcXJBKohgFao328phinUfqCcKjoSh6PDmFWXo5Zgwy3T48oy5Yv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XMzGb1F4zz2Dd6s;
+	Tue,  8 Oct 2024 09:39:51 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id A53521A016C;
+	Tue,  8 Oct 2024 09:40:54 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 8 Oct
+ 2024 09:40:54 +0800
+Message-ID: <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
+Date: Tue, 8 Oct 2024 09:40:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMg4jQRnCSfqDQ--.20439S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYt7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUd
-	HUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+To: Jarkko Sakkinen <jarkko@kernel.org>, <dhowells@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <chenridong@huaweicloud.com>
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Hi,
 
-ÔÚ 2024/10/01 1:11, Tejun Heo Ð´µÀ:
-> Hello,
+
+On 2024/10/8 7:15, Jarkko Sakkinen wrote:
+> Hi,
 > 
-> On Mon, Sep 30, 2024 at 04:52:58PM +0800, Yu Kuai wrote:
->> +static inline bool blkg_print_dev_name(struct seq_file *sf,
->> +				       struct blkcg_gq *blkg)
->> +{
->> +	struct gendisk *disk = blkg->q->disk;
->> +
->> +	if (!disk)
->> +		return false;
->> +
->> +	seq_printf(sf, "%u:%u", disk->major, disk->first_minor);
->> +	return true;
->> +}
->> +
+> Revisit...
 > 
-> I wonder whether we just should add a name field to disk.
+> On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
+>> We meet the same issue with the LINK, which reads memory out of
+>> bounds:
+> 
+> Never ever use pronoun "we" in a commit message in any possible
+> sentence. Instead always use passive imperative.
+> 
+> What you probably want to say is:
+> 
+> "KASAN reports an out of bounds read:"
+> 
+> Right?
 > 
 
-Of course we can, however, I'm not sure if this is better, because
-this field is not used in the fast path.
+Yes.
 
-Thanks,
-Kuai
+>> BUG: KASAN: slab-out-of-bounds in __kuid_val
+>> include/linux/uidgid.h:36
+>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63
+>> [inline]
+>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+>> security/keys/permission.c:54
+>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+>>
+>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
+>> gafbffd6c3ede #15
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:82 [inline]
+>>   dump_stack+0x107/0x167 lib/dump_stack.c:123
+>>   print_address_description.constprop.0+0x19/0x170
+>> mm/kasan/report.c:400
+>>   __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+>>   kasan_report+0x3a/0x50 mm/kasan/report.c:585
+>>   __kuid_val include/linux/uidgid.h:36 [inline]
+>>   uid_eq include/linux/uidgid.h:63 [inline]
+>>   key_task_permission+0x394/0x410 security/keys/permission.c:54
+>>   search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+> 
+> Snip all below away:
+> 
+>>   keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+>>   search_cred_keyrings_rcu+0x111/0x2e0
+>> security/keys/process_keys.c:459
+>>   search_process_keyrings_rcu+0x1d/0x310
+>> security/keys/process_keys.c:544
+>>   lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+>>   keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+>>   __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+>>   __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+>>   do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>>   entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> 
+> Remember to cut only the relevant part of the stack trace to make this
+> commit message more compact and readable.
+> 
+Thank you, I will do that.
 
-> Thanks.
+>>
+>> However, we can't reproduce this issue.
+>> After our analysis, it can make this issue by following steps.
+>> 1.As syzkaller reported, the memory is allocated for struct
+> 
+> "1."
+> 
+>>    assoc_array_shortcut in the assoc_array_insert_into_terminal_node
+>>    functions.
+>> 2.In the search_nested_keyrings, when we go through the slots in a
+>> node,
+>>    (bellow tag ascend_to_node), and the slot ptr is meta and
+>>    node->back_pointer != NULL, we will proceed to  descend_to_node.
+>>    However, there is an exception. If node is the root, and one of the
+>>    slots points to a shortcut, it will be treated as a keyring.
+>> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
+>> function.
+>>    However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
+>>    ASSOC_ARRAY_PTR_SUBTYPE_MASK,
+>> 4.As mentioned above, If a slot of the root is a shortcut, it may be
+>>    mistakenly be transferred to a key*, leading to an read out-of-
+>> bounds
+>>    read.
+> 
+> Delete the whole list and write a description of the problem and why
+> your change resolves it.
+> 
+> As per code change, let's layout it something more readable first:
+> 
+> /* Traverse branches into depth: */
+> if (assoc_array_ptr_is_meta(ptr)) {
+> 	if (node->back_pointer || assoc_array_ptr_is_shortcut(ptr))
+> 		goto descend_to_node;
+> }
+> 
+> So one thing that should be explained just to make the description
+> rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
+> not 'node'. I'm actually 100% sure about that part, which kind
+> of supports my view here, right? :-)
+> 
+> The first part of the if-statement obviously filters out everything
+> that is not root (when it comes to 'node'). Explain the second part.
+> At that point it is know that node is a root node, so continue from
+> there.
+> 
+> BR, Jarkko
 > 
 
+Thank you for your patience.
+I will update soon.
+
+Best regards,
+Ridong
 
