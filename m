@@ -1,113 +1,83 @@
-Return-Path: <linux-kernel+bounces-356081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42018995C3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EF2995DAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4571C21FC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC151F26837
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4871EA84;
-	Wed,  9 Oct 2024 00:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puEFSkBz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F061812B94;
-	Wed,  9 Oct 2024 00:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E518E7DA79;
+	Wed,  9 Oct 2024 02:16:06 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4C117C61;
+	Wed,  9 Oct 2024 02:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728432847; cv=none; b=MkpBlCAgqXvJuQWPjw/stZKNjhkt1qoUOCONIoK7T0CanTKeHuy539+gVarya8XuXv+zX3oNQ1Cj4IYETu6WhUW+ccbxZhQInng0OBSeNH6LhW9mHOox018Qz07Jj1+8+Jv3qlgTzIJzB0BOtKnz7+XA7UKlIcGzcCK1AHi6BZw=
+	t=1728440166; cv=none; b=TUAM1YRLBA9rGXvMRodnH8tDl39Fs7F7ivsRe362YDKgqLOB0owyQ5+ikR18vxQ7Qd548Fth0M8nWUd7k8yS0T4tkZ0dklkkt502AT86KUXSkdlOHbOwzk5Oagrzi+fq32teRrW2iEixAjzUSXSJZY3nNtMr9+Xhl8BA+2wcvZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728432847; c=relaxed/simple;
-	bh=0qjVzVNij6Q7rJVM+vtOkErT499UlI/yKNhtwMaoh0g=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=NIIjOJeEiuWbu2lHeM3ETUjAj3CsYqmecr+QGDfTry40LDcdgmF9EMBVON0JrU79xQn2HAGUvfxMCa/fn3DheVlrbSeGxC1ly3I3HlejXlWaxh06VLhlLUDD1YTMlZC804YWi5vd5K+imI8vmc8GPJlUPCpozZefgsEO9qetCh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puEFSkBz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FBB3C4AF11;
-	Wed,  9 Oct 2024 00:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728432846;
-	bh=0qjVzVNij6Q7rJVM+vtOkErT499UlI/yKNhtwMaoh0g=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=puEFSkBzWgvk/zmDjShuQjw7OOadqpBUmWf4OlBffZHx4dN5tYkG86koRo6HSzM5T
-	 LVfoSWEaHOTjUfucK8K/hxP6XkwEAb9wontZF9kKx0lhgsxfSHkPlRSdVQxYrBrpj5
-	 tvSs5jDI51vWVrAmiMQtF0AApi+XQ0lwE7jaPeEaOhWxjxqlpHWug1kNpfMIjPDHqp
-	 EG4h86navGeGQvgw2RASLujNDEzTZsyUyVZeGb0JMB15Fi6fcpKoUF5kH2e3zJ0kjh
-	 vs2NQq6Q8dFvvkhLxI7pbsynPslRqwdCqXBDuSrNZfvrN1fWGkeA8l1yAdDnru5qyg
-	 1PUiG7mlxJJAw==
-Date: Tue, 08 Oct 2024 19:14:05 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1728440166; c=relaxed/simple;
+	bh=45ybUQtIa+XN8SSVxjuGi8n3YCzyHdhDbnAgFxIGg0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DHWv/ikmK8z/Lyzb1eYz+6kJaFmeweQOwdtjnEmXAXZn7vN3vO0sCfDOddPW3VoKrYoukAAQwGNybj9pGIiMef3pMe92No/UavfCo0s3erzi/Lg0nr+7xO0tj+I9oHFRthLK2wermo/LNraTx7aZcxQms3v9Y9hVTGBX89eidQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee66705e75c014-b68db;
+	Wed, 09 Oct 2024 10:15:58 +0800 (CST)
+X-RM-TRANSID:2ee66705e75c014-b68db
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee26705e74c45c-d34b7;
+	Wed, 09 Oct 2024 10:15:58 +0800 (CST)
+X-RM-TRANSID:2ee26705e74c45c-d34b7
+From: Ba Jing <bajing@cmss.chinamobile.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: deller@gmx.de,
+	linux-parisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ba Jing <bajing@cmss.chinamobile.com>
+Subject: [PATCH] parisc: lba_pci: remove unused macro
+Date: Tue,  8 Oct 2024 15:26:20 +0800
+Message-Id: <20241008072620.38663-1-bajing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
- Pavel Machek <pavel@ucw.cz>, linux-watchdog@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
- Guenter Roeck <linux@roeck-us.net>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Daniel Thompson <daniel.thompson@linaro.org>
-In-Reply-To: <20241008-zii_yaml-v1-4-d06ba7e26225@nxp.com>
-References: <20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com>
- <20241008-zii_yaml-v1-4-d06ba7e26225@nxp.com>
-Message-Id: <172843284314.2657793.15106714372363156953.robh@kernel.org>
-Subject: Re: [PATCH 4/5] dt-bindings: watchdog: convert zii,rave-sp-wdt.txt
- to yaml format
+Content-Transfer-Encoding: 8bit
+
+By reading the code, I found the macro LBA_MASTER_ABORT_ERROR 
+is never referenced in the code. Just remove it.
+
+Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+---
+ drivers/parisc/lba_pci.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/parisc/lba_pci.c b/drivers/parisc/lba_pci.c
+index 3fc3765fddaa..5990766b6561 100644
+--- a/drivers/parisc/lba_pci.c
++++ b/drivers/parisc/lba_pci.c
+@@ -277,7 +277,6 @@ static int lba_device_present(u8 bus, u8 dfn, struct lba_device *d)
+  *		smart mode as well.
+  */
+ 
+-#define LBA_MASTER_ABORT_ERROR 0xc
+ #define LBA_FATAL_ERROR 0x10
+ 
+ #define LBA_CFG_MASTER_ABORT_CHECK(d, base, tok, error) {		\
+-- 
+2.33.0
 
 
-On Tue, 08 Oct 2024 18:01:00 -0400, Frank Li wrote:
-> Convert device binding doc zii,rave-sp-wdt.txt to yaml format.
-> Additional changes:
-> - Ref to watchdog.yaml.
-> - Remove mfd node in example.
-> - Remove eeprom part in example.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/watchdog/zii,rave-sp-wdt.txt          | 39 ------------------
->  .../bindings/watchdog/zii,rave-sp-wdt.yaml         | 47 ++++++++++++++++++++++
->  2 files changed, 47 insertions(+), 39 deletions(-)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
-Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241008-zii_yaml-v1-4-d06ba7e26225@nxp.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
