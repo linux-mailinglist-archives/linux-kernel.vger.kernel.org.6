@@ -1,197 +1,126 @@
-Return-Path: <linux-kernel+bounces-355819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6046E995789
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:17:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6421399578A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E931C233A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4C32817A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6717B212D3E;
-	Tue,  8 Oct 2024 19:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799D0212D3B;
+	Tue,  8 Oct 2024 19:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dytzaYdJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O2onej86"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88BF1F472B;
-	Tue,  8 Oct 2024 19:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAF213541B;
+	Tue,  8 Oct 2024 19:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728415048; cv=none; b=tdfw1GwtlVRfEt/MdfNc7f9lobSBWJYFD4xFdU3yMJFknLDPFyFT/T3mkWs5+0tuIauFwM7C50wuFwmtcxvdHttl3izde9wNcbr4lwS6tD+x5Kfwi+ZTVBvJL82vQ3RLL1F5dAhQC0sehxj6eIiH8fzYGh6YP1SxsY3CWMPmuTA=
+	t=1728415105; cv=none; b=LMfyVeA1UuK3c0tsRqxKaGPj+OB9KJdmzpdXrH3cLp734XDSQriqz3sJePVKXxEP7YKxeWUjYO2RILVNppFPyO/PMtxKJe29huOax1ZworcEZfcZF6PL67NbR03hlI/B2ZegsLT1v+2gYjuXUigUfrs8uvHJtq804MbHVE+ATRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728415048; c=relaxed/simple;
-	bh=Im3Wb0BE1gCm1511GCSPk39xhrX/ifJqxV+8+v7ISgc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRTBC53yFPJv0KERm6gVEDS5WPvwEyh8rcIVxjY1eI8H7E/wq/jHVSfb1pjvFyNGZPIbfJZT7QLCNFfSnuLYnrWOgSd9MjyzgA5fC2OOSakCKbYJDNzbPeZ5KlXvuyGW61aUVUd5IKsn/FaY0o+QL7Lk8s3vnB6TtdB6denmLMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dytzaYdJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA81C4CEC7;
-	Tue,  8 Oct 2024 19:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728415048;
-	bh=Im3Wb0BE1gCm1511GCSPk39xhrX/ifJqxV+8+v7ISgc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dytzaYdJzzM/6QEvvFY5cOcAAPKqVfIq83uLep/yVDnKaBx3m/QHa1sDY46rGzSph
-	 QdzSxM8rBH9vmpVdmhFMueHa0SNniB4iTiVROCL1Htrz7j4PzWBKY0HvYXBKz4ICD8
-	 1WV5TA+iJPnEl5ADSAFCcrR3S1ErVb+oneonOm3I/FxuFDOwpekIAP1n68owYZvGO2
-	 VW1zb8KjZOHW5Nls83s5G25e+3hW3GlBHLYbcdlSxQKB0HUW8D5dY4BGj+7Vgi6vhX
-	 R79RZqp8svuv5tYzN+R/2tc5AKRMEfd0nPROsWyC2ULZsQFa2VLAij3zPkno3QmDCo
-	 BnwlMjZLPhpeA==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: [PATCH v3] tracepoints: Use new static branch API
-Date: Tue,  8 Oct 2024 12:17:19 -0700
-Message-ID: <7a08dae3c5eddb14b13864923c1b58ac1f4af83c.1728414936.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728415105; c=relaxed/simple;
+	bh=uFg0S2Rr8P1/EgjOYhVKli1cEC4yWKwNsV71L1XmBLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AaFAatrlztjtfSdUSV7Wimr1rh9iF7oP6yvxlPKxadDgVM368r3TUNrhWPgxGkbBi+4x6Yf0qkg38txb38SgnaXDEFFpWGVLGAlRsl8IB30AwfVppv3qomjLT+IH5NTyiDIyoJRF1uBmaNyMyZy4Jv1PlieAe8JVa7rrz3A9CXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O2onej86; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728415105; x=1759951105;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uFg0S2Rr8P1/EgjOYhVKli1cEC4yWKwNsV71L1XmBLo=;
+  b=O2onej86+PDW7zn3tPSzF3WwRWm9VGuYeYgOZkGVnDZTZN8J3j9vXoli
+   285BjQcqVUy4knpdG5YH1EzKJa7EWypIHbJCfXDkQAlYpCy/k7SbxtB3V
+   odE3Dkoc8PePZsWC8X1mB53mU2r5DzHKmhRXZLifZlXWiRKR4QZsgquXz
+   x4dM7NH+UqbJrhkIJkOtuC5qDaEsQ3Rtzpy1csGy7k+VYc5Oz00ry4BBv
+   tZRTvenYyI82tHk7e0IwX+aB1RWMHc75xCLHzgHRgOsQDnu3lMiCQgIes
+   tvn832EiVphfGeQ+Fs/sTM5Qbxmdhii0yvUFJXNdg6t6aOpzai/E0HHkm
+   g==;
+X-CSE-ConnectionGUID: UHWIvBLoSm6VPUdJOrGZcQ==
+X-CSE-MsgGUID: XkZ7s2W4Sw+E1yZVm9uNKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="45118030"
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="45118030"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 12:18:24 -0700
+X-CSE-ConnectionGUID: yscp/KodTgWankHwH43E2w==
+X-CSE-MsgGUID: eH8ygnYYSV677NcO4QOnSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="80742690"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 08 Oct 2024 12:18:20 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 906BE26B; Tue, 08 Oct 2024 22:18:18 +0300 (EEST)
+Date: Tue, 8 Oct 2024 22:18:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	Philip Li <philip.li@intel.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <ZwWFeo1zV4JGpTLw@black.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZwPsYqkLF0eWUb9e@smile.fi.intel.com>
+ <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZwVlZROV84DDMCnc@black.fi.intel.com>
+ <670581c5e7e_174cb329467@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670581c5e7e_174cb329467@dwillia2-xfh.jf.intel.com.notmuch>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The old static key API is deprecated.  Switch to the new one.
+On Tue, Oct 08, 2024 at 12:02:29PM -0700, Dan Williams wrote:
+> Andy Shevchenko wrote:
+> [..]
+> > We have all tags and MAINTAINERS database. How do you know if those who
+> > are in the Cc list are really interested in receiving this? What make me
+> > sure is to have Author of the culprit commit, relevant mailing list and
+> > maintainers, also reviewers and testers, if any. All this information is
+> > available without Cc list. But if you *really* want it, you should
+> > follow the Link tag (for the new commits, for the past ~2+ years) and
+> > harvest it there. And actually I use that Link to reply to the thread
+> > directly. So, again, the Cc list in the commit message is a historical
+> > burden that consumes a lot of time and energy and should be gone in the
+> > future.
+> 
+> Andy, this debate is consuming more time and energy than any amount of
+> trimming Cc: lines from commits could save.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
-v3: fix CONFIG_USER_EVENTS build failure
-v2: fix CONFIG_HIST_TRIGGERS build failure
+Okay, okay, I'm giving up...
+...with a thought that this planet is doomed.
 
- include/linux/tracepoint-defs.h  | 4 ++--
- include/linux/tracepoint.h       | 8 ++++----
- kernel/trace/trace_events_hist.c | 2 +-
- kernel/trace/trace_events_user.c | 4 ++--
- kernel/tracepoint.c              | 4 ++--
- 5 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 4dc4955f0fbf..60a6e8314d4c 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -31,7 +31,7 @@ struct tracepoint_func {
- 
- struct tracepoint {
- 	const char *name;		/* Tracepoint name */
--	struct static_key key;
-+	struct static_key_false key;
- 	struct static_call_key *static_call_key;
- 	void *static_call_tramp;
- 	void *iterator;
-@@ -83,7 +83,7 @@ struct bpf_raw_event_map {
- 
- #ifdef CONFIG_TRACEPOINTS
- # define tracepoint_enabled(tp) \
--	static_key_false(&(__tracepoint_##tp).key)
-+	static_branch_unlikely(&(__tracepoint_##tp).key)
- #else
- # define tracepoint_enabled(tracepoint) false
- #endif
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 93a9f3070b48..2a29334bbc02 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -248,7 +248,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
- 	static inline void trace_##name##_rcuidle(proto)		\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 1);			\
-@@ -274,7 +274,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	extern struct tracepoint __tracepoint_##name;			\
- 	static inline void trace_##name(proto)				\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 0);			\
-@@ -311,7 +311,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	static inline bool						\
- 	trace_##name##_enabled(void)					\
- 	{								\
--		return static_key_false(&__tracepoint_##name.key);	\
-+		return static_branch_unlikely(&__tracepoint_##name.key);\
- 	}
- 
- /*
-@@ -328,7 +328,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	struct tracepoint __tracepoint_##_name	__used			\
- 	__section("__tracepoints") = {					\
- 		.name = __tpstrtab_##_name,				\
--		.key = STATIC_KEY_INIT_FALSE,				\
-+		.key = STATIC_KEY_FALSE_INIT,				\
- 		.static_call_key = &STATIC_CALL_KEY(tp_func_##_name),	\
- 		.static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
- 		.iterator = &__traceiter_##_name,			\
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 5f9119eb7c67..cc2924ad32a3 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -822,7 +822,7 @@ static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
- {
- 	struct tracepoint *tp = event->tp;
- 
--	if (unlikely(atomic_read(&tp->key.enabled) > 0)) {
-+	if (unlikely(static_key_enabled(&tp->key))) {
- 		struct tracepoint_func *probe_func_ptr;
- 		synth_probe_func_t probe_func;
- 		void *__data;
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index 42b0d998d103..17bcad8f79de 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -1676,7 +1676,7 @@ static void update_enable_bit_for(struct user_event *user)
- 	struct tracepoint *tp = &user->tracepoint;
- 	char status = 0;
- 
--	if (atomic_read(&tp->key.enabled) > 0) {
-+	if (static_key_enabled(&tp->key)) {
- 		struct tracepoint_func *probe_func_ptr;
- 		user_event_func_t probe_func;
- 
-@@ -2280,7 +2280,7 @@ static ssize_t user_events_write_core(struct file *file, struct iov_iter *i)
- 	 * It's possible key.enabled disables after this check, however
- 	 * we don't mind if a few events are included in this condition.
- 	 */
--	if (likely(atomic_read(&tp->key.enabled) > 0)) {
-+	if (likely(static_key_enabled(&tp->key))) {
- 		struct tracepoint_func *probe_func_ptr;
- 		user_event_func_t probe_func;
- 		struct iov_iter copy;
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8879da16ef4d..1e3de77ea6b3 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -358,7 +358,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
- 		rcu_assign_pointer(tp->funcs, tp_funcs);
--		static_key_enable(&tp->key);
-+		static_branch_enable(&tp->key);
- 		break;
- 	case TP_FUNC_2:		/* 1->2 */
- 		/* Set iterator static call */
-@@ -414,7 +414,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		if (tp->unregfunc && static_key_enabled(&tp->key))
- 			tp->unregfunc();
- 
--		static_key_disable(&tp->key);
-+		static_branch_disable(&tp->key);
- 		/* Set iterator static call */
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
