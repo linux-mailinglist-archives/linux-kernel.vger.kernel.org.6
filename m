@@ -1,88 +1,78 @@
-Return-Path: <linux-kernel+bounces-354825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06B399430D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ED0994317
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4979F1F29682
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0AF1F294CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7E1D07BA;
-	Tue,  8 Oct 2024 08:50:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118F177102
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691431DCB09;
+	Tue,  8 Oct 2024 08:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="OpwYvbnr"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B06C19340A;
+	Tue,  8 Oct 2024 08:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377405; cv=none; b=J2X2iB9qQJJfrY+a3tnVpVZWq21BE/3D6okQfzQRanwV8dNzfv18yAOk1s1B64LQFylaicjtd6ECEgt0vofLJf9lYFqpXW9I1hMwVp4IikOBroOAabyLK0fYMHgXSBXQYXpjuYH8CG0H4LgQt6mClZ6DywdmK4ZUXTI1ozZfS+8=
+	t=1728377474; cv=none; b=aOqD3GACPSJjFvBh3PaUvp1zilK0nCVqDLppUABw1lKnmuuN/NVeh9jvrhrlhfXdQPmrTVQW7xA991ulY7a+lLDaplcp1cc/PY610iyArDI5086foRkYMAHsJO9kZHfMGvGDfw7cmXMiJoPhSxpAG36fx2AAVoj3rW7ffXip7KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377405; c=relaxed/simple;
-	bh=U1ovfypYMIhQmtiZi2K/KRO7l4WfNQM2nK8I2rd0ucQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZeJ2YKoOJd29oI8uwwantPtvSzum+gEsse7fu9Aa5+PlpwyEnvzgyVAsIwsAKGW1OwdFEs/aVf0crZRxhgFI0YJ/dLc8Og9j99hVFhvG6o+qFQ84BgZaIFsIwaqPMC2AyS+PsVkmHQplRCf2E6b2JyAVrGmFIe8zWDQ2wIW8kkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aad3fa5edso448579339f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728377403; x=1728982203;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CBvKpDn9GrRhj3YxBgIM7qO8I2+gyEgbuwpf8yiHtBI=;
-        b=D1C+Jez7nXIn2EI1U1voWRD3NxBdxzxeESy4bzsp6abAqQjrAoOYYFI4L8wwg7Azrp
-         Ed5X02HmZHi+rdN0bq6YJ80iTcIyt6IuTm9n41h7Us5+kAqDlGCht7tfb6jSNYc4xI+W
-         hwRX5+d+9V/f2NjhmyAPfG8267SuzIX9ZApGR4dRzn0kYQzvs0SH0mos0ymCvwsB8qb9
-         /z2imtKlNe6HnsFH2sClkOS5vXGXbuM0XXOKsbSJQJEz+iSRfvudhG2+itO+ZdbSfCWq
-         BiIEhSvL06tp4Hc4nuvHdUx+WU0LyB1sN7s9Spq4Ay5B1HRu1CsksFe8ajSmCUVEXExg
-         pxVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9FX7mBKad1591Tay+EYAJ91iZen+BaUFcjm4k2JTxOpiIDf36Ggos03zocdlQRmVDG4jh8lD3Abehidc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf/gfAjYKfOx0Kx+9Ykp4/QuW6wxKn5n8j8ZaUktinaY4p3Lda
-	pNZ0CAc2gWp71MyefB0FlQq2I3K75k3TJkCS1dH6qXpFGl7f5u1BZKBFE5OVBjIYUDsNXAshjBq
-	x3sXleCApd0UNf1Vnr91fdIhFAhATT6IhZf9yQXzivHmyapJwPWcrqB8=
-X-Google-Smtp-Source: AGHT+IFA6pdilpZEWRCu6RFnLR3T1nvedPKJLWW8oYyLLPhmY98zuXMLzPfqjW9gE8T0n/whKpmWeJNjitTfQE05EeLoE0Z6Wp7c
+	s=arc-20240116; t=1728377474; c=relaxed/simple;
+	bh=5EYqTaH65chTt/LnuwJZgF8ia3vSrrdnjA7snFEHGqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duAWVfjJkDRXABRup8g+bhsDBtzlllHJM64cszRqXjWB3Ncz+WXdvQUrijFTyA9jTkLyRVrMluPFeqRtHpbkbdOcgno1jFE21VkBIpodfZHqtXMxoSNHk1XRCNkMIEAVe+LAuumvk2HswhgY8ge3L7SUsTajF5W7XH2xn0HyoXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=OpwYvbnr; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=PJZdc22OCR844nkMs2ao6cs66z7059vtXIHCyFffkPk=;
+	b=OpwYvbnrgpjlqKX5BnUpeI3nMk3cUj6Xfs7mEVUIQD6IwhgjOfyo1ayZvAC1mh
+	MAonW5dn/A+cQLzU8rFn+BI2rb3ZVaIRJrjZl4rMBf0H/cpGV44/etOSUx8Nh2Y9
+	12DsQZH3pn0fOKo+RTLQRsin7/LPVpK7xWFqMsYHGbdZo=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDnlx5O8gRnBRXTAQ--.54852S3;
+	Tue, 08 Oct 2024 16:50:23 +0800 (CST)
+Date: Tue, 8 Oct 2024 16:50:21 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux@ew.tq-group.com,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: dts: imx6qdl: Add reserved memory area for CMA
+ memory
+Message-ID: <ZwTyTZH4+CS8lm0Q@dragon>
+References: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c5:b0:3a0:9244:1916 with SMTP id
- e9e14a558f8ab-3a375a9e8famr137522615ab.11.1728377403354; Tue, 08 Oct 2024
- 01:50:03 -0700 (PDT)
-Date: Tue, 08 Oct 2024 01:50:03 -0700
-In-Reply-To: <feacd590-f315-4cfc-a8c6-eb664cc6350b@126.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6704f23b.050a0220.1e4d62.0088.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
-From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zhaomzhao@126.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
+X-CM-TRANSID:M88vCgDnlx5O8gRnBRXTAQ--.54852S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVxR6UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCR9yZWcEqhjkVQAAsh
 
-Hello,
+On Tue, Aug 27, 2024 at 04:24:58PM +0200, Alexander Stein wrote:
+> Default CMA size is too small for HDMI output and VPU usage. Increase the
+> default size by providing a CMA memory area.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Changed subject prefix to "ARM: dts: imx6qdl-mba6: "
 
-Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Applied, thanks!
 
-Tested on:
-
-commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=140617d0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1105a327980000
-
-Note: testing is done by a robot and is best-effort only.
 
