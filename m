@@ -1,245 +1,172 @@
-Return-Path: <linux-kernel+bounces-354530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB0D993EB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5FF993EFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDBB1C21F0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B812838AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B717E46E;
-	Tue,  8 Oct 2024 06:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C3B1CEE8E;
+	Tue,  8 Oct 2024 06:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="cmFj8rpX"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLZ7O/Hp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5705E17C7C6
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5E1190463;
+	Tue,  8 Oct 2024 06:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368353; cv=none; b=K7ZUlBvY7OGxAq+JQbGXTp71SBr+aSO0uPyhvUba3Ij3zGBxzvjdSB/Pohdb0pwg3zcj1D5h8sFlL31VWglnMWw0fAxiDYaKhSXyqxCRQnnbpOciOThy8b+XG8kIxGXMlv1J3iNOYaULDYE//UPdIQ4IPeGriBtePargVe06GYU=
+	t=1728368581; cv=none; b=b0+i7NIf4tZtGEygf48LH97G/5MJNgJD3Lo+n/svHlSRHc5+O8C+ujWoXX1dB4dKEj2fXIFPikjSodmb09XaVgY52wid/yz0lRL9LgnSlpxRbXYqdXDn+jyd3keRyqyanJQcYvX2ML7ELdWGDwMW3UEQOPZXOEWjxptmNQfMw3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368353; c=relaxed/simple;
-	bh=99T99fkhxyl05NOCSdwgSHdnxbr2uaqIW2y8IKVz1Ok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jOhheZttvbNImOQvFS1XiA7ZllmFqLx0jeXqyHvRHhJ+VDhUChzYLCcjp/HpO+v+vwMb/0gEv7f+a8QYKJXMmE8fsCLr6J4giygPHnaXbbfKmqq6gqi9HE638oftnnLulaCfmv2ekgfwpxkr7n/saom2HTMBa+WxM90a2bwGfeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=cmFj8rpX; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a33a6c3102so15117245ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:19:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1728368349; x=1728973149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XRr5KbJ5pCun9Ui+yXUQXX9sN3Sf5UKx3OLBX37YeoY=;
-        b=cmFj8rpX2U7Pk7sWVT2QvCzFW7jiDGmJMRyhDw4U/5oSgrO1suZrnX1Qaw5wxuZLvM
-         pRmaO1VwVqRCMdIDWOOXdAcIlepbfiVf97sbLOQcpSSsAexgMJMIlDBqJcglE0XlR1BU
-         vBjxB8hMBSsgQBHYxbJCO76mHtMovYr88RBPpZ1YBm7N90Al8z7ICJ8/g2fIDqwlsuEh
-         kuBoTkG2dS3WNCGd9piy//T9OhVypoqbpZK43vXrW1jtYYGOVkW4dyxcc+JNKJAdnKyl
-         1V/aczokanFGQdaHltxFvOebjQKp+07/ECLEnXpEbJFu/MCcfN4OG+CxiofaITUV+K6h
-         bMJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728368349; x=1728973149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XRr5KbJ5pCun9Ui+yXUQXX9sN3Sf5UKx3OLBX37YeoY=;
-        b=Mu++KYL3wRW0EOYsFLtwruGOIEl+CBPYa9qHbvXHEnEbH6nfYoMWmLaoNHGiY44WZ+
-         nlsUlI/DBtYAT2vAAkN0B1ZpjhEKREEXkrhdm6Q+3FJ+oDCrqxfeLCeAW3CaRxz2e/tw
-         8nqguStEz2Lr+GVcVoaMaqaYIFNR/B6VwNViIjy+VoIvY+w9eHSnAvTLTNtjgAiiilL7
-         KC9VkvPkX7zu1eR4pesVwWfFD/wxzIbm6aVL4ZGES4HJMWKOWiFn1zUrs/lSRurrPDgV
-         e8TQfPTFaLEkpiq2fN/nMrVyKOsrp3qoyvX4WuDS/lVMzpUY+VF3NXcjzwjjSyNWmj7D
-         M0Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWO23drD1r4rEQuzJ9GEEew9aj14udfU53eId5inm9LSVtOavR8YpU0cQWLTUK4KvmZT4A4MHeZw+F2gvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfq6m1jtukc9WkcYnAlsBn02RwGr6mQ+G8r7YNkHLsuHlreUQA
-	ye/DvmowrNuzdB4wAhe9/PleBpJOndsobw2qmMx7hTVnIhJ6uEl+UYD1vYe/Y+x+MWQmxCT664/
-	t4DelOxRKYsGstJkJVs6wCeqQ9kFuj/MjTQ0Glg==
-X-Google-Smtp-Source: AGHT+IEEV1iKS64xo2W8tSXTVgZ9wK0tVm8MaNOWH+N+f0lrse/SrQLSt9EsGck2HE3GwEbRPJ5ayCLs8lBdAbKu4jQ=
-X-Received: by 2002:a05:6e02:1a2c:b0:3a0:abd0:122 with SMTP id
- e9e14a558f8ab-3a38af6a526mr16553285ab.8.1728368349400; Mon, 07 Oct 2024
- 23:19:09 -0700 (PDT)
+	s=arc-20240116; t=1728368581; c=relaxed/simple;
+	bh=7+OOlYDwjjrmYkugp0zG3rCIOBJXVhabkZlBvijiN0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+jiP2eICH93Xd25lhaeFb8hoxpl+Au5fgjUGRklcsO4Sm7rSGaAqmt6p2Xka+wAs8DAVY0qTGDKecUG1Qz+3ELSjZns6wXXoJLbFmnYmCVsLTstksO9Q7eNYJjhQwrVrbwf4x8hr7N5qpaYaSKTevBs9vvE0dV+0CTatrl0BcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLZ7O/Hp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C076C4CEC7;
+	Tue,  8 Oct 2024 06:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728368581;
+	bh=7+OOlYDwjjrmYkugp0zG3rCIOBJXVhabkZlBvijiN0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HLZ7O/HpKqwZhtBX1cNCiAk8EV6vD0WzAl1dR/RILMS7jSHhGDnYDNH2Dzn6ECEly
+	 M0+GSr/JGL8nAopaejPjKSQKa6Jmnx6kHabKvo9FyggKvIK/+rwoLnO5mphSBOrVi8
+	 U9wdgL7Nl7zM0jbSh9FiGcxw5b5J+su+JR+7Gf4XG9wvT3v6GVYlXJH8m3l11OFKZ1
+	 9jEHuFYuJh2kBStvb3JCpXCoRR3L/JiHNjMlM70jCbMyIiQEwYJp2wijiSZ4G1su3J
+	 9j8W/sm+G2yCx41UsRZ1DC/eNueJYqT+Lq5WzrcGaGCVNkuw9bP/AltQfceSnkaSt6
+	 lK+siW3UD/EyQ==
+Date: Tue, 8 Oct 2024 09:19:13 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v4 5/8] arch: introduce set_direct_map_valid_noflush()
+Message-ID: <ZwTO4S_smfPbP06x@kernel.org>
+References: <20241007062858.44248-1-rppt@kernel.org>
+ <20241007062858.44248-6-rppt@kernel.org>
+ <CAAhV-H4u5qk-Zd8ctiooCv_hGKbDpXRAtTZMMsUab9bbLAnd5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
- <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
- <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
- <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com> <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
- <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
-In-Reply-To: <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Tue, 8 Oct 2024 14:18:58 +0800
-Message-ID: <CANXhq0r611Hi7pohDGRXhvi2E_uOFjwLRDrqZcL2WdLHcs+oHA@mail.gmail.com>
-Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
- on clone
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H4u5qk-Zd8ctiooCv_hGKbDpXRAtTZMMsUab9bbLAnd5A@mail.gmail.com>
 
-On Tue, Oct 8, 2024 at 1:31=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> wr=
-ote:
->
-> On Tue, Oct 08, 2024 at 01:16:17PM +0800, Zong Li wrote:
-> >On Tue, Oct 8, 2024 at 7:30=E2=80=AFAM Deepak Gupta <debug@rivosinc.com>=
- wrote:
-> >>
-> >> On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
-> >> >On Wed, Oct 2, 2024 at 12:20=E2=80=AFAM Deepak Gupta <debug@rivosinc.=
-com> wrote:
-> >> >>
-> >> >> Userspace specifies CLONE_VM to share address space and spawn new t=
-hread.
-> >> >> `clone` allow userspace to specify a new stack for new thread. Howe=
-ver
-> >> >> there is no way to specify new shadow stack base address without ch=
-anging
-> >> >> API. This patch allocates a new shadow stack whenever CLONE_VM is g=
-iven.
-> >> >>
-> >> >> In case of CLONE_VFORK, parent is suspended until child finishes an=
-d thus
-> >> >> can child use parent shadow stack. In case of !CLONE_VM, COW kicks =
-in
-> >> >> because entire address space is copied from parent to child.
-> >> >>
-> >> >> `clone3` is extensible and can provide mechanisms using which shado=
-w stack
-> >> >> as an input parameter can be provided. This is not settled yet and =
-being
-> >> >> extensively discussed on mailing list. Once that's settled, this co=
-mmit
-> >> >> will adapt to that.
-> >> >>
-> >> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> >> >> ---
-> >> >>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
-> >>
-> >> ... snipped...
-> >>
-> >> >> +
-> >> >> +/*
-> >> >> + * This gets called during clone/clone3/fork. And is needed to all=
-ocate a shadow stack for
-> >> >> + * cases where CLONE_VM is specified and thus a different stack is=
- specified by user. We
-> >> >> + * thus need a separate shadow stack too. How does separate shadow=
- stack is specified by
-> >> >> + * user is still being debated. Once that's settled, remove this p=
-art of the comment.
-> >> >> + * This function simply returns 0 if shadow stack are not supporte=
-d or if separate shadow
-> >> >> + * stack allocation is not needed (like in case of !CLONE_VM)
-> >> >> + */
-> >> >> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
-> >> >> +                                          const struct kernel_clon=
-e_args *args)
-> >> >> +{
-> >> >> +       unsigned long addr, size;
-> >> >> +
-> >> >> +       /* If shadow stack is not supported, return 0 */
-> >> >> +       if (!cpu_supports_shadow_stack())
-> >> >> +               return 0;
-> >> >> +
-> >> >> +       /*
-> >> >> +        * If shadow stack is not enabled on the new thread, skip a=
-ny
-> >> >> +        * switch to a new shadow stack.
-> >> >> +        */
-> >> >> +       if (is_shstk_enabled(tsk))
-> >> >
-> >> >Hi Deepak,
-> >> >Should it be '!' is_shstk_enabled(tsk)?
-> >>
-> >> Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFO=
-RK, it was returning
-> >> 0 anyways. And in the case of CLONE_VM (used by pthread), it was not d=
-oing the right thing.
+Hi Huacai,
+
+On Tue, Oct 08, 2024 at 10:11:25AM +0800, Huacai Chen wrote:
+> Hi, Mike,
+> 
+> On Mon, Oct 7, 2024 at 2:30 PM Mike Rapoport <rppt@kernel.org> wrote:
 > >
-> >Hi Deepak,
-> >I'd like to know if I understand correctly. Could I know whether there
-> >might also be a risk when the user program doesn't enable the CFI and
-> >the kernel doesn't activate CFI. Because this flow will still try to
-> >allocate the shadow stack and execute the ssamowap command. Thanks
->
-> `shstk_alloc_thread_stack` is only called from `copy_thread` and  allocat=
-es and
-> returns non-zero (positive value) for ssp only if `CLONE_VM` is specified=
-.
-> `CLONE_VM` means that address space is shared and userspace has allocated
-> separate stack. This flow is ensuring that newly created thread with sepa=
-rate
-> data stack gets a separate shadow stack as well.
->
-> Retruning zero value from `shstk_alloc_thread_stack` means that, no need =
-to
-> allocate a shadow stack. If you look at `copy_thread` function, it simply=
- sets
-> the returned ssp in newly created task's task_struct (if it was non-zero)=
-.
-> If returned ssp was zero, `copy_thread` doesn't do anything. Thus whateve=
-r is
-> current task settings are that will be copied over to new forked/cloned t=
-ask.
-> If current task had shadow stack enabled, new task will also get it enabl=
-ed at
-> same address (to be COWed later).
->
-> Any task get shadow stack enabled for first time using new prctls (see pr=
-ctl
-> patches).
->
-> So only time `ssamoswap` will be exercised will be are
-> - User issues enabling `prctl` (it'll be issued from loader)
-> - fork/clone happens
->
-> In both cases, it is guarded against checks of whether cpu supports it an=
-d task
-> has shadow stack enabled.
->
-> Let me know if you think I missed any flow.
-
-Thanks a lot for the detail, it is very helpful for me. But sorry for
-the confusion, my question is actually on the situation with this bug
-(i.e., before the fix)
-
->
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > >
-> >> Most of the testing has been with busybox build (independent binaries0=
- driven via buildroot
-> >> setup. Wondering why it wasn't caught.
-> >>
-> >> Anyways, will fix it. Thanks for catching it.
-> >>
-> >> >
-> >> >> +               return 0;
-> >> >> +
-> >> >> +       /*
+> > Add an API that will allow updates of the direct/linear map for a set of
+> > physically contiguous pages.
+> >
+> > It will be used in the following patches.
+> >
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/set_memory.h     |  1 +
+> >  arch/arm64/mm/pageattr.c                | 10 ++++++++++
+> >  arch/loongarch/include/asm/set_memory.h |  1 +
+> >  arch/loongarch/mm/pageattr.c            | 21 +++++++++++++++++++++
+> >  arch/riscv/include/asm/set_memory.h     |  1 +
+> >  arch/riscv/mm/pageattr.c                | 15 +++++++++++++++
+> >  arch/s390/include/asm/set_memory.h      |  1 +
+> >  arch/s390/mm/pageattr.c                 | 11 +++++++++++
+> >  arch/x86/include/asm/set_memory.h       |  1 +
+> >  arch/x86/mm/pat/set_memory.c            |  8 ++++++++
+> >  include/linux/set_memory.h              |  6 ++++++
+> >  11 files changed, 76 insertions(+)
+> >
+> > diff --git a/arch/loongarch/include/asm/set_memory.h b/arch/loongarch/include/asm/set_memory.h
+> > index d70505b6676c..55dfaefd02c8 100644
+> > --- a/arch/loongarch/include/asm/set_memory.h
+> > +++ b/arch/loongarch/include/asm/set_memory.h
+> > @@ -17,5 +17,6 @@ int set_memory_rw(unsigned long addr, int numpages);
+> >  bool kernel_page_present(struct page *page);
+> >  int set_direct_map_default_noflush(struct page *page);
+> >  int set_direct_map_invalid_noflush(struct page *page);
+> > +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid);
+> >
+> >  #endif /* _ASM_LOONGARCH_SET_MEMORY_H */
+> > diff --git a/arch/loongarch/mm/pageattr.c b/arch/loongarch/mm/pageattr.c
+> > index ffd8d76021d4..f14b40c968b4 100644
+> > --- a/arch/loongarch/mm/pageattr.c
+> > +++ b/arch/loongarch/mm/pageattr.c
+> > @@ -216,3 +216,24 @@ int set_direct_map_invalid_noflush(struct page *page)
+> >
+> >         return __set_memory(addr, 1, __pgprot(0), __pgprot(_PAGE_PRESENT | _PAGE_VALID));
+> >  }
+> > +
+> > +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)
+> > +{
+> > +       unsigned long addr = (unsigned long)page_address(page);
+> > +       pgprot_t set, clear;
+> > +
+> > +       return __set_memory((unsigned long)page_address(page), nr, set, clear);
+> This line should be removed.
+
+Argh, copy/paste is so hard...
+
+Thanks, will do.
+ 
+> Huacai
+
+-- 
+Sincerely yours,
+Mike.
 
