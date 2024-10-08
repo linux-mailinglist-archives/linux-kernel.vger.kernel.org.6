@@ -1,86 +1,162 @@
-Return-Path: <linux-kernel+bounces-354824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC9994309
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC8E994300
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A1D1F29579
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15BD2881D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5C31CACF5;
-	Tue,  8 Oct 2024 08:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950511C173F;
+	Tue,  8 Oct 2024 08:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="StnbA0xL"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Uy16n8FC"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B883E23A0;
-	Tue,  8 Oct 2024 08:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE0823A6;
+	Tue,  8 Oct 2024 08:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377366; cv=none; b=oDwKuxuDqTKjPz2I9FrDQEsym9aDO8k4Ne8oUTwy+BI4VdS1KIJUe21OwcFoxxgGIb0OhU3tg7SxPL5nnF21gXVgiu1IcNsEvjcx+/q1ntZc8KR9EX+TvaW9S2EeQF3XBts4DXQ4jMR8Nce7G2trD2R3aIqhsW5/wVu9xV2l+iE=
+	t=1728377293; cv=none; b=jRK359xumk/9yec8ueVA/+jWTX/7X3HD8Iyi3y4+92mj/CFC3B5zSYaToPctAlh/GqrJamC3q0eLS/hc4+wIMIRb2ygKTBLTG6yrqjQ4NoJ74Ap0T+WXDI+8kfStTxUwC5gWbbpyN0AcDkOrl3XrVCkPJwi43Un2F8wTPoApQpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377366; c=relaxed/simple;
-	bh=/l/VCM8P/tqLz/LGzZ0KAl22YoEU/fXM+/C2NF7cqFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uGk2U8fV3eZVaY75bP4bB5SJT/ayWbcRg+aKymLF/pV3gy00Ljggxmky8Y68rUAXGuTmngtWZ/ruS9WTeGcVqmhjrGqyg+AuZcbj2XT5eWt9TzYcJlAtFqCMIA1XxlcnUR9UBMDMQrt7CvVIGVHyuZaYiErXR5pAleWqp/9xiAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=StnbA0xL; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9339623FD3;
-	Tue,  8 Oct 2024 10:49:20 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id TVFrPVHNPkMC; Tue,  8 Oct 2024 10:49:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1728377359;
-	bh=/l/VCM8P/tqLz/LGzZ0KAl22YoEU/fXM+/C2NF7cqFg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=StnbA0xLmBFhMjaBJ4+1l+FeBZrffSvndACehw8BWVKdccuNoR13CjxsHtJbQpH4W
-	 o/VjlSMP3dh7TNc4J8D679gGXAYYDhNFm0D/3ZBiyE5//gkcFnVFiYyG5OyUPGrtex
-	 9pzuKx/Z4WTyZTgqVS5/uGFVy11HeYGFBWQSkij+XglBaXfwm8ih8PPaDa/3pkTV11
-	 YJLO+q+j4jS/oyphBNRHZSjkBHI1sr1GPN6IOUzGyT87+XQNw5S1b0l03QwJP2KYH2
-	 DUrKGTpHbjdO5RlhpK5sYA7r1zK2tLXqaDaPEtE5EhU4JH4qetgPmr+RlD61JujUXa
-	 bGTh59MWWAZgg==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: arnd@arndb.de
-Cc: andersson@kernel.org,
-	catalin.marinas@arm.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	exxxxkc@getgoogleoff.me,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	linus.walleij@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	robh@kernel.org,
-	sboyd@kernel.org,
-	will@kernel.org
-Subject: Re: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
-Date: Tue,  8 Oct 2024 16:47:44 +0800
-Message-ID: <20241008084744.30819-1-exxxxkc@getgoogleoff.me>
-In-Reply-To: <ad82005d-729d-4165-afa5-61ca82382bc5@app.fastmail.com>
-References: <ad82005d-729d-4165-afa5-61ca82382bc5@app.fastmail.com>
+	s=arc-20240116; t=1728377293; c=relaxed/simple;
+	bh=P5IJuUy+T74DhW4ApCo/oZ/vVvE3y/nqd0OTnW1YJq8=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=oswHVXzOUIQE3Fls97bUEg0W77+ZDXAm7nbQSZ7HTgTXETc85xILYpz/vsHWKW3uwhdvwghyfN1UyeeYMSARyFAa1cAufpA0dX4XeWCprYZO7qxuurgfoZ17Y+bsJNSc91zJAaMOgLllZiTfvie7wXG5gLX255lWkX2PM4iuN+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Uy16n8FC; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4988NU54025972;
+	Tue, 8 Oct 2024 08:47:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:subject:in-reply-to:references:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=7MP11VUlfXKwc
+	pm96rLnvLT5SEO86aFkUlgq9ArC7xw=; b=Uy16n8FC6csKR+UeqXTVERRc6GQKK
+	anpypxPvUC9hrahxjnQQXcYusKfEu+f7cgbfij1D/AnD7Kn5dylE8Nr3Z6cpisvw
+	9ByKKgEykA7NE+ipO/C/jWsLN5LMnuX61x/PXQrI+iQBoqr1kRl9M5goQ0/81J7g
+	WzN6BPKltUAU84EHUKSW2oyRFiTGdEItVii4WChHeYlwVQ6F2jEmURFPQqLhoMq/
+	4quwa9IRLmudpI5jHgKqpo0W/mZ4I+ws5rPwHn6gIbZnaDNzawn6kBbHMv4NIv8q
+	m8DAqpWfUkUsBlG9ppfcldq7/OyL0YMyewjNv/2h3K8RatusEARTHoQow==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 425168047k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 08:47:56 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4988lu97023436;
+	Tue, 8 Oct 2024 08:47:56 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 425168047a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 08:47:56 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4986n1O6022856;
+	Tue, 8 Oct 2024 08:47:54 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423h9ju3cy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 08:47:54 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4988loZu52232558
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Oct 2024 08:47:50 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81E8020040;
+	Tue,  8 Oct 2024 08:47:50 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F8CF20049;
+	Tue,  8 Oct 2024 08:47:49 +0000 (GMT)
+Received: from li-1de7cd4c-3205-11b2-a85c-d27f97db1fe1.ibm.com (unknown [9.171.60.219])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  8 Oct 2024 08:47:49 +0000 (GMT)
+From: "Marc Hartmayer" <mhartmay@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>, Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "Martin
+ K. Petersen" <martin.petersen@oracle.com>,
+        Robin Murphy
+ <robin.murphy@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-s390@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix dma_parm pointer not set up
+In-Reply-To: <20241007201030.204028-1-pasic@linux.ibm.com>
+References: <20241007201030.204028-1-pasic@linux.ibm.com>
+Date: Tue, 08 Oct 2024 10:47:48 +0200
+Message-ID: <875xq3yo97.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T7Va_BBmWNw-LhTa-SzgYLXU2lafAMMM
+X-Proofpoint-ORIG-GUID: yESAaKcR7NlJ8V719IsRdztHZgQzCCjk
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-08_06,2024-10-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 spamscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080056
 
-I dont have the uboot sauce.Also i did ask for the gpl code via their form and they putted that in the site that u sanded.I tried ask for the uboot sauce via the live support chat but i got nothing back.Maybe i should use the form again?(linksys dont have the uboot sauce in the gpl tarball of other rotuer as well. i guess it is the time for fsf to suit linksys twice? (See https://en.wikipedia.org/wiki/Free_Software_Foundation%2C_Inc._v._Cisco_Systems%2C_Inc.) )
+On Mon, Oct 07, 2024 at 10:10 PM +0200, Halil Pasic <pasic@linux.ibm.com> w=
+rote:
+> At least since commit 334304ac2bac ("dma-mapping: don't return errors
+> from dma_set_max_seg_size") setting up device.dma_parms is basically
+> mandated by the DMA API. As of now Channel (CCW) I/O in general does not
+> utilize the DMA API, except for virtio. For virtio-ccw however the
+> common virtio DMA infrastructure is such that most of the DMA stuff
+> hinges on the virtio parent device, which is a CCW device.
+>
+> So lets set up the dma_parms pointer for the CCW parent device and hope
+> for the best!
+>
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> Fixes: 334304ac2bac ("dma-mapping: don't return errors from dma_set_max_s=
+eg_size")
+> Reported-by: "Marc Hartmayer" <mhartmay@linux.ibm.com>
+> Closes: https://bugzilla.linux.ibm.com/show_bug.cgi?id=3D209131
 
-Also Other linksys ipq5018 based rotuer is capable of booting arm64.maybe i could rip the uboot from those rotuer and flash it to ea9350 v3 but i dont have another linksys ipq5018 based rotuer.
+I guess, this line can be removed as it=E2=80=99s internal only.
 
+> Reviewed-by: Eric Farman <farman@linux.ibm.com>
+> ---
+>
+> In the long run it may make sense to move dma_parms into struct
+> ccw_device, since layering-wise it is much cleaner. I decided
+> to put it in virtio_ccw_device because currently it is only used for
+> virtio.
+>
+> ---
 
+[=E2=80=A6snip=E2=80=A6]
+
+Thanks for fixing this!
+
+Tested-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+
+--=20
+Kind regards / Beste Gr=C3=BC=C3=9Fe
+   Marc Hartmayer
+
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+Gesch=C3=A4ftsf=C3=BChrung: David Faller
+Sitz der Gesellschaft: B=C3=B6blingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
 
