@@ -1,210 +1,94 @@
-Return-Path: <linux-kernel+bounces-355002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58AD9945D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330D79945D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58391C228DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B04285829
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FAB1CACF5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2166E1CC8B6;
 	Tue,  8 Oct 2024 10:54:42 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovbgNVzJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A142CA8
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8D3320F;
+	Tue,  8 Oct 2024 10:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728384881; cv=none; b=KmpZVRy13ilUzgiKI8wZ3z5J/8NKg/+df0E/kjC8keqQQwKjuQwliyVK0BQ/JjNk1bXls0c0Je3nBGiZvHc3hCq+5gBRjO0LGlnRmEiLSgszTB61ZrCfrl3YdMSJXE5rr9f1M/lgQocPkwduC7Sxx44mazAVsF7YItdZ++OMS48=
+	t=1728384881; cv=none; b=b8pJiFYFMoekK1fPca5zs3mJlIfuRgoma2zeJkMgLMMRWwLmvTbc8fCT6tohOPuBwbGTjnrwLeb3NdFlXf5aSmDcYiwGVXWUUmU62ebvoQLMMd/Baz/sg4hUdLB0Tnq74TrJ+aXBszmD2waCl7pnSDqQ65Z68FT1p4EsLEv0VV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728384881; c=relaxed/simple;
-	bh=27o7KUKq9lbTXRZUrDjXx8h86VGke4PyLQ7YBCSSenA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cCh2E+lIvkSYKbYj+9Rg6fX5qdeqoOEDB3tt/h7HDKfYxkkklUUdf+yI5spDK6l8J8InUWChC1mRgmSTF7rMlGwrslK3HiYJ5MjQb+5bUVu12JrZd+lZZD0ogZoLsR/EaCK8ZUmxmfJq+FJ63InNqxDuBxGWX4Bthi8JEXdujo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.10.199])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67050F3C00001F59; Tue, 8 Oct 2024 18:53:52 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3893203408170
-X-SMAIL-UIID: 783BC62F157E4D65A32E12E32B2EB28C-20241008-185352-1
-From: Hillf Danton <hdanton@sina.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Netdev <netdev@vger.kernel.org>,
+	bh=tMLwLbqSfjHfOw4e2UN9i2C4GUC3GQ+xO7cRITf7Dtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOTJMHLl0NDXk8x1uff6z8X+2aCZ9YxbsQLyx7j39438f/SB4lvll5PBjyqx9A20wAL94CZNUqbWdA7s6uYDeipDqmGHapT3TsfhDe/Yd+Ywvd+Uzmd6EaPT6fX+PkZyl3lrK2iNOeiJ+0t6HcVYgIGSgoFl5l7xcV5vxvCHgIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovbgNVzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6557DC4CEC7;
+	Tue,  8 Oct 2024 10:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728384881;
+	bh=tMLwLbqSfjHfOw4e2UN9i2C4GUC3GQ+xO7cRITf7Dtw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ovbgNVzJkmgwqhNXgMxucWth9ib2ZNZ6+KFUe3Jx7Xyld3/TxQ48FYFAUUNLlICTc
+	 yFadogOuiCYTIGm+UsXdxL1o2OtGyT/PB3X4e2K+e2iGN0Inm7DUo3hPCZ9yKyvMjk
+	 UCkMz7kYkiJeWmDg6VSfATI0zNPqrmcBOYRHAKN3S5yDu7ILX+HO298ngo7uT0ZCwQ
+	 ykVBmjDBpX7VH1/p2o4V5KCpjt2r5OzRGtHldp6WZalqFYpJdegy3OrkRlZcwuiqsm
+	 InKMMt+8ap7bWGNYZqTqe4AZZ3GjcU50a3AgX/RH5wAK5LjGoMh8WO/cNCO/BzmEDI
+	 Vq9L+nSAWj39Q==
+Date: Tue, 8 Oct 2024 11:54:35 +0100
+From: Will Deacon <will@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: selftests: net: pmtu.sh: Unable to handle kernel paging request at virtual address
-Date: Tue,  8 Oct 2024 18:53:40 +0800
-Message-Id: <20241008105340.2214-1-hdanton@sina.com>
-In-Reply-To: <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com>
-References: <20230830112600.4483-1-hdanton@sina.com> <f607a7d5-8075-f321-e3c0-963993433b14@I-love.SAKURA.ne.jp> <20230831114108.4744-1-hdanton@sina.com> <CANn89iLCCGsP7SFn9HKpvnKu96Td4KD08xf7aGtiYgZnkjaL=w@mail.gmail.com> <20230903005334.5356-1-hdanton@sina.com> <CANn89iJj_VR0L7g3-0=aZpKbXfVo7=BG0tsb8rhiTBc4zi_EtQ@mail.gmail.com> <20230905111059.5618-1-hdanton@sina.com> <CANn89iKvoLUy=TMxW124tiixhOBL+SsV2jcmYhH8MFh3O75mow@mail.gmail.com> <CA+G9fYvskJfx3=h4oCTAyxDWO1-aG7S0hAxSk4Jm+xSx=P1dhA@mail.gmail.com>
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 11/20] sched: Handle CPU isolation on last resort
+ fallback rq selection
+Message-ID: <20241008105434.GA9243@willie-the-truck>
+References: <20240926224910.11106-1-frederic@kernel.org>
+ <20240926224910.11106-12-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926224910.11106-12-frederic@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, 6 Oct 2024 14:08:18 -0400 Xin Long <lucien.xin@gmail.com>
-> Sorry for bringing up this issue, it recently occurred on my aarch64 kernel
-> with blackhole_netdev backported. I tracked it down, and when deleting
-> the netns, the path is:
+On Fri, Sep 27, 2024 at 12:48:59AM +0200, Frederic Weisbecker wrote:
+> When a kthread or any other task has an affinity mask that is fully
+> offline or unallowed, the scheduler reaffines the task to all possible
+> CPUs as a last resort.
 > 
-> In cleanup_net():
+> This default decision doesn't mix up very well with nohz_full CPUs that
+> are part of the possible cpumask but don't want to be disturbed by
+> unbound kthreads or even detached pinned user tasks.
 > 
->   default_device_exit_batch()
->     unregister_netdevice_many()
->       addrconf_ifdown() -> call_rcu(rcu, fib6_info_destroy_rcu) <--- [1]
->     netdev_run_todo()
->       rcu_barrier() <- [2]
->   ip6_route_net_exit() -> dst_entries_destroy(net->ip6_dst_ops) <--- [3]
-> 
-> In fib6_info_destroy_rcu():
-> 
->   dst_dev_put()
->   dst_release() -> call_rcu(rcu, dst_destroy_rcu) <--- [5]
-> 
-> In dst_destroy_rcu():
->   dst_destroy() -> dst_entries_add(dst->ops, -1); <--- [6]
-> 
-> fib6_info_destroy_rcu() is scheduled at [1], rcu_barrier() will wait
-> for fib6_info_destroy_rcu() to be done at [2]. However, another callback
-> dst_destroy_rcu() is scheduled() in fib6_info_destroy_rcu() at [5], and
-> there's no place calling rcu_barrier() to wait for dst_destroy_rcu() to
-> be done. It means dst_entries_add() at [6] might be run later than
-> dst_entries_destroy() at [3], then this UAF will trigger the panic.
-> 
-No more important discoveries than this one in the net core so far in 2024.
+> Make the fallback affinity setting aware of nohz_full. This applies to
+> all architectures supporting nohz_full except arm32. However this
+> architecture that overrides the task possible mask is unlikely to be
+> willing to integrate new development.
 
-Thanks
-Hillf
+I'm not sure I understand this last sentence. The possible mask is
+overridden for 32-bit tasks on an *arm64* kernel when running on an SoC
+featuring some CPUs that can execute only 64-bit tasks. Who is unwilling
+to integrate what?
 
-> On Tue, Oct 17, 2023 at 1:02 PM Naresh Kamboju
-> <naresh.kamboju@linaro.org> wrote:
-> >
-> > On Tue, 5 Sept 2023 at 17:55, Eric Dumazet <edumazet@google.com> wrote:
-> > >
-> > > On Tue, Sep 5, 2023 at 1:52 PM Hillf Danton <hdanton@sina.com> wrote:
-> > > >
-> > > > On Mon, 4 Sep 2023 13:29:57 +0200 Eric Dumazet <edumazet@google.com>
-> > > > > On Sun, Sep 3, 2023 at 5:57=E2=80=AFAM Hillf Danton <hdanton@sina.com>
-> > > > > > On Thu, 31 Aug 2023 15:12:30 +0200 Eric Dumazet <edumazet@google.com>
-> > > > > > > --- a/net/core/dst.c
-> > > > > > > +++ b/net/core/dst.c
-> > > > > > > @@ -163,8 +163,13 @@ EXPORT_SYMBOL(dst_dev_put);
-> > > > > > >
-> > > > > > >  void dst_release(struct dst_entry *dst)
-> > > > > > >  {
-> > > > > > > -       if (dst && rcuref_put(&dst->__rcuref))
-> > > > > > > +       if (dst && rcuref_put(&dst->__rcuref)) {
-> > > > > > > +               if (!(dst->flags & DST_NOCOUNT)) {
-> > > > > > > +                       dst->flags |= DST_NOCOUNT;
-> > > > > > > +                       dst_entries_add(dst->ops, -1);
-> > > > > >
-> So I think it makes sense to NOT call dst_entries_add() in the path
-> dst_destroy_rcu() -> dst_destroy(), as it does on the patch above,
-> but I don't see it get posted.
-> 
-> Hi, Eric, would you like to move forward with your patch above ?
-> 
-> Or we can also move the dst_entries_add(dst->ops, -1) from dst_destroy()
-> to dst_release():
-> 
-> Note, dst_destroy() is not used outside net/core/dst.c, we may delete
-> EXPORT_SYMBOL(dst_destroy) in the future.
-> 
-> Thanks.
-> 
-> > > > > > Could this add happen after the rcu sync above?
-> > > > > >
-> > > > > I do not think so. All dst_release() should happen before netns removal.
-> > > >
-> > > >         cpu2                    cpu3
-> > > >         ====                    ====
-> > > >         cleanup_net()           __sys_sendto
-> > > >                                 sock_sendmsg()
-> > > >                                 udpv6_sendmsg()
-> > > >         synchronize_rcu();
-> > > >                                 dst_release()
-> > > >
-> > > > Could this one be an exception?
-> > >
-> > > No idea what you are trying to say.
-> > >
-> > > Please give exact locations, instead of being rather vague.
-> > >
-> > > Note that an UDP socket can not send a packet while its netns is dismantled,
-> > > because alive sockets keep a reference on the netns.
-> >
-> > Gentle reminder.
-> > This is still an open issue.
-> >
-> > # selftests: net: pmtu.sh
-> > # TEST: ipv4: PMTU exceptions                                         [ OK ]
-> > # TEST: ipv4: PMTU exceptions - nexthop objects                       [ OK ]
-> > # TEST: ipv6: PMTU exceptions                                         [ OK ]
-> > # TEST: ipv6: PMTU exceptions - nexthop objects                       [ OK ]
-> > # TEST: ICMPv4 with DSCP and ECN: PMTU exceptions                     [ OK ]
-> > # TEST: ICMPv4 with DSCP and ECN: PMTU exceptions - nexthop objects   [ OK ]
-> > # TEST: UDPv4 with DSCP and ECN: PMTU exceptions                      [ OK ]
-> > # TEST: UDPv4 with DSCP and ECN: PMTU exceptions - nexthop objects    [ OK ]
-> > # TEST: IPv4 over vxlan4: PMTU exceptions                             [ OK ]
-> > # TEST: IPv4 over vxlan4: PMTU exceptions - nexthop objects           [ OK ]
-> > # TEST: IPv6 over vxlan4: PMTU exceptions                             [ OK ]
-> > # TEST: IPv6 over vxlan4: PMTU exceptions - nexthop objects           [ OK ]
-> > # TEST: IPv4 over vxlan6: PMTU exceptions                             [ OK ]
-> > <1>[  155.820793] Unable to handle kernel paging request at virtual
-> > address ffff247020442000
-> > <1>[  155.821495] Mem abort info:
-> > <1>[  155.821719]   ESR = 0x0000000097b58004
-> > <1>[  155.822046]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > <1>[  155.822412]   SET = 0, FnV = 0
-> > <1>[  155.822648]   EA = 0, S1PTW = 0
-> > <1>[  155.822925]   FSC = 0x04: level 0 translation fault
-> > <1>[  155.823317] Data abort info:
-> > <1>[  155.823590]   Access size = 4 byte(s)
-> > <1>[  155.823886]   SSE = 1, SRT = 21
-> > <1>[  155.824167]   SF = 1, AR = 0
-> > <1>[  155.824450]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > <1>[  155.824847]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > <1>[  155.825345] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041d84000
-> > <1>[  155.827244] [ffff247020442000] pgd=0000000000000000, p4d=0000000000000000
-> > <0>[  155.828511] Internal error: Oops: 0000000097b58004 [#1] PREEMPT SMP
-> > <4>[  155.829155] Modules linked in: vxlan ip6_udp_tunnel udp_tunnel
-> > act_csum libcrc32c act_pedit cls_flower sch_prio veth vrf macvtap
-> > macvlan tap crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64
-> > fuse drm backlight dm_mod ip_tables x_tables [last unloaded:
-> > test_blackhole_dev]
-> > <4>[  155.832289] CPU: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.6.0-rc6 #1
-> > <4>[  155.832896] Hardware name: linux,dummy-virt (DT)
-> > <4>[  155.833927] pstate: 824000c9 (Nzcv daIF +PAN -UAO +TCO -DIT
-> > -SSBS BTYPE=--)
-> > <4>[  155.834496] pc : percpu_counter_add_batch+0x24/0xcc
-> > <4>[  155.835735] lr : dst_destroy+0x44/0x1e4
-> >
-> > Links:
-> > - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.6-rc6/testrun/20613439/suite/log-parser-test/test/check-kernel-oops/log
-> > - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.6-rc6/testrun/20613439/suite/log-parser-test/tests/
-> >
-> > - Naresh
+Will
 
