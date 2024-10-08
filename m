@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-354946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BC9994500
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93249994502
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2495286BEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9492F1C22610
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0499418DF65;
-	Tue,  8 Oct 2024 10:03:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D604518FDC9;
+	Tue,  8 Oct 2024 10:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZspKtVr4"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7E918BC03
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FAC18C93D;
+	Tue,  8 Oct 2024 10:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728381784; cv=none; b=XXUr0v0axKP6/AqlmA9uGVZnTU05BnqaN1tA87CDtIo42aE8a7pWoiDiGN5RtYPpGX4Lx+xELuyQJGxY7B955nmuGQFl0oBv8EkB12FSOQbDh/zALctDjxJ0WIZQoO0OMdRsswFu/bLA2oq0bZ3YL3Td+2zIRhq9v+CCdbXuk38=
+	t=1728381811; cv=none; b=uy+arYzv7WfD/DbxBvhi1Ch1YHQlGvqP9YPR8PLFUO53sTZFw6d0J57XXfftUcEjSad5j8dToqfcr086K7psnZFZq6yHrvQdwxu6xdO4BwXdAYiSPx07+6PrVWbmGaPir9gNuXW25JzQaNj2pX6or3E0lo+gu4kmxIf6gEHkSLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728381784; c=relaxed/simple;
-	bh=CAEWxPrFRKScxByaAJ78wRJWn7m8oaXZ4H66Gc4jqIk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LyXImNVT649ecU7XfaQfIekL0+/COW6hbt199tCWFkm/h5I06UcLlgo8yaZw0e5dF+6Z2RcD4Aj0CtV+i6OFNRatlvF+1yISLrAPnQrJ8rV8qkpTJfgoOe5bSM/9ngAvsqZSzdIWRZxFcRSM+wCl13TfB1eA5Zyo1mv4TQfrG3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so791318739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 03:03:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728381782; x=1728986582;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ElZuUT5tf3AhyXQhKTHLJGL0EUSCnFKm0SgYF0oqKU=;
-        b=NahJTf9ls0nVXNNJlkVgmlCQpjFow5Enok/P3LqOubVKKGI4vdztTgvRhYKquBxMgP
-         nPB6Fs5z0XRfmfMypqmrL5xlvoyTH+DswP8xnBrtFGwgX/nvpzACC88BGlg9F/TIcuVe
-         3lP99MGiVHHNFZsYhfh7uX7CgK9GnGyhaJ2QzMGbIh/obfv/gKQEe869eTrnbw8WUc3l
-         Rl1aYkLyIfDFk3RJWM7LbeNbPMeSwBR2mZFBJq9+MuneTJcqy02uz2Ks0xHGbIfD0lK6
-         K2zZcyIK5acKv5t+Pd37PnQCCyHFEoAqSbvIlf5xq/Izxf4tGvcKzFb4AfpS7ogK7RZ2
-         8eXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXv4YtyxZfTrxzvtDSi7+LRuFxTRagzEpfUuwq02U2aLiiqNDZC7oynQx8BRxZfT4ci00FrCBut61EQvcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIWBTk6Q88LF1dQB3rErP7fs7IQQ7LR4gZrhfvsvXOwTptq+vw
-	KexMF4iZptPLkI2Srej3OKSQCcGV5YSIEgVu5R/Xyl34hLCs/Uo3jjJE4kjWHOVaAM4YH9YjKuY
-	z1o2jhFewWir3Q8fTBsLrHMkTccFTTKCoS8aQPed+Ko53tDV4/s/Pg/M=
-X-Google-Smtp-Source: AGHT+IHQg4eCsJN4tdqPJ2+dXzB0T2qaM0BNmTRhXiZbSRnNeby6NPKvqKliC5SM+GqG5MZOifLC6tZ2uAXgIzcpZLUu5GWoEDWS
+	s=arc-20240116; t=1728381811; c=relaxed/simple;
+	bh=G6UPXBCWZIToUxidHOl2NxFaDb6t5b8R/d+rhgiKuDI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ifS5nn6em/7vocNUrGJj+1VzQTuisB8yLBAi+4rd8y5KiIvmJyvjgGhR56cPzLRT6N0vxV2MzC2p/H5IIk3fb7tj3eVqXXcWkgrIF/4KM84kgX6n4cUzG35mZDjPjXQTVbCoaSjw/pd1fKmvppyZ6nH5YgQD9QsxO2UN6RMw6SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZspKtVr4; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DAD254000C;
+	Tue,  8 Oct 2024 10:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728381801;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IVxPJv4WO7g3wfRjUaiplqBDEDVJijQhGxNVEhWUWKs=;
+	b=ZspKtVr4RYm6L/twttTXteM7haghR4dHWe1qpzjiDWjXI9J0A7iVVY5IDeK8CoSKMDzEJ0
+	vrYFUsKfFBIb9yl0gtsFRkx42TWsK8Q6B+cS6rIig4+kfHlxPBY/XzDMGRFpJyD5upCPv5
+	BOd4TTgsFvh4HPn5dPIex1KAVvs5dPJ0Kom52eoa5q116Kq0feyJYrljv51OEGuEjCyXMD
+	4+c2PuMONvsCE/4lemyIwfkBePWUmRJ+B480GrPq5/6kS0xJNsGuCKtb9VUbQ4EJfTI7K5
+	WOLGZe+3zJLplSj8/CNnHJmhdMcKYdIKOvv9V4McRlfOnxVP8lyfb0FVtqQoCQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: mobileye: eyeq6h-epm6: Use eyeq6h in the board
+ device tree
+In-Reply-To: <f7f6e582-6e68-4f45-b486-43132b896856@kernel.org>
+References: <20241008-eyq6h-dt-v1-1-b8a4df1e6a6c@bootlin.com>
+ <f7f6e582-6e68-4f45-b486-43132b896856@kernel.org>
+Date: Tue, 08 Oct 2024 12:03:20 +0200
+Message-ID: <871q0qewt3.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164e:b0:3a0:b0dc:abfe with SMTP id
- e9e14a558f8ab-3a375bae0camr148534705ab.17.1728381782345; Tue, 08 Oct 2024
- 03:03:02 -0700 (PDT)
-Date: Tue, 08 Oct 2024 03:03:02 -0700
-In-Reply-To: <tencent_E64189A52EEFAEE6CC83A7C746FAD2E6C606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67050356.050a0220.1e4d62.008c.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_rx_work
-From: syzbot <syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-GND-Sasl: gregory.clement@bootlin.com
 
-Hello,
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On 08/10/2024 11:18, Gregory CLEMENT wrote:
+>> There is currently no eyeq6 compatible string defined in the binding
+>> documentation. Only eyeq6h version is defined, so let's use it.
+>> 
+>> Note that there are actually no codes relying on eyeq6h; the purpose
+>> of this patch is mainly to be coherent with the documentation.
+>> 
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>> ---
+>>  arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>
+> That's a new platform, so you were supposed to make it warning free. I
+> think that dtbs_check were never really run here...
 
-Reported-by: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com
-Tested-by: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com
+Yes my bad. Sorry for that I won't do it again.
 
-Tested on:
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-commit:         87d6aab2 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14eba327980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ea290ba76d8c1eb1ac2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11cbbb80580000
+Thanks!
 
-Note: testing is done by a robot and is best-effort only.
+>
+> Best regards,
+> Krzysztof
 
