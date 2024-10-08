@@ -1,190 +1,115 @@
-Return-Path: <linux-kernel+bounces-355479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA6D9952D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:03:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246649952C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742FA1F26061
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5674B1C248A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBB31C4631;
-	Tue,  8 Oct 2024 15:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D21E102F;
+	Tue,  8 Oct 2024 15:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hp5MyPO7"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K0UpnBBZ"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01F1DFD1
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27ED1E0DDE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728399664; cv=none; b=LGlTCjTjcsyMjH9T44vc7l7DhjPM3/id4F5aHXDnrRxpqasWXoFSVfgd92HF9e38UniKrWidd9QAlouZoXq9BUxpt289/z4R9HT27wEuQW0Im9Nb649Ttsvh8ezFVtI4qxb7ucatedg2AZralwjBhljvSeLb4tGbzZLHusw4gnA=
+	t=1728399613; cv=none; b=Car9y0r58XpLXEr7BI+4WvzQTNdOqrhbfWPzOOiwXIGREA1iC/h6yaZf+oxFkPpeLhdlgzVVD2BI4uqueQLYWD7eMUT9GLAjm5/3kEoXjt6yIQAGXtA2XdAQ3B3Bgk0bTii9PowxKXz829JCX2TtNnaxxECquhn3sTKvnrKZRp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728399664; c=relaxed/simple;
-	bh=ISDycBoROB1PogJNHrlA/nfpzEIank8h3YISvLhTIkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=jhHedZeZVbknYg/rRPtgXeT2TlQ4c+pAlbZbMFvvEJWE+UG7vbbZkfnAIu35oP8TasovK0zZSa3ZcF2gQXzM5QT2Hs9EBE58LOH7p7Kzz20fX5oOj53oS0WylONVgKRXblXPDU/K4G2GzndzMfGkYBsYpQbqxeWXtI3DeMOvOoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hp5MyPO7; arc=none smtp.client-ip=209.85.161.45
+	s=arc-20240116; t=1728399613; c=relaxed/simple;
+	bh=fB8wPdyHy0ruFXLPdPg1YMrsIEXSnFE6R8nK/u6IlDU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kf2sT+xgSPRVLmhBzum9Fr6lZmQoS4dpd/BTJ6IE+c5FGDpQ3hKsBtDCmOT7fVVz2hSP1utPd0qORhj3fjTugJJkhGXTOuYOjNklhHX54U3o+12V1xwpM8LrfPLpXs1dUurGgeb8l8pxkE5kIIw/0aRkBjmGFPP4o9e3KQK0Jgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=K0UpnBBZ; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e1dadb257bso227109eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:01:02 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a9b72749bcso488554585a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728399662; x=1729004462; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vNaoqE9iLYEqaxmKhH8Fh/36izXlvroo3qs4o9RMtlo=;
-        b=hp5MyPO7JjB4qWlDwAg/dQIbZGLiX7Q0a8567zYdsEoUHkWglsQAohUa2lV6fltlL5
-         BGoKoQzSVfLKIZVp1+X63tPgCceyD8PYHUnb6+eq/f9+OeEi/lqfrhaR198fGyCBRbkX
-         Z8r1sqWgG1kiS0tuSVFGR86yYNBKvk/ZiD1mU=
+        d=chromium.org; s=google; t=1728399609; x=1729004409; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F8e25TBg3r/kV0lKd0SznJNEmKH9RSBCdHNOg8ma+Ik=;
+        b=K0UpnBBZQWEQpfVEDBQEqC+94GQrHO0iVY14rIKVEzATU6/q3BOnUitznNefC3nBeS
+         0XiC07TVzo/3n3TZQyZTAv75Jc/GVAOeJJ1cLyzK8TL//2oZRwDMAhYu5U3TF711gMWe
+         bOkQ8bUPgVryxzsWJxDENVMjr01ICifej4atM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728399662; x=1729004462;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vNaoqE9iLYEqaxmKhH8Fh/36izXlvroo3qs4o9RMtlo=;
-        b=IEQ5IOOifXbHXp1POw6y2b65jdvxrV6v61uJMgdiXJ9A4L6X7WeBrlrhs0I2OFIdX+
-         CRfrrRWasimQh4Ys+OVw9k8YF35tu0Hdh6BRuy5sDsnGwqoqd9kl58AXpjfw+3YpCDhr
-         aC0+Oa+y0JORCzzJmp4Ht1O8CZaUGdezjWmFu/uisU/D0YxQSvK0Wn1/yBoaUcgc54h/
-         yIYMrr6kA7/DB3SeIvnrLA2fn4epQY58qCS9eXw+2zkm7IAwDJWs/k7VL0di6s96zezz
-         MqbxsgKLACLeH1eA/Pd9Wxp8dpoapiTp9mp5oDhGKV8p/8sJhmmBXFUG9rPpJHNvWz6g
-         Wtbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMzoFS7/0oI+XDTaiVWeMKMyV8i2mxnnSB6OXII2qe9IpBqsWaOWt6KoF7Ips9fECQE8Jv9YP9XaKnAok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3SN+On96ycZJqHAn4NqrEHWtXO7ilVUZZNsMIrdEs43kmkQxM
-	quN9Ch2oBuSlVjIozcHTqLDjHMxJnsRfiMJVuyWYbQAsgoebrh5UGuyhPMGViwugF9dzEa5sbM5
-	ySyTTSBr6xtqD63MQTLw5mwdeLfQIzKzOsttW
-X-Google-Smtp-Source: AGHT+IFMtDvnSOLpJ2+MdayuHbe1zXaSJRKropnN+uC9XI1mdmCdWI7HRfFEHmxrAvMu2kyjkRI7+J9N6QbI9kV3qvE=
-X-Received: by 2002:a05:6870:b30f:b0:27b:9f8b:277d with SMTP id
- 586e51a60fabf-287c225aee7mr2608151fac.12.1728399661695; Tue, 08 Oct 2024
- 08:01:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728399609; x=1729004409;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F8e25TBg3r/kV0lKd0SznJNEmKH9RSBCdHNOg8ma+Ik=;
+        b=t6KblhTigJ2B4IVyaqUSTQkjVL12AMR8Fn38RP8DOH7PzyA0gfP5BkGP+9oJb9Fp+F
+         Kzu1Pf9vf/xQl5GlkSIW2bqO3CK/CQYAPCmrF9JGbDKS2fkfbX/T8hMJimXQ3j2woflG
+         6+zMYVuEe9jZ8UvisbGsNnoGs/6GP7oSE0t+7UKWb+OjZCqSBqzfopUMTUwZve9A+8G+
+         d5AofKfFHIagh0LiG2ElAtemZblRXpmhUznqfdOWf4lafu9YrtfYKBQhOk1M57mGYhGJ
+         OnW38tQx+jJwVKTlcYGi20HHadZtG3RGKq7npQKKY1dWx742fFXxkn+o8CBgE2vMViGU
+         UzpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlpAvRkp33OFQ7GS9YR2GP6lI3wPe7WhgrYDwi3P87fKk9Bn/Wo5sgZBegsbV2yPahSO/kgpi1LJ00XW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwncUDzgeyOVYHFTeM3PxIj02tYotOMT6gXnlfkO0/MAkmbCH2y
+	gWo1Vd2Ynau5tCsJwKS2APtudDmtrB3mgOma3qGNngcK82g777m5axmRl8kM+A==
+X-Google-Smtp-Source: AGHT+IHXENak+TMDoF00Og9xFSrFvlDH1rXWX5ywyh1MscQhuH3y3sDASJnCumrz7mMpx1Y76cc7Mw==
+X-Received: by 2002:a05:620a:2494:b0:792:f429:9e9 with SMTP id af79cd13be357-7ae6f43a81dmr2449319585a.22.1728399609268;
+        Tue, 08 Oct 2024 08:00:09 -0700 (PDT)
+Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75762a36sm360886085a.124.2024.10.08.08.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 08:00:08 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/2] media: uvcvideo: Support partial control reads and
+ minor changes
+Date: Tue, 08 Oct 2024 15:00:06 +0000
+Message-Id: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004163155.3493183-1-jeffxu@google.com> <v32x3rszfq7twguleqpj3xejsh6gtupput4dgfmvv357lxznqs@dy6fzjuhrs3v>
-In-Reply-To: <v32x3rszfq7twguleqpj3xejsh6gtupput4dgfmvv357lxznqs@dy6fzjuhrs3v>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 8 Oct 2024 08:00:00 -0700
-Message-ID: <CABi2SkVfPjfbAMVEK8KFzS4RsZefCo8LAW9r7BkiSweUxVeJpQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/1] seal system mappings
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, jeffxu@chromium.org, akpm@linux-foundation.org, 
-	keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, ojeda@kernel.org, adobriyan@gmail.com, 
-	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, 
-	mike.kravetz@oracle.com, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de, peterx@redhat.com, 
-	hca@linux.ibm.com, f.fainelli@gmail.com, gerg@kernel.org, 
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	nathan_lynch@mentor.com, dsafonov@virtuozzo.com, mhocko@suse.com, 
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, enh@google.com, 
-	rientjes@google.com, groeck@chromium.org, lorenzo.stoakes@oracle.com, 
-	Jeff Xu <jeffxu@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPZIBWcC/3XMQQ7CIBCF4as0sxYDFBN05T2aLiidlklsMYMlm
+ oa7i927/F/yvh0SMmGCW7MDY6ZEca2hTw344NYZBY21QUttlJRWbNkLRjc+MCWh2+k6WO9GObR
+ QL0/Gid4H1/W1A6VX5M+hZ/Vb/0BZCSmk0c6bi1WTMXcfOC60LefIM/SllC/pl/3hqwAAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
-Hi Liam,
+Some cameras do not return all the bytes requested from a control
+if it can fit in less bytes. Eg: returning 0xab instead of 0x00ab.
+Support these devices.
 
-On Mon, Oct 7, 2024 at 7:19=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
->
-> * jeffxu@chromium.org <jeffxu@chromium.org> [241004 12:32]:
-> > From: Jeff Xu <jeffxu@google.com>
-> >
-> > Seal vdso, vvar, sigpage, uprobes and vsyscall.
-> >
-> > Those mappings are readonly or executable only, sealing can protect
-> > them from ever changing during the life time of the process.
-> >
-> > System mappings such as vdso, vvar, and sigpage (for arm) are
-> > generated by the kernel during program initialization. These mappings
-> > are designated as non-writable, and sealing them will prevent them
-> > from ever becoming writeable.
->
-> But it also means they cannot be unmapped, right?
->
-> I'm not saying it's a thing people should, but recent conversations
-> with the ppc people seem to indicate that people do 'things' to the vdso
-> such as removing it.
->
-> Won't this change mean they cannot do that, at least if mseal is enabled
-> on ppc64?  In which case we would have a different special mapping for
-> powerpc, or any other platform that wants to be able to unmap the vdso
-> (or vvar or whatever else?)
->
-> In fact, I came across people removing the vdso to catch callers to
-> those functions which they didn't want to allow.  In this case enabling
-> the security of mseal would not allow them to stop applications from
-> vdso calls.  Again, I'm not saying this is a good (or bad) idea but it
-> happening.
->
-> >
-> > Unlike the aforementioned mappings, the uprobe mapping is not
-> > established during program startup. However, its lifetime is the same
-> > as the process's lifetime [1], thus sealable.
-> >
-> > The vdso, vvar, sigpage, and uprobe mappings all invoke the
-> > _install_special_mapping() function. As no other mappings utilize this
-> > function, it is logical to incorporate sealing logic within
-> > _install_special_mapping(). This approach avoids the necessity of
-> > modifying code across various architecture-specific implementations.
-> >
-> > The vsyscall mapping, which has its own initialization function, is
-> > sealed in the XONLY case, it seems to be the most common and secure
-> > case of using vsyscall.
-> >
-> > It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-> > alter the mapping of vdso, vvar, and sigpage during restore
-> > operations. Consequently, this feature cannot be universally enabled
-> > across all systems. To address this, a kernel configuration option has
-> > been introduced to enable or disable this functionality. I tested
-> > CONFIG_SEAL_SYSTEM_MAPPINGS_ALWAYS with ChromeOS, which doesn=E2=80=99t=
- use
-> > CHECKPOINT_RESTORE, to verify the sealing works.
->
-> I am hesitant to say that CRIU is the only user of moving the vdso, as
-> the ppc people wanted the ability for the fallback methods to still
-> function when the vdso was unmapped.
->
-> I am not sure we can change the user expected behaviour based on a
-> configuration option; users may be able to mmap/munmap but may not be
-> able to boot their own kernel, but maybe it's okay?
->
-The text doesn't say CRIU is the **only** feature that is not
-compatible with this.
+Also, now that we are at it, improve uvc_query_ctrl() logging.
 
-The default config is "CONFIG_SEAL_SYSTEM_MAPPINGS_NEVER", and
-distribution needs to opt-in for this feature, such as ChromeOS or
-Android or other safe-by-default systems that doesn't allow to unmap
-or remap vdso in production build.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2:
+- Rewrite error handling (Thanks Sakari)
+- Discard 2/3. It is not needed after rewriting the error handling.
+- Link to v1: https://lore.kernel.org/r/20241008-uvc-readless-v1-0-042ac4581f44@chromium.org
 
-Thanks
--Jeff
+---
+Ricardo Ribalda (2):
+      media: uvcvideo: Support partial control reads
+      media: uvcvideo: Add more logging to uvc_query_ctrl()
 
+ drivers/media/usb/uvc/uvc_video.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241008-uvc-readless-23f9b8cad0b3
 
-> >
-> > [1] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkR=
-kL-NrCZxYAyg@mail.gmail.com/
-> >
-> > Jeff Xu (1):
-> >   exec: seal system mappings
-> >
-> >  .../admin-guide/kernel-parameters.txt         |  9 ++++
-> >  arch/x86/entry/vsyscall/vsyscall_64.c         |  9 +++-
-> >  fs/exec.c                                     | 53 +++++++++++++++++++
-> >  include/linux/fs.h                            |  1 +
-> >  mm/mmap.c                                     |  1 +
-> >  security/Kconfig                              | 26 +++++++++
-> >  6 files changed, 97 insertions(+), 2 deletions(-)
-> >
-> > --
-> > 2.47.0.rc0.187.ge670bccf7e-goog
-> >
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
