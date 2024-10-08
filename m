@@ -1,279 +1,214 @@
-Return-Path: <linux-kernel+bounces-355365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D1E99513C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1006199513E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0E31F268C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6B228699D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D971DF96B;
-	Tue,  8 Oct 2024 14:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805851DFD8B;
+	Tue,  8 Oct 2024 14:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gR3/uvqX"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kaNL9cxv"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2C31DDA15
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACF714EC59
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396926; cv=none; b=JRmWjH541f31A+Dr9BzVuWenmyKDmR0RA+JPGe5pU49hqDHjdg5cTbVzVXTKMvv/DqiKmm4SMAbLk62mbePgUdnoL7BUihCM+fnEIoJ/JsTiTiueijA8Fy9LQPC+O+uVsKpUAct06oWKsq+iVTFHVdvtpfJ7qmaeap73xKl0tJ4=
+	t=1728396955; cv=none; b=iDZqeCF29RN6DHwlMwOhrh+r0oodHXk/E8UhpBI9IIfg3ozAJJTLzSZhtzNaoRN5gHgU+zb+qpXXHeCAqUAsLvYz34VT2AN+MzKPV/ZEJEpH2ip4aHMeQOpPJh6ww2Rr3dK7WVGOtEvAvNxnDyHP4ntMUz68fVJ70uPE+KsHtLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396926; c=relaxed/simple;
-	bh=CqreoEFhCQFdVZYvfxwSzFz7kcPrc8UoGAIbyX317wU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fAFhvvA+levajA2NO5cbyHQk4+f4O9P2xMZPTgWcDFUL0tKSfHA561jMZubCm2hKe1/mAR4kTaDnxXsmqDjqWNrZ506s64SnMHtbfVWaZTArKq9BtdAO19KE9JjwQtkNCcK69Zr3n+7o8S+ReNqdfxmNd/cidC7ezxu3BuhPOTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gR3/uvqX; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43055b43604so5015245e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:15:23 -0700 (PDT)
+	s=arc-20240116; t=1728396955; c=relaxed/simple;
+	bh=gkeeqDTDDubVJYRwtdiPdEysGDVPCBeFN0D6UddIiJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ugwa67WmEJ9IB3FlOguAAtfHgseqhyjXAKeVNudgha0jZU3aPo4IdWNak19/Mn3NGCtN4z0fwVJfhu7DKjMlEXn/I82NW5z4C+5psHtaFpQnixKSRiFOOOUi7F9ZwtweXDaGYCxEhCFsCTm7iBpLPyEDlg+s3M2ZckF7+32NrrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kaNL9cxv; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5399651d21aso5189553e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728396922; x=1729001722; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YbHZZTOAhsp8JBOuMrZ0YxXm19FoPjC7YvWjJGqNBfs=;
-        b=gR3/uvqXZie4pTVIqfxySbbtK6FOWWc/p3GNkJFD+4nmiCDD1VU2NH5wr/TMr8ZfHE
-         fsR/dAbLrnURXQejXr1k2BNzP409L7y84mWLLoaBZlgatNcgN0X1PKdE03uHruaFKg7P
-         341ODkzxhSqd+BDUOLgUxoS1risk8dWRWXLPbGCsdIwWXuQwoGswrjhlrI81+iVT5EG0
-         F3BLYjdsGz/J40YM2kAI1boHeD2GY8ZHO5ukioRvRYI6ZrxVcHqT9fhN7PDWNugvyYxm
-         KSSUubHJ3Su7I8mz2SnXNd27zGlzDXR2yDbnWJCx7pNOJEHMtIhXLtxyh2cB8nrroGot
-         w9CQ==
+        d=google.com; s=20230601; t=1728396951; x=1729001751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iodlSeFvKO9O9lc2vubxBeazS52YJzq6TJTLiQpLA28=;
+        b=kaNL9cxvGS62DZ31csoImPqpaykkWMhZZPyTNLbmGvMLarHXBBJDZI18d7C0ptd5Cx
+         JCOEjN4QAFLyy743c29J86T/qGY+xcjAM0aZ/L4O1MFsdz7FKLBKibBgKIWj+E0RKMFe
+         stpszTjXh2sFW/nFzwnt4FtI1sfhCV516+xUq5gJf7G7jPl928za9u3FvWnXzavOw7vY
+         74yukO27yZwU14r/QToIcpquTXHInxz1sVCON+RcpYM8hzPzMLfyFWvGiwiOuuuW/RZY
+         tOJe6gI9/3Tml5FkN2t2oGjwmFwxx/CQzDG/Jkt/CWF/vEXV8GpfKBAipnW9yK8vk9Zv
+         /PYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396922; x=1729001722;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YbHZZTOAhsp8JBOuMrZ0YxXm19FoPjC7YvWjJGqNBfs=;
-        b=V1fXK3rARiBAF15izSsPvbdYTPLZ1rxnefQqyG0JHeY47lHXj2obcNQUsPpv9+drbb
-         dJUOaTx9c/zM3U2gVPD8spGPzAPtObZYRhuQRlJ0BRciocCsEbKmCwP5IV152ROor1rP
-         RfMB5z5+QHDcHOwbfmTcMGSPfiwGJzlrZdO9BE6tgD9yPwKXuSfS0xYMALgaWsNVi34h
-         c/8Jr/pSG10EgdGGIf4HNGklabHxfn8SFIg34pQ90s9aIk3RXco9ls5Ll3yxeXnhQwS3
-         x1LNMvUlQ6TiliYF6nA49LYRH/zHHh9Zur4WwHilNvOhxOes3zquPajMK36LdcLnqtUK
-         tTPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0NTGs51P1bhaztDfYtdgmQOoPg2Lrd4/uxj1q0TWW3lR9AL3Xq4Dup3SeFLNivXUK9s1dLC5vL9xiMuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWRbi9YoNICnDOEyOWoCrxeGzqHQnr6jqtOzxHQPH7u93KuSly
-	jLBC7WMGeDZ7THGm0gppzZMA0IggkW8oAx5DnpfwdfmphyaQbJoFPh7IA4u+3E4=
-X-Google-Smtp-Source: AGHT+IEoQhbVmmbQMTTmc9qQqvTZ3+3Kk0Hi9yFcuaSu4B+QxOUVAbfHqw2zbJ89+CJkgxBFZGPM1A==
-X-Received: by 2002:a05:600c:450f:b0:42f:7ed4:4c26 with SMTP id 5b1f17b1804b1-42f8818577amr96674785e9.12.1728396921317;
-        Tue, 08 Oct 2024 07:15:21 -0700 (PDT)
-Received: from ?IPV6:2a04:cec2:a:a540:2f11:ef35:cca2:1960? ([2a04:cec2:a:a540:2f11:ef35:cca2:1960])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f8d133b73sm97911835e9.9.2024.10.08.07.15.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 07:15:20 -0700 (PDT)
-Message-ID: <ac765343-7804-4bd5-8057-d67fec2f17b1@baylibre.com>
-Date: Tue, 8 Oct 2024 16:15:19 +0200
+        d=1e100.net; s=20230601; t=1728396951; x=1729001751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iodlSeFvKO9O9lc2vubxBeazS52YJzq6TJTLiQpLA28=;
+        b=oQgujAtGl2Osp/YeI+hMqbYdZw+gH9NuL/0QzoeVDVDl2DPyoOQyAXCcRRWDTNLRoA
+         3r9LRiuwkEaxouB4y/B++ZCLpLZWWDdiBu9u4IaMf9ULJmdNyfuoeVp2P5sMC+cE+FjZ
+         zIK8Sb1hmAKds8rtoTSzBy1QglIkZWmW4wzuTjCP5jXs3W5N1QAmjEKIwMA0rYWbZBCw
+         aFwqp7X00hQrykwMv1o4tnk55nDablCsAJL3Dby2jmYZtUp5wUrf1YZV/9c5hPMtiILB
+         wQ+t4W4aSzlf9F1q28AC1bPjyAh7CEKuU32WzgjmWlHZiAMqtUkiG3D115h4UAIb+tZz
+         IgpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2dMfs+VK3g3FXC97HtySRa/0Wlgb/KImbzDWG+eDxqwA2fsoFNdlOhAV3IlmbFh5Ggk8Jr4PYXophUhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6kfDEsb5Cmh6OB6Aqz8nVZuWE5sZlEn5Qt7NHtKhbwszdXi90
+	a3kPNNKx8uv1PAilJ40jVUS29oSL7oE4mU4677VOscpY7O/u+YmnETyXi1uenhyTEVj1bXjVcAO
+	eJDO1W9EUo0Krv8StbGJ+qVXQacVmTsHxBD7Z
+X-Google-Smtp-Source: AGHT+IF3JZ0aU7P3DH+wfLO5j082Jriq88QMvx27KyZ0zh69K7klO4Qc/o+LBXdGIVCAlvjZnmQ0NSdIIQFlIkL0EE0=
+X-Received: by 2002:a05:6512:33d0:b0:533:cf5a:eb32 with SMTP id
+ 2adb3069b0e04-539ab8741c0mr8296779e87.19.1728396950549; Tue, 08 Oct 2024
+ 07:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] iio: adc: ad7606: Add iio-backend support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
- <20241004-ad7606_add_iio_backend_support-v3-9-38757012ce82@baylibre.com>
- <20241005125318.0c4a7bc8@jic23-huawei>
-Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <20241005125318.0c4a7bc8@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241004162720.66649-1-leitao@debian.org> <2234f445-848b-4edc-9d6d-9216af9f93a3@kernel.org>
+ <20241004-straight-prompt-auk-ada09a@leitao> <759f82f0-0498-466c-a4c2-a87a86e06315@redhat.com>
+ <ZwU8l8KSnVPIC5yU@gmail.com>
+In-Reply-To: <ZwU8l8KSnVPIC5yU@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 8 Oct 2024 16:15:37 +0200
+Message-ID: <CANn89iKBzOOMSQv5U8vpRcNtEYmPtOzqOWLxNgyjAnGOC=Bx+A@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: Optimize IPv6 path in ip_neigh_for_gw()
+To: Breno Leitao <leitao@debian.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, rmikey@meta.com, 
+	kernel-team@meta.com, horms@kernel.org, 
+	"open list:NETWORKING [IPv4/IPv6]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 8, 2024 at 4:07=E2=80=AFPM Breno Leitao <leitao@debian.org> wro=
+te:
+>
+> Hello Paolo,
+>
+> On Tue, Oct 08, 2024 at 12:51:05PM +0200, Paolo Abeni wrote:
+> > On 10/4/24 19:37, Breno Leitao wrote:
+> > > On Fri, Oct 04, 2024 at 11:01:29AM -0600, David Ahern wrote:
+> > > > On 10/4/24 10:27 AM, Breno Leitao wrote:
+> > > > > Branch annotation traces from approximately 200 IPv6-enabled host=
+s
+> > > > > revealed that the 'likely' branch in ip_neigh_for_gw() was consis=
+tently
+> > > > > mispredicted. Given the increasing prevalence of IPv6 in modern n=
+etworks,
+> > > > > this commit adjusts the function to favor the IPv6 path.
+> > > > >
+> > > > > Swap the order of the conditional statements and move the 'likely=
+'
+> > > > > annotation to the IPv6 case. This change aims to improve performa=
+nce in
+> > > > > IPv6-dominant environments by reducing branch mispredictions.
+> > > > >
+> > > > > This optimization aligns with the trend of IPv6 becoming the defa=
+ult IP
+> > > > > version in many deployments, and should benefit modern network
+> > > > > configurations.
+> > > > >
+> > > > > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > > > ---
+> > > > >   include/net/route.h | 6 +++---
+> > > > >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/include/net/route.h b/include/net/route.h
+> > > > > index 1789f1e6640b..b90b7b1effb8 100644
+> > > > > --- a/include/net/route.h
+> > > > > +++ b/include/net/route.h
+> > > > > @@ -389,11 +389,11 @@ static inline struct neighbour *ip_neigh_fo=
+r_gw(struct rtable *rt,
+> > > > >         struct net_device *dev =3D rt->dst.dev;
+> > > > >         struct neighbour *neigh;
+> > > > > -       if (likely(rt->rt_gw_family =3D=3D AF_INET)) {
+> > > > > -               neigh =3D ip_neigh_gw4(dev, rt->rt_gw4);
+> > > > > -       } else if (rt->rt_gw_family =3D=3D AF_INET6) {
+> > > > > +       if (likely(rt->rt_gw_family =3D=3D AF_INET6)) {
+> > > > >                 neigh =3D ip_neigh_gw6(dev, &rt->rt_gw6);
+> > > > >                 *is_v6gw =3D true;
+> > > > > +       } else if (rt->rt_gw_family =3D=3D AF_INET) {
+> > > > > +               neigh =3D ip_neigh_gw4(dev, rt->rt_gw4);
+> > > > >         } else {
+> > > > >                 neigh =3D ip_neigh_gw4(dev, ip_hdr(skb)->daddr);
+> > > > >         }
+> > > >
+> > > > This is an IPv4 function allowing support for IPv6 addresses as a
+> > > > nexthop. It is appropriate for IPv4 family checks to be first.
+> > >
+> > > Right. In which case is this called on IPv6 only systems?
+> > >
+> > > On my IPv6-only 200 systems, the annotated branch predictor is showin=
+g
+> > > it is mispredicted 100% of the time.
+> >
+> > perf probe -a ip_neigh_for_gw; perf record -e probe:ip_neigh_for_gw -ag=
+;
+> > perf script
+> >
+> > should give you an hint.
+>
+> Thanks. That proved to be very useful.
+>
+> As I said above, all the hosts I have a webserver running, I see this
+> that likely mispredicted. Same for this server:
+>
+>         # cat /sys/kernel/tracing/trace_stat/branch_annotated | grep ip_n=
+eigh_for_gw
+>          correct incorrect  %        Function                  File      =
+        Line
+>                0    17127 100 ip_neigh_for_gw                route.h     =
+         393
+>
+> It is mostly coming from ip_finish_output2() and tcp_v4. Important to
+> say that these machine has no IPv4 configured, except 127.0.0.1
+> (localhost).
 
-On 10/5/24 13:53, Jonathan Cameron wrote:
-> On Fri, 04 Oct 2024 21:48:43 +0000
-> Guillaume Stols <gstols@baylibre.com> wrote:
->
->> - Basic support for iio backend.
->> - Supports IIO_CHAN_INFO_SAMP_FREQ R/W.
->> - Only hardware mode is available, and that IIO_CHAN_INFO_RAW is not
->>    supported if iio-backend mode is selected.
-> I don't much like the trivial window between this patch and the next
-> where the emulated mode is still there but the sleeps aren't adapting with sampling frequency.
->
-> Maybe it's worth a dance of leaving the write_raw support
-> until after this one so the frequency remains fixed until after
-> the fsleep(2) calls are gone?
->
-> There is another bit that I'm unsure is technically correct until after
-> the next patch.  Maybe I'm reading the diff wrong though!
->
-> Thanks,
->
-> J
->
->> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
->> ---
->>   drivers/iio/adc/Kconfig      |   2 +
->>   drivers/iio/adc/ad7606.c     | 124 +++++++++++++++++++++++++++++++++++++------
->>   drivers/iio/adc/ad7606.h     |  15 ++++++
->>   drivers/iio/adc/ad7606_par.c |  94 +++++++++++++++++++++++++++++++-
->>   4 files changed, 219 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
->> index 4ab1a3092d88..9b52d5b2c592 100644
->> --- a/drivers/iio/adc/Kconfig
->> +++ b/drivers/iio/adc/Kconfig
->> @@ -224,9 +224,11 @@ config AD7606_IFACE_PARALLEL
->>   	tristate "Analog Devices AD7606 ADC driver with parallel interface support"
->>   	depends on HAS_IOPORT
->>   	select AD7606
->> +	select IIO_BACKEND
->>   	help
->>   	  Say yes here to build parallel interface support for Analog Devices:
->>   	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
->> +	  It also support iio_backended devices for AD7606B.
->>   
->>   	  To compile this driver as a module, choose M here: the
->>   	  module will be called ad7606_par.
->> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
->> index 3666a58f8a6f..d86eb7c3e4f7 100644
->> --- a/drivers/iio/adc/ad7606.c
->> +++ b/drivers/iio/adc/ad7606.c
->> @@ -21,6 +21,7 @@
->> @@ -737,6 +773,10 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
->>   			return ret;
->>   
->>   		return 0;
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->> +		if (val < 0 && val2 != 0)
->> +			return -EINVAL;
->> +		return ad7606_set_sampling_freq(st, val);
-> Currently I think  for the !backend + pwm case this can go out of
-> range for which that code works (fsleep removed in next patch).
-> Perhaps delay adding this until after that patch.
+Now run the experiment on a typical server using IPv4 ?
 
-Hi Jonathan,
+I would advise removing the likely() if it really bothers you.
+(I doubt this has any impact)
 
-The sampling frequency can be adjusted only for the backend version, 
-otherwise (including pwm+interrupt), there is no sysfs access to the 
-sampling frequency (only available for AD7606_BI_CHANNEL).
+But assuming everything is IPv6 is too soon.
 
->>   	default:
->>   		return -EINVAL;
->>   	}
->> @@ -1108,7 +1186,24 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->>   					       st->cnvst_pwm);
->>   		if (ret)
->>   			return ret;
->> +	}
->> +
->> +	if (st->bops->iio_backend_config) {
->> +		/*
->> +		 * If there is a backend, the PWM should not overpass the maximum sampling
->> +		 * frequency the chip supports.
->> +		 */
->> +		ret = ad7606_set_sampling_freq(st,
->> +					       chip_info->max_samplerate ? : 2 * KILO);
->> +		if (ret)
->> +			return ret;
->> +
->> +		ret = st->bops->iio_backend_config(dev, indio_dev);
->> +		if (ret)
->> +			return ret;
->> +		indio_dev->setup_ops = &ad7606_pwm_buffer_ops;
->>   	} else {
->> +		init_completion(&st->completion);
->>   		st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
->>   						  indio_dev->name,
->>   						  iio_device_id(indio_dev));
-> It's a little hard to unwind the patches, but this was previously in the !pwm case.
-> At this point in the series we still allow the pwm case to work with ! backend.
-> So is this now running in that case?   Do we need a temporary additional check
-> on !pwm
+There are more obvious changes like :
 
-mmm actually this should not be in a condition in the PWM  patch. Will 
-fix this directly there.
+diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
+index b6e7d4921309741193a8c096aeb278255ec56794..445f4fe712603e8c14b1006ad4c=
+baac278bae4ea
+100644
+--- a/net/ipv4/ip_input.c
++++ b/net/ipv4/ip_input.c
+@@ -462,7 +462,7 @@ static struct sk_buff *ip_rcv_core(struct sk_buff
+*skb, struct net *net)
+        /* When the interface is in promisc. mode, drop all the crap
+         * that it receives, do not try to analyse it.
+         */
+-       if (skb->pkt_type =3D=3D PACKET_OTHERHOST) {
++       if (unlikely(skb->pkt_type =3D=3D PACKET_OTHERHOST)) {
+                dev_core_stats_rx_otherhost_dropped_inc(skb->dev);
+                drop_reason =3D SKB_DROP_REASON_OTHERHOST;
+                goto drop;
+diff --git a/net/ipv6/ip6_input.c b/net/ipv6/ip6_input.c
+index 70c0e16c0ae6837d1c64d0036829c8b61799578b..3d0797afa499fa880eb5452a0de=
+a8a23505b3e60
+100644
+--- a/net/ipv6/ip6_input.c
++++ b/net/ipv6/ip6_input.c
+@@ -153,7 +153,7 @@ static struct sk_buff *ip6_rcv_core(struct sk_buff
+*skb, struct net_device *dev,
+        u32 pkt_len;
+        struct inet6_dev *idev;
 
->
->
->> @@ -1126,15 +1221,14 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->>   						      &ad7606_buffer_ops);
->>   		if (ret)
->>   			return ret;
->> +		ret = devm_request_threaded_irq(dev, irq,
->> +						NULL,
->> +						&ad7606_interrupt,
->> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
->> +						chip_info->name, indio_dev);
->> +		if (ret)
->> +			return ret;
->>   	}
->> -	ret = devm_request_threaded_irq(dev, irq,
->> -					NULL,
->> -					&ad7606_interrupt,
->> -					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
->> -					chip_info->name, indio_dev);
->> -	if (ret)
->> -		return ret;
->> -
->>   	return devm_iio_device_register(dev, indio_dev);
->>   }
->>   EXPORT_SYMBOL_NS_GPL(ad7606_probe, IIO_AD7606);
->> diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
->> index b87be2f1ca04..6042f6799272 100644
->> --- a/drivers/iio/adc/ad7606_par.c
->> +++ b/drivers/iio/adc/ad7606_par.c
->> @@ -2,7 +2,8 @@
->> +
->> +static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev *indio_dev)
->> +{
->> +	struct ad7606_state *st = iio_priv(indio_dev);
->> +	unsigned int ret, c;
->> +	struct iio_backend_data_fmt data = {
->> +		.sign_extend = true,
->> +		.enable = true,
->> +	};
->> +
->> +	st->back = devm_iio_backend_get(dev, NULL);
->> +	if (IS_ERR(st->back))
->> +		return PTR_ERR(st->back);
->> +
->> +	/* If the device is iio_backend powered the PWM is mandatory */
->> +	if (!st->cnvst_pwm)
->> +		return dev_err_probe(st->dev, -EINVAL,
->> +				     "A PWM is mandatory when using backend.\n");
->> +
->> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_iio_backend_enable(dev, st->back);
->> +	if (ret)
->> +		return ret;
->> +
->> +	for (c = 0; c < indio_dev->num_channels; c++) {
->> +		ret = iio_backend_data_format_set(st->back, c, &data);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	indio_dev->channels = ad7606b_bi_channels;
-> Ultimately this may want to move into the chip_info structures as more devices are added
-> but this is fine for now I suppose.
-Will do this in a next series where support is added for the other chips.
->
->> +	indio_dev->num_channels = 8;
->> +
->> +	return 0;
->> +}
+-       if (skb->pkt_type =3D=3D PACKET_OTHERHOST) {
++       if (unlikely(skb->pkt_type =3D=3D PACKET_OTHERHOST)) {
+                dev_core_stats_rx_otherhost_dropped_inc(skb->dev);
+                kfree_skb_reason(skb, SKB_DROP_REASON_OTHERHOST);
+                return NULL;
 
