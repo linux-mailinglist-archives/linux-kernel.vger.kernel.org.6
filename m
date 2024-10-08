@@ -1,366 +1,384 @@
-Return-Path: <linux-kernel+bounces-355038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A9799464F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E2994655
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A93D287599
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A181C22DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E371A1D0149;
-	Tue,  8 Oct 2024 11:14:32 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5217816EB42;
-	Tue,  8 Oct 2024 11:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB2D1CFEAE;
+	Tue,  8 Oct 2024 11:15:31 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B761CF7A2;
+	Tue,  8 Oct 2024 11:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728386072; cv=none; b=M6L9mM/6gFfgyLBHJVioMyBkKygApaafvQPOb+UGfRYaVOB7jWhMlqIeKvxl70L2VB+ofm+SdxVm97W0tYlJfQUXdEWi9I17JNSOPZS0HkdfWiLM6UwsfXowi9MbePv6xtp1HgxwLUIOv8VSxCuNrAMZfSTFXbUMb1XCPOstLsM=
+	t=1728386130; cv=none; b=mPTFaSXsy0Aum25SJ8PJH8E7x0vlglKRT+iaVuCo43cpZMvq/Iw+iEeudcbK+WTUq8luJqqI8GIXZVA5TRaWI4N6+3oEqs/XWk0FjsKnzeJDUMP2RRXIaG6GRllXB4Sm61QRq7J2fj51rRJaGA+k2rh/OhgbCDqz3I6x5KRPtrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728386072; c=relaxed/simple;
-	bh=ot0AMcrLmz5uhZ4+SV5LBkr8+ixd49O2Iu3QZusUki0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBcCagbOlJ4CczNcqr+VAKZ0DljeJR+kjSIAV+I5fVnCqCAHjTnQ4Iv+MtFpsLdai7Lf7NfZZOFNvElcV1GkgyG7CkaTmI8YFy0u3seKZ4Y0G4JMqOFVPEdhYdpnwgoqugx+CK4YqGBrRB0xe8ndyoPajMoLcvdIU/ZV/Wdz7bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5398cc2fcb7so6226268e87.1;
-        Tue, 08 Oct 2024 04:14:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728386068; x=1728990868;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P49/aqnFeGhK0JHnT6oL1HTdVou7U5WzZzZVhN5T5As=;
-        b=sX/gJNybGtK8Hp/pqt4TdNHiSdv5fM4XszthMWUlJR1VR3lCjSX944jSUTA8rTUea0
-         o6S149Y+XTMfBAOnrkToUkMisAjnJR6hfQUj+cXtMVIclTW0lG0xtcf3Fhaiiaij9xTx
-         KPqd4S8BdOOy2hY+vcwFx1lgB6wodcRnYjklbUtE+JOQI5QEEw+KTKpMh8rvip+sL+ph
-         kpBe0lL5C04ve5qeGvFz4Bv3LZeMhIL+LiJY0fRLGb5KOkcpMbJYRYCFLy4USsQKW7sc
-         tSdRXOAV0pJiMTbaDbE0vfGvKVPmIPrzCm7bm0fMPV7oh52/Ako16ydqVer8CKO4XAAo
-         yeOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3mzgzkfN+wjsurz+CKB2O0UQK2iSqwV/O6fbUqEixxlc6o/a/2e8v70y0WnvowKk1a/NeVbkRk3YRfoIs@vger.kernel.org, AJvYcCWFgLgG8dzk6atprkWtvnehRkhL5+NnULGvAsFyDhq1rYsvc0dE6YaJlVVqGqPRfXC0nR+Bivj6@vger.kernel.org, AJvYcCWQs1Hy/rcA+dpo5317qpZ/vBFKARTEeG9Rd8mPKBu5O9V4KN5vJoKtMyJmSi4rRguWu+AHIto6Y+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzlqEYfmNaq1GSSKP42cSL3kuRkUf40IFWFQ43esCMKXJdYT9Z
-	4dhfXEQcXgud3eiehjBmZ2HbXXUzXFsCgeNCDQk0lqT3wWx0l/rg
-X-Google-Smtp-Source: AGHT+IG9JKoIOuQG3c56tZ2srx6cmx2FrWqGR96EfuHT/vTAun99vCIp2v2w3qOAUkCFcdqwA3jCLA==
-X-Received: by 2002:a05:6512:1250:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-539ab86b120mr8820594e87.29.1728386067955;
-        Tue, 08 Oct 2024 04:14:27 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994062660csm414327066b.21.2024.10.08.04.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 04:14:27 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-team@meta.com,
-	kuniyu@amazon.com,
-	asml.silence@gmail.com,
-	Willem de Bruijn <willemb@google.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
-Subject: [PATCH net-next v2] net: Implement fault injection forcing skb reallocation
-Date: Tue,  8 Oct 2024 04:13:43 -0700
-Message-ID: <20241008111358.1691157-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728386130; c=relaxed/simple;
+	bh=GvOIH3DHFsDeaxCjB3ghIAXSIOFMn7rO3QRkqzJq7CQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPpa+etXe78MXdCipYWjBP48Q7D7XaH4ftbsVDDy6a7uloI+RbOFUfHSxxUgual5ZHBBMpEquDdmvW47xKU1+wOtXERLKgMtZn1CCHkXS2yRu7z9rcvpP1OmU7F3R0aGyii988EP918VFTUSE8F1CmR86y0pNsXgHk8rftIl3jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 498BEiGn023933;
+	Tue, 8 Oct 2024 06:14:44 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 498BEgtu023932;
+	Tue, 8 Oct 2024 06:14:42 -0500
+Date: Tue, 8 Oct 2024 06:14:42 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+Message-ID: <20241008111442.GA23889@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com> <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 08 Oct 2024 06:14:44 -0500 (CDT)
 
-Introduce a fault injection mechanism to force skb reallocation. The
-primary goal is to catch bugs related to pointer invalidation after
-potential skb reallocation.
+On Wed, Oct 02, 2024 at 10:35:58AM -0400, Paul Moore wrote:
 
-The fault injection mechanism aims to identify scenarios where callers
-retain pointers to various headers in the skb but fail to reload these
-pointers after calling a function that may reallocate the data. This
-type of bug can lead to memory corruption or crashes if the old,
-now-invalid pointers are used.
+Good morning, I hope the day is starting well for everyone.
 
-By forcing reallocation through fault injection, we can stress-test code
-paths and ensure proper pointer management after potential skb
-reallocations.
+Some clarifications regarding the current challenges to LSM review.
 
-Add a hook for fault injection in the following functions:
+> On Wed, Oct 2, 2024 at 6:38???AM Dr. Greg <greg@enjellic.com> wrote:
+> > On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> > > On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> > > >
+> > > > Linus, it's unclear if you're still following this thread after the
+> > > > pull, but can you provide a little insight on your thoughts here?
+> >
+> > > I absolutely hate the whole "security people keep arguing", and I
+> > > cannot personally find it in myself to care about tomoyo.  I don't
+> > > even know where it is used - certainly not in Fedora, which is the
+> > > only distro I can check quickly.
+> > >
+> > > If the consensus is that we should revert, I'll happily revert. This
+> > > was all inside of the tomoyo subdirectory, so I didn't see it as
+> > > some kind of sidestepping, and treated the pull request as a regular
+> > > "another odd security subsystem update".
+> >
+> > I see that Paul Moore has further responded with commentary about the
+> > 'LSM community' responding to this issue.  I wanted, on behalf of our
+> > project and in support of Tetsuo's concerns, to register directly with
+> > you a sense of jaded skepticism about the notion of a community
+> > response.
+> >
+> > Fixing Tetsuo's issue, at least to the extent it can be fixed,
+> > requires technical improvements in the Linux security architecture.
+> > Currently, potential technical improvements in this venue are
+> > struggling to receive any kind of acknowledgement or review, to the
+> > ultimate detriment of enhancements that Linux should be bringing
+> > forward to address, not only this issue, but the security industry
+> > writ-large.
 
- * pskb_trim_rcsum()
- * pskb_may_pull_reason()
- * pskb_trim()
+> I've believe the LSM developer community is interesting in that it
+> is much smaller than many other kernel subsystems, despite the
+> substantial technical scope when one considers the LSM's reach
+> within the kernel.  This brings about a number of challenges, the
+> largest being that reviewing ideas, documents, and code changes
+> takes time.  Everyone always wants their personal patchset to land
+> "right now!", but it's important that the changes are given the
+> proper review and testing.  You don't have to look any further than
+> the recent static call changes to see a perfect example of how
+> overly aggressive attitudes toward merging would have resulted in a
+> number of real world failures.  I agree that a quicker pace would be
+> nice, but I'm not willing to trade off reliability or correctness so
+> people's favorite feature can land in Linus' tree a bit quicker.
 
-As the other fault injection mechanism, protect it under a debug Kconfig
-called CONFIG_FAIL_SKB_FORCE_REALLOC.
+We would certainly concur and fall decidedly on the side of minimizing
+any potential negative impacts to changes in the LSM.  One of our
+areas of primary focus is on critical infrastructure systems, so we
+are laser focused on both simplicity and high reliability.
 
-This patch was *heavily* inspired by Jakub's proposal from:
-https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
+That is why TSEM was designed to be an LSM that implements generic
+security modeling and only functions to consume security event
+descriptions, with no impact outside of its own functionality.
 
-CC: Akinobu Mita <akinobu.mita@gmail.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
+For the benefit of the record, and everyone following along, here is
+the diffstat for the recent V4 release:
 
-v2:
- * Moved the CONFIG_FAIL_SKB_FORCE_REALLOC Kconfig entry closer to other
-   fault injection Kconfigs.  (Kuniyuki Iwashima)
- * Create a filter mechanism (Akinobu Mita)
+Documentation/ABI/testing/tsem                | 2420 ++++++++++++++++
+Documentation/admin-guide/LSM/index.rst       |    1 +
+Documentation/admin-guide/LSM/tsem.rst        | 1680 +++++++++++
+.../admin-guide/kernel-parameters.txt         |   29 +
+MAINTAINERS                                   |    8 +
+include/uapi/linux/lsm.h                      |    1 +
+security/Kconfig                              |   11 +-
+security/Makefile                             |    1 +
+security/security.c                           |    3 +-
+security/tsem/Kconfig                         |   36 +
+security/tsem/Makefile                        |    6 +
+security/tsem/event.c                         | 1846 +++++++++++++
+security/tsem/export.c                        |  429 +++
+security/tsem/fs.c                            | 2304 ++++++++++++++++
+security/tsem/map.c                           | 1536 +++++++++++
+security/tsem/model.c                         |  758 +++++
+security/tsem/model0.c                        |   21 +
+security/tsem/namespace.c                     |  530 ++++
+security/tsem/nsmgr.c                         |  255 ++
+security/tsem/nsmgr.h                         |   48 +
+security/tsem/trust.c                         |  261 ++
+security/tsem/tsem.c                          | 2446 +++++++++++++++++
+security/tsem/tsem.h                          | 2336 ++++++++++++++++
 
-v1:
- * https://lore.kernel.org/all/20241002113316.2527669-1-leitao@debian.org/
+It should be noted that with version v4, in response to the issues
+that Tetsuo has been raising, we implemented the ability to implement
+customized LSM event handling through the use of loadable kernel
+modules.
 
- .../fault-injection/fault-injection.rst       | 35 +++++++
- include/linux/skbuff.h                        |  9 ++
- lib/Kconfig.debug                             | 10 ++
- net/core/Makefile                             |  1 +
- net/core/skb_fault_injection.c                | 95 +++++++++++++++++++
- 5 files changed, 150 insertions(+)
- create mode 100644 net/core/skb_fault_injection.c
+Given the code footprint and design, and the Tomoyo discussion and
+issues, we believe our approach offers a highly positive benefit/risk
+ratio.
 
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 8b8aeea71c68..bb19638d5317 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -45,6 +45,28 @@ Available fault injection capabilities
-   ALLOW_ERROR_INJECTION() macro, by setting debugfs entries
-   under /sys/kernel/debug/fail_function. No boot option supported.
- 
-+- fail_net_force_skb_realloc
-+
-+  inject skb (socket buffer) reallocation events into the network path. The
-+  primary goal is to identify and prevent issues related to pointer
-+  mismanagement in the network subsystem.  By forcing skb reallocation at
-+  strategic points, this feature creates scenarios where existing pointers to
-+  skb headers become invalid.
-+
-+  When the fault is injected and the reallocation is triggered, these pointers
-+  no longer reference valid memory locations. This deliberate invalidation
-+  helps expose code paths where proper pointer updating is neglected after a
-+  reallocation event.
-+
-+  By creating these controlled fault scenarios, the system can catch instances
-+  where stale pointers are used, potentially leading to memory corruption or
-+  system instability.
-+
-+  To select the interface to act on, write the network name to the following file:
-+  `/sys/kernel/debug/fail_net_force_skb_realloc/devname`
-+  If this field is left empty (which is the default value), skb reallocation
-+  will be forced on all network interfaces.
-+
- - NVMe fault injection
- 
-   inject NVMe status code and retry flag on devices permitted by setting
-@@ -216,6 +238,18 @@ configuration of fault-injection capabilities.
- 	use a negative errno, you better use 'printf' instead of 'echo', e.g.:
- 	$ printf %#x -12 > retval
- 
-+- /sys/kernel/debug/fail_net_force_skb_realloc/devname:
-+
-+        Specifies the network interface on which to force SKB reallocation.  If
-+        left empty, SKB reallocation will be applied to all network interfaces.
-+
-+        Example usage:
-+        # Force skb reallocation on eth0
-+        echo "eth0" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
-+
-+        # Clear the selection and force skb reallocation on all interfaces
-+        echo "" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
-+
- Boot option
- ^^^^^^^^^^^
- 
-@@ -227,6 +261,7 @@ use the boot option::
- 	fail_usercopy=
- 	fail_make_request=
- 	fail_futex=
-+	fail_net_force_skb_realloc=
- 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
- 
- proc entries
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 39f1d16f3628..d9ee756a64fc 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2681,6 +2681,12 @@ static inline void skb_assert_len(struct sk_buff *skb)
- #endif /* CONFIG_DEBUG_NET */
- }
- 
-+#if defined(CONFIG_FAIL_SKB_FORCE_REALLOC)
-+void skb_might_realloc(struct sk_buff *skb);
-+#else
-+static inline void skb_might_realloc(struct sk_buff *skb) {}
-+#endif
-+
- /*
-  *	Add data to an sk_buff
-  */
-@@ -2781,6 +2787,7 @@ static inline enum skb_drop_reason
- pskb_may_pull_reason(struct sk_buff *skb, unsigned int len)
- {
- 	DEBUG_NET_WARN_ON_ONCE(len > INT_MAX);
-+	skb_might_realloc(skb);
- 
- 	if (likely(len <= skb_headlen(skb)))
- 		return SKB_NOT_DROPPED_YET;
-@@ -3210,6 +3217,7 @@ static inline int __pskb_trim(struct sk_buff *skb, unsigned int len)
- 
- static inline int pskb_trim(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
- }
- 
-@@ -3964,6 +3972,7 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	if (likely(len >= skb->len))
- 		return 0;
- 	return pskb_trim_rcsum_slow(skb, len);
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..fa65e14f7c61 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2115,6 +2115,16 @@ config FAIL_SUNRPC
- 	  Provide fault-injection capability for SunRPC and
- 	  its consumers.
- 
-+config FAIL_SKB_FORCE_REALLOC
-+	bool "Fault-injection capability forcing skb to reallocate"
-+	depends on FAULT_INJECTION_DEBUG_FS
-+	help
-+	  Provide fault-injection capability that forces the skb to be
-+	  reallocated, caughting possible invalid pointers to the skb.
-+
-+	  For more information, check
-+	  Documentation/dev-tools/fault-injection/fault-injection.rst
-+
- config FAULT_INJECTION_CONFIGFS
- 	bool "Configfs interface for fault-injection capabilities"
- 	depends on FAULT_INJECTION
-diff --git a/net/core/Makefile b/net/core/Makefile
-index c3ebbaf9c81e..02658807242b 100644
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -45,3 +45,4 @@ obj-$(CONFIG_BPF_SYSCALL) += bpf_sk_storage.o
- obj-$(CONFIG_OF)	+= of_net.o
- obj-$(CONFIG_NET_TEST) += net_test.o
- obj-$(CONFIG_NET_DEVMEM) += devmem.o
-+obj-$(CONFIG_FAIL_SKB_FORCE_REALLOC) += skb_fault_injection.o
-diff --git a/net/core/skb_fault_injection.c b/net/core/skb_fault_injection.c
-new file mode 100644
-index 000000000000..b6e7a99292cc
---- /dev/null
-+++ b/net/core/skb_fault_injection.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/fault-inject.h>
-+#include <linux/netdevice.h>
-+#include <linux/debugfs.h>
-+#include <linux/skbuff.h>
-+
-+static struct {
-+	struct fault_attr attr;
-+	char devname[IFNAMSIZ];
-+	bool filtered;
-+} skb_realloc = {
-+	.attr = FAULT_ATTR_INITIALIZER,
-+	.filtered = false,
-+};
-+
-+void skb_might_realloc(struct sk_buff *skb)
-+{
-+	struct net_device *net = skb->dev;
-+
-+	if (skb_realloc.filtered &&
-+	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
-+		/* device name filter set, but names do not match */
-+		return;
-+
-+	if (!should_fail(&skb_realloc.attr, 1))
-+		return;
-+
-+	pskb_expand_head(skb, 0, 0, GFP_ATOMIC);
-+}
-+EXPORT_SYMBOL(skb_might_realloc);
-+
-+static int __init skb_realloc_setup(char *str)
-+{
-+	return setup_fault_attr(&skb_realloc.attr, str);
-+}
-+__setup("skb_realloc=", skb_realloc_setup);
-+
-+static void reset_settings(void)
-+{
-+	skb_realloc.filtered = false;
-+	memzero_explicit(&skb_realloc.devname, IFNAMSIZ);
-+}
-+
-+static ssize_t devname_write(struct file *file, const char __user *buffer,
-+			     size_t count, loff_t *ppos)
-+{
-+	ssize_t ret;
-+
-+	reset_settings();
-+	ret = simple_write_to_buffer(&skb_realloc.devname, IFNAMSIZ,
-+				     ppos, buffer, count);
-+	/* Remove the \n */
-+	skb_realloc.devname[strlen(skb_realloc.devname) - 1] = '\0';
-+	if (ret < 0)
-+		return ret;
-+
-+	if (strnlen(skb_realloc.devname, IFNAMSIZ))
-+		skb_realloc.filtered = true;
-+
-+	return count;
-+}
-+
-+static ssize_t devname_read(struct file *file,
-+			    char __user *buffer,
-+			    size_t size, loff_t *ppos)
-+{
-+	if (!skb_realloc.filtered)
-+		return 0;
-+
-+	return simple_read_from_buffer(buffer, size, ppos, &skb_realloc.devname,
-+				       strlen(skb_realloc.devname));
-+}
-+
-+static const struct file_operations devname_ops = {
-+	.write = devname_write,
-+	.read = devname_read,
-+};
-+
-+static int __init fail_net_force_skb_realloc_debugfs(void)
-+{
-+	umode_t mode = S_IFREG | 0600;
-+	struct dentry *dir;
-+
-+	dir = fault_create_debugfs_attr("fail_net_force_skb_realloc", NULL,
-+					&skb_realloc.attr);
-+	if (IS_ERR(dir))
-+		return PTR_ERR(dir);
-+
-+	debugfs_create_file("devname", mode, dir, NULL, &devname_ops);
-+
-+	return 0;
-+}
-+
-+late_initcall(fail_net_force_skb_realloc_debugfs);
--- 
-2.43.5
+> Independent of everything above, it is important to note that the pace
+> of changes in the LSM framework over the past two years has increased
+> significantly.  Even ignoring some of the administrative improvements,
+> e.g. process documentation, since 2022 the LSM community has been
+> merging code at a pace much higher than we've seen during the entirety
+> of the "git age":
+> 
+> [NOTE: using 'security/security.c' to be representative of LSM
+> framework specific changes seems reasonable for a quick metric]
+> 
+> # previous two years (reference)
+> % git log --after="2022" --before="2024" \
+>   --oneline security/security.c | wc -l
+> 141
 
+We certainly wouldn't ascribe to be 'git foo' masters but we have used
+git a little bit and grep a whole lot.
+
+We believe the following command sheds some light on these statistics:
+
+git log --after=2022 --before=2024 --oneline --no-merges security/security.c |
+	egrep -vi "comments|evm|ima|integrity|spelling" | wc -l
+
+Which generates the following value as of the head of the v6.10 tree:
+
+60
+
+The EVM/IMA/integrity integration work is certainly positive, and we
+believe was something that you advocated for in coming into the LSM
+maintainership role, but its potential negative impacts writ-large are
+potentially more significant than an independent LSM.
+
+To extend a bit further with respect to our work.
+
+If one reads the TSEM documentation carefully, one will find that its
+functional predicate, from a modeling perspective, is based on tying
+security event descriptions to the cryptographic checksums of the
+executable that are generating the security events.
+
+By composing from a clean sheet of music you get a simpler and more
+self-contained integrity design.  Since a TSEM security model has its
+time of measurement based on the unit test of the workload, the
+complexity of cryptographic metadata signing (EVM) can be sidestepped
+along with a significant component of its performance impact.
+
+So we would posit, once again, that TSEM offers a comparatively low
+risk implementation with significant benefit to the Linux security
+community.
+
+> > We have made multiple submissions of technology, that can at least
+> > positively impact Tetsuo's concerns, and in the process perhaps
+> > improve the opportunity for security innovation in Linux.  After 20
+> > months of doing so we have yet to receive anything that would resemble
+> > substantive technical review [1].
+
+> I disagree.  I've personally reviewed two of your LSM revisions,
+> providing feedback on both.  Unfortunately both times I've not made
+> it past the documentation as there have been rather significant
+> issues which I didn't believe were properly addressed from one
+> revision to the next.  From what I've seen on the mailing list,
+> others have identified similarly serious concerns which in my
+> opinion have not received adequate responses.
+
+I believe the published record of TSEM clearly does not support this
+premise.
+
+For the benefit of everyone following this discussion, we will post
+again the links to the four releases:
+
+V1
+https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+
+V2:
+https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+
+V3:
+https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
+
+V4:
+https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+
+Here is a breakdown of all the review comments received in 20 months:
+
+Casey Schaufler		9
+Paul Moore		3
+Serge Hallyn		2
+Greg Kroah-Hartman	2
+Randy Dunlap		1
+
+At the risk of having possibly missed something, we would encourage
+everyone else to look at the four link summaries to see if we have
+left any review comments unanswered, we don't believe an inspection of
+the threads will find that to be the case.
+
+If anyone chooses to clone the TSEM GIT repository, you will find in
+the commit summary, references to all of the issues that were raised
+and the steps we took to address them.
+
+For the record, we have integrated all of the functional changes
+requested by the reviews, most significantly the implementation of
+JSON encoding of all security event descriptions, a very positive
+review comment from GKH.
+
+Casey's primary concerns have been about the organization of the code,
+ie. a single header file with all of the declarations and definitions
+for the compilation units in the security/tsem directory.
+
+We reached out to you in advance of the v3 release to find out if you
+would like us to re-structure the code to have multiple include files.
+You indicated there were far more problems than the code organization,
+we asked specifically what those problems would be and received no
+response.
+
+The primary technical objection you raised, and to date no one else
+has raised this issue, was with the fact that we were exporting the
+global PID of an externally modeled process to a trust orchestrator.
+This is needed so that the orchestrator can find the process task
+structure, in order to set its trust status in its task control
+structure before releasing the process for further exection, after the
+model evaluation of a security event was completed.
+
+Two of your review comments dealt with this issue.  In your original
+response you posited that it was possible to kill a process waiting
+for model evaluation and conduct a PID race attack that could
+substitute an alternate process to be acted on by the trust
+orchestrator.
+
+In response to that concern, we implemented a task authentication
+mechanism that requires cryptographic verification of the process by
+the trust orchestrator.  We also implemented protections in the
+task_kill handler that would allow only tasks with CAP_MAC_ADMIN
+status to generate a cross-model/namespace signal that would bring a
+modeled task out of its sleep state.
+
+You indicated that authentication was good but insufficient and noted
+that an attacker could use the OOM handler to bypass the task_kill
+protections.  You posited that pidfd's were how this type of thing
+should be done.
+
+We went back and studied the problem in significant detail, including
+trust orchestration latency timings and the impact they would have on
+the exploitability of a race window.
+
+For the record, here is the lore link to our response that we posted
+on 02/19/2024, which to date, we have received no reply to:
+
+https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#me86004e3cd197046885d371cb70df389beb72c7e
+
+We would hope that anyone in the LSM community, that reads the above,
+would conclude that we took time to develop a detailed technical
+response to this primary concern you have raised.
+
+A summary for those that don't want to click on the link.
+
+Exploiting the race window would require killing the sleeping process
+with the OOM handler, something that we are not sure is even possible,
+and then cycling a new process with an identical PID into the PID slot
+in approximately 45-90 micro-seconds.  In a worst case scenario, with
+a 32 bit PID space, this would require 2 billion forks in the race
+window, without the trust orchestrator being re-scheduled, which would
+have the effect of terminating the race window.
+
+To extend further, since we are answering a technical criticism.
+
+TSEM's security model predicates on the notion of a trust orchestrator
+constraining the behavior of processes in a workload to a set of
+cryptographically unique coefficients that represent each security
+state the process can enter into.  Those states are dependent not only
+on the cryptographic checksum of the executable code that gave rise to
+the process but the cryptographic identities of all processes that led
+to that process.
+
+If an adversary were to substitute a process that was 'raced' into the
+PID slot it would have a different cryptographic identity than the
+process it was replacing and would thus generate security events that
+were inconsistent with the model being enforced.  This would result in
+any further security events by that process being trapped as
+untrusted.
+
+An open vulnerability in this model, of course, is if the attacker
+could also mount an effective second pre-image attack against the
+cryptographic hash function being used to implement the extension sum
+that represents the task identity.  To our knowledge, no such attacks
+are available against any of the cryptographically secure hash
+functions that would be chosen for a TSEM security model.  Such an
+attack would represent a major failure in the modern cryptographic
+primitives the security industry depends on.
+
+> The TSEM LSM is still queued for review, but based on prior reviews
+> it currently sits at a lower priority.  I realize this is
+> frustrating, but I have to prioritize work based on impact and
+> perceived quality.
+
+We will leave the perceived quality discussion to the previous section
+of our response and take on the notion of impact here.
+
+We've stated previously and will state again.  We saw the issue
+created by Tetsuo and this Tomoyo incident coming during the COVID
+years and began work on addressing what we saw was going to be an
+important issue for the Linux security community.
+
+You commented to us in an alternate thread, that you have seen nothing
+that Tetsuo has done that would change your mind with respect to
+having an LSM being implemented with a loadable module.
+
+If that isn't possible, and there are probably good technical reasons
+for that, then we need an LSM that is capable of implementing security
+models of one's choosing, using mechanisms that do not necessarily
+require having an in-kernel LSM.
+
+That is exactly what TSEM was designed to bring to the Linux security
+community.  Which, given the issues this event has raised, would seem
+to be a positive contribution with some impact.
+
+Which we also believe justifies more attention than what it has been
+able to receive in 20 months.
+
+> paul-moore.com
+
+Hopefully with these clarifications in place we can proceed forward in
+a more positive context.
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
