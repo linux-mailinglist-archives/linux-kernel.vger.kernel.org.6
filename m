@@ -1,113 +1,198 @@
-Return-Path: <linux-kernel+bounces-354509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48049993E73
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F449993E74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4512B21164
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C89C281329
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8529213AA27;
-	Tue,  8 Oct 2024 05:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1992C13B580;
+	Tue,  8 Oct 2024 05:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQgahom9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hszHqI1N"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42CF2905;
-	Tue,  8 Oct 2024 05:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728366387; cv=none; b=qqiFGM87aZO+yiN4NMy+oA+y/o/axmFF299hND/ZbkVPHZT1NHpyOyUU5bJeAiU11V3U/Z219V4jlgPa6hwJwseNO5+kEVdctomUvivbF2f9annJmo9OKs8GqY3QgXAXyUrjpith0DA8z+Ewuedua9XhUD1xJYV3PiHuI/2I/eA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728366387; c=relaxed/simple;
-	bh=N/Spo9SDduv0RLowIffYPfGmNx1YtohH9VQK4z1BrSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AE+grb318TDyJFnFeOfFNgbZS0A0bMIYe7hl6X11H9uG2hNmymSV78rziphngwXnCyM0Px4g5BpiI9orupRH5af+1jilqckBo9xxQkHVFyzEhp6ZY6l/2egPX/kfyI5NAr4vBiYpYqf5dEhcZUehXdfI2Z+Oz5Z0woWIOvDlEMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQgahom9; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b7259be6fso57469635ad.0;
-        Mon, 07 Oct 2024 22:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728366385; x=1728971185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pc93Myxhw5WDTjlUIkYMv2Vf5o3lHuclVJG9aINvVes=;
-        b=aQgahom9TbAgn8J8DOXeff+FkjyKQDzTC4ZWWNPSh8uShbAJGh7yRqB6ArLDXqM+vt
-         0aXBb+nBmodkql7HCUSVAW5gd8wSqLKQVRIZG1ff3WHwO4tvtj1sdcEvd7pHbOBkDB4I
-         DtNGan/6bIFPosNdZfatTSalVu2Lr2oEXpXl90IJHZS6OUF/NP3+gJ0U/Od/fNqHQI5D
-         zgXX3fxqsxj53LMIF/CNNxLMRiOxjKZrUxe7VjXLImy6AhCnsJiNALbZgYFS7/3Tw3Ax
-         I1iVk15B+y6hYKPazhfP9jpj1DfpZkB/FLaYSkQXlBB6OKwsz1bGYJSNojF3gM3sZeKR
-         aBOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728366385; x=1728971185;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pc93Myxhw5WDTjlUIkYMv2Vf5o3lHuclVJG9aINvVes=;
-        b=m6QCO23JxBM0tmIcEBvLEMaINsBe+uMJ6qQS5lyOOMXAxqQmytRxMZoc8CXSZTAGnH
-         bpvuRqj5132vjPyJz5wl6uRWApCK5d9e1GAeA+nqox/qHlOHTBZ8eaupjuM11Oy8jJHc
-         znVOaYdNij2rdn+kHxLD3it43j6jXXX6UftmL+NeTaVAkWv2Qd3utjWoekV69NKkEYrK
-         J50YKZi7AobdFQQEMUghD0Dwx1SoUCtb0h6TZwcmWMTjOi/KPU2YL9+x0JfoWAhFefPT
-         zq7oFogfsBPlSvs+YBzk8n3Km5boHEcbHR2jhVb2FCYRXDv2RffUkRTn8wRT+ggwQbcb
-         0ncQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2qUylZyQ5V6B8hX0Dom1z66NnxPTcGB/7KW/NDjBjQVc+hk7shxSauBgXCSHLtpwToMHaK09rxTkdf48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEB5d7s6J+gWooDj2UxGlDcjQs/0D8AEhYqFYdmgi6or8TzFUS
-	sczFyBsge7IhXbfhCFAQt5TUlZTNMd17Ef+kmXv3xdxLxXR6VPK22/qWkUNZ6BI=
-X-Google-Smtp-Source: AGHT+IHxznj5YGFHAoWp8hwcy9eUBWmkaPeX447OgP8eReH1zm/Z/baPjrCgcZTCfhWCxirLxtgdrQ==
-X-Received: by 2002:a17:902:e2d4:b0:20b:b079:5b7a with SMTP id d9443c01a7336-20bff03519fmr136454675ad.50.1728366384899;
-        Mon, 07 Oct 2024 22:46:24 -0700 (PDT)
-Received: from localhost ([202.85.210.186])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c5a90c002sm1136015ad.72.2024.10.07.22.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 22:46:24 -0700 (PDT)
-From: Yang Li <yang.li85200@gmail.com>
-To: guoren@kernel.org
-Cc: linux-csky@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Li <yang.li85200@gmail.com>
-Subject: [PATCH] csky: fix csky_cmpxchg_fixup not working
-Date: Tue,  8 Oct 2024 13:46:15 +0800
-Message-Id: <20241008054615.43062-1-yang.li85200@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC78F2905;
+	Tue,  8 Oct 2024 05:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728366420; cv=fail; b=WV7QI6iBklhcuPoQwpRjlikwbIvQPVBufEtfU/m6JL4DOr7dcWLan3NId06DOTFlvwaKzbAlBCOjn2Bh+gvwLz+OBtINGyGNc7S87Q+YMi/D2FEPchNyXcZVUfZd6qnw0Sw0BnEIEtZTAQP9Mwq04uRNSLStvyYUr8VvhJB0Yas=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728366420; c=relaxed/simple;
+	bh=rr7z/l8cZsWMTc7vso1MONPOmWr3U3YxCdjUZLHL/4E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V17B1jJpcquFNI5rsxcUmuXLltcKrcPigrfzBfw9AmpAs7T48zXKITsID9gTnYVG5Uqi80me1PbTjZ+yMe5dfGUcYE+opHwHu3tyyQ4aA5bqwX3Y+XKnDZYyZ4tX2pSBanplJslTMO3eFlRoZwCP6UB3+rdss8ZIhguVHYNFVyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hszHqI1N; arc=fail smtp.client-ip=40.107.223.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g12EDJiJX7H26khAxyQNB0YIjdvVnPRPJ+2b8OWzw7qEl8BJ1zOmIuyUdYPHVoqKAWeZ7nfBHcN1qFJS1MzuN+16HbRrOG8H1Q8CIuQwVq6Q8vzBwFIFHjtS1IfgDZqBhaQOlVBU7FhWl+GNw0Vnc59G+r40qxNLwrOYIMX+caXpxWP6DNs9pijnQYQphU23sQk09Hg7Vs39Kxh0f11HqVY/G4pJLrSfYYg2S/Va6RuMz0l0FkFJMTCVdqVJU0H4CGILFVOFDYuGMHYaPPiiM8b6xw/JQHbCCzm3x1JPmJ6Zx5DxDeR3vV7T5bvBu5OwegHmlzdDftXsoS9JIZJHow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JXXilo6R+tjYMSpRM5V6k5Aao8pPVf9U+B4Wg3QyN7k=;
+ b=v342AUyJMYUJKpeO3jPwfQO/8R49+1QbWvXqLlNf/pb14qozOFPAn1OTtkS7gd+kyGEzSBvWJMG/UHAPPKn0ZCApP4LX1+uQ1oGoMjRYGM80rrOBY5fmfFe5BNKN6tdSQX/TUZ3jefjX8yOu47bP3rpR9Vtja0J7p1obUn/RxPGJeF0E5ystC1NpfS/k/6iKkETjVI+X33TTshLPYY6yrJ88MBlkvrVpb1ntmsQ65IOk9cVZRzNNPwFhBTse0pG4zIdC90pPLXjYWOljzE8MvjDTiHWWSFcRW8I4DwzcDP+YRJZDAzlyvDfF2u8uSCfJ9UMm1iFgxxCWapTRZexn4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JXXilo6R+tjYMSpRM5V6k5Aao8pPVf9U+B4Wg3QyN7k=;
+ b=hszHqI1NNfr0jEmDCGesuWqJq1ejhxx8qhoGAx53Fo6DQPvDv1Ap6m2dmeP0xT/9BZS7FZFgcDM6tbWOwqVC0AJpuIYpaJca5CcgCQ4KWepAtwvmtoz9XzD0mFt+revWcxfO2yynT+gx2CJleM738r+gsrEt2TsETTTnCMqBGvA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by IA1PR12MB8238.namprd12.prod.outlook.com (2603:10b6:208:3f9::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
+ 2024 05:46:56 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%4]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
+ 05:46:55 +0000
+Message-ID: <8a105c37-d403-4967-8862-6e097328c836@amd.com>
+Date: Tue, 8 Oct 2024 11:16:43 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] perf/amd/ibs: Add pmu specific minimum period
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ eranian@google.com, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20241007034810.754-1-ravi.bangoria@amd.com>
+ <20241007034810.754-7-ravi.bangoria@amd.com> <ZwQ2yzLm2yyaYOcJ@google.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <ZwQ2yzLm2yyaYOcJ@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN0PR01CA0017.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:4f::22) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|IA1PR12MB8238:EE_
+X-MS-Office365-Filtering-Correlation-Id: d85a37f6-9820-4c3f-df6d-08dce75c9e1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dWlkNmVaZ0hSdUhUS2Z0VkpIZWxxN3l6V2FlTHNueWNIeHVrS215aVZ5RUpQ?=
+ =?utf-8?B?NnlPRFJjMndLNjI0M1pGZkVFTlk3QXJWNFVQY3hMRjI4N0V1Q25TSDFjckpC?=
+ =?utf-8?B?OVh5VVJoVFNWUHZiVEdNUStRRStsTUM1bktwY243U0h1NWdNTEF3amFQaEJG?=
+ =?utf-8?B?S0VjbFFoeWlnRytiZTRKeXA5K1BFWjFBTEpUTlRsL3dad2NrUTI3UldVcmNU?=
+ =?utf-8?B?T1BaVWpTQ0R5TUZYQWJLUlp2R01BNFRzaTdXWUlnVU5PcWVERlF5a1pGU0pC?=
+ =?utf-8?B?Z3JhK0J2bEdBRmZ3SlRsejlzS3B2ZlRoMkhpZlp3TXpmSWRVNVFrN3JJZDdn?=
+ =?utf-8?B?REdLam9Rdjd2Y0UxS1l0eUFoR1FXL0xkeHJhK2FuWWtpOTMwME9QZG5sVEUx?=
+ =?utf-8?B?a00ybVBTWlQvekR5VXB1U0VLeC84K1lvQ2IxYk4vTnBwcnlXd29POVdzd3I2?=
+ =?utf-8?B?UktmMTdjdndWOFhCSTFBRlhwVlJMTTVwbWlma0V5bmYva040L1RCYURCeUF6?=
+ =?utf-8?B?VjVuNzBkSUtRZWFyNmlLQ2ZzbHNJQ0RGZWhGcFNUUUFlMXExTG9VTDZnaEo2?=
+ =?utf-8?B?WGZGeSszNHJlcy9nV0FvSWYrUEVaKy9oU2hLdS9SMEtQVjZPeFpyWmYvS1Y0?=
+ =?utf-8?B?a0dsL2lZbVI4dEpibDFJQnUrWjI2VTM0Y09wNThVdWxkM2FDazJtT052K3o2?=
+ =?utf-8?B?Y2pYejQ2YmNZZ1BpTUdJSjFmUWI5TXhDSU4yczR6Nk82eGdCdHNsWXZDK3Zk?=
+ =?utf-8?B?WTBoRmF6MjF3eW9OSk55cDM4c2w2RUVYU0dwdHB6R2NUek0wYTlZd2VFRGZE?=
+ =?utf-8?B?ZEwvQ0diWlIwb1lMNFJXZi9SQk0zNnhFQkdCRHp3V1NGR205K3V3QUg4SmFz?=
+ =?utf-8?B?ZStpaGJvZVk2WFFUdXo0Wms4eWRXNmpCeGpObTFvZ296S1RVcVNmNlJtRnZw?=
+ =?utf-8?B?YTFPUnE5VVRTaVBycDNNRUhwYkd2UkF5TlZFRGs3SGs3TGwrQ2lNK2xnbEU1?=
+ =?utf-8?B?dmZHMGY3YzVGS3ZZcjdxd1hPdHNQQ0Z0TklHYVRVQndINVl6S295N0JCdk1k?=
+ =?utf-8?B?N1RvZkhEeDB0b2xFbGM5QkpzbkdrMkJKMjNXL2xWL1o5L1cyUEhWeGFsRHM5?=
+ =?utf-8?B?a29NUURXc29sMVRWTTZwTzROZTNnYlFkZzFaRE1qdnd0REczSS9jcVl6Y0to?=
+ =?utf-8?B?dmQxeTF4bUM1Myt5VFJCZ1NVZ1pUZFFlUkNaWDRDQ0FxRTA3aGYrOVBod2hD?=
+ =?utf-8?B?TlpQSmc3TUMrR0hsOEtPc29tNjAvWkVRSEswV0ZlVFBYeXdYdFhnVGtvZjl5?=
+ =?utf-8?B?VklScGFCU1c3cTgwTkljLzRxcTdNMGg1RFJONTkyYXYvanVyYjFrcktReThx?=
+ =?utf-8?B?N2xIUGVnTHgvU2dHbFgyaGFSU1NieExoc0UxdkJqek5sWFRMcUdGdlh4YTBN?=
+ =?utf-8?B?aFlkcXZIQ0JzZEV5b2RSQWpnUmwzQ1ZVd3dPZDd5aHNscHltUXBiSnd6elBF?=
+ =?utf-8?B?dUpGbWtWQ3lERCtBMG10QVZ3UmFURnBGUlgwQWdGRnNCMVlTVjdXaWk2STdU?=
+ =?utf-8?B?SWVIaG5KdkhDejhXR3VqRjNtdUFEZytqYVo5amFPUWdvZGFPYjkwcUNISHVV?=
+ =?utf-8?B?MDhmekRyNE5kVVpLMHczL3BvbGpKR0xtNUE1enVxSDFQaEtNN0VnbHBETXVu?=
+ =?utf-8?B?UWc4MGZzTG92NFJ0NjdmZDFCOUQ3WEcveUxQSFU5Y3lZN1padnJQMk1BPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZkVUSnRQU2dySktDU3JSdWFuN0R2ODJkd1BvK1gwZDhQbUJJUUdqMHZNSTBh?=
+ =?utf-8?B?WWxLM2kyTDFUdEpBZzlTYTlXOHNkUGFoQkN5SjFxc1oyeS9JblJocWNRS3pV?=
+ =?utf-8?B?Z2pPL0ZWNEhUYWJVYlErWVpheFRia3hTaklpOSt6SGVpM3YyQllZZ24vcm1I?=
+ =?utf-8?B?aGk3UnNRMUJxdmlqeG5FMGZPNUVyVkpUc1VMZDl0aHhLaHBBVjNBd1owU0w2?=
+ =?utf-8?B?S3Y5T1c4QkdxTE1iUGVLVXNPOXpQSllYeTMwL2FScHZwdS81OHlJQzNqdGd5?=
+ =?utf-8?B?a1dlYUpXTmIrZk50NWxFQ1dzS1RWV2JNTmtCaVc5SVNzR0JwNzE4MnBBYUl6?=
+ =?utf-8?B?KzExMThDUFp0N3NNR3dMUG1LbWVqY1A0cldKUWhHYlQrVjVMVnN0eHFLSGRH?=
+ =?utf-8?B?MWpFcUI1cTlTKzBTLzN1WEV5MFpzWWkwdzZ0QmthbnZXeTZtSjhmS2xnNGky?=
+ =?utf-8?B?SzdJTjE2Vm8vcWpEZnh2b2RqbEhqZXNRMVZQcDdzOG1BVHR6V2dydkZkMVZV?=
+ =?utf-8?B?NnFvWDFzT0ZKUERBV0FTaUswZXVoMjBDTUNEU1ZNenkxT3hRWVhyRmJCZ2ZG?=
+ =?utf-8?B?cGxtQWd6VTBMR29YQUFvMzl6SWw3SzZhV2JTNHhpQ2NJMnBMcGxKUG5jMEhB?=
+ =?utf-8?B?dkVUYnhGVjZ6SDMxdTFKY1cyM1JadTArY1pibmdkelhzdHhYZUorUWJrT3Vt?=
+ =?utf-8?B?blRubEJSQ2FnU2pxdUhXQUsxemVMUkFtaDBlODFQN25IUlRUeU8rZjVXV0Nz?=
+ =?utf-8?B?WklJbXJSa0UrVVErdnV5MTZhSjNhbjd2OTBHSSsxcXE5NVQ0UXVqN2RjQTR2?=
+ =?utf-8?B?cTZ2ckE2U3VHVWhrcXVnbkRDSE13elRoWE9TNER3b3Jnemd0OFBuUkJjZjJZ?=
+ =?utf-8?B?Ukh3TlpyMm51cmduM0xibW5ORFRLaW9DRXRxVEJKc0JiTWlISEt4TTdiUHJP?=
+ =?utf-8?B?TGFoVE9jOFlqejhsdE9qVlRBNXV4eWZkMndKZm5nd2E4OW9BUmNhbWtvazZq?=
+ =?utf-8?B?Zi9MbGd1bGx1RktLWng1OEwyRjlrUmRaY0gweElMWnM4ck84d0FaVTJzdUZB?=
+ =?utf-8?B?Qk1oWEdIaUo5ejVGanRyNzBMODk2QUQ4VVFhM0dEcFYvekU5WFVRWGZHWVJh?=
+ =?utf-8?B?WUptY0kyL1plRVFlY0pRNzQ0OG5aWlQ5WWRQQ0NxazIremlzMUtIb1dPak1t?=
+ =?utf-8?B?Nm9xNjdyUEdobi9VUkloMXFPTC90a1UwSTU5TSt2SlNKLzlSSWsvZklFUWYz?=
+ =?utf-8?B?VGVMY0xDM3JOOXFFdnlOVmRhVW5jT0xSWjFRcnlEeU1hc05aWk1DaVR0R0c5?=
+ =?utf-8?B?K0p6dWE3MHdaZkVGMUQ5cjhUemNmUVRyWGpGcnNPSy9CLzNNYmU5S3pGTEI2?=
+ =?utf-8?B?b2FseEQ4NGk5SEs5VEwzWE9zaE1lL1BrSldXdm1zUzZIWmhVNzhwaWNMNTRS?=
+ =?utf-8?B?aWhXeXJ6dlA0N3hvbGdxM0UwZERKOHFoMEc3NGpEYWJHRW5tQnpiWldQMEZT?=
+ =?utf-8?B?Sjd6dWhONHZMdUQ4Q2l3WHMrYTE3SURHeUh2SWUzYm05L0M5cG5GRFFRTkNp?=
+ =?utf-8?B?aGdsMmZWQTVJTkEyQ3Fvd1BFTERqRFpydEwwOWU5cnc0WHRnL3ZHeDlIWFk3?=
+ =?utf-8?B?Q0ZkM2N5ZmxLaDRDbU80TWZXNlNaTWRXNE1wWXJSOGRIc210cENYRno0M2Nx?=
+ =?utf-8?B?dThwbVl5R05OOVZNTmlwcEhPUWlsdzZVTkpmN3V2NWZ1RlBKNXIzSEtzVFV4?=
+ =?utf-8?B?dTd3UFFJeS9YRDdsb2pXWXRmRGFGY0dCVEVuMGpCd2VCWVlNVzFFazhUY3Ja?=
+ =?utf-8?B?RlRKTXFIMkVjZFU2anVwajJPeTZ4cFlyWlhrQnB2eHBIbDM2Tnl1UlpJR09S?=
+ =?utf-8?B?OVRGNmxUY1JjcEtxbmNSNm1FVStQb1R4L0pDRHdJM091V0p5dFlQY01Nbktl?=
+ =?utf-8?B?WE1nMFFvdVJkRjFkMXlrNW5RTmhmV0FLNEhWcDJtMnpoWU4xSE93U05ieXZX?=
+ =?utf-8?B?TEt0UWZEeHJicW1EdEZHVzFxWkloSFliRXV3NWEraUYyanh6dVJyMURzTCsr?=
+ =?utf-8?B?OENWQjFhL1Z6UnowOG1IbDZUZDRQNGs4TzhwVDBiQ0srOEtuWG9ZM05pUDh0?=
+ =?utf-8?Q?DsMmtWUvhDlZ5PJhh+Ya4U19w?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d85a37f6-9820-4c3f-df6d-08dce75c9e1c
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 05:46:55.8595
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gNS3Gnn6OEjYydbNSdZ5u24Fzc6k125TLslKKVCMAmwBIHHpMZvButZaiOdcKrNUUq0/WyRO1kJk4PAK7hizQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8238
 
-In the csky_cmpxchg_fixup function, using the global variable
-csky_cmpxchg_stw to determine the address where the exception
-occurred is incorrect. The global variable csky_cmpxchg_stw
-stores the opcode at the time of the exception, while
-&csky_cmpxchg_stw is the address where the exception occurred.
+>> @@ -295,10 +296,14 @@ static int perf_ibs_init(struct perf_event *event)
+>>  			/* raw max_cnt may not be set */
+>>  			return -EINVAL;
+>>  
+>> -		/* Silently mask off lower nibble. IBS hw mandates it. */
+>> -		hwc->sample_period &= ~0x0FULL;
+>> -		if (!hwc->sample_period)
+>> -			hwc->sample_period = 0x10;
+>> +		if (event->attr.freq) {
+>> +			hwc->sample_period = perf_ibs->min_period;
+>> +		} else {
+>> +			/* Silently mask off lower nibble. IBS hw mandates it. */
+>> +			hwc->sample_period &= ~0x0FULL;
+>> +			if (hwc->sample_period < perf_ibs->min_period)
+>> +				return -EINVAL;
+> 
+> Maybe it needs to check perf_ibs->max_period as well.
 
-Signed-off-by: Yang Li <yang.li85200@gmail.com>
----
- arch/csky/mm/fault.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We do allow event with sample_period > pmu->max_period and handle it with
+"period_left" logic.
 
-diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
-index a885518ce1dd..87ff26212261 100644
---- a/arch/csky/mm/fault.c
-+++ b/arch/csky/mm/fault.c
-@@ -45,8 +45,8 @@ static inline void csky_cmpxchg_fixup(struct pt_regs *regs)
- 	if (trap_no(regs) != VEC_TLBMODIFIED)
- 		return;
- 
--	if (instruction_pointer(regs) == csky_cmpxchg_stw)
--		instruction_pointer_set(regs, csky_cmpxchg_ldw);
-+	if (instruction_pointer(regs) == &csky_cmpxchg_stw)
-+		instruction_pointer_set(regs, &csky_cmpxchg_ldw);
- 	return;
- }
- #endif
--- 
-2.34.1
-
+Thanks,
+Ravi
 
