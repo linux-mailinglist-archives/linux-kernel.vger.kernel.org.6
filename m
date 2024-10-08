@@ -1,160 +1,176 @@
-Return-Path: <linux-kernel+bounces-355367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED30995141
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B58995150
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AF81F221B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CF21F225A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3E91DF985;
-	Tue,  8 Oct 2024 14:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F31DFE05;
+	Tue,  8 Oct 2024 14:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="es1Z/ANU"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g0u2p575"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBF014EC59
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CBB1CEAAA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397023; cv=none; b=ippjFqZQqSBscXOXaiIBKmtBQ+7T7//1etcvcFOMOwFOvu6x6dy6UISYa3oNhGBQ2IqYwf5KSyGvaEyp8Zr5c8uy1HpE7VPr3jOZslFEfpCXHwoqlN/rpmpjgJJig1ajO+tgPykycMg6lOi2flbK5v4sIBrsb5gFq6EctYDNpBY=
+	t=1728397117; cv=none; b=Zx59xzA6GKIpxi/Zjxa+AvHL+WINuBUMzW3ByqamftNsV1yGg4+DM7W0iDzDK0jQMDnq/QMJsd6NEj0lr1xjfi7UhEI+M5KOiY1oWKRGpLDYxrydUM9eUsqPxCFQhfwda0UbTtKScrA8DKL7OPFuHyoM8emL5Kas6Y9L5I7xlEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397023; c=relaxed/simple;
-	bh=UkTNdZ4bOXW8oYPKMVJ6hvZIHf+eC5vYvqnPjPO6TUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JK+n4r+yNjZQPCrgK/XNRnnVSDufoQIlgQN390PfGFmbDaGWY2CaXIYJLTd5RcULrESiqkVRQ1riS9yKcqEiyf6EeTK8aqNdKn2okpEmEkEKKH4/O2XfKA6rT6aXB13BnVawflfED8j5AHfoWOPM8QBo5yowjm3jSAMEhYswoJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=es1Z/ANU; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e262e36df27so5532637276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:17:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728397021; x=1729001821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zP9h4DJsAwsrhGSa7N8S+hvtyECH+0TD7DFBPSUfj1g=;
-        b=es1Z/ANUt/2PuzCddIESCvJWQXyWBIpTa+DcAiz1Qu3zScHDzYLORUfKAM+owpaDuD
-         4YmePfhLxY7rUl++J7OpQDpH7TE9Q1t6X9Qrxq+qYxi1awLPh2cNVmiQWU2ZZBEzP97i
-         eO7boOf7GKDTzfqZ58T11iAxRhdd4WTclbv5Ylmf1YyMhGG+s1ACfS01mEq9/6pLI5+B
-         EX4qEJmA3OnqXba1vU6mPdoqSO35llznnYU9ChBgGaDyP72sRZCPe4imnynfS7lqNXF1
-         zTaZwujmMywxv4zZCxvaDGgqnqDMp1HH6OUhvhIzo/f6vz+8Tirjgblgwok+O7nPh8Pn
-         7a4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728397021; x=1729001821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zP9h4DJsAwsrhGSa7N8S+hvtyECH+0TD7DFBPSUfj1g=;
-        b=Va2OO27eN/g8PWXgVUexXmpawD/fuUj8DADO208hV2Ai3qdwfclfiPl7HpyY85s7sM
-         +/pQZDx+1DBv4OtugFquBip5YcWbf01Q5TXeDEJsSZp8uExmZAz/Hv4ynKETFoq/9e8o
-         Ca0KQHZmpDGFhxRFuqpa8yR5JhC43/m2mXM0urxAuuls4QSkixouFFwknPLH4TDlgdZa
-         GYXp/EFkOfDH7B87V9YNAa86cVqAMCuybiH+WgqZYusIsyZmbYlzEH6lrOVfjVZRAOzP
-         T5CA4WgSulpgQI8zMXq+jTJPOUNJJwFoyrHc5OglPnm1WSa7fnG8v48Bzw3C6Fh1zNV/
-         8Kyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfngQhYSJr5DYq6xSaH43hLIzAqHb1OG8GUYfUM0e8X5tQQSOHvtqQmjqGxTenolMXL5/zAF4TWX828bM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2QvtqCGHnmwg1RCk/TaDxmgemJRQ6jy6UdAWTk+RnnnNc8uBz
-	LYhFKPo+UvfNjKCBzd58pehVAZSy65rjgRBUIxSAoRZvHaHIOM9WIJbuX8HXKcmemKMck6WpT0h
-	kvtgCA5U0i1krEVw6GMQkZ1zYderrK9KSAhL/0w==
-X-Google-Smtp-Source: AGHT+IFurydxnrI+CHeh0ogyuTUXiIwB25WFmX9OYU9Dg8GrojDvKYyR0qSp+PNVc4F3L05RqX7iOmnnS3SL4rXngFc=
-X-Received: by 2002:a25:b34d:0:b0:e26:acc:4088 with SMTP id
- 3f1490d57ef6-e28f9bad98dmr276784276.27.1728397020952; Tue, 08 Oct 2024
- 07:17:00 -0700 (PDT)
+	s=arc-20240116; t=1728397117; c=relaxed/simple;
+	bh=ighNPneJJEoZIQOc3id4SokXbTnEytF2OF2Fhme/9+A=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=moBHz5+J9IPuSmFu2OTDI4KDw0yqxBiOhdLSHdjoLVA99toU+eEcnDaN74BKNg7Pm8QuGaFlicQYYNH5acrrlPCQXVWV/5Gj9WvrsdxSTiwysSC2GKibadfWFrGdXtNmFNSZYFTG6VCE4LTZ9AN1ciVcNdqRcxVQJFuDkqiHZrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g0u2p575; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4987Hm9L022594;
+	Tue, 8 Oct 2024 14:18:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=mKcFKKtcx9HS3yB8+up2fd
+	e7YYFYgEm/1MbSp4O0/Fs=; b=g0u2p575E+jjV+xyocdYWxx9W52OihzItvkHsU
+	WZLPyZMNOgd5J30xsK29zMaFq8CAnNOTzFbHctmrv0/iuXrBNWvBTBtcrIu6wPLF
+	93baCey1DiUG58jAgAb+mlBo2+t7GC8sGMrmSwnsneXsk46g6J91BLibTvO6nFHs
+	V8+Q5tOoiG3ubFXkVNO1hMQf7/DVVRlX9l6o4wzRHNBwbkB5x/7XhXaEc3jK29Co
+	oV+5i+m9QNpF9jbNljkyGoq0bV69/ttYboBZfTv3blm7BaTthqJbcEtLA3lQQh34
+	5mpfePCHrKAP7c5ARurVAyX0a2HEWwCUuu2CQL0ur9FCIVKA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaetv2r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:18:11 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498EIAfa026035
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 14:18:10 GMT
+Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 8 Oct 2024 07:18:10 -0700
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: [PATCH RFC v2 0/3] Support for Simulated Panels
+Date: Tue, 8 Oct 2024 07:17:37 -0700
+Message-ID: <20241008-jz-test-sim-panel-v2-0-d60046470e6c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007114549.51213-1-brgl@bgdev.pl> <ab1180ff-b435-46c8-82a8-66fea41db110@wanadoo.fr>
- <CAMRc=MfrQNc1idCD8fBbOx5bWzCU6f-Ryefu-eoxfzOaA8=_Fg@mail.gmail.com>
-In-Reply-To: <CAMRc=MfrQNc1idCD8fBbOx5bWzCU6f-Ryefu-eoxfzOaA8=_Fg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Oct 2024 16:16:24 +0200
-Message-ID: <CAPDyKFpNuKMQhqiWhOz2j+9Ubj_FaBb54x-GincD6m2n6UbH0Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mmc_spi: fix snprintf() output buffer size
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAE/BWcC/22NwQ6CMBBEf4Xs2TXdBkrwZGLiB3g1HEhdZI202
+ CJRCf9ug1ePbybzZobIQTjCLpsh8CRRvEugNxnYrnFXRrkkBq10rkhpvH1w5DhilB6HxvEdS7K
+ UN4UpyTCk3RC4ldfqPMPpeIA6hZ3E0Yf3+jPRWv2UZP4oJ0KFbVUQtbmxlS33j6dYcXZrfQ/1s
+ ixfSx55g7kAAAA=
+X-Change-ID: 20240102-jz-test-sim-panel-71c14a56716e
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Sam Ravnborg
+	<sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>,
+        Simona Vetter <simona.vetter@ffwll.ch>
+CC: <quic_abhinavk@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728397090; l=2313;
+ i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
+ bh=ighNPneJJEoZIQOc3id4SokXbTnEytF2OF2Fhme/9+A=;
+ b=1lQPVx1euRnffM4NVhtz2ysaiyU81ajo65PST6yF4dS/I1Pfvr1hBxLTTaU32vE1FYhPHRTOU
+ k8Q+TBY2BowA+tRtttffiFYP6Ar7kUgIW2GaS3gNZIrHUXJ4G5C/+0I
+X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
+ pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xIPZZzAyOpQiH2tjgnMzx-wywoLMlU7W
+X-Proofpoint-GUID: xIPZZzAyOpQiH2tjgnMzx-wywoLMlU7W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080091
 
-On Tue, 8 Oct 2024 at 09:13, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> On Mon, Oct 7, 2024 at 8:09=E2=80=AFPM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> >
-> > Le 07/10/2024 =C3=A0 13:45, Bartosz Golaszewski a =C3=A9crit :
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > GCC 13 complains about the truncated output of snprintf():
-> > >
-> > > drivers/mmc/host/mmc_spi.c: In function =E2=80=98mmc_spi_response_get=
-=E2=80=99:
-> > > drivers/mmc/host/mmc_spi.c:227:64: error: =E2=80=98snprintf=E2=80=99 =
-output may be truncated before the last format character [-Werror=3Dformat-=
-truncation=3D]
-> > >    227 |         snprintf(tag, sizeof(tag), "  ... CMD%d response SPI=
-_%s",
-> > >        |                                                             =
-   ^
-> > > drivers/mmc/host/mmc_spi.c:227:9: note: =E2=80=98snprintf=E2=80=99 ou=
-tput between 26 and 43 bytes into a destination of size 32
-> > >    227 |         snprintf(tag, sizeof(tag), "  ... CMD%d response SPI=
-_%s",
-> > >        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-> > >    228 |                 cmd->opcode, maptype(cmd));
-> > >
-> > > Increase the size of the target buffer.
-> > >
-> > > Fixes: 15a0580ced08 ("mmc_spi host driver")
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> > >   drivers/mmc/host/mmc_spi.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-> > > index 8fee7052f2ef..fa1d1a1b3142 100644
-> > > --- a/drivers/mmc/host/mmc_spi.c
-> > > +++ b/drivers/mmc/host/mmc_spi.c
-> > > @@ -222,7 +222,7 @@ static int mmc_spi_response_get(struct mmc_spi_ho=
-st *host,
-> > >       u8      leftover =3D 0;
-> > >       unsigned short rotator;
-> > >       int     i;
-> > > -     char    tag[32];
-> > > +     char    tag[43];
-> > >
-> > >       snprintf(tag, sizeof(tag), "  ... CMD%d response SPI_%s",
-> > >               cmd->opcode, maptype(cmd));
-> >
-> > 'tag' is only used in a dev_dbg() at the end of the function.
-> >
-> > Maybe "  ... CMD%d response SPI_%s" could me moved directly within the
-> > dev_dbg(). This would save a few bytes on the stack, save a snprintf()
-> > in the normal path and fix the warning without the need of magic number=
-.
-> >
-> > just my 2c.
-> >
-> > CJ
->
-> I would be hesitant to change this logic here. The cmd struct is
-> manipulated pretty extensively later in the function which leads me to
-> believe that this snprintf() here was done on purpose.
+This series introduces a simulated MIPI DSI panel driver.
 
-The cmd->opcode and cmd->flags aren't really something a host driver
-should need to change. It's the core that sets them to inform the host
-driver about the command.
+Currently, the only way to validate DSI connectors is with a physical
+panel. Since obtaining physical panels for all possible DSI configurations
+is logistically infeasible, introduce a way for DSI drivers to simulate a
+panel.
 
-I looked closer and it seems to be correct in this case too.
+This will be helpful in catching DSI misconfiguration bugs and catching
+performance issues for high FPS panels that might not be easily
+obtainable.
 
-Kind regards
-Uffe
+To configure and bind the sim panel, the user must:
+
+1) modprobe the panel_simulation kernel module after the device boots to
+   shell
+2) Mount the configfs and create a test panel config group within the
+   sim_panel configfs
+3) Configure the sim panel
+4) Enable the sim panel by writing the DSI device name to the `enable`
+   node
+
+Currently, the sim panel driver supports configuring the supported DRM
+mode and DSI mode flags. Eventually, we would like to add more
+customizations (such as configuring DSC, dual DSI, etc.).
+
+TODOs once a general agreement has been reached on the configfs design:
+- Add documentation
+- Allow users to specify multiple supported DRM modes
+
+---
+Changes in v2:
+- Use configfs framework for panel configuration
+- Move sim panel framework API calls from MSM DSI driver to
+  DRM framework
+- Rebased to latest msm-next
+- Link to v1: https://lore.kernel.org/r/20240116-jz-test-sim-panel-v1-0-f9511f46c9c7@quicinc.com
+
+---
+Jessica Zhang (3):
+      drm/panel: add driver for simulated panel
+      drm/dsi: Add API to register simulated DSI panel
+      drm/panel: Introduce simulated panel bridge API
+
+ MAINTAINERS                              |   5 +
+ drivers/gpu/drm/bridge/panel.c           |  28 +++
+ drivers/gpu/drm/drm_mipi_dsi.c           |  36 +++
+ drivers/gpu/drm/drm_panel.c              |  33 +++
+ drivers/gpu/drm/panel/Kconfig            |   9 +
+ drivers/gpu/drm/panel/Makefile           |   1 +
+ drivers/gpu/drm/panel/panel-simulation.c | 371 +++++++++++++++++++++++++++++++
+ include/drm/drm_bridge.h                 |   1 +
+ include/drm/drm_panel.h                  |   1 +
+ 9 files changed, 485 insertions(+)
+---
+base-commit: 2023aaa11289cab27f69cf7e8111fd233cdf3170
+change-id: 20240102-jz-test-sim-panel-71c14a56716e
+
+Best regards,
+-- 
+Jessica Zhang <quic_jesszhan@quicinc.com>
+
 
