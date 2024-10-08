@@ -1,318 +1,240 @@
-Return-Path: <linux-kernel+bounces-354551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B0B993FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17939993F3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1DA1F25613
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FBCB1F239FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4D21DF24C;
-	Tue,  8 Oct 2024 06:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2D1DF240;
+	Tue,  8 Oct 2024 06:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cvKhxu3f"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33401DEFD4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XTIHt7n8"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D43C1DEFE0
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368877; cv=none; b=ZH/gH0bxL43qIWH9dRFqj/It2nI2RnihE5DCQdNVr42XH4fROOvigxWDsa7GCufim8A67haoUixZlQI8YSY4NLxrWV7XxYkFAUjwht/4t5fHkl2+Zfh5jkwVef19LE59uAVWrrlvH3gRhLm5M/+E5sQLP1rxIxi+Xd0wnrAh3sk=
+	t=1728368876; cv=none; b=FFJD+EytqO+D/OhcdGcYCs31HW7XQPGITgePQDe40MpCyajyfuqybnYU7DqryHmibYmB60EbaUzTohF3nw6K56ExdsSM32ns21rHSgoAujuIetfWPjqi17mSg90MtknvUBSYw/pgscGk8HcCcIf9IpTt3esxAU4qpCPVSLzjw5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368877; c=relaxed/simple;
-	bh=QKgyiJIqewQic5HiInbRFgc8h2PvmkN3iSVvXw+RaAA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HaTAEO48bfxnOuVB3Ewv+DNvUWV3RYOSBYh7Y7HGeMBgQwJhyLbPNfqW9UpdFry0eksuDBvKnJQ4dujCb/CbAM0lr5NE9/EG17MxDY4ak9hWU6gQVgEj+YuMqrWzAlmPbd5sQaX3HKxcMgSQmqEGHojL0rnq/G3C2z0ZWescuv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cvKhxu3f; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=cnM9d
-	dcUZFZ+Luy5237hCVz5GR0zgN46TwtoqrzWf90=; b=cvKhxu3f8DyszcTr0oCyt
-	1IN9VCRzuHBulV8EwS8HZM1GAwEJIDiuH8tVq1T8m+s1lslfeWyTvJukHEkB4kwu
-	+57JxS3t6yjF9D0kah4p9IEOEKqJ5sYjZKThaJnHgXl2bP060+T93aDCpLCxFPCy
-	U2C6AGigK2QpYaiRIDC3fk=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBXT7+g0ARno_BXBg--.55594S4;
-	Tue, 08 Oct 2024 14:26:41 +0800 (CST)
-From: Ran Xiaokai <ranxiaokai627@163.com>
-To: elver@google.com
-Cc: dvyukov@google.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	tglx@linutronix.de
-Subject: Re: [PATCH 3/4] kcsan, debugfs: fix atomic sleep by converting spinlock_t to rcu lock
-Date: Tue,  8 Oct 2024 06:26:39 +0000
-Message-Id: <20241008062639.2632455-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ZvwDevIahZ5352mO@elver.google.com>
-References: <ZvwDevIahZ5352mO@elver.google.com>
+	s=arc-20240116; t=1728368876; c=relaxed/simple;
+	bh=sRrs971ywU2XBHAio/v+KH3KPEi6b2tpjaOK3Y8GDYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTB2bMsHOw9xdJ/7w8XsteP3mgYDQGaE9e1OFyFbvLbBYBOgdHDILOQ4p4PA9s7pO1CJfA3LSSAfqGWdxr3+50KPNcurOvq/mBeELL76rOJ8D5xhTOnJA7kMirzdKhVvJl+2ecZBrv2MR1c99GuDp6dzz6ftS+1RHR/1epqCgj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XTIHt7n8; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e082bf1c7fso3593488a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728368873; x=1728973673; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yD1uY1GFMUYlwE1Gpa3bWH24Ki4C8p8PksybGuIxKXE=;
+        b=XTIHt7n8eFdZ98U/iFWue/AxK+I9gGtVd1ksnkBACkNE4Ir/TPvhqYx+tkzy8Sl5J5
+         Swmen6YabiMoYR83mUXPFuus/OrvInPq/eOgEJjayw11BERkTFwsaDqhqR8TEnNdadX2
+         HSjfp0VtceYiCRaLbHfQ1dlUm01Y+B+4/hIvll01ntHwoKENIJ5+LxiF9Ek2G2TaLjJI
+         kyQOrkZSTZ1/WGp6V+i5slBo/mqB39+TwKTPE9YGXfyY2ffObMucn5Q6jg3XMnjAHtjA
+         Q+34YskpP/mU99fti72DpH+Ol4kOXEWdvmkEy1ffzlCW4BcziiNvJrrIUm2NZgiGUvsJ
+         hdVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728368873; x=1728973673;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yD1uY1GFMUYlwE1Gpa3bWH24Ki4C8p8PksybGuIxKXE=;
+        b=JWWKeePSJac98Hg3TKmnZRCwb4gwAdtb4b3GkyNeuMzXJwaAKEvFRQatAEfvXCoB7c
+         ilDW2sxFMAAnLbVtEDNEbPr1xmmGflaHGRdSlSN3WQ37GSBRHPR7yrc9sZSLPtyeyz3h
+         2XV7jClKvhI7O5g/HC0ugJVrOe8vq73fEig/6ym5d9ljI6IdR3P8BxrF9OJwGfFdTsJU
+         klY6HDVlVrILjDLrDsuxVvaXx7KSiLOh1aSjDa9g6cfYvssskgNQjsxSfVRE5J4u5fFY
+         CKzriEz7PXdeLA4hxYVLhcAdQ4tk0k52oK18lVHstIrmI/XLGDvMFZZ28sCYipUMZY6H
+         h6Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZoy14h4Mj5nh3riDEBPpfJlcPbNwC3z0fCRaqvvzgzz6HVOcSPRNIgmjGKMojAQEisMXRctswviuxudc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVvNCGDSlaqPEJ60p5OAldiBsz7o09UrCs9WwZXH4wnVhioVRh
+	1rwX0yFObq7+2+MUF1JntdH99Ry9aU67oF0VdFN4xAI19S6AA2keYxer9SnzEuo=
+X-Google-Smtp-Source: AGHT+IF/ZQHlU6tp9Sg21rBMwoL6ZDWlzQEcykMAFPhKfSpu/YJnzOfJudFoJo575FCLm+0FY5JUkg==
+X-Received: by 2002:a17:90b:1b05:b0:2d3:cd5c:15bb with SMTP id 98e67ed59e1d1-2e1e63698a6mr17009604a91.25.1728368873537;
+        Mon, 07 Oct 2024 23:27:53 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e28b773a77sm464805a91.11.2024.10.07.23.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 23:27:53 -0700 (PDT)
+Date: Mon, 7 Oct 2024 23:27:49 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Zong Li <zong.li@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
+ on clone
+Message-ID: <ZwTQ5c+YOQFHa4YC@debug.ba.rivosinc.com>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
+ <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
+ <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com>
+ <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
+ <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
+ <CANXhq0r611Hi7pohDGRXhvi2E_uOFjwLRDrqZcL2WdLHcs+oHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXT7+g0ARno_BXBg--.55594S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WF1fWw13GFWkJF17JFWxCrg_yoWfJr1fpa
-	43Ww1DtFyqvFy7Cr1DAry5Wr1rK34DXr17Za42kry7CFs0qrs5uw4S9r90g398ur1xAr4k
-	XF4vqrn7Aws8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUbjjDUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqR1yTGcEzZ9LIAAAsQ
+In-Reply-To: <CANXhq0r611Hi7pohDGRXhvi2E_uOFjwLRDrqZcL2WdLHcs+oHA@mail.gmail.com>
 
->> -	spin_lock_irqsave(&report_filterlist_lock, flags);
->> -	if (report_filterlist.used == 0)
->> +	rcu_read_lock();
->> +	list = rcu_dereference(rp_flist);
->> +
->> +	if (!list)
->> +		goto out;
->> +
->> +	if (list->used == 0)
->>  		goto out;
->>  
->>  	/* Sort array if it is unsorted, and then do a binary search. */
->> -	if (!report_filterlist.sorted) {
->> -		sort(report_filterlist.addrs, report_filterlist.used,
->> +	if (!list->sorted) {
->> +		sort(list->addrs, list->used,
->>  		     sizeof(unsigned long), cmp_filterlist_addrs, NULL);
->> -		report_filterlist.sorted = true;
->> +		list->sorted = true;
->>  	}
+On Tue, Oct 08, 2024 at 02:18:58PM +0800, Zong Li wrote:
+>On Tue, Oct 8, 2024 at 1:31 PM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> On Tue, Oct 08, 2024 at 01:16:17PM +0800, Zong Li wrote:
+>> >On Tue, Oct 8, 2024 at 7:30 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>> >>
+>> >> On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
+>> >> >On Wed, Oct 2, 2024 at 12:20 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>> >> >>
+>> >> >> Userspace specifies CLONE_VM to share address space and spawn new thread.
+>> >> >> `clone` allow userspace to specify a new stack for new thread. However
+>> >> >> there is no way to specify new shadow stack base address without changing
+>> >> >> API. This patch allocates a new shadow stack whenever CLONE_VM is given.
+>> >> >>
+>> >> >> In case of CLONE_VFORK, parent is suspended until child finishes and thus
+>> >> >> can child use parent shadow stack. In case of !CLONE_VM, COW kicks in
+>> >> >> because entire address space is copied from parent to child.
+>> >> >>
+>> >> >> `clone3` is extensible and can provide mechanisms using which shadow stack
+>> >> >> as an input parameter can be provided. This is not settled yet and being
+>> >> >> extensively discussed on mailing list. Once that's settled, this commit
+>> >> >> will adapt to that.
+>> >> >>
+>> >> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> >> >> ---
+>> >> >>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
+>> >>
+>> >> ... snipped...
+>> >>
+>> >> >> +
+>> >> >> +/*
+>> >> >> + * This gets called during clone/clone3/fork. And is needed to allocate a shadow stack for
+>> >> >> + * cases where CLONE_VM is specified and thus a different stack is specified by user. We
+>> >> >> + * thus need a separate shadow stack too. How does separate shadow stack is specified by
+>> >> >> + * user is still being debated. Once that's settled, remove this part of the comment.
+>> >> >> + * This function simply returns 0 if shadow stack are not supported or if separate shadow
+>> >> >> + * stack allocation is not needed (like in case of !CLONE_VM)
+>> >> >> + */
+>> >> >> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+>> >> >> +                                          const struct kernel_clone_args *args)
+>> >> >> +{
+>> >> >> +       unsigned long addr, size;
+>> >> >> +
+>> >> >> +       /* If shadow stack is not supported, return 0 */
+>> >> >> +       if (!cpu_supports_shadow_stack())
+>> >> >> +               return 0;
+>> >> >> +
+>> >> >> +       /*
+>> >> >> +        * If shadow stack is not enabled on the new thread, skip any
+>> >> >> +        * switch to a new shadow stack.
+>> >> >> +        */
+>> >> >> +       if (is_shstk_enabled(tsk))
+>> >> >
+>> >> >Hi Deepak,
+>> >> >Should it be '!' is_shstk_enabled(tsk)?
+>> >>
+>> >> Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFORK, it was returning
+>> >> 0 anyways. And in the case of CLONE_VM (used by pthread), it was not doing the right thing.
+>> >
+>> >Hi Deepak,
+>> >I'd like to know if I understand correctly. Could I know whether there
+>> >might also be a risk when the user program doesn't enable the CFI and
+>> >the kernel doesn't activate CFI. Because this flow will still try to
+>> >allocate the shadow stack and execute the ssamowap command. Thanks
+>>
+>> `shstk_alloc_thread_stack` is only called from `copy_thread` and  allocates and
+>> returns non-zero (positive value) for ssp only if `CLONE_VM` is specified.
+>> `CLONE_VM` means that address space is shared and userspace has allocated
+>> separate stack. This flow is ensuring that newly created thread with separate
+>> data stack gets a separate shadow stack as well.
+>>
+>> Retruning zero value from `shstk_alloc_thread_stack` means that, no need to
+>> allocate a shadow stack. If you look at `copy_thread` function, it simply sets
+>> the returned ssp in newly created task's task_struct (if it was non-zero).
+>> If returned ssp was zero, `copy_thread` doesn't do anything. Thus whatever is
+>> current task settings are that will be copied over to new forked/cloned task.
+>> If current task had shadow stack enabled, new task will also get it enabled at
+>> same address (to be COWed later).
+>>
+>> Any task get shadow stack enabled for first time using new prctls (see prctl
+>> patches).
+>>
+>> So only time `ssamoswap` will be exercised will be are
+>> - User issues enabling `prctl` (it'll be issued from loader)
+>> - fork/clone happens
+>>
+>> In both cases, it is guarded against checks of whether cpu supports it and task
+>> has shadow stack enabled.
+>>
+>> Let me know if you think I missed any flow.
 >
->This used to be under the report_filterlist_lock, but now there's no
->protection against this happening concurrently.
->
->Sure, at the moment, this is not a problem, because this function is
->only called under the report_lock which serializes it. Is that intended?
->
->> -	ret = !!bsearch(&func_addr, report_filterlist.addrs,
->> -			report_filterlist.used, sizeof(unsigned long),
->> +	ret = !!bsearch(&func_addr, list->addrs,
->> +			list->used, sizeof(unsigned long),
->>  			cmp_filterlist_addrs);
->> -	if (report_filterlist.whitelist)
->> +	if (list->whitelist)
->>  		ret = !ret;
->[...]
->> +
->> +	memcpy(new_list, old_list, sizeof(struct report_filterlist));
->> +	new_list->whitelist = whitelist;
->> +
->> +	rcu_assign_pointer(rp_flist, new_list);
->> +	synchronize_rcu();
->> +	kfree(old_list);
->
->Why not kfree_rcu()?
->
->> +out:
->> +	mutex_unlock(&rp_flist_mutex);
->> +	return ret;
->>  }
->[...]
->> +	} else {
->> +		new_addrs = kmalloc_array(new_list->size,
->> +					  sizeof(unsigned long), GFP_KERNEL);
->> +		if (new_addrs == NULL)
->> +			goto out_free;
->> +
->> +		memcpy(new_addrs, old_list->addrs,
->> +				old_list->size * sizeof(unsigned long));
->> +		new_list->addrs = new_addrs;
->>  	}
->
->Wait, for every insertion it ends up copying the list now? That's very
->wasteful.
->
->In general, this solution seems overly complex, esp. the part where it
->ends up copying the whole list on _every_ insertion.
->
->If the whole point is to avoid kmalloc() under the lock, we can do
->something much simpler.
->
->Please test the patch below - it's much simpler, and in the common case
->I expect it to rarely throw away the preemptive allocation done outside
->the critical section because concurrent insertions by the user should be
->rarely done.
+>Thanks a lot for the detail, it is very helpful for me. But sorry for
+>the confusion, my question is actually on the situation with this bug
+>(i.e., before the fix)
 
-I have tested this, it works.
-Yes, this patch is much simpler. 
-Another consideration for me to convert the spinlock to a RCU lock was that
-this would reduce the irq-latency when kcsan_skip_report_debugfs() called from
-hard-irq context, but as you said, insertions by the user should not be a frequent 
-operation, this should not be a problem. 
 
->Thanks,
->-- Marco
->
->------ >8 ------
->
->From: Marco Elver <elver@google.com>
->Date: Tue, 1 Oct 2024 16:00:45 +0200
->Subject: [PATCH] kcsan: turn report_filterlist_lock into a raw_spinlock
->
-><tbd... please test>
->
->Reported-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->Signed-off-by: Marco Elver <elver@google.com>
->---
-> kernel/kcsan/debugfs.c | 76 +++++++++++++++++++++---------------------
-> 1 file changed, 38 insertions(+), 38 deletions(-)
->
->diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
->index 1d1d1b0e4248..5ffb6cc5298b 100644
->--- a/kernel/kcsan/debugfs.c
->+++ b/kernel/kcsan/debugfs.c
->@@ -46,14 +46,8 @@ static struct {
-> 	int		used;		/* number of elements used */
-> 	bool		sorted;		/* if elements are sorted */
-> 	bool		whitelist;	/* if list is a blacklist or whitelist */
->-} report_filterlist = {
->-	.addrs		= NULL,
->-	.size		= 8,		/* small initial size */
->-	.used		= 0,
->-	.sorted		= false,
->-	.whitelist	= false,	/* default is blacklist */
->-};
->-static DEFINE_SPINLOCK(report_filterlist_lock);
->+} report_filterlist;
->+static DEFINE_RAW_SPINLOCK(report_filterlist_lock);
-> 
-> /*
->  * The microbenchmark allows benchmarking KCSAN core runtime only. To run
->@@ -110,7 +104,7 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
-> 		return false;
-> 	func_addr -= offset; /* Get function start */
-> 
->-	spin_lock_irqsave(&report_filterlist_lock, flags);
->+	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
-> 	if (report_filterlist.used == 0)
-> 		goto out;
-> 
->@@ -127,7 +121,7 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
-> 		ret = !ret;
-> 
-> out:
->-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
-> 	return ret;
-> }
-> 
->@@ -135,9 +129,9 @@ static void set_report_filterlist_whitelist(bool whitelist)
-> {
-> 	unsigned long flags;
-> 
->-	spin_lock_irqsave(&report_filterlist_lock, flags);
->+	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
-> 	report_filterlist.whitelist = whitelist;
->-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
-> }
-> 
-> /* Returns 0 on success, error-code otherwise. */
->@@ -145,6 +139,9 @@ static ssize_t insert_report_filterlist(const char *func)
-> {
-> 	unsigned long flags;
-> 	unsigned long addr = kallsyms_lookup_name(func);
->+	unsigned long *delay_free = NULL;
->+	unsigned long *new_addrs = NULL;
->+	size_t new_size = 0;
-> 	ssize_t ret = 0;
-> 
-> 	if (!addr) {
->@@ -152,32 +149,33 @@ static ssize_t insert_report_filterlist(const char *func)
-> 		return -ENOENT;
-> 	}
-> 
->-	spin_lock_irqsave(&report_filterlist_lock, flags);
->+retry_alloc:
->+	/*
->+	 * Check if we need an allocation, and re-validate under the lock. Since
->+	 * the report_filterlist_lock is a raw, cannot allocate under the lock.
->+	 */
->+	if (data_race(report_filterlist.used == report_filterlist.size)) {
->+		new_size = (report_filterlist.size ?: 4) * 2;
->+		delay_free = new_addrs = kmalloc_array(new_size, sizeof(unsigned long), GFP_KERNEL);
->+		if (!new_addrs)
->+			return -ENOMEM;
->+	}
-> 
->-	if (report_filterlist.addrs == NULL) {
->-		/* initial allocation */
->-		report_filterlist.addrs =
->-			kmalloc_array(report_filterlist.size,
->-				      sizeof(unsigned long), GFP_ATOMIC);
->-		if (report_filterlist.addrs == NULL) {
->-			ret = -ENOMEM;
->-			goto out;
->-		}
->-	} else if (report_filterlist.used == report_filterlist.size) {
->-		/* resize filterlist */
->-		size_t new_size = report_filterlist.size * 2;
->-		unsigned long *new_addrs =
->-			krealloc(report_filterlist.addrs,
->-				 new_size * sizeof(unsigned long), GFP_ATOMIC);
->-
->-		if (new_addrs == NULL) {
->-			/* leave filterlist itself untouched */
->-			ret = -ENOMEM;
->-			goto out;
->+	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
->+	if (report_filterlist.used == report_filterlist.size) {
->+		/* Check we pre-allocated enough, and retry if not. */
->+		if (report_filterlist.used >= new_size) {
->+			raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+			kfree(new_addrs); /* kfree(NULL) is safe */
->+			delay_free = new_addrs = NULL;
->+			goto retry_alloc;
-> 		}
-> 
->+		if (report_filterlist.used)
->+			memcpy(new_addrs, report_filterlist.addrs, report_filterlist.used * sizeof(unsigned long));
->+		delay_free = report_filterlist.addrs; /* free the old list */
->+		report_filterlist.addrs = new_addrs;  /* switch to the new list */
-> 		report_filterlist.size = new_size;
->-		report_filterlist.addrs = new_addrs;
-> 	}
-> 
-> 	/* Note: deduplicating should be done in userspace. */
->@@ -185,8 +183,10 @@ static ssize_t insert_report_filterlist(const char *func)
-> 		kallsyms_lookup_name(func);
-> 	report_filterlist.sorted = false;
-> 
->-out:
->-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+
->+	if (delay_free)
->+		kfree(delay_free);
-> 
-> 	return ret;
-> }
->@@ -204,13 +204,13 @@ static int show_info(struct seq_file *file, void *v)
-> 	}
-> 
-> 	/* show filter functions, and filter type */
->-	spin_lock_irqsave(&report_filterlist_lock, flags);
->+	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
-> 	seq_printf(file, "\n%s functions: %s\n",
-> 		   report_filterlist.whitelist ? "whitelisted" : "blacklisted",
-> 		   report_filterlist.used == 0 ? "none" : "");
-> 	for (i = 0; i < report_filterlist.used; ++i)
-> 		seq_printf(file, " %ps\n", (void *)report_filterlist.addrs[i]);
->-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
->+	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
-> 
-> 	return 0;
-> }
->-- 
->2.46.1.824.gd892dcdcdd-goog
->
+Yeah with the bug (i.e. before the fix), this function would still return 0
+for `fork` or `clone` with `!CLONE_VM`. And if existing (current) thread had
+shadow stack enabled, that will become shadow stack for new thread (COWed later)
 
+The bug would surface only when `clone` is called with `CLONE_VM` and in that case
+instead of allocating a new shadow stack, it would be re-using same shadow stack
+for both `pthreads`.
+
+In anycase, thanks again for noticing and bringing it up.
+
+>
+>>
+>> >
+>> >> Most of the testing has been with busybox build (independent binaries0 driven via buildroot
+>> >> setup. Wondering why it wasn't caught.
+>> >>
+>> >> Anyways, will fix it. Thanks for catching it.
+>> >>
+>> >> >
+>> >> >> +               return 0;
+>> >> >> +
+>> >> >> +       /*
 
