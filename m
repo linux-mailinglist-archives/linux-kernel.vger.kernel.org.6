@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-354878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73CC9943E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:15:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0289943EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D091F221F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E9A2862DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A2E18B482;
-	Tue,  8 Oct 2024 09:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77AA155A24;
+	Tue,  8 Oct 2024 09:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OM7wCO67"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="RkOaqHUt"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101DF18B474
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBB713A88A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 09:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378860; cv=none; b=Rm7bwmVywH1uSaY/cJ2f4SSM/A/TuX/cRz8oK/PDjgjNqu7MgS6ebWJOCJmXfMf05soQtj7e1ITw4IsbOYYQwlEfnvqP9X9XVJIL/v7cUs9oUcRSLvTgh7gKIk+YcfsT3VDg1ObKmx9K2w7vjQElEe/Ck6u/eHyKpo2t2x2pvAk=
+	t=1728378965; cv=none; b=WMfTpET03ZTWBSYE1r6+8ZUcu+R/Z8X3ezJH1QuRlWnrqUCm+9KkmiHXcJhM4L0rPFTSnrmeeUCt5fhBD7rLYSb9jNMNYIXyCPAeCU0nvqr6rYeiB9FcQMs/hp7sgLHblAU2HAl8yjoWJNwVbnQUjhiGFmcsTkMdA7T0BP+TmuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378860; c=relaxed/simple;
-	bh=h0XoJmnxeuzgLK3XsE5ue6QNSKsebyDFmi/AyV0doeo=;
+	s=arc-20240116; t=1728378965; c=relaxed/simple;
+	bh=BIb6ky49pKlcCxSWFCn3FbS4FEb/o0sO1hh+b6iUjUA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LQCrQPX3D5thFacYWTiifE1+eROcUNw54kx7rvro992+N03KU+xbB+MnKBQS6LdhlQfMXcIQhnrE4gAapv6TT98bg/wq4iU2Djo+rjIPYKYj3u8HNzUdRlCNC0H4dEQCF7o7DSgfmpJFPiDr2VnDudAUgAHUKyJ/TRcNL/0aog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OM7wCO67; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728378857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjzBqg5gmnyslj1f7FzCfy4oe6l+aeujhqIrttDmUiU=;
-	b=OM7wCO675OHsJu1LLpzoknx+RXC/DWmGVw2N81q2wzQuZnguP9f5It0dcmnKWCF/u1VT2q
-	eObk7+9opeNibZ2UWbrosJZCULLbNdLl774R2ZZ1oJ7KbfOdjI4/RUD0Ltq9jiyQqh4Awq
-	mh3qgJBz3FHYhv3vSdH+cw1wcg9dcrk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-468-Qil3omiHNsefaKb80m2mkA-1; Tue, 08 Oct 2024 05:14:16 -0400
-X-MC-Unique: Qil3omiHNsefaKb80m2mkA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43052e05c8fso3128245e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:14:16 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=U/YhMNH9qkocf54m0MgKJVS4JMm/AGZEiieGU9cX/WuKF27EB0Ae4G8v48pkaOjb/HokcAg62ekKtal7FfNjFr4rqIY9PelTLXX71cOyDAi+xK0Y2pzNtNxctor5W7d4WtwjZqUhKFZQ8yhPLV0bjsTIBCbAszUDvrNpZcbjDM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=RkOaqHUt; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so55314895e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 02:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1728378961; x=1728983761; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/gkpdZua6cNQ8Ih6+gim40kZwxJstT2riF7r2XcuP8=;
+        b=RkOaqHUtW5u6Ysn1rsUs9LzYhB/IG6UPDybWXk31L/47phGN5uwgN2gosp2r+WGksk
+         j/v4sGkMfxbI6eXN5y5XBTMA76lt+yoHSao5BC1emKK6hrGgrwHEz3gV9tfq7kh9BCwL
+         u3eQap7zU+tN2ZcTEF4HqKnhXfTGWWinGoDn7wOt1b1xSK4I2BPyXNgif6HgwB/j1AZs
+         7x+oQqx7C5IwB2utKcw6E2A1gg6Eq4S7glQCqkThf+jTKmk7TjxgzyJopLAN0G5+oRHK
+         WAcir84wHghETHNG5ZJeHBZBU7tqHkgq15xA7rYm4JR3Eoxi7gPTmPpEG7mb4jQJPvvA
+         pOdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728378855; x=1728983655;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gjzBqg5gmnyslj1f7FzCfy4oe6l+aeujhqIrttDmUiU=;
-        b=p/PNX74rKKs38mHdKGswU6VBNjRFvvYxP0HD0r44QRpsOeK+MwHXhmAu+JTlIdzthH
-         heJDiwmyjjXxNtyGVP+NZYb6e2GYIoYoyRwDV8hUKziI/er8Nfkz4dC4/XYDxgbGicwZ
-         wjtwQMYXFZS/vzqB+Pr617Cl5xn3W50Xf7a/eGV0WxcJAKMauta0Eh1xGa1G3YAm4TyX
-         sh8sVk78g6c646C6Tl/SHDABoKcbHP9gKHI6mHfQ8jXly3TydRu4A4FvfoWakgFS+xs6
-         BBlk6PPqv6u/CiHT1MYejl4w59s4Sa/6X5AaXhpIt/iIuF303zVIwIHVGEFE2mIWmXP3
-         4JuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjFnemVnck3xkInZL/AT3cS78vO0xkQ+uaz4KHkjAWJTJsscHGt4t/eNRVnP5rKQErYOTZ/R7dNtxVeqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3CjydluhYU8jcadgWqfKiuy4NHX33te/rdMUQ/UuX9lWX246e
-	R6WLn7Z6y2kcXRGIAGI6vGATQC48mZLkNNamGdoskROCyQVrO3H/BEtftkfUfc8pOSbjKB79KUg
-	ASEaJiyuilzTUjn1oZFbsM6mRiJJu9eo1M4+iHizPvspdXE7UdVewcsuTXHk31Q==
-X-Received: by 2002:a05:600c:468f:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42f85aea086mr109974425e9.28.1728378855367;
-        Tue, 08 Oct 2024 02:14:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEntxED6Ajev+yYqCnvqbFQbY5VYJc60hLz2Tup0O0K/v+7ozifBz2tuAGRqhC6j91M0iDvhQ==
-X-Received: by 2002:a05:600c:468f:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42f85aea086mr109974165e9.28.1728378854940;
-        Tue, 08 Oct 2024 02:14:14 -0700 (PDT)
-Received: from [192.168.88.248] (146-241-82-174.dyn.eolo.it. [146.241.82.174])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec63c3sm102594535e9.38.2024.10.08.02.14.13
+        d=1e100.net; s=20230601; t=1728378961; x=1728983761;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E/gkpdZua6cNQ8Ih6+gim40kZwxJstT2riF7r2XcuP8=;
+        b=F8Ic2I7cIWh14manfP2bXKvgGkrOJAnm6y/i4z0/H6u2XIHwjRzqDnh8mOw6oSYmMQ
+         GNUeoTSzI/LgXIyFuj8MKiI/WQb+6dp20pWOA1Z1fX+x4vdfzLtqMxE4t9QZUYXzDGfr
+         sHBwRpIjNG878VoyTMrcF5YrQ8/vbAnfCJEvLgdJGLaI/LYparAOsGg5W5dIJ2zjaeCW
+         jp3YJibY+18oJ64b5wZiGmNqJb4zxXMndqvdTtyfZsvurKPH8P4ErxrS4JWNwpME8YoT
+         h0KDwLHrno7ZhKLOnuuptDPqEiR6Et/TiEkl8B3vpPeFwbOKCFL/5YnKC0k3zA06k7A1
+         4SMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWc4hzcBu3c/Neq+FG1GIjZ5FtmZ0UkZ90Jza6Ix9CfzRPA9BJbpC0hWM+vhhTYmdcmcIF3bv0JTAJDtyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr7PzAfbxofl5w+DHh0+Q0qFtzQTsw9HMwgjEP9/DeED3U+SJn
+	2DCa9yC6UrNDk0jtbi23IaHHVRW1t8nB8k7cYD9lC10L0OIC7gs0+Qa82otqefQ=
+X-Google-Smtp-Source: AGHT+IFNOZCVjkcCMqpKHJe/PgoF2C9Rj5+jWdu3hfVpd90h26lENYFjll829q+i//lQ21ox4TWEWg==
+X-Received: by 2002:a05:600c:6048:b0:42c:df54:1908 with SMTP id 5b1f17b1804b1-42f85ab7dffmr112390505e9.18.1728378961171;
+        Tue, 08 Oct 2024 02:16:01 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:1075:5147:8807:441e? ([2001:67c:2fbc:1:1075:5147:8807:441e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43056da1d34sm2764855e9.29.2024.10.08.02.15.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 02:14:14 -0700 (PDT)
-Message-ID: <6db0670f-6a39-4a23-94d2-5b944fea8dff@redhat.com>
-Date: Tue, 8 Oct 2024 11:14:13 +0200
+        Tue, 08 Oct 2024 02:16:00 -0700 (PDT)
+Message-ID: <056588a7-de1b-4416-8553-750c8d20dc97@openvpn.net>
+Date: Tue, 8 Oct 2024 11:16:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,51 +76,201 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v3] idpf: Don't hard code napi_struct size
-To: Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: aleksander.lobakin@intel.com, przemyslaw.kitszel@intel.com,
- horms@kernel.org, kuba@kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- "moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
- open list <linux-kernel@vger.kernel.org>, Joe Damato <jdamato@fastly.com>,
- netdev@vger.kernel.org
-References: <20241004105407.73585-1-jdamato@fastly.com>
+Subject: Re: [PATCH net-next v8 03/24] ovpn: add basic netlink support
+To: Jiri Pirko <jiri@resnulli.us>, ryazanov.s.a@gmail.com
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ sd@queasysnail.net
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
+ <ZwP-_-qawQJIBZnv@nanopsycho.orion>
+ <fd952c28-1f17-45da-bd64-48917a7db651@openvpn.net>
+ <ZwT0SkGHu5VHQ9Hd@nanopsycho.orion>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241004105407.73585-1-jdamato@fastly.com>
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ xsFNBFN3k+ABEADEvXdJZVUfqxGOKByfkExNpKzFzAwHYjhOb3MTlzSLlVKLRIHxe/Etj13I
+ X6tcViNYiIiJxmeHAH7FUj/yAISW56lynAEt7OdkGpZf3HGXRQz1Xi0PWuUINa4QW+ipaKmv
+ voR4b1wZQ9cZ787KLmu10VF1duHW/IewDx9GUQIzChqQVI3lSHRCo90Z/NQ75ZL/rbR3UHB+
+ EWLIh8Lz1cdE47VaVyX6f0yr3Itx0ZuyIWPrctlHwV5bUdA4JnyY3QvJh4yJPYh9I69HZWsj
+ qplU2WxEfM6+OlaM9iKOUhVxjpkFXheD57EGdVkuG0YhizVF4p9MKGB42D70pfS3EiYdTaKf
+ WzbiFUunOHLJ4hyAi75d4ugxU02DsUjw/0t0kfHtj2V0x1169Hp/NTW1jkqgPWtIsjn+dkde
+ dG9mXk5QrvbpihgpcmNbtloSdkRZ02lsxkUzpG8U64X8WK6LuRz7BZ7p5t/WzaR/hCdOiQCG
+ RNup2UTNDrZpWxpwadXMnJsyJcVX4BAKaWGsm5IQyXXBUdguHVa7To/JIBlhjlKackKWoBnI
+ Ojl8VQhVLcD551iJ61w4aQH6bHxdTjz65MT2OrW/mFZbtIwWSeif6axrYpVCyERIDEKrX5AV
+ rOmGEaUGsCd16FueoaM2Hf96BH3SI3/q2w+g058RedLOZVZtyQARAQABzSdBbnRvbmlvIFF1
+ YXJ0dWxsaSA8YW50b25pb0BvcGVudnBuLm5ldD7Cwa0EEwEIAFcCGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AFCRWQ2TIWIQTKvaEoIBfCZyGYhcdI8My2j1nRTAUCYRUquBgYaGtwczov
+ L2tleXMub3BlbnBncC5vcmcACgkQSPDMto9Z0UzmcxAAjzLeD47We0R4A/14oDKlZxXO0mKL
+ fCzaWFsdhQCDhZkgxoHkYRektK2cEOh4Vd+CnfDcPs/iZ1i2+Zl+va79s4fcUhRReuwi7VCg
+ 7nHiYSNC7qZo84Wzjz3RoGYyJ6MKLRn3zqAxUtFECoS074/JX1sLG0Z3hi19MBmJ/teM84GY
+ IbSvRwZu+VkJgIvZonFZjbwF7XyoSIiEJWQC+AKvwtEBNoVOMuH0tZsgqcgMqGs6lLn66RK4
+ tMV1aNeX6R+dGSiu11i+9pm7sw8tAmsfu3kQpyk4SB3AJ0jtXrQRESFa1+iemJtt+RaSE5LK
+ 5sGLAO+oN+DlE0mRNDQowS6q/GBhPCjjbTMcMfRoWPCpHZZfKpv5iefXnZ/xVj7ugYdV2T7z
+ r6VL2BRPNvvkgbLZgIlkWyfxRnGh683h4vTqRqTb1wka5pmyBNAv7vCgqrwfvaV1m7J9O4B5
+ PuRjYRelmCygQBTXFeJAVJvuh2efFknMh41R01PP2ulXAQuVYEztq3t3Ycw6+HeqjbeqTF8C
+ DboqYeIM18HgkOqRrn3VuwnKFNdzyBmgYh/zZx/dJ3yWQi/kfhR6TawAwz6GdbQGiu5fsx5t
+ u14WBxmzNf9tXK7hnXcI24Z1z6e5jG6U2Swtmi8sGSh6fqV4dBKmhobEoS7Xl496JN2NKuaX
+ jeWsF2rOwE0EZmhJFwEIAOAWiIj1EYkbikxXSSP3AazkI+Y/ICzdFDmiXXrYnf/mYEzORB0K
+ vqNRQOdLyjbLKPQwSjYEt1uqwKaD1LRLbA7FpktAShDK4yIljkxhvDI8semfQ5WE/1Jj/I/Q
+ U+4VXhkd6UvvpyQt/LiWvyAfvExPEvhiMnsg2zkQbBQ/M4Ns7ck0zQ4BTAVzW/GqoT2z03mg
+ p1FhxkfzHMKPQ6ImEpuY5cZTQwrBUgWif6HzCtQJL7Ipa2fFnDaIHQeiJG0RXl/g9x3YlwWG
+ sxOFrpWWsh6GI0Mo2W2nkinEIts48+wNDBCMcMlOaMYpyAI7fT5ziDuG2CBA060ZT7qqdl6b
+ aXUAEQEAAcLBfAQYAQgAJhYhBMq9oSggF8JnIZiFx0jwzLaPWdFMBQJmaEkXAhsMBQkB4TOA
+ AAoJEEjwzLaPWdFMbRUP/0t5FrjF8KY6uCU4Tx029NYKDN9zJr0CVwSGsNfC8WWonKs66QE1
+ pd6xBVoBzu5InFRWa2ed6d6vBw2BaJHC0aMg3iwwBbEgPn4Jx89QfczFMJvFm+MNc2DLDrqN
+ zaQSqBzQ5SvUjxh8lQ+iqAhi0MPv4e2YbXD0ROyO+ITRgQVZBVXoPm4IJGYWgmVmxP34oUQh
+ BM7ipfCVbcOFU5OPhd9/jn1BCHzir+/i0fY2Z/aexMYHwXUMha/itvsBHGcIEYKk7PL9FEfs
+ wlbq+vWoCtUTUc0AjDgB76AcUVxxJtxxpyvES9aFxWD7Qc+dnGJnfxVJI0zbN2b37fX138Bf
+ 27NuKpokv0sBnNEtsD7TY4gBz4QhvRNSBli0E5bGUbkM31rh4Iz21Qk0cCwR9D/vwQVsgPvG
+ ioRqhvFWtLsEt/xKolOmUWA/jP0p8wnQ+3jY6a/DJ+o5LnVFzFqbK3fSojKbfr3bY33iZTSj
+ DX9A4BcohRyqhnpNYyHL36gaOnNnOc+uXFCdoQkI531hXjzIsVs2OlfRufuDrWwAv+em2uOT
+ BnRX9nFx9kPSO42TkFK55Dr5EDeBO3v33recscuB8VVN5xvh0GV57Qre+9sJrEq7Es9W609a
+ +M0yRJWJEjFnMa/jsGZ+QyLD5QTL6SGuZ9gKI3W1SfFZOzV7hHsxPTZ6
+Organization: OpenVPN Inc.
+In-Reply-To: <ZwT0SkGHu5VHQ9Hd@nanopsycho.orion>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/4/24 12:54, Joe Damato wrote:
-> The sizeof(struct napi_struct) can change. Don't hardcode the size to
-> 400 bytes and instead use "sizeof(struct napi_struct)".
+On 08/10/2024 10:58, Jiri Pirko wrote:
+> Tue, Oct 08, 2024 at 10:01:40AM CEST, antonio@openvpn.net wrote:
+>> Hi,
+>>
+>> On 07/10/24 17:32, Jiri Pirko wrote:
+>>> Wed, Oct 02, 2024 at 11:02:17AM CEST, antonio@openvpn.net wrote:
+>>>
+>>> [...]
+>>>
+>>>
+>>>> +operations:
+>>>> +  list:
+>>>> +    -
+>>>> +      name: dev-new
+>>>> +      attribute-set: ovpn
+>>>> +      flags: [ admin-perm ]
+>>>> +      doc: Create a new interface of type ovpn
+>>>> +      do:
+>>>> +        request:
+>>>> +          attributes:
+>>>> +            - ifname
+>>>> +            - mode
+>>>> +        reply:
+>>>> +          attributes:
+>>>> +            - ifname
+>>>> +            - ifindex
+>>>> +    -
+>>>> +      name: dev-del
+>>>
+>>> Why you expose new and del here in ovn specific generic netlink iface?
+>>> Why can't you use the exising RTNL api which is used for creation and
+>>> destruction of other types of devices?
+>>
+>> That was my original approach in v1, but it was argued that an ovpn interface
+>> needs a userspace program to be configured and used in a meaningful way,
+>> therefore it was decided to concentrate all iface mgmt APIs along with the
+>> others in the netlink family and to not expose any RTNL ops.
 > 
-> Suggested-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->   drivers/net/ethernet/intel/idpf/idpf_txrx.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Can you please point me to the message id?
+
+<CAHNKnsQnHAdxC-XhC9RP-cFp0d-E4YGb+7ie3WymXVL9N-QS6A@mail.gmail.com> 
+from Sergey and subsequent replies.
+RTNL vs NL topic starts right after the definition of 'ovpn_link_ops'
+
+Recently Kuniyuki commented on this topic as well in:
+<20240919055259.17622-1-kuniyu@amazon.com>
+and that is why I added a default dellink implemetation.
+
 > 
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> index f0537826f840..9c1fe84108ed 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-> @@ -438,7 +438,8 @@ struct idpf_q_vector {
->   	__cacheline_group_end_aligned(cold);
->   };
->   libeth_cacheline_set_assert(struct idpf_q_vector, 112,
-> -			    424 + 2 * sizeof(struct dim),
-> +			    24 + sizeof(struct napi_struct) +
-> +			    2 * sizeof(struct dim),
->   			    8 + sizeof(cpumask_var_t));
->   
->   struct idpf_rx_queue_stats {
+> 
+>>
+>> However, recently we decided to add a dellink implementation for better
+>> integration with network namespaces and to allow the user to wipe a dangling
+>> interface.
+> 
+> Hmm, one more argument to have symmetric add/del impletentation in RTNL
+> 
+> 
+>>
+>> In the future we are planning to also add the possibility to create a
+>> "persistent interface", that is an interface created before launching any
+>> userspace program and that survives when the latter is stopped.
+>> I can guess this functionality may be better suited for RTNL, but I am not
+>> sure yet.
+> 
+> That would be quite confusing to have RTNL and genetlink iface to
+> add/del device. From what you described above, makes more sent to have
+> it just in RTNL
 
-@Tony: I'm assuming you want this one to go via your tree first, please 
-LMK otherwise.
+All in all I tend to agree.
 
-Thanks,
+> 
+>>
+>> @Jiri: do you have any particular opinion why we should use RTNL ops and not
+>> netlink for creating/destroying interfaces? I feel this is mostly a matter of
+>> taste, but maybe there are technical reasons we should consider.
+> 
+> Well. technically, you can probabaly do both. But it is quite common
+> that you can add/delete these kind of devices over RTNL. Lots of
+> examples. People are used to it, aligns with existing flows.
 
-Paolo
+The only counterargument I see is the one brought by Sergey: "the ovpn 
+interface is not usable after creation, if no openvpn process is running".
 
+However, allowing to create "persistent interfaces" will define a 
+use-case for having an ovpn device without any userspace process.
+
+@Sergey what is your opinion here? I am not sure persistent interfaces 
+were discussed at the time you brought your point about RTNL vs NL.
+
+
+Regards,
+
+
+> 
+>>
+>> Thanks a lot for your contribution.
+>>
+>> Regards,
+>>
+>>
+>>>
+>>>
+>>> ip link add [link DEV | parentdev NAME] [ name ] NAME
+>>> 		    [ txqueuelen PACKETS ]
+>>> 		    [ address LLADDR ]
+>>> 		    [ broadcast LLADDR ]
+>>> 		    [ mtu MTU ] [index IDX ]
+>>> 		    [ numtxqueues QUEUE_COUNT ]
+>>> 		    [ numrxqueues QUEUE_COUNT ]
+>>> 		    [ netns { PID | NETNSNAME | NETNSFILE } ]
+>>> 		    type TYPE [ ARGS ]
+>>>
+>>> ip link delete { DEVICE | dev DEVICE | group DEVGROUP } type TYPE [ ARGS ]
+>>>
+>>> Lots of examples of existing types creation is for example here:
+>>> https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking
+>>>
+>>>
+>>>
+>>>> +      attribute-set: ovpn
+>>>> +      flags: [ admin-perm ]
+>>>> +      doc: Delete existing interface of type ovpn
+>>>> +      do:
+>>>> +        pre: ovpn-nl-pre-doit
+>>>> +        post: ovpn-nl-post-doit
+>>>> +        request:
+>>>> +          attributes:
+>>>> +            - ifindex
+>>>
+>>> [...]
+>>
+>> -- 
+>> Antonio Quartulli
+>> OpenVPN Inc.
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
