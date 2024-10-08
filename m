@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-355298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB3C995026
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:33:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8454899502F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B0B286CED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:33:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B8F0B26ADB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9CB1DF734;
-	Tue,  8 Oct 2024 13:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADED1DF24B;
+	Tue,  8 Oct 2024 13:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3ffvz4M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1LmxDvwl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I/OhDTFN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB081DF24B;
-	Tue,  8 Oct 2024 13:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22998190055
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394337; cv=none; b=skEAmqL0sARiXI86jTbYX6MLWQKFBgBsSCeEoh4Ix/MKkOo+tbDw3z6wVe7mmi3TaKbOitTZAvHax4pQAkXAzDe0TfMxRY6LkONZrvv69k6sQsfckC2SygGJzEy0jvYbxY2jDxxE1YhQaAcKThAv0NWFQyOHYmr2nGuYSqC+jus=
+	t=1728394437; cv=none; b=B9JjOAPt/i3DhHLSDlu97L+1ERmTUWLM+NIxSjxQ0oaKccs765XsIoExCv6yrTbr50DWbXDtwlQDWVVjmCo1LyuTR+xusOEuDkETh1r+B5hLN162CCS6hzw8qNGQPdGb15Z1ruPlYAdKj1hfnZUkjYkMljcQmohDnJVz4kJmzgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394337; c=relaxed/simple;
-	bh=m3Dqaue9iMHe36I/93iGbTtg5g0XsNP1DjGguFYsNxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTXGE8l/m7z+hjo1jPHVcvcnwRZ4K89LQBSkbDKqOAPclQGen4lxYsXdE/Axzz+f2O3v2z1lZYlBW39Ggj1sb4vp88NyUBpo+FTmieVyzO6St2tn4CHEIDW94lqxlA8iJ22jOyf9EBTYlWz/w6qZmiWuBknacFRlDPXjDq/NO7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3ffvz4M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D6CC4CEC7;
-	Tue,  8 Oct 2024 13:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728394337;
-	bh=m3Dqaue9iMHe36I/93iGbTtg5g0XsNP1DjGguFYsNxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n3ffvz4MdASGCADyFqcOUDV3RAoKJ0UC0IMNe+xmXbpkLs55+uR3st3mH2w+0QqAC
-	 hUHLQrtNj2qlRYMakBl95BmzI+lL6m2y40hXK8ucPYmaJzgyaA1Yc/mpIFWZKBjp20
-	 WyqPeVRSvEDKZkyu2TskwsveLVsVNmo0VqrB0cNRngMIFX0fKMp7p0k16vCWzLNWor
-	 /PuXmwHHSDUdUGzMKvUJnEfA2BGYLvCbHn9ksdJ/dWY0C/0ZQskX39pusYBGtrIXzl
-	 cLegrKJm+fmX/OVgHwztKx+d7ukPh+ZLN8NomG57k10SZcEm74PevVZVu8UXc1k+eF
-	 iQRzPmLKmuNsg==
-Date: Tue, 8 Oct 2024 15:32:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: ufs: Document Rockchip UFS host
- controller
-Message-ID: <pthhldiu7mus3ehk2yndro5npyqaqdenru53daz34gx7vrizlp@ub7lgvoyiq6a>
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-3-git-send-email-shawn.lin@rock-chips.com>
+	s=arc-20240116; t=1728394437; c=relaxed/simple;
+	bh=NEQfk9yB9JG+PD/NGEoPH3I1T+oFiFFHTcldxCwl+6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jHvQ4y/eaJPWlYh0MO4zjybl+Tg1czwAcd7Ia1rTKUPe7MkQuTbEsk//XY1xi1SXpfneDElE4Yi/dr8tp64VZ2fZ26egGCaFTsyPug4iZvbnR1mBCytMwmXtZxCztK/q3drjaJDLgGErVNLhom9JmWKjcvY75vZqEcRfW3+w0sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1LmxDvwl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I/OhDTFN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Benedikt Spranger <b.spranger@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728394434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6BgLtv//7VX3/T9mPQLCPe+CkxNyewsbkBQ2mYybJu8=;
+	b=1LmxDvwlGEaHrglEMqiy/Y+W+vkoe4YCxWUPOYo0ol1UUeaCLF1tanFOaD217w9Fe3lRhz
+	BAXsftwMwTj9TYGXl6R8tphZ4W1q7Y1UxM3vrJJc2vqZ3GkWYNadnsmOM1TlpykoigDuIM
+	ARYhtoWWgmbrn9JN9t4PFSyAauSBUxXGEOpTiC+hRYh6bfU0lR3P+yZv0+Pkb7GmAr3Fln
+	Lby/Lb3rX06FcIUxprm3cclsNFx0myH0SZtY3QO24rTMQklmXcchhwdBNj/VN+Lfx6YTIo
+	bN7HF5huiSx3+455Vx79kZ903UopPnaRaPws4qrmj6/7dj3Xbx839zenMx2eeA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728394434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6BgLtv//7VX3/T9mPQLCPe+CkxNyewsbkBQ2mYybJu8=;
+	b=I/OhDTFNa1iQHtYFc6aVIAO1IykJefsblpB+gKkt6bwiVdL+AxNU57llKL8d8lzbPclcDD
+	n4Qnx0jtDCIuHoAg==
+To: linux-kernel@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 1/1] ubifs: Try to recover from missing znode
+Date: Tue,  8 Oct 2024 15:33:42 +0200
+Message-Id: <20241008133342.1937674-1-b.spranger@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1728368130-37213-3-git-send-email-shawn.lin@rock-chips.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 02:15:27PM +0800, Shawn Lin wrote:
-> Document Rockchip UFS host controller for RK3576 SoC.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> 
-> ---
-> 
-> Changes in v3:
-> - rename the file to rockchip,rk3576-ufshc.yaml
-> - add description for reset-gpios
-> - use rockchip,rk3576-ufshc as compatible
+After powercut on a system using ubifs mounting failed:
 
-... 
+2024-09-30T12:38:26.880487+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node type (255 but expected 9)
+2024-09-30T12:38:26.880506+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node at LEB 103:46920, LEB mapping status 0
+2024-09-30T12:38:26.880509+02:00 sonja kernel: Not a node, first 24 bytes:
+2024-09-30T12:38:26.880510+02:00 sonja kernel: 00000000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff                          ........................
 
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 4
-> +
-> +  reset-names:
-> +    items:
-> +      - const: biu
-> +      - const: sys
-> +      - const: ufs
-> +      - const: grf
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: |
-> +      GPIO specifiers for host to reset the device.
+While traversing over zbranches during the journal replay one zbranch
+points to a znode, which was not written to the flash and therefore the
+flash is empty.
 
-Redundant description. I don't get why did you add it.... maybe we were
-confused by duplicating resets and GPIO, but then say here something
-useful not what the property name is already saying.
+Try to recover from that by inserting an empty znode instead of failing.
 
-E.g. Which pin is this? Active low/high? Resets which device - phy?
-memory?
+Signed-off-by: Benedikt Spranger <b.spranger@linutronix.de>
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
+---
+ fs/ubifs/io.c       | 16 ++++++++++++++++
+ fs/ubifs/tnc_misc.c |  6 +++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-With proper description:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/fs/ubifs/io.c b/fs/ubifs/io.c
+index 01d8eb170382..0bbb426f9006 100644
+--- a/fs/ubifs/io.c
++++ b/fs/ubifs/io.c
+@@ -1110,6 +1110,22 @@ int ubifs_read_node(const struct ubifs_info *c, void *buf, int type, int len,
+ 		return err;
+ 
+ 	if (type != ch->node_type) {
++		/*
++		 * While recovering, we may face lost data i.e. empty flash.
++		 * Give callsites a hint by returning -ENODATA.
++		 */
++		if (c->replaying) {
++			u8 *b = buf;
++
++			for (l = 0; l < len; l++) {
++				if (b[l] != 0xff)
++					break;
++			}
++			if (l == len) {
++				ubifs_errc(c, "no node, but empty flash");
++				return -ENODATA;
++			}
++		}
+ 		ubifs_errc(c, "bad node type (%d but expected %d)",
+ 			   ch->node_type, type);
+ 		goto out;
+diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
+index d3f8a6aa1f49..4d085fc1300f 100644
+--- a/fs/ubifs/tnc_misc.c
++++ b/fs/ubifs/tnc_misc.c
+@@ -300,7 +300,11 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
+ 	err = ubifs_read_node(c, idx, UBIFS_IDX_NODE, len, lnum, offs);
+ 	if (err < 0) {
+ 		kfree(idx);
+-		return err;
++		/*
++		 * While recovering we may face a non written znode.
++		 * Inject an empty znode in this case.
++		 */
++		return (err == -ENODATA) ? 0 : err;
+ 	}
+ 
+ 	err = ubifs_node_check_hash(c, idx, zzbr->hash);
+-- 
+2.39.5
 
 
