@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-355587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65E1995462
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0FB99545F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F1CEB25297
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:27:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80B8B25100
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1962C1E0DFF;
-	Tue,  8 Oct 2024 16:26:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E90A1E0DC0;
+	Tue,  8 Oct 2024 16:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WenUi9nM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B31E0B6F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DE01DF241;
+	Tue,  8 Oct 2024 16:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404810; cv=none; b=DGZSIJ+xmhvwsJWL+EGXPkx67nFPgvMotyaZhQXVisL0R8ba6pugXFfQRFR4te0xrKwJWrozYNfva36/ndfexXRbbwoI1zRWRc587nVS2dHD6luV8jTmxDeAiTVQ2VtuSx6pwgHuJuoYGZ7KuHcTHsxGxALxWEgHhQh4JhD3+t4=
+	t=1728404800; cv=none; b=dCedQ3ai2CTsXJUMHRiXQUIEX+wNsJF7LaYqzSoEGpvtasZNrsJ9iTeWohz7Ds9OVBCB0/1kfgzbn2lq7vFw8wqZYanEUxIMkVWOnO5flid3FsgrN1HJxpiqIJQplxmFPkC+6Bt+spJ6Ue2RU0+runC0tA4F3bcEkCm2cH0TTF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404810; c=relaxed/simple;
-	bh=16jmV6QrV7ugvLP+a5JbgEoIuyzmF2r5BsIMwyFMCnY=;
+	s=arc-20240116; t=1728404800; c=relaxed/simple;
+	bh=g3mTwkOGnaGYMekj4pHF5T98Ay768IFcDD66yHGl9vc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7MCRa0EPu3Gkm4tthq96TTf3gLVi8LkYSuAxLKL6fZs9BrWNo1K/wJeiKgTVEd5ixsyhRmHpwkLfvIF0GInkM3yDHmvt5ufO2nDFEK3f2V/5W1QWkhWvrpP1ibcCRjquQeDGFia9yq2eurhwuxW1EE/dpASOYXB27bI+spsPxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syD2i-0000MN-2d; Tue, 08 Oct 2024 18:26:36 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syD2g-000PKD-3O; Tue, 08 Oct 2024 18:26:34 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syD2f-000RzO-3D;
-	Tue, 08 Oct 2024 18:26:34 +0200
-Date: Tue, 8 Oct 2024 18:26:33 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 09/12] net: pse-pd: tps23881: Add support for
- PSE PI priority feature
-Message-ID: <ZwVdOQGzbglxtq5H@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
- <20241002-feature_poe_port_prio-v1-9-787054f74ed5@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nO/QzMgo1TpmlN3xKAIDGa7x+ElhNK28uxxoE1i2hEt432/11MUIRm8vCPjyxDPmwGzc4k/B3Z+rd0Rniw0jLzmCUlmh/JiitSyR+XzSoOa08jXvK+iZlW7qw+j9b7Qgl/d17OjHPaxlSkaDK+Jr8XB3SAL9TFTN0NRvaZgbguw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WenUi9nM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26445C4CEC7;
+	Tue,  8 Oct 2024 16:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728404800;
+	bh=g3mTwkOGnaGYMekj4pHF5T98Ay768IFcDD66yHGl9vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WenUi9nM1S3TtiQlmPE1/7+zo2OAB+Q9nS9pcM3TsZ7YIWHvmjFxsZJXhCGwYPooV
+	 kL70DsdAFOpw9yx1CUd72izaMzeL2tCCt6DF7nPyPfWsbPlEve4W2zoBveFsp4jkcM
+	 l7shlIGVFMi4AsXbAt/gjm6ykh2FrZ4Yk+7hrBxJGk4LGxVizKBvz0z+Zgh9NuBlAW
+	 nEOKEPXfwIGie5KbFpUBRATJifcA85IKwoBR+6MS+lZvHR9nar3P0Xy6uEL8LWMpEn
+	 TPRFNpMQFIdPqkgiW7KZWyqL9MreLu4hfponXKqlRDXoG/2DA4RU4aAWmkqgP2n8RX
+	 y0qWkHo86RAVw==
+Date: Tue, 8 Oct 2024 17:26:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Wenliang <wenliang202407@163.com>, linux@roeck-us.net,
+	jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH linux dev-6.11 2/2] dt-bindings: modified ina2xx to match
+ SY24655(SQ52205)
+Message-ID: <20241008-audible-immerse-9be169b3150c@spud>
+References: <7c155638-8c33-4873-9534-17a9454c83e6@roeck-us.net>
+ <20240911122518.41393-1-wenliang202407@163.com>
+ <20240911122518.41393-2-wenliang202407@163.com>
+ <20240911-cahoots-wildland-0ea4d25d8cd8@spud>
+ <f721966e-4e75-4aa0-8d0a-4e2bf73cf9e9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zyl02mF8vy9zqIwE"
 Content-Disposition: inline
-In-Reply-To: <20241002-feature_poe_port_prio-v1-9-787054f74ed5@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <f721966e-4e75-4aa0-8d0a-4e2bf73cf9e9@kernel.org>
 
-On Wed, Oct 02, 2024 at 06:28:05PM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> This patch extends the PSE callbacks by adding support for the newly
-> introduced pi_set_prio() callback, enabling the configuration of PSE PI
-> priorities. The current port priority is now also included in the status
-> information returned to users.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
->  drivers/net/pse-pd/tps23881.c | 57 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
 
-....
-> 
->  static const char fw_parity_name[] = "ti/tps23881/tps23881-parity-14.bin";
-> @@ -1106,6 +1162,7 @@ static int tps23881_i2c_probe(struct i2c_client *client)
->  	priv->pcdev.dev = dev;
->  	priv->pcdev.types = ETHTOOL_PSE_C33;
->  	priv->pcdev.nr_lines = TPS23881_MAX_CHANS;
-> +	priv->pcdev.pis_prio_max = 1;
+--zyl02mF8vy9zqIwE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This controller supports 1 bit and 3 bit prios, it will be good to know
-why 1 bit mode is used.
+On Tue, Oct 08, 2024 at 02:35:38PM +0200, Krzysztof Kozlowski wrote:
+> On 11/09/2024 19:49, Conor Dooley wrote:
+> > On Wed, Sep 11, 2024 at 08:25:18AM -0400, Wenliang wrote:
+> >> Modified the binding of ina2xx to make it compatible with SY24655.=20
+> >=20
+> > Rather, you should explain why the sy24655 is compatible with the ina2xx
+> > devices.
+> >=20
+> >>
+>=20
+> This looks like patch for some forked tree, like the BMC folks are
+> doing. At least linux dev suggests it.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+CC list wouldn't imply that it is.
+
+--zyl02mF8vy9zqIwE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwVdOwAKCRB4tDGHoIJi
+0rVXAP9bLpLOltPkImxR7yAF6jz37KVoRQN+/ZMA02nPw3ubhQD9HltuY1oft4J2
+jKGj2FVZfDfx5hCFYGdjAo3xn0ZscwA=
+=b50z
+-----END PGP SIGNATURE-----
+
+--zyl02mF8vy9zqIwE--
 
