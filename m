@@ -1,180 +1,207 @@
-Return-Path: <linux-kernel+bounces-354522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C52993E90
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CE1993E8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795B71C2274D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4CF1C234F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2156F1420B6;
-	Tue,  8 Oct 2024 06:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCF313B582;
+	Tue,  8 Oct 2024 06:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="Um5WrAkA"
-Received: from mx0a-00176a03.pphosted.com (mx0a-00176a03.pphosted.com [67.231.149.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dMAu7ROq"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6813D250;
-	Tue,  8 Oct 2024 06:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2917E101
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728367356; cv=none; b=Q654oAfDhddGIIsEdYboEtbWW4uzvFypitEYPfFNefmwIMFZ3LecJh2QB4YhTsJN+vCsu7biDDBhE20N8pjflplYGzCAmtw4nyfFjRpUoGoyArsfRzXrBbmRNKJDSuVGmYF89WHjGqHufJj15RYJCfk1Gv3ZaIkxrccKVZ92fNQ=
+	t=1728367344; cv=none; b=U18+HfIZq4lCt0dyhTp7gK4teyH0/IK/hVchkssKzXaSLaAlTaJumPW8pLb39EJUrma5IRDEXm5YWdKGSaYn48Fqf2noRRUCioaJHRqpXHKkIyoql3U2il7aNi6M9vJl1Jmlvg5Nir/PmP0w74ZYG7QzTZ7Y7EwEnw93AnksFJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728367356; c=relaxed/simple;
-	bh=SBIkhXRb+howfpCEH6gtSLdYH169fnh6Q1siVLjUwFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o5Le2AFKQ6fbrpksKsV26fcc1XPwZ4ZEFXwkjhBqobMKqdF9iCgUuOOS6CE+VH4AdaOM2ORKZ8m70QBPow/636zB2olEG+WrphIrRwd7c9washofG/Ft14aEFfowJ6Tk+gb3S46O+iHKxpehQasfNrMPbytc9qIIsLjaNmfV9Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=Um5WrAkA; arc=none smtp.client-ip=67.231.149.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
-Received: from pps.filterd (m0048275.ppops.net [127.0.0.1])
-	by m0048275.ppops.net-00176a03. (8.18.1.2/8.18.1.2) with ESMTP id 4985QSsT003436;
-	Tue, 8 Oct 2024 02:02:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	gehealthcare.com; h=cc:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=outbound; bh=1
-	yGYyZ0+jiHSQO3Sl+l3tqeTZCwx6SdYlckmINxiIeM=; b=Um5WrAkAybysE9oX/
-	+WALkhTrIVQXoel4ZxDtWQpMM5HrzKHnYW5Cncl6aLeOumP91XSTfrYrx+QThmMf
-	2uVU3Lyx1OId4ODdMeHXsntBwA6BVLreIHwJkkCRo0wGj65M/mSZ+lnuVX8rhv8H
-	RsMsNEpu1upVDBXvf21hZjWn4W47XhTtQGgzKeVof1DDILRXcW7QvecUBcHOWoH/
-	Viv/goRxnxJpW5Soycw95NYcT3sQFurbg7CCMpS4R9C+uCi5bIiVqN0oR9D7yfGW
-	sCbwuKI4u7WcqqK0xqtkGpWylnX5eeuHRzbkO1I9dGmjIa/QHYzAs9bygaXbNGq6
-	DYKkQ==
-Date: Tue, 8 Oct 2024 09:02:12 +0300
-From: Ian Ray <ian.ray@gehealthcare.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
-Message-ID: <ZwTK5Jip2YJrSd8L@f642ec5a18a7>
-References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
- <ce0ac1bfe2fb54feb10dc06827091caea57b7a19.camel@suse.de>
+	s=arc-20240116; t=1728367344; c=relaxed/simple;
+	bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VHAceZr+nVfPxmFiYvQcLeI0ZN598BqD0zDl1MSKptsd/aYrwzUdicV3qfX8jyCaFK6Ho5Z50iU8bpcq0NJTSZDo9Tl3JyeQPCkd2WLATAdOncD+nASFtnZAgOMI7ZtQl3lWKzEQvUJI/mkRdi0+M5J2GVaf4TJc60SNW0xCY/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dMAu7ROq; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ccfbbd467so3708598f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728367340; x=1728972140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
+        b=dMAu7ROqQInhqCkD9nVSV0u9PqTEpXMLw8leXCuP8/Cf2dKHmAzmLPmJ6FU3xXk5cZ
+         YtnsX6jfInpH7AwJxOl+MkORcK2x7ospBzNxa367eg7NP/KbP/j050VXTL3Tz/Gq0UK9
+         dckjuvsm5lpR0gYz623apVVwic4NE8a0m4MPswQzFx4tYtO3zzQaY41PHNItuzNO9tN6
+         u5i98sWGB12lwYbifG6s9BqEoFN34e5VIAsZJCeS+QHvnx8RIqeKBD4soj7+vYnmmjgU
+         ZG6gRukXnGRoi8m+8qLbbSS0Asn2dDxUgtrC0arCq07p63PGnW4E5Syzf2Q/8OC/AIhB
+         wRLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728367340; x=1728972140;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
+        b=Blf6bmQqzXU724REjXtI6d7/sRy/aCt0SqWf2odPHKX9b5MAi80a1a+eaCGxeDtE0S
+         1VyOutqnm9rmV2shk/JFMf4tm+6wj3TnI7ByuOfAbBvUCxPyJmhdbZHGFsQkK8a2J1wf
+         5gLJRh+NMNXzBtDlWaXAab5XiXyfUSJxnVGt50RMiWpDdjNi7ZGgg/ceW/oTJt5o0xAn
+         RrKBPQ6qEq10zdtZdDoOv//OSxvGNxDQNygYYLpcClwNss1rQ1sqdWECsKX/Uc9n7e4u
+         I2NZd9ajBV5zhoK28OKiOwQ15fNY2AGTyRsJCmsSfmtPzcj+75VRLSaFMWe2Ro9JxxBu
+         DPbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVtJTDzJxHApJSXuD4Lv4g8vlCEncegKAHxOK8KkO62jvmiImQErgKoNMYY9CdiUBsRo9ypnHVwFIBxfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytZRRWaGH63BNPuS4p7dc8r1hqHEvefqr0KNZUTWwsO1y67Vxz
+	t+j+P1SZifOoEEfqfNU+SRPUX4AislJy1tRvWq6u2NRehnPCiCS3MrWuhNiLo2Y=
+X-Google-Smtp-Source: AGHT+IHe+A9wTyATKAfiRoVRSil4JXvoDYrf57UaYrGEMYze/HZIN0MycxHFtINVSh9VQvZZ8GlaIA==
+X-Received: by 2002:a5d:598f:0:b0:37c:cdcd:68ac with SMTP id ffacd0b85a97d-37d0e8f74e6mr10479650f8f.52.1728367339614;
+        Mon, 07 Oct 2024 23:02:19 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:41f2:4244:ce34:c273])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1697024fsm7195797f8f.95.2024.10.07.23.02.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 23:02:19 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
+In-Reply-To: <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com> (Chuan Liu's
+	message of "Tue, 8 Oct 2024 13:44:54 +0800")
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
+	<20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+	<CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
+	<20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
+Date: Tue, 08 Oct 2024 08:02:18 +0200
+Message-ID: <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce0ac1bfe2fb54feb10dc06827091caea57b7a19.camel@suse.de>
-X-Proofpoint-ORIG-GUID: 2W3k1kxgcy8b0iXnZUQ7_EgqndcIVagC
-X-Proofpoint-GUID: 2W3k1kxgcy8b0iXnZUQ7_EgqndcIVagC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-08_04,2024-10-07_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 bulkscore=0 spamscore=0
- adultscore=0 impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410080038
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 11:16:51PM +0200, Jean Delvare wrote:
-> Hi Ray,
-> 
-> On Thu, 2024-06-20 at 07:29 +0300, Ian Ray wrote:
-> > Ensure that `i2c_lock' is held when setting interrupt latch and mask in
-> > pca953x_irq_bus_sync_unlock() in order to avoid races.
-> >
-> > The other (non-probe) call site pca953x_gpio_set_multiple() ensures the
-> > lock is held before calling pca953x_write_regs().
-> >
-> > The problem occurred when a request raced against irq_bus_sync_unlock()
-> > approximately once per thousand reboots on an i.MX8MP based system.
-> >
-> >  * Normal case
-> >
-> >    0-0022: write register AI|3a {03,02,00,00,01} Input latch P0
-> >    0-0022: write register AI|49 {fc,fd,ff,ff,fe} Interrupt mask P0
-> >    0-0022: write register AI|08 {ff,00,00,00,00} Output P3
-> >    0-0022: write register AI|12 {fc,00,00,00,00} Config P3
-> >
-> >  * Race case
-> >
-> >    0-0022: write register AI|08 {ff,00,00,00,00} Output P3
-> >    0-0022: write register AI|08 {03,02,00,00,01} *** Wrong register ***
-> >    0-0022: write register AI|12 {fc,00,00,00,00} Config P3
-> >    0-0022: write register AI|49 {fc,fd,ff,ff,fe} Interrupt mask P0
-> >
-> 
-> I have more questions on this. Where does the above log come from?
-> Specifically, at which layer (bus driver, regmap, gpio device drier)?
+On Tue 08 Oct 2024 at 13:44, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-Additional debug, with manually added commentary (sorry for not being
-clearer).  The debug was added to drivers/base/regmap/regmap-i2c.c while
-investigating the issue.
+> Hi Martin,
+>
+>
+> On 2024/10/1 4:08, Martin Blumenstingl wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> Hello,
+>>
+>> On Sun, Sep 29, 2024 at 8:10=E2=80=AFAM Chuan Liu via B4 Relay
+>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>>> From: Chuan Liu <chuan.liu@amlogic.com>
+>>>
+>>> glitch free mux has two clock channels (channel 0 and channel 1) with
+>>> the same configuration. When the frequency needs to be changed, the two
+>>> channels ping-pong to ensure clock continuity and suppress glitch.
+>> You describe the solution to this below:
+>>> Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
+>>> switchover to suppress glitch.
+>> It would be great to have this change in a separate patch.
+>> The clocks to which you're adding CLK_SET_RATE_GATE aren't switched at
+>> runtime in mainline kernels (at least I think so).
+>
+>
+> Okay, I will separate it into two patches and submit it in the next versi=
+on.
+>
+>
+>>
+>>> Channel 0 of glitch free mux is not only the clock source for the mux,
+>>> but also the working clock for glitch free mux. Therefore, when glitch
+>>> free mux switches, it is necessary to ensure that channel 0 has a clock
+>>> input, otherwise glitch free mux will not work and cannot switch to the
+>>> target channel.
+>> [...]
+>>> glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
+>>> has clock input when switching channels.
+>> This describes a second problem. I think it's best to have this in a
+>> separate commit/patch.
+>> Also you're updating some mali clocks (e.g. on G12 and GX) but not all
+>> of them (Meson8b for example is missing).
+>
+>
+> Yes, M8 missed it, I will complete it in the next version.
+>
+>
+>>
+>> I still have some questions to the CLK_OPS_PARENT_ENABLE approach -
+>> please share your findings on this.
+>>
+>> There's multiple clocks involved in a glitch-free mux hierarchy:
+>> - a number of clock inputs (e.g. fclk, xtal, ...)
+>> - two muxes (one for every channel of the glitch-free mux)
+>> - two dividers (one for every channel of the glitch-free mux)
+>> - two gates (one for every channel of the glitch-free mux)
+>> - the glitch-free mux
+>>
+>> When switching from channel 0 (which is active and enabled) CCF
+>> (common clock framework) will:
+>> a) on channel 1:
+>> - find the best input clock
+>> - choose the best input clock in the mux
+>> - set the divider
+>> - enable the gate
+>> b) switch the glitch-free mux
+>> c) on channel 2:
+>> - disable the gate
+>>
+>> To me it's not clear at which level the problem occurs (glitch-free
+>> mux, gate, divider, mux, input clock).
+>> Also I don't understand why enabling the clocks with
+>> CLK_OPS_PARENT_ENABLE solves any problem since CCF is doing things
+>> automatically for us.
+>> Can you please explain (preferably with an example) what problem is
+>> solved with this approach?
+>
+>
+> If CLK_OPS_PARENT_ENABLE is configured in mux, 'new_parent' and
+> 'old_parent' will be enabled first when __clk_set_parent_before() is
+> called. And disable them at __clk_set_parent_after(). Our glitch free
+> only has two clock sources, so adding this flag ensures that both
+> channels 0 and 1 are enabled when mux switches.
+>
+> In fact, we just need to make sure that channel 0 is enabled. The
+> purpose of CLK_OPS_PARENT_ENABLE may not be to solve our situation,
+> but adding this flag does solve our current problem.
 
-> What do these values represent exactly? Which GPIO chip was used on
-> your system? Which i2c bus driver is being used on that system? What
-> are the "requests" you mention in the description above?
+This is last point is important.
 
-GPIO expander pi4ioe5v6534q at I2C address 0-0022.
+It is OK to use a side effect of CLK_OPS_PARENT_ENABLE but it needs to
+be documented somehow, so what really matters is still known 2y from now.
 
-# grep . {name,uevent}
-name:30a20000.i2c
-uevent:OF_NAME=i2c
-uevent:OF_FULLNAME=/soc@0/bus@30800000/i2c@30a20000
-uevent:OF_COMPATIBLE_0=fsl,imx8mp-i2c
-uevent:OF_COMPATIBLE_1=fsl,imx21-i2c
-uevent:OF_COMPATIBLE_N=2
-uevent:OF_ALIAS_0=i2c0
+Make sure the information appears in the code comments at least once.
 
-> 
-> I'm asking because I do not understand how writing to the wrong
-> register can happen, even without holding i2c_lock in
-> pca953x_irq_bus_sync_unlock(). The i2c layer has a per-i2c_adapter lock
+>
+>
+>>
+>> Last but not least: if we're running into bugs when
+>> CLK_OPS_PARENT_ENABLE is missing then that patch should carry a Fixes
+>> tag.
+>
+>
+> Thanks for the heads-up. I'll keep an eye on it in the next version.
+>
+>
+>>
+>> Best regards,
+>> Martin
 
-Given that pca953x_irq_bus_sync_unlock is part of an interrupt handler,
-IMHO this explains very well why locking is needed (but I did not dig
-deeper than that).
-
-> which is taken before any bus transfer, so it isn't possible that two
-> transfers collide at the bus level. So the lack of locking at the
-> device driver level could lead to data corruption (for example read-
-> modify-write cycles overlapping), but not to data being written to the
-> wrong register.
-
-Based on the observed data, the hypothesis was that pca953x_write_regs
-(called via pca953x_gpio_set_multiple) and pca953x_irq_bus_sync_unlock
-can race.
-
-The missing guard neatly explained and fixed the issue (disclaimer: on
-my hardware for my scenario).
-
-> 
-> As a side note, I dug through the history of the gpio-pca953x driver
-> and found that i2c_lock was introduced before the driver was converted
-> to regmap by:
-> 
-> commit 6e20fb18054c179d7e64c0af43d855b9310a3394
-> Author: Roland Stigge
-> Date:   Thu Feb 10 15:01:23 2011 -0800
-> 
->     drivers/gpio/pca953x.c: add a mutex to fix race condition
-> 
-> The fix added locking around read-modify-write cycles (which was indeed
-> needed) and also around simple register reads (which I don't think was
-> needed).
-> 
-> It turns out that regmap has its own protection around read-modify-
-> write cycles (see regmap_update_bits_base) so I think several uses of
-> i2c_lock should have been removed from the gpio-pca953x driver when it
-> was converted to regmap as they became redundant then. This driver-side
-> lock is still needed in a number of functions though, where the read-
-> modify-write is handled outside of regmap (for example in
-> pca953x_gpio_set_multiple).
-> 
-
-Blue skies,
-Ian
-
-
-> Thanks,
-> --
-> Jean Delvare
-> SUSE L3 Support
+--=20
+Jerome
 
