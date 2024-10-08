@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-355757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC65995697
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:33:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BB0995699
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FC71F25C4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429A21C241A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89103212D2D;
-	Tue,  8 Oct 2024 18:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E60213ECF;
+	Tue,  8 Oct 2024 18:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvj01IXe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETyZQm4d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730B487BF;
-	Tue,  8 Oct 2024 18:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F76213EC4;
+	Tue,  8 Oct 2024 18:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412368; cv=none; b=kdgnluYEV6m09XWr9l9vHI8XndexGTZhrxOETNSdgU3LYPZL71fAj2/caXcPYjyQj1BULLAQS0N+y8qT+ClvrEvl4DqMuIPw8nHYYPJivxAbEhuGcNMjPbZ+m680juB2rzXeQ6tdhNcQHSTRK1aIzLdsXsoEIUSdI0UOKKxRxJY=
+	t=1728412373; cv=none; b=ZktDaJo8UexHAIl+SU9zpoKgrUR/6UEMu8JNj6qbuJi0UImHoiue3b0Do6DvUQEmSjqdstPHgykyXDSX/gCRVaTi2NXfvNu/DlgubNnvgVyPcAMJn8+3pj0aHehv359mXRqHN3QK4BKmJDLOvnVLVEt0WdFSkuY/cQJ1wN3qrGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728412368; c=relaxed/simple;
-	bh=EZcXyQnK92mhEIojwW1omtIJwUnP3T0fmnE4nmCzEWc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=n/+1l6XG/Mxz0VQMYtogkAicoC2FozY657YA+MDVzl4cmDrODeXlf5cJxyf4cCSm6+HYB9KABJZ4l6Z4qSQBa4fFZcNnxp07xBwj1JYkiMUa0e9pK0wk5txK4heMWTKTOnmu4tPAuzzDRI8PC+ISiKqs79d/3lfaofTIrPHlteQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvj01IXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA36C4CEC7;
-	Tue,  8 Oct 2024 18:32:47 +0000 (UTC)
+	s=arc-20240116; t=1728412373; c=relaxed/simple;
+	bh=Hjb1+BeAE9xuDkPbt0cC3SuHpN9twhafpNuaPpdLT24=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IjD8aKcEkTrNl2bsGG32AcJZZe5K1oE1uh+YU2TZkDqWFyJpX//QywheXRQYF7gEGDCVFd/rCPC9enjzBiJvDNZtVzkNlRDgmJAA+8QaRgleQc5lSbSCWJIpxZ8BJvZuHg8Q8zMwRNXL8M/ypvljVU5eg6o9g9e0zi7MkMtlqDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETyZQm4d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC169C4CEC7;
+	Tue,  8 Oct 2024 18:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728412367;
-	bh=EZcXyQnK92mhEIojwW1omtIJwUnP3T0fmnE4nmCzEWc=;
+	s=k20201202; t=1728412372;
+	bh=Hjb1+BeAE9xuDkPbt0cC3SuHpN9twhafpNuaPpdLT24=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nvj01IXe/Gb+5ThCrqZhOWW1T2JUyhvLfNqY672J2I86xbtjlzgveEnwIfW4smmSE
-	 SQESRod91SOPcji67t30GjFwAlS8L4K/2FcRCnYZUJnEhkkAX1T5qb/eoZeHpqvr23
-	 JwzyAOSMmwwKVRQyQsdkkB0CY8vCr84MQONfeLKymIKxstkLmmzYWxI14F3zPqRwLD
-	 7TCzhz/ne+hBemDHpisw2hoaiOKNuwdHVvCU41kJOghHr11cNWXkR1CrguGZl39OVP
-	 GmRgsvaGMOYbq++05ih609DIddG5tJfhe+i0y3tMVG3wyQOUWWWTbJPaQjBzKG4Pjj
-	 R3xje/w6SU8pA==
+	b=ETyZQm4dCtt3qrmiFTK4cP1fvsk4v+gHXSq0y5nmIQwjJ0wNNvXx+2YsZAzJrDosr
+	 a3Y4Ad+NULms9qd2RV0IKXs7GRP7z9Qg3Rz/N4pIRx+ZF0XUju5X0m4YJ0CvCmvG3a
+	 FRDXowbx48LN08fu0x5CIPfc+4nrnEhDm26p4Ka17i42U0CXH4rA+szpFciduhzjcb
+	 LeNdRo8iZVAkMfiJ8gSb8ScYtuG+hol1VrFWugoY/6B2ziZXpq7OmhrLCLzVvrRa2I
+	 2F/WNBG9WhfToVu4KkWmQxjhYEXDKO5n/TXnVMgibHlzK25U8FJIAOfMb9rwTAlLoc
+	 AMmPIm62F27Ug==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FAE3810938;
-	Tue,  8 Oct 2024 18:32:53 +0000 (UTC)
-Subject: Re: [GIT PULL] perf tools fixes for v6.12
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D183810938;
+	Tue,  8 Oct 2024 18:32:58 +0000 (UTC)
+Subject: Re: [GIT PULL] ntfs3: bugfixes for 6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241008135549.988547-1-acme@kernel.org>
-References: <20241008135549.988547-1-acme@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241008135549.988547-1-acme@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
-X-PR-Tracked-Commit-Id: e934a35e3cc1fe0bfb1bc771e64f3ba6e70c40e2
+In-Reply-To: <20241008150247.6972-1-almaz.alexandrovich@paragon-software.com>
+References: <20241008150247.6972-1-almaz.alexandrovich@paragon-software.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241008150247.6972-1-almaz.alexandrovich@paragon-software.com>
+X-PR-Tracked-Remote: https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.12
+X-PR-Tracked-Commit-Id: 48dbc127836a6f311414bc03eae386023d05ed30
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b2760b839044132c29234b648aa4f6a2877de234
-Message-Id: <172841237167.640621.9516345254030033808.pr-tracker-bot@kernel.org>
-Date: Tue, 08 Oct 2024 18:32:51 +0000
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Monakov <amonakov@ispras.ru>, Ilkka Koskinen <ilkka@os.amperecomputing.com>, James Clark <james.clark@linaro.org>, Yang Jihong <yangjihong@bytedance.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+X-PR-Merge-Commit-Id: 5b7c893ed5ed0fc1cbe28c0e3296a6fb45698486
+Message-Id: <172841237676.640621.11629920171530544260.pr-tracker-bot@kernel.org>
+Date: Tue, 08 Oct 2024 18:32:56 +0000
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: torvalds@linux-foundation.org, ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue,  8 Oct 2024 10:55:49 -0300:
+The pull request you sent on Tue, 8 Oct 2024 18:02:47 +0300:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
+> https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.12
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b2760b839044132c29234b648aa4f6a2877de234
+https://git.kernel.org/torvalds/c/5b7c893ed5ed0fc1cbe28c0e3296a6fb45698486
 
 Thank you!
 
