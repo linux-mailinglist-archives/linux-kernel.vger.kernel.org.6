@@ -1,219 +1,152 @@
-Return-Path: <linux-kernel+bounces-355739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D9899563D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AC5995645
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598EF28B459
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E9CB25ED7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB99212642;
-	Tue,  8 Oct 2024 18:13:28 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E231821262F;
+	Tue,  8 Oct 2024 18:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="il6N5YZL"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA0A2940F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88281E0DEF;
+	Tue,  8 Oct 2024 18:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411208; cv=none; b=T5I1605GCmKgD59jpAZnuJ2uJurEyOQm35n90xN6mxUnyYUmIQZ2ok/l50qH/rPJQd6cGzXMdwcqkvgU9IVIlPsk441P+Jj8PibRoHq/RITqRPCNUOOpWNFSr7JGIpYuv2etpRdUOM1zIFk0Kfg7jHQRj9bMcNNtCtPO0i24fl4=
+	t=1728411398; cv=none; b=K/p6AuaaRv+Aho7bLu17okKWLmPI/0Z8GI4a9yANoKDnWWd/cmPE5MvGHZMouaZbmY9NVRRIsh5AFyPeM+II4+gHJ9SeVh8mKRTcvYQ/t56w9O4yI/qKzzlqaAcFUnZAqvyCXPpZI3m4XvQGC8ahUL1UQaRqH763K4n9SdlLIa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411208; c=relaxed/simple;
-	bh=TyKulcS6b2v49mZ5JY37uTPP61Uc7smThSPijgdWXsg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KPYjDUQuMHqUYg69SxnvvlgwKkQEHXGnbImJJ6m1oPkCgpwgOZl1jLCjqj7fdbetlrrWMvGHVhM6fRBIh6/RjkCDrBY09aZMIK9mzpyyp51XGtRd1+i9ywLVceEp+Vpop+2AuP/BClLwM/ASk2528UWKoLmREolc6DZhki3LbVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342620f50so51100095ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:13:26 -0700 (PDT)
+	s=arc-20240116; t=1728411398; c=relaxed/simple;
+	bh=Y7/56yR6vBITsGPWI5jf0/L6gBmBPXhOjLQQFgWih54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFjkMOHZGaSPSVypvYS4UelvJE23PK4ZD/EOac/Mm3jFsIs7p43wf7YCbjZMRLwwGpI+npLlP25cMOJB7xwdwBCF7cLOZZuSkwbC8JjMnYsI7n/FXjedQgw8frlokA3JlBOSd6P3QmtJuQ+5yANIrChpEJuexi/gP0z6ZkCn+s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=il6N5YZL; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7afcf9f3c96so11205285a.1;
+        Tue, 08 Oct 2024 11:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728411396; x=1729016196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ljRJPF1sniqZTlNdNEIGJI8zWqUOe0ldVmcWgnzAc8=;
+        b=il6N5YZLLvdXvmhtUheoVCu8qbYi/255ZMiFPtFaklPb7m/PvVSCMvQ5p3nleIhYzh
+         jv0Z2Kgeaa3X7BEIzLXI0Rq/6T3PWCWABrEgdrciSHaPK1kM41XMJuPRzLiVCt37E8sm
+         DBM0Kxs0wPFybM1nOWxFCsWZu/OQhn51Wa2/992Ef7GFvocw7BkM1LkxUXv4e9FiFOsN
+         EWd8GNtb4NmQXyJUejgf41uSxx7680Ypugcv1QuvrN0DFwpMPDILEiH34dEoO56wZ2/a
+         TOikJL5WdR+stYhjo69sGDujWTkPWZ1tKQP3fxkgDMBUgi9tlzEQ+/dBfQOmi+Vxfovg
+         11Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728411205; x=1729016005;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0MQzjSaKVYeWaWQppOOsmsM7r8sTYW/AeftTpIwUERE=;
-        b=jtoBI+78oav7bQV/PafeHajtw3WJbNKYp2N3tJy+0hXFFM5DbSl8RiGAE9VLC6ihtL
-         ikF+E091sJiZPdfkdYsIHD77ctsVEELzNVwS3XWO9yEbaQ8FOUIAe5ngqDS6rnYoUJei
-         JvLMogkUMUPqLQzP9Lkmu8Ld5v6Kx5uMBVXlw7fTqwFCmUCuj9B269OBlE4MklyM5YUv
-         bwI/3Sm3F+93wE8Ei0nD44hGBvqH6DI79LhiJdK8s369Y66rYzJuCz5EgXm/8Sp5tEhH
-         VuTA1Hb9uZRpqs/QAQ45uRqG6spTeDpm+Kq55CbOr94PuyqVwpNydSOP8p7HthGB1gn9
-         erdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXUBMSSRGtoumKeLz1ww4Pg+4YtoXyshjoAlBApT4sjj8IP5wSvLH0D2mBqC5eguquzsRPlgzPZBpJJK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgtwHBlDAXSXRFaR1Ya/syhYPjKCDXsx54Ep8fpGRTEdI1VEt5
-	brjhBGI2LHk7HR5Zki/AkYV0WwFfcc/T6YqfwJ5tf06kcvA2U5ynF8NFIjaqY0LXjkf4Mux1j48
-	v03Twr1AvB5J/uFxugz4FScNYZ2vHUyqSkOgOw/Bd026wZh5mVikGJpM=
-X-Google-Smtp-Source: AGHT+IFxLxSgUPTvxHIh5CCQCfDXbTcjNoPz+QbB51/spldK7VGtQv3RckB5vJ/2ElHi3zmPWoJZbp56ZJkitgV148ieCAOBrwgI
+        d=1e100.net; s=20230601; t=1728411396; x=1729016196;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ljRJPF1sniqZTlNdNEIGJI8zWqUOe0ldVmcWgnzAc8=;
+        b=nUr49qBOtuN/RaZo9WZkArVXjAIQbfc7jekD/Zwwqx+BxfKrxmw6HmJME5ATNf14x0
+         1hwaydpC+Sda4lvfqYaDx0ZI338koElsi/bB4hOhqv26Imcr1b52ie7f/lxRnqJFJ8Mi
+         ozSRnH02R26qpDOn6usWKcdVhxkjYZJwItk58jQY9Se22ezntz+IO5+Ak6RaLYx0hPp+
+         IbyuNUImeua1ph/k2GrCuRu0tcXkKRdcA8v5Lp5JHVmxGGqWG/g2kmHwCxAAknzJ7iT/
+         7qseMzd2ovb5CNXK6d6a/1ONI//2PmkJcPOV+sGDkQm8aAFnQkaUl2cDQBp6C1C2uKEj
+         rvnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6pzIg3SDuDe+JE08nWTQKMHMNQZQgTl66L+Qv+uAj6uI+ngTLtdikV5oxUQ+iBANnJ+oxVyOI@vger.kernel.org, AJvYcCVIEgOJE7JkB4u5iQ/ILdi6oeqHVq3A+H676JZ/z/+71HdN4yaiEjdUNNP+Y+pbpsWDjPO55s4zj7XXa0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpEHEwyy4QmBDce7BwXf8sDpK2hHuvIjpVX+Zkm+RByDxa1Foa
+	YpdmIeJzPBA3bHFjag0t+wzIep2HDY5T4OlA541Hb63X+eHDETkC
+X-Google-Smtp-Source: AGHT+IHi2BHTQ0TZEwydyU5veAGCJXnEogUc2vvW9dAteZAE+MpBFJ7pj4F4HSy9vikz+zxvHXtVjA==
+X-Received: by 2002:a05:620a:170d:b0:7a9:b2dc:99a6 with SMTP id af79cd13be357-7ae6f4411a5mr2114593985a.24.1728411395695;
+        Tue, 08 Oct 2024 11:16:35 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45f04e2cc7bsm5636161cf.49.2024.10.08.11.16.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 11:16:35 -0700 (PDT)
+Message-ID: <b84bb574-0469-4681-b50d-14efa01074f3@gmail.com>
+Date: Tue, 8 Oct 2024 11:16:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d90:b0:3a0:4250:165f with SMTP id
- e9e14a558f8ab-3a3757d6d99mr161958185ab.0.1728411205645; Tue, 08 Oct 2024
- 11:13:25 -0700 (PDT)
-Date: Tue, 08 Oct 2024 11:13:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67057645.050a0220.13529.0000.GAE@google.com>
-Subject: [syzbot] [jfs?] general protection fault in metapage_write_folio
-From: syzbot <syzbot+d7ffeb5538fe5c793f74@syzkaller.appspotmail.com>
-To: dave.kleikamp@oracle.com, jfs-discussion@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241008115648.280954295@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/8/24 05:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.14 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-syzbot found the following issue on:
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1746fd27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7ffeb5538fe5c793f74
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c6fd27980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b87380580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/3f7113d64967/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/fc2de7358212/mount_6.gz
-mounted in repro #3: https://storage.googleapis.com/syzbot-assets/627888892b4e/mount_11.gz
-
-The issue was bisected to:
-
-commit 35474d52c6056976e675e9130d755cdb749ded5a
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Wed Apr 17 17:56:46 2024 +0000
-
-    jfs: Convert metapage_writepage to metapage_write_folio
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=155f47d0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=175f47d0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=135f47d0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d7ffeb5538fe5c793f74@syzkaller.appspotmail.com
-Fixes: 35474d52c605 ("jfs: Convert metapage_writepage to metapage_write_folio")
-
-loop0: rw=0, sector=120, nr_sectors = 8 limit=0
-ERROR: (device loop0): remounting filesystem as read-only
-syz-executor140: attempt to access beyond end of device
-loop0: rw=2049, sector=30744, nr_sectors = 8 limit=0
-lbmIODone: I/O error in JFS log
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5242 Comm: syz-executor140 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:metapage_write_folio+0xb7/0x10e0 fs/jfs/jfs_metapage.c:346
-Code: 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 6d 3c cf fe 48 8b 1b 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 4b 3c cf fe 4c 8b 2b 48 8d 84 24 b0
-RSP: 0018:ffffc900036172a0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffc90003617400 RDI: ffffea0000b5ec40
-RBP: ffffc900036173b0 R08: ffffea0000b5ec77 R09: 1ffffd400016bd8e
-R10: dffffc0000000000 R11: fffff9400016bd8f R12: ffffea0000b5ec74
-R13: ffffea0000b5ec40 R14: dffffc0000000000 R15: ffffc90003617400
-FS:  00007f1541cdd6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fe70fb1000 CR3: 000000007aad2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- metapage_write_one+0x2c7/0x680 fs/jfs/jfs_metapage.c:710
- force_metapage+0x10a/0x2b0 fs/jfs/jfs_metapage.c:732
- txForce fs/jfs/jfs_txnmgr.c:2215 [inline]
- txCommit+0x6250/0x6b90 fs/jfs/jfs_txnmgr.c:1315
- diNewIAG fs/jfs/jfs_imap.c:2592 [inline]
- diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
- diAllocAG+0x17ab/0x1e50 fs/jfs/jfs_imap.c:1669
- diAlloc+0x1d2/0x1630 fs/jfs/jfs_imap.c:1590
- ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
- jfs_mkdir+0x1c5/0xba0 fs/jfs/namei.c:225
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1541d37e49
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1541cdd168 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00007f1541dc64a8 RCX: 00007f1541d37e49
-RDX: 0000000000000135 RSI: 0000000020000140 RDI: 00000000ffffff9c
-RBP: 00007f1541dc64a0 R08: 00007f1541cdd6c0 R09: 0000000000000000
-R10: 00007f1541cdd6c0 R11: 0000000000000246 R12: 00007f1541dc64ac
-R13: 000000000000000b R14: 00007ffcfa87d490 R15: 00007ffcfa87d578
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:metapage_write_folio+0xb7/0x10e0 fs/jfs/jfs_metapage.c:346
-Code: 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 6d 3c cf fe 48 8b 1b 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 4b 3c cf fe 4c 8b 2b 48 8d 84 24 b0
-RSP: 0018:ffffc900036172a0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffc90003617400 RDI: ffffea0000b5ec40
-RBP: ffffc900036173b0 R08: ffffea0000b5ec77 R09: 1ffffd400016bd8e
-R10: dffffc0000000000 R11: fffff9400016bd8f R12: ffffea0000b5ec74
-R13: ffffea0000b5ec40 R14: dffffc0000000000 R15: ffffc90003617400
-FS:  00007f1541cdd6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1541dc3f18 CR3: 000000007aad2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	48 89 d8             	mov    %rbx,%rax
-   3:	48 c1 e8 03          	shr    $0x3,%rax
-   7:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1)
-   c:	74 08                	je     0x16
-   e:	48 89 df             	mov    %rbx,%rdi
-  11:	e8 6d 3c cf fe       	call   0xfecf3c83
-  16:	48 8b 1b             	mov    (%rbx),%rbx
-  19:	48 89 d8             	mov    %rbx,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 4b 3c cf fe       	call   0xfecf3c83
-  38:	4c 8b 2b             	mov    (%rbx),%r13
-  3b:	48                   	rex.W
-  3c:	8d                   	.byte 0x8d
-  3d:	84 24 b0             	test   %ah,(%rax,%rsi,4)
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
