@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-354415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC846993D35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D923993D31
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EFE284D0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D03284E5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37A029CFB;
-	Tue,  8 Oct 2024 03:02:42 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919E23FC7;
-	Tue,  8 Oct 2024 03:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7FA38DE5;
+	Tue,  8 Oct 2024 02:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7SncYKi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF81C3B1AC;
+	Tue,  8 Oct 2024 02:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728356562; cv=none; b=Gy8DsSq49UXwPBBVnWU3u+gvpRDxgn+KIgoLEhao7anJq+/jj1Taw4ngpAktPcH0lqvCrcmwg3U2mk5ujzCr/3hAkKDpmLTmsmt4jsD3JqsQBufARjHkDtB1phpN3p033W7Uh4ygLxuDQSfhhNboQFW13CzBfV7HrrmyRy3bXt0=
+	t=1728356390; cv=none; b=RIXtSH4Fo4d8526N3E5ZRkSfDa4yOwVy65B/zISPgfmCMw21/xLx0Zta2mhAgNILzFQj/eQJ9gXmPd8ZVL8pWbwmFz1IRsF95fZztJRGyIPTLzS5Fne++dFb2+Fq7i6TvWS5CrdVzkGZsgv3s2Cxt/9HmAvBWwpZ7j15PhPOUx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728356562; c=relaxed/simple;
-	bh=EIblVUPShlUFmQ/WUe97ldk8Qs/Ts9lujgAx4hFJObo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Ra3iVMo2BNV3fVllC2XlAZdi4GkjZxW55B19FBbU8qScIihRKdF8rK9XcaC9mynoveRyS679VhDGfGs3xxb+XmZwzAoHlCCM7gEBt+aob6y2yltURwCupt+1KYCt/8BIdyrjFSWaFUUSjykMS5jtQ6l2qUnnSStWdtrxhwSVG68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76704a00e407-df40f;
-	Tue, 08 Oct 2024 10:59:27 +0800 (CST)
-X-RM-TRANSID:2ee76704a00e407-df40f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66704a00dda2-8b9c4;
-	Tue, 08 Oct 2024 10:59:27 +0800 (CST)
-X-RM-TRANSID:2ee66704a00dda2-8b9c4
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: perex@perex.cz
-Cc: tiwai@suse.com,
-	wangweidong.a@awinic.com,
-	andriy.shevchenko@linux.intel.com,
-	heiko@sntech.de,
-	kuninori.morimoto.gx@renesas.com,
-	nathan@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	zhujun2@cmss.chinamobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	broonie@kernel.org,
-	lgirdwood@gmail.com
-Subject: [PATCH] sound:aw88399:Correct error handling in aw_dev_get_dsp_status function
-Date: Mon,  7 Oct 2024 19:59:23 -0700
-Message-Id: <20241008025923.10606-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728356390; c=relaxed/simple;
+	bh=rGIhUZq1OIxQBgv47TJ2KRLmsrhF54gP2FImUbG5WxM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OPBh8TLJ+c0PirOUhJuUrlcrnHED97UN277SEFetFYqxufnd291lo+43Z9pcbhnEnFp5j6Om+8Lu7kM51tUgUsc72Vn8edzeEzRuokQ5ZrAaLpYzxRODRgG+/ocmQaePFChDvSzYfaQ9sIgEuiT1CBv3uhmms6QdAq2H+FhGrqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7SncYKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 51E60C4CEC6;
+	Tue,  8 Oct 2024 02:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728356390;
+	bh=rGIhUZq1OIxQBgv47TJ2KRLmsrhF54gP2FImUbG5WxM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Y7SncYKijbK/6Xgse2ukZe6FgX0iG37A0cd0QPQtvhn1Tpy6nxoDnb+oga2ixSAyn
+	 nkT4vfyyhFAHhREIfh+5hYBZJwBLLi/2oZRbt+Coa77QWfNQ7wsewWRw0krzz2YfBV
+	 TYAGKj3Zuydcw4sW6kXmyQhy1nVa0s6Klnlemg6P5hX5bfg3ApZG+oQMziIZy37GSd
+	 PUYp2kEPiiz8lNGrf1pxxoOAKR9ZLUEozMC26S1Qf3Y7XnlW/3T7J7FC4ngXAZ4LBi
+	 DgnzPc7jmlAX2/mjq3H4ULNT3yuzrWezGiP9C8HQmzESceNtex6pyGZiuQB5W7IhR1
+	 vypiH9OCBv7vg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39648CED25D;
+	Tue,  8 Oct 2024 02:59:50 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Subject: [PATCH 0/3] Add Xiaomi Poco F1 touchscreen support
+Date: Mon, 07 Oct 2024 21:59:25 -0500
+Message-Id: <20241007-pocof1-touchscreen-support-v1-0-db31b21818c5@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA2gBGcC/x3MQQqDQAwAwK9IzgZ2Q1vBr0gPEmPNZbMkWgTx7
+ 116nMtcEOIqAWN3gctXQ6005L4D3ubyEdSlGSjRI6c0YDW2NeNuB2/BLlIwjlrNd+ThSXN+ES9
+ M0ILqsur5z6f3ff8AhCZNdGwAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Joel Selvaraj <foss@joelselvaraj.com>, 
+ Joel Selvaraj <joelselvaraj.oss@gmail.com>, Joel Selvaraj <jo@jsfamily.in>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728356389; l=1209;
+ i=foss@joelselvaraj.com; s=20241007; h=from:subject:message-id;
+ bh=rGIhUZq1OIxQBgv47TJ2KRLmsrhF54gP2FImUbG5WxM=;
+ b=Fl+P5tK2HKXeuCQYn6cyNaeJn/xLqsmBsmpzVI44xGA9DUcKVhl6Qo8siQ2aiHR3O8R2TiJMH
+ TjrxdBd9YLoDMC6mxGzBu8w/loaUKs66mLk6wN6nAXr/8LUSjwEiKni
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=pqYvzJftxCPloaoUbVsfQE7Gwv8bynZPy8mjYohwMCc=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20241007 with
+ auth_id=238
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-Added proper error handling for register value check that
-return -EPERM when register value does not meet expected condition
+In the first patch, I have enabled the  qupv3_id_1 and gpi_dma1 as they 
+are required for configuring touchscreen. Also added the pinctrl configurations.
+These are common for both the Poco F1 Tianma and EBBG panel variant.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+In the subsequent patches, I have enabled support for the Novatek NT36672a
+touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+Tianma and EBBG panel variant respectively.
+
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
 ---
- sound/soc/codecs/aw88399.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Joel Selvaraj (3):
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-common: add touchscreen related nodes
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma: introduce touchscreen support
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-ebbg: introduce touchscreen support
 
-diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
-index 8dc2b8aa6832..bba59885242d 100644
---- a/sound/soc/codecs/aw88399.c
-+++ b/sound/soc/codecs/aw88399.c
-@@ -656,7 +656,7 @@ static int aw_dev_get_dsp_status(struct aw_device *aw_dev)
- 	if (ret)
- 		return ret;
- 	if (!(reg_val & (~AW88399_WDT_CNT_MASK)))
--		ret = -EPERM;
-+		return -EPERM;
- 
- 	return 0;
- }
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   | 39 ++++++++++++++++++++++
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-ebbg.dts | 23 +++++++++++++
+ .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 +++++++++++++
+ 3 files changed, 85 insertions(+)
+---
+base-commit: d435d1e92be5fd26cd383fbddb596942ddc52b9f
+change-id: 20241007-pocof1-touchscreen-support-c752a162cdc2
+
+Best regards,
 -- 
-2.17.1
-
+Joel Selvaraj <foss@joelselvaraj.com>
 
 
 
