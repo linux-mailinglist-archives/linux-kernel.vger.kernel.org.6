@@ -1,75 +1,113 @@
-Return-Path: <linux-kernel+bounces-355584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9B899545A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 875E899543C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9022E1F26B05
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4729A1F260E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD2C1E0DEA;
-	Tue,  8 Oct 2024 16:25:16 +0000 (UTC)
-Received: from mail.qrator.net (mail.qrator.net [178.248.233.8])
-	(using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5BA1E0492;
+	Tue,  8 Oct 2024 16:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KfTRWE+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB781E0DBF;
-	Tue,  8 Oct 2024 16:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.248.233.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77827580C;
+	Tue,  8 Oct 2024 16:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404715; cv=none; b=eFH/yBpsC86LokJ2o+/rNlETAnIjn2uDGCe2kwHCAAnVzAXFEYLXHI0d2zbiFZOeYvIxdggbVzcabL2zN/0ozTomqJrQ0q7/SRQ211N5vdVgwLbi3tRSN5IGhJlVtZiSCf2jHL6db3wAtwyObqXh/u+sfe9JnkulHHRmWfjj49o=
+	t=1728404387; cv=none; b=dPS9SW2vAPSX1Htdy8WSM2X+2klLzJFv85t/7tjvm2eRQ+GeQ7JLyUrLgd0/tiBDePn1HDm8jwv1Gly82RFFZ8bvuDwjWbJFxdPNwvWa/JjuyCNOfXaG5wQ9X6xg8HE8YrIBhHPFSAYXMNvVcKK+mmwERXsToYxdjO3/yTsVSXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404715; c=relaxed/simple;
-	bh=7pgNhZBvfXc3wbG0Sp9K8Qy2J/CP6yQS2O5ZoGMt4Bw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mIV+oiBI2ZocO9ePjwaGsVoQ3d8qQGmOgeuTV4ZImy78dnD678CEn25tlCKrjZmBvgXX6j7/DfbJjvYhAMhbUj25OjwkxyLg3cWjIldEWYQwvMTY657pj5lhKBu1yximWrF0Vnym/IkqUfmhxPvibu6wir0YTTGn9SuQIigRzcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qrator.net; spf=pass smtp.mailfrom=qrator.net; arc=none smtp.client-ip=178.248.233.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qrator.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qrator.net
-Received: from localhost.localdomain (unknown [10.0.0.0])
-	by mail.qrator.net (Postfix) with ESMTP id 8A26F88024B9;
-	Tue,  8 Oct 2024 19:19:15 +0300 (MSK)
-From: Alexander Zubkov <green@qrator.net>
-To: jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	green@qrator.net
-Subject: [PATCH] Fix misspelling of "accept*" in infiniband
-Date: Tue,  8 Oct 2024 18:19:13 +0200
-Message-ID: <20241008161913.19965-1-green@qrator.net>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728404387; c=relaxed/simple;
+	bh=Vj2g89hH873pxGtBNbvA/Dz/9+d/kuB58Uusb8enIOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCh2Boed4E//eMO590xwavZ6qo/56z0+mgbOs19ZTOWr1zGCbove4QQajlWyJhzDP15SPmigKQkXMdkvBDg7LaAXg1S82cDNMIWx6QrNECxg7qBc/SV6halEM6LSc5F7lESQz+ieWPGVIB9y8wgVKo0JN+41LV4fmTXSWSx0d04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KfTRWE+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13800C4CEC7;
+	Tue,  8 Oct 2024 16:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728404387;
+	bh=Vj2g89hH873pxGtBNbvA/Dz/9+d/kuB58Uusb8enIOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KfTRWE+h1l0NU0HtZM6F+WlJme9GmzQ4nW1qp4yMwhzqlmLXbhtfEElfts2CuaUmn
+	 duRqnyd3pytZephfTwkW9RcdLbaPe3D65DTu9wQ4p8wfH6SGnMKJZHtqXtJ2rxBWDk
+	 8SzA79Ih0yU9KLhEm9htnFZRQ3Mxvi00pszTC3h/g0Z20XHPkAvw/qY9hhj84XRIjt
+	 uJ8SXqXw8PEY/D+8zpod0jkviVPXZggdtrhHcyDKeBsbelgD5TgLVCggqtGrMXhP4G
+	 GwdbDoJHSCnnJIEWovY2mYQ+CmQU9inkz8r2+yp81I8Ia3ipIQz7EzXaHl6kxtzU38
+	 6cLhYyvgqE3lw==
+Date: Tue, 8 Oct 2024 17:19:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v3 0/6] octeontx2-pf: handle otx2_mbox_get_rsp errors
+Message-ID: <20241008161943.GA99782@kernel.org>
+References: <20241006163832.1739-1-kdipendra88@gmail.com>
+ <20241008132024.GN32733@kernel.org>
+ <CAEKBCKMrtLm1j3dU+H12Oy8635Ra2bZ6eFfxdixTvYwSEEyaJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEKBCKMrtLm1j3dU+H12Oy8635Ra2bZ6eFfxdixTvYwSEEyaJQ@mail.gmail.com>
 
-There is "accept*" misspelled as "accpet*" in the comments.
-Fix the spelling.
+On Tue, Oct 08, 2024 at 09:28:18PM +0545, Dipendra Khadka wrote:
+> Hi Simon,
+> 
+> On Tue, 8 Oct 2024 at 19:05, Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Sun, Oct 06, 2024 at 04:38:31PM +0000, Dipendra Khadka wrote:
+> > > This patch series improves error handling in the Marvell OcteonTX2
+> > > NIC driver. Specifically, it adds error pointer checks after
+> > > otx2_mbox_get_rsp() to ensure the driver handles error cases more
+> > > gracefully.
+> > >
+> > > Changes in v3:
+> > > - Created a patch-set as per the feedback
+> > > - Corrected patch subject
+> > > - Added error handling in the new files
+> > >
+> > > Dipendra Khadka (6):
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_common.c
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_ethtool.c
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in cn10k.c
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dmac_flt.c
+> > >   octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dcbnl.c
+> > >
+> > >  drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c   |  5 +++++
+> > >  .../net/ethernet/marvell/octeontx2/nic/otx2_common.c |  4 ++++
+> > >  .../net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c  |  5 +++++
+> > >  .../ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c   |  9 +++++++++
+> > >  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 10 ++++++++++
+> > >  .../net/ethernet/marvell/octeontx2/nic/otx2_flows.c  | 12 ++++++++++++
+> > >  6 files changed, 45 insertions(+)
+> >
+> > Thanks for bundling this up in a patch-set.
+> >
+> > For reference, it does seem that the threading of this patchset is broken.
+> > Perhaps there was some option you passed to git send-email that caused
+> > this. In any case, please look into this for future submissions.
+> >
+> > Also, please use ./scripts/get_maintainer.pl patch_file to generate
+> > the CC list for patches.
+> >
+> > Lastly, b4 can help with both of the above.
+> 
+> Sure, thanks for this.
+> Do I have to send all the patches again with v4 with the new changes
+> to the few patches and the same old unchanged patches?
 
-Signed-off-by: Alexander Zubkov <green@qrator.net>
----
- drivers/infiniband/hw/irdma/cm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/irdma/cm.c b/drivers/infiniband/hw/irdma/cm.c
-index 36bb7e5ce638..ce8d821bdad8 100644
---- a/drivers/infiniband/hw/irdma/cm.c
-+++ b/drivers/infiniband/hw/irdma/cm.c
-@@ -3631,7 +3631,7 @@ void irdma_free_lsmm_rsrc(struct irdma_qp *iwqp)
- /**
-  * irdma_accept - registered call for connection to be accepted
-  * @cm_id: cm information for passive connection
-- * @conn_param: accpet parameters
-+ * @conn_param: accept parameters
-  */
- int irdma_accept(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
- {
--- 
-2.46.0
-
+Please send all the patches when you send a new version.
 
