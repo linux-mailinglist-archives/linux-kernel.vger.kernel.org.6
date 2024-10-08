@@ -1,132 +1,223 @@
-Return-Path: <linux-kernel+bounces-355761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFB29956B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:36:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419C5995680
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA931C23FF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B91283351
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3492A212F11;
-	Tue,  8 Oct 2024 18:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290D8212F04;
+	Tue,  8 Oct 2024 18:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cpGnH/5K"
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0FdY2cnm"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A84212D14
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33BE212D3D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412531; cv=none; b=DT60g5P1ESmy6pOQuDZsiXrQIm4xA3J1OrKdgHq3c+PEDGTpH3vmPgRCd6iOaiO4K7Ix4KNjDmfK86K24T5yWoRObjppj37R0yuvN6m9DrMHs6J5+Si/a9GKrDBYzciT7A5e7frw9vAePnFHoLy2JewfvKTuuhqG5iKMZ6loRvU=
+	t=1728411937; cv=none; b=HfO8QQRfsCTeeiX9KLhiywtz07xsb6KBSU70RcgwQVHpCF396cxhef5EJ4PpJZK5F6UbOqrqIl6mggBWZOgyqUnD39bZL11+RXU8o1nYeV3chFuYcpMPcRtveoNWXHLqolBxVLT6pcsJgPPzuwIRNXereE0zn9qL+WM6E01Gbfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728412531; c=relaxed/simple;
-	bh=N1bztF2nEyn1H0E0epOkKEV8XHk6AdEef/+UQc4GkcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmQDLI3uuqOwRrxlyDHWXE0WGYPhGyAd++i0tPQBXVr4z+cjp1Sngght4EY7by4AyiStqZhpzet4TvE1/i8YSUjdX3YfUud3HtNQZGJtKEcg3Wx8FhiqHWBm+n88rKu9PcPo9hlITocx9uoz+kbsLn/7EVr6qv5LDMT7asBdHrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cpGnH/5K; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728412528; bh=HL5BOpcuVd9I44iQJAedgR9TxToL599NaIMxA9giEDo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cpGnH/5Kn6THxB+9ZyT6aAbzUKa2cOskhFyqMlVZPrbO+Ad53a3QaQfiwRzpaFzsUgMPW36O+Bg2eC3ZNF3FUe1sKJn5IOZmZVZSrhE37eQTLsEi62JYJw6Gch+DtJx8Pqr5qapQNgaJN/ogknr8WbLEGDKKe9jWrBp6DDPQUdT07q9QZR2UHLFFVgbj07PQlG7Vm5MZf0pjPA9thuo1RO5QYReqJrOM0QEhZwxrO5Wl1+35dLLYDoItWA7Qlgu4TjiiPzS1ORKD4VPNJBFaYuW3+OTexZt2WS32pTA+bNfSzJMQJhX30NSr4WxUU4XurTXWrSsvhz1V45k1hj2Hdw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728412528; bh=cPhDzUZaWATQc/hy1s4TE1RV2SgI9DDD1yppFTWJRUi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aicSE8uQncsug2/T8iWto8ggzObEZJFv8ISW7rxDrX0IDjJpcaW11IE4U78tVPBYh611ohoNAQ03G3jhrGDkXXD1y/+jBF4fMViXYnzO3hmc+aX4do8bzoxOWYtcQjBwKBsHz4o3FQw2w3VO1c+uQcXl3puLY/dO8oNpBgH/chAE8OM+LRbwIxGMazsIe1pUCEXxy8xrgHUf23MDDo7hz6OgLOJEZTQNuC9O4iG34NelYsbiFMS6asc2HEMGzO7N2CWZluwc3GbAU5AMyNPf6NR9uSBRACUqBWT6JX+EXPjjp3sL0kIf6bWBCDGY3KXa6x6baBEVLy0OViqlwkWJig==
-X-YMail-OSG: quio1GcVM1krtO9p4KkBRLaTqrm7b9HH9u67A7MBscU3ZPdjeTDdW8eELTrcm57
- 3SXK.VOC4RbDA2xQr1swvuZUgNdtCRvTAcp3MrKe9igNhid.ZcDFyRWHgIwikRlnChbypAoQkbvQ
- HdDeB3F9SJOY9I8SI5JMFehhucVzIwd44AOozlBj2i71WQf57KBPVp7RW9DtqEXfm.vl9a.KWwP6
- F_PVL.z1TY0PiuDsOSKS5QfRsP8Nm_njnCDUPW4bxcxWb.WOlY4CAN8TNwKeN8LGDDWBSHxvmjUH
- dGIBcbZRClTtUlTUgef_4lMWbi3kLmGl.KQeunzfdh7.aCrbV9ko9gNVixNym18w6Z5DL0WiSUU1
- gisI6XN_jgXVXJQFNpPqoOeSp3j.JSfTMrHW8NExXZSeGBy9SnLgZWBoTmTyxrD3bvfgf05C0.Pg
- yYsExE3uddj4BXCG2udiyZdAs1.4HPq4TWAPDuYScSeJ1MocztwAXPu_cOlPrmukPnt7CUORfwof
- qu10cc6RIa1TWr9EKBVk3wXBs2gMwqpl68BN6WwQb26DbuVC3Qr2LMF6tq6NN9FoxUC5667lyPTS
- 2VLj7hF_esBrwfzZqqMATBLQZmzJ6ZFdXDHn.m89H4IJcE2aX_wWKIVcIs7kFO2IVSbRa53t0w_e
- 5Sj0xm9.JIHnbXP0lx6O5IsjKrt_ATQhCtkXpO3Km_5nRaM4FmHs7lN_HGtkSZFzpHX5__wNXWt9
- KuXhpvSjO8kdm.zfi4OLcPaSHV3Tg4T9KNgBQtx5X0cQOdeLt0_tQon2QWwP3ZmmS7xuGoBrp0O3
- 34ezOJCGcbrbxkH1bElmAPpV96c_HLbWDqELX.4PPg0T_rVFfwya08MvrXQjnXCPS96ddMruKnAj
- LYCaeUkMO2REQpvjXx45pGsFP0HOCgOLC81PTD_TpSrbYG5yfaNd4tKVHUHacs41yo3miTewi.FV
- jgTZuNwM30UXbMiA_b5ZPsKFd09PBTBVlvcgP2Ks76juMdctJq6fB_PHqU1OJ3VzxJDwFv1jzdUV
- AES2_ma51xSDji7rYN0d7ilKQ1lHHr7vF58B8_QPounXKDy8_41Mfu34PtWvE8TQfCjlevcuDMxL
- 741uqOMJ.ymHiE2_n7TIdEH4ACBtzgBGF1xXsFetx3OcjoEP._z72rFT_ACzwm9h1rq0DGaxVQPi
- 02SyR63QgDOsGLQEM8bi0axT7JcnHI0btJvKa6xgV4_pfOsBocKDtoor0nQsh9znP_fj24q9_MRe
- AQD2RUzjYz7gIhgPe9JpV61MV6IgMUayTAKny6MwLhNhEbUiimVyOPhPkDKPR6WOIL8s2MkHS33D
- GoQzPfhbzTXpWX2T69nOG_lzQ1Jqx0KerT1ZpC3fWzBMGzMFeDBKzJZPPqCe9tingrTpnRjy.1iJ
- lvDO2eeBU.31D.l_uIimlggsI5K5VngvPN7sOMRzdXd5vOVsU7_vHooASzICwKlkxxNDcFQw1U5X
- 7vOUyFhtcha_Jdp.X964RMqZvifnxTwIBtolIiuoNmdL4lydezM_uWZqVyH9vPKKyzP4ho409sdZ
- cPWAUcZ_JLGTubXxeFWKNBMXPSuLaVLLQoZs3Dki.FvzoptW1dBGagMoTa5kO.ESYC4M_ozQ2zIM
- FZqk6q9fZVp_.cVOKRSYiuRg67SDLWng0H5jFMZHblj0vIMa_LJNNMD7mE4mPXmCRcEGjEbb9aBU
- 1X14FMRDmaJbnaqU2vAX3BjQMR9Z.6Wpky_PE.V26OUA5C3tsNXan0bnRKrlSMs0gmttODS.1NJN
- KJVSt1REPE1py4tSs9ELp3bZEZj4TJt9YLaAeA8HNeqXboA3gWzm5zxuyiD014Wc3EkhJPExCoQn
- TJHFvNrB8P5YKV4gw.ErzVRS1SIfKu5JW36NfCuq2YBtKg97rbwInWW7gkOngd9cmVZuCOFa4Z8P
- ax0UGz2KGdCqXb42uQmp.3ahJmmg7_8_FIhJO3_e3Oj0YbQDDuhkq9i3KniOTaoXfYSRl7359cXs
- ZCgyfNZ_lPCBAQIaTxPSgUih.dvnzg1Iccin8gAN3DHfvy69MHNROEbxOn0huZTksVaxzKvkqPvP
- 7WC9XQMLhJw1Zrsr8j1nnYA1HFzhr98mCJ8004mMOTi8pYqc2hibWymHtNIs1Siuwxv5dbONOIiZ
- bKfT0kSqaFoxWBa942Uuo7Z9zD9ii2PAA07DmIek_Rn4MU2ViNITsCYXkVq_GDC1x5mfAMznZu0v
- 91LVwKIJZ23adkvfNaokBAtNQ2p.UOgXS8gBMHVpA3QyHiUZDffDaT5eMpPS8JFw1fUCmNQVE8P_
- fXf7vpNXwKWzRbCsld6RL7dwW75F7N8RBLCo-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 039f7a34-ab00-43a0-8ae5-12dac1431324
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 8 Oct 2024 18:35:28 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 60574d1afa6c8ee7d0e3cceaaabf2a2b;
-          Tue, 08 Oct 2024 18:25:18 +0000 (UTC)
-Message-ID: <88954576-5e62-4d95-bdf4-3913ffea68c2@schaufler-ca.com>
-Date: Tue, 8 Oct 2024 11:25:16 -0700
+	s=arc-20240116; t=1728411937; c=relaxed/simple;
+	bh=hOXbxmxGL9RjWcZWCgTZ0kljKWaTMIJz6LF9nZkfKgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b7x3FfWedKLQd25XXJPQwoogQwf9zLia2Q6DrilLA/HeLLSI7ga+Ch7QsPEF0nVp2rL1CiIev1OkxmWgb2BLuuTvw335nuKF85zrUMhopl1IpToQh73U3+e9R8XgxfsNHWwnS+xX+VF1/6NxfQBEQlaSmkec6TwEJUejDt3tRwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0FdY2cnm; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae4ead5bso34345e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728411934; x=1729016734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O9+qQfvvXgyE3lbO6k8qawt8v4FfcA1COjzGEqqIH8M=;
+        b=0FdY2cnmeqPVl0D3RZk2Fi5NOuT5VbVbt6FFc4E7IIABhaStx0cTGGqCKXYuF+Ovgs
+         xdjYgeNQU88HEvcZsakEaFJBFvJzPpzKFaGxlurZv3AnU2uWJxOy9Hat5KAn901PoDLb
+         vNW9M0k4tnNlYaM5KWxwkvzPKD5U/QJOrgVa9tH7oGbhduRN6PDRG4BZ1O9DfQRybc8l
+         AnupCspSoMt477hLnoa/46Bsj2gtQ3kJXnbsyesp1NF9mg6jV8ZS0UsIIz/B34+LMz0Z
+         cGdxXY0gvCNYwGPXkRbgg1DH/+s+qeLK/miO7uFiyw//yKvzhE1M3YGnJi7vhXVZpJl/
+         1hHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728411934; x=1729016734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O9+qQfvvXgyE3lbO6k8qawt8v4FfcA1COjzGEqqIH8M=;
+        b=VddM5LQpZ7MKgZrRu40vO6FcZHbPOgyE6uWkKFDNDzXZVX2CGnrHWuxWcjwXRfEe3i
+         xOOtipemIAteYDqs9BW8MQ8Z09Kix4isSRkb1Iohq6h8v78weKfjbKv60WGGC6pX65fs
+         gFUY2/WBGEtARLIalVAXBU0ocVdzJ/SNzrGqiSJ17wgxcwMwRIJxmUZU/eSHpNBd5efl
+         Zau0+6COC60mtRnQRWe9VGyFOWhyAZcS0IBv5LjZ29WrGxSBNgkyL6lJxTjg/CBxY2zm
+         /vMkmvcMapzvE/sn5rC5paWTO1GeesGVbdirlvEZScY76bwJvbfyshFvcCkd6uGHD1Tf
+         OkvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFnCz289Gtvbgsm7y7Yym0sV0++0Y1bixwGl61RjqT4rfz5735+UfmUa56NHTM1bTtTpaS+ab2arOjGXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWI3k44dxqeQJz4lAFZEm6f0rd6iYrnEztsaigCSyJw5uDslvK
+	fmznCEtYdimLG7XW0XltgC6Nn+17dHpM6kKW7wdNxXgvkIJweYWODuWNJoacGITzUgtWmlguI5R
+	A8gb7uEFZX39XRX5OF+tAXeIDPXynwJKpWuCY
+X-Google-Smtp-Source: AGHT+IHAssweWZAY+6Z2ceMdPdwwXkz/meoe1Yl5qmMTx3Ojc57hVUGpsCH+wADKon600alISzrnsmRVOkEfwYW3jWI=
+X-Received: by 2002:a05:600c:c07:b0:42c:acd7:b59b with SMTP id
+ 5b1f17b1804b1-43058d74771mr362955e9.6.1728411933766; Tue, 08 Oct 2024
+ 11:25:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <20241002103830.GA22253@wind.enjellic.com>
- <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
- <20241008111442.GA23889@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241008111442.GA23889@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com> <CAGSQo02oVWxazut2nyh-9K9gK+937zKCfYMBkT4EQE2CddvZtg@mail.gmail.com>
+In-Reply-To: <CAGSQo02oVWxazut2nyh-9K9gK+937zKCfYMBkT4EQE2CddvZtg@mail.gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 8 Oct 2024 11:25:21 -0700
+Message-ID: <CAGSQo01FErmGbeu-+_kRfpQrO4xkaGuSo_zAXTmGHZuFVYXpNw@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/2024 4:14 AM, Dr. Greg wrote:
-> ...
+Err, slight amendment - I think you want `-o $$TMP`, and not
+`--out-dir $$TMPOUT`
+
+You definitely don't want `--out-dir $$TMP`, but the other two
+settings above would be defensible.
+
+
+On Tue, Oct 8, 2024 at 10:43=E2=80=AFAM Matthew Maurer <mmaurer@google.com>=
+ wrote:
 >
-> Which we also believe justifies more attention than what it has been
-> able to receive in 20 months.
-
-You're right. You're also not alone. There are things that you can do
-that will help get the review you're looking for. Developers who attend
-to the needs and preferences of reviewers get a whole lot more attention
-than those who fuss and fume about not getting what they "deserve". My
-hopefully constructive recommendations are:
-
-1.	Lead with code. Save the documentation for later.
-2.	Incremental implementation. Don't drop the whole mess on the
-	reviewers at once. A patch set should be a story, with each patch
-	introducing one new element.
-3.	Emphasize the similarities with existing implementations. No one
-	wants to deal with novel or clever code. If it is familiar, it is
-	easy to understand.
-4.	Thank your reviewers. Complaints about review latency typically
-	increase it.
-5.	Do some reviews yourself. That will get in the good graces of other
-	reviewers.
-6.	Be brief. The biggest single problem with reviewing TSEM has been that
-	doing anything takes so long. Multiple paragraph responses to an issue
-	don't help. Say it, say it once, say it in small words, and use as
-	few of those as possible.
-
-
-
+> Thanks for catching this - I had a specialized toolchain enabled which
+> didn't exercise the `RUSTC_BOOTSTRAP` issue, and without an unexpected
+> failure, didn't see the `--out-dir` flag conflict after I got the
+> request to add it.
+>
+> Reviewed-By: Matthew Maurer <mmaurer@google.com>
+>
+>
+> On Tue, Oct 8, 2024 at 10:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > Fix a few different compiler errors that cause rustc-option to give
+> > wrong results.
+> >
+> > If KBUILD_RUSTFLAGS or the flags being tested contain any -Z flags, the=
+n
+> > the error below is generated. The RUSTC_BOOTSTRAP environment variable
+> > is added to fix this error.
+> >
+> >         error: the option `Z` is only accepted on the nightly compiler
+> >         help: consider switching to a nightly toolchain: `rustup defaul=
+t nightly`
+> >         note: selecting a toolchain with `+toolchain` arguments require=
+ a rustup proxy;
+> >               see <https://rust-lang.github.io/rustup/concepts/index.ht=
+ml>
+> >         note: for more information about Rust's stability policy, see
+> >               <https://doc.rust-lang.org/book/appendix-07-nightly-rust.=
+html#unstable-features>
+> >         error: 1 nightly option were parsed
+> >
+> > The probe may also fail incorrectly with the below error message. To fi=
+x
+> > it, the /dev/null argument is replaced with a new rust/probe.rs file
+> > that doesn't need even the core part of the standard library.
+> >
+> > error[E0463]: can't find crate for `std`
+> >   |
+> >   =3D note: the `aarch64-unknown-none` target may not be installed
+> >   =3D help: consider downloading the target with `rustup target add aar=
+ch64-unknown-none`
+> >   =3D help: consider building the standard library from source with `ca=
+rgo build -Zbuild-std`
+> >
+> > The -o and --out-dir parameters are altered to fix this warning:
+> >
+> >         warning: ignoring --out-dir flag due to -o flag
+> >
+> > I verified that the Kconfig version of rustc-option doesn't have the
+> > same issues.
+> >
+> > Fixes: c42297438aee ("kbuild: rust: Define probing macros for rustc")
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> > Changes in v2:
+> > - Add `export` to RUSTC_BOOTSTRAP.
+> > - Fix error about core being missing.
+> > - Fix warning about -o flag.
+> > - Link to v1: https://lore.kernel.org/r/20241008-rustc-option-bootstrap=
+-v1-1-9eb06261d4f7@google.com
+> > ---
+> >  rust/probe.rs             | 7 +++++++
+> >  scripts/Makefile.compiler | 5 +++--
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/rust/probe.rs b/rust/probe.rs
+> > new file mode 100644
+> > index 000000000000..bf024e394408
+> > --- /dev/null
+> > +++ b/rust/probe.rs
+> > @@ -0,0 +1,7 @@
+> > +//! Nearly empty file passed to rustc-option by Make.
+> > +//!
+> > +//! The no_core attribute is needed because rustc-option otherwise fai=
+ls due to
+> > +//! not being able to find the core part of the standard library.
+> > +
+> > +#![feature(no_core)]
+> > +#![no_core]
+> > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> > index 057305eae85c..08d5b7177ea8 100644
+> > --- a/scripts/Makefile.compiler
+> > +++ b/scripts/Makefile.compiler
+> > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD=
+_EXTMOD))/).tmp_$$$$
+> >  # automatically cleaned up.
+> >  try-run =3D $(shell set -e;              \
+> >         TMP=3D$(TMPOUT)/tmp;              \
+> > +       export RUSTC_BOOTSTRAP=3D1;       \
+> >         trap "rm -rf $(TMPOUT)" EXIT;   \
+> >         mkdir -p $(TMPOUT);             \
+> >         if ($(1)) >/dev/null 2>&1;      \
+> > @@ -76,7 +77,7 @@ ld-option =3D $(call try-run, $(LD) $(KBUILD_LDFLAGS)=
+ $(1) -v,$(1),$(2),$(3))
+> >  # __rustc-option
+> >  # Usage: MY_RUSTFLAGS +=3D $(call __rustc-option,$(RUSTC),$(MY_RUSTFLA=
+GS),-Cinstrument-coverage,-Zinstrument-coverage)
+> >  __rustc-option =3D $(call try-run,\
+> > -       $(1) $(2) $(3) --crate-type=3Drlib /dev/null --out-dir=3D$$TMPO=
+UT -o "$$TMP",$(3),$(4))
+> > +       $(1) $(2) $(3) --crate-type=3Drlib $(srctree)/rust/probe.rs --o=
+ut-dir=3D$$TMP,$(3),$(4))
+> >
+> >  # rustc-option
+> >  # Usage: rustflags-y +=3D $(call rustc-option,-Cinstrument-coverage,-Z=
+instrument-coverage)
+> > @@ -86,4 +87,4 @@ rustc-option =3D $(call __rustc-option, $(RUSTC),\
+> >  # rustc-option-yn
+> >  # Usage: flag :=3D $(call rustc-option-yn,-Cinstrument-coverage)
+> >  rustc-option-yn =3D $(call try-run,\
+> > -       $(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=3Drlib /dev/null=
+ --out-dir=3D$$TMPOUT -o "$$TMP",y,n)
+> > +       $(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=3Drlib $(srctree=
+)/rust/probe.rs --out-dir=3D$$TMP,y,n)
+> >
+> > ---
+> > base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+> > change-id: 20241008-rustc-option-bootstrap-607e5bf3114c
+> >
+> > Best regards,
+> > --
+> > Alice Ryhl <aliceryhl@google.com>
+> >
 
