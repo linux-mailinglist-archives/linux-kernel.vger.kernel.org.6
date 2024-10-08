@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-355253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87855994E40
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2780E994E75
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05B51C25296
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599CE1C24F60
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D9F1DF27C;
-	Tue,  8 Oct 2024 13:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946A1DF254;
+	Tue,  8 Oct 2024 13:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fT18YtRT"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dj9LzXPb"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90E116FF26;
-	Tue,  8 Oct 2024 13:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809551DF243
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393260; cv=none; b=DctJgiNnDHyc/I3d9CSIgPvIdf2FrT6Bk02zXKM3VnhqIEIOWpTzh2IZXpz4LF0SAB988dYEvNQujUoObLn0aWNReWTJih7mvuaWzirjvdYrCoewstMfqoc5t6fR66Nv0eLxRdWpuh6j6l8AENj1lBXYwi6ayntUu/lnw+wIqrM=
+	t=1728393442; cv=none; b=jpH8S9YSrUwjVLWLA7e/y/YJZTFpWEAqjXlBfvlNzhM2rVXkbCHzVC96wfJmVTuha3BNioWsiwhfjBU1AWwSRnILBX2YhexNhyMwEQ11t1Dbyh8O7APXjU/HZhWvc9RHFyMvEcWIEihE5bo+NiCBUFpE99ll9IeuaVCrVIlwfyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393260; c=relaxed/simple;
-	bh=NMxQjc2T8csseIw5lnqI5Gms21LeoC5nw88NrOvZtiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/feyX7Hmy0jvxgBC4km9KiT662xDyCisD+0+R9G5IdI/iWV1JDvYnBy9Y0me/rdK6c7/6uQr6T0HK2M6W3nbfUFRmcc2izgLZ7CrEx4yepMchFL/V9uvsRVeTty2peUlnYizZdx3knxYO3UnDxBxnpDGtBNKkUO56QMF+N+U1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fT18YtRT; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717839f9eb6so673843b3a.3;
-        Tue, 08 Oct 2024 06:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728393258; x=1728998058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMxQjc2T8csseIw5lnqI5Gms21LeoC5nw88NrOvZtiQ=;
-        b=fT18YtRTM/GauX11FhWrJ7wxYEDZLmebbrKa3XstyDMT3mUg1TcjUd/FsHwXezWpVG
-         7r1R3bNkS5y5uT0do6wiSNRqs/gdqtziC3zYcomO/tCd2z8nPn7+Of7xVgO3PLqCe5uY
-         KTe9PrzuDhzz/xQdiUxaPOpiC3lkt3ntmwIHkDj/GlYNLbVCMlnyHXEFvionoM/Ldspm
-         chsfgK1x6/MPRRt4OW8NfkmU4TjbS0/+gzZBPRMNzJVEtOXMIm3TNesCBQhmFv6VgX/F
-         73/1cBrwIVi9lGIgPd9cfrcuWbhICEzsWnogPhub40c8w1CL6y1kERmA/j9EdJfTxBVZ
-         GKow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728393258; x=1728998058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NMxQjc2T8csseIw5lnqI5Gms21LeoC5nw88NrOvZtiQ=;
-        b=Zkc11njBE3fYR5COe+lPHMZ2QgzuA7pbY58Pa8DvXySPwkS3P7pyB/jvWj23I7Iqr8
-         PNNtezteY6nbFjrYTIa3aE446vvGEm2y9CafkdGxvYn7i1lT8EdMUAYzDeLNep1YEcwC
-         zg5RtsTM7PJJwSaNFDyHLjtBVvWT57KY4Ah8+xBSI0G5Qkhavs8ltPFf+4xNertKJwjh
-         oKmEmj5JakqeJtOIL2MokN0frA/lpYZU1vnTHXSIb1Au2M7L2VQw5iVboSTH6NJ0MPpt
-         Q7Awe1xuVrUNj+ACjsCh9WgOO0f/1RKH5SY4d4SVJYMQL5Qw/JKkWKgqQDRU+g1cIV7D
-         DiFw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Npxic0tYEDpdG2jf1DSgH4dNNV5llJ1Pe8H6PYEN/Xyy+L+V2R05KQbjC3sKoURRQb/RCXbDohFmzqKNzDU=@vger.kernel.org, AJvYcCVHsuKqeX09qMOpzwBt1rRwemwQt0/P81fMEfKSZgqiMuGYkKY/8SwydjRtQiOf3WgrU+Ui4M0t@vger.kernel.org, AJvYcCX9hP2gs9B5EGLybJ3nYwkgQaccjKOti512DwO20lGT29kr5X6DObMyWtNSxz6VtniFhtUDqLoGvJAakzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweUS6024j0+Ae1XiIvASJEFVIeYiWa0GlIfMi69n90sR3yysdD
-	Z8+qJSWpW8itNm21maEk0acK9TCinmpNN2Zyhn1+3uGT/roZO6DLJL1FVCZb28t+bg0l72lzXTV
-	CyISdxcqIuHxvmEyUCoWYcWIrxHg=
-X-Google-Smtp-Source: AGHT+IFIuvyES4s9VElGPqNkC2xj2m2K4rPwfHrrItKyso51Yi8CEyESeZiYUdAkjVNkI+7vvtUAuf75lShL5tVVHd0=
-X-Received: by 2002:a05:6a00:84f:b0:71e:1225:77f0 with SMTP id
- d2e1a72fcca58-71e12257b7fmr1664544b3a.6.1728393258158; Tue, 08 Oct 2024
- 06:14:18 -0700 (PDT)
+	s=arc-20240116; t=1728393442; c=relaxed/simple;
+	bh=X8tOFgj5tloIcKscQ/zZKAIhAnbbZmcvev2zOGM1T7Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=PEiERBZ02LZt31qEiyjY5kq3px4EqM+aVe53zumAudNPnbydTJEGFrCNBQ8U4+g5LvDBtUrSW2UhBmJDfUlOXeJviUjVchXVybZC4MD76WO69/cHWuKRoh/wFJGJc+/DN/9MBGv+Hexe7MEVf3oOUeW14dadbIXCrV7IPZVPdqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dj9LzXPb; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728393399; x=1728998199; i=markus.elfring@web.de;
+	bh=adxgRSJOkFGPFpFSyKuJM1pQeF57D1d9SQt+490tSoM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=dj9LzXPbqmbhBrfkURWkmkvpJY8rtnYCjgJy2eKzZb+GH0Sx9UvFiVEDzOTbE8mY
+	 VuuiIaikDVYqq5gFqEUHLZp3kGOlL6mDVX+telrt9d9s1CyF6Nlq4NwOFxtUBHwnN
+	 cR5heYOjPJ2AVQFgzlOG4DLQlreUPEBv7rhF3zh3hHNbJMGop9gNbdBBNsdPUGlQU
+	 C9Qj3os0QZaF+UYfJfuGobUlmayniAeykyCSqo/+Md8D3RMMIZqDxxm9MEjcTxseQ
+	 9k/f6S4Bn+By3iN6xtjp+JO+4YAYcLofWTJeWoPZhMYdCXqJjOnP3aJwaQ2p70V0H
+	 noo/VnfA+DkoqqEUhA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSZM3-1tQWr81oRV-00SOx8; Tue, 08
+ Oct 2024 15:16:39 +0200
+Message-ID: <4366efe2-89cc-45bf-9d51-04a2afd2783e@web.de>
+Date: Tue, 8 Oct 2024 15:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005122531.20298-6-fujita.tomonori@gmail.com>
- <06cbea6a-d03e-4c89-9c05-4dc51b38738e@lunn.ch> <ZwG8H7u3ddYH6gRx@boqun-archlinux>
- <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch> <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch> <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux> <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
- <ZwRq7PzAPzCAIBVv@boqun-archlinux> <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
-In-Reply-To: <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 8 Oct 2024 15:14:05 +0200
-Message-ID: <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Yonggil Song <yonggil.song@samsung.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>,
+ Daejun Park <daejun7.park@samsung.com>,
+ Dongjin Kim <dongjin_.kim@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Siwoo Jung <siu.jung@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
+Subject: Re: [PATCH] libf2fs: Fix calculation of usable segments for single
+ zoned
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pbgt8tsSEsd8luFTcv8T1w/ipDMyxIIq8nNIyLdvDS+reGScQ1U
+ tUykC3c29eOiFX6FFtSqZseji7fwMUBMPuC93nXcSFqd7q8G2eXJUtnbqBeMgsTS7TA1AcB
+ ZA9YHEZAdWMzSeJl8D234ptXjg5Gov6mu+U9N7UPbiMdHogcwkXPmbhBMjzDUtB0YkkbyVe
+ bLuEwTxw6Dmyy1K5paQOg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uDqyZAkOSHM=;d0g+TTEd8ZBVUEmjALxmfNEExoq
+ dbOPl10LTsHJt3rBtAqSiI9pF/vwJd09d+7P73/UegAf29UfhAU+1jR4DJyCqv2EZk1RBiK8s
+ +wGvEvXuNmT8HVyPoDAQObNz7BVfJomIslIgMtoiNxvx5DmWJmivl2BsSn+HE1HVOifpAvXWV
+ 158UbGeF5FJGGa6sWTx/Bc4xMrxEbETK7UfPKMbA/3l/ZiPFtMUTG11EvhJq0mFEPqsDLRZw3
+ nYDmqIRzncjFOG+29DaM7SsuJM6C4Xv8CH/XPvfPPK9MGAqsVJQyc+oZs6eijhVrjdx30n2Im
+ WkYhvJaDWaSy563eORu8q7G84I7UnOdegygpmoPgky2Yc+w/GyomhvExGycgcAPH5jfok6TYJ
+ YpBcpa2rUTR+rqzpH7a4U8ppL5J2h54PZms0SYcYg8Yr2ek+loUJAtudHWBWyP0HFrZAXXRR6
+ CIPz1fRqk57sR1SqXwybP1jj/tpihJfVxhfy6pEhTDoUye4N6AwzhAK4iHku8yaTmDF3vZK23
+ 4aR1G/wKB7bqKWEB3aNPGZFzVh9d72h8BGlRjMkXGhTo2vZl3p2CZr21A28XBggcjc9+JCoRQ
+ 8c3fTRcbjqUjCryuZjkfuQjNhz3MlX897WMzk7/ONEzPMr2CcXM0JMTSUWMrZq5Bok3rdMV7h
+ 1gb9t28hh1HIQnBxG6iWgp3Mp1Qgaiv5Jy+oHqNAn8WCljW0IoZhBzFvJmQoF06DEIziUB1c7
+ XRavrD5GM70gqrdrOOzpDR0jmkbfPaAIWQAdmkTXV6aPq4SgBFFDDG0KMkJWBIPLQjuwOQUUH
+ Zby0ypSEldgcVHtOFTg5qVuQ==
 
-On Tue, Oct 8, 2024 at 2:13=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> As far as i see, might_sleep() will cause UAF where there is going to
-> be a UAF anyway. If you are using it correctly, it does not cause UAF.
+=E2=80=A6
+> This patch fixes the bug by =E2=80=A6
 
-This already implies that it is an unsafe function (in general, i.e.
-modulo klint, or a way to force the user to have to write `unsafe`
-somewhere else, or what I call ASHes -- "acknowledged soundness
-holes").
+* How do you think about to choose another imperative wording
+  for an improved change description?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n94
 
-If we consider as safe functions that, if used correctly, do not cause
-UB, then all functions would be safe.
+* Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D) accordingly?
 
-Cheers,
-Miguel
+
+Regards,
+Markus
 
