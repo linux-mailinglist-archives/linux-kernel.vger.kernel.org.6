@@ -1,192 +1,106 @@
-Return-Path: <linux-kernel+bounces-355942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE58E99597E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F26995979
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A360B2171C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383B31C21CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B1A21642E;
-	Tue,  8 Oct 2024 21:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD61215026;
+	Tue,  8 Oct 2024 21:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZU6iqLAN"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rxq824CP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB13215024;
-	Tue,  8 Oct 2024 21:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C96185923;
+	Tue,  8 Oct 2024 21:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728424749; cv=none; b=pKHsL4hdRnSA9jRK91h9pSIVi6Y4ZlPBAwan9qsPfBhmkoRCNt5eb+7DJpgHdrQ4scl+1oIIpT+Mls0TBZo45B7bLPb1aJ0JzRcpthKirfLBkkxdXZcH/d0GABAHyJIXJ3W9Tv9+30v22ElWS8A9KOl/MFGvwOVPHQGUMkNb6dA=
+	t=1728424691; cv=none; b=QYjnY9fb4ZEH0dyW1yvqgt8hFDx3vVgEkg0rUS5SWtvh2cgUjR76Sl8Vvv/R69bTsnP6p0wRBPGXqmH8DH87GhxFQEuHBAmp9Q05VIqD9zVWOfauZYfpY77lzj7bUFSqRGS3HHn8jdIOyRCIqPJM/gvVzdALc4dFjqcM69OoAs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728424749; c=relaxed/simple;
-	bh=VoMl7LpDjDXr1VZaAh7ow87FifQ459wX0X4bZGdU9HI=;
+	s=arc-20240116; t=1728424691; c=relaxed/simple;
+	bh=xCkhWr4L99Mc/IQW1K6PzQOytJMgYvq3ru5wDNf8phI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gv8w/g1x1pvXGY5u0C7uRvlLLoZA1kmMU0PJlNF7/ZOjM4Wh87a4/XrEyd6NHPuEyCG3BX5N5pWDRsdEe7Wz+Xii0aCKH3T8nO+Sb4DX/5sDZbNMM3d2nV4YtGwwysV7JHMH1TQrjORKk6ayO6Okd2lhPM47N8bHnrx7ZUyy3eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZU6iqLAN; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a99fd5beb6so22292285a.0;
-        Tue, 08 Oct 2024 14:59:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728424747; x=1729029547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6zzMoQ9GRFFQIfKm8Gy9DFstioAKOO5Mgjhl3aFl9IM=;
-        b=ZU6iqLANroR8XSaJ3DhqkYPRbPEyiuzcc7Q7AXEHhx3UHNfj+sv3AyNBnNh6gGt7Ks
-         zb/20gr2kLlNk4CMccrasWVbxtghrohUmy/QUPNNuWQtvWmgLWi5djMBNh5k7/MTKwDt
-         +x+z4b1QyeWX+GmmLfzqEqf0GI9+/VNqH3Z5tbMbAAe1GXxzmNDTyi1Ed9jrv04Ag2RG
-         ocZiTEXLJM8/VyjWwegMIx7g5ueQ/RUAkaff56tkkMZM4SKzmaSJ6PYGjqbMq2xzHJfF
-         LEa1zshiuyhXcn421oYfsT2luu27fGPuBQH7/YDzkZdoZHPlwoH2sgOYodFG/v2kJT9+
-         vxXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728424747; x=1729029547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6zzMoQ9GRFFQIfKm8Gy9DFstioAKOO5Mgjhl3aFl9IM=;
-        b=KWdYpAvfqBJSGeVuQ5ettd067INTOFQer02IJE/LM4kwnryB/D80U52ML1udRx8djr
-         t29dOmIUaEX1x7Bveo3Zv5skI2z403fTSrvd4p8AoC6TI18YLEehQxzC8YGiQy8jrshm
-         0GHKpyFdr+Rh3PRRN9EXqkfIGtBlMKWULcEAmVMe+jfUZkd+NTnV1ULmYm/iTmTY02IF
-         sC9XS7xc7kujxtjqu9xxUURUbAtBFXTWlfq8pVhfzPvcOcCabDzVbJOjL153neRDSYqf
-         kTdprdfnNx1rLM3ANiiYSMRuusgzODzmIISU9pSaU3BMV4JAvNMke6q5OS8eABMJCPER
-         hqvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBSZEode1MzWVBX0SvtjK4dlXlkh0sO00TgrM8bDO/FzLGXq10bmbHZ+q+DFIXk2RP7m+32OLFUdjzUEc=@vger.kernel.org, AJvYcCWntzpOh7ogMQZzyafWXuheFKiakog4R0RRuWEPvJ6A5KnD/FaNjxHOhhNfssMqCWAGNxPt9Xd0@vger.kernel.org, AJvYcCXLyZSyhbl2wCTCRxVlLwKLzAmR6Fx3HcFlt5vxzZJ5mM66nvF/M69mKKzUCT/kZ6lCqUloTwcA+mlW2i2QI/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGWNygpx8gSk7/M7u/p9B5tmVvSB3EMvn/nZc2NAqlAJHnGPC8
-	Du625zXjXl0aaphr1dY+mCJc+7OQeucBANqrKoUuRYBjvXpCi8y0
-X-Google-Smtp-Source: AGHT+IElaBK06Rfr7LDkmiWS5ObaJrVEsHKgkBImGnsdOYipQ/6l2iH5PIfu9BNzl/v6kSNfFMdmJA==
-X-Received: by 2002:a05:620a:24cd:b0:7ab:32a8:d61f with SMTP id af79cd13be357-7ae85f6faeemr815005685a.26.1728424747092;
-        Tue, 08 Oct 2024 14:59:07 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afcde42e20sm64074785a.2.2024.10.08.14.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 14:59:06 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2EA4E1200088;
-	Tue,  8 Oct 2024 17:59:06 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 08 Oct 2024 17:59:06 -0400
-X-ME-Sender: <xms:KqsFZw7aSvKrzJPeYoDvRdPQBiSiCrS7ib1zW_SUwtvOh1BlVsgW3Q>
-    <xme:KqsFZx6Ipdp13Jx8UJwEH1YBXrN6XqpyExauI-68cbiLm8w--jHoBVJE63FXJH_3d
-    8kyzZ7zxV-ZmsKH0g>
-X-ME-Received: <xmr:KqsFZ_dAzkdFCrNREmXHmTwXUk1e1zceTlU0vZMtUf5YFHU3U0hOd9iixH8PVg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefvddgtdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
-    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvtddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtg
-    hpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishesghhmrghilhdrtgho
-    mhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopehfuhhjihhtrgdrthhomhhonhhorhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    nhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqd
-    hfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhk
-    rghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuh
-    hmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:KqsFZ1L_xjvEysHZXQj1J5IsMrAt9wJW9oz0q49RYx9QbrmA_ISygg>
-    <xmx:KqsFZ0Im-vSMe-r7eK25vaJN3QJ7nQW8BdKivccOHrQrioRsVdkRmg>
-    <xmx:KqsFZ2wyoA5lCzgkg-9FJ6UhyryDWzAdQBD5vkz9K0oUhHWQewRfvA>
-    <xmx:KqsFZ4IRsL3t_3elIhD1RgLYKrXLK_yTfwC7GZGkzalLkLHRhZzCIQ>
-    <xmx:KqsFZzYNO9zY80RPdMdV6cEZ2CZnoVQ6toGMGOfaVOj2YMQVZ8HG01Ez>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Oct 2024 17:59:05 -0400 (EDT)
-Date: Tue, 8 Oct 2024 14:57:43 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <ZwWq1yDK9Y7ee1pJ@boqun-archlinux>
-References: <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
- <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
- <ZwRq7PzAPzCAIBVv@boqun-archlinux>
- <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
- <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
- <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
- <ZwWp9C2X_QIrTJEq@boqun-archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwkFMj8vN3znE7yqNrNQJiiJTMj0YhKIOOkfSrNKCzubeFMywHUdGKFn+OMO8j0pgY4nlTrTtyGwQvW5O4OOq5o7bY3j6EX+3vanw4iHBWdnBn8UGJHCV9/YB2wUHS6LrXF3v55+8LRKDe2jIFR0PpNvEQ5THaCW9oJC/RQ4mxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rxq824CP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ol6xCRDeAcUBSBVtOuCb1imrILBrc3i/1kc8nU/d/wM=; b=Rxq824CPUR3hYn+96FXudWGxMh
+	Eb4KrySC7FbCtVscNmEUyMB6nZ9KKrQKqO6jhvTd2t665+fLW/OIWL/wDR9KC5/tFo8tmhke8SC6n
+	yLlMmeLgQMPWYcdI0en8RwE3saNCIYa1rrCAbYGvI7n5iHWXk8XiKOc/xXH7eqPnWYOQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syIDQ-009Pvi-IE; Tue, 08 Oct 2024 23:58:00 +0200
+Date: Tue, 8 Oct 2024 23:58:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Alexandra Diupina <adiupina@astralinux.ru>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+ <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+ <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwWp9C2X_QIrTJEq@boqun-archlinux>
+In-Reply-To: <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
 
-On Tue, Oct 08, 2024 at 02:53:56PM -0700, Boqun Feng wrote:
-> On Tue, Oct 08, 2024 at 07:16:42PM +0200, Andrew Lunn wrote:
-> > On Tue, Oct 08, 2024 at 03:14:05PM +0200, Miguel Ojeda wrote:
-> > > On Tue, Oct 8, 2024 at 2:13 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > >
-> > > > As far as i see, might_sleep() will cause UAF where there is going to
-> > > > be a UAF anyway. If you are using it correctly, it does not cause UAF.
-> > > 
-> > > This already implies that it is an unsafe function (in general, i.e.
-> > > modulo klint, or a way to force the user to have to write `unsafe`
-> > > somewhere else, or what I call ASHes -- "acknowledged soundness
-> > > holes").
-> > > 
-> > > If we consider as safe functions that, if used correctly, do not cause
-> > > UB, then all functions would be safe.
+On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
+> Quoting Alexandra Diupina (2024-09-24 06:14:44)
+> > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> index 8701a58a5804..b32c6d4d7ee5 100644
+> > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+> > >>          div = get_div(double_div->reg1, double_div->shift1);
+> > >>          div *= get_div(double_div->reg2, double_div->shift2);
+> > >>   
+> > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> > >> +       if (!div) {
+> > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
+> > > hw->init is set to NULL after registration (see clk_register() code). If
+> > > div is 0 what does the hardware do?
 > > 
-> > From what i hear, klint is still WIP. So we have to accept there will
-> > be bad code out there, which will UAF. We want to find such bad code,
+> > Thanks for noticing the error. Yes, hw->init is set to zero,
+> > I will replace that code with clk_hw_get_name(hw).
+> > If the value of div is 0, should I return 0 as stated in the
+> > comment for .recalc_rate (in struct clk_ops) or should I
+> > return parent_rate as in some other similar rate recalculation
+> > functions (in some other drivers)?
 > 
-> If you don't believe in klint, then we need to mark might_sleep() as
-> unsafe, as I already explain a million times, might_sleep() is unsafe
-> without the klint compile time check. You have to accept that an unsafe
-> function should really be marked as unsafe. And yes, in this way, all
-> sleep functions would be marked as unsafe as well (or we could mark all
-> preemption disable function as unsafe), but still an unsafe function is
-> unsafe.
-> 
-> Again, as Miguel mentioned, we can only mark might_sleep() because sleep
-> in atomic context is an ASH, not because it's really safe.
-> 
-> > and the easiest way to find it at the moment is to make it UAF as
-> > fast as possible. might_sleep() does that, __might_sleep() does not,
-> > and using neither is the slowest way.
-> > 
-> 
-> might_sleep() is useful because it checks preemption count and task
-> state, which is provided by __might_sleep() as well. I don't think
-> causing UAF helps we detect atomic context violation faster than what
-> __might_sleep() already have. Again, could you provide an example that
-> help me understand your reasoning here?
-> 
+> It depends on what the hardware does. Does the hardware pass on the
+> parent rate if the divider is zero? If so, then return parent_rate. Or
+> does it turn off completely? If so, return zero.
 
-Another advantage of __might_sleep() is that it's already an exported
-symbol, so we don't need to introduce a rust helper.
+I don't think anybody knows what the hardware does in this
+condition. I also suspect it has never happened, or if it has, nobody
+has complained.
 
-Regards,
-Boqun
+I would say, let is divide by 0, so there is an obvious kernel stack
+trace and hopefully a report of the issue. It can then be investigated
+in a way we can then find out what the hardware actually is doing.
 
-> Regards,
-> Boqun
-> 
-> > 	Andrew
+   Andrew
 
