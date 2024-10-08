@@ -1,187 +1,136 @@
-Return-Path: <linux-kernel+bounces-354355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA35993C72
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:47:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3DB993C81
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E438D285245
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33FBDB22920
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F14A1DFF8;
-	Tue,  8 Oct 2024 01:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJImDytc"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820271CD0C;
-	Tue,  8 Oct 2024 01:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CEA18EB1;
+	Tue,  8 Oct 2024 01:51:25 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5F41C695;
+	Tue,  8 Oct 2024 01:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728352045; cv=none; b=sZz6/DB/MzcvtPhRBUJKqERckKlhZbCU5GF5MV/kO+djOgnK7p+XwHA7jYTpCTfvdIDkzVrCjjSeGO4n2DjTXGGqPz8A/9APQBDv3kma6HI0eJjldxdMfmpGYEMq1G/fAiuQhI30SK6K9jmbs3wYDTmDF1Ub/MViR12hzznJbA8=
+	t=1728352285; cv=none; b=n42IpieU9YHo8d7mnjh7uzTVqK/9ucBfXPpCT1uYg46PkZ7FNzf35ELrapNynMDpgkOY4ov8GV6XbVacxElQWdxT5hanFhzAsY1SA8vhM2mqnXLJQaZVyiD4AZ6LNzEOfOYrAdTs4kvHNmpMOQqHzSpGKhY8MiQOzBR486SyEF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728352045; c=relaxed/simple;
-	bh=dsvj2frVr6MGiwtWhTRMsRmO1BwMNYYun3RBtTY467Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vC8rAANJCi2++j9BweQRxSWS5ikFPnJeBhnGCrFSRL2fZgaqBnXYVbeI/iDDHfjvLMeAt/EWNzUMh4BzqXUN1BwlM78qxt6y5was3+zbdlEJaCbOTrFE94huURwBR0quX5dCxDB5qAVClu9yxm/T34xP2UvJYr2Ti5pzgz9QDQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJImDytc; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71dfc250001so1583327b3a.2;
-        Mon, 07 Oct 2024 18:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728352043; x=1728956843; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hsdZK56BEuQGs9pXkV5YDLxOr/kjcEbLorwgkGs7QDg=;
-        b=DJImDytcopys66S5TnA/kEXZfZ1fy7Zzw8VV2MrcYd/gxvyY5qPfZ4OHsosYfBMyoB
-         DA1AvJ3Z2KFb9ItWvfFQ60EWl8gu6pdfsawRyBlHrJZlYwz0CwKfceEEa24Dbv/hR8xh
-         aOyE2oG7m2br/gDN8cDAHh+Zh642Z0P7U1FJuhSuZ1qmqJGPwK3jcsW+c9fWOIuTrNxp
-         tutnHCCNgFD6gmwJt07eBGc3aGsf5mHU9gz5y6LmucQLgf+Y2ocrVP393ZLJIHAy3v9U
-         Ueb8qNtkcLsAofI9J8uwB4MJ9fLJ6ZuxKCAYzjsGHSc8l7TmN5knmmOSshDdb6WZSOgX
-         xWYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728352043; x=1728956843;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hsdZK56BEuQGs9pXkV5YDLxOr/kjcEbLorwgkGs7QDg=;
-        b=v6dfef7yUV3jElC4hkpocZ3a8zwNeB3nIh0iGrG596XDetdtocn3ABy1wn8egVcdot
-         +RFTGTioagMYTpV92XOVift/UacWfT/Qa/p9omOB+PAL9mRAPmE356d2/r4OhukMXqBG
-         kJ0CdSkOYgZPqZ/y2Q18f+OlWJWqhP58mjy/344a8itix0wturljdB+MZYvpR15wSBt6
-         eMHiuiPkR6CbSOtHs4joCDLWES6EhBL5w3qbJkSLSWIV80rYaTN9S4zNJXn7PUJP7K3T
-         6l10M/g7MAD8bOkk3g+UsXzp0+5n2Xa0SAVCTion4bdlS5WGmJSBr6YCHyBfD8heviYY
-         /A4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXIMoBy8uZwlb3ldsoDkkKAxFPahTSxNAc9aayO7tRVb50rVG3hceH7QyCDLvqg8DzZ5ftnZRbNWWTndeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSvlMwcU/SAZqF/7O3vP93yCs03VAIHSjEdVbhyegN7QpuLl+v
-	wZmMrrd9TJdlagzqyeR0sd+Mo/rDP7lrvn7VuOz4jzOb03mCoa+u
-X-Google-Smtp-Source: AGHT+IGuHHX5sRH/OaT7vryo8dVawPFqQIgVH67akZQkhIF4Phvmh5OuHSUiCqo0fLXG1lG0DE5yhA==
-X-Received: by 2002:a05:6a20:438f:b0:1cf:6c64:ee6b with SMTP id adf61e73a8af0-1d6dfa426damr18828915637.27.1728352042869;
-        Mon, 07 Oct 2024 18:47:22 -0700 (PDT)
-Received: from localhost.localdomain ([205.204.117.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d453bbsm5070235b3a.130.2024.10.07.18.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 18:47:22 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
+	s=arc-20240116; t=1728352285; c=relaxed/simple;
+	bh=vZOBNbEZs0Rfo7A5bAl8df+cNkkn7NVEylmQziEjhNY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uqlf2BDdJ5Flb40ZtarZb+IuGvfC1xiRb5bz8L16ii9nNO793WjlTDSBjgZkTgzRmNk1nd22LGp/aUI/azUgVMcVqCbesQtcStxSSGROGSKIVbmSNdKVrlhDg6ApgfiCNdg9esnF3dqFJVTzFRpUG1zBYNFSLYb2DIR9EU066Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee467048f58187-aea80;
+	Tue, 08 Oct 2024 09:48:08 +0800 (CST)
+X-RM-TRANSID:2ee467048f58187-aea80
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea67048f57b35-8143b;
+	Tue, 08 Oct 2024 09:48:08 +0800 (CST)
+X-RM-TRANSID:2eea67048f57b35-8143b
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: perex@perex.cz
+Cc: tiwai@suse.com,
+	zhujun2@cmss.chinamobile.com,
 	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH V4 1/1] livepatch: Add stack_order sysfs attribute
-Date: Tue,  8 Oct 2024 09:47:06 +0800
-Message-Id: <20241008014706.3543-2-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20241008014706.3543-1-zhangwarden@gmail.com>
-References: <20241008014706.3543-1-zhangwarden@gmail.com>
+	linux-sound@vger.kernel.org
+Subject: [PATCH] Sound:vx_uer:Delete extra blank lines
+Date: Mon,  7 Oct 2024 18:48:06 -0700
+Message-Id: <20241008014806.7573-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add "stack_order" sysfs attribute which holds the order in which a live
-patch module was loaded into the system. A user can then determine an
-active live patched version of a function.
+Delete extra blank lines inside in vx_uer.c
 
-cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
-
-means that livepatch_1 is the first live patch applied
-
-cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-
-means that livepatch_module is the Nth live patch applied
-
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Suggested-by: Miroslav Benes <mbenes@suse.cz>
-Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 ---
- .../ABI/testing/sysfs-kernel-livepatch        |  9 +++++++
- kernel/livepatch/core.c                       | 24 +++++++++++++++++++
- 2 files changed, 33 insertions(+)
+ sound/drivers/vx/vx_uer.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-livepatch b/Documentation/ABI/testing/sysfs-kernel-livepatch
-index 3735d868013d..73e40d02345e 100644
---- a/Documentation/ABI/testing/sysfs-kernel-livepatch
-+++ b/Documentation/ABI/testing/sysfs-kernel-livepatch
-@@ -55,6 +55,15 @@ Description:
- 		An attribute which indicates whether the patch supports
- 		atomic-replace.
+diff --git a/sound/drivers/vx/vx_uer.c b/sound/drivers/vx/vx_uer.c
+index 3eca22151225..a0ce9b205e4d 100644
+--- a/sound/drivers/vx/vx_uer.c
++++ b/sound/drivers/vx/vx_uer.c
+@@ -12,7 +12,6 @@
+ #include <sound/vx_core.h>
+ #include "vx_cmd.h"
  
-+What:		/sys/kernel/livepatch/<patch>/stack_order
-+Date:		Oct 2024
-+KernelVersion:	6.13.0
-+Description:
-+		This attribute specifies the sequence in which live patch modules
-+		are applied to the system. If multiple live patches modify the same
-+		function, the implementation with the biggest 'stack_order' number
-+		is used, unless a transition is currently in progress.
-+
- What:		/sys/kernel/livepatch/<patch>/<object>
- Date:		Nov 2014
- KernelVersion:	3.19.0
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 3c21c31796db..0cd39954d5a1 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -347,6 +347,7 @@ int klp_apply_section_relocs(struct module *pmod, Elf_Shdr *sechdrs,
-  * /sys/kernel/livepatch/<patch>/transition
-  * /sys/kernel/livepatch/<patch>/force
-  * /sys/kernel/livepatch/<patch>/replace
-+ * /sys/kernel/livepatch/<patch>/stack_order
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/patched
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-@@ -452,15 +453,38 @@ static ssize_t replace_show(struct kobject *kobj,
- 	return sysfs_emit(buf, "%d\n", patch->replace);
+-
+ /*
+  * vx_modify_board_clock - tell the board that its clock has been modified
+  * @sync: DSP needs to resynchronize its FIFO
+@@ -127,7 +126,6 @@ static int vx_read_uer_status(struct vx_core *chip, unsigned int *mode)
+ 	return freq;
  }
  
-+static ssize_t stack_order_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct klp_patch *patch, *this_patch;
-+	int stack_order = 0;
-+
-+	this_patch = container_of(kobj, struct klp_patch, kobj);
-+
-+	mutex_lock(&klp_mutex);
-+
-+	klp_for_each_patch(patch) {
-+		stack_order++;
-+		if (patch == this_patch)
-+			break;
-+	}
-+
-+	mutex_unlock(&klp_mutex);
-+
-+	return sysfs_emit(buf, "%d\n", stack_order);
-+}
-+
- static struct kobj_attribute enabled_kobj_attr = __ATTR_RW(enabled);
- static struct kobj_attribute transition_kobj_attr = __ATTR_RO(transition);
- static struct kobj_attribute force_kobj_attr = __ATTR_WO(force);
- static struct kobj_attribute replace_kobj_attr = __ATTR_RO(replace);
-+static struct kobj_attribute stack_order_kobj_attr = __ATTR_RO(stack_order);
- static struct attribute *klp_patch_attrs[] = {
- 	&enabled_kobj_attr.attr,
- 	&transition_kobj_attr.attr,
- 	&force_kobj_attr.attr,
- 	&replace_kobj_attr.attr,
-+	&stack_order_kobj_attr.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(klp_patch);
+-
+ /*
+  * compute the sample clock value from frequency
+  *
+@@ -144,7 +142,6 @@ static int vx_read_uer_status(struct vx_core *chip, unsigned int *mode)
+  *    case 0x00000700: HexFreq = (dword) (((double) 28224000 / (double) (Frequency*2)) - 1)
+  *    default        : HexFreq = (dword) ((double) 28224000 / (double) (Frequency*4)) - 0x000001FF
+  */
+-
+ static int vx_calc_clock_from_freq(struct vx_core *chip, int freq)
+ {
+ 	int hexfreq;
+@@ -169,7 +166,6 @@ static int vx_calc_clock_from_freq(struct vx_core *chip, int freq)
+ 	return 0x5fe; 	/* min freq = 6893 Hz */
+ }
+ 
+-
+ /*
+  * vx_change_clock_source - change the clock source
+  * @source: the new source
+@@ -186,7 +182,6 @@ static void vx_change_clock_source(struct vx_core *chip, int source)
+ 	vx_toggle_dac_mute(chip, 0);
+ }
+ 
+-
+ /*
+  * set the internal clock
+  */
+@@ -209,7 +204,6 @@ void vx_set_internal_clock(struct vx_core *chip, unsigned int freq)
+ 	mutex_unlock(&chip->lock);
+ }
+ 
+-
+ /*
+  * set the iec958 status bits
+  * @bits: 32-bit status bits
+@@ -225,7 +219,6 @@ void vx_set_iec958_status(struct vx_core *chip, unsigned int bits)
+ 		vx_write_one_cbit(chip, i, bits & (1 << i));
+ }
+ 
+-
+ /*
+  * vx_set_clock - change the clock and audio source if necessary
+  */
+@@ -267,7 +260,6 @@ int vx_set_clock(struct vx_core *chip, unsigned int freq)
+ 	return 0;
+ }
+ 
+-
+ /*
+  * vx_change_frequency - called from interrupt handler
+  */
 -- 
-2.18.2
+2.17.1
+
+
 
 
