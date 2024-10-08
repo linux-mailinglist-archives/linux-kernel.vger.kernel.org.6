@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-354802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479639942C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:52:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B477994305
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4BA288731
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A89B2BB4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABB91E0DEA;
-	Tue,  8 Oct 2024 08:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD301E1325;
+	Tue,  8 Oct 2024 08:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HlgXsr5/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B8B1DF992;
-	Tue,  8 Oct 2024 08:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EfW0N1xJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5D81E1300;
+	Tue,  8 Oct 2024 08:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728376301; cv=none; b=mhB3iTuovZB5VWiTLMqdWK8RpB90KhdUudwG6MadhxX9iIMgNBKb2Ce4NrvADAgU3HTVy8VSSsXHpQpspNvakc8NL1EmHap0fW2O7rnsylhuKT7FkVxECoT0AULBA6Sx5WQRHhmY/9K4jKzDiF0U1rJBYYBhTz/SEQ+swRfurzU=
+	t=1728376344; cv=none; b=K6YPeS6+SdNmAEPzgQ1FxVcONITJJb/75/bpLIT5JZyOwADzDA6oAp15fiyJoIIGPADfgIS/H0t0cXgu3NtHzwDACj220JxxYl+xAm0FJ0YjdT3GtAOEYwaLjay2wVQAsU3dCprFtcvZQG1sZn5SazwL7pzJ+5GpEgQomAjsEPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728376301; c=relaxed/simple;
-	bh=uiQgzBxJtxFIFzFO1Q0G8G8iZ07N4T2ckZhzqXQ2b3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wh9yKkyZLp5Rxwe6YXcjX537bnleuJ6rTobnUxT15RElMPsKngwLPhCQm+6XHt+RK5unOyke8RpG5dbhZg3kpmmwbnIJ/b3F3m0H6n9xY0gde4ZLTFbNyXOcJmF03zb0JLjiRQHUgMtTjVl/X553K7LieMdnt+8FzJ5BUBSEFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=HlgXsr5/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KUKKV+hhxMy1Mw968oqWoUVxYocxrQgxcW/UOjKQ9Mk=; b=HlgXsr5/jd9oezKVg0NBeFTKO2
-	CBGJa5KUUZY2kFnjnzqjArSBEnHalFO+Y8EGhSedaGziaWUg1J9+HnTdlxKUhGygX6IV+XgL01jQh
-	nbCvBCzyKTNkuJnYbMCTV5IVingoevoyK/1jG8wd+BLW7u5eUSuTkcyBsUIQMP6QBdh7x58sh5QaP
-	rYoQT3/7qum5GTTe4dYV/lQRgtx4jPaUyVuvg/nYQxZ5I9s19cxM0hx7xJPSculULQFwZokHbMObf
-	WbOpIM7H1RiaBcjSGVbGdpCsyv+rnC7rfZaaMkoa1f/Hje570PjKJAORdSEjW5X3NpDFc2ohK0hrP
-	9eKkiMbA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34528)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sy5ck-00077R-0b;
-	Tue, 08 Oct 2024 09:31:17 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sy5cf-00052g-14;
-	Tue, 08 Oct 2024 09:31:13 +0100
-Date: Tue, 8 Oct 2024 09:31:13 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
-	hkallweit1@gmail.com, andrei.botila@oss.nxp.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v2 net-next 2/2] net: phy: c45-tja11xx: add support for
- outputing RMII reference clock
-Message-ID: <ZwTt0R_n40ohJqH1@shell.armlinux.org.uk>
-References: <20241008070708.1985805-1-wei.fang@nxp.com>
- <20241008070708.1985805-3-wei.fang@nxp.com>
+	s=arc-20240116; t=1728376344; c=relaxed/simple;
+	bh=L6hn56+wY3Cptqr18fuXGg+zcOl3Ut65We9gsf4eF8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q2NytGtHHdGYDIcELA7I6DYWFk+sUp5BRuzfh9kuOsn6JVr3i9lK2Daf1A3f0cc34gdgr2IZwTAOjMIHfFdDss1Y9OTzqX4DrFJQvB4j8ZsUdzlB9DiRs7YhV34K4A6J6EUU40BeTDQ1LFnkpbuihdKSCxRiaf9B3wBiSBma1Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EfW0N1xJ; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=L6hn56+wY3Cptqr18fuXGg+zcOl3Ut65We9gsf4eF8w=;
+	b=EfW0N1xJyCUF79glByvifp7jswsQSoJEFybOSsDOy9KVeOAsHSp2EAUBMYHrgk
+	KN++s2mCF296fEOgNadLcGWB2bz6LN+fcixWHBp8wNBWFYKYwHvZAOGwlMPKPl5b
+	xSysI5nUcDzWBHc4nA/Y1UpYNohA4JYmwHF211cWRcWbg=
+Received: from [192.168.31.242] (unknown [27.18.107.81])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBXf4Tn7QRnmf5rBg--.6114S2;
+	Tue, 08 Oct 2024 16:31:38 +0800 (CST)
+Message-ID: <6a1a3e38-0c6b-4d79-a101-b3292a2ab3be@163.com>
+Date: Tue, 8 Oct 2024 16:31:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008070708.1985805-3-wei.fang@nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Add initial support for Canaan Kendryte K230
+ pinctrl
+To: Conor Dooley <conor@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
+ <CACRpkdYk9aCp7mdWJJTT-1cwNZC4RN_eB6v5rducDY5MGJ_dbg@mail.gmail.com>
+ <20241001-stratus-overplay-96266c33ca89@spud>
+Content-Language: en-US
+From: Ze Huang <18771902331@163.com>
+In-Reply-To: <20241001-stratus-overplay-96266c33ca89@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBXf4Tn7QRnmf5rBg--.6114S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1DAF1kJr4UKFWrZF15XFb_yoW8tr43pF
+	93KFs0ka1UJw4ayrZ29anFyFn0v3ZYyr90gFs8KryUXF9I9a42qFWxKr4jkF9xCr4Fkr4j
+	yrs0qw1xJanrXFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UOzV8UUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJxlyomcEoY7FgAACsl
 
-On Tue, Oct 08, 2024 at 03:07:08PM +0800, Wei Fang wrote:
-> @@ -1561,8 +1565,13 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
->  			phydev_err(phydev, "rmii mode not supported\n");
->  			return -EINVAL;
->  		}
-> -		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-> -			      MII_BASIC_CONFIG_RMII);
-> +
-> +		if (priv->flags & TJA11XX_REVERSE_MODE)
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-> +				      MII_BASIC_CONFIG_RMII | MII_BASIC_CONFIG_REV);
-> +		else
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-> +				      MII_BASIC_CONFIG_RMII);
+On 10/1/24 8:32 PM, Conor Dooley wrote:
+> On Tue, Oct 01, 2024 at 02:27:25PM +0200, Linus Walleij wrote:
+>> On Thu, Sep 26, 2024 at 5:58 PM Ze Huang <18771902331@163.com> wrote:
+>>
+>>> This patch series introduces support for the pinctrl driver of the Canaan
+>>> K230 SoC. The K230 SoC features 64 IO pins, each of which can be configured
+>>> for up to five different functions.
+>>>
+>>> The controller manages the entire pin configuration and multiplexing
+>>> through a single register, which control features such as schmitt trigger,
+>>> drive strength, bias pull-up/down, input/output enable, power source, and
+>>> mux mode.
+>>>
+>>> The changes have been tested on CanMV-K230-V1.1 board.
+>>>
+>>> The pin function definition can be found here [1], and most of the DTS data
+>>> was converted from the vendor's code [2].
+>> Bindings ACKed and patches look good to I applied patch
+>> 1 & 2 to the pin control tree.
+>>
+>> Please funnel patch 3 through the SoC tree.
+>>
+>>> prerequisite-message-id: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
+>>> prerequisite-patch-id: 704efc6e76814e1877748959d7319d558c8386c1
+>>> prerequisite-patch-id: c2144cf468c57b856830a61615ba6ba501e8ec58
+>>> prerequisite-patch-id: ced4a01ccd8ddab2fd308d543ddf47bd1641518a
+>>> prerequisite-patch-id: f8b983b301d0c14f1448b9e4c321262a509e061e
+>>> prerequisite-patch-id: 834b65b6a2b037daed5cffc6a41963622568dc9c
+>>> prerequisite-patch-id: 2401703b57448c9ea2c3dc7650b4502491a28944
+>> I don't know about all this stuff but neither bindings or code seems
+>> to contain anything that won't compile so I just assume that any of these
+>> dependencies are purely for patch 3/3 and I nothing blocks me
+>> merging patches 1 & 2 so I just went ahead with that.
+> Yah, this should all be cos I haven't yet applied
+> https://lore.kernel.org/all/tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com/
+> as I am waiting for a clock driver to be sorted out.
 
-Netdev has an 80 column limit, and this needs commenting because we have
-PHY_INTERFACE_MODE_REVRMII which could be confused with this (although
-I haven't checked.)
+Thank you very much for your time in reviewing and helping fix the bug!
+Indeed, only patch 3 really depends on the previous patches. We are now
+working on clock driver. Should we deal with patch 3 after that?
 
-		u16 basic_config;
-		...
-		basic_config = MII_BASIC_CONFIG_RMII;
-
-		/* This is not PHY_INTERFACE_MODE_REVRMII */
-		if (priv->flags & TJA11XX_REVERSE_MODE)
-			basic_config |= MII_BASIC_CONFIG_REV;
-
-		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-			      basic_config);
-
-is much nicer to read.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
