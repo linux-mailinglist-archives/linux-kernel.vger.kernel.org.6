@@ -1,165 +1,162 @@
-Return-Path: <linux-kernel+bounces-355130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FFB9947C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:52:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E514B9947EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D270F1C24FB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217A81C24A76
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90D51DD54F;
-	Tue,  8 Oct 2024 11:51:33 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1588C1DE2D9;
+	Tue,  8 Oct 2024 12:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="RYURahtC";
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="Ib9new5v"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0C1D7E50
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388293; cv=none; b=RWOKzx+Pj8Y3xObla5sO+Ero6mvLU4+vZOeWibRUId/2FFn6ui7Aq39ozaZrX4e0k/op3v2C1fYUD8KdYrt50OQ5oNfU+dk9IF/bG5OWIrZwVSXqs29K4rbsNolqVvZJ4PaYgfxn3ogp+JuviOfB2m7m3ncK7g4iRXTq6Bb3KPE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388293; c=relaxed/simple;
-	bh=nSJQXKojb11FRD7CjZoS0RHG2kV4sHEUr0oJZCAZxuo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N6dqVVtBa6coU1b+HgDP3JD/TVzj386o0Lpb+rH9B9kjQ4NjtIGXzvhn1+5wVtc8Nh5fv0phh20wzzesK5BslFyxKXOuwWsjshxPZJVEgvNoDTUx55/PIGApJKufLqbrb3x7PcUce1Rc0ieVtomCMaiDUP/RfzClyyzZi5taXJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf28c74efso652992339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:51:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728388291; x=1728993091;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HFsP843Ovwu3dUFXwHHSKedyHO1oIz1Y6/uLi2CAMGA=;
-        b=J09omvNojlR52ZlMvMQ50+mkwlblqf1MQtrLAlCuS84hUW2+9TJ2nuAxH0VwJ8hgvk
-         B3RFJDKvnbWCTvrNqBnOtU4iVOwPP4FXhQ3ziCiWTHq6zAA/JMJCm/78OWVJdd5fQ0vl
-         het+HXoAf7uPOALwq5okKSZyt+A6IGrHY+GynUwrX8LEr+J7u6n2y7MhMHE4bLIk2m1y
-         v8rwFKyR+fDzTxUrMGER/yz1UaAR2jQ3DgaS0S5mpRCFSQE34G60NKmgkQvoIpxehWtp
-         NOr/kSWyWXFtoZ1JxXS6kiuTbdjic4Iapx9Xumly1e/hTuKbpOAmFKCLzRtvKlwTKRU9
-         9DRQ==
-X-Gm-Message-State: AOJu0YwOwWljLwO3MtbxEmYNCD6bSN4zUHg+b2J4bmnXN7WB+mrQB+fe
-	Pvs4+/6VrC3gaanIzsF4poz5A/qRPKg1IsWPIou70mvLM7a1v1ZoEveEH96j6dzyYO9MWInBwnK
-	cdNug2RYdc3BPdchFIwmg0qKV8Oc0PUfQKxW2ez9Wl8rJVnjfOzx9Zow=
-X-Google-Smtp-Source: AGHT+IECwLY6Ybq2fg7N/YFdl7sOUiaJ7wmCSMQRo5cHIyCmAWBBCWND5pAJk/rP7oH/UAgTrmH/P86dpvuaZQKnH7p+c/LiZ7T+
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C041DDA36;
+	Tue,  8 Oct 2024 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728388863; cv=fail; b=aR2S5eR3tY4UjEG0bD1GHoF4ALRV00Y5VFRF+PZjbriwZa8MZm7FvgUozu/2+IYvDyq3j1dH8bu7gD0oEAAOs8hQGoWOY/epgqjrFhaTAQR1rvpt+R5/0J+34zpHs7INxGNxLsRhQZLvbcEpDnn7SKzvqq1Fxd4Rv6ndsoqdm0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728388863; c=relaxed/simple;
+	bh=b1P3DJk/6hfkSCnVQuxHt+Ux8LUCWKKpIGVzlcmNA0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vd+551GbIcuuamXnuu0sI93a2LaCYUqxUbYu5N1sJI4sFhBR+VLCigLI0tsb9nFjTKVQ9jUvyxYB94xu0xn19f0qgDdEhKvZcP951Qwy7ccfRlL0+QewnlSRKFSB0xzgmzDsIusSgH1tWbAMxt/wRY3c2mfkCi+YtEscbQ3+KK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=RYURahtC; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=Ib9new5v; arc=fail smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4XNDsL1G9Mz49Pwl;
+	Tue,  8 Oct 2024 14:52:22 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1728388342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/1XjZ8pkIPE3lI97nZZnbcpCWTZVXjxc7zkc/9HM1M=;
+	b=RYURahtCmVnySZmKapolw8ViCcq5lJ2BkQEMp1UpemEG/ODBqu8kgoHn9QFLVBC9UTKl6L
+	W0d0KeqPHxGOWnTv0W0g/6QdT/7sgc4gNT+u5HH9ZmaH/y+eb7CF59Ign9nP4sca3u2a5Z
+	HVwY+vIDWDCpKsnaK/UqbmTGtLXMk+UYpYwJywUQZ9q6OHUdizAQ3oQTN5BqOiIOMPChf5
+	l799kqxzipMalW4w3cvCzxfGtdBeHTMHFnRASfuBMcSv+8dTon54JEiNCHddCruTWWH8ad
+	ron9fiylHeNGvBg+l99iWGSVC+kJsCBAHMvEDuWsaxS0mPPWRs3SWMGarJa2AA==
+Received: from hillosipuli.retiisi.eu (80-248-247-191.cust.suomicom.net [80.248.247.191])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4XNDs97169zyRx;
+	Tue,  8 Oct 2024 14:52:13 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1728388334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/1XjZ8pkIPE3lI97nZZnbcpCWTZVXjxc7zkc/9HM1M=;
+	b=Ib9new5vglA0JYX/xJisWGgvH6vzKC0ctR1J7NBeUt2OrolKwqRTtzd4iHb2NuN7AOBqjJ
+	/9upfe9aJwRJE17j8av5ehstbNt+0DF0t5IcZuiasmhWuL1kUhSV0hP4yHdk2mKMuGPlQ3
+	0APdLgpVdHKI5YTMaJ4RnI7Jp2OsPso=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1728388334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/1XjZ8pkIPE3lI97nZZnbcpCWTZVXjxc7zkc/9HM1M=;
+	b=xdSSDQROEFpeWY85dTW3FKy8Uks27Ql3uWRoSRDKrB1G/UY3BHZR665BCc1j9QoQyqTei8
+	m5J2CFLStaw26wK7R2B6vyV4JB//q1NNhm60NEi+8WeWc4YvJRJrgLAXUZddXYQryfIq11
+	T9XP87nVEsq1xNEiNWEtnnUPoBTJF6g=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1728388334; a=rsa-sha256; cv=none;
+	b=xu6Ltj/i7Bvwjg+t1+v6vrZODN6IHByVP50vkI+HUGAjff99SMjtp6rlQrQVj1PtIEJJm2
+	CahD/42SYXNKKRJRh+CrfTeANoW4sgkerkxLub/cKIwvsf1N4iQK+WFeVsAzsbLcBLtd06
+	FqnN2Mk0Jpl4ABKPRCDwqsy9dlMqf7A=
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 7D29E634CBD;
+	Tue,  8 Oct 2024 14:52:11 +0300 (EEST)
+Date: Tue, 8 Oct 2024 11:52:11 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: uvcvideo: Support partial control reads
+Message-ID: <ZwUc6-hbqDgBiqRl@valkosipuli.retiisi.eu>
+References: <20241008-uvc-readless-v1-0-042ac4581f44@chromium.org>
+ <20241008-uvc-readless-v1-1-042ac4581f44@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c9:b0:3a2:6ce9:19c6 with SMTP id
- e9e14a558f8ab-3a375be2ec4mr115963205ab.25.1728388290860; Tue, 08 Oct 2024
- 04:51:30 -0700 (PDT)
-Date: Tue, 08 Oct 2024 04:51:30 -0700
-In-Reply-To: <000000000000657ecd0614456af8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67051cc2.050a0220.840ef.0001.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008-uvc-readless-v1-1-042ac4581f44@chromium.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Ricardo,
 
-***
-
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-Author: leon@kernel.org
-
-On Mon, Oct 07, 2024 at 06:44:02PM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
+On Tue, Oct 08, 2024 at 07:06:14AM +0000, Ricardo Ribalda wrote:
+> Some cameras, like the ELMO MX-P3, do not return all the bytes
+> requested from a control if it can fit in less bytes.
+> Eg: Returning 0xab instead of 0x00ab.
+> usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
 > 
-> commit 5f8ca04fdd3c66a322ea318b5f1cb684dd56e5b2
-> Author: Chiara Meiohas <cmeiohas@nvidia.com>
-> Date:   Mon Sep 9 17:30:22 2024 +0000
+> Extend the returned value from the camera and return it.
 > 
->     RDMA/device: Remove optimization in ib_device_get_netdev()
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16db2327980000
-> start commit:   c4a14f6d9d17 ipv4: ip_gre: Fix drops of small packets in i..
-> git tree:       net
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15db2327980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11db2327980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11eca3d0580000
-> 
-> Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
-> Fixes: 5f8ca04fdd3c ("RDMA/device: Remove optimization in ib_device_get_netdev()")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> Cc: stable@vger.kernel.org
+> Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+Is this really the patch that introduced the problem?
 
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index e029401b5680..0b7e5245ffbc 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -2061,19 +2061,14 @@ void ib_dispatch_event_clients(struct ib_event *event)
- 	up_read(&event->device->event_handler_rwsem);
- }
- 
--static int iw_query_port(struct ib_device *device,
--			   u32 port_num,
--			   struct ib_port_attr *port_attr)
-+static int iw_query_port(struct ib_device *device, u32 port_num,
-+			 struct ib_port_attr *port_attr,
-+			 struct net_device *netdev)
- {
- 	struct in_device *inetdev;
--	struct net_device *netdev;
- 
- 	memset(port_attr, 0, sizeof(*port_attr));
- 
--	netdev = ib_device_get_netdev(device, port_num);
--	if (!netdev)
--		return -ENODEV;
--
- 	port_attr->max_mtu = IB_MTU_4096;
- 	port_attr->active_mtu = ib_mtu_int_to_enum(netdev->mtu);
- 
-@@ -2096,7 +2091,6 @@ static int iw_query_port(struct ib_device *device,
- 		rcu_read_unlock();
- 	}
- 
--	dev_put(netdev);
- 	return device->ops.query_port(device, port_num, port_attr);
- }
- 
-@@ -2134,13 +2128,27 @@ int ib_query_port(struct ib_device *device,
- 		  u32 port_num,
- 		  struct ib_port_attr *port_attr)
- {
-+	struct net_device *netdev = NULL;
-+	int ret;
-+
- 	if (!rdma_is_port_valid(device, port_num))
- 		return -EINVAL;
- 
-+	if (rdma_protocol_iwarp(device, port_num) ||
-+	    rdma_protocol_roce(device, port_num)) {
-+		netdev = ib_device_get_netdev(device, port_num);
-+		if (!netdev)
-+			return -ENODEV;
-+	}
-+
- 	if (rdma_protocol_iwarp(device, port_num))
--		return iw_query_port(device, port_num, port_attr);
-+		ret = iw_query_port(device, port_num, port_attr, netdev);
- 	else
--		return __ib_query_port(device, port_num, port_attr);
-+		ret = __ib_query_port(device, port_num, port_attr);
-+	if (netdev)
-+		dev_put(netdev);
-+	return ret;
-+
- }
- EXPORT_SYMBOL(ib_query_port);
- 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index cd9c29532fb0..853dfb7b5f7b 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -79,11 +79,16 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+>  	if (likely(ret == size))
+>  		return 0;
+>  
+> +	if (ret > 0 && ret < size) {
+> +		memset(data + ret, 0, size - ret);
+
+It'd be nice to have a comment in the code why this is being done
+(including it's little endian).
+
+> +		return 0;
+> +	}
+> +
+>  	if (ret != -EPIPE) {
+>  		dev_err(&dev->udev->dev,
+>  			"Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
+>  			uvc_query_name(query), cs, unit, ret, size);
+> -		return ret < 0 ? ret : -EPIPE;
+> +		return ret ? ret : -EPIPE;
+>  	}
+>  
+>  	/* Reuse data[0] to request the error code. */
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
