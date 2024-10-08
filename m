@@ -1,117 +1,145 @@
-Return-Path: <linux-kernel+bounces-355375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD77995169
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A0F99518A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084961C22C51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:23:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39212855EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD3D1DF995;
-	Tue,  8 Oct 2024 14:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3315C1E04A3;
+	Tue,  8 Oct 2024 14:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FgWyaZvQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hve8338q"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D235914EC59;
-	Tue,  8 Oct 2024 14:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478281E0488;
+	Tue,  8 Oct 2024 14:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397381; cv=none; b=PgMD3H9Edno9zxTrOQEajYW6BuRm3SjOt8CgCuGlEFe+MyAi31wW42urV7CzvJWDYDaLUUPnim7xBMGvGr3LFFqgaIvxi9yT8m4zWbpRM2ZpGBH23BX9+fF2Pupr+mU48oo4WJBTU7pCZU5jnGVQd3TCy++bE2LQxTrfF833IVs=
+	t=1728397454; cv=none; b=AUu9mGcsR78QJpP3kUDnuGQHYQ8zVAtyi8BXpj/sd1iExyl+l8QHX+F0EvKKDtDP17YUWRpm0F++Rj41PCQe9PC8znRWgTPTZNxacZCSsTAvJLFr9L/zpBT/eAGYVMiGwGKVBvk9ZXgsiX+ppYNs3xlTrTZzaFnwxK0awp0RCHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397381; c=relaxed/simple;
-	bh=0/YnJspMX6J81VA8xxI9V7NSuLJDpJF01rZgKUpPriA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ts1zqiHgIE2W9TjkBdK2P92zSC2KjemsihRw8br0/ehl9kCCiCq6LJIyQ9Rtq6jabgCidbkgz3s7hJJxR4JaW7hOcgl3bnMfnHgpuO4JkJWHMuGcHY+XD2ABqERFGYxuKwef8N05V587bdvxhOo9iZ9FphvxPqCax+jTogrsNOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FgWyaZvQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498AnfMs003643;
-	Tue, 8 Oct 2024 14:22:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=M8JqB+WKh2j4Amcs4cgH3B1LeIF
-	XSY4yAJ26NyXHtFA=; b=FgWyaZvQ16/sxO8tfAhW8uO2g6OK3uKp/+MiGq64UFh
-	sXYo2/9rMkkpgqCymDA34ZMuB5Os21Rr7oVlOLSMMu/vwKjYPD8wx2t2CGXZ2keL
-	An7NJuOaRyV4FA7nmg7ud+OB1GaxMADRbmOarYLE88YHJWlUCkbN3l9PSdjOOg53
-	3NPk31YTiIarfs4ESVKbBVBPP3+OFZQ70UOfbKKPZewPASw8cDNP0gQcYMGlJSDd
-	rkonbksL5Qv5Nys94tYO4N0Hh0CziR1GcRi9SO2/zvhgoMG6t57+PoaoZ2vZABIz
-	L7goG44mXt9DpEp1o8EwX8A3cEtceCjIUR4KsK1Hz6g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4253axsapk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 14:22:55 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 498EMtoh018428;
-	Tue, 8 Oct 2024 14:22:55 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4253axsapf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 14:22:55 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 498E2iqY022848;
-	Tue, 8 Oct 2024 14:22:54 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg0vdw9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 14:22:54 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 498EMob642664206
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Oct 2024 14:22:50 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B81442004D;
-	Tue,  8 Oct 2024 14:22:50 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 89B992004E;
-	Tue,  8 Oct 2024 14:22:50 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  8 Oct 2024 14:22:50 +0000 (GMT)
-Date: Tue, 8 Oct 2024 16:22:49 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Antonia Jonas <antonia@toertel.de>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, toertel@gmail.com
-Subject: Re: [PATCH] s390: Correct typo CYLCE
-Message-ID: <20241008142249.27223-A-hca@linux.ibm.com>
-References: <20241003115648.26188-1-antonia@toertel.de>
+	s=arc-20240116; t=1728397454; c=relaxed/simple;
+	bh=xmSEGfXWYYnrxahV/hxdM2xvbpsGMckUIHbpupwQeoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cvhlbAwq5sYZuHHkux1UGrYbUZnC7AHqgzuQ166vPFgOxOVktfPNbpdCufpOzufxj/4xlBFki5MEc/CqUtH8eW1rDcdngLnafPk/NiYu4wKCvN/8KTCTvE2PcWPxEnoK3eLIMaPP2LaNkgntSHdwcxSe3rT1TC68Fto+oS/AV/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hve8338q; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20b9b35c7c3so59767515ad.3;
+        Tue, 08 Oct 2024 07:24:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728397452; x=1729002252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BLQPPQHkux9UrJBZUqB+t1LpH9/HisAt/+hbWRBu/OA=;
+        b=hve8338qaPKc+mtU6TmLw1yW3YsOlOLEH1aJoOqzE1JchN+3+yipWUwsxZzchNnXVZ
+         GDaJITru2ch/b4scOvtKoMpgUjF6ieZ/1ESu/m3yd17G+nYBcZ9BFLR7p9ndjvRJR1ly
+         NXzOKdFz5GL653Mj27hFm0mxvc7by6kNb8E9JjTdFzeAU3FT8qA9eV/5ZTxMrs9xqbas
+         aNOMrb9A9AjrEaIIhrLhr47QmUCiZ/DuA3bXLpHLkI911rUI2v5A9LceY2+Gfs6Jl+KB
+         6kWv7rME7N51S9y24jXZIZt0Ueqmgv67UxqDhwmUXptJjwD5a0EJoyo+Zc9tvnUrDKZY
+         O7Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728397452; x=1729002252;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BLQPPQHkux9UrJBZUqB+t1LpH9/HisAt/+hbWRBu/OA=;
+        b=N4c/KSHiO7qYJJeYQ+efm1w3eVlB1BiLvbKx9+JHSc4hKFV4pNah4QvfFnQcxYSANp
+         Vp44IIowbFPS8FsWn/xC5kGuRrj8vdKcc5aRFoOJW777QFGfZs22AtFluZSkf5OpfLMl
+         L2sWVVh04JBc2ibsEH2V430ZE7znWMJABCIN9feUKiPNlhWSArgVwpYE9inRyrc7ckCg
+         kTrC29GF4ZvA/H8Vcif3v7RrNwXcziNAibhK/E4oXZQ3jgQwTuHluTI1KLEaW91KEVN/
+         743QFbBvJSveLWPLXGtGuHvNbS+aKIRpqOmH7ooNB4Spn0ffeG2s7xrXxvGO5eLYSjf3
+         w8eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfqFzkRfPa06JW7+bMONMOeTKKPpaegDD4uon9Xt1BjjgWuC3eo0QbKazVyjw0BLDa1E05wLhf@vger.kernel.org, AJvYcCUkkxmBETfMgdbhaYBLPBnV03a6PiF5/W3oIiJgA//fOOZhgPficDzr4baA+T429BiKrm41dEVf28MkZuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGGLKn+TQylIxvX8Olmavhy9njBuIW4qf9ZGBX6p4qnj0Y+Lhj
+	h4ZCZ7PTY2N7lQsF05fhrdLsD0jnD9/M11ShMyxUDuXe2fxsQ2vh
+X-Google-Smtp-Source: AGHT+IFvNBxDQEa0XGqcHuykNEC8Z3ZPUOEa6O9cnvLrigfOqfS4ak9C4O+mvE6nDpNsQphiBcRekQ==
+X-Received: by 2002:a17:90b:4f8a:b0:2d3:bd6f:a31e with SMTP id 98e67ed59e1d1-2e1e636f8d4mr20800603a91.28.1728397452418;
+        Tue, 08 Oct 2024 07:24:12 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0f68a8sm7675987a91.36.2024.10.08.07.24.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 07:24:12 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: idosch@nvidia.com,
+	kuba@kernel.org,
+	aleksander.lobakin@intel.com,
+	horms@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	dongml2@chinatelecom.cn,
+	amcohen@nvidia.com,
+	gnault@redhat.com,
+	bpoirier@nvidia.com,
+	b.galvani@gmail.com,
+	razor@blackwall.org,
+	petrm@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Subject: [PATCH net-next v6 02/12] net: tunnel: add pskb_inet_may_pull_reason() helper
+Date: Tue,  8 Oct 2024 22:22:50 +0800
+Message-Id: <20241008142300.236781-3-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241008142300.236781-1-dongml2@chinatelecom.cn>
+References: <20241008142300.236781-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003115648.26188-1-antonia@toertel.de>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6MyIgrmjgZbRYCCP0hc8mNYLSmU0wYkp
-X-Proofpoint-GUID: CAKCv8laFQgCmGhSjjYY0CVGNZyqlOpF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-08_12,2024-10-08_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 mlxlogscore=352 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080089
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 01:56:40PM +0200, Antonia Jonas wrote:
-> Signed-off-by: Antonia Jonas <antonia@toertel.de>
-> ---
->  arch/s390/kernel/perf_cpum_cf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Introduce the function pskb_inet_may_pull_reason() and make
+pskb_inet_may_pull a simple inline call to it. The drop reasons of it just
+come from pskb_may_pull_reason().
 
-Applied, thanks.
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+---
+ include/net/ip_tunnels.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
+index 6194fbb564c6..7fc2f7bf837a 100644
+--- a/include/net/ip_tunnels.h
++++ b/include/net/ip_tunnels.h
+@@ -439,7 +439,8 @@ int ip_tunnel_encap_del_ops(const struct ip_tunnel_encap_ops *op,
+ int ip_tunnel_encap_setup(struct ip_tunnel *t,
+ 			  struct ip_tunnel_encap *ipencap);
+ 
+-static inline bool pskb_inet_may_pull(struct sk_buff *skb)
++static inline enum skb_drop_reason
++pskb_inet_may_pull_reason(struct sk_buff *skb)
+ {
+ 	int nhlen;
+ 
+@@ -456,7 +457,12 @@ static inline bool pskb_inet_may_pull(struct sk_buff *skb)
+ 		nhlen = 0;
+ 	}
+ 
+-	return pskb_network_may_pull(skb, nhlen);
++	return pskb_network_may_pull_reason(skb, nhlen);
++}
++
++static inline bool pskb_inet_may_pull(struct sk_buff *skb)
++{
++	return pskb_inet_may_pull_reason(skb) == SKB_NOT_DROPPED_YET;
+ }
+ 
+ /* Variant of pskb_inet_may_pull().
+-- 
+2.39.5
+
 
