@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-355266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296D7994EE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C97994EEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93661F22709
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1811D1C20B74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1492D1DF973;
-	Tue,  8 Oct 2024 13:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637721DFE09;
+	Tue,  8 Oct 2024 13:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g52CjfDw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="D6Tyy9s9"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD48A1DF971
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6341D1DF986
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393702; cv=none; b=SHZKDeZhFYrfdLmFgpzvQl2sdqjkWR8hteDKt222lgXircTqgpfiVMCpbuG7dFWHYHpftTWxjSgdJRPxmYzS+v6SPCTNziOYgh6zmqK1BbSmEtdNuuS6sCpPsnNmroFQv3t+mCF/Q19uZNzNO9CJmogye4xqBBM4yXhH1lUbnVQ=
+	t=1728393711; cv=none; b=YWHxoIVqpJlF0QykJGQjVUpwKENvHtfngjihKcijxVlphQBMXoJzyS1KKwB8K4vxoehc+baamQFnRNhkZjYLoPKfeqa6R5nQoeSIRZxK3PzTK0FnseXvPl5oKSxnapjtYsP5NOtf6k5RQMKH7NAqLdDERwCFxdXOW5DHWboDXHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393702; c=relaxed/simple;
-	bh=ajP7n0RqPyNoSyNoOW70sWnt1w9sBqfDzQAKeg1G680=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sKkf+3Nicm0C3Ch+XMpd73qNFJdHPKzcmH8wsAFT+ZaqTkMYngJSd4p5/yhMAJShPyKJow2DSmTRnsT3DeuOmwGXLs5XrimA/4Or4FB1+LsdTJon/A9fBs1Sd0eZIzzEcI53bBrD//6UUmkBdNDTM16+oeHlR9lMzYMN573k4EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g52CjfDw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728393699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3i4WY4hzjXrQpVRw975Aj9ZRsZd7OJ2Z1ha+ChceVpo=;
-	b=g52CjfDwnEZOmLDQZvP4jhUiDMW3BpV2AK+NQas6CGHrQpefMkVFMWTWbzUtX96u1NyuIU
-	zqk9QzY3gjHHKo2aWj1/HF1XjYqb7VKwKqzkqdRiDzbFnLHsjTNz3jP5cAux1fFzCDU9iW
-	t6T4sTNgGt2od680Wodghs9RE0P0TnA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-Ui73j019P2K2gKiXYSpC4Q-1; Tue, 08 Oct 2024 09:21:36 -0400
-X-MC-Unique: Ui73j019P2K2gKiXYSpC4Q-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cb38a37b56so93651716d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:21:36 -0700 (PDT)
+	s=arc-20240116; t=1728393711; c=relaxed/simple;
+	bh=Y2NwIPBfopwGVzULHFGxxIZwuj6htpe1C4mcre4uAPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uo05YM9sb52czYfUulGw6araT5mYD/x+qIBbm6Th4oU6nzAaT0G/qOd7yRjbeNSPGE4ic/wipQfCnHwrx6KhVQ5rI1HBGMxo7Dq4efy0B6tEJ2M72ZnatWNFVZJQPQkjte30bH7BhPP39Gh59dyJO7UXxiI7J79l58zO6XXEuIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=D6Tyy9s9; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cc810ce73so2974670f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1728393708; x=1728998508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IGwDh27EeGXf7C+l09NBLsyVsUfw+2j7TtSeoREWHV8=;
+        b=D6Tyy9s9Yb4bM0SwMwMxqwaWau15Vbx3ZK2V7eszu1aBA+Ny6r55PzVJwczUuDmCGL
+         w2aQBi+wUWutydmT40hztdDJr3EzUfyP6iPOqYrIJqmrl3r8EMYNYKXMYRsri7s5M5cf
+         O+eQOXuBUfG+t9aIdYm9t9tO6A+Mqx6wBz+k94xRpNFwNWpfumWwUyB5tFlMievXsdOp
+         +VUFchGUgPT4/O12XZ1yOHPzjQVV+XRMsZMb5CSh01FTE1H5pCZV79p2cqcjHu8UrFJa
+         mC7fF4P9FPkqzpBYQ24nqxQSe0NWRwkky5c1PZV4O3hVamSyjwjR/MQiicunwJLIUajU
+         A23Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728393696; x=1728998496;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3i4WY4hzjXrQpVRw975Aj9ZRsZd7OJ2Z1ha+ChceVpo=;
-        b=JfAIJ6YhfISJJOkxD4kNpe7Mh+huzhCa8sc2L4oPEKnc0BYayQEO6AKPbdGGQoo5T0
-         Cp3k2gSi0J1ANsPS2uebJXhRRDrRc/VwzR0tukzs1yROuRji7yOSHA3A99S1zbK9CGru
-         vLuj4IdoaEdmjuxW8ARZBhYWzsNeXD1jW9lu4AOoAYQ0vyAI4Yrkf2Nd88jj/qT2v9Zc
-         D180flnc3mKZw0BDscFpNH9sYFaL6GVE0j4iGOAHAwHUsIh8aQSm0AxG1+5nvkPmsBxo
-         WvzOihB3ffe+8WHQU3Ku4z4olDJA9DThxrCkML3OM5zXWZWtx+RMq4ulQcFbURUdjMxQ
-         fplw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7y5xKc1gB15h7UigFAWpj50y27SaUjeIBzAeMjn+nbMRvWIueUyx0UQdUgNN7BMoT8jG8VzLmkLyTrbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32B2yF6WMSrUkgMp+Fo8EdCtmTZjyfQes5XWwy70QB0y1r/H7
-	6L+q1/2/8e71uFQiThnT36QL7vlnreVVuz7mVfUOKphKd28tci8DSEbhfSwGLKABmbM8Nm41UMT
-	QyCogWNkVyWqeI5IANr1g0Z5UpkXNRmfKrqtR1K899Hiy8MiysMF9wz/6AxzbdA==
-X-Received: by 2002:a05:6214:4688:b0:6cb:c684:fc4d with SMTP id 6a1803df08f44-6cbc684fcd4mr14237276d6.19.1728393695869;
-        Tue, 08 Oct 2024 06:21:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZeY9f3MBY87PiWg12jEFRJZvaHHw90qEh6qk+10li/oi+JBY5TvX1wgYyK+tiXYrQIHwZMQ==
-X-Received: by 2002:a05:6214:4688:b0:6cb:c684:fc4d with SMTP id 6a1803df08f44-6cbc684fcd4mr14236956d6.19.1728393695436;
-        Tue, 08 Oct 2024 06:21:35 -0700 (PDT)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afcab06219sm37232985a.132.2024.10.08.06.21.34
+        d=1e100.net; s=20230601; t=1728393708; x=1728998508;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IGwDh27EeGXf7C+l09NBLsyVsUfw+2j7TtSeoREWHV8=;
+        b=thKeK5MNQHSabnGJBi0zAjCwfmMTQx1vWlge87qbRA6FE7zHYN2Swem6Zi9P6Voohu
+         72tRdgXhCZ/XFLuYBzq1U/t/+WIvcSETNacR1mJV9rcpV5ododzyYheLUulKtRBSZ1gR
+         gUmAmAbN93lgit75F3CcMXpEIyXP5wK2BzPr6ZwOjn1piJA5S4TQ6uMMXrW+OBI6/6mD
+         66CSMp2iD/8GhxPqflImPtCMMylNKJuSRxcio+ClB5vvmEqWP1shCl+DyR788hRmSsQf
+         RKSDJceGlslr4xXRoxYvrsDFrmNh9zW/suM8A0Iqd6+arygC6Gjst/JwpTkBDWc9Ry69
+         +RYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhiGGRSzUaOwzQLNSTYE9ykKK8n1Ox1+Jeezzb54gHbIgDyYRvJFEXPBRhN++xa9XR3Kb47gxOM4j9RFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIrKAvqss/a7qigvJiG1HMKrCTCfVCxFQe3ypC0+cGOXLaqOma
+	edK8EdihmVFYkTsTLDMa7JXL3yLbeqop5AbDdE+YD2NDqYrM1WerRPZGfrTz8Lo=
+X-Google-Smtp-Source: AGHT+IFKAPyfcD6cHtfzXzf1ecrJz21uorYTRGkCpeSTZoGEvhelaz9wRAzhIhYNbbvhFnagaXMPRg==
+X-Received: by 2002:adf:a198:0:b0:37c:d20d:447c with SMTP id ffacd0b85a97d-37d0e779f64mr8922794f8f.29.1728393707682;
+        Tue, 08 Oct 2024 06:21:47 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:1075:5147:8807:441e? ([2001:67c:2fbc:1:1075:5147:8807:441e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695ec1esm8150559f8f.74.2024.10.08.06.21.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 06:21:34 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <ce60b576-b8bd-49da-90b1-a84c7cb0eb9e@redhat.com>
-Date: Tue, 8 Oct 2024 09:21:34 -0400
+        Tue, 08 Oct 2024 06:21:47 -0700 (PDT)
+Message-ID: <b6c46bf5-9ea6-41ac-bf75-1d85b12c9651@openvpn.net>
+Date: Tue, 8 Oct 2024 15:21:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,153 +76,230 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locking/rtmutex: Always use trylock in rt_mutex_trylock()
-To: Peter Zijlstra <peterz@infradead.org>, Waiman Long <llong@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Luis Goncalves <lgoncalv@redhat.com>,
- Chunyu Hu <chuhu@redhat.com>
-References: <20240926151315.507905-1-longman@redhat.com>
- <20241002093745.GO5594@noisy.programming.kicks-ass.net>
- <7918987a-4b66-4191-aa52-798f9434352a@redhat.com>
- <20241007145037.GE4879@noisy.programming.kicks-ass.net>
- <95365aa5-d039-4d09-8191-516ba01c9e5d@redhat.com>
- <20241007153341.GA14587@noisy.programming.kicks-ass.net>
- <13f78472-2fa8-4af9-9d5f-a93cb16cc7ca@redhat.com>
- <20241008073800.GD14587@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH net-next v8 03/24] ovpn: add basic netlink support
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: ryazanov.s.a@gmail.com, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, sd@queasysnail.net
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
+ <ZwP-_-qawQJIBZnv@nanopsycho.orion>
+ <fd952c28-1f17-45da-bd64-48917a7db651@openvpn.net>
+ <ZwT0SkGHu5VHQ9Hd@nanopsycho.orion>
+ <056588a7-de1b-4416-8553-750c8d20dc97@openvpn.net>
+ <ZwUrAn8xrF2BCrMp@nanopsycho.orion>
 Content-Language: en-US
-In-Reply-To: <20241008073800.GD14587@noisy.programming.kicks-ass.net>
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <ZwUrAn8xrF2BCrMp@nanopsycho.orion>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/8/24 3:38 AM, Peter Zijlstra wrote:
-> On Mon, Oct 07, 2024 at 11:54:54AM -0400, Waiman Long wrote:
->> On 10/7/24 11:33 AM, Peter Zijlstra wrote:
->>> On Mon, Oct 07, 2024 at 11:23:32AM -0400, Waiman Long wrote:
->>>
->>>>> Is the problem that:
+On 08/10/2024 14:52, Jiri Pirko wrote:
+> Tue, Oct 08, 2024 at 11:16:01AM CEST, antonio@openvpn.net wrote:
+>> On 08/10/2024 10:58, Jiri Pirko wrote:
+>>> Tue, Oct 08, 2024 at 10:01:40AM CEST, antonio@openvpn.net wrote:
+>>>> Hi,
+>>>>
+>>>> On 07/10/24 17:32, Jiri Pirko wrote:
+>>>>> Wed, Oct 02, 2024 at 11:02:17AM CEST, antonio@openvpn.net wrote:
 >>>>>
->>>>> 	sched_tick()
->>>             raw_spin_lock(&rq->__lock);
->>>>> 	  task_tick_mm_cid()
->>>>> 	    task_work_add()
->>>>> 	      kasan_save_stack()
->>>>> 	        idiotic crap while holding rq->__lock ?
+>>>>> [...]
 >>>>>
->>>>> Because afaict that is completely insane. And has nothing to do with
->>>>> rtmutex.
 >>>>>
->>>>> We are not going to change rtmutex because instrumentation shit is shit.
->>>> Yes, it is because of KASAN that causes page allocation while holding the
->>>> rq->__lock. Maybe we can blame KASAN for this. It is actually not a problem
->>>> for non-PREEMPT_RT kernel because only trylock is being used. However, we
->>>> don't use trylock all the way when rt_spin_trylock() is being used with
->>>> PREEMPT_RT Kernel.
->>> It has nothing to do with trylock, an everything to do with scheduler
->>> locks being special.
+>>>>>> +operations:
+>>>>>> +  list:
+>>>>>> +    -
+>>>>>> +      name: dev-new
+>>>>>> +      attribute-set: ovpn
+>>>>>> +      flags: [ admin-perm ]
+>>>>>> +      doc: Create a new interface of type ovpn
+>>>>>> +      do:
+>>>>>> +        request:
+>>>>>> +          attributes:
+>>>>>> +            - ifname
+>>>>>> +            - mode
+>>>>>> +        reply:
+>>>>>> +          attributes:
+>>>>>> +            - ifname
+>>>>>> +            - ifindex
+>>>>>> +    -
+>>>>>> +      name: dev-del
+>>>>>
+>>>>> Why you expose new and del here in ovn specific generic netlink iface?
+>>>>> Why can't you use the exising RTNL api which is used for creation and
+>>>>> destruction of other types of devices?
+>>>>
+>>>> That was my original approach in v1, but it was argued that an ovpn interface
+>>>> needs a userspace program to be configured and used in a meaningful way,
+>>>> therefore it was decided to concentrate all iface mgmt APIs along with the
+>>>> others in the netlink family and to not expose any RTNL ops.
 >>>
->>> But even so, trying to squirrel a spinlock inside a raw_spinlock is
->>> dodgy at the best of times, yes it mostly works, but should be avoided
->>> whenever possible.
+>>> Can you please point me to the message id?
+>>
+>> <CAHNKnsQnHAdxC-XhC9RP-cFp0d-E4YGb+7ie3WymXVL9N-QS6A@mail.gmail.com> from
+>> Sergey and subsequent replies.
+>> RTNL vs NL topic starts right after the definition of 'ovpn_link_ops'
+> 
+> Yeah, does not make sense to me. All devices should implement common
+> rtnl ops, the extra-config, if needed, could be on a separate channel.
+> I don't find Sergey's argumentation valid.
+
+Thanks a lot for taking the time to read our conversation.
+
+Ok, considering all points we have discussed so far (including future 
+developments already on the roadmap), I think it makes sense to go back 
+to RTNL and drop the new/del-dev ops from the netlink family.
+
+Will do that in v9.
+
+Regards,
+
+> 
+> 
+>>
+>> Recently Kuniyuki commented on this topic as well in:
+>> <20240919055259.17622-1-kuniyu@amazon.com>
+>> and that is why I added a default dellink implemetation.
+> 
+> Having dellink without newlink implemented is just wrong.
+> 
+> 
+>>
 >>>
->>> And instrumentation just doesn't count.
 >>>
->>>> This is certainly a problem that we need to fix as there
->>>> may be other similar case not involving rq->__lock lurking somewhere.
->>> There cannot be, lock order is:
+>>>>
+>>>> However, recently we decided to add a dellink implementation for better
+>>>> integration with network namespaces and to allow the user to wipe a dangling
+>>>> interface.
 >>>
->>>     rtmutex->wait_lock
->>>       task->pi_lock
->>>         rq->__lock
+>>> Hmm, one more argument to have symmetric add/del impletentation in RTNL
 >>>
->>> Trying to subvert that order gets you a splat, any other:
 >>>
->>>     raw_spin_lock(&foo);
->>>     spin_trylock(&bar);
+>>>>
+>>>> In the future we are planning to also add the possibility to create a
+>>>> "persistent interface", that is an interface created before launching any
+>>>> userspace program and that survives when the latter is stopped.
+>>>> I can guess this functionality may be better suited for RTNL, but I am not
+>>>> sure yet.
 >>>
->>> will 'work', despite probably not being a very good idea.
+>>> That would be quite confusing to have RTNL and genetlink iface to
+>>> add/del device. From what you described above, makes more sent to have
+>>> it just in RTNL
+>>
+>> All in all I tend to agree.
+>>
 >>>
->>> Any case involving the scheduler locks needs to be eradicated, not
->>> worked around.
->> OK, I will see what I can do to work around this issue.
-> Something like the completely untested below might just work.
+>>>>
+>>>> @Jiri: do you have any particular opinion why we should use RTNL ops and not
+>>>> netlink for creating/destroying interfaces? I feel this is mostly a matter of
+>>>> taste, but maybe there are technical reasons we should consider.
+>>>
+>>> Well. technically, you can probabaly do both. But it is quite common
+>>> that you can add/delete these kind of devices over RTNL. Lots of
+>>> examples. People are used to it, aligns with existing flows.
+>>
+>> The only counterargument I see is the one brought by Sergey: "the ovpn
+>> interface is not usable after creation, if no openvpn process is running".
+>>
+>> However, allowing to create "persistent interfaces" will define a use-case
+>> for having an ovpn device without any userspace process.
+>>
+>> @Sergey what is your opinion here? I am not sure persistent interfaces were
+>> discussed at the time you brought your point about RTNL vs NL.
+>>
+>>
+>> Regards,
+>>
+>>
+>>>
+>>>>
+>>>> Thanks a lot for your contribution.
+>>>>
+>>>> Regards,
+>>>>
+>>>>
+>>>>>
+>>>>>
+>>>>> ip link add [link DEV | parentdev NAME] [ name ] NAME
+>>>>> 		    [ txqueuelen PACKETS ]
+>>>>> 		    [ address LLADDR ]
+>>>>> 		    [ broadcast LLADDR ]
+>>>>> 		    [ mtu MTU ] [index IDX ]
+>>>>> 		    [ numtxqueues QUEUE_COUNT ]
+>>>>> 		    [ numrxqueues QUEUE_COUNT ]
+>>>>> 		    [ netns { PID | NETNSNAME | NETNSFILE } ]
+>>>>> 		    type TYPE [ ARGS ]
+>>>>>
+>>>>> ip link delete { DEVICE | dev DEVICE | group DEVGROUP } type TYPE [ ARGS ]
+>>>>>
+>>>>> Lots of examples of existing types creation is for example here:
+>>>>> https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking
+>>>>>
+>>>>>
+>>>>>
+>>>>>> +      attribute-set: ovpn
+>>>>>> +      flags: [ admin-perm ]
+>>>>>> +      doc: Delete existing interface of type ovpn
+>>>>>> +      do:
+>>>>>> +        pre: ovpn-nl-pre-doit
+>>>>>> +        post: ovpn-nl-post-doit
+>>>>>> +        request:
+>>>>>> +          attributes:
+>>>>>> +            - ifindex
+>>>>>
+>>>>> [...]
+>>>>
+>>>> -- 
+>>>> Antonio Quartulli
+>>>> OpenVPN Inc.
+>>
+>> -- 
+>> Antonio Quartulli
+>> OpenVPN Inc.
 
-The real problem is due to the occasional need to allocate new pages to 
-expand the stack buffer in stack depot that will take additional lock. 
-Fortunately, there is a kasan_record_aux_stack_noalloc() variant that 
-will prevent that. Below is my proposed solution that is less restrictive.
-
-diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index cf5e7e891a77..2964171856e0 100644
---- a/include/linux/task_work.h
-+++ b/include/linux/task_work.h
-@@ -14,11 +14,14 @@ init_task_work(struct callback_head *twork, 
-task_work_func_t func)
-  }
-
-  enum task_work_notify_mode {
--    TWA_NONE,
-+    TWA_NONE = 0,
-      TWA_RESUME,
-      TWA_SIGNAL,
-      TWA_SIGNAL_NO_IPI,
-      TWA_NMI_CURRENT,
-+
-+    TWA_FLAGS = 0xff00,
-+    TWAF_NO_ALLOC = 0x0100,
-  };
-
-  static inline bool task_work_pending(struct task_struct *task)
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 43e453ab7e20..0259301e572e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10458,7 +10458,9 @@ void task_tick_mm_cid(struct rq *rq, struct 
-task_struct *curr)
-          return;
-      if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
-          return;
--    task_work_add(curr, work, TWA_RESUME);
-+
-+    /* No page allocation under rq lock */
-+    task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
-  }
-
-  void sched_mm_cid_exit_signals(struct task_struct *t)
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 5d14d639ac71..c969f1f26be5 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -55,15 +55,26 @@ int task_work_add(struct task_struct *task, struct 
-callback_head *work,
-            enum task_work_notify_mode notify)
-  {
-      struct callback_head *head;
-+    int flags = notify & TWA_FLAGS;
-
-+    notify &= ~TWA_FLAGS;
-      if (notify == TWA_NMI_CURRENT) {
-          if (WARN_ON_ONCE(task != current))
-              return -EINVAL;
-          if (!IS_ENABLED(CONFIG_IRQ_WORK))
-              return -EINVAL;
-      } else {
--        /* record the work call stack in order to print it in KASAN 
-reports */
--        kasan_record_aux_stack(work);
-+        /*
-+         * Record the work call stack in order to print it in KASAN
-+         * reports.
-+         *
-+         * Note that stack allocation can fail if TWAF_NO_ALLOC flag
-+         * is set and new page is needed to expand the stack buffer.
-+         */
-+        if (flags & TWAF_NO_ALLOC)
-+            kasan_record_aux_stack_noalloc(work);
-+        else
-+            kasan_record_aux_stack(work);
-      }
-
-      head = READ_ONCE(task->task_works);
-
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
