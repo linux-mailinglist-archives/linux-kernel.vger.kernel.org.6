@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-354308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10A5993B94
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:10:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CFC993B98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C351C23CF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAA1B23D0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F101928EF;
-	Tue,  8 Oct 2024 00:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A0ACA4E;
+	Tue,  8 Oct 2024 00:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lo5LyUsH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFZ0rLfx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7F161;
-	Tue,  8 Oct 2024 00:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBC8B660;
+	Tue,  8 Oct 2024 00:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728346222; cv=none; b=kWDXt70JmcmFaBtYy8j94h1pz90FEHstfUAuKOif50viysLjpHV9Rj+AAZgmrFrc41nL9QmlgW8APMj/f7EOLJIEMpO5l4RLXHv+k/tEuQC2gAS7rLv+TLK05jHMyxJ5Nhxmb6LfWf56wtUlHg0VO5/Ha2LP56E0852csuujxuI=
+	t=1728346228; cv=none; b=LARVgjyOsuIUF960yhRmW73spyyNwHtG8XNMuDiuDq0tAhXl9e2U3LrIXFhufWe9FBwqZVOX8jCcqmSDc2rTsQvZ0HEemLXDM5OTgTdw8zBBLFpR7z2NtfQJkYjQ8q1U1PbQtoz8fopH275QXzktdx1hyoK8fmZlND9s179WXRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728346222; c=relaxed/simple;
-	bh=b63IQ4s+fB8dm+DXtt4cfpDH5Bvp1G9Z8Iy6UTu075E=;
+	s=arc-20240116; t=1728346228; c=relaxed/simple;
+	bh=OTqr0HAj7fvZB0XnLpayG4MV4M3PnvenTa1Qlekh73U=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=N1MZ4zuuGTV9Ip/KnO1jswLxTrC98Ooa3zpuEGKEnUuzd+0Ycr6qfSoZcFZwdJx/Tn/+hM94e6J4DU5yBW+ZFUOYMsmBli5LOhVpxD8Am3ExC3KQjYsCoEK2QPLA1r8q/0rnE84VC12uZS+RPUyaErCoZBengp26/fTvUIfWM6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lo5LyUsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7A2C4CEC6;
-	Tue,  8 Oct 2024 00:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728346221;
-	bh=b63IQ4s+fB8dm+DXtt4cfpDH5Bvp1G9Z8Iy6UTu075E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lo5LyUsHejX7iDckt6apclTXgRIRq3Cy8hkulbHMP6Fs4exTswv/zd9tUAZ+V7Pxf
-	 75hVobVY9T5g5WkYfYtjc3VySssRw4nDkJ9wxSN64n89DIzxSztpBkTXzG/JpVGAdA
-	 55Sl7NdbeCV2ih7XU1f7MofRHt5pCpMrMpCoqZtbEfdIBTbExDn1FrPlBc69XPxjin
-	 MdsbGYAzVf8ZLGulgPB4YRJsGJJO9btIAkVYXq7L0I2CDdyDtcsaUvo4Hzz6/PnLel
-	 xj+kKLSG6UjwihOiWhJYaNeHwUgr5xxb68/UMe194hlvm43k9zG7+X4SQOXCQjVnKi
-	 C692NfQDpDG6w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D153803262;
+	 In-Reply-To:To:Cc; b=n4Hogq6be2ht1kv8BkKB5pyu3A98hoP3fjQIAnQ+95fv0r9oo8sNFTGswL0hWtqEznrv/+TOwF/kdkgNnUDZ6AwM0FqLvN456UFu+z36hAs/P2hbDLypmsz2HGz8vdKZfXYdBO3zAnGfAUoc/ynRVL2Fn1fdrw2w2eYVxJrQRzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFZ0rLfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967B0C4CEC6;
 	Tue,  8 Oct 2024 00:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728346227;
+	bh=OTqr0HAj7fvZB0XnLpayG4MV4M3PnvenTa1Qlekh73U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eFZ0rLfxyYe534aT05tAk/djtUWpFKCUiPHJ0MWRUy9uZ/NdeI0643h7gjw1lH9lE
+	 DbKs8Oa7VyWTu+CgcWVdOwist5LKYRmxWaWVRCLSDWNU9mQJmuMcVd9Jv84liRtQst
+	 /WljMFlTnTLTtGnjOoctrFMBJlThBmvftw0Tvs6Hc0WmHEZwRzfZoYLwwNMJsTOghD
+	 ePENbpB8GoN8lqjpZ152lDPxBHMCyzywVB25OpYl2MBpobOHJ+Ioj1XE4mNMuhKyFD
+	 uASoPL1FHBykVOquK5as0MWVzpCr9Rm082QWC2mAztewUnKd5stKg8PG4L8t87K5Nn
+	 49yNe97eeno1g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD6B3803262;
+	Tue,  8 Oct 2024 00:10:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling
- path in adin1110_read_fifo()
+Subject: Re: [PATCH v1 net-next] vmxnet3: support higher link speeds from vmxnet3
+ v9
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172834622606.25280.14865735835274867551.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Oct 2024 00:10:26 +0000
-References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, lennart@lfdomain.com, alexandru.tachici@analog.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
+ <172834623148.25280.4689711251086629740.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 00:10:31 +0000
+References: <20241004174303.5370-1-ronak.doshi@broadcom.com>
+In-Reply-To: <20241004174303.5370-1-ronak.doshi@broadcom.com>
+To: Ronak Doshi <ronak.doshi@broadcom.com>
+Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu,  3 Oct 2024 20:53:15 +0200 you wrote:
-> If 'frame_size' is too small or if 'round_len' is an error code, it is
-> likely that an error code should be returned to the caller.
+On Fri, 4 Oct 2024 10:43:03 -0700 you wrote:
+> Until now, vmxnet3 was default reporting 10Gbps as link speed.
+> Vmxnet3 v9 adds support for user to configure higher link speeds.
+> User can configure the link speed via VMs advanced parameters options
+> in VCenter. This speed is reported in gbps by hypervisor.
 > 
-> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
-> 'success' is returned.
-> 
-> Return -EINVAL instead.
+> This patch adds support for vmxnet3 to report higher link speeds and
+> converts it to mbps as expected by Linux stack.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: ethernet: adi: adin1110: Fix some error handling path in adin1110_read_fifo()
-    https://git.kernel.org/netdev/net/c/83211ae16405
+  - [v1,net-next] vmxnet3: support higher link speeds from vmxnet3 v9
+    https://git.kernel.org/netdev/net-next/c/0458cbedfe35
 
 You are awesome, thank you!
 -- 
