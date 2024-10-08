@@ -1,106 +1,62 @@
-Return-Path: <linux-kernel+bounces-354559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CC8993FC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A50C993F56
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95061C2374B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738D1B22FAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926081DFE1B;
-	Tue,  8 Oct 2024 06:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOgA1URd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74188183CB0;
+	Tue,  8 Oct 2024 06:33:22 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38CA16132E;
-	Tue,  8 Oct 2024 06:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CED216BE23
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728369174; cv=none; b=eTdzzNpCmCBsX/PSSEPUtTkZESF1mPMK+ILTOxg+h3AZGgyqgZvwoYwjLWYenvCarJOZeG/pEJk6IS0j7gbEy6Y9FnsrSUMTkUDwTjJd3VSNKV7WvJDHWcgSD4HT2AAUMmDo/aN3xTX3vIx8QoEI2kle606d9zgbxOcmVSilSj0=
+	t=1728369202; cv=none; b=MAPTxl0goUcLbd+6W6xEMFciZ7HTvbjrtG7OOlvk5hhXhvKBZn6MS0tzoD+J4bOp6ySLeLPpnlg7yJXGuvcMVHNPLWzQM2i0gwRB8ZyjBDHSuUo+tzdz8xVniZYfgh4gz0gpg86VORCl9+g02WNPaG4gBUYqK2aCM/npQjP5y44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728369174; c=relaxed/simple;
-	bh=yQK0RMfo+TSViKU2KPmCcU/7mF+5ynxcxIuuloy3MHo=;
+	s=arc-20240116; t=1728369202; c=relaxed/simple;
+	bh=+APgwDb3Jk7AK2giGmPtZN1egEQgAGDqOvnQSQ7zIx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGZI0rzhOCOBvirojOy0t+RChcJ6bPnI2GPr1pqBeET+ysiZuluBeEpHntSViNgVrEJhDHyeQlk3bJ63Y+c/7Iw+RzM1O/kXxvDuo0shMJyJ6Blij8WxCR0vwKrF9IuhZ/bFVsZ8a2jZ/9sQgrn3SpbqGSYuDkzoGDvVhpI49P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOgA1URd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA82C4CEC7;
-	Tue,  8 Oct 2024 06:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728369173;
-	bh=yQK0RMfo+TSViKU2KPmCcU/7mF+5ynxcxIuuloy3MHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZOgA1URdaNskre+harX8yhZHdZieZOiQbOYw0+hMj6LVzrqgotEgLZgM3PnQHrP+f
-	 LvEL5L1GMjcvgjZpC5Bugw3p8Aa11MsymaIThS2pY59e0dINfP2o+Q1siphCiXDmwf
-	 3lof9BOvuSmZVjkoqeBmDNf+kzT9jIj61DP0PaggfFS/Hmz9ObWccjdn/jX2tddsC6
-	 ZgRvMgvYWf1Y0f3cv6WtE1iP1ufIs5XcPl7CE17om8cijCmHKM2gCbvQGW2ODXA2fe
-	 ZLhtJoOnm5Cj6qrEj2i91flkfFZpMdIpKwX9TIqfo4g4Zi3fAesXe14QTZ30oI+i8W
-	 kKD6oq5NkpA7w==
-Date: Tue, 8 Oct 2024 08:32:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 14/14] arm64: defconfig: Enable RP1 misc/clock/gpio
- drivers
-Message-ID: <7y4rgefxfst5y7xgvtwhv6dulxjd7ieou5jlqi3waqwyw6vpuq@xken3govscld>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <6964b1728d155b85c9c97fe26726e8ee2c04abf8.1728300190.git.andrea.porta@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7gA/iouHpvJnLVvo73OH4zkpCBle5R/JfyrEUn8AwPreiG9chaSdHW0oPsOeCJePGltAx9eNVy0fAVWjkvepw+xHNj/27AYFPIZhWuHD/dnw1gn+pKkPZsJfhjnPk9O2YZMRqBlp5PVVKwJ5DjqXWe+QinGbjcBSchjt3RR8Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 8E083227A8E; Tue,  8 Oct 2024 08:33:08 +0200 (CEST)
+Date: Tue, 8 Oct 2024 08:33:07 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, hch@lst.de,
+	brauner@kernel.org, sfr@canb.auug.org.au
+Subject: Re: [linux-next][20241004]BUG: KFENCE: memory corruption in
+ xfs_iext_remove+0x288/0x2c8 [xfs]
+Message-ID: <20241008063307.GA22312@lst.de>
+References: <ae6217b4-7b62-4722-9afe-f8379201cc9e@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6964b1728d155b85c9c97fe26726e8ee2c04abf8.1728300190.git.andrea.porta@suse.com>
+In-Reply-To: <ae6217b4-7b62-4722-9afe-f8379201cc9e@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Oct 07, 2024 at 02:39:57PM +0200, Andrea della Porta wrote:
-> Select the RP1 drivers needed to operate the PCI endpoint containing
-> several peripherals such as Ethernet and USB Controller. This chip is
-> present on RaspberryPi 5.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  arch/arm64/configs/defconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 5fdbfea7a5b2..5fcd9ae0d373 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -609,6 +609,7 @@ CONFIG_PINCTRL_QCM2290=y
->  CONFIG_PINCTRL_QCS404=y
->  CONFIG_PINCTRL_QDF2XXX=y
->  CONFIG_PINCTRL_QDU1000=y
-> +CONFIG_PINCTRL_RP1=y
+On Mon, Oct 07, 2024 at 07:34:18PM +0530, Venkat Rao Bagalkote wrote:
+> Greetings!!!
+>
+>
+> Observing Kfence errors, while running fsstress test on Power PC platform
 
-Module, that's not a SoC component.
-
->  CONFIG_PINCTRL_SA8775P=y
->  CONFIG_PINCTRL_SC7180=y
-
-Best regards,
-Krzysztof
+Is this new or is this the first time you run kfence?  Any chance you
+could bisect it?
 
 
