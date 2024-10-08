@@ -1,153 +1,225 @@
-Return-Path: <linux-kernel+bounces-354490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B9C993E35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:12:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475E1993E37
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2316E1C23E35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BF7286075
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A09613AA2A;
-	Tue,  8 Oct 2024 05:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C693013CA99;
+	Tue,  8 Oct 2024 05:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHzY7ajq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xQ1Kr3uI"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75E013959D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76B513AA36
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728364316; cv=none; b=Ukd1Yv2B2UDutTtSiAJ6S1beOCGVonXAfvVvuUjBjHysujobrb9U9uIynrWkE4MgPU7UB5h6RFO5RKkJhHRgmwTse2dtcf9zucsZyk+Be4JSLsctqCX4zFSAyI9LvYGLP4ikFbzITqbtjKQnV2PtA5vTiLbL53glr7ODAUun1uo=
+	t=1728364419; cv=none; b=tZjr2JlI615V8eYkVHO2uEaZV549EIURR78bZakl7HQqtqokBGuXyioVHYD1iEDRGXa09KsADjVVhDktcxlRyn2XunFpH6/nJJPjrVZFwhpUBRQ1kjdDJO2uwMfPeLRbyet/RgXwzJUKc2cdmL/OkXKx/9PTG7nSJQ7ic9SrHnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728364316; c=relaxed/simple;
-	bh=SLh25qXOWVmw4SCKmmsEBzMRI0rs9M22+5MD2EXMFRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jb/YsvDexHEurCVizFIMJ0gBVpbeA/zMBiMpUSTnvr9HrWoQyRRyeuMwjtZ5+TPPVYeF4ZIP9lUB+lgdWAxnRs+1Mqxk1Zh08IGsrAZ4itpE3mK94RChGwleboJx6ath3QcKVW3wQmP1FM0PBYMpLL5AF2VMORPwzAXdy4tBhv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHzY7ajq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728364313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
-	b=HHzY7ajqd1HaV7hQwKuu/l9GH4hHE3igb3GefV9FjeNHI+m8Jxn+5WaOlAxBoO9erUVsQv
-	KWo8edv8QKgdxSe4K9dOESC2N38FJpIql9xTSP8aW6BGOTaJUFJv8c4E8tcMVgk024+Gfb
-	1EvadcMck+3kJEmqsNUhvqHhRJoM6qs=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-IC5izF0iOJeWtF3i8dXzbQ-1; Tue, 08 Oct 2024 01:11:52 -0400
-X-MC-Unique: IC5izF0iOJeWtF3i8dXzbQ-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-20b4861f942so53812615ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:11:52 -0700 (PDT)
+	s=arc-20240116; t=1728364419; c=relaxed/simple;
+	bh=1EjQ0KXwv7lZn6c10spm9WfH7PgaqXsei0Ivoqk2W6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e8yqLvZ5iOoqIC/hXyRP5LifYy6Ty7GgsHEpQ+1qyQKirJ92zFh9m2zauhWs8S8ii1A1lRy+FCKXTq8DuiZeHS8CZiUkSrsa1QKpNByp66cU7I/N1OvxWK5vzqkrR7fPnWm590m0Jz4sTarvpuD+5rPJB8Uv9y4azduGr5pejbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xQ1Kr3uI; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b40c7fd8eso147945ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728364416; x=1728969216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pmPqsIyIYSer8+7FQ/b/QDr6vcp9lff6dK1sfuzXgSo=;
+        b=xQ1Kr3uI4uVCEip/Jr+uZFlgkGQ2AoqotFCf1PHg178pFBV4NNsPFTQ5ksgRszS67Y
+         p/OLk/J2UTxlqRdBuKA5zcTicUqhNOnow6Ges+giTA1M5LJtH+sTSYa9SoZcoIGDpyx2
+         gAJwppYeYUnxIU0QHQ3LSWCDSye1OGPVUoyaBSjYXmsbmxHukZaknqOFg5NHNC9K40bv
+         KqDcKUDlYgN/V4hcOZxQytzEy2FoiTWKClNeP6LLKrnG1WjKWUJWAt6eC3An0rhGbeuo
+         tT2PWVOHyIB1vFB7uQuPt5K7OU/Uqpc0qhlysiX4OYoePbAIKLdRVjXlf9vZmnpScbvG
+         oOwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728364312; x=1728969112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
-        b=tLC5WJwQV7lyYuixMY0C+fyCw4P8ULwX7uVOIakrb/3iRE1rKnjn+9WYdO5AtiveuL
-         /bi3w6/Tvm0/Tb+pd3WUnoeEd/d3IxSWQT17BVNTss8wCG7HAMS2gb7nt+KqS5rm5sPG
-         VVxlpIamge46nm/OfpWsnl7dH77I6fkevjRqm314b4fjKoVnUTxfzA7oMf3pNRUtznMi
-         +jUOKAx+G5QjZvWZru1DibvNQfee6ggwYZ/0y1FZSj7ZzI6VK+YAdXQb8vqN5U7fKsZY
-         FgkXtGbovjIuQ1gz2Q/31bkNqjgCOdfAB52tzQn6HfrQYyjTU0mca7gmxv+RJCbvPHv1
-         A4SA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLDupk/6b1g7RqnTdLxj5OE13IASrrdxROckDpcZzyDZYM7tv7CVgiFjyu0Ug3KbMo+ghL7qaYUdu/zFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrcEOoEWVR00aPv1zUbalNIbyxUDwuptV8QCCSWHfq0UFosfka
-	nSmqZ9TxWn9KWn1/A3ia7GV2Hc5FH58G1sTI5VCmCm5aZlcMkE1BqRc9ZKSyGM4zCSR7OnxiRgc
-	YcBf5acOu4hLerPW9VllC/b3aPmqN4KWmDbAVGGvMxGtCsJFHQT1B9CC89ttgNg==
-X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889815ad.56.1728364310155;
-        Mon, 07 Oct 2024 22:11:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0Uxz8LXRrdNf1WhECQYg5MY0qjfcxniTa+aF4mi4a2jy2Z32EREelBAIdcmIUg3bfv1+WZg==
-X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889655ad.56.1728364309790;
-        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
-Received: from [10.72.116.34] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138d0cd9sm48174755ad.107.2024.10.07.22.11.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
-Message-ID: <b21e1214-20e5-4dc8-846d-d3a14d66fc1a@redhat.com>
-Date: Tue, 8 Oct 2024 13:11:41 +0800
+        d=1e100.net; s=20230601; t=1728364416; x=1728969216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pmPqsIyIYSer8+7FQ/b/QDr6vcp9lff6dK1sfuzXgSo=;
+        b=RVuXV+gELdhyEwWgBNplafJKNQT7aqyZlTTdaaUjtmIqk/9YtWhzmwwP1LLZoeKJCW
+         MjGgp/F/lVMfue2PL0sy4q0CfBpLXaNhl78U/en15eijyZLLag25IvYRqzv/wnH4Qyli
+         6/UY1er2/EBEMiYcjOflRtaNoIe4lGDos/XUN5ZTBEdl23B6z7dRwOW3o/PXBN5yqFTJ
+         prApVdagG2gxTEG9yXSTxJ17VNv3qo0M7P8PtwkY1Y0UgwYCgGaDJg+XM36bFlfyYbwK
+         CV+nc9eMH9bHJUv2bftUbRb270kg1S5fwuBNLX5cDlSnRPFy36WEV5LyslWKtkxzYLrd
+         4JbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDr+E8Fdm/novL2hDzRyY8sra3Q3CBn+kVqT/l9HGe0a/FBU2M/pjOp9cEelNbf3YH/dMzO9PSDFXLjQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzdEjEWiyHjeJVFoa68DVhRnwqiR3ZULIMy8Z0lljzP+bFZ9UH
+	MKGSlJXa/+QJtTt7m5UgcCT1DQ1Nzmtp/gBAqv6hsEm1hiP58TYwoXUaDDwt3gTYg0Yo5mgNRmp
+	Gz4XkKJXCcoTgK7mHzZ0bhqRQPlhCgQz6GKey
+X-Google-Smtp-Source: AGHT+IF4N8E/GBZW0DRZvjWNzwGfc67oFXTVypzovKmUSl92DUAT4ClpcGM9lERdV+laYRFTLC0plaxBk5XxKavvmp4=
+X-Received: by 2002:a17:903:2303:b0:205:753e:b49d with SMTP id
+ d9443c01a7336-20c4fea8644mr1988455ad.0.1728364415747; Mon, 07 Oct 2024
+ 22:13:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
-To: Patrick Donnelly <batrick@batbytes.com>, Ilya Dryomov
- <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- David Howells <dhowells@redhat.com>
-Cc: Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241003010512.58559-1-batrick@batbytes.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+ <Zv3ek7aBkQo0Z9To@google.com> <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
+ <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com> <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
+ <Zv7KHGQx0y3rAGWx@google.com> <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
+ <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
+ <Zv8XIZAwfoTtzOl4@google.com> <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
+ <CAP-5=fUVNa_JKz7WweWsQjobhFCoknbPuPGzPGFGcaDJ8wxLQw@mail.gmail.com> <PH0PR11MB482486871B66FC139C399C8DCD7E2@PH0PR11MB4824.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB482486871B66FC139C399C8DCD7E2@PH0PR11MB4824.namprd11.prod.outlook.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 7 Oct 2024 22:13:22 -0700
+Message-ID: <CAP-5=fV1wvWqQs3oEojdv4YDB-CFOFSotJoLAZdn_m1+AxRZQw@mail.gmail.com>
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+To: "Mi, Dapeng1" <dapeng1.mi@intel.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yongwei Ma <yongwei.ma@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 7, 2024 at 7:52=E2=80=AFPM Mi, Dapeng1 <dapeng1.mi@intel.com> w=
+rote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Ian Rogers <irogers@google.com>
+> > Sent: Friday, October 4, 2024 7:36 AM
+> > To: Liang, Kan <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>; Peter Zijlstra
+> > <peterz@infradead.org>; Ingo Molnar <mingo@redhat.com>; Arnaldo Carvalh=
+o
+> > de Melo <acme@kernel.org>; Hunter, Adrian <adrian.hunter@intel.com>;
+> > Alexander Shishkin <alexander.shishkin@linux.intel.com>; Dapeng Mi
+> > <dapeng1.mi@linux.intel.com>; linux-perf-users@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Yongwei Ma <yongwei.ma@intel.com>; Mi, Dapeng1
+> > <dapeng1.mi@intel.com>
+> > Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+> >
+> > On Thu, Oct 3, 2024 at 4:29=E2=80=AFPM Liang, Kan <kan.liang@linux.inte=
+l.com> wrote:
+> > >
+> > >
+> > >
+> > > On 2024-10-03 6:13 p.m., Namhyung Kim wrote:
+> > > >> Dapeng's comment should cover replace the comment /* Followed by
+> > > >> topdown events. */ but there are other things amiss. I'm thinking
+> > > >> of something like: "slots,cycles,{instructions,topdown-be-bound}"
+> > > >> the topdown-be-bound should get sorted and grouped with slots, but
+> > > >> cycles and instructions have no reason to be reordered, so do we
+> > > >> end up with slots, instructions and topdown-be-bound being grouped
+> > > >> with cycles sitting ungrouped in the middle of the evlist? I
+> > > >> believe there are assumptions that grouped evsels are adjacent in
+> > > >> the evlist, not least
+> > > >> in:
+> > > >> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-ne=
+x
+> > > >> t.git/tree/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n210=
+6
+> > > >> Does cycles instructions end up being broken out of a group in thi=
+s
+> > > >> case? Which feels like the case the code was trying to avoid.
+> > > > I got this:
+> > > >
+> > > >   $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be=
+-bound}"
+> > true
+> > > >   Error:
+> > > >   The sys_perf_event_open() syscall returned with 22 (Invalid argum=
+ent) for
+> > event (topdown-be-bound).
+> > > >   "dmesg | grep -i perf" may provide additional information.
+> > >
+> > > To be honest, I think the "slots,cycles,{instructions,topdown-be-boun=
+d}"
+> > > is a meaningless case. Why a user wants to group instructions and
+> > > topdown events, but leave the slots out of the group?
+> > > There could be hundreds of different combinations caused by the perf
+> > > metrics mess. I don't think the re-ordering code should/can fix all o=
+f them.
+> >
+> > I'm happy with better code and things don't need to be perfect. Can we =
+fix the
+> > comments though? It'd be nice to also include that some things are goin=
+g to be
+> > broken. I can imagine groups with topdown events but without slots, for=
+ example
+> > we group events in metrics and in tma_retiring we add "0 *
+> > tma_info_thread_slots" to the metric so that we get a slots event. If t=
+he multiply
+> > were optimized away as redundant then we'd have a topdown group without
+> > slots, we could pick up slots and other events from other metrics.
+>
+> I don't think this patch would break any current regroup case. It just bl=
+ocks to move topdown metrics event if they are already in same group with s=
+lot events. We can see same error for this event combination "slots,cycles,=
+{instructions,topdown-be-bound}" in the original code.
+>
+> As Kan said, there could be hundreds of topdown metrics combinations, it'=
+s unrealistic to cover all these combinations just using sorting, and even =
+it can be done, the comparator would become much complicated and hard to ma=
+intain.
+>
+> I think we'd better just maintain several commonly used regroup cases, it=
+ would be fine to raise an error for these unsupported combinations as long=
+ as error message is clear enough.
+>
+> Ian, I don't fully understand your words, could you please give an exampl=
+e? Thanks.
 
-On 10/3/24 09:05, Patrick Donnelly wrote:
-> From: Patrick Donnelly <pdonnell@redhat.com>
->
-> Log recovered from a user's cluster:
->
->      <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
->      <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
->      ...
->      <7>[ 5473.934609] ceph:   my wanted = Fr, used = Fr, dirty -
->      <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking Fr)
->      <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 00000000f7784259 issued pAsLsXs
->      <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe file_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsLsXsFsr  AUTHONLY NOINVAL FLUSH_FORCE
->
-> The MDS subsequently complains that the kernel client is late releasing caps.
->
-> Approximately, a series of changes to this code by the three commits cited
-> below resulted in subtle resource cleanup to be missed. The main culprit is the
-> change in error handling in 2d31604 which meant that a failure in init_request
-> would no longer cause cleanup to be called. That would prevent the
-> ceph_put_cap_refs which would cleanup the leaked cap ref.
->
-> Closes: https://tracker.ceph.com/issues/67008
-> Fixes: 49870056005ca9387e5ee31451991491f99cc45f ("ceph: convert ceph_readpages to ceph_readahead")
-> Fixes: 2de160417315b8d64455fe03e9bb7d3308ac3281 ("netfs: Change ->init_request() to return an error code")
-> Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_request() check caps on readahead")
-> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> Cc: stable@vger.kernel.org
-> ---
->   fs/ceph/addr.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 53fef258c2bc..702c6a730b70 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -489,8 +489,11 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
->   	rreq->io_streams[0].sreq_max_len = fsc->mount_options->rsize;
->   
->   out:
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		if (got)
-> +			ceph_put_cap_refs(ceph_inode(inode), got);
->   		kfree(priv);
-> +	}
->   
->   	return ret;
->   }
->
-> base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+So in the comparator I think most people won't understand the list of
+cases that are supported and those that are not supported:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/arch/x86/util/evlist.c?h=3Dperf-tools-next#n35
+The groups usually come from metrics and to work around issues there
+are constraints on those that may or may not group events. This could
+yield situations that don't work given the cases you list, but I don't
+think current metrics will violate this. We do test metrics
+individually but not together as part of perf test.
 
-Good catch!
+Thanks,
+Ian
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
+> >
+> > > For the case which the re-ordering cannot cover (like above), an erro=
+r
+> > > out is acceptable. So the end user can update their command to a more
+> > > meaningful format, either {slots,cycles,instructions,topdown-be-bound=
+}
+> > > or {slots,topdown-be-bound},cycles,instructions still works.
+> >
+> > Perhaps we can add an arch error path that could help more for topdown =
+events
+> > given they are a particular pain to open.
+> >
+> > > I think what the patch set really fixed is the failure of sample read
+> > > with perf metrics. Without the patch set, it never works no matter ho=
+w
+> > > you change the order of the events.
+> > > A better ordering is just a nice to have feature. If perf cannot
+> > > provides a perfect re-ordering, I think an error out is also OK.
+> >
+> > Agreed, we don't need to fix everything and focussing on the common use=
+ cases
+> > makes sense.
+> >
+> > Thanks,
+> > Ian
 
