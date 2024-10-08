@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-355454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13517995271
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:52:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649BC995297
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443CC1C25828
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:52:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F72B2A67E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC5A1E0488;
-	Tue,  8 Oct 2024 14:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CA61DE4CB;
+	Tue,  8 Oct 2024 14:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MigGLMnW"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diUoWpQz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0C1DFD1
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC861DFD1;
+	Tue,  8 Oct 2024 14:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728399136; cv=none; b=g0YXVi0ktnJ9uQyDAPiQgin5ZooPizaFTahcBHNSetLblsQqMnW7wxgb6Htr2WbXEEAPJD3FxsbVcLiFXprTFRHwj93VGy8Gleo8+ptZTlruw1ee497WtrsyQIPpkJ2KtNj9gQCQ0pz/tbJSqeMpwSeIDHUqu3TDb/E72n32DN4=
+	t=1728399130; cv=none; b=r8r/g3a9+AV4gxjAmnnq5xBQU0/7R2n4KUOrjgjdI9DuFsSxyh/BJkaPv7g4Nx0HlZVGr+YFLnxXyuNuBk6UJJa8Q09DmBRaWFkaaQ9rbez8fiop67zWU3TE6Iln2JnbCcK7T27koqa1kU2YdpratBRsS7yl/mBXw1yR1EddKM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728399136; c=relaxed/simple;
-	bh=Zn5Lg4NhSvGrhq3IQewNEP54T8jNklAcWLlaRE/1F9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MPVo7ezpAfUqDQln9hEGGZwJU0j1AV1ZjQQ6v19odwW3RRqQ7WRFCK9tzI+Wgl2MLk8cjT0kyW1htHEsFDwdrF/RyrvwumIS/i/KjBalFPHbSFUJGlWauFpaB77i62TQeFe9TDRz+TivVjvbeTXnCzK0vATTOSs66668V/0S46A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MigGLMnW; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-710da8668b3so2356255a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728399134; x=1729003934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUyhXq0XNpQ1vRtn0GLY0jKRlrx865fpEqPXy7ajtC4=;
-        b=MigGLMnWCc/8+YabSFhuYBgEwD14/UQVNvTTS9/KilzyKClGKIpPMPDVhb1wGAiLUe
-         eTAM7RkXKVGGg0N7K/EOuSZ/l/2tkZyAqpuxpEfE+4qh6dM6PkXyJCn5Jyuxm/ZtL+DV
-         bsBiv0oNx+t+ZnC0QE5noe8xhrLnyNvsbRvb5lNfe8l3Xp8Qd1wesjKJXw+4EUr9/Pll
-         zBRA8kte0SZ+cr+MsHS1SpeOEVvhTEYW3vDdqDOUjjAF9TufW/yX2vfIxk1uSfhNBlc7
-         KQ23Ymn+eeAK/+emBseWb0AuJq2tDOp8xpX6vdvzkc9D0i0uLi9JNkD6dOX+dCqEAQJb
-         nxpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728399134; x=1729003934;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xUyhXq0XNpQ1vRtn0GLY0jKRlrx865fpEqPXy7ajtC4=;
-        b=Be799V47XKhYcEbXG9V0CaU9PmdlU6fmDIY28taDRQqXS01mWTs0SDGW76WP4SerIz
-         p01oRQxuPBi639bxYazUZbdJLAX+6DZ3hh7UjfN1Pe44eVNduq2VidrvqtQkGG1kkTgu
-         s8FgJkJ6rlGQl9T/QJg6FapThcCOwCRu75iUD4u4xxVHooUh3MUIYfbxOgHCaEvSBc1X
-         WSY8lI1WbOFBkmTVQR8T3UPPMZFPwl1V64kViRGeQ/ykE2EGQV8EMUhyCrhUJjIhLJ5+
-         Mh8AVbGd+sJWSJKJj1lR/82NNnrZUFv/VyIpiW1FiDXl5GSdnVXn/zkyRWJi2K9sev9V
-         ok5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9LRMGfGPIa6iWtdn/4LRYqwRCRQuiTmMnAIjQNM3NPr2ALc+WFcTnFm9UCP+sw3+0bXHe0iV3FttZhNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRjcn06cuK2wbf7BgwuhAKC0UXCEz0XRvIucnQdcKo2pXJPegJ
-	g1DgNbaEFwgpuL11UgCcZ2K2TC9qmDJv1ocd+Xdgyoe7CXk7wPVL
-X-Google-Smtp-Source: AGHT+IEkXbnGd0K9vpnQ3q25JVRnOSg43qf6tJeJGStyswbMqU+pptDh76yBoZwTlOKjBsOHGzfg7w==
-X-Received: by 2002:a05:6830:926:b0:710:f300:9fad with SMTP id 46e09a7af769-7154e97cb9fmr11998102a34.30.1728399134027;
-        Tue, 08 Oct 2024 07:52:14 -0700 (PDT)
-Received: from Kuchus.. ([115.96.37.44])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4cdfdsm6870944a12.87.2024.10.08.07.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:52:13 -0700 (PDT)
-From: Shivam Chaudhary <cvam0000@gmail.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	perezma@redhat.com
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Shivam Chaudhary <cvam0000@gmail.com>
-Subject: [PATCH] Fix typo in vringh_test.c
-Date: Tue,  8 Oct 2024 20:22:04 +0530
-Message-Id: <20241008145204.478749-1-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728399130; c=relaxed/simple;
+	bh=dqrkp2/3a4RSErawaG5/0PMhkPOSRe1WtaBNNRHUviQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RTVcdvnQyUtB8kTjKgenSuDZKMma80HW/CP4eB8nNRsceCM7sh78YL9gPA/QpKK/+QwLWFTD7Ac7fcTOpHZSem9Q49F8Du9g31He7bjwJnf+mZ7gWCdOaALKVB3aMz5AVN+3s8iRyK3/td9MR+OSlGoiB3o+rmJTJTeLinXFdaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diUoWpQz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7CAC4CEC7;
+	Tue,  8 Oct 2024 14:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728399129;
+	bh=dqrkp2/3a4RSErawaG5/0PMhkPOSRe1WtaBNNRHUviQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=diUoWpQzUfkVS2zYhn8+sLGYPQCmBhTaEjiOKYuZOaBuRT1fk8egb++918ito7jSK
+	 hv2yvl4zXHeGFtaGNt7vsOI4ut8NrClLjB7mxLD36G9BVJOwsoZm9HwYRl8rNWtw9t
+	 eT3hi8TsWXM9bSPzqGj0yaxNmgRKk+xTEduhA8hIKe32KIEUZZD1KY/3f/D+TIWoQ7
+	 CRGPcbyWHxYzyzegiMPx07Ijfr7zPvDwRbgyfeI0hUCifouSLq/UfDxb9YQflBLnLe
+	 1cuReQilV0qtnXjoNZiiMMeMAOTi9UtLRuw+ZKvreZOB+HWCE7PvcmIGA3cJTfsJcp
+	 iY6erFbJhmCTQ==
+Date: Tue, 8 Oct 2024 08:52:07 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: SurajSonawane2415 <surajsonawane0215@gmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v3] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+Message-ID: <ZwVHF_0Z0dNnYW58@kbusch-mbp>
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008120413.16402-1-surajsonawane0215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008120413.16402-1-surajsonawane0215@gmail.com>
 
-Corrected minor typo in tools/virtio/vringh_test.c:
-- Fixed "retreives" to "retrieves"
+On Tue, Oct 08, 2024 at 05:34:13PM +0530, SurajSonawane2415 wrote:
+> Fix the uninitialized symbol 'bio' in the function blk_rq_prep_clone
+> to resolve the following error:
+> block/blk-mq.c:3199 blk_rq_prep_clone() error: uninitialized symbol 'bio'.
 
-Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
----
- tools/virtio/vringh_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...
 
-diff --git a/tools/virtio/vringh_test.c b/tools/virtio/vringh_test.c
-index 43d3a6aa1dcf..b9591223437a 100644
---- a/tools/virtio/vringh_test.c
-+++ b/tools/virtio/vringh_test.c
-@@ -519,7 +519,7 @@ int main(int argc, char *argv[])
- 		errx(1, "virtqueue_add_sgs: %i", err);
- 	__kmalloc_fake = NULL;
- 
--	/* Host retreives it. */
-+	/* Host retrieves it. */
- 	vringh_iov_init(&riov, host_riov, ARRAY_SIZE(host_riov));
- 	vringh_iov_init(&wiov, host_wiov, ARRAY_SIZE(host_wiov));
- 
--- 
-2.34.1
+> @@ -3156,19 +3156,21 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>  		      int (*bio_ctr)(struct bio *, struct bio *, void *),
+>  		      void *data)
+>  {
+> -	struct bio *bio, *bio_src;
+> +	struct bio *bio_src;
+>  
+>  	if (!bs)
+>  		bs = &fs_bio_set;
+>  
+>  	__rq_for_each_bio(bio_src, rq_src) {
+> -		bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+> +		struct bio *bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+>  				      bs);
+>  		if (!bio)
+>  			goto free_and_out;
+>  
+> -		if (bio_ctr && bio_ctr(bio, bio_src, data))
+> +		if (bio_ctr && bio_ctr(bio, bio_src, data)) {
+> +			bio_put(bio);
+>  			goto free_and_out;
+> +		}
+>  
+>  		if (rq->bio) {
+>  			rq->biotail->bi_next = bio;
+> @@ -3176,7 +3178,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>  		} else {
+>  			rq->bio = rq->biotail = bio;
+>  		}
+> -		bio = NULL;
+>  	}
+>  
+>  	/* Copy attributes of the original request to the clone request. */
+> @@ -3196,8 +3197,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>  	return 0;
+>  
+>  free_and_out:
+> -	if (bio)
+> -		bio_put(bio);
+>  	blk_rq_unprep_clone(rq);
 
+I think your commit message is missing the real "fix" here. The other
+place that goto's this label is if blk_crypto_rq_bio_prep() fails. At
+this point, the cloned 'rq' has all the bio's that get cleaned up in
+blk_rq_unprep_clone(), so that failure scenario is double put'ing the
+last bio.
 
