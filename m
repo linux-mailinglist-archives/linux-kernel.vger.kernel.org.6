@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-355340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E3C9950DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6041E9950E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2F7286438
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914E11C25096
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BD61DF98C;
-	Tue,  8 Oct 2024 14:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0012C1DFDAD;
+	Tue,  8 Oct 2024 14:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="e6ygE81/"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="StN/9/9V"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247504C97
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08CF1DF999
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396051; cv=none; b=ZgEpwS6CaqWxnLuFi7bPcQXv5VsxiZsSACxzScTQF1NucoJhRCOks9jKpCzL66lmBbcGXPyF9ETeg3YlQT7EOjhCgkLAhAKfgsqQlyEjrDoN5BiEOy/HcR/tCkwREwiKCFEeuQ+8iopZ/CWCPcNYlL9iDlcidkooYB0WVmHW/wg=
+	t=1728396054; cv=none; b=LIrfS+4qI4uF6K2WGtSvI8/hWwLF9hQoThsSQgdkD02k2y8ADwGitBkQeJZaxwcsLjlrRiaxPDZusf8hhhtS/QSltR2qlJ5bq2g/iCRSIa6QglM81Va23ic3UM10M9Ew2qi7QUip7X2eS8epIAVyMWYuqp5Y8CHOXewlhPq0m30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396051; c=relaxed/simple;
-	bh=f24xe0s0P5sHWBZEyg+EVqdFYYoHXDXlETSsuM55DQo=;
+	s=arc-20240116; t=1728396054; c=relaxed/simple;
+	bh=D9ssUjGQ6h7QeJF1IwpdOtgRJ/SdyRy/lVBrG03bkKQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N8/M389se3p3RNORadYZ97kHYtOnNnxFjqMBV8EEKZphU1Rv/MKNeaUZrngXsaMOYk6OuUUgd2HAEqD7N5QxjUr+Rb5QZrNs6XdMMv6YICtZQg4/jke+4CUCt7FXcZ8iQxLLVsTd2ZQd1iJ1/s0FwEGtJWYAhRt0gHn2TDpAp0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=e6ygE81/; arc=none smtp.client-ip=209.85.219.43
+	 MIME-Version; b=I2uJoy6tMabM1O0e3MhRxspw2dkudSDlWbANvt+mieDVTTct8i/P0Xt7vyKKKTUxEJeqxf1lxdZKMvHTgYFBCFGGbkNbsM/eSMzR+WolP9UUOexTEIpOiPoYBcIDLEjqFqrAxQa8kt034n8owhsfydWm8SNagp3pn3jF79+ySBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=StN/9/9V; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb399056b4so43987376d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:00:49 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cbc7c77c99so249356d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1728396049; x=1729000849; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1728396052; x=1729000852; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tYVH9bPzhptOKAKA155SqTUHRG9AKR7xI41sAuZER68=;
-        b=e6ygE81/SJshv+LRjedykthxtW3UO3MvQQc00UzO3sItolCnpOGN/CSJR5UUHhjz10
-         Nm5WpL0LLBo6diEBIPcZpQMDfxyxadhYnnJTnwajnhBbQP/Wyojzuwon6eD9u9lKi/7s
-         v44KfQnKGIjvZYmX0VdJPxp556wG2i4m8beb8zW33jnXZD5NA78ndbvH6EpxaEj5k4Mz
-         EP1kaafWBz7PFLM4l4kGgBqx8oR0G3kOPrEbjXD3r15/TyujmDLQ7OQ4PPZV5A/rCC+u
-         isoSoXleZeyU08ov//WsMKjkzPY08ZRmsG5kSOfaXb6k83/0SMmrN/8aNpAunZvyxs0p
-         v8iQ==
+        bh=iOmfBB2o+BmwtYmn6lEeWqW0gfRN00aP7+NLXlUlw00=;
+        b=StN/9/9VHUbqA+DqeHGKDKHwt6Tsn/zsnYDAfaM8fwy3k1NlJIgr/Q9LzY0ZoRNyXq
+         +uMPnOBFTgKREJeABH/Ls/dKUkbsRLvsp5u57mnOTSd+WmANTIwUJSU9/cwt8/TkUEm9
+         8UBlw8NHNliC/5UQPovW+V33uUdJ73g04pTLC85V0HkT2KBIkxOEhEDFU50ataaOHFYB
+         B/rkDpnpdrAUUCPx5rQYvweU2utBM9qTOcXJayRmh1aH+lQD2RcDsC5/b/0apCqRf8TB
+         elOmMdTbePZRr8x8/8cxOv6EVP5RwnMzsKreKWtQcwlL6E49h/krnxfDcw847ZB2UP/m
+         JtOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396049; x=1729000849;
+        d=1e100.net; s=20230601; t=1728396052; x=1729000852;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tYVH9bPzhptOKAKA155SqTUHRG9AKR7xI41sAuZER68=;
-        b=T47bUCPfva4w9LefX7sy3i0/ghEPhLtj1QB7iiKmfrvpJKLT8n6+JSWHni6P9CisAT
-         uabXUv687NNEeWfrp6NYkKUnNJHfqaWdtI68G8ZRkHPpMcyecyFBrOn49tgtbDA6lpUK
-         /3xm3mHATkwPDm84GNkwwcPGRI450TxbIKOUD6anvn6ZETy3waWFsw8YV5MVtKGQ2gKf
-         s79xsAEKWVk8ysxvG34DJNb7G+H+4YHjdujRrsn7ugeblxfyMQY7KTRsruSAf1ADAqf5
-         TtRdGGleqqvmaePuQ/4bZJIroFY5lvXhOReFW4HB0sqt4kpc/sMT8twMJfyatvcsg0sX
-         pxvg==
-X-Gm-Message-State: AOJu0Yyj3XmAFXxLcBSh1WrEFseBlA0kim1tJUCn0kgspWgLJ3Thi1np
-	BgsiHyafFLrd4EdnJ1a7zGB+CwqH+Q0G0MGIWG13YnoPpfbz0BJquuNa05SlM88=
-X-Google-Smtp-Source: AGHT+IH1G8ITusE7F8TZWngF/LW6FSnDnTSAvzMp2nN4Kfl3aRMl8OFWOkAOoxtA/bT+IIYMoMEjDg==
-X-Received: by 2002:a05:6214:2b91:b0:6cb:5eea:8a3e with SMTP id 6a1803df08f44-6cb9a2ed3d2mr210771516d6.10.1728396048953;
-        Tue, 08 Oct 2024 07:00:48 -0700 (PDT)
+        bh=iOmfBB2o+BmwtYmn6lEeWqW0gfRN00aP7+NLXlUlw00=;
+        b=G3E4zkv8a88EmkFw9L1RYR7DnCDjH2QBx07ioGEr+flK85vDf1Fraz3lvkFPib5T6O
+         klErH6dT9oVu+rDBoCKIumbF6rGSUSh7r4qPuX8qr0dSIXr6fmEvIHiyE03QcHKX6wIN
+         unQYmjXfu004j00HSKpicNcst9yP6/xe7BYTrnrGtHcp9L/nUh/C+92FM7IwwyJOZvPJ
+         d9gdl7DrW0CzYNfatHzwwj/cFbGaBEVwpXf42cKzwBi/OfvfwpDPVscqh9NMownNR7jV
+         FIGZo0j0X224yeK43grDe6klnp6BDUEzhjouAieh027cEMW6wcY2NgZXBV5jUwCt9vsZ
+         DvJw==
+X-Gm-Message-State: AOJu0YwSA1bhrZzOzCMo7K6ypb+uRcPLbSnkfMnfU4TfobQdXYg1DWH5
+	aU5klPRmI5VC5LXHFkyurQHtVlAcTWqtId99WWWgYhJq/G3Z9vwKndZRkMHWF4c=
+X-Google-Smtp-Source: AGHT+IHe1DIW8UN+mP+xqS2Oh3mXbQusW6tw3/R+BVrHed7J8ntdmkY9QJ5q2+XDvRLblwgEqMcXNQ==
+X-Received: by 2002:a05:6214:3b85:b0:6cb:c745:4f44 with SMTP id 6a1803df08f44-6cbc745517dmr10453496d6.26.1728396051760;
+        Tue, 08 Oct 2024 07:00:51 -0700 (PDT)
 Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbc78650efsm698396d6.39.2024.10.08.07.00.47
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbc78650efsm698396d6.39.2024.10.08.07.00.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:00:48 -0700 (PDT)
+        Tue, 08 Oct 2024 07:00:50 -0700 (PDT)
 From: Gregory Price <gourry@gourry.net>
 To: linux-cxl@vger.kernel.org,
 	x86@kernel.org,
@@ -91,9 +91,9 @@ Cc: linux-kernel@vger.kernel.org,
 	lenb@kernel.org,
 	dave.jiang@intel.com,
 	ira.weiny@intel.com
-Subject: [PATCH 1/3] memory: extern memory_block_size_bytes and set_memory_block_size_order
-Date: Tue,  8 Oct 2024 00:43:53 -0400
-Message-ID: <20241008044355.4325-2-gourry@gourry.net>
+Subject: [PATCH 2/3] x86/mm: if memblock size is adjusted, update the cached value
+Date: Tue,  8 Oct 2024 00:43:54 -0400
+Message-ID: <20241008044355.4325-3-gourry@gourry.net>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241008044355.4325-1-gourry@gourry.net>
 References: <20241008044355.4325-1-gourry@gourry.net>
@@ -105,69 +105,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On CXL systems, block alignment may be as small as 256MB, which may
-require a resize of the block size during initialization.  This is done
-in the ACPI driver, so the resize function need to be made available.
+When parsing CFMWS, we need to know the currently registered memory
+block size to avoid accidentally adjusting the size upward. Querying
+the size causes it to be cached in a static global.  Update the static
+global if the value is subsequently updated.
 
-Presently, only x86 provides the functionality to resize memory
-block sizes.  Wire up a weak stub for set_memory_block_size_order,
-similar to memory_block_size_bytes, that simply returns -ENODEV.
-
-Since set_memory_block_size_order is now extern, we also need to
-drop the __init macro.
+Print a warning that this has occurred for debugging purposes if
+the memory block size is changed at an unexpected time (post-init).
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- arch/x86/mm/init_64.c  | 2 +-
- drivers/base/memory.c  | 6 ++++++
- include/linux/memory.h | 4 ++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/mm/init_64.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index ff253648706f..6086f99449fa 100644
+index 6086f99449fa..733dfa899232 100644
 --- a/arch/x86/mm/init_64.c
 +++ b/arch/x86/mm/init_64.c
-@@ -1424,7 +1424,7 @@ void mark_rodata_ro(void)
+@@ -1424,6 +1424,7 @@ void mark_rodata_ro(void)
  
  /* Adjustable memory block size */
  static unsigned long set_memory_block_size;
--int __init set_memory_block_size_order(unsigned int order)
-+int set_memory_block_size_order(unsigned int order)
++static unsigned long memory_block_size_probed;
+ int set_memory_block_size_order(unsigned int order)
  {
  	unsigned long size = 1UL << order;
+@@ -1432,6 +1433,19 @@ int set_memory_block_size_order(unsigned int order)
+ 		return -EINVAL;
  
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 67858eeb92ed..f9045642f69e 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -110,6 +110,12 @@ static void memory_block_release(struct device *dev)
- 	kfree(mem);
+ 	set_memory_block_size = size;
++
++	/*
++	 * If the block size has already been probed, we need to change it.
++	 * This can happen during ACPI/CFMWS parsing, since it needs to
++	 * probe the system for the existing block size to avoid increasing
++	 * the block size if lower memory happens to be misaligned
++	 */
++	if (memory_block_size_probed) {
++		memory_block_size_probed = size;
++		pr_warn("x86/mm: Memory block size changed: %ldMB\n",
++			size >> 20);
++	}
++
+ 	return 0;
  }
  
-+int __weak set_memory_block_size_order(unsigned int order)
-+{
-+	return -ENODEV;
-+}
-+EXPORT_SYMBOL_GPL(set_memory_block_size_order);
-+
- unsigned long __weak memory_block_size_bytes(void)
+@@ -1471,7 +1485,6 @@ static unsigned long probe_memory_block_size(void)
+ 	return bz;
+ }
+ 
+-static unsigned long memory_block_size_probed;
+ unsigned long memory_block_size_bytes(void)
  {
- 	return MIN_MEMORY_BLOCK_SIZE;
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index c0afee5d126e..c57706178354 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -86,8 +86,8 @@ struct memory_block {
- };
- 
- int arch_get_memory_phys_device(unsigned long start_pfn);
--unsigned long memory_block_size_bytes(void);
--int set_memory_block_size_order(unsigned int order);
-+extern unsigned long memory_block_size_bytes(void);
-+extern int set_memory_block_size_order(unsigned int order);
- 
- /* These states are exposed to userspace as text strings in sysfs */
- #define	MEM_ONLINE		(1<<0) /* exposed to userspace */
+ 	if (!memory_block_size_probed)
 -- 
 2.43.0
 
