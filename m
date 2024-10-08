@@ -1,94 +1,89 @@
-Return-Path: <linux-kernel+bounces-355593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE62499547A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:33:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F4B99547B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A4FB26CC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295931C20AEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8ED1E0DBD;
-	Tue,  8 Oct 2024 16:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670731E0DE2;
+	Tue,  8 Oct 2024 16:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UHPf5+FI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SfW5zJgk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YFPa+3Ep"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1DA1EA73;
-	Tue,  8 Oct 2024 16:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBA476048
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728405197; cv=none; b=ERB7GJkQE3Bi/xiZXnW3j73HyP6+II0at3DBDAo01OEgr+UTIDeSB7KH3hOgM397TFkGDAaFczyMLvLnr9Sn8DluJCi9NoqvaJUYdgVkO0FJ7/grpSXWPgPCndw7surb0j0WDlTvSkNx/Hr4dk0MPciwP412Sg9RLOytMy/VLl8=
+	t=1728405197; cv=none; b=VeFgBuIifX7dzNIG7hvVwDb2Z0NB+fz2Zzw6XD0LOphdspYCBsIhT/90tI/JjSmpLLwTQWAQjeD+BbjM/70/iTpO6oYLKEK+m/eXgw/fOoMZZty/LB8mvaH5l0+3RQ22Go6EclHAm7529F+ZkBDhHdvxHnwBgcq2LuwGKo9vaps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728405197; c=relaxed/simple;
-	bh=ABYLgna9ik3Qw3mklNtm//dxT/ojFvjCVfeIpWSQXx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkhqYc52cUULqg9M3fx8w8SuHaAyVjdYJDMhY8WVzqaKh5U3CBZBnT8C4tlekdAmmRZyrXVRiAfFzMzqaKyEFWVXzUTOa0ZCVDHp6qla9HedS0m0zDcVXYews6bI4myGeLcGD+eE5kV+7pD/PU7mqP/cTnHt+VvAUS8V47SSJEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UHPf5+FI; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728405196; x=1759941196;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ABYLgna9ik3Qw3mklNtm//dxT/ojFvjCVfeIpWSQXx4=;
-  b=UHPf5+FIMm3hs4oEeJAcEAk+oQz8BJP2oYAScCyh/hMe8vrwmOkwMx17
-   qTONI01VZwwy9ZT2cPHkpO0ArNygIlBw/YbHzf5oSxOoKk3+0lycU0Aqg
-   /Qe67Jbzmrna7krg0RzqLnVZB7EJ2PPM84VwfCy4JZr5j8NZOG0YMCl2P
-   rR0XbmXNN15kmtCRVKACWhRGRRd7gb1GletpSa3kTsUSVv3tiGAxZyHVz
-   1N5wRAgA/7IkWXhUSesgXnZaL8YWdSJDZZ7evACkyIAmQpuo1cLthZ5H/
-   mYBQsbh1/CcqTNO6gqroIYe0dpH59pDaiMBYlh9SwdTb0UgxillQOpSW4
-   A==;
-X-CSE-ConnectionGUID: Z7/Sn2zES+OJ/8Zs/E6TaA==
-X-CSE-MsgGUID: yK35D0XETeuSHuXYF8biqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27710411"
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="27710411"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:33:15 -0700
-X-CSE-ConnectionGUID: AQyTA9GQQ96nhOK24BJtMw==
-X-CSE-MsgGUID: XANtgy2WQj+5FMfNuLqwyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="75572678"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 08 Oct 2024 09:33:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 3123720F; Tue, 08 Oct 2024 19:33:12 +0300 (EEST)
-Date: Tue, 8 Oct 2024 19:33:12 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Oleksandr Ocheretnyi <oocheret@cisco.com>
-Cc: linux@roeck-us.net, jdelvare@suse.de, linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, wim@linux-watchdog.org,
-	wsa@kernel.org, xe-linux-external@cisco.com
-Subject: Re: [PATCH v3] iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit()
- call
-Message-ID: <20241008163312.GS275077@black.fi.intel.com>
-References: <05dba51b-7c3c-4455-9c97-09777e885fac@roeck-us.net>
- <20241007155702.3676667-1-oocheret@cisco.com>
+	bh=NPHlF3U9EDjmlP5C8GgRljogQLh6ZSFABCIY9YnkpmY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cKMkw/akbuADOcktMu80blsH5GVR8B9RDWowSeBvQyKIWSOthkQR2xwMrln5cQDdIdI7tAcaeBinxyQ7Z3qHtLp1csGo6/R52xdKcuvk3IP/a+CP5xPMxrSrVAn6VHYindAePq66Pf1tDM6GYoM5a/t3W99mCdr+XGFbZoWpGWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SfW5zJgk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YFPa+3Ep; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728405194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WJXzQd5oDtRgpEULpu6QHJU6slB/L2DXRJ17F/8tCx8=;
+	b=SfW5zJgkEI377NnOt+OozAwdHy1R7BYu01OAvdqQ2KGYfpTjOFE0L9YEkeaRjEc6Pp4kLt
+	HqxB2DlanlN+fn6t1Tgc9r6R7vHAbGhie5pY+exL6XyJDrSnPbK8R4kCvzx8Rxf6C2BQdH
+	0FaK2HB5wnI3gOYGTQtdCtXojc/2ub2z8U0mXmWvG+R1rPza05taQXOqDRnqUhrLjIGP4e
+	n89uZVawfQ3XTjZ2Tl8ci/O+zUTjuOaejoiW2J1uVsRp0SjmSe9LMWl9hgJWj1YwBIImbe
+	TpHEVIKe5/gUWSknRXT7/tFlo81O3ZUlTE7LX4VQZA2gprFipWh2zcGhOAq3pw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728405194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WJXzQd5oDtRgpEULpu6QHJU6slB/L2DXRJ17F/8tCx8=;
+	b=YFPa+3Ep64DZ4alR4own23b6l0GKWYcGc1L6FkD6PAgjP1vPjp5bSWgPgtpWA5cfrjGCnS
+	DLPxJyZL2W5Ga6DA==
+To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
+ linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>, Oliver Sang
+ <oliver.sang@intel.com>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH 1/2] perf/x86/rapl: Move the pmu allocation out of CPU
+ hotplug
+In-Reply-To: <20240913171033.2144124-1-kan.liang@linux.intel.com>
+References: <20240913171033.2144124-1-kan.liang@linux.intel.com>
+Date: Tue, 08 Oct 2024 18:33:14 +0200
+Message-ID: <875xq2tv05.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007155702.3676667-1-oocheret@cisco.com>
+Content-Type: text/plain
 
-On Mon, Oct 07, 2024 at 08:57:02AM -0700, Oleksandr Ocheretnyi wrote:
-> Hello Mika,
-> 
-> > I suggest adding some #define for the magical number 8 so that it is
-> > easier for anyone looking at this driver to figure out what it is doing.
-> 
-> Are the changes with #define NMI_NOW bit fine for you?
+On Fri, Sep 13 2024 at 10:10, kan liang wrote:
+> +static void __init init_rapl_pmu(void)
+> +{
+> +	struct rapl_pmu *pmu;
+> +	s32 rapl_pmu_idx;
+> +	int cpu;
+> +
+> +	cpus_read_lock();
+> +
+> +	for_each_cpu(cpu, cpu_online_mask) {
 
-Sure,
+How is that supposed to work, when not all CPUs are online when
+init_rapl_pmus() is invoked?
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Thanks,
+
+        tglx
 
