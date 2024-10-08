@@ -1,100 +1,58 @@
-Return-Path: <linux-kernel+bounces-355235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC20994D77
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D44B994D8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2862284555
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E761F21E00
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750E81DED74;
-	Tue,  8 Oct 2024 13:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKY1fVDS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UV8i1l5C";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKY1fVDS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UV8i1l5C"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053391DFD1;
-	Tue,  8 Oct 2024 13:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2107A1DED4B;
+	Tue,  8 Oct 2024 13:06:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2301C9B99;
+	Tue,  8 Oct 2024 13:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392735; cv=none; b=KemnYgJ5yZ6dbaioJRy3x3/SnhcvWYvvWQgRNjo6wcn788csXTuHGiLg7V1FzMZhsQlStyJfzGn5WY6mkfke/7WifFnQbt+4socRzFgRIpGObo4E239tWnG30ckQFH1UXVvbs+ozfLB+zNku2EQrLpRh3fCFDNOwQxwfxZuE02Y=
+	t=1728392785; cv=none; b=E88ED1hqv7HOKsH4bGikS7FVShjV454xsNUeeFiDMVtqmq1nUGltAPJKRqkTwTjxZ0jXuoZlz/JQl8PyU/mmOKD7L76f01nIs3H8RTOYMWHYzGQqpZtp664f6xtKOhcELI1E58JZkgyGnUrTScjPuwAWDyHdidQKsKHSvy5APiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392735; c=relaxed/simple;
-	bh=jD0jjZGnqRLlvplv38ot434t6s83meJWovIVnwKMRFE=;
+	s=arc-20240116; t=1728392785; c=relaxed/simple;
+	bh=uLHvykvkchfdJn5jUpmEGCdPqI5Vu3BisOWgUgCdUog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTPg90SHq00/bIttb77uXCybzRaxaiM2flNIJhMenKdEn6a+YztKspmPOyB79Ax/+AM3gOe72hDdpmc97sYuAoHFBx/vYsxOVMOJC+lQFTlu5ICyBtyfs49i8sr/EnxK6Ye+/H2Z6+6Bn9Z2BGkNIcZ+mV87OzanFgwbm6m2b4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKY1fVDS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UV8i1l5C; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKY1fVDS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UV8i1l5C; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AD3221FB52;
-	Tue,  8 Oct 2024 13:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728392729; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVyELl6o/F4I9t4aYsMMGs+kdDbJ/MNuBGCTx/ubf5c=;
-	b=tKY1fVDSZqziketyeg2QyHkTkYxUWbc1p611sUtV5/dIiBCBiS/4pRP5svR4+Omo6Z/ATA
-	wYFEXPR+N+vTA0GoRCpakmv23DvPYHjpa9zvSf5a+5WGxlvD/2n7sifSYygiLJ6KtwLlBo
-	i3fmgB1Uv4BpyOxgmkBmDHcMQFy90ic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728392729;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVyELl6o/F4I9t4aYsMMGs+kdDbJ/MNuBGCTx/ubf5c=;
-	b=UV8i1l5CXojpBw2wOT5a+2d1I6MX50f4E1HgIavwPQnHTrTa4coKPgQOiVvwda+CIqZhDS
-	REpbWtfDTaNLotBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728392729; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVyELl6o/F4I9t4aYsMMGs+kdDbJ/MNuBGCTx/ubf5c=;
-	b=tKY1fVDSZqziketyeg2QyHkTkYxUWbc1p611sUtV5/dIiBCBiS/4pRP5svR4+Omo6Z/ATA
-	wYFEXPR+N+vTA0GoRCpakmv23DvPYHjpa9zvSf5a+5WGxlvD/2n7sifSYygiLJ6KtwLlBo
-	i3fmgB1Uv4BpyOxgmkBmDHcMQFy90ic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728392729;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVyELl6o/F4I9t4aYsMMGs+kdDbJ/MNuBGCTx/ubf5c=;
-	b=UV8i1l5CXojpBw2wOT5a+2d1I6MX50f4E1HgIavwPQnHTrTa4coKPgQOiVvwda+CIqZhDS
-	REpbWtfDTaNLotBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9BCD7137CF;
-	Tue,  8 Oct 2024 13:05:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2yzCJRkuBWcQBAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 08 Oct 2024 13:05:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ECB3CA08BD; Tue,  8 Oct 2024 15:05:28 +0200 (CEST)
-Date: Tue, 8 Oct 2024 15:05:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH] ext4: show the default enabled prefetch_block_bitmaps
- option
-Message-ID: <20241008130528.snt2iflir7pm5co6@quack3>
-References: <20241008120134.3758097-1-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBbS+fkY6pXexkLGYW8S2f4Eoz32l25t2QcQphGb2iIDjmTn9WKjEwPetU4/nGmHOZTbMBsxD6K/nVJi0LsMfll+A8MD8E7VNy02w0l65fz4CxbYQW89IG5YfEaGMDa+fzBZxKxrqdfzCGTOTptzOY//habfBOBtHyQZXfDsz38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 611CADA7;
+	Tue,  8 Oct 2024 06:06:52 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.77])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85DC33F640;
+	Tue,  8 Oct 2024 06:06:20 -0700 (PDT)
+Date: Tue, 8 Oct 2024 14:06:17 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-arm-kernel@lists.infread.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
+	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
+	justin.chen@broadcom.com, opendmb@gmail.com,
+	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] firmware: arm_scmi: Give SMC transport precedence over
+ mailbox
+Message-ID: <ZwUuSTYkWrZYIcBM@bogus>
+References: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
+ <ZwPLgcGeUcFPvjcz@pluto>
+ <a4f403e8-44eb-4fb4-8696-ca8ad7962a00@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,75 +61,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008120134.3758097-1-libaokun@huaweicloud.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,huaweicloud.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <a4f403e8-44eb-4fb4-8696-ca8ad7962a00@broadcom.com>
 
-On Tue 08-10-24 20:01:34, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> After commit 21175ca434c5 ("ext4: make prefetch_block_bitmaps default"),
-> we enable 'prefetch_block_bitmaps' by default, but this is not shown in
-> the '/proc/fs/ext4/sdx/options' procfs interface.
-> 
-> This makes it impossible to distinguish whether the feature is enabled by
-> default or not, so 'prefetch_block_bitmaps' is shown in the 'options'
-> procfs interface when prefetch_block_bitmaps is enabled by default.
-> 
-> This makes it easy to notice changes to the default mount options between
-> versions through the '/proc/fs/ext4/sdx/options' procfs interface.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Hi Florian,
 
-Looks good. Feel free to add:
+Thanks for the detailed explanation.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Mon, Oct 07, 2024 at 10:07:46AM -0700, Florian Fainelli wrote:
+> Hi Cristian,
+>
+> On October 7, 2024 4:52:33 AM PDT, Cristian Marussi
+> <cristian.marussi@arm.com> wrote:
+> > On Sat, Oct 05, 2024 at 09:33:17PM -0700, Florian Fainelli wrote:
+> > > Broadcom STB platforms have for historical reasons included both
+> > > "arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
+> > > string.
+> >
+> > Hi Florian,
+> >
+> > did not know this..
+>
+> It stems from us starting with a mailbox driver that did the SMC call, and
+> later transitioning to the "smc" transport proper. Our boot loader provides
+> the Device Tree blob to the kernel and we maintain backward/forward
+> compatibility as much as possible.
+>
 
-								Honza
+IIUC, you need to support old kernel with SMC mailbox driver and new SMC
+transport within the SCMI. Is that right understanding ?
 
-> ---
->  fs/ext4/super.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index b77acba4a719..c88a47639e9c 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -3030,6 +3030,9 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
->  		SEQ_OPTS_PUTS("mb_optimize_scan=1");
->  	}
->  
-> +	if (!test_opt(sb, NO_PREFETCH_BLOCK_BITMAPS))
-> +		SEQ_OPTS_PUTS("prefetch_block_bitmaps");
-> +
->  	ext4_show_quota_options(seq, sb);
->  	return 0;
->  }
-> -- 
-> 2.31.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> >
+> > >
+> > > After the commit cited in the Fixes tag and with a kernel
+> > > configuration that enables both the SCMI and the Mailbox transports, we
+> > > would probe the mailbox transport, but fail to complete since we would
+> > > not have a mailbox driver available.
+> > >
+> > Not sure to have understood this...
+> >
+> > ...you mean you DO have the SMC/Mailbox SCMI transport drivers compiled
+> > into the Kconfig AND you have BOTH the SMC AND Mailbox compatibles in
+> > DT, BUT your platform does NOT physically have a mbox/shmem transport
+> > and as a consequence, when MBOX probes (at first), you see an error from
+> > the core like:
+> >
+> >    "arm-scmi: unable to communicate with SCMI"
+> >
+> > since it gets no reply from the SCMI server (being not connnected via
+> > mbox) and it bails out .... am I right ?
+>
+> In an unmodified kernel where both the "mailbox" and "smc" transports are
+> enabled, we get the "mailbox" driver to probe first since it matched the
+> "arm,scmi" part of the compatible string and it is linked first into the
+> kernel. Down the road though we will fail the initialization with:
+>
+> [    1.135363] arm-scmi arm-scmi.1.auto: Using scmi_mailbox_transport
+> [    1.141901] arm-scmi arm-scmi.1.auto: SCMI max-rx-timeout: 30ms
+> [    1.148113] arm-scmi arm-scmi.1.auto: failed to setup channel for
+> protocol:0x10
+
+IIUC, the DTB has mailbox nodes that are available but fail only in the setup
+stage ? Or is it marked unavailable and we are missing some checks either
+in SCMI or mailbox ?
+
+IOW, have you already explored that this -EINVAL is correct return value
+here and can't be changed to -ENODEV ? I might be not following the failure
+path correctly here, but I assume it is
+	scmi_chan_setup()
+	info->desc->ops->chan_setup()
+	mailbox_chan_setup()
+	mbox_request_channel()
+
+> [    1.155828] arm-scmi arm-scmi.1.auto: error -EINVAL: failed to setup
+> channels
+> [    1.163379] arm-scmi arm-scmi.1.auto: probe with driver arm-scmi failed
+> with error -22
+>
+> Because the platform device is now bound, and there is no mechanism to
+> return -ENODEV, we won't try another transport driver that would attempt to
+> match the other compatibility strings. That makes sense because in general
+> you specify the Device Tree precisely, and you also have a tailored kernel
+> configuration. Right now this is only an issue using arm's
+> multi_v7_defconfig and arm64's defconfig both of which that we intend to
+> keep on using for CI purposes.
+>
+>
+> >
+> > If this is the case, without this patch, after this error and the mbox probe
+> > failing, the SMC transport, instead, DO probe successfully at the end, right ?
+>
+> With my patch we probe the "smc" transport first and foremost and we
+> successfully initialize it, therefore we do not even try the "mailbox"
+> transport at all, which is intended.
+>
+> >
+> > IOW, what is the impact without this patch, an error and a delay in the
+> > probe sequence till it gets to the SMC transport probe 9as second
+> > attempt) or worse ? (trying to understand here...)
+>
+> There is no recovery without the patch, we are not giving up the arm_scmi
+> platform device because there is no mechanism to return -ENODEV and allow
+> any of the subsequent transport drivers enabled to attempt to take over the
+> platform device and probe it again.
+>
+
+OK this sounds like you have already explored returning -ENODEV is not
+an option ? It is fair enough, but just want to understand correctly.
+I still think I am missing something.
+
+I understand the bootloader maintaining backward compatibility, but
+just want to understand better. I also wonder if the old SMC mailbox driver
+returns -EINVAL instead of -ENODEV ? Again it is based on my assumption
+about your backward compatibility usecase.
+
+--
+Regards,
+Sudeep
 
