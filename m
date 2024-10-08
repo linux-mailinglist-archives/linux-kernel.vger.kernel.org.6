@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-355744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9567B995657
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:21:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6796C99565E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1A92888D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:21:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A98B242A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0423212D04;
-	Tue,  8 Oct 2024 18:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB57212D13;
+	Tue,  8 Oct 2024 18:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="W0mZNS7q"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Ao4PoGI9"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EBD189910
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C43F20ADDB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411654; cv=none; b=O5PYMenVSrIEnccShoYyJFBhbiPPFVZiguCiZsLdsYkrhqBCcEt4rPkvcNlTsHfMV7L95/tcMItRZUA4Gz7N584D/BavMQPUqqY4dL+vFzz+n/Mb0ophukuFgmngDs5ulMnTtSR3u8yGA8hhgTiWojS0nLxeZxstODSM0OCXhgY=
+	t=1728411771; cv=none; b=N4RfSbSwgnu/i39+hSwGnCSw3MoyprxBbVZkNZR6nfjZbTWNq9f4QP5v9xuS24WmTHRodJ5AOWoHtL4CfObn2ygSCxVKrravxJUDvEOJGRPlVChsjUy8nDH4t43Ezun6AfHOQ1PqgKbecCPpdVzgJvluin+zCzcwqw7iHR3a03c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411654; c=relaxed/simple;
-	bh=maT2ElR+ztAXb8N7d6RAwLafiZW6/aQk5wJi3IPWR0I=;
+	s=arc-20240116; t=1728411771; c=relaxed/simple;
+	bh=Soj8mFaLd1Cyy0ejjBioY9cxLP9QIIW58JDFeiu2ts0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxUsOiMl/PySxItKGFb/tW958/8Ioqwhug6WN2HRzn9nl+OBrpVv4WLXEC580Jmd7M+pJlHLvmmDkcKC1JpG20C6cN4RRj9WbG8bd3QJN0jhkrz3dY9RCTSItVTMmyNN1a5xHDSHM39gLtozXnvjgYRIrxVfcr8l+izsdb8D3DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=W0mZNS7q; arc=none smtp.client-ip=209.85.210.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMWcOWCqpsrFn07drD/g4W1Gu8M7X+M/GYJdMky7gSjndifHzU/Iysn5F/xta7M8OLT9VqLt7HQQ8rfyRWmUYu6clgTtGnBd5fEIoZ1Jv2CIR3gamTkDqoNSsTOpZncUE4uvkLNShlV4f/P0F2i8vWew4g4o7CIFp2R9q9UmGsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Ao4PoGI9; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71de9e1f431so3467820b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:20:52 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b8be13cb1so63888765ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:22:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728411651; x=1729016451; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1728411770; x=1729016570; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PdixHRRhJR+67cK5BvTRI84FxCdkiNcyBDRYQb0ntbk=;
-        b=W0mZNS7q7PNrGpkL4TlMsJmeQC+19gKX5M0W49Vpy5OArPeUvd9EJ+U//n5sWYSJ2B
-         EZlaomI38+v8b1AQUHAI3yxwHQFexWc9ZvBjaxgFrtFD54Bt4D+h1Dzi5+PJJnhH9oAd
-         /RrqwJ2qEDg9daaZzT72U/4sB1WQI92HTQTJ0=
+        bh=mfgCpS5PaaDvZjkTJaE/xBzcbJqmdBm8+yyCnyw3De8=;
+        b=Ao4PoGI9vwBp2XBS9TbUrC82t+VibfUVIqpnOWesXqezv0Br5BL3Ty6wA+tIYl1bwg
+         Gl3KwX7OxATwATQ4aFYcSBL764vZgdr5lfvNManB36kYOHUNNMjmJjglTqDhY7hkgNAh
+         S6g4uoFnk9dwmJfotqQFxrZf4dItl8v4X5YDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728411651; x=1729016451;
+        d=1e100.net; s=20230601; t=1728411770; x=1729016570;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PdixHRRhJR+67cK5BvTRI84FxCdkiNcyBDRYQb0ntbk=;
-        b=ovlXTFk+P0S+93x1oxpcB/nhHoUJfIFK5s9am1uhR+TrfAgbgVw+e5lKvv4Vt3Wst4
-         TywB4PwsLB61eouGDVvuciJGa5KIBGbjbgPK0r8+LGY1YU791HZYSp9MG+a0Nxui7QWm
-         o+5GxMyvLYhXrQeosXqUOh4eYcPGLrl1HdImxtte2R+fixwGOK1tD7J3RxfbBriFzkpj
-         ud+VQzorY9a9vTTSItvgR4VI4nwRzecyVPxgjgM9V96xpK5TZvdd/LFr682bgF/tZn42
-         NUx81Y4ErkzqSyoVOZtz931/G06AhY+hyFe3rpjsr3x+qAw39K13glra+VGo2WAjN/jb
-         SBiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsqv5U/NvwlnVLCg8az7eqtzcAoCXRJ/5KJWrOUUfmD5sjVxSmgOCyFd9vDivB6b3629gEhQAIofWx7LU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuuvSwgeHJPzOhai82iNAVN+QpEKkMTkYiw1utDiq3ksYyYIed
-	dOTRj4FpWn/TDynKdUO4SM0fQ0ON7XjKtiDPMmamjToHXyp1juzDcc7ewuQ+5r4=
-X-Google-Smtp-Source: AGHT+IHcgv+kRTgXo20tsQSHIv8ZWddq4lfnoSxMVWL9FKQSzZc7w/QjVIgngvmNyac2gK8yiL0N6g==
-X-Received: by 2002:a05:6a00:3a14:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-71de22e1e3fmr27948867b3a.0.1728411651549;
-        Tue, 08 Oct 2024 11:20:51 -0700 (PDT)
+        bh=mfgCpS5PaaDvZjkTJaE/xBzcbJqmdBm8+yyCnyw3De8=;
+        b=IJznbtNklTm7q89ImRSm8SEZMHVigSDt3/ansRH+w0g7q7Ev2ipR9XtENc/DnW4Ago
+         neai+fE6HGkNgKqsmrzqQ36aF5DxUj1Zi3GIDjrL0MI7D2xfGZcQwJ1gSP2poG2oXt9C
+         e4Qhe9Ky8NMbv6fePS1ZfYKby0KCP+rPoq/ANTZ2SCaqQhfbApoeZBIkOybfSlRKR7bd
+         LIl4reT7+kj3wzBcuMBsBylMnvHOXXfHppzkeuIDh75X6RLFzipvO8aHtBU8Mvkc/6fm
+         QyvtKKB9ALXdhHPjJ5dHlJ1KI32laRejx+JQdeWgY2F6seU9NetdvVYWp6sfDFYDAEnb
+         YzMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgw7UwHD+tkbn3Uf8fg4OnucEVKhK6vY5QU0Y4IF+y28jUZGToJPC3RXTfAqh+fapU/CYpA4EuRNEPUjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3HEmP2nhbqbg/hDc3aiGJBeumEBHKVBTvz2eMcs90zERFcc7W
+	PkkN3/8rBC84wWOV0tXnZ1Fu5qCTs4mWeo1WenII4BVJesD64jKVNPMySVeDiVY=
+X-Google-Smtp-Source: AGHT+IGLwKH5D8GmqT91lF+IEqFV1bkPlXaOCwMdX6WQyBYQ2vbuWPbJ2h7utnI4zy5Lzw/E/iDnDg==
+X-Received: by 2002:a17:902:ea0f:b0:20b:a431:8f17 with SMTP id d9443c01a7336-20bff1c4055mr294243605ad.58.1728411769685;
+        Tue, 08 Oct 2024 11:22:49 -0700 (PDT)
 Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c4915asm7122825a12.86.2024.10.08.11.20.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c1395a408sm58422345ad.193.2024.10.08.11.22.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 11:20:50 -0700 (PDT)
-Date: Tue, 8 Oct 2024 11:20:47 -0700
+        Tue, 08 Oct 2024 11:22:49 -0700 (PDT)
+Date: Tue, 8 Oct 2024 11:22:45 -0700
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
@@ -72,15 +72,22 @@ Cc: mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v4 6/9] netdev-genl: Support setting per-NAPI
- config values
-Message-ID: <ZwV3_3K_ID1Va6rT@LQ3V64L9R2>
+	Jonathan Corbet <corbet@lwn.net>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>
+Subject: Re: [RFC net-next v4 3/9] net: napi: Make gro_flush_timeout per-NAPI
+Message-ID: <ZwV4dUxPZIVG366J@LQ3V64L9R2>
 Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
 	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
 	bjorn@rivosinc.com, amritha.nambiar@intel.com,
@@ -88,14 +95,22 @@ Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
+	Jonathan Corbet <corbet@lwn.net>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>
 References: <20241001235302.57609-1-jdamato@fastly.com>
- <20241001235302.57609-7-jdamato@fastly.com>
+ <20241001235302.57609-4-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,36 +119,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001235302.57609-7-jdamato@fastly.com>
+In-Reply-To: <20241001235302.57609-4-jdamato@fastly.com>
 
-On Tue, Oct 01, 2024 at 11:52:37PM +0000, Joe Damato wrote:
-> Add support to set per-NAPI defer_hard_irqs and gro_flush_timeout.
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->  Documentation/netlink/specs/netdev.yaml | 11 ++++++
->  include/uapi/linux/netdev.h             |  1 +
->  net/core/netdev-genl-gen.c              | 14 ++++++++
->  net/core/netdev-genl-gen.h              |  1 +
->  net/core/netdev-genl.c                  | 45 +++++++++++++++++++++++++
->  tools/include/uapi/linux/netdev.h       |  1 +
->  6 files changed, 73 insertions(+)
+On Tue, Oct 01, 2024 at 11:52:34PM +0000, Joe Damato wrote:
 
 [...]
 
-> diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-> index b28424ae06d5..901c6f65b735 100644
-> --- a/net/core/netdev-genl-gen.c
-> +++ b/net/core/netdev-genl-gen.c
-> @@ -87,6 +87,13 @@ static const struct nla_policy netdev_bind_rx_nl_policy[NETDEV_A_DMABUF_FD + 1]
->  	[NETDEV_A_DMABUF_QUEUES] = NLA_POLICY_NESTED(netdev_queue_id_nl_policy),
->  };
->  
-> +/* NETDEV_CMD_NAPI_SET - set */
-> +static const struct nla_policy netdev_napi_set_nl_policy[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT + 1] = {
-> +	[NETDEV_A_NAPI_ID] = { .type = NLA_U32, },
-> +	[NETDEV_A_NAPI_DEFER_HARD_IRQS] = { .type = NLA_S32 },
+> Note that idpf has embedded napi_struct in its internals and has
+> established some series of asserts that involve the size of napi
+> structure. Since this change increases the napi_struct size from 400 to
+> 416 (according to pahole on my system), I've increased the assertion in
+> idpf by 16 bytes. No attention whatsoever was paid to the cacheline
+> placement of idpf internals as a result of this change.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  .../networking/net_cachelines/net_device.rst  |  2 +-
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  2 +-
+>  include/linux/netdevice.h                     |  3 +-
+>  net/core/dev.c                                | 12 +++---
+>  net/core/dev.h                                | 40 +++++++++++++++++++
+>  net/core/net-sysfs.c                          |  2 +-
+>  6 files changed, 51 insertions(+), 10 deletions(-)
 
-Noticed this while re-reading the code; planning on changing this
-from NLA_S32 to NLA_U32 for v5.
+[...]
+
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+> index f0537826f840..fcdf73486d46 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+> @@ -438,7 +438,7 @@ struct idpf_q_vector {
+>  	__cacheline_group_end_aligned(cold);
+>  };
+>  libeth_cacheline_set_assert(struct idpf_q_vector, 112,
+> -			    424 + 2 * sizeof(struct dim),
+> +			    440 + 2 * sizeof(struct dim),
+>  			    8 + sizeof(cpumask_var_t));
+>  
+>  struct idpf_rx_queue_stats {
+
+Now that idpf was fixed separately [1], this will be removed in the
+v5.
+
+[1]: https://lore.kernel.org/netdev/20241004105407.73585-1-jdamato@fastly.com/
 
