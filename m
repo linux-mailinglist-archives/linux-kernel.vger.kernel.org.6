@@ -1,179 +1,555 @@
-Return-Path: <linux-kernel+bounces-354663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F7A9940B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:12:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F2C993FB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4153B28455D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:12:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D684B22F91
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B5F1DED62;
-	Tue,  8 Oct 2024 07:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6901DEFD9;
+	Tue,  8 Oct 2024 07:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c81k6ZFE"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZeXidkr"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F02923A0
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB4A38DF2;
+	Tue,  8 Oct 2024 07:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728372385; cv=none; b=H8iBiKvgeMcar7xFHC2Pb88/WBG7VELu5QQqyj6tgel4UDa7UYnVMMgt3WjEf2DGV+9BfI6MNrIcngWcPbWbzhEUfu7NUbLPOVWQOUJFYQ9hQ41dXQc8l7FkNUVes//ChG33bpfykKedtunmUwpwd9sEb+aXZ6SQ/ftJc299e3I=
+	t=1728372455; cv=none; b=DWWxGsGSV2pGdzwAqGWG96giRLrN31YYYCkfekKhofcp+8RcqH6owpzuITWdwjfX+P/hP3qMu+AK0890kkL5P2E3j2ACoMPPPFLCqkkFVHpZTe30spZOUOJbf0NXrYUNOf6l4Re+JRbPMagnbLScn5FwCBRKWiCC74H7ck09hjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728372385; c=relaxed/simple;
-	bh=YDulYG3j3Eeybv4/71XyZnv7MUvuCj1KoMSungfbKzo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dZx46771PVIJjLgXThgmaLuITTRubLJy8IVb4bm9WMmot8dBq7VxTW8n8vBDFFv9PRplvUupGDRXM4OsztpOyHDbww2hgghywhNSo66oZZCh63ld8M6z1ojQUijgKTSKSXbZKUisNkVp83srP3vJnmK0ytEiQK+iRiWuKnhh280=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c81k6ZFE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccc600466so2667340f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 00:26:23 -0700 (PDT)
+	s=arc-20240116; t=1728372455; c=relaxed/simple;
+	bh=ZqG9RiYdfjfyZKOym4k15OxhhR2yeCyTSXOPejQ/y0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nUZIJ5qAlU0kz3NP/pMlmIigNXX8XMDGNtIGuF2Tqz6xS3G6SIEkLmrmCFhjckXXerhaGzuggf59Hg/T/JJnx79lYdopouepwCQ1udF55azyglriNjq2qJnya0O29FGULIbd3VTBWVbEGXewc2QbekXKyr857xNW7jge9xdAhbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZeXidkr; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e28e6a1b11eso989928276.0;
+        Tue, 08 Oct 2024 00:27:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728372382; x=1728977182; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tde6naARiuFB2gj8gABk4yLz1i061Dy0b7ny+fgB1AI=;
-        b=c81k6ZFEfdrX8Lgbp/u1Gmgodozj37azSFUaiJ7M3L6qBG6N1ZzWkDr4Yx6cExJ5uo
-         w09ZwmjDVFTTWkjdQXABXNy7SullHHcN5C3Squa48kC41+ofvDsyb7oTua6Rs0Ykf8/S
-         RTGRIgOvPNopFpR6b9QG9QY1s4OUI1Ev+dIPZrZcmPIU/lYyEeh6hIrEtPOeJ9jqoyfD
-         dtkORHYyi7Fon/yyZLDxc9YgAVrQKQsQNG8YAxtR8ZKEHjNZfgEeUFDO3KTRKQEBZy1h
-         hxLpOFlFZmeJ34omq8tf92wN1Uzwhc71ZIVAzRkjs9B7pirGZ2oSYJ35ZN5R/xJoIc44
-         iXUg==
+        d=gmail.com; s=20230601; t=1728372452; x=1728977252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cR9zT5AIk862Ax8xhdMPEQkJwEJ6p0gQw7UNbLVjP3s=;
+        b=aZeXidkrqiPrBuNPvgNfbKDPOQxoehZ9W3Taq4bOHCmo9YRcBNNZmHfirn9uQo9O2f
+         LPgAutUCDXnXoZk0llCdDC6jYTyORiWB/4vB7t/tZpQ/EDtO490mXtDtTG9jNwxfkBZN
+         tc07+DF1Vmbwi0hFgpAFGpntSqP6tsEXlE0BHbM5YsdCtL8flLn2e60Kt5CNFthb40wP
+         f4GNs/F/aeuw/Vp1JaMmrhER3vcVOywzJzx7U6loqsX8VueDVLwsjM6ibLev6OBPchAK
+         mbHYZBErX6NztRc7ZD64bVs1Fcu8xwQuHYYxU1q+zvE9MQ/x9dg0HEWQHAhPkxZJDfuL
+         tTHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728372382; x=1728977182;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tde6naARiuFB2gj8gABk4yLz1i061Dy0b7ny+fgB1AI=;
-        b=VACFZWug7RlCbM5X3wfk5rMm/3cE0G7t+ojmiLBeWfp/4OAnz3h4pzSOA3Suvemldf
-         wIBTLn4r/yAPQp6cwNqRKnSd1Log6BIIjwelny5FELmkynIqArCt89IstV+cCIKmzCB8
-         OLRUngg7s2FguT6VRrn6i7WqajukMjZ0cCQ91XcWIl6YfJ+TLkojDi0yYwuBN1N38PHU
-         FQDDJbNtpNbcsta19qzWAVpOnKDHPKk5r3xvnJqDaNPZUkAg2qrhrjVshasmXtsuceml
-         Vd0SGtiLW2Rg4KK1vQ3zgJRGdECr+u4X3eVAiLQicb+FrNZND+M5GCi1+UFrTizdYcVM
-         JG9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtzstUdX2QT78vVdZu9wrsshRtN89Rxwn9Snv1FK5Z+hV4DVE7cq7e3AIp4hVws4EgJoJ7mBosS8/e3Vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEsY6GxoYrtVit6HtmfKmdCN9pQi6ZtnM+QAfc9wfkUu0yVxX6
-	a8JTaiWC4888k7XG6iacMKNwuzUDLFVZ4zpITWS9WW7ZWcjJUO73BCs/RcMJr50=
-X-Google-Smtp-Source: AGHT+IGFT9Rs5w4u61S51MLKNuVCCfuA33nAIecdHnPzSR0BOYT1oFGdenXpd4JxBOZV/8fyyDDrnA==
-X-Received: by 2002:a5d:47ae:0:b0:37d:3173:e018 with SMTP id ffacd0b85a97d-37d3173e40cmr543467f8f.40.1728372381784;
-        Tue, 08 Oct 2024 00:26:21 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19? ([2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695e9b6sm7391552f8f.76.2024.10.08.00.26.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 00:26:21 -0700 (PDT)
-Message-ID: <2e3f719c-82e8-4d95-b159-c8c31dec4293@linaro.org>
-Date: Tue, 8 Oct 2024 09:26:20 +0200
+        d=1e100.net; s=20230601; t=1728372452; x=1728977252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cR9zT5AIk862Ax8xhdMPEQkJwEJ6p0gQw7UNbLVjP3s=;
+        b=WPSZvmMakLbOz0DZnCITh9QR7FXSou/M+KC9oDBYfv3uvab6yCWAEpw4oRcVbLmC9/
+         ZRxXfN6D492NYb6VkF6478WSjcTFrIyHKyBDQxrJqjuyYJHx/Nzm0+mQxa0JYLb2TyJR
+         ZWErA5cv7lTY/V7KzMHelP3z6vHQBRk3pfwJqD7COVNXnFNGbRnENthQjOHUtqXEnBH/
+         JlHs/S0acG0u731puaq5ZQG6VcSSI4sXf0PYAqvwdeBiyD6UdREsQY05Xgw+eQw2D+0x
+         XDeZwzrO/PnVcRdxU+zFtR4qDE6gM3hlYs4A8v9tuAT1QXxFbyqL5gaFJK3m7LLd5OC/
+         7cuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRqNmkxoxwUQPjvH0/kgduFdVPhm8NZKIdVybQB4Zd1lVdQKry560tiWYmK09TJtuqLlg+hEug/C6AfH8=@vger.kernel.org, AJvYcCXXkM4atjRwYxfHFJp4Q3oBexXzYO3JbmoOkUk4g8fl39Wv/G1xnJ4tFg1xVMgAoUyYJYg9mRI2mhX8Cq+rSiFoYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+WDFehTrlJI8+1o4SvHfiZt13uI8EbZUISh1164ygE/Ob7ib2
+	cp+PZg0GnTLf3vhWhtsZBaCDw0W89t+kIAk2Ryup2onRQVE89fUe6fjwxa6nqPcXTn9/x31VWxO
+	mD2Am0HJir6JYPDpzksRyNe1Jm1U=
+X-Google-Smtp-Source: AGHT+IHBnWzQJTVV5JS+vOLFAj0tPRR/UDs7oxDMTc4ORJdb/pbfjfFVQq+96mL0b6HApSHenEUcmDy1/1fTmc/WNDs=
+X-Received: by 2002:a05:6902:228d:b0:e22:59c6:5d2f with SMTP id
+ 3f1490d57ef6-e289393e43emr9833635276.51.1728372451859; Tue, 08 Oct 2024
+ 00:27:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] dt-bindings: soc: amlogic,meson-gx-hhi-sysctrl: Document
- the System Control registers found on early Meson SoC
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-hhi-sysctrl-meson8-v1-1-896b24e6c3c8@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-hhi-sysctrl-meson8-v1-1-896b24e6c3c8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <ZuGL9ROeTV2uXoSp@x1> <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
+ <ZuL_0V5jgaaEUOY_@x1> <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
+ <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
+ <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
+ <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
+ <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
+ <9bbfe425-1f2b-4846-a5a3-a31618742e9a@oracle.com> <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
+In-Reply-To: <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 8 Oct 2024 00:27:24 -0700
+Message-ID: <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
+ BPF skeletons
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, James Clark <james.clark@linaro.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jerome,
+Hi Alan, Arnaldo and James,
 
-On 07/10/2024 16:09, Neil Armstrong wrote:
-> The early Amlogic SoCs also has a System Control registers register set,
-> document it in the amlogic,meson-gx-hhi-sysctrl now the clock controller
-> has been converted to yaml dt-schema.
+This problem was solved in [PATCH 0/2] perf trace: Fix support for the
+new BPF feature in clang 12 (Link:
+https://lore.kernel.org/linux-perf-users/20241007051414.2995674-1-howardchu=
+95@gmail.com/T/#t),
+sorry I forgot to cc you two.
 
-Could you take it via the meson-clk tree since the amlogic,meson8-clkc.yaml dependency is in it ?
+Alan's thought was correct. Thank you so much! :)
 
 Thanks,
-Neil
+Howard
 
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->   .../bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-> index c6bce40946d4..3dc66f1de023 100644
-> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-> @@ -13,6 +13,7 @@ properties:
->     compatible:
->       items:
->         - enum:
-> +          - amlogic,meson-hhi-sysctrl
->             - amlogic,meson-gx-hhi-sysctrl
->             - amlogic,meson-gx-ao-sysctrl
->             - amlogic,meson-axg-hhi-sysctrl
-> @@ -36,6 +37,19 @@ properties:
->       type: object
->   
->   allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - amlogic,meson-hhi-sysctrl
-> +    then:
-> +      properties:
-> +        clock-controller:
-> +          $ref: /schemas/clock/amlogic,meson8-clkc.yaml#
-> +
-> +        pinctrl: false
-> +        phy: false
-> +
->     - if:
->         properties:
->           compatible:
-> 
-> ---
-> base-commit: 2e99ba3e918f5f1a987c86e559fe8f14d9c4048c
-> change-id: 20241007-topic-amlogic-arm32-upstream-bindings-fixes-hhi-sysctrl-meson8-158da98bee95
-> 
-> Best regards,
 
+On Tue, Sep 24, 2024 at 11:45=E2=80=AFAM Howard Chu <howardchu95@gmail.com>=
+ wrote:
+>
+> Hello Alan,
+>
+> On Tue, Sep 24, 2024 at 2:30=E2=80=AFAM Alan Maguire <alan.maguire@oracle=
+.com> wrote:
+> >
+> > On 24/09/2024 03:00, Howard Chu wrote:
+> > > Hello,
+> > >
+> > > I got some good news:
+> > >
+> > > Not being able to pass the BPF verifier is solely (or bi-solely)
+> > > caused by these two functions:
+> > >
+> > > SEC("tp/syscalls/sys_enter_rename")
+> > > int sys_enter_rename(struct syscall_enter_args *args)
+> > >
+> > > SEC("tp/syscalls/sys_enter_renameat2")
+> > > int sys_enter_renameat2(struct syscall_enter_args *args)
+> > >
+> > > The problem with it is double-string augmentation, but I haven't
+> > > figured out how to solve it. Can you please take a look please,
+> > > Arnaldo? Now I just commented these two BPF functions and perf trace
+> > > runs no problem, built by clang that's older than clang 16, for
+> > > example clang 15.0.7.
+> > >
+> >
+> > hi Howard,
+> >
+> > I could be wrong - and I don't know this code at all - but I _think_ th=
+e
+> > problem is here:
+> >
+> >         oldpath_len =3D augmented_arg__read_str(&augmented_args->arg,
+> > oldpath_arg, sizeof(augmented_args->arg.value));
+> >         augmented_args->arg.size =3D PERF_ALIGN(oldpath_len + 1, sizeof=
+(u64));
+> >         len +=3D augmented_args->arg.size;
+> >
+> >         struct augmented_arg *arg2 =3D (void *)&augmented_args->arg.val=
+ue
+> > + augmented_args->arg.size;
+> >
+> >         newpath_len =3D augmented_arg__read_str(arg2, newpath_arg,
+> > sizeof(augmented_args->arg.value));
+> >
+> >
+> > Notice that these strings share the augmented_args->arg.value for
+> > storage, but in the second case (reading arg2) we have added
+> > augmented_args->arg.size to the offset where we store the second string=
+.
+> > However at the same time we have also told augmented_arg__read_str()
+> > that it has
+> >
+> > sizeof(augmented_args->arg.value)
+> >
+> >
+> > ...to work with as arg_len, where in reality we should have specified
+> >
+> > sizeof(augmented_args->arg.value) - augmented_args->arg.size
+> >
+> > ...and ensured that after doing that subtraction, there is still space
+> > to work with (i.e. the above is > 0).
+> >
+> > I _think_ the verifier is likely complaining that we can write past the
+> > end of augmented_args->arg.value , does that sound right?
+> >
+> > Fixing the arg_len parameter for cases where we record more than one
+> > augmented string by reducing arg_len available should solve this if so.
+> > Hope this helps,
+>
+>
+> Thanks for the help, but unfortunately it didn't work... But that's a
+> valid analysis, I had the same idea as you, but I haven't been able to
+> solve it. I'll give it more tries.
+>
+> Thanks,
+> Howard
+>
+> >
+> > Alan
+> >
+> > > perf $ clang -v
+> > > Ubuntu clang version 15.0.7
+> > > Target: x86_64-pc-linux-gnu
+> > > Thread model: posix
+> > > InstalledDir: /bin
+> > > Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > > Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > > Candidate multilib: .;@m64
+> > > Selected multilib: .;@m64
+> > > perf $ ./perf trace -e write --max-events=3D1
+> > >      0.000 ( 0.008 ms): gmain/2173 write(fd: 4, buf: \1\0\0\0\0\0\0\0=
+,
+> > > count: 8)                         =3D
+> > >
+> > > But plot twist, it won't build on clang-14
+> > >
+> > > perf $ clang -v
+> > > Ubuntu clang version 14.0.6
+> > > Target: x86_64-pc-linux-gnu
+> > > Thread model: posix
+> > > InstalledDir: /bin
+> > > Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > > Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > > Candidate multilib: .;@m64
+> > > Selected multilib: .;@m64
+> > > perf $ ./perf trace -e write --max-events=3D1
+> > > libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+> > > libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+> > > 0: R1=3Dctx() R10=3Dfp0
+> > > ; int sys_enter(struct syscall_enter_args *args) @
+> > > augmented_raw_syscalls.bpf.c:509
+> > > 0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
+> > >
+> > > This time the problem is my code in BTF general collector:
+> > >
+> > > ; payload_offset +=3D written; @ augmented_raw_syscalls.bpf.c:497
+> > >
+> > > I'll resolve this.
+> > >
+> > > Thanks,
+> > > Howard
+> > >
+> > > On Wed, Sep 18, 2024 at 8:13=E2=80=AFPM Howard Chu <howardchu95@gmail=
+.com> wrote:
+> > >>
+> > >> Hello,
+> > >>
+> > >> I'm able to reproduce it on Ubuntu 24.
+> > >>
+> > >> perf $ cat /etc/os-release
+> > >> PRETTY_NAME=3D"Ubuntu 24.04.1 LTS"
+> > >> NAME=3D"Ubuntu"
+> > >> VERSION_ID=3D"24.04"
+> > >> VERSION=3D"24.04.1 LTS (Noble Numbat)"
+> > >> VERSION_CODENAME=3Dnoble
+> > >> ID=3Dubuntu
+> > >> ID_LIKE=3Ddebian
+> > >> HOME_URL=3D"https://www.ubuntu.com/"
+> > >> SUPPORT_URL=3D"https://help.ubuntu.com/"
+> > >> BUG_REPORT_URL=3D"https://bugs.launchpad.net/ubuntu/"
+> > >> PRIVACY_POLICY_URL=3D"https://www.ubuntu.com/legal/terms-and-policie=
+s/privacy-policy"
+> > >> UBUNTU_CODENAME=3Dnoble
+> > >> LOGO=3Dubuntu-logo
+> > >>
+> > >> perf $ uname -r
+> > >> 6.11.0-061100-generic
+> > >>
+> > >> perf $ git log
+> > >> commit 4c1af9bf97eb56d069421c3233ce61608458d5c8 (HEAD)
+> > >> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > >> Date:   Tue Sep 10 13:54:23 2024 -0300
+> > >>
+> > >>     perf trace: If a syscall arg is marked as 'const', assume it is
+> > >> coming _from_ userspace
+> > >>
+> > >>
+> > >> perf $ clang -v
+> > >> Ubuntu clang version 15.0.7
+> > >> Target: x86_64-pc-linux-gnu
+> > >> Thread model: posix
+> > >> InstalledDir: /bin
+> > >> Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/1=
+3
+> > >> Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > >> Candidate multilib: .;@m64
+> > >> Selected multilib: .;@m64
+> > >>
+> > >> perf $ ./perf trace -e write --max-events=3D1
+> > >> libbpf: prog 'sys_enter_rename': BPF program load failed: Permission=
+ denied
+> > >> libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
+> > >> 0: R1=3Dctx() R10=3Dfp0
+> > >> ; int sys_enter_rename(struct syscall_enter_args *args) @
+> > >> augmented_raw_syscalls.bpf.c:275
+> > >>
+> > >>
+> > >> With clang-16:
+> > >>
+> > >> perf $ clang -v
+> > >> Ubuntu clang version 16.0.6 (23ubuntu4)
+> > >> Target: x86_64-pc-linux-gnu
+> > >> Thread model: posix
+> > >> InstalledDir: /bin
+> > >> Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/1=
+3
+> > >> Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
+> > >> Candidate multilib: .;@m64
+> > >> Selected multilib: .;@m64
+> > >>
+> > >> perf $ ./perf trace -e write --max-events=3D1
+> > >>      0.000 ( 0.021 ms): sudo/4741 write(fd: 8, buf:
+> > >> \27[?25l\27[37m\27[48;5;96m\27[H[trace] , count: 205) =3D
+> > >>
+> > >>> I'll try to build it and see. But Ubuntu 22 only has clang 11 to 15=
+ so
+> > >>> making 16 the minimum could be an issue.
+> > >>
+> > >> Yes, I think disabling any distro that doesn't come with clang 16
+> > >> (released in 2023) is not a good idea. I'll try to tame the BPF
+> > >> verifier.
+> > >>
+> > >> Thanks,
+> > >> Howard
+> > >>
+> > >> On Tue, Sep 17, 2024 at 10:37=E2=80=AFAM Howard Chu <howardchu95@gma=
+il.com> wrote:
+> > >>>
+> > >>> Hello James and Arnaldo,
+> > >>>
+> > >>> On Fri, Sep 13, 2024 at 3:42=E2=80=AFAM Arnaldo Carvalho de Melo
+> > >>> <arnaldo.melo@gmail.com> wrote:
+> > >>>>
+> > >>>>
+> > >>>>
+> > >>>> On Fri, Sep 13, 2024, 7:20=E2=80=AFAM James Clark <james.clark@lin=
+aro.org> wrote:
+> > >>>>>
+> > >>>>>
+> > >>>>>
+> > >>>>> On 12/09/2024 15:50, Arnaldo Carvalho de Melo wrote:
+> > >>>>>> On Thu, Sep 12, 2024 at 03:40:32PM +0100, James Clark wrote:
+> > >>>>>>> On 11/09/2024 13:24, Arnaldo Carvalho de Melo wrote:
+> > >>>>>>>> Howard reported problems using perf features that use BPF:
+> > >>>>>>
+> > >>>>>>>>     perf $ clang -v
+> > >>>>>>>>     Debian clang version 15.0.6
+> > >>>>>>>>     Target: x86_64-pc-linux-gnu
+> > >>>>>>>>     Thread model: posix
+> > >>>>>>>>     InstalledDir: /bin
+> > >>>>>>>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-l=
+inux-gnu/12
+> > >>>>>>>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gn=
+u/12
+> > >>>>>>>>     Candidate multilib: .;@m64
+> > >>>>>>>>     Selected multilib: .;@m64
+> > >>>>>>>>     perf $ ./perf trace -e write --max-events=3D1
+> > >>>>>>>>     libbpf: prog 'sys_enter_rename': BPF program load failed: =
+Permission denied
+> > >>>>>>>>     libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
+> > >>>>>>>>     0: R1=3Dctx() R10=3Dfp0
+> > >>>>>>>>
+> > >>>>>>>> But it works with:
+> > >>>>>>>>
+> > >>>>>>>>     perf $ clang -v
+> > >>>>>>>>     Debian clang version 16.0.6 (15~deb12u1)
+> > >>>>>>>>     Target: x86_64-pc-linux-gnu
+> > >>>>>>>>     Thread model: posix
+> > >>>>>>>>     InstalledDir: /bin
+> > >>>>>>>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-l=
+inux-gnu/12
+> > >>>>>>>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gn=
+u/12
+> > >>>>>>>>     Candidate multilib: .;@m64
+> > >>>>>>>>     Selected multilib: .;@m64
+> > >>>>>>>>     perf $ ./perf trace -e write --max-events=3D1
+> > >>>>>>>>          0.000 ( 0.009 ms): gmain/1448 write(fd: 4, buf: \1\0\=
+0\0\0\0\0\0, count: 8)                         =3D 8 (kworker/0:0-eve)
+> > >>>>>>>>     perf $
+> > >>>>>>>>
+> > >>>>>>>> So lets make that the required version, if you happen to have =
+a slightly
+> > >>>>>>>> older version where this work, please report so that we can ad=
+just the
+> > >>>>>>>> minimum required version.
+> > >>>>>>
+> > >>>>>>> I wasn't able to reproduce the issue with either of these versi=
+ons. But I
+> > >>>>>>> suppose it could be an issue with only 15.0.6.
+> > >>>>>>
+> > >>>>>> Interesting, that complicates things, probably the best way then=
+ is to
+> > >>>>>> try to build it, if it fails, mention that 15.0.6 is known to be
+> > >>>>>> problematic and suggest working versions?
+> > >>>>>>
+> > >>>>>> - Arnaldo
+> > >>>>>
+> > >>>>> I still wasn't able to reproduce it with 15.0.6. And I double che=
+cked
+> > >>>>> with V=3D1 that the build was using the right clang. I suppose it=
+ could be
+> > >>>>> a build configuration issue, or maybe with a different kernel ver=
+sion?
+> > >>>>
+> > >>>>
+> > >>>> Howard? If not reproducible we can revert it.
+> > >>>>
+> > >>>> - Arnaldo
+> > >>>>
+> > >>>>
+> > >>>>>
+> > >>>>> $  uname --kernel-release
+> > >>>>> 6.8.0-76060800daily20240311-generic
+> > >>>>>
+> > >>>>> $ ../../llvm-project/build/bin/clang -v
+> > >>>>> clang version 15.0.6 (https://github.com/llvm/llvm-project.git
+> > >>>>> 088f33605d8a61ff519c580a71b1dd57d16a03f8)
+> > >>>>> Target: x86_64-unknown-linux-gnu
+> > >>>>> Thread model: posix
+> > >>>>> InstalledDir: /home/james/workspace/linux/linux/../../llvm-projec=
+t/build/bin
+> > >>>>> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/1=
+1
+> > >>>>> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/1=
+2
+> > >>>>> Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
+> > >>>>> Candidate multilib: .;@m64
+> > >>>>> Selected multilib: .;@m64
+> > >>>>>
+> > >>>>> $ git log
+> > >>>>> commit 003265bb6f028d7bcd7cbd92d6ba2b4e26382796
+> > >>>>> (perf-tools-next/perf-tools-next)
+> > >>>>>
+> > >>>>> $ make O=3D../build/local/ CLANG=3D../../llvm-project/build/bin/c=
+lang -C \
+> > >>>>>    tools/perf
+> > >>>>>
+> > >>>>> $ perf trace -e write --max-events=3D1
+> > >>>>>
+> > >>>>>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
+> > >>>>>         0x7fffa102d9b0, count: 8)                           =3D 8
+> > >>>
+> > >>> Thanks for the effort! But this output seems to be unaugmented? I
+> > >>> think you are testing the perf/perf-tools-next branch that's slight=
+ly
+> > >>> older (perf mem: Fix the wrong reference in parse_record_events()
+> > >>> 003265bb6f028d7bcd7cbd92d6ba2b4e26382796), and I think that doesn't
+> > >>> have the new perf trace feature yet...
+> > >>>
+> > >>> That's why the perf trace output looks like:
+> > >>>
+> > >>>>> $ perf trace -e write --max-events=3D1
+> > >>>>>
+> > >>>>>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
+> > >>>>>         0x7fffa102d9b0, count: 8)
+> > >>>
+> > >>> With the new buffer augmentation it should look like this:
+> > >>>
+> > >>> perf $ ./perf trace -e write --max-events=3D1
+> > >>>      0.000 ( 0.011 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0=
+\0,
+> > >>> count: 8)                         =3D
+> > >>>
+> > >>> The new perf trace can be found on
+> > >>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/
+> > >>> perf-tools-next
+> > >>>
+> > >>> perf $ git log
+> > >>> commit 1de5b5dcb8353f36581c963df2d359a5f151a0be (HEAD ->
+> > >>> struct-aug-arnaldo-2, perf/perf-tools-next)
+> > >>>
+> > >>> Also, if you want to test the clang, you may want to checkout to th=
+e
+> > >>> commit before the clang-16 guard (otherwise you can't test differen=
+t
+> > >>> clang version).
+> > >>>
+> > >>> perf $ git log --oneline
+> > >>> 1de5b5dcb835 (HEAD -> struct-aug-arnaldo-2, perf/perf-tools-next) p=
+erf
+> > >>> trace: Mark the 'head' arg in the set_robust_list syscall as coming
+> > >>> from user space
+> > >>> 0c1019e3463b perf trace: Mark the 'rseq' arg in the rseq syscall as
+> > >>> coming from user space
+> > >>> edf3ce0ed38e perf env: Find correct branch counter info on hybrid
+> > >>> 9953807c9e01 perf evlist: Print hint for group
+> > >>> eb9b9a6f5ab3 tools: Drop nonsensical -O6
+> > >>> 89c0a55e550e perf pmu: To info add event_type_desc
+> > >>> f08cc258431d perf evsel: Add accessor for tool_event
+> > >>> 925320737ae2 perf pmus: Fake PMU clean up
+> > >>> d3d5c1a00fcd perf list: Avoid potential out of bounds memory read
+> > >>> 4ae354d73a8e perf help: Fix a typo ("bellow")
+> > >>> 74298dd8acb8 perf ftrace: Detect whether ftrace is enabled on syste=
+m
+> > >>> 83420d5f5863 perf test shell probe_vfs_getname: Remove extraneous '=
+=3D'
+> > >>> from probe line number regex
+> > >>> 9327f0ecad48 perf build: Require at least clang 16.0.6 to build BPF
+> > >>> skeletons. **********[[[[[[[[[[[[!!!!(This is the clang
+> > >>> guard)]]]]]]]]]]*****
+> > >>> 4c1af9bf97eb perf trace: If a syscall arg is marked as 'const', ass=
+ume
+> > >>> it is coming _from_ userspace
+> > >>> e37b315c17df perf parse-events: Remove duplicated include in parse-=
+events.c
+> > >>>
+> > >>> My machine is debian 12, and I cannot build perf trace with the new
+> > >>> augmentation feature on clang-13, clang-14, and clang-15.
+> > >>>
+> > >>> perf $ uname -r
+> > >>> 6.11.0-061100rc7-generic
+> > >>>
+> > >>> perf $ git log
+> > >>> commit 4c1af9bf97eb56d069421c3233ce61608458d5c8 (HEAD)
+> > >>>
+> > >>> perf $ make CLANG=3D/bin/clang-13 && ./perf trace -e write --max-ev=
+ents=3D1
+> > >>> ...
+> > >>> libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+> > >>> libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+> > >>> 0: R1=3Dctx() R10=3Dfp0
+> > >>> ; int sys_enter(struct syscall_enter_args *args) @
+> > >>> augmented_raw_syscalls.bpf.c:509
+> > >>> 0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
+> > >>>
+> > >>>
+> > >>> perf $ make CLANG=3D/bin/clang-14 && ./perf trace -e write --max-ev=
+ents=3D1
+> > >>> ...
+> > >>> libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+> > >>> libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+> > >>> 0: R1=3Dctx() R10=3Dfp0
+> > >>> ; int sys_enter(struct syscall_enter_args *args) @
+> > >>> augmented_raw_syscalls.bpf.c:509
+> > >>>
+> > >>>
+> > >>> perf $ make CLANG=3D/bin/clang-15 && ./perf trace -e write --max-ev=
+ents=3D1
+> > >>> libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+> > >>> libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+> > >>> 0: R1=3Dctx() R10=3Dfp0
+> > >>>
+> > >>>
+> > >>> perf $ make CLANG=3D/bin/clang-16 && ./perf trace -e write --max-ev=
+ents=3D1
+> > >>>      0.000 ( 0.010 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0=
+\0,
+> > >>> count: 8)                         =3D
+> > >>>
+> > >>>
+> > >>> Anyway thank you so much, I'll try to reproduce it on Ubuntu, like =
+you
+> > >>> mentioned.
+> > >>>
+> > >>> Thanks,
+> > >>> Howard
+> > >>>
+> > >>>
+> > >>>>>
+> >
 
