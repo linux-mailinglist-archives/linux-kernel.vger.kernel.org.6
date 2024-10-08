@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-354733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F226F9941E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF669941EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3605BB28307
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3891C21320
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF1E20C46B;
-	Tue,  8 Oct 2024 07:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEE31E3DFE;
+	Tue,  8 Oct 2024 07:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yj8D2NIg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YfjNPipn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O9LJuDw5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W3+DJXAa"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB001CDFDA;
-	Tue,  8 Oct 2024 07:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2841E47DC;
+	Tue,  8 Oct 2024 07:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728374185; cv=none; b=QoBZEzKN9PAk5YNl/e18LRTgRnerFDYAGGpf6Z8+MeUJJU7NdI6z5oaiQLup7WTN/HlVlHVLaRUk7Ly1uKCcFKLGYJOkw7dT5D4t+PSQmU6w1nrUc4vDk1DCgCsDoFT/6xj65oSefZnjGLgvnTVtZUFHnslHSDYBi6bTeVDMUug=
+	t=1728374185; cv=none; b=BegDLntcHp7tMJsblOy0cK3kSVdcE7M+NmUWRyebLtkCpLdDmv1nvrOldTOpHaqgB7ZGdA8rke1u7Das4sVmUi4C9Bb06rDiRv3srCE3nI16u2pysHFvd9fLJn9VXZyjPH/AKLZzfIJDWR5tou36djXoiFuuRRe6BHDa05WkdsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728374185; c=relaxed/simple;
-	bh=s0Bxv9SKOtnTVCla81T+1PRfMlx/XHnJidCCbDYKjzo=;
+	bh=OnZdR/PeIStOl/UwKGSNmYgyBjQlSaVWMVmJ7hglGIU=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DVrrZRAm2LroZbDwHv+5ggBHgR7nVCgEhT1CIK8I6zYSNEsL/0m54qImdR1O1boNEBnhILyOc4JKW0CjsCLhkSdUfdZsqXQINDKlPsaLf9PGFxAIfTiheWc2h6zxnQ9DuiYRPF8nsiSVkfNwlYxXBQC9/tUuScq04qEpTAQZDxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yj8D2NIg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YfjNPipn; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=tbU8wXjAuaD21VG5b0C+l734AAXggAsFUC8nBVSKV0SW8kbiwL2rxQwvnAGSQvNKB0cAIOYgV87E4HvGsx/uUZjE6tIruFtfC9jOfyrVX9Ty97zft/8PhuST7Dm67hs/eND/BVf/t66u41yorVO4P0f3KzXuLlvZd6bge/2IlCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O9LJuDw5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W3+DJXAa; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 07:56:19 -0000
+Date: Tue, 08 Oct 2024 07:56:21 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728374181;
+	s=2020; t=1728374182;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+g5TZIXUOj1cA7euEhKF0WT5Do9vByysHxIzw+lrHHw=;
-	b=Yj8D2NIgieORfOSIPNbCZwKUlcLo9Er7PijcFZJGJNL8kx8A6GYGT13QpkF3OOQUBEs2sj
-	W4T5hc9Q6mKw5KtWFrK3GKESjcK4a/XC9rHb+yIF4XOXupOjElVRM9ckBbf0H93Yz6Zm0+
-	BWYu2qcQI3xcxGcVob5Y2Gz57DdZ4ca3XyuqgMlbm98rozE/mMZyiY68HKsVS7en8iDrrN
-	19zNqsHLIwR7wTSLW+vSGPtyK8Wm/lUXt5hgjpHwwcKedOb1Mo/CVz9w8i4Eb3VotSHuip
-	YE9QFJb3kjQ222hcvahZFtP/L0NCs2DbsNoja0fJW0cSgHXRaSRkkMQhQH3ncg==
+	bh=VjG+YXoheuV4tyzsZL+44/97M+trG4fGWcGM6FdA75Q=;
+	b=O9LJuDw5KBcZ1vTVvh8WQ16KrHxioNPzG6CI0sHlfPTJuxVhjKmEWompA1Mz/sWvWJ9CO4
+	8YtJyIiOT3N1ohGB2t073JMedpMACgjb/eEX863HnQCkJ4rFAxnF9Wtt3He3P+TWvGWIGI
+	QYaclujemuMOX0EwSvkGKv/MHuPXulLaa20aIKhRL9JBKK5vontawdWEmAh0J4LrKWDY2W
+	WAngi2TbhrGB37YkxIPPTeo2CUsB2XwHr7h9UdzWyf2qzjwMJHeTUDsuRTF+XCLq+QShRu
+	aI635u1Be/NC1w5hAXahrJBC5/re3TZ0+TPOttoXmGswspLVuT5nHqEIMsY/Lw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728374181;
+	s=2020e; t=1728374182;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+g5TZIXUOj1cA7euEhKF0WT5Do9vByysHxIzw+lrHHw=;
-	b=YfjNPipn8QqiSSQz67/539tQCW3s6GGWhMFoAgDGvggcWlVSBzz3F0GcE9aJgcBV3YueHy
-	tVni4Fw4f73CNmDg==
-From: "tip-bot2 for David Disseldorp" <tip-bot2@linutronix.de>
+	bh=VjG+YXoheuV4tyzsZL+44/97M+trG4fGWcGM6FdA75Q=;
+	b=W3+DJXAarcQ6PYaY+W1+H3zHzP3G+ZXee+LDFb/1ERffLTyitq/Ei5D0RAGO+VGBzCU+xO
+	394qJvk2XjcWfCDw==
+From: "tip-bot2 for NeilBrown" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/core] sched: remove unused __HAVE_THREAD_FUNCTIONS hook support
-Cc: David Disseldorp <ddiss@suse.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240930050945.30304-2-ddiss@suse.de>
-References: <20240930050945.30304-2-ddiss@suse.de>
+Subject: [tip: sched/core] sched: add wait_var_event_io()
+Cc: NeilBrown <neilb@suse.de>, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240925053405.3960701-7-neilb@suse.de>
+References: <20240925053405.3960701-7-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172837417999.1442.13689312973453261120.tip-bot2@tip-bot2>
+Message-ID: <172837418166.1442.8175035816812384640.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,57 +80,72 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     5e9f0c4819deb9459f32f12c4fd2b47993b8c395
-Gitweb:        https://git.kernel.org/tip/5e9f0c4819deb9459f32f12c4fd2b47993b8c395
-Author:        David Disseldorp <ddiss@suse.de>
-AuthorDate:    Mon, 30 Sep 2024 05:09:46 
+Commit-ID:     80681c04c5e8e4297b9ebf201ca3ce6242aa16c3
+Gitweb:        https://git.kernel.org/tip/80681c04c5e8e4297b9ebf201ca3ce6242aa16c3
+Author:        NeilBrown <neilb@suse.de>
+AuthorDate:    Wed, 25 Sep 2024 15:31:43 +10:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 07 Oct 2024 09:28:40 +02:00
+CommitterDate: Mon, 07 Oct 2024 09:28:39 +02:00
 
-sched: remove unused __HAVE_THREAD_FUNCTIONS hook support
+sched: add wait_var_event_io()
 
-__HAVE_THREAD_FUNCTIONS could be defined by architectures wishing to
-provide their own task_thread_info(), task_stack_page(),
-setup_thread_stack() and end_of_stack() hooks.
+It is not currently possible to wait wait_var_event for an io_schedule()
+style wait.  This patch adds wait_var_event_io() for that purpose.
 
-Commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
-removed the last upstream consumer of __HAVE_THREAD_FUNCTIONS, so change
-the remaining !CONFIG_THREAD_INFO_IN_TASK && !__HAVE_THREAD_FUNCTIONS
-conditionals to only check for the former case.
-
-Signed-off-by: David Disseldorp <ddiss@suse.de>
+Signed-off-by: NeilBrown <neilb@suse.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Link: https://lkml.kernel.org/r/20240930050945.30304-2-ddiss@suse.de
+Link: https://lore.kernel.org/r/20240925053405.3960701-7-neilb@suse.de
 ---
- include/linux/sched.h            | 2 +-
- include/linux/sched/task_stack.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/wait_bit.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index e6ee425..abf26f1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1898,7 +1898,7 @@ extern unsigned long init_stack[THREAD_SIZE / sizeof(unsigned long)];
+diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
+index 6aea10e..6346e26 100644
+--- a/include/linux/wait_bit.h
++++ b/include/linux/wait_bit.h
+@@ -281,6 +281,9 @@ __out:	__ret;								\
+ #define __wait_var_event(var, condition)				\
+ 	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
+ 			  schedule())
++#define __wait_var_event_io(var, condition)				\
++	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
++			  io_schedule())
  
- #ifdef CONFIG_THREAD_INFO_IN_TASK
- # define task_thread_info(task)	(&(task)->thread_info)
--#elif !defined(__HAVE_THREAD_FUNCTIONS)
-+#else
- # define task_thread_info(task)	((struct thread_info *)(task)->stack)
- #endif
+ /**
+  * wait_var_event - wait for a variable to be updated and notified
+@@ -306,6 +309,34 @@ do {									\
+ 	__wait_var_event(var, condition);				\
+ } while (0)
  
-diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-index bf10bdb..2e52cc4 100644
---- a/include/linux/sched/task_stack.h
-+++ b/include/linux/sched/task_stack.h
-@@ -33,7 +33,7 @@ static __always_inline unsigned long *end_of_stack(const struct task_struct *tas
- #endif
- }
- 
--#elif !defined(__HAVE_THREAD_FUNCTIONS)
-+#else
- 
- #define task_stack_page(task)	((void *)(task)->stack)
- 
++/**
++ * wait_var_event_io - wait for a variable to be updated and notified
++ * @var: the address of variable being waited on
++ * @condition: the condition to wait for
++ *
++ * Wait for an IO related @condition to be true, only re-checking when a
++ * wake up is received for the given @var (an arbitrary kernel address
++ * which need not be directly related to the given condition, but
++ * usually is).
++ *
++ * The process will wait on a waitqueue selected by hash from a shared
++ * pool.  It will only be woken on a wake_up for the given address.
++ *
++ * This is similar to wait_var_event(), but calls io_schedule() instead
++ * of schedule().
++ *
++ * The condition should normally use smp_load_acquire() or a similarly
++ * ordered access to ensure that any changes to memory made before the
++ * condition became true will be visible after the wait completes.
++ */
++#define wait_var_event_io(var, condition)				\
++do {									\
++	might_sleep();							\
++	if (condition)							\
++		break;							\
++	__wait_var_event_io(var, condition);				\
++} while (0)
++
+ #define __wait_var_event_killable(var, condition)			\
+ 	___wait_var_event(var, condition, TASK_KILLABLE, 0, 0,		\
+ 			  schedule())
 
