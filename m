@@ -1,152 +1,156 @@
-Return-Path: <linux-kernel+bounces-354460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D3F993DBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:57:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9392993DC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B223F1F24F81
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA9E1C232D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362596BFC0;
-	Tue,  8 Oct 2024 03:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985D674C08;
+	Tue,  8 Oct 2024 04:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDqXVjw/"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iaHsXtf6"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D871DFD1;
-	Tue,  8 Oct 2024 03:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D602533CA;
+	Tue,  8 Oct 2024 04:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728359836; cv=none; b=dxUzTT3+PanprI4YLb7AmkvQseiWHu+/fp6jK2+mqq8jGdZO+7t2OpgK+BLdAOM4YbKvrWm46rtuKgD+AwHxJvGWinphRi8kLTsMQDRECBpd5pGK6qgB7qbeqIUdnC2MwhG32wurS4Ka7kpJ2N+YdqhWzjFxqgixytwA+o9kanc=
+	t=1728360235; cv=none; b=mvhSDOGPibibllhiHqUiKnXfdqJsCgPubQrnr7+X6U3l9e7lfqZaVRlA9RzsLEdx0EAf81F7ByZa2FK8SerOb9dOIa1STpOMfu7ZJ3QGByVD/NPspPnZOsWIaRo7h7hwLVogeXvHkrw0LgiCAjj3gQ0Y7A6nZaxZUVH7KAyxGhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728359836; c=relaxed/simple;
-	bh=qsli9gtkK5ZTuY3q6/to/HXIW7x0JP9DsMQNb2xaElA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BpwuB60SRkhnLKoaE4pplH9lPj5tmSx39aooUKD28HUp9iKe0arl1Ju3Sb8RlkcM7lYhlFBL65+BuTcWGa4UyotxVpvzpDgtCCVQx0jlzRRBL9SE+niV1XvaiXm2v3CZGPO7LZeyEttdZc4JznXCMZpMauDqQZXrelgD5ZgqGkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDqXVjw/; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so1015547a12.1;
-        Mon, 07 Oct 2024 20:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728359833; x=1728964633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcUVJ/6+noJlpbJBmbf+eW3fpO34COUffJkJzgFbYIQ=;
-        b=lDqXVjw/Do2J5L1vnn74G7hADkobwXiO4iWsHzlBO1Yixq/4wXvZWitTcTMO43OsMZ
-         UCtGzkpdenf1qG7KP03RuMoNQeTAybvlj06X6jXGIMRIl3AvA2HqYFUTuBzNlJL8/XdE
-         49/OsVnbIN1btKzCOhFkD4zaMVg+btSQOorVFF7dLZ0MTWAaazxwK2zKcd2dqQ30M452
-         cY7hLjnLRLGj64yCreii4qz9S5ff3CQeumd2tsCRr0po8rAp/eDhEW8wfa/FaawgA+UI
-         ECk+PShqwbxmyf3OoxTaRTAw47EJjnjxcbRTsKGn/eel4DctdwCHtL25gyrlY5P8139Q
-         +GFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728359833; x=1728964633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcUVJ/6+noJlpbJBmbf+eW3fpO34COUffJkJzgFbYIQ=;
-        b=qMfy9Tl8XAX38QXF88Eh9l81XXIgDsl5pJ8atJyuj8s4hX8BD3gbfK0HXDrBx5B48o
-         eo9ZZslTlvFhRQ4hCo7dOtvZGrGgeM9hLuWVkzIkKr8ZHtW08O8DUhDu0XUxUCCY4cIg
-         x0UuR1pFJtr+FdroNgwCDvpQIAklN1XYv2jqWHUiDlAgsOkMVNAZKZKbKLZtCHNg4Yew
-         mOpNuRA0BNtZ3DPenoo1m7uKmizA/gsF40Zn6FA2KKmHh3DAi2QWCucIp8YQsCOKtIjf
-         u2wPMyI50GhS8nS2dpTNoYn9bxlcFe15kBf0U8r7spm9SklqCB94e1m57rU47YjTXX8W
-         mWEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV33UYLbpY+1uzBDcpAm6PWFjI/iIlMyK04qoxWsFra0k/Ixo3qTQ5l60oTJUrMl4FooptIT2+j@vger.kernel.org, AJvYcCV6RHhZNjLhOk5DvpJTqicaWJZz6WUqiokSprvWxSUW2WtRDbbpfsh+Fktweg+CdeJoTtloO/62IE1a/25k@vger.kernel.org, AJvYcCWGKeJi1vzzrMNI6MkubKQjg8hU96D0tqHjNNnNN7QmDw63PiVviQfUWuLWs8xHJqGPVANYVGw/TlfAJr+a@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC0zbv/uSpce9PkmcBsM6+5CogERZPB+tDBx32zz5PT7Jzmb2z
-	etS6WE9SOd+0xUCrt4n+tPxCGxqCF3iL77NA9fgvG0JVXHGH9U+XCzs6VywOYDIxWLUXdafpKzh
-	V7kFa9WTyt052YLq1LqkzWpkBLPU=
-X-Google-Smtp-Source: AGHT+IHUCWKMeOgk9aCrQZXwpbznfoG6MZWaaIYljAfiq8IPEe4ATI7V9VVtNaK607XCDA65FJ/xODUhR6fjlmTuBt8=
-X-Received: by 2002:a05:6402:13c8:b0:5c9:60a:5025 with SMTP id
- 4fb4d7f45d1cf-5c9060a5142mr1632630a12.9.1728359833031; Mon, 07 Oct 2024
- 20:57:13 -0700 (PDT)
+	s=arc-20240116; t=1728360235; c=relaxed/simple;
+	bh=I/Er5nsXCFA4qiwG/cy7GiECil0ndyiV7ITbEyOhjQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kWurrETvj0lzzq6PVTNdDqtVhHv1pkLJlYvALBLrdZ9Q9qA2lL0s2RI3XOniWmZQWpuWxpn3lHNcvyxNwUvbIqN96/PaGqkUeeTmtNOergIypvcYrZeGaTNMsoGCjLDV7UVw05i+AOyHOeCpoKq8f0yxlEIYwLqMDGKmem7AIco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=iaHsXtf6; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 4e404752852a11ef8b96093e013ec31c-20241008
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=mwTHTTsRLjvACOCxRw8N0aIBKWsdNo6TgCo9mXIoopg=;
+	b=iaHsXtf6Rw0jYxC0w/UHeGf/u82Oiul5qQOcx4Fymap1mSSh7OcuhZvigAfrEidjnhT+3feWte8eJssZq398qQX1uJJqaErGMf1Kmjs/BezRPWB+nESMlMbT08c0i7/il8ngl98T6NAwBJFhhCKdkqAjE96CsoqTwm1xds7HBPY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:8694662a-45eb-4a20-8b53-5455f62f7b67,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:6394e764-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 4e404752852a11ef8b96093e013ec31c-20241008
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 345459854; Tue, 08 Oct 2024 12:03:41 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 8 Oct 2024 12:03:39 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Tue, 8 Oct 2024 12:03:38 +0800
+Message-ID: <3a970560-2458-f5f3-87c5-925079fa12a4@mediatek.com>
+Date: Tue, 8 Oct 2024 12:03:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007130825.10326-1-xry111@xry111.site> <20241007130825.10326-3-xry111@xry111.site>
-In-Reply-To: <20241007130825.10326-3-xry111@xry111.site>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 8 Oct 2024 05:57:00 +0200
-Message-ID: <CAGudoHHdccL5Lh8zAO-0swqqRCW4GXMSXhq4jQGoVj=UdBK-Lg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH |
- ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>, Miao Wang <shankerwangmiao@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] dt-bindings: phy: mediatek: tphy: add a property for
+ power-domains
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>, Jason-ch Chen
+	<Jason-ch.Chen@mediatek.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Chunfeng Yun
+	<chunfeng.yun@mediatek.com>
+CC: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
+ chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+References: <20240926101804.22471-1-macpaul.lin@mediatek.com>
+ <20240926-treadmill-purr-b2e3279a14a4@spud>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20240926-treadmill-purr-b2e3279a14a4@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--12.403700-8.000000
+X-TMASE-MatchedRID: csPTYAMX1+EOwH4pD14DsPHkpkyUphL9mX+W7bzPOQEsElh8RiHU9TRO
+	5DLJAPjbbIezkMyOt2/FtYuDam42iwdNdS6cTLNYoaP4nSNLOYuwR/wKmchi2fJ/jS86DpPDFVk
+	w4X07kmgXw0prgDEKYG2UIwvQdMxgucM7lDuTbby8coKUcaOOvaOI1u80g4PZZ5yuplze9puVQ2
+	bE9K2FgiEn+59qml4SkZOl7WKIImrvXOvQVlExsFZ0V5tYhzdWxEHRux+uk8h+ICquNi0WJOQuX
+	NATtBTvuMcQkP5KqdH9y2dEXTBNtCv1l1GAoBYzftwZ3X11IV0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--12.403700-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	C4C001A2C3E0140BF9ED2D1FF23C06F2DC8DAACE6EC962175BCD71A962969DD42000:8
 
-On Mon, Oct 7, 2024 at 3:08=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
-:
->
-> We've supported {statx,fstatat}(real_fd, NULL, AT_EMPTY_PATH, ...) since
-> Linux 6.11 for better performance.  However there are other cases, for
-> example using AT_FDCWD as the fd or having AT_SYMLINK_NOFOLLOW in flags,
-> not covered by the fast path.  While it may be impossible, too
-> difficult, or not very beneficial to optimize these cases, we should
-> still turn NULL into "" for them in the slow path to make the API easier
-> to be documented and used.
->
-> Fixes: 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->  fs/stat.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/stat.c b/fs/stat.c
-> index ed9d4fd8ba2c..5d1b51c23c62 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -337,8 +337,11 @@ int vfs_fstatat(int dfd, const char __user *filename=
-,
->         flags &=3D ~AT_NO_AUTOMOUNT;
->         if (flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
->                 return vfs_fstat(dfd, stat);
-> +       else if ((flags & AT_EMPTY_PATH) && !filename)
-> +               name =3D getname_kernel("");
-> +       else
-> +               name =3D getname_flags(filename, getname_statx_lookup_fla=
-gs(statx_flags));
->
-> -       name =3D getname_flags(filename, getname_statx_lookup_flags(statx=
-_flags));
->         ret =3D vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS=
-);
->         putname(name);
->
-> @@ -791,8 +794,11 @@ SYSCALL_DEFINE5(statx,
->         lflags =3D flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
->         if (lflags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
->                 return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, b=
-uffer);
-> +       else if ((lflags & AT_EMPTY_PATH) && !filename)
-> +               name =3D getname_kernel("");
-> +       else
-> +               name =3D getname_flags(filename, getname_statx_lookup_fla=
-gs(flags));
->
-> -       name =3D getname_flags(filename, getname_statx_lookup_flags(flags=
-));
->         ret =3D do_statx(dfd, name, flags, mask, buffer);
->         putname(name);
->
 
-I thought you are going to patch up the 2 callsites of
-vfs_empty_path() or add the flags argument to said routine so that it
-can do the branching internally.
 
-Either way I don't think implementing AT_FDCWD + NULL + AT_EMPTY_PATH
-with  getname_kernel("") is necessary.
+On 9/27/24 00:25, Conor Dooley wrote:
+> On Thu, Sep 26, 2024 at 06:18:04PM +0800, Macpaul Lin wrote:
+>> Some platforms requires a dependency for power-domains.
+> 
+> Some, so not all? Why isn't this restricted on a per compatible basis?
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+After discussion with Chunfeng and double check tphy design in detail.
+Chunfeng commented that tphy dose not need to add mtcmos.
+It is not necessary to add it, if the power of the phy is turned off,
+it will affect other functions.
+
+ From the current USB hardware design perspective, even if mtcmos
+is added to the phy, it is always on.
+
+>> So we add property 'power-domains' and set 'maxItems: 1' in the
+>> DT Schema.
+>>
+>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>> ---
+>>   Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>> index 423b7c4e62f2..c77fe43c224a 100644
+>> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+>> @@ -125,6 +125,9 @@ properties:
+>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>       default: 28
+>>   
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>>   # Required child node:
+>>   patternProperties:
+>>     "^(usb|pcie|sata)-phy@[0-9a-f]+$":
+>> -- 
+>> 2.45.2
+>>
+
+Please drop this patch and I'll send a new fix to mt8195.dtsi.
+
+Thanks
+Macpaul Lin
 
