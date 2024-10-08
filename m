@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-355611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3F69954C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:45:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB549954C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC1D1C20946
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:45:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D66FB271CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B311E1020;
-	Tue,  8 Oct 2024 16:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730ED1E1041;
+	Tue,  8 Oct 2024 16:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="UoDMisc+"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ES2Y2dL2"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B67B1E0DE2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAEB1E0DEF
 	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728405892; cv=none; b=prJC3r9U/mDgYceRHOgfAmiitJ0Wve4w9tMJLFIRwEDnqzSAqCACw+kD06waOH0Ls6H8PsXkUfxWqd1vqKPx4lOpsuutIMFRTLQ+9H3LOb2v/xEbnOEvO2Yw/ku6nmkVebuRigndVCATazfLIFXGhcjB9QWKVAblngftvcSpjT8=
+	t=1728405892; cv=none; b=h83BLiZzvWNlgK4QsH6w81XIHqJiskG5gP9YV3YLdszcqlv+yH+c5dI/4i2wbqNToCIE1yE3fpo9JW2y7agRh+uwqMbgs7cAFGkJ52wsSmJyTYkBivHPapGX0m2QiL9xtXgYAH9xzvYLAPcj+5fZmWLBn05Bo5vWZhJXIl22VtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728405892; c=relaxed/simple;
-	bh=h3UCe1Rt32rV9sM43SpJCsE3HPW1UX3cfs9j80OLF9Q=;
+	bh=7LJFaZ5lVg4DIQoHqNAd7OFH5xxkU2BgOP/yAhDK6Yo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pi9TUNu7qdlOl0PvvP5o0Ev5KEOdxDL9W2teurOz5srbKGyyKWxYIgZ8BXR8qj4jt6/adhOicjZRY67ES+t3FKwnuUbUUzkGO5YNJOYiY3UTRuZBBcl52C8d/TaZVSH6sVS3i4pBeSocxhUpmogkjdUR/EiLAxVauNE2EH4t7oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=UoDMisc+; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=TmY86aKNVfc+RJ+FPp7DUpvyID4M7KEjYlI/v0YL1t3utH2v7epZPygWkQO0Uhpmex+h381obnCpR/47McMcQeK1SADWk63cSXeEWJNo6LTrOpxPkIaQOZ9hXTWEKHPw5QV14yzI4wGwMqKOBonMPOo/HBXHHLMsvh+d315rLLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ES2Y2dL2; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so60057975e9.3
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so55114725e9.0
         for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 09:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=raspberrypi.com; s=google; t=1728405889; x=1729010689; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=90ANlFWGN+t7YRM+OQtOzbvQb+vC2EWhHHwqfHzlk5w=;
-        b=UoDMisc+Q7Wwni4VR69WesJn4ksXMHy3c031X2Ar7J0guaKzVGy14BdL2TBUkxnvnj
-         KPdvyK3srW+KgPW1Lfm7p8rfOWgH7UU4iZp/ZrsDuxHSSFQRb6UazOX66T8CvHmCXttk
-         DGVC+75Scvub/M/tweJjps1l5gLpgaONDZDR8mx7D5Njg3Gp6Tyrp+Zr8d8ztdsf8pXG
-         daPTPXju4NENFq1bDP2hYTvCycNZwH3V5ayPXYMZ8JoJY1r3gKIXSSsZ9bS+ORc3Nwr9
-         oefgKRNNqGvOXDqGS9RMGogK56geBMAcJUUNFFi+FQ+5OUSjCUVFRjZmyLAki1x/J7ba
-         ZJgg==
+        bh=2l4FLyzwOuwNRQ0BH8EkMWwB8eDzTs5gmrCiRkeOxgQ=;
+        b=ES2Y2dL2VeoLS4X+8FDJ/HcEx/IfM2mDyKg/ElGhwiS45XX0sCRRfPUUHh+t5jrY2x
+         yRUnqTGooPIOwakYtg8yPFw3wYQz+gzwMiwJVFp2Fy2esKY8j8zX05vaG5cc9Dcv2Sx+
+         lWNQwO7HJh8h1NtCdKoPhN0hhooaUoBNTJrMU46ApPUwRPlCkz6GOpgyKX3sW0dtGes+
+         JpRNAjIBjOcYO9spsTHr4U0b+iw8c2vgOW1RGJBW/97jv5cp25TNtKgXj/NWX3B6dEIC
+         GR44eBW4GbHugmephqZk0YF8XxWlHMTio9bOR/1AxojM+XSCe2LAKXQ1/CCFIC+KJvdY
+         2B2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1728405889; x=1729010689;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=90ANlFWGN+t7YRM+OQtOzbvQb+vC2EWhHHwqfHzlk5w=;
-        b=wtAjFDjAhdIvWIp/GWU1+7ddrvuuX5bCnb3s/rDpfW4FTv1G6aXpThQd8ltNLezsvG
-         jAxRhdlYqO0hkWAkAlz6OcVRGNn5Z91XhhlteZNf+M+qN4mozWQSNBGNaQDKKftYluRw
-         1XDNH8DwqZRsIEhLdZk850rUy7qX5GSajiWlOQN0JUre1Z8zoHcL6wJzEmhrvz0b5C6W
-         g7nbW91ndALTYOva1GWAt/gLcRNisMFBh+o1anI3RikGcIJB8RPc+vleYaQ7XJ6RASSD
-         EMtRPef1dGpAptgW0+dAcih26MatVdOxJI5ZSoh+RD4pb2RbyqQ4FBNOczmzXPJDoHZa
-         Sz7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrHGgu/SmLC3+/9zxeg2IfKm5y/TEO48554GiS6vU4v72KGVzcxsqYUoiSzjSGh/jAgxKLGKsICzAsrgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykBTvtB5XVHKmea0Wuxim2SF12EzvyOftU42xS7jOl1Wy1LuTB
-	O/Q1bPJJoPyEdqIdBgSACey0+XpVSGQ4Lj1MWgtRwdDyWFpVo2nU4S2PWhjAT5E=
-X-Google-Smtp-Source: AGHT+IFvA3g8BnPqda9AgaP6SE6nfhTyCYyUtjJJCs7ai6iH9pJMhXZuRLfeVaJbZvQEw/32OWwilg==
-X-Received: by 2002:a05:600c:47d2:b0:430:5701:93a4 with SMTP id 5b1f17b1804b1-430570198c6mr14325085e9.14.1728405888599;
-        Tue, 08 Oct 2024 09:44:48 -0700 (PDT)
+        bh=2l4FLyzwOuwNRQ0BH8EkMWwB8eDzTs5gmrCiRkeOxgQ=;
+        b=sDPsG11wQ0UugvCRKvQIbSZc46GWS4mx0n+KdRoQZnpl6IUbIp0GuEsFjnZpSyqWTZ
+         IhVc15hKZq2YUQmk3tdtSnTHX9jO1fV2equq5tJ5m9Zt+zgy8dlQnsDjRXKzBWFNan0E
+         MsaAhTXkpp/zAt6ud+wIRpH6z5MxjYkga0gP2Q87Se6+Ao3MZIHbm0QFs6S2Swem0hoR
+         k0sj/ivyJ4PSqtcAJMSci1e89ZuJfnhMxgSwzqg5cA+4VCSmlKkgiAyjxIUeK+gcREYC
+         bLs67+rYdHmYubHyTOsAlgf0gZUYB8eK8OjfGKVAu8unCVQ88ZPtulBYirqRfsFbq1LC
+         OAnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9+b+Fo4f4iIZj7A57+FPYUrG8trtCC1YJRo23flU2DE3BmCwbTiSIlLOIODQhM8piCvASkY3B9dDT0ME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG8Q0/+GMN6zGlgDod+tODLKMpfI4x/OJVEc8fVlqBXWUE2LpR
+	KzibI/pS9ShXtH4nj3mZND+e8/aWgXr0FvjgeFgF2eqeW4rQUkfq7T/iijKo3I4=
+X-Google-Smtp-Source: AGHT+IHutSlQhM1lnWVmLyvUAsNDvxWyNHWdvnQugeExpuf3dCs4jPGscvamNYC8t4b6FoA34h4a+w==
+X-Received: by 2002:a05:600c:35ca:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-43023094011mr28998195e9.1.1728405889355;
+        Tue, 08 Oct 2024 09:44:49 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86b4acddsm132133155e9.44.2024.10.08.09.44.47
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86b4acddsm132133155e9.44.2024.10.08.09.44.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 08 Oct 2024 09:44:48 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 08 Oct 2024 17:44:35 +0100
-Subject: [PATCH 2/3] drm/vc4: Match drm_dev_enter and exit calls in
- vc4_hvs_atomic_flush
+Date: Tue, 08 Oct 2024 17:44:36 +0100
+Subject: [PATCH 3/3] drm/vc4: Correct generation check in vc4_hvs_lut_load
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-drm-vc4-fixes-v1-2-9d0396ca9f42@raspberrypi.com>
+Message-Id: <20241008-drm-vc4-fixes-v1-3-9d0396ca9f42@raspberrypi.com>
 References: <20241008-drm-vc4-fixes-v1-0-9d0396ca9f42@raspberrypi.com>
 In-Reply-To: <20241008-drm-vc4-fixes-v1-0-9d0396ca9f42@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -91,38 +90,32 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-Commit 92c17d16476c ("drm/vc4: hvs: Ignore atomic_flush if we're disabled")
-added a path which returned early without having called drm_dev_exit.
+Commit 24c5ed3ddf27 ("drm/vc4: Introduce generation number enum")
+incorrectly swapped a check of hvs->vc4->is_vc5 to
+hvs->vc4->gen == VC4_GEN_4 in vc4_hvs_lut_load, hence breaking
+loading the gamma look up table on Pi0-3.
 
-Ensure all paths call drm_dev_exit.
+Correct that conditional.
 
-Fixes: 92c17d16476c ("drm/vc4: hvs: Ignore atomic_flush if we're disabled")
+Fixes: 24c5ed3ddf27 ("drm/vc4: Introduce generation number enum")
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/gpu/drm/vc4/vc4_hvs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-index 546ee11016b2..c5ebc317188a 100644
+index c5ebc317188a..1edf6e3fa7e6 100644
 --- a/drivers/gpu/drm/vc4/vc4_hvs.c
 +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-@@ -603,7 +603,7 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
- 	}
+@@ -224,7 +224,7 @@ static void vc4_hvs_lut_load(struct vc4_hvs *hvs,
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
  
- 	if (vc4_state->assigned_channel == VC4_HVS_CHANNEL_DISABLED)
--		return;
-+		goto exit;
+-	if (hvs->vc4->gen == VC4_GEN_4)
++	if (hvs->vc4->gen != VC4_GEN_4)
+ 		goto exit;
  
- 	if (debug_dump_regs) {
- 		DRM_INFO("CRTC %d HVS before:\n", drm_crtc_index(crtc));
-@@ -686,6 +686,7 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
- 		vc4_hvs_dump_state(hvs);
- 	}
- 
-+exit:
- 	drm_dev_exit(idx);
- }
- 
+ 	/* The LUT memory is laid out with each HVS channel in order,
 
 -- 
 2.34.1
