@@ -1,83 +1,90 @@
-Return-Path: <linux-kernel+bounces-355633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4239799551A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:55:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7406995537
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096252845BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2411F2814B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFC91E0E15;
-	Tue,  8 Oct 2024 16:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5F11E0E0C;
+	Tue,  8 Oct 2024 17:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5Ml9LV7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HhzzDFbU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F61E0DC3
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C279237708;
+	Tue,  8 Oct 2024 17:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728406482; cv=none; b=XXYo/f7E98xGWITKUuP56+9bBnloUxxo9H3PfLCiUyFWGxOlUHyfk1mK4w3iebxzbVmKn6KWqGkUDh2nIsmjIVi786oC8D4DlVDpLU14/fmhIvcZYOTtc9I6sjQ8Seyqbx6g1tB3hhtv0HnZjs27C9Ah44ulnpjTfOoxE41pMCs=
+	t=1728406893; cv=none; b=Y1T+Mvt01LsxLw0Ep8LnNSFxTsew3SVIbw/ygW8UavClA7zyufsD9JcprqZTaZcHFdZfg9AeRwg35YopW7qoWwUT2CFteMm6d8FY2T/N7aD+zOvxRTNNU/sLf0z31iIgyrnagReejtPZAjUrE2Ina03gjGxhJiG/H83jXTxt4vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728406482; c=relaxed/simple;
-	bh=AmrGfG7Zuo+YxId5wPfF6uG8BrrY9vTDPH0WxlRp8qw=;
+	s=arc-20240116; t=1728406893; c=relaxed/simple;
+	bh=7yDX3p5l4AOgfdAig7iHKghNGgGyy6V+GbZVWH6Nah0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dU82pC4ATUZiwr/1iTfQCA0vn3aYaRQv/HyTJMuX3PH4QO1pQyv8fDz0zu4f46gsYT+QvHou4YU5ADwRE3V/Z1qGf1w26F+0lf5VTxri2abxwovwKh3qfCLKjFI4Pe/ZaDnFGm+Emm/4OBJmedq0pFBIOZGE53LU1mSNndiIGLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5Ml9LV7; arc=none smtp.client-ip=192.198.163.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZqObrxMzvTNpEE+/mu+LsDLnFQF9VAoJW56MZv0Iiad43Mev/GEzKB5p71L45bAzD9VY7F5N+NmqvG0kMZf6bQd69HItRFnrrlyfl2qUH598fbT5klL/FeeLpn0/ZuQZ4JvbZmogXgtsZ4UiaPCZc90I89UimE66UacQ78yWww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HhzzDFbU; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728406481; x=1759942481;
+  t=1728406892; x=1759942892;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=AmrGfG7Zuo+YxId5wPfF6uG8BrrY9vTDPH0WxlRp8qw=;
-  b=S5Ml9LV7Z779vDvSZvZkhs5Q3lhd9aAHQrSUhscimkn/35v1lxQtF8fE
-   dGkOZS+chEJYwvXRXNZnHM68X1NapKn/YwzM0UJfe0H4+6KlmMLjiRxzu
-   EktdP+9VA7+xVbuvtLoEoVtncO/ZEKahwuhk7Ww5IOk/6IDy7oM9D/bSf
-   8uDu6RviEYDOr14LbkT1If7t1yngydifBwnms1oE6gVZq+FzqHfEbVRNI
-   Mf3BeTWLWnYmoMlIvsm/iJvgmWb+0neOkf7DxRgFezaYs7vOG2KdnqEgI
-   ie1PJl78mcwXe5r38AfRhH/pvzPQoDD7v+yYqSReqEEKXCWsw6+XBwmva
+  bh=7yDX3p5l4AOgfdAig7iHKghNGgGyy6V+GbZVWH6Nah0=;
+  b=HhzzDFbU4r9Zzjc9VlLdY3ZWwK9nXM0chO9CEHDo8c+VYN5/1fAnaPcj
+   b3auopn+nFBzneVvcgUaDM/nGc8Ss5s/b5SfmYLCc5Uquh6g96b0N9RcH
+   4rEZSKYAHty0IyhoSZ4bZloxUmEpXZH1rdLPTJ721ys5vVx3zgna+Sl4R
+   +KMvx9SLu0XcTu34gdV7tHE8QJ9EpTotURBSWDWXlLMAYdf+9FX6r+iSu
+   ydyZ9MRNTuMeb7jckuxaEGkksV5SoeAMXKFm9bNo5u75jvHO49BFewrou
+   ftU9Vn/8Nn3Sl0Pnl9KLbebUlGJOk9dSedcTQV5yWIjyqrADFLUC2o+PA
    A==;
-X-CSE-ConnectionGUID: ICm/QMzJTYGM982P3AorVg==
-X-CSE-MsgGUID: mif8sCBNRqi7rNcPtOSEMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27501948"
+X-CSE-ConnectionGUID: Ithb/VPLS0WjUv/d++o23A==
+X-CSE-MsgGUID: 1knjyHwzT6q6rso/8Q4heA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27574513"
 X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="27501948"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:54:34 -0700
-X-CSE-ConnectionGUID: XcDyNtj0SXmdNjjfBfIGyw==
-X-CSE-MsgGUID: GybRok1vRO+uL5FxpdVQkw==
+   d="scan'208";a="27574513"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 10:01:31 -0700
+X-CSE-ConnectionGUID: otqcIQWJTfm9wfBUFR+WKA==
+X-CSE-MsgGUID: OIYtR1NlR0SJCumSBlYHUw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="76011804"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:54:27 -0700
-Date: Tue, 8 Oct 2024 10:00:15 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] cacheinfo: Allocate memory during CPU hotplug if
- not done from the primary CPU
-Message-ID: <20241008170015.GA24312@ranerica-svr.sc.intel.com>
-References: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
- <20240913083155.9783-2-ricardo.neri-calderon@linux.intel.com>
- <20241008155106.GMZwVU6gjw45z2gn8x@fat_crate.local>
+   d="scan'208";a="99244245"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Oct 2024 10:01:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id D7F8220F; Tue, 08 Oct 2024 20:01:25 +0300 (EEST)
+Date: Tue, 8 Oct 2024 20:01:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	Philip Li <philip.li@intel.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <ZwVlZROV84DDMCnc@black.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZwPsYqkLF0eWUb9e@smile.fi.intel.com>
+ <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,34 +93,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008155106.GMZwVU6gjw45z2gn8x@fat_crate.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Oct 08, 2024 at 05:51:06PM +0200, Borislav Petkov wrote:
-> On Fri, Sep 13, 2024 at 01:31:53AM -0700, Ricardo Neri wrote:
-> > The motivation for commit 5944ce092b97 was to prevent a BUG splat in
-> > PREEMPT_RT kernels during memory allocation. This splat is not observed on
-> > x86 because the memory allocation for cacheinfo happens in
-> > detect_cache_attributes() from the cacheinfo CPU hotplug callback.
-> > 
-> > The dereference of a NULL cacheinfo is not observed today because
-> > cache_leaves(cpu) is zero until after init_cache_level() is called
-> > (during the CPU hotplug callback). A subsequent changeset will set
-> > the number of cache leaves earlier and the NULL-pointer dereference
-> > will be observed.
+On Tue, Oct 08, 2024 at 10:52:00AM +0800, Huang, Ying wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> > On Fri, Sep 06, 2024 at 09:07:41AM +0800, Huang, Ying wrote:
+> >> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> >> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+> >> >> Huang, Ying wrote:
+> >> >> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+
+[..]
+
+> >> >> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+> >> >> > > message.
+> >> >> > 
+> >> >> > Emm... It appears that it's a common practice to include "Cc" in the
+> >> >> > commit log.
+> >> >> 
+> >> >> Yes, just ignore this feedback, it goes against common practice. Cc list
+> >> >> as is looks sane to me.
+> >> >
+> >> > It seems nobody can give technical arguments why it's better than just keeping
+> >> > them outside of the commit message. Mantra "common practice" nowadays is
+> >> > questionable.
+> >> 
+> >> Cc list is used by 0day test robot to notify relevant developers and
+> >> maintainers in addition to the author when reporting regressions.  That
+> >> is helpful information.
+> >
+> > I'm not objecting Cc email tags, I'm objecting having them in the commit messages!
+> > Can you explain, how useful they are when they are placed as part of commit message
+> > bodies?
 > 
-> Lemme get this straight: this NULL ptr deref will happen after your changes
+> The result of regression bisection is the first bad commit.  Where we
+> use the Cc list in commit message to help find out whom we should send
+> the report email to.
 
-Yes. It does happen only after my changes.
+We have all tags and MAINTAINERS database. How do you know if those who
+are in the Cc list are really interested in receiving this? What make me
+sure is to have Author of the culprit commit, relevant mailing list and
+maintainers, also reviewers and testers, if any. All this information is
+available without Cc list. But if you *really* want it, you should
+follow the Link tag (for the new commits, for the past ~2+ years) and
+harvest it there. And actually I use that Link to reply to the thread
+directly. So, again, the Cc list in the commit message is a historical
+burden that consumes a lot of time and energy and should be gone in the
+future.
 
-> so we don't really need this patch in stable and thus no Fixes: tag at all,
-> right?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-IMHO, this patchset is needed in stable kernel because /sys/devices/system/cpu
-cpu0/cache would be broken on Meteor Lake and processors like it.
 
-This patch alone is not needed in stable kernels.
-
-Thanks and BR,
-Ricardo
 
