@@ -1,104 +1,162 @@
-Return-Path: <linux-kernel+bounces-354547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFED2993F24
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:08:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D499E993F29
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977371F230FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7381A1F21B90
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246E11DE3D1;
-	Tue,  8 Oct 2024 06:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C70D1DE895;
+	Tue,  8 Oct 2024 06:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Utx4v5Da"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqpvB27S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69C81DE2D9;
-	Tue,  8 Oct 2024 06:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C911DE4D9;
+	Tue,  8 Oct 2024 06:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368787; cv=none; b=YW8T0OdIZXLQLX6LhWK1m56rma/W7nVA9hA4fovI+S31Ev7ruovKpljbOaLmRrT+W3nPfljNSi6qyeuNEtsvG7sV1KtTVXGWfQvtZNjd4g6RiA0Q9orva0W6Eekmp89OfR3zQ3pcOoqmz2hg8HoOCetX5MKHGN9vagYkyw4+u30=
+	t=1728368789; cv=none; b=XzlEBC9XbmFSWf9d7Bhr8p77Vsx2dGocFFlB01gm6rM0XErBqWGY1F32ZJVtRKnQA09Dzgi08XT0NGo6DY2h8h76jZSPA7CxFc3rBoWyLgKO0gBscbHXEyOBv8F06Yb4ERio6XoS+jJuasv+dixJev2cqeKC95gnx6m0coLuxRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368787; c=relaxed/simple;
-	bh=FBn5hUcmPojNqX2JjsbG0PtHs/T0zBBfdvmWQORKrc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MQlT+NdRjgxsh7lXeqkLbcIb3dbvensq37oX6dH/4ysaKrHwsSc6cLo1uTVP7IWZgjCgxRn7qic5kDk0lZXqxvPymb2LFr2dJsomdvIeGS3O2to9NCPMbmGExqt2Gz/oZdr576/Gafn85fMU5fBq6zBqR38nnoXFckv5U3qql/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Utx4v5Da; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728368781;
-	bh=sG/byCiHjgnFQwYunXfvNYFt3ZlgN1Siml+c6vJoNRU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Utx4v5DaYXtAAL1+0dvP/b6oSqCVtOuQlM1pKZiY+jPMg6GPez/UEXNlABlGAmCq2
-	 slCkI8R1FHVIJ/ogkkCgGqjJkG4+WxJQRIvTieYYewZ42E7x9CXeQSn+Y366jcrMRy
-	 7Awy150+UeBwwdBeGSx3O8FXqf5UIXC4whwGKYc/i6rQQR9WZRb2Ndq1HwT3uvYmX5
-	 tM5540nA9Dls06U8bpurt6paaTsIH6VaqRVQN32juZE4fbqaZxBSo8yCuEtItNQy3F
-	 vKo7HRajHWS+6G4zGxmz65zYIgLOzy7Q2RPh4cIgWSXbIczs4ECJX8lGFXqx37/d7O
-	 zXCS4zP6RQ/jA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XN5d83hBwz4wb0;
-	Tue,  8 Oct 2024 17:26:20 +1100 (AEDT)
-Date: Tue, 8 Oct 2024 17:26:20 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Boris
- Brezillon <boris.brezillon@collabora.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drm-misc tree
-Message-ID: <20241008172620.6fbd5569@canb.auug.org.au>
+	s=arc-20240116; t=1728368789; c=relaxed/simple;
+	bh=T45AqMpwASiBl0/I50N2dY606S5QKSd7yQWdyfR9JdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpM/pnJfyP/L0y/IS2rcIqhJJh1TIIxbPaB5T2of59AZL1gIS/lBYfl8lK3wlndg4friLvtvYKJvolRHQxqW/7udgfSx9yTaKyvxIrcxJMO1G0S+UacdoZTcXlypMchw6IWYCQ3InGHRFL/CQVpiOZmp46FdKQEpzFWsLYy6qPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqpvB27S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2527DC4CECC;
+	Tue,  8 Oct 2024 06:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728368788;
+	bh=T45AqMpwASiBl0/I50N2dY606S5QKSd7yQWdyfR9JdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hqpvB27S6vyJAseVV7a2ekE1MW8fK51W7M2o5OXx9n0djgMeF1DhKsAxpMVtcNqWH
+	 D3f2AUxaMr9vNiyhZqZF4PSoXJTlFpEZXZS3sS8Z+8/+y9j8gz4E+9J9wwiiplZrrA
+	 FxMAvuyThwsIkCfuG7hctoTgaFG95309AoBvQ0IU92ObWRf7SfuB+Z3eJD1TDlLPJA
+	 SpUS0ugQPwjSEIj81uKzhXJj2k17WCSGacw62j9KGwcQiDny0djKWIfj8PxttApF0h
+	 VHDsCEZzW/z/nd1YRVsWRoiLhllvp/xdDxSGhB0NcgdKavv7LC5i8RYvc7Wklw8JtZ
+	 cfPjwDO1ZGgig==
+Date: Tue, 8 Oct 2024 08:26:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <zequ4ps7h6ynr2y5yrcqm3tpvvmmrgc6auupfy435rpysiyypf@7cd2zbwhk3ya>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kKyl1Fx/nkDa0.LzYNSkGpE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
 
---Sig_/kKyl1Fx/nkDa0.LzYNSkGpE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
+> The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> schema is intended as minimal support for the clock generator and
+> gpio controller peripherals which are accessible through BAR1.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 111 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> new file mode 100644
+> index 000000000000..3f099b16e672
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RaspberryPi RP1 MFD PCI device
+> +
+> +maintainers:
+> +  - Andrea della Porta <andrea.porta@suse.com>
+> +
+> +description:
+> +  The RaspberryPi RP1 is a PCI multi function device containing
+> +  peripherals ranging from Ethernet to USB controller, I2C, SPI
+> +  and others.
+> +  The peripherals are accessed by addressing the PCI BAR1 region.
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-ep-bus.yaml
+> +
+> +properties:
+> +  compatible:
+> +    additionalItems: true
 
-Hi all,
+Why is this true? This is final schema, not a "common" part.
 
-After merging the drm-misc tree, today's linux-next build (htmldocs)
-produced this warning:
+> +    maxItems: 3
+> +    items:
+> +      - const: pci1de4,1
+> +
+> +patternProperties:
+> +  "^pci-ep-bus@[0-2]$":
+> +    $ref: '#/$defs/bar-bus'
+> +    description:
+> +      The bus on which the peripherals are attached, which is addressable
+> +      through the BAR.
+> +
+> +unevaluatedProperties: false
+> +
+> +$defs:
+> +  bar-bus:
+> +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      "#interrupt-cells":
+> +        const: 2
+> +        description:
+> +          Specifies respectively the interrupt number and flags as defined
+> +          in include/dt-bindings/interrupt-controller/irq.h.
+> +
+> +      interrupt-controller: true
+> +
+> +      interrupt-parent:
+> +        description:
+> +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
+> +          PCI interrupts on behalf of peripheral generated interrupts.
+> +
+> +    patternProperties:
+> +      "^clocks(@[0-9a-f]+)?$":
 
-Documentation/gpu/panthor.rst:10: WARNING: duplicate label panfrost-usage-s=
-tats, other instance in Documentation/gpu/panfrost.rst
+Why @ is optional? Your device is fixed, not flexible.
 
-Introduced by commit
+Best regards,
+Krzysztof
 
-  6a797bdfde77 ("drm/panthor: add sysfs knob for enabling job profiling")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kKyl1Fx/nkDa0.LzYNSkGpE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcE0IwACgkQAVBC80lX
-0Gz8uwf8Dm7UEpyJb2LcJkH2HvBkj5OvJQ8dxAzCeWkmBFvtQ0nPE3TMlzBlHuW4
-bmIcWmWbgKMDxeK0SVvqUvhz6I43Tyo1if6RoDt+pYcf/xKMFgBCuTqlYwzPSlSB
-M739DDj27lYfQRu7s3kZbfDON6OyFeHn1goqYC2UBN74dehLPvE0Zv71p/C61pxU
-pT50xsVi9DCosUDCX1RGB2Y79EUhsQc/ZrLk4vvho7MI0ThW4lpg39ApN3nSm8Kc
-M4x/FDoI9biPF42TP5j9vYupvtQbORPEUuXSJS6Cn098bDQGttEODGHycz7t4VVY
-mkpGTudO5k3e5OlcG8j1XYMjvCqDrg==
-=kq3B
------END PGP SIGNATURE-----
-
---Sig_/kKyl1Fx/nkDa0.LzYNSkGpE--
 
