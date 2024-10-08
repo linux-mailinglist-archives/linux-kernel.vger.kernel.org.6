@@ -1,135 +1,200 @@
-Return-Path: <linux-kernel+bounces-354623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3D5994062
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF2D994051
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DC51C26C4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C9C1C265BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787201F9415;
-	Tue,  8 Oct 2024 07:03:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1847A1F9408;
-	Tue,  8 Oct 2024 07:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EE11F9433;
+	Tue,  8 Oct 2024 07:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdEvGQW9"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AB113A88A;
+	Tue,  8 Oct 2024 07:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728371010; cv=none; b=B3QCOG/X/qMKC/7G/Mc/LpNpMqFsEIWUiFHRXBk4YNHLDhzsmvU/8mZQe6B6ERH02tL1PkYirRrb6MNopOq56t8/xvtK6SPxJ7yHDQdGTDPLZuG37M0BAxxoB36I6MmOnVxw8phHjdPCuB/XgwdhoUqus/QyEnOSTR0x5Ptv6i4=
+	t=1728371179; cv=none; b=Lscpp9EsXy4LVsG5qt3gakiwFgDpAK/NWxAzVUA+a1NTA/EGhwTsnILt3leyP2NEGuDIRvVm3VvF5e5aKTMs62JJOBHR7H191Ph0rWYMkRPG+yFV/VvQe7wgsKYW/pLj6ZfbzLtH1CqVdr/YgdDlFOmPC6gCtgOWSJAKiVq9upw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728371010; c=relaxed/simple;
-	bh=qTdHcUquvVIj5n44UFGoznQhbIg+PrAhpjPHGQ/oEhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JYcVy7I6rad4h45u8wFHBRS0b/pAf7sKdeSXGgTM7IlVYgnu2lBPXlIMEMXu4uIweaumYvKSs+A4L8Mf3nsH7BGAuVjoJG7+mYZqmI3uSNXOWki3WgzI0VLhpQv3kRgaWIc596cXgyn5VoNnkAhKNW8kanOVW3Kn9wRL9BI51Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 078F4DA7;
-	Tue,  8 Oct 2024 00:03:57 -0700 (PDT)
-Received: from [10.163.38.160] (unknown [10.163.38.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCA453F640;
-	Tue,  8 Oct 2024 00:03:22 -0700 (PDT)
-Message-ID: <2e9e559e-82b3-4ba7-8316-a514abe9dd38@arm.com>
-Date: Tue, 8 Oct 2024 12:33:18 +0530
+	s=arc-20240116; t=1728371179; c=relaxed/simple;
+	bh=uXTg1uHnm5XEmDJlhimEj2kwTfW/6/nR+60at7BFp94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2XphtQXaY5SzmJs+EgThHaFI2dHyHKHUQDIBSH9BafK4tUTlAzSCzACY+r1cikOm9J+Y3bKddQKf4OZT+Wey5xFKsXcb6kMQDHSJ5jGkj66TZh0WVHMbeOGDPH0PQT9qc/LEHvRwLVJ1zAFXew2jINo1cnHWFqNE2hgOHIQEhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdEvGQW9; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-45efe44eb77so2815591cf.0;
+        Tue, 08 Oct 2024 00:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728371176; x=1728975976; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vsTuDSKkRObHCn42+F4y62pCjIW+t1IXf3lagGIigZQ=;
+        b=fdEvGQW9tLUcsswcEEqjcfFWi4Oy/0iQRngiBI0s3uH/mAYdERFWru1HlQRx8ZMnta
+         Hu9L7zVoqYWkXflHLGXqk+OzalflmoVmJLN7aYFCT206ILLREXSenuYrY/N5eCzqgxL5
+         rdZ/vNe0s0m+fIzMgDuWuskx4KnCGC1QKpNqASDC/Z4DLyVq5e55zFkiOHtjwzV28idP
+         NDk0mJ9SKiDy2CHKe/l3y62NR7I4Hf+MzriV3vfIhgeO0szs68u9yR09Z6qHgUARQ2PK
+         YH33WV79lEfDXIDxB2F+X2DuDUUKoTq2zPZofdimQHRJq2cQIa0QQftpLLWMBz3iWRi9
+         BxYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728371176; x=1728975976;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vsTuDSKkRObHCn42+F4y62pCjIW+t1IXf3lagGIigZQ=;
+        b=rbZsPDYyx7MKhXFvaRqpu4sr/q9Pjxc8vkTmeWoIjZ8+72Ila0Co0WxkTmXW7tMq6R
+         Xsd8sMsK1kZh/rKq9lZZTpk1Shl4ignfcVHl86NnAINWRnd3do9VAsMYBYJ2wQjKIxd6
+         8uxAkCF0KQAs2DRMj1IOg8qHTHqBfdyJy6w8RAeTj/Ab2EEumRx5amdob2ZwKSEO1vWZ
+         1l+hYKN4e84vFV01u5PKW8W7v8emVyop2jGg4YwANkYoZ3OWrHf6cGv6qWOfDyPD8u7w
+         fJZje3Hr3UkMxGjZ3Z6EpJCqoL9VPzD1h7ZQkSJIV1vLmegR3lP0OpNA2FTZKULwIajb
+         +Ykg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRCK7Xtx6RpqahIRG+I9pfiaEVbKxFULmEmVYNJDaczgSNgAhZaljV6vmv8TTR72PaBceltJyf7YD6tYkExcg=@vger.kernel.org, AJvYcCX06m2kGrorwi8jEWUiwOGqtKX0GRzjsBoRG9m0BKZJIaBJl+r01Jz7dRH6Zi/XBKXdskodWZfOxRcJS1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYWRUwx4DwUOWJcozvNhiDa8roR+Mm9Bjk+v0as44oNbWjmY9E
+	HcT7+MnbiQ7d5ERjRddTg+lzigAYNSpKqyayLWrjky+P/jMO8HcO
+X-Google-Smtp-Source: AGHT+IEiZQyyBqHDBYjLH1EpSIhHufA4n8BfpH2QxGhhqwh6YWERtmmJxAuA9PcyL+l7bFafKxS1oA==
+X-Received: by 2002:a05:622a:30e:b0:454:b417:ac4f with SMTP id d75a77b69052e-45d9baba058mr178263831cf.43.1728371176302;
+        Tue, 08 Oct 2024 00:06:16 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da75564f4sm33767581cf.48.2024.10.08.00.06.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 00:06:15 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 5B5EB1200043;
+	Tue,  8 Oct 2024 03:06:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 08 Oct 2024 03:06:15 -0400
+X-ME-Sender: <xms:59kEZ61xo1SF2H1QcdEpAaz_O9SWeLVX5CBvbrxB4_h_qin2R8NM1A>
+    <xme:59kEZ9HwKvuTginwEUtB_sMPhIt3ECx0jo1w9CHNk-ak-6S0wT-OH_QP1gAcRB0-T
+    LDmy-s4RH9GfYk5ow>
+X-ME-Received: <xmr:59kEZy6nsLtHJHUoagzwxFTrRP-8dK25W6kpSNMZ5aqnG9Fmcdj3ruFKXgTpqQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeftddguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfeikeekffejgeegueevffdtgeefudet
+    leegjeelvdffteeihfelfeehvdegkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
+    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
+    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrsgguihgv
+    lhdrjhgrnhhulhhguhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhushhtqdhfoh
+    hrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhr
+    sehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlhihuuggvsehrvgguhhgrthdrtgho
+    mhdprhgtphhtthhopegrihhrlhhivggusehrvgguhhgrthdrtghomhdprhgtphhtthhope
+    hmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepsghoqhhunhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:59kEZ73utefOwYz62Trgkl67VxNShnwQI1BV-6Lj4PmhlWABg_LqKw>
+    <xmx:59kEZ9E4dFUJ9Pr0PlZiXo9HpnUAeF-wfkwqd6ydwDti6NFR4gPovQ>
+    <xmx:59kEZ0-TGu2h4sMrCNuHShXbqD2ICh9a5aD4tW499IzfZrGPeTzCBg>
+    <xmx:59kEZylEG5Z0f2gTbCmUBlDqs-KXlLmGoPjSYKDSkdgEITUcrbc-bg>
+    <xmx:59kEZ1GoVdURJD6HR5ABQYWAkvAHWVO3fiS_iHxwgWKvowFf7Kn-YoY2>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Oct 2024 03:06:14 -0400 (EDT)
+Date: Tue, 8 Oct 2024 00:04:54 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, dakr@redhat.com,
+	linux-kernel@vger.kernel.org, lyude@redhat.com, airlied@redhat.com,
+	miguel.ojeda.sandonis@gmail.com
+Subject: Re: [PATCH 1/3] rust: page: replace the page pointer wrapper with
+ Opaque
+Message-ID: <ZwTZlqHMhexdkXJ7@boqun-archlinux>
+References: <20241007202752.3096472-1-abdiel.janulgue@gmail.com>
+ <20241007202752.3096472-2-abdiel.janulgue@gmail.com>
+ <CAH5fLggkpELOx2mfz32d2C0xE_aSWs3GQHAkufq5H=30xB3MUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 1/2] binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4
-To: Mark Brown <broonie@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <kees@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Yury Khrustalev <yury.khrustalev@arm.com>,
- Wilco Dijkstra <wilco.dijkstra@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <20241004-arm64-elf-hwcap3-v2-0-799d1daad8b0@kernel.org>
- <20241004-arm64-elf-hwcap3-v2-1-799d1daad8b0@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241004-arm64-elf-hwcap3-v2-1-799d1daad8b0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLggkpELOx2mfz32d2C0xE_aSWs3GQHAkufq5H=30xB3MUQ@mail.gmail.com>
 
-
-
-On 10/5/24 01:56, Mark Brown wrote:
-> AT_HWCAP3 and AT_HWCAP4 were recently defined for use on PowerPC in commit
-> 3281366a8e79 ("uapi/auxvec: Define AT_HWCAP3 and AT_HWCAP4 aux vector,
-> entries"). Since we want to start using AT_HWCAP3 on arm64 add support for
-> exposing both these new hwcaps via binfmt_elf.
+On Tue, Oct 08, 2024 at 08:58:56AM +0200, Alice Ryhl wrote:
+> On Mon, Oct 7, 2024 at 10:28 PM Abdiel Janulgue
+> <abdiel.janulgue@gmail.com> wrote:
+> >
+> > Replace NonNull with Opaque to make it possible to cast to a Page pointer
+> > from a raw struct page pointer.
+> >
+> > Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> > ---
+> >  rust/kernel/page.rs | 19 +++++++++++++------
+> >  1 file changed, 13 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+> > index 208a006d587c..08ff09a25223 100644
+> > --- a/rust/kernel/page.rs
+> > +++ b/rust/kernel/page.rs
+> > @@ -8,8 +8,9 @@
+> >      error::code::*,
+> >      error::Result,
+> >      uaccess::UserSliceReader,
+> > +    types::Opaque,
+> >  };
+> > -use core::ptr::{self, NonNull};
+> > +use core::ptr::{self};
+> >
+> >  /// A bitwise shift for the page size.
+> >  pub const PAGE_SHIFT: usize = bindings::PAGE_SHIFT as usize;
+> > @@ -25,8 +26,9 @@
+> >  /// # Invariants
+> >  ///
+> >  /// The pointer is valid, and has ownership over the page.
+> > +#[repr(transparent)]
+> >  pub struct Page {
+> > -    page: NonNull<bindings::page>,
+> > +    page: Opaque<bindings::page>,
+> >  }
+> >
+> >  // SAFETY: Pages have no logic that relies on them staying on a given thread, so moving them across
+> > @@ -65,15 +67,20 @@ pub fn alloc_page(flags: Flags) -> Result<Self, AllocError> {
+> >          // SAFETY: Depending on the value of `gfp_flags`, this call may sleep. Other than that, it
+> >          // is always safe to call this method.
+> >          let page = unsafe { bindings::alloc_pages(flags.as_raw(), 0) };
+> > -        let page = NonNull::new(page).ok_or(AllocError)?;
+> > +        if page.is_null() {
+> > +            return Err(AllocError);
+> > +        }
+> > +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings::page`.
+> > +        let ptr = page.cast::<Self>();
+> >          // INVARIANT: We just successfully allocated a page, so we now have ownership of the newly
+> >          // allocated page. We transfer that ownership to the new `Page` object.
+> > -        Ok(Self { page })
+> > +        // SAFETY: According to invariant above ptr is valid.
+> > +        Ok(unsafe { ptr::read(ptr) })
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  fs/binfmt_elf.c        |  6 ++++++
->  fs/binfmt_elf_fdpic.c  |  6 ++++++
->  fs/compat_binfmt_elf.c | 10 ++++++++++
->  3 files changed, 22 insertions(+)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 06dc4a57ba78a7939bbde96bf181eefa950ea13a..3039a6b7aba4bd38f26e21b626b579cc03f3a03e 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -257,6 +257,12 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
->  #ifdef ELF_HWCAP2
->  	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-> +#endif
-> +#ifdef ELF_HWCAP3
-> +	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
-> +#endif
-> +#ifdef ELF_HWCAP4
-> +	NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4);
->  #endif
->  	NEW_AUX_ENT(AT_EXECFN, bprm->exec);
->  	if (k_platform) {
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index 4fe5bb9f1b1f5e0be6e8d1ef5b20492935b90633..31d253bd3961a8679678c600f4346bba23502598 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -623,6 +623,12 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_HWCAP,	ELF_HWCAP);
->  #ifdef ELF_HWCAP2
->  	NEW_AUX_ENT(AT_HWCAP2,	ELF_HWCAP2);
-> +#endif
-> +#ifdef ELF_HWCAP3
-> +	NEW_AUX_ENT(AT_HWCAP3,	ELF_HWCAP3);
-> +#endif
-> +#ifdef ELF_HWCAP4
-> +	NEW_AUX_ENT(AT_HWCAP4,	ELF_HWCAP4);
->  #endif
->  	NEW_AUX_ENT(AT_PAGESZ,	PAGE_SIZE);
->  	NEW_AUX_ENT(AT_CLKTCK,	CLOCKS_PER_SEC);
-> diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-> index 8f0af4f626316ed2e92204ff9bf381cd14103ae9..d5ef5469e4e620f6ee97f40ce9cbbfa48e37e33c 100644
-> --- a/fs/compat_binfmt_elf.c
-> +++ b/fs/compat_binfmt_elf.c
-> @@ -80,6 +80,16 @@
->  #define	ELF_HWCAP2		COMPAT_ELF_HWCAP2
->  #endif
->  
-> +#ifdef	COMPAT_ELF_HWCAP3
-> +#undef	ELF_HWCAP3
-> +#define	ELF_HWCAP3		COMPAT_ELF_HWCAP3
-> +#endif
-> +
-> +#ifdef	COMPAT_ELF_HWCAP4
-> +#undef	ELF_HWCAP4
-> +#define	ELF_HWCAP4		COMPAT_ELF_HWCAP4
-> +#endif
-> +
->  #ifdef	COMPAT_ARCH_DLINFO
->  #undef	ARCH_DLINFO
->  #define	ARCH_DLINFO		COMPAT_ARCH_DLINFO
+> Using `ptr::read` on the page is definitely not okay. That duplicates
+> the contents of the `struct page`. You'll need some sort of pointer
+> type around `Page` instead.
 > 
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Agreed. So may I suggest we introduce `Owned` type and `Ownable` trait
+[1]? `alloc_page()` can be refactor to return a `Result<Owned<Self>,
+AllocError>`.
+
+[1]: https://lore.kernel.org/rust-for-linux/ZnCzLIly3DRK2eab@boqun-archlinux/
+
+Regards,
+Boqun
+
+> Alice
+
 
