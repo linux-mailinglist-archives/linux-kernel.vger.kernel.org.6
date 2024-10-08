@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-355873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B56A995844
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:18:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB97995848
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148A0288B18
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D49289642
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135DD215000;
-	Tue,  8 Oct 2024 20:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B12215004;
+	Tue,  8 Oct 2024 20:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1W//qBN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wbf8mIAj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A91D2905;
-	Tue,  8 Oct 2024 20:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D1A2905;
+	Tue,  8 Oct 2024 20:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728418698; cv=none; b=BVfd4sv52rVBywF8l8IcsE9BNfLzfbs73oxtBOkI3BR+026SizbAEc0s6ADln5d++N05W/pu4h4pUZjBwGtDNMVZ1qlm3yJ94P0TBBG0ivPU52nrtf33epeL2sqYsn4GNn+QR6pc8ePn8XS6voGWOMB9Ujrd/vPLKT9C7AK0O/w=
+	t=1728418849; cv=none; b=JRMocdY0Zw0yiwqL30FvLRYu9z/ahu700OP/RnZLk/RTG+/DbVw+V5luwnW3fY07yBqRlxQYFWG0mCAGlK2uTPTBQswCBRPUegtyYkLFw0CXl19q2XBrozkRnUSyTRZaxEhZSRpDLma0elkV+874xX2/cM8lE9qnYHLMtvaX45M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728418698; c=relaxed/simple;
-	bh=pORIhZtegzimHlEuxnl0uRW3ZkQC+8hI3a4/aUi1e+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aVFT4CFsbyJnjoWI1r+afiMX/0KMCI+1mZsc6hCwrKkrVdD4ycHMYTHnHBIyzL1doY5JdwD5d6EN8lfqh3Y2Yle0szNW2ohc3onseCps0zeS7Fzr74dYkyVrAigAsmAmhyhz/AX2sw4oQk9faK6wluKLkqjBDCR4WiBepCFo0zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1W//qBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46ADEC4CED0;
-	Tue,  8 Oct 2024 20:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728418698;
-	bh=pORIhZtegzimHlEuxnl0uRW3ZkQC+8hI3a4/aUi1e+I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F1W//qBNBIrozvKcwamd10uy5xeBE9DihBlvVjIGxTWVx8eTWbJW3oD+2hE89MFxL
-	 DeQ9TqzP4HRSkBn55i4GogtWUfN83VvnLJVNG2W5DddnmlR0lMDA61dpvTYuxYjVPv
-	 lIbBnST43dhBTYQFUqH+GmToWENEsE8FMiddbb5sx+mzMKjJEnmFQU6R6JDf9pekYy
-	 UlspadWmf0qYgcMODsGfWxPlRul+77QWtMcbdRV9etdCJksiBqUSSoL7z143bwA1Q2
-	 gK+2FtREQTe3BC4AEf3mxekvVlhS4DwSNxY/S06dtp39CR6FA3oXFKzWNAB5aPWBhq
-	 mQtF4FAAO3V1w==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2facf40737eso67181681fa.0;
-        Tue, 08 Oct 2024 13:18:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUBMuFQef/HCx5LWsPeUXVGNTO+xWzq22bibNiA84Sfrbb+u1wyc2tcXgrs0JKrgy+E3abWiXZ72yNy5nW@vger.kernel.org, AJvYcCVStrmCDxLFNNybQu8j7ptYeuGmaiZXpQ6ys1CWdYTpFdGDbMFrI/L+wBACGmmt9bZarjFNozixaM0HFT4=@vger.kernel.org, AJvYcCXK34vWHDsnfD5NwwkCdkDEnrjriL4UJ1oWsA63lI6w1PHaWbneru5gSXXATwjHtt4xEM5LsUGoVh0yNv5N0/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEWcVQ7WPVbGCqtZnrVc8qQNWjAUh/yKdalYmU6kaIp/0IUESp
-	/yXggcJ6+5wZrr+Y6nYZaaTCCiOzguuV4SK5a4PE+N2r6jpQ4wm/T1nF+u8yYrBioufL1TD9i4i
-	8yfawIkCvDjc+LsTQhg4d23yO4fs=
-X-Google-Smtp-Source: AGHT+IEFzyJtTh4Uv5EdRNZ24nxcmGNTs6sECg8IKzBtxMaY8Mv15BVzVq5hGDvYovu/lPrqA1w9XtBZWRjWK11CQl4=
-X-Received: by 2002:a2e:4a19:0:b0:2f3:eeab:7f17 with SMTP id
- 38308e7fff4ca-2fb18801681mr1303771fa.41.1728418696915; Tue, 08 Oct 2024
- 13:18:16 -0700 (PDT)
+	s=arc-20240116; t=1728418849; c=relaxed/simple;
+	bh=a+CvXQsfvb9W0/UUGySvxVG4bRVf92+QlgygJfurKFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KIciiZ5tyHExU6wn7gHGhDWk0owz4UW5CdoOKJWs13WdUYCvKp33X/t89e06YujyRyiDRyNP0il8vpLDNf9ZNpqhkakVg+Tob4C031IoELn+S9Ag+AfPCschvLHu8qdCLDBCFdUrDaHJDnTbaIvj0I7HK1JW1M8Im04IgvO1bDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Wbf8mIAj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728418845;
+	bh=ZUAX+nMXdMMBK4bJn355F73977ikaUcKeALd46qz2xY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Wbf8mIAjsqtp36GLo5CP94iicjq7qVPy8TK4dHOd7qGl8jcY3cKLtdpmIPyfDYily
+	 URWMOTji1xfbzZLsKgOETBP1UybpQZUM0oBNGadXxriCoPMIsM01tkqodIea0wrd2D
+	 7iIADOUVyZHzJmOtpahF+KIOI9f96PoLgGUjehujrqyUd8+ME3uYKKFARTEG2lOwFq
+	 Gnmsgbyv+QYvJNOIHdYDHM7LwGhMTuIhd4SZyoMgQMbTZcbsFiip2ehoZ3oflPLcsd
+	 VEQSndDCQ1FjMvLq1bS5FDsyZZRwiOCiLvmRUFQ2qYlhByiQVMBRwYnB9ckdUkUMva
+	 oyoPYu7t8z7NQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNS7x0M1kz4wnr;
+	Wed,  9 Oct 2024 07:20:44 +1100 (AEDT)
+Date: Wed, 9 Oct 2024 07:20:44 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mmc tree
+Message-ID: <20241009072044.67f195b0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-rustc-option-bootstrap-v1-1-9eb06261d4f7@google.com>
- <CANiq72k-Z88A+Bk6q4M5dnVW74L7u85Bqdo0ptSdvVaD6BR3_A@mail.gmail.com>
- <CAK7LNAQU8m=QrEXS2h_0Q8UNqqTmkud18zc8RM6LVPsKYM5z3w@mail.gmail.com> <CANiq72mCuqCE3fA2jgaaA4fyj1kNzYm61C2600vAf0CT5=JP0A@mail.gmail.com>
-In-Reply-To: <CANiq72mCuqCE3fA2jgaaA4fyj1kNzYm61C2600vAf0CT5=JP0A@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 9 Oct 2024 05:17:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARDkS6uAHcdyZatc2SB7A66TWGfKZWNkYOoa7i3jo3QqA@mail.gmail.com>
-Message-ID: <CAK7LNARDkS6uAHcdyZatc2SB7A66TWGfKZWNkYOoa7i3jo3QqA@mail.gmail.com>
-Subject: Re: [PATCH] Kbuild: add RUSTC_BOOTSTRAP to rustc-option
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/TR000JQqvI7yc5729qgWj3n";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/TR000JQqvI7yc5729qgWj3n
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 5:06=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Oct 8, 2024 at 8:45=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > Really?
-> >
-> > $(shell ...) inherits env variables in my understanding.
->
-> I mean the Make-exported variables (not the external environment),
-> i.e. `RUSTC_BOOTSTRAP=3D1` that we export in the main `Makefile`. Those
-> are not exported into the `shell` function.
->
-> However, it turns out this changes in GNU Make 4.4 in commit
-> 98da874c4303 ("[SV 10593] Export variables to $(shell ...) commands"):
->
->     * WARNING: Backward-incompatibility!
->       Previously makefile variables marked as export were not exported
-> to commands
->       started by the $(shell ...) function.  Now, all exported variables =
-are
->       exported to $(shell ...).  If this leads to recursion during
-> expansion, then
->       for backward-compatibility the value from the original
-> environment is used.
->       To detect this change search for 'shell-export' in the .FEATURES va=
-riable.
->
-> And indeed:
->
->     export A :=3D .PHONY: a
->     $(shell echo $$A)
->     a: ; @echo exported
->
-> Gives:
->
->     $ make-4.3
->     make: 'a' is up to date.
->
->     $ make-4.4.1
->     exported
+Hi all,
 
+Commit
 
-OK, I reached the same understanding now.
+  14b473254d60 ("mmc: sh_mmcif: correctly report success when obtaining DMA=
+ channels")
 
+is missing a Signed-off-by from its committer.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/TR000JQqvI7yc5729qgWj3n
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
---
-Best Regards
-Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcFlB0ACgkQAVBC80lX
+0GwPhQf9G2/SfbOyjZ4W62YiiC73u5jdlghFkstXNRBJo7NsHsncwFvLaDMJu5Bb
+SE17VBz97FKTJRl2/M99smdcnZK+svNmXlBSQJtgYy8iRFvBhzTBfDU/CqC6R/5e
+gB/FYDmdPuRvQAg+Z759Frq7qoTdrFy8Q4dgoTuJROu1bJmtSinCj6w+oxu8HAcG
+FlLzNo3whZHL3csK0frdCAsaOEdkZuJ1yjgBqIUoRHNvcVy8EEEicdGXMUE0TSSr
+10XEuPw6UbgQs81SMu2N+JBoReEU91xPvEUqdP3QVoFVNbbSEunmfG9OlJznmPRv
+PtA4rkYO/D6f8FmIotJt0WVKv5jrIw==
+=EQ/M
+-----END PGP SIGNATURE-----
+
+--Sig_/TR000JQqvI7yc5729qgWj3n--
 
