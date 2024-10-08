@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-356036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027D0995B4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:03:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F71B995B57
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF901F24202
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972731C219FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F335215F47;
-	Tue,  8 Oct 2024 23:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kATOozmZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C877D2178FE;
+	Tue,  8 Oct 2024 23:06:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4F1D0F44
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567A11D0F44;
+	Tue,  8 Oct 2024 23:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728428617; cv=none; b=efBjiSQnKPqaZ3+2BXM6ilFfpF1SV7jkH/SgLUZnkLPdvsKbl+3GFKqazd82hhTDNgG0lqKaKTc/nQjX3qR4g4+c6feByQpC/jbIJQixwkFMSBYJkMde8BDbu6bxgTE8glDVpApSiCQJU/n4/BszC/2F299U0ZuK6YimY7yvsp8=
+	t=1728428785; cv=none; b=quj/5wNYs++bK1FArF51Li3KKz0AJBAr9ZHunpsgYBXZhsDZX1YUzyQT+5clGx8YliHG4hvlxbWQIBHU7eiCh98+7Z1Z9RYFAT9z9EXw2KJqYD+/H99IXkEWhXUoslykti/H7tjUj7NcQDvmyO5NGXcLO811i9yeM/A4fNR+Sv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728428617; c=relaxed/simple;
-	bh=5hvxAlPWX0LyqgToI+agMcWwCHEqYCMYgWeLZB2yhfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COhe44qbpXDfkY9B2c0c9qD5lP2UnBOUb7O8SwmnZg81e6pKApfRFm7y+kjWSiz9JVtIkzY9PARrL9mNt4/L8iw6TeWP6tgW3qU4IS8AL6W+vTyaROmCeXekMiqS8aczr1K+ey032cf0lVfhyJ0nGwqwr0IKDcab+DKog+41838=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kATOozmZ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728428616; x=1759964616;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5hvxAlPWX0LyqgToI+agMcWwCHEqYCMYgWeLZB2yhfk=;
-  b=kATOozmZzavrmJ8xAzbqDy2qVeVvWaqF3ixV5qJRB/Om1fLDp2u6UP63
-   ISJ8BqK2gpQ+ZjsyM8iTBiILCoKicQhqEf9GrecU3PDfNUPW3FSVETHb9
-   VsYMMZgHgSm1F9SYChPRz7jaL8fASP4g2lWeciuz3Ul4Mtyth0gBrzAIY
-   Y35xgxs+Zdb0TzFzmJPy+Y2uqHzOAfzJRus6EDop6DofWiyQem6cvfSfZ
-   lnz77Cvjhc9bvf+7nywmMpAnE7ZoKzXdrjuXnO+LmfCPzJuYNmF5J4mup
-   hutfuppOtG83v2jaxdfv8y3MuQtys5ubKlNEfvZl2rpzP8AMcjNiSCvl3
-   Q==;
-X-CSE-ConnectionGUID: aKZkL00kRna0A0DO/WmcOQ==
-X-CSE-MsgGUID: XnMyIzVLQ0KCa4TubqLWrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="53090136"
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="53090136"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:03:35 -0700
-X-CSE-ConnectionGUID: JttidmRFQFexSFY7Kms96Q==
-X-CSE-MsgGUID: K/OPJ4aMRwaZy1nerDvmAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="106860738"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:03:35 -0700
-Date: Tue, 8 Oct 2024 16:03:33 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v5 38/40] fs/resctrl: Add boiler plate for external
- resctrl code
-Message-ID: <ZwW6RbkNIml07hbg@agluck-desk3.sc.intel.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-39-james.morse@arm.com>
+	s=arc-20240116; t=1728428785; c=relaxed/simple;
+	bh=4MIypqsyOGWR9qQpPieVB7d802V9vDLkd4c0SEg2wW4=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Bx74zGjsZEww11aru1rAOPHLCUjuImHmebQTRq1ej6KN920bTiJCv6jNc++u+m2QXyRpw1H/bXNa/Op8y+6xmT7oCr+v/edSJz3d3i+BnpA9484CcK6wF46YSRpZ5Wulu/SkUFutQdCdN4OZD20XqHHv4Eg+52BR0gcC2LcQrco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8738C4CEC7;
+	Tue,  8 Oct 2024 23:06:24 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1syJHg-00000001164-3tWc;
+	Tue, 08 Oct 2024 19:06:28 -0400
+Message-ID: <20241008230527.674939311@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 08 Oct 2024 19:05:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Paul  Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Thomas  Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@kernel.org>,
+ Borislav  Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v2 0/2] ftrace: Make ftrace_regs abstract and consolidate code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004180347.19985-39-james.morse@arm.com>
 
-On Fri, Oct 04, 2024 at 06:03:45PM +0000, James Morse wrote:
-> Add Makefile and Kconfig for fs/resctrl. Add ARCH_HAS_CPU_RESCTRL
-> for the common parts of the resctrl interface and make X86_CPU_RESCTRL
-> select this.
-> 
-> Adding an include of asm/resctrl.h to linux/resctrl.h allows the
-> /fs/resctrl files to switch over to using this header instead.
 
-> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> index 4b7e370e71ac..973fddf7e9a3 100644
-> --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> @@ -7,10 +7,9 @@
->  #include <linux/kernfs.h>
->  #include <linux/fs_context.h>
->  #include <linux/jump_label.h>
-> +#include <linux/resctrl.h>
->  #include <linux/tick.h>
+This is based on:
 
-internal.h already has a #include of <linux/resctrl.h> it doesn't need
-another one.
+  https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/
+     ftrace/for-next
 
--Tony
+ftrace_regs was created to hold registers that store information to save
+function parameters, return value and stack. Since it is a subset of
+pt_regs, it should only be used by its accessor functions. But because
+pt_regs can easily be taken from ftrace_regs (on most archs), it is
+tempting to use it directly. But when running on other architectures, it
+may fail to build or worse, build but crash the kernel!
+
+Instead, make struct ftrace_regs an empty structure and have the
+architectures define __arch_ftrace_regs and all the accessor functions
+will typecast to it to get to the actual fields. This will help avoid
+usage of ftrace_regs directly.
+
+I again compiled all the affected architectures (except for 32bit ppc).
+I got s390 built when disabling bcachefs.
+
+Changes since v1: https://lore.kernel.org/all/20241007204743.41314f1d@gandalf.local.home/
+
+- Moved the non ftrace args code from asm-generic/ftrace.h to linux/ftrace.h
+  those archs have their own asm/ftrace.h and are not using asm-generic.
+  The default has to be in linux/ftrace.h
+
+- simplified arch_ftrace_get_regs() and made it a static inline function
+
+- Added a second patch that consolidates a lot of the duplicate code
+  when an architecture has pt_regs embedded in the ftrace_regs.
+
+Steven Rostedt (2):
+      ftrace: Make ftrace_regs abstract from direct use
+      ftrace: Consolidate ftrace_regs accessor functions for archs using pt_regs
+
+----
+ arch/arm64/include/asm/ftrace.h          | 21 +++++++++--------
+ arch/arm64/kernel/asm-offsets.c          | 22 +++++++++---------
+ arch/arm64/kernel/ftrace.c               | 10 ++++----
+ arch/loongarch/include/asm/ftrace.h      | 29 ++++--------------------
+ arch/loongarch/kernel/ftrace_dyn.c       |  2 +-
+ arch/powerpc/include/asm/ftrace.h        | 27 +++-------------------
+ arch/powerpc/kernel/trace/ftrace.c       |  4 ++--
+ arch/powerpc/kernel/trace/ftrace_64_pg.c |  2 +-
+ arch/riscv/include/asm/ftrace.h          | 22 ++++++++++--------
+ arch/riscv/kernel/asm-offsets.c          | 28 +++++++++++------------
+ arch/riscv/kernel/ftrace.c               |  2 +-
+ arch/s390/include/asm/ftrace.h           | 29 ++++--------------------
+ arch/s390/kernel/asm-offsets.c           |  4 ++--
+ arch/s390/kernel/ftrace.c                |  2 +-
+ arch/s390/lib/test_unwind.c              |  4 ++--
+ arch/x86/include/asm/ftrace.h            | 30 ++++++------------------
+ arch/x86/kernel/ftrace.c                 |  2 +-
+ include/linux/ftrace.h                   | 39 +++++++++++++++-----------------
+ include/linux/ftrace_regs.h              | 36 +++++++++++++++++++++++++++++
+ kernel/trace/ftrace.c                    |  2 +-
+ 20 files changed, 139 insertions(+), 178 deletions(-)
+ create mode 100644 include/linux/ftrace_regs.h
 
