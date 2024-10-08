@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-354935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F9B9944BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:51:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC09944D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4B92879DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:51:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A59B262C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8C21C2DB8;
-	Tue,  8 Oct 2024 09:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B3018CBF1;
+	Tue,  8 Oct 2024 09:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeaV2hCu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIq+O07B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C571C2322;
-	Tue,  8 Oct 2024 09:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62D2173336;
+	Tue,  8 Oct 2024 09:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728380953; cv=none; b=c77LrPVbCPkWuFZf0keyiNfAJt2WVxyA5fuP2MiAJlF0bn5VaWDariZLtLgaPhz7MOU9EmGFFPpcyXOxUISnqdRT7CnP1n82+JuZC79pr/38WaJPASk+8cJW3nfF4zLDlzSSvdk3hAE+fEYlqMcwjCAA7Pup0SM64xy8ZH6ZDeg=
+	t=1728381028; cv=none; b=RYS3Knfdgg6942uduTs8mISwnyjGZqjf3denseD2BAioP8QASvmxXVXm7Epe7j9kwmqe21OiL0cnvyvUdgEsXLeR0FTZWBrUz21MoD/axwu1Ia/t96Au77h/X0/RGIgnnlTUT75kDPilPFSAQIfA9OlWH6Mpy4D7w92dkmvCBbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728380953; c=relaxed/simple;
-	bh=6Oe4lOymiFbbttkw2/k5vL3jnxSJdzZTenZxFyHXga8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hON0Bl80kGASz0Wk8ewq0Ao4ItnTLD+q7m9xiQ0+kc8ERDP+Xw5t6tkc8cXby+wZwP7igKJFIFvgP5yjdmqyzet1iQ/YG5f4k1YYV5iQNYT3uBX2hJHQpFYwH0LpOLjCwxGKRCWxAA0OADwuCgygcQhPDThleezFXn2yzX3I7AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeaV2hCu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CF3C4CEC7;
-	Tue,  8 Oct 2024 09:49:11 +0000 (UTC)
+	s=arc-20240116; t=1728381028; c=relaxed/simple;
+	bh=XEm2ORiPKfTRSrw0KpulPUwOgoWHLL9ryCeASyTK1ec=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZA1fTjl2D5hJRi0AU1ozRNcyFnudB0n0mzvtkaRA1Y036+t7RW9MwhlTeXM9V+0Unc5xTzaDsxGAO+6wjvmtS0Xkxe8cypTDx+vdoXX2XaD9+zXq6uaXCqyhDKFRGCeE+WO3vI1V5OpeBk2M+sdGVi9/YMsNE1UZWxvztUihJXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIq+O07B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C444C4CEC7;
+	Tue,  8 Oct 2024 09:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728380952;
-	bh=6Oe4lOymiFbbttkw2/k5vL3jnxSJdzZTenZxFyHXga8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LeaV2hCuNM9/bJcfltFyWgfhXMrmwZP3L8VRIh5ZKnThTyJL8rJTP9SwKvR9rJj3B
-	 jqOmWtMqddzJ2G2br9QTjalahu6zlJ/4WRrZHi0t5blK9wFDBEhX7PULAEgjvpxZY1
-	 ErqjcO85nEtgG8r3rOCLKNVRexaB5T2Atz+9hiTmgUkDGOUVMtxI3yLt8rRWX0A9Ql
-	 8HF8yO9Vcq0r2J/GDqAthyscCbLf0uTu8vbEJCx2iuYu3PZaWQgImOnhZT6BmQb1ca
-	 xm+AmBPZAGcnLPIpJfzq9OrI3B4/C84aIO/v0zEpM4mn21kRGhjj78tt+YzYtdkwfb
-	 L3ylwJcPks0/w==
-Date: Tue, 8 Oct 2024 10:49:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Weidong Wang <wangweidong.a@awinic.com>
-Subject: Re: [PATCH] ASoC: codecs: aw88399: Correct error handling in
- aw_dev_get_dsp_status function
-Message-ID: <ZwUAFaVkP7MLFn_O@finisterre.sirena.org.uk>
-References: <20241008025923.10606-1-zhujun2@cmss.chinamobile.com>
- <6849d647-0240-4d3b-8f35-e4e65397e389@web.de>
+	s=k20201202; t=1728381026;
+	bh=XEm2ORiPKfTRSrw0KpulPUwOgoWHLL9ryCeASyTK1ec=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MIq+O07BVQWa6upj60nCwdO1Qt7nViDEdOxFbQm+bk1Aye7F78rmUZiEjFvQKgGTv
+	 ccujhfrgiLAfYrG16rAo3SoIi+G8UTvzlZ9x2yS8MyOFAJELNlX3Rdgu20NUxOIZaP
+	 mxw0g+xJ7a3JYLvvFwK1yPZhx4d95j5hjFroMI6cfxlcrRe4jM0Yh+YzWzmdHldyN3
+	 3hBm9eb5CaTpZ9rQjD9DXafrJC619vsIbUJYsb6icbKEEtbXTaGr2E7GLPwsofxeIE
+	 dc6Jb3bSIlVOr82+MZcq7fHIPKEobwE/7K3s4sk46PUztdtVocnChZBlWNbmnTdFvd
+	 LK2auw7HfBMtA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD203810938;
+	Tue,  8 Oct 2024 09:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TSB0aCd0HgCe3e0d"
-Content-Disposition: inline
-In-Reply-To: <6849d647-0240-4d3b-8f35-e4e65397e389@web.de>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 1/1] Documentation: networking: add Twisted Pair
+ Ethernet diagnostics at OSI Layer 1
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172838103051.472898.7922396138133362766.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 09:50:30 +0000
+References: <20241004121824.1716303-1-o.rempel@pengutronix.de>
+In-Reply-To: <20241004121824.1716303-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, f.fainelli@gmail.com, maxime.chevallier@bootlin.com,
+ kory.maincent@bootlin.com, lukma@denx.de, corbet@lwn.net,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux@armlinux.org.uk, Divya.Koppera@microchip.com
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri,  4 Oct 2024 14:18:24 +0200 you wrote:
+> This patch introduces a diagnostic guide for troubleshooting Twisted
+> Pair  Ethernet variants at OSI Layer 1. It provides detailed steps for
+> detecting  and resolving common link issues, such as incorrect wiring,
+> cable damage,  and power delivery problems. The guide also includes
+> interface verification  steps and PHY-specific diagnostics.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v3,1/1] Documentation: networking: add Twisted Pair Ethernet diagnostics at OSI Layer 1
+    https://git.kernel.org/netdev/net-next/c/e793b86ae44e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---TSB0aCd0HgCe3e0d
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 08, 2024 at 08:32:32AM +0200, Markus Elfring wrote:
-> * Please check the subsystem specification once more.
->=20
-> * How do you think about to replace the word =E2=80=9Cfunction=E2=80=9D (=
-in the summary phrase)
->   by parentheses?
-
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
-
---TSB0aCd0HgCe3e0d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcFABQACgkQJNaLcl1U
-h9BRNAf/Tk8WFAYAuAYF4quSPeBvWtoalHDjKypnXRlpkmQ3EJjVhGfVapiMukVH
-1C5RLcTAtf0nu7XM8gFQnFCXO+axnRBvN+mNEfeByDwhZkq3NfdEJ61WUEJ6JkaL
-QtGODSIgIXHYEsEf/cwSrNFAEpESxredbqLjmhGfc7toB9r3tvhG5wZNFSRjEEiH
-5F9ios/O3uVuoX/edF2LH22+TGh+tktWui/0i4LVUGFkcyFhpY6rbAKJTvAOJqGw
-pYAU8iM2cIdcqfUhPo2C+KV2SiHQmwLxp64s7RvLqmY19JbTloGUnggItTAD3DIr
-NaDU2xe67VTw5A+vLc44zk+vdVGcVg==
-=4dlo
------END PGP SIGNATURE-----
-
---TSB0aCd0HgCe3e0d--
 
