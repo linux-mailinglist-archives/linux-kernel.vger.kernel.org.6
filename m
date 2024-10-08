@@ -1,103 +1,168 @@
-Return-Path: <linux-kernel+bounces-355348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649099950F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0653C995100
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7301F261A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:04:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C114A284E8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F2A1DF98F;
-	Tue,  8 Oct 2024 14:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="vqbWoPWR"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649D21DFD87;
+	Tue,  8 Oct 2024 14:05:17 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049E94C97
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEA31DF25D;
+	Tue,  8 Oct 2024 14:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396286; cv=none; b=hLx8sZg64cpJDPc0jjjbH+l3DDtBhMa2b+xz/kZY0gg+0R5xi5MKdwK9yYxQ6AZaiU4I80v9FW851KxrFNmExJ/CVV70+fCW1HVO9gX+1Axf5/z6cpwCoewaD24zVfic/+/BOCazZeGVT2dXQCnq62AovQOFn5Q6r/KaMidtBTE=
+	t=1728396317; cv=none; b=CghKuY9Uct5TyLSLazXKPuQ8Mn+0NuedCf7Z+2GqtbBDKV2zyfYxDi9VkhuJyOBfUeTIVYLIr773sZq1jOuOlHJ5A+c9N899DJBzqKccQ7z6WpE2dG75PywVqapHSflE5uOvU8sVbXABr+mG2BNwvdTvKHQC90D4RRueQTVdFrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396286; c=relaxed/simple;
-	bh=TyjnE8Cl8BUiV44ccbi4F/Mx1PAYvm9DmLImjXSogU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMVlqiCCVxArEgHspzMlzzCGZKC0Om6pGvQ1q54CQ9tyLJuoOyi7lMqVFF4fiYP22TD63XJaVeqPKMAMEAC0xXtOPhvhlVbVPaIxu9j7bxHe5UCR8D787EJ30Igsm9tqrf+UyJJousc9HZ+c5fxWHRtXiwtoYShXEG5GuaMeGsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=vqbWoPWR; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7ae6f4b1f16so345135785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1728396283; x=1729001083; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyjnE8Cl8BUiV44ccbi4F/Mx1PAYvm9DmLImjXSogU8=;
-        b=vqbWoPWR1x8oLFDAN6Y7ugzbPWhFXxeqy+13p50wYDbJtEg6qq6MeXfcrnJb4qy7w/
-         p0zNR8x/SZPbDdrlqAJEkoMfni+zCPSiwya5sHHd7mWYd4RdT7EEpMb1yPYVoaQ0NrDc
-         Tb+MLjwylCxuvySz9CNmjHm4dItSYaKpFKDGt4y0UIeRhDL9F2XJ0AoBEz8R0DfAV3VT
-         B6oyRD6RSFlGje9fz4QCIADkBuma+FlYrhSw0crgC/pDwwDlQUjBmwCnRq4k11SeBOum
-         hIu3cT/29a1Y5pHNdE1RGOj6ODHWguz2ewYpCDdkupv44SzaF0SRrKVz+/lhq2kC6dGb
-         AY5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728396283; x=1729001083;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TyjnE8Cl8BUiV44ccbi4F/Mx1PAYvm9DmLImjXSogU8=;
-        b=NbARogEwUQoGfenBbTZl1W9S2z9NAkKdptt90vlxmCBtsOQsvYq4FtKtXKLez7BGIe
-         KtpwqjNgZitNC7wn79L+LwmjdX5JqN1shRHAAshQZJfGtrHR6YHXvy/7TxC4C9jTMgQq
-         riIAp1Z+mbiPpFF16ozg8PA8PVT/hDJ6VurUiaXkpLuxRi0fsZYEj3TCUls5FyV8tAXQ
-         XfmWlbf1s8eysjBOXRduLW+w0TS2ozZSLp6tGO4Kj3WJo+STujcijySez+cb6k6NyCAK
-         llGdmteepVIrN49Z01vkpI9IrUlsCydpVmbxnIyLh3szmzjuV0Ltc7CaIxrFHqVYQTvU
-         1tHw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/on69nF3jgT+Q3FkwP5oIWJPpeig5typatcMhwOinXndAc3eecjEdYGMNE4Awrx4xVzlAjdt0QotOUcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRjJcQWH7fQx57261bsgzsvByFyHfRXDgaxov8pQWhKbN/I76x
-	Zsh5GU5zw0+VsCHRw2ULKTVmHgRNOpnJPJZDwoc7kTiR45aYoqRgDchyj0wrx4Q=
-X-Google-Smtp-Source: AGHT+IFnW2G/DfWAVwb6xF3THBSDW4i0rfBOz3jsospEhAW/qdZuxZtZPhcU4bN7LYLHEFGNDDmj9w==
-X-Received: by 2002:a05:620a:2993:b0:7a7:dd3a:a699 with SMTP id af79cd13be357-7ae6f421a2dmr2339888985a.11.1728396282545;
-        Tue, 08 Oct 2024 07:04:42 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7561e5d6sm356567985a.9.2024.10.08.07.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:04:41 -0700 (PDT)
-Date: Tue, 8 Oct 2024 10:04:37 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, surenb@google.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] sched, psi: Don't account irq time if
- sched_clock_irqtime is disabled
-Message-ID: <20241008140437.GA6937@cmpxchg.org>
-References: <20241008061951.3980-1-laoar.shao@gmail.com>
- <20241008061951.3980-4-laoar.shao@gmail.com>
+	s=arc-20240116; t=1728396317; c=relaxed/simple;
+	bh=PTNke107SXU71vG2qIJWjzH/i2LTHqtJyFWHIFg7khM=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=iUFNZM2QRK0lqrOSUOjCw/C0/Ll2u2f0r5fpnZ1i8MyAI3y8fjrzlN1X5n21kmLyWaXAuPVo40F6Fry7iiwB+VuTc3E8nWCb3QN1ekUJPAzu8Yn1szREUMThFbLRSuVPXG7V3KNRWnIiuL/dkO+e+XS9Tzr4AGxWcVC94ZGCIZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XNHpd1FTXz1ymTW;
+	Tue,  8 Oct 2024 22:05:13 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id D91CA1402C6;
+	Tue,  8 Oct 2024 22:05:08 +0800 (CST)
+Received: from [10.174.162.134] (10.174.162.134) by
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 8 Oct 2024 22:05:07 +0800
+Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+To: Marc Zyngier <maz@kernel.org>
+CC: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241008082429.33646-1-zhengzengkai@huawei.com>
+ <86v7y355zr.wl-maz@kernel.org>
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+Message-ID: <57e9adb8-a34a-6d63-24b8-4ad0abb74bf9@huawei.com>
+Date: Tue, 8 Oct 2024 22:04:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008061951.3980-4-laoar.shao@gmail.com>
+In-Reply-To: <86v7y355zr.wl-maz@kernel.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200010.china.huawei.com (7.221.188.124)
 
-On Tue, Oct 08, 2024 at 02:19:50PM +0800, Yafang Shao wrote:
-> sched_clock_irqtime may be disabled due to the clock source, in which case
-> IRQ time should not be accounted. Let's add a conditional check to avoid
-> unnecessary logic.
 
-Makes sense. When disabled, irq_time_read() won't change over time, so
-there is nothing to account. We can save iterating the whole hierarchy
-on every tick and context switch.
+ÔÚ 2024/10/8 16:55, Marc Zyngier Ð´µÀ:
+> On Tue, 08 Oct 2024 09:24:29 +0100,
+> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+>> According to GTDT Table Structure of ACPI specification, the result of
+>> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
+>> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
+> There is no such language in the spec. It simply says "Offset to the
+> Platform Timer Structure[] array from the start of this table".
+OK, I mean that in current code, the condition of this check is redundant.
+>> in function acpi_gtdt_init(), so the condition of the "invalid timer
+>> data" check will never be true, remove the EINVAL error check branch
+>> and change to void return type for acpi_gtdt_init() to simplify the
+>> function implementation and error handling by callers.
+> And ACPI tables are well known to be always correct, right?
+Not always, check is needed, but should be changed.
+>> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
+>> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
+>> not be called with parameter platform_timer_count set to NULL and we
+>> can explicitly initialize the integer variable which is used for storing
+>> the number of platform timers by caller to zero, so there is no need to
+>> do null pointer check for platform_timer_count in acpi_gtdt_init(),
+>> remove it to make code a bit more concise.
+>>
+>> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+>> ---
+>> Changes in v2:
+>> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
+>>
+>> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+>> ---
+>>   drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
+>>   drivers/clocksource/arm_arch_timer.c |  6 ++----
+>>   include/linux/acpi.h                 |  2 +-
+>>   3 files changed, 11 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+>> index c0e77c1c8e09..7fe27c0edde7 100644
+>> --- a/drivers/acpi/arm64/gtdt.c
+>> +++ b/drivers/acpi/arm64/gtdt.c
+>> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
+>>    * @table:			The pointer to GTDT table.
+>>    * @platform_timer_count:	It points to a integer variable which is used
+>>    *				for storing the number of platform timers.
+>> - *				This pointer could be NULL, if the caller
+>> - *				doesn't need this info.
+>> - *
+>> - * Return: 0 if success, -EINVAL if error.
+>>    */
+>> -int __init acpi_gtdt_init(struct acpi_table_header *table,
+>> +void __init acpi_gtdt_init(struct acpi_table_header *table,
+>>   			  int *platform_timer_count)
+>>   {
+>> -	void *platform_timer;
+>>   	struct acpi_table_gtdt *gtdt;
+>>   
+>>   	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>>   	acpi_gtdt_desc.gtdt = gtdt;
+>>   	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
+>>   	acpi_gtdt_desc.platform_timer = NULL;
+>> -	if (platform_timer_count)
+>> -		*platform_timer_count = 0;
+>>   
+>>   	if (table->revision < 2) {
+>>   		pr_warn("Revision:%d doesn't support Platform Timers.\n",
+>>   			table->revision);
+>> -		return 0;
+>> +		return;
+>>   	}
+>>   
+>>   	if (!gtdt->platform_timer_count) {
+>>   		pr_debug("No Platform Timer.\n");
+>> -		return 0;
+>> +		return;
+>>   	}
+>>   
+>> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+>> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+>> -		pr_err(FW_BUG "invalid timer data.\n");
+>> -		return -EINVAL;
+>> -	}
+>> -	acpi_gtdt_desc.platform_timer = platform_timer;
+>> -	if (platform_timer_count)
+>> -		*platform_timer_count = gtdt->platform_timer_count;
+>> -
+>> -	return 0;
+>> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> And now you are trusting something that potentially points to some
+> unexpected location, blindly using it. It is bad enough that the
+> current checks are pretty poor (no check against the end of the
+> table for the first timer entry), but you are making it worse.
+>
+> 	M.
 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Can I use the second and third bytes (the length) of platform timer 
+structure to
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+check against the end of the table ?
+
+Thanks!
+
 
