@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-355747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035E2995663
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA59995664
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C2E1F22893
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9251288A0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64DD212D24;
-	Tue,  8 Oct 2024 18:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4E8212EE8;
+	Tue,  8 Oct 2024 18:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zb1hKXUC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLcfD5Gf"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE08212D19;
-	Tue,  8 Oct 2024 18:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52635212D38
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728411859; cv=none; b=QQC+hKzdP2dlGZvVIlDkkBJ/Tl+Is8msU9AE3OgCF0cku3Y60aqJY5Uflhl9uo5sszBXTB6J+AUsp1rqX1AJX00tLXPOClEGx+kk8y57VeV0j2AEm+zTb5QcJoq97SNvE1AKbjaQxlV+f0ffIwogGzN8hpL+hKlRNUuY/Ls0M/I=
+	t=1728411862; cv=none; b=ATZ794VKfQgleE4n8KmsPlvLK7+PJ6MWyY9ahmil+yIqkPCvv7aTCTAz7HIYMnpnsVOtm/Aluv84M1AEEqi4iocu7JQdZSvvYEIqbpjtwLGra0WygPq7y+jSJZkyDVzZ0cEmn8mZiMcYUF+3c8o2CkW2XLN0irceZSIj399K4iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728411859; c=relaxed/simple;
-	bh=HZlnqo+1ZAcu5d/47LtzTbNi6jaK0jMUp+f63esCaGw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ichdCrcLQk6JEwKfK439wZtq+COGzEcouJ1ijbb1hkKLuD6GTPT5r36OtjmB0HQ8hn7Vu8sEcIntFe98WQw4sQpWeC5FwmxFlxbF053JQXSMXH5QBvxGtyKEwoebDYPxsQnPpt8WbzHL6kZqFaSzJDds0QWJIJq0u2oIeV9IMfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zb1hKXUC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57678C4CECE;
-	Tue,  8 Oct 2024 18:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728411858;
-	bh=HZlnqo+1ZAcu5d/47LtzTbNi6jaK0jMUp+f63esCaGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zb1hKXUChH8iNdBE6a4Ea7EdE1gcoboPgumc2L7H2g705QaAwK6qzSLPDM0wNAZAK
-	 bE1OncLFVga6S5YJd9cyEISMbKXVce1/Jov1ed+tSZ7st/OqMyKFPHgzMnl/m4ie90
-	 s2gYOorirYdVfUt02UjBpP8zIpscaOz2wh6UdsfrOgx+Lp0vnIkENasY2cVG1w006K
-	 DvDP0fFwewKWISoOEkvfX8xZhiTDOSon9ofaUdAW0UJpdoUIvcYYt1Fyus8VemBcG+
-	 NCWj7dW6M73MxhPg5Twb4BILMhm6zdxl5l360+6bdfk5e2bkBU+RSl5oQts4SRxjc8
-	 5/kbzhMRsRoBw==
-From: Will Deacon <will@kernel.org>
-To: robin.murphy@arm.com,
-	joro@8bytes.org,
-	jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	mshavit@google.com,
-	smostafa@google.com,
-	baolu.lu@linux.intel.com,
-	Chen Ni <nichen@iscas.ac.cn>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Convert comma to semicolon
-Date: Tue,  8 Oct 2024 19:24:09 +0100
-Message-Id: <172840911539.3011557.12588658852433747200.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240923021557.3432068-1-nichen@iscas.ac.cn>
-References: <20240923021557.3432068-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1728411862; c=relaxed/simple;
+	bh=rLjkqqec3xpR1frr9NDKk6gRLk94gdypxDmkrUEViws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Df2fkqL86Ub+0I8fUjaVBnpx/DhGwW1o3dhUZ3d5WSnQfBgos3frqrkPvEa1IkgxZg26AqvVux80MHQiEEbpbaeUmNNK6/XK4o49/jIyJpVRE+6w1leD3uBAWh++DU7DFI85xI4Eny55FCzcGlKdleczPEUG+7WTc12hejiEjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLcfD5Gf; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2916a92ffso578816a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728411860; x=1729016660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrvlWnwoFV3e2edxctMJRWd6D69IO32Lv18UF7a4HnQ=;
+        b=SLcfD5Gfp+c686H24nYnKw1SGC9cSwmi4mlV8n3Gy46KIRmCNdrYelE/kkzJZmBvz9
+         zp/cMcTKaUyrZ2/1oSzzLPenbvuxS5aFEbUkeMaTyqFLgDrgOWtnlaffv06lHoEoDakX
+         JVFJ//d6o+Fefhr3OGZKqQ67wmfJd1fkoluN7GCV4ww8ZvzZbdTV4lT2EVyIrqToxoGI
+         pGpQnNTqw9UEPd13eQ0aUZ34kWF9Ntr3hBtQBbJKphTymfgyYACdQ6A2PjYdESSQa1mY
+         41OxF46EwKcswCpLc6X037IP2UpV5qnfNQfNNPrEJKGcOJyILSAmql/SLZaikB1TLf+F
+         gsWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728411860; x=1729016660;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xrvlWnwoFV3e2edxctMJRWd6D69IO32Lv18UF7a4HnQ=;
+        b=eK/XVg2DzHV5229eKwyloc8qWaJgcY/BzqSUrNZkC0H0DRL7pPSdi37i8iaLlBi7xH
+         MgXfMLjg3B7lHEWAtyHOPMTS64ON+tpq82GEOZWjcxL/LJ8rFfMR2es50Uxeyn4w0v5M
+         8XkT6F3nNifgUejYegVHvqYzImcMMT6YniiYQUBNHmwO642BgVleNhzyfiWPdnGLNJ3L
+         r644NXUb5JkfO6Uf0K/CikUV9CnouxtQTkj7+2vxW45jxYs5NP8G/Vv5FDa9NjTCvSKv
+         AVKDNOUcaAVwoC0Qmyai3Cl9Gz2cwoAm84gLNGha0h5VbIdeBQUWrRgyZIme0nGm18wy
+         IHXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDNJBsQS+GZCekXs0PujzbGR/YdUKnsfrVyoLVolP0F7pVUeQ+lrAgbumWPDTItr1AqGn4maIRIUwBkIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi/UCrnIOLmWfpx4aMxVuojla3o2z6hOggojNfDZkdeFihdj3X
+	K9sHuC+jlHHzmhr4q68HkX1zwIX0qMEmyZwtNGbYTaHWjVNvaZ/ctc7fbg==
+X-Google-Smtp-Source: AGHT+IFrC1BOX5fq3fT9GY+B4e+w7fOfAwRzhd364zGbc1qa8ApU9IGR03UBDYTaiaQwO53RvLNhGg==
+X-Received: by 2002:a17:90a:e593:b0:2c8:6bfa:bbf1 with SMTP id 98e67ed59e1d1-2e1e626bbd4mr21589884a91.23.1728411860513;
+        Tue, 08 Oct 2024 11:24:20 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:11a4:8d8a:9e8f:54c2:bf8d:2f83])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85c8fd1sm9712450a91.18.2024.10.08.11.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 11:24:20 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: dwmw2@infradead.org,
+	richard@nod.at
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	surajsonawane0215@gmail.com
+Subject: [PATCH] fs: jffs2: Fix inconsistent indentation in jffs2_mark_node_obsolete
+Date: Tue,  8 Oct 2024 23:54:11 +0530
+Message-Id: <20241008182411.30387-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Sep 2024 10:15:57 +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> [...]
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
 
-Applied to will (for-joerg/arm-smmu/fixes), thanks!
+Fix the indentation to ensure consistent code style and improve
+readability, and to fix this warnings:
+fs/jffs2/nodemgmt.c:635 jffs2_mark_node_obsolete() warn: inconsistent
+indenting
+fs/jffs2/nodemgmt.c:646 jffs2_mark_node_obsolete() warn: inconsistent
+indenting
 
-[1/1] iommu/arm-smmu-v3: Convert comma to semicolon
-      https://git.kernel.org/will/c/7de7d35429aa
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ fs/jffs2/nodemgmt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Cheers,
+diff --git a/fs/jffs2/nodemgmt.c b/fs/jffs2/nodemgmt.c
+index bbab2bdc7..cc51c85ef 100644
+--- a/fs/jffs2/nodemgmt.c
++++ b/fs/jffs2/nodemgmt.c
+@@ -630,8 +630,8 @@ void jffs2_mark_node_obsolete(struct jffs2_sb_info *c, struct jffs2_raw_node_ref
+ 					  ref->flash_offset, jeb->used_size);
+ 			BUG();
+ 		})
+-			jffs2_dbg(1, "Obsoleting previously unchecked node at 0x%08x of len %x\n",
+-				  ref_offset(ref), freed_len);
++		jffs2_dbg(1, "Obsoleting previously unchecked node at 0x%08x of len %x\n",
++				ref_offset(ref), freed_len);
+ 		jeb->unchecked_size -= freed_len;
+ 		c->unchecked_size -= freed_len;
+ 	} else {
+@@ -641,8 +641,8 @@ void jffs2_mark_node_obsolete(struct jffs2_sb_info *c, struct jffs2_raw_node_ref
+ 					  ref->flash_offset, jeb->used_size);
+ 			BUG();
+ 		})
+-			jffs2_dbg(1, "Obsoleting node at 0x%08x of len %#x: ",
+-				  ref_offset(ref), freed_len);
++		jffs2_dbg(1, "Obsoleting node at 0x%08x of len %#x: ",
++				ref_offset(ref), freed_len);
+ 		jeb->used_size -= freed_len;
+ 		c->used_size -= freed_len;
+ 	}
 -- 
-Will
+2.34.1
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
 
