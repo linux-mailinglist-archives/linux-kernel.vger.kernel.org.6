@@ -1,213 +1,191 @@
-Return-Path: <linux-kernel+bounces-354997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797AC9945C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:47:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBB79945C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBBC1F2184C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404F81C22DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2580E1C75F8;
-	Tue,  8 Oct 2024 10:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DB31CC8B6;
+	Tue,  8 Oct 2024 10:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DqiSeIi5"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nCKqZ/yk"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012008.outbound.protection.outlook.com [52.101.66.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7F1B4F39
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728384424; cv=none; b=NbEf+cNKvtZV3Tm9I2y9U5yS23bMjbGDNeJIzP7eVeGWPHHdAvlOT3xQzZ/QN57MOAuhMG6o6FeqXoRlYS0PR31AYSy34Qapv+FqKNorHiaHSr8TigDsEMuLp+KPWR7tGSD6xT3PKkjRKEUbrpEZYBD8N/7zgekwnhGMOA0L0Jo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728384424; c=relaxed/simple;
-	bh=BTK1twW5R9PAw75WIcXBsshF/UQ2BRp7G3EWibEwO6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DohSL7hdE9JuihqdHThtJoeU++bw/1CbJYVgB9QQ3Bn3+zGRWM+jec68nj8BRKzDVXkIw7sHv4e6O0Oxrnnl+mUPQji1YmXEgBH7PDAgnCCxaAQ3IPRtgNPvrSrRQtjIBNv8Jqldk126kIDwVFePt4HW/YnYX6hAN8GEgKSXqD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DqiSeIi5; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2d2447181so28474837b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 03:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728384422; x=1728989222; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TD+ghPU2ZLooa9x0HWTILmd0XsXwmDoPDULmRLdUyoc=;
-        b=DqiSeIi5Qkc7IQ0IH8U4uyl5Bcry9anKZmcRthCIYHp4n8uWVW8qrR3XGnrTW+Ktwu
-         uyNhWunn4TEwu9Mo6ybFqQCX5x04fv8ZozckFrAT1X9YhBGbdHxv/FYyYDInEzZ/5gF4
-         w5mQH+nZ+ggPexLKlO3gcQ0+Kd7ZJ4wL5KeDvhaP10VDF1FKQ3sJq0/kREQatlrZXpk0
-         2dYdWKKgnPrjJK0DTJ54dJw9RQvx3693gtZGYyhBs+m9GfCuL5LGmLQJ8YkEVm6SaCHp
-         xvu1Atp8IHgU/BiYKFh1MVj0ioLsPqB9rXtq64sQ5BlsR3LTAcoJqLgHVHF931V6HvgF
-         64fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728384422; x=1728989222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TD+ghPU2ZLooa9x0HWTILmd0XsXwmDoPDULmRLdUyoc=;
-        b=gB/kckvrLx7zsf9+j0hj8jSZlYkgTeJdtdrGLid75E4UWHFaTdFzN/nuqyUrugRp/j
-         yCYINDTCXu6ol+ccAvjOPJyuIwzJkpDKltcmbBGfs4GJi2+0iIjYYHdGkTgrCrNxBlYn
-         1HhpAjsiANnat7MbR74/NEnlVZ7ZRywcDyryiu5CbADfx5Qo4J/BLHssRIczja3KvF4N
-         Ua0S13y+WbLqC1CN8OEQIZJSZMOSn2Be0nT33I0wj9xIaz1Kr1ndmK6M/6Ufn/zic7Hm
-         zY972xskvwra/MfmM/6S3KzwOQ6qbJJxvbKUSdEbONUQt3He00CDHU7Rr5C4ZpZPmgdB
-         vh5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkubqH8rqQpiySuTtYirqRVwmmL29CmVdGrOA42v+uSWtElOhcOaUXTlnj1fejLGtwtFR2jCLKwvfBSL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0rGyVRJZcDvxB0eRBIH+piIk0O8k9TmKvV4QfbHRR3D0MCJ/E
-	LNo135WItv1WDHIYhDWFBU9mDllF+J4iqEPpvqQRYM6gtCjymyuDL2RuDA2RGcAVckWvV7FDB5W
-	AvAMpan+nepEx6Z80ik0WbqDZxikqJBGvZBmlaw==
-X-Google-Smtp-Source: AGHT+IECP10UjEJdYbc48ykgN+rdUK38iSJ8CKS1U/S3BZgrH0DuUNb4uJosYAr3Ei6C8lCvYX9wCfuCS4n0ARKeuYQ=
-X-Received: by 2002:a05:690c:ec1:b0:686:1240:621a with SMTP id
- 00721157ae682-6e2c728a26emr122806547b3.31.1728384421737; Tue, 08 Oct 2024
- 03:47:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52B618CC07;
+	Tue,  8 Oct 2024 10:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728384433; cv=fail; b=HudayDHPkXSDERRBds5TMZSEQLuT6IgsIiZxPv5zMNejXsCfmnTI5UE9Gb7qVKL4J7/RIGs0UhlhgvLYvbMEz3Kodf/1dPLKrMWwrVvIDOGHtXHQs6MKqPlCTKEm1qGzsQBtzEqUoRB8BczWfDALpCFie2HbdiyUuuBUxGEiGYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728384433; c=relaxed/simple;
+	bh=T/q3ddQK3mVBOCaIfWDeOqUk0EEGhMxmegbJItua4Pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ribX1qBOi1m4IETna4fUi+VfU8I8Dn5CU6gd9QLfqhQZmKzLnPmHSBhzMexM+TNwdZK1yS9teZEdHC12q6HbVkxP6E685lMocCDwyZ7DilLwPutF9LJlrO1nHKiooOeDweDcKvFxhdf7h89zx3QYA2LZ3uWpCwKC4CoiRfl9KdU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nCKqZ/yk; arc=fail smtp.client-ip=52.101.66.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gNZokYyuWtSKu3NWpbjSWiwexQOXXuXke4lXkQuO7c8pHot5WzpWiUiaQZIF3q402VyRH6S0UEDmLhDDK7pCmofVAEWDsshOSPayHGj92Uce7B05DniHua3qZLVFrY7T7bjIkUnt4MDPoZNJr0LWLkuxqqBjfy4ATvM46GxwzJlLIyeZkhxScxCy07ygwHA6M4FBxt1P0q2gFS4omuA/JlyEPZsCz/wNROmMWFuQGzZIYvjTPhFH2eZkDDKOETNQaq1zA6pC8qRmYr9GQKek+FArUpmzpsmQLloyCIm+Lyn/tDoyZ3cMO2AxVtwzJGg/0CyhWuv3GjErg2dZXEtNIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9TMqdxhwbFWmSfktcRRhsG8w+km3b6cP9D4MHcWfKHk=;
+ b=Umo3XegXluRn18m922PwQjGNuUDUerJX4euhLqkx6SkhlE2uElqqKHgUzKIRnnUBQiaesfugIc+s9bMfWSYr0qy91Ep7C2pSb/ejLN8B/dekFhDJlTIMHsoFHqhSGlcrjX+3HY0ZCGu2BfL9FHbEYvPVdbXqXoLITLmZpEnxmZ/zXNFZ29XoREpFURgZErV2Ru341Uo2qvXKKY23fLAhEtDKa9Enc8+X/8HSjMFD75Giru+R7PRqNFgiv8a2/Wqal7md4CtrpPpzyXFN+RRbYwWUrtve1nA+q/p5BBc8ePzawob7VKUaJEcxsUdmp2uhUB+RQnB+mMGUrZWpxWNG+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9TMqdxhwbFWmSfktcRRhsG8w+km3b6cP9D4MHcWfKHk=;
+ b=nCKqZ/ykxA6HRSqFj2ve9rFj5BBquPKjA1SOkTEC3uFs2xy2WKt0bryrwNcF8Rg2437MlghotnY/5nOBugvIeom2CgYPXYsGnnhd3tSvNW5XunzLLmZ0OK2f4aksPVBe9bcBMMPiWFYue0QLD7zjIWs4sbudWMDtLexJY6KkZ0+eq2drSZiJ1a7KOTcwltAevw5xhdR8K+kNf0iU7Ag/8rSrZI1kNnsynsZYFgHjkF0ofStjoz0CfMcKg0fxmmhr6/CEa3CzUftEZJCOEzlTuWMBTi0+FSqIRJ4x4KLzgtp7g6kcKzN9fds9ReKZPej3bBqcN4bVA6rOzLdb0PxTMQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AS5PR04MB10044.eurprd04.prod.outlook.com (2603:10a6:20b:682::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
+ 2024 10:47:08 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8026.019; Tue, 8 Oct 2024
+ 10:47:08 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Pawel Dembicki <paweldembicki@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH net-next] net: dsa: vsc73xx: remove ds->untag_bridge_pvid request
+Date: Tue,  8 Oct 2024 13:46:57 +0300
+Message-ID: <20241008104657.3549151-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1P195CA0032.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:5a::21) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
- <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l> <b900d558-8ab0-436f-87bd-7a3d83e3dea0@quicinc.com>
-In-Reply-To: <b900d558-8ab0-436f-87bd-7a3d83e3dea0@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 8 Oct 2024 13:46:44 +0300
-Message-ID: <CAA8EJpr9pOc4i983ZoiwffTVNyJzH=6ka=m-k=BAT92d3K-OXA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators load/mode setting
-To: Rakesh Kota <quic_kotarake@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_kamalw@quicinc.com, quic_jprakash@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS5PR04MB10044:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3fc4acb-9463-499e-c611-08dce7868e4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tr0IiMXMGidhmaNnozkh0BkzTzAbH2mA9WZlozuFS09b2syVYnF7UmC69+8N?=
+ =?us-ascii?Q?EDGhOr0QojYODjTOtMc0lKk/Qyvbn4PjllbHIscCBL2xODa5FBqm+AYfIMlm?=
+ =?us-ascii?Q?dvOxV0JxZHM9lmX/luS7AEezGTa8HSCJsTxiL0wgfds1iytG6NqG3DrxScOh?=
+ =?us-ascii?Q?vMfiKWuEgRFw9DoRkjsxEGZS9nVqWi2sG0I7yJdD1g98DiRrr7BWxw2LAQwK?=
+ =?us-ascii?Q?m7PwhTKStdyXWNp4Lxv3Sfq02gVClccGiiPhSI8k0mINDEVGEGwZGelrsxb0?=
+ =?us-ascii?Q?zE/Y76TVk09ilpAL7pEsm4Uj9cl6HZzEoNc4z2VjklS/rMBQTz5De20IzJ8Z?=
+ =?us-ascii?Q?BUqHXU0QFT7NgRjko+qQ9cSIhKrLJUZSBrNeXgIoWCq+VM65pE+HFspwBtnw?=
+ =?us-ascii?Q?SV4rPnpgKcLMYGNQpEuIeqKmX15/NiHqUrPDeK2gCu4wyEOx5bEDd8io+/17?=
+ =?us-ascii?Q?NNbdaJRQ3ty+q+4XpodRswoDs56ebNuxAmvUJ5NKc3LNq6EBGs7fiQNDSjJP?=
+ =?us-ascii?Q?rzl7fhHyLU2CAuLxqiL6rBDfz8jAi/dDjsjw5gd2ibyYxE0S3r3jS7XaKKWg?=
+ =?us-ascii?Q?7nvR3vphH8TRuz7BmsG5QNr5vgq6KId/P9m+AHJYtbsDn/AQtlGv7n4uyXU6?=
+ =?us-ascii?Q?WkGJVWCWUfSOLj6TjMEhUvoQYOnEt4WY5Uju72MPnIL7oxzG+yiVPTxvFevG?=
+ =?us-ascii?Q?S1uh2cxmrppQW/x4W9EjM5ZLTI7GYEzAYnAnGVHsz1tP0jZzEb1gy9rbGdMf?=
+ =?us-ascii?Q?C8FMiWe/qINcrmEbrdmi2WPm89KHkm9fD3PbERBxOh/gVJLnN78FQH941Lcc?=
+ =?us-ascii?Q?l81teiF64gGY52xnept3+ZqLHX5GWlHagv6jYF2bthVJXJvzG4F+JSpeNax4?=
+ =?us-ascii?Q?HrF64aTV406N8dw6dtoTzw7q/ZS4WqIefNWRW3QolS0bOv0rZOIkt8sNThM5?=
+ =?us-ascii?Q?kX9nIlHsqmyiSfLjKMfR7BKy6IGPTa7xGFbQjp+cHk8EShSLVV/EfXeI7w8d?=
+ =?us-ascii?Q?qxDcw6njJKbP6tGxmPjklZJzGRwMhAXoUC75nlQenGt2DKfdqp1YmC/pVxGh?=
+ =?us-ascii?Q?tZLvjNY0aXeptdP39VV8ezLSIZc6VqGIWR0EXxjWvcTY2SZDN7MjHF1MBrD/?=
+ =?us-ascii?Q?A+MCKqmBoYL36jFhumUNT5vIHUh4OZ9bNPxfjfpmSPElvll3touD14W4kzVe?=
+ =?us-ascii?Q?UwbKNXxiswCvCfGSnwHuNrpLtHbKCpmkIEbWfMOOlGX/8SAZMti3PdT0zdEP?=
+ =?us-ascii?Q?1/fWU+xFXeTaVJNCCNqG0vUU6vpwTGDIPcmu+4hvSGa4O2siEq1EWmTtqgBz?=
+ =?us-ascii?Q?DHNbS13bfWjMyLod4wRTgABM0Y0eQbBUST9xl3eg3JL4FQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZDoKAxjn56vUuo4wL8uMA0BfIaMmi0uDENnXuOUpCWEkidocP3vlyNo81urt?=
+ =?us-ascii?Q?+H8pQYrODKoUh0h5nvFzBE7qIGZqSqcY2nn3yphGVoWz4SGJyUxfZSX19qWR?=
+ =?us-ascii?Q?thFzi/jiJgINf6QuSOArpQEToyAnVWR8WJuP9tvD8txot2ZWPqsL+itLrdTp?=
+ =?us-ascii?Q?3THNuDqA4/9b9EEguiOlJ0iVfT5yrWHphnrcYEtry/tlIF7Ug7XsLrroeooP?=
+ =?us-ascii?Q?Hco5TlKJW/ph6/RvMnzeC2W/nx9LctEGoxKSk89dtzISfJ035eUwS1duby4d?=
+ =?us-ascii?Q?w9k5SE1ziA1BFDX4OYtNxUTXxAcnfLPw9FL5VF/GPiZiL6YmMEvEH4Mf6CZ8?=
+ =?us-ascii?Q?PdbozENstccORzr2dD50TQriIVKg0L/MWJOLw+KyqBcjWmqkmrqxb0oR+t68?=
+ =?us-ascii?Q?TnJVcAk7TYdmWjggDTIIYHQoIvlAwA4nhOBQbIFn8A9Hg4ROe1676rATwtQi?=
+ =?us-ascii?Q?BBmEYurVsOkaAxIHomFOylCFj8Bcgg4XZKSfkMhVeoGpQhIcPe58dszn9fyL?=
+ =?us-ascii?Q?jhRWmqCWRit9gBga+T+FknRrmO0CsIPwdFlBsj0qJv1LEB6GhPcgof3cZoUV?=
+ =?us-ascii?Q?TiQN34jLZSoRfjvGBi8AlT+oJljANz2JneYctXEvHUIgZyzWBitsdSy3QffA?=
+ =?us-ascii?Q?998aSQGtF5J+t4fAD9zmxo/E8qvGHtuN3YD27KIxRFRzdyFnfyKbY0q7X880?=
+ =?us-ascii?Q?QERyoAd1iyfdFkSwQ7nGxMBNnCOzZipRM8Yf5653vLxr4ts9anTTk/yJiXrz?=
+ =?us-ascii?Q?GpA0Q2hm4/byOCB/bwPe/UhsVvIIwfj3QCNxxntc/wJHFbTesWtVXnype87a?=
+ =?us-ascii?Q?Fax1huKSx/yVeKS4JmZ4G17qZzhUKDl1SRyOVbvdTFcvB9Xy+wSX3dEDqvjI?=
+ =?us-ascii?Q?8tOb8nPqubFC3PhbgYWRtzxyRYMzurFS5G64EAcXpMkl2iTWYnOXp7Vp+cOJ?=
+ =?us-ascii?Q?y9cotv/v5GuJYgYdzY/5zTTIJN5jJRVUw1ABYAklc+7Do4BZygliYFw6dP8S?=
+ =?us-ascii?Q?LqlHGI47tPoR1lp7mWx5debaW3HtsF7AJd72Cv5a+PdRc+Ul8pxruUwKnmAz?=
+ =?us-ascii?Q?GMy8oGsm8WVh5sZ2So3mEUMlDUv274DKIVcYTFVbiTbNYY7YRF1TPR6Jb24u?=
+ =?us-ascii?Q?mluoD8gK5lEobLxTP/b/Wh38dPnxtBHnb2TsOGpSgoyuQisgULDfKH2WwI9m?=
+ =?us-ascii?Q?VHlwREuDEHuLvsCMN887hXs8LCCn97TgDP/tx7sbpuXVeIOSSFoqJmu2eTvh?=
+ =?us-ascii?Q?paDWwhQaMOQsBXdA5aNhGWnl4ykdFp4ZSxv4lbrVm4nqzgS5OqDIBFdCj9as?=
+ =?us-ascii?Q?gih4y4iN3n4Ejf4BIStA2r4Bwuylnahx57bn1uyz1viO/FuXG27QJH2gXVD4?=
+ =?us-ascii?Q?XJM1hU1OZdFgVZ4PZD6PzPueDXtX5sErJiAiZdX+DObDZiY0TkZfXvYsX7TQ?=
+ =?us-ascii?Q?nIYJ9bzlGgw/8OH1EC/Ha0gNl8n6lDwd6IkQ6hbjMBktIiNyQ6h0ishh24EL?=
+ =?us-ascii?Q?aHG3eLA+j1AwfXOhrZgr80Dzkdhapp8pfSBsVEWR6SFMbByNcNtcsP0QwPs0?=
+ =?us-ascii?Q?wvsfYnFNYB7EWhvc9gXOKq5sJR6SzxzFtRO3XQcS59zEz6maj3+S1x5eS214?=
+ =?us-ascii?Q?xA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3fc4acb-9463-499e-c611-08dce7868e4e
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 10:47:08.1074
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mZcJPzQ8hGrQBFNml9+Ivu25NNeWduUknji6i8v9TIcQ+b1OIw2UCn2+E89ppGrMR6JcmqpISNhAC091wjKnJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10044
 
-On Tue, 8 Oct 2024 at 12:39, Rakesh Kota <quic_kotarake@quicinc.com> wrote:
->
->
->
-> On 10/7/2024 1:37 AM, Dmitry Baryshkov wrote:
-> > On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
-> >> The UFS driver expects to be able to set load (and by extension, mode)
-> >> on its supply regulators. Add the necessary properties to make that
-> >> possible.
-> >>
-> >> While at it, UFS rails have different voltage requirement for UFS2.x
-> >> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
-> >> There can be case where the voltage set by bootloader is overridden
-> >> by HLOS client.
-> >>
-> >> To prevent above issue, add change to remove voltage voting support
-> >> for dedicated UFS rails.
-> >
-> > add change to remove smth doesn't sound correct to me.
-> > Please don't depend on the bootloader and describe hardware > configura=
-tion. If there can be two types of IDP boards and you can not
-> > identify the voltage via other means, please create something like
-> > qcm6490-idp-ufs3.dts. Please add proper Fixes tags.
-> > Last, but not least, as Bjorn wrote, please split into two patches.
-> >
-> sure, i will split the change into two.
->
-> Since we can=E2=80=99t differentiate IDP boards based on UFS versions whi=
-le
-> loading the DT and we have only single board ID for the IDP's, it=E2=80=
-=99s not
-> possible to create separate UFS-based DT files like qcm6490-idp-ufs3.dts
-> and ufs2.dtsi... etc.
+Similar to the situation described for sja1105 in commit 1f9fc48fd302
+("net: dsa: sja1105: fix reception from VLAN-unaware bridges") from the
+'net' tree, the vsc73xx driver uses tag_8021q.
 
-It is definitely possible to create a second DT file. And upstream
-doesn't have board IDs (not to mention that nothing stops you from
-using another board ID for IDP with a different UFS revision. Qualcomm
-owns the board ID registry.)
+The ds->untag_bridge_pvid option strips VLANs from packets received on
+VLAN-unaware bridge ports. But those VLANs should already be stripped by
+tag_vsc73xx_8021q.c as part of vsc73xx_rcv(). It is even plausible that
+the same bug that existed for sja1105 also exists for vsc73xx:
+dsa_software_untag_vlan_unaware_bridge() tries to untag a VLAN that
+doesn't exist, corrupting the packet.
 
->
-> And also UFS driver does not vote for voltage on UFS rails & they just
-> vote on load only.
-> Hence to support both UFS 2.x and 3.x, we need to remove the voltage
-> min/max voting. if add the min and max voltages in DT, then those
-> initial voltage set by bootloader is overridden by regulator
-> framework with min voltage specified in DT.
+Only compile tested, as I don't have access to the hardware.
 
-Yes, this is correct. Regulator framework should know min and max
-voltages. Once the voltage is in the specified range, the UFS driver
-doesn't have to cast a particular vote on it.
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+---
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-So, dropping the regulator min/max is still NAKed.
+diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
+index e4b98fd51643..f18aa321053d 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx-core.c
++++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
+@@ -851,7 +851,6 @@ static int vsc73xx_setup(struct dsa_switch *ds)
+ 
+ 	dev_info(vsc->dev, "set up the switch\n");
+ 
+-	ds->untag_bridge_pvid = true;
+ 	ds->max_num_bridges = DSA_TAG_8021Q_MAX_NUM_BRIDGES;
+ 	ds->fdb_isolation = true;
+ 
+-- 
+2.43.0
 
->
-> Note: Bootloader have capability to detect the UFS version (where as
-> HLOS does not have that capability)
->
-> Thank you for quick review!!
-> >>
-> >> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
-> >>   1 file changed, 8 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boo=
-t/dts/qcom/qcm6490-idp.dts
-> >> index 84c45419cb8d..8a4df9c2a946 100644
-> >> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> >> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> >> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
-> >>                      regulator-name =3D "vreg_l6b_1p2";
-> >>                      regulator-min-microvolt =3D <1140000>;
-> >>                      regulator-max-microvolt =3D <1260000>;
-> >> +                    regulator-allow-set-load;
-> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
-LPM RPMH_REGULATOR_MODE_HPM>;
-> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> >>              };
-> >>
-> >>              vreg_l7b_2p952: ldo7 {
-> >>                      regulator-name =3D "vreg_l7b_2p952";
-> >> -                    regulator-min-microvolt =3D <2400000>;
-> >> -                    regulator-max-microvolt =3D <3544000>;
-> >> +                    regulator-allow-set-load;
-> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
-LPM RPMH_REGULATOR_MODE_HPM>;
-> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> >>              };
-> >>
-> >> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
-> >>
-> >>              vreg_l9b_1p2: ldo9 {
-> >>                      regulator-name =3D "vreg_l9b_1p2";
-> >> -                    regulator-min-microvolt =3D <1200000>;
-> >> -                    regulator-max-microvolt =3D <1304000>;
-> >> +                    regulator-allow-set-load;
-> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
-LPM RPMH_REGULATOR_MODE_HPM>;
-> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> >>              };
-> >>
-> >> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
-> >>                      regulator-name =3D "vreg_l10c_0p88";
-> >>                      regulator-min-microvolt =3D <720000>;
-> >>                      regulator-max-microvolt =3D <1050000>;
-> >> +                    regulator-allow-set-load;
-> >> +                    regulator-allowed-modes =3D <RPMH_REGULATOR_MODE_=
-LPM RPMH_REGULATOR_MODE_HPM>;
-> >>                      regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> >>              };
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
-
-
-
---=20
-With best wishes
-Dmitry
 
