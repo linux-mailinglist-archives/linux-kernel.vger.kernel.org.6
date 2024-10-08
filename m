@@ -1,262 +1,272 @@
-Return-Path: <linux-kernel+bounces-354969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DEE994553
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:26:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535C0994560
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3A6B2634F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D85284DEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A451C6F73;
-	Tue,  8 Oct 2024 10:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201011C4613;
+	Tue,  8 Oct 2024 10:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2XtFOQgd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pq1MY1wi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36B8198836
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF50C193082
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728383162; cv=none; b=qt/90k6BJljoQwdY4j5FdHc9bs1WiyzDWGjQCM5kQ/eE9nw4rZnnVsjTNY3YHmjGw/6oj0d2ET/4mtkX0TmdzQa6qkKiYfXecuX7f+1W5ntZLqj78kHaAvd/01pbStArEHTjMk00DN7xStOOcSa3v5ZCik5bkueZ2SRSiAcOoNI=
+	t=1728383214; cv=none; b=X4x+nu6ysWTIW5bSIDyPQYQQMsLlX8quZC+2et8uEeDADBRJ7zj2VplZ+5e4HqBetM9MyGl5QcrXFeX2y7nXvDfSZn7Ww03GYnRrt+kMe/XiycTS0auFa7imtdViPH+wyCZEO14ZwDjH/albcPhBdLDCLGJvlsTYYUIRLSPlToY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728383162; c=relaxed/simple;
-	bh=lDqIh3H/vWELixQK7kH36Vf7D/HlGgVTg57Mysl6ug4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=me1G8WY1rEBPKjakfyNh0+ooGunNJEfXUrmD1QI11VcP5wiw7t8nJrUk+NzefEmj/KTeMgznUDwva40kxs4NAjEb2Fryu8MJj2EDXvYhx43bbQOFpJaursFZoBojrgzNV1DSAxVj1EB8p9xWxfjTQ5WKDkJkq7ILFXqAtwWO33s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2XtFOQgd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso56206625e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 03:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728383159; x=1728987959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NiFzJljIZK6K18VBx2o+5L+9T8qGzII0DZ/h6IKErVs=;
-        b=2XtFOQgddsaAoevgbrlHxMe6psGEjLjkB20fbMUMFKkWw2guFS28KeuQLSXYaLsH0s
-         odq4/a/lY3smCpcr7hInG2bTnJBVXLnikTpEdSCb0yAob5r212P3a3Op/4cPYQULbOKE
-         RcBJ0Wxk+8hrzAGkcVPpmjUNzeV+N+vF5VZVOqe0pdCpXIFdWCvGx/PU572CkDtraBqv
-         0b1lAOFAWVONbHwKb9K2vUfz3RVkhvTY3SkQIPs/RYkarMf14RY1901AIeRgzhmzjnhq
-         bPCIK+7L26a8rDplwvnIXPCYk2+zoR/EEshIxuDjloQMsJPdAhWSX/htWLjj+lLI+jcp
-         pRtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728383159; x=1728987959;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NiFzJljIZK6K18VBx2o+5L+9T8qGzII0DZ/h6IKErVs=;
-        b=AVn2cOiBtlzb4wZZ3uVLnfKg9xEWhWdruQpYh3gNVInDK2rh5omVz3hYI+BLWv9TJz
-         UktSbl17Y2Cg+DU33OoLH2Feas9d8QSO2OGtiuDoZESAEAXqdCsRxDnjkuC07cSDV2ai
-         2hrmZUKz6algJj7e3gBfx0WnJJMk6N89g38POkxSo3/IfNqxE87V+fTDo/4QpF4pTECU
-         zQzXyOwfs3ek9eWdtiKk7162B0gRFXCcak7QZuubZGmooctKCCVV2ybCSk1c4bBPFd3l
-         TcWzzMeQDTo7JKGmeaZVFFkQqxVLB4R+QkETUKNLm/sibmQLSyahT7u9iCrTa1bH8uu3
-         7y7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ4RgeQnzWcILcyHEhiGWsahSQbZVamDRJLcx2mbWbj5XSNBmVTIniGioCZdB+yMgz9oovdpC4eDT+SXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH9Gy1TZntkbhpH0kF/YKwjaRu3YK+V7tZr5EqenzowB5EfGL5
-	65xN2V/n5I42X5hbXd9FFli4P/7ZmwNOqKRCT6Zc3Z3LULAXou7Bw4rG6eIgmRQ=
-X-Google-Smtp-Source: AGHT+IEGcrxEhyJl+MXEaIJ+7wi+2eFIF0HFIrWSMUS9U40XllI18QLKQiArpLJr4U/01gV7YwnE6A==
-X-Received: by 2002:a05:600c:1c8a:b0:42b:af52:2525 with SMTP id 5b1f17b1804b1-42f85ab7cd9mr119677385e9.16.1728383158933;
-        Tue, 08 Oct 2024 03:25:58 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:738a:20da:f541:94ff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691b505sm7766800f8f.43.2024.10.08.03.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 03:25:58 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Steev Klimaszewski <steev@kali.org>
-Subject: [PATCH v5 3/3] arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6855
-Date: Tue,  8 Oct 2024 12:25:44 +0200
-Message-ID: <20241008102545.40003-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241008102545.40003-1-brgl@bgdev.pl>
-References: <20241008102545.40003-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1728383214; c=relaxed/simple;
+	bh=TM5zII4InKkHkeV+Ua1uhoIQGlVg5VaY+4jBxksr/80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNboGdySeXu5wJxUJr6TIm1lH+Dws2tnLFzds4922SS2uwZ4QR1Gr5TmgmdSFkBr96rVQk8rBoGvBSI8d4BM3xvWzDHJZGnn1h+ntf996O0O8WCG9hk+TVxRWklLPkbLiizWlr5yudzpTtwnC6O+ZQVy7RGg4rlchwNOb52o35c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pq1MY1wi; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728383211; x=1759919211;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TM5zII4InKkHkeV+Ua1uhoIQGlVg5VaY+4jBxksr/80=;
+  b=Pq1MY1wiq8w+q8N6HE2UsJnEcKmZzmbkuWejZe61/ulVbYNEx2Ch/PR4
+   bOQOhJWWySpP+EplQuPI51SPzMSgMN5lSQNQCIkkY1wn5s92rGLqr4bfw
+   YEjVTlvSCVSYJlKYYrs+eUjO6+YRyDUy1NeAsBe721wdT17Bp6+uqkvKO
+   Nz3bKKoprfL2gI9kkC93VsvjJCTxQMha3lhwAE+JQH9DtMX0be/GSbZ97
+   iMy9/M0xkgWfPla/w5yvHVvQ8j4fpESR5FfPaVO8h92QC8mwuPm2PJ86Y
+   8T6ylsLs7jKRvt7UO6zTPVtrOmXpPPzjHjX/Z1smvrGK0U+c0iKXlBoBg
+   w==;
+X-CSE-ConnectionGUID: YnquxixPRtq16YbXgVdpCA==
+X-CSE-MsgGUID: rpyUDCCcTNa23CccYTt/lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27731539"
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="27731539"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 03:26:51 -0700
+X-CSE-ConnectionGUID: kbdBwszoSLqJjricnWXOlw==
+X-CSE-MsgGUID: zIFfp2QdSmWJpiSmu6QRRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="76162299"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 08 Oct 2024 03:26:49 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sy7QV-0006FW-2l;
+	Tue, 08 Oct 2024 10:26:47 +0000
+Date: Tue, 8 Oct 2024 18:26:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiaofeng Lian <1198715581lxf@gmail.com>, stefani@seibold.net,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Xiaofeng Lian <1198715581lxf@gmail.com>
+Subject: Re: [PATCH v2] include/linux/kfifo.h: fix some IDEs Intelligence
+ errors and the previous patch was misnamed
+Message-ID: <202410081818.V12XcEDC-lkp@intel.com>
+References: <20241002172427.412715-1-1198715581lxf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002172427.412715-1-1198715581lxf@gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Xiaofeng,
 
-Add a node for the PMU of the WCN6855 and rework the inputs of the wifi
-and bluetooth nodes to consume the PMU's outputs.
+kernel test robot noticed the following build errors:
 
-With this we can drop the regulator-always-on properties from vreg_s11b
-and vreg_s12b as they will now be enabled by the power sequencing
-driver.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12-rc2 next-20241008]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested-by: Steev Klimaszewski <steev@kali.org> # Thinkpad X13s
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 101 +++++++++++++++---
- 1 file changed, 87 insertions(+), 14 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiaofeng-Lian/include-linux-kfifo-h-fix-some-IDEs-Intelligence-errors-and-the-previous-patch-was-misnamed/20241006-015547
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241002172427.412715-1-1198715581lxf%40gmail.com
+patch subject: [PATCH v2] include/linux/kfifo.h: fix some IDEs Intelligence errors and the previous patch was misnamed
+config: i386-buildonly-randconfig-005-20241008 (https://download.01.org/0day-ci/archive/20241008/202410081818.V12XcEDC-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081818.V12XcEDC-lkp@intel.com/reproduce)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index 6a28cab97189..863412842102 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -400,6 +400,68 @@ usb1_sbu_mux: endpoint {
- 			};
- 		};
- 	};
-+
-+	wcn6855-pmu {
-+		compatible = "qcom,wcn6855-pmu";
-+
-+		pinctrl-0 = <&bt_default>, <&wlan_en>;
-+		pinctrl-names = "default";
-+
-+		wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
-+		swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
-+
-+		vddio-supply = <&vreg_s10b>;
-+		vddaon-supply = <&vreg_s12b>;
-+		vddpmu-supply = <&vreg_s12b>;
-+		vddrfa0p95-supply = <&vreg_s12b>;
-+		vddrfa1p3-supply = <&vreg_s11b>;
-+		vddrfa1p9-supply = <&vreg_s1c>;
-+		vddpcie1p3-supply = <&vreg_s11b>;
-+		vddpcie1p9-supply = <&vreg_s1c>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn_0p8: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn_0p8";
-+			};
-+
-+			vreg_pmu_aon_0p8: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p8";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p8: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p8";
-+			};
-+
-+			vreg_pmu_btcmx_0p8: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p8";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo5 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo6 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo8 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo9 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -426,7 +488,6 @@ vreg_s11b: smps11 {
- 			regulator-min-microvolt = <1272000>;
- 			regulator-max-microvolt = <1272000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-always-on;
- 		};
- 
- 		vreg_s12b: smps12 {
-@@ -434,7 +495,6 @@ vreg_s12b: smps12 {
- 			regulator-min-microvolt = <984000>;
- 			regulator-max-microvolt = <984000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
--			regulator-always-on;
- 		};
- 
- 		vreg_l1b: ldo1 {
-@@ -927,6 +987,16 @@ wifi@0 {
- 		compatible = "pci17cb,1103";
- 		reg = <0x10000 0x0 0x0 0x0 0x0>;
- 
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-+		vddaon-supply = <&vreg_pmu_aon_0p8>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
-+
- 		qcom,ath11k-calibration-variant = "LE_X13S";
- 	};
- };
-@@ -1258,20 +1328,16 @@ &uart2 {
- 	bluetooth {
- 		compatible = "qcom,wcn6855-bt";
- 
--		vddio-supply = <&vreg_s10b>;
--		vddbtcxmx-supply = <&vreg_s12b>;
--		vddrfacmn-supply = <&vreg_s12b>;
--		vddrfa0p8-supply = <&vreg_s12b>;
--		vddrfa1p2-supply = <&vreg_s11b>;
--		vddrfa1p7-supply = <&vreg_s1c>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-+		vddaon-supply = <&vreg_pmu_aon_0p8>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p8>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
- 
- 		max-speed = <3200000>;
--
--		enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
--		swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
--
--		pinctrl-0 = <&bt_default>;
--		pinctrl-names = "default";
- 	};
- };
- 
-@@ -1761,4 +1827,11 @@ reset-pins {
- 			bias-disable;
- 		};
- 	};
-+
-+	wlan_en: wlan-en-state {
-+		pins = "gpio134";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-down;
-+	};
- };
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410081818.V12XcEDC-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
+     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                                 ^ ~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
+      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
+         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   include/linux/kfifo.h:79:24: note: expanded from macro '__STRUCT_KFIFO_PTR'
+      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:61:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
+      61 |                 datatype        *type; \
+         |                 ^~~~~~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
+     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                                 ^ ~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
+      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
+         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   include/linux/kfifo.h:79:24: note: expanded from macro '__STRUCT_KFIFO_PTR'
+      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:62:9: note: expanded from macro '__STRUCT_KFIFO_COMMON'
+      62 |                 const datatype  *const_type; \
+         |                       ^~~~~~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
+     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                                 ^ ~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/kfifo.h:84:37: note: expanded from macro 'STRUCT_KFIFO_PTR'
+      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
+         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+   include/linux/kfifo.h:79:39: note: expanded from macro '__STRUCT_KFIFO_PTR'
+      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+   include/linux/kfifo.h:64:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
+      64 |                 ptrtype         *ptr; \
+         |                 ^~~~~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
+     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                                 ^ ~~~~
+   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+   include/linux/kfifo.h:84:37: note: expanded from macro 'STRUCT_KFIFO_PTR'
+      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
+         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+   include/linux/kfifo.h:79:39: note: expanded from macro '__STRUCT_KFIFO_PTR'
+      79 |         __STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+   include/linux/kfifo.h:65:3: note: expanded from macro '__STRUCT_KFIFO_COMMON'
+      65 |                 ptrtype const   *ptr_const; \
+         |                 ^~~~~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:138:34: note: expanded from macro '__KFIFO_SIZE'
+     138 |                 DECLARE_KFIFO_PTR(__tmp_kfifo, get_kfifo_data_type(fifo));\
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                                 ^ ~~~~
+   include/linux/kfifo.h:116:56: note: expanded from macro 'DECLARE_KFIFO_PTR'
+     116 | #define DECLARE_KFIFO_PTR(fifo, type)   STRUCT_KFIFO_PTR(type) fifo
+         |                                         ~~~~~~~~~~~~~~~~~^~~~~
+   include/linux/kfifo.h:84:28: note: expanded from macro 'STRUCT_KFIFO_PTR'
+      84 |         struct __STRUCT_KFIFO_PTR(type, 0, type)
+         |                ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   include/linux/kfifo.h:80:2: note: expanded from macro '__STRUCT_KFIFO_PTR'
+      80 |         type            buf[0]; \
+         |         ^~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: member reference base type 'typeof(struct sec_request_el *)' (aka 'struct sec_request_el *') is not a structure or union
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:46: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:139:52: note: expanded from macro '__KFIFO_SIZE'
+     139 |                 (sizeof(*(fifo)) - sizeof(__tmp_kfifo)) / sizeof(get_kfifo_data_type(fifo));\
+         |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:130:49: note: expanded from macro 'get_kfifo_data_type'
+     130 | #define get_kfifo_data_type(fifo) typeof(*(fifo)->type)
+         |                                           ~~~~~~^ ~~~~
+>> drivers/crypto/hisilicon/sec/sec_algs.c:912:2: error: invalid operands to binary expression ('void' and 'int')
+     912 |         INIT_KFIFO(ctx->queue->softqueue);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:151:71: note: expanded from macro 'INIT_KFIFO'
+     151 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __KFIFO_SIZE(__tmp->buf) - 1;\
+         |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~ ^ ~
+   7 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+
+
+vim +912 drivers/crypto/hisilicon/sec/sec_algs.c
+
+915e4e8413dacc Jonathan Cameron 2018-07-23  902  
+915e4e8413dacc Jonathan Cameron 2018-07-23  903  static int sec_alg_skcipher_init_with_queue(struct crypto_skcipher *tfm)
+915e4e8413dacc Jonathan Cameron 2018-07-23  904  {
+915e4e8413dacc Jonathan Cameron 2018-07-23  905  	struct sec_alg_tfm_ctx *ctx = crypto_skcipher_ctx(tfm);
+915e4e8413dacc Jonathan Cameron 2018-07-23  906  	int ret;
+915e4e8413dacc Jonathan Cameron 2018-07-23  907  
+915e4e8413dacc Jonathan Cameron 2018-07-23  908  	ret = sec_alg_skcipher_init(tfm);
+915e4e8413dacc Jonathan Cameron 2018-07-23  909  	if (ret)
+915e4e8413dacc Jonathan Cameron 2018-07-23  910  		return ret;
+915e4e8413dacc Jonathan Cameron 2018-07-23  911  
+915e4e8413dacc Jonathan Cameron 2018-07-23 @912  	INIT_KFIFO(ctx->queue->softqueue);
+915e4e8413dacc Jonathan Cameron 2018-07-23  913  	ret = kfifo_alloc(&ctx->queue->softqueue, 512, GFP_KERNEL);
+915e4e8413dacc Jonathan Cameron 2018-07-23  914  	if (ret) {
+915e4e8413dacc Jonathan Cameron 2018-07-23  915  		sec_alg_skcipher_exit(tfm);
+915e4e8413dacc Jonathan Cameron 2018-07-23  916  		return ret;
+915e4e8413dacc Jonathan Cameron 2018-07-23  917  	}
+915e4e8413dacc Jonathan Cameron 2018-07-23  918  	ctx->queue->havesoftqueue = true;
+915e4e8413dacc Jonathan Cameron 2018-07-23  919  
+915e4e8413dacc Jonathan Cameron 2018-07-23  920  	return 0;
+915e4e8413dacc Jonathan Cameron 2018-07-23  921  }
+915e4e8413dacc Jonathan Cameron 2018-07-23  922  
+
 -- 
-2.30.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
