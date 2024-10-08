@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-354952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC8B994518
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9507899477B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E64581F22E5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF332886DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4922192591;
-	Tue,  8 Oct 2024 10:08:28 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7162F1DE8B9;
+	Tue,  8 Oct 2024 11:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KgWcxmci"
+Received: from mail-m92248.xmail.ntesmail.com (mail-m92248.xmail.ntesmail.com [103.126.92.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387A778276;
-	Tue,  8 Oct 2024 10:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396A81D432D;
+	Tue,  8 Oct 2024 11:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.126.92.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728382108; cv=none; b=g+cjGgcPQNoz15H5fcUwMUkzdiWqfVrEImwMrK5XUp6vy/CT8InURYjF3gtlOYKBNMTo2wFDWubXbauIJVkf2MS47U/hOO5SJCUAe2YSHvgg8a8RxCWpvdOvpVGSlBBybUkOnKBX9r0znj53qpJUBuIxdnuHXhiXYy0CN55IqSE=
+	t=1728387716; cv=none; b=cXFdOjeHCzUTPtJY8FY5m07bndzOyeOWanEcTyvw5vsHl4JNUbyK5QVBAHEatwDCAvThVH2aeymPwsRu8ynWST0feheTeZFDmT/WL7Rh2GlzH4iRtiAJ5zfuDsHjH6/Ii+EBL8iJ6JCyEgh4X+RGb4sEpeOQ3Z32wdcF9N8YOMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728382108; c=relaxed/simple;
-	bh=kmCNfHjWXdftj3Q1U37B1UQ/6HSiMQJPwXH7I/NxWgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mwf1yWBCiE95mudF8bxrXOZ9sZ4x0yfH29W0nA4raLtvJOnRC9lVRMFUc+ICOrId3B16PVsU/Pg2+Udt+ymFhQtznVQveuaWPwUWe7Z7Gdz8WgfBnDXTS82tjgP8xOfBzFSpK3pKehgbkmMu4Z0OECTCSxjAQaCC2DILjnxIeCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6dbc9a60480so45930787b3.0;
-        Tue, 08 Oct 2024 03:08:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728382105; x=1728986905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eofPis0FPAdLt8MucuiPgt80mBBI69FxYuGtMj8mdn0=;
-        b=pcOAbrCwBakVO6dthbF1B7ZM4d2idBlDzFrNdNeKenfBbhPIQE9GB9UAte611Obh9d
-         I9/3og6qzrllT9qZ/TS/0es43yvaq0XOTxVFq+dEhBdJTi9Gqw44oPDCVBjJ6Lb9G8Gn
-         pxuzK8W1/k/u8w7ZRNT95P9kfKFZdcBRzNAIvuAkzv6l0Wiu/gLKu2T81t1y3rrQyOAa
-         sJuUaf2gVcVwIS5J06vrJz5IVLWtn/RsvQ1vvErNzaUdkXWpjy/MelfcXN6+Yo0nq2Nn
-         2FMN7PWNm7kwO5zTOrKO3AnUt2tDZzzoCpS2+T2lCVWReSCwfiENg72AKytZLHA9DNV5
-         VnjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD9HVqB4jdkJHZD/E35HR4loPnhHNyawUEJPcMFNcJgh8ZACgq55vm6zZ1ANWZrZNUiMh+scbeoGFcbUn305oyflc=@vger.kernel.org, AJvYcCVq3G6IBKHDUqeiqquN2eU2KwzrvYQuxVD6mNuDvm5cbdwYaJkfBXkM9DaSZC7NWPE4UmqVYSxxcoTxCKsJ@vger.kernel.org, AJvYcCX5XXPDViEqPbF4zmQtPXYOVU1CjCjfh4i7jFbpTtBpzCdlySp9gNQG6xwOomRK6W/XXjrxo6t13qLT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5venrTDdVN3w0l+Gh+Q4rMxAqoemfTsxJXp42496hPh3ZDpKp
-	GUXXX0yaiXe7YfaTY4HWe9mtfIkk7V4alcpFXkpkd6GB2hpTGtZ36qjosGCb
-X-Google-Smtp-Source: AGHT+IHGa0DD6v0k5cgNLFSAW51Hkuu1o74aAvKlpN2Ra7Tvx489n+9O/ZfZgaOl8ri1DliLjED8zQ==
-X-Received: by 2002:a05:690c:f8f:b0:6dd:cdd7:ce5a with SMTP id 00721157ae682-6e2c7036ae1mr126498757b3.18.1728382104614;
-        Tue, 08 Oct 2024 03:08:24 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93e271fsm13591067b3.105.2024.10.08.03.08.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 03:08:24 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2f4c1f79bso19004607b3.1;
-        Tue, 08 Oct 2024 03:08:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQUcEGpvvYkekSrpXUKbEaU+udJ/OkXaYEc3GaTfO9O7MukfHkkFNvQmPQrKAKdrOIuzV0+uGlvK/xFLDlgKzE/TI=@vger.kernel.org, AJvYcCVCQ+/B2UKPm0QsD+AJ9dyxuT+9vayPtZeH7cDHrKfmUjTcwQJHBoWR5x3oe86sA4JzbpOUYDCGvSl1fG0+@vger.kernel.org, AJvYcCXOoQq0wSRw5y5ktFUSEnuDHC+yfuuLTZPPoGJUaXPIs4QzZwYFbYXkdWsqTzPt2zeWP6e05/t8ZjVF@vger.kernel.org
-X-Received: by 2002:a05:690c:eca:b0:6b3:a6ff:7676 with SMTP id
- 00721157ae682-6e2c6fcbc5fmr128552717b3.3.1728382103697; Tue, 08 Oct 2024
- 03:08:23 -0700 (PDT)
+	s=arc-20240116; t=1728387716; c=relaxed/simple;
+	bh=LqFmd05ir7RUy3YMIpP/6IvCOkRh3HSEHwPzr7nSMO0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=NN/yOEtBs+gyMfgvI6oQU+GLASJuH1qKHx87gtcMckwjIpOC3imWPiNzyPUrh96EJWws96ZZymrrenhoNClSNWDlmk1SSv3FK6cC38Wi7xB78ery3ZfjusVqCm8A8sZN3Lu9ytDfBDhP8rdIi/XTyOAPdSWEiKPe1FHL3biUA4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KgWcxmci; arc=none smtp.client-ip=103.126.92.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=KgWcxmciS5GpTyARwQKc6LgB1GSoVgqp2cAyyTzFohP9VzhACD6syEFaz9rP2m1BdhLv/8GBTE1ZkwNUrpibIE/EdUjSBiOYgbb/EG2+9Tz2JyJfcgvQok5xP8Ns5VbKEFwlLqZWY2Bxmpiew2YPP1y5fdvSoZ4MK8XdFl+sijI=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=2RS102Ukpw/1cre6YFY4SwFwGmpEzgGiNXvoLSujjwY=;
+	h=date:mime-version:subject:message-id:from;
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id EBDA5520711;
+	Tue,  8 Oct 2024 14:15:57 +0800 (CST)
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	YiFeng Zhao <zyf@rock-chips.com>,
+	Liang Chen <cl@rock-chips.com>,
+	linux-scsi@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v3 0/5] Initial support for RK3576 UFS controller
+Date: Tue,  8 Oct 2024 14:15:25 +0800
+Message-Id: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk5KT1ZISE5JQ0oYTBkYS01WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a926ac528db03afkunmebda5520711
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PBA6Cio5NTIdTRYpCStNDkgj
+	Dy9PCi5VSlVKTElDSE1DSk5CT0JMVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU9LQ0I3Bg++
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241004133108.779934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241004133108.779934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Oct 2024 12:08:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXDc55KO-d0i0_ag0udh7sGCjFfJ78aw8o1-9zaHS15+A@mail.gmail.com>
-Message-ID: <CAMuHMdXDc55KO-d0i0_ag0udh7sGCjFfJ78aw8o1-9zaHS15+A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r9a09g057: Add OPP table
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
 
-On Fri, Oct 4, 2024 at 3:31=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add OPP table for RZ/V2H(P) SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This patchset adds initial UFS controller supprt for RK3576 SoC.
+Patch 1 adds new quirk and patch 2 is the dt-bindings.
+patch 3/4 deal with rpm and spm support in advanced. Final atch 5 is the
+driver added.
 
-Thanks for your patch!
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
->                 clock-frequency =3D <0>;
->         };
->
-> +       /*
-> +        * The default cluster table is based on the assumption that the =
-PLLCA55 clock
-> +        * frequency is set to 1.7GHz. The PLLCA55 clock frequency can be=
- set to
-> +        * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and addit=
-ionally can be
-> +        * clocked to 1.8GHz as well). The table below should be overridd=
-en in the board
-> +        * DTS based on the PLLCA55 clock frequency.
-> +        */
-> +       cluster0_opp: opp-table-0 {
-> +               compatible =3D "operating-points-v2";
-> +
-> +               opp-1700000000 {
-> +                       opp-hz =3D /bits/ 64 <1700000000>;
-> +                       opp-microvolt =3D <900000>;
-> +                       clock-latency-ns =3D <300000>;
-> +               };
-> +               opp-850000000 {
-> +                       opp-hz =3D /bits/ 64 <850000000>;
-> +                       opp-microvolt =3D <900000>;
+Changes in v3:
+- rename the file to rockchip,rk3576-ufshc.yaml
+- add description for reset-gpios
+- reword Kconfig description
+- elaborate more about controller in commit msg
+- use rockchip,rk3576-ufshc for compatible
+- remove useless header file
+- remove inline for ufshcd_is_device_present
+- use usleep_range instead
+- remove initialization, reverse Xmas order
+- remove useless varibles
+- check vops for null
+- other small fixes for err path
+- remove pm_runtime_set_active
+- fix the active and inactive reset-gpios logic
+- fix rpm_lvl and spm_lvl to 5 and move to end of probe path
+- remove unnecessary system PM callbacks
+- use UFSHCI_QUIRK_DME_RESET_ENABLE_AFTER_HCE instead
+  of UFSHCI_QUIRK_BROKEN_HCE
 
-According to Table 10.1-2 ("Recommended Operating Range"), this should
-be 800000 for this and all operating points below.
+Changes in v2:
+- rename the file
+- add reset-gpios
 
-> +                       clock-latency-ns =3D <300000>;
-> +               };
-> +               opp-425000000 {
-> +                       opp-hz =3D /bits/ 64 <425000000>;
-> +                       opp-microvolt =3D <900000>;
-> +                       clock-latency-ns =3D <300000>;
-> +               };
-> +               opp-212500000 {
-> +                       opp-hz =3D /bits/ 64 <212500000>;
-> +                       opp-microvolt =3D <900000>;
-> +                       clock-latency-ns =3D <300000>;
-> +                       opp-suspend;
-> +               };
-> +       };
+Shawn Lin (5):
+  scsi: ufs: core: Add UFSHCI_QUIRK_DME_RESET_ENABLE_AFTER_HCE
+  dt-bindings: ufs: Document Rockchip UFS host controller
+  soc: rockchip: add header for suspend mode SIP interface
+  soc: rockchip: power-domain: Add GENPD_FLAG_RPM_ALWAYS_ON support
+  scsi: ufs: rockchip: initial support for UFS
 
-The rest LGTM.
+ .../bindings/ufs/rockchip,rk3576-ufshc.yaml        | 103 ++++++
+ drivers/pmdomain/rockchip/pm-domains.c             |   3 +
+ drivers/ufs/core/ufshcd.c                          |  17 +
+ drivers/ufs/host/Kconfig                           |  12 +
+ drivers/ufs/host/Makefile                          |   1 +
+ drivers/ufs/host/ufs-rockchip.c                    | 346 +++++++++++++++++++++
+ drivers/ufs/host/ufs-rockchip.h                    |  51 +++
+ include/soc/rockchip/rockchip_sip.h                |   3 +
+ include/ufs/ufshcd.h                               |   6 +
+ 9 files changed, 542 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ufs/rockchip,rk3576-ufshc.yaml
+ create mode 100644 drivers/ufs/host/ufs-rockchip.c
+ create mode 100644 drivers/ufs/host/ufs-rockchip.h
 
-Gr{oetje,eeting}s,
+-- 
+2.7.4
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
