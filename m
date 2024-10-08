@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-354341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7395C993C48
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA16993C4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1131C22783
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1766285B74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081D014A91;
-	Tue,  8 Oct 2024 01:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="wF94IDHO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A459168BE;
+	Tue,  8 Oct 2024 01:32:46 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8261388;
-	Tue,  8 Oct 2024 01:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2682A1388;
+	Tue,  8 Oct 2024 01:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728351054; cv=none; b=GKhY3C5dgzcXfjtKAPlsEeNb/Q+nrg9zr27dNnumkcXM/LkjvkOLS+8oLuNt/615EgMu4rBuIUSGb2u8Op4fQsk6EVbtmKlCLGeGT7LJpoE7JfU3FVStB3MYux78s2iY/BqDvBwQ7YVT4I9YkjjBuUOtZwtSrs2jihFgTDfcShE=
+	t=1728351166; cv=none; b=tYFO6bxC4fVQDlrKeIo43SGz6q4F4+wxM6ZAL6xlbHIBVVPHz+xJ9FR1EINIvbir86Wld2vmdGEY3vcKJrIyZ0GiIefDg2EjCRnrM4D5r5KxrOVPidH6jFwIYVGhNHDFhMYU7mRKEl1nvXDbnUMBBfQ+Ka3CrCC0vQh5q0M3+5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728351054; c=relaxed/simple;
-	bh=vxCcy/wP0tEtAiAQ0trrZTIT30svRSVdwkpX1EAEGt4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RlQq/yIi+slRONkmeSU9IHooCy6+7tu+YvlqFLmQocYcBbUQcSD5dm3QtUBQpdjPiKBlSuzfC2eu9GUiHStT2wl/91AW4kpjpSJpmoFKZxFCSZ5lO+MWZo8x0A5M0SueKPql9V0aoDqzFVcvpCyDLYX7cKkKImBg9MKUM05pbik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=wF94IDHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B035C4CEC6;
-	Tue,  8 Oct 2024 01:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1728351053;
-	bh=vxCcy/wP0tEtAiAQ0trrZTIT30svRSVdwkpX1EAEGt4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=wF94IDHOQAeyer+0lJ5Mckea+dNy8krILakDNpJqOzg+tg8ispVGQYFQXOm/FTmJN
-	 oW947/ZfzwLHLMvCCxMXdadu5OVEaYMZF2TU4yBjhtl98Z7Mn2Z+4OAzW71vxjHQ0h
-	 gAa5NjNqZuy0fz1A78aePnk2FhR1355LE0MRx4yg=
-Date: Mon, 7 Oct 2024 18:30:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Jeongjun Park <aha310510@gmail.com>, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, kasong@tencent.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm: swap: prevent possible data-race in
- __try_to_reclaim_swap
-Message-Id: <20241007183052.9d87f42e19db5f9777dc8e77@linux-foundation.org>
-In-Reply-To: <202410071223.t0yF8vP8-lkp@intel.com>
-References: <20241004142504.4379-1-aha310510@gmail.com>
-	<202410071223.t0yF8vP8-lkp@intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728351166; c=relaxed/simple;
+	bh=3KRvihZPuYjgBr5Wx3GSlaRyE8msdFng5koVj0+5JBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jl1w8fGt4+egIOPH2ieN5ejKUAdNMyLJsXKrQnOG5/wWgC08p83r78cIn3EQ1zu9LXNgQvNMu4L5dBN6sz1p5Cpw1YBw2+kioFhH200r6axMD9BcRhzXLcg3fTgprRwTMoha9W0ya3AKOakWoAH3YeX5ox5F8tMi7spEVsweb1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XMz5x5tJXz4f3jkJ;
+	Tue,  8 Oct 2024 09:32:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 848961A0A22;
+	Tue,  8 Oct 2024 09:32:33 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgAHiMSwiwRnULjpDQ--.47120S2;
+	Tue, 08 Oct 2024 09:32:33 +0800 (CST)
+Message-ID: <a7399dd5-f332-4a0e-a0a3-fcc0ba7a20bb@huaweicloud.com>
+Date: Tue, 8 Oct 2024 09:32:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] workqueue: doc: Add a note saturating the
+ system_wq is not permitted
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+ longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <20240923114352.4001560-3-chenridong@huaweicloud.com>
+ <ipabgusdd5zhnp5724ycc5t4vbraeblhh3ascyzmbkrxvwpqec@pdy3wk5hokru>
+ <6a2f4e01-c9f5-4fb5-953e-2999e00a4b37@huaweicloud.com>
+ <hk4gfwg7cua6rbcly7qzpqah7bfxbzgndgwasmsqqzsim5uxzu@ofpo4e6koms2>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <hk4gfwg7cua6rbcly7qzpqah7bfxbzgndgwasmsqqzsim5uxzu@ofpo4e6koms2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHiMSwiwRnULjpDQ--.47120S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GryUuFyfArWxuw45Zr43KFg_yoWDurc_G3
+	ZxZwnFka1DJ3ZFga4Syw15Za9xJry3Cr45Zw17JwsrJw1aqa4kAFs5ArWxXwn8uFWfJrnr
+	C3Z0gwn0vrnxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Mon, 7 Oct 2024 13:06:49 +0800 kernel test robot <lkp@intel.com> wrote:
 
-> Hi Jeongjun,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on akpm-mm/mm-everything]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Jeongjun-Park/mm-swap-prevent-possible-data-race-in-__try_to_reclaim_swap/20241004-222733
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20241004142504.4379-1-aha310510%40gmail.com
-> patch subject: [PATCH] mm: swap: prevent possible data-race in __try_to_reclaim_swap
-> config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241007/202410071223.t0yF8vP8-lkp@intel.com/config)
-> compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241007/202410071223.t0yF8vP8-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410071223.t0yF8vP8-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> mm/swapfile.c:203:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
->      203 |         if (!folio_trylock(folio))
->          |             ^~~~~~~~~~~~~~~~~~~~~
->    mm/swapfile.c:254:9: note: uninitialized use occurs here
->      254 |         return ret;
 
-This warning can't be correct?
+On 2024/9/30 20:50, Michal Koutný wrote:
+> Hi.
+> 
+> On Fri, Sep 27, 2024 at 04:08:26PM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>> How about:
+>> Note: If something may generate works frequently, it may saturate the
+>> system_wq and potentially lead to deadlock. It should utilize its own
+>> dedicated workqueue rather than system wq.
+> 
+> It doesn't depend only on generating frequency (in Tetsuo's example with
+> slow works, the "high" would only be 256/s) and accurate information is
+> likely only empirical, thus I'd refine it further:
+> 
+>> Note: If something may generate more than @max_active outstanding
+>> work items (do stress test your producers), it may saturate a system
+>> wq and potentially lead to deadlock. It should utilize its own
+>> dedicated workqueue rather than the system wq.
+> 
+> (besides @max_active reference, I also changed generic system_wq to
+> system wq as the surrounding text seems to refer to any of the
+> system_*wq)
+> 
+> Michal
+
+Thank you, Michal.
+I took a week off.
+I will update soon.
+
+Best regards,
+Ridong.
+
 
