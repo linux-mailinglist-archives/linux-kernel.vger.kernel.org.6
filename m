@@ -1,168 +1,106 @@
-Return-Path: <linux-kernel+bounces-354975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7308C99456A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:30:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC8999456C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91FC286E8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B96C28692D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAA01CBE9E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F6A1CDFDA;
 	Tue,  8 Oct 2024 10:29:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwX6e7Lj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA85F198836;
-	Tue,  8 Oct 2024 10:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00F1CB308;
+	Tue,  8 Oct 2024 10:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728383372; cv=none; b=CiZmKiC8SREaZ/JpCcf2VTcZ4IRZr9o/p9Y6eI6hG5UwwroTrPjoZggzUivFpaIXTYcTyWYknfoklHSYpgGFL6J2TDU0X3wf5kEmK8zpHaFOU01SiBQDCSvnA6UCOIom9jsdaPDMRLozJh7SoJotHe8VwbTpvGKG01C7nj7GOBY=
+	t=1728383373; cv=none; b=p+Kla33yRCeau29L8wkcCcrk2DYCf669wsIKM2i9/QfWiQhq0RKMq+dVFoKn4kh4t8SwNRjAk+xpDXmNbU8rCZLiWQkbsJ7UCNCgCK7ksrl2EVNGjqjDfPVeJ7c1YRc8lAJ+rUL7kUEwenlFGN4Vik501IPtZwt2awSn5lum1pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728383372; c=relaxed/simple;
-	bh=n6Pyknfvtq8jCstOTEB1lqtTghs0zco2bDfrzky9UhI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kGo4hQ0xVRjgo8vixjkKxO3pLIphhTNbeScNLR0/kDUSydkA7EPj4edZCLXw43ckBmVmRc3oGrCMMOK7Ucw3MqBzq0HZR88UWcSnq1l7GZe6qJZz3c71onDSQ3dgK+LVt9TSzxAE+9o7nw8wr2do4NwYAP7qjYNZzbQxeB4wG0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNBwk4ZdMz6GFMH;
-	Tue,  8 Oct 2024 18:25:10 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4424E1402C6;
-	Tue,  8 Oct 2024 18:29:28 +0800 (CST)
-Received: from china (10.200.201.82) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Oct
- 2024 12:29:22 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: Gur Stavi <gur.stavi@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
-	<shuah@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	<linux-kselftest@vger.kernel.org>
-Subject: [PATCH net-next v02 2/2] selftests: net/psock_fanout: socket joins fanout when link is down
-Date: Tue, 8 Oct 2024 13:27:59 +0300
-Message-ID: <6a30be3ddff2f18f803236ace6a61a552aa324ce.1728382839.git.gur.stavi@huawei.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1728382839.git.gur.stavi@huawei.com>
-References: <cover.1728382839.git.gur.stavi@huawei.com>
+	s=arc-20240116; t=1728383373; c=relaxed/simple;
+	bh=r6uqx0gKzPJlQTnJfU80WZi/CjkKIp2ytA8teYg3T4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ln0S092mkda2ihgErE3r/+Dw1AYVSxU9rYkMJ4IZQjeYVtdumBAM3Rxj7jhvyRUj0pgJxSzO3mr8z6tQk0IJoab6a2V8ASBGQrKa7eadsAz2ZIOLqf9K38HEB0AXMmxgtaKXNCq2NrrDyt5EdKScCcQTCHl5lcuLrxwchDCTFTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwX6e7Lj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91C1C4CEC7;
+	Tue,  8 Oct 2024 10:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728383372;
+	bh=r6uqx0gKzPJlQTnJfU80WZi/CjkKIp2ytA8teYg3T4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwX6e7LjdGFMW4ZkZgiEBpTLMqqIOX+ATRyulL2aZFJDHiTuBoF4o4JvneLbRrW6S
+	 ur+UM8QSxwZXgdJeIKD0nTtiN9mXgz+z9if/L38DwR1Y08fjwMhHB/pN6jfRpY/3JR
+	 Yj/Wvb20obNLHveykP5AwmtYg2wQ4fhcPjfKwiihnJTr/UqBpm08yO3N4FM3UzVCzh
+	 HgRl0j7T9fLWvGST3nJ8bYjhmPHVUYMQj9oHfJ3qpIKT5EcwRCnMvualHgOd3nPGt7
+	 sbtzOgnQeP0rHfGBsINPGGh+gSdu6QaTl54XL4ZytkxT7DaPSnndgE598gmf2UCboW
+	 xBAqqpGGd/EsA==
+Date: Tue, 8 Oct 2024 11:29:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Mihai Sain <mihai.sain@microchip.com>, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: atmel-quadspi: Print the controller version and
+ used irq
+Message-ID: <ZwUJiAj_ZVztLvS5@finisterre.sirena.org.uk>
+References: <20241008083226.51163-1-mihai.sain@microchip.com>
+ <1c525e43-d71c-4c4a-a8ac-96627cd6ea7e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- frapeml500005.china.huawei.com (7.182.85.13)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/tCwxRMHdmQqa9TN"
+Content-Disposition: inline
+In-Reply-To: <1c525e43-d71c-4c4a-a8ac-96627cd6ea7e@linaro.org>
+X-Cookie: Editing is a rewording activity.
 
-Modify test_control_group to have toggle parameter.
-When toggle is non-zero, loopback device will be set down for the
-initialization of fd[1] which is still expected to successfully join
-the fanout.
 
-Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
----
- tools/testing/selftests/net/psock_fanout.c | 42 ++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 3 deletions(-)
+--/tCwxRMHdmQqa9TN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/tools/testing/selftests/net/psock_fanout.c b/tools/testing/selftests/net/psock_fanout.c
-index 4f31e92ebd96..acdfae8f8a9a 100644
---- a/tools/testing/selftests/net/psock_fanout.c
-+++ b/tools/testing/selftests/net/psock_fanout.c
-@@ -48,6 +48,7 @@
- #include <string.h>
- #include <sys/mman.h>
- #include <sys/socket.h>
-+#include <sys/ioctl.h>
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <unistd.h>
-@@ -59,6 +60,33 @@
- 
- static uint32_t cfg_max_num_members;
- 
-+static void loopback_set_up_down(int state_up)
-+{
-+	struct ifreq ifreq = {};
-+	int fd, err;
-+
-+	fd = socket(AF_PACKET, SOCK_RAW, 0);
-+	if (fd < 0) {
-+		perror("socket loopback");
-+		exit(1);
-+	}
-+	strcpy(ifreq.ifr_name, "lo");
-+	err = ioctl(fd, SIOCGIFFLAGS, &ifreq);
-+	if (err) {
-+		perror("SIOCGIFFLAGS");
-+		exit(1);
-+	}
-+	if (state_up != !!(ifreq.ifr_flags & IFF_UP)) {
-+		ifreq.ifr_flags ^= IFF_UP;
-+		err = ioctl(fd, SIOCSIFFLAGS, &ifreq);
-+		if (err) {
-+			perror("SIOCSIFFLAGS");
-+			exit(1);
-+		}
-+	}
-+	close(fd);
-+}
-+
- /* Open a socket in a given fanout mode.
-  * @return -1 if mode is bad, a valid socket otherwise */
- static int sock_fanout_open(uint16_t typeflags, uint16_t group_id)
-@@ -264,17 +292,22 @@ static void test_control_single(void)
- }
- 
- /* Test illegal group with different modes or flags */
--static void test_control_group(void)
-+static void test_control_group(int toggle)
- {
- 	int fds[2];
- 
--	fprintf(stderr, "test: control multiple sockets\n");
-+	if (toggle)
-+		fprintf(stderr, "test: control multiple sockets with link down toggle\n");
-+	else
-+		fprintf(stderr, "test: control multiple sockets\n");
- 
- 	fds[0] = sock_fanout_open(PACKET_FANOUT_HASH, 0);
- 	if (fds[0] == -1) {
- 		fprintf(stderr, "ERROR: failed to open HASH socket\n");
- 		exit(1);
- 	}
-+	if (toggle)
-+		loopback_set_up_down(0);
- 	if (sock_fanout_open(PACKET_FANOUT_HASH |
- 			       PACKET_FANOUT_FLAG_DEFRAG, 0) != -1) {
- 		fprintf(stderr, "ERROR: joined group with wrong flag defrag\n");
-@@ -294,6 +327,8 @@ static void test_control_group(void)
- 		fprintf(stderr, "ERROR: failed to join group\n");
- 		exit(1);
- 	}
-+	if (toggle)
-+		loopback_set_up_down(1);
- 	if (close(fds[1]) || close(fds[0])) {
- 		fprintf(stderr, "ERROR: closing sockets\n");
- 		exit(1);
-@@ -489,7 +524,8 @@ int main(int argc, char **argv)
- 	int port_off = 2, tries = 20, ret;
- 
- 	test_control_single();
--	test_control_group();
-+	test_control_group(0);
-+	test_control_group(1);
- 	test_control_group_max_num_members();
- 	test_unique_fanout_group_ids();
- 
--- 
-2.45.2
+On Tue, Oct 08, 2024 at 10:34:39AM +0100, Tudor Ambarus wrote:
+> On 10/8/24 9:32 AM, Mihai Sain wrote:
 
+> > Add support to print the controller version and used irq
+> > similar to other at91 drivers (spi, twi, usart).
+
+> > +	dev_info(&pdev->dev, "AT91 QSPI Controller version %#x (irq %d)\n",
+> > +		 atmel_qspi_read(aq, QSPI_VERSION), irq);
+
+> This pollutes the console. Better to add a dev_dbg if you care.
+> And irq number doesn't bring too much value as you can see it in dt,
+> isn't it?
+
+The objective of bringing the various AT91 drivers into consistency does
+seem useful so if this isn't OK for this driver we should probably
+update the other drivers as well.  Ensuring that people can get at the
+IP version does feel useful, I guess it could also be a sysfs thing?
+
+--/tCwxRMHdmQqa9TN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcFCYUACgkQJNaLcl1U
+h9DDOAf/Y8OAs67WdyBhy6znpd9MnCRbd2ynn7x0IFVnQeaOcNPJFreZ5D81G9DO
+G2dEOU68qbHH7LCNDDUEcNre1C95gQpAFVWg7zVeLcRR7iXOSgYMjybkQp8A9jEM
+w8RucD9+/6SHS/y3mEflYgtRk8QnbA/1Gu0cVhM6606Y8sxXQKmiDEEEIXqoSzp6
+Oz9LVdlk1GYyGFflv7eTTvy1CVey8xOOVYQBpjohmXxzYUqhrNNw+ef7tUsHDued
+k7jyRfC7ndsYamet7RzQFrMVXvP1TJxcgYcAkv/CDdSB8LUyTpq7+vSc/zEVpbD7
+onHIdDe8ZvRplwY2vgOHjYDzW0gc6Q==
+=4Gul
+-----END PGP SIGNATURE-----
+
+--/tCwxRMHdmQqa9TN--
 
