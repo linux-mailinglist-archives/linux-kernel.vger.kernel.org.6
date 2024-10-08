@@ -1,317 +1,255 @@
-Return-Path: <linux-kernel+bounces-355026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D635199462A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 583A699463C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E8D1F2867C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:08:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74CB1F28D2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8031DF276;
-	Tue,  8 Oct 2024 11:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8151D2B14;
+	Tue,  8 Oct 2024 11:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zyjZdjb+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8QSBT5Ms"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbWkX+cb"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9061DE8BC;
-	Tue,  8 Oct 2024 11:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6DD16FF2A;
+	Tue,  8 Oct 2024 11:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385523; cv=none; b=WQYpNuVrdOgaBjoyMuvDH2Mh4u7y1iGTew7cXYDs4RMr3Hkx8SzbRuCYhdJSeTd8CK8rV9XVYZfWIEZKmc9L3bvNYWhplHiFQjgyWITirhyF0q4MwJ5ON2LCcB8fUN/SYB3B52pYSoR51KEN2hcP0xzpT5w6Zca9QCE8BVBP+0Y=
+	t=1728385574; cv=none; b=i9SEC3//fEYk3GGLhtBHqDef6DA9d/lFDwwRRGsuIG8iJSoff/hG5HNoJvu+Yrtb6ElKbwIihU93CjLR6+06k5myYq9p7ekmplxBEutDZYdMTqV6vr3aq9DLDfWZwcb9q7YfrQnVIIILLbFmNW5sH5yWxN6ORH/ioJXUuuOdotU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385523; c=relaxed/simple;
-	bh=GW18BoqXq9/WOcPh5afcrqKnoeQr+vTNiUuntXT5BZw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lHlu0zulaRqvwmcfAzQ7bFbpFraeOYNe7cfBawTbSbPos18mkOBWpwWoxRGM3AeiVPJ+3fyVNt9cXFohrRryCnN1GRK2rrV43Um600t+KKUzFMEQeXW3VoyTHEQwg2yqUhC0rIowkKmKu6A5DqtGomLGuu29DPxDgPssYqyZnd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zyjZdjb+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8QSBT5Ms; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 11:05:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728385519;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3MQKjeV/3C+CBTd/8Zd/+h/5Kdcw/gFIq3QubgGvtGc=;
-	b=zyjZdjb+yksNLXsMy8sFLT+J4hr9FIZ5PJIjhpKQzAVLgusPTcQdFMEESkZllotXet4jDA
-	ztmBFEln4Zwn1LhQ3es3As8gxLvR751zQrwaf7g0/pqOU/feYfdf8pyM4FudB3RVvKBPCT
-	HhY26mj6/7Sq6KXeohflKNt8FTgKWaFwUUjGNn3ejTMRxJ7RYCLotTJoEX26ezH6LRVorA
-	N/j2SL4mTfQ7P28UZER4HLkvKUpVKhKcrpxo1BFeSiIx9OGuwm3eAcRBkhSpiYqoBcqs//
-	ieT5ii42MW/QCT6z7X3eLUjZE/LRPwWhjBLbIt3ys0D5HKiKQVe8SNew2E2UaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728385519;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3MQKjeV/3C+CBTd/8Zd/+h/5Kdcw/gFIq3QubgGvtGc=;
-	b=8QSBT5MsC3DDeSspILj3eRv/18TXSB5fgb5a9L3WJJZ/83ocoYlWzW/3KRcoRDOSFgpHIw
-	yQNwsEv8p1Y57NAQ==
-From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] uprobes: switch to RCU Tasks Trace flavor for better
- performance
-Cc: Andrii Nakryiko <andrii@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240910174312.3646590-1-andrii@kernel.org>
-References: <20240910174312.3646590-1-andrii@kernel.org>
+	s=arc-20240116; t=1728385574; c=relaxed/simple;
+	bh=RPO7jVFt26dwjcYzMBn1wdOFCuV+0MtqoPac+9csBtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TBJFPqPmySbmFtP5WSxHBqsWqvzw+yHVHZuyrfsYYRsv4w4g116c5rFQBouCfear0phY2tes9UPajcU6huR0EL6n8CyD43nmrVMoOEddsMTFiNb9cS3Tovh5DdgN0eWBWcPKaR7QRpfzMTU0PWISEy/icJq7HNj+Do4cyRGNbG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbWkX+cb; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50c937b92d9so1042700e0c.2;
+        Tue, 08 Oct 2024 04:06:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728385571; x=1728990371; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZtOVjbyAjG2zU29QqMkTWldiGOO5NXXvaEbwHvDFhJM=;
+        b=HbWkX+cbghBgU8gf4awvDtehIQZh3KdkYPLABg8gxZuzbSPdq5hZ67WmrgIcfVW+O9
+         ewcOwO5Ws/h4Zq9kBPe3IEN6VJVAE4IAXiLvID6o/dOwNN1I2l9y8IUmpHtlEvpIw4Kw
+         jo5hydjvI+cV1EcUvjDiVXtUJEHIS+HakGzzxP+w3heH1VWIRQJn5wfSzDIdb7FoOsld
+         6Xci6jB8uBjYcSOANDB+Nyj136AuHrfzAigEELd39vqbLrEeIShKyFFChUagBLOsfJG2
+         VfD7aIrRtloZD5hf9dStLld6UW7rCxaPNq1IgLpAJzaV0OIHORqTirtlm74gCtQyDFhH
+         el9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728385571; x=1728990371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZtOVjbyAjG2zU29QqMkTWldiGOO5NXXvaEbwHvDFhJM=;
+        b=rVkImMUJXNRUmo3h1C2fASNh/O62PaZSg4co7Cbb5/473OQZlS0ZCXu9spQugebE0I
+         NMzjzxxSIiV4chIJhEjfLjancAeL5aHqNwKkWZ9ivyWcYMAufCepoWMxBvUK4T+hoG5D
+         +sXCcx9SiWbf8+QBZZSi2tK46tDtJXuqq3TNiEWh0ITsYfbvQT0mPbpxVx2I6Vv3e6lJ
+         Fq7ijiXCTQYXjY5gt9XDLEc89koudUlGo5pDPMZVSKOKbQjY6SPlB9C0GF+kDpusJulf
+         HCI8h8Wyay/PnLUMDi86ws3P2hnvGFqAUfgfCBwFSh9vrnrda1itbGIUmtU852xbgh0F
+         Fb1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKrk2XC3/J0r/VfQtR2E806IQf2qnk00h7Ia5JedD/T3+xVRe+uPixZ/jjAgwVVokhBWxwmqmFZSLlT6g=@vger.kernel.org, AJvYcCWVpmr/TRFLMXOGSgN/O/fVI2G+9cLK2HFQ64S2nyxyMmmEnLCtNypN7sQ4XNste1ICuxq3+GXUMWPFDbM=@vger.kernel.org, AJvYcCXVJ+5AKChnDvHmUhGBvxWoyM3OBH8CuinVJzSgjCZH5ybsBZSqIv92aSBdMYgehYXZHEJSpWbrYTyXYINUvCITg5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdCmZeXzj/3ncsgPbmpUK/kDZs8wnqZn/nqzkBGy2aHLn5AFVL
+	3pzjsypIu7G0dlapMAiqCocOzmaw/2AfpLfT6uMtrt8sf2p0Ik5SzRptjN2QBwymrCnuKGLG3Rb
+	TwXhlX1qioJ5Be59En6/uCHBjWCk=
+X-Google-Smtp-Source: AGHT+IFAhzzWfREFDTRHEadMk6vgR1uvY0/FlJpPVHoW3gADi57xjaNCLMzf+BqKhf1eKVX42naNkJ6b4ixltvpeAQ0=
+X-Received: by 2002:a05:6122:1688:b0:50a:b604:2b9e with SMTP id
+ 71dfb90a1353d-50c854b95fdmr11984777e0c.7.1728385571161; Tue, 08 Oct 2024
+ 04:06:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172838551927.1442.2798722944163929587.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241007200603.GA28812@pendragon.ideasonboard.com>
+In-Reply-To: <20241007200603.GA28812@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 8 Oct 2024 12:05:44 +0100
+Message-ID: <CA+V-a8s_hweyJ37U9VWoohMAZJOGLPZ+Wf6BX-2-3U0DPj3=Fg@mail.gmail.com>
+Subject: Re: [PATCH v4 13/17] media: rzg2l-cru: video: Implement
+ .link_validate() callback
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the perf/core branch of tip:
+Hi Laurent,
 
-Commit-ID:     87195a1ee332add27bd51448c6b54aad551a28f5
-Gitweb:        https://git.kernel.org/tip/87195a1ee332add27bd51448c6b54aad551=
-a28f5
-Author:        Andrii Nakryiko <andrii@kernel.org>
-AuthorDate:    Tue, 10 Sep 2024 10:43:12 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 07 Oct 2024 09:28:42 +02:00
+Thank you for the quick review.
 
-uprobes: switch to RCU Tasks Trace flavor for better performance
+On Mon, Oct 7, 2024 at 9:06=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Mon, Oct 07, 2024 at 07:48:35PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Implement the `.link_validate()` callback for the video node and move t=
+he
+> > format checking into this function. This change allows the removal of
+> > `rzg2l_cru_mc_validate_format()`.
+> >
+> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
+om>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 91 ++++++++++---------
+> >  1 file changed, 47 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index ceb9012c9d70..385b4242db2f 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buff=
+er *vb)
+> >       spin_unlock_irqrestore(&cru->qlock, flags);
+> >  }
+> >
+> > -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
+> > -                                     struct v4l2_subdev *sd,
+> > -                                     struct media_pad *pad)
+> > -{
+> > -     struct v4l2_subdev_format fmt =3D {
+> > -             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> > -     };
+> > -
+> > -     fmt.pad =3D pad->index;
+> > -     if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
+> > -             return -EPIPE;
+> > -
+> > -     switch (fmt.format.code) {
+> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
+> > -             break;
+> > -     default:
+> > -             return -EPIPE;
+> > -     }
+> > -
+> > -     switch (fmt.format.field) {
+> > -     case V4L2_FIELD_TOP:
+> > -     case V4L2_FIELD_BOTTOM:
+> > -     case V4L2_FIELD_NONE:
+> > -     case V4L2_FIELD_INTERLACED_TB:
+> > -     case V4L2_FIELD_INTERLACED_BT:
+> > -     case V4L2_FIELD_INTERLACED:
+> > -     case V4L2_FIELD_SEQ_TB:
+> > -     case V4L2_FIELD_SEQ_BT:
+> > -             break;
+> > -     default:
+> > -             return -EPIPE;
+> > -     }
+> > -
+> > -     if (fmt.format.width !=3D cru->format.width ||
+> > -         fmt.format.height !=3D cru->format.height)
+> > -             return -EPIPE;
+> > -
+> > -     return 0;
+> > -}
+> > -
+> >  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
+> >                                   int slot, dma_addr_t addr)
+> >  {
+> > @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_d=
+ev *cru, int on)
+> >               return stream_off_ret;
+> >       }
+> >
+> > -     ret =3D rzg2l_cru_mc_validate_format(cru, sd, pad);
+> > -     if (ret)
+> > -             return ret;
+> > -
+> >       pipe =3D media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
+> >       ret =3D video_device_pipeline_start(&cru->vdev, pipe);
+> >       if (ret)
+> > @@ -995,6 +951,52 @@ static const struct v4l2_file_operations rzg2l_cru=
+_fops =3D {
+> >       .read           =3D vb2_fop_read,
+> >  };
+> >
+> > +/* -------------------------------------------------------------------=
+----------
+> > + * Media entity operations
+> > + */
+> > +
+> > +static int rzg2l_cru_video_link_validate(struct media_link *link)
+> > +{
+> > +     struct v4l2_subdev_format fmt =3D {
+> > +             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> > +     };
+> > +     const struct rzg2l_cru_ip_format *video_fmt;
+> > +     const struct rzg2l_cru_ip_format *ip_fmt;
+> > +     struct v4l2_subdev *subdev;
+> > +     struct rzg2l_cru_dev *cru;
+> > +     struct media_pad *remote;
+> > +     int ret;
+> > +
+> > +     remote =3D link->source;
+> > +     subdev =3D media_entity_to_v4l2_subdev(remote->entity);
+> > +     fmt.pad =3D remote->index;
+>
+>         subdev =3D media_entity_to_v4l2_subdev(link->source->entity);
+>         fmt.pad =3D link->source->index;
+>
+> and drop the remote variable. Or, if you prefer keeping it, rename it to
+> source.
+>
+OK, I will drop the local variable.
 
-This patch switches uprobes SRCU usage to RCU Tasks Trace flavor, which
-is optimized for more lightweight and quick readers (at the expense of
-slower writers, which for uprobes is a fine tradeof) and has better
-performance and scalability with number of CPUs.
+> > +     ret =3D v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+> > +     if (ret < 0)
+> > +             return ret =3D=3D -ENOIOCTLCMD ? -EINVAL : ret;
+> > +
+> > +     cru =3D container_of(media_entity_to_video_device(link->sink->ent=
+ity),
+> > +                        struct rzg2l_cru_dev, vdev);
+> > +     video_fmt =3D rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat)=
+;
+> > +     if (!video_fmt)
+> > +             return -EPIPE;
+>
+> Can this happen, doesn't the s_fmt handler on the video device ensure
+> that pixelformat is always valid.
+>
+Agreed, this won't happen. I'll drop this check.
 
-Similarly to baseline vs SRCU, we've benchmarked SRCU-based
-implementation vs RCU Tasks Trace implementation.
+> > +     ip_fmt =3D rzg2l_cru_ip_code_to_fmt(fmt.format.code);
+> > +     if (!ip_fmt)
+> > +             return -EPIPE;
+>
+> Same question here.
+>
+This won't happen, so I will drop the check. Actually as you mentioned
+below we can drop one check so I'll get rid of fetching ip_fmt.
 
-SRCU
-=3D=3D=3D=3D
-uprobe-nop      ( 1 cpus):    3.276 =C2=B1 0.005M/s  (  3.276M/s/cpu)
-uprobe-nop      ( 2 cpus):    4.125 =C2=B1 0.002M/s  (  2.063M/s/cpu)
-uprobe-nop      ( 4 cpus):    7.713 =C2=B1 0.002M/s  (  1.928M/s/cpu)
-uprobe-nop      ( 8 cpus):    8.097 =C2=B1 0.006M/s  (  1.012M/s/cpu)
-uprobe-nop      (16 cpus):    6.501 =C2=B1 0.056M/s  (  0.406M/s/cpu)
-uprobe-nop      (32 cpus):    4.398 =C2=B1 0.084M/s  (  0.137M/s/cpu)
-uprobe-nop      (64 cpus):    6.452 =C2=B1 0.000M/s  (  0.101M/s/cpu)
+> > +
+> > +     if (fmt.format.width !=3D cru->format.width ||
+> > +         fmt.format.height !=3D cru->format.height ||
+> > +         fmt.format.field !=3D cru->format.field ||
+> > +         video_fmt->code !=3D fmt.format.code ||
+> > +         ip_fmt->format !=3D cru->format.pixelformat)
+>
+> The last two line seem to implement the same check.
+>
+OK, I will drop the pixelformat check and keep the code check.
 
-uretprobe-nop   ( 1 cpus):    2.055 =C2=B1 0.001M/s  (  2.055M/s/cpu)
-uretprobe-nop   ( 2 cpus):    2.677 =C2=B1 0.000M/s  (  1.339M/s/cpu)
-uretprobe-nop   ( 4 cpus):    4.561 =C2=B1 0.003M/s  (  1.140M/s/cpu)
-uretprobe-nop   ( 8 cpus):    5.291 =C2=B1 0.002M/s  (  0.661M/s/cpu)
-uretprobe-nop   (16 cpus):    5.065 =C2=B1 0.019M/s  (  0.317M/s/cpu)
-uretprobe-nop   (32 cpus):    3.622 =C2=B1 0.003M/s  (  0.113M/s/cpu)
-uretprobe-nop   (64 cpus):    3.723 =C2=B1 0.002M/s  (  0.058M/s/cpu)
-
-RCU Tasks Trace
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-uprobe-nop      ( 1 cpus):    3.396 =C2=B1 0.002M/s  (  3.396M/s/cpu)
-uprobe-nop      ( 2 cpus):    4.271 =C2=B1 0.006M/s  (  2.135M/s/cpu)
-uprobe-nop      ( 4 cpus):    8.499 =C2=B1 0.015M/s  (  2.125M/s/cpu)
-uprobe-nop      ( 8 cpus):   10.355 =C2=B1 0.028M/s  (  1.294M/s/cpu)
-uprobe-nop      (16 cpus):    7.615 =C2=B1 0.099M/s  (  0.476M/s/cpu)
-uprobe-nop      (32 cpus):    4.430 =C2=B1 0.007M/s  (  0.138M/s/cpu)
-uprobe-nop      (64 cpus):    6.887 =C2=B1 0.020M/s  (  0.108M/s/cpu)
-
-uretprobe-nop   ( 1 cpus):    2.174 =C2=B1 0.001M/s  (  2.174M/s/cpu)
-uretprobe-nop   ( 2 cpus):    2.853 =C2=B1 0.001M/s  (  1.426M/s/cpu)
-uretprobe-nop   ( 4 cpus):    4.913 =C2=B1 0.002M/s  (  1.228M/s/cpu)
-uretprobe-nop   ( 8 cpus):    5.883 =C2=B1 0.002M/s  (  0.735M/s/cpu)
-uretprobe-nop   (16 cpus):    5.147 =C2=B1 0.001M/s  (  0.322M/s/cpu)
-uretprobe-nop   (32 cpus):    3.738 =C2=B1 0.008M/s  (  0.117M/s/cpu)
-uretprobe-nop   (64 cpus):    4.397 =C2=B1 0.002M/s  (  0.069M/s/cpu)
-
-Peak throughput for uprobes increases from 8 mln/s to 10.3 mln/s
-(+28%!), and for uretprobes from 5.3 mln/s to 5.8 mln/s (+11%), as we
-have more work to do on uretprobes side.
-
-Even single-thread (no contention) performance is slightly better: 3.276
-mln/s to 3.396 mln/s (+3.5%) for uprobes, and 2.055 mln/s to 2.174 mln/s
-(+5.8%) for uretprobes.
-
-We also select TASKS_TRACE_RCU for UPROBES in Kconfig due to the new
-dependency.
-
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Link: https://lkml.kernel.org/r/20240910174312.3646590-1-andrii@kernel.org
----
- arch/Kconfig            |  1 +
- kernel/events/uprobes.c | 38 ++++++++++++++++----------------------
- 2 files changed, 17 insertions(+), 22 deletions(-)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 8af374e..5b5c216 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -135,6 +135,7 @@ config KPROBES_ON_FTRACE
- config UPROBES
- 	def_bool n
- 	depends on ARCH_SUPPORTS_UPROBES
-+	select TASKS_TRACE_RCU
- 	help
- 	  Uprobes is the user-space counterpart to kprobes: they
- 	  enable instrumentation applications (such as 'perf probe')
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 4b52cb2..5106dc1 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -26,6 +26,7 @@
- #include <linux/task_work.h>
- #include <linux/shmem_fs.h>
- #include <linux/khugepaged.h>
-+#include <linux/rcupdate_trace.h>
-=20
- #include <linux/uprobes.h>
-=20
-@@ -42,8 +43,6 @@ static struct rb_root uprobes_tree =3D RB_ROOT;
- static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
- static seqcount_rwlock_t uprobes_seqcount =3D SEQCNT_RWLOCK_ZERO(uprobes_seq=
-count, &uprobes_treelock);
-=20
--DEFINE_STATIC_SRCU(uprobes_srcu);
--
- #define UPROBES_HASH_SZ	13
- /* serialize uprobe->pending_list */
- static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
-@@ -651,7 +650,7 @@ static void put_uprobe(struct uprobe *uprobe)
- 	delayed_uprobe_remove(uprobe, NULL);
- 	mutex_unlock(&delayed_uprobe_lock);
-=20
--	call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
-+	call_rcu_tasks_trace(&uprobe->rcu, uprobe_free_rcu);
- }
-=20
- static __always_inline
-@@ -706,7 +705,7 @@ static struct uprobe *find_uprobe_rcu(struct inode *inode=
-, loff_t offset)
- 	struct rb_node *node;
- 	unsigned int seq;
-=20
--	lockdep_assert(srcu_read_lock_held(&uprobes_srcu));
-+	lockdep_assert(rcu_read_lock_trace_held());
-=20
- 	do {
- 		seq =3D read_seqcount_begin(&uprobes_seqcount);
-@@ -934,8 +933,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm=
-_struct *mm)
- 	bool ret =3D false;
-=20
- 	down_read(&uprobe->consumer_rwsem);
--	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
--				 srcu_read_lock_held(&uprobes_srcu)) {
-+	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_tr=
-ace_held()) {
- 		ret =3D consumer_filter(uc, mm);
- 		if (ret)
- 			break;
-@@ -1156,7 +1154,7 @@ void uprobe_unregister_sync(void)
- 	 * unlucky enough caller can free consumer's memory and cause
- 	 * handler_chain() or handle_uretprobe_chain() to do an use-after-free.
- 	 */
--	synchronize_srcu(&uprobes_srcu);
-+	synchronize_rcu_tasks_trace();
- }
- EXPORT_SYMBOL_GPL(uprobe_unregister_sync);
-=20
-@@ -1240,19 +1238,18 @@ EXPORT_SYMBOL_GPL(uprobe_register);
- int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
- {
- 	struct uprobe_consumer *con;
--	int ret =3D -ENOENT, srcu_idx;
-+	int ret =3D -ENOENT;
-=20
- 	down_write(&uprobe->register_rwsem);
-=20
--	srcu_idx =3D srcu_read_lock(&uprobes_srcu);
--	list_for_each_entry_srcu(con, &uprobe->consumers, cons_node,
--				 srcu_read_lock_held(&uprobes_srcu)) {
-+	rcu_read_lock_trace();
-+	list_for_each_entry_rcu(con, &uprobe->consumers, cons_node, rcu_read_lock_t=
-race_held()) {
- 		if (con =3D=3D uc) {
- 			ret =3D register_for_each_vma(uprobe, add ? uc : NULL);
- 			break;
- 		}
- 	}
--	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-+	rcu_read_unlock_trace();
-=20
- 	up_write(&uprobe->register_rwsem);
-=20
-@@ -2134,8 +2131,7 @@ static void handler_chain(struct uprobe *uprobe, struct=
- pt_regs *regs)
-=20
- 	current->utask->auprobe =3D &uprobe->arch;
-=20
--	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
--				 srcu_read_lock_held(&uprobes_srcu)) {
-+	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_tr=
-ace_held()) {
- 		int rc =3D 0;
-=20
- 		if (uc->handler) {
-@@ -2173,15 +2169,13 @@ handle_uretprobe_chain(struct return_instance *ri, st=
-ruct pt_regs *regs)
- {
- 	struct uprobe *uprobe =3D ri->uprobe;
- 	struct uprobe_consumer *uc;
--	int srcu_idx;
-=20
--	srcu_idx =3D srcu_read_lock(&uprobes_srcu);
--	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
--				 srcu_read_lock_held(&uprobes_srcu)) {
-+	rcu_read_lock_trace();
-+	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_tr=
-ace_held()) {
- 		if (uc->ret_handler)
- 			uc->ret_handler(uc, ri->func, regs);
- 	}
--	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-+	rcu_read_unlock_trace();
- }
-=20
- static struct return_instance *find_next_ret_chain(struct return_instance *r=
-i)
-@@ -2266,13 +2260,13 @@ static void handle_swbp(struct pt_regs *regs)
- {
- 	struct uprobe *uprobe;
- 	unsigned long bp_vaddr;
--	int is_swbp, srcu_idx;
-+	int is_swbp;
-=20
- 	bp_vaddr =3D uprobe_get_swbp_addr(regs);
- 	if (bp_vaddr =3D=3D uprobe_get_trampoline_vaddr())
- 		return uprobe_handle_trampoline(regs);
-=20
--	srcu_idx =3D srcu_read_lock(&uprobes_srcu);
-+	rcu_read_lock_trace();
-=20
- 	uprobe =3D find_active_uprobe_rcu(bp_vaddr, &is_swbp);
- 	if (!uprobe) {
-@@ -2330,7 +2324,7 @@ static void handle_swbp(struct pt_regs *regs)
-=20
- out:
- 	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
--	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-+	rcu_read_unlock_trace();
- }
-=20
- /*
+Cheers,
+Prabhakar
 
