@@ -1,81 +1,175 @@
-Return-Path: <linux-kernel+bounces-355576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4204B995443
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFDC99544C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7302E1C257B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03C11C24AEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CA538DF2;
-	Tue,  8 Oct 2024 16:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9FC1E1034;
+	Tue,  8 Oct 2024 16:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rial4+8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPq5lP35"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5B21E0B6F;
-	Tue,  8 Oct 2024 16:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74821E1028;
+	Tue,  8 Oct 2024 16:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404496; cv=none; b=YDoJhC5jtKFiam0Cy36aGk4k2SOJKBbQtLy2eZ0jlYShPtb0sbKK1OPMCWhX6lsRmTl4k96o1XEjNSCy2cgaJumvsF/Wv2snjbO55LuVWYabnW+rCn6hGcaYWkpA/1CFJ5l3gD2bAQk3auGnS2EKRQAZqymGXcpGVcInUsn1UyQ=
+	t=1728404514; cv=none; b=e2+scBHUzMpQZa5bk0A31eR7/iW2f7nBVVjKz4JrZGjgXqWgmMd2Y7aSYFH7f17wZPyaX94sVSy1jQoiF+vYGphnA2ADHdXryY6WAIzvC5y0RJtruce6kUWH7BlyubjhmZE7mUzRwfm7V1I/5eLRYssY33ThiPL7LHzo0p7/exc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404496; c=relaxed/simple;
-	bh=cK2AO0UyBXyi9yD7+SO928e2An/r1n3pdnmvV5sfwgQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YPJyJqQOOu/4WlTRbxZ3qHWPCFvw00s250bIidFO8N6g9jNVGCEIO8NM0nJqhQe/ubQ+M9hsUl4/ByipBa1eS0RMRnH4OVes7lyrXR6x9XBbKYk2s5y9WYkKqrT3F5H9dgdUTiKB95IbRudJ+xz+8deUUbFysJhklTCGk0Lt8ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rial4+8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DDCC4CEC7;
-	Tue,  8 Oct 2024 16:21:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728404496;
-	bh=cK2AO0UyBXyi9yD7+SO928e2An/r1n3pdnmvV5sfwgQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Rial4+8Mhh4nfHDTBhJegLh6zRIquS0VDkRcaOvfYZLgvc7sXhw4GwNvU0Ukdh07o
-	 47BRMJASioeFu1ZdKGuKad5OEKWS6AYHQDdJZICt0jWMeDJLIFiHCw7b3k+g7QlGWJ
-	 OD2YTfWloURe7GrecrRXGguE8TsYix1KAyhRcAywhffV8a4npviKMsrLHrFi39AOft
-	 qNMnEF1xHPFWOpCbWJLTELg4NuHq/vWf5MfzyRhpbpPramxf6Jpz77nVbhQzZYyyLi
-	 QqibyHuwSvbpX5v6rH0UCUk7yrlYbVc8nE2KgmaLYmbcy7U8rZjzb5qU8VHJOA/H6K
-	 gtHJLj0M44I5w==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com
-In-Reply-To: <20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com>
-References: <20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com>
-Subject: Re: (subset) [PATCH v2] dt-bindings: mfd: qcom,tcsr: Add
- compatible for QCS8300
-Message-Id: <172840449361.301890.16032825347779980062.b4-ty@kernel.org>
-Date: Tue, 08 Oct 2024 17:21:33 +0100
+	s=arc-20240116; t=1728404514; c=relaxed/simple;
+	bh=56j0MbqjsKqUdLUCTSs6ZzNdm7C7JX746nf3ep8nc10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8wxhUbbtoolsAUOq4A32VoaEO/uD9AkCo4ODhV9uCuqqL4RMXHYcTMwKJcZJ8Ypxeo4OHFKB+h5Z7VIXTxFyiIM7vNNiZdXxe1FoltEJj75FdgIvKZKtheXRP+v0N0QVpY8YthNIeXvLQpaTAdKKaa52aJj+vhBWhnKygmo+Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPq5lP35; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728404513; x=1759940513;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=56j0MbqjsKqUdLUCTSs6ZzNdm7C7JX746nf3ep8nc10=;
+  b=fPq5lP35+GJWZCFohh+2tU5Zh0Qa05TSL6TK+cJhOIh28WpAfKte87KG
+   iHhqOkiAEQG/bf6WNHSTU+mbgg/pa2JvvHTNczoTRhzrlPTovJbvUpYOu
+   yw7+rBLdr52hsVR4gufYyYyCELhg1O6amsll5+5V3C/OAl+xQsjeKfqWB
+   g2HCZ7qAin6hjQyCCjv3Mpq//QTKLPKd82e+1VhfxyQVlt7Jkd/ezRsGm
+   nA53LeYGqHqQMDSJu8NQ25vvheWRxVCR0+uSF4aI3mNArAdT26VoliYA5
+   Ycu5/IPFR3apBHp8RscK9XTIj75CnBdoeJ5iJxzb7nuxryragxuyS658I
+   Q==;
+X-CSE-ConnectionGUID: uWuqgOhpQSGWBYXWxnRUxQ==
+X-CSE-MsgGUID: 5WMImFCjSXev3LpIe86Dbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31320321"
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="31320321"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:21:52 -0700
+X-CSE-ConnectionGUID: dcEKRUjyQ5ypUQhDSIsasQ==
+X-CSE-MsgGUID: xEP1D9qhTWy6MIHneojlzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="76251435"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 08 Oct 2024 09:21:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 23E3020F; Tue, 08 Oct 2024 19:21:46 +0300 (EEST)
+Date: Tue, 8 Oct 2024 19:21:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] i2c: npcm: Modify the client address assignment
+Message-ID: <ZwVcGu3YeJ6pI0sM@black.fi.intel.com>
+References: <20241001062855.6928-1-kfting@nuvoton.com>
+ <20241001062855.6928-5-kfting@nuvoton.com>
+ <Zvv2Y10hJqGnUDvW@smile.fi.intel.com>
+ <CACD3sJbJ0cNCRiBba73BOAkO=jn9KuJJXC1-Sy_iVf_8EJSjxA@mail.gmail.com>
+ <CACD3sJa23TEfBQ_b8PGM8ot2L0g4n=GcqvPk0HJGjRf-d+=-pg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+In-Reply-To: <CACD3sJa23TEfBQ_b8PGM8ot2L0g4n=GcqvPk0HJGjRf-d+=-pg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 11 Sep 2024 15:44:25 +0800, Jingyi Wang wrote:
-> Document the qcom,qcs8300-tcsr compatible, tcsr will provide various
-> control and status functions for their peripherals.
+On Fri, Oct 04, 2024 at 10:29:10AM +0800, Tyrone Ting wrote:
+> Hi Andy:
 > 
+> Thank you for your comments.
 > 
+> After a second thought, I'll explain why slave_addr << 1 is given here.
+> 
+> Tyrone Ting <warp5tw@gmail.com> 於 2024年10月4日 週五 上午9:49寫道：
+> >
+> > Hi Andy:
+> >
+> > Thank you for your comments and they'll be addressed.
+> >
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> 於 2024年10月1日 週二 下午9:17寫道：
+> > >
+> > > On Tue, Oct 01, 2024 at 02:28:53PM +0800, Tyrone Ting wrote:
+> > > > From: Tyrone Ting <kfting@nuvoton.com>
+> > > >
+> > > > Store the client address earlier since it might get called in
+> > > > the i2c_recover_bus() logic flow at the early stage of
+> > > > npcm_i2c_master_xfer().
+> > >
+> > > ...
+> > >
+> > > > +     /*
+> > > > +      * Previously, the address was stored w/o left-shift by one bit and
+> > > > +      * with that shift in the following call to npcm_i2c_master_start_xmit().
+> > > > +      *
+> > > > +      * Since there are cases that the i2c_recover_bus() gets called at the
+> > > > +      * early stage of npcm_i2c_master_xfer(), the address is stored with
+> > > > +      * the shift and used in the i2c_recover_bus().
+> > > > +      *
+> > > > +      * The address is stored from bit 1 to bit 7 in the register for
+> > > > +      * sending the i2c address later so it's left-shifted by 1 bit.
+> > > > +      */
+> > > > +     bus->dest_addr = slave_addr << 1;
+> > >
+> > > I'm wondering if it's better to use i2c_8bit_addr_from_msg() here?
+> > >
+> 
+> The current implementation of i2c_8bit_addr_from_msg() (ref link:
+> https://github.com/torvalds/linux/blob/master/include/linux/i2c.h#L947)
+> is
+> "return (msg->addr << 1) | (msg->flags & I2C_M_RD);" and it takes
+> extra consideration about the read flag when retrieving the i2c
+> address.
+> IOW, if there is a read event, the i2c address contains a read
+> indication (bit 0 of the i2c address is 1).
+> 
+> The patch code "bus->dest_addr = slave_addr << 1;" might get used in
+> i2c_recover_bus() later. (ref link:
+> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7xx.c#L1691)
+> 
+> Suppose there is a read event and the i2c address is 0x60.
+> 
+> With i2c_8bit_addr_from_msg(), bus->dest_addr will be 0xc1.
+> With the original patch, bus->dest_addr will be 0xc0.
+> 
+> If some error condition occurs and it requires i2c_recover_bus() to
+> recover the bus, according to the description at
+> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7xx.c#L1742,
+> the address "0xc1" is used
+> as a parameter to npcm_i2c_wr_byte() which is used to send the address
+> in the write direction.
+> 
+> If i2c_8bit_addr_from_msg() is applied, it might not fit the scenario
+> described at
+> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm7xx.c#L1742,
+> which is about to send
+> an address in a write direction since the address from
+> i2c_8bit_addr_from_msg() contains a read indication.
 
-Applied, thanks!
+Okay, then I would do the i2c_8bit_addr_from_msg() call here as AFAICS
+this is the real event where you save the address *of the event*.
 
-[1/1] dt-bindings: mfd: qcom,tcsr: Add compatible for QCS8300
-      commit: 1857a06502dd04ebd682d99697e66aa38b15d43a
+And in the respective user update the comment to summarize above and do
+rather ->dest_addr & ~I2C_M_RD there.
 
---
-Lee Jones [李琼斯]
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
