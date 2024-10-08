@@ -1,405 +1,332 @@
-Return-Path: <linux-kernel+bounces-354418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5792993D3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0E4993D41
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C822281A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A009F2818EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C5D2AE8C;
-	Tue,  8 Oct 2024 03:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B5B2AE8C;
+	Tue,  8 Oct 2024 03:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiadXSMT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhL+Zehu"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E211C25779
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 03:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616FB3A1B5;
+	Tue,  8 Oct 2024 03:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728356657; cv=none; b=sLsl2VaCEs8wSMjAk+D15/k+um4UnM3i9xTajrmXHt6hI+vAkf3Rzm69Q5W9rOCLjoNfFWWVdyLkP16Bqjo+JMDCw5w0UnhLGO4BpujcQgfFOPQ2qCrboV0837p5DApPnZLUVe9QUzQwNgeOzjLDj0GxnTb994v+CXiacbzcoq8=
+	t=1728356666; cv=none; b=pBe/L7OU5hy5jU60FUIrIL4F1sW2pZ+BZrhEAku6Fkur2Azx89O1ZXVzshJqFWqXsCDjyMk0uJT7/RDvxQgQHpmKH/4GWVlmHXRG5u/2tkMJCwxnO0VN8zEcAlNB4Diu5Dxxslp1fZAxYucCDP6HrwerjJAkPIu9tk0G0nd5gtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728356657; c=relaxed/simple;
-	bh=P9u3Et+3TLvKSO3sQ8MfLgWgAZD2sd6VVWGwIZpfbRM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P31/tL76AsAOVCL4guT2Yuyjr+RgKP+HY6yRB3jrt0+SCVzYVa6FkuEmjIMoCOBOqV6q/nvUCEYeplAXQilZE7QplPGxhozw7bWZOBlxsJ9UBP/RoYpN2+kebyHQVxFFQCMHzhdyusTrU1xgcHs1d5aL54WpQyHO2kyDQKuVJsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiadXSMT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB31C4CECC;
-	Tue,  8 Oct 2024 03:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728356656;
-	bh=P9u3Et+3TLvKSO3sQ8MfLgWgAZD2sd6VVWGwIZpfbRM=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=fiadXSMTB69dUuvHB18AkPe+tLNzK6qX6184p2al0eSBy/rf3q4ghw/C2BRsNcp5i
-	 y0xX0iXFtL8kRo8NN7CkvfcRyvoDa6eyvViUbUsvR8sXY+PWEv6dfOEf6ievwEMYzl
-	 YiwBl8JN7CJ3u8auXT8kFRWNsVCKY0i3HA74jXr8V6uijktiBGXXOaTaJbnwFHblFk
-	 DqEn4qcUkj3jV0qCoWVwDxbKPBeiNyLnHqxGx4+3354mFDIj9TWlOCvspzz4C6ochD
-	 lRH2jzNIlxA8B4FhhqR5qLxhbfH3ajaQB6JvKrsKYZ9UvYy4ZMkYOHNFbuG+SS3YGN
-	 tDkX6Ddoi15Wg==
-Message-ID: <7d94a3d0-d7e5-45f8-814c-16219a1d5c04@kernel.org>
-Date: Tue, 8 Oct 2024 11:04:12 +0800
+	s=arc-20240116; t=1728356666; c=relaxed/simple;
+	bh=oAzjdmauBfKU8BlumM8J3crYAKMe10uoGI7BavUCMhM=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pbUVMp+dUxWRBH2i+D2XKPD47CT2Ct5iTXfqc4c30oJTlBCIEYtOtCY8EfiTmeRFWMfKaGYvY5Q/k5x/G1YBFWh4jfQCeSfuCqc1W+NcMnq0JAcW/YIsebV3EL161sKYxxugtFnbbuURb5ECqrH3AZ9Ksm/X65bsXcqbptBAGGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhL+Zehu; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-710f388621fso3163146a34.1;
+        Mon, 07 Oct 2024 20:04:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728356663; x=1728961463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HrwsSs/z/pCRHRshak8tpEDcJHcOvUffC1RAHP+5S5k=;
+        b=jhL+ZehuD+OxiX6AdoM7N4dB4nYmKU/AhPPr4A1G71yDsca7BGwk1STJ//xhOXr/bA
+         C5DGetk9/AQL2YV2hXn3E6DkwJlqtd8L1ZM86CUYajM5dmryN4msw7LeN7WnA2NZ6lTy
+         c1d1sbVVIhW12e7LLRas48tM9W56mKRuwlCI3oSH336JAe8/bUrCQQT9juBz8zs2KvM6
+         3CNkbj/RwTSmVnEzcM2MF89KRjFHCgLSKTlELcc14ZVZgmCXgUeQ4DaQR6ZUGn0mwWLL
+         QjERUhFvhvcXsi/9a7zq2aVsvKhZxJbqnGhKSxxT43yq22iXljRgtRyTWPp8LINJYwG1
+         viYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728356663; x=1728961463;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HrwsSs/z/pCRHRshak8tpEDcJHcOvUffC1RAHP+5S5k=;
+        b=xE5IwwqGHJJyF9dK4Pj3o1T5VQF1Yx9/HYKVVA2fxmf+HPQHFPGiiUo6imcDV8MZa/
+         fQYScCF+f444npnF3zAFJYKEbYNGYtTwxq3mTyq8rqdqfmz1K512pSA1U0beBDRWM9Fm
+         PC/nexPbxJvOfHL/wOZiH8D+t6+IY5e1ZVvb4UvJfd/qaaKgJvvnh16ZG+3cSsruCC57
+         91Etjwm+5P5r7JJ4mwFSq91s1xpESuvLJxVVwyQOJdHs/YVfsCPYDPh0n6WBN4jmGmfQ
+         0Gju6X2J4X0IgRTJ8MJYx52Qx96HPy+RydBmo7SrSBXKglwizioDjMDjOlEaOU3zJfv5
+         uePA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAeIjl2xeZNfodXuacFkwl1sSt/VXwPsGbV4nCsIAvTap7jeDLVOXb64l5vKjgKUC5jbPVC6c8ELWe@vger.kernel.org, AJvYcCUIRRJXrn0Es+JuasQSuGF5P4wdS4Qua7ONa9DuiePBqPEgjirKSuGrfOVMFgyoYsif3eJ7+dQpKhlslYlu@vger.kernel.org, AJvYcCXdFLL/u8hTyKD+nu8Rg2d8A/noj+aagmfB2OEdbrQ3pdJGbSOmu3UYdJF5ST1SSowzGleaKuN0c1xB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqe4d3571HrtnqzVWxGx8LRFwbWBgvqs+FtVTs6/Byns+AcLCj
+	gassVnT7uH8u6YW5epfSKUfw2LHWixMASqKHJwh8AulfkcK0N3Qi
+X-Google-Smtp-Source: AGHT+IEb54nCKSmtX6R321kIvYFqIxBWK2RiPXmKmeYVbfI35Fr35utxmLX4AJ1AAe8oCgCz3NBYHw==
+X-Received: by 2002:a05:6830:6481:b0:711:3ed:4226 with SMTP id 46e09a7af769-7154e807f0fmr10858455a34.7.1728356663389;
+        Mon, 07 Oct 2024 20:04:23 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71556847306sm1763569a34.51.2024.10.07.20.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 20:04:22 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: [PATCH v3 2/3] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Date: Tue,  8 Oct 2024 11:04:14 +0800
+Message-Id: <57cf7ac3b4c092df1a6962d310b6d2603ca26995.1728355974.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1728355974.git.unicorn_wang@outlook.com>
+References: <cover.1728355974.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [PATCH v3] f2fs: introduce device aliasing file
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20240925215221.3045262-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240925215221.3045262-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/9/26 5:52, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> F2FS should understand how the device aliasing file works and support
-> deleting the file after use. A device aliasing file can be created by
-> mkfs.f2fs tool and it can map the whole device with an extrent, not
-> using node blocks. The file space should be pinned and normally used for
-> read-only usages.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v3: merged Chao's extent cache sanity check.
->      prevented device aliasing support with noextent mount option
-> v2: changed the position of f2fs_destroy_extent_tree() only for device
->      aliasing files
-> ---
->   fs/f2fs/data.c         |  5 +++++
->   fs/f2fs/extent_cache.c | 45 +++++++++++++++++++++++++++++++++++++++++-
->   fs/f2fs/f2fs.h         |  5 +++++
->   fs/f2fs/file.c         | 36 +++++++++++++++++++++++++++++----
->   fs/f2fs/inode.c        | 12 ++++++++++-
->   fs/f2fs/super.c        |  4 ++++
->   fs/f2fs/sysfs.c        |  2 ++
->   7 files changed, 103 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index b94cf6eea2f9..385b46e62ede 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->   
->   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
->   						 &dn.data_blkaddr)) {
-> +		if (IS_DEVICE_ALIASING(inode)) {
-> +			err = -ENODATA;
-> +			goto out;
-> +		}
-> +
->   		if (locked) {
->   			err = f2fs_reserve_block(&dn, index);
->   			goto out;
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 62ac440d9416..019c1f7b7fa5 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -24,6 +24,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
->   	struct extent_info ei;
-> +	int devi;
->   
->   	get_read_extent_info(&ei, i_ext);
->   
-> @@ -38,7 +39,36 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
->   			  ei.blk, ei.fofs, ei.len);
->   		return false;
->   	}
-> -	return true;
-> +
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		return true;
-> +
-> +	for (devi = 0; devi < sbi->s_ndevs; devi++) {
-> +		if (FDEV(devi).start_blk != ei.blk ||
-> +				FDEV(devi).end_blk != ei.blk + ei.len - 1)
-> +			continue;
-> +
-> +		if (devi == 0) {
-> +			f2fs_warn(sbi,
-> +			    "%s: inode (ino=%lx) is an alias of meta device",
-> +			    __func__, inode->i_ino);
-> +			return false;
-> +		}
-> +
-> +		if (bdev_is_zoned(FDEV(devi).bdev)) {
-> +			f2fs_warn(sbi,
-> +			    "%s: device alias inode (ino=%lx)'s extent info "
-> +			    "[%u, %u, %u] maps to zoned block device",
-> +			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-> +			return false;
-> +		}
-> +		return true;
-> +	}
-> +
-> +	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
-> +			"[%u, %u, %u] is inconsistent w/ any devices",
-> +			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-> +	return false;
->   }
->   
->   static void __set_extent_info(struct extent_info *ei,
-> @@ -76,6 +106,9 @@ static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
->   
->   static bool __may_extent_tree(struct inode *inode, enum extent_type type)
->   {
-> +	if (IS_DEVICE_ALIASING(inode) && type == EX_READ)
-> +		return true;
-> +
->   	/*
->   	 * for recovered files during mount do not create extents
->   	 * if shrinker is not registered.
-> @@ -401,6 +434,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
->   	if (atomic_read(&et->node_cnt) || !ei.len)
->   		goto skip;
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		et->largest = ei;
-> +		goto skip;
-> +	}
-> +
->   	en = __attach_extent_node(sbi, et, &ei, NULL,
->   				&et->root.rb_root.rb_node, true);
->   	if (en) {
-> @@ -463,6 +501,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		ret = false;
-> +		goto out;
-> +	}
-> +
->   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
->   	if (!en)
->   		goto out;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 33f5449dc22d..b6ba22a1da47 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -213,6 +213,7 @@ struct f2fs_mount_info {
->   #define F2FS_FEATURE_CASEFOLD			0x00001000
->   #define F2FS_FEATURE_COMPRESSION		0x00002000
->   #define F2FS_FEATURE_RO				0x00004000
-> +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
->   
->   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->   	((raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
->   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
->   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
-> +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
->   
->   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
->   
-> @@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   /* Flags that are appropriate for non-directories/regular files. */
->   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
->   
-> +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-> +
->   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
->   {
->   	if (S_ISDIR(mode))
-> @@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
->   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
->   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
->   F2FS_FEATURE_FUNCS(readonly, RO);
-> +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
->   
->   #ifdef CONFIG_BLK_DEV_ZONED
->   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 99903eafa7fe..f2d2d84d025b 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   
->   	trace_f2fs_truncate_blocks_enter(inode, from);
->   
-> +	if (IS_DEVICE_ALIASING(inode) && from) {
-> +		err = -EINVAL;
-> +		goto out_err;
-> +	}
-> +
->   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
->   
->   	if (free_from >= max_file_blocks(inode))
-> @@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-> +		struct extent_info ei = et->largest;
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < ei.len; i++)
-> +			f2fs_invalidate_blocks(sbi, ei.blk + i);
-> +
-> +		dec_valid_block_count(sbi, inode, ei.len);
-> +		f2fs_update_time(sbi, REQ_TIME);
-> +
-> +		f2fs_put_page(ipage, 1);
-> +		goto out;
-> +	}
-> +
->   	if (f2fs_has_inline_data(inode)) {
->   		f2fs_truncate_inline_inode(inode, ipage, from);
->   		f2fs_put_page(ipage, 1);
-> @@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   	/* lastly zero out the first data page */
->   	if (!err)
->   		err = truncate_partial_data_page(inode, from, truncate_page);
-> -
-> +out_err:
->   	trace_f2fs_truncate_blocks_exit(inode, err);
->   	return err;
->   }
-> @@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->   		return -EPERM;
->   
->   	if ((attr->ia_valid & ATTR_SIZE)) {
-> -		if (!f2fs_is_compress_backend_ready(inode))
-> +		if (!f2fs_is_compress_backend_ready(inode) ||
-> +				IS_DEVICE_ALIASING(inode))
->   			return -EOPNOTSUPP;
->   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
->   			!IS_ALIGNED(attr->ia_size,
-> @@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
->   		return -EIO;
->   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
->   		return -ENOSPC;
-> -	if (!f2fs_is_compress_backend_ready(inode))
-> +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
->   		return -EOPNOTSUPP;
->   
->   	/* f2fs only support ->fallocate for regular file */
-> @@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
->   	struct f2fs_inode_info *fi = F2FS_I(inode);
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   
-> +	if (IS_DEVICE_ALIASING(inode))
-> +		return -EINVAL;
-> +
->   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
->   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
->   			  __func__, inode->i_ino, fi->i_gc_failures);
-> @@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->   	if (f2fs_readonly(sbi->sb))
->   		return -EROFS;
->   
-> +	if (!pin && IS_DEVICE_ALIASING(inode))
-> +		return -EOPNOTSUPP;
-> +
->   	ret = mnt_want_write_file(filp);
->   	if (ret)
->   		return ret;
-> @@ -4764,7 +4791,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
->   	else
->   		return 0;
->   
-> -	map.m_may_create = true;
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		map.m_may_create = true;
->   	if (dio) {
->   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
->   						inode->i_write_hint);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 1ed86df343a5..25f66a0ed831 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -372,6 +372,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->   		return false;
->   	}
->   
-> +	if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_sb_has_device_alias(sbi)) {
-> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
-> +			  __func__, inode->i_ino);
-> +		return false;
-> +	}
+From: Chen Wang <unicorn_wang@outlook.com>
 
-Device alias inode should be pinned, so we need to add below sanity check?
+Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
 
-if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_is_pinned_file(inode)) {
-	f2fs_warn(...);
-	return false;
-}
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/pwm/Kconfig             |  10 ++
+ drivers/pwm/Makefile            |   1 +
+ drivers/pwm/pwm-sophgo-sg2042.c | 180 ++++++++++++++++++++++++++++++++
+ 3 files changed, 191 insertions(+)
+ create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
 
-Thanks,
-
-> +
->   	return true;
->   }
->   
-> @@ -823,7 +829,8 @@ void f2fs_evict_inode(struct inode *inode)
->   	f2fs_bug_on(sbi, get_dirty_pages(inode));
->   	f2fs_remove_dirty_inode(inode);
->   
-> -	f2fs_destroy_extent_tree(inode);
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		f2fs_destroy_extent_tree(inode);
->   
->   	if (inode->i_nlink || is_bad_inode(inode))
->   		goto no_delete;
-> @@ -879,6 +886,9 @@ void f2fs_evict_inode(struct inode *inode)
->   		goto retry;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode))
-> +		f2fs_destroy_extent_tree(inode);
-> +
->   	if (err) {
->   		f2fs_update_inode_page(inode);
->   		if (dquot_initialize_needed(inode))
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index fc2c586c7619..95097498b544 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -834,6 +834,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   			set_opt(sbi, READ_EXTENT_CACHE);
->   			break;
->   		case Opt_noextent_cache:
-> +			if (F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_DEVICE_ALIAS)) {
-> +				f2fs_err(sbi, "device aliasing requires extent cache");
-> +				return -EINVAL;
-> +			}
->   			clear_opt(sbi, READ_EXTENT_CACHE);
->   			break;
->   		case Opt_noinline_data:
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index c56e8c873935..e51304bc65ea 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
->   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
->   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
->   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
-> +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
->   
->   static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_encryption),
-> @@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_casefold),
->   	ATTR_LIST(sb_compression),
->   	ATTR_LIST(sb_readonly),
-> +	ATTR_LIST(sb_device_alias),
->   	NULL,
->   };
->   ATTRIBUTE_GROUPS(f2fs_sb_feat);
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 0915c1e7df16..ec85f3895936 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -584,6 +584,16 @@ config PWM_SL28CPLD
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-sl28cpld.
+ 
++config PWM_SOPHGO_SG2042
++	tristate "Sophgo SG2042 PWM support"
++	depends on ARCH_SOPHGO || COMPILE_TEST
++	help
++	  PWM driver for the PWM controller on Sophgo SG2042 SoC. The PWM
++	  controller supports outputing 4 channels of PWM waveforms.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm_sophgo_sg2042.
++
+ config PWM_SPEAR
+ 	tristate "STMicroelectronics SPEAr PWM support"
+ 	depends on PLAT_SPEAR || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 9081e0c0e9e0..539e0def3f82 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -53,6 +53,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
+ obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+ obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+ obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
++obj-$(CONFIG_PWM_SOPHGO_SG2042)	+= pwm-sophgo-sg2042.o
+ obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+ obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
+ obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+new file mode 100644
+index 000000000000..198019b751ad
+--- /dev/null
++++ b/drivers/pwm/pwm-sophgo-sg2042.c
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Sophgo SG2042 PWM Controller Driver
++ *
++ * Copyright (C) 2024 Sophgo Technology Inc.
++ * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
++ *
++ * Limitations:
++ * - After reset, the output of the PWM channel is always high.
++ *   The value of HLPERIOD/PERIOD is 0.
++ * - When HLPERIOD or PERIOD is reconfigured, PWM will start to
++ *   output waveforms with the new configuration after completing
++ *   the running period.
++ * - When PERIOD and HLPERIOD is set to 0, the PWM wave output will
++ *   be stopped and the output is pulled to high.
++ */
++
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++
++#include <asm/div64.h>
++
++/*
++ * Offset RegisterName
++ * 0x0000 HLPERIOD0
++ * 0x0004 PERIOD0
++ * 0x0008 HLPERIOD1
++ * 0x000C PERIOD1
++ * 0x0010 HLPERIOD2
++ * 0x0014 PERIOD2
++ * 0x0018 HLPERIOD3
++ * 0x001C PERIOD3
++ * Four groups and every group is composed of HLPERIOD & PERIOD
++ */
++#define SG2042_HLPERIOD(chan) ((chan) * 8 + 0)
++#define SG2042_PERIOD(chan) ((chan) * 8 + 4)
++
++#define SG2042_PWM_CHANNELNUM	4
++
++/**
++ * struct sg2042_pwm_ddata - private driver data
++ * @base:		base address of mapped PWM registers
++ * @clk_rate_hz:	rate of base clock in HZ
++ */
++struct sg2042_pwm_ddata {
++	void __iomem *base;
++	unsigned long clk_rate_hz;
++};
++
++static void pwm_sg2042_config(void __iomem *base, unsigned int chan, u32 period, u32 hlperiod)
++{
++	writel(period, base + SG2042_PERIOD(chan));
++	writel(hlperiod, base + SG2042_HLPERIOD(chan));
++}
++
++static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			    const struct pwm_state *state)
++{
++	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
++	u32 hlperiod;
++	u32 period;
++
++	if (state->polarity == PWM_POLARITY_INVERSED)
++		return -EINVAL;
++
++	if (!state->enabled) {
++		pwm_sg2042_config(ddata->base, pwm->hwpwm, 0, 0);
++		return 0;
++	}
++
++	/*
++	 * Period of High level (duty_cycle) = HLPERIOD x Period_clk
++	 * Period of One Cycle (period) = PERIOD x Period_clk
++	 */
++	period = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->period, NSEC_PER_SEC), U32_MAX);
++	hlperiod = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->duty_cycle, NSEC_PER_SEC), U32_MAX);
++
++	if (hlperiod > period) {
++		dev_err(pwmchip_parent(chip), "period < hlperiod, failed to apply current setting\n");
++		return -EINVAL;
++	}
++
++	dev_dbg(pwmchip_parent(chip), "chan[%u]: period=%u, hlperiod=%u\n",
++		pwm->hwpwm, period, hlperiod);
++
++	pwm_sg2042_config(ddata->base, pwm->hwpwm, period, hlperiod);
++
++	return 0;
++}
++
++static int pwm_sg2042_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
++				struct pwm_state *state)
++{
++	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
++	unsigned int chan = pwm->hwpwm;
++	u32 hlperiod;
++	u32 period;
++
++	period = readl(ddata->base + SG2042_PERIOD(chan));
++	hlperiod = readl(ddata->base + SG2042_HLPERIOD(chan));
++
++	if (!period && !hlperiod)
++		state->enabled = false;
++	else
++		state->enabled = true;
++
++	state->period = DIV_ROUND_UP_ULL((u64)period * NSEC_PER_SEC, ddata->clk_rate_hz);
++	state->duty_cycle = DIV_ROUND_UP_ULL((u64)hlperiod * NSEC_PER_SEC, ddata->clk_rate_hz);
++
++	state->polarity = PWM_POLARITY_NORMAL;
++
++	return 0;
++}
++
++static const struct pwm_ops pwm_sg2042_ops = {
++	.apply = pwm_sg2042_apply,
++	.get_state = pwm_sg2042_get_state,
++};
++
++static const struct of_device_id sg2042_pwm_ids[] = {
++	{ .compatible = "sophgo,sg2042-pwm" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sg2042_pwm_ids);
++
++static int pwm_sg2042_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct sg2042_pwm_ddata *ddata;
++	struct pwm_chip *chip;
++	struct clk *clk;
++	int ret;
++
++	chip = devm_pwmchip_alloc(dev, SG2042_PWM_CHANNELNUM, sizeof(*ddata));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++	ddata = pwmchip_get_drvdata(chip);
++
++	ddata->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(ddata->base))
++		return PTR_ERR(ddata->base);
++
++	clk = devm_clk_get_enabled(dev, "apb");
++	if (IS_ERR(clk))
++		return dev_err_probe(dev, PTR_ERR(clk), "failed to get base clk\n");
++
++	ret = devm_clk_rate_exclusive_get(dev, clk);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
++
++	ddata->clk_rate_hz = clk_get_rate(clk);
++	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
++		return dev_err_probe(dev, -EINVAL,
++				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
++
++	chip->ops = &pwm_sg2042_ops;
++
++	ret = devm_pwmchip_add(dev, chip);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
++
++	return 0;
++}
++
++static struct platform_driver pwm_sg2042_driver = {
++	.driver	= {
++		.name = "sg2042-pwm",
++		.of_match_table = sg2042_pwm_ids,
++	},
++	.probe = pwm_sg2042_probe,
++};
++module_platform_driver(pwm_sg2042_driver);
++
++MODULE_AUTHOR("Chen Wang");
++MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
 
 
