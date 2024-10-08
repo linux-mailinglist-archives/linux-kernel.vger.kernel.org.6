@@ -1,104 +1,82 @@
-Return-Path: <linux-kernel+bounces-355419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80C39951FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218D49951D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DEE1F25DE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541631C24C48
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E9D1E0DD3;
-	Tue,  8 Oct 2024 14:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F2F1DFD98;
+	Tue,  8 Oct 2024 14:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rZCtlbn0"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAnel8LY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6CA1E0090
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BF1DF74F;
+	Tue,  8 Oct 2024 14:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728398218; cv=none; b=LUfawP2pkw46Uzlrol+PXEyLiQR4KTkEptyoDh881Ctq1765dlFFRXs8g9OchTW1m9Hp1Cc45iDO2rp2vxqpklsNCep8UejWRo/t70mHuYU77zvt6JZytZHpdiAgc5uYNqRqcNFYzxEp1evYuPUG7toA0K9oWzQcmNzqMHkPMMM=
+	t=1728398173; cv=none; b=kvzhTPrDkwFhQw43HSGJA0buBkkKk++c2cy2qIOdbL5SKB/zi6rw1V8GA6S/XRWQqH6MQEIV07rrMgQl6C7ktQwx+cWzw4mDw9oLpbyqs9wARhWbMxep0oWCPBeQjkQIQzQKlGSOueOSn/m5AOdhireXd5lL3+s4NRIHVZZsMdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728398218; c=relaxed/simple;
-	bh=GEH0TORf5ghIciVtZ7HkHhLC7ZUfQAQZ3HuiMQ0/5yQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccKJWgX5vPo026gDGeeQG6qBrrPxW3KE+ZdjZljihY0bebk+Rud8vhTrt/AMJePL8DA3NAbSxWmaTGOvuHB0WERcfEEWYD3odoDJTSSAis+pez0gbmXRISJNBRTZgCFcsYO/Tr5TaphJGGCDGsBilvUOlaYcV3DYepHoiJhUI9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rZCtlbn0; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e25d405f238so4983832276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728398215; x=1729003015; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N9oq3jezHlQMT6rg1nSIemrSZ1OTMBtx54B/fq7slMk=;
-        b=rZCtlbn0BqM4tNGM8i+tKTZDLI9h5DbaB7OTL5mooQ9LLpNuZUcNtJvRZocbX9lpO5
-         Qi1qRwlqwYtADdCvbaA8RjjLzxK6rlSZ9hFJSn70+mjB9r66ETwlW+H7jeRvkICLS4Qt
-         BxMO++IBOX782GYRyhY4Bd4z1yJ47XAGYU6iPLQtemVSCesJ+Mx7FS8nSRewLA9zv9XU
-         Ax5tqflqrz0Tb1cZ4jFK5wObgXHi2bxQlw9ow4mOG7ky14Ynu03yPn7WDbuTT5nZ+pP3
-         nvGxw1X6S/rUwoz+O7Lu7X7yQK86QtxnJjPP3ow4fx10o9YGlPWMqwxmNJ/mhav6xgJG
-         hiuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728398215; x=1729003015;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N9oq3jezHlQMT6rg1nSIemrSZ1OTMBtx54B/fq7slMk=;
-        b=EsjwPwmZIoJ34YqyBrMXQt91DQaKop2x4IACYe8bmMf7HL38StNJbBIlWKSwOvBGZV
-         wqXC+OuIPq+GhNkMvAvzyne0kid7tk77XpsgcY88wZ/ElhJ39+3sfsM+4kh8H5IPrhmb
-         gwjL1tpfoXdmBgjSuqYutKkvC/8lOqpcblZtoo+Mwemp///JPHFHsFtBT/B8Eeuum5i4
-         mXNPV5eUkoB9FoFX2gEJqxulIDVHcb+uQv+nhExr/phEVOnAU4gM66TbbxN6PxBk8Q9b
-         eIfCekpHRs9nwu/uER2UofZ2HfmMP55vBOqF2sc62FjBSBICUo6ME6ksehR/2Gv7tk7D
-         0xjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXagqntI9tup1+eajkvOpYukjKq44eL/BBlRR1JSAuI3qHX2F8IkD8PPyBRMqnaeooOb4WjMeYpnQ9b6wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGTi0yjlMmKLEhydn1olZyUepOh8r3aX+y+M56AWYiptwm57lu
-	tpsA/YN8AHeVXFBpBpUsUQkoJ5+XbVGjBbvhMtqbFe4R3uQFQNHV75d5efXhtmBRPraowi7OFXa
-	417RiL2x0txCLKi7yB87DSInEUnMSrTVPf5t4nQ==
-X-Google-Smtp-Source: AGHT+IEjM292qoxRSTMVZiEHGGPCXwidKp0QKEL9SSYcSrYZB36fSHw7uDxBp6+cKhZ+mA+gwRbbOrFaFvtkEpLB0WY=
-X-Received: by 2002:a05:6902:1a4a:b0:e28:6b10:51b4 with SMTP id
- 3f1490d57ef6-e2893951ac4mr10369636276.46.1728398215648; Tue, 08 Oct 2024
- 07:36:55 -0700 (PDT)
+	s=arc-20240116; t=1728398173; c=relaxed/simple;
+	bh=XFTDVxdUiWqYsPpoEERzDy7hronrGo3f7N9SxVo8K6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5nZFnkQ5JumCS2bQCsu3yNJat51zLBF0bQDbo4a2GNKRFJoWVK/pbe6XtJ+f+QD6x+WgfhTuNlUe9JR1X9txoKJx3DPOothaZTUqMZL4aSBwfxfloKvJOayzjpW/t+21EZ3jhVCy07vnuEngBC7uvK05Qb+PowMjpGbrcfAMPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAnel8LY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A8FFC4CEC7;
+	Tue,  8 Oct 2024 14:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728398173;
+	bh=XFTDVxdUiWqYsPpoEERzDy7hronrGo3f7N9SxVo8K6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YAnel8LYL9XuGoiYmGeTFvz2f1NZHk1fFFzV4gszFA4sAyLeTjbV+N3B5Ps0R1i9C
+	 KXk8mBSdsEx4mSNpguTCCkTQmpVH6IlV1RFLnPwzft9sIIrKDRd0Rl0kadxxyy+xg3
+	 YUAFp+agN0Ab6aD76CIC04IeTAopg5gU1ovSDELK81NZ8he1/8HmFxI8I3EQjH588J
+	 YtFzZeCVlaGZ8q9pkVKLc/Mz+aPHv+uijdvik1lXuc8Or887PBc813oEdYPqhlbCSY
+	 lqfd/REywkAFQCLYwd1WpQ2FuFAxBE6AuFgCX2lpNHT4g2vH7oDxcivZl0nHGFFcza
+	 bckzSx8se9eZw==
+Date: Tue, 8 Oct 2024 09:36:12 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	conor+dt@kernel.org, lee@kernel.org, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org
+Subject: Re: [PATCH v2] dt-bindings: leds: Document "rc-feedback" trigger
+Message-ID: <172839817228.1284212.5694841643473345087.robh@kernel.org>
+References: <20241007205315.2477060-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930224919.355359-1-rosenp@gmail.com>
-In-Reply-To: <20240930224919.355359-1-rosenp@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Oct 2024 16:36:11 +0200
-Message-ID: <CAPDyKFo69H+653J=7eDqTSm2gz_AQH-3R+axqiTWqumOPQM9GQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mmc: mtk-sd: add some devm
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-mmc@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007205315.2477060-1-heiko@sntech.de>
 
-On Tue, 1 Oct 2024 at 00:49, Rosen Penev <rosenp@gmail.com> wrote:
->
-> Simplifies the code. Also a bugfix with devm_clk_get_optional.
->
-> Rosen Penev (3):
->   mmc: mtk-sd: use devm_mmc_alloc_host
->   mmc: mtd-sd: use devm_platform_ioremap_resource
->   mmc: mtk-sd: fix devm_clk_get_optional usage
->
->  drivers/mmc/host/mtk-sd.c | 70 ++++++++++++++-------------------------
->  1 file changed, 25 insertions(+), 45 deletions(-)
->
 
-Applied for next, thanks!
+On Mon, 07 Oct 2024 22:53:15 +0200, Heiko Stuebner wrote:
+> Document the "rc-feedback" trigger which is used to control LEDs by
+> remote control device activity. This is an existing trigger used in
+> existing DTs, document it so validation of those DTs would pass.
+> 
+> It was originally introduced into the Linux kernel in 2013 with
+> commit 153a60bb0fac ("[media] rc: add feedback led trigger for rc keypresses")
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> changes in v2:
+> - put the entry in the correct position and comment above it (Pavel)
+> 
+>  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Kind regards
-Uffe
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
