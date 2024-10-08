@@ -1,54 +1,61 @@
-Return-Path: <linux-kernel+bounces-355271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26CD994F15
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC528994F1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FEB1F242CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E911F22584
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CB1DFDB3;
-	Tue,  8 Oct 2024 13:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5101E008B;
+	Tue,  8 Oct 2024 13:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDv1TiPC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmqzzBKP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346DF1DED7A;
-	Tue,  8 Oct 2024 13:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3EF1DFDBD;
+	Tue,  8 Oct 2024 13:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393791; cv=none; b=fOCX6tyhUU3ELo0GHCZ7tw68cgfcCJ2L3Tvl0S9J8i7YukBsp/add84GIKX7WQ2n/pYDM1eIvR17dEmvjz9WUgFglTejl1yCxPfOuagJIq3tRK3kZatCKFCMZutkP9uBSmFdAbcA79+UCZ6cVE8focjXl1Twn2awJ7q+WVFTcI8=
+	t=1728393793; cv=none; b=h1ToY0AWkCfZ1Trxj31vy/C34TieodrAImjiFcim7ld3J8XF+5Ir2FbKOKCt7kbECrSK4Wqoa1BG7wITmOATEVE+rRNZ0ceixMnRsRerkED9rs+4ljwr2eJ0qdHg3jgMkto38OPpjc117heHrmDtxCzzqEZxnYNTSnV8Rpp7O6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393791; c=relaxed/simple;
-	bh=Qo7uY7516n2CtfdCfqkenk2KagxCPBaQX2nSTTcau2s=;
+	s=arc-20240116; t=1728393793; c=relaxed/simple;
+	bh=G6INLuaaIukQElfuCzHeq8WikAfpGMesESZCDNnEtBs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOh4ZS4ToEf2fYilDXL/1poUfX6fPie9382mkpcefZYSC1lwvOtvIqVJkXZyUSQzBLSRlLewd3MbQBiDQEVL3ccn1xC0euCry2nrpXGkztbcbCMj9ZHLXI+vXepcm4fB1We1iYX/PnE62XpX4vZyvjw6b4xCVc2/Vv+jfX6oLKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDv1TiPC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B98C4CEC7;
-	Tue,  8 Oct 2024 13:23:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZDmF+AXTbMlD1Zi+0feH03XO0F8yTZUHJCne35IO/ILmWHJCM8T7mrYlUiEEOMYM3rmesQIzMVWJmDxUEclq5ARD36vLvdBlDHpdPooRTjrvgW+hPJdyIiPz3RZneBUAXJ1mm3ea6Aly1u+EnG0CJx7sU8I6Mkhllpizz4qilQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmqzzBKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15856C4CED7;
+	Tue,  8 Oct 2024 13:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728393791;
-	bh=Qo7uY7516n2CtfdCfqkenk2KagxCPBaQX2nSTTcau2s=;
+	s=k20201202; t=1728393792;
+	bh=G6INLuaaIukQElfuCzHeq8WikAfpGMesESZCDNnEtBs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sDv1TiPCHTi3QcPNjknsBvAZ/T4PnslpMU4RaLg+uEXI08OcrM43ZWZsqojeHdHT6
-	 ytOx6M/rncH1n8PU1R9hTbjsJVaz3/KlJS78hqUZIeEQ4mZO7PThcp3EBfGyvL4K8w
-	 Wtp8MGIWN6dHbAJ4S+YXNqntenOnzIVO0NQF01eCTBtaFU8u/fmurhJIiLj2HIeRly
-	 9LL+W/yUwbyjNEXMGGd3dWv0YA7LZjVKJ1JVnfnVZy05v7OBPac3u2rqXGvGiqD0+t
-	 cVbPKzP0sWjfcCvC+S2cM0meb2o1q0JYxb24QppjtrSvZdhplqVN0KDQr1SU1FKv+7
-	 hIe6yoj8SdK4g==
-Date: Tue, 8 Oct 2024 15:23:06 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: luca.boccassi@gmail.com, oleg@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, christian@brauner.io, 
-	linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241008-kruste-aufguss-bd03e60997ab@brauner>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <20241008-parkraum-wegrand-4e42c89b1742@brauner>
+	b=dmqzzBKP85lR+8OXQtT+zykw7IugpJp6dCPdDHKscNFdzOPrOxNJP9si8ZNdroebx
+	 iBVtvi/ulKfvbHUEQuQGR4vkxVd8FtL4xc2c0UUBaw7sx8rtyda2wB8f06hG0fmdY3
+	 J7Y3ieUk9Ot21yIccVzLSqDFkW/KqmGyvS17D1gp4qiriMjESCi1crO192nDPy5FSH
+	 EJH4eVsubhEZ/Ik+O4CWSbPxedoQQ3O4INDpMDKNGR5n8btNAv7lmQrECltMpsGnqV
+	 cURiSl3dtqDQXdGEWfC4243IaSzuYlE0lzsA0gb20DY1mjS6eP+WmJYSmDf0qbaW0S
+	 EoriZKgo3wsEQ==
+Date: Tue, 8 Oct 2024 15:23:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alain Volmat <alain.volmat@foss.st.com>
+Cc: Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 02/15] dt-bindings: media: addition of stm32 csi driver
+ description
+Message-ID: <c2askprap35pmyanrfvtk333oamjjrolbxhfkar2lgoow4gpcr@xfikinnrs42e>
+References: <20241008-csi_dcmipp_mp25-v1-0-e3fd0ed54b31@foss.st.com>
+ <20241008-csi_dcmipp_mp25-v1-2-e3fd0ed54b31@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,80 +64,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241008-parkraum-wegrand-4e42c89b1742@brauner>
+In-Reply-To: <20241008-csi_dcmipp_mp25-v1-2-e3fd0ed54b31@foss.st.com>
 
-> > +#ifdef CONFIG_CGROUPS
-> > +	if (request_mask & PIDFD_INFO_CGROUPID) {
-> > +		struct cgroup *cgrp;
-> > +
-> > +		guard(rcu)();
-> > +		cgrp = task_cgroup(task, pids_cgrp_id);
-> > +		if (!cgrp)
-> > +			return -ENODEV;
+On Tue, Oct 08, 2024 at 01:18:04PM +0200, Alain Volmat wrote:
+> Addition of the stm32 csi controller driver
+
+This is supposed to be about hardware, not driver. Missing full stop.
+
 > 
-> Afaict this means that the task has already exited. In other words, the
-> cgroup id cannot be retrieved anymore for a task that has exited but not
-> been reaped. Frankly, I would have expected the cgroup id to be
-> retrievable until the task has been reaped but that's another
-> discussion.
+> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> ---
+>  .../devicetree/bindings/media/st,stm32-csi.yaml    | 129 +++++++++++++++++++++
+
+Use compatible as filename.
+
+>  1 file changed, 129 insertions(+)
 > 
-> My point is if you contrast this with the other information in here: If
-> the task has exited but hasn't been reaped then you can still get
-> credentials such as *uid/*gid, and pid namespace relative information
-> such as pid/tgid/ppid.
+> diff --git a/Documentation/devicetree/bindings/media/st,stm32-csi.yaml b/Documentation/devicetree/bindings/media/st,stm32-csi.yaml
+> new file mode 100644
+> index 000000000000..71e7c51be58c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/st,stm32-csi.yaml
+> @@ -0,0 +1,129 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/st,stm32-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics STM32 CSI controller
+> +
+> +description:
+> +  The STM32 CSI controller allows connecting a CSI based
+> +  camera to the DCMIPP camera pipeline.
+> +
+> +maintainers:
+> +  - Alain Volmat <alain.volmat@foss.st.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,stm32mp25-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pclk
+> +      - const: txesc
+> +      - const: csi2phy
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Digital core power supply (0.91V)
+> +
+> +  vdda18-supply:
+> +    description: System analog power supply (1.8V)
+> +
+> +  access-controllers:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port node
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                description:
+> +                  Indicate the number of data-lanes and their mapping.
+> +
+> +                items:
 
-Related to this and I just want to dump this idea somewhere:
+Drop
 
-I'm aware that it is often desirable or useful to have information about
-a task around even after the task has exited and been reaped.
+... and test your patches. Mailing list is not the place to test them.
+Your machine is.
 
-The exit status comes to mind but maybe there's other stuff that would
-be useful to have.
+> +                  minItems: 1
+> +                  items:
+> +                    - const: 1
+> +                    - const: 2
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Output port node
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - ports
 
-Since we changed to pidfs we know that all pidfds no matter if they
-point to the same struct file (e.g., dup()) or to multiple struct files
-(e.g., multiple pidfd_open() on the same pid) all point to the same
-dentry and inode. Which is why we switched to stashing struct pid in
-inode->i_private.
+Best regards,
+Krzysztof
 
-So we could easily do something like this:
-
-// SKETCH SKETCH SKETCH
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 7ffdc88dfb52..eeeb907f4889 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -344,9 +344,24 @@ static const struct dentry_operations pidfs_dentry_operations = {
-        .d_prune        = stashed_dentry_prune,
- };
-
-+struct pidfd_kinfo {
-+       // We could even move this back to file->private_data to avoid the
-+       // additional pointer deref though I doubt it matters.
-+       struct pid *pid;
-+       int exit_status;
-+       // other stuff;
-+};
-+
- static int pidfs_init_inode(struct inode *inode, void *data)
- {
--       inode->i_private = data;
-+       struct pidfd_kinfo *kinfo;
-+
-+       kinfo = kzalloc(sizeof(*info), GFP_KERNEL_ACCOUNT);
-+       if (!kinfo)
-+               return -ENOMEM;
-+
-+       kinfo->pid = data;
-+       inode->i_private = kinfo;
-        inode->i_flags |= S_PRIVATE;
-        inode->i_mode |= S_IRWXU;
-        inode->i_op = &pidfs_inode_operations;
-
-and that enables us to persist information past task exit so that as
-long as you hold the pidfd you can e.g., query for the exit state of the
-task or something.
-
-I'm mostly thinking out loud but I think that could be potentially
-interesting.
 
