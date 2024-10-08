@@ -1,141 +1,211 @@
-Return-Path: <linux-kernel+bounces-354444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F8B993D8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:32:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32796993D8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76E6B231AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22E528311D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D273EA6C;
-	Tue,  8 Oct 2024 03:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09854AEE0;
+	Tue,  8 Oct 2024 03:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZYgGJVoc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="apnEPwxL"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158B51DFD1;
-	Tue,  8 Oct 2024 03:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11F13BBDE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 03:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728358328; cv=none; b=odid/5vgUVvok1SQewQpCBxJ2CnCoXUaeDalmo1zTE0QYyuz7D9uuejyHVUpxsaeYLYfoHLbDcNM2bdC9zZCDp0JQ05eYyQTl1xUHyK7AyCqOqjFN1ggCrAKqjlylO/h+LJCHz14RKj+2tTP4S/sNA9Q7L8eiJtxKD+l8Mfzayw=
+	t=1728358351; cv=none; b=Ffyo2ENWsAgYE/VgzHc0hMIGdl1Eb7XG6/8UWrj73Volz5w/NQynnUlRxhuA7/Z0Nbe32oetC6GF0BmxDXP8V6DSi6H0aplpeXTOMlx0ON5PMqeQvyAvKhrhU7OhyZOwTAzapl9phkugsVhiEgxXChuKj1PjHrN/FKRDiI1J3Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728358328; c=relaxed/simple;
-	bh=FN10PuVDaVlGrGnxjoWDkn1qjkRGHM7dYMWr7KGEh54=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qVld6QNz7HYH7Sr3Id1sv+37J8bE8A+oF9/CJmQbGH+OX28u7woyaXRqhKz4Va3mQQmhMM2WV1/Gi1kHMpy6IwKcebBkM1iGF/pLIbO+D4DxwJtqHULtaDYPWhu5RHIt+vqkYYPkljtkSG5X0KV0n8Oj7ZCI7wh6eeoBU1/9bU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZYgGJVoc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728358320;
-	bh=i03PF6w3CmS7llHF+GNcSOf/R8cqhDofQwzNz9sR7gY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZYgGJVoc6MTtDC7KQgrgFkBfhE3rh0SIyXcfb2AZ4AXVmRPd6BpF32mixCmo1KoL3
-	 CQq01QnvjGuTF+djg7QBF0ZyXOgOlP22ina90/dwHRfA4CNQPuQUGCMaxEdbGY3Sbk
-	 ONSCqQtI4rjQFu6nYnypggSqS2fcDfnOTIKIxcw4VDtEgGUdZwKjzRO5Ih5X9cWwgb
-	 OD+H+kO0fjDfThVw4XtEBOpSRW2+guu0VfCKagleEVNzNLDv6KcqTGcd0jLMbWHZOf
-	 gO3B1QFiDyGWAHGSnJx8C+5Nty1epKnKYnz3LhwBobk3uLus4xU26C/n3H37/6U5zO
-	 86ehmAvRdaiBg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XN1m001SQz4wc3;
-	Tue,  8 Oct 2024 14:31:59 +1100 (AEDT)
-Date: Tue, 8 Oct 2024 14:31:59 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Avri Altman <avri.altman@wdc.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mmc tree
-Message-ID: <20241008143159.35e26d8e@canb.auug.org.au>
+	s=arc-20240116; t=1728358351; c=relaxed/simple;
+	bh=PaukYXKVKjrCDOkV4PFDg9sPsWa5nulyO71UKyRO7Ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYVLtQfnF7sBeIzIAJp/pphLXK/dbd9GKnpOleiq4L9qMAfNGuW2R+QvvyuitHfKEce7TEPu/bzke4jtl7+3DKY0fFcBpbPzsG01Wr06Nm8wKgXjW1iHtJcFHEJ2RqAFRTNrRw9pb5NhcKqNoiE1RbdDGp+q3tJXMjKakxRdeE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=apnEPwxL; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728358346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6F9ykY/tuHztluF+GdmaM1qP7Xvh4mEADCbA7XwmAyc=;
+	b=apnEPwxLCL6E2q+Ry/n++/iwPLAiMz7yf776gtMLkSWQMLgSsa9sulCle93olDTNfumCx7
+	WXiStHNcv3X9LGiN/o5JldqbWvAkmNnzwb8jSsI2GNemqRqLOvtPialkmyzlJUbmE6tMgZ
+	3SS9nBMnIutKvY8RCuuJO4im5JPVnKs=
+From: Jeff Xie <jeff.xie@linux.dev>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiehuan09@gmail.com,
+	dolinux.peng@gmail.com,
+	chensong_2000@189.cn,
+	Jeff Xie <jeff.xie@linux.dev>
+Subject: [PATCH v5] ftrace: Get the true parent ip for function tracer
+Date: Tue,  8 Oct 2024 11:31:59 +0800
+Message-ID: <20241008033159.22459-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wl2d6V4dLjtPexrsNrkDHpC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/wl2d6V4dLjtPexrsNrkDHpC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When using both function tracer and function graph simultaneously,
+it is found that function tracer sometimes captures a fake parent ip
+(return_to_handler) instead of the true parent ip.
 
-Hi all,
+This issue is easy to reproduce. Below are my reproduction steps:
 
-After merging the mmc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+jeff-labs:~/bin # ./trace-net.sh
 
-drivers/mmc/core/block.c:53:10: fatal error: asm/unaligned.h: No such file =
-or directory
-   53 | #include <asm/unaligned.h>
-      |          ^~~~~~~~~~~~~~~~~
+jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
+    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
+    [...]
 
-Caused by commit
+The following is my simple trace script:
 
-  251377c52fde ("mmc: core: Adjust ACMD22 to SDUC")
+<snip>
+jeff-labs:~/bin # cat ./trace-net.sh
+TRACE_PATH="/sys/kernel/debug/tracing"
 
-interatcing with commit
+set_events() {
+        echo 1 > $1/events/net/enable
+        echo 1 > $1/events/tcp/enable
+        echo 1 > $1/events/sock/enable
+        echo 1 > $1/events/napi/enable
+        echo 1 > $1/events/fib/enable
+        echo 1 > $1/events/neigh/enable
+}
 
-  5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+set_events ${TRACE_PATH}
+echo 1 > ${TRACE_PATH}/options/sym-offset
+echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
 
-from Linus' tree (in v6.12-rc2).
+echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+echo function_graph > ${TRACE_PATH}/current_tracer
 
-I applied the following merge fix patch.
+INSTANCE_FOO=${TRACE_PATH}/instances/foo
+if [ ! -e $INSTANCE_FOO ]; then
+        mkdir ${INSTANCE_FOO}
+fi
+set_events ${INSTANCE_FOO}
+echo 1 > ${INSTANCE_FOO}/options/sym-offset
+echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+echo function > ${INSTANCE_FOO}/current_tracer
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 8 Oct 2024 14:25:34 +1100
-Subject: [PATCH] fix up for "mmc: core: Adjust ACMD22 to SDUC"
+echo 1 > ${TRACE_PATH}/tracing_on
+echo 1 > ${INSTANCE_FOO}/tracing_on
 
-interacting with "move asm/unaligned.h to linux/unaligned.h" from
-Linus' tree.
+echo > ${TRACE_PATH}/trace
+echo > ${INSTANCE_FOO}/trace
+</snip>
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
 ---
- drivers/mmc/core/block.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v5:
+  https://lore.kernel.org/linux-trace-kernel/5bc5b9b07d997e299b048005826bc6d592265c67@linux.dev/T/#me683cf5ac3858711230e54e5d5924a82e85917e6
+- Using fregs helper function to get the stack pointer 
+  
+v4:
+  https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@rorschach.local.home/
+- fixed the crash when accessing the "current" if the arch has not implemented noinstr
+  thanks steve for the testing and the detailed explanation
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 66de5ccbb432..9752ecac6c5b 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -50,7 +50,7 @@
- #include <linux/mmc/sd.h>
-=20
- #include <linux/uaccess.h>
--#include <asm/unaligned.h>
-+#include <linux/unaligned.h>
-=20
- #include "queue.h"
- #include "block.h"
---=20
-2.45.2
+v3:
+  https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b312f1d956cf352a2@kernel.org/
+- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=n suggested by Masami
 
---=20
-Cheers,
-Stephen Rothwell
+v2:
+  https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@gandalf.local.home/
+- Adding __always_inline to function_get_true_parent_ip suggested by Steve
 
+ kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---Sig_/wl2d6V4dLjtPexrsNrkDHpC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..46c79a349d8c 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
++#ifdef CONFIG_FUNCTION_GRAPH_TRACER
++static __always_inline unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	unsigned long true_parent_ip;
++	int idx = 0;
++
++	true_parent_ip = parent_ip;
++	if (unlikely(parent_ip == (unsigned long)&return_to_handler) && fregs)
++		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
++				(unsigned long *)ftrace_regs_get_stack_pointer(fregs));
++	return true_parent_ip;
++}
++#else
++static __always_inline unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	return parent_ip;
++}
++#endif
++
+ static void
+ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
+@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
++
+ 	trace_ctx = tracing_gen_ctx();
+ 
+ 	cpu = smp_processor_id();
+@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	if (atomic_read(&data->disabled))
+@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEp68ACgkQAVBC80lX
-0GwmAgf/Vwe49gdSq9ydIlJT9A/dNEG7ebN9B4Vb7oFFRGS3sDXd9a80n2r5wEi2
-u6ndnx4NEU1/GBobF/rd9pIzS51Q00P8kbhVkcJ6NKkyXpJ/9y8LQZ/h4Jlia7CV
-jiPUYugDUeigynuuK968nVLhJDrAnEPLVlnc/+zBTDD50VzboCxtGTUj8kwYHpUp
-F9tl9ZNyMyRCPdN48UZyPNFO6oINpNnjkZNIxsFpo6E887gGcY9iKVHvYRnGhANI
-LMIIrih4dk42OEZDdMH45HrDxMJgLPesqo35GMnAyyuUtn/u0qCLs4zrY4Kip84o
-oCyoT7BmdxcGmX3AEnHvoaJqPXDrng==
-=RIKX
------END PGP SIGNATURE-----
-
---Sig_/wl2d6V4dLjtPexrsNrkDHpC--
 
