@@ -1,144 +1,161 @@
-Return-Path: <linux-kernel+bounces-355334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F7B9950C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D2D9950C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2719BB26FB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6471528659E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B6A1DF990;
-	Tue,  8 Oct 2024 13:54:50 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD51DF756;
+	Tue,  8 Oct 2024 13:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJcBIttx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A911DF74E;
-	Tue,  8 Oct 2024 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5A3197A65;
+	Tue,  8 Oct 2024 13:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395689; cv=none; b=kt50DEBEwPGgQDLEEA2sVr9AtY9ybeSk//ol6k93d/0yWsA8vaHVL8nsjFCsTu+Iix6IwQFvu7V2sLPbgPu+Kdxb0Ykv1mAMoHqp73mV5Xbn5VYILKiv3J45vE5L6gfLG7WIV7WfZiofBfObH1PFRtq4mHgJn9zuFgx3bxIPO9g=
+	t=1728395764; cv=none; b=ZvD7UDIXuxvICZIUmVdQdk2qvO+zz7YrSPAHicCgllEWHXfuRKcafyxnAiLYWLu+GrVWLb9awzLGdivUqc90817nQ0drdsEHcUVC0JmpMTmfw2sId+OllF/wV3nctbgJruryrNiZZwRbwytCmyFZI2WKAfvAwtZ84UY7UxZUJTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395689; c=relaxed/simple;
-	bh=LO8a+sxjyviC62YLXvVJ3sekmoTsrJ17qcMmxdMKoGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rjdVKurlN+8rIjcSJ/pOYIHh5XAhvYTovoiMmAvEHHfg3JhqL/QCNWB5kiWKnzPapf2dp6KwSf/MJPazH4NnioD5VC/zaZOU2vc+MboKJr6SLF/vL3s/swZhq6nRiyXz/QgPDce/z1DnSbYbBDITH4Uno5/UoKlR3FxhvRCksbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e25f3748e0so57073367b3.0;
-        Tue, 08 Oct 2024 06:54:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728395686; x=1729000486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L3uCZskBH2tXjyYuhmNFj34NCuiW42SvvJ2N3l6bLtk=;
-        b=dhsCwCrXWFhQe5q72vZTUVYdVTTC4m/LIpg98PL1c+B/458IzGVMF5ghJsgbwnYc/l
-         /lkx4ppZ8U9T11I1P261RLXrKl7BM8iSEbynD0Tiq6P9LwsUIkoR7CXKGYUaIhS5/yqu
-         gNg0i/3Mkyidy7j+57WPhHSEVDwKokrodkgBvQ45aqj92DxDOMbPSpMqTTizwXNm5lCm
-         nTe1iELkxtKjo/4LJtqId+/n6ckQ6F2SsVBjo4bm+kQriFur7z++N7JkC8XhrtiXwG9J
-         iZwj2QAZ+3JqG300F938PsBx2iZKete5GyYHFlwXlktq4ivK2X/d2J9ELXbMUjzvEMpd
-         Sr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmtC63cvYYW9ULbFy8Vbg97pQzCjr0iaFGAJuqfmuV347ee23TAscIO9cm73WT1U+glMMHBqPUfjk=@vger.kernel.org, AJvYcCVV1y/li12E9yXlftnPCXIORwREOZ4/40cWNPSo7iJt0NYmyKflHm3NZtKfLp8sFNCvh78NTwG2NHvb@vger.kernel.org, AJvYcCWK+a4ZOTc8WkXjzOJB9ikfKdKZH5ie39Ln33pWNh2kl3JkzGo+03JxaRL+BsvzhOc2pjmxARAM9ryu8iwVFI1wdCc=@vger.kernel.org, AJvYcCWZkVsUE7aJcuMJ/A2bxom8o89p1Xea12PFU8sveQWEYHZvppUrUeY/yLaJofHp1ZCxSSe2HfDAqA+X@vger.kernel.org, AJvYcCWn4gFLkWXZUq0EyCOyd5vuwwZToZ0tefo8Hu1aeESWC7KPsPi72nsvbZ4upQfhsmul0C2D6qQsOfFbFh96@vger.kernel.org, AJvYcCX+luNUrVoFUAUgbTldFLgs95jAyI+Y7SboqRuvMTrzGficVGtX5Ii0k4wKHo12m5zuI+ViYMwsMKw+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOgPPDHFnzBpwwqykHZ+5+Jy4+tyRRMeFB35rH/YmXjaCM8Wz5
-	3d/u/dJhu3onBlSrMZDVRsQO2pQduiVPU6W89n7jqRO5WfK2Z4OkTQ/yMkrU
-X-Google-Smtp-Source: AGHT+IE3dMwOza+AVSqH1LE/rEHn4F9GIOTC8H1byRwwn11XsFIJT227xStdSmI67pYeyiuzj8Cr9g==
-X-Received: by 2002:a05:690c:700a:b0:6b1:2825:a3cd with SMTP id 00721157ae682-6e2c728aa03mr120194077b3.35.1728395686643;
-        Tue, 08 Oct 2024 06:54:46 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d937c4d9sm14337007b3.56.2024.10.08.06.54.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 06:54:46 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e424ab49so23420847b3.3;
-        Tue, 08 Oct 2024 06:54:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURNkZhtyAHS52ACMW77Q6JjbJ2VhIJbZ/ipS1srnisTmEnEppfi+mfuH7rr2GOJl4jce2zcConKNvc@vger.kernel.org, AJvYcCUW5c8rXd5UQDeC1cbvMN/sm1OOi+g7Ffg90C4xF/sUes7n1FMrTTbbRDBHaNs5/VGEoz3BDIClNpuky/5L@vger.kernel.org, AJvYcCUgJOZsrl+gAZrOy02V6O8GOG6nfvjDrTaHeVkdk5uwQZouUnzMcF4gEgp3pN7UfHiryZ4G18Ve4boW@vger.kernel.org, AJvYcCUpKOf4yHncJwcVMOXCtL+YIH621e1/qIUM0zHQn4Lyk2WQtyucf8khqg4WztWQGD7sXMs+q2m0QpGYy3x/TE4z9cQ=@vger.kernel.org, AJvYcCVp2acOyRMm45Hycpv8bXaMU4iwilb6Mqgo6UqyjZ+D/xUDrMKQPlToiSW7frGOalYIxYhoswlMjQjV@vger.kernel.org, AJvYcCVpoOEzYcyugh1nrHUCcEcdqlnEVwHGbFn7nh4TLl7/PtGSr4WUmqaRI/zF3IzmM/PJ85Kjv3EwrRI=@vger.kernel.org
-X-Received: by 2002:a05:690c:6ac8:b0:6de:a3:a7ca with SMTP id
- 00721157ae682-6e2c728a25fmr119511907b3.32.1728395685683; Tue, 08 Oct 2024
- 06:54:45 -0700 (PDT)
+	s=arc-20240116; t=1728395764; c=relaxed/simple;
+	bh=l3v5zbOAu2VpNitLU1rz2xcsriFrmQpDRQUKMsWmwdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ELd1X57BlpMPI4cJ0sUE+dxz25UqX6T9UWxbNihLWAIAoK5f8M/EQrKzquBDtU7N9bEEABVzDDSI1q41PZZ3igH0awJAeWGy6saiCaw6F6nGAhRq+2sLEDyqbh2xcFPy8Qlr012zKzb2f81r/3wLGbWTjkr/BGRGE1x+R2/E1ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJcBIttx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B40FC4CEC7;
+	Tue,  8 Oct 2024 13:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728395763;
+	bh=l3v5zbOAu2VpNitLU1rz2xcsriFrmQpDRQUKMsWmwdw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kJcBIttxXZGEloWu2Jm18sb9Beb6pG4lVWi+d8BX80/hMKZlIoTN6OBsW1F9rck/R
+	 4iczFFKtY3ZGxLkrVCfM+RkBeCn28BbUBmq0/h/bO8jDyTPNfR/vN+m5sDbSgP0uLu
+	 2g/GkPGatZ+brJJATPTlM6SyLAD1jmS+gvtE+SCK535LHRMSFZtrn+BrLk0cIKgmYT
+	 aPXqmMFMstTO6DvTn0JPUIDFO7lAWsm7AvTbKtOVYFwkT7F5UkC+8R+kyEQaLMpyqr
+	 VWqZdf0oiam28q+CwzYT9+LE5qNifptn6KTz1mHXKJcWjYfHeTTVJ2YfSiNNRS0NJ9
+	 YrYWl1Mf/BpKA==
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Monakov <amonakov@ispras.ru>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	James Clark <james.clark@linaro.org>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL] perf tools fixes for v6.12
+Date: Tue,  8 Oct 2024 10:55:49 -0300
+Message-ID: <20241008135549.988547-1-acme@kernel.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com> <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
-In-Reply-To: <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Oct 2024 15:54:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWakggcbrBetKht+JHB5F+fxoi9U-oJMMq=ythUOqtYkA@mail.gmail.com>
-Message-ID: <CAMuHMdWakggcbrBetKht+JHB5F+fxoi9U-oJMMq=ythUOqtYkA@mail.gmail.com>
-Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+Hi Linus,
 
-On Wed, Sep 25, 2024 at 9:50=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 24.09.2024 14:32, Geert Uytterhoeven wrote:
-> > On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) t=
-hat
-> >> need to be configured before/after powering off/on the PCI or USB
-> >> ares. The bits in these registers control signals to PCIE and USB that
-> >> need to be de-asserted/asserted after/before power on/off event. For t=
-his
-> >> add SYSC controller driver that registers a reset controller driver on
-> >> auxiliary bus which allows USB, PCIE drivers to control these signals.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/reset/reset-rzg3s-sysc.c
-> >> @@ -0,0 +1,140 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Renesas RZ/G3S SYSC reset driver
-> >> + *
-> >> + * Copyright (C) 2024 Renesas Electronics Corp.
-> >> + */
-> >> +
-> >> +#include <linux/auxiliary_bus.h>
-> >
-> > Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
->
-> Thank you for pointing it. I'll adjust it in the next version, if it will
-> be one.
+	Please consider pulling,
 
-Thanks, the rest LGTM.
+Best regards,
 
-Gr{oetje,eeting}s,
+- Arnaldo
 
-                        Geert
+The following changes since commit eee280841e1c8188fe9af5536c193d07d184e874:
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+  Merge tag 'mm-hotfixes-stable-2024-09-27-09-45' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-09-27 10:27:22 -0700)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
+
+for you to fetch changes up to e934a35e3cc1fe0bfb1bc771e64f3ba6e70c40e2:
+
+  perf cs-etm: Fix the assert() to handle captured and unprocessed cpu trace (2024-10-02 18:21:49 -0300)
+
+----------------------------------------------------------------
+perf tools fixes for v6.12:
+
+- Fix an assert() to handle captured and unprocessed ARM CoreSight CPU traces.
+
+- Fix static build compilation error when libdw isn't installed or is too old.
+
+- Add missing include when building with !HAVE_DWARF_GETLOCATIONS_SUPPORT.
+
+- Add missing refcount put on 32-bit DSOs.
+
+- Fix disassembly of user space binaries by setting the binary_type of DSO when
+  loading.
+
+- Update headers with the kernel sources, including asound.h, sched.h, fcntl,
+  msr-index.h, irq_vectors.h, socket.h, list_sort.c and arm64's cputype.h.
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (11):
+      Merge remote-tracking branch 'torvalds/master' into perf-tools
+      tools include UAPI: Sync sound/asound.h copy with the kernel sources
+      tools include UAPI: Sync linux/sched.h copy with the kernel sources
+      tools include UAPI: Sync linux/fcntl.h copy with the kernel sources
+      tools arch x86: Sync the msr-index.h copy with the kernel sources
+      perf trace beauty: Update the arch/x86/include/asm/irq_vectors.h copy with the kernel sources
+      tools headers UAPI: Sync the linux/in.h with the kernel sources
+      perf beauty: Update copy of linux/socket.h with the kernel sources
+      tools check_headers.sh: Add check variant that excludes some hunks
+      perf tools: Cope with differences for lib/list_sort.c copy from the kernel
+      tools headers arm64: Sync arm64's cputype.h with the kernel sources
+
+Ian Rogers (1):
+      perf vdso: Missed put on 32-bit dsos
+
+Ilkka Koskinen (1):
+      perf cs-etm: Fix the assert() to handle captured and unprocessed cpu trace
+
+James Clark (1):
+      perf dwarf-aux: Fix build with !HAVE_DWARF_GETLOCATIONS_SUPPORT
+
+Namhyung Kim (1):
+      perf symbol: Set binary_type of dso when loading
+
+Yang Jihong (2):
+      perf build: Fix static compilation error when libdw is not installed
+      perf build: Fix build feature-dwarf_getlocations fail for old libdw
+
+ tools/arch/arm64/include/asm/cputype.h             |  2 +
+ tools/arch/x86/include/asm/msr-index.h             |  2 +
+ tools/build/feature/Makefile                       |  5 +-
+ tools/include/uapi/linux/in.h                      |  2 +-
+ tools/perf/Makefile.config                         |  7 +-
+ .../perf/check-header_ignore_hunks/lib/list_sort.c | 31 ++++++++
+ tools/perf/check-headers.sh                        | 29 +++++++-
+ .../beauty/arch/x86/include/asm/irq_vectors.h      |  4 +-
+ tools/perf/trace/beauty/fs_at_flags.sh             |  5 ++
+ tools/perf/trace/beauty/include/linux/socket.h     |  1 +
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 84 +++++++++++++++-------
+ tools/perf/trace/beauty/include/uapi/linux/sched.h |  1 +
+ .../perf/trace/beauty/include/uapi/sound/asound.h  | 17 ++++-
+ tools/perf/trace/beauty/msg_flags.c                |  4 ++
+ tools/perf/util/cs-etm.c                           |  2 +-
+ tools/perf/util/dwarf-aux.h                        |  1 +
+ tools/perf/util/symbol.c                           |  3 +
+ tools/perf/util/vdso.c                             |  4 +-
+ 18 files changed, 170 insertions(+), 34 deletions(-)
+ create mode 100644 tools/perf/check-header_ignore_hunks/lib/list_sort.c
 
