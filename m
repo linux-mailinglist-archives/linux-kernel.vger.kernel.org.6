@@ -1,100 +1,156 @@
-Return-Path: <linux-kernel+bounces-355562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD7199540E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38C2995412
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F68F282219
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAAF21C24E4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA901E0B91;
-	Tue,  8 Oct 2024 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4081E0DC4;
+	Tue,  8 Oct 2024 16:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JKD6qWZE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSLy971V"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B0A64A8F;
-	Tue,  8 Oct 2024 16:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3047F1E498;
+	Tue,  8 Oct 2024 16:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403813; cv=none; b=SC9UJR98wvhQEmksPnricK3SROGVq55uazkUu9g1Qdj/xp40BOPrR6i5yE//nKWwCeVdXCGaFO0j9o6eKADkxFcW4aRWdzhcKCoLte9OQNFeYhd2c+2gaJqIFrwpArsMFkW7BunRfKtlGFk5tKDL3fPlSgEvA3ZfGmimp+A46xA=
+	t=1728403836; cv=none; b=rUmD6/8NChKYDUQN/6ShejP/UfYLZDnfMpt4YJ30iE7X7QaiYaJMEJl6Q0GFNHUx/PrVVXM736C10ciftGaZIFdYPi3AulmfrO3CGzHgLU+bFj6KuFijdly74BVzVvHJ3VHD6H2F6uhTCoU+Wj0ILxnyZZeeC5nEXtIw+lAc+ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403813; c=relaxed/simple;
-	bh=Jqt51uv11WaJ2wYSsFLauwhBG+IqYiIyY54lrvUrEx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Own++pXpb+NZoUawz1JMoE8/gFBamj0syYBDNlQkXPThbB1mnJjr7MDXHgiLVwtHDpLTp5XaENqcKIFHUsZ8pQjcqOQKzpXQ/npgawXRxXaG9IIG7/EFZpATu1hxFXJ4mMCoH2uBsfVXM8yeDadJ8MqLsHj80nHCjoloOIV3ptg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JKD6qWZE; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728403812; x=1759939812;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Jqt51uv11WaJ2wYSsFLauwhBG+IqYiIyY54lrvUrEx4=;
-  b=JKD6qWZE+xSdNg4wevb20GfhDx3tbctPcQElQB6v6OriF8oZCNG9tPWk
-   QFcc6VmaXnJasHSbcW0tQqnIktlojsdT8B529wiaPwaks/izMi2hYo9Mb
-   7bWwS3MZSpY/al0mqbD+WiLTRSdFQlrKh3EyEurTzojyIRoSRBOVlS8PZ
-   IMyi+IQGxo32NaWFlKryk1b3zwHMbxzhuO84bflTPsBqmQPuwW2EUSBo4
-   dJ1qD9vk1dmA0p5GHdkOXY7lpDdIs54XjALMJz3uoAkft4RWDkam5Qqw+
-   t874SDW/XD0ByxOv34K1wTK/jFpWucYmrDm9X2gquBBfpjDPphd9A9C2O
-   Q==;
-X-CSE-ConnectionGUID: jM2giKVYSaiAZfnm1veloA==
-X-CSE-MsgGUID: tLwP50HxS/mp8T7TrioZ+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38183801"
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="38183801"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:10:11 -0700
-X-CSE-ConnectionGUID: rfMMT9K5RoC2YZkugt0plA==
-X-CSE-MsgGUID: w/X4QyNoRCi52Jz8Sqd5DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="99223278"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Oct 2024 09:10:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5CC1720F; Tue, 08 Oct 2024 19:10:08 +0300 (EEST)
-Date: Tue, 8 Oct 2024 19:10:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mathias Nyman <mathias.nyman@intel.com>
-Subject: Re: [PATCH v2 1/3] xhci: pci: Aling the naming for Cadence PCI ID
- 0x0200
-Message-ID: <ZwVZYOu78QX-lYXg@black.fi.intel.com>
-References: <20241003121729.3867216-1-andriy.shevchenko@linux.intel.com>
- <20241003121729.3867216-2-andriy.shevchenko@linux.intel.com>
- <2024100417-graveness-irritably-d31c@gregkh>
+	s=arc-20240116; t=1728403836; c=relaxed/simple;
+	bh=r7mEyXf1ZjwYZC8Jb+xbA1l4DsVejATdpcD82SdWp+g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hb7VWUu6VigBBlv5O/5pu/KIyL+WbHKdXVQWwoUaWRJThUb1a4rTxpaj2GKHGZ3C/1HZF3Ce3on+aS2biJW3eylMnL3OJCcNO7I0OruO+ZRLRyCoETPwzdICQh/ZzeWqSkZxl9T2uAp16KWkNrBdpviZscN4++C/RNPep3qzvVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSLy971V; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d375ddfc0so331393f8f.2;
+        Tue, 08 Oct 2024 09:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728403833; x=1729008633; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9a7LfuOs1NbeujelVlPKPSzT8OPKYTCPHEBo+bsTRco=;
+        b=OSLy971VQE4SU0Y7DJFLveIXH8D7yXGxhZHdE9p425v7XF5GxjAUqd728taxeQEnLY
+         9Xj5MIwfDGVPzn6Fn5bmXCA2ol8MBzrf1s5LL7tvQaWBlm7D+5W61Bk0mZ7EGFhJedg7
+         +io69lYWfJnpSTEx2vareJs1YOYz/ufu8mN5zFdlws6AnMYdOjS/WUTKd8DcBe4W6r1B
+         +HKCQwujZ0xRorjj4EAEI9UrCmLbYqN1FnN7qrHfHgNr78hX8nOR9ZWSzFDJy34VKwlW
+         t4naFxa4aVa1TLagd6OR3FQO2TwIR4XbR7R2gL5JjdI9aG/95olJ/rLPX07DK06IpOsr
+         lbgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728403833; x=1729008633;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9a7LfuOs1NbeujelVlPKPSzT8OPKYTCPHEBo+bsTRco=;
+        b=OrZCltnVW1U31ysSUDdLjcbTQ/xkiGpi4MvjvXiIIDgXbMTSjwQmucwAy7xfwxbH1o
+         X/6/vcp/2odaE7Np8knAH/YIvQzro2eXJaACxZJbmFK/IGWkZKQDpJsEggcepgpp/r3r
+         q/oA0+UdHrtFNEScLiua01cekR32FBQobV0ZQEeWU6hgKfl7o0K6u45SsezBQXXcJIyr
+         1FbPiHi2/h5KzMk0Eh/sI2yg8UJEdxPWv5mthJ98oRbKV7jnhPhWtGAGvYBZMZmx4TDe
+         MWVP1g6vgrdmaezotlAB+ix0wf2lSL/34QqK9FYJiPwV9si2z3pYEFEj7NEkuQ3Gd8ib
+         ZXlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrg5m0NYRopXBGMSy1nx1qHhNQ+40dybjjPBPF9PlHxPG4ycT+VSQ5A9n6pXontv7RNbui3a5JOrDP9rQ=@vger.kernel.org, AJvYcCXsuVWWAJLaL1qocCyoQIF9qyKslaTC2AuRKWbHIOCdumjBaYlbeTHxO54SHBYRkFo/sIluyzgY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2D1GKryEw/Yk5bhoVGJG410FUwjwgfUEVs7K+leLB2xbcW0Qt
+	tlERUPQYtG8Il9z3QVZy3zPHGd3iFV91dvj/lcZwM+RFblfaJQHQC89RXxVg
+X-Google-Smtp-Source: AGHT+IH8RgU9JvlhYvJcIwAb+cJCcTDEwjzENs+domo3S9hsJa7Hhhwnth6Igz1dDZJCQIiwLJI/qA==
+X-Received: by 2002:adf:a199:0:b0:37c:cd0d:208f with SMTP id ffacd0b85a97d-37d0eae30dcmr8625123f8f.49.1728403832954;
+        Tue, 08 Oct 2024 09:10:32 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-f2f2-fc2e-cc91-5c72.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:f2f2:fc2e:cc91:5c72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ec71aesm113505385e9.33.2024.10.08.09.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 09:10:31 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH net-next 0/3] net, device property: fix led node releases
+ in mv88e6xxx with new macro
+Date: Tue, 08 Oct 2024 18:10:26 +0200
+Message-Id: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024100417-graveness-irritably-d31c@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHJZBWcC/x2MwQqDMBAFf0X23EC0YmN/pUgQ82wX2lWSVBfEf
+ 28ozGUOMwclREaie3VQxMaJFylSXyqaXqM8YTgUp8Y2bW2tM5/NOXSq6t8Iyc+7LAF+/WbTX/u
+ 2w210BSr9GjGz/t8PEmQj0EzDef4A5gbY73UAAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Daniel Scally <djrscally@gmail.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728403830; l=2352;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=r7mEyXf1ZjwYZC8Jb+xbA1l4DsVejATdpcD82SdWp+g=;
+ b=uY2eosIrS6TFt07rJl43cqlejlZlmyh8kFffYX1G5Z4Ik9bg0lp2RcDoCp4Ni85bdLUYcqkJj
+ l6fkBR/ijFhC11lUozwAE1BS5JQaS1YyO9SrBVXaJX2jF3HegSTNyhU
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Fri, Oct 04, 2024 at 09:48:35AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Oct 03, 2024 at 03:14:44PM +0300, Andy Shevchenko wrote:
-> > Rename the PCI device ID to match what's used in another driver.
-> 
-> If the same device id is in multiple drivers, why not add it to
-> pci_ids.h like is normal to do?
+This series introduces the scoped variant of
+fwnode_for_each_available_child_node() to avoid the common issue the
+non-scoped variant triggers: forgetting the required fwnode_handle_put()
+upon early exits. It is strongly based on the existing
+device_for_each_child_node_scoped(), using
+fwnode_get_next_available_child_node() instead, and of course fwnode
+instead of dev.
 
-Also an option. So, Mathias, please, skip the first patch, seems we can
-do better.
+A fix with this new macro has been proposed in this series, as well as a
+second fix for a node outside the loop by means of the __free()
+automatic cleanup mechanism. Given that the bugs were recently
+introduced, new approaches can be used without affecting stable kernels.
+Of course the issue could be solved by adding multiple calls to
+fwnode_handle_put(), but the scoped macros and the automatic cleanup has
+already showed multiple times that they can save us from introducing
+bugs and also help us fix existing ones.
 
+Note that the declaration of 'leds' has been moved to its initialization
+as it is preferred when using this mechanism to avoid releasing
+uninitialized nodes. It could be left on top with a NULL initialization,
+but that pattern is less common.
+
+A more important modification is the use of the _available_ variant of
+the macro, as it seems that there is no need to walk over unavailable
+nodes. If that is not the case, please let me know why unavailable nodes
+are required, as a scoped variant of the current loop could be
+introduced instead.
+
+This series has been compile-checked and statically analyzed, as I
+don't have the hardware to test it. I have been using the scoped macro
+for a while downstream, but that is not saying much, and actual tests
+with the real hardware would be more than welcome.
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (3):
+      device property: Introduce fwnode_for_each_available_child_node_scoped()
+      net: dsa: mv88e6xxx: leds: fix led refcount in error path
+      net: dsa: mv88e6xxx: leds: fix leds refcount
+
+ drivers/net/dsa/mv88e6xxx/leds.c | 6 +++---
+ include/linux/property.h         | 5 +++++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+---
+base-commit: 489cee4caeba4f70a29b7215cfd18152dcadab7f
+change-id: 20241008-mv88e6xxx_leds_fwnode_put-93946e7a87a8
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
