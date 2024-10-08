@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-355240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B29D994E0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042AC994D1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99173B26639
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C4A1F22019
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AD51DED74;
-	Tue,  8 Oct 2024 13:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5730A1DED43;
+	Tue,  8 Oct 2024 13:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kXfEDZ1h"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637FA1DFD1;
-	Tue,  8 Oct 2024 13:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="aPDWWmu0"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD81DFD1;
+	Tue,  8 Oct 2024 13:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392895; cv=none; b=Tt/+Fr5VGISQSN8a0RBGAzv+uekzKLksWQjuGKSTtaCdtul+V/MFqcBDen6NLCZHFwLzjdzWWGZ5XaTkfzs8r4M0FcjIX2t21OWy9DBCSsrzZ9MdXTm/Uja2lPv2W7hlMIkGgQrNe6KJuagdr+R5nnP5eHcJ7oQjG8ZZgnYPs/w=
+	t=1728392511; cv=none; b=g/8BgyKOsuLKrYl6gKWQJXQFd21ZFVZoZ588NjQLWLtZ/7leOpQ+ftI9+GbdcYrZ3v3Q+XTXti8rMUdHVsfVLO0KHCDgmZ7a9s5E8rwahfwmdawuGyNfv6bEUGrTUIwRHS/NaS8ErgBvawShg2N7UALN6QFaykC1hL/tPX6k6qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392895; c=relaxed/simple;
-	bh=1s8jDLz4xsPK7rdXBwFDX7m1XmwgNdlX1mlSZLpHbZ4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=c9R+EQ7oQSkhrBC8GSP/ojLCdG/ObiwZ0GgcZ7kA+d+dLKU6jd67OHl6T9rrLamTBkgIAwhERjRMYPaygRr7zd7scZvJsts2jjiscHSDM1DirgV77ZwzpyW+0pb0RWA2PsHUWfk44qQR5EyhIhpMAwY0hKLD0A6TYv1wb48seOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kXfEDZ1h; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498CtsVf006392;
-	Tue, 8 Oct 2024 13:07:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:date:from:message-id:subject:to; s=corp-2023-11-20; bh=rjSoOMSa
-	uMzXhjoJcHAzY8r8uKcpbwQWm8/vJhmG4qM=; b=kXfEDZ1hPJL8/YY0Mbce0Q0H
-	kthEycWPzKjHz4CYwdYDMkBEfw6K97XR6smfnUAJxpbW4wfHsY1wZvDaeYXsEbYx
-	Pf140liBmBcqoksnfdhbbrIfi9fUhkwQ/EV4V0EN8DRevF5p3xDhOm6bUig0mKHy
-	tLzH8deTsDW9LdrjIPitX7gLyW+SofUJ+vuEUjQgFKWTiSEhGpID/S+lra7sop8f
-	4MlRpZZlhILspBA1DqSDZHDnvrOol2/yboR0lpowWSaMKK87TXUjL+tu2grfCD8M
-	IpmhnNHMS/JzorgCi3NUTjZZilCvYsRttZ1UWHoVk8BgkLSmzeEWI02gKTgK2Q==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 422yyv5rt1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 08 Oct 2024 13:07:04 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 498C6r8B001243;
-	Tue, 8 Oct 2024 13:07:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw75ryp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 08 Oct 2024 13:07:03 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 498D720i035615;
-	Tue, 8 Oct 2024 13:07:02 GMT
-Received: from gkennedy-linux.us.oracle.com (gkennedy-linux.us.oracle.com [10.152.170.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 422uw75rwg-1;
-	Tue, 08 Oct 2024 13:07:02 +0000
-From: George Kennedy <george.kennedy@oracle.com>
-To: ravi.bangoria@amd.com
-Cc: george.kennedy@oracle.com, harshit.m.mogalapalli@oracle.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dongli.zhang@oracle.com,
-        stable@vger.kernel.org
-Subject: [PATCH] [PATCH v3] perf/x86/amd: check event before enable to avoid GPF
-Date: Tue,  8 Oct 2024 08:00:53 -0500
-Message-Id: <1728392453-18658-1-git-send-email-george.kennedy@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-08_11,2024-10-08_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=889 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410080083
-X-Proofpoint-GUID: Csx44xj9ZCE0QeYwfVVPYRjwsxjGHVxN
-X-Proofpoint-ORIG-GUID: Csx44xj9ZCE0QeYwfVVPYRjwsxjGHVxN
+	s=arc-20240116; t=1728392511; c=relaxed/simple;
+	bh=PjYUW86T74UXwM2Ugm9utYyrO2lI7z5siDAlwllsukI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3yekXogDIhT/vALhvz/yVfEF3AE53L1NfCdDPiyF+rob9YtiCX6sd54c3xKS10Kgb79IDMaFr6Lp6yBhCRy6yLwXsBCnrFf2unmkxFin489CxX1rbxOQbUqRnSFs15kBg4BBfx9+aySmjsNA6h03zOn1k366xHse+XuB8PZl08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=aPDWWmu0; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=z/wk1Uvs/XAIDFdJXIhXEljo1iiUXtvIJAYJotUPatU=;
+	b=aPDWWmu0SDTLkn6GRQBPuxBihtWmoNiSMiipCpRcZOQZAxCVxtkefUTRuP+mrv
+	IU+O1Dgz0qE0MDyUdcOB6aI4LDD8erniMjMXiVYPI1Epk0dllJBmMnW921SjhDCP
+	w+xW5/PEmUq5BFrKy3esCgEsRvK/o+CcHp7kYY+Tosyds=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgA3zvQVLQVnr4zVAQ--.29073S3;
+	Tue, 08 Oct 2024 21:01:10 +0800 (CST)
+Date: Tue, 8 Oct 2024 21:01:08 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 6/7] arm64: dts: freescale: imx95-19x19-evk: add
+ nxp,ctrl-ids property
+Message-ID: <ZwUtFKhB3R2geN1D@dragon>
+References: <20240903-imx95-dts-new-v2-0-8ed795d61358@nxp.com>
+ <20240903-imx95-dts-new-v2-6-8ed795d61358@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-imx95-dts-new-v2-6-8ed795d61358@nxp.com>
+X-CM-TRANSID:M88vCgA3zvQVLQVnr4zVAQ--.29073S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFW5uF1fKw17tryxtFyDtrb_yoW8WFyfpF
+	15CFWDGw48WF4fGr9Iga4rtwn3Aw4ruF48ur1UZanrtr4jvw1xJr40gFn3Wr4UXw4kCa1r
+	uFnFyr18WFy2y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYnQUUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxhyZWcFFVE1PAAAsr
 
-On AMD machines cpuc->events[idx] can become NULL in a subtle race
-condition with NMI->throttle->x86_pmu_stop().
+On Tue, Sep 03, 2024 at 03:17:51PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add 'nxp,ctrl-ids' for SCMI firmware to confirm the board ctrls as
 
-Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
-This appears to be an AMD only issue.
+s/confirm/configure?
 
-Syzkaller reported a GPF in amd_pmu_enable_all.
+> wakeup sources.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
+> index 37a1d4ca1b20..5101cd171e09 100644
+> --- a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
+> @@ -8,6 +8,15 @@
+>  #include <dt-bindings/pwm/pwm.h>
+>  #include "imx95.dtsi"
+>  
+> +#define FALLING_EDGE			1
+> +#define RISING_EDGE			2
+> +
+> +#define BRD_SM_CTRL_SD3_WAKE		0x8000	/* PCAL6408A-0 */
+> +#define BRD_SM_CTRL_PCIE1_WAKE		0x8001	/* PCAL6408A-4 */
+> +#define BRD_SM_CTRL_BT_WAKE		0x8002	/* PCAL6408A-5 */
+> +#define BRD_SM_CTRL_PCIE2_WAKE		0x8003	/* PCAL6408A-6 */
+> +#define BRD_SM_CTRL_BUTTON		0x8004	/* PCAL6408A-7 */
 
-INFO: NMI handler (perf_event_nmi_handler) took too long to run: 13.143
-    msecs
-Oops: general protection fault, probably for non-canonical address
-    0xdffffc0000000034: 0000  PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x00000000000001a0-0x00000000000001a7]
-CPU: 0 UID: 0 PID: 328415 Comm: repro_36674776 Not tainted 6.12.0-rc1-syzk
-RIP: 0010:x86_pmu_enable_event (arch/x86/events/perf_event.h:1195
-    arch/x86/events/core.c:1430)
-RSP: 0018:ffff888118009d60 EFLAGS: 00010012
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000034 RSI: 0000000000000000 RDI: 00000000000001a0
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-R13: ffff88811802a440 R14: ffff88811802a240 R15: ffff8881132d8601
-FS:  00007f097dfaa700(0000) GS:ffff888118000000(0000) GS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200001c0 CR3: 0000000103d56000 CR4: 00000000000006f0
-Call Trace:
- <IRQ>
-amd_pmu_enable_all (arch/x86/events/amd/core.c:760 (discriminator 2))
-x86_pmu_enable (arch/x86/events/core.c:1360)
-event_sched_out (kernel/events/core.c:1191 kernel/events/core.c:1186
-    kernel/events/core.c:2346)
-__perf_remove_from_context (kernel/events/core.c:2435)
-event_function (kernel/events/core.c:259)
-remote_function (kernel/events/core.c:92 (discriminator 1)
-    kernel/events/core.c:72 (discriminator 1))
-__flush_smp_call_function_queue (./arch/x86/include/asm/jump_label.h:27
-    ./include/linux/jump_label.h:207 ./include/trace/events/csd.h:64
-    kernel/smp.c:135 kernel/smp.c:540)
-__sysvec_call_function_single (./arch/x86/include/asm/jump_label.h:27
-    ./include/linux/jump_label.h:207
-    ./arch/x86/include/asm/trace/irq_vectors.h:99 arch/x86/kernel/smp.c:272)
-sysvec_call_function_single (arch/x86/kernel/smp.c:266 (discriminator 47)
-    arch/x86/kernel/smp.c:266 (discriminator 47))
- </IRQ>
+Are these defines board specific?
 
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Signed-off-by: George Kennedy <george.kennedy@oracle.com>
----
- Suggested comment now with the code.
+Shawn
 
- arch/x86/events/amd/core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 920e3a640cad..6615ace15f5d 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -762,7 +762,12 @@ static void amd_pmu_enable_all(int added)
- 		if (!test_bit(idx, cpuc->active_mask))
- 			continue;
- 
--		amd_pmu_enable_event(cpuc->events[idx]);
-+		/*
-+		 * FIXME: cpuc->events[idx] can become NULL in a subtle race
-+		 * condition with NMI->throttle->x86_pmu_stop().
-+		 */
-+		if (cpuc->events[idx])
-+			amd_pmu_enable_event(cpuc->events[idx]);
- 	}
- }
- 
--- 
-2.39.3
+> +
+>  / {
+>  	model = "NXP i.MX95 19X19 board";
+>  	compatible = "fsl,imx95-19x19-evk", "fsl,imx95";
+> @@ -357,6 +366,14 @@ &usdhc2 {
+>  	status = "okay";
+>  };
+>  
+> +&scmi_misc {
+> +	nxp,ctrl-ids = <BRD_SM_CTRL_SD3_WAKE	FALLING_EDGE
+> +			BRD_SM_CTRL_PCIE1_WAKE	FALLING_EDGE
+> +			BRD_SM_CTRL_BT_WAKE	FALLING_EDGE
+> +			BRD_SM_CTRL_PCIE2_WAKE	FALLING_EDGE
+> +			BRD_SM_CTRL_BUTTON	FALLING_EDGE>;
+> +};
+> +
+>  &wdog3 {
+>  	fsl,ext-reset-output;
+>  	status = "okay";
+> 
+> -- 
+> 2.37.1
+> 
 
 
