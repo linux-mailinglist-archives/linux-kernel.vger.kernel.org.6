@@ -1,210 +1,120 @@
-Return-Path: <linux-kernel+bounces-355446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E283799528B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:56:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B815D9952CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F8FFB29134
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:49:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1ABFB23B9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB67B1E00A9;
-	Tue,  8 Oct 2024 14:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559461DFE3B;
+	Tue,  8 Oct 2024 14:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZGBtJDa7"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SieLekxt"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B77D1DE4CB
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE8218CBED;
+	Tue,  8 Oct 2024 14:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728398960; cv=none; b=LHCkENg6NMmaCKACyhHOoYki0EvFTGrO2T85h4e0EUg5OcyUGGAQRipGLLejBSFa37yz4VV43fvBbbcrA83estMRJNcrfVwMZJ3XE8t15wAMVfjN83AddXqBu+L7G9oX5lg3IvpOu7/jYdw0fUMuG0ea/C52hqwBM2ZNKmkOLHU=
+	t=1728399068; cv=none; b=Q2bM7oxZN3/E7mF/xDkdYIWOAKwAKT5CtAu0sSPf6a5nB6e2JMb8d+u384UJv9BLyaQz3A4l2tZH1nEEZqn04y6VsYCU08pTK5GBwxqiTeC4wNfsMdHVg+Zx5aDpdCoeeq7UJI9ttNbRDYYtZPppvdo513NOcMhes2x279uCvRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728398960; c=relaxed/simple;
-	bh=qfU8C3TAPpSJwHJTPIgiDIgrnm35EvTKgGk+6mYnWkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDEBCiRZda+qS7/f6SO769f9R5ITG9JU0cjieplujHFlbumztcmNGEo+aV0WEsArkqtgx6sNmo1Dd43q0sf3t0VLz+kcNuJkw27Sy8sB73BQLkeH7XUVuz6vO4HHKzRZuZMMTprBevNAqonr9LLGzGFLF3sfs+v3KRROBOgcwMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZGBtJDa7; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a9aa913442so522346785a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1728398957; x=1729003757; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJFDONM1BJH1/Fon/2cRmbbze18YgFQzcNOLNf5fQ30=;
-        b=ZGBtJDa7FrRzccHTFFXNE4CH3iBtybCrBuglxHATE/ALaQQlUwyI90MikkDZLON4Zx
-         7a9FfKKAjAlvKlOgtNsPcwwt6ZjgfDqGPterJa41mlMXtBdlIGGRd+6IdvT68CHA7rHD
-         5p1XuBqUwE6FXTmMGkFtcQgbjN4O7Cv4AIfttJGI9DLKjYRfKWdvJ06CedCF+3a7XTog
-         Az2y494vinaWXCAeueFSQeAzIhcyjPObCuXc5u4320WFZ7cFtbmTc64HPFYIVRxI89t1
-         1HzmbQi9CqI08DzFFmQkqMGLBDC5QfOZ09sJ7h20KD0NzL7LbVpe96iFXemBFldrqjkM
-         72cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728398957; x=1729003757;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sJFDONM1BJH1/Fon/2cRmbbze18YgFQzcNOLNf5fQ30=;
-        b=aGiRsOzlXqt4QVSfPjkOmLZ0fefRLqNYneSdEO7SB5PrDX/fjYE/fTc7/XyD/5CYUL
-         UCnaPtvabUUaUvE8ZEJiNS1dEG+IjvJVGNX2hax9QGohwavUP4NRKataK+gegWoVclh6
-         5VLBT0oVs65qYhBGJcgO79F3D23nRX8FiSSZK5GROQIY+kD1xufByXXsqlEQ5PPzvmRV
-         +XJt3DOP7wR8TxcWXqaWbbcoCAIz+Va5B3HnOf8/5bQ+ntE+QM1BOv7ov9FEbkHkShPu
-         nhKsgIW32/XvTMHv2sSOBTYzm/JaEfQjH8O/PI281dNgxU83uzx02Cu8fW3WLTueTvNV
-         m4Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQJrzoRolHmyGFTmSZjvr24TSF+UVt2IDyM0yKSa4BafsfhlT94slnONkRU9sk0thtu6Moq0Ykx1pCjlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC6Sq2PrnfZA97zybb2LVVzB/enPyYe4qQsJRwuFyy8JnMrJDV
-	2L5ZylC1Xs2zXhXS2cWU/fIJ5jfHdK7WUx/QQnEZAky6mkngyCm2dY/i31f7n18=
-X-Google-Smtp-Source: AGHT+IG6OVFWCoKZv69Wir07hN1vPWvg1lLXioIZ8R9wjd/d9XMMbY+LszjT31b7d2ZMcixN54E+Nw==
-X-Received: by 2002:a05:620a:1a96:b0:7a9:c0f3:3b71 with SMTP id af79cd13be357-7ae6f43756fmr2795433385a.19.1728398957353;
-        Tue, 08 Oct 2024 07:49:17 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7562ca6esm355821885a.52.2024.10.08.07.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:49:16 -0700 (PDT)
-Date: Tue, 8 Oct 2024 10:49:07 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-cxl@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	david@redhat.com, osalvador@suse.de, gregkh@linuxfoundation.org,
-	rafael@kernel.org, akpm@linux-foundation.org,
-	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
-	alison.schofield@intel.com, rrichter@amd.com, terry.bowman@amd.com,
-	lenb@kernel.org, dave.jiang@intel.com
-Subject: Re: [PATCH 0/3] memory,acpi: resize memory blocks based on CFMW
- alignment
-Message-ID: <ZwVGY1WzwEakdcCJ@PC2K9PVX.TheFacebook.com>
-References: <20241008044355.4325-1-gourry@gourry.net>
- <670543eae94d9_125a7294bd@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1728399068; c=relaxed/simple;
+	bh=p/9acfdEgaLxVZfogRhnfANqjd3z7mrfWD179zJel/M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Sl4X+tJXQQDRn9ylZL/Gbwa1DvP7lpUbbLZn8GU/ARazEV94gFStWmwlSqb8JDNs6hrgdTdcGEOV2BnoQZTwgy7s/IshV3l4P25xoI9N+vhVBNKXu20ohrzwuVNQhrxzd7UJlIKz1b7KunJEeBhVS2f9t6z2WoSu3ASHSya/BcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SieLekxt; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9C6244000A;
+	Tue,  8 Oct 2024 14:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728399064;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T8JTIkRyYPw4ANhnRm9O1xslQPulRbbv6/2c4JrZHr0=;
+	b=SieLekxt9CJgTwGfAISBzmrG8aI1Zw9QyaTNvG7O3mRQexMn+MGTAUtKxIRU1XJd9AGUhr
+	OWoKrOtvHK+ncs/rsblUPL64zUk+f5lggblH4VOsnTdeW4F+gt11zJmMpCfUYvH5jL6PKK
+	fuNCgJkNkg5EwJfnXI8KIDQCzBX13d2sMGj9n3A8j9uUH3J/fED+EovzLoHU4wdyqo1bAo
+	niIeKT6ZAJhMBIy152AtsoprW1mCyn2kaBo+XQ7Am8E+PSqVjxCRluYd/7dvub+1FUo9pO
+	vb/R8q4zfhr0b+ELQqfWkweSIQMvOusWpnEiCK8g1WKk4OnHVTJ6hd+pDwT1oA==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Date: Tue, 08 Oct 2024 16:50:57 +0200
+Subject: [PATCH bpf] selftests/bpf: add missing header include for htons
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670543eae94d9_125a7294bd@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241008-network_helpers_fix-v1-1-2c2ae03df7ef@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIANBGBWcC/x2MWwqAIBAAryL7naA96HGViMjaailU1qggunvS5
+ wzMPBCQCQM04gHGkwI5G0EnAsZ1sAtKmiJDqtJcK1VJi8fleOtX3D1y6Ge6pTGmnHRR1XWmIJa
+ eMer/2oLxM3Tv+wEKzjpBagAAAA==
+X-Change-ID: 20241008-network_helpers_fix-bbb7d1589930
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Tue, Oct 08, 2024 at 09:38:35AM -0500, Ira Weiny wrote:
-> Gregory Price wrote:
-> > When physical address capacity is not aligned to the size of a memory
-> > block managed size, the misaligned portion is not mapped - creating
-> > an effective loss of capacity.
-> > 
-> > This appears to be a calculated decision based on the fact that most
-> > regions would generally be aligned, and the loss of capacity would be
-> > relatively limited. With CXL devices, this is no longer the case.
-> > 
-> > CXL exposes its memory for management through the ACPI CEDT (CXL Early
-> > Detection Table) in a field called the CXL Fixed Memory Window.  Per
-> > the CXL specification, this memory must be aligned to at least 256MB.
-> > 
-> > On X86, memory block capacity increases based on the overall capacity
-> > of the machine - eventually reaching a maximum of 2GB per memory block.
-> > When a CFMW aligns on 256MB, this causes a loss of at least 2GB of
-> > capacity, and in some cases more.
-> > 
-> > It is also possible for multiple CFMW to be exposed for a single device.
-> > This can happen if a reserved region intersects with the target memory
-> > location of the memory device. This happens on AMD x86 platforms. 
-> 
-> I'm not clear why you mention reserved regions here.  IIUC CFMW's can
-> overlap to describe different attributes which may be utilized based on
-> the devices which are mapped within them.  For this reason, all CFMW's
-> must be scanned to find the lowest common denominator even if the HPA
-> range has already been evaluated.
-> 
-> Is that what you are trying to say?
->
+Including the network_helpers.h header in tests can lead to the following
+build error:
 
-On AMD systems, depending on the capacity, it is possible for a single
-memory expander to be represented by multiple CFMW.
+./network_helpers.h: In function ‘csum_tcpudp_magic’:
+./network_helpers.h:116:14: error: implicit declaration of function \
+  ‘htons’ [-Werror=implicit-function-declaration]
+  116 |         s += htons(proto + len);
 
-an example: There are two memory expanders w/ 256GB total capacity
+The error is avoided in many cases thanks to some other headers included
+earlier and bringing in arpa/inet.h (ie: test_progs.h).
 
-[    0.000000] BIOS-e820: [mem 0x000000c050000000-0x000000fcffffffff] soft reserved
-[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000010000000000-0x000001034fffffff] soft reserved
+Make sure that test_progs build success does not depend on header ordering
+by adding the missing header include in network_helpers.h
 
-[0A4h 0164   1]                Subtable Type : 01 [CXL Fixed Memory Window Structure]
-[0A5h 0165   1]                     Reserved : 00
-[0A6h 0166   2]                       Length : 0028
-[0A8h 0168   4]                     Reserved : 00000000
-[0ACh 0172   8]          Window base address : 000000C050000000
-[0B4h 0180   8]                  Window size : 0000002000000000
-[0BCh 0188   1]     Interleave Members (2^n) : 00
-[0BDh 0189   1]        Interleave Arithmetic : 00
-[0BEh 0190   2]                     Reserved : 0000
-[0C0h 0192   4]                  Granularity : 00000000
-[0C4h 0196   2]                 Restrictions : 0006
-[0C6h 0198   2]                        QtgId : 0001
-[0C8h 0200   4]                 First Target : 00000007
+Fixes: f6642de0c3e9 ("selftests/bpf: Add csum helpers")
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+ tools/testing/selftests/bpf/network_helpers.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-[0CCh 0204   1]                Subtable Type : 01 [CXL Fixed Memory Window Structure]
-[0CDh 0205   1]                     Reserved : 00
-[0CEh 0206   2]                       Length : 0028
-[0D0h 0208   4]                     Reserved : 00000000
-[0D4h 0212   8]          Window base address : 000000E050000000
-[0DCh 0220   8]                  Window size : 0000001CB0000000
-[0E4h 0228   1]     Interleave Members (2^n) : 00
-[0E5h 0229   1]        Interleave Arithmetic : 00
-[0E6h 0230   2]                     Reserved : 0000
-[0E8h 0232   4]                  Granularity : 00000000
-[0ECh 0236   2]                 Restrictions : 0006
-[0EEh 0238   2]                        QtgId : 0002
-[0F0h 0240   4]                 First Target : 00000006
+diff --git a/tools/testing/selftests/bpf/network_helpers.h b/tools/testing/selftests/bpf/network_helpers.h
+index c72c16e1aff825439896b38e59962ffafe92dc71..5764155b6d25188ed38e828e1e4a8a08f8a83934 100644
+--- a/tools/testing/selftests/bpf/network_helpers.h
++++ b/tools/testing/selftests/bpf/network_helpers.h
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __NETWORK_HELPERS_H
+ #define __NETWORK_HELPERS_H
++#include <arpa/inet.h>
+ #include <sys/socket.h>
+ #include <sys/types.h>
+ #include <linux/types.h>
 
-[0F4h 0244   1]                Subtable Type : 01 [CXL Fixed Memory Window Structure]
-[0F5h 0245   1]                     Reserved : 00
-[0F6h 0246   2]                       Length : 0028
-[0F8h 0248   4]                     Reserved : 00000000
-[0FCh 0252   8]          Window base address : 0000010000000000
-[104h 0260   8]                  Window size : 0000000350000000
-[10Ch 0268   1]     Interleave Members (2^n) : 00
-[10Dh 0269   1]        Interleave Arithmetic : 00
-[10Eh 0270   2]                     Reserved : 0000
-[110h 0272   4]                  Granularity : 00000000
-[114h 0276   2]                 Restrictions : 0006
-[116h 0278   2]                        QtgId : 0003
-[118h 0280   4]                 First Target : 00000006
+---
+base-commit: 67a7c7b656cfc10a7280f71641fb9e88726e8a5d
+change-id: 20241008-network_helpers_fix-bbb7d1589930
 
-Note that there are two soft reserved regions, but 3 CFMWS.  This is
-because the first device is contained entirely within the first region,
-and the second device is split across the first and the second.
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-The reserved space at the top of the 1TB memory region is reserved by
-the system for something else - similar I imagine to the PCI hole at the
-top of 4GB.
-
-The e820 entries are not aligned to 2GB - so you will lose capacity
-right off the bat. Then on top of this, when you go to map the windows,
-you're met with more bases and lengths not aligned to 2GB which results
-in even futher loss of usable capacity.
-
-> > 
-> > This patch set detects the alignments of all CFMW in the ACPI CEDT,
-> > and changes the memory block size downward to meet the largest common
-> > denomenator of the supported memory regions.
-> > 
-> > To do this, we needed 3 changes:
-> >     1) extern memory block management functions for the acpi driver
-> >     2) modify x86 to update its cached block size value
-> >     3) add code in acpi/numa/srat.c to do the alignment check
-> > 
-> > Presently this only affects x86, since this is the only architecture
-> > that implements set_memory_block_size_order.
-> > 
-> > Presently this appears to only affect x86, and we only mitigated there
-> > since it is the only arch to implement set_memory_block_size_order.
-> 
-> NIT : duplicate statement
-> 
-> Ira
 
