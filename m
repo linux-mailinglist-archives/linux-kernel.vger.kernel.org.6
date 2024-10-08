@@ -1,157 +1,247 @@
-Return-Path: <linux-kernel+bounces-354955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE73994528
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:16:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46519994521
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D7C1F2568C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E90B23979
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1974193097;
-	Tue,  8 Oct 2024 10:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B61BBBE3;
+	Tue,  8 Oct 2024 10:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JTG7K03b"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZoPcBQZ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5738F6C;
-	Tue,  8 Oct 2024 10:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1025B19067C;
+	Tue,  8 Oct 2024 10:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728382554; cv=none; b=ddLrBEmJgYr3cmZP62sLXYVjRnP9JywJ2pkPUvV3qxZX7Tuxs4otwGlW8E4PKv2Z0iqarYClL+vvzPdEMS/4Wiw05fwv9JvgHPq93yhnZr1GecdsUDeUc2bqx4iysURmw/mhYGSSIUWuTH4AeujqdTIbbQMOPYXDMjbzTqq31G8=
+	t=1728382482; cv=none; b=dqDkOXGL/Rbi9XqltmnIbbXkgcW1pUZSg8o7krsi/8ctl+ePAWyUg5+eJyZMWWWug6rxozm2kWlSygjPfocFdpPfZm/nVvpc4zpus1VpKydoVYO5f3gutJWC/+74HHRhckVUItZ+d0Oyt5cZ+vET9dpNd0s47ljqYpmyB77ILd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728382554; c=relaxed/simple;
-	bh=ZLYahmtyndIk4/pqcHsKdqny7r1Sl4aYqUTjLcYh8Ak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kH7AupOxVDZDDtT738o4AtQQ9p6VBlFwEZLSx+IamostYg1uNooMC9oXkxUc7Z5cSY798fcE2h3gHXI1vH27/MiryVX4OrU30DpUBihWm90I+Flveu9g767eRMHw0tV66ZoinxGHNzvjJ4uIXEKNmI+3rN03iMUL4KLypFqGKM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JTG7K03b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49867ppI027160;
-	Tue, 8 Oct 2024 10:15:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3RJTAwrBMMifMwMRVvCFjx7Qj9rE9rKp95xJNGZcrlQ=; b=JTG7K03bVEF4d9wS
-	NALr5kZyAqxAcbJ2rvbb2VOB8L8Zssr1YZYesKKkVgc4PGt2Si4fmMnyrKm0RH0w
-	z34W66So35oivg7bO5EvWAUsFZ5a2PKFphKHXRo5H2SjboAglCQULWai5lzWc1Au
-	6xZWD0RiVgvQZ1WicYURXIRt+W6PPBojySPvkXSgrne9wp1tC8Jy4K7yRvEmwTcl
-	tnhPygrI97B5UJIVePjnb5YT6aMJjJcGJjly1Gkpj6+uuU+I7yBtBRv0Z2Pk9Fk8
-	4Xuy8sDhX2xkg42h59ile0QN8QCPL8F2RohVFvVZBHjjLo/V3huAnMXqF7l7F7iB
-	m+O9Gg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xq9y0xc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 10:15:34 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498AFXE4009912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 10:15:33 GMT
-Received: from [10.50.47.90] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
- 03:15:26 -0700
-Message-ID: <0aa2599b-a77c-428d-a475-0be63e49d0ca@quicinc.com>
-Date: Tue, 8 Oct 2024 15:45:23 +0530
+	s=arc-20240116; t=1728382482; c=relaxed/simple;
+	bh=TUqU4rRtqBHAmFV5UzRNB/U1p3wPjrjfJRAziwSvtxE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ev61Kf/PLUrVe7a0ZALdpx8PXRiWxy71O7IZEBbX/HTv3jTRbLaRbu+TAP3AAS83H1snncVq35tqKF8p/S3M2UmBdUXor213h9I5vJs24hGMpnZi0LB0NPKWVBIhyxzUxHtNcN9nAgNGahaz5Rq76cWW/0RsY4bgW/Logq6dsxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZoPcBQZ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so48670835e9.0;
+        Tue, 08 Oct 2024 03:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728382479; x=1728987279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Imn45k5J9wM19h9i9/RuyLoAF2diDSxFA12TsgI6H5w=;
+        b=MZoPcBQZoPDRcIbxRIVYiX+IiSHzxWXtgA3tX5JJMMpA/Z5xtVLfHF0Of3tHvSmYcf
+         UVR/YxXTAl/u30vn0VHizdIM6ul+/DTMYKahj0NgrFpWlztZFnSMdfp3rtgHTzgOKcab
+         e08h+5RXZZz8iH+q94YFoiB8WVx16IVR8Q+r4hTWAEnQ3PbSBzZXICATQQiBWCVgj2iJ
+         FwDw/SygXQ3+Ddac7laW7iNu1BMh0MRm51VEy9pCKl5aKyA8SrTVsBST21W3WqMtKwii
+         RAqQwolwGHEUO1gVsNFJ2qK0O15MPbcrAp8XyNBc4+Rs3S+j4jIpMNs2QXR/lD1vzPnZ
+         R0/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728382479; x=1728987279;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Imn45k5J9wM19h9i9/RuyLoAF2diDSxFA12TsgI6H5w=;
+        b=gWtdnCpfCEZx4kYtuvWH1c99gmYLndyLbbBr2cgPllmulaGtV5YuFvTexNVq9XU/XE
+         R10cUV1nPamgJoAg7e1BDwpU4CsPoDZAMWf+teM2SWs70A4LQgaegzzb2TAFSJJy9xzx
+         2inoPQ6Wm/ynHNPXOmsb6v59deMN8vWw18KoHnGTJXgDA+bGm2/McK3nC6if1v3cXRkQ
+         Fe/dMaK0lqxBZOtdQr/s/w4w1lKK7XC6MHPTDrBV80jsJBU/PMWuH8yJbCWu80WSJTVK
+         JRwwpZ9tF1+nxQdQlyvlb/OfpJtWk49I6+LoKgatnlyMcWe+wYqVsPL8ucOXx60BQaYO
+         ZQpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZ+GIrw41hYp2r9kha+BTVjRjtVVmwrMENP7Nh0ivytQqxLw5zc8mhHKyl9yUEbDypROX/TP6cs+tSNsO@vger.kernel.org, AJvYcCWIXj4w4SUXgBEnqHYP30RhdDcjupbJOw3uR1ESMUo3nrYqCqENqC6XZp4ZHuucJigmbtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwr4wS+UbLXHaFaKwABZn7+sWubbxQ9NNAOsPJhq25S7DsLQgB
+	XmiRtUAIXD2ZpO7raezoDMtBDv4vau4lD5LFEkJvd7rBRgAPcP8i
+X-Google-Smtp-Source: AGHT+IFUHFdsSTKRxb8639sVgXceTyFTrRE4SGLmq/ZsJV2CO1ZElzEx8lFPPP5n/dq949hi8/BBKA==
+X-Received: by 2002:a05:600c:4f14:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42f85af5387mr96155965e9.32.1728382479035;
+        Tue, 08 Oct 2024 03:14:39 -0700 (PDT)
+Received: from work.. ([94.200.20.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e89624sm103790585e9.12.2024.10.08.03.14.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 03:14:38 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: elver@google.com,
+	akpm@linux-foundation.org
+Cc: andreyknvl@gmail.com,
+	bpf@vger.kernel.org,
+	dvyukov@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	snovitoll@gmail.com,
+	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
+	vincenzo.frascino@arm.com
+Subject: [PATCH v3] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Date: Tue,  8 Oct 2024 15:15:26 +0500
+Message-Id: <20241008101526.2591147-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CACzwLxh1yWXQZ4LAO3gFMjK8KPDFfNOR6wqWhtXyucJ0+YXurw@mail.gmail.com>
+References: <CACzwLxh1yWXQZ4LAO3gFMjK8KPDFfNOR6wqWhtXyucJ0+YXurw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/7] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
- binding
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <quic_varada@quicinc.com>
-References: <20241004102342.2414317-1-quic_srichara@quicinc.com>
- <20241004102342.2414317-3-quic_srichara@quicinc.com>
- <c0e9479c-0a69-4ffe-aab5-0b5af92df31d@kernel.org>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <c0e9479c-0a69-4ffe-aab5-0b5af92df31d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YL0vpv9p-5X-LFf5aMjhRP2uguTED-sN
-X-Proofpoint-GUID: YL0vpv9p-5X-LFf5aMjhRP2uguTED-sN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080067
+Content-Transfer-Encoding: 8bit
 
+Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
+memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
+the memory corruption.
 
+syzbot reported that bpf_probe_read_kernel() kernel helper triggered
+KASAN report via kasan_check_range() which is not the expected behaviour
+as copy_from_kernel_nofault() is meant to be a non-faulting helper.
 
-On 10/6/2024 2:09 PM, Krzysztof Kozlowski wrote:
-> On 04/10/2024 12:23, Sricharan R wrote:
-> 
->>   maintainers:
->>     - Bjorn Andersson <andersson@kernel.org>
->>   
->>   description: |
->>     Qualcomm global clock control module provides the clocks, resets and power
->> -  domains on IPQ5332.
->> +  domains on IPQ5332 and IPQ5424.
->>   
->> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
->> -
->> -allOf:
->> -  - $ref: qcom,gcc.yaml#
->> +  See also::
-> 
-> s/::/:/
-> 
->> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
->> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
->>   
->>   properties:
->>     compatible:
->> -    const: qcom,ipq5332-gcc
->> +    enum:
->> +      - qcom,ipq5332-gcc
->> +      - qcom,ipq5424-gcc
->>   
->>     clocks:
->> +    minItems: 5
->>       items:
->>         - description: Board XO clock source
->>         - description: Sleep clock source
->>         - description: PCIE 2lane PHY pipe clock source
->>         - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
->> +      - description: PCIE 2-lane PHY2 pipe clock source
->> +      - description: PCIE 2-lane PHY3 pipe clock source
->>         - description: USB PCIE wrapper pipe clock source
-> 
-> Why do you change fifth clock on ipq5332?
-> 
-> Please test your patches - change DTS for ipq5332 and provide PCIE
-> 2-lane PHY2 there.
+Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
+copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
+kernel memory. In copy_to_kernel_nofault() we can retain
+instrument_write() explicitly for the memory corruption instrumentation.
 
-Ho ok, these 2 additional clocks are required only for IPQ5424.
-I ran the check_dtbs/dt_binding_check for both IPQ5332/IPQ5424.
-Agree that fifth clock should not be changed in default.
-So, would it be fine to add these 2 clocks in the end and re-send ?
+copy_to_kernel_nofault() is tested on x86_64 and arm64 with
+CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
+kunit test currently fails. Need more clarification on it
+- currently, disabled in kunit test.
 
-Regards,
-  Sricharan
+Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
+Suggested-by: Marco Elver <elver@google.com>
+Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
+Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+v2:
+- squashed previous submitted in -mm tree 2 patches based on Linus tree
+v3:
+- moved checks to *_nofault_loop macros per Marco's comments
+- edited the commit message
+---
+ mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
+ mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
+ mm/maccess.c            | 10 ++++++++--
+ 3 files changed, 52 insertions(+), 2 deletions(-)
+
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9d..5cff90f831db 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1954,6 +1954,32 @@ static void rust_uaf(struct kunit *test)
+ 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
+ }
+ 
++static void copy_to_kernel_nofault_oob(struct kunit *test)
++{
++	char *ptr;
++	char buf[128];
++	size_t size = sizeof(buf);
++
++	/* Not detecting fails currently with HW_TAGS */
++	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
++
++	ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
++	OPTIMIZER_HIDE_VAR(ptr);
++
++	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
++		/* Check that the returned pointer is tagged. */
++		KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN);
++		KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
++	}
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_to_kernel_nofault(&buf[0], ptr, size));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_to_kernel_nofault(ptr, &buf[0], size));
++	kfree(ptr);
++}
++
+ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmalloc_oob_right),
+ 	KUNIT_CASE(kmalloc_oob_left),
+@@ -2027,6 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(match_all_not_assigned),
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
++	KUNIT_CASE(copy_to_kernel_nofault_oob),
+ 	KUNIT_CASE(rust_uaf),
+ 	{}
+ };
+diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
+index 13236d579eba..9733a22c46c1 100644
+--- a/mm/kmsan/kmsan_test.c
++++ b/mm/kmsan/kmsan_test.c
+@@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
+ 	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
+ }
+ 
++static void test_copy_from_kernel_nofault(struct kunit *test)
++{
++	long ret;
++	char buf[4], src[4];
++	size_t size = sizeof(buf);
++
++	EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
++	kunit_info(
++		test,
++		"testing copy_from_kernel_nofault with uninitialized memory\n");
++
++	ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
++	USE(ret);
++	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
++}
++
+ static struct kunit_case kmsan_test_cases[] = {
+ 	KUNIT_CASE(test_uninit_kmalloc),
+ 	KUNIT_CASE(test_init_kmalloc),
+@@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
+ 	KUNIT_CASE(test_long_origin_chain),
+ 	KUNIT_CASE(test_stackdepot_roundtrip),
+ 	KUNIT_CASE(test_unpoison_memory),
++	KUNIT_CASE(test_copy_from_kernel_nofault),
+ 	{},
+ };
+ 
+diff --git a/mm/maccess.c b/mm/maccess.c
+index 518a25667323..3ca55ec63a6a 100644
+--- a/mm/maccess.c
++++ b/mm/maccess.c
+@@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
+ 	return true;
+ }
+ 
++/*
++ * The below only uses kmsan_check_memory() to ensure uninitialized kernel
++ * memory isn't leaked.
++ */
+ #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+-		__get_kernel_nofault(dst, src, type, err_label);		\
++		__get_kernel_nofault(dst, src, type, err_label);	\
++		kmsan_check_memory(src, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
+@@ -49,7 +54,8 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+ 
+ #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+-		__put_kernel_nofault(dst, src, type, err_label);		\
++		__put_kernel_nofault(dst, src, type, err_label);	\
++		instrument_write(dst, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
+-- 
+2.34.1
+
 
