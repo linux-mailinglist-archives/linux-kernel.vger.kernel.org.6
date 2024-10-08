@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-355178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2680099497C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43024994988
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D0728442B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DE128419C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4AC1DF26D;
-	Tue,  8 Oct 2024 12:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wMKZSAVf"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431BB1DEFF0;
+	Tue,  8 Oct 2024 12:23:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4FF1DE898;
-	Tue,  8 Oct 2024 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BC91DE89D;
+	Tue,  8 Oct 2024 12:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390185; cv=none; b=jU2K/QA8BgcrNuHiTx8RkjwWHAIgoVfQdDumxMkQBDUD0u8h2UdHHKglAWLZDKUNu9GdzrsUgeH/gfRAPWZydjv4z5XMF43zkQaPWBstgZXWvOusKNrVPEk2xu1kH+522l9OWKW8kooyRHfT/hT5S2osxly2vpVCFzAYR6/HVMA=
+	t=1728390212; cv=none; b=hagTrs2zNQ3bUpgp6RhZXJEjf4oLwLOQ1FDK/He968TZR+nkhnaMxbAr3uFjH7S39yQ6/g/6kJYEbqe/GGZeWFCPyRdxrlsD7eUFnbS+2aR3IiWI5Fm72f+ajDhbmiBmP4p9Py+YkFFPyJifylhvFd3/eySyqlRegzc4VotRmSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390185; c=relaxed/simple;
-	bh=oaTW+3j9yeNvgxRODXAtsCJmY5aEpjsfkgrxoSXjr3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m49G4TDVBGh9ab9e/Mc88wKsEZS3TEvfzr/4IzyCHcjaMW/u5jsLQyMVcGz+G8HVMv962H7ajA/yGN/OH9An/NowIq4pTHTWqQgvuz8/tJ4lY5SBzLZvFPYWUFR5fB4RD83fptx3XgS5RveXklks1d2WqGdcCAZIJQQHJPKv7XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wMKZSAVf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uOucjaDDLBn6pVXhclYDmS9P5w8KdiUT3z9VmKsnsyQ=; b=wMKZSAVfys5mDit4w+XYZVptdZ
-	VHuD8UX6YphYoaj4wONU+VkGn/uHro6xXS9tDHvoOb9jxAZGITTnXTkE92vsJSoRenRILUcvJFgNt
-	x+LoxUzeaVrgezrIxXja1V+DfKYd+l/n83Y/LbXDPsrlHYF6qBlRBta7zDiM/XjLHQ5nnEnH5JjJn
-	lS4s0H1WM7m1PVVZ908mMJa7X12JY7D9jaoUfhcX+erKtdvH+qkrqrvlHaJUHnVUjx231GTwJWlO8
-	Z0WZ/r7NAOEgym1ntfuv1v+10mCVRVDwLo5mhSnNmbUOVhx+vD4pyMxDg+8jSOcWI/VxZ88HSWQoM
-	/jEEikcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy9Ey-00000005nM4-1f73;
-	Tue, 08 Oct 2024 12:23:00 +0000
-Date: Tue, 8 Oct 2024 05:23:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
-Message-ID: <ZwUkJEtwIpUA4qMz@infradead.org>
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
- <ZwUcT0qUp2DKOCS3@infradead.org>
- <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
+	s=arc-20240116; t=1728390212; c=relaxed/simple;
+	bh=SCF5MKEq16SFnbVDi08n3eyf7GGCyNqr4vBbOqEWMcw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M3274GtWGFaUBKXR0/Kc9jR/Vxk9QMod9no1jxQ7klpy7ehylfD6T8PBS2H7HfLxCwx/4nWiYVZhT31moAIDu2QDPnumavO94Vm35AdfIEGiBiGTa0rANhEgzvgVyClMP5Iba+guqVtL1ODie7SAtlkMD4WeomAzfYJHW3iw40E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNFSH4knhz6L77W;
+	Tue,  8 Oct 2024 20:19:11 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6D17A140517;
+	Tue,  8 Oct 2024 20:23:29 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Oct
+ 2024 14:23:28 +0200
+Date: Tue, 8 Oct 2024 13:23:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
+	<thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Vasily Khoruzhick
+	<anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v3 4/6] thermal: qcom-spmi-adc-tm5: Simplify with scoped
+ for each OF child loop
+Message-ID: <20241008132327.00007777@Huawei.com>
+In-Reply-To: <20241008-b4-cleanup-h-of-node-put-thermal-v3-4-825122398f71@linaro.org>
+References: <20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org>
+	<20241008-b4-cleanup-h-of-node-put-thermal-v3-4-825122398f71@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Oct 08, 2024 at 08:10:45PM +0800, Gao Xiang wrote:
-> But the error message out of get_tree_bdev() is inflexible and
-> IMHO it's too coupled to `fc->source`.
+On Tue, 08 Oct 2024 11:00:04 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+
+> Use scoped for_each_available_child_of_node_scoped() when iterating over
+> device nodes to make code a bit simpler.
 > 
-> > Otherwise just passing a quiet flag of some form feels like a much
-> > saner interface.
-> 
-> I'm fine with this way, but that will be a treewide change, I
-> will send out a version with a flag later.
-
-I'd probably just add a get_tree_bdev_flags and pass 0 flags from
-get_tree_bdev.
-
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
