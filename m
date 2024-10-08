@@ -1,66 +1,56 @@
-Return-Path: <linux-kernel+bounces-354312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D74993BA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:20:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9AA993BA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744971C23F96
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B666B238A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D147EEB1;
-	Tue,  8 Oct 2024 00:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53348F6C;
+	Tue,  8 Oct 2024 00:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Upa9NYTG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIJaIsVJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A9EAD51;
-	Tue,  8 Oct 2024 00:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A03F6AA1;
+	Tue,  8 Oct 2024 00:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728346831; cv=none; b=teVeSS67rLDbOTMoAFLesNoej3lFlSIiy+ryWr58AtDWfbrYDkSW6Jmnn5MzsI71prmkyaw7zbY2gLA4I7H2kjQUN71SK1VfrI/svPb+gPFpcDkvK8UPSYNqXng41EMFAUNHi+VzDeMeOGLKeBAv9n1h2W9HtHbQYRxove/ETpE=
+	t=1728346884; cv=none; b=h0BKHwFa2j4K/I1q87xq2uQIhgbCHRchVdZGqNB3Dc1s275kXFjdqohKqAR8YjBM+Mu4gpZQlBgWGhZz+G+aEzTRnOn/OSuMYgpCwG6MP6b1ahYax2fSUVfCf1NgXzYKbxSBu3iZ9UfPTMsk8BdxZ6dH8ebd69zNvqcSlQu93po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728346831; c=relaxed/simple;
-	bh=/+6uaaMCh4sbJPAQbhHpA/CscaKM7TpXkjIak0yRLVM=;
+	s=arc-20240116; t=1728346884; c=relaxed/simple;
+	bh=KR2Ypbof7fqw9S7256Ff1zDPZlQAMxBLEB5g0hsgCZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ANpiZcFlmMiMVIh7FsykRtUXSPpsHgxnWa0oQlGNRMVdNv59e20zim5rYDWbFWgIhnm0WoaO/thfzAZ2kWHtrTiqYR4nPZ3mH/30z1Z06ZsmPvDUyYtMX0aRJb2n3mYN7C7XICV9FMfuGGAqecBvihDd58KxehddIhf7TZISjws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Upa9NYTG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509C2C4CEC6;
-	Tue,  8 Oct 2024 00:20:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=V99i9hDteo5FlSQhV/oXTH5M52CYOALkbUoXrPd/jv8pVPf/irtnDwxVQvBuVu085deG+cHeqfzVgG1jV/gZjDGUnfWbBTlHGwnLsvDDZWtqdBA/c5FR/lzcuIZTdi7beGmsvzATpD13aASFETjP7chUaZ5MCHeHraRgLJVCoqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIJaIsVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25CA7C4CEC6;
+	Tue,  8 Oct 2024 00:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728346831;
-	bh=/+6uaaMCh4sbJPAQbhHpA/CscaKM7TpXkjIak0yRLVM=;
+	s=k20201202; t=1728346883;
+	bh=KR2Ypbof7fqw9S7256Ff1zDPZlQAMxBLEB5g0hsgCZo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Upa9NYTGyJ/4HOqvJ+z6HZV4iVbewGaDD7R0rtxi+8+0YHO75QlapLO0hblRyH54r
-	 Okpwc3i4hN2fm2TTAMum4DWcA3PuxELXL4id91Pzdf4YJsZzHIjUUEB+9LlhojT8Ty
-	 pGySaM8AdRn14naMI97Tn0ZovOiyYQp1GagE9QMcHbaWoSqBSa6SoYKb0i4f5Zbdxp
-	 7HgOBehE6GDxIekWcBJp3b+Cwm+YSiuk8rN/6eKzV/d9o4LO0Uo3bT6RorAppQZr0c
-	 LKoOakFhsxPgKmA31UDLNyGce01uDRGwf3jdbvlLf4IgJESjf5WZE2UEKxthqjVGHK
-	 bB1zUXWGFN/Ng==
-Date: Mon, 7 Oct 2024 17:20:29 -0700
+	b=ZIJaIsVJ34+zdvuDnp7Dl5OPRS+eCx1i1ukMtkrah40cZotU6y8j/g+TEThMc+tCe
+	 b7pE/vOVrW586WGd/3bDUrjo/01jyylT1aW4pMy0B2EeUg37dk8/tvHkwm66Nvu931
+	 mpdoUBMIcEpWR4Aik/MWyafpQLMIGxUOzjS7t2AaMdPkhU3HYf8YOzo8wIxrvsCoCZ
+	 2llvApPIA+HH40GNRXRXcXrXy6NAg9bMjuHLfgDE+lQj02pxS8dit2uKmyi86WBQLu
+	 i5he+pxrUwEvMYEs0RbZF6VnhVEaEbORc1g1HM+3aPXa7shG3nhGEavMTewubOzxyd
+	 yv7fm8sWXMu/Q==
+Date: Mon, 7 Oct 2024 17:21:22 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Ignat Korchagin <ignat@cloudflare.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Marcel Holtmann
- <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, Luiz
- Augusto von Dentz <luiz.dentz@gmail.com>, Oliver Hartkopp
- <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, Alexander
- Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>, David Ahern
- <dsahern@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
- linux-wpan@vger.kernel.org, kernel-team@cloudflare.com, kuniyu@amazon.com,
- alibuda@linux.alibaba.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] net: explicitly clear the sk pointer, when
- pf->create fails
-Message-ID: <20241007172029.5d48ea32@kernel.org>
-In-Reply-To: <20241007213502.28183-2-ignat@cloudflare.com>
-References: <20241007213502.28183-1-ignat@cloudflare.com>
-	<20241007213502.28183-2-ignat@cloudflare.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
+ chunkeey@gmail.com
+Subject: Re: [PATCH net] net: ibm: emac: mal: add dcr_unmap to _remove
+Message-ID: <20241007172122.6624c1ec@kernel.org>
+In-Reply-To: <20241007203923.15544-1-rosenp@gmail.com>
+References: <20241007203923.15544-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,27 +60,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon,  7 Oct 2024 22:34:55 +0100 Ignat Korchagin wrote:
-> diff --git a/net/socket.c b/net/socket.c
-> index 601ad74930ef..042451f01c65 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -1574,8 +1574,13 @@ int __sock_create(struct net *net, int family, int type, int protocol,
->  	rcu_read_unlock();
->  
->  	err = pf->create(net, sock, protocol, kern);
-> -	if (err < 0)
-> +	if (err < 0) {
-> +		/* ->create should release the allocated sock->sk object on error
-> +		 * but it may leave the dangling pointer
-> +		 */
-> +		sock->sk = NULL;
->  		goto out_module_put;
-> +	}
+On Mon,  7 Oct 2024 13:39:23 -0700 Rosen Penev wrote:
+> Fixes: 1ff0fcfcb1a6 ("ibm_newemac: Fix new MAL feature handling")
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-This chunk is already in net, as part of the fix you posted earlier.
-Please resend the cleanup portion with the other patches for net-next
-on Friday (IOW after net -> net-next merge).
--- 
-pw-bot: cr
+I'll fix this one when applying but please make sure there is no empty
+lines between tags in the future.
 
