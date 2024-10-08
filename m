@@ -1,214 +1,156 @@
-Return-Path: <linux-kernel+bounces-355041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219B599465E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:17:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7090B994684
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4246A1C234E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947541C224EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79B21CEE90;
-	Tue,  8 Oct 2024 11:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0A71D278C;
+	Tue,  8 Oct 2024 11:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3/t/fAVH"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s6TpWhiI"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8082F18CC13
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45099199E92;
+	Tue,  8 Oct 2024 11:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728386220; cv=none; b=M0kqbUnTL0/Je62eVjjSFOSyweZ7nnyBOUemDBSvPrZ+eshphiuOBbRooIqfyYp54uGzT5I/AkRnigGu50AzF+Jp2Vcppyo8m2bC0Qk0BtOphRMbwfkAR1TSTr8ovNSOtyLuQ1NkhOjdOUT3a9UZ0O0OIKvJJLPqFxvgmPEDJxw=
+	t=1728386481; cv=none; b=AP+NgWD/YUQgSP6lqXLCTnf+L0wrXS9yKOPngfrjjxFzU549dBLDjLge4GBDNvfbByd1m4YnFXk1JgeS1YFQtSP0DMSUfssugZpUzAR5NkZw+s/bap1f5kLvHCCqLXu3FJVnAZk/oJUsHuRxttyPyBDvuaK2rvR7paVQn0wvrf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728386220; c=relaxed/simple;
-	bh=2ug4GQTLq46laZ4FLFYMnnf+0UJr2qh2sYtC965i3xE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C0iyWU4/RdKgSUFnJB9Gaha7SX1QBCD+urb0f9fD/3n11c2nzGjAcadWBFD5J3R2Ba5WnLoiFcHeS8WS9a+qmflduVZ6OoYIwRchGE8c1ymQnCPG+y84Q+y4jQy0EM0K3O5qS32lyo+SFbTLG3CK85zZuZoXhOI1WyWXBM715bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3/t/fAVH; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso273495ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728386217; x=1728991017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yfduNa9S+5CbmjKt4d003RrStTLV4Mm/ebDfA/iEhTQ=;
-        b=3/t/fAVHd+QpmRyPJ7AwtkTon/IqVbdjgaNxp7gb6g9+j66i6DQyYr3+tupjK9M2u8
-         0sl018CzjFS7yrNVRC5F30GwwjOE/aAJ710JSUhHx4QUqdk60AB1wJwTeS+Vb58YSqhW
-         NNVVbMlBuCXio5FO1Po93KfyAfs+nAGU9hXm7vXgtPXBzGGWIlXkCCYJIRmqO8uKOiBE
-         FPlYB+fWvh3wag6Wqp4wJMOobbFag+iV6QSrncYh+kn0VFkVO5BkOJb2JAO3LhHCyxbe
-         E9AtvmNaa/zpCdVLQsR5JtqRufudz6nn24Y3DK2Mbp1wK8fBNvjhMFRr2TiMiHEqiJcM
-         FeTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728386217; x=1728991017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yfduNa9S+5CbmjKt4d003RrStTLV4Mm/ebDfA/iEhTQ=;
-        b=RM8ew9FMCRIpJB22nyq1Q+RPySIfsBPMxx2N278SozTFd6TXhHM3dSCuNL0+z6mPns
-         3VnxjrdsP6y0UldvT12O3n1+rFXPHMp6hW7nj5YGkcMFGC7CwzPwY8/BUHK83gSCHukP
-         peor9XEBjXJRuOsp/ZhlvnwbrUemugWss2jKkst/qCxKvLUBh9BrVQ9t3GkHaQ/k8HfI
-         iT4bdeV/mv4szNlvmnu0yFPFRcVV5anV5mB51zDmRh2H81tpAGr52KCTr4WXo6apVFY0
-         Qiy9JpDIlwAisKsROokBvEiGuoYsQQpqczzB0kV7d4bm7b9M3W8c2DnPaUyV4SRKVBNT
-         RycA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhf5J+hZ4r7u96qKN8jKCzzTE7kKOs+F29Mkqf8taYVNqAlAdCyiAO7O9P6BkMT3eQyDp00H0R2zFaGs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMGmM8b2mdnjoYuXjsfdJUcNwjhN6LOjI97nQrPCCi9IcjNbMs
-	folEkgKntuf7kSnslio0pgggznFJuMK2agttr/mCf6pBA40qYjAORvqWhBMHW3MK4s0PnbwMIS4
-	Sa4rLK794PQXfjlIjexMD2etuDcrtOSuFmCMm
-X-Google-Smtp-Source: AGHT+IGy/rBOOYCIkTWtnFOjjrUEliy6p4WfFm8CYdLi4PiT7fvNmIDA0DNayplkeyTFUCK36E0b2jOdZXOZFF8FzLM=
-X-Received: by 2002:a05:6e02:1a86:b0:3a0:9e83:21ea with SMTP id
- e9e14a558f8ab-3a38ea105f7mr3031155ab.17.1728386212685; Tue, 08 Oct 2024
- 04:16:52 -0700 (PDT)
+	s=arc-20240116; t=1728386481; c=relaxed/simple;
+	bh=LykEdxSO49aaoH0KmMqunv4a7HuZQstj9yyl3nT1YBA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=R1x4X/L5A01iSDQia29YZrjVHfR1Pbqi3ru37ZNViRByzgELNtgyB0HTr7dg9XXBIyu7o3ELnafW0NjcWmzjN1m6UzDg9BLk0CpdROB/rdUIoixxGm3BnLh8OQXJ1APVo+JOKyNl/pBp7Vm863rZZr0be78GSjGxSW3VxU9lU8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s6TpWhiI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4989iRMb023105;
+	Tue, 8 Oct 2024 13:21:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=PrLR1FSoG364PmBEJPDnHR
+	HbRh23KLrRCGJoIZfeH28=; b=s6TpWhiI+L3zgNKWoxb+2+d2PnqAU0IO9ih1NU
+	QeLJ0HoGsVz7I5csdmcbqafj31Tyf4YGLVdVv2wZS7E1CpCeTnn0m+crP4f0OvLu
+	ZV2QNrBqvHHcaijCspTRBHtbOiQ9BYm39X+jagaYtptsDZMMtvnUl702UZz9DJXk
+	RYWvOxbDfA+LptUGr4JAHMrH9oHa2rJQSI5fLlbpo7/5QpIcv/b07oW3SYQ4hneL
+	V4ZYwL5vUOuqPagB5vVa0rnMB/YxyXdq06X/L55MEuw9vcKOn9KBK8/ZCXO+9VJa
+	++5LVFE8/jiq7SkEvCBF0JVyJ7/rHAygGjQgvPfMPmMaBcxw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 422xtq5pyt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 13:21:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D1AFF4004C;
+	Tue,  8 Oct 2024 13:19:59 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD109285187;
+	Tue,  8 Oct 2024 13:18:13 +0200 (CEST)
+Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 8 Oct
+ 2024 13:18:13 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+Subject: [PATCH 00/15] media: stm32: introduction of CSI / DCMIPP for
+ STM32MP25
+Date: Tue, 8 Oct 2024 13:18:02 +0200
+Message-ID: <20241008-csi_dcmipp_mp25-v1-0-e3fd0ed54b31@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007205236.11847-1-fw@strlen.de> <20241007181541.4bbe9b8580f6475023256515@linux-foundation.org>
- <CAJuCfpGZg8Pydy4rGUefOBgwJZ5C6_s3p913oFQJSVV+S9MQoA@mail.gmail.com> <ZwTb8tMVVqrpZIv2@pc636>
-In-Reply-To: <ZwTb8tMVVqrpZIv2@pc636>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 8 Oct 2024 04:16:39 -0700
-Message-ID: <CAJuCfpFKXYEaNJce2bUDR0EJNNk8KV_cUZfRALfmp=ejCW042A@mail.gmail.com>
-Subject: Re: [PATCH lib] lib: alloc_tag_module_unload must wait for pending
- kfree_rcu calls
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Florian Westphal <fw@strlen.de>, 
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Ben Greear <greearb@candelatech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOoUBWcC/x3MQQqAIBBA0avErBNUsqGuEiGhU81CE4UIpLsnL
+ d/i/wqFMlOBuauQ6ebCV2xQfQfu3OJBgn0zaKkHJSUKV9h6FzglG5I2AhGnUardoN+gVSnTzs9
+ /XNb3/QBfFgf9YQAAAA==
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Alain Volmat <alain.volmat@foss.st.com>,
+        <stable@vger.kernel.org>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Oct 8, 2024 at 12:15=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com>=
- wrote:
->
-> On Mon, Oct 07, 2024 at 06:49:32PM -0700, Suren Baghdasaryan wrote:
-> > On Mon, Oct 7, 2024 at 6:15=E2=80=AFPM Andrew Morton <akpm@linux-founda=
-tion.org> wrote:
-> > >
-> > > On Mon,  7 Oct 2024 22:52:24 +0200 Florian Westphal <fw@strlen.de> wr=
-ote:
-> > >
-> > > > Ben Greear reports following splat:
-> > > >  ------------[ cut here ]------------
-> > > >  net/netfilter/nf_nat_core.c:1114 module nf_nat func:nf_nat_registe=
-r_fn has 256 allocated at module unload
-> > > >  WARNING: CPU: 1 PID: 10421 at lib/alloc_tag.c:168 alloc_tag_module=
-_unload+0x22b/0x3f0
-> > > >  Modules linked in: nf_nat(-) btrfs ufs qnx4 hfsplus hfs minix vfat=
- msdos fat
-> > > > ...
-> > > >  Hardware name: Default string Default string/SKYBAY, BIOS 5.12 08/=
-04/2020
-> > > >  RIP: 0010:alloc_tag_module_unload+0x22b/0x3f0
-> > > >   codetag_unload_module+0x19b/0x2a0
-> > > >   ? codetag_load_module+0x80/0x80
-> > > >
-> > > > nf_nat module exit calls kfree_rcu on those addresses, but the free
-> > > > operation is likely still pending by the time alloc_tag checks for =
-leaks.
-> > > >
-> > > > Wait for outstanding kfree_rcu operations to complete before checki=
-ng
-> > > > resolves this warning.
-> > > >
-> > > > Reproducer:
-> > > > unshare -n iptables-nft -t nat -A PREROUTING -p tcp
-> > > > grep nf_nat /proc/allocinfo # will list 4 allocations
-> > > > rmmod nft_chain_nat
-> > > > rmmod nf_nat                # will WARN.
-> > > >
-> > > > ...
-> > > >
-> > > > --- a/lib/codetag.c
-> > > > +++ b/lib/codetag.c
-> > > > @@ -228,6 +228,8 @@ bool codetag_unload_module(struct module *mod)
-> > > >       if (!mod)
-> > > >               return true;
-> > > >
-> > > > +     kvfree_rcu_barrier();
-> > > > +
-> > > >       mutex_lock(&codetag_lock);
-> > > >       list_for_each_entry(cttype, &codetag_types, link) {
-> > > >               struct codetag_module *found =3D NULL;
-> > >
-> > > It's always hard to determine why a thing like this is present, so a
-> > > comment is helpful:
-> > >
-> > > --- a/lib/codetag.c~lib-alloc_tag_module_unload-must-wait-for-pending=
--kfree_rcu-calls-fix
-> > > +++ a/lib/codetag.c
-> > > @@ -228,6 +228,7 @@ bool codetag_unload_module(struct module
-> > >         if (!mod)
-> > >                 return true;
-> > >
-> > > +       /* await any module's kfree_rcu() operations to complete */
-> > >         kvfree_rcu_barrier();
-> > >
-> > >         mutex_lock(&codetag_lock);
-> > > _
-> > >
-> > > But I do wonder whether this is in the correct place.
-> > >
-> > > Waiting for a module's ->exit() function's kfree_rcu()s to complete
-> > > should properly be done by the core module handling code?
-> >
-> > I don't think core module code cares about kfree_rcu()s being complete
-> > before the module is unloaded.
-> > Allocation tagging OTOH cares because it is about to destroy tags
-> > which will be accessed when kfree() actually happens, therefore a
-> > strict ordering is important.
-> >
-> > >
-> > > free_module() does a full-on synchronize_rcu() prior to freeing the
-> > > module memory itself and I think codetag_unload_module() could be
-> > > called after that?
-> >
-> > I think we could move codetag_unload_module() after synchronize_rcu()
-> > inside free_module() but according to the reply in
-> > https://lore.kernel.org/all/20241007112904.GA27104@breakpoint.cc/
-> > synchronize_rcu() does not help. I'm not quite sure why...
-> >
-> It is because, synchronize_rcu() is used for a bit different things,
-> i.e. it is about a GP completion. Offloading objects can span several
-> GPs.
+This series introduces the camera pipeline support for the
+STM32MP25 SOC.  The STM32MP25 has 3 pipelines, fed from a
+single camera input which can be either parallel or csi.
 
-Ah, thanks! Now that I looked into the patch that recently added
-kvfree_rcu_barrier() I understand that a bit better.
+This series adds the basic support for the 1st pipe (dump)
+which, in term of features is same as the one featured on
+the STM32MP13 SOC.  It focuses on introduction of the
+CSI input stage for the DCMIPP, and the CSI specific new
+control code for the DCMIPP.
+One of the subdev of the DCMIPP, dcmipp_parallel is now
+renamed as dcmipp_input since it allows to not only control
+the parallel but also the csi interface.
 
->
-> > Note that once I'm done upstreaming
-> > https://lore.kernel.org/all/20240902044128.664075-3-surenb@google.com/,
-> > this change will not be needed and I'm planning to remove this call,
-> > however this change is useful for backporting. It should be sent to
-> > stable@vger.kernel.org # v6.10+
-> >
-> The kvfree_rcu_barrier() has been added into v6.12:
->
-> <snip>
-> urezki@pc638:~/data/raid0/coding/linux.git$ git tag --contains 2b55d6a42d=
-14c8675e38d6d9adca3014fdf01951
-> next-20240912
-> next-20240919
-> next-20240920
-> next-20241002
-> v6.12-rc1
-> urezki@pc638:~/data/raid0/coding/linux.git$
-> <snip>
->
-> For 6.10+, it implies that the mentioned commit should be backported also=
-.
+Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+---
+Alain Volmat (15):
+      media: stm32: dcmipp: correct dma_set_mask_and_coherent mask value
+      dt-bindings: media: addition of stm32 csi driver description
+      media: stm32: csi: addition of the STM32 CSI driver
+      media: stm32: dcmipp: use v4l2_subdev_is_streaming
+      media: stm32: dcmipp: replace s_stream with enable/disable_streams
+      media: stm32: dcmipp: rename dcmipp_parallel into dcmipp_input
+      media: stm32: dcmipp: add support for csi input into dcmipp-input
+      media: stm32: dcmipp: add bayer 10~14 bits formats
+      media: stm32: dcmipp: add 1X16 RGB / YUV formats support
+      media: stm32: dcmipp: avoid duplicated format on enum in bytecap
+      media: stm32: dcmipp: fill media ctl hw_revision field
+      dt-bindings: media: addition of stm32mp25 compatible of DCMIPP
+      media: stm32: dcmipp: add core support for the stm32mp25
+      arm64: dts: st: add csi & dcmipp node in stm32mp25
+      arm64: dts: st: enable imx335/csi/dcmipp pipeline on stm32mp257f-ev1
 
-I see. I guess for pre-6.12 we would use rcu_barrier() instead of
-kvfree_rcu_barrier()?
+ .../devicetree/bindings/media/st,stm32-csi.yaml    |  129 +++
+ .../devicetree/bindings/media/st,stm32-dcmipp.yaml |   53 +-
+ MAINTAINERS                                        |    8 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |   23 +
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |   87 ++
+ drivers/media/platform/st/stm32/Kconfig            |   14 +
+ drivers/media/platform/st/stm32/Makefile           |    1 +
+ drivers/media/platform/st/stm32/stm32-csi.c        | 1150 ++++++++++++++++++++
+ .../media/platform/st/stm32/stm32-dcmipp/Makefile  |    2 +-
+ .../st/stm32/stm32-dcmipp/dcmipp-bytecap.c         |  128 ++-
+ .../st/stm32/stm32-dcmipp/dcmipp-byteproc.c        |  119 +-
+ .../platform/st/stm32/stm32-dcmipp/dcmipp-common.h |    4 +-
+ .../platform/st/stm32/stm32-dcmipp/dcmipp-core.c   |  116 +-
+ .../platform/st/stm32/stm32-dcmipp/dcmipp-input.c  |  540 +++++++++
+ .../st/stm32/stm32-dcmipp/dcmipp-parallel.c        |  440 --------
+ 15 files changed, 2238 insertions(+), 576 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241007-csi_dcmipp_mp25-7779601f57da
 
->
-> --
-> Uladzislau Rezki
+Best regards,
+-- 
+Alain Volmat <alain.volmat@foss.st.com>
+
 
