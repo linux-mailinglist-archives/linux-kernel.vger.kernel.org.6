@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-354960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2799B99453B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:20:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A61699453D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4108928402B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384721C23F77
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AB119306C;
-	Tue,  8 Oct 2024 10:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EFE19340A;
+	Tue,  8 Oct 2024 10:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="2fYTKnU4"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q31b5xb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895C816EB76;
-	Tue,  8 Oct 2024 10:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E87C16EB76;
+	Tue,  8 Oct 2024 10:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728382814; cv=none; b=rpH8L1ZFSpiV/WNngrH94qdTQJZHX2m/Va4/zCucLN4CXj775T7X8uAbVLcwkk7VKucXVBFl0ZVBLyBhLPXP/m6/vSNrC0+x9R+Z2ODRS4je5bVtfCAJ9LvgYoJVMqIv+JACFZYgVG8xBTtyJzIoavBnMFdNSNKNeLWFEpZGf7w=
+	t=1728382831; cv=none; b=QwtITHUrDrnL9vhfHgqITB6OGML0u7Md3Yffkaf1AWmosNdaQsledIH66hGAEZY/hDLrMjgYZU3TCopR1PGlGx0lTbVcDX5Pjy2YuCQB48DHWJZZYOHCz2H7giztrawUcZXUeKKsZKhEJn/mF8wKZvNOLzX/pHfszKRp7dVrzEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728382814; c=relaxed/simple;
-	bh=6T/BQtvdoD0QZSehx69s8EwGl3evviJoWR/EADMMNdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RwAM0uwlLpf3hz09YtUYSTBvRYQOCzGPpdiZhlig+rho2RWZZaJVFGAz2wZqzwiou+ZYMie0lc5KnWM6Da0sGcT3iNOjYRYGYamSEda0PrCYyRBQsuNtNjRCYQ6u17IWaO/LlPKWCmNB10jvfAd65EzribtU5pajDt/jDy04A6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=2fYTKnU4; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1728382790; x=1728987590; i=christian@heusel.eu;
-	bh=E1nT/M9+SosslnD2/3K4r7sOqDzUYaV/IpDRu1a1zJ4=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=2fYTKnU4r0NW2QJoNPmb9CVMp4ia5coeIeGFCREwPqRfOQGWInb5avg8hf5mfir6
-	 UbAuusyGcKGVSi1LFZYEmuLDIRk9dJv2+aOXBM5UUv3HiifRQ2vcUZjdypwizX01H
-	 zgvSkfJHXr9tW2tqr3j2cehqPCzbDOES8YxSHI5qBxkbglXI3aJ2GW+hka4dhbPt+
-	 SWmcdeUjY7WGQ+oLX3nthRP7lEzhee64fjQ/VgzlcqgCRWKkadjIeSizmNA+yqLlz
-	 2vMQLVxkdKMBiZtp/U1xFkA1B8RPBay1KqCYvdMs5umICiSsSB4jlj3HQtn86e2UU
-	 U8JLb2xltXGSGJ8QsA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue109
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1MWAay-1tVn8p3Iss-00WJmH; Tue, 08
- Oct 2024 12:19:49 +0200
-Date: Tue, 8 Oct 2024 12:19:48 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Tatsunosuke Tobita <tatsunosuke.tobita@wacom.com>, 
-	Ping Cheng <ping.cheng@wacom.com>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Daniel Jutz <daniel@djutz.com>, Jason Gerecke <jason.gerecke@wacom.com>, 
-	linux-input@vger.kernel.org
-Subject: [REGRESSION][BISECTED] YOGA 7 pencil only show up as eraser since
- 9c2913b962da
-Message-ID: <3cd82004-c5b8-4f2a-9a3b-d88d855c65e4@heusel.eu>
+	s=arc-20240116; t=1728382831; c=relaxed/simple;
+	bh=kLi+2f/IPLjUmv/ri1Lmwen9Td/rsABcslFVqFuImKo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pxa9qxyKHXgD3jZ7JdL8Sn+sNGaTBr4eiFZ0vW4NThW4QR8DQg8oILyvOXY1yw6RLaEcchSxYIEcHLXfR2tbbL2BWtya+OS2in0ucCh0eWqP2nEYIY17WzlBZqHrQf9NLKYBVTJ1bruFdqVFfg/9u+F0K+G3rfblgFMp4XPTHGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q31b5xb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D62CEC4CEC7;
+	Tue,  8 Oct 2024 10:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728382830;
+	bh=kLi+2f/IPLjUmv/ri1Lmwen9Td/rsABcslFVqFuImKo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Q31b5xb39mG4jassUDPkVLpwImy1wum4qzSx4laNP9oiB7DL99KMBqYB9LJazRtkg
+	 nSIZuFSX+vA5pZhimXb/E+K+ARi8glIn3wMVm55EtQV4QBKM4+ArKPk09IX0dai6ey
+	 fte2qx586YcdBeh3trb3NmCRmXEgyHHILpJ4mgja5KT3Tm8ZnCLJrER2KqqNDUit0W
+	 /vV5YN8nqeVSWXE9H/TRurfaU0Lgk2vYo6qZR/kcCaDOmjk0J7E+7I/nMq/DzDW2J2
+	 TR+gBri7ZUyKYhNOzoGXGTiRPMHRYK6X8Xjc0iityyfB+xayKawhPuhzpYNXRl350r
+	 KCujo4yKGU19Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343163810938;
+	Tue,  8 Oct 2024 10:20:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pezzs6s5iephxgn7"
-Content-Disposition: inline
-X-Provags-ID: V03:K1:b3hqhQRy5ZkTstJitpMmSfCYz+qxojOBwDkvRAWAnGXEvQ12kSw
- ijKzYyPhK46RiISiax/xPe/bIeCVRomXjMVRNr810E6mALHp6MEfgJk6NZcha9R4BU96XMl
- Y0pJu1hdgyTVsp3Co2uf/VxjoPvlFKwFepO0kjZ7Hmt7QU1B91mn6SQ5gEChKccEj6W9lTa
- DcbULbxtkvQhnYTnFdyJg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nQwMtyC6WDQ=;5J65yCmzj9clO7JyWBuyByhdRBw
- OAhP37FKpprc4Bvn2yZk8K5ORTsOhiF+g1ar2Z+FznC89KKtPbABZnjcH0a39SVNUgMTtvJ1d
- 5m3TG9dXs6EsTuXPxYFe+Zr2VSxPOHQ/ViXHrgk0WeYUQP4kwCvCrPyEKVDiKxgfN6n2iyCpR
- D1ibJ+wKUUFT9H89fmU2NlMvCTL5rR4XBJo0VKGq8gTEoTyKRN89JekgwjKEuCJCWebZ9awPz
- sEd0oDxSZzvzFHI85C8Nd3GgJuw2J4X3FTckgKM8uvZnZii7zS5+FX21czS+1FQ87s5Z6FGiU
- B0rLVlz38848g0Rp4U0W8QM32HuCib/UMfT0C8sR4f6OqxQJS661kLXymSLtH7ZuuXXMaGMFs
- Z3m4YPXgJVaWptznbS623YO+DVxv15JpzJr71NgiO1JMTScZRt1hrJun77Hzo9WLeDvFV8JV0
- J3PLN4vbcxdoz8+oNXXIylxzPo0+T344qsv9mg5WaNCj1IKBECy7l03b+lVaQEP2QHdPx6fg/
- ZnxhsfmBQcTEz/Igv5wKvSnJiAHGF8waB1/Rx1k9oHDiaxU//4BIDejPW9QToR4ZapeXDNV6h
- nxXbwWQWasZEYh99u/5hodAjk6LVBeQOCglbYZOwmGuaewYr1iyuPDK75FlTTDxBT4vFjAiGK
- rO19LUXCxlL3qQ/6IbGRAnRq3g/x1BkM7VJMHSTac8cYLF6uTyLbo4/XMD6vFbJRins3WJ6w/
- FmPnAUSy13QRbNNZhbhTit5mC/j+UW8qw==
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 00/15] net: sparx5: prepare for lan969x switch
+ driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172838283503.481683.11330764068159767637.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 10:20:35 +0000
+References: <20241004-b4-sparx5-lan969x-switch-driver-v2-0-d3290f581663@microchip.com>
+In-Reply-To: <20241004-b4-sparx5-lan969x-switch-driver-v2-0-d3290f581663@microchip.com>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
+ horatiu.vultur@microchip.com, jensemil.schulzostergaard@microchip.com,
+ UNGLinuxDriver@microchip.com, richardcochran@gmail.com, horms@kernel.org,
+ justinstitt@google.com, gal@nvidia.com, aakash.r.menon@gmail.com,
+ jacob.e.keller@intel.com, ast@fiberby.net, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 4 Oct 2024 15:19:26 +0200 you wrote:
+> == Description:
+> 
+> This series is the first of a multi-part series, that prepares and adds
+> support for the new lan969x switch driver.
+> 
+> The upstreaming efforts is split into multiple series (might change a
+> bit as we go along):
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,01/15] net: sparx5: add support for private match data
+    https://git.kernel.org/netdev/net-next/c/1d00c0804852
+  - [net-next,v2,02/15] net: sparx5: add indirection layer to register macros
+    https://git.kernel.org/netdev/net-next/c/5ba3f8460393
+  - [net-next,v2,03/15] net: sparx5: modify SPX5_PORTS_ALL macro
+    https://git.kernel.org/netdev/net-next/c/7a03df01457b
+  - [net-next,v2,04/15] net: sparx5: add *sparx5 argument to a few functions
+    https://git.kernel.org/netdev/net-next/c/f68f71f33f62
+  - [net-next,v2,05/15] net: sparx5: add constants to match data
+    https://git.kernel.org/netdev/net-next/c/d5a1eb484594
+  - [net-next,v2,06/15] net: sparx5: use SPX5_CONST for constants which already have a symbol
+    https://git.kernel.org/netdev/net-next/c/3f9e46347a46
+  - [net-next,v2,07/15] net: sparx5: use SPX5_CONST for constants which do not have a symbol
+    https://git.kernel.org/netdev/net-next/c/559fb423d5f2
+  - [net-next,v2,08/15] net: sparx5: add ops to match data
+    https://git.kernel.org/netdev/net-next/c/048c96907ca1
+  - [net-next,v2,09/15] net: sparx5: ops out chip port to device index/bit functions
+    https://git.kernel.org/netdev/net-next/c/20f8bc8755a7
+  - [net-next,v2,10/15] net: sparx5: ops out functions for getting certain array values
+    https://git.kernel.org/netdev/net-next/c/beb36b507170
+  - [net-next,v2,11/15] net: sparx5: ops out function for setting the port mux
+    https://git.kernel.org/netdev/net-next/c/b7e09ddb673f
+  - [net-next,v2,12/15] net: sparx5: ops out PTP IRQ handler
+    https://git.kernel.org/netdev/net-next/c/8c274d69093f
+  - [net-next,v2,13/15] net: sparx5: ops out function for DSM calendar calculation
+    https://git.kernel.org/netdev/net-next/c/a0dd8906824b
+  - [net-next,v2,14/15] net: sparx5: add is_sparx5 macro and use it throughout
+    https://git.kernel.org/netdev/net-next/c/4b67bcb9094e
+  - [net-next,v2,15/15] net: sparx5: redefine internal ports and PGID's as offsets
+    https://git.kernel.org/netdev/net-next/c/8cc4102363c7
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---pezzs6s5iephxgn7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: [REGRESSION][BISECTED] YOGA 7 pencil only show up as eraser since
- 9c2913b962da
-MIME-Version: 1.0
-
-Hello everyone,
-
-Daniel (in CC) as well as the Arch forum user "ls" report a regression
-with the pen of their Yoga 7 2-in-1 14AHP9 Laptop that leads to it being
-always recognized as an eraser:
-
-    $ libinput debug-tablet
-    Tool: eraser serial 0x80e51447, id 0x219
-
-    $ evtest /dev/input/event6
-    type 1 (EV_KEY), code 321 (BTN_TOOL_RUBBER), value 0
-
-While the expected output with a previous kernel version (6.10.y stable
-series) is the following:
-
-    $ libinput debug-tablet
-    Tool: pen serial 0x80e51447, id 0x219
-
-    $ evtest /dev/input/event6
-    type 1 (EV_KEY), code 320 (BTN_TOOL_PEN), value 0
-
-We have bisected the issue together in the mainline tree and found that
-the following commit has introduced this behaviour:
-
-    9c2913b962da ("HID: wacom: more appropriate tool type categorization")
-
-If any more debug information is needed or there are preliminary patches
-to test we're happy to help!
-If there is a fix found for this issue it would be nice if you could
-credit us as follows:
-
-Reported-by: Daniel Jutz <daniel@djutz.com>
-Bisected-by: Christian Heusel <christian@heusel.eu>
-
-Cheers,
-Chris
-
----
-
-#regzbot link: https://bbs.archlinux.org/viewtopic.php?id=300005
-#regzbot introduced: 9c2913b962da
-#regzbot title: HID/wacom: Yoga 7 Pen always detected as eraser
-
---pezzs6s5iephxgn7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmcFB0QACgkQwEfU8yi1
-JYWICg//VvlKtK713rPJqCp8jV6R249+SgMjqXEhSGTyF9iIi+abrCpRTc10ATRs
-jb1EOgw9DUQKc+7pV2U1+2lXHd0Sx0p3DJnDH2izWcYSIci8MRvrm+OFofqkRAxC
-ZkLCfqIR4U4/df44c+LIys4J0LD6VhSbhhzkz1oLp3smkZFGZQh1Ojf/uoyhAmwR
-o5eFdLL2Q7B5IhRUy38bYyb8zep4KsgK1M4MfwftHG7kfMYCRKyIfH8OsFtdeDkg
-NP1r/OjJOY+n/0vKkEfoymKNWWINjEO+JJblEgjtn+RuOd39iYgutyg48kDBQ8ed
-e9FHIF90Yc+WIcFjKVJTTjpu/n7tlC9X8CokQOUSsCw1zERRqQM9blFwtRTJo5Va
-KmO3L+DzTkz0fogQcJR6AqNU79djE43b/Y6NaSzwZZU4NePpWYer9cnwkRr/P0Ze
-WuhQvaP1RxC/VO0JQgaB3oi3+5ZuJ6vpEPOcy62sefbjWCYlgG12prHM77v1z+LJ
-UUd8nbY2Y0/1H3EKoj/JTXz9P+wGOOmtc24tK7EQ7Z/BvdwBDn41RV+OpNrIF4nq
-12kXQjvjs4xCE4gKQXoIbvV3mt86x2qcXDREIGR3ShQn9Ma8VCwFF5a98xqntaAO
-r86Ewo//2HUdOn9QuX87zaQQFECam30QJ1SOI7oswnuvaG13HEg=
-=NQM7
------END PGP SIGNATURE-----
-
---pezzs6s5iephxgn7--
 
