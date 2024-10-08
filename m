@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-354837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02670994332
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:01:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F83B994334
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2412428D9BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483BF1F22DE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0921DF27A;
-	Tue,  8 Oct 2024 08:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96181DF96E;
+	Tue,  8 Oct 2024 08:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2pun7Sf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JtcB8O/l"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597A213AA45;
-	Tue,  8 Oct 2024 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D178C18BC03
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377707; cv=none; b=FAjrrVeEjQCdFlQpwd9MGra8s6xMZ/tYVVeb38TMEnn2O8dwEyTcho1HEFKwJoRzRj6kswbqr2JfpWF5iuCDNt7sLZs09RXUZTXTog/5k5S5SVwg2WOLr8wlAI4Ugwb8y3eXvYRNsj9gBnWQy1ABYUvx6XbuQRKQ7epsvAf8E68=
+	t=1728377736; cv=none; b=mNLAOU40Xag2+UHmzXVM9w7DZNaoSHL8obJvA7eouZyb6TGtcCVD6j5lTzxo/6FS7Oymnm9Q0ow++eRS3VyKID61LRgRJy5Tb/AmWjpd4yZNpAkxzeH1kHw/Jb2utOfZnGoom/pf+8spOs8vxDtkuz+SB7A1rqQZbYNQTX6nq6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377707; c=relaxed/simple;
-	bh=dzsCD0bOgufP2zzatT6Djh1eOmuug+qqhpBIirk2fkI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YROpnApXez2FUa05CNEClwl6I+isFQwskkGCxJIfol7XJ34qwEx0BIV4CVKweoBwbcS+DKDyeL6d3K9d+wAyXRyhR3GfLrVth9HkG1U9EHhgqJMlE2QjRuuEFbBFYNx/APYxj3t1yYSfdDVaYW4+IAtcwyw2A2oNiqHvCBU/qr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2pun7Sf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D05C4CEC7;
-	Tue,  8 Oct 2024 08:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728377707;
-	bh=dzsCD0bOgufP2zzatT6Djh1eOmuug+qqhpBIirk2fkI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b2pun7Sfw15Ull7ICokZ0OX86X5Q/VjK9Nqp5eEmmQqGrDoGFC5/r7zTb+gYZDiRZ
-	 lEdPXvfAseOteH8yCIdg39lij/ALnjGz1EYaB0QJa8f4qDe7t9eHLmt30LdTsUqU/B
-	 WbWpiiYHespUcN21yFrnFEgfkMmHdjsZE6JYHIV3edFJrV4HjdqVpdBXMUM6bCKwdy
-	 pZh2WVxmwW8plf+5lo3LvVpuxpUmxwjQc0ZRHyYRfrfkEbiClkhnQnqSId/FG43aJl
-	 EGKq1NwGrYu4qiHd+VY7ZB1JmDCTH7YGNg2zL1o36+sZ1OILfb5DCJqWSUdhwYgtqR
-	 6qNLTX6qBZgXA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sy5zk-001IA4-J4;
-	Tue, 08 Oct 2024 09:55:04 +0100
-Date: Tue, 08 Oct 2024 09:55:04 +0100
-Message-ID: <86v7y355zr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zheng Zengkai <zhengzengkai@huawei.com>
-Cc: <lpieralisi@kernel.org>,
-	<guohanjun@huawei.com>,
-	<sudeep.holla@arm.com>,
-	<mark.rutland@arm.com>,
-	<rafael@kernel.org>,
-	<lenb@kernel.org>,
-	<daniel.lezcano@linaro.org>,
-	<tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
-In-Reply-To: <20241008082429.33646-1-zhengzengkai@huawei.com>
-References: <20241008082429.33646-1-zhengzengkai@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1728377736; c=relaxed/simple;
+	bh=dmkMffEeGWhREFpipHghIfPsN7DWC8TeziPMMD8P7Tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q3aPqkRiK+FiWDBxrec6vqoQQmSdvmyP6MHLm5YawhYEM6UtddYA4AJtejkq6lXQ0iKgi4E0K5qp9GEdqdyrsewXlKt8/1f5+lC2fknaQz/01FWNnhr8/A71/3To/9DiHZL9eFUHkJWjtYaCnvtj9N6rSJGG2sPHae74uz2aaHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JtcB8O/l; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 56AF2FF80A;
+	Tue,  8 Oct 2024 08:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728377725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X2J2kZz9XVQBtjS6G6EvCariDJ3hTXnxYgwv1j+Fa0w=;
+	b=JtcB8O/llg/5QP86K1t+19Ewr2z92DZa5seey/ztVjdg2NouCwZwjHasybz7L6F5piBgTe
+	16Gjp173ZX06TfRVBifaOQ8I10L+pUjs4bO3r4DMuZ+o9ICSQkI+dsYCHV8+EWj0gItxBp
+	MbXwj2DUdQn3FXTMulXteL6lGcNpeblGkKTD8u8yR4Jz1LMst/1SPYq+aePDnLBfQu/O3l
+	oKre/abPfEt87jQkj9KP3iV1N5otY9242mOHoPyzqxOrgPe8w9UqM5suhgnZc5hxae+zPs
+	HU0Q0t22JXXA6xfPhK2SX6zL8RnitH1mA6eoybSGGa8vU8bXaj52JuDjbzpeHw==
+Date: Tue, 8 Oct 2024 10:55:23 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
+ leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH 1/2] mtd: spi-nand: Add fixups for read retry
+Message-ID: <20241008105523.1647f2ca@xps-13>
+In-Reply-To: <CAAyq3SaZKMqJrv7caVwO0+u+nk8JWZ8qTRHdUqQOfQhx9gBF7Q@mail.gmail.com>
+References: <20240905055333.2363358-1-linchengming884@gmail.com>
+	<20240905055333.2363358-2-linchengming884@gmail.com>
+	<20241001114039.67bab21e@xps-13>
+	<CAAyq3SbP4kSW47ZaT7V9ZzeHauj_EwfU5GPipZjNK6j69qm7Vw@mail.gmail.com>
+	<20241007103331.55f37dcb@xps-13>
+	<CAAyq3SaZKMqJrv7caVwO0+u+nk8JWZ8qTRHdUqQOfQhx9gBF7Q@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, 08 Oct 2024 09:24:29 +0100,
-Zheng Zengkai <zhengzengkai@huawei.com> wrote:
-> 
-> According to GTDT Table Structure of ACPI specification, the result of
-> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
-> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
+Hi,
 
-There is no such language in the spec. It simply says "Offset to the
-Platform Timer Structure[] array from the start of this table".
+linchengming884@gmail.com wrote on Tue, 8 Oct 2024 14:25:25 +0800:
 
-> in function acpi_gtdt_init(), so the condition of the "invalid timer
-> data" check will never be true, remove the EINVAL error check branch
-> and change to void return type for acpi_gtdt_init() to simplify the
-> function implementation and error handling by callers.
+> Hi Miquel,
+>=20
+> Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=
+=887=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:33=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> >
+> > Hi Cheng Ming,
+> > =20
+> > > > > @@ -325,7 +373,8 @@ static const struct spinand_info macronix_spi=
+nand_table[] =3D {
+> > > > >                                             &update_cache_variant=
+s),
+> > > > >                    SPINAND_HAS_QE_BIT,
+> > > > >                    SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+> > > > > -                                  mx35lf1ge4ab_ecc_get_status)),
+> > > > > +                                  mx35lf1ge4ab_ecc_get_status),
+> > > > > +                  SPINAND_FIXUPS(&read_retry_fixups)),
+> > > > >       SPINAND_INFO("MX35UF1GE4AC",
+> > > > >                    SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY,=
+ 0x92, 0x01),
+> > > > >                    NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1=
+), =20
+> > > >
+> > > > I expect a patch targeting the core first, and then the changes in =
+the
+> > > > Macronix driver. =20
+> > >
+> > > Got it, so do you prefer that we switch to using flags instead? =20
+> >
+> > Not necessarily, did I?
+> >
+> > ...
+> > =20
+>=20
+> Using a flag instead of fixups allows this patch to target the core first,
+> and reduces changes in the Macronix driver.
 
-And ACPI tables are well known to be always correct, right?
+Propose what ever you think is best. You can also look at how it is
+done in raw NAND. But always include the core changes first, please.
+It is not related to how you implement it.
 
-> 
-> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
-> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
-> not be called with parameter platform_timer_count set to NULL and we
-> can explicitly initialize the integer variable which is used for storing
-> the number of platform timers by caller to zero, so there is no need to
-> do null pointer check for platform_timer_count in acpi_gtdt_init(),
-> remove it to make code a bit more concise.
-> 
-> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
-> ---
-> Changes in v2:
-> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
-> 
-> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
-> ---
->  drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
->  drivers/clocksource/arm_arch_timer.c |  6 ++----
->  include/linux/acpi.h                 |  2 +-
->  3 files changed, 11 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> index c0e77c1c8e09..7fe27c0edde7 100644
-> --- a/drivers/acpi/arm64/gtdt.c
-> +++ b/drivers/acpi/arm64/gtdt.c
-> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
->   * @table:			The pointer to GTDT table.
->   * @platform_timer_count:	It points to a integer variable which is used
->   *				for storing the number of platform timers.
-> - *				This pointer could be NULL, if the caller
-> - *				doesn't need this info.
-> - *
-> - * Return: 0 if success, -EINVAL if error.
->   */
-> -int __init acpi_gtdt_init(struct acpi_table_header *table,
-> +void __init acpi_gtdt_init(struct acpi_table_header *table,
->  			  int *platform_timer_count)
->  {
-> -	void *platform_timer;
->  	struct acpi_table_gtdt *gtdt;
->  
->  	gtdt = container_of(table, struct acpi_table_gtdt, header);
->  	acpi_gtdt_desc.gtdt = gtdt;
->  	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
->  	acpi_gtdt_desc.platform_timer = NULL;
-> -	if (platform_timer_count)
-> -		*platform_timer_count = 0;
->  
->  	if (table->revision < 2) {
->  		pr_warn("Revision:%d doesn't support Platform Timers.\n",
->  			table->revision);
-> -		return 0;
-> +		return;
->  	}
->  
->  	if (!gtdt->platform_timer_count) {
->  		pr_debug("No Platform Timer.\n");
-> -		return 0;
-> +		return;
->  	}
->  
-> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> -		pr_err(FW_BUG "invalid timer data.\n");
-> -		return -EINVAL;
-> -	}
-> -	acpi_gtdt_desc.platform_timer = platform_timer;
-> -	if (platform_timer_count)
-> -		*platform_timer_count = gtdt->platform_timer_count;
-> -
-> -	return 0;
-> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+>=20
+> > > > >       const struct spinand_manufacturer *manufacturer;
+> > > > >       void *priv;
+> > > > > +     int read_retries; =20
+> > > >
+> > > > Any reason to keep this variable signed? =20
+> > >
+> > > No, we can simply change from int to u8. =20
+> >
+> > Just unsigned int is fine.
+> > =20
+>=20
+> Sure, thanks!
+>=20
+> > Thanks,
+> > Miqu=C3=A8l =20
+>=20
+> Thanks,
+> Cheng Ming Lin
 
-And now you are trusting something that potentially points to some
-unexpected location, blindly using it. It is bad enough that the
-current checks are pretty poor (no check against the end of the
-table for the first timer entry), but you are making it worse.
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks,
+Miqu=C3=A8l
 
