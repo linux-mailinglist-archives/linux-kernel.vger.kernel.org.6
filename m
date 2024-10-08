@@ -1,115 +1,219 @@
-Return-Path: <linux-kernel+bounces-354305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C05993B8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:03:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4CB993B83
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBA01F230BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:03:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DE41F2392C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6580C6AA1;
-	Tue,  8 Oct 2024 00:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1EF192D9E;
+	Tue,  8 Oct 2024 00:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="AJaihXU3"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NwbIDl6k"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFABD382
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 00:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3EA188CBE;
+	Tue,  8 Oct 2024 00:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345810; cv=none; b=LoWEqI7+p7DPVy5AghGqIfuz06Il/XaGFNOGtwN99O2RsXw5gHu7T7X4y6ZyVVrj6NL8w6cgHTabjgkv/S1985qd9d+u25TCkGDu6jh1tv0h4d57sZ+Teua0wcGpr0SZPeI6Xbu2yE84DE/2B8BLdL6Ub+QR/8BvGY6aGPIOkJ8=
+	t=1728345621; cv=none; b=HGlEhcz8MVz/H1dHZzFCt90Dj4IIOMqk/Iz2vJgbcxQqHNuKU72uQskYJQnq0Pu2+FjaMAufGg2b8KtSyfSuRxW/7ge+lXRUPaEmSStPbCR+I3vRL/6YKogybhO5/7n3T9aP6jt2/d6vkkUKIj7KutL+LKCC6YmM59a9pmrgeb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345810; c=relaxed/simple;
-	bh=v/cGjRKPEtXmv7RwDeyzOSBu/wmVaWL2ZuBnO42bLf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lm7G26293TAbEoUHo7+3P8XG63gUNDvKU+ZUI5BfyhPjtUfEWq8vJpgNHYg3WH742i4Euqry9TsfKjny3Cp9FnLtl2bW9hUke0ljMBJImq2iBTIocEoYr0C364/1LYNNmOHQo9jXeSyEvX+oJvwdyFw0ZuMdfRhXjFvUvF9ol40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=AJaihXU3; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb7f5f9fb7so53640686d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 17:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728345807; x=1728950607; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUhSEJ0yAaeMQ5+BVSRaapV0sFetukkSF95MlT02JR4=;
-        b=AJaihXU3hl1mR+ywM7s4r6oByM0BQgArnjAk3i+CnTU47w0hIYmKtyCD9mlzd0+PF3
-         D/CbI52KSpx2weCNeJ06HWdBLnQid8BYkBnuJJarzo587M5sSfgUT0GegHkHWt7yk29d
-         EnWglgIXffkjmK33zQPqHdsKtfiTtHl3n9Aof0Cw33zMIQJ37YdfLTO0PEgH0zDnYncP
-         dZIehlt92SBzHC4mBzwYrIKrAVfgTziXaIlPgjWJDJ1qABm2aU/KC/bHrER2jP1VhqES
-         MTxpMnnzW1TOTfShcmpd24EWqBc/K0R5r4Z57wIoFnl3Xx08EfrJlIIFtgknRTPBKGKb
-         UafA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728345807; x=1728950607;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bUhSEJ0yAaeMQ5+BVSRaapV0sFetukkSF95MlT02JR4=;
-        b=E8bwbjA4WO5fMmRDkjZqvwwLfgmxk2t2cfJfU6UCibMjxVXiKAqLntN6tHyEvGzuI/
-         Z+RsoJxlViaDzsVU3bjqQh+aqrdh3w3e6CMwQBdDdKcT0diWi2lRtsn2RZ6e+pSEWnj+
-         nwQB99RuhkQdUfiaiJ0VWt/VHT/jIqczG2Ps/dsnuRNUTzOCrqqJV2F5tQ9cwCwPbybU
-         PJAObWroeC3dygBpDEvm68Wgocucufr/I3eJ2LwUAVKPwI8jyPi0QvaPnPNyesd0zgKZ
-         Cs8+jGTy6ck/Vt7wXYe7ezXExopdUtA3alJb4/cOfZUDlmW+xwtz1lSkXvzVt3PgetiA
-         eC4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZIRp68mOMtK1n+wZWMpfV0at0kRI88/LtaQim50NmvG2NbLu9ODrinHO9HykHdVFPLlWrpmV6gCT44fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxjk8s4nfZlzFFHFQOq2s++X/Gw99P6gKv4HSmPvnMwYl2Vy6J
-	IZBDfdoCl3rD+5D2BBOjSwF6DX2b+yLe0vHJ80zdw11Aa+Qu0PBNXU+YsYhUtgE=
-X-Google-Smtp-Source: AGHT+IEx3bklsQStYmee6ZmH3DEMApP2qVX1WSbpsnNhNBWyboJaq2oNlhHvvvoCROpV/zglNNL0Ew==
-X-Received: by 2002:a05:6214:3386:b0:6c5:8ab0:60cc with SMTP id 6a1803df08f44-6cb9a472824mr193319236d6.40.1728345806863;
-        Mon, 07 Oct 2024 17:03:26 -0700 (PDT)
-Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cad28sm30487096d6.18.2024.10.07.17.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 17:03:26 -0700 (PDT)
-From: Jonathan Marek <jonathan@marek.ca>
-To: linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] rpmsg: glink: use only lower 16-bits of param2 for CMD_OPEN name length
-Date: Mon,  7 Oct 2024 19:59:35 -0400
-Message-ID: <20241007235935.6216-1-jonathan@marek.ca>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1728345621; c=relaxed/simple;
+	bh=znBNrU5Gy3VD2T7enLVH3it8iQkEy3CQdnumZPCGVBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W2ihRnsRdjEoAi+b+tHyr+QFB9MWCOtSVAAUFDPmicMb11Xuvoyu9QD7LAYIFkMv7HIJYZEx2/fhu5Fr5ZWvW4IOrPlDDiV+xacQJssKIEqrK06ueGa7+XpmP4fZ7Z89TaN0VpxuVNiwlSOm3FdX3EzlrSqPlr+QZ8Dg7xyzKII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NwbIDl6k; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728345610;
+	bh=yjAEA3gAg2MrSRwiY5GNHjLAVYmztAgeqRcgOAiLRR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NwbIDl6kQHNBWm97ZxScLI/dYOIHt0zRS56Nj7VWm50Oo04LcwDMSmsH4yU+qMMzI
+	 d4Rb132HhKpeufbXPs4Bt3wuTZgeQdoNMQn2aDXbQk8SIGscWapXGyUOS5texwA99r
+	 gUcA8aTUrT6h3gOoO7bM15i1DKGvkuj+tTjxnV4oRNRER0tVgxp0JVTGAwPWvBqGyC
+	 36x7afKicQSXONqkrtkko/sJrkXeZwYpaYxtw8VQEfhDbAOKiYYp7/SZbmaoJjnA9+
+	 0LJZdY3FQAPXH9/K5ND2yiZRB58x6cOYDnEFEYqSRaX8vr4XBhCPEPpoSRkt1iD3LG
+	 XWKf9kohqV3oQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XMx3Y0ppHz4wxx;
+	Tue,  8 Oct 2024 11:00:09 +1100 (AEDT)
+Date: Tue, 8 Oct 2024 11:00:08 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
+ =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ DRM XE List <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the
+ drm-misc-fixes tree
+Message-ID: <20241008110008.243b9be7@canb.auug.org.au>
+In-Reply-To: <20241004121800.7ab3214b@canb.auug.org.au>
+References: <20241004121800.7ab3214b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/waKzPEYWWWoW7vIuYvwUsaZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The name len field of the CMD_OPEN packet is only 16-bits and the upper
-16-bits of "param2" are a different "prio" field, which can be nonzero in
-certain situations, and CMD_OPEN packets can be unexpectedly dropped
-because of this.
+--Sig_/waKzPEYWWWoW7vIuYvwUsaZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by masking out the upper 16 bits of param2.
+Hi all,
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/rpmsg/qcom_glink_native.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, 4 Oct 2024 12:18:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the drm-xe tree got a conflict in:
+>=20
+>   drivers/gpu/drm/xe/xe_guc_submit.c
+>=20
+> between commit:
+>=20
+>   9286a191abe2 ("drm/xe: Drop GuC submit_wq pool")
+>=20
+> from the drm-misc-fixes tree and commit:
+>=20
+>   861108666cc0 ("drm/xe: fix UAF around queue destruction")
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 0b2f290069080..b534b88db3f8e 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1204,7 +1204,8 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
- 			ret = qcom_glink_rx_open_ack(glink, param1);
- 			break;
- 		case GLINK_CMD_OPEN:
--			ret = qcom_glink_rx_defer(glink, param2);
-+			/* upper 16 bits of param2 are the "prio" field */
-+			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
- 			break;
- 		case GLINK_CMD_TX_DATA:
- 		case GLINK_CMD_TX_DATA_CONT:
--- 
-2.45.1
+This is now also commit
 
+  2d2be279f1ca ("drm/xe: fix UAF around queue destruction")
+
+in Linus' tree.
+
+> from the drm-xe tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc drivers/gpu/drm/xe/xe_guc_submit.c
+> index 17c25f18e286,8a5c21a87977..000000000000
+> --- a/drivers/gpu/drm/xe/xe_guc_submit.c
+> +++ b/drivers/gpu/drm/xe/xe_guc_submit.c
+> @@@ -224,11 -224,80 +224,27 @@@ static bool exec_queue_killed_or_banned
+>   		 EXEC_QUEUE_STATE_BANNED));
+>   }
+>  =20
+>  -#ifdef CONFIG_PROVE_LOCKING
+>  -static int alloc_submit_wq(struct xe_guc *guc)
+>  -{
+>  -	int i;
+>  -
+>  -	for (i =3D 0; i < NUM_SUBMIT_WQ; ++i) {
+>  -		guc->submission_state.submit_wq_pool[i] =3D
+>  -			alloc_ordered_workqueue("submit_wq", 0);
+>  -		if (!guc->submission_state.submit_wq_pool[i])
+>  -			goto err_free;
+>  -	}
+>  -
+>  -	return 0;
+>  -
+>  -err_free:
+>  -	while (i)
+>  -		destroy_workqueue(guc->submission_state.submit_wq_pool[--i]);
+>  -
+>  -	return -ENOMEM;
+>  -}
+>  -
+>  -static void free_submit_wq(struct xe_guc *guc)
+>  -{
+>  -	int i;
+>  -
+>  -	for (i =3D 0; i < NUM_SUBMIT_WQ; ++i)
+>  -		destroy_workqueue(guc->submission_state.submit_wq_pool[i]);
+>  -}
+>  -
+>  -static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
+>  -{
+>  -	int idx =3D guc->submission_state.submit_wq_idx++ % NUM_SUBMIT_WQ;
+>  -
+>  -	return guc->submission_state.submit_wq_pool[idx];
+>  -}
+>  -#else
+>  -static int alloc_submit_wq(struct xe_guc *guc)
+>  -{
+>  -	return 0;
+>  -}
+>  -
+>  -static void free_submit_wq(struct xe_guc *guc)
+>  -{
+>  -
+>  -}
+>  -
+>  -static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
+>  -{
+>  -	return NULL;
+>  -}
+>  -#endif
+>  -
+> + static void xe_guc_submit_fini(struct xe_guc *guc)
+> + {
+> + 	struct xe_device *xe =3D guc_to_xe(guc);
+> + 	struct xe_gt *gt =3D guc_to_gt(guc);
+> + 	int ret;
+> +=20
+> + 	ret =3D wait_event_timeout(guc->submission_state.fini_wq,
+> + 				 xa_empty(&guc->submission_state.exec_queue_lookup),
+> + 				 HZ * 5);
+> +=20
+> + 	drain_workqueue(xe->destroy_wq);
+> +=20
+> + 	xe_gt_assert(gt, ret);
+> + }
+> +=20
+>   static void guc_submit_fini(struct drm_device *drm, void *arg)
+>   {
+>   	struct xe_guc *guc =3D arg;
+>  =20
+> + 	xe_guc_submit_fini(guc);
+>   	xa_destroy(&guc->submission_state.exec_queue_lookup);
+>  -	free_submit_wq(guc);
+>   }
+>  =20
+>   static void guc_submit_wedged_fini(void *arg)
+
+This is now a conflict between the drm-misc-fixes tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/waKzPEYWWWoW7vIuYvwUsaZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEdggACgkQAVBC80lX
+0GwcqQf/QUyq9Ta+LN7BSZ39z3xyI+qoj2TryT7/RlRUujMo4Skcqv4D5DPGjG5q
+gUR//jxTEBotj4tqZzcfX4C416sIe/cdP5H1wlfCDaSrTrZJfIaS3470rhYfrwrk
+E4CIVonkoQnUG0SXewfQ0YjZwMl89kVNXQTLFnK18kSRqqEN4bIm19IvFlnDUOqb
+fhmuWOjpx7pxpZqvnwKvGcO1hyvK0hfw7YSdvFZ0beTbGmfjzFacqL1WhojXMWAi
+s5AQsaEWL3IKj+Zo/8NqYEHZOEsLdM9RVAygiL3QYgBES47IgmZ4s0hP4yISns0J
+ii7rApDRcbXeip+mveodZyWyVhY+eA==
+=Dqw3
+-----END PGP SIGNATURE-----
+
+--Sig_/waKzPEYWWWoW7vIuYvwUsaZ--
 
