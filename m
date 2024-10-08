@@ -1,127 +1,171 @@
-Return-Path: <linux-kernel+bounces-354660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D8C9940A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:10:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C2B9940AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8664B252A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06DF1F21A2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8692E206967;
-	Tue,  8 Oct 2024 07:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3222206960;
+	Tue,  8 Oct 2024 07:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nF32kqlP"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kc44xN9t"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128A620607F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F08206947
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728372310; cv=none; b=jBk2dMUv79hoL88sL5GACp5ItGAhLdKBDQEj/1gWJ1S40kSm0RH8DyPm0561G+VIr614Zi9iAKTyeU1cb2r3gzNkQFMD/zI1z8gbD4Lm2f+T3/3qFz11C/hshWfCvNInL7Sj7Ke5/f5ovz1V8oIXHNcdwC9dxECDfPsSSfRX6vE=
+	t=1728372310; cv=none; b=umK2mfXxfL3f/ur4kuP5aItvd+h+xXIYsj/w8gQbly8fnjTGaUjxSKbZI7jAYhyXscTSPG6zxJ2Vm6W//+CS+JwSdy3Ls7cP4uE0JXhJ5ugXmA27Jxbzta+R6BJccInI5Lfbdv/5iWuTvYxm13r9HlDvQm/ywmsC5yto3dLJGQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728372310; c=relaxed/simple;
-	bh=dQrPibP+7L6SLFDyd4VzqD43IY6BT7dbsyfsq+AE6ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCWQ5pQYKFH/cbyv+jMa/B6D60ccpfSMgHQW1hMzCorA9F1XuHpnp6mGG0cUJvZ4mpEG99nXtFVl1scriEnw/f/kCDyaIVd07X9n/mqMtPSHcePcj9Bevx4W9Hgw26iW0cv7lz3gPxhaqilR2bpxPWkTx3mVHgQ4ufnr49ZQ5oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nF32kqlP; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=peqKieM5fVCLy4Db0Grs9YzrvovudXSYe1GPeAJBBws=; b=nF32kqlPPUD3IbqP8nnqsROt4I
-	slJ2QBvL7JxG0tYfF0GML66UoKXER+UjxKkfl1IYKPQ9Vti/uKKXS7qSXKOwEL/S4tBIkRMzTMaLv
-	MPzC9OS4LyngjlN43YLu5WOHqTajen/PSR/zMqzVpbtmNIz2Exuc5j08JcnUl6oTKp41v6tUZrVHd
-	sHXODHCMOPoTI1RPsX1EVHJACHBb/w5Gjl3RUZ1DMxeONPePVfmVy0NKnNOGVACE1eHi6qMJsJx6m
-	Ix4TsAY9m0wPlD81eN0mWmfWCTht2JyHd780fB//CXhOjR8tKTpaVMFYNw44owFQHGQ7RRbJnskJ3
-	Fnjb8ksA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy4ad-00000004YeZ-2qDw;
-	Tue, 08 Oct 2024 07:25:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 98165300599; Tue,  8 Oct 2024 09:25:02 +0200 (CEST)
-Date: Tue, 8 Oct 2024 09:25:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: bp@alien8.de, david.kaplan@amd.com, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [RFC][PATCH 2/2] x86: Clean up default rethunk warning
-Message-ID: <20241008072502.GC14587@noisy.programming.kicks-ass.net>
-References: <20241007083210.043925135@infradead.org>
- <20241007083844.119369498@infradead.org>
- <20241007173345.yokak3mlnqpsuxty@treble>
+	bh=T1Y4WwrIh2YEiqFz/MV6PXScb2u9aOaPE/ZxQO+KPiY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kJJ/YkA3UOBVXK4K6xsWfccz5us8tmhxmrNdIjI0W5DhKBkVVmWm68c3aRtNZGZprxufwZ7fdtu44rlYu4bToY0PtOWSsG2Ovd6I80QOPqT+EJpyuBppu4n2z3FQNNldPTY2yVoX2jvLeVENBW1NSInEqDQNo/uJR5djAkajCps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kc44xN9t; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso46279285e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 00:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728372307; x=1728977107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5e0vB/xfUb5KsKbGyPnOatGTMRs7uojzkUVkiPqJNdc=;
+        b=kc44xN9tt+fpFPyQBRMWs0JSVRBpaS3z5QriLq+Hl+OXx02vqZ5igb14/1Qas5NUnY
+         KQ/NwANUJfKWwLgUTz+Zf5JnEkEi/O/+YhWWYHJXoY1Mf/Vm0zbFTGUSK0G5QdT+N0IH
+         93XU3cQiWaxQV9yYM/t53MPwDu3zrXugYXDY29eMYC3WqlAXIwDM5vW1amiTwBeeJsW1
+         iDaGIHYS3sKEADVXHO2JjQHRsW5d0N67miPC19dU7or8Z8GqNhdN2OvWBQ+xldDHK9AI
+         dZdQ0oYDMcS4HAb9pNXNsrUVt/clkwHfJvU5K2AJOOWt0I28xCmYXkdBtcEsa+TBhiXW
+         nmnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728372307; x=1728977107;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5e0vB/xfUb5KsKbGyPnOatGTMRs7uojzkUVkiPqJNdc=;
+        b=guqAn4RRkzOyMzhfpO2nINxOrpxUO6Ul1sqfqD47aSzQTban3zpcZzNoktdGRRlZNR
+         4TX5rCkhGWYGhGBc5W0Jw4lVz8YJcfa/z7CO7TA0KpW+Bx/H4sGSq/1z5cedDtrhwIg7
+         3JGRP+qJNxIZei+Cn1h2PinJjq3HjSZlOEDNN6n0i2KEMlTrHvaBAd2qSllg2W+OUVT3
+         Q0Pt7pD0aaTCcp6eKfYJ7B4zm8xuj8QAg0tMbQjd5/7Ab0DGgY7ijaLMzvRbitHVxa1D
+         floKwY0wYjOpe6I7Lsm3R0BOojCf4fUlEjzpFW7M7C4f4FuUwbijxwf8m65MbanV40RI
+         LDdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLzq7MX113hPpPZabwgOFh5ui7iJkR9XzYMLovuQ2q08PE58naZe+1JJCjBf5YL+GMVmZfkM+9HsB6QZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydr1UHXfWdy5+dAHkCxL9FTkuqq62UbuAUaFWJyOXFzbUqaJmQ
+	3GC3FpOviqrP1GoXpkjcdW86ydwcZXGtq2i+I7xqm6/vHiyhsfkhhIm4Aj3Cl8I=
+X-Google-Smtp-Source: AGHT+IGKJyKn1CkE8ieX0UPcPGOpB+0hJcZaEl/FBijOrKGtn1bkOSUkYtwO+y6Clre3YaP2L94JBQ==
+X-Received: by 2002:a05:600c:3b95:b0:430:5406:a60d with SMTP id 5b1f17b1804b1-4305406a73amr4563595e9.23.1728372306816;
+        Tue, 08 Oct 2024 00:25:06 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19? ([2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89e8a25csm100160435e9.17.2024.10.08.00.25.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 00:25:06 -0700 (PDT)
+Message-ID: <356bf96a-862a-4b66-bb63-92127ef5d84f@linaro.org>
+Date: Tue, 8 Oct 2024 09:25:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007173345.yokak3mlnqpsuxty@treble>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: controller: move properties
+ common with slot out to mmc-controller-common
+To: Rob Herring <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-0-ad4eb22c2a8d@linaro.org>
+ <20241007-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v3-1-ad4eb22c2a8d@linaro.org>
+ <20241007200230.GA2301832-robh@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241007200230.GA2301832-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 10:33:45AM -0700, Josh Poimboeuf wrote:
-> On Mon, Oct 07, 2024 at 10:32:12AM +0200, Peter Zijlstra wrote:
-> > Replace the funny __warn_thunk thing with a more regular
-> > WARN_ON_ONCE(), and simplify the ifdeffery.
-> > 
-> > Notably this avoids RET from having recursive RETs (once from the
-> > thunk and once from the C function) -- recursive RET makes my head
-> > hurt for no good reason.
+On 07/10/2024 22:02, Rob Herring wrote:
+> On Mon, Oct 07, 2024 at 04:03:37PM +0200, Neil Armstrong wrote:
+>> Move the common MMC "slot" properties because they are shared by the
+>> single-slot or multi-slot controllers, and will help defining a simple
+>> mmc-slot bindings document with proper slot properties and nodename.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   .../bindings/mmc/mmc-controller-common.yaml        | 357 +++++++++++++++++++++
+>>   .../devicetree/bindings/mmc/mmc-controller.yaml    | 344 +-------------------
+>>   2 files changed, 360 insertions(+), 341 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+>> new file mode 100644
+>> index 000000000000..e02d3cbcc271
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+>> @@ -0,0 +1,357 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mmc/mmc-controller-common.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MMC Controller & Slots Common Properties
+>> +
+>> +maintainers:
+>> +  - Ulf Hansson <ulf.hansson@linaro.org>
+>> +
+>> +description: |
+>> +  These properties are common to multiple MMC host controllers and the
+>> +  possible slots or ports for multi-slot controllers.
+>> +
+>> +properties:
+>> +  "#address-cells":
+>> +    const: 1
+>> +    description: |
+>> +      The cell is the slot ID if a function subnode is used.
 > 
-> This could use an explanation for why the ifdefs can be removed and why
-> the alternative can be removed.
+> Actually, this comment is wrong. When slot is used, this is still the
+> cell size for the mmc bus.
 
-The alternative is in the WARN_ONCE now.
+OK, not sure how it should be fixed, and it should be fixed before this serie.
 
-> > +#define WARN_ONCE							\
-> > +	1: ALTERNATIVE "", "ud2", X86_FEATURE_ALWAYS ;			\
-> > +	ASM_BUGTABLE_FLAGS(1b, 0, 0, BUGFLAG_WARNING | BUGFLAG_ONCE) ;	\
-> > +	REACHABLE
-> 
-> Can we not use __FILE__ and __LINE__ here?  
-
-Because for asm, __FILE__ is spelled like:
-
-#ifdef CONFIG_DEBUG_BUGVERBOSE
-.pushsection .rodata.str1.1, "aMS",@progbits,1
-.LC0:
-	.string __FILE__
-.popsection
-#endif
-	1: ALTERNATIVE "", "ud2", X86_FEATURE_ALWAYS
-	ASM_BUGTABLE_FLAGS(1b, LC0b, __LINE__, BUGFLAG_WARNING | BUGFLAG_ONCE)
-	REACHABLE
-
-And I didn't feel the whole thing was worth the trouble, if NULL bug
-will only print the symbol name and that should be clear enough.
-
-> Also why not put this in asm/bug.h?
-
-Because the ALTERNATIVE..
-
-> >  SYM_CODE_START(__x86_return_thunk)
-> >  	UNWIND_HINT_FUNC
-> >  	ANNOTATE_NOENDBR
-> > -#if defined(CONFIG_MITIGATION_UNRET_ENTRY) || \
-> > -    defined(CONFIG_MITIGATION_SRSO) || \
-> > -    defined(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)
-> > -	ALTERNATIVE __stringify(ANNOTATE_UNRET_SAFE; ret), \
-> > -		   "jmp warn_thunk_thunk", X86_FEATURE_ALWAYS
-> > -#else
-> > +
-> > +#ifdef CONFIG_X86_64
-> > +	WARN_ONCE
-> > +#endif
-> 
-> Isn't this return thunk used before apply_returns()?  How does that not
-> trigger the warning?
-
-You missed the ALTERNATIVE I squirreled away in the WARN thing :-)
+Neil
 
