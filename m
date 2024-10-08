@@ -1,62 +1,84 @@
-Return-Path: <linux-kernel+bounces-355406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D009951C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:33:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22EB09951EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABEE281DAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCDFFB24E67
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C6D1DFDB5;
-	Tue,  8 Oct 2024 14:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D711DFE00;
+	Tue,  8 Oct 2024 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+MnrN8L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AkIJcx+y"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912A1DE3AE;
-	Tue,  8 Oct 2024 14:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DFB1DEFEC;
+	Tue,  8 Oct 2024 14:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397953; cv=none; b=t+H4uTLOg4i5KVWpoSZszeQCi4kSVlYVi3aRQIVq4XnmagAJDQ44o9w/0FcZVNV4KtNxhl05VuLKt4D5nz3UcLv4XfykunfPtmkSupcQO7tAdKS+XFSy2rAOOtm0HeTkRL6k8ecuTsNXGPkGG2wH3ZisJEcGGfJYkNuzVYdlbO8=
+	t=1728397997; cv=none; b=uF2oHRBwcDkajQpSQiZbHrHrNxHSckeqc4P8dtZpFHQLkVK0gKUW1AMmyLLGyNCEWMIJbM1xpZpIG3+BY71/Hjwif4aQP1P2kKRW5ZSSV2fpp08qkt0eHU3qEeKsD1JRiuNxz1yYGfnpsgDzZfmZ2fW6fCLra1ep3IZMdXbmsCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397953; c=relaxed/simple;
-	bh=t9DSeeXfOlcRotreqKbSLlHeaWLMsRoQIASSMIB2hwg=;
+	s=arc-20240116; t=1728397997; c=relaxed/simple;
+	bh=9cfXzVwqV3YDkOBFYxzR0uO9BMz4wHvAooOgTm1+v5I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Brj3HuWQ7EZvJaBVgPnvRi/u2ThZMPlBHOrribvVwM+cq96GRskCAku5tybhG1PfHaAFD8jvk/MkqYDuqZlYwZ7ckI3EFPjryRA7ycYYIkLA133vgg16BsjVZH90cHMEe6A9tqAg+DMuKRmQR/wBu9qYsv7WiXgMsbTYDikQ81A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+MnrN8L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5887C4CEC7;
-	Tue,  8 Oct 2024 14:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728397952;
-	bh=t9DSeeXfOlcRotreqKbSLlHeaWLMsRoQIASSMIB2hwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+MnrN8LCmWYxWqnxbR/QkkXoB/84sd2a4yRgwzGvjfEp31aAwR/+q6fr8sOjf6eP
-	 mjmyVgiOU3A7pgB6Vu06FndHVTm322OhTvffGOZ0+XQj2OVxc/MHl2Pcnu62ZSj8un
-	 dCWe4d3dY6rGiLZrWz376i+xyJ+F4Yn6CHXcjcs0LhCRs2qALHS0pg6+ulcispOwbf
-	 UMs6KGdsmKRuj8sPM8NCK0yO8J/U0DQHwpz//VSDDmuzKgiE9Xg5N+QZsBPChGwChv
-	 uVstgtL+TNtLyzGlL+xvqGcJwdHaV5H3fp9tieoZN2MP+4/168EI+XuF/cirjHhZnM
-	 6oGcL6LXXbb8w==
-Date: Tue, 8 Oct 2024 16:32:25 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, akpm@linux-foundation.org
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com, lina@asahilina.net,
-	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
-	lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v9 25/29] rust: alloc: implement `Cmalloc` in module
- allocator_test
-Message-ID: <ZwVCeQK4qu3HPBGQ@cassiopeiae>
-References: <20241004154149.93856-1-dakr@kernel.org>
- <20241004154149.93856-26-dakr@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsaOzOCfYdaCkJWP7P7Pi+X46cWrHXxl3WM6NaUl7mNSfW4tVqLoRAPMftfNybnhf/YyRnomBym745r8EGgrHG6wWnwsYLbpYIANcStYxUikLApgsR4qCxgsaBLeKVySyKb46FOZp2qeWY67AlSHRt2IsZjz0TXPGHZ72G3ze9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AkIJcx+y; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498Anbbr003573;
+	Tue, 8 Oct 2024 14:33:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=h8+tsLjQ3QhrlZLEn7X3olsqPxp
+	rYWszln0rwOWK3LE=; b=AkIJcx+yRA3oRwJuXL7RRfUvzFA0hdyWm9Et1I+wq41
+	+Za+3/9RW71fNCd+R5HtOT/Kc2xQfhbOmu5PT8bG1KCcRzhsQY/PIF1epR0kdY0m
+	8M6iUaM6MTWFX7PPLpHmMg3ad8evE37x1u4Qqv1/5m8S0y9UoaqMlncAbwRYwpvR
+	YPxInSCRW/tgDm42JUOZezP1m0YxFREnMkIeKgOJyfrq4tJyg+jZXsBa1NErFO70
+	ArJpaLahkNvyArY0ekj7ojgbijBTMXL6CFFsjF1JSRo0H+hAvVzsrC2Ixs0dPxkj
+	vEmWYSSf0KPBZ+dq0h4kr3BXCdbYTeXoyg+N5tCUhYA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4253axscn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:33:15 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 498C7AEi011535;
+	Tue, 8 Oct 2024 14:33:14 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5xmx5r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 14:33:14 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 498EXAGv54002172
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Oct 2024 14:33:10 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6EED52005A;
+	Tue,  8 Oct 2024 14:33:10 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C11A2004B;
+	Tue,  8 Oct 2024 14:33:10 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  8 Oct 2024 14:33:10 +0000 (GMT)
+Date: Tue, 8 Oct 2024 16:33:08 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steffen Eiden <seiden@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+Subject: Re: [PATCH v2 1/2] s390/uv: Refactor uv-sysfs creation
+Message-ID: <20241008143308.27223-B-hca@linux.ibm.com>
+References: <20241002160418.2424889-1-seiden@linux.ibm.com>
+ <20241002160418.2424889-2-seiden@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +87,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004154149.93856-26-dakr@kernel.org>
+In-Reply-To: <20241002160418.2424889-2-seiden@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2m-uuezrKBnTJdfoGbrOz1mraajLhMNG
+X-Proofpoint-GUID: 2m-uuezrKBnTJdfoGbrOz1mraajLhMNG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-08_12,2024-10-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 mlxlogscore=474 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080092
 
-On Fri, Oct 04, 2024 at 05:41:29PM +0200, Danilo Krummrich wrote:
-> So far the kernel's `Box` and `Vec` types can't be used by userspace
-> test cases, since all users of those types (e.g. `CString`) use kernel
-> allocators for instantiation.
+On Wed, Oct 02, 2024 at 06:04:17PM +0200, Steffen Eiden wrote:
+> Streamline the sysfs generation to make it more extensible.
+> Add a function to create a sysfs entry in the uv-sysfs dir.
+> Use this function for the query directory.
 > 
-> In order to allow userspace test cases to make use of such types as
-> well, implement the `Cmalloc` allocator within the allocator_test module
-> and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
-> allocator uses libc's realloc() function as allocator backend.
-> 
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
 > ---
->  rust/kernel/alloc/allocator_test.rs | 88 ++++++++++++++++++++++++++---
->  1 file changed, 81 insertions(+), 7 deletions(-)
-> 
+>  arch/s390/kernel/uv.c | 34 ++++++++++++++++++++++++----------
+>  1 file changed, 24 insertions(+), 10 deletions(-)
+...
+> -static int __init uv_info_init(void)
+> +static int __init uv_sysfs_dir_init(const struct attribute_group *grp,
+> +				    struct kset **uv_dir_kset, const char *name)
+> +{
+> +	struct kset *kset;
+> +	int rc = -ENOMEM;
 
-Here we can remove it again:
+rc is unnecessarily preinitialized, so you can wait for a cleanup
+patch from some bot.
 
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index 912b6ba2abaa..8acaa24a8f1f 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -215,7 +215,6 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
-     }
- }
+> +	kset = kset_create_and_add(name, NULL, uv_kobj);
+> +	if (!kset)
+> +		return -ENOMEM;
+> +	*uv_dir_kset = kset;
+> +
+> +	rc = sysfs_create_group(&kset->kobj, grp);
+> +	if (!rc)
+> +		return 0;
+> +
+> +	kset_unregister(kset);
+> +	return rc;
 
--#[allow(dead_code)]
- /// Returns a properly aligned dangling pointer from the given `layout`.
- pub(crate) fn dangling_from_layout(layout: Layout) -> NonNull<u8> {
-     let ptr = layout.align() as *mut u8;
+doing it like
 
-@Miguel: I pushed [1], which is already rebased to rust-next (-rc2) and contains
-the fixups.
+	rc = sysfs_create_group(&kset->kobj, grp);
+	if (rc)
+		kset_unregister(kset);
+	return rc;
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+is shorter ;)
 
