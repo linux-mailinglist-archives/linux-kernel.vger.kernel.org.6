@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-355187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B194B9949E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:28:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFA19949FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6727128308C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F3D1C225C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45F61DF27B;
-	Tue,  8 Oct 2024 12:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CBE1DF265;
+	Tue,  8 Oct 2024 12:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rapY8Ysu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyW8ajgD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041581DF25A;
-	Tue,  8 Oct 2024 12:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D622E1DEFE1;
+	Tue,  8 Oct 2024 12:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390433; cv=none; b=qiWjcIWXClnjlr22I1g2Khd1ZNY+EYSWcIYigs1FarrYZd76V/zyNM66QhJJdA/BadM0Nc3DivR+y7KLLmm+DIm9IXai3W/myKPLRK1Vx8/MfDsIxjGep0blW6TOgxX6QEwvjr8CrRKeu1vCG2SoTh6+gjSSv/AW4SHdK2EpQak=
+	t=1728390481; cv=none; b=IPx1F+orxU0K1v8W2G5S1rrFVh+PQXCKZNeasP1iS+z0sk3Ezxoz+XTIQWIp+l2QESpd0hGUuY6neWGFKbxXxpfiM8fWOEJaK4VUzsmiII0NnNLkfANttjXoNMC8DT8fQT/FLX94BtHyO2ipkzdcD6rCw4Ca1kmyKpbvetrX680=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390433; c=relaxed/simple;
-	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P+p169Yx2ZynT9Q8N0FhYn+h3iLsFCoqF9ZqHoVqT21ERfg0C4F/AlAHg4LK/zevI5GBjAMuWtZj+NcY+D4KHMFDHmwruAYvoaY7kCgbqsFYOcklD2BVHWMrn/wAQ17xOlUwoyMB7jD2kfQnPCgRbCy3BMG/1YCdnq1WgG2kaKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rapY8Ysu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A0EC4CEC7;
-	Tue,  8 Oct 2024 12:27:11 +0000 (UTC)
+	s=arc-20240116; t=1728390481; c=relaxed/simple;
+	bh=nbHT3cP3WYMMqE2TSlw5V5n87tenvgeKw3UFNgYUXGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlGAgL8YbhOrj8mFXwk2zEW1HgMNgt4Wetp3Yz4aBIBqm9X0b/Q3Kkxu3P+lfmWUD52uSTlpNm4rp8O+ZUipFzw5YtdO1oLdoTR1IbIAflnX9O7oV5uN/Ghm5rhARour25YRYzbwmBXvCdo5YK8W5mxErOOBZub5IMRPaCJINRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyW8ajgD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F847C4CEC7;
+	Tue,  8 Oct 2024 12:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728390432;
-	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rapY8YsuiXiFzuUBQL5TU17rlUmLVj37hlrfQRivl7bwl9HHMMPOU0Iwy7WBQAcER
-	 oSF/eHzWaovsjjwgTYof0BkZS9uTE4HOYbxpt0/Tg9/Sgpapb6VRukCQOX/jS+Ai2M
-	 JNeKBM1VQitYCvPk+w1MFX36u8ZX09huNpny5H5ZSBbtKOdLCr4//1LfNEPdQ7BH0Q
-	 UODVymhlRHO+7iT5EAkVe2tBQCtqVxf1Yb5vdY/7Ka54zKuibKdPQ3AHp+dEeFHkiV
-	 uy/xf689Z5/Z+PsU8AMie5ZR20sFo9h7cSedLxNBTJIlhTv6HDlJerz85wdue9fAOZ
-	 x4Sm3OShYZAVA==
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Andrew Kreimer <algonell@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20241008121602.16778-1-algonell@gmail.com>
-References: <20241008121602.16778-1-algonell@gmail.com>
-Subject: Re: [PATCH] fs/inode: Fix a typo
-Message-Id: <172839043123.1673124.6132955349484034928.b4-ty@kernel.org>
-Date: Tue, 08 Oct 2024 14:27:11 +0200
+	s=k20201202; t=1728390481;
+	bh=nbHT3cP3WYMMqE2TSlw5V5n87tenvgeKw3UFNgYUXGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GyW8ajgDShLQ+H6+/84eMX1JUOj+NYgGBhwwIMis53pnSBq6KsXkNNJnix2fNfMgU
+	 jSmo22rNQNdt1+t/+ITBp03ALkOEA+kP0QtzVqnanhaqh1yPAv3f5rWvIvs4v58nXa
+	 s6Ekf6FEAleCIimWt5Iej8ZZWhTWyD8V+dgQSAX8A2RLvi1uAKLA5fT7YlaNDqdz9j
+	 0bzDoSezNjJWtOV6zpgTZ6G8SbzAloghFRcyXt/PdrfF/r4KcqbhJO3NTKJLqmlZqV
+	 dNXm2bp5Dro7GB6BceECq4KOiGLWu2T3p8r4FYzG6mWTp3Na0SQOORqb5Zbqbu+mth
+	 G9yHwXn9I8ycA==
+Date: Tue, 8 Oct 2024 14:27:58 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 11/20] sched: Handle CPU isolation on last resort
+ fallback rq selection
+Message-ID: <ZwUlTiDpvmb9ysfn@localhost.localdomain>
+References: <20240926224910.11106-1-frederic@kernel.org>
+ <20240926224910.11106-12-frederic@kernel.org>
+ <20241008105434.GA9243@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-dedf8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241008105434.GA9243@willie-the-truck>
 
-On Tue, 08 Oct 2024 15:16:02 +0300, Andrew Kreimer wrote:
-> Fix a typo in comments: wether v-> whether.
+Le Tue, Oct 08, 2024 at 11:54:35AM +0100, Will Deacon a écrit :
+> On Fri, Sep 27, 2024 at 12:48:59AM +0200, Frederic Weisbecker wrote:
+> > When a kthread or any other task has an affinity mask that is fully
+> > offline or unallowed, the scheduler reaffines the task to all possible
+> > CPUs as a last resort.
+> > 
+> > This default decision doesn't mix up very well with nohz_full CPUs that
+> > are part of the possible cpumask but don't want to be disturbed by
+> > unbound kthreads or even detached pinned user tasks.
+> > 
+> > Make the fallback affinity setting aware of nohz_full. This applies to
+> > all architectures supporting nohz_full except arm32. However this
+> > architecture that overrides the task possible mask is unlikely to be
+> > willing to integrate new development.
 > 
-> 
+> I'm not sure I understand this last sentence. The possible mask is
+> overridden for 32-bit tasks on an *arm64* kernel when running on an SoC
+> featuring some CPUs that can execute only 64-bit tasks. Who is unwilling
+> to integrate what?
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Right I've been lazy on that, assuming that nohz_full is a niche, and
+nohz_full on arm 32 bits tasks must be even more a niche. But I can make
+it a macro just like task_cpu_possible_mask() so that architectures
+can override it?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/inode: Fix a typo
-      https://git.kernel.org/vfs/vfs/c/e1a6efa9de95
-
+Thanks.
 
