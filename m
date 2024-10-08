@@ -1,219 +1,154 @@
-Return-Path: <linux-kernel+bounces-354302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4CB993B83
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA70993B81
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DE41F2392C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49CE28306C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1EF192D9E;
-	Tue,  8 Oct 2024 00:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A900613C90A;
+	Tue,  8 Oct 2024 00:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NwbIDl6k"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NgRHxFbU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3EA188CBE;
-	Tue,  8 Oct 2024 00:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702018C335
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 00:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345621; cv=none; b=HGlEhcz8MVz/H1dHZzFCt90Dj4IIOMqk/Iz2vJgbcxQqHNuKU72uQskYJQnq0Pu2+FjaMAufGg2b8KtSyfSuRxW/7ge+lXRUPaEmSStPbCR+I3vRL/6YKogybhO5/7n3T9aP6jt2/d6vkkUKIj7KutL+LKCC6YmM59a9pmrgeb8=
+	t=1728345620; cv=none; b=KkV4CqavJQnAKiQB8ydMYuuTqGwx7wDKS2iTOZ8Xo6WQL6DsDzqC+FK20FldEjERr/Fww02cl9tnN5Ig6FDLSc3Zi1QbL05BCoe+OGGU9T4i/OPY9UopjTChK59IwzPY4JL9U2exhKE1MwaU8pF9M/0sz/bDeO/j2h/+0mUwk54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345621; c=relaxed/simple;
-	bh=znBNrU5Gy3VD2T7enLVH3it8iQkEy3CQdnumZPCGVBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W2ihRnsRdjEoAi+b+tHyr+QFB9MWCOtSVAAUFDPmicMb11Xuvoyu9QD7LAYIFkMv7HIJYZEx2/fhu5Fr5ZWvW4IOrPlDDiV+xacQJssKIEqrK06ueGa7+XpmP4fZ7Z89TaN0VpxuVNiwlSOm3FdX3EzlrSqPlr+QZ8Dg7xyzKII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NwbIDl6k; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728345610;
-	bh=yjAEA3gAg2MrSRwiY5GNHjLAVYmztAgeqRcgOAiLRR0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NwbIDl6kQHNBWm97ZxScLI/dYOIHt0zRS56Nj7VWm50Oo04LcwDMSmsH4yU+qMMzI
-	 d4Rb132HhKpeufbXPs4Bt3wuTZgeQdoNMQn2aDXbQk8SIGscWapXGyUOS5texwA99r
-	 gUcA8aTUrT6h3gOoO7bM15i1DKGvkuj+tTjxnV4oRNRER0tVgxp0JVTGAwPWvBqGyC
-	 36x7afKicQSXONqkrtkko/sJrkXeZwYpaYxtw8VQEfhDbAOKiYYp7/SZbmaoJjnA9+
-	 0LJZdY3FQAPXH9/K5ND2yiZRB58x6cOYDnEFEYqSRaX8vr4XBhCPEPpoSRkt1iD3LG
-	 XWKf9kohqV3oQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XMx3Y0ppHz4wxx;
-	Tue,  8 Oct 2024 11:00:09 +1100 (AEDT)
-Date: Tue, 8 Oct 2024 11:00:08 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
- =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- DRM XE List <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>
-Subject: Re: linux-next: manual merge of the drm-xe tree with the
- drm-misc-fixes tree
-Message-ID: <20241008110008.243b9be7@canb.auug.org.au>
-In-Reply-To: <20241004121800.7ab3214b@canb.auug.org.au>
-References: <20241004121800.7ab3214b@canb.auug.org.au>
+	s=arc-20240116; t=1728345620; c=relaxed/simple;
+	bh=mEpj0iMPhBBU/sf9vaoLlpURmXdhk6gx52/vlsBsuYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5fxWSILrdt37knvzwftmj54u1VGaLilrerwD2v+QWAhW7eROvh7PiQ9JR8Zk3YYDtnyJgnSTj68X+61RzEtXvIY0eXbm9pa8OJjeJ+vDmVLDVEND7awnbsxAoV2gK4Rt9FjVgcEqFmRLB7irbGF4GP2iCy9t6w+ov7LBgwNR+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NgRHxFbU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728345619; x=1759881619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mEpj0iMPhBBU/sf9vaoLlpURmXdhk6gx52/vlsBsuYg=;
+  b=NgRHxFbUp8fqeeD4gu1GG3ZTt1hKSxiMN9D5yUzr37KdvDqR3bcWj63Q
+   qLZmmSjGEaOz2ZOjpPKX7TuxWqzN1W+OT0a0lyOEJUVeJQ3hKBne8Pbog
+   9e7kKrtLvPWERzHhae6HbZoDvdj1AaPr3OnNBRX9Fz1STdtnRbTnMNiJ6
+   NPAUsydmx5aTvt48llarqMeJ7LxaFTKyKoqSnONshsQBmIh9jLuOvMVAh
+   PwC+S1ZrTBNviTkfJOoYsu04OimcLdsTJHzbVIOTBbmhdNGvLKs8aY97/
+   oO793m09fpHKCbjkmq09bC2jIvMZB56t3I6VAd0MnR9hkWUKK/LKftIcB
+   A==;
+X-CSE-ConnectionGUID: C2C+gWRZQ++zZPMBKrzLNw==
+X-CSE-MsgGUID: GJqwyIvoS+aw59WjD6Puag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="30399826"
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="30399826"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 17:00:18 -0700
+X-CSE-ConnectionGUID: 5PUMPXgDTASH2bsizRgkbw==
+X-CSE-MsgGUID: KUlCu8l/RhakU1pIKTHFVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
+   d="scan'208";a="80472239"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 17:00:17 -0700
+Date: Mon, 7 Oct 2024 17:00:15 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Subject: Re: [PATCH v5 17/40] x86/resctrl: Rewrite and move the
+ for_each_*_rdt_resource() walkers
+Message-ID: <ZwR2D4ISzIrZRTHi@agluck-desk3.sc.intel.com>
+References: <20241004180347.19985-1-james.morse@arm.com>
+ <20241004180347.19985-18-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/waKzPEYWWWoW7vIuYvwUsaZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004180347.19985-18-james.morse@arm.com>
 
---Sig_/waKzPEYWWWoW7vIuYvwUsaZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 04, 2024 at 06:03:24PM +0000, James Morse wrote:
+> The for_each_*_rdt_resource() helpers walk the architecture's array
+> of structures, using the resctrl visible part as an iterator. These
+> became over-complex when the structures were split into a
+> filesystem and architecture-specific struct. This approach avoided
+> the need to touch every call site, and was done before there was a
+> helper to retrieve a resource by rid.
+> 
+> Once the filesystem parts of resctrl are moved to /fs/, both the
+> architecture's resource array, and the definition of those structures
+> is no longer accessible. To support resctrl, each architecture would
+> have to provide equally complex macros.
+> 
+> Rewrite the macro to make use of resctrl_arch_get_resource(), and
+> move these to the core header so existing x86 arch code continues
+> to use them.
 
-Hi all,
+Apologies if this comment was suggested against earlier versions
+of this series.
 
-On Fri, 4 Oct 2024 12:18:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the drm-xe tree got a conflict in:
->=20
->   drivers/gpu/drm/xe/xe_guc_submit.c
->=20
-> between commit:
->=20
->   9286a191abe2 ("drm/xe: Drop GuC submit_wq pool")
->=20
-> from the drm-misc-fixes tree and commit:
->=20
->   861108666cc0 ("drm/xe: fix UAF around queue destruction")
+Did you consider replacing rdt_resources_all[] a list (in the filesystem
+code) instead of an array (in the architecture code)?
 
-This is now also commit
+List would start empty. Architecture init code would enumerate features
+and add entries to the list for those that exist and are to be enabled.
 
-  2d2be279f1ca ("drm/xe: fix UAF around queue destruction")
+The "for_each" macros then walk the list (variants for all entries,
+for "alloc_capable" and for "mon_capable"). Note that only enabled
+entries appear on the lists.
 
-in Linus' tree.
+There are currently a bunch of places in filesystem code that
+do:
+	r = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
+or
+	r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
 
-> from the drm-xe tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/gpu/drm/xe/xe_guc_submit.c
-> index 17c25f18e286,8a5c21a87977..000000000000
-> --- a/drivers/gpu/drm/xe/xe_guc_submit.c
-> +++ b/drivers/gpu/drm/xe/xe_guc_submit.c
-> @@@ -224,11 -224,80 +224,27 @@@ static bool exec_queue_killed_or_banned
->   		 EXEC_QUEUE_STATE_BANNED));
->   }
->  =20
->  -#ifdef CONFIG_PROVE_LOCKING
->  -static int alloc_submit_wq(struct xe_guc *guc)
->  -{
->  -	int i;
->  -
->  -	for (i =3D 0; i < NUM_SUBMIT_WQ; ++i) {
->  -		guc->submission_state.submit_wq_pool[i] =3D
->  -			alloc_ordered_workqueue("submit_wq", 0);
->  -		if (!guc->submission_state.submit_wq_pool[i])
->  -			goto err_free;
->  -	}
->  -
->  -	return 0;
->  -
->  -err_free:
->  -	while (i)
->  -		destroy_workqueue(guc->submission_state.submit_wq_pool[--i]);
->  -
->  -	return -ENOMEM;
->  -}
->  -
->  -static void free_submit_wq(struct xe_guc *guc)
->  -{
->  -	int i;
->  -
->  -	for (i =3D 0; i < NUM_SUBMIT_WQ; ++i)
->  -		destroy_workqueue(guc->submission_state.submit_wq_pool[i]);
->  -}
->  -
->  -static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
->  -{
->  -	int idx =3D guc->submission_state.submit_wq_idx++ % NUM_SUBMIT_WQ;
->  -
->  -	return guc->submission_state.submit_wq_pool[idx];
->  -}
->  -#else
->  -static int alloc_submit_wq(struct xe_guc *guc)
->  -{
->  -	return 0;
->  -}
->  -
->  -static void free_submit_wq(struct xe_guc *guc)
->  -{
->  -
->  -}
->  -
->  -static struct workqueue_struct *get_submit_wq(struct xe_guc *guc)
->  -{
->  -	return NULL;
->  -}
->  -#endif
->  -
-> + static void xe_guc_submit_fini(struct xe_guc *guc)
-> + {
-> + 	struct xe_device *xe =3D guc_to_xe(guc);
-> + 	struct xe_gt *gt =3D guc_to_gt(guc);
-> + 	int ret;
-> +=20
-> + 	ret =3D wait_event_timeout(guc->submission_state.fini_wq,
-> + 				 xa_empty(&guc->submission_state.exec_queue_lookup),
-> + 				 HZ * 5);
-> +=20
-> + 	drain_workqueue(xe->destroy_wq);
-> +=20
-> + 	xe_gt_assert(gt, ret);
-> + }
-> +=20
->   static void guc_submit_fini(struct drm_device *drm, void *arg)
->   {
->   	struct xe_guc *guc =3D arg;
->  =20
-> + 	xe_guc_submit_fini(guc);
->   	xa_destroy(&guc->submission_state.exec_queue_lookup);
->  -	free_submit_wq(guc);
->   }
->  =20
->   static void guc_submit_wedged_fini(void *arg)
+those could become:
 
-This is now a conflict between the drm-misc-fixes tree and Linus' tree.
+	r = resctrl_arch_get_mba_resource();
 
---=20
-Cheers,
-Stephen Rothwell
+	r = resctrl_arch_get_l3_resource();
 
---Sig_/waKzPEYWWWoW7vIuYvwUsaZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Then the whole "enum resctrl_res_level" and ->rid field in
+struct rdt_resource could go away? Remaining uses look like
+distinguishing MBA from SMBA. Perhaps better done with a
+flags word?
 
------BEGIN PGP SIGNATURE-----
+Advantage of doing this would be to avoid the generic
+enum resctrl_res_level having to be a superset of all
+features across all architectures. E.g. ARM might want
+to add L4/L5 resources, X86 may have some that ARM will
+never need. RiscV may also follow some divergent path.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEdggACgkQAVBC80lX
-0GwcqQf/QUyq9Ta+LN7BSZ39z3xyI+qoj2TryT7/RlRUujMo4Skcqv4D5DPGjG5q
-gUR//jxTEBotj4tqZzcfX4C416sIe/cdP5H1wlfCDaSrTrZJfIaS3470rhYfrwrk
-E4CIVonkoQnUG0SXewfQ0YjZwMl89kVNXQTLFnK18kSRqqEN4bIm19IvFlnDUOqb
-fhmuWOjpx7pxpZqvnwKvGcO1hyvK0hfw7YSdvFZ0beTbGmfjzFacqL1WhojXMWAi
-s5AQsaEWL3IKj+Zo/8NqYEHZOEsLdM9RVAygiL3QYgBES47IgmZ4s0hP4yISns0J
-ii7rApDRcbXeip+mveodZyWyVhY+eA==
-=Dqw3
------END PGP SIGNATURE-----
+If this v5 series is close to being applied then I don't
+want to derail with a re-write at this late stage.
+All of this could be done as a cleanup after this series
+has been applied.
 
---Sig_/waKzPEYWWWoW7vIuYvwUsaZ--
+-Tony
 
