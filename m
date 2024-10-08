@@ -1,158 +1,164 @@
-Return-Path: <linux-kernel+bounces-355852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B109957FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543699957FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB58AB24270
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81DC1F2168C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA024215006;
-	Tue,  8 Oct 2024 19:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F7213EDF;
+	Tue,  8 Oct 2024 20:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sNLVO2Y+"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="du1Y863U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BE0213EEE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AE578685
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417409; cv=none; b=GM7NR8KJKjJGIuWtqUlUgiefXODT1ZhLqvcoQnqz83gaGob8X6A6bcT/fvBC85oTyCgtqqa/2c8UW/LR898KwsiE5ofIMiiBV/EVvMLXOktNg4Pzh+oNg7I7Tw+kL6K4qoZEpim8xq7zLHCR/nfWJbAguvE+P5Uzq5zEOmy+w0w=
+	t=1728417620; cv=none; b=O2uZmjPMG3BO/I01xa9cyDZpBD/4SERN7a5CqyBDz90wAhdk/ca7ChiBZ4M8a4cG2DxrDXvOwUIrEVRgJL9nyNMeorT/HVfRwNaBbbwrjYOM8Wr+yr9a22IdPjkiKZLCaQvAgmoxmb1WzBOZM/jx5qGanpp9Oj50Tra0O3ZB++k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417409; c=relaxed/simple;
-	bh=lJ13KuCMxM+rGS6o4c5nzT7RJcxdk/8pPHoQ2SxGCac=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iBvOf0pPfuVjK58lwDVbWBR4wysK74XhRDkF39ZZB8irQhM6anFwrKzZXO7+gLfV/XIFekYd2A3uMZYqONURhza+nujatvEaY+AxuYpvMcdI/W4vM+NTLU8Rq2mtPdaTlGQop0w9lvV2xfh3Pk/Q9VInnXqHYtg+779PNHZW14A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sNLVO2Y+; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6818fa37eecso6455184a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728417407; x=1729022207; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/G+V8S+q0QrqWGrvEamJlOg78EP9KmYBGMaK7S1DW0=;
-        b=sNLVO2Y+ZGXrk6RtwKZE7YqHM8bPryppBG+/7hGML41/pnL1cb/uihynRVuhIT/ZlK
-         cEwInNPyDzNquXLvfArwe/FIvYjCqrfFqMVPo9YBdimTTB3u5To4uIPlvkhkF748E7Om
-         QRoUSnsGVY4AEmlp8cAy0t+w3o34FsIJ4zekxPBKrX5qiAPJFuuV+StMJmL/OjgW9uJR
-         weCi/a0VosIKdn14acfTv5m6inmMw4+RIUY4EUsf8TqW4ADgB4qU/4iL7danprnteY8T
-         GuhehGFM9f9i/mHNwXs4BLpZWYbdu251+bcluXcYp4lpNXny8gE408jDLn+bMn6mtE0/
-         n7HA==
+	s=arc-20240116; t=1728417620; c=relaxed/simple;
+	bh=jZNlIVJNu3pQP4BfKX+ZZfcg/eF7qqcjt/kO0OoSjqY=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QDNkAE4mLGH79YLmivFqyoLTcXV+HhCdG3awzFbjYy73p+5RPxjTQIusa+8aiPuEgAzKHywqX78EORXeW/ev53ddAtVV6j5cg3HoBSioJm64MYQiS8Ve5e5VtgOzl6VKBCKVxvJL/KagAgNEUj5Yg+WvWTfShAv5PHnOWTdZtQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=du1Y863U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728417617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MObZzYucpeIvsY1Jse5Uz3zevG/TvvXUOk3aKsny1xc=;
+	b=du1Y863UWLscHBwymrGlztutHTOfx/bJfnNyQDBYDoRKEGov2uFU/VmxE1OgDz7hBr9a4l
+	gHIi2BdExJKBc2sT+nTVdGKs6QK1i1b5yw6JkQtim2MbRhNn1TuM9EgUZpS74GMyrUA1N7
+	QpTRNlpA4qiwSk0lTr/3PaLFSBUdvEQ=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-346-fFXcO45kOAOLEzpy7PiiEg-1; Tue, 08 Oct 2024 16:00:15 -0400
+X-MC-Unique: fFXcO45kOAOLEzpy7PiiEg-1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa499f938so12678039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 13:00:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728417407; x=1729022207;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/G+V8S+q0QrqWGrvEamJlOg78EP9KmYBGMaK7S1DW0=;
-        b=Yhrqd9j7vh9tSdmwJ+5ZbiHpdHhcDE7ldDE+JtQ9CnM2yBy1d9xAKZBoR/K3yU/n2k
-         ih9TRTKgbQzRlC4axQJWVZrnFkV8b72S2hO85EbJSozbwOd7+OdGbt1ICPegieZfAU5b
-         hX1O1Zcfej8Wffw8JMk6Jv6Fa6vL9KykHuPkZDO5dDg3IVvtzWbElu0QMCNIgZutXqO9
-         NwLXBR8Xz858CTfQzNKIYklTpGuWV9voLMhxVkfHs+/vz5pYWCsCOs/FYy6nCSJlSlkA
-         tF1k7NzPI1l7GyGHzbK75OhhwLxbxPXW4Oti1S9sFVsd1iIYw7MsGXAmr+rjbp9RpJ8s
-         m79A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQRGC28jsOD1RT64nWWvj8CUhdL+8m78mtJs9cSxn4CATLn7165dgmFAfjkhhufBRnNOkQubTnxUyIy40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpFrPbmdUUU8sxIXACxJkcO0PCf73N/Ecew6+w7zYNktz8jKED
-	j0YVSfAGpZn2m+T40mHglpzCBoCszvhVoeaNn365JlSJUEMRvatgGsgZw5i2LO/S0wSoJbPSrxD
-	6TA==
-X-Google-Smtp-Source: AGHT+IHyx9QyjvcH0QuqsTJ5s9OSvQOQBKzDDSMtuR28E1GHQRe/I98C0rGCGAu3RxyW1QfCFMI9GKgHUE4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:f151:0:b0:7e9:f98c:e9f7 with SMTP id
- 41be03b00d2f7-7ea320f3304mr172a12.10.1728417406827; Tue, 08 Oct 2024 12:56:46
- -0700 (PDT)
-Date: Tue, 8 Oct 2024 12:56:45 -0700
-In-Reply-To: <diqz1q0qtqnd.fsf@ackerleytng-ctop.c.googlers.com>
+        d=1e100.net; s=20230601; t=1728417615; x=1729022415;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MObZzYucpeIvsY1Jse5Uz3zevG/TvvXUOk3aKsny1xc=;
+        b=cR0mmjp0n7+/9I3v1RWZaaK9bm4KXDSLnU6wCDrT5pqOXOGVjfQF+YSlApyv7Tgwzs
+         Oasa9mKOTFu2XC5uBU5TF/FjONhA7ik+LGffNDI05jKZ9hPoMCTl4HI28sJ6KxlFIf3F
+         4IYT0qj8J5ZynRC/yZISCH6YHnqNGPM33ul5elaRsv8ShZ0P/e3MBw2QkGlkxDnBUEq8
+         x3srDdCYFFbe/JsDLvcbXDQ390pmrrG2qcOvlTkkcmvfF8qj+HZMfeoC79n0HIP8VxZA
+         DY6vTyCsgIT9zR/TXf1vgYpEmuBVjqfMMcfBNsFVyYSJsw+yVGqyhxwXGkyGB/TL2bUX
+         bEZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKZ+gW3nW40/OxQzNBWpvufKYSKV+vkKGx6uxbl1MQCfzoKzAHK1jn8N5xEjVHTSruXnmV0OoqpuFK7EQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4jl/Ne+5Nae7n6wazxnN9SWhtORu9A9YgQPWP+/NI3Tb7yp1k
+	Q+VCj8/00vnwrJX5CwizWUMqh1DW8doL1PmlHzynPdNsokmj3ue1olhyvG+lcUGrRoyP10r8FqK
+	C86r0CzJu6uw+i8+opsKCR3uw7pSSImbVDmjxPiAGW4jSUZ5UBUjuwFTQqBzBLw==
+X-Received: by 2002:a05:6602:6404:b0:82a:a4e7:5539 with SMTP id ca18e2360f4ac-8353bd5f792mr24963539f.2.1728417615041;
+        Tue, 08 Oct 2024 13:00:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGb/gNCzEh7KldvpPLOCBRHkdbQAEa/qjLdBELHthZDFAyg1V7V+5LqxV3lj9h68DULAuahIw==
+X-Received: by 2002:a05:6602:6404:b0:82a:a4e7:5539 with SMTP id ca18e2360f4ac-8353bd5f792mr24961939f.2.1728417614666;
+        Tue, 08 Oct 2024 13:00:14 -0700 (PDT)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83503b305dfsm189543039f.53.2024.10.08.13.00.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 13:00:14 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <7451b309-6f7e-43d9-801b-224a0a5cb08d@redhat.com>
+Date: Tue, 8 Oct 2024 16:00:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <e8f55fef-1821-408e-88ed-b25200ef66c9@amazon.co.uk> <diqz1q0qtqnd.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <ZwWOfXd9becAm4lH@google.com>
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Patrick Roy <roypat@amazon.co.uk>, quic_eberman@quicinc.com, tabba@google.com, 
-	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
-	fvdl@google.com, jthoughton@google.com, pbonzini@redhat.com, 
-	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
-	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
-	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org, 
-	jgowans@amazon.com, kalyazin@amazon.co.uk, derekmn@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] cgroup/cpuset: Optimize domain counting using
+ updated uf_union()
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, Waiman Long <llong@redhat.com>
+Cc: xavier_qy@163.com, lizefan.x@bytedance.com, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com, akpm@linux-foundation.org,
+ jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+References: <20241007152833.2282199-1-visitorckw@gmail.com>
+ <20241007152833.2282199-6-visitorckw@gmail.com>
+ <ef7f2495-06fc-4409-8233-062d2e884271@redhat.com>
+ <ZwVhxDEz8cSeForw@visitorckw-System-Product-Name>
+Content-Language: en-US
+In-Reply-To: <ZwVhxDEz8cSeForw@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024, Ackerley Tng wrote:
-> Patrick Roy <roypat@amazon.co.uk> writes:
-> > For the "non-CoCo with direct map entries removed" VMs that we at AWS
-> > are going for, we'd like a VM type with host-controlled in-place
-> > conversions which doesn't zero on transitions,
+On 10/8/24 12:45 PM, Kuan-Wei Chiu wrote:
+> On Tue, Oct 08, 2024 at 10:02:23AM -0400, Waiman Long wrote:
+>> On 10/7/24 11:28 AM, Kuan-Wei Chiu wrote:
+>>> Improve the efficiency of calculating the total number of scheduling
+>>> domains by using the updated uf_union function, which now returns a
+>>> boolean to indicate if a merge occurred. Previously, an additional loop
+>>> was needed to count root nodes for distinct groups. With this change,
+>>> each successful merge reduces the domain count (ndoms) directly,
+>>> eliminating the need for the final loop and enhancing performance.
+>>>
+>>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+>>> ---
+>>> Note: Tested with test_cpuset_prs.sh
+>>>
+>>> Side note: I know this optimization provides limited efficiency
+>>> improvements in this case, but since the union-find code is in the
+>>> library and other users may need group counting in the future, and
+>>> the required code change is minimal, I think it's still worthwhile.
+>>>
+>>>    kernel/cgroup/cpuset.c | 10 +++-------
+>>>    1 file changed, 3 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>> index a4dd285cdf39..5e9301550d43 100644
+>>> --- a/kernel/cgroup/cpuset.c
+>>> +++ b/kernel/cgroup/cpuset.c
+>>> @@ -817,6 +817,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>>>    	if (root_load_balance && (csn == 1))
+>>>    		goto single_root_domain;
+>>> +	ndoms = csn;
+>>> +
+>>>    	for (i = 0; i < csn; i++)
+>>>    		uf_node_init(&csa[i]->node);
+>>> @@ -829,17 +831,11 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>>>    				 * partition root cpusets.
+>>>    				 */
+>>>    				WARN_ON_ONCE(cgrpv2);
+>>> -				uf_union(&csa[i]->node, &csa[j]->node);
+>>> +				ndoms -= uf_union(&csa[i]->node, &csa[j]->node);
+>> You are taking the implicit assumption that a boolean true is casted to int
+>> 1. That is the usual practice, but it is not part of the C standard itself
+>> though it is for C++.  I will be more comfortable with the "if (cond)
+>> ndoms++" form. It will also be more clear.
+>>
+> Thanks for your feedback. I appreciate your point regarding the implicit
+> casting of boolean values. And changing the code to:
+>
+> if (uf_union(&csa[i]->node, &csa[j]->node))
+>      --ndoms;
+>
+> would also enhance clarity and readability.
+>
+> Would you like me to resend v3? I'm asking because I suspect Tejun may
+> want to see more user cases before considering such optimizations.
 
-Hmm, your use case shouldn't need conversions _for KVM_, as there's no need for
-KVM to care if userspace or the guest _wants_ a page to be shared vs. private.
-Userspace is fully trusted to manage things; KVM simply reacts to the current
-state of things.
+I agreed with Tejun that union-find performance is not that important 
+for the cpuset use case which is also the only use case at the moment. I 
+will support a v3 if you can find another use case where performance is 
+more important.
 
-And more importantly, whether or not the direct map is zapped needs to be a
-property of the guest_memfd inode, i.e. can't be associated with a struct kvm.
-I forget who got volunteered to do the work, but we're going to need similar
-functionality for tracking the state of individual pages in a huge folio, as
-folio_mark_uptodate() is too coarse-grained.  I.e. at some point, I expect that
-guest_memfd will make it easy-ish to determine whether or not the direct map has
-been obliterated.
+Cheers,
+Longman
 
-The shared vs. private attributes tracking in KVM is still needed (I think), as
-it communicates what userspace _wants_, whereas he guest_memfd machinery will
-track what the state _is_.
-
-> > so if KVM_X86_SW_PROTECTED_VM ends up zeroing, we'd need to add another new
-> > VM type for that.
-
-Maybe we should sneak in a s/KVM_X86_SW_PROTECTED_VM/KVM_X86_SW_HARDENED_VM rename?
-The original thought behind "software protected VM" was to do a slow build of
-something akin to pKVM, but realistically I don't think that idea is going anywhere.
-
-Alternatively, depending on how KVM accesses guest memory that's been removed from
-the direct map, another solution would be to allow "regular" VMs to bind memslots
-to guest_memfd, i.e. if the non-CoCo use case needs/wnats to bind all memory to
-guest_memfd, not just "private" mappings.
-
-That's probably the biggest topic of discussion: how do we want to allow mapping
-guest_memfd into the guest, without direct map entries, but while still allowing
-KVM to access guest memory as needed, e.g. for shadow paging.  One approach is
-your RFC, where KVM maps guest_memfd pfns on-demand.
-
-Another (slightly crazy) approach would be use protection keys to provide the
-security properties that you want, while giving KVM (and userspace) a quick-and-easy
-override to access guest memory.
-
- 1. mmap() guest_memfd into userpace with RW protections
- 2. Configure PKRU to make guest_memfd memory inaccessible by default
- 3. Swizzle PKRU on-demand when intentionally accessing guest memory
-
-It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
-instead of to usersepace memory.
-
-The benefit of the PKRU approach is that there are no PTE modifications, and thus
-no TLB flushes, and only the CPU that is access guest memory gains temporary
-access.  The big downside is that it would be limited to modern hardware, but
-that might be acceptable, especially if it simplifies KVM's implementation.
-
-> > Somewhat related sidenote: For VMs that allow inplace conversions and do
-> > not zero, we do not need to zap the stage-2 mappings on memory attribute
-> > changes, right?
-
-See above.  I don't think conversions by toggling the shared/private flag in
-KVM's memory attributes is the right fit for your use case.
 
