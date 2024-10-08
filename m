@@ -1,185 +1,157 @@
-Return-Path: <linux-kernel+bounces-355529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4908199538E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:43:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A9B995393
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2831C256E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8D2286B0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564501E0B63;
-	Tue,  8 Oct 2024 15:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="dzbNI35C";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GyampA03"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67BA1E0B9E;
+	Tue,  8 Oct 2024 15:44:28 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A5B1DFD8B;
-	Tue,  8 Oct 2024 15:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9423218C327;
+	Tue,  8 Oct 2024 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728402234; cv=none; b=pCiv0Z3KpESUtTpx9mrokwvqFrHQw2YAWyiKoHia9NfpN9WVYJwTOK7JLeNb2Xhq49rg0RzHALP4EHW0fAV0c8LMFQtto3fnulNdho6LVRtyP8x7dxFo2aGhTCj3sUmA6/q0PzDLB/zVCaGzITjg/B84FIknNCOMmd2PPuxpRJk=
+	t=1728402268; cv=none; b=NPilWDZw+2iDn7/NB4wGr1w1gq5OXZeCn/NuavRKb+vReHSMr93CW7I96/gSuVF7+8GuzC0TITyU4/EimhgElGwfvtjb7Lhe8+d62ZbA8m7dBBbozXp1ko/TKQDXKXmjStQ+ddhoypwXE76n/+4mJ892dwxfrTiUfNPH8ct96KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728402234; c=relaxed/simple;
-	bh=kibQiZ7MUXO9FWBfsXJG4QfUKF6DMjfZUlKYeN3IbaQ=;
+	s=arc-20240116; t=1728402268; c=relaxed/simple;
+	bh=j2O2vvbQsRzozuJK5x8FZ7BszygrUj3FutD9s91tQs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsKMbjXyswR0CCqyXrNvv/CLmNvi+emgKTcMBiu9T40wz1vUxFX40GtUjbyQCUy3l6r2ACYZ1kmm/Oa8u07+qbYbJi7w0s53cVfG13H67sxhJLqip9nRhEL20J0vkiIRbIlFXCvrJ1DK9b0zlInOWpHEWa4uB++HWD/tjbU/Ugg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=dzbNI35C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GyampA03; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id B256420048A;
-	Tue,  8 Oct 2024 11:43:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 08 Oct 2024 11:43:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1728402231; x=1728409431; bh=l0xeH/FCCL
-	ppRorwdACWdysYGh4W11hlmJQYjSLUypo=; b=dzbNI35CVLAHolVPibiv52nJzR
-	aZ5Fu6xM+1Gw3aQVp9pPZldoFtGovLnFCsk0Mj0JJ71Z6CBXjXWogI6rxUbopciz
-	7zkoezcBGxXDwxR/Xq8mR54Fryri/W/tRJIlybCCqS5FFe8tz+VxZEGdN//bR0wi
-	DW9H2id1b7IJyaw7SKFPY1Kzq4a5C93BuvgbQ67OxrBsK5kyGQUCnrQId4FaBPOg
-	mD2Ctg968FEUzYg5NQAnmTCfj+syTP4JTsf9jiPz9A5Mtqohcx8vqpBaLFAEn/IA
-	fCCP+RcSLLqqlUy/liDx2SvKDQOy79xJsVo2odaeK4VygvNO8bIIBghKbZzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728402231; x=1728409431; bh=l0xeH/FCCLppRorwdACWdysYGh4W
-	11hlmJQYjSLUypo=; b=GyampA03PbYHio0MYbM3ulWkqT8Hrh0ecMsGM2NuutRw
-	UbHtvO8MHgHxVkQOQa75QBVnVmqCRQwaAyHdwCYkLhHGXoL5F3Eka0+U6UPFwEdg
-	2ULZFV8gF0d7oxB5miuuTgpaSc0f/pCUfePpO8kwZV65ABtonN1xQWDxictQNUvz
-	cHQggVrAEOuj8YQxxfHG8rhfFTHXAnKJfa1U7BYZPmOeBZ5yGwC3y+pSErmIodxi
-	Ur6YRP9zTKKS4r2c777p6tNX+Y3c9RODHLuuZwMPE1Q/9wFGIW+JlxKdtFo91g8p
-	jVgfIkTyFRUW6+JdbyZr6eGdJPO75iLohmfjUoO0KA==
-X-ME-Sender: <xms:N1MFZ8mTCzSCfgWwzWwqiTRscfG6ftj50ApQ5C-XTV-MSPB8E4_F-Q>
-    <xme:N1MFZ72e9mJJm73nnLx6T14YRUoYoQUOdCDsOvxs_6tER0ydqIantwkSwh848yMA-
-    sbbaqb-CPHcfQ>
-X-ME-Received: <xmr:N1MFZ6q8O-mHHQYBGBg_4C2UNEAQavpqc_GhJVEfjZbPj2ERD_ZMvpWuK2ng-8bXiUYjD82EPQ1lhRyXT4LMAHFNgRH2yRs5CJw7og>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefuddgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedvkedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepghhiohhmvghtthhisegvnhhnvggvnhhnvgdrtghomh
-    dprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopegthhhrihhsthhoph
-    hhvghrrdhsrdhhrghllhesihhnthgvlhdrtghomhdprhgtphhtthhopehsuhgsrhgrmhgr
-    nhhirghnrdhmohhhrghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepthhglhigsehlih
-    hnuhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhk
-    oheslhhinhhugidrihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:N1MFZ4l8i5dbg9CeYqkLfWFf6QdlX4AVIZCMLGoL1Qens8Es8HwcXg>
-    <xmx:N1MFZ63g1rDjphvhlVY2nKxZp6Df6mSBsYqmWxh0VL_ERRVsSJXKsw>
-    <xmx:N1MFZ_uzu__AlHpMWoWN0tQTUkTcSkgMx25gmGbTIfkeaiEX6AudEQ>
-    <xmx:N1MFZ2W1oI4hNXl5ty3NeYmpLmsX7_87kZeXOAN2UoF_wIOjWOb0hw>
-    <xmx:N1MFZ_f6ONbWJRi470kBXgVSJe-EHjojNltVnVBo0l4iQneZQaQDIVLu>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Oct 2024 11:43:50 -0400 (EDT)
-Date: Tue, 8 Oct 2024 17:43:49 +0200
-From: Greg KH <greg@kroah.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net,
-	Hall Christopher S <christopher.s.hall@intel.com>,
-	Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	Dong Eddie <eddie.dong@intel.com>, N Pandith <pandith.n@intel.com>,
-	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
-	Zage David <david.zage@intel.com>,
-	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
-Subject: Re: [RFC 3/3] Documentation ABI: add PPS generators documentaion
-Message-ID: <2024100819-wildlife-counting-6c63@gregkh>
-References: <20241008135033.3171915-1-giometti@enneenne.com>
- <20241008135033.3171915-4-giometti@enneenne.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjWfB+AWtRxhr/9oj1NRZv+93ZBEB1M2zU2es4BZyJfu+0Fb5HbLpD9KbFpkA1Ep/GuFP2Uq1AGCTWX7ujh7xwJCE7qcFncc6MuucSvjmJjxYYTqeFbBkfNvMX0zbmaKWaJlp/BryPzLfm07VVFUH3XOn0DW+sDGWjGFcDcZ3IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=53202 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1syCNo-008k9X-1n; Tue, 08 Oct 2024 17:44:22 +0200
+Date: Tue, 8 Oct 2024 17:44:18 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Amedeo Baragiola <ingamedeo@gmail.com>, Roopa Prabhu <roopa@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
+Message-ID: <ZwVTUt_ie0sMsjbk@calendula>
+References: <20241005014514.1541240-1-ingamedeo@gmail.com>
+ <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
+ <ZwVCC3DYWw0aiOcJ@calendula>
+ <8f285237-757b-4637-a76d-a35f27e4e748@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241008135033.3171915-4-giometti@enneenne.com>
+In-Reply-To: <8f285237-757b-4637-a76d-a35f27e4e748@blackwall.org>
+X-Spam-Score: -1.8 (-)
 
-On Tue, Oct 08, 2024 at 03:50:33PM +0200, Rodolfo Giometti wrote:
-> This patch adds the documentation for the ABI between the Linux kernel
-> and userspace regarding the PPS generators.
+On Tue, Oct 08, 2024 at 05:45:44PM +0300, Nikolay Aleksandrov wrote:
+> On 08/10/2024 17:30, Pablo Neira Ayuso wrote:
+> > Hi Nikolay,
+> > 
+> > On Sat, Oct 05, 2024 at 05:06:56PM +0300, Nikolay Aleksandrov wrote:
+> >> On 05/10/2024 04:44, Amedeo Baragiola wrote:
+> >>> Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack input hook for promisc packets")
+> >>> a second argument (promisc) has been added to br_pass_frame_up which
+> >>> represents whether the interface is in promiscuous mode. However,
+> >>> internally - in one remaining case - br_pass_frame_up checks the device
+> >>> flags derived from skb instead of the argument being passed in.
+> >>> This one-line changes addresses this inconsistency.
+> >>>
+> >>> Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
+> >>> ---
+> >>>  net/bridge/br_input.c | 3 +--
+> >>>  1 file changed, 1 insertion(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+> >>> index ceaa5a89b947..156c18f42fa3 100644
+> >>> --- a/net/bridge/br_input.c
+> >>> +++ b/net/bridge/br_input.c
+> >>> @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool promisc)
+> >>>  	 * packet is allowed except in promisc mode when someone
+> >>>  	 * may be running packet capture.
+> >>>  	 */
+> >>> -	if (!(brdev->flags & IFF_PROMISC) &&
+> >>> -	    !br_allowed_egress(vg, skb)) {
+> >>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
+> >>>  		kfree_skb(skb);
+> >>>  		return NET_RX_DROP;
+> >>>  	}
+> >>
+> >> This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
+> >> is found it will always drop the traffic after this patch (w/ promisc) if it
+> >> doesn't pass br_allowed_egress(). It would've been allowed before, but current
+> >> situation does make the patch promisc bit inconsistent, i.e. we get
+> >> there because of BR_FDB_LOCAL regardless of the promisc flag.
+> >>
+> >> Because we can have a BR_FDB_LOCAL dst and still pass up such skb because of
+> >> the flag instead of local_rcv (see br_br_handle_frame_finish()).
+> >>
+> >> CCing also Pablo for a second pair of eyes and as the original patch
+> >> author. :)
+> >>
+> >> Pablo WDYT?
+> >>
+> >> Just FYI we definitely want to see all traffic if promisc is set, so
+> >> this patch is a no-go.
+> > 
+> > promisc is always _false_ for BR_FDB_LOCAL dst:
+> > 
+> >         if (dst) {
+> >                 unsigned long now = jiffies;
+> > 
+> >                 if (test_bit(BR_FDB_LOCAL, &dst->flags))
+> >                         return br_pass_frame_up(skb, false);
+> > 
+> >                 ...
+> >         }
+> > 
+> >         if (local_rcv)
+> >                 return br_pass_frame_up(skb, promisc);
+> > 
+> >>> -	if (!(brdev->flags & IFF_PROMISC) &&
+> >>> -	    !br_allowed_egress(vg, skb)) {
+> >>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
+> > 
+> > Then, this is not equivalent.
+> > 
+> > But, why is br_allowed_egress() skipped depending on brdev->flags & IFF_PROMISC?
+> > 
+> > I mean, how does this combination work?
+> > 
+> > BR_FDB_LOCAL dst AND (brdev->flags & IFF_PROMISC) AND BR_INPUT_SKB_CB(skb)->vlan_filtered
 > 
-> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
-> ---
->  Documentation/ABI/testing/sysfs-pps-gen | 44 +++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-pps-gen
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-pps-gen b/Documentation/ABI/testing/sysfs-pps-gen
-> new file mode 100644
-> index 000000000000..9ad066cb3ce5
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-pps-gen
-> @@ -0,0 +1,44 @@
-> +What:		/sys/class/pps-gen/
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		The /sys/class/pps-gen/ directory will contain files and
-> +		directories that will provide a unified interface to
-> +		the PPS generators.
-> +
-> +What:		/sys/class/pps-gen/pps-genX/
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		The /sys/class/pps-gen/pps-genX/ directory is related to X-th
-> +		PPS generator into the system. Each directory will
-> +		contain files to manage and control its PPS generator.
-> +
-> +What:		/sys/class/pps-gen/pps-genX/enable
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		This write-only file enables or disables generation of the
-> +		PPS signal.
-> +
-> +What:		/sys/class/pps-gen/pps-genX/name
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		This read-only file reports the name of the X-th generator.
+> The bridge should see all packets come up if promisc flag is set, regardless if the
+> vlan exists or not, so br_allowed_egress() is skipped entirely.
 
-Again, why a name?  What is that for?
+I see, but does this defeat the purpose of the vlan bridge filtering
+for BR_FDB_LOCAL dst while IFF_PROMISC is on?
 
-> +
-> +What:		/sys/class/pps-gen/pps-genX/system
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		This read-only file returns "1" if the generator takes the
-> +		timing from the system clock, while it returns "0" if not
-> +		(i.e. from a peripheral device clock).
-> +
-> +What:		/sys/class/pps-gen/pps-genX/time
-> +Date:		October 2024
-> +Contact:	Rodolfo Giometti <giometti@enneenne.com>
-> +Description:
-> +		This read-only file contains the current time stored into the
-> +		generator clock as two integers representing the current time
-> +		seconds and nanoseconds. 
+> As I commented separately the patch changes that behaviour and
+> suddenly these packets (BR_FDB_LOCAL fdb + promisc bit set on the
+> bridge dev) won't be sent up to the bridge.
 
-Trailing whitespace, please always run checkpatch.pl.
+I agree this proposed patch does not improve the situation.
 
-thanks,
+> I think the current code should stay as-is, but wanted to get your
+> opinion if we can still hit the warning that was fixed because we
+> can still hit that code with a BR_FDB_LOCAL dst with promisc flag
+> set and the promisc flag will be == false in that case.
 
-greg k-h
+Packets with BR_FDB_LOCAL dst are unicast packets but
+skb->pkt_type != PACKET_HOST?
 
