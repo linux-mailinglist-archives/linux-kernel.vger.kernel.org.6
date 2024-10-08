@@ -1,129 +1,97 @@
-Return-Path: <linux-kernel+bounces-355638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0587995532
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8DC995534
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE321C22027
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963472886A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AAF1E0E15;
-	Tue,  8 Oct 2024 16:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA0036127;
+	Tue,  8 Oct 2024 17:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="byzNQWes"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sElErNoZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F336153365;
-	Tue,  8 Oct 2024 16:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6CF1E1024;
+	Tue,  8 Oct 2024 17:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728406764; cv=none; b=b2K0+JpmOntjhRuu1/07asJgY0+rd7CN+ODWTB7MD0RSw8FN7akWoD83J8vgCFPRmT39oiDuq11Mim7z47h3DpGARCZF83prIhxt03IvGxQKzX+VRpk3Tno7aj+38gfrQRtscs9YL6gPO5yZNh5pO3esE4ccjBj4VRdsa4xmNwY=
+	t=1728406806; cv=none; b=b+ExCnkYET1h7l8MK+08DiyWW+3SJeTk7kJJTfzi2lJakzjvWBv2eUVWCYEAF+xmvau8XD0oQ0EN6FajYde3OKgjZKqBdual+yrvUh5JW+inkWSSyYNDi7zOyV93hRmjKpnBTm85XT4jQt5dESTgDk2tNaiUqKs+fjgSUbGCTR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728406764; c=relaxed/simple;
-	bh=ww/PdwMU32dIxV0+2DxsU66aBiSWMXdRV7q+lECsFNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AzCXYgaDc52eFl35BjPZBuzenkYncxEImtmOpJU+S+r0R4o110owW2eYUz6fYyOOqAIL9M50rZuzjTZz6+Q41Z7duJ+UFiX5t02cUebPwVhrEJzju3e+TEaDeY8nrA5WyVllV7tSJiRYEpt17Bex9w4uSW1qikmP/1GDf1APSzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=byzNQWes; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2facf481587so49837101fa.1;
-        Tue, 08 Oct 2024 09:59:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728406761; x=1729011561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uFgf22IeF2Fd7XqiEj7HlqG+Di0IstmknMdZldE+EzQ=;
-        b=byzNQWes5qRmgi+MJjZfnm100ZdUzmc6CbsBKjAPEWs4OuepK/kv/HPwt01R7BSf1a
-         /0NxVaNCibJr0tPDzQrPME2vcyhGi/hgUAaCwoAg9yhDcqivW50vXVv1RkCUUYDvIRYs
-         8nMRbsvkE5IcD7yqQQmYgjKsqvr3j0Y25qmdXPLYtUCzENROajXFT9aE0dfU0f3tQMfz
-         O/LkD68ywngEm4hGI4pxozNWWYROa/gA5pIOc2wsGgRy05Gd0PilZx8Ocj3Fh83d4nmO
-         KqUkx8RS+wEUdKkVbsYE62VMJLBArInKuQhiDAdEuZPZqGWseedekYtgeoivRtuuqKCH
-         fF+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728406761; x=1729011561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uFgf22IeF2Fd7XqiEj7HlqG+Di0IstmknMdZldE+EzQ=;
-        b=IzBpJkjisqxt57YH6CMhHgmFp8aieofbLTqfMEHik2lN3BYsijQov7oUc7fFK9p6EM
-         WfoaUaFkQAkc/JcfDJC0/g7VB8t5nIqLg91AAqrqIAUgBFd1+bA+vcwncGHOvGt8mFxX
-         GIg0IZHhz0Bd4FLBEtiHVJf6+byOTEALGGhzW1qbW/z1rWDsFbBvqXeTOeStZifFtZi3
-         y3IbIsjs+HkP04u4DF+GAjINFqrXcIw8wW+ZbXuo3ETPyAg/FlxSVL2FYHx60lkjBRkq
-         7lOma5IkURJnphaQgqGOivUbKMovMouE73FRcxIM4dCjQXgpKyavFB4S0fW30GNnX/ZI
-         KK9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qtG7+s8mhYJqiwcBx+m265Atz8pXfvvfV/DwaKNA/hRl2gTZSKKGjiEAggh+iGfQ9Jt4MCIq@vger.kernel.org, AJvYcCXSGCWVYo8730F7rmVwUXnkZkrB854HDX+JH3gEyiLYVQun08wFwhmIVqwe1x/iIh+b5MWizbCFdwFQ8OA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0InyuJyDOCzwXKpi0U7nqV7C19lNiU495+XNljfiBuC6alcdy
-	904Iwpfu4UaN/hdh1dvKFieUksiBs5xlnfhbSx/WZ27Jpsu1moef3TrWLhFFr7OrcdV1HiJPIdU
-	7UeERKxRokEz8i+YC2jCK8dMundRND2pNHz85u7B7
-X-Google-Smtp-Source: AGHT+IGjaWSRhSPVNkoNqb5MZeA9wXUH299qFdknPM0dXQsR+d+960UYHK2+rTeKjS7KFceadFUlN9N71Mx+dFS6tqw=
-X-Received: by 2002:a2e:be1f:0:b0:2fa:d4ad:f4df with SMTP id
- 38308e7fff4ca-2faf3c0c141mr74718161fa.7.1728406760601; Tue, 08 Oct 2024
- 09:59:20 -0700 (PDT)
+	s=arc-20240116; t=1728406806; c=relaxed/simple;
+	bh=ilNygfwAr+c6HawWam7RWUXOjmWcDkBEry6nZ3GjjFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3w2H5JYPTzSS0fHMBAv0J9WVPOqtntiry+p7aKqyBwIbkAh+rZcdujigppxQQ/FmbvIbEwZaFjGlDgbrYXhNTDIj4/MT+turK+ddH6KasQ3L98Ivs6flIMRJ+0N+/bZ8OMfNQJ2RVdfVFUbHJeP8B4YOVERa0DPOhPLQBa7/2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sElErNoZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B180FC4CEC7;
+	Tue,  8 Oct 2024 17:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728406806;
+	bh=ilNygfwAr+c6HawWam7RWUXOjmWcDkBEry6nZ3GjjFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sElErNoZbiv37nRnBW2MU9Pgqb7CG3i1JoUGzmuhVQ3x5wd7cI3e8Gm1LF9Lfb6AH
+	 HWe9x1CH4G3VqVW5xGLewPrxjdf43OPhCvFCaWaz+wPhqlWtXEyG26qwbBMU8sjYVy
+	 RAFfO0/PaXe1yn4OPMgkOev/ZuOfSNPglknFIs8cI+8Z8s4HF3rHNYZYBN9Dq5JSVv
+	 9Lz4MYNEkBaWYz2WyQlhxfovyPu6CQcbI/ZXgPgA/eCIIClYi3fKX27LR34bNJCTjx
+	 ms+L8LM8PUjqlukl60t2gLIxrHdY6U3f/CpIoKuN8pQlj0HDg1pwW2bwjcY6z1Nivx
+	 GL/qntinx1KQw==
+Date: Tue, 8 Oct 2024 18:00:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-spi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+	oss@helene.moe, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] driver core: Add device probe log helper
+ dev_warn_probe()
+Message-ID: <ZwVlE9bgHYNT8J7J@finisterre.sirena.org.uk>
+References: <cover.1727601608.git.dsimic@manjaro.org>
+ <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
+ <e8cbbf877cc0e6838afd2d6de3b7bfa1@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007092936.53445-1-rand.sec96@gmail.com> <20241007172715.649822ba@kernel.org>
-In-Reply-To: <20241007172715.649822ba@kernel.org>
-From: Rand Deeb <rand.sec96@gmail.com>
-Date: Tue, 8 Oct 2024 19:59:09 +0300
-Message-ID: <CAN8dotnMoh9VKd50MQx=FJ9ALhsHp7DMsMNq--EdrbWb8=Vv3w@mail.gmail.com>
-Subject: Re: [PATCH] drivers:atlx: Prevent integer overflow in statistics aggregation
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	deeb.rand@confident.ru, lvc-project@linuxtesting.org, 
-	voskresenski.stanislav@confident.ru
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lRqd+6XvOQTtUjE0"
+Content-Disposition: inline
+In-Reply-To: <e8cbbf877cc0e6838afd2d6de3b7bfa1@manjaro.org>
+X-Cookie: Editing is a rewording activity.
 
-On Tue, Oct 8, 2024 at 3:27=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Mon,  7 Oct 2024 12:29:36 +0300 Rand Deeb wrote:
-> > The `atl1_inc_smb` function aggregates various RX and TX error counters
-> > from the `stats_msg_block` structure. Currently, the arithmetic operati=
-ons
-> > are performed using `u32` types, which can lead to integer overflow whe=
-n
-> > summing large values. This overflow occurs before the result is cast to
-> > a `u64`, potentially resulting in inaccurate network statistics.
-> >
-> > To mitigate this risk, each operand in the summation is explicitly cast=
- to
-> > `u64` before performing the addition. This ensures that the arithmetic =
-is
-> > executed in 64-bit space, preventing overflow and maintaining accurate
-> > statistics regardless of the system architecture.
->
-> Thanks for the nice commit message, but honestly I don't think
-> the error counters can overflow u32 on an ancient NIC like this.
 
-Hi Jakub,
+--lRqd+6XvOQTtUjE0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your feedback, much appreciated!
+On Tue, Oct 08, 2024 at 06:18:46PM +0200, Dragan Simic wrote:
 
-Honestly, when I was investigating this, I had the same thoughts regarding
-the possibility of the counters overflowing. However, I want to clarify
-that the variables where we store the results of these summations (like
-new_rx_errors, new_tx_errors, etc.) are already u64 types. Given that, it
-seems logical to cast the operands to u64 before the addition to ensure
-consistency and avoid any potential issues during the summation.
+> I just spotted a couple of small typos, noted below, and I hope you won't
+> mind to apply the fixes by hand before applying this patch, please?
 
-Additionally, all counters in the atl1_sft_stats structure are also
-defined as u64, which reinforces the rationale for casting the operands in
-the summation as well.
+Sorry, your mail arrived after I'd already published the changes -
+please send an incremental patch for the one in the comments.
 
-Thanks again for your input!
+--lRqd+6XvOQTtUjE0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Rand Deeb
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcFZRIACgkQJNaLcl1U
+h9CjOgf/YdYsIumY/c+kP3vXgm7bvxtlgtOfE5LJQjZQYzGjfxM0kQ+PuKn3AbCO
+4lp9A4x7pDHgx9WAnyX4l/ILms/OoUu1wTgid7R/3jeDNzwcVCKdDNQI7zx9CUun
+Zve7qeu6Tk+1tdM5TrduLh7U78SwXYEdAOT/ET/q/9cMSMwWv2hVJqG+BMCeXSjT
+WQGgHkJXXW+w/pmIDmNbzWnvEM1OWyXpxtG9Rf3chM8DxEJBIvVhxhXGnwPMqOx6
+QT82NcYOzOaiqdkq4mMtxAOUmMDXDm4Pt38T4YSSKF0jO5DgBq/8+r//47KkEb9p
+XdDnNuV9l55UFJrV7O9IKPMQbjMVMA==
+=5llK
+-----END PGP SIGNATURE-----
+
+--lRqd+6XvOQTtUjE0--
 
