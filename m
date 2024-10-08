@@ -1,207 +1,91 @@
-Return-Path: <linux-kernel+bounces-355857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DEE995812
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 310CC995814
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C1D1F22B89
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:03:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09CD1F2179B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222A3213EE7;
-	Tue,  8 Oct 2024 20:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E29213EE7;
+	Tue,  8 Oct 2024 20:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="Qcb4CfVL"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2084.outbound.protection.outlook.com [40.107.20.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldiHwV8G"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788B412B17C;
-	Tue,  8 Oct 2024 20:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417758; cv=fail; b=HAiYNhMcu1bC+IasOTQc4jKbbZYv+Y6nx0w/J40taFRZUUKhyvNUdkYe1qwKSFHZPwuyajX5tsavYm64UJ8KBfBMwB9G8BIROyT47ZHIRZFDv/Cii07LbEq3XemX3+aZsid4FoVBQryUzF7ZHl+Xa/1ibLuRi8YEk9ogKB609PU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417758; c=relaxed/simple;
-	bh=oWwdgxRh3PgMhyfxXmuTOzNv7jbRnAY4BxC/MB72HWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pSrKSLNw/Kxg+UPAzsoRqf/vOuCKFnfjjVFhJ4mviLlYMqq5K6fIEET0vzBU0vddhZ1zX3qxTuyqaCLsPRd7hqHW5xcyuHmddtliq7+Pcu7l70svWxNFKhikjT2Y+xlQBUf9MbP8ZL1iloKwW6nMJbcyu0kMsOyLR55wY++czzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=Qcb4CfVL; arc=fail smtp.client-ip=40.107.20.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YBD2ygesGKbAwGgbxBfszn438y7Qvrq5++Loq9CDk0TcLMhn8/rGNZ5FW0UlNoSFBloLQYGU7N/YgiwZ3MU9p/o9SW/kJZ/MzDVXnY9kWJDoEV+JMXu2J1agdcSeCCCpdp9t+50lr1gMAnf5hw2JZfdmD4nV/z5Q7wt6EFOcAbArZALTIg2zgVBhw+JtsBSVixN/RRt08mGkAgnM6UsyLWbQLIVDf8SC0CxU716NMr7UxvP3cxJtdPY6tIjJaT0DYFm7fijys9dkSwClZ4oShobzp6H5bgz1FrrUlwOPwusUB9o3nc68gQPdh4Qu+mCKL55T8yWZW7D8tGqDPNDuVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wzdWotbnb0kglrqvBB63QGfSYLt0JHlsQ5C5ZifPh0k=;
- b=qO/9pW/k9myJ3Sa/e/HBx3+eLcNPT6RaCFAimv41qReuVS/vjfoZNEhGP0gilIDmAcuXhnireXIYLm9ujHAzqbJoA6LctsA5pAx7hI+0a+bmCGocXZ65DjusOGBLckTa0YGwA4qNuep+bPcIyUo4kDGkyoJiXvlRDxn2M9nlqV+ddN1v/H9f7cnbNpqgXDnEwbWF4VXubyimwm6XWUriMLQ3yIZheGD7GcVqSjOI3YVn4kaDLZiFm9LUC6ILj/0sPUfRAPmnn4TSz4PGyxSn0I3XcM/s+PwZSfuJldL4sFKOqa77mHJuYPuE2De1dHPAyrHhd761UuGBHEmeoSvVbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wzdWotbnb0kglrqvBB63QGfSYLt0JHlsQ5C5ZifPh0k=;
- b=Qcb4CfVLBSnu8tdOYcs42sM62UnkABAOBcxR8/drmJT/UPa667GiECEKhAq7pw4Vy/n3z+6mH32tXPh5Q5QC+V+Tr24YHz+vdtz1qGMcT1V3XJkDKpiMZsDMv+l37JQaiNVnNh5ieUt4hrEXq0hAWlvo9RM/awyjH53pN820uOT/H1RgjEpM/9A8W8LWEFeZoit7PeUeBiYYE9bA5Ql/Lnz57GLnDrm8Ebd96JWRAr/JlEjTYXKYtulQOV/a+GdTa2xNjtpXEnCXYguyPoCGEPD2s5SCOhe/wt0jXCgk/g5YkbhbaiomwhJhT5oUnOLXUMUrANChu0ieu0uPaDvUFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nokia.com;
-Received: from AS4PR07MB8707.eurprd07.prod.outlook.com (2603:10a6:20b:4f1::7)
- by VI1PR07MB9500.eurprd07.prod.outlook.com (2603:10a6:800:1c7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
- 2024 20:02:30 +0000
-Received: from AS4PR07MB8707.eurprd07.prod.outlook.com
- ([fe80::887:2f82:171e:f1ca]) by AS4PR07MB8707.eurprd07.prod.outlook.com
- ([fe80::887:2f82:171e:f1ca%4]) with mapi id 15.20.8026.017; Tue, 8 Oct 2024
- 20:02:29 +0000
-From: Julien Meunier <julien.meunier@nokia.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Leo Yan <leo.yan@linux.dev>
-Cc: stable@vger.kernel.org,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] coresight: etm4x: Fix PID tracing when perf is run in an init PID namespace
-Date: Tue,  8 Oct 2024 22:02:25 +0200
-Message-Id: <20241008200226.12229-1-julien.meunier@nokia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925131357.9468-1-julien.meunier@nokia.com>
-References: <20240925131357.9468-1-julien.meunier@nokia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: GV3PEPF00003676.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::38d) To AS4PR07MB8707.eurprd07.prod.outlook.com
- (2603:10a6:20b:4f1::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573CF38DD6;
+	Tue,  8 Oct 2024 20:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728417848; cv=none; b=kV8xIrQdb8OgtvFK/1a3ooCWTAZKc2daQkcNTieoanf8moIYWS4Jmye5cOgh3bB/J0FGhxIFquhLoovWOdLYrXYMz77vbCNr+SIyXTNBGRwHmq3YGB5ItcmKOqFd7Z8lz2Yy811es4MCQK4hMaahUmLFns/xADJDSZ7SAN7j9kU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728417848; c=relaxed/simple;
+	bh=hIDdguQllWlrrSrcWZPyuiCbjmKx458t7j7bTnzxdJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZVQUdGl2Fjy+QMeM4vO9XGuqDEf/AWA/ebeuxTxE/HHyT6yqM5AFvecrPHj7VPEgEAPXP0lOU9ljJDL7ZK7dg2Hv9ddLPNulDrYZC8tab6Z/PjCXHPmjBP8CaZ7DguAAcYQ6ovWoO2JVjTFdILhetlrau7wsyIV/ibrHq7giMSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldiHwV8G; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b9b35c7c7so43379995ad.1;
+        Tue, 08 Oct 2024 13:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728417846; x=1729022646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hIDdguQllWlrrSrcWZPyuiCbjmKx458t7j7bTnzxdJk=;
+        b=ldiHwV8GBDpu1TUgyJ7lcCSxeop0QeGU41jJ0msCZgMVEuRtVLlIWKXZiHJdUi8+z/
+         +33wDNLsfA627GIs4+Yhj6s8AUOq2reGwuPuQEaOS3bXIcBW7CGP8VjzPaY3TLnbFwRA
+         svioh6ONTS+uKeep/YebsUlkdL1LyxR9rEhoPvptwuRdErWRpMt3+ZLEvRn4nD7QNgYE
+         gMDb+XwcyToOYxbVkkkbdGZEKJbVTbcUvY2CiMqD5Y+2Iy/gpjoIGYvS2iRxFVH6Eexf
+         a7KA9+0jbXspe0y5DjbDYWbi5OOyVbxSb11OFswrxSSVWdpbmlXQRYuuQM//JpXd6v9O
+         /6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728417846; x=1729022646;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hIDdguQllWlrrSrcWZPyuiCbjmKx458t7j7bTnzxdJk=;
+        b=BGA+En+cFdXYp0UiAO36zU0wE4T9lEJiMDDpvvzb0OC6t+kZS2Led4Y0sH+jrIe4cL
+         w/l4eB7m33yjZI+YCZ4Y9rBYvINbgYTbcxzDFDxfv3ORqpGdcty66I/6UTN0FK/rH19x
+         cMxdVVbBcmLH5LM+08SNmVGt1vsPtM7/hml1d9ll2Md9eaF2tluf7MyuIYeUMkS4HEEw
+         D4w+JyCEkRiiAmK/P/3MoUrFWuaAQDHRJrRg2934YXyrT3tH/vs/CRNsso8hT9xz1xLL
+         3z+PkG9ITv86pN2T2jhBI5S19m0rF54IoXyiarYhM2glp+DPYSF7McwTN+/NGD2Sdf2d
+         cItg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgr7+jHRb0o1CZBfUYwQl43ctXxN5FPKio+e/HDuGBRxLEORPMz05JOsvzVkEfolYqHGbS3wJbe1Aur1I=@vger.kernel.org, AJvYcCV7j3z0ajGFTuuDnQD2pn9q8uVcnNgNRSr2EOiuvukBc+HsGLqblKaCDtxw+M3R7MdwnK2PKLD3Uqe0aZc3Et+3lxa4vw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZRUA4O9PCqbWEt+EDWTW1yY9/SO8qgGG9qXBBR//xH/kM/qGz
+	eKiTu42r3vRY5hsTKM76/hfUKspTB61PjlXLv7DdP9qs3fCy/ke0
+X-Google-Smtp-Source: AGHT+IEtJsd+K+WN9pJ9nP4sHlGi1tJMSZ/1lsCBtLZkBRPv+JKjmD2xW+j6mmWfLDYRkPkMKZDeQQ==
+X-Received: by 2002:a17:902:db03:b0:20c:56b8:1627 with SMTP id d9443c01a7336-20c63787f1emr2390245ad.35.1728417846470;
+        Tue, 08 Oct 2024 13:04:06 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138d05casm59011765ad.91.2024.10.08.13.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 13:04:06 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH] alienware-wmi: Dell AWCC platform_profile support
+Date: Tue,  8 Oct 2024 17:04:03 -0300
+Message-ID: <20241008200403.37798-1-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241008193746.35318-3-kuurtb@gmail.com>
+References: <20241008193746.35318-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR07MB8707:EE_|VI1PR07MB9500:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4a64217-d418-4caf-cc20-08dce7d4237f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b+aocHE11pqjdiojvRn+ze0uJYSFlGRJX3NV5Kdfnu9kSrOOlcCNoXo71wZO?=
- =?us-ascii?Q?wbdU2B1pvN0IkEBqr3/z9ZcnaDYCyTCmqzeP6TmnVtzs6ItA0uzxzoWDXFVq?=
- =?us-ascii?Q?S1nYhBFEMsTG8bfO/qap9wP9P+3ETMNVl4ij8fucGK+06gXPEsvWUGXQRqq0?=
- =?us-ascii?Q?VVv7KnhFdE5fKy+HGfepX9T3xNHCBVDyZTp/SXq/R0+pEoRPmMvkifXE4RZ/?=
- =?us-ascii?Q?xiB2LowkVN4hmvtCvlyABBpYA5QsqYMJymD7aGlfNvh2S6jIHqOLx5fW0fHc?=
- =?us-ascii?Q?abSj9MPG1oaFA6PCKOELvugchbpB4P6vpIjMkksAOXSJ0cOnVBBewnUN/Wuo?=
- =?us-ascii?Q?l4SV7CV3WDK6biWU1qQJmX+bf4xxQsNJyu7YnWqlskhkosWujOFl33frH4+/?=
- =?us-ascii?Q?swybfDNGxQadX8vV1AJEYhcR+mFX1PN6xDeTM/6t5Xr2qIi80uYBav3Y6yJ8?=
- =?us-ascii?Q?VN1n0zyeKk3rsGhIWm6OsAKtjLtHHCw1rbcD7HVpYC8s1b0wxpDCy+cl53WQ?=
- =?us-ascii?Q?XjtNrEqyQNtgh2V48t2G0YucdDfUjqb95ZSXj5Gwt+HFAR1DYxTVNV1/Fdoo?=
- =?us-ascii?Q?H4Nyv/sTR5KLRtoFG9kwDm1+rHbxnKPA8/C7Mcp+2IAKD48UbrWZ/gzPyZxa?=
- =?us-ascii?Q?usp8pvQutunG52/zFD38WfH78sCxlvynEibQTXdC1B3avC8DmF/BWgZlPHYQ?=
- =?us-ascii?Q?4hJl9bQ9oflZHUDvTD/v+LWn4Q6sDNl1EIghV9weCNkuc+h95LBl7c8m8QAl?=
- =?us-ascii?Q?1sQukUa5Q1/KFndZu0XKHu13DsuhFB/fSu+iw0V/nFdz1FEPVLztF0axNqA8?=
- =?us-ascii?Q?ewZE4Wuf57iAR/OnKQjUEcMUgq02HrPMUzvbJeQzeXQoNwM2arK1kpx7f1om?=
- =?us-ascii?Q?lN8zc/I3sH1s/F1EfRE5Qh0aG7GgALx5Wizw7hZ5tWLcV3rF7M0vXtxircKl?=
- =?us-ascii?Q?KBIe25u8CXl9SFT4IoeopzrOpxP8ceYRA6WiZITVHNZj2L490jLo9Ds7G4C1?=
- =?us-ascii?Q?+J9GbiSFXW/4ae+UlSEpsiH63Unp3p8a5kQlXkmbnxobu2kE+N9zNwwFL8Dl?=
- =?us-ascii?Q?JaR+o53ZsSchjq5HKa+oHneYKvFYkjg4GWzvczfugTpz+3Zvuifp8uYqkskX?=
- =?us-ascii?Q?bEr94oVDG1OefdUUOkO+zlwKAgAJXw0BDqr4D7E/ioidsaefULKpRIpdH8x9?=
- =?us-ascii?Q?S0Ywa8Bn3XUi+mv25nek1aaXQQSo8KqMbKwXk7kYXQKrs45KNbv96+iF2pa8?=
- =?us-ascii?Q?M7n8dvbLfCJYh9SlYjq7u6WqpYEU4iuOnGvCUsCeng=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR07MB8707.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bfbSS6XoVVYcXpI2zCDytJ3QOBAlItO0r8vrsMd9JaZsAjYZpnBSlh6FtIHi?=
- =?us-ascii?Q?O02iIeRKr11qr8f9KwrWVbPxj4WNmRGwhsftkCRbKSAZxrJ1xuC/Ew5MaVJy?=
- =?us-ascii?Q?ltEbKcreVunMK2mAC2/p2mCBMGUzRaNI+yrjnH1zcSZgnRKb4FG5NQfkqKBK?=
- =?us-ascii?Q?tx7WQut4NC2nkfITATNSIUT6I5xl7YnCCyr+ZOwlnV+st+ZHLvqekfxl34oL?=
- =?us-ascii?Q?aOaOxRaBE8kpnksIT/znodi58Ac2pf/Q4PNDiI/c+QCEHAgNvIhyUOdkSYeP?=
- =?us-ascii?Q?RoTiUaiGqL1/BwQAOUk41AaPCn9vCGXfQJrPCEE8sp706KQQrAMA9NEbOCgu?=
- =?us-ascii?Q?mprf326dwAqf97s8zvhUIrQoNdwej5dB67+5VOzj3F1+xarlL+C9aFbgH88K?=
- =?us-ascii?Q?0bGoaVvqu5Qy6V8mB2lb7WFVzgu9bzAEJ1+UAXKMI9icXY6VgaLcl+xcnTDO?=
- =?us-ascii?Q?jyO5A+hD12l1JyZoLJQulIYTKxU/RTnTJGaBAKUjpYsSbnIZzjj7iA/fLu2o?=
- =?us-ascii?Q?G9u54ZIfNk3J8tzI8g4LWhQFgFyEXMCWvapECU+viakB23EhMwOoYvGgc4u8?=
- =?us-ascii?Q?ykA9VgsqXyP2nP5IzDzl3k1eik0j1cSkabHzoiIRKcr88FPRDQD6sWP0/C7Q?=
- =?us-ascii?Q?qev1zjryMP02VYszJHM1gAi5Uek0UT05RTo//mAJ/cBlbRBgwMyQSfEy3LHg?=
- =?us-ascii?Q?6VOuB5tRXUVP4dYfy7S1yxcGdkHhctu2ePE0QQGXfyylX9psNFabYwxxChU3?=
- =?us-ascii?Q?tK4vinECLSyZT7Fjgz4f1V+iXDlx+hxxgFSy0Rv9BC2inIUm0Bb1UgxnrguU?=
- =?us-ascii?Q?YKEQmGYo1fCzI0i9Nmq4YyCa0G2dT2/yKBOQhN1Yi3y97oUhvlMPu1m7ILsK?=
- =?us-ascii?Q?BySN8OBVRPQ4K/esDdfCaWOdMKH0md2F+o6Sefz1jzOjDJBAk8BIdpUPgCRK?=
- =?us-ascii?Q?CNPv3lb4WldQQ4TR6a37yqYsgFA4QD6kR1CN1HXPzBq+s3yDdRwz+sjsWb+B?=
- =?us-ascii?Q?FuDM+99iFmPwGBxlX8zTaPPYVzOYrX72LvgW0tH0rfxTPyAifKR7wZEsyLjs?=
- =?us-ascii?Q?MIEa1iVAGq+RfFDPw66cRg1m1BOyjTvHCd4HZzMRLgVrF5cv99DSPOtT6hyf?=
- =?us-ascii?Q?78VkzXkqdVoueGHyz9CX0aYem+M94oac+px75bF7jNWF6SVNazitujgv4fA2?=
- =?us-ascii?Q?nozz6Pj8uGh9k5B1E3NxZBVffT3rSBsL13wN+n4bfGUtcXsCnCMESe84dcnf?=
- =?us-ascii?Q?HX6giRL8+QtTL5NTt0DP4mgtLnF2hqC0yiddeSZD1QIdzayoOUjqdST6qEYR?=
- =?us-ascii?Q?ptqgxnlCAUmffWuekEkr5swzqWgsT6MM2XcWOLnt6+e5Hc2uuc32sKTTmAxE?=
- =?us-ascii?Q?8+rAyS8QKTaBS6dLo4AhSP3854s/Y3vF9iHNg1MBusLtUFqIoOYbtGlIsCie?=
- =?us-ascii?Q?I0/SZ7zr4wVkZZMS6vOvErEfCr617sWitRZd0rFRNxZW4BPSlZW3bubCNZns?=
- =?us-ascii?Q?w5CalFdNdAca+2AeRjhPnyriQOCDFDNPn5zbqwo+QvvlccOgEQfQMcf4KUm5?=
- =?us-ascii?Q?BaRmfSNwtZce+MPxObZJgeMQznNs6DgrHwv3alNmc6KoZebsQOQZubETogIZ?=
- =?us-ascii?Q?wQ=3D=3D?=
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4a64217-d418-4caf-cc20-08dce7d4237f
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR07MB8707.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 20:02:29.5658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J4eNaXNLAhQVs/jApUTi5ltpokDD0LVUba0tQDw9I42lLrWDduuKn4g4bHx2CPRmq0Ls/9uJ2dfYBkQ8rv0pS/CY3YF6E0vuHWT2dXSLWWE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB9500
+Content-Transfer-Encoding: 8bit
 
-The previous implementation limited the tracing capabilities when perf
-was run in the init PID namespace, making it impossible to trace
-applications in non-init PID namespaces.
-
-This update improves the tracing process by verifying the event owner.
-This allows us to determine whether the user has the necessary
-permissions to trace the application.
-
-Cc: stable@vger.kernel.org
-Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
-Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
----
-Changes in v2:
-* Update comments
----
- drivers/hwtracing/coresight/coresight-etm4x-core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 66d44a404ad0..cf41c42399e1 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -693,9 +693,9 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
- 		config->cfg |= TRCCONFIGR_TS;
- 	}
- 
--	/* Only trace contextID when runs in root PID namespace */
-+	/* Only trace contextID when the event owner is in root PID namespace */
- 	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
--	    task_is_in_init_pid_ns(current))
-+	    task_is_in_init_pid_ns(event->owner))
- 		/* bit[6], Context ID tracing bit */
- 		config->cfg |= TRCCONFIGR_CID;
- 
-@@ -709,8 +709,8 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
- 			ret = -EINVAL;
- 			goto out;
- 		}
--		/* Only trace virtual contextID when runs in root PID namespace */
--		if (task_is_in_init_pid_ns(current))
-+		/* Only trace virtual contextID when the event owner is in root PID namespace */
-+		if (task_is_in_init_pid_ns(event->owner))
- 			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
- 	}
- 
--- 
-2.34.1
-
+Sorry. Please ignore.
 
