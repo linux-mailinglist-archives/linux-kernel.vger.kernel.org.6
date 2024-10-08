@@ -1,156 +1,299 @@
-Return-Path: <linux-kernel+bounces-354461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9392993DC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:04:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D31B993DC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA9E1C232D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48E82861A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985D674C08;
-	Tue,  8 Oct 2024 04:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB2C770FE;
+	Tue,  8 Oct 2024 04:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iaHsXtf6"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZx/S/hl"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D602533CA;
-	Tue,  8 Oct 2024 04:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DD433CA;
+	Tue,  8 Oct 2024 04:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728360235; cv=none; b=mvhSDOGPibibllhiHqUiKnXfdqJsCgPubQrnr7+X6U3l9e7lfqZaVRlA9RzsLEdx0EAf81F7ByZa2FK8SerOb9dOIa1STpOMfu7ZJ3QGByVD/NPspPnZOsWIaRo7h7hwLVogeXvHkrw0LgiCAjj3gQ0Y7A6nZaxZUVH7KAyxGhY=
+	t=1728360276; cv=none; b=FGK9wFs35VMQ7ZHglfngsgbTF/2l6aJXeWMGI0Jit4nXotIfS+lk5iuFv7Pa5uvqCLCSngj3T26LNqUTyiP4Ohgb1FnwpAc30zHbsF2hqvds8YsKrsz4kP1naM3PhvaEK7GY3YuLznvtNP/0XTcstYwt28QgJtrROv4GmM2F6tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728360235; c=relaxed/simple;
-	bh=I/Er5nsXCFA4qiwG/cy7GiECil0ndyiV7ITbEyOhjQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kWurrETvj0lzzq6PVTNdDqtVhHv1pkLJlYvALBLrdZ9Q9qA2lL0s2RI3XOniWmZQWpuWxpn3lHNcvyxNwUvbIqN96/PaGqkUeeTmtNOergIypvcYrZeGaTNMsoGCjLDV7UVw05i+AOyHOeCpoKq8f0yxlEIYwLqMDGKmem7AIco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=iaHsXtf6; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4e404752852a11ef8b96093e013ec31c-20241008
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=mwTHTTsRLjvACOCxRw8N0aIBKWsdNo6TgCo9mXIoopg=;
-	b=iaHsXtf6Rw0jYxC0w/UHeGf/u82Oiul5qQOcx4Fymap1mSSh7OcuhZvigAfrEidjnhT+3feWte8eJssZq398qQX1uJJqaErGMf1Kmjs/BezRPWB+nESMlMbT08c0i7/il8ngl98T6NAwBJFhhCKdkqAjE96CsoqTwm1xds7HBPY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:8694662a-45eb-4a20-8b53-5455f62f7b67,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:6394e764-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4e404752852a11ef8b96093e013ec31c-20241008
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 345459854; Tue, 08 Oct 2024 12:03:41 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 8 Oct 2024 12:03:39 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Tue, 8 Oct 2024 12:03:38 +0800
-Message-ID: <3a970560-2458-f5f3-87c5-925079fa12a4@mediatek.com>
-Date: Tue, 8 Oct 2024 12:03:37 +0800
+	s=arc-20240116; t=1728360276; c=relaxed/simple;
+	bh=bXaRgSHofV6Rkkq4qfXRdN7k91QpXPIN6NrC9+sniNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CxGBb0Y2cRJvhY1kyhIegfOKOkTcjiBulgXIdWxCXz4z4iJxLPiAytKfbqCkb8aHihgZsSeGYnI5I0/0K/ND0tGjcTmQp+nevXBCx/puP0mOSHrG3VIPPZ9etQ916JLULbHL7y0e3PZJ5EgsY+yJiNi+u4i9MMOYT+MiYdpG9lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZx/S/hl; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37cdbcb139cso3973460f8f.1;
+        Mon, 07 Oct 2024 21:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728360273; x=1728965073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XeL2eCQ3D5dxw4ZH8f6RmNsLwTsdLHD4eyRo25Vm5C0=;
+        b=JZx/S/hlH+PHgw2Gs66Iq8+7FFQyj1ztnz6/do2zBUlI6tmATrEdwK5b3Mu841E94u
+         HCsLy+UwBpET3tfQKKez+Ed+rXADigDEdgTBF8xwe+PjX+Ssgh/d1zW6D7nqHP7b/RZ0
+         6cJtUzGbjT068VCKE9bPREHXJRX063WRKPm9LcmW41l9VUGhJLP6zLUnIXvYvTdvzKxU
+         +P3tqSnB3uEyshuwuSeyAD/HYhOuYkcfqYpCZecm2OG6/Dei5542djMLkwvSjqdId5fi
+         YGqFnK6UkApWLz++Zr3auS4Mj4U+vZbGJ68+Zq29CaC4oC+4E//1gxdJuzj8CtOqHT8F
+         JYeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728360273; x=1728965073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XeL2eCQ3D5dxw4ZH8f6RmNsLwTsdLHD4eyRo25Vm5C0=;
+        b=HbLKG8Db6ITpR+RPOZLT5Qhr2aIERYwNsBEk4Y+RvSThDPNWFZPa8pGcsF5/YeT9+2
+         fFMDVwFdWnsk+Xk+L29OR/YW3EvTRHLD1A2ZqUKToFj6P1UbzjrvlEw93jrnPdfr+0fn
+         4RrtxXPC4ABzr6s81yh2lMpr1ZBWkSZJxjmePnxgXJ92D47j4fxxHQCRFXeTkAeBCg5X
+         FhfF04uGETlEY5gfH6b7Jb+fQKiElctXKgXk5BNLNMFSY/neCEO57JgaCx20yxfrA5Ky
+         dgwix4Mdpq1MwIc1UAMSlWnsawuBLSBL7AJtAuiFpu3GSappz/UyF63iSWftvFpfH9YO
+         D1Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgMN0gOl6rTXIOdKuUL8J2JO4h+WS7lhAlgsvUFBwm1ICLYPEigZMNPiCJTMON+ppdNMc=@vger.kernel.org, AJvYcCXFJw3A2axQprYl8MWdF+CynUDihsRWG7Bes7RTyfTHJuZdpemfqA5MJeZjzYMqWinwfLku6BDchwEuT82d@vger.kernel.org, AJvYcCXvoBBRxwHuz8lPWZgwHHmdkAb6SoJd6ZAqQLsYF7LMYmk1EzH530GiKT18bW+ydPSk8WuzvcaDKJSrHEmUaLxr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq8TAiELD61nrDhCAa4Mz52oAsFqpdVChPWlLyldef258fyToI
+	Kw4tGNnD1pBEFIB+6ALXiByEsfTmQOq5QmYzxrS6we7l9zgvxetbM98kQIo5iFv5ScAPx2UsGds
+	cZwbOqqsjnkNCySNTlyC+F1rhqsk=
+X-Google-Smtp-Source: AGHT+IHq6nL5kxATCrOVR0zNdZG0uySRJFuWtC6A4pqWyJRtHOG2KIuPSxSw+beCCOE8d2wnI7WM3lsd9KiBn2RDjds=
+X-Received: by 2002:a05:6000:1818:b0:37c:ca21:bc53 with SMTP id
+ ffacd0b85a97d-37d0e76fdfdmr8678174f8f.26.1728360272583; Mon, 07 Oct 2024
+ 21:04:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] dt-bindings: phy: mediatek: tphy: add a property for
- power-domains
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, Jason-ch Chen
-	<Jason-ch.Chen@mediatek.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>
-CC: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
-	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
- chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-References: <20240926101804.22471-1-macpaul.lin@mediatek.com>
- <20240926-treadmill-purr-b2e3279a14a4@spud>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240926-treadmill-purr-b2e3279a14a4@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--12.403700-8.000000
-X-TMASE-MatchedRID: csPTYAMX1+EOwH4pD14DsPHkpkyUphL9mX+W7bzPOQEsElh8RiHU9TRO
-	5DLJAPjbbIezkMyOt2/FtYuDam42iwdNdS6cTLNYoaP4nSNLOYuwR/wKmchi2fJ/jS86DpPDFVk
-	w4X07kmgXw0prgDEKYG2UIwvQdMxgucM7lDuTbby8coKUcaOOvaOI1u80g4PZZ5yuplze9puVQ2
-	bE9K2FgiEn+59qml4SkZOl7WKIImrvXOvQVlExsFZ0V5tYhzdWxEHRux+uk8h+ICquNi0WJOQuX
-	NATtBTvuMcQkP5KqdH9y2dEXTBNtCv1l1GAoBYzftwZ3X11IV0=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--12.403700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	C4C001A2C3E0140BF9ED2D1FF23C06F2DC8DAACE6EC962175BCD71A962969DD42000:8
+References: <ZwOWs_XrBtlTGE24@krava> <20241007182933.8841-1-wudevelops@gmail.com>
+In-Reply-To: <20241007182933.8841-1-wudevelops@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 7 Oct 2024 21:04:17 -0700
+Message-ID: <CAEf4Bzb1JzE7OPieODoq7H5hg_z2WwkBZo91dyGuRQ56cJ03jg@mail.gmail.com>
+Subject: Re: [PATCH bpf v6 1/2] bpf: fix unpopulated name_len field in
+ perf_event link info
+To: Tyrone Wu <wudevelops@gmail.com>
+Cc: olsajiri@gmail.com, laoar.shao@gmail.com, andrii@kernel.org, 
+	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, 
+	haoluo@google.com, john.fastabend@gmail.com, kernel-patches-bot@fb.com, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, martin.lau@linux.dev, mykolal@fb.com, 
+	sdf@fomichev.me, shuah@kernel.org, song@kernel.org, yonghong.song@linux.dev, 
+	Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 7, 2024 at 11:29=E2=80=AFAM Tyrone Wu <wudevelops@gmail.com> wr=
+ote:
+>
+> From: tyrone-wu <wudevelops@gmail.com>
+>
+> Previously when retrieving `bpf_link_info.perf_event` for
+> kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
+> kernel, leaving it to reflect the value initially set by the user. This
+> behavior was inconsistent with how other input/output string buffer
+> fields function (e.g. `raw_tracepoint.tp_name_len`).
+>
+> This patch fills `name_len` with the actual size of the string name.
+>
+> Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy1=
+6-yb0Snztmtg@mail.gmail.com/
+> Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
+> Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> Acked-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+> V5 -> V6:
+> Link: https://lore.kernel.org/bpf/ZwOWs_XrBtlTGE24@krava/
+> - Use simpler buf check while keeping V4
+> - Fix netdev/checkpatch warning for 80 cols exceeded
+> - Fix Signed-off-by to use real name instead of git username
+>
+> V4 -> V5:
+> Link: https://lore.kernel.org/bpf/CALOAHbC5xm7Cbfhau3z5X2PqUhiHECNWAPtJCW=
+iOVqTKmdZp-Q@mail.gmail.com/
+> - Check that buf is not NULL before retrieving/using its length
+>
+> V3 -> V4:
+> Link: https://lore.kernel.org/bpf/Zv_PP6Gs5cq3W2Ey@krava/
+> - Split patch into separate kernel and selftest change
+>
+> V2 -> V3:
+> Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
+> - Use clearer variable name for user set/inputted name len (name_len -> i=
+nput_len)
+> - Change (name_len -> input_len) type from size_t to u32 since it's only =
+received and used as u32
+>
+> V1 -> V2:
+> Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
 
+Please drop all the Link: tags, our scripts will accumulate all of
+them in the final commit and it becomes very confusing. Our script
+will add the final Link: for your latest applied version anyways.
 
-On 9/27/24 00:25, Conor Dooley wrote:
-> On Thu, Sep 26, 2024 at 06:18:04PM +0800, Macpaul Lin wrote:
->> Some platforms requires a dependency for power-domains.
-> 
-> Some, so not all? Why isn't this restricted on a per compatible basis?
+Also, git still shows:
 
-After discussion with Chunfeng and double check tphy design in detail.
-Chunfeng commented that tphy dose not need to add mtcmos.
-It is not necessary to add it, if the power of the phy is turned off,
-it will affect other functions.
+Author: tyrone-wu <wudevelops@gmail.com>
 
- From the current USB hardware design perspective, even if mtcmos
-is added to the phy, it is always on.
+So please try to fix that.
 
->> So we add property 'power-domains' and set 'maxItems: 1' in the
->> DT Schema.
->>
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->> ---
->>   Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->> index 423b7c4e62f2..c77fe43c224a 100644
->> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->> @@ -125,6 +125,9 @@ properties:
->>       $ref: /schemas/types.yaml#/definitions/uint32
->>       default: 28
->>   
->> +  power-domains:
->> +    maxItems: 1
->> +
->>   # Required child node:
->>   patternProperties:
->>     "^(usb|pcie|sata)-phy@[0-9a-f]+$":
->> -- 
->> 2.45.2
->>
+But generally, looks good and I almost applied, but see one small
+issue below, which I think needs fixing.
 
-Please drop this patch and I'll send a new fix to mt8195.dtsi.
+pw-bot: cr
 
-Thanks
-Macpaul Lin
+> - Use user set *ulen in bpf_copy_to_user before overwriting *ulen
+>
+>  kernel/bpf/syscall.c | 32 +++++++++++++++++++++++---------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index a8f1808a1ca5..b5a7e428ac16 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -3565,27 +3565,33 @@ static void bpf_perf_link_dealloc(struct bpf_link=
+ *link)
+>  }
+>
+>  static int bpf_perf_link_fill_common(const struct perf_event *event,
+> -                                    char __user *uname, u32 ulen,
+> +                                    char __user *uname, u32 *ulen,
+
+nit: I'd do what Jiri suggested, use `u32 *ulenp` here
+
+>                                      u64 *probe_offset, u64 *probe_addr,
+>                                      u32 *fd_type, unsigned long *missed)
+>  {
+>         const char *buf;
+> -       u32 prog_id;
+> +       u32 prog_id, input_len;
+
+and then just `u32 ulen;` here.
+
+>         size_t len;
+>         int err;
+>
+
+start with just
+
+ulen =3D *ulenp;
+
+> -       if (!ulen ^ !uname)
+> +       if (!(*ulen) ^ !uname)
+
+and remove all the `*ulen` uses except the final assignment
+
+>                 return -EINVAL;
+>
+>         err =3D bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
+>                                       probe_offset, probe_addr, missed);
+>         if (err)
+>                 return err;
+> +
+> +       if (buf) {
+> +               input_len =3D *ulen;
+> +               len =3D strlen(buf);
+> +               *ulen =3D len + 1;
+> +       }
+
+don't we need
+
+} else {
+    *ulen =3D 1;
+}
+
+for cases when we don't have buf returned from
+bpf_get_perf_event_info()? Though I don't think it can happen
+currently, existing code is clearly ready to handle that case, so
+let's keep it consistent.
+
+>         if (!uname)
+>                 return 0;
+> +
+>         if (buf) {
+> -               len =3D strlen(buf);
+> -               err =3D bpf_copy_to_user(uname, buf, ulen, len);
+> +               err =3D bpf_copy_to_user(uname, buf, input_len, len);
+>                 if (err)
+>                         return err;
+>         } else {
+> @@ -3609,7 +3615,7 @@ static int bpf_perf_link_fill_kprobe(const struct p=
+erf_event *event,
+>
+>         uname =3D u64_to_user_ptr(info->perf_event.kprobe.func_name);
+>         ulen =3D info->perf_event.kprobe.name_len;
+> -       err =3D bpf_perf_link_fill_common(event, uname, ulen, &offset, &a=
+ddr,
+> +       err =3D bpf_perf_link_fill_common(event, uname, &ulen, &offset, &=
+addr,
+>                                         &type, &missed);
+>         if (err)
+>                 return err;
+> @@ -3617,7 +3623,7 @@ static int bpf_perf_link_fill_kprobe(const struct p=
+erf_event *event,
+>                 info->perf_event.type =3D BPF_PERF_EVENT_KRETPROBE;
+>         else
+>                 info->perf_event.type =3D BPF_PERF_EVENT_KPROBE;
+> -
+> +       info->perf_event.kprobe.name_len =3D ulen;
+>         info->perf_event.kprobe.offset =3D offset;
+>         info->perf_event.kprobe.missed =3D missed;
+>         if (!kallsyms_show_value(current_cred()))
+> @@ -3639,7 +3645,7 @@ static int bpf_perf_link_fill_uprobe(const struct p=
+erf_event *event,
+>
+>         uname =3D u64_to_user_ptr(info->perf_event.uprobe.file_name);
+>         ulen =3D info->perf_event.uprobe.name_len;
+> -       err =3D bpf_perf_link_fill_common(event, uname, ulen, &offset, &a=
+ddr,
+> +       err =3D bpf_perf_link_fill_common(event, uname, &ulen, &offset, &=
+addr,
+>                                         &type, NULL);
+>         if (err)
+>                 return err;
+> @@ -3648,6 +3654,7 @@ static int bpf_perf_link_fill_uprobe(const struct p=
+erf_event *event,
+>                 info->perf_event.type =3D BPF_PERF_EVENT_URETPROBE;
+>         else
+>                 info->perf_event.type =3D BPF_PERF_EVENT_UPROBE;
+> +       info->perf_event.uprobe.name_len =3D ulen;
+>         info->perf_event.uprobe.offset =3D offset;
+>         info->perf_event.uprobe.cookie =3D event->bpf_cookie;
+>         return 0;
+> @@ -3673,12 +3680,19 @@ static int bpf_perf_link_fill_tracepoint(const st=
+ruct perf_event *event,
+>  {
+>         char __user *uname;
+>         u32 ulen;
+> +       int err;
+>
+>         uname =3D u64_to_user_ptr(info->perf_event.tracepoint.tp_name);
+>         ulen =3D info->perf_event.tracepoint.name_len;
+> +       err =3D bpf_perf_link_fill_common(event, uname, &ulen, NULL, NULL=
+, NULL,
+> +                                       NULL);
+
+nit: keep it on a single line
+
+> +       if (err)
+> +               return err;
+> +
+>         info->perf_event.type =3D BPF_PERF_EVENT_TRACEPOINT;
+> +       info->perf_event.tracepoint.name_len =3D ulen;
+>         info->perf_event.tracepoint.cookie =3D event->bpf_cookie;
+> -       return bpf_perf_link_fill_common(event, uname, ulen, NULL, NULL, =
+NULL, NULL);
+> +       return 0;
+>  }
+>
+>  static int bpf_perf_link_fill_perf_event(const struct perf_event *event,
+> --
+> 2.43.0
+>
 
