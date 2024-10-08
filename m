@@ -1,90 +1,61 @@
-Return-Path: <linux-kernel+bounces-355640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7406995537
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:01:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B20999553C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2411F2814B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCED3B2374C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5F11E0E0C;
-	Tue,  8 Oct 2024 17:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280241E0DF2;
+	Tue,  8 Oct 2024 17:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HhzzDFbU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BvRLTc98"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C279237708;
-	Tue,  8 Oct 2024 17:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB026F2F3;
+	Tue,  8 Oct 2024 17:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728406893; cv=none; b=Y1T+Mvt01LsxLw0Ep8LnNSFxTsew3SVIbw/ygW8UavClA7zyufsD9JcprqZTaZcHFdZfg9AeRwg35YopW7qoWwUT2CFteMm6d8FY2T/N7aD+zOvxRTNNU/sLf0z31iIgyrnagReejtPZAjUrE2Ina03gjGxhJiG/H83jXTxt4vQ=
+	t=1728406950; cv=none; b=eSRfED6mwEcXyJCoC3mBpJzVs7A5tApmT8Dd6gIrOXQo3OpEBoGz+MTeewVfsGq+36y1ypQxldK7VHYa/i2koHS129RDAjvaxChvnn+bokDqNTuiepq4E7tynSG/UHkjV8m4F9NMUXsAWI4vxk71yy2woPgdJUCKoEc1AX9dMkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728406893; c=relaxed/simple;
-	bh=7yDX3p5l4AOgfdAig7iHKghNGgGyy6V+GbZVWH6Nah0=;
+	s=arc-20240116; t=1728406950; c=relaxed/simple;
+	bh=fgEN0PVbg51E78WWmHJQVcw9mVrCW7a9PjfY+dKOZwg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZqObrxMzvTNpEE+/mu+LsDLnFQF9VAoJW56MZv0Iiad43Mev/GEzKB5p71L45bAzD9VY7F5N+NmqvG0kMZf6bQd69HItRFnrrlyfl2qUH598fbT5klL/FeeLpn0/ZuQZ4JvbZmogXgtsZ4UiaPCZc90I89UimE66UacQ78yWww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HhzzDFbU; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728406892; x=1759942892;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7yDX3p5l4AOgfdAig7iHKghNGgGyy6V+GbZVWH6Nah0=;
-  b=HhzzDFbU4r9Zzjc9VlLdY3ZWwK9nXM0chO9CEHDo8c+VYN5/1fAnaPcj
-   b3auopn+nFBzneVvcgUaDM/nGc8Ss5s/b5SfmYLCc5Uquh6g96b0N9RcH
-   4rEZSKYAHty0IyhoSZ4bZloxUmEpXZH1rdLPTJ721ys5vVx3zgna+Sl4R
-   +KMvx9SLu0XcTu34gdV7tHE8QJ9EpTotURBSWDWXlLMAYdf+9FX6r+iSu
-   ydyZ9MRNTuMeb7jckuxaEGkksV5SoeAMXKFm9bNo5u75jvHO49BFewrou
-   ftU9Vn/8Nn3Sl0Pnl9KLbebUlGJOk9dSedcTQV5yWIjyqrADFLUC2o+PA
-   A==;
-X-CSE-ConnectionGUID: Ithb/VPLS0WjUv/d++o23A==
-X-CSE-MsgGUID: 1knjyHwzT6q6rso/8Q4heA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27574513"
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="27574513"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 10:01:31 -0700
-X-CSE-ConnectionGUID: otqcIQWJTfm9wfBUFR+WKA==
-X-CSE-MsgGUID: OIYtR1NlR0SJCumSBlYHUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="99244245"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Oct 2024 10:01:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D7F8220F; Tue, 08 Oct 2024 20:01:25 +0300 (EEST)
-Date: Tue, 8 Oct 2024 20:01:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	Philip Li <philip.li@intel.com>
-Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
-Message-ID: <ZwVlZROV84DDMCnc@black.fi.intel.com>
-References: <20240819023413.1109779-1-ying.huang@intel.com>
- <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
- <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
- <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
- <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZwPsYqkLF0eWUb9e@smile.fi.intel.com>
- <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSCsKCmOjODrZLuR8I3DbQto9ZxNVXERjsJM8h6vQqF9ftH/JaE9FZ2FBx+/OGqB6hBaXtmqOrvy9RaipoeEbleFl0YBnSoybh+Ta5l51QN/WuZ7g/N+BctZ+SCDGK5TKdM9pXL/pw2gacJfD2m761qfjYP4UmOKEDC8vUr64ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BvRLTc98; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=LVqwtJiH59AwTPCCe1LAxfi3a8eGWm0tAbr4rEugXwQ=; b=BvRLTc98UxPG7Ong218w31h2zP
+	gi9kIN5SDowu9TH31FZ9+sDchwP60bnJQpsepdaHfNS7PlOi4nVA1XDRQiEtI15J4znvxheSi9Wt+
+	1k/bS//tcD4KHS33Je8T0MSYpND39Mo7lSclqkyqj1CSHzvVIz6GZDAakYLPc8P4ElUM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syDbG-009OVn-WD; Tue, 08 Oct 2024 19:02:19 +0200
+Date: Tue, 8 Oct 2024 19:02:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v2] net: phy: Validate PHY LED OPs presence
+ before registering
+Message-ID: <9ed5fd73-b4e8-4be1-9642-9dbeb8bfd892@lunn.ch>
+References: <20241004183312.14829-1-ansuelsmth@gmail.com>
+ <851ebd20-0f7a-438d-8035-366964d2c4d8@lunn.ch>
+ <67053002.050a0220.63ee8.6d11@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,58 +64,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871q0rnw6n.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <67053002.050a0220.63ee8.6d11@mx.google.com>
 
-On Tue, Oct 08, 2024 at 10:52:00AM +0800, Huang, Ying wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> > On Fri, Sep 06, 2024 at 09:07:41AM +0800, Huang, Ying wrote:
-> >> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> >> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
-> >> >> Huang, Ying wrote:
-> >> >> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-
-[..]
-
-> >> >> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
-> >> >> > > message.
-> >> >> > 
-> >> >> > Emm... It appears that it's a common practice to include "Cc" in the
-> >> >> > commit log.
-> >> >> 
-> >> >> Yes, just ignore this feedback, it goes against common practice. Cc list
-> >> >> as is looks sane to me.
-> >> >
-> >> > It seems nobody can give technical arguments why it's better than just keeping
-> >> > them outside of the commit message. Mantra "common practice" nowadays is
-> >> > questionable.
-> >> 
-> >> Cc list is used by 0day test robot to notify relevant developers and
-> >> maintainers in addition to the author when reporting regressions.  That
-> >> is helpful information.
+On Tue, Oct 08, 2024 at 03:13:34PM +0200, Christian Marangi wrote:
+> On Tue, Oct 08, 2024 at 03:08:32PM +0200, Andrew Lunn wrote:
+> > > +	/* Check if the PHY driver have at least an OP to
+> > > +	 * set the LEDs.
+> > > +	 */
+> > > +	if (!phydev->drv->led_brightness_set &&
+> > > +	    !phydev->drv->led_blink_set &&
+> > > +	    !phydev->drv->led_hw_control_set) {
+> > 
+> > I think this condition is too strong. All that should be required is
+> > led_brightness_set(). The rest can be done in software.
 > >
-> > I'm not objecting Cc email tags, I'm objecting having them in the commit messages!
-> > Can you explain, how useful they are when they are placed as part of commit message
-> > bodies?
 > 
-> The result of regression bisection is the first bad commit.  Where we
-> use the Cc list in commit message to help find out whom we should send
-> the report email to.
+> Mhh the idea was really to check if one of the 3 is declared. Ideally to
+> future proof case where some led will only expose led_hw_control_set or
+> only led_blink_set?
 
-We have all tags and MAINTAINERS database. How do you know if those who
-are in the Cc list are really interested in receiving this? What make me
-sure is to have Author of the culprit commit, relevant mailing list and
-maintainers, also reviewers and testers, if any. All this information is
-available without Cc list. But if you *really* want it, you should
-follow the Link tag (for the new commits, for the past ~2+ years) and
-harvest it there. And actually I use that Link to reply to the thread
-directly. So, again, the Cc list in the commit message is a historical
-burden that consumes a lot of time and energy and should be gone in the
-future.
+Ah, i read it wrong. Sorry.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Maybe apply De Morgan's laws to make it more readable?
 
++	if (!(phydev->drv->led_brightness_set ||
++	      phydev->drv->led_blink_set ||
++	      phydev->drv->led_hw_control_set)) {
 
+However, it is correct as is.
+
+    Andrew
 
