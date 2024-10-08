@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-354943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99849944FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:03:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E639944F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74BF4B28C57
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753131C22517
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41621C0DF3;
-	Tue,  8 Oct 2024 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jCi+Ur33"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A5716EB42;
-	Tue,  8 Oct 2024 09:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A10918E368;
+	Tue,  8 Oct 2024 09:59:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B99716EB42;
+	Tue,  8 Oct 2024 09:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728381381; cv=none; b=r8Zq8rypb7x+TaFkPRatRUjjZGaXQi1o4dFNk//bIbGwmVtN70Ks5c2RWhQJzJK4YMW2G7lYJ1NRXz7/kos80aM+Qr66aBp+5iCIZn8lyKMe25jh40EE76agqNDM7N7aa1b3IGEkx2ztGvTcF5/nfiJaRc4BNKNZ8X96fodktMY=
+	t=1728381579; cv=none; b=D4OuKy46e8oXtrImWUqWkvIvGE8Exd7TsJ5Xrxl9aVotw1Dg3dbcpGi/HX7oIEBG8ObvwkanYbsIyEtXCqOmQPZ57gYCiUIsbi0sH8SgOzselInOwMbguODcWjp2u1SifCppjI4WF5PKvGoGAVR93c4buJxPadYCS6z6vg39WS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728381381; c=relaxed/simple;
-	bh=FJR4Ir4ZuWPXAfrYHUlhoiegfsDfN7qxz21F7RWF9dM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fhmVKi4jmdzn5m717/Uadww1waR/jPV1KICNCB2Vmme5tVgu7NizHeb9U8nXVActWwc1F/htPXp8Nr0MePydBWULtBgIvW67w8WiHb2+AOJ4u6EVQwkKkoA3B628LhpjiyEimxweZ01RRZfAoDqLlOtxV6skMoebMRCoy9lKBfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jCi+Ur33; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728381376; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=1k0liHka3S7LfAa+7MLacRLt1xutM2cYpmE1M22Izy0=;
-	b=jCi+Ur33o4RnqQqkunHsDH1ipG/wU230NRZmpOLphVT/bnYKQJdII/Vyz8ICbKN2/KBBqaD5aGkSj8cd3Vpv72sG04Mhquwo/q8dv4BhpDKbUOoQJozvzI+PWG9RZr3T18PAToBEzkskWBN0WxWDae0S+gfylNqzjeU5FqVrpDQ=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGdZ8t5_1728381374)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Oct 2024 17:56:15 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 2/2] erofs: use get_tree_bdev_by_dev() to avoid misleading messages
-Date: Tue,  8 Oct 2024 17:56:06 +0800
-Message-ID: <20241008095606.990466-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728381579; c=relaxed/simple;
+	bh=WQyaXbocJhLew6nNB7zdESM6j9aXbn9MwJAi7hKZcd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EL9Iepzpy3OW0EVJbzbiD21FnwvjApRg9iaNryZUg3rWWM5Ly5v0NUJ6fMJbBmzbBckE/gKX5mMwuudzXN8960l/2k60oBycGNEExWS/2yv7VgxFKQq4oqyFhlwuphXmx4GyyfLLizoTsN1YcMdkOw6/MW9MLwlxVC8RTVxc7lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A372DA7;
+	Tue,  8 Oct 2024 03:00:06 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5ADDD3F640;
+	Tue,  8 Oct 2024 02:59:35 -0700 (PDT)
+Message-ID: <c519631b-e02f-438c-a61f-68fa97583668@arm.com>
+Date: Tue, 8 Oct 2024 10:59:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: etm4x: Fix PID tracing when perf is run in an
+ init PID namespace
+To: Leo Yan <leo.yan@arm.com>, Leo Yan <leo.yan@linux.dev>,
+ Julien Meunier <julien.meunier@nokia.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ stable@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240925131357.9468-1-julien.meunier@nokia.com>
+ <20241007200528.GB30834@debian-dev>
+ <93e822b1-76d1-454b-a42f-adf9292d4da6@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <93e822b1-76d1-454b-a42f-adf9292d4da6@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Users can pass in an arbitrary source path for the proper type of
-a mount then without "Can't lookup blockdev" error message.
+On 08/10/2024 07:52, Leo Yan wrote:
+> On 10/7/2024 9:05 PM, Leo Yan wrote:
+>>
+>> Hi Julien,
+>>
+>> On Wed, Sep 25, 2024 at 03:13:56PM +0200, Julien Meunier wrote:
+>>> The previous implementation limited the tracing capabilities when perf
+>>> was run in the init PID namespace, making it impossible to trace
+>>> applications in non-init PID namespaces.
+>>>
+>>> This update improves the tracing process by verifying the event owner.
+>>> This allows us to determine whether the user has the necessary
+>>> permissions to trace the application.
+>>
+>> The original commit aab473867fed is not for constraint permission. It is
+>> about PID namespace mismatching issue.
+>>
+>> E.g. Perf runs in non-root namespace, thus it records process info in the
+>> non-root PID namespace. On the other hand, Arm CoreSight traces PID for
+>> root namespace, as a result, it will lead mess when decoding.
+>>
+>> With this change, I am not convinced that Arm CoreSight can trace PID for
+>> non-root PID namespace. Seems to me, the concerned issue is still existed
+>> - it might cause PID mismatching issue between hardware trace data and
+>> Perf's process info.
+> 
+> I thought again and found I was wrong with above conclusion. This patch is a
+> good fixing for the perf running in root namespace to profile programs in
+> non-root namespace. Sorry for noise.
+> 
+> Maybe it is good to improve a bit comments to avoid confusion. See below.
+> 
+> [...]
+> 
+>>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>>> index bf01f01964cf..8365307b1aec 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>>> @@ -695,7 +695,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>>>
+>>>        /* Only trace contextID when runs in root PID namespace */
+> 
+> We can claim the requirement for the *tool* running in root PID namespae.
+> 
+>    /* Only trace contextID when the tool runs in root PID namespace */
 
-Reported-by: Allison Karlitskaya <allison.karlitskaya@redhat.com>
-Closes: https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/super.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+minor nit: I wouldn't call "tool". Let keep it "event owner".
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 666873f745da..04a5873c1594 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -700,16 +700,19 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- static int erofs_fc_get_tree(struct fs_context *fc)
- {
- 	struct erofs_sb_info *sbi = fc->s_fs_info;
-+	dev_t dev;
- 	int ret;
- 
- 	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
- 		return get_tree_nodev(fc, erofs_fc_fill_super);
- 
--	ret = get_tree_bdev(fc, erofs_fc_fill_super);
-+	if (!fc->source)
-+		return invalf(fc, "No source specified");
-+	ret = lookup_bdev(fc->source, &dev);
-+	if (!ret)
-+		return get_tree_bdev_by_dev(fc, erofs_fc_fill_super, dev);
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
- 	if (ret == -ENOTBLK) {
--		if (!fc->source)
--			return invalf(fc, "No source specified");
- 		sbi->fdev = filp_open(fc->source, O_RDONLY | O_LARGEFILE, 0);
- 		if (IS_ERR(sbi->fdev))
- 			return PTR_ERR(sbi->fdev);
--- 
-2.43.5
+	/* Only trace contextID when the event owner is in root PID namespace */
+
+
+Julien,
+
+Please could you respin the patch with the comments addressed.
+
+Kind regards
+Suzuki
+
+
+> 
+> 
+>>>        if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
+>>> -         task_is_in_init_pid_ns(current))
+>>> +         task_is_in_init_pid_ns(event->owner))
+>>>                /* bit[6], Context ID tracing bit */
+>>>                config->cfg |= TRCCONFIGR_CID;
+>>>
+>>> @@ -710,7 +710,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>>>                        goto out;
+>>>                }
+>>>                /* Only trace virtual contextID when runs in root PID namespace */
+> 
+> Ditto.
+> 
+>    /* Only trace virtual contextID when the tool runs in root PID namespace */
+> 
+> With above change:
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> 
+>>> -             if (task_is_in_init_pid_ns(current))
+>>> +             if (task_is_in_init_pid_ns(event->owner))
+>>>                        config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
+>>>        }
+>>>
+>>> --
+>>> 2.34.1
+>>>
+>>>
 
 
