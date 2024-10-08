@@ -1,276 +1,142 @@
-Return-Path: <linux-kernel+bounces-355509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836F499534A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA92499534E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC9E281EF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E8285441
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830811E0B93;
-	Tue,  8 Oct 2024 15:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F2B1E0DA2;
+	Tue,  8 Oct 2024 15:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQbPZTKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZtI11w+j"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD171E04BA;
-	Tue,  8 Oct 2024 15:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4831DE2A2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400904; cv=none; b=PYViYk3f4/NuqHpj4ORbuK9nOPhugbOe6FMPz9dBDdqxsZ5LFo6XJtUJigLS123hjLYD3gz3Qh2+VNVqHjnC5DMVuhjE2BxKDRkLJ9BZGhjmp4ofSOH1uy8Aj0VR0FV2K26NY33t+/W+W8ybAd0InHBi8xw6uSKcjkGk8Dt18H4=
+	t=1728400928; cv=none; b=VG4tmNbKZOr8hawHk7GG0drGZEs++nydKeRKren95L/78PGNnM9LEmfxgSDCvGwAO2xmR/llYwZj7KHh+Njm4+rC/8TjvuJBSbuGvfakCJ8oxOhFNoscrHj0i+Lkdl/4PHIJC4vrBY/6Hf0JtKN65JK20D8xznpoCyCVzh18dsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400904; c=relaxed/simple;
-	bh=UWc2qvCFSN/lJ4nXoiViC2Mk+bdUrVpTctmrpmU2MX0=;
+	s=arc-20240116; t=1728400928; c=relaxed/simple;
+	bh=3hNLYOGxFEk/QG9fzsv0VGS8Q4v9VUxQyk8dxvdDmAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7UMhtIq6fmUO6Clf0JroMQV1zgzifVeGwlADd1764vzBRh3uH7Irlr2NQiwNi7D33gGx0+bRuEbhvzBFdc4OxW6ysot7PpjYQz9pudrjk5ywFMKWA7CEI9RtajNHK8XA15wfoInDDoaMhvVMh0PXA3xbI1rPRc9ujXjIG+FA3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQbPZTKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 110A0C4CEC7;
-	Tue,  8 Oct 2024 15:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728400904;
-	bh=UWc2qvCFSN/lJ4nXoiViC2Mk+bdUrVpTctmrpmU2MX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YQbPZTKznkz7snGmIxfOlgvGNOndnoQnAWFbJQxWppnNqX6GBWTaH9DU7Urk7MzD8
-	 PY6pO2AqN0z2PzWkbsvnGiQ7qY95i2wXOsHRpjKmMLPUlbjJXSC07HFkKLpKc2sb9t
-	 c3uknU7lxFoX5PgFVyiKp0OC4fW8mYcfNPeDBooeLnhaaiOT9qfE7hk83ztTxrFMhq
-	 vC2dT9sF25uVaWxvmNV9cA3dMvB/iROZpxsj5L+CdXcT1MadHF74rRcM6+7lk0bHy6
-	 DSuqDRqXmgYllQ1DcDYFsPqZQlo7M5QlKyI7hUkSL1moYICCgI6FacPsKFHVpVc8em
-	 RE5NjkMyuWqtw==
-Date: Tue, 8 Oct 2024 17:21:38 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
-References: <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
- <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
- <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
- <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuDpbMmjX8/fsTwG1Bgl3nr1r9EbwEo6kcEBkwS8ZXqxKWuUqqcsy8ICwM/8Xps/LzK7nnXBwEjigZNJHEqmcBLoHEaxpqQKHeYaWApOypZJWwjnlOTLguDUTU4Di0XG+/uhIa/rT6Cx9JGIX6MAc4FyEp/K/iuktoyErbRNN0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZtI11w+j; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9ab721058so572198685a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1728400926; x=1729005726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZ67u8RxgzRAwx2Ool9AQUwW74l6Qtl1I/8HA1yVK7o=;
+        b=ZtI11w+jtp1wDLPTjJriENfyaUN27ukJSDZhn15aAnQRJx/DBCvy/KPwEeie3UiXdV
+         wPphXu0ZVmC2AGClKeFDgb0RPNtlFloUN+LhSVwM72Jgr87IyXFG4QobA3qqD16pTwyF
+         baVW1m/sZffmaLNEIKIJDXdaDFsDObIouFDmYz/04Z/JRmPKHj7Xe3Gt+AyKZdUf+vSV
+         7O++oZciC3rCCR3Wgjkxza8/pB62u5gB0iGg9AuB1YoY/cLCkgoBM70rZf+Rk4prJCgA
+         pPnC+7BJNt3WE7RV03SNgESnOB+UbEJ+vfdM7KpRdTzZUOtUhiIRFLEeXYhzFOxABHyM
+         gxHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728400926; x=1729005726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XZ67u8RxgzRAwx2Ool9AQUwW74l6Qtl1I/8HA1yVK7o=;
+        b=RNxSaI/Pi7ru0X4/VVIC+TvbW5/WLJDfJpQv80h792whWqHLCnU/OfogMZU5HgXJ/A
+         vRLZoExXOt+2SJ6JSkd8tBoQ8/bVMYfqTB24XKVanC87/r+rq/SqSHymLSFXJbnhbeqg
+         X0KH+C/RuKhapVkiw/6Kl0z7V1rQLASEiyOwResjqRJHT9MCATkzlSDp6iRJ85r19PsE
+         EXOTqO/RL7p+UEXo+I/2ptXEuoTduYNTXN6/MK3N/tZF/KOi4nizte0Uzflt5doo+veR
+         ykw6uRC0pfxh6PMRnjgCa0yGfpER8r/jRB+u67uX1w9Ll0M3EKxyfew2A0knVxcrpKEb
+         4PFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUORbESz3phcOK/v7erobRnTa6k/udjILCb3iVghpY5CkvKgGKhyUX2f0T5lQWIOMhwtx3ISfNYhtMVqQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4SN+jHNsr69c3b67fIoyRscLNQbF1ETCOmb3DM+7jDWBBAO0V
+	GdlOfz5mOPq/bXocZGEJA6VRz4p72cAF9A/Jo4/qIvO4mpScAHpNJgFoFyLHJD04NErhBNQ+7M5
+	K
+X-Google-Smtp-Source: AGHT+IGMO0Tvvi9+VmcOsgILzXspWMlWZQ5WxVaJLr0S8i8w6Q2UsaoDkhwE/bfLc/fA5kw9BP3AeA==
+X-Received: by 2002:a05:620a:1791:b0:7a9:95f6:e372 with SMTP id af79cd13be357-7afcf03a0e9mr69595385a.2.1728400925668;
+        Tue, 08 Oct 2024 08:22:05 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7562caf3sm361427285a.36.2024.10.08.08.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 08:22:05 -0700 (PDT)
+Date: Tue, 8 Oct 2024 11:21:55 -0400
+From: Gregory Price <gourry@gourry.net>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-cxl@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+	osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+	akpm@linux-foundation.org, dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com, alison.schofield@intel.com,
+	rrichter@amd.com, terry.bowman@amd.com, lenb@kernel.org,
+	dave.jiang@intel.com, ira.weiny@intel.com
+Subject: Re: [PATCH 1/3] memory: extern memory_block_size_bytes and
+ set_memory_block_size_order
+Message-ID: <ZwVOE6JRS8Fd9_a8@PC2K9PVX.TheFacebook.com>
+References: <20241008044355.4325-1-gourry@gourry.net>
+ <20241008044355.4325-2-gourry@gourry.net>
+ <039e8c87-c5da-4469-b10e-e57dd5662cff@redhat.com>
+ <ZwVG8Z3GRYLoL_Jk@PC2K9PVX.TheFacebook.com>
+ <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+In-Reply-To: <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
 
-On Oct 08 2024, Werner Sembach wrote:
-> 
-> Am 08.10.24 um 14:18 schrieb Benjamin Tissoires:
-> > On Oct 08 2024, Werner Sembach wrote:
-> > > Am 08.10.24 um 11:53 schrieb Benjamin Tissoires:
-> > > > On Oct 07 2024, Werner Sembach wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > Am 02.10.24 um 10:31 schrieb Benjamin Tissoires:
-> > > > > > On Oct 01 2024, Werner Sembach wrote:
-> > > > > > > Hi Benjamin,
-> > > > > > > 
-> > > > > > > Am 01.10.24 um 15:41 schrieb Benjamin Tissoires:
-> > > > > > > > [...]
-> > > > > > > > PPS: sorry for pushing that hard on HID-BPF, but I can see that it fits
-> > > > > > > > all of the requirements here:
-> > > > > > > > - need to be dynamic
-> > > > > > > > - still unsure of the userspace implementation, meaning that userspace
-> > > > > > > >       might do something wrong, which might require kernel changes
-> > > > > > > Well the reference implementetion for the arduiono macropad from microsoft
-> > > > > > > ignores the intensity (brightness) channel on rgb leds contrary to the HID
-> > > > > > > spec, soo yeah you have a point here ...
-> > > > > > Heh :)
-> > > > > > 
-> > > > > > > > - possibility to extend later the kernel API
-> > > > > > > > - lots of fun :)
-> > > > > > > You advertise it good ;). More work for me now but maybe less work for me
-> > > > > > > later, I will look into it.
-> > > > > > Again, I'm pushing this because I see the benefits and because I can
-> > > > > > probably reuse the same code on my Corsair and Logitech keyboards. But
-> > > > > > also, keep in mind that it's not mandatory because you can actually
-> > > > > > attach the BPF code on top of your existing driver to change the way it
-> > > > > > behaves. It'll be slightly more complex if you don't let a couple of
-> > > > > > vendor passthrough reports that we can use to directly talk to the
-> > > > > > device without any tampering, but that's doable. But if you want to keep
-> > > > > > the current implementation and have a different layout, this can easily
-> > > > > > be done in BPF on top.
-> > > > > > 
-> > > > > > Cheers,
-> > > > > > Benjamin
-> > > > > > 
-> > > > > > 
-> > > > > > [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
-> > > > > Thinking about the minimal WMI to HID today, but found a problem: a HID
-> > > > > feature report is either strictly input or output afaik, but the WMI
-> > > > > interface has both in some functions.
-> > > > Not sure you are talking about feature reports, because they are
-> > > > read/write. It's just that they are synchronous over the USB control
-> > > > endpoint (on USB).
-> > > I'm confused about the split between get and send feature reports
-> > > https://www.kernel.org/doc/html/latest/hid/hidraw.html
+On Tue, Oct 08, 2024 at 05:02:33PM +0200, David Hildenbrand wrote:
+> On 08.10.24 16:51, Gregory Price wrote:
+> > > > +int __weak set_memory_block_size_order(unsigned int order)
+> > > > +{
+> > > > +	return -ENODEV;
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(set_memory_block_size_order);
 > > > 
-> > > I guess then a get feature report can also carry input data and the
-> > > difference is that a send feature report doesn't wait for a reply? but then
-> > > what is it's reason of existence in contrast to an output report?
-> > I'm under the impression you are mixing the 3 types of reports (just
-> > re-stating that here in case I wasn't clear).
-> > 
-> > - Input reports:
-> >    `Input()` in the report descriptor
-> >    -> data emitted by the device to the host, and notified through an IRQ
-> >    mechanism
-> >    -> obtained in hidraw through a blocking read() operation
-> > - Output reports:
-> >    `Output()` in the report descriptor
-> >    -> data sent asynchronously by the host to the device.
-> >    -> sent from hidraw by calling write() on the dev node (no feedback
-> >    except how many bytes were sent)
-> > - Feature reports:
-> >    `Feature()` in the report descriptor
-> >    -> way to synchronously configure the device. Think of it like a
-> >    register on the device: you can read it, write it, but you never get
-> >    an interrupt when there is a change
-> >    -> read/written by using an ioctl on the hidraw node
-> 
-> From userspace there are the HIDIOCSFEATURE and HIDIOCGFEATURE ioctls.
-> 
-> From the hid 1.11 spec:
-> 
-> "
-> 
-> 7.2.2 Set_Report Request
-> 
-> [...]
-> 
-> The meaning of the request fields for the Set_Report request is the same as for
-> the Get_Report request, however the data direction is reversed and the Report
-> Data is sent from host to device.
-> 
-> "
-> 
-> and from the hut 1.5, some of the LampArray feature reports are meant to be
-> used with set report and some with get report
-
-Yeah, it just means that you can query or send the data. You can also
-use HIDIOCGINPUT() and HIDIOCSOUTPUT() to get a current input report and
-set an output report through the hidraw ioctl...
-
-Internally, HIDIOCGINPUT() uses the same code path than
-HIDIOCGFEATURE(), but with the report type being an Input instead of a
-Feature. Same for HIDIOCSOUTPUT() and HIDIOCSFEATURE().
-
-> 
-> (well as far as I can tell the hut doesn't actual specify, if they need to
-> be feature reports, or am I missing something?)
-
-They can be both actually. The HUT is missing what's expected here :(.
-
-However, looking at the HUT RR 84:
-https://www.usb.org/sites/default/files/hutrr84_-_lighting_and_illumination_page.pdf
-
-There is an example of a report descriptor, and they are using Features.
-Not Input+Output.
-
-And looking even further (above), in 3.5 Usage Definitions:
-3.5.2, 3.5.3 and 3.5.5 all of them are meant to be a feature, like:
-LampArrayAttributesReport CL – Feature -
-LampAttributesRequestReport CL – Feature –
-LampAttributesResponseReport CL – Feature –
-LampArrayControlReport CL – Feature –
-
-3.5.4: can be either feature or output, like:
-LampMultiUpdateReport CL – Feature/Output –
-LampRangeUpdateReport CL – Feature/ Output –
-
-So I guess the MS implementation can handle Feature only for all but the
-update commands.
-
-> 
-> and there is the pair with LampAttributesRequestReport and
-> LampAttributesResponseReport.
-
-Yeah, not a big deal. The bold IN and OUT are just to say that calling a
-setReport on a LampAttributesResponseReport is just ignored AFAIU.
-
-> 
-> Sorry for my confusion over the hid spec.
-
-No worries. It is definitely confusing :)
-
-Cheers,
-Benjamin
-
-> 
-> > 
-> > And BTW, it's perfectly fine to have a dedicated report ID which has
-> > Input, Output and Feature attached to it :)
-> > 
-> > > > An input report is strictly directed from the device, and an output
-> > > > report is from the host to the device.
-> > > > 
-> > > > But a feature report is bidirectional.
-> > > > 
-> > > > > How would I map that?
-> > > > Depending on the WMI interface, if you want this to be synchronous,
-> > > > defining a Feature report is correct, otherwise (if you don't need
-> > > > feedback from WMI), you can declare the commands to WMI as Output
-> > > > reports.
-> > > Thanks for reminding me that output reports exist xD.
-> > hehe
-> > 
-> > > > > If I split everything in input and output the new interface wouldn't
-> > > > > actually be much smaller.
-> > > > The HID report descriptor doesn't need to be smaller. The fact that by
-> > > > default it exposes only one or two LEDs so we don't have the micrometers
-> > > > arrays is the only purpose.
-> > > > 
-> > > > But if we also implement a not-full HID implementation of LampArray, we
-> > > > should be able to strip out the parts that we don't care in the LED
-> > > > class implementation, like the exact positioning, or the multiupdate.
-> > > > 
-> > > > > Also what would I write for the usage for the reserved padding in the report
-> > > > > descriptor. Usage: 0x00?
-> > > > padding are ignored by HID. So whatever current usage you have is fine.
-> > > > 
-> > > > However, if you are talking about the custom WMI vendor access, I'd go
-> > > > with a vendor collection (usage page 0xff00, usage 0x08 for the 8 bytes
-> > > > long WMI command for instance, 0x10 for the 16 bytes long one).
-> > > > 
-> > > > Side note: in drivers/hid/bpf/progs/hid_report_helpers.h we have some
-> > > > autogenerated macros to help writing report descriptors (see
-> > > > drivers/hid/bpf/progs/Huion__Dial-2.bpf.c for an example of usage). It's
-> > > > in the hid-bpf tree but I think we might be able to include this in
-> > > > other drivers (or do a minimal rewrite/move into include).
-> > > > I'm not asking you to use it on your code right now, but this has the
-> > > > advantage of becoming less "binary blob" in your code, and prevent
-> > > > mistakes where you edit the comments but not the values.
-> > > I will look into it.
+> > > I can understand what you are trying to achieve, but letting arbitrary
+> > > modules mess with this sounds like a bad idea.
 > > > 
-> > > Since the interface is fixed I don't need to flesh out the whole descriptor
-> > > (which i thought i must do) and usage page (0xff42, because NB04 and the wmi
-> > > has 2 other ec controlling wmi interfaces besides the AB one), report usage
-> > > (matching the wmi comand id's) and report size should be enough.
-> > I'm a little confused by that last sentence. But yeah, I would expect
-> > some minimal sanity check before handing over the HID report to the WMI
-> > interface :)
 > > 
-> > Cheers,
-> > Benjamin
+> > I suppose the alternative is trying to scan the CEDT from inside each
+> > machine, rather than the ACPI driver?  Seems less maintainable.
 > > 
+> > I don't entirely disagree with your comment.  I hummed and hawwed over
+> > externing this - hence the warning in the x86 machine.
+> > 
+> > Open to better answers.
+> 
+> Maybe an interface to add more restrictions on the maximum size might be
+> better (instead of setting the size/order, you would impose another upper
+> limit).
+
+That is effectively what set_memory_block_size_order is, though.  Once
+blocks are exposed to the allocators, its no longer safe to change the
+size (in part because it was built assuming it wouldn't change, but I
+imagine there are other dragons waiting in the shadows to bite me).
+
+So this would basically amount to a lock-bit being set in the architecture,
+beyond which block size can no longer be changed and a big ol' splat
+can be generated that says "NO TOUCH".
+
+> Just imagine having various users of such an interface ..
+
+I don't wanna D:
+
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
