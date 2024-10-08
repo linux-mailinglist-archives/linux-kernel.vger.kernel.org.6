@@ -1,169 +1,133 @@
-Return-Path: <linux-kernel+bounces-354483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29E0993E19
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:52:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256DF993E21
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D410A1C24315
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1EA285F70
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 04:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95DA13959D;
-	Tue,  8 Oct 2024 04:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EFB1369B6;
+	Tue,  8 Oct 2024 04:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d6ADtaRB"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="kxPK2ldM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04B12AE77;
-	Tue,  8 Oct 2024 04:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C0B2AE77
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 04:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728363128; cv=none; b=ZXDfiKsnvM/AlPevPG1PtSiUf89lJJAWP6rBSfrGB/W8lhh8YwWmf7UpFtmNYONmxppdbcWVUx/QmX9kAHm8WAYQH5c/JLHl0dJ9UWwLrAKkdYQ9opqFf7U13JgDVjsqAsK/2TzqIpAqjskFucAzIkZgsHPMDbkd1xPrdodwdZM=
+	t=1728363581; cv=none; b=a7+mhzDmqPsPH/uMjhq5ssQrioRI4ZDFL08p0SyIaW3Iw+5KEdhmrWzlKckh8Hgvo2/68IetdF2+pQQKgrH5vKABkT18eD0PpOr7Q+sAaKWEBBwnkNZGg2pvp8hziFV8CtwwU+nUv795NDojWKvBxUCv3u1NsAY/CLPJRs4aDbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728363128; c=relaxed/simple;
-	bh=dFtszke0zpIjulGjyDtcKGLzGnllBUfkv3uWVLJlt/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tr9iNmTusRGG/k0ADnKRT9QN1IMgCYrJzNLt9mtBChN2YKV8fHVAeleQiwQwF/A5C5OAOzVJpo8fwX2CgMUu/W1l0Wrp6St90rDIwj7BWCjj5KTEOqfazKz5tWlHSQjTbuO4Hc+avaAV+AlgkKl1vjIxanx1sTus0ltIjjKYxp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d6ADtaRB; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=n+zQbghErJQIvBNG0813bgVJbMCpjIgARP/D+S4a0BI=; b=d6ADtaRBMSEV8rFznw2jS6vuYS
-	zv737teyo8W3rwrv6ELyRQI0yLqGsK7fGZdPFIyZg1U6TWYuQK8x8/CoL9Z35M2G9DqAeY1Fa68Yc
-	QwPNJMgfFY+3J6mb5eqKEDP/3Z9w0tDocA2pXWxEJc6UmeXHQh0OgJFZPECwSsR4mK7O8G+TBZQsX
-	w8trUUIsZ2pivZwp7ar0X0LaNhYXEz2UJZn+HIC92r2SoxZJHotVuKyrE86ixIb89EDHkwqM4OtF0
-	BpuzIRFRAitRQYNQAeNeEsS4IDvlre+djZ4PRMk6CgN8GQrE2Va0l9ztxm3a4U6rfXP2HY/mZxX5T
-	G6C+sDdg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy2CZ-00000001lvf-46YG;
-	Tue, 08 Oct 2024 04:52:04 +0000
-Date: Tue, 8 Oct 2024 05:52:03 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Xi Ruoyao <xry111@xry111.site>, Christian Brauner <brauner@kernel.org>,
-	Miao Wang <shankerwangmiao@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH |
- ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
-Message-ID: <20241008045203.GX4017910@ZenIV>
-References: <20241007130825.10326-1-xry111@xry111.site>
- <20241007130825.10326-3-xry111@xry111.site>
- <CAGudoHHdccL5Lh8zAO-0swqqRCW4GXMSXhq4jQGoVj=UdBK-Lg@mail.gmail.com>
- <20241008041621.GV4017910@ZenIV>
- <20241008042751.GW4017910@ZenIV>
+	s=arc-20240116; t=1728363581; c=relaxed/simple;
+	bh=2he7TmWRGX1I2Xw6fbx3AGiAfCkQ1CA7w92o52NR8BA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nz5gUAZTa7fhLOnTiPyibr0nPpnvU4wzVutRVxl9DCe4xPc+icBT4N1rdGsSx2pBtJ87zbaScREqVm4AztAqcp9QinQAymjxH1nEs0zwcY0LcEygBl0zTHReEiWXef2SAzEtqx9Kgkro1+t9HAXIgk1jZ6NTmUwmcErJHdRwPFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=kxPK2ldM; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1728363541; x=1728968341; i=efault@gmx.de;
+	bh=t7Mi51R4XOjeAh4Ma/htACrQooHwkpYDidzpIPppMO8=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kxPK2ldMw9knAsSRXIVDbedv/gzFIRKKOi2NzRaZzhAQI5YGj1ZbH2PSjGhu6eFN
+	 cjWH+cyMvLq726uf9IlAmPyZ2e0OZUgoBigMEv/AzI3hOAUGbCDAxm09bTuwYAXEi
+	 0qIxasv2aKWq37fzB0cWdcN5pO083A8Ol9Edz1mw6ZXZh4wY/NrBZ4a3IiwiZGTDa
+	 o/82o6icuEqLCX91c3rYy97ucqCRBjkKVpvbKFgIMDugFUBiXuFoC0UgmAvf1kglf
+	 v+2TQa3Lq3m8uV/t6FFOW0sKsTTrlKDztJdZj4gJisZML8o2oH9C8i9TFPRCaLVpr
+	 SoCDb9F+E0wSBw9A4w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.175]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTRQq-1tPYYj2nVs-00XriT; Tue, 08
+ Oct 2024 06:59:01 +0200
+Message-ID: <579b7ea34ef6e2f7c955abdfc0929fe1af36faef.camel@gmx.de>
+Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>, bigeasy@linutronix.de, 
+	tglx@linutronix.de, mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org, juri.lelli@redhat.com, 
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ ankur.a.arora@oracle.com
+Date: Tue, 08 Oct 2024 06:58:59 +0200
+In-Reply-To: <20241007074609.447006177@infradead.org>
+References: <20241007074609.447006177@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008042751.GW4017910@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A7EstQL3oyLhEMJa/owq7meZyzz0bcwvLkshWm8E0o7LlVlLiJM
+ Q07BuLFhNXsQAzvw8ovCA6/K4VDh/CmUllw58y1YeyAf1QZ9gOJSfccZK87y2urSDUT7ENh
+ +zLZK677gVLaykcqwg4LovT8E6UdLqeWcX2JpW1/FCVwxbP4vyrUCHXJFYCNU1rDFS6n5lN
+ fu7g8yfVU0m6JgmUu8wVA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PYkBP5A4XTU=;xRT87POMenAt0qWCbZ7E2TacIFG
+ sddqhwtHF1ehFs71fYJHK6HTfILYj3BmylaC+KpUIIEng4Lcs25fWijoEOkCz+xvYY4jbBdE3
+ Z41bXwMNlmYhgZTBj6RfXjbowtlShOwJXHVb0lKLYg/OHCeTXsuJYwIVA7Hn+Hko4UMMyWI+L
+ lBFEWjnhQXh/+gaDWi6CqByPcnK1xHvueS4Xu4SvDFpdsWe3Cb6xXsAoHkRXTOb9DqzgdFJMv
+ KeaWue7+A4k+cDvjWe4JtHY05yMyEn0UGhcGGUB/32K8A95lLd5LS3T2Z2wvzqaSDtntabzup
+ 65sfgzLQBhHsCaC/9pGJTvnRuhu8E5Purrnnl/owB2tZ0ZaGV83Ith+8JVBUvaRnCswrm9tC/
+ oAHdAjOUD2MazypLDA/f4+1mkpTHyHnRTbpXcyGCcu028S+ONZnYtbjCKk6y3R5ULMuDi5SSo
+ 4qp8hGVHNWoNegENxtXNHLTgRBH0pZOQy/iD6TbjF2S+6uuoD4kzVyWvSpFoBledse4LV8i+G
+ W2eS3ZceahdjAvxyoSGjXiI8R/TJxQNJ2Uxv6lzNiI+eV8S0I8UepS9cK/rnQap73U000qq7v
+ Zhgt0va5+CASRWxdyD7fT3d/1n7s2iTj4248JsFob0x4OaovJQjoct6ZieBBj9m6P9IAlzssW
+ sfQ4KCkJvq4EbhszcDCuQXZXn7SZrbivxY/+0IVxPyGGG3ng+E9SM429sJ5PPOx77sQmhUbeO
+ 2WVJbUMXcChwxcveD4SJ5Pb/vbVOHwgJiZFFjv+3aLVp3yQqJ26z0QbBtvvuqIs8NII6F5gFu
+ yLrTMPvIl+MZQm4hYcEtx9vA==
 
-On Tue, Oct 08, 2024 at 05:27:51AM +0100, Al Viro wrote:
-> On Tue, Oct 08, 2024 at 05:16:21AM +0100, Al Viro wrote:
-> 
-> > Folks, please don't go there.  Really.  IMO vfs_empty_path() is a wrong API
-> > in the first place.  Too low-level and racy as well.
-> > 
-> > 	See the approach in #work.xattr; I'm going to lift that into fs/namei.c
-> > (well, the slow path - everything after "if path is NULL, we are done") and
-> > yes, fs/stat.c users get handled better that way.
-> 
-> FWIW, the intermediate (just after that commit) state of those functions is
-> 
-> int vfs_fstatat(int dfd, const char __user *filename,
->                               struct kstat *stat, int flags)
-> {
->         int ret;
->         int statx_flags = flags | AT_NO_AUTOMOUNT;
->         struct filename *name = getname_maybe_null(filename, flags);
-> 
->         if (!name)
->                 return vfs_fstat(dfd, stat);
-> 
->         ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
->         putname(name); 
-> 
->         return ret;  
-> }
-> 
-> and
-> 
-> SYSCALL_DEFINE5(statx,
->                 int, dfd, const char __user *, filename, unsigned, flags,
->                 unsigned int, mask,
->                 struct statx __user *, buffer)
-> {
->         int ret;
->         unsigned lflags;
->         struct filename *name = getname_maybe_null(filename, flags);
-> 
->         /*
->          * Short-circuit handling of NULL and "" paths.
->          *
->          * For a NULL path we require and accept only the AT_EMPTY_PATH flag
->          * (possibly |'d with AT_STATX flags).
->          *
->          * However, glibc on 32-bit architectures implements fstatat as statx
->          * with the "" pathname and AT_NO_AUTOMOUNT | AT_EMPTY_PATH flags.
->          * Supporting this results in the uglification below.
->          */
->         lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
->         if (!name)
->                 return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
-> 
->         ret = do_statx(dfd, name, flags, mask, buffer);
->         putname(name);
-> 
->         return ret;
-> }
-> 
-> static inline struct filename *getname_maybe_null(const char __user *name, int flags)
-> {
->         if (!(flags & AT_EMPTY_PATH))
->                 return getname(name);
-> 
->         if (!name)
->                 return NULL;
->         return __getname_maybe_null(name);
-> }
-> 
-> struct filename *__getname_maybe_null(const char __user *pathname)
-> {
->         struct filename *name;
->         char c;
-> 
->         /* try to save on allocations; loss on um, though */
->         if (get_user(c, pathname))
->                 return ERR_PTR(-EFAULT);
->         if (!c)
->                 return NULL;
-> 
->         name = getname_flags(pathname, LOOKUP_EMPTY);
->         if (!IS_ERR(name) && !(name->name[0])) {
->                 putname(name);
->                 name = NULL;
->         }
->         return name;   
-> }
+On Mon, 2024-10-07 at 09:46 +0200, Peter Zijlstra wrote:
+> Hi!
+>
+> During LPC Thomas reminded me that the lazy preemption stuff was not the=
+re yet.
+>
+> So here goes, robot says it builds, and I checked both a regular and PRE=
+EMPT_RT
+> build boots and can change the mode.
+>
+> Please have a poke.
 
-Incidentally, the name 'getname_statx_lookup_flags' is an atrocity:
-	* getname and its variants do not give a fuck for the state of
-any flags besides AT_EMPTY_PATH
-	* lookups, OTOH, ignore LOOKUP_EMPTY (which shouldn't have been
-in the LOOKUP_... namespace to start with).
+My box seems content.
 
-Another fun question: why do we play with setting ->mnt_id, etc. in
-vfs_statx_path() if vfs_getattr() returns non-zero?  Or when we hit
-it via vfs_statx() from vfs_fstatat()...
+I'm gonna miss VOLATILE (voluntary;) when it's eventually whacked, but
+not a lot.. or at all general case, security and whatnot over time have
+beaten up high end switchers far worse.
+
+tbench 8 30s - single run, box=3Di7-4790
+
+master static
+  voluntary     3620.45 MB/sec   1.000   mean3 3613.45  stddev3 14.08
+  voluntary     2706.54 MB/sec    .747   +cpu_mitigations
+  voluntary     4028.72 MB/sec   1.112   nostalgia (4.4.231)
+  preempt       3449.35 MB/sec    .952
+  none          3631.99 MB/sec   1.003
+
+master dynamic
+  none          3548.19 MB/sec    .980
+  voluntary     3495.77 MB/sec    .965
+  full          3476.50 MB/sec    .960
+  lazy          3473.95 MB/sec    .959
+  laziest       3492.09 MB/sec    .964
+
+master dynamic rt
+  full          2352.58 MB/sec    .649
+  lazy          2986.28 MB/sec    .824
+  laziest       2977.63 MB/sec    .822
+
+distro kernel dynamic
+  none          1744.51 MB/sec    .481
+  none          2189.74 MB/sec    .604  mitigations=3Doff
+
 
