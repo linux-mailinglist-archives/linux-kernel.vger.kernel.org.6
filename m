@@ -1,85 +1,107 @@
-Return-Path: <linux-kernel+bounces-355227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D657994CAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:57:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CBF994D83
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8251C236BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:57:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF734B271F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB261DFDB2;
-	Tue,  8 Oct 2024 12:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC8C1DF974;
+	Tue,  8 Oct 2024 12:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mw0dG3RS"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HYbN/Mop"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678F1DF73A;
-	Tue,  8 Oct 2024 12:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785A1DE8A0;
+	Tue,  8 Oct 2024 12:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392158; cv=none; b=TYCGL8ux0hBp8swrlvGFOtc84rdscxUq6KEi5fSjUHOw+Q3m4CzMo6/n8P/IZSsMPWdRUWTsS+LuD6b0+wVHvG9S6XSV1faaz2dxpg/+AJQBL7XnNjjuF8E+OsXX6evC2ynhxVHOx+a7sJuu5vzgiDq9xXjU81xEfxh+w7ww7wQ=
+	t=1728392189; cv=none; b=HhHn6FD86bCyHstMv56fv8Ps5u40rFBnr6VoDYdYqSRdhJam1PHP1PhD4+ykyAc9rnp2semtEcFSO2B/Lmz69/tbkaMWaYylwtcidc74iSipVEL8pyItsAFcwr7B9hPBP640hMavLZOCQUBIIdGmG/bqjft1OH+papH1vGZzpcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392158; c=relaxed/simple;
-	bh=Vgp/xKtJboxc+kG3KTH2G2MM1dwKAkSs1/b5QSn/HzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLabTJlCEHnL1QI5bTzQQz1NtSlgEVWnKAzARgU0bMmqVWyvVd7M8sUfpux8q9EIIVGubvOVvCHLzM9s9CvPjnf+chqh2zZgOEotkOOLamatlnRllSsAmSR+z6UBzcuIoUriUAjjEEI0KLy+Xmgl9wDvZgQIIxVYFs2ugZLGP5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Mw0dG3RS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=d4cHsnC3TBo8c4sySnC2hojW9m7YjVLgXXnPhZPoswQ=; b=Mw0dG3RSJahn+N5QDQW5LVfqJu
-	WaObqx4JIfFPnfJg3XWZOaL8FE6Mz9lrmlP7hecQiJEui0m3cb1ZqxI+8+6TSidsVrdDswYz2qXNG
-	wJPeG/0iIqW8f5DbVN78SLJJtbdEdb7GHhRfthw0pVgCWtWp94y9r0sH66Kg0FZebtEezUJQZACtv
-	FNLrDVIRpYt2gTnY/IKl7m0E8tDD3hE51fkG15LvgVyxFZErww5Nqqv6NVHDvElSsAC3f8hESZSrE
-	1MlLwn90OR0cgnOKOyzKDuwhq4DPAlXT5I9MSdlb/2D6Mu0SXDM0L8yDb2lzK/F/jshEnbgzgyiYd
-	ikf2DR0w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy9km-00000005srg-19Pg;
-	Tue, 08 Oct 2024 12:55:52 +0000
-Date: Tue, 8 Oct 2024 05:55:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
-Message-ID: <ZwUr2HthVw9Hc1ke@infradead.org>
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
- <ZwUcT0qUp2DKOCS3@infradead.org>
- <34cbdb0b-28f4-4408-83b1-198f55427b5c@linux.alibaba.com>
- <ZwUkJEtwIpUA4qMz@infradead.org>
- <ca887ba4-baa6-4d7d-8433-1467f449e1e1@linux.alibaba.com>
+	s=arc-20240116; t=1728392189; c=relaxed/simple;
+	bh=BJav8e+HcALTipfP/NLFD+NrSKZ2vTYocgEXeZdKx3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ip1kDDi/L0rv6OigBmMm43RUaq5JASD3HBW1p5a2VgMjEKU1qxnCXSukZlEPYAo9dfhA03nxVAEHeQ3XhTeE9ro6rGV+q+c6iGpQF/sJPBdPlm8qYrZ31svLuiuGvrFHJZbY5DmE6TU+0A7JMt7Msf2QRQp15MJCxOVJNI0Ivho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HYbN/Mop; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1D32820005;
+	Tue,  8 Oct 2024 12:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728392179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BJav8e+HcALTipfP/NLFD+NrSKZ2vTYocgEXeZdKx3U=;
+	b=HYbN/MopgVOwhbm94jUtKR3niX7PPJ0/GQfIoI5KcrRc2eZol/OFPY1TA73qzramgLsS3p
+	JP5MG9rDv7jGu+/P7YaUR+k/ic65bSoML8+JuAb/XseyWvn3PxviiV0jiWtuEIli7TU5mG
+	MRKaWOxmRhm/9ntz1Lz2/+zBB0Pimfoj3DzE62zoHRujPUS2HNB3NOSTsns37kCy5okXI4
+	Cn/jEQ+qDCz5i7Kr+1IgNSJJUY+eQqnhjeenc2i6lR7MZ2meX5u7NrzAp2DNfqw7wOPt37
+	yiy8RE424U7Db1AqAluXZdNzlUohnQ8zD6TmnazEjLdHf350OCwOrkK16XkeiA==
+Date: Tue, 8 Oct 2024 14:56:17 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
+Subject: Re: [PATCH net-next 06/12] net: ethtool: Add PSE new port priority
+ support feature
+Message-ID: <20241008145617.23254843@kmaincent-XPS-13-7390>
+In-Reply-To: <20241008122300.37c77493@kmaincent-XPS-13-7390>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+	<20241002-feature_poe_port_prio-v1-6-787054f74ed5@bootlin.com>
+	<ZwDcHCr1aXeGWXIh@pengutronix.de>
+	<20241007113026.39c4a8c2@kmaincent-XPS-13-7390>
+	<ZwPr2chTq4sX_I_b@pengutronix.de>
+	<20241008122300.37c77493@kmaincent-XPS-13-7390>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca887ba4-baa6-4d7d-8433-1467f449e1e1@linux.alibaba.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Oct 08, 2024 at 08:33:27PM +0800, Gao Xiang wrote:
-> how about
-> int get_tree_bdev_flags(struct fs_context *fc,
-> 		int (*fill_super)(struct super_block *,
-> 				  struct fs_context *), bool quiet)
-> 
-> for now? it can be turned into `int flags` if other needs
-> are shown later (and I don't need to define an enum.)
+On Tue, 8 Oct 2024 12:23:00 +0200
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-I'd pass an unsigned int flags with a clearly spellt out (and
-extensible) flags namespae.
+> On Mon, 7 Oct 2024 16:10:33 +0200
+> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>=20
+> > User will not understand why devices fail to provide enough power by
+> > attaching two device to one domain and not failing by attaching to
+> > different domains. Except we provide this information to the user space.
+>=20
+> What you are explaining seems neat on the paper but I don't know the best=
+ way
+> to implement it. It needs more brainstorming.
 
+Is it ok for you if we go further with this patch series and continue talki=
+ng
+about PSE power domain alongside?
+It should not be necessary to be supported with port priority as the two PSE
+supported controller can behave autonomously on a power domain.
+I hope I will have time in the project to add its support when we will have=
+ a
+more precise idea of how.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
