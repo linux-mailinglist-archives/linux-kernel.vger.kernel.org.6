@@ -1,158 +1,189 @@
-Return-Path: <linux-kernel+bounces-356068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E42C995BCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EBE995BCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926D4B210A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AE71C20D90
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB7F2185A5;
-	Tue,  8 Oct 2024 23:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nqoE63Rh"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3B0218D6D;
+	Tue,  8 Oct 2024 23:43:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D588E21791E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D837F218591
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728430833; cv=none; b=gX2hPnUZG18zTWeI0MpVetaf4fTlwVSjKk46FPTJKCxyYyGvYvcPsX911hjcp+Du7glJfr2tG2KR+veTWROOQo74GgIraSDsejhcO3Gpdl2fpX3KClgJmdhgCtSpJEup7Dx8e2dxUA7/hut7+IMx22W8loT+4KN1jhCjK+jmZkk=
+	t=1728431005; cv=none; b=X1YSmGuJOV1DdhEn1Hc/MfnDQUGzpWZBvcoQiW5KNRZOWqNZLSEyoLE5DsrGerRjooGdVDHtVkDplxCMQsolApERr1sH0sGUGk6bcaj4mHYqY2Xn+1grSO1SiBV96LrKPpnZv0mD/FT6t44p5Cz5dqwbH2T9dtjzSc6LTmyShec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728430833; c=relaxed/simple;
-	bh=3Id3YShJvU/qzMpJxiLmIb/mHvhpyX85OyEo+GK4LaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SUEyRCDf1suoqrTNU5LQ1U2bG2DJZGtiPzek4XsQG0+IS4lIgYHvyNU/0r+dxxql8R1kwyJ8Cca7+KotSonkjo2e+TbyGsbNNM8bq+f8A1gBMylglrj4NCLG3XZ3qP4vVeJ1OqtZhA8BFzWCSQE1GrniV5vZSz7C0sYLA2exKfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nqoE63Rh; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a36ad4980bso91185ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 16:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728430831; x=1729035631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9TzFohBlNzqxKjuZ5GdWfeG9SOi18QREh/ikp0rKgog=;
-        b=nqoE63RhdGRrUt0d8oBr7pDZCtOy0gj3Jf0BTMaF6s0Z0L0UDtoy7wznSV0oGhT5Po
-         MQ/CxnUzbH3xe9KilL2mCRQ3Y3vm8y4rLN9MS/A3qUSRUsZDw4rgIrtTI+cwWP2rVJFV
-         QbJUDQxwmMThbXVP8VXlbSE+WLEcAKFVRkXMu+sNokLV4RYUDsnMVl8VikZlOeqfk4KF
-         4lpTl586UWmeQ19gaqZ3RtRKqXNxIvFfO8anll8qT3yBr0bDhs1ZxLQX5Jmcokvqw8+R
-         Xj/kUONOn9WadKKBHE33+sPr3vJjQFHBqxKLy3dZuwijiNIw65ADzFHguUIMAlVWyjsc
-         qd+g==
+	s=arc-20240116; t=1728431005; c=relaxed/simple;
+	bh=hvFwZ685hyIt21w8mmdVedVdoaIqNJBwbKnv8axuuro=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YC2/Es9Ep8BLtubjZSpnlsCfnUrRI8JvrlWKsd62rRaCC+YrA0nTkmFpaNDH5eMQtF4P+PIyimpzM6p58ZE3hmw1QSjSjdS0vxtHOVvSY8A1CY1tgT9GDZ80LJnlg5lkmCPOLR5YmPoL4aIkfEHGnQRJDU6ThD/DzRfNsGg0UJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1925177fdso72575675ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 16:43:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728430831; x=1729035631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9TzFohBlNzqxKjuZ5GdWfeG9SOi18QREh/ikp0rKgog=;
-        b=uTg+DWsYV89TLaekBDHQkbExlxYDsXZ8BmBIanqSGth//TCUOcUgpW04Zjfn++UNLu
-         5E3ifZt9UzcAunI3cfJtHkA8hv7GvH0PK6DThWk4cVi1Jn4yyjly9/OSwurp6yldkzu+
-         KD8qcPJCnw+JnUQjtFVAeD3v4awP4j7v+L5d43T/u+kSmJheb8LX6ETxh8qmm/Qz4LnL
-         3j/udSmTKL6wvPE0nXogQcP08SbunL6hzCfOr3qI2CjtN/9zG0NSVRM8V0VZR718FEfE
-         pEo2GMyEmpIiSycrthzxUWpFi5RGpZh/iIEmTjmuKyCJZGA6bOqx0CsKFghc4AyWneaF
-         p9Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnrgVonRsdANYbx0ZhEdfLCRM1apZS/UI85ygePTWx4HXuqLqwSFnEFT57QWCna7UWaMHWOqVLlXbPg38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9kZnCnta7Rttk1lj+6igbtBofyRQvVuhalHB6Z5m7qCs2eM0L
-	yNVy/d5acbX6iZoM1TSN0dqoSdgxpCk6W9XU03q0hdjDgo26qFwzNBFa/7ETJ6pCe9IzgxxxGno
-	SmEO6SZTqRZdGUhkmLVjDjgcv66f6rQdI+Sep
-X-Google-Smtp-Source: AGHT+IE5fjoBzAtkHCZGRdBV0PsFyCvAbFAQk3kbxTIueT1WdZS6X5ubk/wldHFcczaiHaFDoWXDSNx3t7l8U0XSvt4=
-X-Received: by 2002:a05:6e02:144b:b0:3a0:a75d:8659 with SMTP id
- e9e14a558f8ab-3a3980913f8mr745665ab.29.1728430830851; Tue, 08 Oct 2024
- 16:40:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728431003; x=1729035803;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xXzKkitN8PR+TnJMD7nb2qAAUzE05QdQUBobAP0aOT4=;
+        b=ou+px4gtRBnWLbifaqtKy+y2oZUxTlFbLKrnhz4sQZUjv86L00tPOGMG3vrWGZpSe+
+         +1W+VXUPAzsCQWpNXHpbSZyGCA1kBgYovhforSOQVcJu0yYLkJI8i4O4FNdI1kOk2aAl
+         cZVp+XuVUatlxEGwaERQ70Z0RwXyJ5ofXqWYTe1bzseuZDot+vDH91da4tN6i0DkjBBT
+         H0Yw7uxo5FU9/S4Ae3f1iLO0yZEiguPOe18GNaL/PRVR1Rak4hMqw7YzhXqDnPZkk3xu
+         UaiulEEMSibitscWamjc9TM1Zl7EAsXCu2oN3/KkyZdSjtete3lVCFEVGgTkIB1c6Zxv
+         zPHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoEH7OY+ar7RIERqS0EMMFke8SdH6DsZOraQT+OUekOe/MPzlGBFrfGYwuBzasixp3mbimK/ca+x2l+D8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhnbH8sGdBvJVUFZjGPEBvRrIGBtAd49AaLE5r+p4SSvDYjfoy
+	cjY+f7HhX0bv2KH+gYuZPhLvKiy1N0G4K5NATv7zjaVONMOb2bJ6GOx6EeoAdhejSLkvPdOR+fD
+	ETneUUe9FUHO/KPPHPcDXtj5ktzbFeSVrcPlaAVQLuuCKcznizBQ+TJE=
+X-Google-Smtp-Source: AGHT+IHOEOB1mxvcC94blicK1WU6cHtMi0YFohOr/46UT26ZKSKjL/HJqShcOVupslfDZ+mBlIEZaUH/7bXqYKTr0+ian45vBTpB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004234120.1495209-1-irogers@google.com> <ZwW2m5D2cnIabE_z@google.com>
-In-Reply-To: <ZwW2m5D2cnIabE_z@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 8 Oct 2024 16:40:19 -0700
-Message-ID: <CAP-5=fV80pNi=jh48uq+99pSHV9aeE1X7LvDi=bY9sGQ0JVwkg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/8] CSV/JSON metric thresholds, fix printf modifiers
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:c56e:0:b0:3a2:76c9:f2b7 with SMTP id
+ e9e14a558f8ab-3a397d17d54mr5288605ab.24.1728431003100; Tue, 08 Oct 2024
+ 16:43:23 -0700 (PDT)
+Date: Tue, 08 Oct 2024 16:43:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6705c39b.050a0220.22840d.000a.GAE@google.com>
+Subject: [syzbot] [xfs?] KFENCE: memory corruption in xfs_idata_realloc
+From: syzbot <syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 3:47=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> Hi Ian,
->
-> On Fri, Oct 04, 2024 at 04:41:12PM -0700, Ian Rogers wrote:
-> > Metric thresholds are being computed for CSV and JSON output but not
-> > displayed. Rename the color that encodes the threshold as enum values
-> > and use to generate string constants in a CSV column or json
-> > dictionary value.
->
-> IIUC it'd show "good" or "bad" when the metric defines a threshold and
-> show "good", "less good", "nearly bad" or "bad" for the legacy shadow
-> stats?  Anyway it's nice to show if the value is good or not.
+Hello,
 
-Correct. I'm open to suggestions for the names. The alternative to
-showing the metric thresholds would be to drop them for CSV and JSON
-output, which would reduce the number of events. With this approach
-the thresholds can still be dropped with --metric-no-threshold.
+syzbot found the following issue on:
 
-Thanks,
-Ian
+HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=164f779f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a8170685a482c92e86a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13012707980000
 
-> >
-> > Add printf attribute to functions in color.h that could support
-> > it. Fix bad printf format strings that this detected.
-> >
-> > Ian Rogers (8):
-> >   perf color: Add printf format checking and resolve issues
-> >   perf stat: Fix/add parameter names for print_metric
-> >   perf stat: Display "none" for NaN with metric only json
-> >   perf stat: Drop metric-unit if unit is NULL
-> >   perf stat: Change color to threshold in print_metric
-> >   perf stat: Display metric threshold value in CSV output
-> >   perf stat: Add metric-threshold to json output
-> >   perf stat: Disable metric thresholds for CSV/JSON metric-only mode
->
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
->
-> Thanks,
-> Namhyung
->
-> >
-> >  tools/perf/Documentation/perf-stat.txt        |   1 +
-> >  tools/perf/arch/x86/util/iostat.c             |   2 +-
-> >  tools/perf/builtin-sched.c                    |   2 +-
-> >  tools/perf/builtin-script.c                   |   6 +-
-> >  tools/perf/builtin-stat.c                     |   8 ++
-> >  tools/perf/builtin-trace.c                    |   2 +-
-> >  .../tests/shell/lib/perf_json_output_lint.py  |   5 +-
-> >  tools/perf/tests/shell/stat+csv_output.sh     |  24 ++--
-> >  tools/perf/util/arm-spe.c                     |   2 +-
-> >  tools/perf/util/color.h                       |   9 +-
-> >  tools/perf/util/intel-bts.c                   |   2 +-
-> >  tools/perf/util/intel-pt.c                    |   2 +-
-> >  tools/perf/util/s390-cpumsf.c                 |   2 +-
-> >  tools/perf/util/s390-sample-raw.c             |   6 +-
-> >  tools/perf/util/stat-display.c                |  85 +++++++++---
-> >  tools/perf/util/stat-shadow.c                 | 128 ++++++++++--------
-> >  tools/perf/util/stat.h                        |  16 ++-
-> >  17 files changed, 191 insertions(+), 111 deletions(-)
-> >
-> > --
-> > 2.47.0.rc0.187.ge670bccf7e-goog
-> >
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/547c3034fd79/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com
+
+XFS (loop2): Quotacheck: Done.
+==================================================================
+BUG: KFENCE: memory corruption in krealloc_noprof+0x160/0x2e0
+
+Corrupted memory at 0xffff88823bedafeb [ 0x03 0x00 0xd8 0x62 0x75 0x73 0x01 0x00 0x00 0x11 0x4c 0x00 0x00 0x00 0x00 0x00 ] (in kfence-#108):
+ krealloc_noprof+0x160/0x2e0
+ xfs_idata_realloc+0x116/0x1b0 fs/xfs/libxfs/xfs_inode_fork.c:523
+ xfs_dir2_sf_addname_easy fs/xfs/libxfs/xfs_dir2_sf.c:469 [inline]
+ xfs_dir2_sf_addname+0x899/0x1b60 fs/xfs/libxfs/xfs_dir2_sf.c:432
+ xfs_dir_createname_args+0x152/0x200 fs/xfs/libxfs/xfs_dir2.c:308
+ xfs_dir_createname+0x4b3/0x640 fs/xfs/libxfs/xfs_dir2.c:361
+ xfs_dir_create_child+0xe3/0x490 fs/xfs/libxfs/xfs_dir2.c:860
+ xfs_create+0x8cc/0xf60 fs/xfs/xfs_inode.c:722
+ xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+kfence-#108: 0xffff88823bedafa0-0xffff88823bedafea, size=75, cache=kmalloc-96
+
+allocated by task 7203 on cpu 1 at 147.184900s (0.409032s ago):
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ xfs_init_local_fork fs/xfs/libxfs/xfs_inode_fork.c:55 [inline]
+ xfs_iformat_local+0x2db/0x620 fs/xfs/libxfs/xfs_inode_fork.c:97
+ xfs_iformat_data_fork+0x38f/0x7b0 fs/xfs/libxfs/xfs_inode_fork.c:264
+ xfs_inode_from_disk+0xaa9/0xf60 fs/xfs/libxfs/xfs_inode_buf.c:254
+ xfs_iget_cache_miss fs/xfs/xfs_icache.c:683 [inline]
+ xfs_iget+0xc5a/0x2f00 fs/xfs/xfs_icache.c:821
+ xfs_mountfs+0x1040/0x2020 fs/xfs/xfs_mount.c:873
+ xfs_fs_fill_super+0x11f0/0x1460 fs/xfs/xfs_super.c:1765
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+freed by task 7203 on cpu 0 at 147.535434s (0.189887s ago):
+ krealloc_noprof+0x160/0x2e0
+ xfs_idata_realloc+0x116/0x1b0 fs/xfs/libxfs/xfs_inode_fork.c:523
+ xfs_dir2_sf_addname_easy fs/xfs/libxfs/xfs_dir2_sf.c:469 [inline]
+ xfs_dir2_sf_addname+0x899/0x1b60 fs/xfs/libxfs/xfs_dir2_sf.c:432
+ xfs_dir_createname_args+0x152/0x200 fs/xfs/libxfs/xfs_dir2.c:308
+ xfs_dir_createname+0x4b3/0x640 fs/xfs/libxfs/xfs_dir2.c:361
+ xfs_dir_create_child+0xe3/0x490 fs/xfs/libxfs/xfs_dir2.c:860
+ xfs_create+0x8cc/0xf60 fs/xfs/xfs_inode.c:722
+ xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 7203 Comm: syz.2.194 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
