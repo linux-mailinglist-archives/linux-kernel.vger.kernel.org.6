@@ -1,186 +1,102 @@
-Return-Path: <linux-kernel+bounces-354350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7448993C68
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B18993C5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABEE28141A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E171F24708
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABFF224FA;
-	Tue,  8 Oct 2024 01:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BrBMh57k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D58F182C5;
+	Tue,  8 Oct 2024 01:41:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36D118C3E;
-	Tue,  8 Oct 2024 01:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D148818622;
+	Tue,  8 Oct 2024 01:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728351755; cv=none; b=Sj5XBifY/IvJas3YkGIUOwCTmMvVqieMSnx4RByFitZDo3Gmah1rJ/tIjmJVr+l7+8dFJQA5DEW4wWTaYg4w1r1ybdYo3TOGW1uTpfHq+OrqcmZOHZwUgC2f6NjO4Hk7bXWyyKlXUeQKP7IpUj8K9EeCs8zd7IriQY7MZNPNE1c=
+	t=1728351717; cv=none; b=i50g4DxWvloun6kRsz4LVmm3lOJuwjrPFZSk+NKIZabDZm9LycjxGpLYefAAi1xeO/f3nkqB/mDyup3q0+ItlwudAAyQhTfFM5Js4jT0hZl1B9tzWOs3kLDDS8psPKpkcK/vaKh0ZaObvn6IFYiuq7YrOQFTMyS7hwhfVu/wQDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728351755; c=relaxed/simple;
-	bh=5rbrBv9GV4LUUrlEqbf06277AN5BK7aUbXun41u4U+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDBlLWaQLCKPPEk+8aCuLoT+lGyzglQgaJu2u9XuVVZxq2LpRH/NBaqs9DkRsaK4VZr+bhwpnSMJaikovjXaBCLqWR8xL+MxPtZyux/RaMuImbjF1I6QIy6qB4GoigbJRC/U9G2zs6hVLaHxTQaqd+Nv0h/YRtspQdWY/XI66Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BrBMh57k; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728351754; x=1759887754;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5rbrBv9GV4LUUrlEqbf06277AN5BK7aUbXun41u4U+A=;
-  b=BrBMh57kKI9c6BE91KJ1ZwCF/FmLngZ0R7lUKFgG5sZtNXQpDtGv7F8t
-   ORYjCXf8/x1eUx6JEK4ZCW62u0/P/XFi8Ow7civxlphx4dYYwDaPZedG4
-   QIEwW/vxGRIEsma+i07KcHGmOMglCFBldezsJkbh6kPTzatfRxLMLG1q8
-   +jDZaYX4pShp/cP+kv1DrQPeDemFPojqcVW/2E80Z6bWIajMEOR8Kr12p
-   GD3xwRZwsuFn+3kORQ1u4btdoN8Sw15WMXCuxWZn5hvHjK1Ln076Kj4tj
-   g7+9Mk0y4wPJ7ivvmiMNZEZgT//qN3SwSnxWbXQHFZTqCCwaZLDUZQiJ6
-   w==;
-X-CSE-ConnectionGUID: B3tmx2E9SEaYDudJf7cqbg==
-X-CSE-MsgGUID: oSBpwFPGSeetiQgspaP/rA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27691186"
-X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
-   d="scan'208";a="27691186"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 18:42:30 -0700
-X-CSE-ConnectionGUID: lr/CiGJzR9GiP4F5Jt7jzA==
-X-CSE-MsgGUID: cl0324zZQJ2DfzvDBux3Aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,185,1725346800"; 
-   d="scan'208";a="80455774"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 07 Oct 2024 18:42:27 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxzF2-0005kq-2p;
-	Tue, 08 Oct 2024 01:42:24 +0000
-Date: Tue, 8 Oct 2024 09:41:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>,
-	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
-	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-	dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v1 1/4] misc: fastrpc: Add CRC support using invokeV2
- request
-Message-ID: <202410080940.S7Rar8Zi-lkp@intel.com>
-References: <20241007084518.3649876-2-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1728351717; c=relaxed/simple;
+	bh=cWSt4WA0p+of5ATDqf+7wEmIL+eMVlkDc/qdAUHqWjg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VZMoz78uhqGmfv7Nv6xOQ42FsUdwWlImwrQ5ZBUI87peqTxzHDgODjmd4jhYNqMoGnTW4LH3fXitsSeUcE15CPSRQcyCI1euxf8Q2qSCkowCoxzkZXepyXlDDtIu2hAGyRs3F2dZRG5gZOMzkLbxB9ZNEt97lq6ltxIjoSdwwXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XMzJj1gZ2z4f3jk7;
+	Tue,  8 Oct 2024 09:41:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E597A1A0359;
+	Tue,  8 Oct 2024 09:41:52 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgD3KsfgjQRnQFbqDQ--.24419S3;
+	Tue, 08 Oct 2024 09:41:52 +0800 (CST)
+Subject: Re: [PATCH 5.10] block, bfq: remove useless checking in
+ bfq_put_queue()
+To: Jens Axboe <axboe@kernel.dk>, George Rurikov
+ <g.ryurikov@securitycode.ru>, stable@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paolo Valente <paolo.valente@linaro.org>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ Jan Kara <jack@suse.cz>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241007140709.1762881-1-g.ryurikov@securitycode.ru>
+ <5995b8d7-a94a-4c5d-8bf6-e19998c0ac72@kernel.dk>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <06ed3431-1311-ef45-0611-1321307a4629@huaweicloud.com>
+Date: Tue, 8 Oct 2024 09:41:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007084518.3649876-2-quic_ekangupt@quicinc.com>
+In-Reply-To: <5995b8d7-a94a-4c5d-8bf6-e19998c0ac72@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3KsfgjQRnQFbqDQ--.24419S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYH7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4
+	kS14v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
+	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrw
+	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
+	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
+	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbPEf5UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Ekansh,
+Hi,
 
-kernel test robot noticed the following build errors:
+在 2024/10/07 22:21, Jens Axboe 写道:
+> On 10/7/24 8:07 AM, George Rurikov wrote:
+>> From: George Ryurikov <g.ryurikov@securitycode.ru>
+>>
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> commit 1e3cc2125d7cc7d492b2e6e52d09c1e17ba573c3
+>>
+>> 'bfqq->bfqd' is ensured to set in bfq_init_queue(), and it will never
+>> change afterwards.
+> 
+> No point pushing this to stable, so no from here.
+> 
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.12-rc2 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Yes, and there are no follow up fixes as well.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ekansh-Gupta/misc-fastrpc-Add-CRC-support-using-invokeV2-request/20241007-164734
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20241007084518.3649876-2-quic_ekangupt%40quicinc.com
-patch subject: [PATCH v1 1/4] misc: fastrpc: Add CRC support using invokeV2 request
-config: arm-randconfig-002-20241008 (https://download.01.org/0day-ci/archive/20241008/202410080940.S7Rar8Zi-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410080940.S7Rar8Zi-lkp@intel.com/reproduce)
+Thanks,
+Kuai
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410080940.S7Rar8Zi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/misc/fastrpc.c:7:
-   In file included from include/linux/dma-buf.h:19:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/misc/fastrpc.c:1696:12: error: incompatible pointer to integer conversion assigning to '__u64' (aka 'unsigned long long') from 'struct fastrpc_invoke_args *' [-Wint-conversion]
-    1696 |         inv->args = args;
-         |                   ^ ~~~~
->> drivers/misc/fastrpc.c:1716:8: error: incompatible integer to pointer conversion passing '__u64' (aka 'unsigned long long') to parameter of type 'const void *' [-Wint-conversion]
-    1716 |         kfree(inv.args);
-         |               ^~~~~~~~
-   include/linux/slab.h:446:24: note: passing argument to parameter 'objp' here
-     446 | void kfree(const void *objp);
-         |                        ^
-   drivers/misc/fastrpc.c:1734:8: error: incompatible integer to pointer conversion passing '__u64' (aka 'unsigned long long') to parameter of type 'const void *' [-Wint-conversion]
-    1734 |         kfree(inv2.inv.args);
-         |               ^~~~~~~~~~~~~
-   include/linux/slab.h:446:24: note: passing argument to parameter 'objp' here
-     446 | void kfree(const void *objp);
-         |                        ^
-   1 warning and 3 errors generated.
-
-
-vim +1696 drivers/misc/fastrpc.c
-
-  1677	
-  1678	static int fastrpc_copy_args(struct fastrpc_invoke *inv)
-  1679	{
-  1680		struct fastrpc_invoke_args *args = NULL;
-  1681		u32 nscalars;
-  1682	
-  1683		/* nscalars is truncated here to max supported value */
-  1684		nscalars = REMOTE_SCALARS_LENGTH(inv->sc);
-  1685		if (nscalars) {
-  1686			args = kcalloc(nscalars, sizeof(*args), GFP_KERNEL);
-  1687			if (!args)
-  1688				return -ENOMEM;
-  1689	
-  1690			if (copy_from_user(args, (void __user *)(uintptr_t)inv->args,
-  1691					   nscalars * sizeof(*args))) {
-  1692				kfree(args);
-  1693				return -EFAULT;
-  1694			}
-  1695		}
-> 1696		inv->args = args;
-  1697	
-  1698		return 0;
-  1699	}
-  1700	
-  1701	static int fastrpc_invoke(struct fastrpc_user *fl, char __user *argp)
-  1702	{
-  1703		struct fastrpc_invoke_v2 ioctl = {0};
-  1704		struct fastrpc_invoke inv;
-  1705		int err;
-  1706	
-  1707		if (copy_from_user(&inv, argp, sizeof(inv)))
-  1708			return -EFAULT;
-  1709	
-  1710		err = fastrpc_copy_args(&inv);
-  1711		if (err)
-  1712			return err;
-  1713	
-  1714		ioctl.inv = inv;
-  1715		err = fastrpc_internal_invoke(fl, false, &ioctl);
-> 1716		kfree(inv.args);
-  1717	
-  1718		return err;
-  1719	}
-  1720	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
