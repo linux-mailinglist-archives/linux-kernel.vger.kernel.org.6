@@ -1,255 +1,237 @@
-Return-Path: <linux-kernel+bounces-355032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583A699463C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:11:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A363994638
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74CB1F28D2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:11:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7261CB24D4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8151D2B14;
-	Tue,  8 Oct 2024 11:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584871D0F76;
+	Tue,  8 Oct 2024 11:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbWkX+cb"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="flky8EG1"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6DD16FF2A;
-	Tue,  8 Oct 2024 11:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1DA1DFE0D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385574; cv=none; b=i9SEC3//fEYk3GGLhtBHqDef6DA9d/lFDwwRRGsuIG8iJSoff/hG5HNoJvu+Yrtb6ElKbwIihU93CjLR6+06k5myYq9p7ekmplxBEutDZYdMTqV6vr3aq9DLDfWZwcb9q7YfrQnVIIILLbFmNW5sH5yWxN6ORH/ioJXUuuOdotU=
+	t=1728385547; cv=none; b=A9aj5Jd3pSlndgPP75o35cHrml5NRIfipLYCfFG5UBiad7Rx8LOvooMJZCpck8RzYHiiyuTChSGGhqGN+YWmYGS+m1FLiv3/9tckewkzD0NmYCurl/L8nxHgqAJyAiXecjDLtNUcD2qWXRLBymxkiBlFK/nTDKMkLBVDxTqJ3oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385574; c=relaxed/simple;
-	bh=RPO7jVFt26dwjcYzMBn1wdOFCuV+0MtqoPac+9csBtQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TBJFPqPmySbmFtP5WSxHBqsWqvzw+yHVHZuyrfsYYRsv4w4g116c5rFQBouCfear0phY2tes9UPajcU6huR0EL6n8CyD43nmrVMoOEddsMTFiNb9cS3Tovh5DdgN0eWBWcPKaR7QRpfzMTU0PWISEy/icJq7HNj+Do4cyRGNbG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbWkX+cb; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50c937b92d9so1042700e0c.2;
-        Tue, 08 Oct 2024 04:06:12 -0700 (PDT)
+	s=arc-20240116; t=1728385547; c=relaxed/simple;
+	bh=blpyLMsuFMn24VZPPL8dDbNZnSR7Pou7ksJj/nytLXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4gF+hBPoxl24e8NflcEaE8aAamCDBA8410Dk4/i8G7duslozbRnngEASA+T+JKPZipkFYIEjn3IgWO0E49inISVGyDD7JEv7IDJo9M1PyqLlnWetE50G/BqBYRrgUiewyhCjUqbZLQ8GJSIibI/RFAkFvcD01kqo3affSKO/Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=flky8EG1; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso75250821fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728385571; x=1728990371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZtOVjbyAjG2zU29QqMkTWldiGOO5NXXvaEbwHvDFhJM=;
-        b=HbWkX+cbghBgU8gf4awvDtehIQZh3KdkYPLABg8gxZuzbSPdq5hZ67WmrgIcfVW+O9
-         ewcOwO5Ws/h4Zq9kBPe3IEN6VJVAE4IAXiLvID6o/dOwNN1I2l9y8IUmpHtlEvpIw4Kw
-         jo5hydjvI+cV1EcUvjDiVXtUJEHIS+HakGzzxP+w3heH1VWIRQJn5wfSzDIdb7FoOsld
-         6Xci6jB8uBjYcSOANDB+Nyj136AuHrfzAigEELd39vqbLrEeIShKyFFChUagBLOsfJG2
-         VfD7aIrRtloZD5hf9dStLld6UW7rCxaPNq1IgLpAJzaV0OIHORqTirtlm74gCtQyDFhH
-         el9A==
+        d=linaro.org; s=google; t=1728385542; x=1728990342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxNxFS3ZbI3W4kQXbO0lCunpQ22o9dZ3gjnqPR7i4vQ=;
+        b=flky8EG1aHAhFOZU+fcGyaSoCVgdRKxcMW1PgG2kjfaTz3yfqrkb1WLRICnPxb+DNl
+         oqmBGTxO5Y7HL40xafgfz3W5cIdheWosnGfdrSCMqljJt39HueOFrSBRuUkXrNEqJdi7
+         +ctEqm20qppIzVTPqDzYH+tygvEC6OyKlDKyfwquW+HYUpBC3f594JJ+az1U+fsLjkyo
+         qFNcYFnISfjGozqdh+9/+dFSwliMNEZxmPq7NdXjoQJut3458cCV+df/shjSQCob/a03
+         fgr+XQ6fAG+/yKuMpX3ZaCYMSGgLDtSbLVY718zqcPJPjN6HO/TDBbC3COG85n5FQDpX
+         +hbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728385571; x=1728990371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZtOVjbyAjG2zU29QqMkTWldiGOO5NXXvaEbwHvDFhJM=;
-        b=rVkImMUJXNRUmo3h1C2fASNh/O62PaZSg4co7Cbb5/473OQZlS0ZCXu9spQugebE0I
-         NMzjzxxSIiV4chIJhEjfLjancAeL5aHqNwKkWZ9ivyWcYMAufCepoWMxBvUK4T+hoG5D
-         +sXCcx9SiWbf8+QBZZSi2tK46tDtJXuqq3TNiEWh0ITsYfbvQT0mPbpxVx2I6Vv3e6lJ
-         Fq7ijiXCTQYXjY5gt9XDLEc89koudUlGo5pDPMZVSKOKbQjY6SPlB9C0GF+kDpusJulf
-         HCI8h8Wyay/PnLUMDi86ws3P2hnvGFqAUfgfCBwFSh9vrnrda1itbGIUmtU852xbgh0F
-         Fb1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUKrk2XC3/J0r/VfQtR2E806IQf2qnk00h7Ia5JedD/T3+xVRe+uPixZ/jjAgwVVokhBWxwmqmFZSLlT6g=@vger.kernel.org, AJvYcCWVpmr/TRFLMXOGSgN/O/fVI2G+9cLK2HFQ64S2nyxyMmmEnLCtNypN7sQ4XNste1ICuxq3+GXUMWPFDbM=@vger.kernel.org, AJvYcCXVJ+5AKChnDvHmUhGBvxWoyM3OBH8CuinVJzSgjCZH5ybsBZSqIv92aSBdMYgehYXZHEJSpWbrYTyXYINUvCITg5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdCmZeXzj/3ncsgPbmpUK/kDZs8wnqZn/nqzkBGy2aHLn5AFVL
-	3pzjsypIu7G0dlapMAiqCocOzmaw/2AfpLfT6uMtrt8sf2p0Ik5SzRptjN2QBwymrCnuKGLG3Rb
-	TwXhlX1qioJ5Be59En6/uCHBjWCk=
-X-Google-Smtp-Source: AGHT+IFAhzzWfREFDTRHEadMk6vgR1uvY0/FlJpPVHoW3gADi57xjaNCLMzf+BqKhf1eKVX42naNkJ6b4ixltvpeAQ0=
-X-Received: by 2002:a05:6122:1688:b0:50a:b604:2b9e with SMTP id
- 71dfb90a1353d-50c854b95fdmr11984777e0c.7.1728385571161; Tue, 08 Oct 2024
- 04:06:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728385542; x=1728990342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxNxFS3ZbI3W4kQXbO0lCunpQ22o9dZ3gjnqPR7i4vQ=;
+        b=FqGqnySc2jbKJCyUsQx69cFcTDJtqN5yjENsOJIbUnHiZ2arSaApiO/bfm/GpQaaDa
+         rhXN6fhESw0u7pGU6DwVByjtnpgKHAhsBkiGLwxRyxM3To4YkmSlunSA2xMlb8tv89WZ
+         JJwcMPa5YR2hkJUQ8H9zZeKPN0g5cZWOxzBXafyr04q+ty2QYzt6tXLGyyvCUe2mE0gv
+         uRu4OANDVw4NCN5ZfJLM9uDoo6/xiCSe6VGfLa6JTGiiz93XBBLblJKZQeVtYhzslqvA
+         BiARyxuL6utRV7vW78VXtqmSgdWo4LitNF36RD4c1LnAXdeFHjlNkTrG1LU472xhwwqV
+         kHqw==
+X-Forwarded-Encrypted: i=1; AJvYcCW71CaQ+6IltHBW1vycAXlDp3oMT5JynS9eHS+22z8OZJ5wIx2hJ/+r6K8OPZWkVrKVWcLIkisgbMks4tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXtgWZ94lw0qXFXxwEBBIi5bQ+hHSTEDMAabrhBGa3p2675+On
+	FEbdxLAzOOvJLUyFoQWvNMelcgyhijQQ5tRmFROXGX/G6xE3jb0wzcOCRWut9BQ=
+X-Google-Smtp-Source: AGHT+IFUUVsOSGGJPAphsOFCoHIZ+0khfsB4/lk7TDogJccRq5ZqzE4wbYgRX+9fbyD9s7dMaYkATg==
+X-Received: by 2002:a05:651c:2211:b0:2f0:27da:6864 with SMTP id 38308e7fff4ca-2faf3c1e75emr93401371fa.17.1728385529761;
+        Tue, 08 Oct 2024 04:05:29 -0700 (PDT)
+Received: from myrica ([2.221.137.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993d92ed5dsm434265866b.63.2024.10.08.04.05.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 04:05:29 -0700 (PDT)
+Date: Tue, 8 Oct 2024 12:05:49 +0100
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH v6 11/11] arm64: Document Arm Confidential Compute
+Message-ID: <20241008110549.GA1058742@myrica>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-12-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007184839.190519-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241007184839.190519-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241007200603.GA28812@pendragon.ideasonboard.com>
-In-Reply-To: <20241007200603.GA28812@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 8 Oct 2024 12:05:44 +0100
-Message-ID: <CA+V-a8s_hweyJ37U9VWoohMAZJOGLPZ+Wf6BX-2-3U0DPj3=Fg@mail.gmail.com>
-Subject: Re: [PATCH v4 13/17] media: rzg2l-cru: video: Implement
- .link_validate() callback
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004144307.66199-12-steven.price@arm.com>
 
-Hi Laurent,
+On Fri, Oct 04, 2024 at 03:43:06PM +0100, Steven Price wrote:
+> Add some documentation on Arm CCA and the requirements for running Linux
+> as a Realm guest. Also update booting.rst to describe the requirement
+> for RIPAS RAM.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>  Documentation/arch/arm64/arm-cca.rst | 67 ++++++++++++++++++++++++++++
+>  Documentation/arch/arm64/booting.rst |  3 ++
+>  Documentation/arch/arm64/index.rst   |  1 +
+>  3 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/arch/arm64/arm-cca.rst
+> 
+> diff --git a/Documentation/arch/arm64/arm-cca.rst b/Documentation/arch/arm64/arm-cca.rst
+> new file mode 100644
+> index 000000000000..ab7f90e64c2f
+> --- /dev/null
+> +++ b/Documentation/arch/arm64/arm-cca.rst
+> @@ -0,0 +1,67 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=====================================
+> +Arm Confidential Compute Architecture
+> +=====================================
+> +
+> +Arm systems that support the Realm Management Extension (RME) contain
+> +hardware to allow a VM guest to be run in a way which protects the code
+> +and data of the guest from the hypervisor. It extends the older "two
+> +world" model (Normal and Secure World) into four worlds: Normal, Secure,
+> +Root and Realm. Linux can then also be run as a guest to a monitor
+> +running in the Realm world.
+> +
+> +The monitor running in the Realm world is known as the Realm Management
+> +Monitor (RMM) and implements the Realm Management Monitor
+> +specification[1]. The monitor acts a bit like a hypervisor (e.g. it runs
+> +in EL2 and manages the stage 2 page tables etc of the guests running in
+> +Realm world), however much of the control is handled by a hypervisor
+> +running in the Normal World. The Normal World hypervisor uses the Realm
+> +Management Interface (RMI) defined by the RMM specification to request
+> +the RMM to perform operations (e.g. mapping memory or executing a vCPU).
+> +
+> +The RMM defines an environment for guests where the address space (IPA)
+> +is split into two. The lower half is protected - any memory that is
+> +mapped in this half cannot be seen by the Normal World and the RMM
+> +restricts what operations the Normal World can perform on this memory
+> +(e.g. the Normal World cannot replace pages in this region without the
+> +guest's cooperation). The upper half is shared, the Normal World is free
+> +to make changes to the pages in this region, and is able to emulate MMIO
+> +devices in this region too.
+> +
+> +A guest running in a Realm may also communicate with the RMM to request
+> +changes in its environment or to perform attestation about its
+> +environment. In particular it may request that areas of the protected
+> +address space are transitioned between 'RAM' and 'EMPTY' (in either
+> +direction). This allows a Realm guest to give up memory to be returned
+> +to the Normal World, or to request new memory from the Normal World.
+> +Without an explicit request from the Realm guest the RMM will otherwise
+> +prevent the Normal World from making these changes.
 
-Thank you for the quick review.
+We could mention that this interface is "RSI", so readers know what to
+look for next
 
-On Mon, Oct 7, 2024 at 9:06=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Mon, Oct 07, 2024 at 07:48:35PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Implement the `.link_validate()` callback for the video node and move t=
-he
-> > format checking into this function. This change allows the removal of
-> > `rzg2l_cru_mc_validate_format()`.
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 91 ++++++++++---------
-> >  1 file changed, 47 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index ceb9012c9d70..385b4242db2f 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buff=
-er *vb)
-> >       spin_unlock_irqrestore(&cru->qlock, flags);
-> >  }
-> >
-> > -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
-> > -                                     struct v4l2_subdev *sd,
-> > -                                     struct media_pad *pad)
-> > -{
-> > -     struct v4l2_subdev_format fmt =3D {
-> > -             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > -     };
-> > -
-> > -     fmt.pad =3D pad->index;
-> > -     if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
-> > -             return -EPIPE;
-> > -
-> > -     switch (fmt.format.code) {
-> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     switch (fmt.format.field) {
-> > -     case V4L2_FIELD_TOP:
-> > -     case V4L2_FIELD_BOTTOM:
-> > -     case V4L2_FIELD_NONE:
-> > -     case V4L2_FIELD_INTERLACED_TB:
-> > -     case V4L2_FIELD_INTERLACED_BT:
-> > -     case V4L2_FIELD_INTERLACED:
-> > -     case V4L2_FIELD_SEQ_TB:
-> > -     case V4L2_FIELD_SEQ_BT:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     if (fmt.format.width !=3D cru->format.width ||
-> > -         fmt.format.height !=3D cru->format.height)
-> > -             return -EPIPE;
-> > -
-> > -     return 0;
-> > -}
-> > -
-> >  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
-> >                                   int slot, dma_addr_t addr)
-> >  {
-> > @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_d=
-ev *cru, int on)
-> >               return stream_off_ret;
-> >       }
-> >
-> > -     ret =3D rzg2l_cru_mc_validate_format(cru, sd, pad);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> >       pipe =3D media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
-> >       ret =3D video_device_pipeline_start(&cru->vdev, pipe);
-> >       if (ret)
-> > @@ -995,6 +951,52 @@ static const struct v4l2_file_operations rzg2l_cru=
-_fops =3D {
-> >       .read           =3D vb2_fop_read,
-> >  };
-> >
-> > +/* -------------------------------------------------------------------=
-----------
-> > + * Media entity operations
-> > + */
-> > +
-> > +static int rzg2l_cru_video_link_validate(struct media_link *link)
-> > +{
-> > +     struct v4l2_subdev_format fmt =3D {
-> > +             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > +     };
-> > +     const struct rzg2l_cru_ip_format *video_fmt;
-> > +     const struct rzg2l_cru_ip_format *ip_fmt;
-> > +     struct v4l2_subdev *subdev;
-> > +     struct rzg2l_cru_dev *cru;
-> > +     struct media_pad *remote;
-> > +     int ret;
-> > +
-> > +     remote =3D link->source;
-> > +     subdev =3D media_entity_to_v4l2_subdev(remote->entity);
-> > +     fmt.pad =3D remote->index;
->
->         subdev =3D media_entity_to_v4l2_subdev(link->source->entity);
->         fmt.pad =3D link->source->index;
->
-> and drop the remote variable. Or, if you prefer keeping it, rename it to
-> source.
->
-OK, I will drop the local variable.
+> +
+> +Linux as a Realm Guest
+> +----------------------
+> +
+> +To run Linux as a guest within a Realm, the following must be provided
+> +either by the VMM or by a `boot loader` run in the Realm before Linux:
+> +
+> + * All protected RAM described to Linux (by DT or ACPI) must be marked
+> +   RIPAS RAM before handing over the Linux.
 
-> > +     ret =3D v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-> > +     if (ret < 0)
-> > +             return ret =3D=3D -ENOIOCTLCMD ? -EINVAL : ret;
-> > +
-> > +     cru =3D container_of(media_entity_to_video_device(link->sink->ent=
-ity),
-> > +                        struct rzg2l_cru_dev, vdev);
-> > +     video_fmt =3D rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat)=
-;
-> > +     if (!video_fmt)
-> > +             return -EPIPE;
->
-> Can this happen, doesn't the s_fmt handler on the video device ensure
-> that pixelformat is always valid.
->
-Agreed, this won't happen. I'll drop this check.
+"handing control over to Linux", or something like that?
 
-> > +     ip_fmt =3D rzg2l_cru_ip_code_to_fmt(fmt.format.code);
-> > +     if (!ip_fmt)
-> > +             return -EPIPE;
->
-> Same question here.
->
-This won't happen, so I will drop the check. Actually as you mentioned
-below we can drop one check so I'll get rid of fetching ip_fmt.
+> +
+> + * MMIO devices must be either unprotected (e.g. emulated by the Normal
+> +   World) or marked RIPAS DEV.
+> +
+> + * MMIO devices emulated by the Normal World and used very early in boot
+> +   (specifically earlycon) must be specified in the upper half of IPA.
+> +   For earlycon this can be done by specifying the address on the
+> +   command line, e.g.: ``earlycon=uart,mmio,0x101000000``
 
-> > +
-> > +     if (fmt.format.width !=3D cru->format.width ||
-> > +         fmt.format.height !=3D cru->format.height ||
-> > +         fmt.format.field !=3D cru->format.field ||
-> > +         video_fmt->code !=3D fmt.format.code ||
-> > +         ip_fmt->format !=3D cru->format.pixelformat)
->
-> The last two line seem to implement the same check.
->
-OK, I will drop the pixelformat check and keep the code check.
+This is going to be needed frequently, so maybe we should explain in a
+little more detail how we come up with this value: "e.g. with an IPA size
+of 33 and the base address of the emulated UART at 0x1000000,
+``earlycon=uart,mmio,0x101000000``"
 
-Cheers,
-Prabhakar
+(Because the example IPA size is rather unintuitive and specific to the
+kvmtool memory map)
+
+Thanks,
+Jean
+
+> +
+> + * Linux will use bounce buffers for communicating with unprotected
+> +   devices. It will transition some protected memory to RIPAS EMPTY and
+> +   expect to be able to access unprotected pages at the same IPA address
+> +   but with the highest valid IPA bit set. The expectation is that the
+> +   VMM will remove the physical pages from the protected mapping and
+> +   provide those pages as unprotected pages.
+> +
+> +References
+> +----------
+> +[1] https://developer.arm.com/documentation/den0137/
+> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+> index b57776a68f15..30164fb24a24 100644
+> --- a/Documentation/arch/arm64/booting.rst
+> +++ b/Documentation/arch/arm64/booting.rst
+> @@ -41,6 +41,9 @@ to automatically locate and size all RAM, or it may use knowledge of
+>  the RAM in the machine, or any other method the boot loader designer
+>  sees fit.)
+>  
+> +For Arm Confidential Compute Realms this includes ensuring that all
+> +protected RAM has a Realm IPA state (RIPAS) of "RAM".
+> +
+>  
+>  2. Setup the device tree
+>  -------------------------
+> diff --git a/Documentation/arch/arm64/index.rst b/Documentation/arch/arm64/index.rst
+> index 78544de0a8a9..12c243c3af20 100644
+> --- a/Documentation/arch/arm64/index.rst
+> +++ b/Documentation/arch/arm64/index.rst
+> @@ -10,6 +10,7 @@ ARM64 Architecture
+>      acpi_object_usage
+>      amu
+>      arm-acpi
+> +    arm-cca
+>      asymmetric-32bit
+>      booting
+>      cpu-feature-registers
+> -- 
+> 2.34.1
+> 
+> 
 
