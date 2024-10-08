@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-354755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAE1994237
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A28994235
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80A11C210F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3321F22640
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E6F1F12E8;
-	Tue,  8 Oct 2024 08:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wcslBufv"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A921EF94F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BE71E47DD;
 	Tue,  8 Oct 2024 08:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="clzmfAMN"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA2D1DE2DA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728374969; cv=none; b=ff62gyhWqoaNztou3ELv48Z+A9adViZizBECmjrQtKKkm3i+gu8kG0eYyOaYlrmkdkSQzcPbLEVdrb4FoSuuwfh5Km+GynfQxh5ULTHVu71hUSCnoEmjweTCwBsjWpVulbbPiM6O4NvAxmNVNi4NvehZrlWkswx2dllJSMf4Oyw=
+	t=1728374965; cv=none; b=HR5lViYyskoq+SHcFAjk0Ci5PEBJb05I2O5PMx4dYNgYL+vYDvfy67gc3Fr+OiKktwDWRn5SIBozfQJbZ8VFenlYduSqns82QmYWmKp+YfTz0qL+8BM9mDTPSVmbuWfDNlQ27a6JCLhuSJUx1jzKvFR5O+vVPSkMa4yNglcwtzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728374969; c=relaxed/simple;
-	bh=8TWrMAqz+8PV+QIuzBMLugBELPe9nkZP3HMj0ti5P9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6zhlpeK42xPjHmZ51dvvGyXAMQVs8QHqXSpggpGZqBSt1NKMG4AUM7e653OSUuZr59wH7Ash78Ys1EY9plPf3aL/gWVC2CPlPauSLwCYhwNBBVM0/F8tmv7lMlRdLsMWnsUEHMQMwT8LPBs2snsxIA1//WAeXrv2Pr/EP1rWz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wcslBufv; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728374958; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=4wuyDbSs+jQNbrvshTJAPkFNX8Ga8obk7ExF2kgCdfQ=;
-	b=wcslBufvmRepU86iHhX/TEHpV3BGjTzDKeU4EbrLOdYGUQbtzz5Z27p9QzF/xxRCtQOZG9PBK4m0GX9+aUoORKRynhWJHkcwbdyMiBr21K/YP9qNf8AjrhXPhzrPdHLT4Jy+HoKTvTIOfiBgCSXEGhY7K6so3L4XhiyzMpk/exQ=
-Received: from localhost(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WGcMLEf_1728374956)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Oct 2024 16:09:17 +0800
-From: Philo Lu <lulie@linux.alibaba.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	xuanzhuo@linux.alibaba.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next] bpf: Add rcu ptr in btf_id_sock_common_types
-Date: Tue,  8 Oct 2024 16:09:16 +0800
-Message-Id: <20241008080916.44724-1-lulie@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1728374965; c=relaxed/simple;
+	bh=zDeQXTiXUletPGiQ77lYmBtlj5Q0xqqvI4ZgDGlkPh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JzfNdyUhdbokMLjUE/wITis2FezGW27aWf/m36bW8kPjYMLroaS/ze0Bf+/jL5MRUSfgop4Dc7KjAcq7ve11vzlIwqCiDLYZzOLIGojEPuBY8L3dn+cplj5Z+RCRIAKm8Ud36QYfBMkrbAmOOK5sTXI3CQO4mnC1pQ41d/uX7V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=clzmfAMN; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43052e0904dso2295245e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:09:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728374962; x=1728979762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vCi+bPFLApksSJh9xnndm615uMPRgHRJb3lAr7/SXn0=;
+        b=clzmfAMN39lUN4ljEaddpci+Dvps3Rjux0F19rHGo1b3ZZSW6YPm1zWoWswVaTzNKy
+         o68A3p6ZwXF+i97ANh2picAHVkoaQNUi2qt9RqtQSgxlDGG9scHSewaJvtGIqquSP3kA
+         3mIwTYP8vVa0yqd0phSwuMnkbnEL0QoE6QGle+8MkOPg8pArEVOpceHt+ppFCtgtJOBO
+         rtN3Q7iLKLte9FTJpfkUDKqUeKL6WQTZ34J/JbvH+ufAEqBrYD4pgTAqQ2KxspMwA5J+
+         aBJ7cJws4HxZB8k0H6ywUx9cxvBY3ApGZgRBrXJWXzL9zYUUk/fI9VPyQBXegnGbuH9u
+         Bzkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728374962; x=1728979762;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vCi+bPFLApksSJh9xnndm615uMPRgHRJb3lAr7/SXn0=;
+        b=ao0dNiY+acJUCbMbi59JcBxtxJA3e38sry2h+pqZuVuHrwgNZh9d3FM3zhT+ORJo5w
+         v6KVl+h5ideFDUEyDF47uXPE/w/Dpdb0FBSJApwYsxFmdHWaKwVD2dsxzWapTJrlNfEB
+         gthMyHlT6wmSwatvcTKno3Am5tGZE9euGvLgCy1434Q80rRV6xLbF0tExYQMoD8kGQ/h
+         ftgnd8l2HNeanIxmvhz1tBsP35qNgX20kC7iZDRSlNPWJqDeT6hO34mstdaSgOZTT33H
+         jn9FhsS2hsqJFwi+f0LSRk3pMQH3PQFuIPv4/bv35fqERxBCF3xcRLBMOo2tZ13qAKlF
+         eQaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWW7+ZGVzWhXZXl0hcVvy9nQ6bhddDeFoWaZmacTS+mza9YH+W8zIAgRbX2e0QM8EKMAGnv3UmnM6qosyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz6j7ddwGS8dWmz4k24OvR641Hk5hLmrcXELFIsdzuC+OjqzAL
+	YfdnsKxtRIOYc7pp5JyREkW7Oz2fyM8yIr+LN0OnNDV5rlxefkCV8iZIJaO2r/Q=
+X-Google-Smtp-Source: AGHT+IFlU/2l+C25duvKbhYVoekFXnHwrsiYUIeAd4dZPEvF9IjzIB5nHvVhIu2Fb8BcMvoC3vJEBw==
+X-Received: by 2002:a05:600c:4449:b0:426:5dc8:6a63 with SMTP id 5b1f17b1804b1-42f85af408cmr93039285e9.30.1728374961932;
+        Tue, 08 Oct 2024 01:09:21 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:738a:20da:f541:94ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed9833sm99982225e9.48.2024.10.08.01.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 01:09:21 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: mvebu: allow building the module with COMPILE_TEST=y
+Date: Tue,  8 Oct 2024 10:09:20 +0200
+Message-ID: <172837494532.17503.15271041414971057291.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240930091111.32010-1-brgl@bgdev.pl>
+References: <20240930091111.32010-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Sometimes sk is dereferenced as an rcu ptr, such as skb->sk in tp_btf,
-which is a valid type of sock common. Then helpers like bpf_skc_to_*()
-can be used with skb->sk.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-For example, the following prog will be rejected without this patch:
-```
-SEC("tp_btf/tcp_bad_csum")
-int BPF_PROG(tcp_bad_csum, struct sk_buff* skb)
-{
-	struct sock *sk = skb->sk;
-	struct tcp_sock *tp;
 
-	if (!sk)
-		return 0;
-	tp = bpf_skc_to_tcp_sock(sk);
+On Mon, 30 Sep 2024 11:11:10 +0200, Bartosz Golaszewski wrote:
+> Make it possible to build the module when COMPILE_TEST is enabled for
+> better build coverage.
+> 
+> 
 
-	return 0;
-}
-```
+Applied, thanks!
 
-Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
----
- kernel/bpf/verifier.c | 1 +
- 1 file changed, 1 insertion(+)
+[1/2] gpio: mvebu: allow building the module with COMPILE_TEST=y
+      commit: 956ee0c5c969c9caf6744e166f5a80526be10c5b
+[2/2] gpio: mvebu: use generic device properties
+      commit: ddfdfe76ca54e5615a8e3eefd7dbe44c624ee9fa
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 9a7ed527e47e..3e7ce448ae03 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -8362,6 +8362,7 @@ static const struct bpf_reg_types btf_id_sock_common_types = {
- 		PTR_TO_XDP_SOCK,
- 		PTR_TO_BTF_ID,
- 		PTR_TO_BTF_ID | PTR_TRUSTED,
-+		PTR_TO_BTF_ID | MEM_RCU,
- 	},
- 	.btf_id = &btf_sock_ids[BTF_SOCK_TYPE_SOCK_COMMON],
- };
+Best regards,
 -- 
-2.32.0.3.g01195cf9f
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
