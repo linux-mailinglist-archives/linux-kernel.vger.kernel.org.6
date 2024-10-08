@@ -1,152 +1,145 @@
-Return-Path: <linux-kernel+bounces-355085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B141994706
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2399470B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9641C25F91
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8BB5288969
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120361D318A;
-	Tue,  8 Oct 2024 11:32:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEF01CFEB9;
+	Tue,  8 Oct 2024 11:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4tEDTD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E797718C900;
-	Tue,  8 Oct 2024 11:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2423A1CD;
+	Tue,  8 Oct 2024 11:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728387134; cv=none; b=JdwF0VprMHnczgl1kJThLwDRkBj9seUWLVh0v0a0LSVELumJtx69fKM0cePt8qcxe6U2gppiaf/EX5x9ev5K/aF2oUoD+Cfm/mql5qtcozfVW+ADN94JXq2FAS1K/pOzaI0GSAg2KnfSgbzSlSJwyRKO4EQf7WiRkyBK2UVQtcc=
+	t=1728387181; cv=none; b=DvIpxS4PB4uL28HFxN97QlFZXl3o5nvK3xtcla/HhHrX/trsAfg0/FzLf6QVa2V9yFYIxJTXdAQGlqzD0mc0F1umQBbhUCysT0pkmGWvDjDXCD5kGL+tUjqv3BkO5qHALEWyc2KkDMi4/dmhTfHKVazBr78OiFpu/2kvpqRAuZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728387134; c=relaxed/simple;
-	bh=BIZhFLzZ1V3Ac+YnjXpug+akiGgDZeawNbKSfEcCcG8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OkEKE8revsogk3ZkUgAjZLRXT651iN63LqcKSP85mINs5y6JHb6MvwaCtTYzA4OgHcf0jQFk2odbI6qlOxW4s4k4NXitKMsBJwIutB0Ie636h3JyrhfdAHRGXLaSojCTMYEBSyook4BijajkaYzPp2MnucJPBZUN0Koul3rMMdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNDNc564Tz6GCD6;
-	Tue,  8 Oct 2024 19:30:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 082A71408F9;
-	Tue,  8 Oct 2024 19:32:11 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Oct
- 2024 13:32:10 +0200
-Date: Tue, 8 Oct 2024 12:32:09 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
-	<thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Vasily Khoruzhick
-	<anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v3 2/6] thermal: of: Use scoped device node handling to
- simplify thermal_of_trips_init()
-Message-ID: <20241008123209.00005cee@Huawei.com>
-In-Reply-To: <20241008-b4-cleanup-h-of-node-put-thermal-v3-2-825122398f71@linaro.org>
-References: <20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org>
-	<20241008-b4-cleanup-h-of-node-put-thermal-v3-2-825122398f71@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728387181; c=relaxed/simple;
+	bh=QzyaUahYbY7wgx3pHji+WA9wzaFsyYJmaWXKvJka74o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rzx6UcBp578vznt2UtTltVf1vuibYfOqnt+tVkZWPVoZksGt9QUgyVv0egViQRmKb7RpScIUYGrxWBLRLTKCIJryiKWHVcYqWnCsB/qWVniQMizEJVgJCQBiCxijWCJc16OXCBoIy56EDh9chc9pkJWlkWF9M0LSbtBaleX4Q0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4tEDTD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F97C4CEC7;
+	Tue,  8 Oct 2024 11:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728387180;
+	bh=QzyaUahYbY7wgx3pHji+WA9wzaFsyYJmaWXKvJka74o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W4tEDTD4S7PxWQYOWoI4C3QJ6w3DDsC4Z5yAkieKAxdrDICDJkhZlFYq7S0zZUjZS
+	 wi7d270VytCxELG+5pJ/e9iRnO7UyzrNWdZLRyGM7DJj0gDrCUDHVkXh8nvnp9KHBY
+	 ZUDulr/JHBW3GaBuoo18PouxslEKxzf6kkPCEV04J/D+iPZZlP425yxiUzABCyjGC6
+	 4q7KmYbvS2x/B26gQMWknrH+6DsLGNyVswCf5TtGuF4EwLfJWyuUPxZSJ1tuQDHW7/
+	 QmGHGKjnkPRlacCBbkXjaGfKQAoTSQaNce7TNhMCglg97utINNRT29errGn3J5bSgo
+	 oLdnQ2dqmeoCg==
+Message-ID: <4e2ba7ae-b1e6-40ea-b2d3-7d8950cb367c@kernel.org>
+Date: Tue, 8 Oct 2024 13:32:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: rockchip: fix compatible string rk3328
+ cru node
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, jbx6244@gmail.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240930215001.1999212-1-heiko@sntech.de>
+ <20240930215001.1999212-3-heiko@sntech.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240930215001.1999212-3-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 08 Oct 2024 11:00:02 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> Obtain the device node reference with scoped/cleanup.h to reduce error
-> handling and make the code a bit simpler.
+On 30/09/2024 23:50, Heiko Stuebner wrote:
+> From: Johan Jonker <jbx6244@gmail.com>
 > 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-A follow up suggestion below.
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
+> The cru node references undocumented compatibles of "rockchip,cru" and also
+> marks it as syscon.
 > 
+> A general rockchip,cru is way too generic to ever be used anywhere, so
+> needs to go away, similarly the cru should not be written to from other
+> places, instead regular clock routines should be used.
+> 
+> Both mainline Linux as well as the vendor-kernel up to their 6.1 branch
+> only reference the cru via the normal assigned-clocks, clocks and resets
+> properties and do not get a syscon from the node.
+> 
+> Similarly, there is no syscon access by compatible both in mainline
+> nor the vendor-kernel up to their 6.1 branch, through either the
+> rockchip,rk3328-cru nor rockchip,cru compatibles.
+> 
+> So these two really are unused in all publically visible places.
+> 
+> Sidenote: the vendor-kernel does pretty crazy stuff in the camera interface
+> and tdm driver, where they map the cru separately and set clock muxes and
+> gates directly. This should of course never reach mainline anyway.
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> [update commit message, to explain the unused compatibles]
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
-> 
-> Changes in v2:
-> 1. Drop left-over of_node_put in regular exit path (Chen-Yu)
-> ---
->  drivers/thermal/thermal_of.c | 16 ++++------------
->  1 file changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index f0ffc0e335ba9406f4fd858d6c561f9d23f4b842..d7d6f62caa13d545e5f7fae4c8ac1e737bf4c4b1 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -96,10 +96,9 @@ static int thermal_of_populate_trip(struct device_node *np,
->  static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *ntrips)
->  {
->  	struct thermal_trip *tt;
-> -	struct device_node *trips;
->  	int ret, count;
->  
-> -	trips = of_get_child_by_name(np, "trips");
-> +	struct device_node *trips __free(device_node) = of_get_child_by_name(np, "trips");
->  	if (!trips) {
->  		pr_err("Failed to find 'trips' node\n");
->  		return ERR_PTR(-EINVAL);
-> @@ -108,15 +107,12 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
->  	count = of_get_child_count(trips);
->  	if (!count) {
->  		pr_err("No trip point defined\n");
-> -		ret = -EINVAL;
-> -		goto out_of_node_put;
-> +		return ERR_PTR(-EINVAL);
->  	}
->  
->  	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
-> -	if (!tt) {
-> -		ret = -ENOMEM;
-> -		goto out_of_node_put;
-> -	}
-> +	if (!tt)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	*ntrips = count;
->  
-> @@ -127,15 +123,11 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
->  			goto out_kfree;
->  	}
->  
-> -	of_node_put(trips);
-> -
->  	return tt;
->  
->  out_kfree:
->  	kfree(tt);
-May be worth a follow up to do __free(kfree) on this + a steal for the return.
-Then push the ntrips set until after the populate so it doesn't need resetting to 0.
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->  	*ntrips = 0;
-> -out_of_node_put:
-> -	of_node_put(trips);
->  
->  	return ERR_PTR(ret);
->  }
-> 
+Best regards,
+Krzysztof
 
 
