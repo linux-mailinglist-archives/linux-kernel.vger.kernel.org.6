@@ -1,211 +1,145 @@
-Return-Path: <linux-kernel+bounces-355168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AEA9948FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD96994914
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824A41F29238
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7FD283A74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624961D12EA;
-	Tue,  8 Oct 2024 12:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D301DED4B;
+	Tue,  8 Oct 2024 12:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFhSj0AP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gz1O5NFx"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E5718FC70;
-	Tue,  8 Oct 2024 12:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B5933981;
+	Tue,  8 Oct 2024 12:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728389912; cv=none; b=dQBefS33t5briUKbrq3r8fRuZSx29IaDJXiTif2XoFBAe5KFE8+I/1mPo66j4ed8zHRJKEcEm597zHOzje+gcjWGDuR/aW1f68KoXApeVaW2KZRHRkdyk+nvovl6wpLj6h+AFMA2gUqi7ytWrt5f22HcedPMefI3IFX8leJezEU=
+	t=1728389967; cv=none; b=alVkiB8Z+beSY4tbH89eMWLEYnPbFcBeQhdQjGZ2s+VciQLwJlS5SqKtijsqF0OLaQ6P9/2t1RWKoZLhZ3VvGLYgaB9jlYV/KbzHC8nyM5/l0t9szxFfrySiAF2VtAxkgOraHVsxt6RpZqNh9yKVg5Rp+mS+7nHRzybmDe4Fnwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728389912; c=relaxed/simple;
-	bh=ZZBb88EBZ7jvXT4yqtrtuNfo8z1jRu6/kL6AWdU6EyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkVuh33/wO/rDPiAQaoKqhNBykbnsMzMzRY9fR0YjgxM0Ed1nVvs7Ygo19LqWIyEClznUeydmb/K76EVq64VB1lKk/KNS1rnrzd/YzsUBE893I045NCE/5FZU6omJhloWTB01msw4nk5G61d0nFz+peSfqYFVOadQAEOgkz9RgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFhSj0AP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE67C4CEC7;
-	Tue,  8 Oct 2024 12:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728389912;
-	bh=ZZBb88EBZ7jvXT4yqtrtuNfo8z1jRu6/kL6AWdU6EyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WFhSj0APGOEzGtXFxxEfL9FdmJb94FNYUpt6ywoZXpdqotDeCzmA6HRRONdOPp1kE
-	 LssDr8lm2L4fJYhNcluoHOxVhNGp/aDAf1r+jsLUeMJJmgXCY8Z2UfhuY9uRiWsYE7
-	 gY1IaexkymJRY8z/OzZEZnmOiLjsZdt4o1KEkaQnnXgMrqdiEfMkjhbTSBlLVUQeup
-	 7/qFPdvQJPA2N8fC6ermQh8C1GRP6aPpqzLlXv9Bfdw/Zd7HLPuUDopNc/LfMil5BF
-	 ZEwSf+pFd+IYNkG8DAW/LdplBypqKXiysi/u7gDbWt3W4BZEM/qRnuHSV27IfR21p2
-	 cmQomzwIUBNJQ==
-Date: Tue, 8 Oct 2024 14:18:26 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
-References: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
- <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
- <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
- <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
- <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+	s=arc-20240116; t=1728389967; c=relaxed/simple;
+	bh=FIAeavQ/gVeAtbxi6uncuBjEWr1Dz+YMFROEKKHm5PE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gqcfssyLrELLyecIks/g4F7MzyzMGLIuDVf/w7vKk4J2epm/ANFs4svqYZz3rw3LlrWtvkUiYXxQmBXA+sF/Bl3kOBOA2XKinvjPNS8Dv1FPuVnLIa9md0MPhIM/vzjcMMKKuPzC9r/at/BVPKbRCXLvh1Uiv4wygmCW4HtL3bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gz1O5NFx; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093997dffdso1606074a34.2;
+        Tue, 08 Oct 2024 05:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728389965; x=1728994765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=quf//++Xbqy/yfLg/X0DJkUdlM0deuvR/WSCLaISByI=;
+        b=Gz1O5NFxwnf5cxhc/trEHH4quok4LDWA7Am2ggfn/MvUjeGZ5xUdZXb0Ts6LZ/uYEg
+         xh/tg3F6tEvKDKQWW7E9CIWZyFivAV9r4XF0XnaLQTgu5IQSyl34c6+BybHw2T8JNsp7
+         EkeqmtsqZwZJe3pg8g3zJFjZQ6GGLE2c/E0vVdpAdN509aldIpmSM/XfMvOXGqWXSNNO
+         ozWIkNK/tmejm8TLNE+H93s9/k5puLd2g9ZrSLeJ6vbq4pfl769DV/J1WSrn71c25ZOK
+         JtkwjG2vZ1De1r8YMLZxuSUANgkFWL7eFjiNCb/Cd0cM0tntW7gwg9VIA1z2bNFz9Fen
+         6tLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728389965; x=1728994765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=quf//++Xbqy/yfLg/X0DJkUdlM0deuvR/WSCLaISByI=;
+        b=G+6EeVa3jxhCobgKUzbiVuZuapWnRsu2XlhPVruJtfdRLOn+Yr+hTCOTZUGKNJqWmc
+         hwdOu/teSVvtEJi20UqRewt6gyHfWEVR2K1XuKeKsCi2s7mIPpy1PcJwhHIVWxNHjdzo
+         EEDc/pbcx9EZa2lwsZJizJ+8dxRpOs9Tr2fKZ+lUCjiDM/XZMXt47gul1HRb6SiMgiFx
+         6QBLPQdb+WygOu+XNvP+FROVKb3GabbP5IwL+rXLc3q+XEfmTz63nv0mkGFBix37idFP
+         sacidx2DWUt6SR0MD9DJgI/i0MOtgsJUJZwd7zE8+XG4Y2LIn/FYgVXGzWvbfrp++Ic7
+         Gy/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUgCd56/rF1H9lClWLuCgMuHD2fDxTz7byAoxO/lzc/VE6KDCQSaCk+jk+eLaUll5oBNikT8QnKC+sk9JfK@vger.kernel.org, AJvYcCV5bZ9d8aKydpkH2iSQJk3Ci6o5qgrIcFRpjXaP2UF5xyJ1jxTfv/qYa/CX62Cc5VWEWAomhPo5E1QL6u/Yx9Z7Z80=@vger.kernel.org, AJvYcCX3MVNYKeERr3vETonpxQsn7e0f4pm4Tdtiz9gYNm7AosGKMP0vK6erNhjHkisHVZBWaLYrp0p+U6Zx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZv+i4GcpwkxOUG+lDZ4xD0lj1DoGY26rFqXvDyBdExwQzQOys
+	rZaSGFwMFAaY7usdNE8bKV8xdTZS/OQvH9X2W1MpsobOdI5j4g/EDaB7mIk/ikwHahliQDq27wI
+	ZTR9pn1ATX6wLKDEjw0uFIFQ+ZM0=
+X-Google-Smtp-Source: AGHT+IGxSirj+Hv+ZX4ScQi8rvrb31b1FnfoPkqWHaPpBvs2xeJM5KPyQKlnaYPkgKJt01azZdoy5o2nnwnCPHvLHHQ=
+X-Received: by 2002:a05:6358:9d98:b0:1c2:fab0:a2e with SMTP id
+ e5c5f4694b2df-1c2fab00c80mr18386155d.21.1728389965343; Tue, 08 Oct 2024
+ 05:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+References: <20241004133108.779934-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXDc55KO-d0i0_ag0udh7sGCjFfJ78aw8o1-9zaHS15+A@mail.gmail.com>
+In-Reply-To: <CAMuHMdXDc55KO-d0i0_ag0udh7sGCjFfJ78aw8o1-9zaHS15+A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 8 Oct 2024 13:18:59 +0100
+Message-ID: <CA+V-a8smckrsxxauwJHPJ7zG0qfxemdm6oz6TTbMcN2TAwCu5g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r9a09g057: Add OPP table
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Oct 08 2024, Werner Sembach wrote:
-> 
-> Am 08.10.24 um 11:53 schrieb Benjamin Tissoires:
-> > On Oct 07 2024, Werner Sembach wrote:
-> > > Hi,
-> > > 
-> > > Am 02.10.24 um 10:31 schrieb Benjamin Tissoires:
-> > > > On Oct 01 2024, Werner Sembach wrote:
-> > > > > Hi Benjamin,
-> > > > > 
-> > > > > Am 01.10.24 um 15:41 schrieb Benjamin Tissoires:
-> > > > > > [...]
-> > > > > > PPS: sorry for pushing that hard on HID-BPF, but I can see that it fits
-> > > > > > all of the requirements here:
-> > > > > > - need to be dynamic
-> > > > > > - still unsure of the userspace implementation, meaning that userspace
-> > > > > >      might do something wrong, which might require kernel changes
-> > > > > Well the reference implementetion for the arduiono macropad from microsoft
-> > > > > ignores the intensity (brightness) channel on rgb leds contrary to the HID
-> > > > > spec, soo yeah you have a point here ...
-> > > > Heh :)
-> > > > 
-> > > > > > - possibility to extend later the kernel API
-> > > > > > - lots of fun :)
-> > > > > You advertise it good ;). More work for me now but maybe less work for me
-> > > > > later, I will look into it.
-> > > > Again, I'm pushing this because I see the benefits and because I can
-> > > > probably reuse the same code on my Corsair and Logitech keyboards. But
-> > > > also, keep in mind that it's not mandatory because you can actually
-> > > > attach the BPF code on top of your existing driver to change the way it
-> > > > behaves. It'll be slightly more complex if you don't let a couple of
-> > > > vendor passthrough reports that we can use to directly talk to the
-> > > > device without any tampering, but that's doable. But if you want to keep
-> > > > the current implementation and have a different layout, this can easily
-> > > > be done in BPF on top.
-> > > > 
-> > > > Cheers,
-> > > > Benjamin
-> > > > 
-> > > > 
-> > > > [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
-> > > Thinking about the minimal WMI to HID today, but found a problem: a HID
-> > > feature report is either strictly input or output afaik, but the WMI
-> > > interface has both in some functions.
-> > Not sure you are talking about feature reports, because they are
-> > read/write. It's just that they are synchronous over the USB control
-> > endpoint (on USB).
-> 
-> I'm confused about the split between get and send feature reports
-> https://www.kernel.org/doc/html/latest/hid/hidraw.html
-> 
-> I guess then a get feature report can also carry input data and the
-> difference is that a send feature report doesn't wait for a reply? but then
-> what is it's reason of existence in contrast to an output report?
+Hi Geert,
 
-I'm under the impression you are mixing the 3 types of reports (just
-re-stating that here in case I wasn't clear).
+Thank you for the review.
 
-- Input reports: 
-  `Input()` in the report descriptor
-  -> data emitted by the device to the host, and notified through an IRQ
-  mechanism
-  -> obtained in hidraw through a blocking read() operation
-- Output reports:
-  `Output()` in the report descriptor
-  -> data sent asynchronously by the host to the device.
-  -> sent from hidraw by calling write() on the dev node (no feedback
-  except how many bytes were sent)
-- Feature reports:
-  `Feature()` in the report descriptor
-  -> way to synchronously configure the device. Think of it like a
-  register on the device: you can read it, write it, but you never get
-  an interrupt when there is a change
-  -> read/written by using an ioctl on the hidraw node
-
-And BTW, it's perfectly fine to have a dedicated report ID which has
-Input, Output and Feature attached to it :)
-
-> 
-> > 
-> > An input report is strictly directed from the device, and an output
-> > report is from the host to the device.
-> > 
-> > But a feature report is bidirectional.
-> > 
-> > > How would I map that?
-> > Depending on the WMI interface, if you want this to be synchronous,
-> > defining a Feature report is correct, otherwise (if you don't need
-> > feedback from WMI), you can declare the commands to WMI as Output
-> > reports.
-> Thanks for reminding me that output reports exist xD.
-
-hehe
-
-> > 
-> > > If I split everything in input and output the new interface wouldn't
-> > > actually be much smaller.
-> > The HID report descriptor doesn't need to be smaller. The fact that by
-> > default it exposes only one or two LEDs so we don't have the micrometers
-> > arrays is the only purpose.
-> > 
-> > But if we also implement a not-full HID implementation of LampArray, we
-> > should be able to strip out the parts that we don't care in the LED
-> > class implementation, like the exact positioning, or the multiupdate.
-> > 
-> > > Also what would I write for the usage for the reserved padding in the report
-> > > descriptor. Usage: 0x00?
-> > padding are ignored by HID. So whatever current usage you have is fine.
-> > 
-> > However, if you are talking about the custom WMI vendor access, I'd go
-> > with a vendor collection (usage page 0xff00, usage 0x08 for the 8 bytes
-> > long WMI command for instance, 0x10 for the 16 bytes long one).
-> > 
-> > Side note: in drivers/hid/bpf/progs/hid_report_helpers.h we have some
-> > autogenerated macros to help writing report descriptors (see
-> > drivers/hid/bpf/progs/Huion__Dial-2.bpf.c for an example of usage). It's
-> > in the hid-bpf tree but I think we might be able to include this in
-> > other drivers (or do a minimal rewrite/move into include).
-> > I'm not asking you to use it on your code right now, but this has the
-> > advantage of becoming less "binary blob" in your code, and prevent
-> > mistakes where you edit the comments but not the values.
-> 
-> I will look into it.
-> 
-> Since the interface is fixed I don't need to flesh out the whole descriptor
-> (which i thought i must do) and usage page (0xff42, because NB04 and the wmi
-> has 2 other ec controlling wmi interfaces besides the AB one), report usage
-> (matching the wmi comand id's) and report size should be enough.
-
-I'm a little confused by that last sentence. But yeah, I would expect
-some minimal sanity check before handing over the HID report to the WMI
-interface :)
+On Tue, Oct 8, 2024 at 11:08=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, Oct 4, 2024 at 3:31=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add OPP table for RZ/V2H(P) SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
+> >                 clock-frequency =3D <0>;
+> >         };
+> >
+> > +       /*
+> > +        * The default cluster table is based on the assumption that th=
+e PLLCA55 clock
+> > +        * frequency is set to 1.7GHz. The PLLCA55 clock frequency can =
+be set to
+> > +        * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and add=
+itionally can be
+> > +        * clocked to 1.8GHz as well). The table below should be overri=
+dden in the board
+> > +        * DTS based on the PLLCA55 clock frequency.
+> > +        */
+> > +       cluster0_opp: opp-table-0 {
+> > +               compatible =3D "operating-points-v2";
+> > +
+> > +               opp-1700000000 {
+> > +                       opp-hz =3D /bits/ 64 <1700000000>;
+> > +                       opp-microvolt =3D <900000>;
+> > +                       clock-latency-ns =3D <300000>;
+> > +               };
+> > +               opp-850000000 {
+> > +                       opp-hz =3D /bits/ 64 <850000000>;
+> > +                       opp-microvolt =3D <900000>;
+>
+> According to Table 10.1-2 ("Recommended Operating Range"), this should
+> be 800000 for this and all operating points below.
+>
+Agreed, I had missed that. I added the voltage level based on the
+schematic VDD09_CA55
 
 Cheers,
-Benjamin
+Prabhakar
 
