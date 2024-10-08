@@ -1,94 +1,102 @@
-Return-Path: <linux-kernel+bounces-355723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2927995616
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:58:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DC199561D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ACAD281E79
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEDEA1F248EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027E120CCF1;
-	Tue,  8 Oct 2024 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7C120CCEF;
+	Tue,  8 Oct 2024 18:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="H7lFaxRn"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLxOv4Uy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D292F1FA254;
-	Tue,  8 Oct 2024 17:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36D1E0086;
+	Tue,  8 Oct 2024 18:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728410299; cv=none; b=Q2/gBmWizzzD1sO8FAXpOEgDjKDo/1+KpAa6MzNqNxYLWqVXEhklM9EjT8n+svHoIEr/r+9Fiy+tkGihG6bfJDPlM9hZnEqxfq8mMv/YMJannQHiGfK0wYsoSV1c/pCMxliSj3fJFepSoF1NV04KpxSbXVnoQAutnNqND+qk+20=
+	t=1728410526; cv=none; b=N4IT2kemkCxTEC832zX6dlHwatvSlyUGBTKxech8hTs2En0B15XuB6yiLCmgpEyRzxjLUiVd+TkfUGE3iJWVwumdr6Um1Sg2C9JBOZ4Kd+zNiauQUWpFPcgPm4tqjlrP+smWf0M5Uwte3RFmBTgehhTLPjUAbQ4dtGFOEL/FzdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728410299; c=relaxed/simple;
-	bh=4U1UeKZlaCfqzLoEn1fO7sTNMI+RyozZNZBl5ZowbL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/m7L7k7RK/kaj/tWYwgCmvmrONw+q4Fr6cUhdN4OkSY7jry2mq0JiECPavnCbcxN0qSZqcUwcg2im1uCW+gXqnBg8MBvlslAAGnxooIhPYx6YCVj40cS6GllXBMxIrf3xFLhFHkG9KLbhlu2CRiqq80bF9Z0V7oO7mqxC0Xmus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=H7lFaxRn; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XNNzR62Fhz6ClY9T;
-	Tue,  8 Oct 2024 17:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1728410285; x=1731002286; bh=4U1UeKZlaCfqzLoEn1fO7sTN
-	MI+RyozZNZBl5ZowbL4=; b=H7lFaxRn1xw2wn2LDW/u/CpFkHpOGamVeOWYBS2V
-	DvVGxY2G/0hXDL6K3bdlwOuzluAFfY5DUR3k540PvQ39xfiWIjGJJDrKjUMkIt1L
-	Jom7OQcOXiLbUS6y555iHeCL6ZdEFva2JnlGwH+chppj2elhO1XilUWhU1X4JJKu
-	IwQPDF0QbwB6HK3WjYptr0lyhIiAtqBlgl7586RVz0yfZ3TnRhAAa1mxBG84I6rO
-	twIIKHQudjdrHkn2Ax69JihAtZ2glxBA61ksF4y199nvRz5ROUg9jZ/3PWxxFW2B
-	ieK2v1VDbFmwDYMKvAlOKQVh9VgybWyG7jZf80DywNaVHg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id w_FNwSulsJTo; Tue,  8 Oct 2024 17:58:05 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XNNzG0VGhz6ClY9R;
-	Tue,  8 Oct 2024 17:58:01 +0000 (UTC)
-Message-ID: <210ebb75-d384-4787-9e1a-d08643cc4843@acm.org>
-Date: Tue, 8 Oct 2024 10:58:00 -0700
+	s=arc-20240116; t=1728410526; c=relaxed/simple;
+	bh=bZm3h8/hH1BGka1NtA4C1l5QJdxDis3k8TsO7flifJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCVkK8PK7z/yBRG4YMSFDfo0A9b7gQlek6pXN/Gvel54qRJknJG9r7kcm4zTpeUUIdHY2K/os0aF4aeegHNdh0R+/Q9ahrM8Zb4rDMdQ/tBiUzirpJ8qU98Z0Nu2k9vNS8N8sB1/5WhyF12yGtpQLwlaiQZOau48/x47Fi6YWwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLxOv4Uy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756AAC4CEC7;
+	Tue,  8 Oct 2024 18:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728410526;
+	bh=bZm3h8/hH1BGka1NtA4C1l5QJdxDis3k8TsO7flifJo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FLxOv4UywXu8Mo22aWFfhhEWKBJO0xQV6JipiDYpRgDZfNTH+QGZTzFokxH+ehGmx
+	 h8BIJw9+km8sWQuofV2msH/dG9EzPeFcL/XYN3XefayGSa3lV3Yojxu2mbKiObf9L0
+	 dFOkAA2J5b1UtPZXcrbN1r3jQbPBOOl7THLXffhTPoQw+WbVGQFmOlMnrLyXjl7/xt
+	 BkZIeKPHQfA98X7QoYPEHVTSckBzjU232L4+osmxqnteo+CSQ7Z9u/yhAa2Sm2vRxv
+	 yGx29ZeUFtcsfaTpHFFR5qJmvwIs0P7VUxRqJVq/JzWBx7b/grNqQPzK0WozDCyhCP
+	 YTX31FTy6EZUg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kconfig: qconf: set QSplitter orientation in the constructor
+Date: Wed,  9 Oct 2024 03:00:06 +0900
+Message-ID: <20241008180202.2315986-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
-To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com, avri.altman@wdc.com,
- alim.akhtar@samsung.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
- dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
- cw9316.lee@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
-References: <20240829093913.6282-1-sh8267.baek@samsung.com>
- <CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
- <20240829093913.6282-2-sh8267.baek@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240829093913.6282-2-sh8267.baek@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/29/24 2:39 AM, Seunghwan Baek wrote:
-> There is a history of dead lock as reboot is performed at the beginning of
-> booting. SDEV_QUIESCE was set for all lu's scsi_devices by ufs shutdown,
-> and at that time the audio driver was waiting on blk_mq_submit_bio holding
-> a mutex_lock while reading the fw binary. After that, a deadlock issue
-> occurred while audio driver shutdown was waiting for mutex_unlock of
-> blk_mq_submit_bio. To solve this, set SDEV_OFFLINE for all lus except wlun,
-> so that any i/o that comes down after a ufs shutdown will return an error.
+The orientation of the QSplitter can be specified directly in its
+constructor.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/qconf.cc | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index e260cab1c2af..202823aad393 100644
+--- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -1240,8 +1240,7 @@ ConfigSearchWindow::ConfigSearchWindow(ConfigMainWindow *parent)
+ 	layout2->addWidget(searchButton);
+ 	layout1->addLayout(layout2);
+ 
+-	split = new QSplitter(this);
+-	split->setOrientation(Qt::Vertical);
++	split = new QSplitter(Qt::Vertical, this);
+ 	list = new ConfigList(split, "search");
+ 	list->mode = listMode;
+ 	info = new ConfigInfoView(split, "search");
+@@ -1344,15 +1343,13 @@ ConfigMainWindow::ConfigMainWindow(void)
+ 	QVBoxLayout *layout = new QVBoxLayout(widget);
+ 	setCentralWidget(widget);
+ 
+-	split1 = new QSplitter(widget);
+-	split1->setOrientation(Qt::Horizontal);
++	split1 = new QSplitter(Qt::Horizontal, widget);
+ 	split1->setChildrenCollapsible(false);
+ 
+ 	menuList = new ConfigList(widget, "menu");
+ 
+-	split2 = new QSplitter(widget);
++	split2 = new QSplitter(Qt::Vertical, widget);
+ 	split2->setChildrenCollapsible(false);
+-	split2->setOrientation(Qt::Vertical);
+ 
+ 	// create config tree
+ 	configList = new ConfigList(widget, "config");
+-- 
+2.43.0
+
 
