@@ -1,262 +1,152 @@
-Return-Path: <linux-kernel+bounces-356029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2488F995B26
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6814A995B2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89511F21314
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 926241C2205D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA05921BB0A;
-	Tue,  8 Oct 2024 22:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF19221C175;
+	Tue,  8 Oct 2024 22:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImmB3Dbh"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OptAEzqt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B5221BAEB;
-	Tue,  8 Oct 2024 22:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8709A21C16A;
+	Tue,  8 Oct 2024 22:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728427704; cv=none; b=Lyxwc90Z+ILoEyTX+TU9wOeT7ct/AyfVxOFVXDOXnDHdQcwAZQ2N1z8Vexty47Z6405gn3VeGCaG8d9kwFPjWzkpoxXPXahMky3xmUfY7lTXhMZaW+kD+cLTDyLSGZLRWiA2tpDrlNfQqZ5YWTpEvpZbaZmfJ6LJviOQlDCLIQM=
+	t=1728427717; cv=none; b=Fn8uYHJUuIrgzhW05KxxsrbgIYVC89YGcCHHUP13/WGjxVlsnEPaRrQ8Z6JwVQehZbcc3WHY8n5tpqOI0Yov5KPTAcCbq1OC+kMosz1XKLURNJ1nK56PkiywZPb8g76K6cp3TJJOJv3EJEBDPDtjo4ZgIWR/s76x+o7lj0r2tzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728427704; c=relaxed/simple;
-	bh=fZmiMWrnvEU7AtsBXF1xT3bij7HVz3rNHfdt0R1c6is=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CK5yzx2OjI+cCK9WzHUHiw1K2HdEvMJbUalU1wELFF4dxdgO/WrmrtmAWF8XIG7N5XTu5GLYVrXKzuvppyHvHaWe3R5hmfuAqFvtnoMPo5Yq4UthkS/zks+0eUypxJbFaiDtILA8JK9HdJL64rx+F58OJkvSFTRYnX2PszkwQ+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImmB3Dbh; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7afe994d519so20974085a.0;
-        Tue, 08 Oct 2024 15:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728427699; x=1729032499; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=izjsYK/zcMAv1lzo33rnDn/MQlO729XBJLAL6PlACzc=;
-        b=ImmB3Dbh39Yg/notQoo0y2Wfd1Osy54h1ZU4ZIyZqilw7XSGobDoXh4/umXdGU57GL
-         prfAmB5hqHBQq7vV1zjBNbE9VQLQhaeeqD5U4mknMwIqwYEudNpWoBOWSyppTh/f6IwP
-         3NbegxOfJM1kq4tkgkSlS0/sGnX6HYXwWvj2OkKTR7I8ySQhWciuyuidicgsBp4dHYFf
-         AHJes9LOF3gfC/868M8P6qsdRSW8jf8myjsfSLQ8UzwHqCJ38rESFEjuVAD1gnt26xGc
-         GXIbdEG4QfAPDC+j4Iw4Kmtv4Y1Qy635/NE+liiYp6T8EBR4SyDKDm0QqeEA02UU7pTo
-         cc+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728427699; x=1729032499;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=izjsYK/zcMAv1lzo33rnDn/MQlO729XBJLAL6PlACzc=;
-        b=mbIStJyThENXfGCrRrHgqe+gFZV4LBiFsHjH61UT2WjT7f3N4KezFItbPcxpeXz3pr
-         2/87g+NsQJ/JT6W0neEJeIKWVgbIVfoMgZY/TqdfXp/AbboTmPLkbmY4z1p/g+eHEDq4
-         x6CgxKnd6ULxMJs66nuPr3yQfIVDXZBCiJDogs025Z4zT4xnWvUb9HC5UHx/8SC0R6tM
-         X68C/5uf19ArFWL/RImWSUwgv/dEaE2xnRcuHfL3DP92II1yJeEt2qwrQvahRV05KAXO
-         T+nXzI8ZUoi2jha5OvC2/RmiZOSfGausID7xCVyYvCJ4LJQaNRJKlnfTrrW3E1MjTDV5
-         9eVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKInqcjLQVBA5gRZmWwfOfkRWdEU1Fd8o1DBPyGqUKywjx9U8ZIAfHghRMmvJstj1zB4WcuXTBm1qsyHw=@vger.kernel.org, AJvYcCXI62fgkeGI8ZX3avf1uNY+XQ3O04PVBXr1pudPrYjrOxd1X9ZqBCuXarUwCIGmWOWrEXP22cVVKVVYdH7v@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0y8sRRC/VOQ1rkO5cDFMHCyLawF45qeteBTPQL9s9vJIlUcra
-	AKVHhAnO7eyxJl6+8Z0GIcdoCdq8PNDkdfIBA3TZQovBiWWAxnunMrKAciT4
-X-Google-Smtp-Source: AGHT+IGXhK9Cg0i6JBJr1NS5o3nc52SVkPvomsn47NwVWnzgWY3Ix2lNPS/UeLBbWAVt4u2Ugb09fg==
-X-Received: by 2002:a05:620a:2a06:b0:7b0:6e8:9506 with SMTP id af79cd13be357-7b0795536a1mr61356585a.60.1728427699416;
-        Tue, 08 Oct 2024 15:48:19 -0700 (PDT)
-Received: from Tamirs-MBP.mynetworksettings.com (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da763fdecsm40671001cf.84.2024.10.08.15.48.18
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 08 Oct 2024 15:48:19 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Daniel Gomez <da.gomez@samsung.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Fiona Behrens <me@kloenk.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	"David S. Miller" <davem@davemloft.net>,
-	Kris Van Hees <kris.van.hees@oracle.com>,
-	=?UTF-8?q?=C3=8D=C3=B1igo=20Huguet?= <ihuguet@redhat.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH] rust: query the compiler for dylib path
-Date: Tue,  8 Oct 2024 18:48:08 -0400
-Message-ID: <20241008224810.84024-1-tamird@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728427717; c=relaxed/simple;
+	bh=3GKgYfyhdleRaHkSvkj4OIVlumHIbOCk6niGXkvjOcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V+VFIgsg82ygBn6EKhDozVzy6IoGz+ahb9NEHqcfEromULATrRjE9SE5Wu6ajK8WTp5zO0MYuDHUvUzXQW10V49QG+ucCRZ+w1G/5K5KJ+ec/tK1mXZUS8smQUwaPbTPjlvyE/WpVpkUm4y3SkSwydctL/aZe1N0NnEJRZaycs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OptAEzqt; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728427716; x=1759963716;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3GKgYfyhdleRaHkSvkj4OIVlumHIbOCk6niGXkvjOcQ=;
+  b=OptAEzqtf9aB5HT7xDsWKLNA41Dvos2IXhxUl84RWP8RHnDva/tUok4O
+   8dqPkjTkXxU2JhIrgBQ3bmcegMb8s+VnVtt3nHrRFiUEm9ip2hoz43qRl
+   UYc5ciWiyVeCTT6ALRLzfcO3nqCa8ofwrYjMuxjm8ZVrOWmw3juqDYe7x
+   bwhIbAvWFg37r80Ssu+x22wDh8venAq8tuYm6/d+LKdSdnZeh2DTRYmwE
+   EHo3yJThYgEqNBVc5lEKIKjrRZXbEyvmQPVvmF/5L7Esl+LSMesb9q1w2
+   qfBbc7Z6DZSG2TlrqhJ4eVEwj7fycq3iXqsemTcvC8UYWsg2f4yTAh4zJ
+   Q==;
+X-CSE-ConnectionGUID: fuWtKj/ORWq0D6DLWt/HgA==
+X-CSE-MsgGUID: KatX4snFQgyEhu1MaaXLDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27811148"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="27811148"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 15:48:35 -0700
+X-CSE-ConnectionGUID: NRbRLc7ARkqM42UBH55ZYA==
+X-CSE-MsgGUID: N96918yoSf6yCnryYzOsfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="99369574"
+Received: from jdoman-desk1.amr.corp.intel.com (HELO [10.124.222.147]) ([10.124.222.147])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 15:48:34 -0700
+Message-ID: <212478a0-ab8a-4ed7-8dfb-600f9d81e7ba@intel.com>
+Date: Tue, 8 Oct 2024 15:48:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] Fix dosemu vm86() fault
+To: Thorsten Leemhuis <regressions@leemhuis.info>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
+ Brian Gerst <brgerst@gmail.com>, antonio.gomez.iglesias@linux.intel.com,
+ daniel.sneddon@linux.intel.com, stable@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+ <bd933e11-7836-462f-9b6b-5172301f188b@leemhuis.info>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <bd933e11-7836-462f-9b6b-5172301f188b@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Rust proc-macro crates are loaded by the compiler at compile-time, so
-are always dynamic libraries; on macOS, these artifacts get a .dylib
-extension rather than .so.
+On 10/8/24 06:52, Thorsten Leemhuis wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+> for once, to make this easily accessible to everyone.
+> 
+> Is there hope that patches like these makes it to mainline any time
+> soon?
 
-Replace hardcoded paths ending in .so with paths obtained from the
-compiler.
+Unless it breaks something again:
 
-Signed-off-by: Fiona Behrens <me@kloenk.dev>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- .gitignore                        |  1 +
- Makefile                          |  2 +-
- rust/Makefile                     | 21 ++++++++++++---------
- scripts/generate_rust_analyzer.py | 16 ++++++++++++----
- 4 files changed, 26 insertions(+), 14 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/urgent&id=785bf1ab58aa1f89a5dfcb17b682b7089d69c34f
 
-diff --git a/.gitignore b/.gitignore
-index 56972adb5031..7cfe4f70b39a 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -22,6 +22,7 @@
- *.dtb.S
- *.dtbo.S
- *.dwo
-+*.dylib
- *.elf
- *.gcno
- *.gcda
-diff --git a/Makefile b/Makefile
-index c5493c0c0ca1..3808869fb95b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1506,7 +1506,7 @@ MRPROPER_FILES += include/config include/generated          \
- 		  certs/x509.genkey \
- 		  vmlinux-gdb.py \
- 		  rpmbuild \
--		  rust/libmacros.so
-+		  rust/libmacros.so rust/libmacros.dylib
- 
- # clean - Delete most, but leave enough to build external modules
- #
-diff --git a/rust/Makefile b/rust/Makefile
-index b5e0a73b78f3..a185a4d05b08 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -11,9 +11,6 @@ always-$(CONFIG_RUST) += exports_core_generated.h
- obj-$(CONFIG_RUST) += helpers/helpers.o
- CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
- 
--always-$(CONFIG_RUST) += libmacros.so
--no-clean-files += libmacros.so
--
- always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
- obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o
- always-$(CONFIG_RUST) += exports_alloc_generated.h exports_helpers_generated.h \
-@@ -36,9 +33,15 @@ always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.c
- obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated.o
- obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.o
- 
--# Avoids running `$(RUSTC)` for the sysroot when it may not be available.
-+# Avoids running `$(RUSTC)` when it may not be available.
- ifdef CONFIG_RUST
- 
-+libmacros_name := $($(RUSTC) --print file-names --crate-name macros --crate-type proc-macro - < /dev/null)
-+libmacros_extension := $(patsubst libmacros.%,%,$(libmacros_name))
-+
-+always-$(CONFIG_RUST) += $(libmacros_name)
-+no-clean-files += $(libmacros_name)
-+
- # `$(rust_flags)` is passed in case the user added `--sysroot`.
- rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
- rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
-@@ -115,10 +118,10 @@ rustdoc-alloc: $(RUST_LIB_SRC)/alloc/src/lib.rs rustdoc-core rustdoc-compiler_bu
- 	+$(call if_changed,rustdoc)
- 
- rustdoc-kernel: private rustc_target_flags = --extern alloc \
--    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
-+    --extern build_error --extern macros=$(objtree)/$(obj)/$(libmacros_name) \
-     --extern bindings --extern uapi
- rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-macros \
--    rustdoc-compiler_builtins rustdoc-alloc $(obj)/libmacros.so \
-+    rustdoc-compiler_builtins rustdoc-alloc $(obj)/$(libmacros_name) \
-     $(obj)/bindings.o FORCE
- 	+$(call if_changed,rustdoc)
- 
-@@ -339,10 +342,10 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
- 		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
- 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
- 		--crate-type proc-macro \
--		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
-+		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) $<
- 
- # Procedural macros can only be used with the `rustc` that compiled it.
--$(obj)/libmacros.so: $(src)/macros/lib.rs FORCE
-+$(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
- 	+$(call if_changed_dep,rustc_procmacro)
- 
- quiet_cmd_rustc_library = $(if $(skip_clippy),RUSTC,$(RUSTC_OR_CLIPPY_QUIET)) L $@
-@@ -421,7 +424,7 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
- $(obj)/kernel.o: private rustc_target_flags = --extern alloc \
-     --extern build_error --extern macros --extern bindings --extern uapi
- $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.o \
--    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
-+    $(obj)/$(libmacros_name) $(obj)/bindings.o $(obj)/uapi.o FORCE
- 	+$(call if_changed_rule,rustc_library)
- 
- endif # CONFIG_RUST
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index d2bc63cde8c6..3834ab0eea9d 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -9,6 +9,8 @@ import logging
- import os
- import pathlib
- import sys
-+import os
-+import subprocess
- 
- def args_crates_cfgs(cfgs):
-     crates_cfgs = {}
-@@ -35,8 +37,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-     crates_cfgs = args_crates_cfgs(cfgs)
- 
-     def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
--        crates_indexes[display_name] = len(crates)
--        crates.append({
-+        crate = {
-             "display_name": display_name,
-             "root_module": str(root_module),
-             "is_workspace_member": is_workspace_member,
-@@ -47,7 +48,15 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-             "env": {
-                 "RUST_MODFILE": "This is only for rust-analyzer"
-             }
--        })
-+        }
-+        if is_proc_macro:
-+            proc_macro_dylib_name = subprocess.check_output(
-+                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
-+                stdin=subprocess.DEVNULL,
-+            ).decode('utf-8')
-+            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
-+        crates_indexes[display_name] = len(crates)
-+        crates.append(crate)
- 
-     # First, the ones in `rust/` since they are a bit special.
-     append_crate(
-@@ -77,7 +86,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-         [],
-         is_proc_macro=True,
-     )
--    crates[-1]["proc_macro_dylib_path"] = f"{objtree}/rust/libmacros.so"
- 
-     append_crate(
-         "build_error",
--- 
-2.47.0
+;)
 
+> This yet again makes me wonder if some "[regression fix]" in the subject
+> or "CC: regressions@lists.linux.dev" in the patches would help to make
+> the regression aspect obvious to everyone involved. But it would create
+> yet another small bit of overhead
+
+In this case, not really.  This was a typical email screwup where I
+didn't pick up that there was an updated patch that got appended to a
+reply among the normal email noise.
+
+We've been poking at this pretty regularly since getting back from Plumbers.
 
