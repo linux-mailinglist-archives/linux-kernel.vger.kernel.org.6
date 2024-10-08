@@ -1,205 +1,120 @@
-Return-Path: <linux-kernel+bounces-354347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009EA993C5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2049993C6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D7A1C23F35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799AE284C6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19547175A5;
-	Tue,  8 Oct 2024 01:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9738617BD9;
+	Tue,  8 Oct 2024 01:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IicOiRTW"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D82EfXVl"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42401DFE8;
-	Tue,  8 Oct 2024 01:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B064B1CD02;
+	Tue,  8 Oct 2024 01:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728351731; cv=none; b=OA8LFVF9lWkiRwr8rtrVia/xf+hvvEaWNUkQnxTXJ37Bk4ZZDN94OpjQ7uyYJG0Ne9K2DsjQLPEKA7TrrNrrf5Ab7GEO12rfrSbdWOhKfuPQ2JSIzhrQFDN/3CB1kE6y7K53fAGtctCLRNxFaJ8pyfZBL6fndWmiGyM34TjaH3s=
+	t=1728351824; cv=none; b=tGlcmZPzDbKkOmTo0Ugg4skSCT9O+eCxGrRooHvzrpGV4bWprlFmDKTd5pBZqwvsm/93XsZ+NmNf8zZFk1limaWtbuxYqqxyszyh5iZEnVHBcSomoLiQjJxJxzEgbIQZRw9KA8Lxne2EoQteNmwzBfuQkRheOGABRBgv/vdtQHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728351731; c=relaxed/simple;
-	bh=Fns9eipf5ZnjQPOq0rR7rcxSRtJdrrJQCclXWN5lAbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dxKMThwM4d5p7OGGtZj4Abs5VhCEX9LsC1CrlqquNXBQAFN4Z+uo09jnxmgZXyInRScqGDww31GAeT745KDM8NwNmclIHOyJQjiFTLCCEMs9PkW70HVMjDdA+DbIbhkROO4daelDJiRaKbHevUac7q0Ox3wuiRRAbohvGbsMDGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IicOiRTW; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1728351824; c=relaxed/simple;
+	bh=yb5EjhqmUwdystXBeXZ20Rj7RIhYJNgRTV7czWOhdKc=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=c8G1IngFcsXpRcjkzwPZ/gmrzUxn9Q2/9sVi/Q9lwaONHb+R7aAn3vT9aRNbqvtaRaWkqR+uCU0NMHpW8uc6+SfozuP8P9vWwtuHmgOIfIvqiA+JP1GYtvL/0pL/FFzmEA7Bar3eHBM7If8HPUDhoJI9Cb1JbgxR1QsJSB3Iugk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D82EfXVl; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-537a399e06dso5262889e87.1;
-        Mon, 07 Oct 2024 18:42:09 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2689e7a941fso2606001fac.3;
+        Mon, 07 Oct 2024 18:43:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728351728; x=1728956528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3H/OIpQ+NUwZNvJrAsNKijREzfomqrSjb5DeGZB3tnY=;
-        b=IicOiRTWO/OA/OgPzfHd0PQFNfHUHg5UvMz+/Rma0IKwayELsx3SSrwH1mCEwwfvuj
-         NxGCSA+n5YBvWcpOyXvAjkRLFzxeiSXb2dd4mTYvadt8eCkIRriTAfGQEMYYBqUzGpMB
-         dw753EcPN5YzZKkuA82A0d6sji3tgpmpzlMbpU8Pxhz2bU+02GacGSOBR0IGINUadFje
-         JjLN8gnyZ9uuxvzfscSbXeixYyHUiV6piJxTrEOz1k4ACnVEhJUhqkNG8jw47zc7hbg2
-         G/ppIFvnqiXDjE3okXBxfFNDj3rTbKL1A1KNJn6FT/Ay3kFivGSSfhBtJny6yv6AAQQ3
-         kQsA==
+        d=gmail.com; s=20230601; t=1728351822; x=1728956622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhudap/e3GFJwj1GIVucRxNplIWeVCeDgboG8FiJJq8=;
+        b=D82EfXVliWq9Qq5YxJMAd4J0Y2zKhnzh4XnjoHZwCvofe16jLDNkpJjUlilwP/EQaE
+         tJxSumsVnx/FCnPCbViQy1UzJCyBMD/ShZP5305/cJG8Sl1Fo/14c4GAxvdhzKxIebiK
+         Xxa5ocs1J1rYF+Px+umMAdnQsKWpvkpfQ6fkFDm4v/AiKuWlBOUW4uMRwJlC+dhrmjwB
+         Lr5KdMU4S6lLCISJetOsPOA2a0z/dxhgJTPfmJ+1ccNJE9kAmb4OcEzhWUBPrSL+qDC8
+         qZ3lZIXQVmz6BYvUTZpOy2z8ZWaKekjwOTQ/sDSjgzOtfndC4saAG+S+QqeKJnl1281D
+         p6mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728351728; x=1728956528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3H/OIpQ+NUwZNvJrAsNKijREzfomqrSjb5DeGZB3tnY=;
-        b=VpLSfzhGwqaXdPgdZ9gHRryOGMLk1kZnkDkq0XfBEqJ/RPTe7jAS255/iNSBmZdvov
-         enDMSjj3RR/pysY9UhP0LJh4GBQ88IgaTujiPoXG5TJSRo3trtbe8efFbj864ddlNTEa
-         aiAYipS10Cqfo/Pt59tVojqGFSCca2a4absLYEuqTuikZRABxGC0DztX3FtN6EQZuofL
-         ZOVbR2k5KDC7hRTbtEFF+BUy4uAqbVUK0GCIM2cL1XQLMZr9DeN67KMXyB5FHKOh6rK3
-         7FSNBM6BPCJPZTeMwAOqiPvvfF+UFrX3F4uN90XMV5f0zL+GS43RiC/riR/n9wyiXnTl
-         VxpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURwzBPCMkmNyi0N5Sbifo5NYFONrHcMlW2Oyg1ON3ODuYd0C7BgYdVaNwujP97z/jq6HT/ORTV2XU=@vger.kernel.org, AJvYcCVdK9AKzmbjZUfpFCUF0rmR/EWmCvNDFZME7Arl9V2lAp5d9F/ubVm8TnVQ1mmVYCAhIvMmjmW9PAPPdSET@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4SSA6DaK2ox5+4Zvjtw6hsocm1+1d92cY4VQmcwCS37fYUOjt
-	qG30NZTmRGqn2imkRcLg39lZL+EPm7tSmcW4nFaHDGAsDZRN8XoPD3a+6GornFKErMQLSp0hRxl
-	dCh6UhXD7w8yKWkgkYmN3iOv27G9rsAi1ag==
-X-Google-Smtp-Source: AGHT+IESXKOjm7teMlCbIj1M/25GcmW+2f4Q9YHEecanjXzZqTD6GJYoaZIGvpw7qjrnyDsUtZR46qTpUxIRdJwfPL4=
-X-Received: by 2002:a05:6512:2203:b0:539:92c7:e68c with SMTP id
- 2adb3069b0e04-539ab9eb2c0mr5364182e87.58.1728351727316; Mon, 07 Oct 2024
- 18:42:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728351822; x=1728956622;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhudap/e3GFJwj1GIVucRxNplIWeVCeDgboG8FiJJq8=;
+        b=T+UUA2Zu8HiejJ31C3ZAUcavO2lWeYosOFy6XgdUfv13jWrNfIVdld3191Wr/xkCoL
+         pqf4SDTIz3rxP+5jJYf20BS2QsOTvpcO9gp9mMOSz+35NbOBlsA7ZIpJRY2vgDG1gvF1
+         S4QrZKJhydUHL7t06LmnPBv1FKbRqOdxm+MvdFNM8yezzHJjedeH0nU00w0cwI3JzQ0V
+         hkjMvlUQcdG34Ingoyo8AzGHU17BMyU5nqS9jiybfUprll+KVvN7L2voGsupkCUP4W7y
+         VVjvt4AYLEDQZJ9ZWJk6Yj2avWohGPpfanuiEhZInXgd0nungzAdwuW/y8hjWzhkjm4s
+         9JXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsqb0FgOeF1y8n5ukrMSt3NvWLia8MzR+01WTDbg73ZnmN2bV6yh8EOUATfSMj/Kuxgm6nMvE0O6ys@vger.kernel.org, AJvYcCXSlh0VfblmueXL8ciiBG16Pn4fk1v0joXZQN86KuY4mDxbQjdrEi274ROwKZ3Un80Q5x9pHfteb3YZeH5X@vger.kernel.org
+X-Gm-Message-State: AOJu0YypIVMnUbEfmzi6iOb0jZgmO9UfxbES0h0g10AJOKim5gblB+kE
+	wceXYCP2Z6GqSw93PEWD5vnnNx9Df3BvoYxqNtONc2Ht96zrIHFe
+X-Google-Smtp-Source: AGHT+IGIYq93CKi8OSj8ClnvKD36PL+CeAVrFU0fxaJlJ3lvOtN58r2VCxwx5Kha5hH09rJI6fEg3A==
+X-Received: by 2002:a05:6870:96aa:b0:277:e7bc:69fd with SMTP id 586e51a60fabf-287c1dafc27mr10088239fac.13.1728351821709;
+        Mon, 07 Oct 2024 18:43:41 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287d70eb210sm2593033fac.23.2024.10.07.18.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 18:43:40 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: aou@eecs.berkeley.edu,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	guoren@kernel.org,
+	inochiama@outlook.com,
+	krzk+dt@kernel.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: [PATCH 0/1] Add power key for pioneer box
+Date: Tue,  8 Oct 2024 09:43:32 +0800
+Message-Id: <cover.1728350655.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001062855.6928-1-kfting@nuvoton.com> <20241001062855.6928-5-kfting@nuvoton.com>
- <Zvv2Y10hJqGnUDvW@smile.fi.intel.com> <CACD3sJbJ0cNCRiBba73BOAkO=jn9KuJJXC1-Sy_iVf_8EJSjxA@mail.gmail.com>
- <CACD3sJa23TEfBQ_b8PGM8ot2L0g4n=GcqvPk0HJGjRf-d+=-pg@mail.gmail.com>
-In-Reply-To: <CACD3sJa23TEfBQ_b8PGM8ot2L0g4n=GcqvPk0HJGjRf-d+=-pg@mail.gmail.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Tue, 8 Oct 2024 09:41:55 +0800
-Message-ID: <CACD3sJZxswUmNoSoGAAhfWUeVLDW=6xdpwVd3mQzwdjBommm5g@mail.gmail.com>
-Subject: Re: [PATCH v5 4/6] i2c: npcm: Modify the client address assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andy:
+From: Chen Wang <unicorn_wang@outlook.com>
 
-May I have your feedback on my reply about keeping the original patch
-"bus->dest_addr =3D slave_addr << 1;"?
+Add power key for pioneer box.
 
-Thank you for your time.
+Thanks,
+Chen
 
-Tyrone Ting <warp5tw@gmail.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=884=E6=97=
-=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=8810:29=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi Andy:
->
-> Thank you for your comments.
->
-> After a second thought, I'll explain why slave_addr << 1 is given here.
->
-> Tyrone Ting <warp5tw@gmail.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=884=E6=97=
-=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=889:49=E5=AF=AB=E9=81=93=EF=BC=9A
-> >
-> > Hi Andy:
-> >
-> > Thank you for your comments and they'll be addressed.
-> >
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=
-=B9=B410=E6=9C=881=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:17=E5=AF=
-=AB=E9=81=93=EF=BC=9A
-> > >
-> > > On Tue, Oct 01, 2024 at 02:28:53PM +0800, Tyrone Ting wrote:
-> > > > From: Tyrone Ting <kfting@nuvoton.com>
-> > > >
-> > > > Store the client address earlier since it might get called in
-> > > > the i2c_recover_bus() logic flow at the early stage of
-> > > > npcm_i2c_master_xfer().
-> > >
-> > > ...
-> > >
-> > > > +     /*
-> > > > +      * Previously, the address was stored w/o left-shift by one b=
-it and
-> > > > +      * with that shift in the following call to npcm_i2c_master_s=
-tart_xmit().
-> > > > +      *
-> > > > +      * Since there are cases that the i2c_recover_bus() gets call=
-ed at the
-> > > > +      * early stage of npcm_i2c_master_xfer(), the address is stor=
-ed with
-> > > > +      * the shift and used in the i2c_recover_bus().
-> > > > +      *
-> > > > +      * The address is stored from bit 1 to bit 7 in the register =
-for
-> > > > +      * sending the i2c address later so it's left-shifted by 1 bi=
-t.
-> > > > +      */
-> > > > +     bus->dest_addr =3D slave_addr << 1;
-> > >
-> > > I'm wondering if it's better to use i2c_8bit_addr_from_msg() here?
-> > >
->
-> The current implementation of i2c_8bit_addr_from_msg() (ref link:
-> https://github.com/torvalds/linux/blob/master/include/linux/i2c.h#L947)
-> is
-> "return (msg->addr << 1) | (msg->flags & I2C_M_RD);" and it takes
-> extra consideration about the read flag when retrieving the i2c
-> address.
-> IOW, if there is a read event, the i2c address contains a read
-> indication (bit 0 of the i2c address is 1).
->
-> The patch code "bus->dest_addr =3D slave_addr << 1;" might get used in
-> i2c_recover_bus() later. (ref link:
-> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm=
-7xx.c#L1691)
->
-> Suppose there is a read event and the i2c address is 0x60.
->
-> With i2c_8bit_addr_from_msg(), bus->dest_addr will be 0xc1.
-> With the original patch, bus->dest_addr will be 0xc0.
->
-> If some error condition occurs and it requires i2c_recover_bus() to
-> recover the bus, according to the description at
-> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm=
-7xx.c#L1742,
-> the address "0xc1" is used
-> as a parameter to npcm_i2c_wr_byte() which is used to send the address
-> in the write direction.
->
-> If i2c_8bit_addr_from_msg() is applied, it might not fit the scenario
-> described at
-> https://github.com/torvalds/linux/blob/master/drivers/i2c/busses/i2c-npcm=
-7xx.c#L1742,
-> which is about to send
-> an address in a write direction since the address from
-> i2c_8bit_addr_from_msg() contains a read indication.
->
-> > > --
-> > > With Best Regards,
-> > > Andy Shevchenko
-> > >
-> > >
-> >
-> > Have a nice day.
-> >
-> > Regards,
-> > Tyrone
->
-> Thank you.
->
-> Regards,
-> Tyrone
+---
 
-Thank you.
+Changes in v1:
+  The patch is based on v6.12-rc1.
 
-Regards,
-Tyrone
+---
+
+Chen Wang (1):
+  riscv: sophgo: dts: add power key for pioneer box
+
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts      | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.34.1
+
 
