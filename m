@@ -1,97 +1,144 @@
-Return-Path: <linux-kernel+bounces-355577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF41995445
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:22:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BA099543B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF921C2556A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB361F26643
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA06B1E0B6F;
-	Tue,  8 Oct 2024 16:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5F21DF75D;
+	Tue,  8 Oct 2024 16:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYs+GQnd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="N+kX042B"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2527E42AB7;
-	Tue,  8 Oct 2024 16:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8997E33986;
+	Tue,  8 Oct 2024 16:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404507; cv=none; b=fp6GspwKwZhbm2AO8rIbTAyf+d3WP7TC0HwEo47K5VRZMNdqmUxdjyNJ7gwsIxEuxRQYYgU0d+b0CYTz/5KpzEy8K8tujqQNvYLU/5eIjN2+APH4U9qnwOkXFy3QyNWZiu+zpXB86GDoOSVAuTSYGyUs40EDzuMC1p3NI6V2mDc=
+	t=1728404331; cv=none; b=UQ86mRfLxtgrGoQsEwTKGDp7E4mupHnaWm48UsaTyyf/t3OvzqZkh/HKnPKRRXLTviBLWFwEhmA81uRg1Eai2WEpn3wlhhjoQ396ydoqGXyuD0DAPKcotN5pYYyh2E+pLdB3Ua1xDldGGB1x11IpYgdZmclWpJshjHkWJTa2oyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404507; c=relaxed/simple;
-	bh=zXf059UWoQ550+54yMiocdr/6qK+9tzdhFNKDz8O4yE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=om8t5cn9uWZqQsNpfYeBjSR6ldVhf/mnG9kCrc2ZH9L+WxDNOTJ9pHvab3JMTqAxJAnpHEnGMQWSIngErHwO8nYdR7K6C9KuyuNPU5tNc0EhATz1hlC6oIE9aDEKa3TuQwc/duHfC68m2gC8py7S9QnPK25+DiPKeBbwA5GcHSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYs+GQnd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 703B4C4CEC7;
-	Tue,  8 Oct 2024 16:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728404505;
-	bh=zXf059UWoQ550+54yMiocdr/6qK+9tzdhFNKDz8O4yE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FYs+GQndbIL+o8ZiSkYinwyScXiHp+4GxhsFM97pTPW0qxc0YT43BnD/8UYHMZlNi
-	 D36Os/0Yd2i75G2N/rqlNBvALFq3L52otkTEF4gukEJ6bL8fFvatKPzxqM4c20vw94
-	 Rz3tjnGTNEcukkLGl8QRavyuBG+oeWk2c+KTtxgMxT6qNazwCZpfZKriaUe7etDfv1
-	 Q4W/8c99AVCeRiXzO6dR2shnxrWT8isG0xv7gKXlglPv6r8xZsi9PcndkieogOpcIE
-	 nYBrG0A8ht/P3Cj8S55pF5ixFKXEI/8ZVpDVCXw4a6uwWrLhz/LvUXJR1/HmiRfnxs
-	 62doIaW/4vg+w==
-Date: Tue, 8 Oct 2024 19:18:17 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pengyu Zhang <zpenya1314@gmail.com>
-Cc: corbet@lwn.net, linus.walleij@linaro.org, fmdefrancesco@gmail.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] Docs/mm: Fix a mistakes for pfn in page_tables.rst
-Message-ID: <ZwVbSSBf2NM_yq1H@kernel.org>
-References: <20241008161050.14732-1-zpenya1314@gmail.com>
+	s=arc-20240116; t=1728404331; c=relaxed/simple;
+	bh=+8ay8vAeT+yhVnHB3MeZaHdeZWEIQQThJ35GfikM7Ps=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=PXKCH9srni0vI1sYwqclHWyu/ng+b3iwaIVa9epTivxyWgvj8qilrWXec+tYXhPpIh3crzr2MtZkfxEe6fA0UwvFy0XzJxFQ4wC496Y3I7eX2CTuRfTGdIUt2C7RFuKQoZvO6zxnZELCW2V65Ylw3B8+ekLTzWWGBXCu5giI03w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=N+kX042B; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008161050.14732-1-zpenya1314@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728404327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LxQ8IxcGyXJP1zufYJ5M9jcB29xMFBanedmkDjAMRI4=;
+	b=N+kX042BIyH4GAwVaT870FLMjhOz1FkC06gB6NqhrM3hfiE3WNEAvGhlmoJKq/W1Nql1/O
+	Qx7RvqH0ghsBWC8EzF6Sr3F7RezkXGT/MTKKQ/5yrVjhdJ63YjictAq3Z9ai/M9jryeOcW
+	SYiABf3JB0n6jdzS9PmYTwVylFx9wFlbBOw6Yp7QDPFCzog7sAQVwWivfzWxkxu5JOtJ2M
+	2XARZ9Sb1XZuO6Eda7lBBFjOgdlMpwPXkalSQ7DFJOwGc50e6A3eO9Xrtm4PgEARhpcvex
+	XJQT7/PiphETvSHXTlcLVcahxqnt5OHbuhdHRw794ps/Z/VikYPaUN6y1YM+Dg==
+Date: Tue, 08 Oct 2024 18:18:46 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-spi@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: broonie@kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org,
+ rafael@kernel.org, oss@helene.moe, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] driver core: Add device probe log helper
+ dev_warn_probe()
+In-Reply-To: <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
+References: <cover.1727601608.git.dsimic@manjaro.org>
+ <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
+Message-ID: <e8cbbf877cc0e6838afd2d6de3b7bfa1@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, Oct 09, 2024 at 12:10:50AM +0800, Pengyu Zhang wrote:
-> The documentation incorrectly calculate the pfn value as 0x3fffff,
-> which should be 0x3ffff instead.It is obtained by right-shifting
-> 0xffffc000 by 14 bits.
+Hello Mark,
+
+I just spotted a couple of small typos, noted below, and I hope you 
+won't
+mind to apply the fixes by hand before applying this patch, please?
+
+On 2024-09-29 11:21, Dragan Simic wrote:
+> Some drivers can still provide their functionality to a certain extent 
+> even
+
+s/extent even/extent when/
+
+> some of their resource acquisitions eventually fail.  In such cases, 
+> emitting
+> errors isn't the desired action, but warnings should be emitted 
+> instead.
 > 
-> This patch corrects the value to prevent any potential confusion
-> for developers referencing this document.
+> To solve this, introduce dev_warn_probe() as a new device probe log 
+> helper,
+> which behaves identically as the already existing dev_err_probe(), 
+> while it
+> produces warnings instead of errors.  The intended use is with the 
+> resources
+> that are actually optional for a particular driver.
 > 
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
+> While there, copyedit the kerneldoc for dev_err_probe() a bit, to 
+> simplify
+> its wording a bit, and reuse it as the kerneldoc for dev_warn_probe(), 
+> with
+> the necessary wording adjustments, of course.
+> 
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
 > ---
->  Documentation/mm/page_tables.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/base/core.c        | 129 +++++++++++++++++++++++++++++--------
+>  include/linux/dev_printk.h |   1 +
+>  2 files changed, 102 insertions(+), 28 deletions(-)
 > 
-> diff --git a/Documentation/mm/page_tables.rst b/Documentation/mm/page_tables.rst
-> index be47b192a596..e7c69cc32493 100644
-> --- a/Documentation/mm/page_tables.rst
-> +++ b/Documentation/mm/page_tables.rst
-> @@ -29,7 +29,7 @@ address.
->  With a page granularity of 4KB and a address range of 32 bits, pfn 0 is at
->  address 0x00000000, pfn 1 is at address 0x00001000, pfn 2 is at 0x00002000
->  and so on until we reach pfn 0xfffff at 0xfffff000. With 16KB pages pfs are
-> -at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3fffff.
-> +at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3ffff.
->  
->  As you can see, with 4KB pages the page base address uses bits 12-31 of the
->  address, and this is why `PAGE_SHIFT` in this case is defined as 12 and
-> -- 
-> 2.25.1
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 8c0733d3aad8..f2e41db0c09f 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -4982,71 +4982,144 @@ define_dev_printk_level(_dev_info, KERN_INFO);
 > 
+>  #endif
+> 
+> +static void __dev_probe_failed(const struct device *dev, int err, bool 
+> fatal,
+> +			       const char *fmt, va_list vargsp)
+> +{
+> +	struct va_format vaf;
+> +	va_list vargs;
+> +
+> +	/*
+> +	 * On x86_64 and possibly on other architectures, va_list is actually 
+> a
+> +	 * size-1 array containing a structure.  As a result, function 
+> parameter
+> +	 * vargps decays from T[1] to T*, and &vargsp has type T** rather 
+> than
 
--- 
-Sincerely yours,
-Mike.
+s/vargps decays/vargsp decays/
+
+> +	 * T(*)[1], which is expected by its assignment to vaf.va below.
+> +	 *
+> +	 * One standard way to solve this mess is by creating a copy in a 
+> local
+> +	 * variable of type va_list and then using a pointer to that local 
+> copy
+> +	 * instead, which is the approach employed here.
+> +	 */
+> +	va_copy(vargs, vargsp);
+> +
+> +	vaf.fmt = fmt;
+> +	vaf.va = &vargs;
 
