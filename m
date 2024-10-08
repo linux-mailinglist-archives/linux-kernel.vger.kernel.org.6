@@ -1,81 +1,125 @@
-Return-Path: <linux-kernel+bounces-354589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F09993F82
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:34:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45945993FE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8157D28561C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D48288725
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895501CDFA3;
-	Tue,  8 Oct 2024 06:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEEB1E2834;
+	Tue,  8 Oct 2024 06:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqORMC6l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBtt3wff"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE2D16BE23;
-	Tue,  8 Oct 2024 06:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711BB1E282B;
+	Tue,  8 Oct 2024 06:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370377; cv=none; b=o6dP6UxRBFfJIb5j3ugViTPOGUX9KkRp2X0hYI6nA1hRNEGbT5c9LeDlr+91OItju309Gc/C5zom9mJg8AsZMfEg9+3IIKbKqfW5mPaNYN43P4W7isKkAdoLqYForqtHWUQvkrqLZ537gY0ar+ZHG5dYKzv0KV+Z2cAroMAJSuw=
+	t=1728370381; cv=none; b=a5bU/SYWglisuF7ie8cDsdLiYvKoPzQaq0NYo+1L395JfD8X+1mKBWsUunVf1steORqVuejyrY/hObBtFw4qWGHnGnlStSD6SDw2b97eMbxbzriJmLDUwrN4vKMiZ9h/CUn/xz56gRx/4NWu+pOi6RJRbIh9fNnY4VGkq/xQ7Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370377; c=relaxed/simple;
-	bh=TmYMLZ96jvXq3r5wT7E8MQYJvfIyxM0I25WLk5CYBEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JS0DPgFHJYbve4Cei72CUTJpPFvKmx6j68b53PWSjQu6WKqAB0bLnZdY8KUDL2hbKXjJhwvxigZQR59Z1q30ZOJrxACQ8HeGTroga39MhD5jK0Al2Z+KVLkrVZLLkeVcgrG8LZ8fnswggrdJLBA02op4l9+bso693sdGQ3IMo/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqORMC6l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B61C4CED0;
-	Tue,  8 Oct 2024 06:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728370376;
-	bh=TmYMLZ96jvXq3r5wT7E8MQYJvfIyxM0I25WLk5CYBEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BqORMC6lGiSTJ6iES13MDpnAZEe730CGTBQ3io4MFZA18V1yR+69pOE8kpzkaMv9Z
-	 AYAdXxEWhJoYfJQvdcbE1N28szkCGHBvLnGaLeIeb9vHNngwbMHdUqdJEK3mtNfDSR
-	 RsLt7TdoHgnJ8KHy2okIBY0/JbFTOXbkDnYNVeFw9kP7hFOndQi48CH9Y/VexY09nc
-	 UogS0+vwD42OBkryWZp8B+IdX3OI22sIQ0qLVQoAkLIUhAfDdpoj6nylORX43mnpti
-	 UjxANXflzIK4JcRHUAF4xprY5opuUGK7droG7bjAFHG3aLDN5axcwPH2MbGQmch/p3
-	 0HFcYa1vmeiiw==
-Date: Tue, 8 Oct 2024 08:52:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, 
-	conor+dt@kernel.org, arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-Message-ID: <knykvevy7rtu4tkrbm2jxpkhzjjkypgpghgsbyzvxkhp75d3c7@5zu6jknd2xrf>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1728370381; c=relaxed/simple;
+	bh=9VUithL9olPT3+zRusGcptvwsS6sjrR7a4P+b6hBSlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AsttiN6o8UcizXKetDgrq29cBX9tjlZJTYzoxbMB5wtFOnd76zw3lAPQqJIVblh3ysXeyoAGQe0PHPJDkRfXPmGEf7ma3Qa9KRirfwBDl4NPXzRyzoI+TbiSdMACISCbZI4bIQrUbz+XsRYh7YVto49X3YtG1Jq9jKSvAnsp2ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBtt3wff; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea0ae67df5so1485884a12.2;
+        Mon, 07 Oct 2024 23:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728370380; x=1728975180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nZtsxSvHO0Hn2DKrEwb0Prd6BKwuA0KF0Jd0oWoumw=;
+        b=LBtt3wffS9RKyDJQ+DlaMK31Km6VWfEP4Q3uPAjxGS80Li4Ck7BYyqBA5EO2UJgBwE
+         CTDxEqBoi3yKKfXtfQq2+XA6WlRAMHaZPKSdgK21AWWBhGTMUF+arVg2C/EhGLNZx/fU
+         pZ7X4AGcUEzhSGOC2Q2DXAwyldi0eC2PKVPDFJ84RSeTfAPOOtYNCA/3hoJHvJfouCTH
+         nqjrDAlfsrGydzI/h1xfSt9eSkCdkW2zWruzfGsypW4SJSBpwxDsIztvE/YyLZW5epOA
+         3zGYpvVHcl7TjSBMtI7nsXAKm68Ijj+cW0hOlrUO4YJFvL/Sb8XXDnm7rYlSYVj2Ltrx
+         m0Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728370380; x=1728975180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2nZtsxSvHO0Hn2DKrEwb0Prd6BKwuA0KF0Jd0oWoumw=;
+        b=SMadQikTWSUfmavBnmLKpyT44YP8UFWiVms3I/0ejAbGx7WAM10xrNOlXdOI6J2WFs
+         ywjpX0xCcqTHdB9NKLrQhjX87Dnskn4+dW7tWhCUb7hBfBzAaX05aZI2KTZiAc9muWSv
+         bTUT6vUNaCyGJQLDfWHcnLqcAthczY2iK4kuK869e9Kc/D1uhjm9FYcaGb5fWZqZF/wA
+         UD9zfqAMHtKkGkdCswBfJbnC0rus2mZEB7Yx7ULYarqCXCVnUEj51Z6j/Q8AjdOZ5lRq
+         jAT4jnP8oACs7a4ZDJMJ43IlbZ7bSEp5TRjWxwH83g+fHllvFkFrRCc7C0lQZFrb31Fj
+         c3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3sx4y3t4DCIl6TihA0/PGgVzBUiIK4kHRvbABwfcPbl9nl6LF2HjWFNYE/fedFcHOquY00R8oMLb7JJH90NTI@vger.kernel.org, AJvYcCW/Le2J4G+YJF8SWB87rtiKviD6t3XFM5Ol7JqeggVsdUJ/ulp9MKt55en8U9b2DD9G0ulAoJzgh75LT40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxET/VRXbP8YUBk3fVOzgMtUsGlsvDHCa9Qr73JhOoipy1bwQtF
+	B8/ahN5zkEjG7gWZJ4KoT8I58bsato/4XNuu05FcwvmDQgyZPFXk
+X-Google-Smtp-Source: AGHT+IENgOIl/uSh6Mzkir7ryCuR5icE44R9obsBFWfQKRnOm1drBbK/yT0nBJW3yiXIhu6dNe4jsA==
+X-Received: by 2002:a05:6a21:4d8a:b0:1d0:3a32:c3f8 with SMTP id adf61e73a8af0-1d6dfabc77amr21185781637.39.1728370379614;
+        Mon, 07 Oct 2024 23:52:59 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:bb25:5583:9ce3:ab6b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e28345fc46sm799826a91.50.2024.10.07.23.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 23:52:59 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: davidgow@google.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [RESEND PATCH v4] list: test: Check the size of every lists for list_cut_position*()
+Date: Tue,  8 Oct 2024 14:52:53 +0800
+Message-ID: <20241008065253.26673-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 11:40:18AM +0530, Sibi Sankar wrote:
-> The QCOM SCMI vendor protocol provides a generic way of exposing a
-> number of Qualcomm SoC specific features (like memory bus scaling)
-> through a mixture of pre-determined algorithm strings and param_id
-> pairs hosted on the SCMI controller. Introduce a client driver that
-> uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
-> to detect memory latency workloads and control frequency/level of
-> the various memory buses (DDR/LLCC/DDR_QOS).
+Check the total number of elements in both resultant lists are correct
+within list_cut_position*(). Previously, only the first list's size was
+checked. so additional elements in the second list would not have been
+caught.
 
-None of your patches are wrapped according to Linux coding style which
-makes reviewing more difficult than it should be. And before you answer
-with checkpatch, checkpatch is not a coding style.
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+---
+change in v4:
+	Amend the description of commit message, make it less confusing
+	and focus on the correct check which is performed now.
 
-Best regards,
-Krzysztof
+ lib/list-test.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/list-test.c b/lib/list-test.c
+index 37cbc33e9fdb..b4b3810c71d0 100644
+--- a/lib/list-test.c
++++ b/lib/list-test.c
+@@ -408,6 +408,8 @@ static void list_test_list_cut_position(struct kunit *test)
+ 		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
+ 		i++;
+ 	}
++
++	KUNIT_EXPECT_EQ(test, i, 3);
+ }
+ 
+ static void list_test_list_cut_before(struct kunit *test)
+@@ -436,6 +438,8 @@ static void list_test_list_cut_before(struct kunit *test)
+ 		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
+ 		i++;
+ 	}
++
++	KUNIT_EXPECT_EQ(test, i, 3);
+ }
+ 
+ static void list_test_list_splice(struct kunit *test)
+-- 
+2.43.0
 
 
