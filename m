@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-355135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4133E9947D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:59:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF809947DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C96283854
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF2E1C2452F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A3C1D8DFB;
-	Tue,  8 Oct 2024 11:59:39 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C1C1DDC35;
+	Tue,  8 Oct 2024 11:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9mxOjv/"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83DE185B58;
-	Tue,  8 Oct 2024 11:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB111DE2AD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388778; cv=none; b=qIoe0XIDh9L6RdCKkdtA2pDKjUJnsaI4Aibo4yP46sbjXDRFKVDYKq4723xV4HPNIOP249t9CXROGslCs7K52YoSu0MbZtcAY5r1Y0JQi85seHjevuelbpdfK0s7ka1/JdlmXD0fY5hXT2He0s0mRscqx+QTeSppHJEBFprQ9RU=
+	t=1728388783; cv=none; b=ORnXgEGdFglJkZwLUweARvH8YGMvK5nlE2u7hokCrIkA5Zbfw2l67PJIbGc/40dCdTGyNwm3bWZzgzHdfym3vSGW8xN8S391g5MLWicjuAU2ySKX56UVCNCNsm+0vObZhyuDB4wVvES/Py9h2IA8VdLESZR/GKO4xzNmA6MVONs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388778; c=relaxed/simple;
-	bh=ZaLYx4nmqBM6DcQkzfjm8PmU+xSyF8YriqxYb412Eoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=td1/L3bdm5OKt8EXTBy/Vf2sxnISRnLpm5Vx0uUHgPpVlGRwVd54pFmAyPkNzdgX2uwgDzBW+2EvjNHmIknlVkeJeBXcamSyZNri7wknS5QZTS1G5u3kiZAQ3ceAmHJfxGhsPqqWoSEdc6bRm+AxDzVlUZB/NVkPDpS8Yto2WjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sy8s4-000000008KO-2PiW;
-	Tue, 08 Oct 2024 11:59:20 +0000
-Date: Tue, 8 Oct 2024 12:59:17 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: check validity of 10GbE
- link-partner advertisement
-Message-ID: <ZwUelSBiPSP_JDSy@makrotopia.org>
-References: <fb736ae9a0af7616c20c36264aaec8702abc84ae.1728056939.git.daniel@makrotopia.org>
- <8fb5c25d-8ef5-4126-b709-0cfe2d722330@lunn.ch>
- <ZwBmycWDB6ui4Y7j@makrotopia.org>
- <ZwUTDw0oqJ1dvzPq@shell.armlinux.org.uk>
+	s=arc-20240116; t=1728388783; c=relaxed/simple;
+	bh=Pz0SOGoJf/49jFAJMh+Bk3CmUi5Zcem4IPFeloGvAno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hyrbP8j8UYyh8KNqs9U+Bsu0Rs/PrJUeHtyWP+knCC6zpAYvGpa8LvyECTA4L/KwIf26PkMqvexwnRwYYzaqW4yjwhYnQrnV3GwBb0le9PbvdkLy/aPJ3z/TtoIIgWkiYcJGmEe2WCnevi+gWvVQYx6VBrNuGvGlDhUfrKwKaGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9mxOjv/; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb1dd2886so236055e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728388779; x=1728993579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rOcmgkPNRf0kvEERDZQRUet6h/8Mc0E/vBAaBKPRt98=;
+        b=q9mxOjv/ckqWMuYa7NT0EzMZ33Yw1LirjuKjrLTZnvUcKv3eQWcP0lB3JRpe1hlY47
+         KR6rsOn0DQP+sHpBO9yWlnhXL5hRKDMG8LQgk2/BJg2/ovw6XZ5c7j7Uw8ezwK9r0Q7V
+         xGJeLnKMLcm+KOu+MRvcLYbdieQtAneKcKhy5HhzTtAaf4qrVQe43vTSTr8zre1N6SZC
+         6wtxwo47/xIJuLj1D+SPvY4NTVsMobr+xkZWHB1f1icoPAHMfxu83bmWuJyDC8b2S0Pc
+         5z3j+0zeGssIkaDQYv4eFt5QEEWr58lYSYpWuUVHs2DXqDwM6GsdSJBQr0VbwthFlXPa
+         vgDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728388779; x=1728993579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rOcmgkPNRf0kvEERDZQRUet6h/8Mc0E/vBAaBKPRt98=;
+        b=PNc87JhtZXLQ2GEm1eD4TDvx8qdPv7YAtFjmtJXr2t+OS64h3zbUhuTb8Hf3ibVEA1
+         JLKCyrU2cn6ZLBP5uCoBxja3tJ4IMZjWBE4Qtkk5oMfque+WHcl4ZxkE8d5EZtZXoXTu
+         bZJkQ2Uc7LqyBrYwc/sGX6cNS8+nIR1kU+ZY83ipeYikNMIZD9XOnZJ7IZ3NPSSMdJb2
+         qK2wHrlcTwlX7a8awOgMGa419+33HJ4OvHinQeXtcs84kJ9mK3gLoywOWhFdPfTWI0hg
+         kDtVqEOKO2+W4SIkPhAdsI4ZsfYdCLyoeH9IA9R1TcA3qXbPE1Z4kKfQrb3X5ZioCHFV
+         xPAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtSWSu5t4sWMSyd+1u16tEeszZgbvxkH9gHTFDRt6qSZYSD7TzYJBqWSMy1G++sWiB9owfPB+DGRgim2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVxp05q9ATzXTNVhBzG438UYURanmLULgJywiFLSdvhynAowNy
+	jSkRClA3XyHyU3qdEIP2OSjBdo0iftLzZrlpUVP5xNjedhpPcD1rN9Qh67N4l9XdcWBPwbRZ598
+	OKjzpS4i1pR4/ufy41egkDGW5ub2ehJBrhxq1
+X-Google-Smtp-Source: AGHT+IF/exW7Z8cqHE69JpNvFhXfSFn/gK+3++BaPSqwc/mLNvI2MIZL+YrUa/fxP6y1gQB3mQOVrQuly8TPYna1emM=
+X-Received: by 2002:a05:600c:3d93:b0:42c:b0b0:513a with SMTP id
+ 5b1f17b1804b1-42fc83dee2emr4432795e9.2.1728388778507; Tue, 08 Oct 2024
+ 04:59:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwUTDw0oqJ1dvzPq@shell.armlinux.org.uk>
+References: <20241007135508.3143756-1-joychakr@google.com> <20241007135508.3143756-2-joychakr@google.com>
+ <c98ece5f-c105-41ca-af1a-bddc61893071@kernel.org> <CAOSNQF148N5meoFZkbGKoMXMZ62kf=JOV+1r0GCsep3DPP_Lrw@mail.gmail.com>
+ <1bc2c476-9d7b-4c87-924b-ecaed0f721de@kernel.org>
+In-Reply-To: <1bc2c476-9d7b-4c87-924b-ecaed0f721de@kernel.org>
+From: Joy Chakraborty <joychakr@google.com>
+Date: Tue, 8 Oct 2024 17:29:23 +0530
+Message-ID: <CAOSNQF0b--3o5bseU05Eu3a2zDiTTYfbnQNONFo3imw3HnaONA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: usb: dwc3: Add binding for USB Gen2 de-emphasis
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 12:10:07PM +0100, Russell King (Oracle) wrote:
-> On Fri, Oct 04, 2024 at 11:06:01PM +0100, Daniel Golle wrote:
-> > On Fri, Oct 04, 2024 at 11:17:28PM +0200, Andrew Lunn wrote:
-> > > On Fri, Oct 04, 2024 at 04:50:36PM +0100, Daniel Golle wrote:
-> > > > Only use link-partner advertisement bits for 10GbE modes if they are
-> > > > actually valid. Check LOCALOK and REMOTEOK bits and clear 10GbE modes
-> > > > unless both of them are set.
-> > > > This prevents misinterpreting the stale 2500M link-partner advertisement
-> > > > bit in case a subsequent linkpartner doesn't do any NBase-T
-> > > > advertisement at all.
-> > > > 
-> > > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > > > ---
-> > > >  drivers/net/phy/realtek.c | 4 ++++
-> > > >  1 file changed, 4 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> > > > index c4d0d93523ad..d276477cf511 100644
-> > > > --- a/drivers/net/phy/realtek.c
-> > > > +++ b/drivers/net/phy/realtek.c
-> > > > @@ -927,6 +927,10 @@ static int rtl822x_read_status(struct phy_device *phydev)
-> > > >  		if (lpadv < 0)
-> > > >  			return lpadv;
-> > > >  
-> > > > +		if (!(lpadv & MDIO_AN_10GBT_STAT_REMOK) ||
-> > > > +		    !(lpadv & MDIO_AN_10GBT_STAT_LOCOK))
-> > > > +			lpadv = 0;
-> > > > +
-> > > >  		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising,
-> > > >  						  lpadv);
-> > > 
-> > > I know lpadv is coming from a vendor register, but does
-> > > MDIO_AN_10GBT_STAT_LOCOK and MDIO_AN_10GBT_STAT_REMOK apply if it was
-> > > also from the register defined in 802.3? I'm just wondering if this
-> > > test should be inside mii_10gbt_stat_mod_linkmode_lpa_t()?
-> > 
-> > Yes, it does apply and I thought the same, but as
-> > mii_10gbt_stat_mod_linkmode_lpa_t is used in various places without
-> > checking those two bits we may break other PHYs which may not use
-> > them (and apparently this is mostly a problem on RealTek PHYs where
-> > all the other bits in the register persist in case of a non-NBase-T-
-> > capable subsequent link-partner after initially being connected to
-> > an NBase-T-capable one).
-> > 
-> > Maybe we could introduce a new function
-> > mii_10gbt_stat_mod_linkmode_lpa_validate_t()
-> > which calls mii_10gbt_stat_mod_linkmode_lpa_t() but checks LOCOK and
-> > REMOK as a precondition?
-> 
-> Isn't the link status supposed to indicate link down of LOCOK
-> is clear?
-> 
-> Maybe checking these bits should be included in the link status
-> check, and if not set, then phydev->link should be cleared?
+On Tue, Oct 8, 2024 at 4:53=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 08/10/2024 12:23, Joy Chakraborty wrote:
+> > On Mon, Oct 7, 2024 at 8:26=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >>
+> >> On 07/10/2024 15:55, Joy Chakraborty wrote:
+> >>> PIPE4 spec defines an 18bit de-emphasis setting to be passed from
+> >>> controller to the PHY.
+> >>> TxDeemph[17:0] is split as [5:0] C-1, [11:6] C0, [17:12] C+1 for 3 ta=
+p
+> >>> filter used for USB Gen2(10GT/s).
+> >>>
+> >>> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 12 ++++++++++=
+++
+> >>>  1 file changed, 12 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/D=
+ocumentation/devicetree/bindings/usb/snps,dwc3.yaml
+> >>> index 1cd0ca90127d..a1f1bbcf1467 100644
+> >>> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+> >>> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+> >>> @@ -190,6 +190,18 @@ properties:
+> >>>        - 1 # -3.5dB de-emphasis
+> >>>        - 2 # No de-emphasis
+> >>>
+> >>> +  snps,tx_gen2_de_emphasis_quirk:
+> >>
+> >> No underscores.
+> >
+> > Ack, will fix it with a follow up patch.
+> >
+> >>
+> >>> +    description: When set core will set Tx de-emphasis for USB Gen2
+> >>
+> >> And why it cannot be implied by compatible?
+> >
+> > As per my understanding these are tuning coefficients for de-emphasis
+> > particular to a platform and not the dwc3 controller, hence should not
+> > be a controller compatible.
+>
+> Platforms must have specific compatible, so this should be implied by
+> compatible.
 
-At least in case of those RealTek PHYs the situation is a bit different:
-The AN_10GBT bits do get set according to the link partner advertisement
-in case the link partner does any 10GBT advertisement at all.
-Now, if after being connected to a link partner which does 10GBT
-advertisement you subsequently connect to a link partner which doesn't
-do any 10GBT advertisement at all, the previously advertised bits
-remain in the register, just REMOK and LOCOK aren't set.
-That obviously doesn't imply that the link is down.
-I noticed it because I would see a downshift warning in kernel logs
-even though the new link partner was not capable of connecting with
-speeds higher than 1000MBit/s.
-Note that some that this doesn't happen with all 1GBE NICs, because
-some seem to carry out 10GBT advertisement but just all empty while
-others just don't do any 10GBT advertisement at all.
+Maybe I am using the word "platform" incorrectly here, what I
+understand is that the same controller(in a chip) when used on 2
+different physical form factors might need different deemphasis
+coefficient values to be passed to its Phy. Someone could correct me
+from the USB link stand point if I am mistaken here.
+
+Thanks
+Joy
+
+>
+> > Similar to the property defined right above this definition which is
+> > from PIPE3 spec for USB Gen1.
+>
+>
+> Best regards,
+> Krzysztof
+>
 
