@@ -1,116 +1,200 @@
-Return-Path: <linux-kernel+bounces-354788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8125994297
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:48:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A72994308
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A078293C96
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:48:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C544DB237D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128AD1DED4C;
-	Tue,  8 Oct 2024 08:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F851DEFEB;
+	Tue,  8 Oct 2024 08:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i23fUmGP"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AbpGOyr8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DB11DE886
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020E21DEFE0
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728375657; cv=none; b=Bx0OzZVH5tvIJvHtwcfufE9UUN6gRUR5Jh0WGAtGbhXks/Pk/1EAfsbFlSuxsJs8l1IIMEediOWCA9Dyr1h4+59ky1D/DzEOgu2oqfCtVICmTEAfe+y/d23QZLzdiTpUsleCIoDemXUlPeNeo5K/ekzc1qXzLIP+FIrLLdojbAA=
+	t=1728375677; cv=none; b=mbol7dZctZh1KY8JbFFqCJMIv9+TkbasGKi4qr3RacjK4Vql8Dd9o4TXii36pn4oq0U6/ZNXzzQ4h6RdZQiaCSUvl40x5KB2MJyuVC6dI51bPkzH6PPvYPfmHQ72qD90dg1G4oOrptlUjfRCJsAjMRMqBfLAdioTi881m6GtsSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728375657; c=relaxed/simple;
-	bh=wfiE7qRSuZ7XkWPlS2rY8eBbtt9KomC4BJ9a9D0fvjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VZNflK/AcZvE12Bbj97zpTy9DZw9KivKVQFzJXmb6PHfYbxKgetzim+b00jNWq7PVVAuYBpwNmjDovCsJlUZ5m/Z7mR0Nj20lOl+1G726N0Z8QiPAwJHsjEUhzQOO+yqdp1sYjhURa3mKokA86oTsxTOcxWjJSzaAQ4/KzHmvF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i23fUmGP; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71dfccba177so1778858b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:20:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728375655; x=1728980455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wxe7XEN1LHMGd0Oyi47FAyf7OZba3eA58SL3i+FereE=;
-        b=i23fUmGPWhmAABiuydxSfk3WCjj6BRHsjVBs8UZQ/aEC+1fPpRnENcxHUYCO34PBHX
-         k6NvOfnLTwdrZtY+DaRg+xTp8MByIKwOOpXtHE2dP4te0BZj/YtO/MYi24EGmNrXTLvN
-         Lp7+SiyyvwGjr59ZJRaEyLoXTQe9uwM5G3nbk=
+	s=arc-20240116; t=1728375677; c=relaxed/simple;
+	bh=jIc5H1FXGoZrRnjNg1/Mn7Rw0fxijTdz12BOUiiwW2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AetH/92yWiXkCwXcE6AMllbJHG1RAswjbq+7juBRiImsPT/tiRr8QkwhM/kMqEKJPOrZa2KPexfQx+VVrUy4IwcqE2hTB516tWifYWr+06dBSXuWtydQ8PUzUHLDpThR1njPFvAKJwnWpgCFkvD4Lm6TDS6Bsn9MMzCqlBpNdWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AbpGOyr8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728375674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rqosfSkDCFYhrwQm7M66U0/q2w7YrSsk+o2s9MBJQz8=;
+	b=AbpGOyr8QcQ7uXtu/b7S6Jojc1GuL1Es4E4KnCUxf928mv7AVM9J4A8M/NF7oBA0Yp6gLX
+	qa2YohMRvd5cq6DgRGd1zJ5PYcOB6IOHtRbRkiF28VSuN4/Nzu5HN0ju1aR5ll6+szbJmb
+	VJJS+1pou2B0KTxc/y/744VVKyNnLCI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-VvRIm0OCMCWHMP_2TdBcuA-1; Tue, 08 Oct 2024 04:21:13 -0400
+X-MC-Unique: VvRIm0OCMCWHMP_2TdBcuA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb6ed7f9dso59082185e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:21:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728375655; x=1728980455;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wxe7XEN1LHMGd0Oyi47FAyf7OZba3eA58SL3i+FereE=;
-        b=s55nnLcpSfM4bhbbheRn/r7i4jClS3RtdgA7HrrGtKEX22mSYRQMCkrBgGs5UN3465
-         y7q/hw7CTH4mhubUxQxo8je3jJrRgpnBe+7tF+oaLGfr3DsWTBKPX8p3DTm2ueiXWbjQ
-         XlANDM0Y63SYxN3LWXFWxSST0FxhmoOoBBLolHzX79iu+ahekJ/NHVOoltjxbDvpXrZo
-         ZA5sxa4ELbqGAX7oD/008mkI71OPiHIXBgy3n9ivWSq5vJ59D3aXrfAPHT+ridKCh5aF
-         MLkFFUbF4P3rBNUfJiYOw5gfIJkDGnrnDG+mtvco5GWz9r57rNkfidcVggyVXXhiKdpv
-         mhEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhIfNWFZxiMTIXmDW6ILGvDt3CgSj7ubkM5ZuKw7yBnw1eB0X7Ri11oZF39MdpYWIiOaGKuLG63ccSrkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp7dTITsnb8SNQr9Mt3M5OsUySDienmdcWw4xFHwCrMsdlipKq
-	a9EBgEsIUb8TMvSRvafQWIjEQrNmbJbsp00Jtq4XQL3SNoPs5VZFsyO5Bu+cGA==
-X-Google-Smtp-Source: AGHT+IFJm0IcwI0CWnxra5LbX1O3mroQEd3t+K9JaisETjqWwQD9tUxGolk9e7WrRGrqYhb2Ata5Fw==
-X-Received: by 2002:a05:6a20:258a:b0:1d4:fb97:41b9 with SMTP id adf61e73a8af0-1d707459d68mr3493318637.22.1728375655445;
-        Tue, 08 Oct 2024 01:20:55 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:10df:d27e:8d4b:6740])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cd0ad2sm5672184b3a.63.2024.10.08.01.20.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 01:20:55 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: mediatek: mt8173-elm-hana: Add vdd-supply to second source trackpad
-Date: Tue,  8 Oct 2024 16:20:49 +0800
-Message-ID: <20241008082051.4002438-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+        d=1e100.net; s=20230601; t=1728375672; x=1728980472;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rqosfSkDCFYhrwQm7M66U0/q2w7YrSsk+o2s9MBJQz8=;
+        b=iwF4wXZijPU8wuYKXwtKkaYLoIYCg5aq+YI5sw5oyVuG12gZSrAJZ6EFhlNnU27YDw
+         RPx7O6PKzfyUIlOFryPNTQYYopl0ykgSGL1xbel7X4Zc5tdnVi7rHkrPP7T9DbTqR/yM
+         i4yBfyk+uW6ExN5RjWKpaRKlYgbiZQ1eNe+H1LxxPWk08yIxY0gJg4K/DeidTjXVxJ2p
+         v+vvs5M9r6KUkAtzLIagGWf8JSbH3AZa2gL1nef8461VzgWzdJYsXeYcwbIhMQNMIShH
+         bt3H2lg4Vyjdt6ERD6wlKp7q0mRySCt8P+8i+zrXNwdwxj1JkAFJ3tMb7fJRYmwcyp2j
+         +MCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQtJ3Gd5qOtVdH7gghM2/SWNDMZoQTEeI2QSvfgGx2UwfiX15P/XmzwDIND3rfx8zCl1T5yc7fZJeolXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsjtRngJN4qQIWSgdE5Uc2YehsqwKLf+JEzDBdnAQjVnlRvBkI
+	9zKoYPWkZT3mo2F5YqAMgoYeWs82Jh+m2ItaVuFJ0lGV0UOjk4YG2sXcUXGiwW6mBLcThhFelge
+	HEIj/ROInvO09zHEVV2krG3puAbGFRjLgqpPNm+gJZu6N8VYZgn6UGXA2k85fZQ==
+X-Received: by 2002:a5d:5f54:0:b0:37c:cfdc:19ba with SMTP id ffacd0b85a97d-37d0e751784mr15394773f8f.28.1728375672227;
+        Tue, 08 Oct 2024 01:21:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEegr1mPVmXtdGKRjNw0OWHkQoTIJu+ZQZHPVx3xgKvhAKp91NIZdq/o3yJ1fDZy5psZjQFpQ==
+X-Received: by 2002:a5d:5f54:0:b0:37c:cfdc:19ba with SMTP id ffacd0b85a97d-37d0e751784mr15394755f8f.28.1728375671772;
+        Tue, 08 Oct 2024 01:21:11 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72f:c700:a76f:473d:d5cf:25a8? (p200300cbc72fc700a76f473dd5cf25a8.dip0.t-ipconnect.de. [2003:cb:c72f:c700:a76f:473d:d5cf:25a8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a47esm7476182f8f.28.2024.10.08.01.21.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 01:21:11 -0700 (PDT)
+Message-ID: <7201c25f-0b6e-4a8b-b6a1-b09c6730fb32@redhat.com>
+Date: Tue, 8 Oct 2024 10:21:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Jann Horn <jannh@google.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, willy@infradead.org, hughd@google.com,
+ lorenzo.stoakes@oracle.com, joel@joelfernandes.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
+ <1c114925-9206-42b1-b24b-bb123853a359@bytedance.com>
+ <75fac79a-0ff2-4ba0-bdd7-954efe2d9f41@redhat.com>
+ <b989a811-f764-4b3d-b536-be4e68c0638e@bytedance.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b989a811-f764-4b3d-b536-be4e68c0638e@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The Hana device has a second source option trackpad, but it is missing
-its regulator supply. It only works because the regulator is marked as
-always-on.
+On 08.10.24 09:58, Qi Zheng wrote:
+> 
+> 
+> On 2024/10/8 15:52, David Hildenbrand wrote:
+>> On 08.10.24 05:53, Qi Zheng wrote:
+>>> Hi Jann,
+>>>
+>>> On 2024/10/8 05:42, Jann Horn wrote:
+>>>
+>>> [...]
+>>>
+>>>>
+>>>> diff --git a/mm/mremap.c b/mm/mremap.c
+>>>> index 24712f8dbb6b..dda09e957a5d 100644
+>>>> --- a/mm/mremap.c
+>>>> +++ b/mm/mremap.c
+>>>> @@ -238,6 +238,7 @@ static bool move_normal_pmd(struct vm_area_struct
+>>>> *vma, unsigned long old_addr,
+>>>>     {
+>>>>         spinlock_t *old_ptl, *new_ptl;
+>>>>         struct mm_struct *mm = vma->vm_mm;
+>>>> +    bool res = false;
+>>>>         pmd_t pmd;
+>>>>         if (!arch_supports_page_table_move())
+>>>> @@ -277,19 +278,25 @@ static bool move_normal_pmd(struct
+>>>> vm_area_struct *vma, unsigned long old_addr,
+>>>>         if (new_ptl != old_ptl)
+>>>>             spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+>>>> -    /* Clear the pmd */
+>>>>         pmd = *old_pmd;
+>>>> +
+>>>> +    /* Racing with collapse? */
+>>>> +    if (unlikely(!pmd_present(pmd) || pmd_leaf(pmd)))
+>>>
+>>> Since we already hold the exclusive mmap lock, after a racing
+>>> with collapse occurs, the pmd entry cannot be refilled with
+>>> new content by page fault. So maybe we only need to recheck
+>>> pmd_none(pmd) here?
+>>
+>> My thinking was that it is cheap and more future proof to check that we
+>> really still have a page table here. For example, what if collapse code
+>> is ever changed to replace the page table by the collapsed PMD?
+> 
+> Ah, make sense.
+> 
+> Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-Add the regulator supply, and the required post-power-on delay.
+Thanks a lot for your review!
 
-Fixes: 689b937bedde ("arm64: dts: mediatek: add mt8173 elm and hana board")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-index 8d1cbc92bce3..e03474702cad 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-@@ -49,6 +49,12 @@ trackpad2: trackpad@2c {
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
- 		reg = <0x2c>;
- 		hid-descr-addr = <0x0020>;
-+		/*
-+		 * The supply is always on. Adding the delay here
-+		 * needlessly delays the readiness of the trackpad.
-+		 */
-+		/* post-power-on-delay-ms = <100>; */
-+		vdd-supply = <&mt6397_vgp6_reg>;
- 		wakeup-source;
- 	};
- };
 -- 
-2.47.0.rc0.187.ge670bccf7e-goog
+Cheers,
+
+David / dhildenb
 
 
