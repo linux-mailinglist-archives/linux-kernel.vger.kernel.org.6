@@ -1,131 +1,95 @@
-Return-Path: <linux-kernel+bounces-354873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE229943D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:14:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DBE994416
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7A981F227BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFC77B2D3F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455FE1CACDC;
-	Tue,  8 Oct 2024 09:12:03 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B443F1C2420;
+	Tue,  8 Oct 2024 09:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIS5MROd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0687DA76;
-	Tue,  8 Oct 2024 09:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEA318C34C;
+	Tue,  8 Oct 2024 09:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378722; cv=none; b=jkxvpULYDo/yovhhLUOen3Mr6GHsgk2GFkOUNnEZpSb9Ss218OX5J9VNfqCEAteyhADK1RTM0Sor2RxWE6ic76IeQO99nngKVTSj3XdjDEomn4mK0pkRSanhOUQByc4AvgLa4Fc0VpYOmLgJA5wTAWiXjNdnwwPRE2WaXNLDIUU=
+	t=1728378689; cv=none; b=GlK/OWByY6aaNqY3fI8u6CW2z9o98sjHJdhrX8M9CIoOaLdoQb9/GFrylrshN/LQbbc/e4m6CHHEq5s5CCX8ZyyU7OfF0l0Ws8eEq4HzTi+e05PJGUFOyXSFO37fyIGHr4T7+0TGm7wv77LwGjxqSMEDnOFgaYTRTPArPCOk+F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378722; c=relaxed/simple;
-	bh=psWv/GQWq/bwZDujqdjpK14Oh7RYTn3S4SaIUCbXiIQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YWtM9HTeU52FzUB4SJBMk8ylKOhIkJoD4SnemaPSxEcVrYPAoy7VAwoiWUwOGtxU3IDH8uQBYu0WL2bRvdDo3jAVRRAJ5lXTSUwTL4eSQYXTZTqrySgNjstntR/pKJ7RgJfUmGeeecZwDIZkfxdvYhBgtuh2Aey9meIfjOPHuz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XN9GH1ZQGz1P9Yx;
-	Tue,  8 Oct 2024 17:10:15 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2388F18005F;
-	Tue,  8 Oct 2024 17:11:57 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 8 Oct
- 2024 17:11:56 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>,
-	<richardcochran@gmail.com>, <johnstul@us.ibm.com>,
-	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v5 2/2] net: lan743x: Remove duplicate check
-Date: Tue, 8 Oct 2024 17:11:01 +0800
-Message-ID: <20241008091101.713898-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241008091101.713898-1-ruanjinjie@huawei.com>
-References: <20241008091101.713898-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1728378689; c=relaxed/simple;
+	bh=U/1/uJ/hBkxob7K3D4/ikcZe5ImlS6E7H73oK15LvJY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMl7+timDsyJZR7WCXR5NnpbBlSwJmNT6QTVJDLudICFdq3+1YkPF521betLFfkPmKZGOJTyovBFEywIUAs9rpuUWUIkQ7QMqUdLQTZqmbdBT1MKs6iFA7RGdoBf7g5vHpdOy8zpzcr94TBxWdANEMjVob7dfCulv7J6190HSqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIS5MROd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1A6C4CED4;
+	Tue,  8 Oct 2024 09:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728378685;
+	bh=U/1/uJ/hBkxob7K3D4/ikcZe5ImlS6E7H73oK15LvJY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZIS5MROdp2TLY8h52+w72tOsMXz0gVNdr9x6tLR2h0rIuCBhXGbKZY4+feqZEd31d
+	 GbI6VNbJ2c+SwUcJOnrzn6VwveY+mtsOXh9kCJ+M/PTo3l7vbzHThZHLmc3I27xpkp
+	 myExy8GaJ8qIqoquO/HSGUUfSFMVRZsHLQZqXWArNl42bAv7D2tB6ZxXuDefrUOWhc
+	 Usb+UMfaJvniwiHflOGkdkHn2NZVsHuYJ8jRQGUQyJ1bY06jk48y3BKkiFMAMxGtab
+	 2ziH8S/u//6ProS2v62vKO6wqmq0nz3aNmwJzQrTxQ7wh61+pcZt4vg4gyeWEv9Cs4
+	 0npTNnboJ6bCw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso74715351fa.3;
+        Tue, 08 Oct 2024 02:11:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURoI6OPcx4PXyzOpF2rYyOpXfNqKkz6bD2lCqlVOz7E1hplHUL6vmLJARr2OSjiII2m48F96ufezjP@vger.kernel.org, AJvYcCVwLALg66l8EU1+e7ZikcaNu07grSJDNUm6t48B+B1jqYef/AB1xdmQI0dMMUP8VD5QYCU+PCtHknpO@vger.kernel.org, AJvYcCXpb5zQX0A2Hy2OvIqg9xkBDn9NSKGJa+5twJae09ta7Ld3zG7/aymfvfQmhN8F2dezTZ+9S1+3udmcvaKa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5UxmFlhXdvYecUvvSqWbRH13TsCV6mb39NXq5D7xayc/ih6Cy
+	LKCm/j6sUjeJhTh2Pe7fU4zuQZfeHmZWRxYwPoefRkf8iHtLecOpvA1e//FxxI5wgD1xAdpDmgn
+	kXalEvFbW7q2tVAwefCem4VaFX2c=
+X-Google-Smtp-Source: AGHT+IHdWWFYOxSOwLZECHc8/8dZy7QOa19hjxZnQGDo2ySjdd2UKfbVudu2888peSyHtBneMfsbr05z2JJQ5NvLJXI=
+X-Received: by 2002:a05:651c:505:b0:2fa:c0b5:ac8c with SMTP id
+ 38308e7fff4ca-2faf3c2977dmr98302401fa.21.1728378683775; Tue, 08 Oct 2024
+ 02:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+References: <20241006153611.1165482-1-kobak@nvidia.com> <20241006153611.1165482-2-kobak@nvidia.com>
+ <406588af4aab38f4d746fe34291f4b853ca18452.camel@intel.com>
+In-Reply-To: <406588af4aab38f4d746fe34291f4b853ca18452.camel@intel.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 8 Oct 2024 11:11:12 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEuPaqNh++1NPu3+ch0wmhsrtESJjPRWvvuUsyBUwB9=Q@mail.gmail.com>
+Message-ID: <CAMj1kXEuPaqNh++1NPu3+ch0wmhsrtESJjPRWvvuUsyBUwB9=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2 V6] acpi/prmt: refactor acpi_platformrt_space_handler
+ to drop gotos
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "mochs@nvidia.com" <mochs@nvidia.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "Ko, Koba" <kobak@nvidia.com>, 
+	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Since timespec64_valid() has been checked in higher layer
-pc_clock_settime(), the duplicate check in lan743x_ptpci_settime64()
-can be removed.
+On Tue, 8 Oct 2024 at 05:24, Zhang, Rui <rui.zhang@intel.com> wrote:
+>
+> On Sun, 2024-10-06 at 23:36 +0800, KobaK wrote:
+> > From: koba ko <kobak@nvidia.com>
+> >
+> > Replace gotos with returns
+> >
+> > Signed-off-by: koba ko <kobak@nvidia.com>
+>
+> I think my previous comment was valid because a different prm_status is
+> returned, say, PRM_HANDLER_ERROR.
+>
+> Given that we return AE_OK directly for PRM_HANDLER_ERROR case in patch
+> 1/2, I think it is okay to drop this patch.
+>
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v4:
-- Update the commit message.
-v2:
-- Check it in ptp core instead of using NSEC_PER_SEC macro.
-- Remove the NULL check.
----
- drivers/net/ethernet/microchip/lan743x_ptp.c | 35 ++++++++------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_ptp.c b/drivers/net/ethernet/microchip/lan743x_ptp.c
-index dcea6652d56d..4a777b449ecd 100644
---- a/drivers/net/ethernet/microchip/lan743x_ptp.c
-+++ b/drivers/net/ethernet/microchip/lan743x_ptp.c
-@@ -401,28 +401,21 @@ static int lan743x_ptpci_settime64(struct ptp_clock_info *ptpci,
- 	u32 nano_seconds = 0;
- 	u32 seconds = 0;
- 
--	if (ts) {
--		if (ts->tv_sec > 0xFFFFFFFFLL ||
--		    ts->tv_sec < 0) {
--			netif_warn(adapter, drv, adapter->netdev,
--				   "ts->tv_sec out of range, %lld\n",
--				   ts->tv_sec);
--			return -ERANGE;
--		}
--		if (ts->tv_nsec >= 1000000000L ||
--		    ts->tv_nsec < 0) {
--			netif_warn(adapter, drv, adapter->netdev,
--				   "ts->tv_nsec out of range, %ld\n",
--				   ts->tv_nsec);
--			return -ERANGE;
--		}
--		seconds = ts->tv_sec;
--		nano_seconds = ts->tv_nsec;
--		lan743x_ptp_clock_set(adapter, seconds, nano_seconds, 0);
--	} else {
--		netif_warn(adapter, drv, adapter->netdev, "ts == NULL\n");
--		return -EINVAL;
-+	if (ts->tv_sec > 0xFFFFFFFFLL) {
-+		netif_warn(adapter, drv, adapter->netdev,
-+			   "ts->tv_sec out of range, %lld\n",
-+			   ts->tv_sec);
-+		return -ERANGE;
-+	}
-+	if (ts->tv_nsec < 0) {
-+		netif_warn(adapter, drv, adapter->netdev,
-+			   "ts->tv_nsec out of range, %ld\n",
-+			   ts->tv_nsec);
-+		return -ERANGE;
- 	}
-+	seconds = ts->tv_sec;
-+	nano_seconds = ts->tv_nsec;
-+	lan743x_ptp_clock_set(adapter, seconds, nano_seconds, 0);
- 
- 	return 0;
- }
--- 
-2.34.1
-
+Agreed
 
