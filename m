@@ -1,189 +1,224 @@
-Return-Path: <linux-kernel+bounces-356069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EBE995BCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:43:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3118E995BD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AE71C20D90
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EEC1F22DE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3B0218D6D;
-	Tue,  8 Oct 2024 23:43:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA09218D6A;
+	Tue,  8 Oct 2024 23:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu6ZlGRZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D837F218591
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75A2218D64;
+	Tue,  8 Oct 2024 23:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728431005; cv=none; b=X1YSmGuJOV1DdhEn1Hc/MfnDQUGzpWZBvcoQiW5KNRZOWqNZLSEyoLE5DsrGerRjooGdVDHtVkDplxCMQsolApERr1sH0sGUGk6bcaj4mHYqY2Xn+1grSO1SiBV96LrKPpnZv0mD/FT6t44p5Cz5dqwbH2T9dtjzSc6LTmyShec=
+	t=1728431031; cv=none; b=Eh5RMqZhdLiOitez6nIs1Rm7vvUT+JzGfrCELDXIF2mGTD9bteCPHl6FV+w+YcWRY7E3HcP0BbumVT+eSN87Nm2XIWwBd/3D4SlOsns/vy9X+5mjS4/pamc9v0GUiMAdfpntZI2yZSn8ewSNv3EB/7GbWa6h+x/CSXOmCa36B44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728431005; c=relaxed/simple;
-	bh=hvFwZ685hyIt21w8mmdVedVdoaIqNJBwbKnv8axuuro=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YC2/Es9Ep8BLtubjZSpnlsCfnUrRI8JvrlWKsd62rRaCC+YrA0nTkmFpaNDH5eMQtF4P+PIyimpzM6p58ZE3hmw1QSjSjdS0vxtHOVvSY8A1CY1tgT9GDZ80LJnlg5lkmCPOLR5YmPoL4aIkfEHGnQRJDU6ThD/DzRfNsGg0UJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1925177fdso72575675ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 16:43:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728431003; x=1729035803;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xXzKkitN8PR+TnJMD7nb2qAAUzE05QdQUBobAP0aOT4=;
-        b=ou+px4gtRBnWLbifaqtKy+y2oZUxTlFbLKrnhz4sQZUjv86L00tPOGMG3vrWGZpSe+
-         +1W+VXUPAzsCQWpNXHpbSZyGCA1kBgYovhforSOQVcJu0yYLkJI8i4O4FNdI1kOk2aAl
-         cZVp+XuVUatlxEGwaERQ70Z0RwXyJ5ofXqWYTe1bzseuZDot+vDH91da4tN6i0DkjBBT
-         H0Yw7uxo5FU9/S4Ae3f1iLO0yZEiguPOe18GNaL/PRVR1Rak4hMqw7YzhXqDnPZkk3xu
-         UaiulEEMSibitscWamjc9TM1Zl7EAsXCu2oN3/KkyZdSjtete3lVCFEVGgTkIB1c6Zxv
-         zPHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoEH7OY+ar7RIERqS0EMMFke8SdH6DsZOraQT+OUekOe/MPzlGBFrfGYwuBzasixp3mbimK/ca+x2l+D8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhnbH8sGdBvJVUFZjGPEBvRrIGBtAd49AaLE5r+p4SSvDYjfoy
-	cjY+f7HhX0bv2KH+gYuZPhLvKiy1N0G4K5NATv7zjaVONMOb2bJ6GOx6EeoAdhejSLkvPdOR+fD
-	ETneUUe9FUHO/KPPHPcDXtj5ktzbFeSVrcPlaAVQLuuCKcznizBQ+TJE=
-X-Google-Smtp-Source: AGHT+IHOEOB1mxvcC94blicK1WU6cHtMi0YFohOr/46UT26ZKSKjL/HJqShcOVupslfDZ+mBlIEZaUH/7bXqYKTr0+ian45vBTpB
+	s=arc-20240116; t=1728431031; c=relaxed/simple;
+	bh=wS/KQGu06xIsULfc+tyBjmIuSFQa5icnoCOazAay/SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d9IvKOtVl8MoUwOaRUDmk/VP0hYpomFvCDFZZcy7/AYQSnySwxqkMXNK6cTZI/LMJKhSYIX/SGqKxd5189Eg417GeUHbBu0KxwRDKbIVGpCnztmiPwhjDs+PmyxcCGGJAYoKHM2kynSvd+0O9pRz371tNhlZDoSuLQWnQU48iHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu6ZlGRZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27208C4CEC7;
+	Tue,  8 Oct 2024 23:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728431030;
+	bh=wS/KQGu06xIsULfc+tyBjmIuSFQa5icnoCOazAay/SY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bu6ZlGRZcv1SIr39/DFFLmX9TuIX2peAHh5TnROaLtZDW6LsYnQZzh3c3NBfVe+CP
+	 /1GDeAixD0szvqctBawLYzNymiu1ZsQn6EBTY+4TgQC3bJa+uyMLOm0VoH7SY4wwax
+	 Xr0SkqR3mIl5T/LHwq9oDlbD60lyjZvVtuu+HqR8d1nSgiP0TE9/dI1IXc7A2K85h9
+	 qaLHUQI3MO+3yU6suol5vMejvltb3UaIf0CFOueZwCB8G9vQinzICCE4eiirMFo0/3
+	 AVdXMObr4OqdF+Dzemx1bpc/EElRNgd5zSd/cCIMJHgspnSSdeMSyT5Tdvmj6CKKP4
+	 kZcnVAWfxOUPA==
+Message-ID: <779e1e8a-93f3-4f90-a51b-11729ee5f875@kernel.org>
+Date: Wed, 9 Oct 2024 02:43:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c56e:0:b0:3a2:76c9:f2b7 with SMTP id
- e9e14a558f8ab-3a397d17d54mr5288605ab.24.1728431003100; Tue, 08 Oct 2024
- 16:43:23 -0700 (PDT)
-Date: Tue, 08 Oct 2024 16:43:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6705c39b.050a0220.22840d.000a.GAE@google.com>
-Subject: [syzbot] [xfs?] KFENCE: memory corruption in xfs_idata_realloc
-From: syzbot <syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Jinjie Ruan <ruanjinjie@huawei.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>, linux-spi@vger.kernel.org,
+ Linux PM <linux-pm@vger.kernel.org>
+References: <20240916114221.021192667@linuxfoundation.org>
+ <CA+G9fYtsjFtddG8i+k-SpV8U6okL0p4zpsTiwGfNH5GUA8dWAA@mail.gmail.com>
+ <b0dfa622-f4f7-4f76-9d67-621544cb2212@kernel.org>
+ <32aa7502-ae52-4119-9e72-6347c32f1f23@stanley.mountain>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <32aa7502-ae52-4119-9e72-6347c32f1f23@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 25.09.24 18:42, Dan Carpenter wrote:
+> On Wed, Sep 18, 2024 at 03:08:13PM +0300, Georgi Djakov wrote:
+>>> Warning log:
+>>> --------
+>>> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x517f803c]
+>>> [    0.000000] Linux version 6.1.111-rc1 (tuxmake@tuxmake)
+>>> (aarch64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils
+>>> for Debian) 2.43) #1 SMP PREEMPT @1726489583
+>>> [    0.000000] Machine model: Thundercomm Dragonboard 845c
+>>> ...
+>>> [    7.841428] ------------[ cut here ]------------
+>>> [    7.841431] WARNING: CPU: 4 PID: 492 at
+>>> drivers/interconnect/core.c:685 __icc_enable
+>>> (drivers/interconnect/core.c:685 (discriminator 7))
+>>> [    7.841442] Modules linked in: soundwire_bus(+) venus_core(+)
+>>> qcom_camss(+) drm_dp_aux_bus bluetooth(+) qcom_stats mac80211(+)
+>>> videobuf2_dma_sg drm_display_helper i2c_qcom_geni(+) i2c_qcom_cci
+>>> camcc_sdm845(+) v4l2_mem2mem qcom_q6v5_mss(+) videobuf2_memops
+>>> reset_qcom_pdc spi_geni_qcom(+) videobuf2_v4l2 phy_qcom_qmp_usb(+)
+>>> videobuf2_common gpi(+) qcom_rng cfg80211 phy_qcom_qmp_ufs ufs_qcom(+)
+>>> coresight_stm phy_qcom_qmp_pcie stm_core rfkill slim_qcom_ngd_ctrl
+>>> qrtr pdr_interface lmh qcom_wdt slimbus icc_osm_l3 qcom_q6v5_pas(+)
+>>> icc_bwmon llcc_qcom qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common
+>>> qcom_glink_smem qmi_helpers mdt_loader display_connector
+>>> drm_kms_helper drm socinfo rmtfs_mem
+>>> [    7.841494] CPU: 4 PID: 492 Comm: (udev-worker) Not tainted 6.1.111-rc1 #1
+>>> [    7.841497] Hardware name: Thundercomm Dragonboard 845c (DT)
+>>> [    7.841499] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>> [    7.841502] pc : __icc_enable (drivers/interconnect/core.c:685
+>>> (discriminator 7))
+>>> [    7.841505] lr : icc_disable (drivers/interconnect/core.c:708)
+>>> [    7.841508] sp : ffff800008b23660
+>>> [    7.841509] x29: ffff800008b23660 x28: ffff800008b23c20 x27: 0000000000000000
+>>> [    7.841513] x26: ffffdd85da6ea1c0 x25: 0000000000000008 x24: 00000000000f4240
+>>> [    7.841516] x23: 0000000000000000 x22: ffff46a58b7ca580 x21: 0000000000000001
+>>> [    7.841519] x20: ffff46a58b7ca5c0 x19: ffff46a58b54a800 x18: 0000000000000000
+>>> [    7.841522] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+>>> [    7.841525] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>>> [    7.841528] x11: fefefefefefefeff x10: 0000000000000bf0 x9 : ffffdd85d8c9b0bc
+>>> [    7.841531] x8 : ffff800008b22f58 x7 : 0000000000000000 x6 : 0000000000024404
+>>> [    7.841535] x5 : 0000000000000000 x4 : ffff46a58b64b180 x3 : ffffdd85daa5e810
+>>> [    7.841537] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+>>> [    7.841541] Call trace:
+>>> [    7.841542] __icc_enable (drivers/interconnect/core.c:685 (discriminator 7))
+>>> [    7.841545] icc_disable (drivers/interconnect/core.c:708)
+>>> [    7.841547] geni_icc_disable (drivers/soc/qcom/qcom-geni-se.c:862)
+>>> [    7.841553] spi_geni_runtime_suspend+0x3c/0x4c spi_geni_qcom
+>>> [    7.841561] pm_generic_runtime_suspend (drivers/base/power/generic_ops.c:28)
+>>> [    7.841565] __rpm_callback (drivers/base/power/runtime.c:395)
+>>> [    7.841568] rpm_callback (drivers/base/power/runtime.c:532)
+>>> [    7.841570] rpm_suspend (drivers/base/power/runtime.c:672)
+>>> [    7.841572] rpm_idle (drivers/base/power/runtime.c:504 (discriminator 1))
+>>> [    7.841574] update_autosuspend (drivers/base/power/runtime.c:1662)
+>>> [    7.841576] pm_runtime_disable_action (include/linux/spinlock.h:401
+>>> drivers/base/power/runtime.c:1703 include/linux/pm_runtime.h:599
+>>> drivers/base/power/runtime.c:1517)
+>>> [    7.841579] devm_action_release (drivers/base/devres.c:720)
+>>> [    7.841581] release_nodes (drivers/base/devres.c:503)
+>>> [    7.841583] devres_release_all (drivers/base/devres.c:532)
+>>> [    7.841585] device_unbind_cleanup (drivers/base/dd.c:531)
+>>> [    7.841589] really_probe (drivers/base/dd.c:710)
+>>> [    7.841592] __driver_probe_device (drivers/base/dd.c:785)
+>>> [    7.841594] driver_probe_device (drivers/base/dd.c:815)
+>>> [    7.841596] __driver_attach (drivers/base/dd.c:1202)
+>>> [    7.841598] bus_for_each_dev (drivers/base/bus.c:301)
+>>> [    7.841600] driver_attach (drivers/base/dd.c:1219)
+>>> [    7.841602] bus_add_driver (drivers/base/bus.c:618)
+>>> [    7.841604] driver_register (drivers/base/driver.c:246)
+>>> [    7.841607] __platform_driver_register (drivers/base/platform.c:868)
+>>> [    7.841609] spi_geni_driver_init+0x28/0x1000 spi_geni_qcom
+> 
+> 
+> So it looks like spi_geni_probe() calls geni_icc_get() which fails.  It must
+> be with -EPROBE_DEFER otherwise we would get a printk.  This could happen if
+> of_icc_get_from_provider() fails for example.  There are two callers.  These
+> were the only possibilities that I saw which didn't lead to a warning message.
 
-syzbot found the following issue on:
+Apologies that it took me some time to get the board and reproduce it.
+The case is slightly different - geni_icc_get() is not failing, but it's
+the spi_geni_grab_gpi_chan() that sometimes returns -EPROBE_DEFER and then
+devres starts freeing the driver resources and it does it in reverse order,
+so for this driver the order is:
 
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=164f779f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a8170685a482c92e86a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13012707980000
+[    7.138679] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
+[    7.138751] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
+[    7.138827] geni_spi 880000.spi: DEVRES REL ffff800081443800 pm_runtime_disable_action (16 bytes)
+[    7.139494] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pm_opp_config_release (16 bytes)
+[    7.139512] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_spi_release_controller (8 bytes)
+[    7.139516] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_clk_release (16 bytes)
+[    7.139519] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_ioremap_release (8 bytes)
+[    7.139524] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_region_release (24 bytes)
+[    7.139527] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (22 bytes)
+[    7.139530] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pinctrl_release (8 bytes)
+[    7.139539] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (40 bytes)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/547c3034fd79/mount_0.gz
+The issue here is that pm_runtime_disable_action() results in a call to
+spi_geni_runtime_suspend(), which attempts to suspend the device and
+disable an interconnect path that devm_icc_release() has just released.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com
+This could be easily reproduced by adding a sleep in the beginning of the
+probe function of the GPI DMA driver to make the SPI driver probe defer.
 
-XFS (loop2): Quotacheck: Done.
-==================================================================
-BUG: KFENCE: memory corruption in krealloc_noprof+0x160/0x2e0
+The first commit that introduced this issue seems to be:
+89e362c883c6 ("spi: geni-qcom: Undo runtime PM changes at driver exit time")
 
-Corrupted memory at 0xffff88823bedafeb [ 0x03 0x00 0xd8 0x62 0x75 0x73 0x01 0x00 0x00 0x11 0x4c 0x00 0x00 0x00 0x00 0x00 ] (in kfence-#108):
- krealloc_noprof+0x160/0x2e0
- xfs_idata_realloc+0x116/0x1b0 fs/xfs/libxfs/xfs_inode_fork.c:523
- xfs_dir2_sf_addname_easy fs/xfs/libxfs/xfs_dir2_sf.c:469 [inline]
- xfs_dir2_sf_addname+0x899/0x1b60 fs/xfs/libxfs/xfs_dir2_sf.c:432
- xfs_dir_createname_args+0x152/0x200 fs/xfs/libxfs/xfs_dir2.c:308
- xfs_dir_createname+0x4b3/0x640 fs/xfs/libxfs/xfs_dir2.c:361
- xfs_dir_create_child+0xe3/0x490 fs/xfs/libxfs/xfs_dir2.c:860
- xfs_create+0x8cc/0xf60 fs/xfs/xfs_inode.c:722
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Here is a link to the patch i submitted to enable runtime_pm after the
+driver gets all resources (including the interconnects). This approach
+ensures that when devres releases resources in reverse order, it will
+start with pm_runtime_disable_action(), suspending the device, and then
+proceed to free the remaining resources:
 
-kfence-#108: 0xffff88823bedafa0-0xffff88823bedafea, size=75, cache=kmalloc-96
-
-allocated by task 7203 on cpu 1 at 147.184900s (0.409032s ago):
- kmalloc_noprof include/linux/slab.h:882 [inline]
- xfs_init_local_fork fs/xfs/libxfs/xfs_inode_fork.c:55 [inline]
- xfs_iformat_local+0x2db/0x620 fs/xfs/libxfs/xfs_inode_fork.c:97
- xfs_iformat_data_fork+0x38f/0x7b0 fs/xfs/libxfs/xfs_inode_fork.c:264
- xfs_inode_from_disk+0xaa9/0xf60 fs/xfs/libxfs/xfs_inode_buf.c:254
- xfs_iget_cache_miss fs/xfs/xfs_icache.c:683 [inline]
- xfs_iget+0xc5a/0x2f00 fs/xfs/xfs_icache.c:821
- xfs_mountfs+0x1040/0x2020 fs/xfs/xfs_mount.c:873
- xfs_fs_fill_super+0x11f0/0x1460 fs/xfs/xfs_super.c:1765
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-freed by task 7203 on cpu 0 at 147.535434s (0.189887s ago):
- krealloc_noprof+0x160/0x2e0
- xfs_idata_realloc+0x116/0x1b0 fs/xfs/libxfs/xfs_inode_fork.c:523
- xfs_dir2_sf_addname_easy fs/xfs/libxfs/xfs_dir2_sf.c:469 [inline]
- xfs_dir2_sf_addname+0x899/0x1b60 fs/xfs/libxfs/xfs_dir2_sf.c:432
- xfs_dir_createname_args+0x152/0x200 fs/xfs/libxfs/xfs_dir2.c:308
- xfs_dir_createname+0x4b3/0x640 fs/xfs/libxfs/xfs_dir2.c:361
- xfs_dir_create_child+0xe3/0x490 fs/xfs/libxfs/xfs_dir2.c:860
- xfs_create+0x8cc/0xf60 fs/xfs/xfs_inode.c:722
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 7203 Comm: syz.2.194 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-==================================================================
+https://lore.kernel.org/r/20241008231615.430073-1-djakov@kernel.org/
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> The automatic cleanup tries to suspend and triggers the warning IS_ERR() warning
+> in __icc_enable().
+> 
+> 	if (WARN_ON(IS_ERR(path) || !path->num_nodes))
+> 
+> The best option is probably to disable the warning for EPROBE_DEFER.  Another
+> two options would be to disable the warning entirely.  A third option would be
+> to do a work-around for EPROBE_DEFER in geni_icc_get().
+> 
+> Please, could you take a look and give the Reported-by tag to Naresh?  Or I
+> could send this patch if you want.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> regards,
+> dan carpenter
+> 
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index 4526ff2e1bd5..0caf8ead6573 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -682,6 +682,8 @@ static int __icc_enable(struct icc_path *path, bool enable)
+>   	if (!path)
+>   		return 0;
+>   
+> +	if (IS_ERR(path) && (PTR_ERR(path) == -EPROBE_DEFER))
+> +		return 0;
+>   	if (WARN_ON(IS_ERR(path) || !path->num_nodes))
+>   		return -EINVAL;
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+This change will not help as it's the !path->num_nodes that triggered the warning.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks,
+Georgi
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
