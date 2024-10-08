@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-355881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5560C995859
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:25:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D9899584D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0961F24F5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9DD289F66
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D721500F;
-	Tue,  8 Oct 2024 20:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABBF215014;
+	Tue,  8 Oct 2024 20:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPpNZf+E"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUgqDT2z"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB631E104B;
-	Tue,  8 Oct 2024 20:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C271E104B;
+	Tue,  8 Oct 2024 20:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728419143; cv=none; b=MQjxruaHgccjlRRmHvopJUe+vOmxHboP9apN6xc7/EG3G/D74bm/FIUVZAJgLRfWZN3aPq8Pe10UHJH9zEkOjeXLLNFTktzp7NIl4NSXrZl5iXD/0FImj3DNGVd2C9OeYHsMNo7tOzn7x+w2uaPP57ZdKOmSssyQpOqyfGrfmJo=
+	t=1728418916; cv=none; b=cnrpMHkrqzlPW9B1XqxPafawO52dNnRcX27PMBNFklkv3Bu8G/10hL2FU1cs/ojv3Q/07S8wwVepfkF25dwbmkKjBVn+PVGxxfzHrDs9YSIv8LbriqsKWMk4TvQ5zSmrE/z7LShlFAAv36lqehYe3+hKPcj5TlLvN98cxvBpaAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728419143; c=relaxed/simple;
-	bh=+62GWsOwVBdhRHetxkZdgjXnt+BdlwrrCAhsBRIYUmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XV90/hhH2CaZVVPyV7a0Cr2I75v+eBI8WahwO5tUrA5SbTgY6aEmwz358H9Iq5qsFyrYBxf7/mBt0Xtbh+d00trQGH6ESuo/gQyx35w2yqoG7lEl6/iQMmZui/ewjEPliVgL73IU3RWMTz1AZ3gXBupikmtJmRTy5mu5g/xWAGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPpNZf+E; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1728418916; c=relaxed/simple;
+	bh=2DsQ7SQOH3j7P3k9UFZPQ7BRKfN2aKs3Cae77opK1d4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L7wjTvmgCZWiDSzPICibj5klyA9zlNXzziGqoIXlFufysSl7evkiKCFhv8kRTz8/rEjppAjGfrM/UXAk8lLByuYThZUGCCn+yCLcEeGkdcmD1FVorrrG//qm+dpyMY3XoOo+HUgA6MXqPsgQkV44DhtuJGN8ivVWg/2svZNdcKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUgqDT2z; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b1134a6b0so5534735ad.2;
-        Tue, 08 Oct 2024 13:25:42 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e18b65fbeso66730b3a.1;
+        Tue, 08 Oct 2024 13:21:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728419142; x=1729023942; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fHFfcjP7e63aVrsj9S3xIwQfv9rNqIN8h79VM6VgqSw=;
-        b=jPpNZf+E+Ac1WEHNIfTAuemRNix4FZx3ZWvNFAN5gIbjD5FmOFus48t6ArZ6bnxZAk
-         Agyg55Bo0nMGsQqxURj1qrJ55lEtVdC5TUj6WfSufiLKD9sKovvlWpcvbhAOWZJnPAde
-         vlbXJB05cl2A4uBUaxdlSE90Cq5eKW3aysgSCAsrirWlr5n4js59JsygxLTumgevHeTb
-         Ipt90xtfJphyl1cHLhoZOR+vblxU/eo+p0pICbJRly9/TvyoGZ7zRmn6EsBXiC/0wejC
-         MMBV2a+bQTHCGDajaRzJHvLcoLhV92kld/ab/dOhGjTmXOE1RNnRzaiUx+evF7Gjf0gi
-         PJKg==
+        d=gmail.com; s=20230601; t=1728418914; x=1729023714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Ypgle67Ewfjbh+G8tSPNEpIJi18q3EcYQ2MRF3FEmk=;
+        b=PUgqDT2z82IL5fn8U82KvrnTOsdNQADZkxl70WhroXQkeBHS33YR8I9oIOExMiHPcr
+         KRgeLlkz+k80gsBT6oD3CekjyKU0kYW/u9HWeulirtOA/ee2efKaRWFcOtTmGQOCkyQP
+         X7Ce9ywb6Gfl7p6gyTMJnpmT8oFaLV5POFEHdOd9Fy6BB9Or5QtJPKs6zd0jfzsN2FP2
+         uQnxBDmHyikSuDZ9RN3AJRewQe9z/hGXqLBdtN0LbmhGBy2u7G9FIvPkzpGp6Wovs1dg
+         B93nB51Tr6kt2LGGeQivLyIP9U8qLDlOEBdTT2X8HuHszcVj+90b4p3RFJ1JHtapZumM
+         VTdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728419142; x=1729023942;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fHFfcjP7e63aVrsj9S3xIwQfv9rNqIN8h79VM6VgqSw=;
-        b=MaJlVmUuwthcAZ52zEUOnL/OENGkPCzg4lNDUzQEl9Lkp0lq8ESeNrrcxCVBDOAmjC
-         CC4rhTowUac5Igp+Zzn6W1WgMShs2rEFhMI9jSw/s5RdWtgYuM9U5r8PuVMfmimaQlvC
-         qjmUqo7B7QoDKK+heAWo/ISfaQM3HZHNOZpb3OVhO+f1cZWhbyp2Ux7+GxbbRy9E2kcS
-         ZBeNeUMUV4JwhJGQZtrE731nLFZvh3Oj02kPCwGFNhAXZPuYIuK2Wkk4g3w8ainyDrtz
-         +dyd8RvOQ7L9zYPFNVFVPUEsz6jQPTAG7Q6sYM2RMK3dRqy1ZpmfYmOhkKd4VZSEL1vR
-         j4sw==
-X-Forwarded-Encrypted: i=1; AJvYcCW09hCO6DC0th2dJx2Ym+uHP/fWniJ2Fllks07N1OosvkgIzCWDqhVmuVFPXTczWbOsNmIkzoRT/CqUWHkmMQ==@vger.kernel.org, AJvYcCXRiKhvLFUmmQD/JBor/Ump5YxX7ZVaMhZ6GogTlztSwEBGH1mvIA9ag4w8U71d40n13eT/5qxWSMoMlXwn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6wwXyMYST8MLFlu3oOlTcReMmiUK/um+UU1QsDj/23aIElt45
-	bqkKLK+wUUZwONHcFxnGmRjZwMOzvXuA1vbt+1U4ifiWrf09PF97
-X-Google-Smtp-Source: AGHT+IFODThhy7hNypCxLh2wteGm9CvuNfcjriQqFrwNXwNktxCk0xzdBP2KCGYk7wxShucokLRKTA==
-X-Received: by 2002:a17:903:18a:b0:20b:7a2d:c543 with SMTP id d9443c01a7336-20c6358f83cmr1687775ad.0.1728419141603;
-        Tue, 08 Oct 2024 13:25:41 -0700 (PDT)
-Received: from ice.. ([171.76.85.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c62f11757sm1054145ad.19.2024.10.08.13.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 13:25:41 -0700 (PDT)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: shaggy@kernel.org
-Cc: jfs-discussion@lists.sourceforge.net,
-	skhan@linuxfoundation.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>,
-	syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
-Subject: [PATCH] jfs: add a check to prevent array-index-out-of-bounds
-Date: Wed,  9 Oct 2024 01:51:38 +0530
-Message-Id: <20241008202137.8577-1-niharchaithanya@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1728418914; x=1729023714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Ypgle67Ewfjbh+G8tSPNEpIJi18q3EcYQ2MRF3FEmk=;
+        b=O9iwf7Z7kIQZDY4OO6CUrylhyLG95l9NmXP+v9un2ftbaHgjxSkqsjmTzcO1NUYzB6
+         xa1FPYt/2JS78k6MQvlAkNwdG6okTuhVukpc6ThIAnkPiSZjAtY73Bcri9T1Z+N2cQjh
+         8kbthQURfloFaH8NFo/lWRoBOOKjjuv6TVzXpMzUoZtC8ouZWMGffgjasyQ69PyUvPlP
+         XIoO2okKGg5b069KivQf0QYvdxk3bEq6AJXbadyDaCHhCyJI1hOYu2SIxeNeucR0gCAK
+         YDdHGtRW4qS8UM1ryLO74ZS+dF4jGMhKol34RzUrDILc6o41o5ASkNyR1+6NmMLjCanW
+         dH2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVFLirwsjbwYMWqz37uVbSK2qDDidSJnogaS0eKgU4xkXu9RHf/6XNYoLFpyzawx7rbFT+AfGetUl4wFl9qal4=@vger.kernel.org, AJvYcCVZiE6N9+Vp8/A5/yv2BAiA+SWkA2iXmwycVlFNWM4S+YCqu23d83/qRTGvNB9dwtmp/dCTkijBkDFyANkX@vger.kernel.org, AJvYcCWzY9RH9F5D8kZp6cbK98wFJA/rlVMPK5yItCGpSqAqrHg7Q0fcqmJ7H6hC1pgHjaZg6GsP/iWA6Le7kQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv+xMRNWRAhZp7R92znlK7C0ZKcIf0jEUlg8aT4qgMAIE8/RY4
+	d7NEm5F5heGrKXX7cQStUEs53sj9qlqUa47vEq2Z2uUWeMx+xh0RyLm/j3PShiOMm0MBQbglPC4
+	e9kHjvY0RSVLeFJ9V7tVa75ALdyA=
+X-Google-Smtp-Source: AGHT+IEFqEwsaHBUgMDUat7yLxNvezUcYRV4sVB9JZ+K4uqVqMW2kzbQYUpI6x+5pJzErmbbR1OdDajIOk/dxqAC2E0=
+X-Received: by 2002:a05:6a20:9186:b0:1cf:37d4:c4f6 with SMTP id
+ adf61e73a8af0-1d8a3c0d92dmr115464637.4.1728418913836; Tue, 08 Oct 2024
+ 13:21:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+In-Reply-To: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 8 Oct 2024 22:21:41 +0200
+Message-ID: <CANiq72=1SfOrpO4VnUK90-Or8POJdPotYbN322DihgU=BHgXhQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When the value of lp is 1 at the end of the iteration in the for loop,
-lp is modified in the next iteration to a negative value.
-Add a check to prevent this condition.
+On Tue, Oct 8, 2024 at 7:32=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> diff --git a/rust/probe.rs b/rust/probe.rs
+> new file mode 100644
+> index 000000000000..bf024e394408
+> --- /dev/null
+> +++ b/rust/probe.rs
+> @@ -0,0 +1,7 @@
+> +//! Nearly empty file passed to rustc-option by Make.
+> +//!
+> +//! The no_core attribute is needed because rustc-option otherwise fails=
+ due to
+> +//! not being able to find the core part of the standard library.
+> +
+> +#![feature(no_core)]
+> +#![no_core]
 
-Reported-by: syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=412dea214d8baa3f7483
-Tested-by: syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
----
- fs/jfs/jfs_dmap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+What I did in the GitHub issue was:
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 5713994328cb..3ebb2dfdd0b3 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -2911,6 +2911,12 @@ static void dbAdjTree(dmtree_t *tp, int leafno, int newval, bool is_ctl)
- 		 */
- 		tp->dmt_stree[pp] = max;
- 
-+		/* check to prevent negative value of lp on the
-+		 * next iteration.
-+		 */
-+		if (lp == 1)
-+			break;
-+
- 		/* parent becomes leaf for next go-round.
- 		 */
- 		lp = pp;
--- 
-2.34.1
+    echo '#![feature(no_core)]#![no_core]' | rustc ... -
 
+to avoid a file just for this and so that things were closer (i.e. the
+comment would be then in the `Makefile`).
+
+Not sure what Masahiro prefers.
+
+Cheers,
+Miguel
 
