@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-354694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EED99412A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:22:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA6899412B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275C31C249B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:22:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8B24B275A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692D61DFDB5;
-	Tue,  8 Oct 2024 07:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Htyk5Z6S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966191DFDAA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9D51DFE18;
+	Tue,  8 Oct 2024 07:48:26 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197DC1DFE13
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728373680; cv=none; b=LrWJpPBJRzSxqD8iO1kRY7gGh7i6b5jsAbY84Lh0WlJEKDHQOh4xBvR9cE6bL8p9GsgWuaXTmfyTHixihi5us5fdirxjVw0YUhufFosZgyWlGWZ8FdbSmS1HQPlBCK91xTsqmMMy0uxGwZtxZLZo0MIH9vQN5/zMlkv8r9OW+7A=
+	t=1728373706; cv=none; b=fnOojzkAJukal8rkMZd86zY7APhFjnaFCL/fRrk5vZ6+HkfG6Buvq5jnayX6FCfUCC+3BifdjSKJJaWyFQwo5Gb4ceiXlx41ZIY5DYPMsllUs+LmQ+SJgIpPyn2OQ7e9f4k4lXPt61FwWkBOXozcy0wcOJShre2j3NGXwR3RIhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728373680; c=relaxed/simple;
-	bh=oI/ExXzCsmA18wz2FVgUQW94yhN9PUIWsaB4gHo3Miw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGmpwwGoTo94QxyzkGCL25LDuUODUgtwiV8Oj6xgzhT0wpKDbxs3DQr3uB5IV9MHP/xIDgclIjH3F0j9Gmf41NJckFd/R9dcfxnVAce7oBpUmQpRu7ycwcTcM3bd6kRCkgMwwdKSmUrZCUJBv8kVS1kGD6GssNQ0P9pj65axwgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Htyk5Z6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3A9C4CEC7;
-	Tue,  8 Oct 2024 07:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728373679;
-	bh=oI/ExXzCsmA18wz2FVgUQW94yhN9PUIWsaB4gHo3Miw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Htyk5Z6SnDSk8k+GHZIu1k5h4uUmqmRHgrqED0oOdfFYG/JvAE8Y3cX587fuv3oQi
-	 U4FiJwWaS8AcHVpNfbDynRVpSmrP+2GZhtbhSjD/BRdfqygi4uq560FSiB46zpg4MP
-	 FQM9qm7d26JbzeH34/AYngi2HQJ185e7pDgbtgV4=
-Date: Tue, 8 Oct 2024 09:47:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/applicom:Removed the unused variable
- byte_reset_it
-Message-ID: <2024100808-antarctic-matching-9be0@gregkh>
-References: <20241008072825.12937-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1728373706; c=relaxed/simple;
+	bh=U4RNqZMO+XDnA5iEgUA3kGJsOHY8X6hnN3awHGhxuFA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=gyJaLfdHCB9KHaeM387M+QnyOn3LTlUSUnQe+SHhPnl0neIi7OAYg9yL0seFRq+E+LvTVvV97T8rC1YYQWXUDwiVoKnV9e6yalHWeB/W2RUa1eX0Nl1Z/axn4gXEQB/KwuJcUtc9+rcl/e33Ok//ZjAC6yDZL+pMK331SgHR1kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee26704e3c1068-18075;
+	Tue, 08 Oct 2024 15:48:20 +0800 (CST)
+X-RM-TRANSID:2ee26704e3c1068-18075
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee36704e3c3800-9739f;
+	Tue, 08 Oct 2024 15:48:20 +0800 (CST)
+X-RM-TRANSID:2ee36704e3c3800-9739f
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: arnd@arndb.de
+Cc: gregkh@linuxfoundation.org,
+	zhujun2@cmss.chinamobile.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/applicom:Remove redundant ret variable in ac_read function
+Date: Tue,  8 Oct 2024 00:48:18 -0700
+Message-Id: <20241008074818.13335-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008072825.12937-1-zhujun2@cmss.chinamobile.com>
 
-On Tue, Oct 08, 2024 at 12:28:25AM -0700, Zhu Jun wrote:
-> Remove unused variable and redundant readb in ac_register_board
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
->  drivers/char/applicom.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
-> index 9fed9706d9cd..ea25caf35346 100644
-> --- a/drivers/char/applicom.c
-> +++ b/drivers/char/applicom.c
-> @@ -127,8 +127,6 @@ static int dummy;	/* dev_id for request_irq() */
->  static int ac_register_board(unsigned long physloc, void __iomem *loc, 
->  		      unsigned char boardno)
->  {
-> -	volatile unsigned char byte_reset_it;
-> -
->  	if((readb(loc + CONF_END_TEST)     != 0x00) ||
->  	   (readb(loc + CONF_END_TEST + 1) != 0x55) ||
->  	   (readb(loc + CONF_END_TEST + 2) != 0xAA) ||
-> @@ -156,7 +154,6 @@ static int ac_register_board(unsigned long physloc, void __iomem *loc,
->  	apbs[boardno].RamIO = loc;
->  	init_waitqueue_head(&apbs[boardno].FlagSleepSend);
->  	spin_lock_init(&apbs[boardno].mutex);
-> -	byte_reset_it = readb(loc + RAM_IT_TO_PC);
+Removed the unused variable 'ret' from the ac_read function
 
-As Arnd said, this is doing something, please be more familiar with
-hardware types (i.e. reads are required to ensure a write happens),
-before removing lines that feel they are not needed, unless you can test
-the driver change yourself.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ drivers/char/applicom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-thanks,
+diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
+index ea25caf35346..ba512d8dffba 100644
+--- a/drivers/char/applicom.c
++++ b/drivers/char/applicom.c
+@@ -536,7 +536,6 @@ static ssize_t ac_read (struct file *filp, char __user *buf, size_t count, loff_
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	unsigned char tmp;
+-	int ret = 0;
+ 	DECLARE_WAITQUEUE(wait, current);
+ #ifdef DEBUG
+ 	int loopcount=0;
+@@ -567,7 +566,7 @@ static ssize_t ac_read (struct file *filp, char __user *buf, size_t count, loff_
+ 
+ 				/* Got a packet for us */
+ 				memset(&st_loc, 0, sizeof(st_loc));
+-				ret = do_ac_read(i, buf, &st_loc, &mailbox);
++				do_ac_read(i, buf, &st_loc, &mailbox);
+ 				spin_unlock_irqrestore(&apbs[i].mutex, flags);
+ 				set_current_state(TASK_RUNNING);
+ 				remove_wait_queue(&FlagSleepRec, &wait);
+-- 
+2.17.1
 
-greg k-h
+
+
 
