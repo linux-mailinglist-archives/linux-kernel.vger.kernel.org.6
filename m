@@ -1,188 +1,245 @@
-Return-Path: <linux-kernel+bounces-354532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD37993EC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB0D993EB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 635A8B20CE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDBB1C21F0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C8918DF88;
-	Tue,  8 Oct 2024 06:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B717E46E;
+	Tue,  8 Oct 2024 06:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oxa6nOQ8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="cmFj8rpX"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D3517C7C6;
-	Tue,  8 Oct 2024 06:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5705E17C7C6
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368383; cv=none; b=jrxkBQQ0PfwRxjXDV1H2Rb7M1f7QClDBObgStXOyXstOvxTrJy2p7AOIWqQJolYK6+s/ck8g0mpamVRQ7gB/3GAfx97vnQk2Gm2DnN9BmCWay3j3tu7criaFph1U8Ha2mUmfH3evmha9XqjopYVPUVNuccCFiZmO0/kJx7r3I08=
+	t=1728368353; cv=none; b=K7ZUlBvY7OGxAq+JQbGXTp71SBr+aSO0uPyhvUba3Ij3zGBxzvjdSB/Pohdb0pwg3zcj1D5h8sFlL31VWglnMWw0fAxiDYaKhSXyqxCRQnnbpOciOThy8b+XG8kIxGXMlv1J3iNOYaULDYE//UPdIQ4IPeGriBtePargVe06GYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368383; c=relaxed/simple;
-	bh=9/cAtOyeoqfcoMdj6oFodLlnbOe7lWY5jYZsIuvI8jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMFOmQOMoT/ew6g7KDp5oAjtdYf7sXIBhSl4YvM7qEQtR2fb3PDtoxLtCwOTUBi/ahyL2XtLBcL/JGQLdRPcD8sTYQLG/MSs5osnLbO5T4CRxFnj+5lH9dt9Ib1OzPdbjSBWl7z222Lkyl+AjMSs1JU0XyzIYTigSGUy0usA7CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oxa6nOQ8; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728368382; x=1759904382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9/cAtOyeoqfcoMdj6oFodLlnbOe7lWY5jYZsIuvI8jo=;
-  b=Oxa6nOQ839xazrwRShekYgUE6sce3hKXAHXQwi2PCAhrat3Ae2iQyXBz
-   uUuGTA/PDCH3cjWCjxDUGDSygYFLfnY0O1dSVkNmxnHZ2pp79nRyKJOmB
-   9MhYksNTygIru9Bladg+I4CtuUDaP4QPX1xANVBzrRZQ0HZw0ctE9mLRC
-   eklRKcJl5kbWOJgy9ApLjeR3gx7tIe9Oo2N3Zusam5ruZ2xoh8HHNaDUj
-   ClY0Ww2DkgIceTLNSERtOgh57MEPrZOOH9RlR404MjHfiGfV5yfj0i+Jy
-   7EupXr+DnJb7BujYxP5vJpTUGLqek6HiGPxXdJ5xuD1IF6XKYtHxFmw50
-   g==;
-X-CSE-ConnectionGUID: 4B4KRJTPR6K5Shpu19alXA==
-X-CSE-MsgGUID: YJPJ24/FTW2OGZwd4+Rr7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="31238492"
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="31238492"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 23:19:42 -0700
-X-CSE-ConnectionGUID: pZn01ajnRgieV7brOfNpiA==
-X-CSE-MsgGUID: fzv5U/I4QwiPuAvz4ZSf/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="75400397"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 07 Oct 2024 23:19:38 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sy3ZI-0005yu-0x;
-	Tue, 08 Oct 2024 06:19:36 +0000
-Date: Tue, 8 Oct 2024 14:18:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Puranjay Mohan <puranjay@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, puranjay12@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: implement bpf_send_signal_task()
- kfunc
-Message-ID: <202410081401.fYRMhL8t-lkp@intel.com>
-References: <20241007103426.128923-2-puranjay@kernel.org>
+	s=arc-20240116; t=1728368353; c=relaxed/simple;
+	bh=99T99fkhxyl05NOCSdwgSHdnxbr2uaqIW2y8IKVz1Ok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jOhheZttvbNImOQvFS1XiA7ZllmFqLx0jeXqyHvRHhJ+VDhUChzYLCcjp/HpO+v+vwMb/0gEv7f+a8QYKJXMmE8fsCLr6J4giygPHnaXbbfKmqq6gqi9HE638oftnnLulaCfmv2ekgfwpxkr7n/saom2HTMBa+WxM90a2bwGfeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=cmFj8rpX; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a33a6c3102so15117245ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1728368349; x=1728973149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRr5KbJ5pCun9Ui+yXUQXX9sN3Sf5UKx3OLBX37YeoY=;
+        b=cmFj8rpX2U7Pk7sWVT2QvCzFW7jiDGmJMRyhDw4U/5oSgrO1suZrnX1Qaw5wxuZLvM
+         pRmaO1VwVqRCMdIDWOOXdAcIlepbfiVf97sbLOQcpSSsAexgMJMIlDBqJcglE0XlR1BU
+         vBjxB8hMBSsgQBHYxbJCO76mHtMovYr88RBPpZ1YBm7N90Al8z7ICJ8/g2fIDqwlsuEh
+         kuBoTkG2dS3WNCGd9piy//T9OhVypoqbpZK43vXrW1jtYYGOVkW4dyxcc+JNKJAdnKyl
+         1V/aczokanFGQdaHltxFvOebjQKp+07/ECLEnXpEbJFu/MCcfN4OG+CxiofaITUV+K6h
+         bMJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728368349; x=1728973149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XRr5KbJ5pCun9Ui+yXUQXX9sN3Sf5UKx3OLBX37YeoY=;
+        b=Mu++KYL3wRW0EOYsFLtwruGOIEl+CBPYa9qHbvXHEnEbH6nfYoMWmLaoNHGiY44WZ+
+         nlsUlI/DBtYAT2vAAkN0B1ZpjhEKREEXkrhdm6Q+3FJ+oDCrqxfeLCeAW3CaRxz2e/tw
+         8nqguStEz2Lr+GVcVoaMaqaYIFNR/B6VwNViIjy+VoIvY+w9eHSnAvTLTNtjgAiiilL7
+         KC9VkvPkX7zu1eR4pesVwWfFD/wxzIbm6aVL4ZGES4HJMWKOWiFn1zUrs/lSRurrPDgV
+         e8TQfPTFaLEkpiq2fN/nMrVyKOsrp3qoyvX4WuDS/lVMzpUY+VF3NXcjzwjjSyNWmj7D
+         M0Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWO23drD1r4rEQuzJ9GEEew9aj14udfU53eId5inm9LSVtOavR8YpU0cQWLTUK4KvmZT4A4MHeZw+F2gvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfq6m1jtukc9WkcYnAlsBn02RwGr6mQ+G8r7YNkHLsuHlreUQA
+	ye/DvmowrNuzdB4wAhe9/PleBpJOndsobw2qmMx7hTVnIhJ6uEl+UYD1vYe/Y+x+MWQmxCT664/
+	t4DelOxRKYsGstJkJVs6wCeqQ9kFuj/MjTQ0Glg==
+X-Google-Smtp-Source: AGHT+IEEV1iKS64xo2W8tSXTVgZ9wK0tVm8MaNOWH+N+f0lrse/SrQLSt9EsGck2HE3GwEbRPJ5ayCLs8lBdAbKu4jQ=
+X-Received: by 2002:a05:6e02:1a2c:b0:3a0:abd0:122 with SMTP id
+ e9e14a558f8ab-3a38af6a526mr16553285ab.8.1728368349400; Mon, 07 Oct 2024
+ 23:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007103426.128923-2-puranjay@kernel.org>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-16-3ba65b6e550f@rivosinc.com>
+ <CANXhq0rpwQkZ9+mZLGVUq=r4WiA8BbZ-eeTDogf3fzeEPqeeqA@mail.gmail.com>
+ <ZwRvAEwFbrpq3zZq@debug.ba.rivosinc.com> <CANXhq0qaokjDC9hb75_dpGuyOd_ex8+q7YNe8pAg7dbTcxuLSg@mail.gmail.com>
+ <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
+In-Reply-To: <ZwTDonkiATv999sS@debug.ba.rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 8 Oct 2024 14:18:58 +0800
+Message-ID: <CANXhq0r611Hi7pohDGRXhvi2E_uOFjwLRDrqZcL2WdLHcs+oHA@mail.gmail.com>
+Subject: Re: [PATCH 16/33] riscv/shstk: If needed allocate a new shadow stack
+ on clone
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Puranjay,
+On Tue, Oct 8, 2024 at 1:31=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> wr=
+ote:
+>
+> On Tue, Oct 08, 2024 at 01:16:17PM +0800, Zong Li wrote:
+> >On Tue, Oct 8, 2024 at 7:30=E2=80=AFAM Deepak Gupta <debug@rivosinc.com>=
+ wrote:
+> >>
+> >> On Mon, Oct 07, 2024 at 04:17:47PM +0800, Zong Li wrote:
+> >> >On Wed, Oct 2, 2024 at 12:20=E2=80=AFAM Deepak Gupta <debug@rivosinc.=
+com> wrote:
+> >> >>
+> >> >> Userspace specifies CLONE_VM to share address space and spawn new t=
+hread.
+> >> >> `clone` allow userspace to specify a new stack for new thread. Howe=
+ver
+> >> >> there is no way to specify new shadow stack base address without ch=
+anging
+> >> >> API. This patch allocates a new shadow stack whenever CLONE_VM is g=
+iven.
+> >> >>
+> >> >> In case of CLONE_VFORK, parent is suspended until child finishes an=
+d thus
+> >> >> can child use parent shadow stack. In case of !CLONE_VM, COW kicks =
+in
+> >> >> because entire address space is copied from parent to child.
+> >> >>
+> >> >> `clone3` is extensible and can provide mechanisms using which shado=
+w stack
+> >> >> as an input parameter can be provided. This is not settled yet and =
+being
+> >> >> extensively discussed on mailing list. Once that's settled, this co=
+mmit
+> >> >> will adapt to that.
+> >> >>
+> >> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> >> >> ---
+> >> >>  arch/riscv/include/asm/usercfi.h |  25 ++++++++
+> >>
+> >> ... snipped...
+> >>
+> >> >> +
+> >> >> +/*
+> >> >> + * This gets called during clone/clone3/fork. And is needed to all=
+ocate a shadow stack for
+> >> >> + * cases where CLONE_VM is specified and thus a different stack is=
+ specified by user. We
+> >> >> + * thus need a separate shadow stack too. How does separate shadow=
+ stack is specified by
+> >> >> + * user is still being debated. Once that's settled, remove this p=
+art of the comment.
+> >> >> + * This function simply returns 0 if shadow stack are not supporte=
+d or if separate shadow
+> >> >> + * stack allocation is not needed (like in case of !CLONE_VM)
+> >> >> + */
+> >> >> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+> >> >> +                                          const struct kernel_clon=
+e_args *args)
+> >> >> +{
+> >> >> +       unsigned long addr, size;
+> >> >> +
+> >> >> +       /* If shadow stack is not supported, return 0 */
+> >> >> +       if (!cpu_supports_shadow_stack())
+> >> >> +               return 0;
+> >> >> +
+> >> >> +       /*
+> >> >> +        * If shadow stack is not enabled on the new thread, skip a=
+ny
+> >> >> +        * switch to a new shadow stack.
+> >> >> +        */
+> >> >> +       if (is_shstk_enabled(tsk))
+> >> >
+> >> >Hi Deepak,
+> >> >Should it be '!' is_shstk_enabled(tsk)?
+> >>
+> >> Yes it is a bug. It seems like fork without CLONE_VM or with CLONE_VFO=
+RK, it was returning
+> >> 0 anyways. And in the case of CLONE_VM (used by pthread), it was not d=
+oing the right thing.
+> >
+> >Hi Deepak,
+> >I'd like to know if I understand correctly. Could I know whether there
+> >might also be a risk when the user program doesn't enable the CFI and
+> >the kernel doesn't activate CFI. Because this flow will still try to
+> >allocate the shadow stack and execute the ssamowap command. Thanks
+>
+> `shstk_alloc_thread_stack` is only called from `copy_thread` and  allocat=
+es and
+> returns non-zero (positive value) for ssp only if `CLONE_VM` is specified=
+.
+> `CLONE_VM` means that address space is shared and userspace has allocated
+> separate stack. This flow is ensuring that newly created thread with sepa=
+rate
+> data stack gets a separate shadow stack as well.
+>
+> Retruning zero value from `shstk_alloc_thread_stack` means that, no need =
+to
+> allocate a shadow stack. If you look at `copy_thread` function, it simply=
+ sets
+> the returned ssp in newly created task's task_struct (if it was non-zero)=
+.
+> If returned ssp was zero, `copy_thread` doesn't do anything. Thus whateve=
+r is
+> current task settings are that will be copied over to new forked/cloned t=
+ask.
+> If current task had shadow stack enabled, new task will also get it enabl=
+ed at
+> same address (to be COWed later).
+>
+> Any task get shadow stack enabled for first time using new prctls (see pr=
+ctl
+> patches).
+>
+> So only time `ssamoswap` will be exercised will be are
+> - User issues enabling `prctl` (it'll be issued from loader)
+> - fork/clone happens
+>
+> In both cases, it is guarded against checks of whether cpu supports it an=
+d task
+> has shadow stack enabled.
+>
+> Let me know if you think I missed any flow.
 
-kernel test robot noticed the following build warnings:
+Thanks a lot for the detail, it is very helpful for me. But sorry for
+the confusion, my question is actually on the situation with this bug
+(i.e., before the fix)
 
-[auto build test WARNING on bpf-next/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Puranjay-Mohan/bpf-implement-bpf_send_signal_task-kfunc/20241007-183648
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20241007103426.128923-2-puranjay%40kernel.org
-patch subject: [PATCH bpf-next v3 1/2] bpf: implement bpf_send_signal_task() kfunc
-config: x86_64-randconfig-121-20241008 (https://download.01.org/0day-ci/archive/20241008/202410081401.fYRMhL8t-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081401.fYRMhL8t-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410081401.fYRMhL8t-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> kernel/trace/bpf_trace.c:839:41: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr @@     got void * @@
-   kernel/trace/bpf_trace.c:839:41: sparse:     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr
-   kernel/trace/bpf_trace.c:839:41: sparse:     got void *
-   kernel/trace/bpf_trace.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   kernel/trace/bpf_trace.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
-   include/linux/rcupdate.h:880:25: sparse: sparse: context imbalance in 'uprobe_prog_run' - unexpected unlock
-
-vim +839 kernel/trace/bpf_trace.c
-
-   822	
-   823	static int bpf_send_signal_common(u32 sig, enum pid_type type, struct task_struct *tsk, u64 value)
-   824	{
-   825		struct send_signal_irq_work *work = NULL;
-   826		kernel_siginfo_t info;
-   827		bool has_siginfo = false;
-   828	
-   829		if (!tsk) {
-   830			tsk = current;
-   831		} else {
-   832			has_siginfo = true;
-   833			clear_siginfo(&info);
-   834			info.si_signo = sig;
-   835			info.si_errno = 0;
-   836			info.si_code = SI_KERNEL;
-   837			info.si_pid = 0;
-   838			info.si_uid = 0;
- > 839			info.si_value.sival_ptr = (void *)value;
-   840		}
-   841	
-   842		/* Similar to bpf_probe_write_user, task needs to be
-   843		 * in a sound condition and kernel memory access be
-   844		 * permitted in order to send signal to the current
-   845		 * task.
-   846		 */
-   847		if (unlikely(tsk->flags & (PF_KTHREAD | PF_EXITING)))
-   848			return -EPERM;
-   849		if (unlikely(!nmi_uaccess_okay()))
-   850			return -EPERM;
-   851		/* Task should not be pid=1 to avoid kernel panic. */
-   852		if (unlikely(is_global_init(tsk)))
-   853			return -EPERM;
-   854	
-   855		if (irqs_disabled()) {
-   856			/* Do an early check on signal validity. Otherwise,
-   857			 * the error is lost in deferred irq_work.
-   858			 */
-   859			if (unlikely(!valid_signal(sig)))
-   860				return -EINVAL;
-   861	
-   862			work = this_cpu_ptr(&send_signal_work);
-   863			if (irq_work_is_busy(&work->irq_work))
-   864				return -EBUSY;
-   865	
-   866			/* Add the current task, which is the target of sending signal,
-   867			 * to the irq_work. The current task may change when queued
-   868			 * irq works get executed.
-   869			 */
-   870			work->task = get_task_struct(tsk);
-   871			work->has_siginfo = has_siginfo;
-   872			work->info = info;
-   873			work->sig = sig;
-   874			work->type = type;
-   875			irq_work_queue(&work->irq_work);
-   876			return 0;
-   877		}
-   878	
-   879		if (has_siginfo)
-   880			return group_send_sig_info(sig, &info, tsk, type);
-   881	
-   882		return group_send_sig_info(sig, SEND_SIG_PRIV, tsk, type);
-   883	}
-   884	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> >
+> >> Most of the testing has been with busybox build (independent binaries0=
+ driven via buildroot
+> >> setup. Wondering why it wasn't caught.
+> >>
+> >> Anyways, will fix it. Thanks for catching it.
+> >>
+> >> >
+> >> >> +               return 0;
+> >> >> +
+> >> >> +       /*
 
