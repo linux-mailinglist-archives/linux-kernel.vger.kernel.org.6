@@ -1,100 +1,249 @@
-Return-Path: <linux-kernel+bounces-355827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6599579F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:29:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB8499579C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4306B21BDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DC128ACD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB930213ECF;
-	Tue,  8 Oct 2024 19:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13298213EED;
+	Tue,  8 Oct 2024 19:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cZ1f3rj6"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I88iF8oG"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B01E0E1F;
-	Tue,  8 Oct 2024 19:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE191E0DCC;
+	Tue,  8 Oct 2024 19:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728415754; cv=none; b=E7ordF+wgTPQNuQoFj+DDgn6h10OadBdNyXnPRq1J9K2DrQ3CRCGZy6rx70OMVhS2fjYzFhyQIW4eL5t+9Oh9zTKykZkqGF8/Bb1UZE+64d94tAMk+KN9gLCp1drkBHOKYKIUqBpFWJN7v/eM/vWIk7fwsLP5ojTF0vsYNGFKME=
+	t=1728415704; cv=none; b=kznmgG0AKlfCAzQ1KqeVp2F4GRqpq3JeUaAM2JDEisnfJCYvE8MwG53J/1YHpxZ4wwg7Zq7Gf2V07pnPcevb4jv2z7AOc8tWsZDJVSow642blrW6WFrG96a+Fo6SFX4xnS9H+fdOBJQpHEjl25eS18UElpk68F/BTxVqTuUgsAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728415754; c=relaxed/simple;
-	bh=LrSotCG1unYOPTZ2QurWOTfNeB/6GwOJpyfHuvaxIt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=POXVOHBUWqWB8cnmgdBISal0WVbfBOx94PAzO1r0JLu/erL5XG0d8oPtimnLLVDAn8KTKnVP8PWqKSExkBuGFi6XVMKpKFc882VcNX39jcwcvl8EQx8I6jGXEr3maKQReIf0a6B7nd4h2uZe89kZ9i7iFtHqSP84ixOUI7ZNc6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cZ1f3rj6; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vp+mxQr1K9SZ25DVot0Ui/tUkTJldDL067EXZplCYD4=; b=cZ1f3rj6eDRY5M2QYGSimczWkM
-	EZfUZAHX2N87TzTp/L05sTqVd3Cqmw9SB+nEtu5CeykrehJe9+a5a6axBXfAr7CkgMGeN65SX4aJj
-	4paTYUcx5nqNMtP5K1awWFkMAPYfk84iREtyo4ex5SGgQ7H/pqsad9A8c/ibp5LS3FoLpTgWIsbri
-	ABnUfXTmNclaxfD5ozhN2lSa4HWcGPchnTqpAE7PqB+U6cNKK/XPMzVR4Yk6yq1Ns3hURl91ViQI4
-	yG7TcuUyl7zsOih9g8mzFMpJEznKr6MiNJkLoBY52B8OVHld5khs3oW3XsYSExiMNy/JuQxs1ZzlH
-	TVCBneYQ==;
-Received: from i53875ad9.versanet.de ([83.135.90.217] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1syFtG-00072O-Lb; Tue, 08 Oct 2024 21:29:02 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Samuel Holland <samuel@sholland.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1728415704; c=relaxed/simple;
+	bh=mah6H/whdiV6xjgfX3wDOws0rxmB0h2kpbnCzErC0Tw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mGu1HnN/E1xDjZrbXWrwIoe5ITs5f9dvuEi+4fvb1O2iq0lc/blhp63uar5BZSBRmfg68aRIwKDqXBQJn21u9PBjqAOS7emAe0BBva56vBtZPam5NCF0QUJv4XI6MZqel7vfwIhXBi/3FYcENTPe55zz8NSxbDc1AnM405+i9oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I88iF8oG; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d325beee2so503371f8f.2;
+        Tue, 08 Oct 2024 12:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728415701; x=1729020501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4YU80h+e3WqJR9RRP2zzYoIrqiryuhlMCUmmaZXckb4=;
+        b=I88iF8oGYyhWjqkjWJ1hXRPIu8XH5Beqyknqygqdlb/AbU/1Ogah3hCchWDtylFQTX
+         YAnxoRg7fTzoEwy/QU5lOPVZja8yrWWZHZM+KGf40ulkz/g1NeLgntstfqc0lx/TO3ae
+         gRM/fBI6B1vfHEpu2wSzOMDwN8sU0eTXzP3kBN7Me6YXeJYo2cTSYjisgPvPE/7wkWjW
+         fvgZ98oPu28InNTCkwPbGsg5f7Z3eTSzHo5AVOwbh2AMsAiQR0RtgU5bqc0V9XZMXbwg
+         KOZsuJT/mL+e2QODdQ/dpi+L+EP8F+2KH9JB269DEBOh+Aw0HSIErKBFxpAEjjpwTzJX
+         FJeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728415701; x=1729020501;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4YU80h+e3WqJR9RRP2zzYoIrqiryuhlMCUmmaZXckb4=;
+        b=RH9OxR6ctXcKoHdnUOT1lrWlU4pXOZTCtroGTWl/6/cqBQhxhaxVubsAfZrVaEZIbB
+         wSDi0GTA4E6VR920bi0eXOXzdXd8YxTbV1ebdmbe1kISHvy2nW/4JhfC5iwmopEPLFer
+         qLSGLusDA0V8Vy7o7QbxXhCYw38iLQjUlFrLJXIO2NeEK8No+1LtELDU+KsD0VIBSBu9
+         4UvIEp/JkIX8H/zi0JYVl0mO7zyEk5EuI1AonYCySkwC9tWAMnHdYBxxKxWvHB5qTZuN
+         hYuGedh2cPQWYB4DT6n/MZE5cJQkhm41WyXqzYL33y3eZkRpgUzmhFvVwiVjFm9VTUXR
+         zd5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVkIam63STtonwz5E0LXmp+VxrIPYr4QFGd1Kp6oz4Yse+WREn7V9lqP+pK/PzYirFa4toyqzfPMqfbMpgF@vger.kernel.org, AJvYcCXrbxqxv9BYgvOWadPDuLNHPsOJJ1A35FmDFpLpNlxhAKDDunnU2Hm+xspZpkOFR3nan18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJsd3tvNaF0Olfl21tQNYEuCGF2PP4W98/DjFa0Sr1YpMBi5Y5
+	luldxlwUo6FVzXvM4K6fFeBqUrIgdC1GM+hSPISpMdUUZdiEyK5AaQc+6aR2
+X-Google-Smtp-Source: AGHT+IF+l2nCX8ohR0udWzU8vUvvwxVBA+1g+7Q7QLi0/L6ruBDHyuNFJFp5VVyOjrIYQ/Vkpg4eAw==
+X-Received: by 2002:a05:6000:4590:b0:374:ca16:e09b with SMTP id ffacd0b85a97d-37d0e6dad03mr8291114f8f.9.1728415700750;
+        Tue, 08 Oct 2024 12:28:20 -0700 (PDT)
+Received: from work.. ([94.200.20.179])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d39ea2eacsm181675f8f.15.2024.10.08.12.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 12:28:20 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: elver@google.com
+Cc: akpm@linux-foundation.org,
+	andreyknvl@gmail.com,
+	bpf@vger.kernel.org,
+	dvyukov@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
 	linux-kernel@vger.kernel.org,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 0/4] rockchip: Fix several DT validation errors
-Date: Tue,  8 Oct 2024 21:28:59 +0200
-Message-ID: <172841572989.2562611.18254512768409976284.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241008113344.23957-1-didi.debian@cknow.org>
-References: <20241008113344.23957-1-didi.debian@cknow.org>
+	linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	snovitoll@gmail.com,
+	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
+	vincenzo.frascino@arm.com
+Subject: [PATCH v4] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Date: Wed,  9 Oct 2024 00:29:10 +0500
+Message-Id: <20241008192910.2823726-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
+References: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Oct 2024 13:15:35 +0200, Diederik de Haas wrote:
-> This is a set of 4 small device-tree validation fixes.
-> 
-> Patch 1 adds the power-domains property to the csi dphy node on rk356x.
-> Patch 2 removes the 2nd interrupt from the hdmi node on rk3328.
-> Patch 3 replaces 'wake' with 'wakeup' on PineNote BT node.
-> Patch 4 replaces 'reset-gpios' with 'shutdown-gpios' on brcm BT nodes.
-> 
-> [...]
+Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
+memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
+the memory corruption.
 
-Applied, thanks!
+syzbot reported that bpf_probe_read_kernel() kernel helper triggered
+KASAN report via kasan_check_range() which is not the expected behaviour
+as copy_from_kernel_nofault() is meant to be a non-faulting helper.
 
-[2/4] arm64: dts: rockchip: Remove hdmi's 2nd interrupt on rk3328
-      commit: de50a7e3681771c6b990238af82bf1dea9b11b21
-[3/4] arm64: dts: rockchip: Fix wakeup prop names on PineNote BT node
-      commit: 87299d6ee95a37d2d576dd8077ea6860f77ad8e2
-[4/4] arm64: dts: rockchip: Fix reset-gpios property on brcm BT nodes
-      commit: 2b6a3f857550e52b1cd4872ebb13cb3e3cf12f5f
+Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
+copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
+kernel memory. In copy_to_kernel_nofault() we can retain
+instrument_write() explicitly for the memory corruption instrumentation.
 
-Best regards,
+copy_to_kernel_nofault() is tested on x86_64 and arm64 with
+CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
+kunit test currently fails. Need more clarification on it
+- currently, disabled in kunit test.
+
+Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
+Reviewed-by: Marco Elver <elver@google.com>
+Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
+Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+v2:
+- squashed previous submitted in -mm tree 2 patches based on Linus tree
+v3:
+- moved checks to *_nofault_loop macros per Marco's comments
+- edited the commit message
+v4:
+- replaced Suggested-By with Reviewed-By: Marco Elver
+---
+ mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
+ mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
+ mm/maccess.c            | 10 ++++++++--
+ 3 files changed, 52 insertions(+), 2 deletions(-)
+
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9d..5cff90f831db 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1954,6 +1954,32 @@ static void rust_uaf(struct kunit *test)
+ 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
+ }
+ 
++static void copy_to_kernel_nofault_oob(struct kunit *test)
++{
++	char *ptr;
++	char buf[128];
++	size_t size = sizeof(buf);
++
++	/* Not detecting fails currently with HW_TAGS */
++	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
++
++	ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
++	OPTIMIZER_HIDE_VAR(ptr);
++
++	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
++		/* Check that the returned pointer is tagged. */
++		KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN);
++		KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
++	}
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_to_kernel_nofault(&buf[0], ptr, size));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_to_kernel_nofault(ptr, &buf[0], size));
++	kfree(ptr);
++}
++
+ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmalloc_oob_right),
+ 	KUNIT_CASE(kmalloc_oob_left),
+@@ -2027,6 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(match_all_not_assigned),
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
++	KUNIT_CASE(copy_to_kernel_nofault_oob),
+ 	KUNIT_CASE(rust_uaf),
+ 	{}
+ };
+diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
+index 13236d579eba..9733a22c46c1 100644
+--- a/mm/kmsan/kmsan_test.c
++++ b/mm/kmsan/kmsan_test.c
+@@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
+ 	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
+ }
+ 
++static void test_copy_from_kernel_nofault(struct kunit *test)
++{
++	long ret;
++	char buf[4], src[4];
++	size_t size = sizeof(buf);
++
++	EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
++	kunit_info(
++		test,
++		"testing copy_from_kernel_nofault with uninitialized memory\n");
++
++	ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
++	USE(ret);
++	KUNIT_EXPECT_TRUE(test, report_matches(&expect));
++}
++
+ static struct kunit_case kmsan_test_cases[] = {
+ 	KUNIT_CASE(test_uninit_kmalloc),
+ 	KUNIT_CASE(test_init_kmalloc),
+@@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
+ 	KUNIT_CASE(test_long_origin_chain),
+ 	KUNIT_CASE(test_stackdepot_roundtrip),
+ 	KUNIT_CASE(test_unpoison_memory),
++	KUNIT_CASE(test_copy_from_kernel_nofault),
+ 	{},
+ };
+ 
+diff --git a/mm/maccess.c b/mm/maccess.c
+index 518a25667323..3ca55ec63a6a 100644
+--- a/mm/maccess.c
++++ b/mm/maccess.c
+@@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
+ 	return true;
+ }
+ 
++/*
++ * The below only uses kmsan_check_memory() to ensure uninitialized kernel
++ * memory isn't leaked.
++ */
+ #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+-		__get_kernel_nofault(dst, src, type, err_label);		\
++		__get_kernel_nofault(dst, src, type, err_label);	\
++		kmsan_check_memory(src, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
+@@ -49,7 +54,8 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+ 
+ #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+-		__put_kernel_nofault(dst, src, type, err_label);		\
++		__put_kernel_nofault(dst, src, type, err_label);	\
++		instrument_write(dst, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.34.1
+
 
