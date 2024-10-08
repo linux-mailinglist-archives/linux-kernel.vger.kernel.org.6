@@ -1,207 +1,79 @@
-Return-Path: <linux-kernel+bounces-354553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B9F993FB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:38:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8E7993FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989321C23296
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DB528439B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2611DF73D;
-	Tue,  8 Oct 2024 06:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6281DF969;
+	Tue,  8 Oct 2024 06:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dEwTCqEn"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="beukEH7X"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34BC14A0B8;
-	Tue,  8 Oct 2024 06:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE00514A0B8;
+	Tue,  8 Oct 2024 06:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368944; cv=none; b=dieRtz0LJVHZbiQ9uKeKv9K9dtLXQ7LkEcBWaV2VVgCvlzGOnPLMVY/5G0+qH1IcCevpNYu1XufuZNVM4nxf7jwkHzDVXj58MEdNnTUji7hmK25IIq7mvnBG4wc709gLgOTiq8++oVnRs6X4NZHGph0YUJnxfZW1fhxZLyxzlHM=
+	t=1728368954; cv=none; b=a2RyPfNDNqHJDNfbGoc2LctTfFDuiY7AmxeOJdKWteIdPr/UWsGw58b7881KzPXUR1jIqBlWESKEB51INu77OB3M6Y6CpOytg5fGD4GN+4ne0UWCer43opFy7+GfaAbnnobOEoz+LquUbz1Xe7OFQ1mTSxn82bvi3rR6b6sV9TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368944; c=relaxed/simple;
-	bh=XfcCA7GBdsZVtnUU6+wVEgKZoMQ1JO+TzKlxKNhCcwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G3u9GFQBDqGikjhwNqf8oHKonrdZM0HrDS+7U4OJ1JtdtRIS+voFMs+4reOtYeRRI/VOOCZ5mw3E1/gB77mBu/b5cVUGzjwDeV4KJBxBm/1VMFaimU+JNNTwiFZYlypJyZikD0JLVg6YSdyLQS4iCyevZl4kgtPkRsl/g2IajpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dEwTCqEn; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 49FC560002;
-	Tue,  8 Oct 2024 06:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728368940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMjB+ql8r09QyY3NNz0RWv1F2k3haxl0jC1S2UqOXoE=;
-	b=dEwTCqEnJPizC1pSETrTjRK7qew2H+iFZgrzoSdQ+tZnKMgnaDNYU03GZp2ZxP3Yr7HR8J
-	dNgx+7GMWC2PYEj5Di09COk3ODG4mBy2FmInVndSEv0CoTvpewESi1CZW21+dhEHKebIgs
-	9SY9HBM0FMWc4itxHE9HG9l6SqtURExsZHphX+Z9e77qNsgAtIjw7JBNzTZWkQ5mGyNh8T
-	+NDBqO3io6Jmlpq0M+CxtStJdL8RPgGHV1CNPOkReFWDDKfY+3QnbTiOtirY0dZIqhYa4l
-	FKOgJx6fNrJcKXHNz9ASoz9JDzXcpM/XDL9aORW2yp/M0bvCimaXo0r27PxfuA==
-Date: Tue, 8 Oct 2024 08:28:57 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 0/9] Allow isolating PHY devices
-Message-ID: <20241008082857.115a2272@device-21.home>
-In-Reply-To: <ZwQD_ByawFLEQ1MZ@shell.armlinux.org.uk>
-References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
-	<ZwAfoeHUGOnDz1Y1@shell.armlinux.org.uk>
-	<20241007122513.4ab8e77b@device-21.home>
-	<ZwQD_ByawFLEQ1MZ@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728368954; c=relaxed/simple;
+	bh=BWGakp8jbxH9ePVwnsRB+ePsR8jJQenV0Mc/y8WuZCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sT2P5q1RbUQ/YZ89lvZ3+i5uaDht+FcIcuNHXaZNVCBTo8s2oZ+oiLPewx+7n5Yosqvkh3m+/F58rvqG1T8JDWv7wMRrSu3/dT5ck9QfS5fjP3SCnMU6LAsZxWv2QWjCDZFBNWzbKgpcB98yiiv5lZhNh3yYRrGGcl6WUVFnSj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=beukEH7X; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BWGakp8jbxH9ePVwnsRB+ePsR8jJQenV0Mc/y8WuZCo=; b=beukEH7XjFhBT5Mspc90DShBuH
+	wt63I8GQ9F5lWs7LnpWsRNBkhPTKgdICUahANeCxnKuCpOKOGgJ36NVgW5yzssUAI2IAyuMSwy/2Y
+	BcZhr2lYT2mxiXSjbsB2S+KYW1/jMjhkGgGGFtzi0GAL1MFRqVDh0EtucortqGJivdXJhSye/0CLR
+	FBnq4quaci6po31FGFzo0+x66XyBSimSzfFhPvSi1ycBd8Tt1gdhMRAFsyo8krqfolMgfy6tDMn9w
+	plePAodPK3TU3ItfYz9HAM9jUfkyAx1vcYS03QmCz0PuKtdQpHizmU55OvaF19MZw4TUr96PLGrX4
+	Wn8tTOMw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy3iZ-00000004eyP-2ork;
+	Tue, 08 Oct 2024 06:29:11 +0000
+Date: Mon, 7 Oct 2024 23:29:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Tejun Heo <tj@kernel.org>,
+	axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
+Message-ID: <ZwTRN4RPKjRIgMAF@infradead.org>
+References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
+ <20240930085302.1558217-2-yukuai1@huaweicloud.com>
+ <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
+ <ce2b9ed1-cf74-1d50-a72a-23733c0d1db0@huaweicloud.com>
+ <ZwS8lwQ_fN2HY93p@infradead.org>
+ <8aab9d5d-ed45-dc38-085b-e6ed67d0b3c6@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8aab9d5d-ed45-dc38-085b-e6ed67d0b3c6@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Russell,
+On Tue, Oct 08, 2024 at 02:24:45PM +0800, Yu Kuai wrote:
+> Yes, but this name is not major and minor(for example, sda instead of
+> 8:0), Tejun was probably talking about major and minor name field.
 
-On Mon, 7 Oct 2024 16:53:32 +0100
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-
-> On Mon, Oct 07, 2024 at 12:25:13PM +0200, Maxime Chevallier wrote:
-> > Hello Russell
-> > 
-> > On Fri, 4 Oct 2024 18:02:25 +0100
-> > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> >   
-> > > I'm going to ask a very basic question concerning this.
-> > > 
-> > > Isolation was present in PHYs early on when speeds were low, and thus
-> > > electrical reflections weren't too much of a problem, and thus star
-> > > topologies didn't have too much of an effect. A star topology is
-> > > multi-drop. Even if the PCB tracks go from MAC to PHY1 and then onto
-> > > PHY2, if PHY2 is isolated, there are two paths that the signal will
-> > > take, one to MAC and the other to PHY2. If there's no impediance match
-> > > at PHY2 (e.g. because it's in high-impedance mode) then that
-> > > transmission line is unterminated, and thus will reflect back towards
-> > > the MAC.
-> > > 
-> > > As speeds get faster, then reflections from unterminated ends become
-> > > more of an issue.
-> > > 
-> > > I suspect the reason why e.g. 88x3310, 88E1111 etc do not support
-> > > isolate mode is because of this - especially when being used in
-> > > serdes mode, the topology is essentially point-to-point and any
-> > > side branches can end up causing data corruption.  
-> > 
-> > I suspect indeed that this won't work on serdes interfaces. I didn't
-> > find any reliable information on that, but so far the few PHYs I've
-> > seen seem to work that way.
-> > 
-> > The 88e1512 supports that, but I was testing in RGMII.  
-> 
-> Looking at 802.3, there is no support for isolation in the clause 45
-> register set - the isolate bit only appears in the clause 22 BMCR.
-> Clause 22 registers are optional for clause 45 PHYs.
-> 
-> My reading of this is that 802.3 has phased out isolation support on
-> the MII side of the PHY on more modern PHYs, so this seems to be a
-> legacy feature.
-> 
-> Andrew has already suggested that we should default to isolate not
-> being supported - given that it's legacy, I agree with that.
-> 
-> > > So my questions would be, is adding support for isolation mode in
-> > > PHYs given todays network speeds something that is realistic, and
-> > > do we have actual hardware out there where there is more than one
-> > > PHY in the bus. If there is, it may be useful to include details
-> > > of that (such as PHY interface type) in the patch series description.  
-> > 
-> > I do have some hardware with this configuration (I'd like to support
-> > that upstream, the topology work was preliminary work for that, and the
-> > next move would be to send an RFC for these topolopgies exactly).
-> > 
-> > I am working with 3 different HW platforms with this layout :
-> > 
-> >       /--- PHY
-> >       |
-> > MAC  -|  phy_interface_mode == MII so, 100Mbps Max.
-> >       |
-> >       \--- PHY
-> > 
-> > and another that is similar but with RMII. I finally have one last case
-> > with MII interface, same layout, but the PHYs can't isolate so we need
-> > to make sure all but one PHYs are powered-down at any given time.  
-> 
-> You have given further details in other response to Andrew. I'll
-> comment further there.
-> 
-> > I will include that in the cover.  
-> 
-> Yes, it would be good to include all these details in the cover message
-> so that it isn't spread out over numerous replies.
-> 
-> > Could we consider limiting the isolation to non-serdes interfaces ?
-> > that would be :
-> > 
-> >  - MII
-> >  - RMII
-> >  - GMII
-> >  - RGMII and its -[TX|RX] ID flavours
-> >  - TBI and RTBI ?? (I'm not sure about these)
-> > 
-> > Trying to isolate a PHY that doesn't have any of the interfaces above
-> > would result in -EOPNOTSUPP ?  
-> 
-> I think the question should be: which MII interfaces can electrically
-> support multi-drop setups.
-> 
-> 22.2.4.1.6 describes the Clause 22 Isolate bit, which only suggests
-> at one use case - for a PHY connected via an 802.3 defined connector
-> which shall power up in isolated state "to avoid the possibility of
-> having multiple MII output drivers actively driving the same signal
-> path simultaneously". This connector only supports four data signals
-> in each direction, which precludes GMII over this defined connector.
-> 
-> However, it talks about isolating the MII and GMII signals in this
-> section.
-> 
-> Putting that all together, 802.3 suggests that it is possible to
-> have multiple PHYs on a MII or GMII (which in an explanatory note
-> elsewhere, MII means 100Mb/s, GMII for 1Gb/s.) However, it is
-> vague.
-
-Yes it's vague, as as testing showed, vendors are pretty liberal with
-how/if they implement this feature :(
-
-> Now... I want to say more, but this thread is fragmented and the
-> next bit of the reply needs to go elsewhere in this thread,
-> which is going to make reviewing this discussion later on rather
-> difficult... but we're being drip-fed the technical details.
-
-TBH I wasn't expecting this series on isolation to be the place to
-discuss the multiplexing use-cases, hence why I didn't include a full
-descriptin of every setup I have in the cover.
-
-Given what Andrew replied, this whole series on controling isolation
-from userspace isn't relevant.
-
-Let me start a proper discussion thread and summarize what has been
-said so far.
-
-Maxime
+Yes, I don't really want to add that as it is a horrible user interface.
 
 
