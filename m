@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-355228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CBF994D83
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DFB994CCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF734B271F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B41A284520
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC8C1DF974;
-	Tue,  8 Oct 2024 12:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD7E1DF26E;
+	Tue,  8 Oct 2024 12:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HYbN/Mop"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785A1DE8A0;
-	Tue,  8 Oct 2024 12:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Qh60MiDy"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328B1DE2A5;
+	Tue,  8 Oct 2024 12:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392189; cv=none; b=HhHn6FD86bCyHstMv56fv8Ps5u40rFBnr6VoDYdYqSRdhJam1PHP1PhD4+ykyAc9rnp2semtEcFSO2B/Lmz69/tbkaMWaYylwtcidc74iSipVEL8pyItsAFcwr7B9hPBP640hMavLZOCQUBIIdGmG/bqjft1OH+papH1vGZzpcU=
+	t=1728392242; cv=none; b=IlohQDdD5ZupoSkhNa4c52VKmO2V7epqyecwsSzWXYrf8SR/rcPkWhY32zJ0CPuQpK0Bt2b22GmpXD1MmBiFx6DDD4jLexUKmBtHZnU4F4vB/KLZb3MEXsqGgfo2WZUeWZ5VXTA+7KaHVbNkbvucJ+nauwrRM79km6PHlac1Ph0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392189; c=relaxed/simple;
-	bh=BJav8e+HcALTipfP/NLFD+NrSKZ2vTYocgEXeZdKx3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ip1kDDi/L0rv6OigBmMm43RUaq5JASD3HBW1p5a2VgMjEKU1qxnCXSukZlEPYAo9dfhA03nxVAEHeQ3XhTeE9ro6rGV+q+c6iGpQF/sJPBdPlm8qYrZ31svLuiuGvrFHJZbY5DmE6TU+0A7JMt7Msf2QRQp15MJCxOVJNI0Ivho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HYbN/Mop; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1D32820005;
-	Tue,  8 Oct 2024 12:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728392179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BJav8e+HcALTipfP/NLFD+NrSKZ2vTYocgEXeZdKx3U=;
-	b=HYbN/MopgVOwhbm94jUtKR3niX7PPJ0/GQfIoI5KcrRc2eZol/OFPY1TA73qzramgLsS3p
-	JP5MG9rDv7jGu+/P7YaUR+k/ic65bSoML8+JuAb/XseyWvn3PxviiV0jiWtuEIli7TU5mG
-	MRKaWOxmRhm/9ntz1Lz2/+zBB0Pimfoj3DzE62zoHRujPUS2HNB3NOSTsns37kCy5okXI4
-	Cn/jEQ+qDCz5i7Kr+1IgNSJJUY+eQqnhjeenc2i6lR7MZ2meX5u7NrzAp2DNfqw7wOPt37
-	yiy8RE424U7Db1AqAluXZdNzlUohnQ8zD6TmnazEjLdHf350OCwOrkK16XkeiA==
-Date: Tue, 8 Oct 2024 14:56:17 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 06/12] net: ethtool: Add PSE new port priority
- support feature
-Message-ID: <20241008145617.23254843@kmaincent-XPS-13-7390>
-In-Reply-To: <20241008122300.37c77493@kmaincent-XPS-13-7390>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<20241002-feature_poe_port_prio-v1-6-787054f74ed5@bootlin.com>
-	<ZwDcHCr1aXeGWXIh@pengutronix.de>
-	<20241007113026.39c4a8c2@kmaincent-XPS-13-7390>
-	<ZwPr2chTq4sX_I_b@pengutronix.de>
-	<20241008122300.37c77493@kmaincent-XPS-13-7390>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728392242; c=relaxed/simple;
+	bh=qmLxEKDLNogueTLZNiuzmnz1XyvexupPj0xM6tRfmA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZsgsrq1vdHPrZ4QbcfzBbgQwJvtDEtctjoctr0ZDSpH8b7yNpafwkmmeUdlvVjyeVFw6pvXG7/6QLD1TK2Dg/r4jYsNVHkqu0hsdpRLF/eTkdlo1wbngXW6UX8JzVXul9Sb4CHaoQOgDejM4iPEXn6Lp4L8rYhWd2xBpCbHObs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Qh60MiDy; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=7U9/B4NoPlMBsAdcdM/qGJCoyS0fXJyvhJt5BfV6Xaw=;
+	b=Qh60MiDyPDh2HS6i/g3TE10KZ0M5jOUd9X5vq2vbx9/AbC5BeA+7zUm7Vbym14
+	QibpnmxrQLDeNCPeMdeatRX0WdrXc0MWpapNg492QEkI3tV/81/ab9oEcjaYe23n
+	+BeN5GEuzZ7nLUIJlCAT4VR7yjgpvBvlfYKtfATUj7pl0=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3ba8HLAVnOFLfAQ--.20679S3;
+	Tue, 08 Oct 2024 20:56:41 +0800 (CST)
+Date: Tue, 8 Oct 2024 20:56:38 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 4/7] arm64: dts: freescale: imx95: add anamix
+ temperature thermal zone and cooling node
+Message-ID: <ZwUsBuvojW15l5Kz@dragon>
+References: <20240903-imx95-dts-new-v2-0-8ed795d61358@nxp.com>
+ <20240903-imx95-dts-new-v2-4-8ed795d61358@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-imx95-dts-new-v2-4-8ed795d61358@nxp.com>
+X-CM-TRANSID:Ms8vCgD3ba8HLAVnOFLfAQ--.20679S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW5GrW3tFWxAry5Aw4fXwb_yoW8Wr18p3
+	4kAwn8Wr12gryxXa4agr4kGFs0yan5Ja1Uuw47WFy0kr43Z3s3Jr1Yyw1S9F18t398Kw4j
+	9r1jqrn7C3W3AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jVVbkUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQdyZWcFDmJEQAAAsT
 
-On Tue, 8 Oct 2024 12:23:00 +0200
-Kory Maincent <kory.maincent@bootlin.com> wrote:
+On Tue, Sep 03, 2024 at 03:17:49PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> i.MX95 has two on-chip temperature sensors, one is inside anamix block.
+> This is to add the anamix temperature thermal zone and its cooling
+> device.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx95.dtsi | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> index 2cba7a889030..d031b9548aaf 100644
+> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> @@ -372,6 +372,38 @@ map0 {
+>  				};
+>  			};
+>  		};
+> +
+> +		ana-thermal {
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <2000>;
+> +			thermal-sensors = <&scmi_sensor 0>;
 
-> On Mon, 7 Oct 2024 16:10:33 +0200
-> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->=20
-> > User will not understand why devices fail to provide enough power by
-> > attaching two device to one domain and not failing by attaching to
-> > different domains. Except we provide this information to the user space.
->=20
-> What you are explaining seems neat on the paper but I don't know the best=
- way
-> to implement it. It needs more brainstorming.
+Have a newline between property list and child node.
 
-Is it ok for you if we go further with this patch series and continue talki=
-ng
-about PSE power domain alongside?
-It should not be necessary to be supported with port priority as the two PSE
-supported controller can behave autonomously on a power domain.
-I hope I will have time in the project to add its support when we will have=
- a
-more precise idea of how.
+Shawn
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> +			trips {
+> +				ana_alert: trip0 {
+> +					temperature = <105000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +
+> +				ana_crit0: trip1 {
+> +					temperature = <125000>;
+> +					hysteresis = <2000>;
+> +					type = "critical";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&ana_alert>;
+> +					cooling-device =
+> +						<&A55_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +						<&A55_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +						<&A55_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +						<&A55_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +						<&A55_4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +						<&A55_5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+> +		};
+>  	};
+>  
+>  	psci {
+> 
+> -- 
+> 2.37.1
+> 
+
 
