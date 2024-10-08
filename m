@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-354803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313B49942C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:52:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED3D9942CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D0B1C2609C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EFF2820BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD261E0DFC;
-	Tue,  8 Oct 2024 08:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9231E1032;
+	Tue,  8 Oct 2024 08:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AcU1VuCk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fSJpxKSy"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC71E0E08;
-	Tue,  8 Oct 2024 08:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AE112C484
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728376310; cv=none; b=LNpaS8/QVJYGL/EO7JtRwcwFwW3c/Z1jaoM192If986OTJ0Xhxsp7bUjGe7pxET3jfESIlbS0hKbNWROxVxUzrP1/lnNCoZNBXuJ2dtCNKU659H9rCKygZ5DPmPasf/xhIy9io0qQe4okvxPHt1n+q+cfygEdU1Zs6iOfmhRnv8=
+	t=1728376324; cv=none; b=LwV+3p0r5AjWYgOPcT9afPhwppXr9odX3yaENLeZg93DvkIxWm6MfEikUZZuAg1MMQCZQfits37Dhr75QTeHiv/APRI4DfCNiVaqkq9prgya0dNwz0oC07rBF0dfJkxSGp0X20pahvTT0ACgsgDjynV4/3sPV4a3Uz1kEEael+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728376310; c=relaxed/simple;
-	bh=+f/xsEFjXW1Goapy9ip1TIgiTvi7UsrdNU7dVcyqE/s=;
+	s=arc-20240116; t=1728376324; c=relaxed/simple;
+	bh=Z75Sn9GTcfm0xV4hLIAiqsia//gfc5SQstwS3gjzZIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnbVkEJw5k9KQ6f7iyVErleDHCPI+MUwelOpb2RsV5PSjrqjehUudpXRyycnN1ybWwEDWHk1oE+T6a43lQD0Erh1Qw4hJvOqATDCwC678SxE/xykom/Yoe5cOJwoJQunmoDI1ieZwlqdqq1aLB4lFil1cristjpIkCPdF0eIkeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AcU1VuCk; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728376308; x=1759912308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+f/xsEFjXW1Goapy9ip1TIgiTvi7UsrdNU7dVcyqE/s=;
-  b=AcU1VuCkOjGJ593j3e5tHyJcthIObdMFvhX25KjEEs6V3dGx+L38oAkN
-   T+rJ+JRpeVim3fJtYqjrDwZlIE3INpXsosUW6t8jTqaqZ7LVE/TODD3R7
-   5heHH06dxxqB4yEHDIJdZ6wACCj5HAIlW5f2FuX7G5OZ17x1r5WZjqvN9
-   nCTd4T1N77LejXngMKvMWz5xcAZuAW9kCEiFaLOyNGpDS84+VnC6gmNx5
-   SRBuTT0PkMUQ7qGTgNp57uNoc6ElZU8CQ+kekL/IAjcunKj0Uu02s+kHi
-   JmuCyNxyRGcWNKXTskpDHon2Y7qFacJdVLMGIp//+D3Jz9ACL7ZomUa7V
-   A==;
-X-CSE-ConnectionGUID: qBWl5wA1RY+8Jnh6Ab/JrQ==
-X-CSE-MsgGUID: HWVOuUFAQPChoyD/5z5Fmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27645402"
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="27645402"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 01:31:48 -0700
-X-CSE-ConnectionGUID: +0vLyqs4S82TUFQ7q02+jw==
-X-CSE-MsgGUID: Kjx0nVjOSZu6aCM3KBP8RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="79752089"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 08 Oct 2024 01:31:44 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sy5d7-00066w-0N;
-	Tue, 08 Oct 2024 08:31:41 +0000
-Date: Tue, 8 Oct 2024 16:31:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Julien Stephan <jstephan@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Julien Stephan <jstephan@baylibre.com>
-Subject: Re: [PATCH 4/6] iio: adc: ad7380: add missing supplies
-Message-ID: <202410081608.ZxEPPZ0u-lkp@intel.com>
-References: <20241007-ad7380-fix-supplies-v1-4-badcf813c9b9@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBSXyIPl++iD0jLVUfkf2DWc9QjkCUSrSCygEtAi+l38rFc3YAB6kmM8TAbEiglMjNOKflqJJJ7ztx+yUJjhfG/wFpKf85PTBoiI/iRXRR/PUgWEmJKXA6I6AA5u2TlDX5fiG3+qFcO8Y3cOQu7dBm16HYVzsUd1ZFi70S0Ec0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fSJpxKSy; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5398ec2f3c3so6681983e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728376320; x=1728981120; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mu+DR2ol7NHxdHwZDLwzTYqI016h/oGfPfj/9x7pI30=;
+        b=fSJpxKSy/D5WolJwqduy3V+5rrCpXVUXGB8UX1HsdXKRVflCJMpPemXg61GQVnkFFA
+         jAKoRT+NwIt7e6XAY1Qo5T/j6MFQESzv5Yfw/RSVl5Wwf6EUWhfacXE3jMj6ctsGnPcG
+         p91nvgc/rPrTI7rmPlgN16yjf8x556rnzecWEJG4hxZYHwI1NrQxh5XJ2MvoMJVjtvJO
+         +nfUEwzwNLlj9TIw+Wn2LCLeQG3qy5exh5aYG75S0rmEBDtJvX3iEVGr4HtYovtkc6RO
+         pYmIrYxMLGVvrAcWjTCJm2edkFwcolOMhl+SoFcVhlNYcM5YnDs5SIgLwtpa0qzVx+Ky
+         +/ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728376320; x=1728981120;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mu+DR2ol7NHxdHwZDLwzTYqI016h/oGfPfj/9x7pI30=;
+        b=AMRy31zYIHEvTv4mWeOXWrTIyApeKewArsjADZkaQmZJaUXw5rb6bUmUnZ2Ius1ft7
+         yBX5xMAIFGvBmxUzhItVEq0ntXAil7p5V6aejdpl56Ga5U/uby2GkjQLcXZzaFGj1h6Y
+         UiOIEWZCEFVIdkkRuPOsFNv0vwYFeKljOYZuEuQ+HRXHRlwhaVK7Dof2EA7/vnGu83xG
+         rnQCQPZIoG6e6h0e8WMoCq+kgRBN2JDQCsLqfLI0fw6JWr81Lf3g5S3QReKjEcPyH3US
+         0Rdy3pTWhL3RyWDdgph6D6U3Mwgva8KhDKIpNTY5WiP5iWIfaRbEk1g1/kAu0kSa1885
+         UHCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbdidhpqvY4pEkUih9llrbpjEZb6frR2SkeNXJixTmwWMyyOeHkyJIxPjIUgFKXrUGINWyWK4oQQLYQqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziAF+qBzx86Kq4ke8gusPVSamrdX8axkq+fvNFCrLQa3r72o9E
+	NEWfP41HYRDkpMqB+YfoCgIrI6quEFjgKaRJ/4PuMeIn502ZAgS3/YZDjo+cig==
+X-Google-Smtp-Source: AGHT+IHRPjdEucYpIL19B14B0iOgGVC/Si4jbJW6VKT4Gyy1C4mm+LnefOrrfcRw+0WtP/7jvOcAtw==
+X-Received: by 2002:a05:6512:104b:b0:536:a5ee:ac01 with SMTP id 2adb3069b0e04-539ab86288amr6724752e87.4.1728376319850;
+        Tue, 08 Oct 2024 01:31:59 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:9c:201:c862:2d9d:4fdd:3ea5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b4acddsm118748205e9.44.2024.10.08.01.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 01:31:59 -0700 (PDT)
+Date: Tue, 8 Oct 2024 10:31:53 +0200
+From: Marco Elver <elver@google.com>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, bpf@vger.kernel.org,
+	dvyukov@google.com, glider@google.com, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
+	vincenzo.frascino@arm.com
+Subject: Re: [PATCH v2 1/1] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Message-ID: <ZwTt-Sq5bsovQI5X@elver.google.com>
+References: <CANpmjNOZ4N5mhqWGvEU9zGBxj+jqhG3Q_eM1AbHp0cbSF=HqFw@mail.gmail.com>
+ <20241005164813.2475778-1-snovitoll@gmail.com>
+ <20241005164813.2475778-2-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,168 +88,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007-ad7380-fix-supplies-v1-4-badcf813c9b9@baylibre.com>
+In-Reply-To: <20241005164813.2475778-2-snovitoll@gmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Hi Julien,
+On Sat, Oct 05, 2024 at 09:48PM +0500, Sabyrzhan Tasbolatov wrote:
+> Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
+> memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
+> the memory corruption.
+> 
+> syzbot reported that bpf_probe_read_kernel() kernel helper triggered
+> KASAN report via kasan_check_range() which is not the expected behaviour
+> as copy_from_kernel_nofault() is meant to be a non-faulting helper.
+> 
+> Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
+> copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
+> kernel memory. In copy_to_kernel_nofault() we can retain
+> instrument_write() for the memory corruption instrumentation but before
+> pagefault_disable().
 
-kernel test robot noticed the following build warnings:
+I don't understand why it has to be before the whole copy i.e. before
+pagefault_disable()?
 
-[auto build test WARNING on 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d]
+I think my suggestion was to only check the memory where no fault
+occurred. See below.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Julien-Stephan/dt-bindings-iio-adc-ad7380-remove-voltage-reference-for-supplies/20241007-234838
-base:   8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
-patch link:    https://lore.kernel.org/r/20241007-ad7380-fix-supplies-v1-4-badcf813c9b9%40baylibre.com
-patch subject: [PATCH 4/6] iio: adc: ad7380: add missing supplies
-config: x86_64-buildonly-randconfig-003-20241008 (https://download.01.org/0day-ci/archive/20241008/202410081608.ZxEPPZ0u-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081608.ZxEPPZ0u-lkp@intel.com/reproduce)
+> diff --git a/mm/maccess.c b/mm/maccess.c
+> index 518a25667323..a91a39a56cfd 100644
+> --- a/mm/maccess.c
+> +++ b/mm/maccess.c
+> @@ -15,7 +15,7 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
+>  
+>  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+>  	while (len >= sizeof(type)) {					\
+> -		__get_kernel_nofault(dst, src, type, err_label);		\
+> +		__get_kernel_nofault(dst, src, type, err_label);	\
+>  		dst += sizeof(type);					\
+>  		src += sizeof(type);					\
+>  		len -= sizeof(type);					\
+> @@ -31,6 +31,8 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
+>  	if (!copy_from_kernel_nofault_allowed(src, size))
+>  		return -ERANGE;
+>  
+> +	/* Make sure uninitialized kernel memory isn't copied. */
+> +	kmsan_check_memory(src, size);
+>  	pagefault_disable();
+>  	if (!(align & 7))
+>  		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
+> @@ -49,7 +51,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+>  
+>  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+>  	while (len >= sizeof(type)) {					\
+> -		__put_kernel_nofault(dst, src, type, err_label);		\
+> +		__put_kernel_nofault(dst, src, type, err_label);	\
+>  		dst += sizeof(type);					\
+>  		src += sizeof(type);					\
+>  		len -= sizeof(type);					\
+> @@ -62,6 +64,7 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+>  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+>  		align = (unsigned long)dst | (unsigned long)src;
+>  
+> +	instrument_write(dst, size);
+>  	pagefault_disable();
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410081608.ZxEPPZ0u-lkp@intel.com/
+So this will check the whole range before the access. But if the copy
+aborts because of a fault, then we may still end up with false
+positives.
 
-All warnings (new ones prefixed by >>):
+Why not something like the below - normally we check the accesses
+before, but these are debug kernels anyway, so I see no harm in making
+an exception in this case and checking the memory if there was no fault
+i.e. it didn't jump to err_label yet. It's also slower because of
+repeated calls, but these helpers aren't frequently used.
 
->> drivers/iio/adc/ad7380.c:1045:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-    1045 |         if (ret)
-         |             ^~~
-   drivers/iio/adc/ad7380.c:1030:9: note: initialize the variable 'ret' to silence this warning
-    1030 |         int ret, i;
-         |                ^
-         |                 = 0
-   1 warning generated.
+The alternative is to do the sanitizer check after the entire copy if we
+know there was no fault at all. But that may still hide real bugs if
+e.g. it starts copying some partial memory and then accesses an
+unfaulted page.
 
 
-vim +/ret +1045 drivers/iio/adc/ad7380.c
-
-  1024	
-  1025	static int ad7380_probe(struct spi_device *spi)
-  1026	{
-  1027		struct iio_dev *indio_dev;
-  1028		struct ad7380_state *st;
-  1029		bool external_ref_en;
-  1030		int ret, i;
-  1031	
-  1032		indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-  1033		if (!indio_dev)
-  1034			return -ENOMEM;
-  1035	
-  1036		st = iio_priv(indio_dev);
-  1037		st->spi = spi;
-  1038		st->chip_info = spi_get_device_match_data(spi);
-  1039		if (!st->chip_info)
-  1040			return dev_err_probe(&spi->dev, -EINVAL, "missing match data\n");
-  1041	
-  1042		devm_regulator_bulk_get_enable(&spi->dev, st->chip_info->num_supplies,
-  1043					       st->chip_info->supplies);
-  1044	
-> 1045		if (ret)
-  1046			return dev_err_probe(&spi->dev, ret,
-  1047					     "Failed to enable power supplies\n");
-  1048		msleep(T_POWERUP_MS);
-  1049	
-  1050		/*
-  1051		 * If there is no REFIO supply, then it means that we are using
-  1052		 * the internal 2.5V reference, otherwise REFIO is reference voltage.
-  1053		 */
-  1054		ret = devm_regulator_get_enable_read_voltage(&spi->dev, "refio");
-  1055		if (ret < 0 && ret != -ENODEV)
-  1056			return dev_err_probe(&spi->dev, ret,
-  1057					     "Failed to get refio regulator\n");
-  1058	
-  1059		external_ref_en = ret != -ENODEV;
-  1060		st->vref_mv = external_ref_en ? ret / 1000 : AD7380_INTERNAL_REF_MV;
-  1061	
-  1062		if (st->chip_info->num_vcm_supplies > ARRAY_SIZE(st->vcm_mv))
-  1063			return dev_err_probe(&spi->dev, -EINVAL,
-  1064					     "invalid number of VCM supplies\n");
-  1065	
-  1066		/*
-  1067		 * pseudo-differential chips have common mode supplies for the negative
-  1068		 * input pin.
-  1069		 */
-  1070		for (i = 0; i < st->chip_info->num_vcm_supplies; i++) {
-  1071			const char *vcm = st->chip_info->vcm_supplies[i];
-  1072	
-  1073			ret = devm_regulator_get_enable_read_voltage(&spi->dev, vcm);
-  1074			if (ret < 0)
-  1075				return dev_err_probe(&spi->dev, ret,
-  1076						     "Failed to get %s regulator\n",
-  1077						     vcm);
-  1078	
-  1079			st->vcm_mv[i] = ret / 1000;
-  1080		}
-  1081	
-  1082		st->regmap = devm_regmap_init(&spi->dev, NULL, st, &ad7380_regmap_config);
-  1083		if (IS_ERR(st->regmap))
-  1084			return dev_err_probe(&spi->dev, PTR_ERR(st->regmap),
-  1085					     "failed to allocate register map\n");
-  1086	
-  1087		/*
-  1088		 * Setting up xfer structures for both normal and sequence mode. These
-  1089		 * struct are used for both direct read and triggered buffer. Additional
-  1090		 * fields will be set up in ad7380_update_xfers() based on the current
-  1091		 * state of the driver at the time of the read.
-  1092		 */
-  1093	
-  1094		/*
-  1095		 * In normal mode a read is composed of two steps:
-  1096		 *   - first, toggle CS (no data xfer) to trigger a conversion
-  1097		 *   - then, read data
-  1098		 */
-  1099		st->normal_xfer[0].cs_change = 1;
-  1100		st->normal_xfer[0].cs_change_delay.value = st->chip_info->timing_specs->t_csh_ns;
-  1101		st->normal_xfer[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
-  1102		st->normal_xfer[1].rx_buf = st->scan_data;
-  1103	
-  1104		spi_message_init_with_transfers(&st->normal_msg, st->normal_xfer,
-  1105						ARRAY_SIZE(st->normal_xfer));
-  1106		/*
-  1107		 * In sequencer mode a read is composed of four steps:
-  1108		 *   - CS toggle (no data xfer) to get the right point in the sequence
-  1109		 *   - CS toggle (no data xfer) to trigger a conversion of AinX0 and
-  1110		 *   acquisition of AinX1
-  1111		 *   - 2 data reads, to read AinX0 and AinX1
-  1112		 */
-  1113		st->seq_xfer[0].cs_change = 1;
-  1114		st->seq_xfer[0].cs_change_delay.value = st->chip_info->timing_specs->t_csh_ns;
-  1115		st->seq_xfer[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
-  1116		st->seq_xfer[1].cs_change = 1;
-  1117		st->seq_xfer[1].cs_change_delay.value = st->chip_info->timing_specs->t_csh_ns;
-  1118		st->seq_xfer[1].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
-  1119	
-  1120		st->seq_xfer[2].rx_buf = st->scan_data;
-  1121		st->seq_xfer[2].cs_change = 1;
-  1122		st->seq_xfer[2].cs_change_delay.value = st->chip_info->timing_specs->t_csh_ns;
-  1123		st->seq_xfer[2].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
-  1124	
-  1125		spi_message_init_with_transfers(&st->seq_msg, st->seq_xfer,
-  1126						ARRAY_SIZE(st->seq_xfer));
-  1127	
-  1128		indio_dev->channels = st->chip_info->channels;
-  1129		indio_dev->num_channels = st->chip_info->num_channels;
-  1130		indio_dev->name = st->chip_info->name;
-  1131		indio_dev->info = &ad7380_info;
-  1132		indio_dev->modes = INDIO_DIRECT_MODE;
-  1133		indio_dev->available_scan_masks = st->chip_info->available_scan_masks;
-  1134	
-  1135		ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-  1136						      iio_pollfunc_store_time,
-  1137						      ad7380_trigger_handler,
-  1138						      &ad7380_buffer_setup_ops);
-  1139		if (ret)
-  1140			return ret;
-  1141	
-  1142		ret = ad7380_init(st, external_ref_en);
-  1143		if (ret)
-  1144			return ret;
-  1145	
-  1146		return devm_iio_device_register(&spi->dev, indio_dev);
-  1147	}
-  1148	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/mm/maccess.c b/mm/maccess.c
+index a91a39a56cfd..3ca55ec63a6a 100644
+--- a/mm/maccess.c
++++ b/mm/maccess.c
+@@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
+ 	return true;
+ }
+ 
++/*
++ * The below only uses kmsan_check_memory() to ensure uninitialized kernel
++ * memory isn't leaked.
++ */
+ #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+ 		__get_kernel_nofault(dst, src, type, err_label);	\
++		kmsan_check_memory(src, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
+@@ -31,8 +36,6 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
+ 	if (!copy_from_kernel_nofault_allowed(src, size))
+ 		return -ERANGE;
+ 
+-	/* Make sure uninitialized kernel memory isn't copied. */
+-	kmsan_check_memory(src, size);
+ 	pagefault_disable();
+ 	if (!(align & 7))
+ 		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
+@@ -52,6 +55,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+ #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+ 	while (len >= sizeof(type)) {					\
+ 		__put_kernel_nofault(dst, src, type, err_label);	\
++		instrument_write(dst, sizeof(type));			\
+ 		dst += sizeof(type);					\
+ 		src += sizeof(type);					\
+ 		len -= sizeof(type);					\
+@@ -64,7 +68,6 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+ 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+ 		align = (unsigned long)dst | (unsigned long)src;
+ 
+-	instrument_write(dst, size);
+ 	pagefault_disable();
+ 	if (!(align & 7))
+ 		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
 
