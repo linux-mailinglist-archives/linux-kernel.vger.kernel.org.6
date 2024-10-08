@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-354918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE0F99448D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:43:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC52994493
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 819D9B23BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F232286ECF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2ED318C03F;
-	Tue,  8 Oct 2024 09:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FuTCWqmF"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E1B192D9E;
+	Tue,  8 Oct 2024 09:43:46 +0000 (UTC)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1240413AA4E;
-	Tue,  8 Oct 2024 09:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E8A18BC19;
+	Tue,  8 Oct 2024 09:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728380605; cv=none; b=kX5MtnRXyAzn966lWyZ72xVpmS2ZJkLVIMEynR3yUb8BmV0Nhi4PAKR0cdJiwWLFx3iLGo8RU35fQZoKh7Xsn9VhS8rJQG470X1PgmloekosJzqQzwZvVhHKjxfEZv2FltEf0eJyO+TjNsPTOmGR4b3g4KuWIwB04hQzpLAco+o=
+	t=1728380626; cv=none; b=iTfJUXsw7TmMtB1m0YCM8BY1c6/qndBhhS37MtV3OkDQ60VDAzyjAviuj5+zXmIPqEPVV6nqOZfe9Wb5xDSEp/5ZqFxl5r3XqsdfQLK7sBHbFFjcWC8lPEfSWAl6/67n+/x9qF1fTDNb159SpQoQ6S0IgpAelDpGaEggYjyuOS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728380605; c=relaxed/simple;
-	bh=yb/CDgSFZHWH4VY3TrxpXMY6jXUIkILz+Oq4q0RIpw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew0Rl6LbWTgNP4maRBXU2LNzCsJa69hEQotuyqxszKyIt6FzX2aPRMUrJN8OurPn5FGzCP8QAqdP04UoISwlpCx4RBJhz7gbUbBnw6LmOcqz5b1b6wERIqvC82MALWeCBa2iGiaxTdY+oS6xs4+hZA5IPCexcAryGBaq1v37XLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FuTCWqmF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LsjBoeZxSr3K3xp8U1TguMhxMcrcRkzQtb3Ojs1anNU=; b=FuTCWqmFxwW5xZUnqXnpdSz27D
-	d3Acw8Zoe4SnG7EyY93MzNh7iNyyKZyLLBcDDqL73R0owrtTxNcpUt5M27lwkAYRXxleg9ZQYCa/w
-	MZWpTDAzabn+ZEV7vqSB5/4oGLlu+DnsjhKXjF689N2Wp/aiabmwI7z2hL4pTq2rrtxxB5wDlfpEW
-	AZFuJX5ARf01KGVwOPpmX3/2sITcHMCCMJv5WsF+NIavPqDvqZ7wWoWULLy9DA+plEe12BwmRwhUI
-	nZideX2v3NNY98t5RqaEu8cVhhS3cT7JM9m46xu0wbi5QqvYza6lYXuBH5n1E0nUu9Y67uoCJjmOv
-	UJ7diYiA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy6kV-00000005Lfm-2WPT;
-	Tue, 08 Oct 2024 09:43:23 +0000
-Date: Tue, 8 Oct 2024 02:43:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 02/12] iomap: Introduce iomap_read_folio_ops
-Message-ID: <ZwT-u9v1I_gZFuQ1@infradead.org>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <0bb16341dc43aa7102c1d959ebaecbf1b539e993.1728071257.git.rgoldwyn@suse.com>
- <ZwCiVmhWm0O5paG4@casper.infradead.org>
+	s=arc-20240116; t=1728380626; c=relaxed/simple;
+	bh=HXy8CJWNF6qH50hLohSF2IGSgGAjFAwW/OWKaY0iWfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LcKtLYVe6RrSobs1g0go8NMp6ScxKNafM8PBcXBBUcHnvUa8O/vCyi5ViiCLrHcjJEg3MrBMO/aF56+Dl7lpn5Q4QlZ4foe6D1eIggDxQMhYJxTuCG3TH24H+Qb6FgDptPYSOfY6U0Ayzm7UhtJHN61sLHZpyLNq9QFnsSfng0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac187eef2so63919061fa.3;
+        Tue, 08 Oct 2024 02:43:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728380622; x=1728985422;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=swh5VTqB4q1vjh5aJ5th+EjDQhZ/dHlb0hXmSyJKUpk=;
+        b=gFd1FzI92oQIpsGRVVteJ4KurW04dAzH62A2eXcVpWIBLpYH+jUUnxGB10QPeqBdhv
+         7+1DTwtQJFrecQje7yiyPUviiRMYg4SN22MnEzTHMgsYuH1SodVQ/jbcUc6csae2vna/
+         HYUuu/G+DtorRx70cUXEsaJHiE7NOze7KPj1tln4KbH9EkrgAh0E0WTM/Io3TJcaTMKQ
+         YY4JhqngExkHRk9DDpwS9B/V5DA37tY39MFJ/poM48z+BxXFlTEnuG4tYY2MzT18Ou07
+         WaKbm2RzKsiYn3YdsfvBDH1k3t5SzOLvS9IC22IH5FiGbm34tSAvgywrgGZp204yr+H9
+         w6og==
+X-Forwarded-Encrypted: i=1; AJvYcCWAT8S+mhYY+6TDKXBw81410XV1qUCoTp3QTrH7tjrLMng8g65g1psf3CWRKxOmhG5Xufk3EpVR@vger.kernel.org, AJvYcCX1Smlvd3tE/J4EjvYTx/LXozQLpC1RDcDqzYblOWbDKIs7f4Q1zyniJ+3nUyeKqLKFEIfaF4LuMQldJ/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsPsZmWWzCwd4huPO62umGsr7zeMvMHdB6Vdgvipoq9Agx7o3g
+	jucSaqQLhMRBUX3F9+BZDWMWzs2psrHiS8rvrwAD9jEair/a+Vv5
+X-Google-Smtp-Source: AGHT+IHGz+7RqFpca06yAzjxBPQFAJG4/E9xG4FhYAaDwwuh4IV8a5uADHH5W0m/3+TJFlSB5wEqxQ==
+X-Received: by 2002:a2e:bc19:0:b0:2fa:cf5b:1e8e with SMTP id 38308e7fff4ca-2faf3c2ff8emr65352401fa.2.1728380622073;
+        Tue, 08 Oct 2024 02:43:42 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eb7f0sm4137427a12.72.2024.10.08.02.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 02:43:40 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthew Wood <thepacketgeek@gmail.com>
+Cc: kernel-team@meta.com,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: netconsole: fix wrong warning
+Date: Tue,  8 Oct 2024 02:43:24 -0700
+Message-ID: <20241008094325.896208-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwCiVmhWm0O5paG4@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 05, 2024 at 03:20:06AM +0100, Matthew Wilcox wrote:
-> On Fri, Oct 04, 2024 at 04:04:29PM -0400, Goldwyn Rodrigues wrote:
-> > iomap_read_folio_ops provide additional functions to allocate or submit
-> > the bio. Filesystems such as btrfs have additional operations with bios
-> > such as verifying data checksums. Creating a bio submission hook allows
-> > the filesystem to process and verify the bio.
-> 
-> But surely you're going to need something similar for writeback too?
-> So why go to all this trouble to add a new kind of ops instead of making
-> it part of iomap_ops or iomap_folio_ops?
+A warning is triggered when there is insufficient space in the buffer
+for userdata. However, this is not an issue since userdata will be sent
+in the next iteration.
 
-We really should not add anything to iomap_ops.  That's just the
-iteration that should not even know about pages.  In fact I hope
-to eventuall get back and replace it with a single iterator that
-could use direct calls for the fast path as per your RFC from years
-ago.
+Current warning message:
 
-iomap_folio_ops is entirely specific to the buffered write path.
+    ------------[ cut here ]------------
+     WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
+      ? write_ext_msg+0x3b6/0x3d0
+      console_flush_all+0x1e9/0x330
 
-I'm honestly not sure what the point is of merging structures specific
-to buffered read, buffered write (and suggested later in the thread
-buffered writeback) when they have very little overlap.
+The code incorrectly issues a warning when this_chunk is zero, which is
+a valid scenario. The warning should only be triggered when this_chunk
+is negative.
+
+Fixes: 1ec9daf95093 ("net: netconsole: append userdata to fragmented netconsole messages")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+ drivers/net/netconsole.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+index 01cf33fa7503..de20928f7402 100644
+--- a/drivers/net/netconsole.c
++++ b/drivers/net/netconsole.c
+@@ -1161,8 +1161,14 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
+ 
+ 			this_chunk = min(userdata_len - sent_userdata,
+ 					 MAX_PRINT_CHUNK - preceding_bytes);
+-			if (WARN_ON_ONCE(this_chunk <= 0))
++			if (WARN_ON_ONCE(this_chunk < 0))
++				/* this_chunk could be zero if all the previous
++				 * message used all the buffer. This is not a
++				 * problem, userdata will be sent in the next
++				 * iteration
++				 */
+ 				return;
++
+ 			memcpy(buf + this_header + this_offset,
+ 			       userdata + sent_userdata,
+ 			       this_chunk);
+-- 
+2.43.5
+
 
