@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-354903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B731F994452
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433C299445D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86FE1C23D5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0437284D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F1017E01A;
-	Tue,  8 Oct 2024 09:31:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6940E18BC3B;
+	Tue,  8 Oct 2024 09:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XYRYWS+z"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC92178CDE;
-	Tue,  8 Oct 2024 09:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869711667DA;
+	Tue,  8 Oct 2024 09:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728379893; cv=none; b=S4lfWybvt5zehkfUh1+QC8lFA0mSJbUkO8jp209w/AtQxEm679kDnfi4ImGTdvRI9NuNTiQGjftV5WMTtG8Qsaemftjq+Vksnul+Td3G/9N1ZdJm74HaFP+aoR8pVEcBZweK+0j/2ol46YwCjxx4crBUqOcy3JhJNf5fectDszk=
+	t=1728379945; cv=none; b=E2tjqs1lvZl7rvMwFas6/bFJ9zwAyzY265ih0XtEMrL3vftGpRSDflA60KD2L/TAtUoCWWyfneS8s4Ne0X7iyBtTYbpogBSshyApvavqtGGPIQD98oJF2siUL1oVi5rEC6EueEWaUY4q4J08GOBWIdph/ElBA/4D0axDpg3zRE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728379893; c=relaxed/simple;
-	bh=hB3RoqyCOXkdq0CTw/bAZqvS8ZisqK6n2N0uXXdFTns=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UJF9yR9qPBsuQmDSEUGzFZnZDEkbnlxXPtfORMNYeAdmzAJvM/253XlNzPe51flqoYTNGR0aKmXECLUYut00utxNOmkkKLUG5iluMCRpHYZlbAXivtktfITOL2ohpdUlS2AMz/HxLomKn5Hz1FRZKoDL8VCvMWOkGlflpJSGnx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 145a79b2855811efa216b1d71e6e1362-20241008
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:772f6418-1f15-4df9-af9c-f661f62fdd48,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:8c76ffd2c683f21bbbff49623c3578f1,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:1
-	1|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 145a79b2855811efa216b1d71e6e1362-20241008
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <luyun@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 731839377; Tue, 08 Oct 2024 17:31:21 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 83E53B803C9E;
-	Tue,  8 Oct 2024 17:31:21 +0800 (CST)
-X-ns-mid: postfix-6704FBE9-429320306
-Received: from localhost.localdomain (unknown [10.42.43.204])
-	by node2.com.cn (NSMail) with ESMTPA id 0BB85B803C9B;
-	Tue,  8 Oct 2024 09:31:20 +0000 (UTC)
-From: Yun Lu <luyun@kylinos.cn>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftest: hid: add the missing tests directory
-Date: Tue,  8 Oct 2024 17:31:20 +0800
-Message-Id: <20241008093120.3081899-1-luyun@kylinos.cn>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1728379945; c=relaxed/simple;
+	bh=DtNUvaG5aVRQZwY0O9ZpeWHToiPPIKHxJRMBlZXkudw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKS+pAOXzT3gEFjxtMeySaszEAofHpp5gZ/sT+H3gct8bFdbte1/zwlsZU95yLhPTfXlFZcmn3cupuj6fnVxVebxaWJgHRAvJq4u+30l0ZHPH0qe000rM576Yghu+RCZ6DIzYUEA1tEkc8fE1+6XoMKSwIAVzuNn5XCeDSfYj8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XYRYWS+z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xyGcAKqyXdq1kSPPIkmS99LVfnBS63wwbbsowm8iq4M=; b=XYRYWS+z8RIT/Be1e2fyTGrd8w
+	OBh+/6Eu8oetgJeuRXO6F/qwYxKs93aV+jSBfCUQZUZJuwswFVdCV8cfUI/KPCr+hpqzu915OEm38
+	tOkHhS0ZfpNycGScxB0pgnhWhUBXr1err78VRrD3tQLvcSDFYWQtqqJBzV69jpNmY/3khV+Co/aDq
+	VAIA7JLYOQlPeuZkAryO/CFCwR0gDMl3wekA74MHSI/HWLqOt0qqjilQGRw9Le8RRVAnc6G4GFaDe
+	TxfCMXqTAfi6s1U0TizGEdFRJSL/eLiVdQlFOPtJnNWrO9Y0b6Ay4himMovud1gGUhvuJOVQDhQDk
+	z93gEE8Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy6ZW-00000005Jsk-3rIF;
+	Tue, 08 Oct 2024 09:32:02 +0000
+Date: Tue, 8 Oct 2024 02:32:02 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Julian Vetter <jvetter@kalrayinc.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, guoren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+	linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-um@lists.infradead.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-sound@vger.kernel.org,
+	Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: Re: [PATCH v8 01/14] Consolidate IO memcpy/memset into iomap_copy.c
+Message-ID: <ZwT8EjvlknRYeDas@infradead.org>
+References: <20241008075023.3052370-1-jvetter@kalrayinc.com>
+ <20241008075023.3052370-2-jvetter@kalrayinc.com>
+ <a9fa56b4-b00c-4941-8c8c-1d3b58b573e2@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9fa56b4-b00c-4941-8c8c-1d3b58b573e2@app.fastmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Commit 160c826b4dd0 ("selftest: hid: add missing run-hid-tools-tests.sh")
-has added the run-hid-tools-tests.sh script for it to be installed, but
-I forgot to add the tests directory together.
+On Tue, Oct 08, 2024 at 09:27:20AM +0000, Arnd Bergmann wrote:
+> >  #endif /* CONFIG_TRACE_MMIO_ACCESS */
+> > 
+> > +extern void memcpy_fromio(void *to, const volatile void __iomem *from,
+> > +			  size_t count);
+> > +extern void memcpy_toio(volatile void __iomem *to, const void *from,
+> > +			size_t count);
+> > +extern void memset_io(volatile void __iomem *dst, int c, size_t count);
+> > +
+> 
+> I think having this globally visible is the reason you are running
+> into the mismatched prototypes.
 
-In fact, the run-hid-tools-tests.sh script uses the scripts in the tests
-directory to run tests. The tests directory also needs to be added to be
-installed.
+Yes, especially as architectures sometimes actually implement this
+as macro or inline function.
 
-Fixes: ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yun Lu <luyun@kylinos.cn>
----
- tools/testing/selftests/hid/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/hid/Makefile b/tools/testing/selftes=
-ts/hid/Makefile
-index 38ae31bb07b5..662209f5fabc 100644
---- a/tools/testing/selftests/hid/Makefile
-+++ b/tools/testing/selftests/hid/Makefile
-@@ -18,6 +18,7 @@ TEST_PROGS +=3D hid-usb_crash.sh
- TEST_PROGS +=3D hid-wacom.sh
-=20
- TEST_FILES :=3D run-hid-tools-tests.sh
-+TEST_FILES +=3D tests
-=20
- CXX ?=3D $(CROSS_COMPILE)g++
-=20
---=20
-2.27.0
+Please also drop the pointless externs while you're at it.
 
 
