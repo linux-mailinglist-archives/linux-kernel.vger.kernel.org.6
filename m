@@ -1,179 +1,107 @@
-Return-Path: <linux-kernel+bounces-355012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C6099460A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:05:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C974D994636
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534F61F264CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:05:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52097B23FDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B941CFED8;
-	Tue,  8 Oct 2024 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3351DFD8E;
+	Tue,  8 Oct 2024 11:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sCCRL4mf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/4OmwiOF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fUS5EOa5"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFA518C00C;
-	Tue,  8 Oct 2024 11:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B9C1D017C;
+	Tue,  8 Oct 2024 11:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385515; cv=none; b=Rqrkr3Iq8MfYtH6CNkVpKeCwgCfBn06vcj556AHIKNOd0ozqKUpUs7W+vGHt9Hf62SfOqwRs6deIZqwaPkUW1YaLiByR//MDSiqAte2CEDI3Z7pNSvai6/oiGQNWkUTsefKVkmVi3P8r47rOSnFRx/XMr0HYOmd/bngVGWFTx80=
+	t=1728385542; cv=none; b=stzZ41q/QfCQh1MFEVcUgajMBHXqveAl4RpPS3erdT4ilq8LRkdTce2SIUxugBbYqlFY0kCTXwrYr2gasBYwEW3NMCOJE6Y5MedSxPkGk4He0wI1zaXVhNIP5GbXuNkbje0gF0Al5lr65Sc1H4vsm1KmXEvUPaojMM1q6/pg1QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385515; c=relaxed/simple;
-	bh=WUpUD/Bl+IwKH5/Rgz/svt/Whv2KwhZO45LzE5Idhvs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aQZg0bGSdi2SQZTrI+rqQ7NI+Om2Te2LxOrtUQs0WPRLwdSM50KAsg0yq5tnTVCBOe2Jgvi5XQs4eTL/lJjLTKjnADF+AWS/O/ohfM2JWtHoE8gcjubF7KoAtjylfJBj6ORVfTUGB2l8/eSqOeoZzRyixBlpBGCYsOk2J+lj/dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sCCRL4mf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/4OmwiOF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 11:05:11 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728385512;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0C1re5MoexYNggJIw/ByQAIWUX8IVGV2GFrlGl2Ie44=;
-	b=sCCRL4mfnbJOeD4qqIDJ+LaPRG2+Nd9YjQZEY5EYhmix/w6xPy9KX199DHO83FVcGnFmjD
-	Y14RZSxOOWZwVlfJrAR700xNDmH1Mko/rb+MI6HuGzm0/E+r8ldiZ2xR27FkyJhnXxLITI
-	O4/GRtSs5lHXz/j0j+B54O/jpwghbSh6XUuKZQBjIOlBpbTOtIWmohO05Kkctjmj7U7mEv
-	ZFngduTWD9+gI4FbNI98jWNR2kb+xueS4vbm2rAzoNGkiy+V+TQO/gMY3ZbCHGneqpVRLL
-	gHv45SN+9FMMbQBiHyTaS5oKPVS4StN2qc0UWn0DRrMDQbGGDFydRpS6V6CjfQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728385512;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0C1re5MoexYNggJIw/ByQAIWUX8IVGV2GFrlGl2Ie44=;
-	b=/4OmwiOFPYUaaUm7+4l/01r2tDnP3tKq03qDs5xRqy4HedDo4SaDunvLDEMKyvIUbnDTc7
-	cvv0X/vGIFHuM0BQ==
-From: "tip-bot2 for Oleg Nesterov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] uprobes: kill xol_area->slot_count
-Cc: Oleg Nesterov <oleg@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241001142458.GA13629@redhat.com>
-References: <20241001142458.GA13629@redhat.com>
+	s=arc-20240116; t=1728385542; c=relaxed/simple;
+	bh=SIqKGT+neniNbPsLfdrsPDyN51fjdu4ct941Bu33hWM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qixxqyZI8zvDVtzspXBds8ebMatTB2+taNibk5P3hdDZZRPUU/GMXSGG0UByTPUckuYlVo193VZCmGFRQC9bg9JkdblBOX4UJv9pbzZQFMWhW+hyRno7PTxAxzctPbIxn9tv1l6TH4q7Ea/xDqtZRc2PGcvd2JRPaRJF9YDcRXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fUS5EOa5; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728385513; x=1728990313; i=markus.elfring@web.de;
+	bh=SIqKGT+neniNbPsLfdrsPDyN51fjdu4ct941Bu33hWM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fUS5EOa5VZHu5i2AuI+M37kw5kGm7izAfoqhQObLEBsZmZy5n7RYBzYSuSC9a1lW
+	 gGPF2e5YUlyNc00wxHI6G+hx8meOWciKYK2VFHUN4n536wfD+9TjFCn3Ocw1Wvt37
+	 UGnqqWapiwCAd1WuwBwhzfVrVK2N4sgig9LRKGkIRBhc13G6Bz6b6xj3mnT/HU2cw
+	 6dVFaDxCljFlsmzt57NoM9w5fYQPdYYNkIXcBUW7ZYslGbYswsmaQKEndoOmH5yTo
+	 y4v24J1gd1qeHpbv6x7XGERv4lglFcFL8VMiDaE/R9bUm3OtuIrgiU8+yvT4Y+NTy
+	 1KPT72o4O6/YSA9oZw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbTL1-1tZOaG3TwX-00bItp; Tue, 08
+ Oct 2024 13:05:13 +0200
+Message-ID: <7592ccd9-9706-4174-8530-61b3eab44140@web.de>
+Date: Tue, 8 Oct 2024 13:05:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172838551131.1442.2133799597969559576.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Boris Tonofa <b.tonofa@ideco.ru>, Petr Vaganov <p.vaganov@ideco.ru>,
+ netdev@vger.kernel.org, lvc-project@linuxtesting.org,
+ Steffen Klassert <steffen.klassert@secunet.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Antony Antony <antony.antony@secunet.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Stephan Mueller <smueller@chronox.de>
+References: <20241008090259.20785-1-p.vaganov@ideco.ru>
+Subject: Re: [PATCH ipsec v3] xfrm: fix one more kernel-infoleak in algo
+ dumping
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241008090259.20785-1-p.vaganov@ideco.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O+REagGZQ+O4CqMfqUOMrun+TyUncCkc3fqqoPj9lx4Yp+MGvO2
+ Icl5RgO/c9r5fptEQsmO/H+6qG52sGJfHA2kV+qkMslNGqkCDR2M8khj63YZEUllyamIcnc
+ Ggisef4q1+yDu9O+ewRcPxkwF+8aKz84CCoGBMKbKQoCQczJtgSouEZsZT714zz7Ev6dr1L
+ cUhZP87SxNP6q3KPN6yfw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Cvnl8CCzMWw=;rqpFD+lsTK36lt5e7wKJ43vKWph
+ jZHjYbUVXzA0df5reuB5znyimH+ZXK2Q+XSdlW3kc2sxQG5BhhsmpY7SKupJRoQYYjk9K7nO/
+ qR5BL+PCINdcqIJWLT6lbpBdeckj25S9fKvcfuMMGMLVDZQ7cgwVYuUpKyxtRdnJM5FXKgdvN
+ x53beQ0FBBfrfUUbC7BrtUiKS7xvTZ9yZ54QA/eaQprphJ1mMRUy6kCBS17FeT6Gy4IXE185y
+ dmFtlPveVaIQIHRWeQab9NfQ3vbGE9nPWqEcWlT6VtUkaO2PWgxMwB/seAL3joYAa1un0w2Hr
+ fbm0cifXssKWIEPbY6ktEFqJ+VHMN6MfTcVx7cqP5FxnYTIEufqqExrz9Oi0lhZr9RcHBvKFg
+ hc/MVnAl7NrUrp+Nt+NAWvCQufvZpf8kSod5HmymzmA5FWYupJASXIvpj5CxQjZiu5Nz2DTXW
+ abc6+bLwDvCuW5mJuYcNoZJOYHGqdRt9m2xlkjdezD3DMuAWnGQkfSrWY6Ns+XJX0V9heNSo5
+ QdIzKDjNWrRkkQZcTF9//reK/izyzitDmDBJhdCyZHIkRutlcJ64Hj23fKBNNwDM2UezGNkkT
+ DCsC+dgYSY+WQ45f+dmfTjtcZfyJ3RnrPx+b2vfYo6qJY+Cob2OIZJqlcJYNIJY1CnfNGt+Az
+ RnARlAdepsXz6YjH5dEGzDGAbA4hnzPuQFGc94jmjiV0CNU2SDhJUEf05SuAJ5X3MO7tG0z2O
+ qJ/7kP66ZZTXZ8+5GwuXQU5nRJj/I9vN43JoOTQW+ky/tivV5Kf0ORJqCYPDhNg9A4a/XsXXj
+ PIzQOyeRZOlL+8lgQ1Is+9Dw==
 
-The following commit has been merged into the perf/core branch of tip:
+=E2=80=A6
+> ---
+> v3: Corrected commit description "This patch fixes copying..." to
+> "Fixes copying..." according to accepted rules of Linux kernel commits,
+> as suggested by =E2=80=A6
 
-Commit-ID:     7a166094bd2b1c084fd215747f9cd05a853d66c9
-Gitweb:        https://git.kernel.org/tip/7a166094bd2b1c084fd215747f9cd05a853d66c9
-Author:        Oleg Nesterov <oleg@redhat.com>
-AuthorDate:    Tue, 01 Oct 2024 16:24:59 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 07 Oct 2024 09:28:45 +02:00
+How do you think about to choose another imperative wording
+for an improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n94
 
-uprobes: kill xol_area->slot_count
-
-Add the new helper, xol_get_slot_nr() which does
-find_first_zero_bit() + test_and_set_bit().
-
-xol_take_insn_slot() can wait for the "xol_get_slot_nr() < UINSNS_PER_PAGE"
-event instead of "area->slot_count < UINSNS_PER_PAGE".
-
-So we can kill area->slot_count and avoid atomic_inc() + atomic_dec(), this
-simplifies the code and can slightly improve the performance.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Link: https://lore.kernel.org/r/20241001142458.GA13629@redhat.com
----
- kernel/events/uprobes.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index d3538b6..a1c801e 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -99,7 +99,6 @@ static LIST_HEAD(delayed_uprobe_list);
-  */
- struct xol_area {
- 	wait_queue_head_t 		wq;		/* if all slots are busy */
--	atomic_t 			slot_count;	/* number of in-use slots */
- 	unsigned long 			*bitmap;	/* 0 = free slot */
- 
- 	struct page			*page;
-@@ -1556,7 +1555,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 	init_waitqueue_head(&area->wq);
- 	/* Reserve the 1st slot for get_trampoline_vaddr() */
- 	set_bit(0, area->bitmap);
--	atomic_set(&area->slot_count, 1);
- 	insns = arch_uprobe_trampoline(&insns_size);
- 	arch_uprobe_copy_ixol(area->page, 0, insns, insns_size);
- 
-@@ -1629,24 +1627,28 @@ void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
- 	}
- }
- 
-+static unsigned long xol_get_slot_nr(struct xol_area *area)
-+{
-+	unsigned long slot_nr;
-+
-+	slot_nr = find_first_zero_bit(area->bitmap, UINSNS_PER_PAGE);
-+	if (slot_nr < UINSNS_PER_PAGE) {
-+		if (!test_and_set_bit(slot_nr, area->bitmap))
-+			return slot_nr;
-+	}
-+
-+	return UINSNS_PER_PAGE;
-+}
-+
- /*
-  *  - search for a free slot.
-  */
- static unsigned long xol_take_insn_slot(struct xol_area *area)
- {
--	unsigned int slot_nr;
-+	unsigned long slot_nr;
- 
--	for (;;) {
--		slot_nr = find_first_zero_bit(area->bitmap, UINSNS_PER_PAGE);
--		if (slot_nr < UINSNS_PER_PAGE) {
--			if (!test_and_set_bit(slot_nr, area->bitmap))
--				break;
--			continue;
--		}
--		wait_event(area->wq, (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
--	}
-+	wait_event(area->wq, (slot_nr = xol_get_slot_nr(area)) < UINSNS_PER_PAGE);
- 
--	atomic_inc(&area->slot_count);
- 	return area->vaddr + slot_nr * UPROBE_XOL_SLOT_BYTES;
- }
- 
-@@ -1682,7 +1684,6 @@ static void xol_free_insn_slot(struct uprobe_task *utask)
- 
- 	slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
- 	clear_bit(slot_nr, area->bitmap);
--	atomic_dec(&area->slot_count);
- 	smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
- 	if (waitqueue_active(&area->wq))
- 		wake_up(&area->wq);
+Regards,
+Markus
 
