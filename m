@@ -1,242 +1,166 @@
-Return-Path: <linux-kernel+bounces-355450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AE5995265
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABD0995264
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231F2284DD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E75D288181
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2961E0481;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193201E00B4;
 	Tue,  8 Oct 2024 14:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="pO1RAbC+"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cnHFE9D0"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7C418CBED;
-	Tue,  8 Oct 2024 14:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A071DEFF4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728399078; cv=none; b=mqq1FRZFphE5QowqZsrUJh6F9inrbyQA263BhGbckYYIR0OTyYTWxBDfKXQfalac+AczpFowZebcFJGavGN/PG+CrSluWT743tEs5JONCT0W54LvonpK0NxjtfLbkDM4afik05jxmdaAMybpq1YV2G9iBMgSksUOaV7+UYK/V+0=
+	t=1728399078; cv=none; b=G5zZBO/nF1iUnnYPrB8aFDFwTMZBmZ974xGVWjoY7d2Y2aG4J/qPeE7aIQpXiXubMq4AK9Uw3F0j4+8pwARi7FV5+FR7e0nvi4SimoBQ2/jLepqTWQQKOBqvw9J5gOP3cgPLVRd2yo9i9JfsMaee9tyk6u2zg1ErKY2uDlFln7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728399078; c=relaxed/simple;
-	bh=NvBTyvbGHbeTpLIZXTO2FV7iVcSkA2Q2bkBJdTC3OCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MhZlpiwiEX0/1EgH4SkkS3YDGpjcFGXLF8F/FGH4thPctM2Jj9sfWjDK12kb2CbeGpYvUUefGo4CAVpT0MME2AUmF9hCH01vwXIddDpW/euyszkmu1gN/E9aU2XfI55gaynTIw9IUa/NZsFxtgXRtsVgqdhXypx1J+Jgnc96fxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=pO1RAbC+; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 726C02FC006B;
-	Tue,  8 Oct 2024 16:51:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1728399072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDuJ+vLxxAjjTnsFERAk5G0m/bqwuQtMTf492YyDqTY=;
-	b=pO1RAbC+prlqPYCaNqF4jnYEJE4hA4+7AvDM0tPKujc02YJkri7lGIUo32WKwCgWBaAXQ0
-	RgXz4mp/y1FuAJns7p0rk756fpkZvDAMcoD26MFsZKD6IBgNEyqTSGy7aiYHxkxxCUXCrD
-	DY8MpUOj7Y3CHrq61Fe5bciNuzdtGOo=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
-Date: Tue, 8 Oct 2024 16:51:11 +0200
+	bh=ZgSRuvfGZ0ItcV/YwoUKTRPIr6VJ33TVYlDf96a8E7w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aGi8XurmYYYur2eAKwumh5lSa5dbgNcT9AI4RFRQHp2GGCh2J5hMhpQRunK8pH86b0bvvmO7dlIxFglMRTd2wa2tsj02dU+Hn7Cw1oNKfYP35v4aaf5szj7zqM8t0cfEpC+jRBANuW7vbx66seoblxjZgJW3ceiNH1f7gP6leRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cnHFE9D0; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e25cfee6581so9761659276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728399076; x=1729003876; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=emQng1abso/nTmgu6ZsfIn6KMzH8O2Ep6fGhK6qECAo=;
+        b=cnHFE9D0vSc+ODj4Khd3GrOFDWrGjz8ZB5mJj7b+bmjXN70DXMU/qYD8GJhXf7/5lE
+         aWzR1PKdtQNnRibh07lsrpvTzJnKRnib5FOvfLwC9BDowlsHxvmn80TSwrURLYqHVDUC
+         vZjEJ6bTlg7Ofwh3NxKXiLbUap5DjHlsn1DlckAe2TmBeHR9oxCumWC4iRgdXlhn0nnf
+         t2jrQxXzr2ghj2zDAnVIKjKpHqPp68MjGyYxX1gm4UjNFlWcHPfviHK+c/Accv8LEf5n
+         ZiF6f53ZBuMRmJK0sZ9BD00TzuvPeF+w/5DvypGZ1k4lG/udOiJddfEZhTyv3+Kh0Qe7
+         AytQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728399076; x=1729003876;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=emQng1abso/nTmgu6ZsfIn6KMzH8O2Ep6fGhK6qECAo=;
+        b=OPXCXZBzJbg/Nr+syWlufYip7dR6hQwt5LkBUFhfEZ2fT7kYNvILS27FegpMg7RHJ5
+         jh/CgQNG3gcPTup/pB71LODuHHEs1CCdV2D9GyvX2UL6rl2Um/7SRcI0y6+Z+BbfX+D9
+         u6vSv/lQjt/YH/X+wvDEvPRyZ+0FBwJBf6Dm2PRBssyPDnmenLc2+Tc/jJBDoVKr4pqH
+         I9gvNt9P8UjuoDEh0pru5LEo+t91IY07OiRkj3hvRltjGtDJ7mqU/Or0N6MadypD0z6B
+         ji5HBFS0/2PZ3NQNodmyhkxVQGMx35q7mYb6szWu48T2ke4BaetvhPu6iUeilKrWs2pG
+         rTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlS3dw9xFw/xTtbhpE98MKX7FeVf+6+hMgHZi1d1vBg1CIS6M0t7vU9hhP9Qpge50v3tWeRzhEjPSi+qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCbiIb6RwKG+sTX550/l967KR7l0plV4HzVkfDb8PEsWJdK9j7
+	c9vZom65C/Tz3FCg91+ynax0h8Q4KxKu1ewPRiF4iCtOgHDmugVLMWYpNAxvmsPUAE7YWI85Wot
+	K0A==
+X-Google-Smtp-Source: AGHT+IFiI3ay5y7w5pgPUPFBTOQ/KW+bT1HbnjiMC1wKY+tCLdLaTeLJvIQHLRs+a2IawRP+op3DZpb5qBc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:d658:0:b0:e28:f8e4:cc5e with SMTP id
+ 3f1490d57ef6-e28f8e4ced4mr209276.2.1728399075773; Tue, 08 Oct 2024 07:51:15
+ -0700 (PDT)
+Date: Tue, 8 Oct 2024 07:51:13 -0700
+In-Reply-To: <ZvPrqMj1BWrkkwqN@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
- <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
- <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
- <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
- <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
+ <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
+ <ZuBsTlbrlD6NHyv1@google.com> <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
+ <ZuCE_KtmXNi0qePb@google.com> <ZuP5eNXFCljzRgWo@yzhao56-desk.sh.intel.com>
+ <ZuR09EqzU1WbQYGd@google.com> <ZuVXBDCWS615bsVa@yzhao56-desk.sh.intel.com> <ZvPrqMj1BWrkkwqN@yzhao56-desk.sh.intel.com>
+Message-ID: <ZwVG4bQ4g5Tm2jrt@google.com>
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Yuan Yao <yuan.yao@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Sep 25, 2024, Yan Zhao wrote:
+> On Sat, Sep 14, 2024 at 05:27:32PM +0800, Yan Zhao wrote:
+> > On Fri, Sep 13, 2024 at 10:23:00AM -0700, Sean Christopherson wrote:
+> > > On Fri, Sep 13, 2024, Yan Zhao wrote:
+> > > > This is a lock status report of TDX module for current SEAMCALL retry issue
+> > > > based on code in TDX module public repo https://github.com/intel/tdx-module.git
+> > > > branch TDX_1.5.05.
+> > > > 
+> > > > TL;DR:
+> > > > - tdh_mem_track() can contend with tdh_vp_enter().
+> > > > - tdh_vp_enter() contends with tdh_mem*() when 0-stepping is suspected.
+> > > 
+> > > The zero-step logic seems to be the most problematic.  E.g. if KVM is trying to
+> > > install a page on behalf of two vCPUs, and KVM resumes the guest if it encounters
+> > > a FROZEN_SPTE when building the non-leaf SPTEs, then one of the vCPUs could
+> > > trigger the zero-step mitigation if the vCPU that "wins" and gets delayed for
+> > > whatever reason.
+> > > 
+> > > Since FROZEN_SPTE is essentially bit-spinlock with a reaaaaaly slow slow-path,
+> > > what if instead of resuming the guest if a page fault hits FROZEN_SPTE, KVM retries
+> > > the fault "locally", i.e. _without_ redoing tdh_vp_enter() to see if the vCPU still
+> > > hits the fault?
+> > > 
+> > > For non-TDX, resuming the guest and letting the vCPU retry the instruction is
+> > > desirable because in many cases, the winning task will install a valid mapping
+> > > before KVM can re-run the vCPU, i.e. the fault will be fixed before the
+> > > instruction is re-executed.  In the happy case, that provides optimal performance
+> > > as KVM doesn't introduce any extra delay/latency.
+> > > 
+> > > But for TDX, the math is different as the cost of a re-hitting a fault is much,
+> > > much higher, especially in light of the zero-step issues.
+> > > 
+> > > E.g. if the TDP MMU returns a unique error code for the frozen case, and
+> > > kvm_mmu_page_fault() is modified to return the raw return code instead of '1',
+> > > then the TDX EPT violation path can safely retry locally, similar to the do-while
+> > > loop in kvm_tdp_map_page().
+> > > 
+> > > The only part I don't like about this idea is having two "retry" return values,
+> > > which creates the potential for bugs due to checking one but not the other.
+> > > 
+> > > Hmm, that could be avoided by passing a bool pointer as an out-param to communicate
+> > > to the TDX S-EPT fault handler that the SPTE is frozen.  I think I like that
+> > > option better even though the out-param is a bit gross, because it makes it more
+> > > obvious that the "frozen_spte" is a special case that doesn't need attention for
+> > > most paths.
+> > Good idea.
+> > But could we extend it a bit more to allow TDX's EPT violation handler to also
+> > retry directly when tdh_mem_sept_add()/tdh_mem_page_aug() returns BUSY?
+> I'm asking this because merely avoiding invoking tdh_vp_enter() in vCPUs seeing
+> FROZEN_SPTE might not be enough to prevent zero step mitigation.
 
-Am 08.10.24 um 14:18 schrieb Benjamin Tissoires:
-> On Oct 08 2024, Werner Sembach wrote:
->> Am 08.10.24 um 11:53 schrieb Benjamin Tissoires:
->>> On Oct 07 2024, Werner Sembach wrote:
->>>> Hi,
->>>>
->>>> Am 02.10.24 um 10:31 schrieb Benjamin Tissoires:
->>>>> On Oct 01 2024, Werner Sembach wrote:
->>>>>> Hi Benjamin,
->>>>>>
->>>>>> Am 01.10.24 um 15:41 schrieb Benjamin Tissoires:
->>>>>>> [...]
->>>>>>> PPS: sorry for pushing that hard on HID-BPF, but I can see that it fits
->>>>>>> all of the requirements here:
->>>>>>> - need to be dynamic
->>>>>>> - still unsure of the userspace implementation, meaning that userspace
->>>>>>>       might do something wrong, which might require kernel changes
->>>>>> Well the reference implementetion for the arduiono macropad from microsoft
->>>>>> ignores the intensity (brightness) channel on rgb leds contrary to the HID
->>>>>> spec, soo yeah you have a point here ...
->>>>> Heh :)
->>>>>
->>>>>>> - possibility to extend later the kernel API
->>>>>>> - lots of fun :)
->>>>>> You advertise it good ;). More work for me now but maybe less work for me
->>>>>> later, I will look into it.
->>>>> Again, I'm pushing this because I see the benefits and because I can
->>>>> probably reuse the same code on my Corsair and Logitech keyboards. But
->>>>> also, keep in mind that it's not mandatory because you can actually
->>>>> attach the BPF code on top of your existing driver to change the way it
->>>>> behaves. It'll be slightly more complex if you don't let a couple of
->>>>> vendor passthrough reports that we can use to directly talk to the
->>>>> device without any tampering, but that's doable. But if you want to keep
->>>>> the current implementation and have a different layout, this can easily
->>>>> be done in BPF on top.
->>>>>
->>>>> Cheers,
->>>>> Benjamin
->>>>>
->>>>>
->>>>> [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
->>>> Thinking about the minimal WMI to HID today, but found a problem: a HID
->>>> feature report is either strictly input or output afaik, but the WMI
->>>> interface has both in some functions.
->>> Not sure you are talking about feature reports, because they are
->>> read/write. It's just that they are synchronous over the USB control
->>> endpoint (on USB).
->> I'm confused about the split between get and send feature reports
->> https://www.kernel.org/doc/html/latest/hid/hidraw.html
->>
->> I guess then a get feature report can also carry input data and the
->> difference is that a send feature report doesn't wait for a reply? but then
->> what is it's reason of existence in contrast to an output report?
-> I'm under the impression you are mixing the 3 types of reports (just
-> re-stating that here in case I wasn't clear).
->
-> - Input reports:
->    `Input()` in the report descriptor
->    -> data emitted by the device to the host, and notified through an IRQ
->    mechanism
->    -> obtained in hidraw through a blocking read() operation
-> - Output reports:
->    `Output()` in the report descriptor
->    -> data sent asynchronously by the host to the device.
->    -> sent from hidraw by calling write() on the dev node (no feedback
->    except how many bytes were sent)
-> - Feature reports:
->    `Feature()` in the report descriptor
->    -> way to synchronously configure the device. Think of it like a
->    register on the device: you can read it, write it, but you never get
->    an interrupt when there is a change
->    -> read/written by using an ioctl on the hidraw node
+The goal isn't to make it completely impossible for zero-step to fire, it's to
+make it so that _if_ zero-step fires, KVM can report the error to userspace without
+having to retry, because KVM _knows_ that advancing past the zero-step isn't
+something KVM can solve.
 
- From userspace there are the HIDIOCSFEATURE and HIDIOCGFEATURE ioctls.
+ : I'm not worried about any performance hit with zero-step, I'm worried about KVM
+ : not being able to differentiate between a KVM bug and guest interference.  The
+ : goal with a local retry is to make it so that KVM _never_ triggers zero-step,
+ : unless there is a bug somewhere.  At that point, if zero-step fires, KVM can
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ : report the error to userspace instead of trying to suppress guest activity, and
+ : potentially from other KVM tasks too.
 
- From the hid 1.11 spec:
+In other words, for the selftest you crafted, KVM reporting an error to userspace
+due to zero-step would be working as intended.  
 
-"
-
-7.2.2 Set_Report Request
-
-[...]
-
-The meaning of the request fields for the Set_Report request is the same as for
-the Get_Report request, however the data direction is reversed and the Report
-Data is sent from host to device.
-
-"
-
-and from the hut 1.5, some of the LampArray feature reports are meant to be used 
-with set report and some with get report
-
-(well as far as I can tell the hut doesn't actual specify, if they need to be 
-feature reports, or am I missing something?)
-
-and there is the pair with LampAttributesRequestReport and 
-LampAttributesResponseReport.
-
-Sorry for my confusion over the hid spec.
-
->
-> And BTW, it's perfectly fine to have a dedicated report ID which has
-> Input, Output and Feature attached to it :)
->
->>> An input report is strictly directed from the device, and an output
->>> report is from the host to the device.
->>>
->>> But a feature report is bidirectional.
->>>
->>>> How would I map that?
->>> Depending on the WMI interface, if you want this to be synchronous,
->>> defining a Feature report is correct, otherwise (if you don't need
->>> feedback from WMI), you can declare the commands to WMI as Output
->>> reports.
->> Thanks for reminding me that output reports exist xD.
-> hehe
->
->>>> If I split everything in input and output the new interface wouldn't
->>>> actually be much smaller.
->>> The HID report descriptor doesn't need to be smaller. The fact that by
->>> default it exposes only one or two LEDs so we don't have the micrometers
->>> arrays is the only purpose.
->>>
->>> But if we also implement a not-full HID implementation of LampArray, we
->>> should be able to strip out the parts that we don't care in the LED
->>> class implementation, like the exact positioning, or the multiupdate.
->>>
->>>> Also what would I write for the usage for the reserved padding in the report
->>>> descriptor. Usage: 0x00?
->>> padding are ignored by HID. So whatever current usage you have is fine.
->>>
->>> However, if you are talking about the custom WMI vendor access, I'd go
->>> with a vendor collection (usage page 0xff00, usage 0x08 for the 8 bytes
->>> long WMI command for instance, 0x10 for the 16 bytes long one).
->>>
->>> Side note: in drivers/hid/bpf/progs/hid_report_helpers.h we have some
->>> autogenerated macros to help writing report descriptors (see
->>> drivers/hid/bpf/progs/Huion__Dial-2.bpf.c for an example of usage). It's
->>> in the hid-bpf tree but I think we might be able to include this in
->>> other drivers (or do a minimal rewrite/move into include).
->>> I'm not asking you to use it on your code right now, but this has the
->>> advantage of becoming less "binary blob" in your code, and prevent
->>> mistakes where you edit the comments but not the values.
->> I will look into it.
->>
->> Since the interface is fixed I don't need to flesh out the whole descriptor
->> (which i thought i must do) and usage page (0xff42, because NB04 and the wmi
->> has 2 other ec controlling wmi interfaces besides the AB one), report usage
->> (matching the wmi comand id's) and report size should be enough.
-> I'm a little confused by that last sentence. But yeah, I would expect
-> some minimal sanity check before handing over the HID report to the WMI
-> interface :)
->
-> Cheers,
-> Benjamin
->
+> E.g. in below selftest with a TD configured with pending_ve_disable=N,
+> zero step mitigation can be triggered on a vCPU that is stuck in EPT violation
+> vm exit for more than 6 times (due to that user space does not do memslot
+> conversion correctly).
+> 
+> So, if vCPU A wins the chance to call tdh_mem_page_aug(), the SEAMCALL may
+> contend with zero step mitigation code in tdh_vp_enter() in vCPU B stuck
+> in EPT violation vm exits.
 
