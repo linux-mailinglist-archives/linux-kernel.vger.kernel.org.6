@@ -1,187 +1,175 @@
-Return-Path: <linux-kernel+bounces-354357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471B2993C78
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:49:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7499D993C7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BCA1C229E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49341F24A0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 01:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AC21E517;
-	Tue,  8 Oct 2024 01:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067271863E;
+	Tue,  8 Oct 2024 01:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtYczA0j"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wACdIh89"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA071CD02;
-	Tue,  8 Oct 2024 01:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FB814287
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 01:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728352147; cv=none; b=eCCbFyLvbEMEV0OxuJ6RoRBx4J9QhEvhv7B39vcPjlHFwuVp0b0xqaNiYUCjlb7xzf4HdE+5HtZ15Fwvas3YonrvLxwYAYwatJ1OQ0vaXNirxp5ET/HESwacDz46aK0WlklXeKOz+B3ZcGqqL7mknFvq63mw+DYBFABGbdSBKpc=
+	t=1728352188; cv=none; b=iVVTiFaM47PEQoQSWPSJ/1TWsshSotyP1iM6lEBVkC6dtfWcBputx3Nyb2vQAkPlLd4ryvqjcuduA1ZwzYM6HQYScBjdp4O+PmY1ZpQtE1U4JeHuZARM1EpgkrHrek1v1xNeULHywKhV3AhO6UJOhdZON8W4IqD88I2gs1Rp21M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728352147; c=relaxed/simple;
-	bh=dsvj2frVr6MGiwtWhTRMsRmO1BwMNYYun3RBtTY467Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ITNa982x867vY00YiO/3ogZfnZgSGJLoqNXFOYxX+yJx+rGA/AoxTCs2YtByU1F2g15dO+6X1qpXnYLHb3KF+qUZeugKdExElDd3p/QhR9p4uzXh753sYOHM812Q6HgdVVsJW1soGBKURNRSCuEcen6Cy+eGCI8KTLDiZmCbcPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtYczA0j; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b95359440so42955915ad.0;
-        Mon, 07 Oct 2024 18:49:05 -0700 (PDT)
+	s=arc-20240116; t=1728352188; c=relaxed/simple;
+	bh=2kyYN2da9Ff5aYW9mTRH3k6w8NQuTi5mxudPSHgTci0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=raiyFmfEcSRfTteWWf/4JaWW0upiEf9jSRtPznO8An+rdZHRS1xvuvMbNsLmx9CSGCsdsnzDdmqwyNfzrn9wZyroT1YAj5Hm4n0B6imrYZgeKBG/rHsBf98GVs32/ywhKV8FZ+dTJ01qULnFeDSLH8n5H0b+U2EaXhvIRC68r+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wACdIh89; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4581cec6079so156281cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 18:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728352145; x=1728956945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1728352185; x=1728956985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hsdZK56BEuQGs9pXkV5YDLxOr/kjcEbLorwgkGs7QDg=;
-        b=XtYczA0juU7zGBq/j9eqV70LOgEaI2dLFSE7kRhD9tHfMOhrF6wxrApA+4gxPVnspT
-         dveM7TmRzsQCRM2jJnJnmZafHhb5PaeFRGf1zgp6ofRka/TyHX734jRFQaRD2safOxQ4
-         OxBtIy1TdYyH7gQlh0jQdc5HQC+Os0PwGueprL8lL3WY87ReLEPVSGm7Hf3swLiD4D8O
-         TYsZHKtNxiA2sE7zlyNRgBTGv5pwP8FOhnJNRpW/51szu7s7X6DSG2Jy7YAkK7C50J4w
-         J5BM5/VZQJxb1SCCERUHKLyepyIkym/pPK3ErmNTDq4JzDJEKurXN64apetVZXEBJ0dx
-         zzJQ==
+        bh=F57M3cASSDc9ogKrJwj+KVMp5A3GRf8CiQ61EpkNzYM=;
+        b=wACdIh89DYAocmMffnaGBp5CSxCi7asuK7RVadCJau7UEpvVzOApo4MyKBeljihF8m
+         QvqlVlxXBoRFekpwttVRSh4ukwppl69Suj9xyL8xPnjnXZeukn+P5JA6BKVoFmptbVS5
+         k4VOD0u0BdwQ15hGPZmOz+7aQFjdcTEE5i5XMQxyD3kz5JMrXiRYG/K/hsCS/IivfmIB
+         Oa3pZroTz2JC21zyvundklTAAk6FZPjH4//ZNp5ObVj37khEepEag9gBFvms7NNZ8OK0
+         APuX1OFwYXmHUGjnovQzPDZQoxx4cPpkV83/eT4l5UpMRv5Vx5AlFZ+zACveGohdUjrJ
+         MGYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728352145; x=1728956945;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728352185; x=1728956985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hsdZK56BEuQGs9pXkV5YDLxOr/kjcEbLorwgkGs7QDg=;
-        b=eMeMUEdSebC42MqBqDKokbh9GlSlidZmEa5yYW0r10zT4w6SgJylypg5sgYPxItZvp
-         L+PLf+T7oybvbNBgUUgggjRrrcg+wpWhNo57eYKuHajcAe4uQ1RcruzpbM9bqPmqyBzN
-         aHrcpW7IbAq2c7c+iV4NwozAAnW9QAcqxOpvG9zw/oUu++jVVIDBv8JX50aEskVrEe8Y
-         Cyb0H67yI2AeK1NF/A0tv5B1mySl7WXWsWzrHJ2OjlPrZNHgxmhq1ubQNEijuZIYgd3o
-         /MyS67fJUqPkAPdV1xI1iS2H8k+kGxGsGc+ExSnu7LA//PnBx/Iu7wOCo0X0GqKhKTDg
-         1FCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1fsriefCPnKbZ/J9RY1xOgBKzgmNxCpT3NuvBfaBFjpTWiEfrscjjtIpT2MVKV/oS7Akz42pnM/Qxu58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2obpDvDyEpaRc7Z9qHeqLinNKZ/tmrBV1cdGRtfw4kZB7vWRO
-	//1s1uDirM/1+b6ZdYlLm2YCp24jfQK1lvtBbiS/NS4YOxS0sH6P
-X-Google-Smtp-Source: AGHT+IHMYiTgJbKi8YrF6tRGzx3ZAxR6DUAWDqNCls5ug50C+Y3/E2BW09RC0ptkG7j5zy+G8LB34Q==
-X-Received: by 2002:a17:903:244d:b0:20b:8510:bf4d with SMTP id d9443c01a7336-20bfde55570mr249473665ad.6.1728352145310;
-        Mon, 07 Oct 2024 18:49:05 -0700 (PDT)
-Received: from localhost.localdomain ([205.204.117.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139891b9sm45755095ad.246.2024.10.07.18.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 18:49:04 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
-Date: Tue,  8 Oct 2024 09:48:56 +0800
-Message-Id: <20241008014856.3729-2-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20241008014856.3729-1-zhangwarden@gmail.com>
-References: <20241008014856.3729-1-zhangwarden@gmail.com>
+        bh=F57M3cASSDc9ogKrJwj+KVMp5A3GRf8CiQ61EpkNzYM=;
+        b=I2R5Rb6qqKSkL2ANwFA0uhIYX8shXUTHMArbMu10c6Ji0bFWjNZpF107czRnej0dn/
+         eivQMtGnhTTTiR/nJYC89JxK5T9CMRff1CFohirIrpnuzTM8MVz2NEjaWA+TlOwDfIxG
+         09g30jt++Z4l4OA1ZlaxyEYNjcVLvA8wBVUJ7LV/0iphDQjDJKks0KCwcAz3RQJZFAmV
+         zq6seykFoa/j8UBqPlzgJ+M1oJw9NcFPE69uw0vLR5ZbsU9ujBSYcEdKBlJ3EO3bo721
+         2Fi8OeDM/A+ka9cQjz6EPvrIdYcIopHULYIpIKsR3J1HmsmYSLjxkpNjFSujMP/GdLEA
+         QVHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9BUnJEyY2/RqH9bHa+px7nNdWsbJtGWkeTMkD/ePnZ1zdBZpBjoHf/ZUKS0ENtm6M7iD8LvY8JcMz6Hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6wtt+cuoSj0DQ5UMCiNr8kfY0h4LoN+26Iyii9sqtLCsI9+gu
+	+EiK7+fE2HsMyxxA5fYcKAO3GfHrV01rvS4MIiTduCggbTWTIOIk/FfgPGsJasUxAnTNxkY8W0d
+	UA4/JTcP1nvgy/eF311fcsnc4fd1iG7lOcYhP
+X-Google-Smtp-Source: AGHT+IHwo08FfOq6O3t2rBR3qoDY9wRZElhnMBl5M85uajhb2/wzcuDSASXwBXGXRz/Od3RP2VLvl1vaUaTA9Fcg4CA=
+X-Received: by 2002:a05:622a:5796:b0:458:14dd:108b with SMTP id
+ d75a77b69052e-45ec7e1f64fmr1004971cf.13.1728352185331; Mon, 07 Oct 2024
+ 18:49:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241007205236.11847-1-fw@strlen.de> <20241007181541.4bbe9b8580f6475023256515@linux-foundation.org>
+In-Reply-To: <20241007181541.4bbe9b8580f6475023256515@linux-foundation.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 7 Oct 2024 18:49:32 -0700
+Message-ID: <CAJuCfpGZg8Pydy4rGUefOBgwJZ5C6_s3p913oFQJSVV+S9MQoA@mail.gmail.com>
+Subject: Re: [PATCH lib] lib: alloc_tag_module_unload must wait for pending
+ kfree_rcu calls
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org, 
+	Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Ben Greear <greearb@candelatech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add "stack_order" sysfs attribute which holds the order in which a live
-patch module was loaded into the system. A user can then determine an
-active live patched version of a function.
+On Mon, Oct 7, 2024 at 6:15=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Mon,  7 Oct 2024 22:52:24 +0200 Florian Westphal <fw@strlen.de> wrote:
+>
+> > Ben Greear reports following splat:
+> >  ------------[ cut here ]------------
+> >  net/netfilter/nf_nat_core.c:1114 module nf_nat func:nf_nat_register_fn=
+ has 256 allocated at module unload
+> >  WARNING: CPU: 1 PID: 10421 at lib/alloc_tag.c:168 alloc_tag_module_unl=
+oad+0x22b/0x3f0
+> >  Modules linked in: nf_nat(-) btrfs ufs qnx4 hfsplus hfs minix vfat msd=
+os fat
+> > ...
+> >  Hardware name: Default string Default string/SKYBAY, BIOS 5.12 08/04/2=
+020
+> >  RIP: 0010:alloc_tag_module_unload+0x22b/0x3f0
+> >   codetag_unload_module+0x19b/0x2a0
+> >   ? codetag_load_module+0x80/0x80
+> >
+> > nf_nat module exit calls kfree_rcu on those addresses, but the free
+> > operation is likely still pending by the time alloc_tag checks for leak=
+s.
+> >
+> > Wait for outstanding kfree_rcu operations to complete before checking
+> > resolves this warning.
+> >
+> > Reproducer:
+> > unshare -n iptables-nft -t nat -A PREROUTING -p tcp
+> > grep nf_nat /proc/allocinfo # will list 4 allocations
+> > rmmod nft_chain_nat
+> > rmmod nf_nat                # will WARN.
+> >
+> > ...
+> >
+> > --- a/lib/codetag.c
+> > +++ b/lib/codetag.c
+> > @@ -228,6 +228,8 @@ bool codetag_unload_module(struct module *mod)
+> >       if (!mod)
+> >               return true;
+> >
+> > +     kvfree_rcu_barrier();
+> > +
+> >       mutex_lock(&codetag_lock);
+> >       list_for_each_entry(cttype, &codetag_types, link) {
+> >               struct codetag_module *found =3D NULL;
+>
+> It's always hard to determine why a thing like this is present, so a
+> comment is helpful:
+>
+> --- a/lib/codetag.c~lib-alloc_tag_module_unload-must-wait-for-pending-kfr=
+ee_rcu-calls-fix
+> +++ a/lib/codetag.c
+> @@ -228,6 +228,7 @@ bool codetag_unload_module(struct module
+>         if (!mod)
+>                 return true;
+>
+> +       /* await any module's kfree_rcu() operations to complete */
+>         kvfree_rcu_barrier();
+>
+>         mutex_lock(&codetag_lock);
+> _
+>
+> But I do wonder whether this is in the correct place.
+>
+> Waiting for a module's ->exit() function's kfree_rcu()s to complete
+> should properly be done by the core module handling code?
 
-cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
+I don't think core module code cares about kfree_rcu()s being complete
+before the module is unloaded.
+Allocation tagging OTOH cares because it is about to destroy tags
+which will be accessed when kfree() actually happens, therefore a
+strict ordering is important.
 
-means that livepatch_1 is the first live patch applied
+>
+> free_module() does a full-on synchronize_rcu() prior to freeing the
+> module memory itself and I think codetag_unload_module() could be
+> called after that?
 
-cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-
-means that livepatch_module is the Nth live patch applied
-
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Suggested-by: Miroslav Benes <mbenes@suse.cz>
-Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
----
- .../ABI/testing/sysfs-kernel-livepatch        |  9 +++++++
- kernel/livepatch/core.c                       | 24 +++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-kernel-livepatch b/Documentation/ABI/testing/sysfs-kernel-livepatch
-index 3735d868013d..73e40d02345e 100644
---- a/Documentation/ABI/testing/sysfs-kernel-livepatch
-+++ b/Documentation/ABI/testing/sysfs-kernel-livepatch
-@@ -55,6 +55,15 @@ Description:
- 		An attribute which indicates whether the patch supports
- 		atomic-replace.
- 
-+What:		/sys/kernel/livepatch/<patch>/stack_order
-+Date:		Oct 2024
-+KernelVersion:	6.13.0
-+Description:
-+		This attribute specifies the sequence in which live patch modules
-+		are applied to the system. If multiple live patches modify the same
-+		function, the implementation with the biggest 'stack_order' number
-+		is used, unless a transition is currently in progress.
-+
- What:		/sys/kernel/livepatch/<patch>/<object>
- Date:		Nov 2014
- KernelVersion:	3.19.0
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 3c21c31796db..0cd39954d5a1 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -347,6 +347,7 @@ int klp_apply_section_relocs(struct module *pmod, Elf_Shdr *sechdrs,
-  * /sys/kernel/livepatch/<patch>/transition
-  * /sys/kernel/livepatch/<patch>/force
-  * /sys/kernel/livepatch/<patch>/replace
-+ * /sys/kernel/livepatch/<patch>/stack_order
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/patched
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-@@ -452,15 +453,38 @@ static ssize_t replace_show(struct kobject *kobj,
- 	return sysfs_emit(buf, "%d\n", patch->replace);
- }
- 
-+static ssize_t stack_order_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct klp_patch *patch, *this_patch;
-+	int stack_order = 0;
-+
-+	this_patch = container_of(kobj, struct klp_patch, kobj);
-+
-+	mutex_lock(&klp_mutex);
-+
-+	klp_for_each_patch(patch) {
-+		stack_order++;
-+		if (patch == this_patch)
-+			break;
-+	}
-+
-+	mutex_unlock(&klp_mutex);
-+
-+	return sysfs_emit(buf, "%d\n", stack_order);
-+}
-+
- static struct kobj_attribute enabled_kobj_attr = __ATTR_RW(enabled);
- static struct kobj_attribute transition_kobj_attr = __ATTR_RO(transition);
- static struct kobj_attribute force_kobj_attr = __ATTR_WO(force);
- static struct kobj_attribute replace_kobj_attr = __ATTR_RO(replace);
-+static struct kobj_attribute stack_order_kobj_attr = __ATTR_RO(stack_order);
- static struct attribute *klp_patch_attrs[] = {
- 	&enabled_kobj_attr.attr,
- 	&transition_kobj_attr.attr,
- 	&force_kobj_attr.attr,
- 	&replace_kobj_attr.attr,
-+	&stack_order_kobj_attr.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(klp_patch);
--- 
-2.18.2
-
+I think we could move codetag_unload_module() after synchronize_rcu()
+inside free_module() but according to the reply in
+https://lore.kernel.org/all/20241007112904.GA27104@breakpoint.cc/
+synchronize_rcu() does not help. I'm not quite sure why...
+Note that once I'm done upstreaming
+https://lore.kernel.org/all/20240902044128.664075-3-surenb@google.com/,
+this change will not be needed and I'm planning to remove this call,
+however this change is useful for backporting. It should be sent to
+stable@vger.kernel.org # v6.10+
 
