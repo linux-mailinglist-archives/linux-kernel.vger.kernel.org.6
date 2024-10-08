@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-355396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7C49951A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:30:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7A899516F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5195B1C2564F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9FD4285262
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE521E22E6;
-	Tue,  8 Oct 2024 14:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583D81DF997;
+	Tue,  8 Oct 2024 14:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHIpOFxQ"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QT01KvKG"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33D81DFD80;
-	Tue,  8 Oct 2024 14:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C781DF98E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397517; cv=none; b=tqQO3eFz86H7f4cU59CQf7wZTk+DVDD0V6VpvoZzaVe3Mx0hBj7odPwpeKxvbi1oS3dI0+JI5NZHYhemfUxirQsgovX4zvCkNWzhoOHpHqoS9fScZLhP8u/GXkAzI7A2hMPpNu0gzvliKUQHebY0kwgSDINuWJl4DQ3V/ztNGRA=
+	t=1728397396; cv=none; b=GLTHLAdFx5jy/wHvK4zfyQPmO3GwYwSByPlNhaq+RJdXIWbMc1MaUPwdR3hmfyXm5JPQ5DHa/s6vFZIkueswKEqwnnK5tdhnLR8ae4XoLm2ANUoEU+LH4B+B0cDjL+mFtijuJDv3aGxpz7wmvGqDeQubgJG9B3Yxz1EZIkePfJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397517; c=relaxed/simple;
-	bh=R8vmG0u3lFl9fsXKHPJv8VqmdcKKDyrNnQXHw0Dmp2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RE1HdbT+PQHkd5bV+G0/oJiAbVzDaEbuKrymri2BQA/Mj8iiszTCvnlwFDFFEwRxuXtjmM2SMkhe4JeXaFwoOKQ/RmVKwJjxNd70XlPrjXoNCaAHzgnm/Jm3ovStQLUsYk8aTMr7IRtUp7A/zPwY7S2IUUTs6gL7tqUp66CyRW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHIpOFxQ; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20b6c311f62so50406525ad.0;
-        Tue, 08 Oct 2024 07:25:15 -0700 (PDT)
+	s=arc-20240116; t=1728397396; c=relaxed/simple;
+	bh=oovhDjQ+h+tGiTzVPs+Bd3Ctyp+vKbNtabnaRMLZ0MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKnanusOW7F7uLYrB/+akl2x4coitH2zhpnyCMGvZ9wgOQYYAShTy4ySljxmzl3w51M9SsxBEe2ZecPSpy7MJwo6qsZvPToKLd4jU8IEtbeONOvrYJsWE46AyQedHNJMjaH/cBfzU4uAgHhG2PA91e9X8MimoOe1tIQopgBrIR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QT01KvKG; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso4213183a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728397515; x=1729002315; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyNsEi0JeRXi6J1a9d2wdU47n7lnZVibMGfNyAtDMsk=;
-        b=EHIpOFxQ3aGXj+cPIGvdM6gx5kzLCHzB0pkML0gahVxKLi2b4PXNZFIj0YnfuUpXuw
-         P7hoCManbsOYUmasE0rQ7FbZl6VCxV6/8fzBBvDQWN1oWVqtECyz0lq/L906leDxEDWb
-         g3Qi9Lfoe1qUGJX9QKBPjQX3Xh256e2CxF//E/WKHStSlKHtYSW6q11pLmLM3uBszjWk
-         dEIpSD1KiFHC0QuX3hhdTK2Ew9y4ECWLTEtw9yTLLY4zUWQM25m5Wp+VoGoz02LhwgNu
-         xqwtFVGRhE4/qH6FHRpBNqOCvJEXfZvfrEHppwsrRPphC7S86nMKXtI3mbd0nfh0kQIr
-         ldOw==
+        d=linaro.org; s=google; t=1728397394; x=1729002194; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3s0y0U4U/zNTntZ4JNtG+dOk0GuXy1+AAJizNLWCVpk=;
+        b=QT01KvKG2prqrjJs4f+XFzFhxsReuJ3NlXP0O4SB0RxgfjaQu7tAWSWGVcBMfxFiFi
+         HxrMjmW7lMZzmGl9QGIRNh3stx6SqFQv9z/nm6poARNynL3LhAZZC1w4m6kJoLdUdOkX
+         4wY7rlnyFu5k28z2OG354pwZ/mDyt79FQUPgCOot69YR5NF8sZ+7mYuNjkp3EQ+eYG1P
+         +hOTerq12mXrBYLHCbVQzzqUE5LiBJyY5aBfdvdXjgwQrAzRyOY7E0b8WM2UXULPPGya
+         9XlDKvb9Z4Wq4jN0JMOFcY1ke5kPmPL/R4IWjy5zlxsKlM5a60wGR3Toj9+rbjoLd2IN
+         xVLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728397515; x=1729002315;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KyNsEi0JeRXi6J1a9d2wdU47n7lnZVibMGfNyAtDMsk=;
-        b=qNikPJXBfQAfTFKl2RvsbHwLXo6fWLWbn9YH63/ROo7bG6YB7iBiqyN3sz9uKbV0wm
-         M0umH+uduDB6uxzPCyU2f8OT3MB1S8ItEKMIeYPOHq8oZRyuObUl2cKpTEcHHpOE80nZ
-         RTvSs1t9RA7wRynOkBGfbvJWLAfYtfi269DWwXGrd5JmtbMCs1EKpcnmqxaZY1w3l4xk
-         3a5GXbPjQISAppdIT50Jtj7+swct6hy5bxNl/XyB5pPus1womkADVDB/8+THJntOJr8f
-         VosOi1iouZ/KTrqhaLzYB8rXKz+SgnkVMjKLhHi8cuK/1YeZ5mnLvVa+MlqtDAFoAFBR
-         tDUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKRgFd3QxU76VEE9z3qVvxlbtXKgEQGORMlai0vc7C0FRMY806af9VLFPvvi3KVxoPDkebEUHyG8TzT+s=@vger.kernel.org, AJvYcCWd8Qkh7oWfsda47FioIvZYEQbM9aGXJ+1DOBJekMTqV4fHeXxIdzmTMVgr3NtqyXLL5tThy+D1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4LUTVdRAqkY14WHYedf8AXe+xu9sjtAmE7Gh9pV8dKgw2/h8w
-	M2idkBuLHL5lDabKIE2ZCKYy9sJxuVhk1uUAFf+W3ZNtGZgE5RC/
-X-Google-Smtp-Source: AGHT+IESTTBBft0mh5cCnBDcux0lVuyKjXuLuoYYeQ7sEweGaRbw6DoOZADQbnff7G6AV4W3htpsMQ==
-X-Received: by 2002:a17:902:cecc:b0:207:c38:9fd7 with SMTP id d9443c01a7336-20bfe290ebamr179165615ad.22.1728397515099;
-        Tue, 08 Oct 2024 07:25:15 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e20b0f68a8sm7675987a91.36.2024.10.08.07.25.08
+        d=1e100.net; s=20230601; t=1728397394; x=1729002194;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3s0y0U4U/zNTntZ4JNtG+dOk0GuXy1+AAJizNLWCVpk=;
+        b=esYTJynW1mcOjePiSMsSNLw+z/e62LznKIPH8y10MjghPlB7xIzNNrGe1HT2UBA4tY
+         1nnzHTFbIC6V7ceE/3vcfb6BmDh28AlIO2C92XRlNCp4fo0HlXUOdeIyMsLwTbqSL4nh
+         H/Gb5pHdxAtfrgf8dic2hRMbBbuiRue3ARsrYGog05B/JpXe4kYgWo38uYaLdOB/ZEKV
+         LZ/0OOlvqnWPVH/FDoNcywKx9YWmdkj4K0XWzCxWPmV0eoKJ6S8oPR9ox8v/GW1wdJV8
+         X65SJFOO9xWsBWVAQqGoO/uwJ2CpWNXxB+l5o/eGAl4xMh/3FUVck1Q6dZriJiGFIaCd
+         Mo2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Ya3iTqGaOeyjUrLNku3NM0JwT4KSwP6bgslUz9a98DG+fMtyLM7C8KGUmP6x7Hs/CawLMBLuw5PmnP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFmQLUhz0/3XKh+uZvkjVQB+4qCj46YmlW8qKqJi1dYFSL2z3B
+	OvVUU5p3La5VeRcuw5ega9ig08LxrFlfjQ5IO4lYpi2swbcE/qrt3J/Okgkasi4=
+X-Google-Smtp-Source: AGHT+IET4qjoJB1wWodF/QyFu2wMpdITwsro6eNAfvM/IE1PiYckOL2Jg39NTknxUkJQohIJiVZU3w==
+X-Received: by 2002:a05:6a20:d50b:b0:1d7:1040:8519 with SMTP id adf61e73a8af0-1d710408630mr2986112637.42.1728397394539;
+        Tue, 08 Oct 2024 07:23:14 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:e3a0:1c0:95c8:8b16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cd2a1bsm6168882b3a.85.2024.10.08.07.23.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:25:14 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: idosch@nvidia.com,
-	kuba@kernel.org,
-	aleksander.lobakin@intel.com,
-	horms@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	dongml2@chinatelecom.cn,
-	amcohen@nvidia.com,
-	gnault@redhat.com,
-	bpoirier@nvidia.com,
-	b.galvani@gmail.com,
-	razor@blackwall.org,
-	petrm@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Subject: [PATCH net-next v6 12/12] net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
-Date: Tue,  8 Oct 2024 22:23:00 +0800
-Message-Id: <20241008142300.236781-13-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241008142300.236781-1-dongml2@chinatelecom.cn>
-References: <20241008142300.236781-1-dongml2@chinatelecom.cn>
+        Tue, 08 Oct 2024 07:23:14 -0700 (PDT)
+Date: Tue, 8 Oct 2024 08:23:10 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA
+ to load the firmware
+Message-ID: <ZwVATlRbo0OdRLbj@p14s>
+References: <20241007131620.2090104-8-arnaud.pouliquen@foss.st.com>
+ <202410081902.TwQcmWjk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410081902.TwQcmWjk-lkp@intel.com>
 
-Replace kfree_skb() with kfree_skb_reason() in encap_bypass_if_local, and
-no new skb drop reason is added in this commit.
+From hereon and starting with this version, I will not review patchets that
+don't pass the compilation bots.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
----
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Mathieu
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index da4de19d0331..f7e94bb8e30e 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2341,7 +2341,7 @@ static int encap_bypass_if_local(struct sk_buff *skb, struct net_device *dev,
- 			DEV_STATS_INC(dev, tx_errors);
- 			vxlan_vnifilter_count(vxlan, vni, NULL,
- 					      VXLAN_VNI_STATS_TX_ERRORS, 0);
--			kfree_skb(skb);
-+			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_INVALID_HDR);
- 
- 			return -ENOENT;
- 		}
--- 
-2.39.5
-
+On Tue, Oct 08, 2024 at 07:07:40PM +0800, kernel test robot wrote:
+> Hi Arnaud,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241007-212358
+> base:   9852d85ec9d492ebef56dc5f229416c925758edc
+> patch link:    https://lore.kernel.org/r/20241007131620.2090104-8-arnaud.pouliquen%40foss.st.com
+> patch subject: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+> config: alpha-kismet-CONFIG_REMOTEPROC_TEE-CONFIG_STM32_RPROC-0-0 (https://download.01.org/0day-ci/archive/20241008/202410081902.TwQcmWjk-lkp@intel.com/config)
+> reproduce: (https://download.01.org/0day-ci/archive/20241008/202410081902.TwQcmWjk-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410081902.TwQcmWjk-lkp@intel.com/
+> 
+> kismet warnings: (new ones prefixed by >>)
+> >> kismet: WARNING: unmet direct dependencies detected for REMOTEPROC_TEE when selected by STM32_RPROC
+>    WARNING: unmet direct dependencies detected for REMOTEPROC_TEE
+>      Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
+>      Selected by [y]:
+>      - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
