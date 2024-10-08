@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-355335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D2D9950C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:56:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2084C9950C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6471528659E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:56:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01B51F234FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD51DF756;
-	Tue,  8 Oct 2024 13:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJcBIttx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9D51DF722;
+	Tue,  8 Oct 2024 13:57:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5A3197A65;
-	Tue,  8 Oct 2024 13:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008826ADD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395764; cv=none; b=ZvD7UDIXuxvICZIUmVdQdk2qvO+zz7YrSPAHicCgllEWHXfuRKcafyxnAiLYWLu+GrVWLb9awzLGdivUqc90817nQ0drdsEHcUVC0JmpMTmfw2sId+OllF/wV3nctbgJruryrNiZZwRbwytCmyFZI2WKAfvAwtZ84UY7UxZUJTo=
+	t=1728395859; cv=none; b=Bt42+fNsMd+H5I8nODQN93K0N6OTBMxMwP0K4pY/O99JeZA02yn81x6zuIIVg5sGvLsWDRz6K1EOLGlXOI4IcwZXhfpkauNvldgIOfP8eJSu4ruRdsUC6ZErD4JxwAv9u9NUOcGj2oVZ8WXN3X2CArad6xExZwoK0bYj0ShZQ24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395764; c=relaxed/simple;
-	bh=l3v5zbOAu2VpNitLU1rz2xcsriFrmQpDRQUKMsWmwdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ELd1X57BlpMPI4cJ0sUE+dxz25UqX6T9UWxbNihLWAIAoK5f8M/EQrKzquBDtU7N9bEEABVzDDSI1q41PZZ3igH0awJAeWGy6saiCaw6F6nGAhRq+2sLEDyqbh2xcFPy8Qlr012zKzb2f81r/3wLGbWTjkr/BGRGE1x+R2/E1ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJcBIttx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B40FC4CEC7;
-	Tue,  8 Oct 2024 13:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728395763;
-	bh=l3v5zbOAu2VpNitLU1rz2xcsriFrmQpDRQUKMsWmwdw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kJcBIttxXZGEloWu2Jm18sb9Beb6pG4lVWi+d8BX80/hMKZlIoTN6OBsW1F9rck/R
-	 4iczFFKtY3ZGxLkrVCfM+RkBeCn28BbUBmq0/h/bO8jDyTPNfR/vN+m5sDbSgP0uLu
-	 2g/GkPGatZ+brJJATPTlM6SyLAD1jmS+gvtE+SCK535LHRMSFZtrn+BrLk0cIKgmYT
-	 aPXqmMFMstTO6DvTn0JPUIDFO7lAWsm7AvTbKtOVYFwkT7F5UkC+8R+kyEQaLMpyqr
-	 VWqZdf0oiam28q+CwzYT9+LE5qNifptn6KTz1mHXKJcWjYfHeTTVJ2YfSiNNRS0NJ9
-	 YrYWl1Mf/BpKA==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Monakov <amonakov@ispras.ru>,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	James Clark <james.clark@linaro.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [GIT PULL] perf tools fixes for v6.12
-Date: Tue,  8 Oct 2024 10:55:49 -0300
-Message-ID: <20241008135549.988547-1-acme@kernel.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728395859; c=relaxed/simple;
+	bh=GCG1XMUAJ27htDvbNOl/slQ3+QUGG+0uIx4+wJfRwGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKpqfZrWmQzygp9xgRt9Pni4M/J6niQa4VNlp0yk9cedg9QgC1RxvlPI+yC1nd/gAYPYXIKColLOC5wtkjhKfTMGkCKCVMci7kiNM6Cx4G0oTgoFifNjJJGssK0yBYJDMYvqFel+akbT7LmKAu4g+p7RZyFjQf7/zx3RlLAbX28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syAiK-0004mB-0R; Tue, 08 Oct 2024 15:57:24 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syAiI-000NW2-9T; Tue, 08 Oct 2024 15:57:22 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syAiI-000Pdx-0b;
+	Tue, 08 Oct 2024 15:57:22 +0200
+Date: Tue, 8 Oct 2024 15:57:22 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 08/12] net: pse-pd: pd692x0: Add support for PSE
+ PI priority feature
+Message-ID: <ZwU6QuGSbWF36hhF@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-8-787054f74ed5@bootlin.com>
+ <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Oct 03, 2024 at 01:41:02AM +0200, Andrew Lunn wrote:
+> > +	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
+> > +	msg.sub[2] = id;
+> > +	/* Controller priority from 1 to 3 */
+> > +	msg.data[4] = prio + 1;
+> 
+> Does 0 have a meaning? It just seems an odd design if it does not.
 
-	Please consider pulling,
+0 is not documented. But there are sub-priority which are not directly
+configured by user, but affect the system behavior.
 
-Best regards,
+Priority#: Critical – 1; high – 2; low – 3
+ For ports with the same priority, the PoE Controller sets the
+ sub-priority according to the logic port number. (Lower number gets
+ higher priority).
 
-- Arnaldo
+Port priority affects:
+1. Power-up order: After a reset, the ports are powered up according to
+ their priority, highest to lowest, highest priority will power up first.
+2. Shutdown order: When exceeding the power budget, lowest priority
+ ports will turn off first.
 
-The following changes since commit eee280841e1c8188fe9af5536c193d07d184e874:
+Should we return sub priorities on the prio get request?
 
-  Merge tag 'mm-hotfixes-stable-2024-09-27-09-45' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-09-27 10:27:22 -0700)
+If i see it correctly, even if user do not actively configures priorities,
+they are always present. For example port 0 will have always a Prio
+higher than Port 10.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.12-1-2024-10-08
-
-for you to fetch changes up to e934a35e3cc1fe0bfb1bc771e64f3ba6e70c40e2:
-
-  perf cs-etm: Fix the assert() to handle captured and unprocessed cpu trace (2024-10-02 18:21:49 -0300)
-
-----------------------------------------------------------------
-perf tools fixes for v6.12:
-
-- Fix an assert() to handle captured and unprocessed ARM CoreSight CPU traces.
-
-- Fix static build compilation error when libdw isn't installed or is too old.
-
-- Add missing include when building with !HAVE_DWARF_GETLOCATIONS_SUPPORT.
-
-- Add missing refcount put on 32-bit DSOs.
-
-- Fix disassembly of user space binaries by setting the binary_type of DSO when
-  loading.
-
-- Update headers with the kernel sources, including asound.h, sched.h, fcntl,
-  msr-index.h, irq_vectors.h, socket.h, list_sort.c and arm64's cputype.h.
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-----------------------------------------------------------------
-Arnaldo Carvalho de Melo (11):
-      Merge remote-tracking branch 'torvalds/master' into perf-tools
-      tools include UAPI: Sync sound/asound.h copy with the kernel sources
-      tools include UAPI: Sync linux/sched.h copy with the kernel sources
-      tools include UAPI: Sync linux/fcntl.h copy with the kernel sources
-      tools arch x86: Sync the msr-index.h copy with the kernel sources
-      perf trace beauty: Update the arch/x86/include/asm/irq_vectors.h copy with the kernel sources
-      tools headers UAPI: Sync the linux/in.h with the kernel sources
-      perf beauty: Update copy of linux/socket.h with the kernel sources
-      tools check_headers.sh: Add check variant that excludes some hunks
-      perf tools: Cope with differences for lib/list_sort.c copy from the kernel
-      tools headers arm64: Sync arm64's cputype.h with the kernel sources
-
-Ian Rogers (1):
-      perf vdso: Missed put on 32-bit dsos
-
-Ilkka Koskinen (1):
-      perf cs-etm: Fix the assert() to handle captured and unprocessed cpu trace
-
-James Clark (1):
-      perf dwarf-aux: Fix build with !HAVE_DWARF_GETLOCATIONS_SUPPORT
-
-Namhyung Kim (1):
-      perf symbol: Set binary_type of dso when loading
-
-Yang Jihong (2):
-      perf build: Fix static compilation error when libdw is not installed
-      perf build: Fix build feature-dwarf_getlocations fail for old libdw
-
- tools/arch/arm64/include/asm/cputype.h             |  2 +
- tools/arch/x86/include/asm/msr-index.h             |  2 +
- tools/build/feature/Makefile                       |  5 +-
- tools/include/uapi/linux/in.h                      |  2 +-
- tools/perf/Makefile.config                         |  7 +-
- .../perf/check-header_ignore_hunks/lib/list_sort.c | 31 ++++++++
- tools/perf/check-headers.sh                        | 29 +++++++-
- .../beauty/arch/x86/include/asm/irq_vectors.h      |  4 +-
- tools/perf/trace/beauty/fs_at_flags.sh             |  5 ++
- tools/perf/trace/beauty/include/linux/socket.h     |  1 +
- tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 84 +++++++++++++++-------
- tools/perf/trace/beauty/include/uapi/linux/sched.h |  1 +
- .../perf/trace/beauty/include/uapi/sound/asound.h  | 17 ++++-
- tools/perf/trace/beauty/msg_flags.c                |  4 ++
- tools/perf/util/cs-etm.c                           |  2 +-
- tools/perf/util/dwarf-aux.h                        |  1 +
- tools/perf/util/symbol.c                           |  3 +
- tools/perf/util/vdso.c                             |  4 +-
- 18 files changed, 170 insertions(+), 34 deletions(-)
- create mode 100644 tools/perf/check-header_ignore_hunks/lib/list_sort.c
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
