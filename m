@@ -1,205 +1,230 @@
-Return-Path: <linux-kernel+bounces-354519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1C1993E87
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8230993E81
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7831F20C1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2198F2818BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DAD146A69;
-	Tue,  8 Oct 2024 05:57:26 +0000 (UTC)
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2093.outbound.protection.outlook.com [40.107.222.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB5213C67A;
+	Tue,  8 Oct 2024 05:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rQVX3tlh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5901419A9;
-	Tue,  8 Oct 2024 05:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728367046; cv=fail; b=RFz3sWvhWxBg8iztuMGbfns4TCwkwRvN/9MPfnL3CNjFR2oJ8bDbmH9r4NODxwjoSyz+UAFI6I/aLZGwtpXE3vL8l6eeeIRU1YMQxX/BMGDtomC5hEUwm3F3eoag2WEABs8L+dPcoOa2p3dulDpv6O18Fe5wANcZ8PFasFE1ppU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728367046; c=relaxed/simple;
-	bh=X51J45QabFI71Uov091eIshZEfaN1dlg6Q54QCilZD0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QWtn0CEBftZGtmtP4I4ut4mHQBQiN346TVHKmXM7D2itmL6dyz06TAHy4clsCWqSYSbI++v/pCuVXbVk5zcwsqm4PrVf9ZKmgTfEIlmazbVXKKV+ykw7eFpY5w0faxQOT2vcVuCYbozfzrtccE+NLPiNdDRmEoJf0qK1jsPT7tc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gGiP9FcOBvQrzD6Oh6C1ZA3NXKEpktn5eLeUcntYpq5jctFJ6SzHrJ3RpXigDfr3UWTXqIa+B4rIS+DUms2n1wXUrD2z7F5i4LJGhJPD/tOPp452CFfx/WQ0v1VF7HpdSLSmYpPTegj32kuIFAMVohtdBIe7o65oUypFDobNMxjHiqrOTV34TK2p9BbMUR09N0sfHHpE/j52FNv82X5plvblq3OMP373P62i7leNQz1wrsKVXerVMkLTt2gCN0kIr4QD44qONqEbGaalpXwDOhWEm1cEe91dy72JzOGlgaw1GzMLls6HJcCwnPBR4IWdWjIq/Xot+bd7fk97pR6/4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CKuRi71SLF418fDZMOlqher3E5JqtU3BAIZCWmKv/z8=;
- b=fRtp9OHqpdkp/RhaIsH3puCDEHrLXlHD7aqyLDdufwxHPALigV+I1GcrNTa+7M23rtM7H0+GTXo0SqntD5Swz3pfrmRBD0XQmsmyFqrbUrgsBMKTGJEnqvyPg98VboQtLEg8WNR8cscdoNH2Y3FfvWemgYzOpkPi0WHyv44XMbrzmq1XiAgBfO2XHDRmYsH0NEyxHX4pFVnjM36bK9CrHHZMzbDVLNGYXWgci5YwZAaUhRdVXMBw6gvfk9wpaksBIrN5ORV4x/pW+crDrDlABebR3RTZETv9RrXY8iKDUlNfcZXT+1v0RNqXTcFZfVsN1HiE4VyBj5/sZBFCcrbc9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
- by PN2P287MB2160.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c5::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
- 2024 05:57:22 +0000
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
- 05:57:22 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: olteanv@gmail.com,
-	broonie@kernel.org,
-	frank.li@nxp.com,
-	shawnguo@kernel.org
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-spi@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/2] spi: spi-imx: Fix casting warnings
-Date: Tue,  8 Oct 2024 11:25:46 +0530
-Message-ID: <20241008055644.4900-3-hardevsinh.palaniya@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241008055644.4900-1-hardevsinh.palaniya@siliconsignals.io>
-References: <20241008055644.4900-1-hardevsinh.palaniya@siliconsignals.io>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN3PR01CA0173.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:de::17) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:204::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0F42905;
+	Tue,  8 Oct 2024 05:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728367003; cv=none; b=IkO9glxVG+Y7NCKHEWA/2Ty1r2K6dlVPwFIDhly2a+EkdrB8pHnMfzG2L7Fj+7Bz1AwD6aQWbyHB+95+pQRW4bmcsjSOq6JsGVcbyTlLXSt4DVq7AxDfrYkLKf/sHP/BbbVdA+F3z7X6pb7+VjHgFO1F3xAyRn3kpvFSjC8Zjfw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728367003; c=relaxed/simple;
+	bh=UmHzq8+lelGAlPH9pd82mtqLGKgeP7kR6xHYM/WlLYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=I6cP450NI/VObwCn7Ba4WWZKcBN93d5MqpSN9p+efc6uxGAWsnh1z9fBHG7SakDBrVhCI8723U6v1og+DLkrwpPlaTNGcrc1/CJWc8Sd/qqdklT0lhXwavkLM1rU0bduNnii6XFBxxntjw/DXw7HRpLhgXCym/6jWRBrEGrx0FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rQVX3tlh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728366996;
+	bh=FEgyFMxR6IYvbg3waLB423wN8QvwNFIdtHgZJ8dpKNU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rQVX3tlhEX+xZahQcq8BpkFYT0pOtO4O7I0A0qidQn6WMDiwoQlN7LHkofMqICUSH
+	 KGDRgAh6Olahfp042SHCI7EFKHUvVnRiV/fsOOgiiVpsEw6Sl6RYy5358eWprAnYHl
+	 8QG9zsojeooPsw6+os+F+1pm9ye9tGy0G8krRsOxpcSps3cn7Ie5KILNWpvNEagV55
+	 69Q7/bHJaP8LITAJthjy8mXJTt+aFUWstys17/7F5wgAt7k67f51zH8wL+lghvZU4s
+	 fkIDIv31urGRDldUFkzHJj0lU83MIeZlavmwbw/mKDPjFpDQZMv7qNrLkQOMfevei7
+	 gaOFPPa9FWD7g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XN4yr4Mz0z4wcr;
+	Tue,  8 Oct 2024 16:56:36 +1100 (AEDT)
+Date: Tue, 8 Oct 2024 16:56:36 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Aliet Exposito Garcia
+ <aliet.exposito@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the vfs-brauner tree
+Message-ID: <20241008165636.0e8d0d4e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|PN2P287MB2160:EE_
-X-MS-Office365-Filtering-Correlation-Id: b35ded7d-835b-485e-2893-08dce75e1382
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LOJQ6cRZXn6Ku+td0pZYIdj7hyx5bzLeHLEKU8R2zGjS1NE4EzrsITiBjlNX?=
- =?us-ascii?Q?ZRBzQPogzO62Dt4clmKhDh1ONIyt2Gd+t4hCcq3OeVWpJTbsE+Gzpi1WciV1?=
- =?us-ascii?Q?8l72dShNL3gB1ZGC4S2rlSeFcopq4hcAgb5KMEfpX2nTnDMsJCRCXyfOQD3H?=
- =?us-ascii?Q?SpnzJz60lDjVGtPbB5/pnzQnt3XmNCyoRdSrTQJZB+GcBcvRwA3+wjULcniH?=
- =?us-ascii?Q?Simua5/itpIbCiui4d6mlvwk/vZlNHK464sDcNZmkD6s51Iskd4dMDYrcXMc?=
- =?us-ascii?Q?ykBk5DEbH3EnTL/PhSCWpyyq5sWqhxPImRfVEU7II2r4vIWkqxPVCPbxTUte?=
- =?us-ascii?Q?6ajEZe6100Z3TZEmP1H8flyqUcthafBdYxeU/EJgL8CwrnXnkTmaixT8hM6e?=
- =?us-ascii?Q?Ih9lDGhDxsSaZzq3hxM6oH+bLAHy2XFSuRqjsvt+XKZHSTZtDNtDymaX1Ypr?=
- =?us-ascii?Q?TG49u2/TZ7X38/hgqu+OeJtC68o+Y7eI8Q+Rre6CYvY0TmDLYXbU28+88zqP?=
- =?us-ascii?Q?ycGrOkPcOobzRIyHt4+p7G0gG3yIzzqBnhT28O4vQDdsXO9GWPNrnZ3N/I4S?=
- =?us-ascii?Q?hRbT2Qp+zXPnyUZqRAioT1K9fTlc81B/k7C+1MX0eTYuyqDxfPxDaGvxecym?=
- =?us-ascii?Q?4XrrewNnE2uL/GyzjVUM+H7Ge2mxg9f2CbhRXPKezeYl75xqOzRzqTROBh5Q?=
- =?us-ascii?Q?7yAV0yZ0G87EAxeFmbpT8mZlJJo1QKMVaiXPNjIyZZGE1Yrb5tuuwD1JxcN+?=
- =?us-ascii?Q?j452OOsP46apN+vhZeJHbyq4xot7IYSyKo2RV0l53eMjB8WoXkZvQHhrLJiE?=
- =?us-ascii?Q?NVh89WwtQJfwYPhAAQFFmtNlVJ0rcwXxWnOtGEmoIQS5yV0QUhufsOL+6CDQ?=
- =?us-ascii?Q?a3cCDu7mS0k/pifZ6LMvoYxyBE56p6zPuR+r1PR5cFqD9JcrumdOUczjpJzg?=
- =?us-ascii?Q?Z+13ByWFP7lmu1QGX56QXjbvdctGW2fL8aWNQSvZqqRVw9RLEBt86jAlJvI7?=
- =?us-ascii?Q?+9qhdHXLJQzU6KzuL8sVgrG/jufUdlRMXpnlc10O6XpMsOO0bzXyLEKxOK/z?=
- =?us-ascii?Q?1bLdCcKBN4zHAqakoEcsUvgoW5EjFU1Vf10Y8yvL3zPLSqevfRPDkmbTZByH?=
- =?us-ascii?Q?IpC6hkNs2kwXsmk0XihWxLnCWqLjGJkZciN9O01x+VbqaV87rt8GYu385ip7?=
- =?us-ascii?Q?EsCyCGFipGEDRb1tyX/MuPN3O4DS9pbHr8HuQdTOdXiDJvVl4OGT8A8uxrNS?=
- =?us-ascii?Q?iJvCKaX1hzRAN0tgmSeX9LnQaC5Y3HJz8pZQHeLYhyGTM7NeCP8lY9xNyfVs?=
- =?us-ascii?Q?kn/fyEr4GdSJyJ0iR56P3p1Pdzy31uQpf3Bo6OXc0AHnRQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bO1GtZM4pAwbnyv90wp0A0wTheEGMHOMkj6Db1fx/ZkpoCi34x4G/UIS8wdM?=
- =?us-ascii?Q?a8QDMNhlv1aaShIyANHtW06R4D4qtZ7Hxc1U8jrMLNPWxad0gr9v8NGnZeqd?=
- =?us-ascii?Q?33chaJve3QEeojJ6FtgBMsyppExLDAXUaWRRoYkDC5qCl00FYsTTHULMaWrg?=
- =?us-ascii?Q?2dJLVjJIBvQNe4CkwxbFjWcuIzB/AbkyR6nnK3bqzHpkqPEaVDciRXjFtZg4?=
- =?us-ascii?Q?CiKjWVTA8vj80tUggkd2HSLk1xQpXbetIIp8xH27R5hI51TPItrtFKiozBte?=
- =?us-ascii?Q?zII8VoQx+/U2svJ4DRDpqdpZztRP0qn30TBGpJV5N/cqajU+aGaAXOkq+DCP?=
- =?us-ascii?Q?jwXn/RUc8A9/S5geT/v61qlvwpPMoRZMibFQKIxLDnJuTwPKg9GL269vwYcg?=
- =?us-ascii?Q?8WuxROnz3xlQGAzyOn+NrejDfab0bsNEA2+tR58eMA2PI/GUmAiU6yJZ+sPr?=
- =?us-ascii?Q?G0dYgv979oXxQCCxHikgXVS2mAUETNnCr8jXZzlMS6z9kqcAxExe5ahmVbxv?=
- =?us-ascii?Q?c0/ZX3iNKyX/YC9/EMclHOvOufOS9eAPJJM/1sOcrzZN7QpuLJJJ0+hs6AgF?=
- =?us-ascii?Q?H4IB9iDTyf+TBj7SxKM1sgoNTFNbOGPF+djJhu4cACI4Wf/Crs36zlVB542P?=
- =?us-ascii?Q?YmZcQ2XNG6j8WkwEoBrsN5nSfQbXoboKBZrJhzJTHSW5c/H7u5K+Nz/z6bFS?=
- =?us-ascii?Q?PRO7XCHqSS7KM1FOfSV8sp80pJlkkbHLojggGz4HY+zvHnAvgY7nNPSTNQMY?=
- =?us-ascii?Q?6ucLvQ5RQTVrHleBmloXvqSKtigskrK/dyaYqZYniC/GrT7CWWTdNPvSr0Rv?=
- =?us-ascii?Q?CATbY+R58wEU7lBupJzf+gNZxO16x9OmQuDZk+iJ7hWpt3kk1rRrkCw6MzwW?=
- =?us-ascii?Q?bgf3yV75246g9lr0PAiIFru7xR1g183il0/uZxSimqXPm+DElE99vKgo51jA?=
- =?us-ascii?Q?JGwirNA8KllwQi/gy1Dof6EypKifMjFZIyh6nwzuFZM7P9mZNQvmDqJjeeqP?=
- =?us-ascii?Q?ow1oYYAEwGseG1Cq/9OUhEwEyMjnB+xI4exfhw50V2ntdkrQAHF3KY+GvJuV?=
- =?us-ascii?Q?bPIbH19Iy47d6uw9tQiUTz3Mlw9S1r5x+qAdMY4m4zHYFAOXq5P5doyVbVH5?=
- =?us-ascii?Q?nNflSgXZ2C2T0sbhXRfM1WRFgmOc3Fwgalw0Atez21YndFerpXyRALwf1Tw3?=
- =?us-ascii?Q?eHz2Fijs/0KaMr98yi8fQ277kCkHUI0QXJkUAuCXnFbjbjq1KOS8ffw/Sir0?=
- =?us-ascii?Q?Gj0DNnc5nYPrOQE6ED/67XtkvD6iP2Jry7mLLVDlNSGwxWv7swyaHL6uIypz?=
- =?us-ascii?Q?pbG5gmxoEfYjvfi/v087wUO8uQHAZ3rIBQuGnfypUSISDlg8P/DHqAo+wLMU?=
- =?us-ascii?Q?bnXam+1vwpU+Ht4xcrLXY3931jYt76hKTeyYUAar7gDcQn8MH5pzOta9Sp04?=
- =?us-ascii?Q?rPCE8HzTFpTt0wgOd+RfFKqj6OAQdbYxjiUw8BH7Q3lldzkypOxeg+GoisMV?=
- =?us-ascii?Q?4JvA7ZqESZp64yuWgTqmL+/XKpvdcO7E/6e6ueEtmnt4eYvydkqdzgxllEVd?=
- =?us-ascii?Q?XIKpktabqscJRIxpF0zoiwEly4sMP4oixqNCHATNp2Tb9EB24Hz1rimJSh30?=
- =?us-ascii?Q?PbfgGhjd2/COIJNu+FTNqc4JYwZ44450Dh9flnMm+s2e?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: b35ded7d-835b-485e-2893-08dce75e1382
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 05:57:22.0728
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 30sng/ykHUZXf7Xks8gHnQYUTdjBsOMXCaFDh9txlPZtsZJKcDH04j+R6/vcyU1VmFrFFfkKD38xVpnPT2KZvEdIVjBX0YCW8d0mvN7gnkeH6dWXa769SjZQufo1yEy4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2160
+Content-Type: multipart/signed; boundary="Sig_/=TaquIC/0_.amr5+WKZXvow";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Sparse warnings:
+--Sig_/=TaquIC/0_.amr5+WKZXvow
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:410:19: warning: cast to restricted __be32
-drivers/spi/spi-imx.c:439:21: warning: incorrect type in assignment (different base types)
-drivers/spi/spi-imx.c:439:21:    expected unsigned int [addressable] [usertype] val
-drivers/spi/spi-imx.c:439:21:    got restricted __be32 [usertype]
+Hi all,
 
-Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
----
- drivers/spi/spi-imx.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Today's linux-next merge of the rust tree got a conflict in:
 
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index 4c31d36f3130..fefee771b042 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -407,7 +407,7 @@ static void spi_imx_buf_tx_swap(struct spi_imx_data *spi_imx)
- 
- static void mx53_ecspi_rx_target(struct spi_imx_data *spi_imx)
- {
--	u32 val = be32_to_cpu(readl(spi_imx->base + MXC_CSPIRXDATA));
-+	u32 val = ioread32be(spi_imx->base + MXC_CSPIRXDATA);
- 
- 	if (spi_imx->rx_buf) {
- 		int n_bytes = spi_imx->target_burst % sizeof(val);
-@@ -436,13 +436,12 @@ static void mx53_ecspi_tx_target(struct spi_imx_data *spi_imx)
- 	if (spi_imx->tx_buf) {
- 		memcpy(((u8 *)&val) + sizeof(val) - n_bytes,
- 		       spi_imx->tx_buf, n_bytes);
--		val = cpu_to_be32(val);
- 		spi_imx->tx_buf += n_bytes;
- 	}
- 
- 	spi_imx->count -= n_bytes;
- 
--	writel(val, spi_imx->base + MXC_CSPITXDATA);
-+	iowrite32be(val, spi_imx->base + MXC_CSPITXDATA);
- }
- 
- /* MX51 eCSPI */
--- 
-2.43.0
+  rust/kernel/types.rs
 
+between commit:
+
+  e7572e5deaf3 ("rust: types: add `NotThreadSafe`")
+
+from the vfs-brauner tree and commits:
+
+  567cdff53e71 ("rust: types: avoid repetition in `{As,From}Bytes` impls")
+  67b3fa4288fa ("rust: kernel: move `FromBytes` and `AsBytes` traits to a n=
+ew `transmute` module")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/types.rs
+index 3238ffaab031,5ea9126c8c93..000000000000
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@@ -468,88 -329,3 +329,24 @@@ pub enum Either<L, R>=20
+      /// Constructs an instance of [`Either`] containing a value of type `=
+R`.
+      Right(R),
+  }
+ +
+- /// Types for which any bit pattern is valid.
+- ///
+- /// Not all types are valid for all values. For example, a `bool` must be=
+ either zero or one, so
+- /// reading arbitrary bytes into something that contains a `bool` is not =
+okay.
+- ///
+- /// It's okay for the type to have padding, as initializing those bytes h=
+as no effect.
+- ///
+- /// # Safety
+- ///
+- /// All bit-patterns must be valid for this type. This type must not have=
+ interior mutability.
+- pub unsafe trait FromBytes {}
+-=20
+- // SAFETY: All bit patterns are acceptable values of the types below.
+- unsafe impl FromBytes for u8 {}
+- unsafe impl FromBytes for u16 {}
+- unsafe impl FromBytes for u32 {}
+- unsafe impl FromBytes for u64 {}
+- unsafe impl FromBytes for usize {}
+- unsafe impl FromBytes for i8 {}
+- unsafe impl FromBytes for i16 {}
+- unsafe impl FromBytes for i32 {}
+- unsafe impl FromBytes for i64 {}
+- unsafe impl FromBytes for isize {}
+- // SAFETY: If all bit patterns are acceptable for individual values in an=
+ array, then all bit
+- // patterns are also acceptable for arrays of that type.
+- unsafe impl<T: FromBytes> FromBytes for [T] {}
+- unsafe impl<T: FromBytes, const N: usize> FromBytes for [T; N] {}
+-=20
+- /// Types that can be viewed as an immutable slice of initialized bytes.
+- ///
+- /// If a struct implements this trait, then it is okay to copy it byte-fo=
+r-byte to userspace. This
+- /// means that it should not have any padding, as padding bytes are unini=
+tialized. Reading
+- /// uninitialized memory is not just undefined behavior, it may even lead=
+ to leaking sensitive
+- /// information on the stack to userspace.
+- ///
+- /// The struct should also not hold kernel pointers, as kernel pointer ad=
+dresses are also considered
+- /// sensitive. However, leaking kernel pointers is not considered undefin=
+ed behavior by Rust, so
+- /// this is a correctness requirement, but not a safety requirement.
+- ///
+- /// # Safety
+- ///
+- /// Values of this type may not contain any uninitialized bytes. This typ=
+e must not have interior
+- /// mutability.
+- pub unsafe trait AsBytes {}
+-=20
+- // SAFETY: Instances of the following types have no uninitialized portion=
+s.
+- unsafe impl AsBytes for u8 {}
+- unsafe impl AsBytes for u16 {}
+- unsafe impl AsBytes for u32 {}
+- unsafe impl AsBytes for u64 {}
+- unsafe impl AsBytes for usize {}
+- unsafe impl AsBytes for i8 {}
+- unsafe impl AsBytes for i16 {}
+- unsafe impl AsBytes for i32 {}
+- unsafe impl AsBytes for i64 {}
+- unsafe impl AsBytes for isize {}
+- unsafe impl AsBytes for bool {}
+- unsafe impl AsBytes for char {}
+- unsafe impl AsBytes for str {}
+- // SAFETY: If individual values in an array have no uninitialized portion=
+s, then the array itself
+- // does not have any uninitialized portions either.
+- unsafe impl<T: AsBytes> AsBytes for [T] {}
+- unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
+-=20
+ +/// Zero-sized type to mark types not [`Send`].
+ +///
+ +/// Add this type as a field to your struct if your type should not be se=
+nt to a different task.
+ +/// Since [`Send`] is an auto trait, adding a single field that is `!Send=
+` will ensure that the
+ +/// whole type is `!Send`.
+ +///
+ +/// If a type is `!Send` it is impossible to give control over an instanc=
+e of the type to another
+ +/// task. This is useful to include in types that store or reference task=
+-local information. A file
+ +/// descriptor is an example of such task-local information.
+ +///
+ +/// This type also makes the type `!Sync`, which prevents immutable acces=
+s to the value from
+ +/// several threads in parallel.
+ +pub type NotThreadSafe =3D PhantomData<*mut ()>;
+ +
+ +/// Used to construct instances of type [`NotThreadSafe`] similar to how =
+`PhantomData` is
+ +/// constructed.
+ +///
+ +/// [`NotThreadSafe`]: type@NotThreadSafe
+ +#[allow(non_upper_case_globals)]
+ +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
+
+--Sig_/=TaquIC/0_.amr5+WKZXvow
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcEyZQACgkQAVBC80lX
+0GxL5Af+L6xVjhjy8fHB7yMsg0Uuow+y3RkTVImzHZmGCBuxtsE3IKDf5u6JrNnv
+Ob6+v7ujU+N0wmvQHT3DfLwf0Btdj1YuHLMaLSV7GQOCyXR+DifJr/yvxCJQq44b
+pghjHui6JwpDsOlsrmuAmCYCceBKLu0c9zWteEkb8YM5KKYwi03Rkqcwhw93hs6Q
+hpvTUbmxMGO23ASVnnr9HkiLGbNCmNGTYU8FUuuWMEy9CcBvDOlNoUDj/0Uv0uiE
+jZnYqIlS/wABgUQx1JFpbkN+FJJu3wZ54HKVfohfUYWo8+yFku6+Z70nr2Roy4J5
+EwtxAtXNX+Eik+vjJABojYOn8i22+A==
+=jVHr
+-----END PGP SIGNATURE-----
+
+--Sig_/=TaquIC/0_.amr5+WKZXvow--
 
