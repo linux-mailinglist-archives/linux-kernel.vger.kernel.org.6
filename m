@@ -1,87 +1,210 @@
-Return-Path: <linux-kernel+bounces-354594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0648993F7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D2A993FEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38DC1C20F4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506E01C215EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E0D1CEE8E;
-	Tue,  8 Oct 2024 06:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95E51E379F;
+	Tue,  8 Oct 2024 06:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IB2m2W1K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="qp+4PYjj"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2316C695;
-	Tue,  8 Oct 2024 06:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A00913D2B2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370460; cv=none; b=et/gx3Icp2pTbQO6ZMbU/L/GDcQ8hJbhmrq8SeEi/2CNNNLu0UVa5V1lyRkOblhUE7/JISxsl8zzMDjJPAQXpnaQiOSJE4nayof7XU9dFMvrf7kR5good2Ne2lBz6T/7+DMu5l+I62gchsUOtRYviA/Hy3LoFcFHwMPzUKUw8vQ=
+	t=1728370478; cv=none; b=OGaxLCkAhPSUP6rtcKAhY0JDHHTAML/WGMXB/k+1Pii7SRREqhWWPxzGk61orM/UEX7hjYGN8Zrnm0CAO/swDllsE+lkYN9BNCm5oDjKdywjj9oZcT7iogFDFf742Bt+uFToaVLMw0tVn16xr45+kKYzefflULzCCrZe+gB1G4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370460; c=relaxed/simple;
-	bh=B0gH9Dqz8PxRVVM4RZd2AcaICH4Dxpie6xhdfRKEhtA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=R7krHN2BESGjMVKnElUVYNa8wnHdfK82cdO+7lf7+/acv5f08w+OvCJaCXBC3WzovElDIASLyI/aYwkpqY1Qs9W1B7KdGUkbCaYy7nC6Em00gRE6QVBTxAICqbyMuCAQEYp1VlE2rghUJpG7bfLW7XtlnlDPHac7jqkxXLEGbYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IB2m2W1K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D69C4CEC7;
-	Tue,  8 Oct 2024 06:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728370458;
-	bh=B0gH9Dqz8PxRVVM4RZd2AcaICH4Dxpie6xhdfRKEhtA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=IB2m2W1KUUwwSn2zJRFG2KCVqVV6GlQApW2i22jtXpCIuayjBXz8nxU7TMgtpf8WA
-	 2naXkT9S/wxitDt7jgqOUPa0NH9n4vNt3H7x0lO0YR966KNiM7xP8MTB7PssYfrU3I
-	 OAZJ3JxtvVntJoAnEFq1LcTwPiwAh/VczaukwHTGfmqRRRck+zG+H3O8vd6LLqkKZG
-	 6/Fr1KhoLYOw9w8udZslxMAr1QPafaRuXzWGl5SiXT4g23RazvBumesDdl8R82fA92
-	 4BpDzr/yPE5TVHY6QxPmbtbY3O1JFynNL+CZQsxY1IwziR2Za0HjBjGUuDUXtJcqlR
-	 mODqRvTzfqppw==
-Date: Tue, 8 Oct 2024 08:54:16 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
-cc: bentiss@kernel.org, bonbons@linux-vserver.org, jic23@kernel.org, 
-    srinivas.pandruvada@linux.intel.com, lains@riseup.net, hadess@hadess.net, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-iio@vger.kernel.org, linux-usb@vger.kernel.org, 
-    opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] HID: Fix typo in the comment
-In-Reply-To: <20240924115005.3130997-1-yanzhen@vivo.com>
-Message-ID: <nycvar.YFH.7.76.2410080854080.20286@cbobk.fhfr.pm>
-References: <20240924115005.3130997-1-yanzhen@vivo.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1728370478; c=relaxed/simple;
+	bh=6j/9R+ZY3hri2Pq0LzMiZP+7u1JzeaSfqhBdxGp4lDo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To; b=f8+betHWjo6w4b7sdoWfJVwEqO5fWxyrEE7Hg/ruPcXK29YSM8TzgP+78nCsTxHp5tHnl7ZLcl5NCF0ExTEC9y8iulsyc5aEWrRwsmSJxG2aEFJPkRP3HqmSq9lekOVYHmYlZLAUXm/P47ywKY5nij10sjqiSASOK3tCqGLWS+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=qp+4PYjj; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b7eb9e81eso62810765ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1728370476; x=1728975276; darn=vger.kernel.org;
+        h=to:content-transfer-encoding:mime-version:message-id:date:subject
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gty0dEnircfdREPGfEnkI3a1znlqYE3ZJr68g8y4pY=;
+        b=qp+4PYjjKIP7yWhCdM47DkiyBzhDd1QwrCwW1dYjZ1x79FjhqkUyhTQMszvnAV7fx2
+         vTdu91qzoyZIVzsIE/HcMPwRNWwlyA357gK47EJWmyJXTNU/2zIrzlVxC+8x6hS6cFBo
+         j4SUfUKP663X+phL1dxePLzjRj9xxFGn9+PqK+Ppawv45f+cKfs1WbMhyGfMku1MTk1I
+         bFUmRH2kOX5/oojo3huyAKA5hmyWk/UB2n4/WigRu4Wx2mzQ3rNDCEkX4+NbJFruap0+
+         ZvxBPBqbHIj4F0rQ5EAkC64hEAynoyD6HBW1ImMeaM0Ji/NWhy+44QAdP9kQXJfNYcHG
+         sDzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728370476; x=1728975276;
+        h=to:content-transfer-encoding:mime-version:message-id:date:subject
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gty0dEnircfdREPGfEnkI3a1znlqYE3ZJr68g8y4pY=;
+        b=lb1uwPEtQUZU01WzS2k5OkRqelSk1qou7aadsdurp6pDkh+vGVBep7eT+LnX607O0V
+         ItgNBJLCiVDF5t6Ber5j/WhY71kUvCTnwVGBgTbDmj+L6pHwQNwkivy8ObNJl7nayPH4
+         VsVdhRv+N/knH9n1vI51efBLY/IWXlXuKCp50lXiQfEM/U2iIDwxyUsyI/0QVU28VKeV
+         O/ojMRWQ4ZxgYdyRCgkJNGo2w9c3Reu/cYGUmkCv12wGYmGehB3zLV2TjxUZ1kKkvcUr
+         k7VUTllAkh3XiwGrtS/LQ70UYFwCFfaemByufu17NJ9RYR3ZrdUAXO98yOEWEUS77Tbl
+         RBcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMjNRlYNaaVSW2C+Z175KmGLyYjqVmwk07Z+LFkro+F/N8RW3+Lbw1lWVoBhF6OgAPGLwk1rl3TMQS9lg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaJ9lo0aQgn9jtKHKmYMcJ6X6ZMdYXQvc4givCQXZLtm4IONf5
+	Zz8qLe9if7KClUaqpauIKK7lwg/bX93Y2K+4OYve+9Q8wqYw3Xwhes7XdT8fcAQ=
+X-Google-Smtp-Source: AGHT+IHPQgocRRuVmNwy/y+36pGmysZiERFRRt/OUdpP+pXSUlRa9FCdE9Lo2jrORE0Se01AVBe7kQ==
+X-Received: by 2002:a17:902:e882:b0:20b:9078:707b with SMTP id d9443c01a7336-20bfe02199emr225978335ad.30.1728370475858;
+        Mon, 07 Oct 2024 23:54:35 -0700 (PDT)
+Received: from localhost ([157.82.207.107])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20c13987571sm49681435ad.250.2024.10.07.23.54.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 23:54:35 -0700 (PDT)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Subject: [PATCH RFC v5 00/10] tun: Introduce virtio-net hashing feature
+Date: Tue, 08 Oct 2024 15:54:20 +0900
+Message-Id: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABzXBGcC/4XOwWrDMAyA4VcpPtdBkhUn6akw6APsOnbIbLUxp
+ fGwS2gpefcZj0HHDrtZlr8fP1SWFCSr3eahkiwhhziXod1ulJvG+SQ6+DIrAmJgMDrlrKUzne8
+ HOY5dp8rLzyTHcKuVN/V6eFHv5XIK+RrTvZYXrKsSMQjQQ0sI2CAzE2nU4zlM4Ryb6Mtp78f7H
+ G6Ni5faWejJYouMlrkhC5btv9b8WIYB2/r5xWjQzhooMf8BPf1B/ISIvxEX1LMMhsSBWPcLrev
+ 6BaOSk/1JAQAA
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+X-Mailer: b4 0.14-dev-fd6e3
 
-On Tue, 24 Sep 2024, Yan Zhen wrote:
+virtio-net have two usage of hashes: one is RSS and another is hash
+reporting. Conventionally the hash calculation was done by the VMM.
+However, computing the hash after the queue was chosen defeats the
+purpose of RSS.
 
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
-> 
-> Fix typos:
-> 'mninum' -> 'minimum',
-> 'destoyed' -> 'destroyed',
-> 'thridparty' -> 'thirdparty',
-> 'lowcase' -> 'lowercase',
-> 'idenitifiers' -> 'identifiers',
-> 'exeuction' -> 'execution',
-> 'fregments' -> 'fragments',
-> 'devides' -> 'devices'.
-> 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+Another approach is to use eBPF steering program. This approach has
+another downside: it cannot report the calculated hash due to the
+restrictive nature of eBPF.
 
-Applied, thanks.
+Introduce the code to compute hashes to the kernel in order to overcome
+thse challenges.
 
+An alternative solution is to extend the eBPF steering program so that it
+will be able to report to the userspace, but it is based on context
+rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+and vhost_net).
+
+The patches for QEMU to use this new feature was submitted as RFC and
+is available at:
+https://patchew.org/QEMU/20240915-hash-v3-0-79cb08d28647@daynix.com/
+
+This work was presented at LPC 2024:
+https://lpc.events/event/18/contributions/1963/
+
+V1 -> V2:
+  Changed to introduce a new BPF program type.
+
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+---
+Changes in v5:
+- Fixed a compilation error with CONFIG_TUN_VNET_CROSS_LE.
+- Optimized the calculation of the hash value according to:
+  https://git.dpdk.org/dpdk/commit/?id=3fb1ea032bd6ff8317af5dac9af901f1f324cab4
+- Added patch "tun: Unify vnet implementation".
+- Dropped patch "tap: Pad virtio header with zero".
+- Added patch "selftest: tun: Test vnet ioctls without device".
+- Reworked selftests to skip for older kernels.
+- Documented the case when the underlying device is deleted and packets
+  have queue_mapping set by TC.
+- Reordered test harness arguments.
+- Added code to handle fragmented packets.
+- Link to v4: https://lore.kernel.org/r/20240924-rss-v4-0-84e932ec0e6c@daynix.com
+
+Changes in v4:
+- Moved tun_vnet_hash_ext to if_tun.h.
+- Renamed virtio_net_toeplitz() to virtio_net_toeplitz_calc().
+- Replaced htons() with cpu_to_be16().
+- Changed virtio_net_hash_rss() to return void.
+- Reordered variable declarations in virtio_net_hash_rss().
+- Removed virtio_net_hdr_v1_hash_from_skb().
+- Updated messages of "tap: Pad virtio header with zero" and
+  "tun: Pad virtio header with zero".
+- Fixed vnet_hash allocation size.
+- Ensured to free vnet_hash when destructing tun_struct.
+- Link to v3: https://lore.kernel.org/r/20240915-rss-v3-0-c630015db082@daynix.com
+
+Changes in v3:
+- Reverted back to add ioctl.
+- Split patch "tun: Introduce virtio-net hashing feature" into
+  "tun: Introduce virtio-net hash reporting feature" and
+  "tun: Introduce virtio-net RSS".
+- Changed to reuse hash values computed for automq instead of performing
+  RSS hashing when hash reporting is requested but RSS is not.
+- Extracted relevant data from struct tun_struct to keep it minimal.
+- Added kernel-doc.
+- Changed to allow calling TUNGETVNETHASHCAP before TUNSETIFF.
+- Initialized num_buffers with 1.
+- Added a test case for unclassified packets.
+- Fixed error handling in tests.
+- Changed tests to verify that the queue index will not overflow.
+- Rebased.
+- Link to v2: https://lore.kernel.org/r/20231015141644.260646-1-akihiko.odaki@daynix.com
+
+---
+Akihiko Odaki (10):
+      virtio_net: Add functions for hashing
+      skbuff: Introduce SKB_EXT_TUN_VNET_HASH
+      net: flow_dissector: Export flow_keys_dissector_symmetric
+      tun: Unify vnet implementation
+      tun: Pad virtio header with zero
+      tun: Introduce virtio-net hash reporting feature
+      tun: Introduce virtio-net RSS
+      selftest: tun: Test vnet ioctls without device
+      selftest: tun: Add tests for virtio-net hashing
+      vhost/net: Support VIRTIO_NET_F_HASH_REPORT
+
+ Documentation/networking/tuntap.rst  |   7 +
+ MAINTAINERS                          |   1 +
+ drivers/net/Kconfig                  |   1 +
+ drivers/net/tap.c                    | 218 ++++--------
+ drivers/net/tun.c                    | 293 ++++++----------
+ drivers/net/tun_vnet.h               | 342 +++++++++++++++++++
+ drivers/vhost/net.c                  |  16 +-
+ include/linux/if_tap.h               |   2 +
+ include/linux/skbuff.h               |   3 +
+ include/linux/virtio_net.h           | 188 +++++++++++
+ include/net/flow_dissector.h         |   1 +
+ include/uapi/linux/if_tun.h          |  75 +++++
+ net/core/flow_dissector.c            |   3 +-
+ net/core/skbuff.c                    |   4 +
+ tools/testing/selftests/net/Makefile |   2 +-
+ tools/testing/selftests/net/tun.c    | 630 ++++++++++++++++++++++++++++++++++-
+ 16 files changed, 1430 insertions(+), 356 deletions(-)
+---
+base-commit: 752ebcbe87aceeb6334e846a466116197711a982
+change-id: 20240403-rss-e737d89efa77
+
+Best regards,
 -- 
-Jiri Kosina
-SUSE Labs
+Akihiko Odaki <akihiko.odaki@daynix.com>
 
 
