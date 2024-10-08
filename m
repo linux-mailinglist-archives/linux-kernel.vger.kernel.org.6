@@ -1,748 +1,562 @@
-Return-Path: <linux-kernel+bounces-355693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532609955C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D219955CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A56B28A69
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36F11F25E14
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8842741C64;
-	Tue,  8 Oct 2024 17:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZ2hOhC1"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02F020ADC1;
+	Tue,  8 Oct 2024 17:36:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA4420ADC1;
-	Tue,  8 Oct 2024 17:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAE620A5F5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728408905; cv=none; b=XaDb5WM/waoe+dckdvMSmrHJcg2tRTc+tf+IClH/FZB4xRPaPuWe8Z8X6Odcpkf8boNmV2KPilwYxsBbEZMy1a1VYaRZolQY34tdlCmuyRGktukFZvm1lSdtVJTmCQiKhaO32nctQtlAoL7gWzNjvt0GXaNmXLkRAo/pWfi4zzY=
+	t=1728408988; cv=none; b=Say1UOycd6yulUQTpArG1+CokArnvZNy3LsoaN0C6VciCUPBqu9AazI6NrTtTH1ON+3EK01CSKdbQfqZOkWr7wbpooowEXV53cnedB9+CSS58Sz4drUWWcGCA35ZGNg2BkUD97mny5DTSSy7JRa1wzI6RsAp38AYMNqJVT67as0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728408905; c=relaxed/simple;
-	bh=C0RGFrBZLycC0Vkl/8oPoU2BH9v7ZVuEArGIZId8opU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N2DpvZELTmccMnwxQvqSUKi64HPuZ5Ws9/a3KYOXTPltP3cb6y8uqPcsWZvCzTzsBBe/bmB94ScMNoEf0LhBUiXo+Y2SqLq4hiVtGnevynsbOpmJm3805q9SHw/WaqOwgiFBJQ7ol37Jh8pcV8FN5MhZwW8N++Pq0Vv+W86mbKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZ2hOhC1; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6de14e0f050so46040967b3.0;
-        Tue, 08 Oct 2024 10:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728408902; x=1729013702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bl1FGmjaQlO0RghiZxostY/Ro9bNqr7H5RQN/T58C3U=;
-        b=TZ2hOhC1QbSv++LmQhp4HjIRyjCY7ziX73Les2vGOAbU8oCX5FdigNKOvIiUBCAjLQ
-         rKIzEgCAxZz1Q3CfdpfjbnGRSK8J9Yrv4j1SbloPsMD9P/sI1olJPybb5ZWE60JowHCi
-         /Dbj9h2exOUk2E8+QeP1LtIO3y9YsAqod4Pqa3RrXBEVCV1vbcK8DqbNlh+7MFEVXNmM
-         Me63W4i+I4BxWx4IhnQ6HCqjohXPnh+ZjMSAL4Qqmy8bOzRjT4ArVHdFGmLKebs4Vakg
-         EqHRV1DNPVq5Q1lbOUvEeDH8g3M0xXAmbFJPZETw0sf2qqhvDe6Iu93jBRnC+V8LEvwx
-         LD0g==
+	s=arc-20240116; t=1728408988; c=relaxed/simple;
+	bh=DNg3NYGFQ3OaIi/SN9v3Y7niL07DDr4tzBbKpqIebCs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UxdY9DUfA+Tbw7HSlDRxIefbRSDfVRDvPsuyBiMARRrbixti4zhS5JieWVhKN7i2sRb8jpAB4qDY7gfImMSn4lHEVq5D63d2tF+v7+uZ0g4uxu2c4AVngZywGsogPvCW3tFYNe2sJb9NbJSn5TUeIqxpaWfvwNEmHAcWy7TP1mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a39631593aso249685ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 10:36:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728408902; x=1729013702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bl1FGmjaQlO0RghiZxostY/Ro9bNqr7H5RQN/T58C3U=;
-        b=kkBpOgjxOLe2awnzLo2cHS4QSdcxsxqdeZbsHmPsHsNkdC41GDAQu6pJ85qFl6Nl1U
-         XaoiixnXZmjjTzM8HTFsjdTceBTcaZHOCyW5ACRa/Y63JUjqTO2ifb1IZWQ9n/MTHYeZ
-         rK8rrW+7mWCRdS3Lz7rVFErqVnkYscBRHWh/mkEFZCDEEWtyTwl1e+YJVFV6ZLQXbFRD
-         sKdE8pOGw/EabGBYqJ6AXXBPKGAOTyTG3rbXDyHnpwjVOHLd2xKu460x3+oxxyq3Swyo
-         9P1ZejP2HkSDczziPMHYLt2vfBei5h1XY0t5R0jpiA0KBdW7nY9XQzqVPCLGlMDWyoem
-         y56g==
-X-Forwarded-Encrypted: i=1; AJvYcCVY0AJu8O6XxO5dI9H/zQZ1fm6cYLBlRWrRcoUeDAzf5bC31xlOzFIXnG082GjSgj0qVOriL9c72yGh7geV@vger.kernel.org, AJvYcCVzQXr+/zy8/B8emlsYAIn2joJHX9E02uexeiREhf8/p2QbEJg2fmB5BmoZTgvKpHRcnCO+B9rWvlyq@vger.kernel.org, AJvYcCWb7F8Xa0Ji52Z9dVrdm5WrFqfM43TYXRc79QuPb/nS+ArSSL0RXEb2GcCsi/45Vjto0ck06oYqCSkU@vger.kernel.org, AJvYcCXBIKqSfgPPN+xT3napAensfaE8HqArTGsfjuB478oCPHtU41a41nf54wui7ftXZedfgKWRRrMcPVbdPdKu8wJc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTdJX0YiA+GycMYfKoLMcQTEDdltwraHJsZ2JwryJ5L6372gGF
-	r1/ZLPqLPqlq1y79Ld+3znynWor07DCWjbZZ9H3PTr/wdYIlxCP5VHYNrWyviiaweF9GQ8hc6gh
-	V0LoK/3r+w6Sm3/K8kau1Oq8AFmY=
-X-Google-Smtp-Source: AGHT+IEaydwyQCvkW5SfAVWHUAvlqVH7s6r0MAbgSuA4mMKIyfeH7uNF9mBDYdWRYCRUsIQOKFgodQTGbf8wnPENJUU=
-X-Received: by 2002:a05:690c:fcf:b0:6dd:d2c5:b2c with SMTP id
- 00721157ae682-6e2c6ff685cmr156212107b3.4.1728408901622; Tue, 08 Oct 2024
- 10:35:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728408985; x=1729013785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=knim6RMb0UOBysPQSJ6ShmsHPlXqICjEz5a6oGa8pOw=;
+        b=RJLJoYFfmPfWi6C8hG/zskNPeFaHtThgIEuJfIs+tY9naslJW8VA12AkAx9eOavKeY
+         W4iSPaFiGmL++X/TdoFQWJOk5wxOkfMLDz6KARNoTHoGZd+FEnBO4LLB32iXp00SQ2l2
+         65WgFoKUY/9dW2NMGFKhWhhpuDqDsVf3Pud8c9Oxh7e/Cq+k48E6rRWx1be5I/AoWLyx
+         oDGfejBVBwlzegMuP0ATUI4FFw347Sk/5IbyIzHunOiQCBxLF7erO96Q99mW4UxXynJ4
+         +geolKX96VnNxhUtbfDVqcpDomzWw3jWaVqEOGidH0kD8OEH28uSxXPmE5T1Jih2hxyL
+         um2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvt2N0ROcUHVSAPpKp1tBlOxRcCtx2Bwwx45vy/ngu8rknYF2Js168lJCBNGuoUAizNNh25aOl88BtrXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtI48VIXwFNue50MM3dhgJGm1mqjH5JI00DCeu4A0Hxru/ptsd
+	lrqIdJLSJRBvjzMRMYts9/RbLEwk80KZQycIC+NLH3xLgoZ1Dv1e+Rv7/9VIP2RQimIezvL4VI0
+	F2xmmEfn55myJFlWppNlKPiKmHPZ6e08tIVvZQ0cXb0m4rE6keM1U1Ss=
+X-Google-Smtp-Source: AGHT+IE44rWtn0WHiK/olQdkOZY/bukIfocfm05ncMg3ovKW4VACXSVujr88DmGXlLKC0ltrVkr0sqBeT4T9nH07/108jlyK/rp/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-9-8d3930091246@rivosinc.com>
-In-Reply-To: <20240911-xtheadvector-v10-9-8d3930091246@rivosinc.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Wed, 9 Oct 2024 01:34:50 +0800
-Message-ID: <CAFTtA3P0UMbg957MR4qni=gEX52haaNcZc-pTJrmu0_4zWrZmw@mail.gmail.com>
-Subject: Re: [PATCH v10 09/14] riscv: vector: Support xtheadvector save/restore
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+X-Received: by 2002:a05:6e02:1a8e:b0:3a2:6402:96b9 with SMTP id
+ e9e14a558f8ab-3a3946e88e6mr7458785ab.9.1728408985198; Tue, 08 Oct 2024
+ 10:36:25 -0700 (PDT)
+Date: Tue, 08 Oct 2024 10:36:25 -0700
+In-Reply-To: <000000000000939d0a0621818f1e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67056d99.050a0220.840ef.000a.GAE@google.com>
+Subject: Re: [syzbot] [mm?] INFO: task hung in hugetlb_fault
+From: syzbot <syzbot+7bb5e48f6ead66c72906@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, dvyukov@google.com, elver@google.com, 
+	glider@google.com, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Charlie,
+syzbot has found a reproducer for the following issue on:
 
-Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Use alternatives to add support for xtheadvector vector save/restore
-> routines.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  arch/riscv/include/asm/csr.h           |   6 +
->  arch/riscv/include/asm/switch_to.h     |   2 +-
->  arch/riscv/include/asm/vector.h        | 225 +++++++++++++++++++++++++--=
-------
->  arch/riscv/kernel/cpufeature.c         |   6 +-
->  arch/riscv/kernel/kernel_mode_vector.c |   8 +-
->  arch/riscv/kernel/process.c            |   4 +-
->  arch/riscv/kernel/signal.c             |   6 +-
->  arch/riscv/kernel/vector.c             |  12 +-
->  8 files changed, 200 insertions(+), 69 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index c0a60c4ed911..b4b3fcb1d142 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -30,6 +30,12 @@
->  #define SR_VS_CLEAN    _AC(0x00000400, UL)
->  #define SR_VS_DIRTY    _AC(0x00000600, UL)
->
-> +#define SR_VS_THEAD            _AC(0x01800000, UL) /* xtheadvector Statu=
-s */
-> +#define SR_VS_OFF_THEAD                _AC(0x00000000, UL)
-> +#define SR_VS_INITIAL_THEAD    _AC(0x00800000, UL)
-> +#define SR_VS_CLEAN_THEAD      _AC(0x01000000, UL)
-> +#define SR_VS_DIRTY_THEAD      _AC(0x01800000, UL)
-> +
->  #define SR_XS          _AC(0x00018000, UL) /* Extension Status */
->  #define SR_XS_OFF      _AC(0x00000000, UL)
->  #define SR_XS_INITIAL  _AC(0x00008000, UL)
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/=
-switch_to.h
-> index 7594df37cc9f..f9cbebe372b8 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -99,7 +99,7 @@ do {                                                  \
->         __set_prev_cpu(__prev->thread);                 \
->         if (has_fpu())                                  \
->                 __switch_to_fpu(__prev, __next);        \
-> -       if (has_vector())                                       \
-> +       if (has_vector() || has_xtheadvector())         \
->                 __switch_to_vector(__prev, __next);     \
->         if (switch_to_should_flush_icache(__next))      \
->                 local_flush_icache_all();               \
-> diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vec=
-tor.h
-> index be7d309cca8a..6fd05efc6837 100644
-> --- a/arch/riscv/include/asm/vector.h
-> +++ b/arch/riscv/include/asm/vector.h
-> @@ -18,6 +18,27 @@
->  #include <asm/cpufeature.h>
->  #include <asm/csr.h>
->  #include <asm/asm.h>
-> +#include <asm/vendorid_list.h>
-> +#include <asm/vendor_extensions.h>
-> +#include <asm/vendor_extensions/thead.h>
-> +
-> +#define __riscv_v_vstate_or(_val, TYPE) ({                             \
+HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e11780580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fb6ea01107fa96bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=7bb5e48f6ead66c72906
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17dd6327980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d24f9f980000
 
-Rather than __riscv_v_vstate_or, shouldn't  __riscv_v_vstate_set() or
-__riscv_v_vstate_assign better suit the semantic below?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/676a1b91b952/disk-87d6aab2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f47965c6cebd/vmlinux-87d6aab2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9ada52fd0e29/bzImage-87d6aab2.xz
 
-> +       typeof(_val) _res =3D _val;                                      =
- \
-> +       if (has_xtheadvector()) \
-> +               _res =3D (_res & ~SR_VS_THEAD) | SR_VS_##TYPE##_THEAD;   =
- \
-> +       else                                                            \
-> +               _res =3D (_res & ~SR_VS) | SR_VS_##TYPE;                 =
- \
-> +       _res;                                                           \
-> +})
-> +
-> +#define __riscv_v_vstate_check(_val, TYPE) ({                          \
-> +       bool _res;                                                      \
-> +       if (has_xtheadvector()) \
-> +               _res =3D ((_val) & SR_VS_THEAD) =3D=3D SR_VS_##TYPE##_THE=
-AD;  \
-> +       else                                                            \
-> +               _res =3D ((_val) & SR_VS) =3D=3D SR_VS_##TYPE;           =
-     \
-> +       _res;                                                           \
-> +})
->
->  extern unsigned long riscv_v_vsize;
->  int riscv_v_setup_vsize(void);
-> @@ -40,39 +61,62 @@ static __always_inline bool has_vector(void)
->         return riscv_has_extension_unlikely(RISCV_ISA_EXT_ZVE32X);
->  }
->
-> +static __always_inline bool has_xtheadvector_no_alternatives(void)
-> +{
-> +       if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR))
-> +               return riscv_isa_vendor_extension_available(THEAD_VENDOR_=
-ID, XTHEADVECTOR);
-> +       else
-> +               return false;
-> +}
-> +
-> +static __always_inline bool has_xtheadvector(void)
-> +{
-> +       if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR))
-> +               return riscv_has_vendor_extension_unlikely(THEAD_VENDOR_I=
-D,
-> +                                                          RISCV_ISA_VEND=
-OR_EXT_XTHEADVECTOR);
-> +       else
-> +               return false;
-> +}
-> +
->  static inline void __riscv_v_vstate_clean(struct pt_regs *regs)
->  {
-> -       regs->status =3D (regs->status & ~SR_VS) | SR_VS_CLEAN;
-> +       regs->status =3D __riscv_v_vstate_or(regs->status, CLEAN);
->  }
->
->  static inline void __riscv_v_vstate_dirty(struct pt_regs *regs)
->  {
-> -       regs->status =3D (regs->status & ~SR_VS) | SR_VS_DIRTY;
-> +       regs->status =3D __riscv_v_vstate_or(regs->status, DIRTY);
->  }
->
->  static inline void riscv_v_vstate_off(struct pt_regs *regs)
->  {
-> -       regs->status =3D (regs->status & ~SR_VS) | SR_VS_OFF;
-> +       regs->status =3D __riscv_v_vstate_or(regs->status, OFF);
->  }
->
->  static inline void riscv_v_vstate_on(struct pt_regs *regs)
->  {
-> -       regs->status =3D (regs->status & ~SR_VS) | SR_VS_INITIAL;
-> +       regs->status =3D __riscv_v_vstate_or(regs->status, INITIAL);
->  }
->
->  static inline bool riscv_v_vstate_query(struct pt_regs *regs)
->  {
-> -       return (regs->status & SR_VS) !=3D 0;
-> +       return !__riscv_v_vstate_check(regs->status, OFF);
->  }
->
->  static __always_inline void riscv_v_enable(void)
->  {
-> -       csr_set(CSR_SSTATUS, SR_VS);
-> +       if (has_xtheadvector())
-> +               csr_set(CSR_SSTATUS, SR_VS_THEAD);
-> +       else
-> +               csr_set(CSR_SSTATUS, SR_VS);
->  }
->
->  static __always_inline void riscv_v_disable(void)
->  {
-> -       csr_clear(CSR_SSTATUS, SR_VS);
-> +       if (has_xtheadvector())
-> +               csr_clear(CSR_SSTATUS, SR_VS_THEAD);
-> +       else
-> +               csr_clear(CSR_SSTATUS, SR_VS);
->  }
->
->  static __always_inline void __vstate_csr_save(struct __riscv_v_ext_state=
- *dest)
-> @@ -81,10 +125,36 @@ static __always_inline void __vstate_csr_save(struct=
- __riscv_v_ext_state *dest)
->                 "csrr   %0, " __stringify(CSR_VSTART) "\n\t"
->                 "csrr   %1, " __stringify(CSR_VTYPE) "\n\t"
->                 "csrr   %2, " __stringify(CSR_VL) "\n\t"
-> -               "csrr   %3, " __stringify(CSR_VCSR) "\n\t"
-> -               "csrr   %4, " __stringify(CSR_VLENB) "\n\t"
->                 : "=3Dr" (dest->vstart), "=3Dr" (dest->vtype), "=3Dr" (de=
-st->vl),
-> -                 "=3Dr" (dest->vcsr), "=3Dr" (dest->vlenb) : :);
-> +               "=3Dr" (dest->vcsr) : :);
-> +
-> +       if (has_xtheadvector()) {
-> +               unsigned long status;
-> +
-> +               /*
-> +                * CSR_VCSR is defined as
-> +                * [2:1] - vxrm[1:0]
-> +                * [0] - vxsat
-> +                * The earlier vector spec implemented by T-Head uses sep=
-arate
-> +                * registers for the same bit-elements, so just combine t=
-hose
-> +                * into the existing output field.
-> +                *
-> +                * Additionally T-Head cores need FS to be enabled when a=
-ccessing
-> +                * the VXRM and VXSAT CSRs, otherwise ending in illegal i=
-nstructions.
-> +                * Though the cores do not implement the VXRM and VXSAT f=
-ields in the
-> +                * FCSR CSR that vector-0.7.1 specifies.
-> +                */
-> +               status =3D csr_read_set(CSR_STATUS, SR_FS_DIRTY);
-> +               dest->vcsr =3D csr_read(CSR_VXSAT) | csr_read(CSR_VXRM) <=
-< CSR_VXRM_SHIFT;
-> +
-> +               dest->vlenb =3D riscv_v_vsize / 32;
-> +
-> +               if ((status & SR_FS) !=3D SR_FS_DIRTY)
-> +                       csr_write(CSR_STATUS, status);
-> +       } else {
-> +               dest->vcsr =3D csr_read(CSR_VCSR);
-> +               dest->vlenb =3D csr_read(CSR_VLENB);
-> +       }
->  }
->
->  static __always_inline void __vstate_csr_restore(struct __riscv_v_ext_st=
-ate *src)
-> @@ -95,9 +165,25 @@ static __always_inline void __vstate_csr_restore(stru=
-ct __riscv_v_ext_state *src
->                 "vsetvl  x0, %2, %1\n\t"
->                 ".option pop\n\t"
->                 "csrw   " __stringify(CSR_VSTART) ", %0\n\t"
-> -               "csrw   " __stringify(CSR_VCSR) ", %3\n\t"
-> -               : : "r" (src->vstart), "r" (src->vtype), "r" (src->vl),
-> -                   "r" (src->vcsr) :);
-> +               : : "r" (src->vstart), "r" (src->vtype), "r" (src->vl));
-> +
-> +       if (has_xtheadvector()) {
-> +               unsigned long status =3D csr_read(CSR_SSTATUS);
-> +
-> +               /*
-> +                * Similar to __vstate_csr_save above, restore values for=
- the
-> +                * separate VXRM and VXSAT CSRs from the vcsr variable.
-> +                */
-> +               status =3D csr_read_set(CSR_STATUS, SR_FS_DIRTY);
-> +
-> +               csr_write(CSR_VXRM, (src->vcsr >> CSR_VXRM_SHIFT) & CSR_V=
-XRM_MASK);
-> +               csr_write(CSR_VXSAT, src->vcsr & CSR_VXSAT_MASK);
-> +
-> +               if ((status & SR_FS) !=3D SR_FS_DIRTY)
-> +                       csr_write(CSR_STATUS, status);
-> +       } else {
-> +               csr_write(CSR_VCSR, src->vcsr);
-> +       }
->  }
->
->  static inline void __riscv_v_vstate_save(struct __riscv_v_ext_state *sav=
-e_to,
-> @@ -107,19 +193,33 @@ static inline void __riscv_v_vstate_save(struct __r=
-iscv_v_ext_state *save_to,
->
->         riscv_v_enable();
->         __vstate_csr_save(save_to);
-> -       asm volatile (
-> -               ".option push\n\t"
-> -               ".option arch, +zve32x\n\t"
-> -               "vsetvli        %0, x0, e8, m8, ta, ma\n\t"
-> -               "vse8.v         v0, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vse8.v         v8, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vse8.v         v16, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vse8.v         v24, (%1)\n\t"
-> -               ".option pop\n\t"
-> -               : "=3D&r" (vl) : "r" (datap) : "memory");
-> +       if (has_xtheadvector()) {
-> +               asm volatile (
-> +                       "mv t0, %0\n\t"
-> +                       THEAD_VSETVLI_T4X0E8M8D1
-> +                       THEAD_VSB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VSB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VSB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VSB_V_V0T0
-> +                       : : "r" (datap) : "memory", "t0", "t4");
-> +       } else {
-> +               asm volatile (
-> +                       ".option push\n\t"
-> +                       ".option arch, +zve32x\n\t"
-> +                       "vsetvli        %0, x0, e8, m8, ta, ma\n\t"
-> +                       "vse8.v         v0, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vse8.v         v8, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vse8.v         v16, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vse8.v         v24, (%1)\n\t"
-> +                       ".option pop\n\t"
-> +                       : "=3D&r" (vl) : "r" (datap) : "memory");
-> +       }
->         riscv_v_disable();
->  }
->
-> @@ -129,28 +229,51 @@ static inline void __riscv_v_vstate_restore(struct =
-__riscv_v_ext_state *restore_
->         unsigned long vl;
->
->         riscv_v_enable();
-> -       asm volatile (
-> -               ".option push\n\t"
-> -               ".option arch, +zve32x\n\t"
-> -               "vsetvli        %0, x0, e8, m8, ta, ma\n\t"
-> -               "vle8.v         v0, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vle8.v         v8, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vle8.v         v16, (%1)\n\t"
-> -               "add            %1, %1, %0\n\t"
-> -               "vle8.v         v24, (%1)\n\t"
-> -               ".option pop\n\t"
-> -               : "=3D&r" (vl) : "r" (datap) : "memory");
-> +       if (has_xtheadvector()) {
-> +               asm volatile (
-> +                       "mv t0, %0\n\t"
-> +                       THEAD_VSETVLI_T4X0E8M8D1
-> +                       THEAD_VLB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VLB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VLB_V_V0T0
-> +                       "add            t0, t0, t4\n\t"
-> +                       THEAD_VLB_V_V0T0
-> +                       : : "r" (datap) : "memory", "t0", "t4");
-> +       } else {
-> +               asm volatile (
-> +                       ".option push\n\t"
-> +                       ".option arch, +zve32x\n\t"
-> +                       "vsetvli        %0, x0, e8, m8, ta, ma\n\t"
-> +                       "vle8.v         v0, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vle8.v         v8, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vle8.v         v16, (%1)\n\t"
-> +                       "add            %1, %1, %0\n\t"
-> +                       "vle8.v         v24, (%1)\n\t"
-> +                       ".option pop\n\t"
-> +                       : "=3D&r" (vl) : "r" (datap) : "memory");
-> +       }
->         __vstate_csr_restore(restore_from);
->         riscv_v_disable();
->  }
->
->  static inline void __riscv_v_vstate_discard(void)
->  {
-> -       unsigned long vl, vtype_inval =3D 1UL << (BITS_PER_LONG - 1);
-> +       unsigned long vtype_inval =3D 1UL << (BITS_PER_LONG - 1);
->
->         riscv_v_enable();
-> +       if (has_xtheadvector())
-> +               asm volatile (THEAD_VSETVLI_X0X0E8M8D1);
-> +       else
-> +               asm volatile (
-> +                       ".option push\n\t"
-> +                       ".option arch, +v\n\t"
-> +                       "vsetvli        x0, x0, e8, m8, ta, ma\n\t"
-> +                       ".option pop\n\t");
-> +
->         asm volatile (
->                 ".option push\n\t"
->                 ".option arch, +zve32x\n\t"
-> @@ -159,25 +282,25 @@ static inline void __riscv_v_vstate_discard(void)
->                 "vmv.v.i        v8, -1\n\t"
->                 "vmv.v.i        v16, -1\n\t"
->                 "vmv.v.i        v24, -1\n\t"
-> -               "vsetvl         %0, x0, %1\n\t"
-> +               "vsetvl         x0, x0, %0\n\t"
->                 ".option pop\n\t"
-> -               : "=3D&r" (vl) : "r" (vtype_inval) : "memory");
-> +               : : "r" (vtype_inval));
-> +
->         riscv_v_disable();
->  }
->
->  static inline void riscv_v_vstate_discard(struct pt_regs *regs)
->  {
-> -       if ((regs->status & SR_VS) =3D=3D SR_VS_OFF)
-> -               return;
-> -
-> -       __riscv_v_vstate_discard();
-> -       __riscv_v_vstate_dirty(regs);
-> +       if (riscv_v_vstate_query(regs)) {
-> +               __riscv_v_vstate_discard();
-> +               __riscv_v_vstate_dirty(regs);
-> +       }
->  }
->
->  static inline void riscv_v_vstate_save(struct __riscv_v_ext_state *vstat=
-e,
->                                        struct pt_regs *regs)
->  {
-> -       if ((regs->status & SR_VS) =3D=3D SR_VS_DIRTY) {
-> +       if (__riscv_v_vstate_check(regs->status, DIRTY)) {
->                 __riscv_v_vstate_save(vstate, vstate->datap);
->                 __riscv_v_vstate_clean(regs);
->         }
-> @@ -186,7 +309,7 @@ static inline void riscv_v_vstate_save(struct __riscv=
-_v_ext_state *vstate,
->  static inline void riscv_v_vstate_restore(struct __riscv_v_ext_state *vs=
-tate,
->                                           struct pt_regs *regs)
->  {
-> -       if ((regs->status & SR_VS) !=3D SR_VS_OFF) {
-> +       if (riscv_v_vstate_query(regs)) {
->                 __riscv_v_vstate_restore(vstate, vstate->datap);
->                 __riscv_v_vstate_clean(regs);
->         }
-> @@ -195,7 +318,7 @@ static inline void riscv_v_vstate_restore(struct __ri=
-scv_v_ext_state *vstate,
->  static inline void riscv_v_vstate_set_restore(struct task_struct *task,
->                                               struct pt_regs *regs)
->  {
-> -       if ((regs->status & SR_VS) !=3D SR_VS_OFF) {
-> +       if (riscv_v_vstate_query(regs)) {
->                 set_tsk_thread_flag(task, TIF_RISCV_V_DEFER_RESTORE);
->                 riscv_v_vstate_on(regs);
->         }
-> @@ -268,6 +391,8 @@ struct pt_regs;
->
->  static inline int riscv_v_setup_vsize(void) { return -EOPNOTSUPP; }
->  static __always_inline bool has_vector(void) { return false; }
-> +static __always_inline bool has_xtheadvector_no_alternatives(void) { ret=
-urn false; }
-> +static __always_inline bool has_xtheadvector(void) { return false; }
->  static inline bool riscv_v_first_use_handler(struct pt_regs *regs) { ret=
-urn false; }
->  static inline bool riscv_v_vstate_query(struct pt_regs *regs) { return f=
-alse; }
->  static inline bool riscv_v_vstate_ctrl_user_allowed(void) { return false=
-; }
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 9340efd79af9..56b5054b8f86 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -867,8 +867,7 @@ static int __init riscv_fill_hwcap_from_ext_list(unsi=
-gned long *isa2hwcap)
->                 riscv_fill_vendor_ext_list(cpu);
->         }
->
-> -       if (riscv_isa_vendor_extension_available(THEAD_VENDOR_ID, XTHEADV=
-ECTOR) &&
-> -           has_thead_homogeneous_vlenb() < 0) {
-> +       if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_v=
-lenb() < 0) {
->                 pr_warn("Unsupported heterogeneous vlenb detected, vector=
- extension disabled.\n");
->                 disable_xtheadvector();
->         }
-> @@ -925,7 +924,8 @@ void __init riscv_fill_hwcap(void)
->                 elf_hwcap &=3D ~COMPAT_HWCAP_ISA_F;
->         }
->
-> -       if (__riscv_isa_extension_available(NULL, RISCV_ISA_EXT_ZVE32X)) =
-{
-> +       if (__riscv_isa_extension_available(NULL, RISCV_ISA_EXT_ZVE32X) |=
-|
-> +           has_xtheadvector_no_alternatives()) {
->                 /*
->                  * This cannot fail when called on the boot hart
->                  */
-> diff --git a/arch/riscv/kernel/kernel_mode_vector.c b/arch/riscv/kernel/k=
-ernel_mode_vector.c
-> index 6afe80c7f03a..99972a48e86b 100644
-> --- a/arch/riscv/kernel/kernel_mode_vector.c
-> +++ b/arch/riscv/kernel/kernel_mode_vector.c
-> @@ -143,7 +143,7 @@ static int riscv_v_start_kernel_context(bool *is_nest=
-ed)
->
->         /* Transfer the ownership of V from user to kernel, then save */
->         riscv_v_start(RISCV_PREEMPT_V | RISCV_PREEMPT_V_DIRTY);
-> -       if ((task_pt_regs(current)->status & SR_VS) =3D=3D SR_VS_DIRTY) {
-> +       if (__riscv_v_vstate_check(task_pt_regs(current)->status, DIRTY))=
- {
->                 uvstate =3D &current->thread.vstate;
->                 __riscv_v_vstate_save(uvstate, uvstate->datap);
->         }
-> @@ -160,7 +160,7 @@ asmlinkage void riscv_v_context_nesting_start(struct =
-pt_regs *regs)
->                 return;
->
->         depth =3D riscv_v_ctx_get_depth();
-> -       if (depth =3D=3D 0 && (regs->status & SR_VS) =3D=3D SR_VS_DIRTY)
-> +       if (depth =3D=3D 0 && __riscv_v_vstate_check(regs->status, DIRTY)=
-)
->                 riscv_preempt_v_set_dirty();
->
->         riscv_v_ctx_depth_inc();
-> @@ -208,7 +208,7 @@ void kernel_vector_begin(void)
->  {
->         bool nested =3D false;
->
-> -       if (WARN_ON(!has_vector()))
-> +       if (WARN_ON(!(has_vector() || has_xtheadvector())))
->                 return;
->
->         BUG_ON(!may_use_simd());
-> @@ -236,7 +236,7 @@ EXPORT_SYMBOL_GPL(kernel_vector_begin);
->   */
->  void kernel_vector_end(void)
->  {
-> -       if (WARN_ON(!has_vector()))
-> +       if (WARN_ON(!(has_vector() || has_xtheadvector())))
->                 return;
->
->         riscv_v_disable();
-> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> index e4bc61c4e58a..191023decd16 100644
-> --- a/arch/riscv/kernel/process.c
-> +++ b/arch/riscv/kernel/process.c
-> @@ -176,7 +176,7 @@ void flush_thread(void)
->  void arch_release_task_struct(struct task_struct *tsk)
->  {
->         /* Free the vector context of datap. */
-> -       if (has_vector())
-> +       if (has_vector() || has_xtheadvector())
->                 riscv_v_thread_free(tsk);
->  }
->
-> @@ -222,7 +222,7 @@ int copy_thread(struct task_struct *p, const struct k=
-ernel_clone_args *args)
->                 p->thread.s[0] =3D 0;
->         }
->         p->thread.riscv_v_flags =3D 0;
-> -       if (has_vector())
-> +       if (has_vector() || has_xtheadvector())
->                 riscv_v_thread_alloc(p);
->         p->thread.ra =3D (unsigned long)ret_from_fork;
->         p->thread.sp =3D (unsigned long)childregs; /* kernel sp */
-> diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-> index dcd282419456..94e905eea1de 100644
-> --- a/arch/riscv/kernel/signal.c
-> +++ b/arch/riscv/kernel/signal.c
-> @@ -189,7 +189,7 @@ static long restore_sigcontext(struct pt_regs *regs,
->
->                         return 0;
->                 case RISCV_V_MAGIC:
-> -                       if (!has_vector() || !riscv_v_vstate_query(regs) =
-||
-> +                       if (!(has_vector() || has_xtheadvector()) || !ris=
-cv_v_vstate_query(regs) ||
->                             size !=3D riscv_v_sc_size)
->                                 return -EINVAL;
->
-> @@ -211,7 +211,7 @@ static size_t get_rt_frame_size(bool cal_all)
->
->         frame_size =3D sizeof(*frame);
->
-> -       if (has_vector()) {
-> +       if (has_vector() || has_xtheadvector()) {
->                 if (cal_all || riscv_v_vstate_query(task_pt_regs(current)=
-))
->                         total_context_size +=3D riscv_v_sc_size;
->         }
-> @@ -284,7 +284,7 @@ static long setup_sigcontext(struct rt_sigframe __use=
-r *frame,
->         if (has_fpu())
->                 err |=3D save_fp_state(regs, &sc->sc_fpregs);
->         /* Save the vector state. */
-> -       if (has_vector() && riscv_v_vstate_query(regs))
-> +       if ((has_vector() || has_xtheadvector()) && riscv_v_vstate_query(=
-regs))
->                 err |=3D save_v_state(regs, (void __user **)&sc_ext_ptr);
->         /* Write zero to fp-reserved space and check it on restore_sigcon=
-text */
->         err |=3D __put_user(0, &sc->sc_extdesc.reserved);
-> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> index 9775d6a9c8ee..f3e1de574050 100644
-> --- a/arch/riscv/kernel/vector.c
-> +++ b/arch/riscv/kernel/vector.c
-> @@ -63,7 +63,7 @@ int riscv_v_setup_vsize(void)
->
->  void __init riscv_v_setup_ctx_cache(void)
->  {
-> -       if (!has_vector())
-> +       if (!(has_vector() || has_xtheadvector()))
->                 return;
->
->         riscv_v_user_cachep =3D kmem_cache_create_usercopy("riscv_vector_=
-ctx",
-> @@ -183,7 +183,7 @@ bool riscv_v_first_use_handler(struct pt_regs *regs)
->         u32 __user *epc =3D (u32 __user *)regs->epc;
->         u32 insn =3D (u32)regs->badaddr;
->
-> -       if (!has_vector())
-> +       if (!(has_vector() || has_xtheadvector()))
->                 return false;
->
->         /* Do not handle if V is not supported, or disabled */
-> @@ -226,7 +226,7 @@ void riscv_v_vstate_ctrl_init(struct task_struct *tsk=
-)
->         bool inherit;
->         int cur, next;
->
-> -       if (!has_vector())
-> +       if (!(has_vector() || has_xtheadvector()))
->                 return;
->
->         next =3D riscv_v_ctrl_get_next(tsk);
-> @@ -248,7 +248,7 @@ void riscv_v_vstate_ctrl_init(struct task_struct *tsk=
-)
->
->  long riscv_v_vstate_ctrl_get_current(void)
->  {
-> -       if (!has_vector())
-> +       if (!(has_vector() || has_xtheadvector()))
->                 return -EINVAL;
->
->         return current->thread.vstate_ctrl & PR_RISCV_V_VSTATE_CTRL_MASK;
-> @@ -259,7 +259,7 @@ long riscv_v_vstate_ctrl_set_current(unsigned long ar=
-g)
->         bool inherit;
->         int cur, next;
->
-> -       if (!has_vector())
-> +       if (!(has_vector() || has_xtheadvector()))
->                 return -EINVAL;
->
->         if (arg & ~PR_RISCV_V_VSTATE_CTRL_MASK)
-> @@ -309,7 +309,7 @@ static struct ctl_table riscv_v_default_vstate_table[=
-] =3D {
->
->  static int __init riscv_v_sysctl_init(void)
->  {
-> -       if (has_vector())
-> +       if (has_vector() || has_xtheadvector())
->                 if (!register_sysctl("abi", riscv_v_default_vstate_table)=
-)
->                         return -EINVAL;
->         return 0;
->
-> --
-> 2.45.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7bb5e48f6ead66c72906@syzkaller.appspotmail.com
 
-For the rest of this patch:
+INFO: task syz-executor390:6168 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:28288 pid:6168  tgid:6166  ppid:5217   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ io_schedule+0xbf/0x130 kernel/sched/core.c:7552
+ folio_wait_bit_common+0x3d8/0x9b0 mm/filemap.c:1309
+ __folio_lock mm/filemap.c:1647 [inline]
+ folio_lock include/linux/pagemap.h:1148 [inline]
+ folio_lock include/linux/pagemap.h:1144 [inline]
+ __filemap_get_folio+0x6a4/0xaf0 mm/filemap.c:1900
+ filemap_lock_folio include/linux/pagemap.h:788 [inline]
+ filemap_lock_hugetlb_folio include/linux/hugetlb.h:795 [inline]
+ hugetlb_fault+0x16ff/0x2fa0 mm/hugetlb.c:6406
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:58
+Code: 40 83 f9 08 73 21 85 c9 74 0f 8a 06 88 07 48 ff c7 48 ff c6 48 ff c9 75 f1 c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 48 8b 06 <48> 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb
+RSP: 0018:ffffc90009107c48 EFLAGS: 00050246
+RAX: 0000000000000000 RBX: 0000000000000008 RCX: 0000000000000008
+RDX: fffff52001220f98 RSI: ffffc90009107cb8 RDI: 000000002001bd48
+RBP: 000000002001bd48 R08: 0000000000000000 R09: fffff52001220f97
+R10: ffffc90009107cbf R11: 0000000000000000 R12: ffffc90009107cb8
+R13: 000000002001bd50 R14: 0000000000000000 R15: 0000000020019680
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:121 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:142 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:188 [inline]
+ _copy_to_user+0xac/0xc0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:216 [inline]
+ msr_read+0x14f/0x250 arch/x86/kernel/msr.c:69
+ vfs_read+0x1ce/0xbd0 fs/read_write.c:567
+ ksys_read+0x12f/0x260 fs/read_write.c:712
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ad6168 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f4df1ba6348 RCX: 00007f4df1b1f8b9
+RDX: 0000000000018ff8 RSI: 0000000020019680 RDI: 0000000000000003
+RBP: 00007f4df1ba6340 R08: 00007f4df1ad66c0 R09: 00007f4df1ba6348
+R10: 00007f4df1ad66c0 R11: 0000000000000246 R12: 00007f4df1ba634c
+R13: 0000000000000000 R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6172 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27104 pid:6172  tgid:6166  ppid:5217   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlb_wp+0x1b4a/0x3320 mm/hugetlb.c:5894
+ hugetlb_fault+0x2248/0x2fa0 mm/hugetlb.c:6454
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x60d/0x13f0 arch/x86/mm/fault.c:1338
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f4df1ae75cb
+RSP: 002b:00007f4df1ab5170 EFLAGS: 00010246
+RAX: 006b6e696c766564 RBX: 00007f4df1ba6358 RCX: 00007f4df1b1f8b9
+RDX: d8e7cd4472269fec RSI: 0000000000000000 RDI: 00007f4df1ab55a0
+RBP: 00007f4df1ba6350 R08: 00007f4df1ab56c0 R09: 00007f4df1ab56c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4df1ba635c
+R13: 000000000000006e R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6171 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:28288 pid:6171  tgid:6167  ppid:5213   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:58
+Code: 40 83 f9 08 73 21 85 c9 74 0f 8a 06 88 07 48 ff c7 48 ff c6 48 ff c9 75 f1 c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 48 8b 06 <48> 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb
+RSP: 0018:ffffc90009117c48 EFLAGS: 00050246
+RAX: 0000000000000000 RBX: 0000000000000008 RCX: 0000000000000008
+RDX: fffff52001222f98 RSI: ffffc90009117cb8 RDI: 000000002001b8a0
+RBP: 000000002001b8a0 R08: 0000000000000000 R09: fffff52001222f97
+R10: ffffc90009117cbf R11: 0000000000000000 R12: ffffc90009117cb8
+R13: 000000002001b8a8 R14: 0000000000000000 R15: 0000000020019680
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:121 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:142 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:188 [inline]
+ _copy_to_user+0xac/0xc0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:216 [inline]
+ msr_read+0x14f/0x250 arch/x86/kernel/msr.c:69
+ vfs_read+0x1ce/0xbd0 fs/read_write.c:567
+ ksys_read+0x12f/0x260 fs/read_write.c:712
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ad6168 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f4df1ba6348 RCX: 00007f4df1b1f8b9
+RDX: 0000000000018ff8 RSI: 0000000020019680 RDI: 0000000000000003
+RBP: 00007f4df1ba6340 R08: 00007f4df1ad66c0 R09: 00007f4df1ba6348
+R10: 00007f4df1ad66c0 R11: 0000000000000246 R12: 00007f4df1ba634c
+R13: 0000000000000000 R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6174 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27104 pid:6174  tgid:6167  ppid:5213   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x60d/0x13f0 arch/x86/mm/fault.c:1338
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f4df1ae75cb
+RSP: 002b:00007f4df1ab5170 EFLAGS: 00010246
+RAX: 006b6e696c766564 RBX: 00007f4df1ba6358 RCX: 00007f4df1b1f8b9
+RDX: d8e7cd4472269fec RSI: 0000000000000000 RDI: 00007f4df1ab55a0
+RBP: 00007f4df1ba6350 R08: 00007f4df1ba6358 R09: 00007f4df1ab56c0
+R10: 00007f4df1ab56c0 R11: 0000000000000246 R12: 00007f4df1ba635c
+R13: 000000000000006e R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6384 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27040 pid:6384  tgid:6383  ppid:5218   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:58
+Code: 40 83 f9 08 73 21 85 c9 74 0f 8a 06 88 07 48 ff c7 48 ff c6 48 ff c9 75 f1 c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 48 8b 06 <48> 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb
+RSP: 0018:ffffc90009597c48 EFLAGS: 00050246
+RAX: 0000000000000000 RBX: 0000000000000008 RCX: 0000000000000008
+RDX: fffff520012b2f98 RSI: ffffc90009597cb8 RDI: 000000002001d000
+RBP: 000000002001d000 R08: 0000000000000000 R09: fffff520012b2f97
+R10: ffffc90009597cbf R11: 0000000000000000 R12: ffffc90009597cb8
+R13: 000000002001d008 R14: 0000000000000000 R15: 0000000020019680
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:121 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:142 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:188 [inline]
+ _copy_to_user+0xac/0xc0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:216 [inline]
+ msr_read+0x14f/0x250 arch/x86/kernel/msr.c:69
+ vfs_read+0x1ce/0xbd0 fs/read_write.c:567
+ ksys_read+0x12f/0x260 fs/read_write.c:712
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ad6168 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f4df1ba6348 RCX: 00007f4df1b1f8b9
+RDX: 0000000000018ff8 RSI: 0000000020019680 RDI: 0000000000000003
+RBP: 00007f4df1ba6340 R08: 00007f4df1ad66c0 R09: 00007f4df1ba6348
+R10: 00007f4df1ba6348 R11: 0000000000000246 R12: 00007f4df1ba634c
+R13: 0000000000000000 R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6385 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27088 pid:6385  tgid:6383  ppid:5218   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
+ vfs_fallocate+0x459/0xf90 fs/open.c:333
+ ksys_fallocate fs/open.c:356 [inline]
+ __do_sys_fallocate fs/open.c:364 [inline]
+ __se_sys_fallocate fs/open.c:362 [inline]
+ __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ab5168 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f4df1ba6358 RCX: 00007f4df1b1f8b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f4df1ba6350 R08: 00007f4df1ab56c0 R09: 00007f4df1ba6358
+R10: 0000000000000400 R11: 0000000000000246 R12: 00007f4df1ba635c
+R13: 000000000000006e R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6457 blocked for more than 145 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27408 pid:6457  tgid:6453  ppid:5216   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
+ vfs_fallocate+0x459/0xf90 fs/open.c:333
+ ksys_fallocate fs/open.c:356 [inline]
+ __do_sys_fallocate fs/open.c:364 [inline]
+ __se_sys_fallocate fs/open.c:362 [inline]
+ __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ab5168 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f4df1ba6358 RCX: 00007f4df1b1f8b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f4df1ba6350 R08: 00007f4df1ab56c0 R09: 00007f4df1ba6358
+R10: 0000000000000400 R11: 0000000000000246 R12: 00007f4df1ba635c
+R13: 000000000000006e R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6501 blocked for more than 145 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27616 pid:6501  tgid:6500  ppid:5215   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+ handle_mm_fault+0x930/0xaa0 mm/memory.c:6060
+ do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:58
+Code: 40 83 f9 08 73 21 85 c9 74 0f 8a 06 88 07 48 ff c7 48 ff c6 48 ff c9 75 f1 c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 48 8b 06 <48> 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb
+RSP: 0018:ffffc90009567c48 EFLAGS: 00050246
+RAX: 0000000000000000 RBX: 0000000000000008 RCX: 0000000000000008
+RDX: fffff520012acf98 RSI: ffffc90009567cb8 RDI: 000000002001e260
+RBP: 000000002001e260 R08: 0000000000000000 R09: fffff520012acf97
+R10: ffffc90009567cbf R11: 0000000000000000 R12: ffffc90009567cb8
+R13: 000000002001e268 R14: 0000000000000000 R15: 0000000020019680
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:121 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:142 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:188 [inline]
+ _copy_to_user+0xac/0xc0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:216 [inline]
+ msr_read+0x14f/0x250 arch/x86/kernel/msr.c:69
+ vfs_read+0x1ce/0xbd0 fs/read_write.c:567
+ ksys_read+0x12f/0x260 fs/read_write.c:712
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ad6168 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f4df1ba6348 RCX: 00007f4df1b1f8b9
+RDX: 0000000000018ff8 RSI: 0000000020019680 RDI: 0000000000000003
+RBP: 00007f4df1ba6340 R08: 00007f4df1ad66c0 R09: 00007f4df1ba6348
+R10: 00007f4df1ad66c0 R11: 0000000000000246 R12: 00007f4df1ba634c
+R13: 0000000000000000 R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
+INFO: task syz-executor390:6502 blocked for more than 145 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor390 state:D stack:27184 pid:6502  tgid:6500  ppid:5215   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
+ vfs_fallocate+0x459/0xf90 fs/open.c:333
+ ksys_fallocate fs/open.c:356 [inline]
+ __do_sys_fallocate fs/open.c:364 [inline]
+ __se_sys_fallocate fs/open.c:362 [inline]
+ __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4df1b1f8b9
+RSP: 002b:00007f4df1ab5168 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f4df1ba6358 RCX: 00007f4df1b1f8b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f4df1ba6350 R08: 00007f4df1ab56c0 R09: 00007f4df1ba6358
+R10: 0000000000000400 R11: 0000000000000246 R12: 00007f4df1ba635c
+R13: 000000000000006e R14: 00007fff98b1c2f0 R15: 00007fff98b1c3d8
+ </TASK>
 
-Reviewed-by: Andy Chiu <andybnac@gmail.com>
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
+5 locks held by kworker/u8:8/3033:
+1 lock held by klogd/4663:
+2 locks held by getty/4978:
+ #0: ffff88814c4320a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
+3 locks held by syz-executor390/6168:
+ #0: ffff8880614a9498 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+ #0: ffff8880614a9498 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:6108 [inline]
+ #0: ffff8880614a9498 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+ #2: ffff88806034b8e8 (&resv_map->rw_sema){++++}-{3:3}, at: hugetlb_vma_lock_read mm/hugetlb.c:276 [inline]
+ #2: ffff88806034b8e8 (&resv_map->rw_sema){++++}-{3:3}, at: hugetlb_vma_lock_read+0x105/0x140 mm/hugetlb.c:267
+2 locks held by syz-executor390/6172:
+ #0: ffff8880247719b8 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:704 [inline]
+ #0: ffff8880247719b8 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x13e/0x980 mm/memory.c:6228
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_wp+0x1b4a/0x3320 mm/hugetlb.c:5894
+2 locks held by syz-executor390/6171:
+ #0: ffff8880614a9e18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
+ #0: ffff8880614a9e18 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:6099 [inline]
+ #0: ffff8880614a9e18 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x35/0x6a0 mm/memory.c:6159
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+2 locks held by syz-executor390/6174:
+ #0: ffff88801d6e7070 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:704 [inline]
+ #0: ffff88801d6e7070 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x13e/0x980 mm/memory.c:6228
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+2 locks held by syz-executor390/6384:
+ #0: ffff8880612e3a98 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+ #0: ffff8880612e3a98 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:6108 [inline]
+ #0: ffff8880612e3a98 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+3 locks held by syz-executor390/6385:
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: ksys_fallocate fs/open.c:356 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __do_sys_fallocate fs/open.c:364 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __se_sys_fallocate fs/open.c:362 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ #1: ffff88806270b8f8 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #1: ffff88806270b8f8 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x2b6/0xfc0 fs/hugetlbfs/inode.c:828
+ #2: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
+3 locks held by syz-executor390/6457:
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: ksys_fallocate fs/open.c:356 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __do_sys_fallocate fs/open.c:364 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __se_sys_fallocate fs/open.c:362 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ #1: ffff888060fa4148 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #1: ffff888060fa4148 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x2b6/0xfc0 fs/hugetlbfs/inode.c:828
+ #2: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
+2 locks held by syz-executor390/6501:
+ #0: ffff88807d5a4d98 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable include/linux/mmap_lock.h:153 [inline]
+ #0: ffff88807d5a4d98 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:6108 [inline]
+ #0: ffff88807d5a4d98 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x3a9/0x6a0 mm/memory.c:6159
+ #1: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x307/0x2fa0 mm/hugetlb.c:6326
+3 locks held by syz-executor390/6502:
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: ksys_fallocate fs/open.c:356 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __do_sys_fallocate fs/open.c:364 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __se_sys_fallocate fs/open.c:362 [inline]
+ #0: ffff8880232a0420 (sb_writers#10){.+.+}-{0:0}, at: __x64_sys_fallocate+0xd9/0x150 fs/open.c:362
+ #1: ffff8880611b69c8 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #1: ffff8880611b69c8 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x2b6/0xfc0 fs/hugetlbfs/inode.c:828
+ #2: ffff8881442d0728 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlbfs_fallocate+0x577/0xfc0 fs/hugetlbfs/inode.c:872
 
-Thanks,
-Andy
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xf0c/0x1240 kernel/hung_task.c:379
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 3033 Comm: kworker/u8:8 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:lockdep_recursion_finish kernel/locking/lockdep.c:467 [inline]
+RIP: 0010:lock_acquire.part.0+0x126/0x380 kernel/locking/lockdep.c:5827
+Code: 94 c1 6a 00 45 0f b6 c9 ff b4 24 f8 00 00 00 41 57 44 8b 44 24 2c 8b 4c 24 28 e8 a5 ad ff ff 48 c7 c7 40 d3 6c 8b 48 83 c4 28 <e8> 25 23 b7 09 b8 ff ff ff ff 65 0f c1 05 40 d7 97 7e 83 f8 01 0f
+RSP: 0018:ffffc90009a577a8 EFLAGS: 00000082
+RAX: 0000000000000001 RBX: 1ffff9200134aef6 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffffffff8b6cd340
+RBP: 0000000000000200 R08: 0000000000000000 R09: fffffbfff2dc4d88
+R10: ffffffff96e26c47 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88801b07b078 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055a312fe8fd8 CR3: 000000000df7c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ __pte_offset_map_lock+0xf1/0x300 mm/pgtable-generic.c:375
+ pte_offset_map_lock include/linux/mm.h:3014 [inline]
+ __get_locked_pte+0x79/0xc0 mm/memory.c:1992
+ get_locked_pte include/linux/mm.h:2727 [inline]
+ __text_poke+0x224/0xca0 arch/x86/kernel/alternative.c:1899
+ text_poke_bp_batch+0x493/0x760 arch/x86/kernel/alternative.c:2373
+ text_poke_flush arch/x86/kernel/alternative.c:2486 [inline]
+ text_poke_flush arch/x86/kernel/alternative.c:2483 [inline]
+ text_poke_finish+0x30/0x40 arch/x86/kernel/alternative.c:2493
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ jump_label_update+0x1d7/0x400 kernel/jump_label.c:920
+ static_key_enable_cpuslocked+0x1b7/0x270 kernel/jump_label.c:210
+ static_key_enable+0x1a/0x20 kernel/jump_label.c:223
+ toggle_allocation_gate mm/kfence/core.c:849 [inline]
+ toggle_allocation_gate+0xfc/0x260 mm/kfence/core.c:841
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.676 msecs
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
