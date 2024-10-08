@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-354456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A0A993DB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01FA993DB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C32E1C23CBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B9028604F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 03:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D8A55E53;
-	Tue,  8 Oct 2024 03:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C59E54F8C;
+	Tue,  8 Oct 2024 03:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bCpvyWzE"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Sqow9lV9"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A2481C4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 03:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AECD40858
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 03:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728359575; cv=none; b=I5VF6LmgYRTQdpi/CVrHARIE9ZJML/DihWl1xB1VWEFv6JVmy3+SlgEt19xkeKJCKEgI+4P5JOA3JAyDUxFaRWw1kcH78qrPLcAZ7GrVXp0R/frcW+iUEsoc6oSNvUdpZjiR1Aekdq252LQbk77qkAQgerPLR+UsJyl6RX1MVeE=
+	t=1728359612; cv=none; b=geM5qjncrIHNF/2qFEMK48K79U7yFF2kira5zotgm1DFIKMxjR6rBeGanPMiFyIWdF5vYT8n2MZU8Ai0OqGehM19f6R8COThLRiYdKiNCHj2HlTl76AI2Xx9/2k63dzFBtQxTjmG6wI3JoFGLBFYxtsaNOntw8pj6mUiRmh4jM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728359575; c=relaxed/simple;
-	bh=hCLWlw0j3aBtBWIKToAqdb5t72nChThzzCfqeoBaQ1w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Skw+sqnn+nnUdPTkQo6xoAtDiOztrBBu4c4Oo3adLnB/CDIjvCVIekA6bYU1KQ0mPh8jDGM4cFt5wTEQgHmLsFhT1KOORjdN2u/+U4be2f3J/I1qa89fECwraazLrs6tX2DW+dwXAKTjZAFI6SyScAJ48S9Njko10OjhxVf+lQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bCpvyWzE; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37cd1ccaf71so3387561f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 20:52:53 -0700 (PDT)
+	s=arc-20240116; t=1728359612; c=relaxed/simple;
+	bh=RDBNanjeTqAsh9rPG2jAlXFjrg3LR8U84MfLAQ6XceI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q2Mjk6gcCWudTLoO3Av927GmBPwGP/YEo4uh0rZqjzvJShBGilAjMRwicoQQ+M8Ijgk+nViDMg4O6Umgv+PyhaFKuVkcfgKITwq9HyxGmP/CedpwgUMKyUwDpNFFpuI7R5ri4FVqL+lkrFhH4U0MJV5J6LR6CFf4KJUyI3w3gys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Sqow9lV9; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-656d8b346d2so3283116a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 20:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728359572; x=1728964372; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ElqD9Hm+WZEodZrxK7bnkSFLALYB9eCjiPyOgKg3kGo=;
-        b=bCpvyWzEP5LSnVcRqcNWjCHuHeJjxXZHv/OwcJjS8n5mEO722I+wvpJc42/vds/7fA
-         A9R98j4/SXT8nDLRZ9d+jJCwRw9vHRbPxomkltbQxZTELx92nJEHfJpouraiZvXkyKdY
-         HfS5495e6Ws8OUPSkuWY2sPr2B4gU2H+85q2EUcC5o03bV/fdBA+Z1o3PFzNEtGJxrH0
-         C24bWz0100aegzcPlqIGLkaXA4BprKXzoKdlzckASB2nnOrzmOuMfuNC6ePXbOX0QV8M
-         DOWdzcUYDGydX4QTTxm/XJrqtC7vF8H/Yi2PcGrKjMB1OrjRGHB954O8RM64n+5Re/4p
-         F30A==
+        d=bytedance.com; s=google; t=1728359610; x=1728964410; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bZmM1kivjY+OP9fhZeIHR6lGq4KOb7jxhbJjcjvyqC4=;
+        b=Sqow9lV9cIVb81dSGgA5ionHvRU86QzWK3f2WAzktCajEHUaDZgaHKlgHs3xKk0TJ3
+         RiGzciQbqA86i6PVz0oVWRf1uy0kdo2EEvpeDSHhaTspLBNLCE4Eb+J6zNYWT0B6Jan/
+         gzp1qGTT4JYBB56dN5ejQ6IesuaKi3Jkf+jYCEZWaXMcIGYbhzXpd4Y9nALEYIOM8z7D
+         xizBSQqZnSwYDpzXG7J5h6BnwUltCu6iWhuEY+i761nahI2Aqc0SxeASumFEjW7EjRFc
+         ff99mcjWUE/VL5bh6Y0S1CSQdFSc8gP32ZzPzMIWJNt5ZaMWdw2RppkcH8y/+3ZHX+iS
+         JULg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728359572; x=1728964372;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ElqD9Hm+WZEodZrxK7bnkSFLALYB9eCjiPyOgKg3kGo=;
-        b=u8QaKaaqT2XqVg+J88mClJXmLA/s7XF09ozE+Ja8r4o3pjWPUwUIzYdk951/Pn6gAW
-         o9QNed7t8mA2UkcUAVMCyy31twIhigUMycIT4KzgWBwAZvDbKzNahWSkFTjyzv1HQH89
-         aQicgwoXJdC7n1QccghXGJQmmVFxlh+mQFj9XaJJJahVbti3GaBOvWA3eHT0QoItX+/o
-         SZ/kUIXhM15ul9tDFElz+HJR30UyCaRQ6wCY6i278XmJ8ri+VmUpqEMQBXchuHzLfFR7
-         JgOVBMe4SrYgTElXjk2UejV4P427RbMoM9LGH/vVtjLhI9pZqrd54fx1d7v6xHrS4Ebn
-         pJlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3WUQxtqR/lTdRFiacOwYEf4EKptrTd4HESjhsm12lz1XulxqDCg/jZuO1S94tv80/CRDSNN0GkTtw3T4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKZOHkuEz62BAmRXHLdrcZynaRgZMDQk4+jRWxpNnPkRW4FQyf
-	ELYRWBWM+yS6ZsTUVcG3HPxBFTzRNSj9vsP1eQCmClUpJNj7KL+rc9vv9QNrW90=
-X-Google-Smtp-Source: AGHT+IG0BGCL/uld55vxEnmyp6p8cfwtL2b0uOPAyw08t7e4tq0ydjKfo3AyQfjiW9owlo+MdBT4cQ==
-X-Received: by 2002:a5d:5105:0:b0:374:d130:a43b with SMTP id ffacd0b85a97d-37d291a9ccdmr959081f8f.4.1728359571913;
-        Mon, 07 Oct 2024 20:52:51 -0700 (PDT)
-Received: from localhost ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16972b97sm6973289f8f.99.2024.10.07.20.52.50
+        d=1e100.net; s=20230601; t=1728359610; x=1728964410;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZmM1kivjY+OP9fhZeIHR6lGq4KOb7jxhbJjcjvyqC4=;
+        b=sDLYy4Wyl4reQDHA/wYVF4H1/mt0UtUL05OPXQucYRrSMeZFeucwGj8wk/5WRZfYM3
+         yRIsbWhdqdZYq6EGqIHQ48MxrAU0MCOo0RLE/s1znyJDbEAfj1eHpQEcn/PMw9fu9AdF
+         ck8ivnNCSyZKeFuE5QPgZdaMz2qdcxpUFKI+QQOJTqzfP3qHOL6YeYIoVX6NdX0R0n6A
+         N+9ceI7bbXCTVTfP9k/QWFGYMSU4X8VLHPRl7ngDoMd9HZtYzkFvAIuAj84GExFgkXB/
+         ywjag3jsC9iY/A9pUX5gHwKGqkK8vdcb3hOVBaObjfC5S1udF3h8PwcAg2v/OjuBZ5Yr
+         R+SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTGlZ/2/JF68kK/oNusPatBWUDrexArYVAss98tAZQYoTGb852nEdcjYL89Ej51Mgk69BH2iqWcgg69VU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw33dwQRawzr/f6G9yLGFe2TQ94vE3+I1OSfQgZxMtTOM9+JLqP
+	DxRLFLa/A/CX0zu+tprCl+62t897jyQiLDqSpgYVDExnE5HYsrutpJw2DYv25k0=
+X-Google-Smtp-Source: AGHT+IEKN2Kdq3MW9os/92sJ7powcTTKtvPCz4qyJxzSGTfT7D+tIcgPx2zAUwMNJC9bB5QI33ZTzA==
+X-Received: by 2002:a05:6a21:38b:b0:1cf:4c70:f26f with SMTP id adf61e73a8af0-1d6dfa3a765mr20221207637.17.1728359610462;
+        Mon, 07 Oct 2024 20:53:30 -0700 (PDT)
+Received: from [10.68.125.128] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f680c732sm5718701a12.12.2024.10.07.20.53.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 20:52:50 -0700 (PDT)
+        Mon, 07 Oct 2024 20:53:30 -0700 (PDT)
+Message-ID: <1c114925-9206-42b1-b24b-bb123853a359@bytedance.com>
+Date: Tue, 8 Oct 2024 11:53:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Oct 2024 04:52:50 +0100
-Message-Id: <D4Q4C17E1A8J.3O1CD1PDP51HH@linaro.org>
-Cc: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
- <kernel@quicinc.com>, "Rohit kumar" <quic_rohkumar@quicinc.com>
-Subject: Re: [PATCH v1] ASoC: codecs: lpass-macro: Add support for channel
- map mixer control
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Mohammad Rafi Shaik" <quic_mohs@quicinc.com>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Jaroslav Kysela"
- <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Srinivas Kandagatla"
- <srinivas.kandagatla@linaro.org>
-X-Mailer: aerc 0.18.2
-References: <20240930053111.3986838-1-quic_mohs@quicinc.com>
-In-Reply-To: <20240930053111.3986838-1-quic_mohs@quicinc.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
+Content-Language: en-US
+To: Jann Horn <jannh@google.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
+ willy@infradead.org, hughd@google.com, lorenzo.stoakes@oracle.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon Sep 30, 2024 at 6:31 AM BST, Mohammad Rafi Shaik wrote:
-> From: Rohit kumar <quic_rohkumar@quicinc.com>
->
-> Add channel map mixer control for lpass macro codec DAIs.
->
-> Signed-off-by: Rohit kumar <quic_rohkumar@quicinc.com>
-> Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
+Hi Jann,
 
-IIUC there was off-the-list discussion about why it is needed.
-Could you please elaborate a bit more in the commit message?
-
-> --- a/sound/soc/codecs/lpass-macro-common.c
-> +++ b/sound/soc/codecs/lpass-macro-common.c
-> @@ -8,12 +8,67 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
-> +#include <sound/control.h>
-> +#include <sound/pcm.h>
-> +#include <sound/soc.h>
-> =20
->  #include "lpass-macro-common.h"
-> =20
->  static DEFINE_MUTEX(lpass_codec_mutex);
->  static enum lpass_codec_version lpass_codec_version;
-> =20
-> +static int lpass_macro_chmap_ctl_get(struct snd_kcontrol *kcontrol,
-> +				     struct snd_ctl_elem_value *ucontrol)
-> +{
-> +	struct snd_pcm_chmap *info =3D snd_kcontrol_chip(kcontrol);
-> +	struct snd_soc_dai *dai =3D info->private_data;
-> +	u32 *chmap_data =3D NULL;
-
-You don't really need to set chmap_data to NULL if you're going to overwrit=
-e
-it with a kzalloc() call a couple of lines below.
-
-> +	u32 rx_ch_cnt =3D 0;
-> +	u32 tx_ch_cnt =3D 0;
-> +	u32 rx_ch, tx_ch;
-> +
-> +	chmap_data =3D kzalloc(sizeof(u32) * 2, GFP_KERNEL);
-> +	if (!chmap_data)
-> +		return -ENOMEM;
-> +
+On 2024/10/8 05:42, Jann Horn wrote:
 
 [...]
 
+> 
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 24712f8dbb6b..dda09e957a5d 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -238,6 +238,7 @@ static bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>   {
+>   	spinlock_t *old_ptl, *new_ptl;
+>   	struct mm_struct *mm = vma->vm_mm;
+> +	bool res = false;
+>   	pmd_t pmd;
+>   
+>   	if (!arch_supports_page_table_move())
+> @@ -277,19 +278,25 @@ static bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>   	if (new_ptl != old_ptl)
+>   		spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+>   
+> -	/* Clear the pmd */
+>   	pmd = *old_pmd;
+> +
+> +	/* Racing with collapse? */
+> +	if (unlikely(!pmd_present(pmd) || pmd_leaf(pmd)))
+
+Since we already hold the exclusive mmap lock, after a racing
+with collapse occurs, the pmd entry cannot be refilled with
+new content by page fault. So maybe we only need to recheck
+pmd_none(pmd) here?
+
 Thanks,
-Alexey
+Qi
 
-
+> +		goto out_unlock;
+> +	/* Clear the pmd */
+>   	pmd_clear(old_pmd);
+> +	res = true;
+>   
+>   	VM_BUG_ON(!pmd_none(*new_pmd));
+>   
+>   	pmd_populate(mm, new_pmd, pmd_pgtable(pmd));
+>   	flush_tlb_range(vma, old_addr, old_addr + PMD_SIZE);
+> +out_unlock:
+>   	if (new_ptl != old_ptl)
+>   		spin_unlock(new_ptl);
+>   	spin_unlock(old_ptl);
+>   
+> -	return true;
+> +	return res;
+>   }
+>   #else
+>   static inline bool move_normal_pmd(struct vm_area_struct *vma,
+> 
+> ---
+> base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+> change-id: 20241007-move_normal_pmd-vs-collapse-fix-2-387e9a68c7d6
 
