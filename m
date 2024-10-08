@@ -1,325 +1,173 @@
-Return-Path: <linux-kernel+bounces-354515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D872993E7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44983993E82
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3619B215EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46ED282C9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB713E8A5;
-	Tue,  8 Oct 2024 05:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tn/5I3pX"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4F613B2A5;
+	Tue,  8 Oct 2024 05:57:20 +0000 (UTC)
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2113.outbound.protection.outlook.com [40.107.222.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355B762D2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728366923; cv=none; b=l8xJE7bnaLCsRWnua9Ahsa7GZShgPXbXqxAlwRSi3vTnSJ3WRBXpp0MALEWYbYOH2a4VtgXNqD0IM50t20kwlFCKm8hYIXMWK+AEnEVTCYW+svI3+Xt6cqIzlc4I8EIchNs/bAGAgxxpG4aX7kVmHzqyhNpGPp1c6dTiZDcSvSw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728366923; c=relaxed/simple;
-	bh=avEFguux3S9vM8mNPwIIXP3BTk6hCqea7FvB/rVtqrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UIkchh1B5V0PZejTdlGqgYhf4pU6lq0+zMLStQV61WAKz94sHZKqmeDlqF7rOrxquECRCkM2Y9WuspeXUyposHrmF0sz0b8ymIwykOkK8LLn7KX0BX3SYSZ/15pxaGoyfoTj/GzTN94A2pZ050zM54kQr6G24L0YdtB9pcbHl+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tn/5I3pX; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c5b628b7cso1425ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 22:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728366921; x=1728971721; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PEML1acWheRJ5mGKtc1GLEU++PB7wEH7HBYQKEb9NvM=;
-        b=Tn/5I3pXMEHEzBilaaN6k2jxmiddpEWN9mDH0v5LTqeZdiEIeo1GICMmKU7Oxx5yJi
-         4lR/F+wAegK/k0oaMoPwfUZ6X8rgdxrVRaotyvFr3CrHUVHpFvFkPtl2yJ1p2AAPn8Si
-         AA74/oNiugbj/b0LCYOl+PxaWfY3TTSiVvj/0+ylXQLnuyDp8ZJ6eDlk3F991ZVv2m13
-         70Wbq7ww7qCo9CAPirzo2S3wMPTn+RC/GhRt+S30cRs3iKurzgu2EiezJDO8raQJc1k4
-         7OSX2EEFS0l+wEZAc0dcKFVY3x0x6Ug3sln+QZ/Vx8W1XZ0wb4iqaYglE11M5zdoZ4Wa
-         D2/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728366921; x=1728971721;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PEML1acWheRJ5mGKtc1GLEU++PB7wEH7HBYQKEb9NvM=;
-        b=jnK56U4aqp3YQBsNtmsSldG6C80gUAg13yS91tNE4/OUI21KVtfy+MbGM5qL/iihJ7
-         HCO5krznTToGhne/uci3h7b2LFREmkYsiPcd9a+fkdVJX+SrTiyLmYhx5gNiBzziZLNA
-         bO2rToDRalHZwGcSvepZyPisha2F/9Lc9Sicq6UnuSxthNsUC9lkJHOnAYHdpT6QfXMf
-         xJ6MlYqLHNUdzlJc+SQIeXfnrFwN88kbR4zgTEGXYq/QPlmRbMEFEb3qPfO/lxop+E2F
-         4aWH2e5xFSHDC6PPEWqS/9MP5YTOP4HAAG62bYvNWV9g2p4eoLxVjItaBMpn9YcOVusi
-         AfeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrUo5N9QdAH3ws5SpEb1bK4zhQGPNXAVzdTS+9t3+2uhdqzVD4XVPYIci9isZbU6NawgAghNRuTjuoInY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8+VQlQcgkeZ66NG+69IcyXnCGcWy4r8lKXTT0wFGI95ahI2an
-	C2vS6eZDm2nT8LXFknItfKeheQtTqL/D8kiFYpsjXvM0JFdV3FemUAHC+GX3Rj6qE0ptBsRWet6
-	l7z05XHPICgTW9s3djoeadyHj03s+gAgpwx3h
-X-Google-Smtp-Source: AGHT+IFBqK5Obh7o1Mvkbq2D+3L4js7HVmAzdZIa1jnn8hA6ZsmChJx0GIsPZbbQH2y/mfxBtFaUIsZMvAcerar88Mk=
-X-Received: by 2002:a17:902:ea06:b0:206:ae0b:bfcb with SMTP id
- d9443c01a7336-20c50243a9amr1923155ad.28.1728366920473; Mon, 07 Oct 2024
- 22:55:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBC913C9CB;
+	Tue,  8 Oct 2024 05:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.113
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728367040; cv=fail; b=QdZXtfSVEbmJZHplO7GJmnHWtmR6dxtc39CETCUokvKwTp/rZcsroS2siTMam8RLxa3vYcACe/G5I4AVnA0fFlAZTpBtUyHVRfRzpY2f0kw02EZO3+onsyITlZmOLiLDpJicCdw10+mYrFgIBHkJQaWhQSnggwayFi83meQGLy4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728367040; c=relaxed/simple;
+	bh=i8w/Dyh9tVTikvPbJ19XBh2oTskZ5ZftrHT6kT6LYuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tDozzojklam453AJod1eMuqeY6sjoQ8FiKBV3gwf4UFkitk8lT4KRdCa3avOzVehRq/ZSaLbxto7XC+DWHo+EOFDh6JltiukpZgBAqmlo2OH4lJ8X26fcAzwWcPqFZWuNSOAYh3x48mHbxhq92KCLn9+87uYPuS0kPBvlvIKwZc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ElH1XcvwQFGj44oXAc3/5/sjzp78NcgMAgU6E8Tt74y8E2TTSkZ7K/LWuRyx+IZCMaO5pDQ+sc3RcdRduZIChYewwerEXnz30pICdQeQoh4CllNyW2h70Gc+xqXAdGBJa3g7MM7s0hLRRkxYgopzsaR/eioK4CPjPPu2IulHveK7WGU/Csz4YjFCB+L5CpGocrfgfKu5rSVfkcVIusrqBn917CYfhyLi2mTRhIN+PfzjxWRhycfCjsH3CHjjitvu/W7cjXo4EbgF2YXwumUZWya7D73SPbzftIIJtPCc377C0k3/dn14qXsC7SPD+3s4twfKWGrN2Up5F9yoBgMqOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DDHud8V6gfHmEaYjUFPqA5ILVZrwi3wVT53QEESuPJg=;
+ b=Z1irsGv9YcurLq7wnFriAygBC3j7Xz7G+Mc2/Mq5fYFcGl8gYy7N+MdA+FT+Z0Iyl5qOa40DTkHHTh0Tqy6cjlY5FMp/rQkMqm8xGyME8elstFGjp0VcJMCwOAVt7ANt6JHFv6dhRi/UcRbKG57CiBZAeibujpw0i5TQ1dw4K3adv65L0U1RBgWvMhwe29Fq2x18hyIbhL+kFKIksj8AtujQRIWNIhJfFo/QvZBWcw9rRsxpxMQzIBgF75JAXCAgJMGAz16+xKUJ/emNXysz238gDzfNgrM9VtMMAKtgN/uXALWk8yOV/2eUOe3J2cMgaX4YU8L2z7dJWglHEvZ/+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
+ by PN2P287MB2160.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
+ 2024 05:57:14 +0000
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
+ 05:57:14 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: olteanv@gmail.com,
+	broonie@kernel.org,
+	frank.li@nxp.com,
+	shawnguo@kernel.org
+Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-spi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Fix Sparse warnings
+Date: Tue,  8 Oct 2024 11:25:44 +0530
+Message-ID: <20241008055644.4900-1-hardevsinh.palaniya@siliconsignals.io>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN3PR01CA0173.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::17) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:204::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com> <20240913084712.13861-2-dapeng1.mi@linux.intel.com>
-In-Reply-To: <20240913084712.13861-2-dapeng1.mi@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 7 Oct 2024 22:55:07 -0700
-Message-ID: <CAP-5=fVFe30xEt6JAg6rUTsAKZpg=7LBSQJSBd=BZszwufjFFw@mail.gmail.com>
-Subject: Re: [Patch v5 1/6] perf x86/topdown: Complete topdown slots/metrics
- events check
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|PN2P287MB2160:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf665030-0c95-4f25-26f9-08dce75e0f20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7F5Hhrozh9dEeQ7irQYZmcp5JgfX0p71a3AMYgbwq9Y3NppCLlwwySknOlf5?=
+ =?us-ascii?Q?EBR+e454meXyN87ZQv9ncOEQLGulZUz1/3WGA+Vvgd+tS7BKtoklodqWzXAy?=
+ =?us-ascii?Q?D0sPeEDt0ZE10YFSxdvPep6LdwgMd/M7lN7+HNrwmeyqZk/JT46FhlDnFLAj?=
+ =?us-ascii?Q?1uDCImoZgdyxJFZqc7qOofeB9J66u77yl4ged+CdsS1+x0ExIZH3O1ldGEzl?=
+ =?us-ascii?Q?ml2ajQ4BBzUecauVU518xdj5udXkeAbb5YczfyhgYPBSn5JHdGoSAHhhCA4u?=
+ =?us-ascii?Q?n4Ugjj3iOtkwu+kPWY13c9ofcd6fM9iZdoMIrAU5hvECMUZ0BW/Vpt+7vzAR?=
+ =?us-ascii?Q?MMCMOixR6ZaO4sowExP7pkfb6VmY6/kMNxrFDi9DcsFKBw3TiLR5FcEKXZ74?=
+ =?us-ascii?Q?SQQ4w3LkvAoUyzbNqvZTxuoHp8g/BJQ94xFFEYnycnBoLkqZCHwiEK+xnBa/?=
+ =?us-ascii?Q?N4iEEQBLcgmP7yDDybUBw+K1HQCfP6hTQCTxNFW9vs4+d2o3912uSj/Xz20R?=
+ =?us-ascii?Q?8woyMJ5/SKpTFYkztPlWuJmT930LTeoGXpVoTjTz156ZkEZ/YTI7mECvvtHx?=
+ =?us-ascii?Q?thSIB7XJ9IuvW8Jnoy5Cs8sNMIw9BKDuiP92xamunY5nnQUnYGCDSamA6O3Y?=
+ =?us-ascii?Q?PIlIbVUjhJdMKII90DseeGZvRXhq4zhW/sZTOMNlKLzzmcagtWlgonuxOZzY?=
+ =?us-ascii?Q?gi+2Vo2xlh7BDFGEi4ZMsIqadGfCOXUrHyaxn+AOPhv/4uPDx3HZaBlogRjT?=
+ =?us-ascii?Q?Yi91kknRNlMqqu6dtSncCtrHCQF39hjUh0yfLWJI01o+EMJroN04ESpGHnMG?=
+ =?us-ascii?Q?K2nE8grqgSgiN/RuWk93J7SQTDdN74JOejiJedobRn21hmHKwCw5pNT2QG0N?=
+ =?us-ascii?Q?f0JP06p4e5iJPptYMiJgvSY3lG3X+fPUbueqOPui4ec5N2GzybzeU2wLEJph?=
+ =?us-ascii?Q?82epUpyGkEahpDQhqNDyVnkY+ozByHi8E5+95+DaqTsI3Bi8h9EK/+US2j9h?=
+ =?us-ascii?Q?q50MyvEtyBd3TIiD7wN9NPWDGCyCLTX2ayJRI4uWSliuvV/lkLTHLdOsweSA?=
+ =?us-ascii?Q?ldun5loOfzI0Mn4wUyMzSPWSp6v9nL/3JiiQdnC3/hyOCXitclk0IPgRz4iV?=
+ =?us-ascii?Q?hSRkxCPQDpNUf2+VmrgGWTahLNcKZbQiKg25BsHi9bmfEStj9ZEh/yuj4Brc?=
+ =?us-ascii?Q?3E031H0OEI+bT6Yohy3INMtLZ/wc6HTJjhK1xojD4Ya1kYcRkhDnHYL1g9n8?=
+ =?us-ascii?Q?vskJIaXgIq8mN1kKKOXruplM2KdVUgPTGnbxUaJh0g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/amdVZV0GpluQ87gCKz3PWA8wnB5KC2igUHcxWH6eqwRa3Xj/pLkp7EjaBlK?=
+ =?us-ascii?Q?bAUNIPryhsNq5Pwayi9slZ5Ib+5mMNAHfFXXzvNqnDTSPZPsW8K+93jwrpxI?=
+ =?us-ascii?Q?8hsdtnOoXorPMVtsBozLO+JHX9W11fJQPbdOO3H4EsUQ2WjnL7LyqLcn/hWg?=
+ =?us-ascii?Q?0dXZ8XsYexTSQ2iXFr0S8+TMCvKIf+ZxpKtnv3+hVurSIIZ0lrPo4slCeOYI?=
+ =?us-ascii?Q?dk68o85bZSF+fTDbrtiGqszL/K+X6B/DIAP5LQDxU1ORTL76Cqawim8JBz0i?=
+ =?us-ascii?Q?R2ucuJejHrbdzhNbYv2YPQPgqZBfRxjRam3EePbEbZUZAvTRu0VAlFNs/x3j?=
+ =?us-ascii?Q?E94FLR3069f1khrYLF6SyLYIdlzGwwwlV/7MD36jG9btASBTULob8prCe5WE?=
+ =?us-ascii?Q?Qhqu4hMWHEBoYAbj+PrjYVt9PQhUBEt7BUBF8TSP7AjdWq8on/9ZfI8VWUd7?=
+ =?us-ascii?Q?UjDh0DJznJHCFb/DCAJpZme5gG0+snAwjp/eKUs3rrOkbnjPa6Od6B4/zGwj?=
+ =?us-ascii?Q?u/jL5EQbCck/aAudxkO3Q3j55bvQExeHXBJrhRS4J7RtVGQ4RvNtZ8ZmNwnH?=
+ =?us-ascii?Q?2jaWLbDsI0Zfz44dY58w959xboDOp6wr4G7iCOtTHzSfmnIm11tkLoGQoEO+?=
+ =?us-ascii?Q?C0Pv1YjqIrDXSmJEEaP3ViEqtbOAX3rIbVdGKsZRzTXmc6SPEh+HIKraw/Py?=
+ =?us-ascii?Q?81U0n1/dFfpN+M+t9FaSMjFItxe8uKrmAHESM1Eeuhr+ztBVb4KYZZKpWvjD?=
+ =?us-ascii?Q?pnhLKzqe0KJRz5IV+n40pxOUEyeMRzKs0gdsC8m7aWDUlD16bEt3uDHC80yM?=
+ =?us-ascii?Q?SCSC2N0y00S9jUodkvIN5gEcZVNOk1F3aEAezEWjccTWsveT+c0gV3Mr5R79?=
+ =?us-ascii?Q?tcbaNnTSlo7u0coVtVp6Lf9Ml/Xq4oreym9DhAld15ZjTsDze/k3EQH4OSFC?=
+ =?us-ascii?Q?Wmz4XgEm7DY/r0UTZdt0fFkZ3+flrObubKPZYtGGlTzTKxYgX44l0pCd6Veo?=
+ =?us-ascii?Q?mAxOTQ5n5cXpLMCIl/D763SU8vGppTseJEyETOa5D+aGilGCx/0OaXJ9kA/q?=
+ =?us-ascii?Q?dxLNOEVZ4mq0CgRRTNnzPk22EXN/G8tg9RgXnkSIY2gUJKKUrnQ7OBG63Jqq?=
+ =?us-ascii?Q?qHyXGNrW91D9H6bAD3w0YkwleWKYp9JvBg3tf47h2zBMcTXn6pvKzxp50slK?=
+ =?us-ascii?Q?qBl3WjpBBALpNWAbKyxJfq8MwdFLk3qUUpGG9DSeYVQwI0PEXkgVQEU0iXeS?=
+ =?us-ascii?Q?9sMM/SWHEcYpuCJcjyqcgoFE4bTS36RP7hr344N/YVw4uoDXtWM1XpD3VJWR?=
+ =?us-ascii?Q?MIXtXWwnvBJFVAGXRCsbfUTMGeFHgcL0/e5GLePpq5XDE9XuS5QjRUmD7rkW?=
+ =?us-ascii?Q?0ajyqG982/SWszD0mfR1MulJnRVQTlaAE0Ssza69yPgj6nEFoQdAS62fLHdV?=
+ =?us-ascii?Q?zm6oZf4eTbSsqlpuHGd+By6LkcEzk6S59NQEJCQDhktP8TzMjtYdxbgPrpYQ?=
+ =?us-ascii?Q?aNwMd0vEAOi70t6VxRR1I3kog71z7v7nRypoOVWXGyI6qD05hrTNXDzPA3ET?=
+ =?us-ascii?Q?wOwzjMvdI3nC9jpe1PJcJ5aCWddq7BDl61CZQn6a4nZV/GoGU2WfRQjjFuHi?=
+ =?us-ascii?Q?0hqlhlmyCOp+bd2bTr9fyicsV76s3z9ucD0Tco8eMhVx?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf665030-0c95-4f25-26f9-08dce75e0f20
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 05:57:14.8238
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mlK8uxHublLEgGC0kqfgEStZyjuMZig8BE0ywURuYNv1hZO0R1kTNjUK5TnOilVjV8RrJMV5Dqn01yU0PBJ96AysHjv1Uln3Y9oiLkjFoDS7JKOfePN6PfeUNaB2xjip
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2160
 
-On Thu, Sep 12, 2024 at 10:21=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel.=
-com> wrote:
->
-> It's not complete to check whether an event is a topdown slots or
-> topdown metrics event by only comparing the event name since user
-> may assign the event by RAW format, e.g.
->
-> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
->
->  Performance counter stats for 'sleep 1':
->
->      <not counted>      instructions
->      <not counted>      cpu/r400/
->    <not supported>      cpu/r8300/
->
->        1.002917796 seconds time elapsed
->
->        0.002955000 seconds user
->        0.000000000 seconds sys
->
-> The RAW format slots and topdown-be-bound events are not recognized and
-> not regroup the events, and eventually cause error.
->
-> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
-> to detect whether an event is topdown slots/metrics event by comparing
-> the event config directly, and use these two helpers to replace the
-> original event name comparisons.
->
-> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  tools/perf/arch/x86/util/evlist.c  |  8 ++---
->  tools/perf/arch/x86/util/evsel.c   |  3 +-
->  tools/perf/arch/x86/util/topdown.c | 48 +++++++++++++++++++++++++++++-
->  tools/perf/arch/x86/util/topdown.h |  2 ++
->  4 files changed, 55 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util=
-/evlist.c
-> index cebdd483149e..79799865a62a 100644
-> --- a/tools/perf/arch/x86/util/evlist.c
-> +++ b/tools/perf/arch/x86/util/evlist.c
-> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const s=
-truct evsel *rhs)
->         if (topdown_sys_has_perf_metrics() &&
->             (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_=
-group(rhs))) {
->                 /* Ensure the topdown slots comes first. */
-> -               if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->na=
-me, "uops_retired.slots"))
-> +               if (arch_is_topdown_slots(lhs))
->                         return -1;
-> -               if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->na=
-me, "uops_retired.slots"))
-> +               if (arch_is_topdown_slots(rhs))
->                         return 1;
->                 /* Followed by topdown events. */
-> -               if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->=
-name, "topdown"))
-> +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metr=
-ics(rhs))
->                         return -1;
-> -               if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->=
-name, "topdown"))
-> +               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metr=
-ics(rhs))
->                         return 1;
->         }
->
-> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/=
-evsel.c
-> index 090d0f371891..181f2ba0bb2a 100644
-> --- a/tools/perf/arch/x86/util/evsel.c
-> +++ b/tools/perf/arch/x86/util/evsel.c
-> @@ -6,6 +6,7 @@
->  #include "util/pmu.h"
->  #include "util/pmus.h"
->  #include "linux/string.h"
-> +#include "topdown.h"
->  #include "evsel.h"
->  #include "util/debug.h"
->  #include "env.h"
-> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *e=
-vsel)
->             strcasestr(evsel->name, "uops_retired.slots"))
->                 return false;
->
-> -       return strcasestr(evsel->name, "topdown") || strcasestr(evsel->na=
-me, "slots");
-> +       return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(ev=
-sel);
->  }
->
->  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
-> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/uti=
-l/topdown.c
-> index 3f9a267d4501..49f25d67ed77 100644
-> --- a/tools/perf/arch/x86/util/topdown.c
-> +++ b/tools/perf/arch/x86/util/topdown.c
-> @@ -32,6 +32,52 @@ bool topdown_sys_has_perf_metrics(void)
->  }
->
->  #define TOPDOWN_SLOTS          0x0400
-> +bool arch_is_topdown_slots(const struct evsel *evsel)
-> +{
+Change in v2:
 
-Perhaps: assert(evsel__find_pmu(evsel)->is_core);
+in patch 2/2:
+	- Use ioread32be instead of readl
+	- Use iowrite32be instead of writel
 
-> +       if (evsel->core.attr.config =3D=3D TOPDOWN_SLOTS)
-> +               return true;
-> +
-> +       return false;
-> +}
-> +
-> +static int compare_topdown_event(void *vstate, struct pmu_event_info *in=
-fo)
-> +{
-> +       int *config =3D vstate;
-> +       int event =3D 0;
-> +       int umask =3D 0;
-> +       char *str;
-> +
-> +       if (!strcasestr(info->name, "topdown"))
-> +               return 0;
-> +
-> +       str =3D strcasestr(info->str, "event=3D");
-> +       if (str)
-> +               sscanf(str, "event=3D%x", &event);
-> +
-> +       str =3D strcasestr(info->str, "umask=3D");
-> +       if (str)
-> +               sscanf(str, "umask=3D%x", &umask);
-> +
-> +       if (event =3D=3D 0 && *config =3D=3D (event | umask << 8))
-> +               return 1;
-> +
-> +       return 0;
-> +}
-> +
-> +bool arch_is_topdown_metrics(const struct evsel *evsel)
-> +{
-> +       struct perf_pmu *pmu =3D evsel__find_pmu(evsel);
-> +       int config =3D evsel->core.attr.config;
-> +
-> +       if (!pmu || !pmu->is_core)
-> +               return false;
-> +
-> +       if (perf_pmu__for_each_event(pmu, false, &config,
-> +                                    compare_topdown_event))
-> +               return true;
-> +
-> +       return false;
-> +}
+Note: Drop 2 patches(patch 2/4 & 4/4) from the last version
+link to v1: https://lore.kernel.org/linux-spi/20240927132944.19285-1-hardevsinh.palaniya@siliconsignals.io/T/#t
 
+Hardevsinh Palaniya (2):
+  spi: spi-fsl-dspi: Fix casting warnings
+  spi: spi-imx: Fix casting warnings
 
-Doing a linear search over every event is painful perf_pmu__have_event
-will try to binary search. The search rejects all events without
-"topdown" in their name, it then sees if the event code is 0 and the
-event|umask match the sysfs/json event. Is there ever a case the
-"topdown" string isn't at the beginning of the string? If it is it
-should be possible to binary search to the start of the topdown
-events.
+ drivers/spi/spi-fsl-dspi.c | 8 ++++----
+ drivers/spi/spi-imx.c      | 5 ++---
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-Strictly you shouldn't hard code the config positions of event and
-umask, they are in the format list:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmu.h?h=3Dperf-tools-next#n113
-There is code doing similar to this here:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n2285
-but it avoids the scanf, uses formats...
-It seems reasonable this code should reject all non-zero configs
-before searching all core PMU events. It could also use
-perf_pmu__name_from_config. So:
-```
-bool evsel__is_topdown_metric_event(const struct evsel *evsel)
-{
-   struct perf_pmu *pmu;
-   const char *name_from_config;
+-- 
+2.43.0
 
-   if (evsel->core.attr.config & 0xFF !=3D 0) /* All topdown events have
-an event code of 0. */
-     return false;
-
-  pmu  =3D evsel__find_pmu(evsel);
-  if (!pmu || !pmu->is_core)
-     return false;
-
-  name_from_config =3D perf_pmu__name_from_config(pmu, config);
-  return name_from_config && !strcasestr(name_from_config, "topdown);
-}
-```
-We could tweak perf_pmu__name_from_config to be pased a  "filter". In
-this case the filter would skip events without topdown in their name,
-without doing a config comparison.
-
-If later we change perf_pmu__name_from_config to say sort events in a
-list by config, then this code could take advantage of that. Perhaps
-for now there should just be an optional "prefix" that can be used to
-binary search to the events.
-```
-  name_from_config =3D perf_pmu__name_from_config(pmu, config,
-/*prefix=3D*/"topdown");
-```
-
-Thanks,
-Ian
-
->  /*
->   * Check whether a topdown group supports sample-read.
-> @@ -44,7 +90,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
->         if (!evsel__sys_has_perf_metrics(leader))
->                 return false;
->
-> -       if (leader->core.attr.config =3D=3D TOPDOWN_SLOTS)
-> +       if (arch_is_topdown_slots(leader))
->                 return true;
->
->         return false;
-> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/uti=
-l/topdown.h
-> index 46bf9273e572..1bae9b1822d7 100644
-> --- a/tools/perf/arch/x86/util/topdown.h
-> +++ b/tools/perf/arch/x86/util/topdown.h
-> @@ -3,5 +3,7 @@
->  #define _TOPDOWN_H 1
->
->  bool topdown_sys_has_perf_metrics(void);
-> +bool arch_is_topdown_slots(const struct evsel *evsel);
-> +bool arch_is_topdown_metrics(const struct evsel *evsel);
->
->  #endif
-> --
-> 2.40.1
->
 
