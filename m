@@ -1,249 +1,138 @@
-Return-Path: <linux-kernel+bounces-355104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09FD994755
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C598E994753
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C59B25309
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8411F230B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7141DED7B;
-	Tue,  8 Oct 2024 11:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A8B1DE8A9;
+	Tue,  8 Oct 2024 11:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mzL9ZZ4X"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="AoH+kNsy"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938AC18C01C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 11:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D53E1D4342;
+	Tue,  8 Oct 2024 11:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728387364; cv=none; b=aU94CFQRy7cjF/f0KvYuFX8riCrd36WpNrHvD5AqG6pewEhEiPq8vJE1fV1EZxrJNcH7BbDTM/9Zkh0roIZ8OoJrSZEQUpT/Csg5nL3ggBKxAhWFAQN4pQtr44m/qTLtAZ/wxVYNEMMuAFByV4LyM5trXAQQxiruB3GbDTBi84w=
+	t=1728387338; cv=none; b=HtgOUamgND1eHVK36Ouxp1LnBBEJXG4c9IUIsZU+P80OsBMEyyKQGQ5DTq2/ws2yTIW67Xv74RxUzfNlKHFgFrZ1JmJsKYpf22M8CenyxEPk+1ffgLoME/L5U7C9/C1LMwoR6LAjvLZHsDxQt+SzvNUP2fO0IqkwZYMk/gwshZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728387364; c=relaxed/simple;
-	bh=tHFU/gwRkf0aidZZCKieHpOpBAoouiQWmHaCzMBpxuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GkeJY9/aWCK7gRNfQ95ycXecXhy2ZYkY3wOn41byjCWi4QmdespJMVCVNop5KU5wQ2uAhgu3hBKvoyM0zyf8mM12xc8ptWx5QSI6aAe5DONN7UIoXb8Blp/mhnngxpzzYnpEUrhGCT9mDNNcS2T7HHrTFFq5MVXewKt7FeIUBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mzL9ZZ4X; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b58f2e1f4so36984065ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 04:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728387362; x=1728992162; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALIusGAUH/4/gvGvjWJecPeh4PIpgeoXr9PxFWIdEcw=;
-        b=mzL9ZZ4Xwgxw43LTldV46RLlhetw7R87vx7uGO1Wdj1DJT0BAalLZ6+BbZSwnH/hR2
-         vJABztnA3IedyPMwFt7Fasuzwc8tlbc0HxUyy/e0Gda7p0QD+RH34PvRMJiolIMJgWDP
-         ZaxO0juP55/TN2cHrly/jWXNlpkGy+QPP1Oy1/YqGOpw6idkAcpd27k/CNR6Wemaqm6a
-         nMHNW0sA2IuyYN1+ieEzwnV8gdanNL8nL27+HizsduufnyoZdDrolWJWEluMfUoGicY+
-         a+hiT+cakw9G/sk6vGC6HYYTuMVmSGse2mimlhFOblsuzKnxBY7vxrHAiZddTXMwkAAS
-         dYOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728387362; x=1728992162;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ALIusGAUH/4/gvGvjWJecPeh4PIpgeoXr9PxFWIdEcw=;
-        b=gxdkEooFl6UI1b1DogtHshie9EKTaqzc4zpXNvWKqwoK0AlQPgbiM5wdweDJas4lYz
-         ANQxgw4GU02J0Xa4Z0TG+hXYZrJbpAYA7jFe3x8i9sE/Ak/7E2TaL8iprL0hDLPI5thl
-         5OsYnzVA/9NesHpUib0TroQ7BPBR43l59Dl09X/POBMByGX/sDWIcmcuT4qQRSeNN+tJ
-         naNjE6i03+5GAidPBJ+ikdKy1qqdEqaPgsDbDSCXxy+z0fUyR0ytICnbjpTZBqILplRW
-         Dtuyg0uZmi8VtxC1yGC+PgOtl1PSm7VHPWImibLokArv4c6gRSTY3eNBmll2gqr8wnm5
-         c10g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxM4p9EuP7F87ndYCJkpif4nOt5oTuZaKqjIXNPHL2HdR2ru6Ua54m7gZgONTwuuyA+dQ8kqVsgboGq8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiZ6MeB+b/L/bc1MOY3nc380mwhSwV/8CQxF8jV7QVIGSe5AoQ
-	KKJ70/d6xxzkwdwLHezFPKSAgm/5VdTO+23VVIUhdyMmSBzuijbpRmnN/5tzKpol+xbpLuredCH
-	QMEIDY1hh3LoXK1zrwvZRQ6TmgN7Xp4jM4OgA
-X-Google-Smtp-Source: AGHT+IGUCuCcx5Oq/sXgMeQZzWnV/tGknipDCQlPgw8tYwUKUn2ZopWd01vBpejmDEYjMN4BboM7KCNc5K5vujleOvM=
-X-Received: by 2002:a17:90a:bc92:b0:2e0:9147:7db5 with SMTP id
- 98e67ed59e1d1-2e1e63bf552mr17536878a91.38.1728387361594; Tue, 08 Oct 2024
- 04:36:01 -0700 (PDT)
+	s=arc-20240116; t=1728387338; c=relaxed/simple;
+	bh=YPYePn9qXROHJ9vl/jwAclfR0CK1RcLn900rJr0Q6DM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cfNuHQo1ONemVw+g5oT4efRq23D3K6ZiRaHaHBmjpk4rZU3YWrfJqX3K9vngs/x6/Kdx/oz8YDARzzdh3AfDl/kzr5WVDF4ZgH//GfissoEFNLK6rnFDRzstUgd6nfvoejgUNUR4KCbtNMSKkF6+nOED1XeURfpX+34C0Ub3ul8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=AoH+kNsy; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E52A2889E1;
+	Tue,  8 Oct 2024 13:35:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728387335;
+	bh=3cD7NWV450ZD4Qg06pJDYhvM7J5Uufk5ZNY7YfVFLzk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AoH+kNsyX27jirdfywpHOdKUUQNc4/H48ceEUinPX5Q5/GZ7OjmSySvpN0dpLtyx8
+	 fSkybVa6wH76nUquYdqxrlvck3XnmIFPkY1/bSl95bh2TmSHHAZOb/x4muzhDdIxzE
+	 1J3orwVm0Coh34fdgeuetb4buJyV6E0p06L5Pf1wlvcN+/3ziGpgTaWXlsR/UMD8ND
+	 0gfZ5QjbsorMA6l4Y339lVZtssRjJ6tVwmcOkshMWD2kvpfkX5uNEcuaos4fg8TwXE
+	 qzhsoSg/hahAg6+vJkjOtiCbA1TeNp7OKjoPQlJ1c8rBbs9tOppkLNW73enS/PXJYg
+	 IMBHK64rUDm+A==
+Date: Tue, 8 Oct 2024 13:35:33 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] ARM: dts: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+Message-ID: <20241008133533.2311f306@wsk>
+In-Reply-To: <752dfca1-327e-48b9-8065-3aca7a4b4420@gmx.net>
+References: <20240925143129.4081815-1-lukma@denx.de>
+	<20240925143129.4081815-2-lukma@denx.de>
+	<20241007115336.393f0696@wsk>
+	<752dfca1-327e-48b9-8065-3aca7a4b4420@gmx.net>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACzwLxh1yWXQZ4LAO3gFMjK8KPDFfNOR6wqWhtXyucJ0+YXurw@mail.gmail.com>
- <20241008101526.2591147-1-snovitoll@gmail.com>
-In-Reply-To: <20241008101526.2591147-1-snovitoll@gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Tue, 8 Oct 2024 13:35:22 +0200
-Message-ID: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
-Subject: Re: [PATCH v3] mm, kasan, kmsan: copy_from/to_kernel_nofault
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, bpf@vger.kernel.org, 
-	dvyukov@google.com, glider@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
-	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com, 
-	vincenzo.frascino@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/zRMKj/PlExkfDhs/YkG.TWg";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Tue, 8 Oct 2024 at 12:14, Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
->
-> Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
-> memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
-> the memory corruption.
->
-> syzbot reported that bpf_probe_read_kernel() kernel helper triggered
-> KASAN report via kasan_check_range() which is not the expected behaviour
-> as copy_from_kernel_nofault() is meant to be a non-faulting helper.
->
-> Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
-> copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
-> kernel memory. In copy_to_kernel_nofault() we can retain
-> instrument_write() explicitly for the memory corruption instrumentation.
->
-> copy_to_kernel_nofault() is tested on x86_64 and arm64 with
-> CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
-> kunit test currently fails. Need more clarification on it
-> - currently, disabled in kunit test.
+--Sig_/zRMKj/PlExkfDhs/YkG.TWg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I assume you retested. Did you also test the bpf_probe_read_kernel()
-false positive no longer appears?
+Hi Stefan,
 
-> Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com/
-> Suggested-by: Marco Elver <elver@google.com>
+> Hi Lukasz,
+>=20
+> Am 07.10.24 um 11:53 schrieb Lukasz Majewski:
+> > Dear Community,
+> > =20
+> >> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+> >> some extend similar to already upstreamed XEA devices, hence are
+> >> using common imx28-lwe.dtsi file.
+> >>
+> >> New, imx28-btt3.dtsi has been added to embrace common DTS
+> >> properties for different HW revisions for this device.
+> >>
+> >> As a result - changes introduced in imx28-btt3-[012].dts are
+> >> minimal. =20
+> > Gentle ping on this patch series... =20
+> unfortunately most of my comments in V6 were silently ignored :(
+>=20
 
-This looks more reasonable:
+Sorry - I've just realized that your reply "disappeared" under other
+mails.
 
-Reviewed-by: Marco Elver <elver@google.com>
+> Regards
 
-This looks like the most conservative thing to do for now.
 
-> Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=61123a5daeb9f7454599
-> Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
-> v2:
-> - squashed previous submitted in -mm tree 2 patches based on Linus tree
-> v3:
-> - moved checks to *_nofault_loop macros per Marco's comments
-> - edited the commit message
-> ---
->  mm/kasan/kasan_test_c.c | 27 +++++++++++++++++++++++++++
->  mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
->  mm/maccess.c            | 10 ++++++++--
->  3 files changed, 52 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index a181e4780d9d..5cff90f831db 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -1954,6 +1954,32 @@ static void rust_uaf(struct kunit *test)
->         KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
->  }
->
-> +static void copy_to_kernel_nofault_oob(struct kunit *test)
-> +{
-> +       char *ptr;
-> +       char buf[128];
-> +       size_t size = sizeof(buf);
-> +
-> +       /* Not detecting fails currently with HW_TAGS */
-> +       KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
-> +
-> +       ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> +       OPTIMIZER_HIDE_VAR(ptr);
-> +
-> +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
-> +               /* Check that the returned pointer is tagged. */
-> +               KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN);
-> +               KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KERNEL);
-> +       }
-> +
-> +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(&buf[0], ptr, size));
-> +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(ptr, &buf[0], size));
-> +       kfree(ptr);
-> +}
-> +
->  static struct kunit_case kasan_kunit_test_cases[] = {
->         KUNIT_CASE(kmalloc_oob_right),
->         KUNIT_CASE(kmalloc_oob_left),
-> @@ -2027,6 +2053,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
->         KUNIT_CASE(match_all_not_assigned),
->         KUNIT_CASE(match_all_ptr_tag),
->         KUNIT_CASE(match_all_mem_tag),
-> +       KUNIT_CASE(copy_to_kernel_nofault_oob),
->         KUNIT_CASE(rust_uaf),
->         {}
->  };
-> diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-> index 13236d579eba..9733a22c46c1 100644
-> --- a/mm/kmsan/kmsan_test.c
-> +++ b/mm/kmsan/kmsan_test.c
-> @@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
->         KUNIT_EXPECT_TRUE(test, report_matches(&expect));
->  }
->
-> +static void test_copy_from_kernel_nofault(struct kunit *test)
-> +{
-> +       long ret;
-> +       char buf[4], src[4];
-> +       size_t size = sizeof(buf);
-> +
-> +       EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
-> +       kunit_info(
-> +               test,
-> +               "testing copy_from_kernel_nofault with uninitialized memory\n");
-> +
-> +       ret = copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0], size);
-> +       USE(ret);
-> +       KUNIT_EXPECT_TRUE(test, report_matches(&expect));
-> +}
-> +
->  static struct kunit_case kmsan_test_cases[] = {
->         KUNIT_CASE(test_uninit_kmalloc),
->         KUNIT_CASE(test_init_kmalloc),
-> @@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] = {
->         KUNIT_CASE(test_long_origin_chain),
->         KUNIT_CASE(test_stackdepot_roundtrip),
->         KUNIT_CASE(test_unpoison_memory),
-> +       KUNIT_CASE(test_copy_from_kernel_nofault),
->         {},
->  };
->
-> diff --git a/mm/maccess.c b/mm/maccess.c
-> index 518a25667323..3ca55ec63a6a 100644
-> --- a/mm/maccess.c
-> +++ b/mm/maccess.c
-> @@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const void *unsafe_src,
->         return true;
->  }
->
-> +/*
-> + * The below only uses kmsan_check_memory() to ensure uninitialized kernel
-> + * memory isn't leaked.
-> + */
->  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)  \
->         while (len >= sizeof(type)) {                                   \
-> -               __get_kernel_nofault(dst, src, type, err_label);                \
-> +               __get_kernel_nofault(dst, src, type, err_label);        \
-> +               kmsan_check_memory(src, sizeof(type));                  \
->                 dst += sizeof(type);                                    \
->                 src += sizeof(type);                                    \
->                 len -= sizeof(type);                                    \
-> @@ -49,7 +54,8 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
->
->  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)    \
->         while (len >= sizeof(type)) {                                   \
-> -               __put_kernel_nofault(dst, src, type, err_label);                \
-> +               __put_kernel_nofault(dst, src, type, err_label);        \
-> +               instrument_write(dst, sizeof(type));                    \
->                 dst += sizeof(type);                                    \
->                 src += sizeof(type);                                    \
->                 len -= sizeof(type);                                    \
-> --
-> 2.34.1
->
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/zRMKj/PlExkfDhs/YkG.TWg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmcFGQYACgkQAR8vZIA0
+zr35EwgAskWkXMfcoDlDJNoGLGCFD9PwnhLWiEJkPfgd0vbdsf11IeNu4gFcJNPT
+kLEQlXnt/BnRDV2is7Ua/EwQEm56B63dpvTgrr+B6THUEMwJhJnsMFcu1uymlKDI
+rbKsPghrfC8b93Vj8wkd+hl+AJ3aFyWzS1FJckvf3bw2XlHfxueb+gJRm+YeH1lM
+u8QUjtM+Rr9jXcq/5rn2KBKx3grxtzAg0qDX4Xmdp4PiqsTNXckv7AEjOfR2KTyE
+YLhxUtEP+DBffvrWNYeRFIi2rVQD1kiIVabHVzcRbGNwFhvZFnsLhNJWPGiGbQSi
+Y0sLE+mcx/hx1lo4tXFD4+4rDCl9mw==
+=gPaV
+-----END PGP SIGNATURE-----
+
+--Sig_/zRMKj/PlExkfDhs/YkG.TWg--
 
