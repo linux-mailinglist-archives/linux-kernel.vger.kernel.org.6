@@ -1,155 +1,212 @@
-Return-Path: <linux-kernel+bounces-355560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAE899540A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE41A995405
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ACE6B24733
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:08:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F34FB2727D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B651E0DF8;
-	Tue,  8 Oct 2024 16:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC771E00B4;
+	Tue,  8 Oct 2024 16:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U2G5rSeu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XYOfN1Jb"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45B41E04A9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582C064A8F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 16:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728403669; cv=none; b=eX8j44NCCxctlzU28Jhy6F1wqq8FfEv2gOF3oGB5X4YVKh3sOwFogH7U5LFHY6Cma2owpsMknOagD6Iv2rOzQ8oDYUHzOPOpZRbzYsIOxKRzshmjlqthA5rqUBAiot6OuP/EznnNzCxwhKvOsHrW8qkWwNUWDAV+41kzrsXxBiY=
+	t=1728403642; cv=none; b=BMSpqm6UqbtGtCSS0xWQdlTyVZBg19xYUuerxXwd/mmrVfUsXerw82XO/AMqhlpsk3b4M7oYiuIVV1WunOaYQyURZ9cgMjHrDQkgpxNTaOF4Q3+95WdfdYWfrv3UoEoMTNCtCiR9u9tXD1PpX96dM20B29FZvIbpRUYxous2U9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728403669; c=relaxed/simple;
-	bh=lhQuXcRpY2zHnZo6m9Qxj7Tw4rIjXk5y2hUFVH+Dy1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mAdMJpQjdhs1xmSAlPdD1cKIYOvomXeY/Yi+7Zas69oaujGSHSKI5jPb4MmxTn8mejmLkIpuGWkQxwv5hsSWwxwmLwqNNtKYow3UrQzimaGud/9goMpgzqxZyJJHngb5rpo7a91nUpXxRUV2d5CtkxR+8QNhVY1lbrSCWQmFH/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U2G5rSeu; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so54534925e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 09:07:47 -0700 (PDT)
+	s=arc-20240116; t=1728403642; c=relaxed/simple;
+	bh=Jryp7LH+8F0BmJi4LTiGbJ1Y9iu7yCp25arP1ycMQNo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KfO0QUzEOkL77pD+yNQ5w85VYrzY5IxGAt7PzHIRnxtrjZpzwXQH3g7hj6EjXDschXSWN6PrhMcSq/QtD9dWlB+aj8N6iPfy/NvjCC4huEok0GA7Yqez60IbQrlF2UguvsllX2NZDw3X/AgpxSKCLLBKiua9kGpyj37vKjRrK/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XYOfN1Jb; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25d62bfe12so8944011276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 09:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728403666; x=1729008466; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lC1VrxWqIvFqRnkCBrcDqdtLVemDPB60EJSOvaq1Zpc=;
-        b=U2G5rSeut+uj2qcUz0jKI7/PO9e+SnvQNh4q85gtxvCYL8ojwsDfm4CUZHrComWYU4
-         OykMnSwe0KFev6bX6jlm08Nq5iYwQeS5ExraBxDfQw/wzBWnu1pTJ5jENGWRaJJD4tQp
-         ryL5hyRzaWawo14WqAv4iH+xPrGymxbLAJFG7xOICXf+4lLyTXfy8RoHcLZjQNQhi+xb
-         077lfhJDMAgIuSd8kwWumDr6aJZPBxOCojVeClh1BmyxJCW5Mk0mrzy3ykti+fEtbaMd
-         RLwvUajemkllvG9rX64duecI9f0UvTV9RjzL5g3IeVVNVg43i8aGfHZNglm65O3fqJQK
-         FqYw==
+        d=google.com; s=20230601; t=1728403639; x=1729008439; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2GrBB1U08T2w/p1kNVN37u8zyKk4xj/d7lqFEpuNQg=;
+        b=XYOfN1JbzS2aorkz30evFJxxXmQJs00IgZr8H/J1o1FMAQ3HfuaHr6zVBRJcRYOrmn
+         iadKwcG0xWYrkOjbH0HlZenghlaWmo9ZVCsO+D8i8x6QXlvfx4wdJAcbdQTK19mJ3KLo
+         weFACiXtaa0imsJKY1Tyhd5hVkkR7Ku2/qEFNxVBBqiTwe5KC5eCXi39i4di0jx4zGKz
+         TbbXgqXg1Sy2M0pR4j/sBf/iwXAz+KLPlmO5gACTctIdlr9/zDJ5iTfnGBHcuYlJ8iyI
+         w9xb5eUEKdd4J6P2A5/209ag0Gz/S031EY6/TAZM9kpTDBYRupicgbO4feiNoFTRx/0e
+         Ir6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728403666; x=1729008466;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lC1VrxWqIvFqRnkCBrcDqdtLVemDPB60EJSOvaq1Zpc=;
-        b=et0DZ8glV1LEssNsvCXpYkZTJ/E6lgpiZTl1W+bqATRw+XSkpld4LGTLpTaS73cjKy
-         SjM7ZFcUD1u2oj29wg0B0gu8ZkXnG+cLUv3PV4RbJqugYH9ZcCvrLvZr5qQ+tQ4EYdg7
-         F4PYwqT627q0stL40yUC+tl8k7r/bjoi0J5FAn6d89LAFMCVF0Xg8GHDr5k1ISGeAfm2
-         VpBO6o7Wil/FbpoBCG1tvaRlJIlAe1UFdqnuzTE3qfhr2OFqZ/yNrNhSW+tXRZgxtbmC
-         WybE3BO7atT8XrngeH1aCq0aT2DVMAqPeODyVCjZctvLgp79xov6uYKNKpuZg48GtHPb
-         GG3g==
-X-Gm-Message-State: AOJu0YxOXBWjvCVF1l6/wPITqJ02kL56PA8RPZmUONmdFW0PjH34upaU
-	Gtx6/dFn/CF2SEuetaQn4tKDGjYSuHzu7FfhuPWgbEFtoGkVLWOySLSYrMonXQIw5PdW4N16f57
-	19ks=
-X-Google-Smtp-Source: AGHT+IFXn9rIZ7Zyl5lyazE5zgUqEmf9anBv84CvL08pKjCuiZVMxUzf/36RMadg3qcFPXnGSeKGIA==
-X-Received: by 2002:a05:600c:1e1d:b0:42c:b950:680a with SMTP id 5b1f17b1804b1-42f93d5f286mr43325985e9.20.1728403665924;
-        Tue, 08 Oct 2024 09:07:45 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:41f2:4244:ce34:c273])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86a20537sm131509375e9.15.2024.10.08.09.07.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 09:07:44 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 08 Oct 2024 18:07:03 +0200
-Subject: [PATCH v2 3/3] regulator: core: remove machine init callback from
- config
+        d=1e100.net; s=20230601; t=1728403639; x=1729008439;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2GrBB1U08T2w/p1kNVN37u8zyKk4xj/d7lqFEpuNQg=;
+        b=azTI2/tl64S0yj65Yd7gtiSRccT8tp1pBQfrB/VxViPvqBB4UD25m32JZQ6QUA1EiM
+         8Z+jA8nu0i+DAmRi7lp0XMo4/kdrscXfRt6FOJfitO+2ECX+Q2n1NGSj6x8wAfyvlO9s
+         PEPyPQ4hlmQI6oMYta2m1b6pEkQSHkzE90QpOIuNX1iIVDj9uRB2lT8rD/TG4AZV7nlX
+         AFI10A9tBp7GTdHGOsTJ/8fqyvB5dNI4IoMVljB97AbKRgdiTCdMAtotMvtUjojXq5nt
+         sY0xINuoWpHcnzj1tFPhx7WJg3WYzXMyqLQq1jCXWoe1IecDl+rSiMeau7PMpwPCr4MO
+         f4rw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoXLT/3s0UFIcm+iOqZuQMGvKrw4aJFuBmaeyfRnwAmVMgZpI1basOd42ZdZSCg28cS7xwzpL+f53Y9A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz93bPUuBU+pUv/WoPNJE554lkFsTgUJhQTeqS39EQ+7XCEYeAm
+	DxRbJPmpUGHtqN4fGPasgBK9tXg5ikYlnQK7eHLmQ2D3lG1d8HahS3ZYKOn1ADrmxPf9Bp+lt1t
+	VOA==
+X-Google-Smtp-Source: AGHT+IEkX/NNjX7Bqm2H8qUc1h2OJv8Pv4ROroEQ8Ifzfk0p1QvySMglhwTVS6UCdy4Zjq8Lob8owYfcAXw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:a206:0:b0:e03:53a4:1a7 with SMTP id
+ 3f1490d57ef6-e289394dedemr66667276.10.1728403639316; Tue, 08 Oct 2024
+ 09:07:19 -0700 (PDT)
+Date: Tue, 8 Oct 2024 09:07:17 -0700
+In-Reply-To: <ZwSAZ0uiwhKOZVlN@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-regulator-ignored-data-v2-3-d1251e0ee507@baylibre.com>
-References: <20241008-regulator-ignored-data-v2-0-d1251e0ee507@baylibre.com>
-In-Reply-To: <20241008-regulator-ignored-data-v2-0-d1251e0ee507@baylibre.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1660; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=lhQuXcRpY2zHnZo6m9Qxj7Tw4rIjXk5y2hUFVH+Dy1o=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnBVjMeuDhe5M14Gpc1xxDstYhvTFU2hM3oHNQ2
- 8Rl9NHrNAyJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZwVYzAAKCRDm/A8cN/La
- hbiWD/9x32PlqF7Bk9HQ6byyM6fvBKt/e0o5VrmJ+u+fWaXKUsqqDrk/0KHkhqCWEfoAkFMREiw
- sllDQ4NM1uAm1NDDgjSAAunGyMjtDCxAiigW7HdS1fyEizfN2u9r2VUbxZIxNLPMBr1qrvZQkRY
- wXod9iHgJl/lyZgjZ/1dzQwCXvvQAQqAv6oBEFzWXMGCBZAHFzZ4/gjunwaE8Y/nY1lnBkPTxMo
- OPjUCeyhfa+0v3p4Wyz1sdDoMgT/IYiV1vnKyDPjtNOXPaJ+FAYe+mofbaaUfMOzhQaYmNCHuf5
- cBPnkQX5lkP1i5baqhMWP6irevJXqKEnqwnLHb7SaGPyqKO4Ht9nbnApGfgHXW2P+G0q7JJX5hv
- l3IhchPu5hbudqvnrCyhyU/PF6V1ni0IEPg/CF7pUD1ST8MqWuFIVsy3vN/SuVQ6y+eJ4UEtCZj
- EN5vVZEzqszvZhAOMykPbMfbZyLpqrPXTd1A/Z2YEZaZK1JMhG/GBOFpnSNxlcIBLdu0XjJWpT9
- 0+mCda/HChZVaQSnNjSpD/Rch1XGpdu33/Eq5uP8sgU7tTSah7QhJLCfpBU3AMSov8gFxw5kaln
- cKkIVQmw62IUzp/ZT3AWanMQbZUjs1Fio4LbHogmU9v7T54HQni8x7HkiGpz8BNu6yQmjQxCAJt
- AoBZneUbsKWAfqw==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Mime-Version: 1.0
+References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
+ <ZuOCXarfAwPjYj19@google.com> <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
+ <Zva4aORxE9ljlMNe@google.com> <ZvbB6s6MYZ2dmQxr@google.com>
+ <ZvkdkAQkN5LmDaE6@yzhao56-desk.sh.intel.com> <ZvrJvucBw1iIwEG6@google.com> <ZwSAZ0uiwhKOZVlN@yzhao56-desk.sh.intel.com>
+Message-ID: <ZwVYtaKFKat0OeWY@google.com>
+Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
+ interesting change
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org, sagis@google.com, 
+	chao.gao@intel.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-The machine specific regulator_init() appears to be unused.
-It does not allow a lot of interaction with the regulator framework,
-since nothing from the framework is passed along (desc, config,
-etc ...)
+On Tue, Oct 08, 2024, Yan Zhao wrote:
+> On Mon, Sep 30, 2024 at 08:54:38AM -0700, Sean Christopherson wrote:
+> > On Sun, Sep 29, 2024, Yan Zhao wrote:
+> > > On Fri, Sep 27, 2024 at 07:32:10AM -0700, Sean Christopherson wrote:
+> > > >  * Don't flush if the Accessed bit is cleared, as access tracking tolerates
+> > > >  * false negatives, and the one path that does care about TLB flushes,
+> > > >  * kvm_mmu_notifier_clear_flush_young(), uses mmu_spte_update_no_track().
+> > > I have a question about why access tracking tolerates false negatives on the
+> > > path kvm_mmu_notifier_clear_flush_young().
+> > > 
+> > > kvm_mmu_notifier_clear_flush_young() invokes kvm_flush_remote_tlbs()
+> > > only when kvm_age_gfn() returns true. But age_gfn_range()/kvm_age_rmap() will
+> > > return false if the old spte is !is_accessed_spte().
+> > > 
+> > > So, if the Access bit is cleared in make_spte(), is a TLB flush required to
+> > > avoid that it's not done in kvm_mmu_notifier_clear_flush_young()?
+> > 
+> > Because access tracking in general is tolerant of stale results due to lack of
+> > TLB flushes.  E.g. on many architectures, the primary MMU has omitted TLB flushes
+> > for years (10+ years on x86, commit b13b1d2d8692).  The basic argument is that if
+> > there is enough memory pressure to trigger reclaim, then there will be enough TLB
+> > pressure to ensure that omitting the TLB flush doesn't result in a large number
+> > of "bad" reclaims[1].  And conversely, if there isn't much TLB pressure, then the
+> > kernel shouldn't be reclaiming.
+> > 
+> > For KVM, I want to completely eliminate the TLB flush[2] for all architectures
+> > where it's architecturally legal.  Because for KVM, the flushes are often even
+> > more expensive than they are for the primary MMU, e.g. due to lack of batching,
+> > the cost of VM-Exit => VM-Enter (for architectures without broadcast flushes).
+> > 
+> > [1] https://lore.kernel.org/all/CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com
+> > [2] https://lore.kernel.org/all/Zmnbb-Xlyz4VXNHI@google.com
+> 
+> It makes sense. Thanks for explanation and the provided links!
+> 
+> Thinking more about the prefetched SPTEs, though the A bit tolerates fault
+> negative, do you think we still can have a small optimization to grant A bit to
+> prefetched SPTEs if the old_spte has already set it? So that if a prefault
+> happens right after a real fault, the A bit would not be cleared, basing on that
+> KVM not changing PFNs without first zapping the old SPTE.
+> (but I'm not sure if you have already covered this optmication in the
+> mega-series).
 
-Machine specific init may also be done with the added init_cb() in
-the regulator description, so remove regulator_init().
+Already handled :-)
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/regulator/core.c          | 7 -------
- include/linux/regulator/machine.h | 3 +--
- 2 files changed, 1 insertion(+), 9 deletions(-)
+Though I need to test the shadow MMU code, as I was initially thinking the issue
+was unique to the TDP MMU (no idea why I thought that).
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f8b5d596f59d..e830230c3f39 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -5775,13 +5775,6 @@ regulator_register(struct device *dev,
- 		resolved_early = true;
- 	}
- 
--	/* perform any regulator specific init */
--	if (init_data && init_data->regulator_init) {
--		ret = init_data->regulator_init(rdev->reg_data);
--		if (ret < 0)
--			goto wash;
--	}
--
- 	if (config->ena_gpiod) {
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		if (ret != 0) {
-diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
-index 0cd76d264727..d0d700ff337a 100644
---- a/include/linux/regulator/machine.h
-+++ b/include/linux/regulator/machine.h
-@@ -285,8 +285,7 @@ struct regulator_init_data {
- 	int num_consumer_supplies;
- 	struct regulator_consumer_supply *consumer_supplies;
- 
--	/* optional regulator machine specific init */
--	int (*regulator_init)(void *driver_data);
-+	/* optional regulator machine specific data */
- 	void *driver_data;	/* core does not touch this */
- };
- 
+Hmm, though I think something like what you've proposed may be in order.  There
+are currently four cases where @prefetch will be true:
 
--- 
-2.45.2
+ 1. Prefault
+ 2. Async #PF
+ 3. Prefetching
+ 4. FNAME(sync_spte)
 
+For 1-3, KVM shouldn't overwrite an existing shadow-present SPTE, which is what
+my code does.
+
+But for 4, FNAME(sync_spte) _needs_ to overwrite an existing SPTE.  And, ignoring
+the awful A/D-disabled case, FNAME(prefetch_invalid_gpte) ensures the gPTE is
+Accessed, i.e. there's no strong argument for clearing the Accessed bit.
+
+Hrm, but the _only_ "speculative" access type when commit 947da5383069 ("KVM:
+MMU: Set the accessed bit on non-speculative shadow ptes") went in was the
+FNAME(sync_spte) case (at the time called FNAME(update_pte)).  I.e. KVM deliberately
+clears the Accessed bit for that case.
+
+But, I'm unconvinced that's actually appropriate.  As above, the gPTE is accessed,
+and kvm_sync_spte() ensures the SPTE is shadow-present (with an asterisk, because
+it deliberately doesn't use is_shadow_present() SPTE so that KVM can sync MMIO
+SPTEs).
+
+Aha!  Before commit c76e0ad27084 ("KVM: x86/mmu: Mark page/folio accessed only
+when zapping leaf SPTEs"), clearing the Accessed bit kinda sorta makes sense,
+because KVM propagates the information to the underlying struct page.  But when
+that code is removed, KVM's SPTEs are the "source of truth" so to speak.
+
+Double aha!  Spurious clearing of the Accessed (and Dirty) was mitigated by commit
+e6722d9211b2 ("KVM: x86/mmu: Reduce the update to the spte in FNAME(sync_spte)"),
+which changed FNAME(sync_spte) to only overwrite SPTEs if the protections are
+actually changing.
+
+So at the very least, somewhere in all of this, we should do as you suggest and
+explicitly preserve the Accessed bit.  Though I'm quite tempted to be more aggressive
+and always mark the SPTE as accessed when synchronizing, because odds are very
+good that the guest still cares about the page that's pointed at by the unsync
+SPTE.  E.g. the most common case where FNAME(sync_spte) actually overwrites an
+existing SPTE is CoW in the guest.
+
+I'll think a bit more on this, and either go with a variant of the below, or
+something like:
+
+	if (!prefetch || synchronizing)
+		spte |= spte_shadow_accessed_mask(spte);
+
+> --- a/arch/x86/kvm/mmu/spte.c
+> +++ b/arch/x86/kvm/mmu/spte.c
+> @@ -163,6 +163,8 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+>         int level = sp->role.level;
+>         u64 spte = SPTE_MMU_PRESENT_MASK;
+>         bool wrprot = false;
+> +       bool remove_accessed = prefetch && (!is_shadow_present_pte(old_spte) ||
+> +                              !s_last_spte(old_spte, level) || !is_accessed_spte(old_spte))
+>         /*
+>          * For the EPT case, shadow_present_mask has no RWX bits set if
+> @@ -178,7 +180,7 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+>                 spte |= SPTE_TDP_AD_WRPROT_ONLY;
+>  
+>         spte |= shadow_present_mask;
+> -       if (!prefetch)
+> +       if (!remove_accessed)
+>                 spte |= spte_shadow_accessed_mask(spte);
+>  
+>         /*
+> @@ -259,7 +261,7 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+>                 spte |= spte_shadow_dirty_mask(spte);
+>  
+>  out:
+> -       if (prefetch)
+> +       if (remove_accessed)
+>                 spte = mark_spte_for_access_track(spte);
+>  
+>         WARN_ONCE(is_rsvd_spte(&vcpu->arch.mmu->shadow_zero_check, spte, level),
 
