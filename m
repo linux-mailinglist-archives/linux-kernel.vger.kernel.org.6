@@ -1,89 +1,55 @@
-Return-Path: <linux-kernel+bounces-355818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4BA6995786
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6046E995789
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258A928A0D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E931C233A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E97212EFD;
-	Tue,  8 Oct 2024 19:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6717B212D3E;
+	Tue,  8 Oct 2024 19:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMsor15u"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dytzaYdJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5BA1F472B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88BF1F472B;
+	Tue,  8 Oct 2024 19:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728414998; cv=none; b=jRatHa1mvOpRYoxaOIJ69HLRxST7n2z/omK+7UKNA6zRANzAnLmgrTDHCwAU5elThGyv0BMKpTC8CJD4oZlCIgKJVK2xsHV/rpVbBTHoEZcl2mbJ06yEYFlsJbdmpU5kkRgHoz7v1R32JMCGuP3uw0aZ4A9Q1RjLU7jZ+RKB2O0=
+	t=1728415048; cv=none; b=tdfw1GwtlVRfEt/MdfNc7f9lobSBWJYFD4xFdU3yMJFknLDPFyFT/T3mkWs5+0tuIauFwM7C50wuFwmtcxvdHttl3izde9wNcbr4lwS6tD+x5Kfwi+ZTVBvJL82vQ3RLL1F5dAhQC0sehxj6eIiH8fzYGh6YP1SxsY3CWMPmuTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728414998; c=relaxed/simple;
-	bh=YceFv62VB2PaAbJZ3O8Mb0rPDwzm/Q3npZBYOgM2RxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PkovC8DVDu8HJiJ9qULpXAOOKjTbtc3CzzT2Qxuf/4tSeVDn+y4RFKImX0PLqh+h8RbJTMSq+q2gQmvB8EQDPeSosv1AQzwCiQPYxiXuKC7bEEQzfNnYBb6RFE/5sGZjVmx8ra/AjyIEQakQklV+tsktizsUFq+WbwVeikb9a5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NMsor15u; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71dfccba177so126874b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728414996; x=1729019796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7qu86Ysicdsx9sM/yuAIgyD1+rSLH54SdSYbKdh/+U=;
-        b=NMsor15usH6mhHdSybffmkmgUrGsowI7c3IpsfwUfpxynaB420g7yprxIIsbPe44wk
-         g9XRDJsYb0zuSmIpBcAdi26TXNBnCSIAULszFUt8nxUARJ+zZ4pzlwhikE8fEKL+V8BC
-         ThY9n5ARIWFesvtOoHW4z7JkJeWHnPsA+bEgZuAr7OUFzl8wtx0j1PmYSm2aY1MWs5bI
-         aXo9ZFeiAv/2WjtyHzXYDzgDVk97qW5DCIwGmgVzb/9Q50cWNfSZv7qdyCatAWDildon
-         7jLOg2gHiRQkZUVggYcZAmJ9uQIIq7ik4JJPrp+eenKXie51DjC2n8jy04dcKHJ4zZlW
-         nFOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728414996; x=1729019796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z7qu86Ysicdsx9sM/yuAIgyD1+rSLH54SdSYbKdh/+U=;
-        b=GoQxtpv4vkrvZQkn8vTYyefa1+nRSYXpC0HKhjra3hchgruU+vAPj2qxFOp6ZLd+mo
-         70/MXYPq2TJp0qRMcSrkVkFsY97oEQHCG2sVqgbSszHYXUSEXnK065NLW/tGBvi6c3y1
-         wYaTrl6UKas/jGXwzM/RaYFX6CDjiI+CYIWNQ9+nvltQm6vSz273AD1uGcgQPVFoNce2
-         Hmjch8YxK9dzsvGZO8kzFZpNx/pIOqNh+iphLUDaqt+t0Iuo9abHY75G7kwtiKwcSBek
-         M5LA7HH34vHagvsO/CPrbYkA1jcW9oW6AmMg9dVCZw/uflgn+VIuRDIAo/Yc0FUYEHj2
-         I4lA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP/XG4zSqKrj765RjYzqDY/8ih1mgQpNF0D2ZFmisTE9GfSdf/RVroyQUsLfnGq1dtwqr4w/zS6nmBRxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymyLqqlQJ+ZMENXb+04vuBreo6/KLPNzBtz7iFPPkbXRMBQEh1
-	WiBXqKlwwRI0MI0YtiXulZdIyQJVDFopwGH2RE2g4MPL7Co6MU7X
-X-Google-Smtp-Source: AGHT+IG11rsBrtdL3pEggLyoVCWr0nW6/pa+HBU7JaoO06ddPz9+dy2vVAYCq5o1iTlk25NJF+qmtw==
-X-Received: by 2002:a05:6a00:c94:b0:71d:fbc9:e5b2 with SMTP id d2e1a72fcca58-71e1d6d2014mr169431b3a.14.1728414995947;
-        Tue, 08 Oct 2024 12:16:35 -0700 (PDT)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:c7a7:6c1f:8104:8963])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dfea52097sm4650939b3a.103.2024.10.08.12.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 12:16:35 -0700 (PDT)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	leo.liu@amd.com,
-	sathishkumar.sundararaju@amd.com,
-	saleemkhan.jamadar@amd.com,
-	sonny.jiang@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1728415048; c=relaxed/simple;
+	bh=Im3Wb0BE1gCm1511GCSPk39xhrX/ifJqxV+8+v7ISgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRTBC53yFPJv0KERm6gVEDS5WPvwEyh8rcIVxjY1eI8H7E/wq/jHVSfb1pjvFyNGZPIbfJZT7QLCNFfSnuLYnrWOgSd9MjyzgA5fC2OOSakCKbYJDNzbPeZ5KlXvuyGW61aUVUd5IKsn/FaY0o+QL7Lk8s3vnB6TtdB6denmLMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dytzaYdJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA81C4CEC7;
+	Tue,  8 Oct 2024 19:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728415048;
+	bh=Im3Wb0BE1gCm1511GCSPk39xhrX/ifJqxV+8+v7ISgc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dytzaYdJzzM/6QEvvFY5cOcAAPKqVfIq83uLep/yVDnKaBx3m/QHa1sDY46rGzSph
+	 QdzSxM8rBH9vmpVdmhFMueHa0SNniB4iTiVROCL1Htrz7j4PzWBKY0HvYXBKz4ICD8
+	 1WV5TA+iJPnEl5ADSAFCcrR3S1ErVb+oneonOm3I/FxuFDOwpekIAP1n68owYZvGO2
+	 VW1zb8KjZOHW5Nls83s5G25e+3hW3GlBHLYbcdlSxQKB0HUW8D5dY4BGj+7Vgi6vhX
+	 R79RZqp8svuv5tYzN+R/2tc5AKRMEfd0nPROsWyC2ULZsQFa2VLAij3zPkno3QmDCo
+	 BnwlMjZLPhpeA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Subject: [PATCH-next v3] drm/amdgpu: Cleanup shift coding style
-Date: Wed,  9 Oct 2024 00:46:23 +0530
-Message-Id: <20241008191623.8171-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	linux-trace-kernel@vger.kernel.org,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: [PATCH v3] tracepoints: Use new static branch API
+Date: Tue,  8 Oct 2024 12:17:19 -0700
+Message-ID: <7a08dae3c5eddb14b13864923c1b58ac1f4af83c.1728414936.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,73 +58,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Improves the coding style by updating bit-shift
-operations in the amdgpu_jpeg.c driver file.
-It ensures consistency and avoids potential issues
-by explicitly using 1U and 1ULL for unsigned
-and unsigned long long shifts in all relevant instances.
+The old static key API is deprecated.  Switch to the new one.
 
-
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
-v1->v2: address review comments
-https://lore.kernel.org/lkml/CAJ7bepJrm9tJJMSZXz0B_94y8817X4oFpwnrTmUHeagOFgVL7g@mail.gmail.com/
-v2->v3: update changelog and add additional 1U cleanups
-https://lore.kernel.org/lkml/CADnq5_OgZvTgUDvDqDikoUh28jTRm2mOAVV6zAEtWE9RHTFkyA@mail.gmail.com/
+v3: fix CONFIG_USER_EVENTS build failure
+v2: fix CONFIG_HIST_TRIGGERS build failure
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/tracepoint-defs.h  | 4 ++--
+ include/linux/tracepoint.h       | 8 ++++----
+ kernel/trace/trace_events_hist.c | 2 +-
+ kernel/trace/trace_events_user.c | 4 ++--
+ kernel/tracepoint.c              | 4 ++--
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-index 95e2796919fc..995bc28b4fe6 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-@@ -47,7 +47,7 @@ int amdgpu_jpeg_sw_init(struct amdgpu_device *adev)
- 		adev->jpeg.indirect_sram = true;
+diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+index 4dc4955f0fbf..60a6e8314d4c 100644
+--- a/include/linux/tracepoint-defs.h
++++ b/include/linux/tracepoint-defs.h
+@@ -31,7 +31,7 @@ struct tracepoint_func {
  
- 	for (i = 0; i < adev->jpeg.num_jpeg_inst; i++) {
--		if (adev->jpeg.harvest_config & (1 << i))
-+		if (adev->jpeg.harvest_config & (1U << i))
- 			continue;
+ struct tracepoint {
+ 	const char *name;		/* Tracepoint name */
+-	struct static_key key;
++	struct static_key_false key;
+ 	struct static_call_key *static_call_key;
+ 	void *static_call_tramp;
+ 	void *iterator;
+@@ -83,7 +83,7 @@ struct bpf_raw_event_map {
  
- 		if (adev->jpeg.indirect_sram) {
-@@ -73,7 +73,7 @@ int amdgpu_jpeg_sw_fini(struct amdgpu_device *adev)
- 	int i, j;
- 
- 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
--		if (adev->jpeg.harvest_config & (1 << i))
-+		if (adev->jpeg.harvest_config & (1U << i))
- 			continue;
- 
- 		amdgpu_bo_free_kernel(
-@@ -110,7 +110,7 @@ static void amdgpu_jpeg_idle_work_handler(struct work_struct *work)
- 	unsigned int i, j;
- 
- 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
--		if (adev->jpeg.harvest_config & (1 << i))
-+		if (adev->jpeg.harvest_config & (1U << i))
- 			continue;
- 
- 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j)
-@@ -357,7 +357,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
- 	if (!adev)
- 		return -ENODEV;
- 
--	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-+	mask = (1ULL << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
- 	if ((val & mask) == 0)
- 		return -EINVAL;
- 
-@@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
- 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
- 			ring = &adev->jpeg.inst[i].ring_dec[j];
- 			if (ring->sched.ready)
--				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-+				mask |= 1ULL << ((i * adev->jpeg.num_jpeg_rings) + j);
- 		}
+ #ifdef CONFIG_TRACEPOINTS
+ # define tracepoint_enabled(tp) \
+-	static_key_false(&(__tracepoint_##tp).key)
++	static_branch_unlikely(&(__tracepoint_##tp).key)
+ #else
+ # define tracepoint_enabled(tracepoint) false
+ #endif
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 93a9f3070b48..2a29334bbc02 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -248,7 +248,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
+ 	static inline void trace_##name##_rcuidle(proto)		\
+ 	{								\
+-		if (static_key_false(&__tracepoint_##name.key))		\
++		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+ 				TP_CONDITION(cond), 1);			\
+@@ -274,7 +274,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	extern struct tracepoint __tracepoint_##name;			\
+ 	static inline void trace_##name(proto)				\
+ 	{								\
+-		if (static_key_false(&__tracepoint_##name.key))		\
++		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+ 				TP_CONDITION(cond), 0);			\
+@@ -311,7 +311,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	static inline bool						\
+ 	trace_##name##_enabled(void)					\
+ 	{								\
+-		return static_key_false(&__tracepoint_##name.key);	\
++		return static_branch_unlikely(&__tracepoint_##name.key);\
  	}
- 	*val = mask;
+ 
+ /*
+@@ -328,7 +328,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 	struct tracepoint __tracepoint_##_name	__used			\
+ 	__section("__tracepoints") = {					\
+ 		.name = __tpstrtab_##_name,				\
+-		.key = STATIC_KEY_INIT_FALSE,				\
++		.key = STATIC_KEY_FALSE_INIT,				\
+ 		.static_call_key = &STATIC_CALL_KEY(tp_func_##_name),	\
+ 		.static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
+ 		.iterator = &__traceiter_##_name,			\
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 5f9119eb7c67..cc2924ad32a3 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -822,7 +822,7 @@ static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+ {
+ 	struct tracepoint *tp = event->tp;
+ 
+-	if (unlikely(atomic_read(&tp->key.enabled) > 0)) {
++	if (unlikely(static_key_enabled(&tp->key))) {
+ 		struct tracepoint_func *probe_func_ptr;
+ 		synth_probe_func_t probe_func;
+ 		void *__data;
+diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+index 42b0d998d103..17bcad8f79de 100644
+--- a/kernel/trace/trace_events_user.c
++++ b/kernel/trace/trace_events_user.c
+@@ -1676,7 +1676,7 @@ static void update_enable_bit_for(struct user_event *user)
+ 	struct tracepoint *tp = &user->tracepoint;
+ 	char status = 0;
+ 
+-	if (atomic_read(&tp->key.enabled) > 0) {
++	if (static_key_enabled(&tp->key)) {
+ 		struct tracepoint_func *probe_func_ptr;
+ 		user_event_func_t probe_func;
+ 
+@@ -2280,7 +2280,7 @@ static ssize_t user_events_write_core(struct file *file, struct iov_iter *i)
+ 	 * It's possible key.enabled disables after this check, however
+ 	 * we don't mind if a few events are included in this condition.
+ 	 */
+-	if (likely(atomic_read(&tp->key.enabled) > 0)) {
++	if (likely(static_key_enabled(&tp->key))) {
+ 		struct tracepoint_func *probe_func_ptr;
+ 		user_event_func_t probe_func;
+ 		struct iov_iter copy;
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8879da16ef4d..1e3de77ea6b3 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -358,7 +358,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+ 		tracepoint_update_call(tp, tp_funcs);
+ 		/* Both iterator and static call handle NULL tp->funcs */
+ 		rcu_assign_pointer(tp->funcs, tp_funcs);
+-		static_key_enable(&tp->key);
++		static_branch_enable(&tp->key);
+ 		break;
+ 	case TP_FUNC_2:		/* 1->2 */
+ 		/* Set iterator static call */
+@@ -414,7 +414,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
+ 		if (tp->unregfunc && static_key_enabled(&tp->key))
+ 			tp->unregfunc();
+ 
+-		static_key_disable(&tp->key);
++		static_branch_disable(&tp->key);
+ 		/* Set iterator static call */
+ 		tracepoint_update_call(tp, tp_funcs);
+ 		/* Both iterator and static call handle NULL tp->funcs */
 -- 
-2.34.1
+2.46.0
 
 
