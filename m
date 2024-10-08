@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-355494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395AF995330
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:19:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCCB995320
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD4DCB25A2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B821F26BE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCAD1E0484;
-	Tue,  8 Oct 2024 15:17:02 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630E21DF275;
+	Tue,  8 Oct 2024 15:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b9ligKLw"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49224144D21;
-	Tue,  8 Oct 2024 15:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1576E1E048F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400621; cv=none; b=mjltXAtUDRsfV8qt52THV395fjn47l48jxmpZzgKk5FI+VeA+tnZ/hgrrpIsH7eAhNCG4VDis5x3xLE9v204u1deXaXb3D6ywzBYWnBqKZvc5luH+0xUds/6wksfE+qWFvTViBamwpTus9UD9LTnjxuZKXIdOzl05svMvVkYbOA=
+	t=1728400659; cv=none; b=SPCEP6EbP/6IqCqHogLAFWVgR365f+AzVVxtSGzjGjZQ08/9QvZYviB0vleNjm3tcK6hsWOjuqMFlAUt/43MD6fj/MgWGGczGgxgIFpujE3xr8fU4I48tbHYp84ezPyAOwnbuWyOAvj3NW6hqyMjHFa1jEoitMf07jro2Zim9Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400621; c=relaxed/simple;
-	bh=x0v6wKBxloqxd6ftXN0Rhhzo7IbMzrRL3YhX/jccxGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h+iLcyAsNrcGaaVs5w0ySkjqRr3sVUw5bsbUcjXYhRonHT7UydtXNDIleQyXmBwJ8SVRKyT1MZBuqjm8e03HXP3XtnTXaHLpG39OvhkyAXci3mfCnyColF/GzjBT8AohprRJtIOXs/Uy9GF99eFH45dprA0BnavzLxF9P9f0MnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6db20e22c85so45577897b3.0;
-        Tue, 08 Oct 2024 08:17:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728400619; x=1729005419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xNkp0597olvl4BH+GQsjOjO3dePD7p4cBzVhPvQBAu0=;
-        b=WIKseKYYNHfk1nGaFWDUdJYhQbSsfcUR/ZGSUglFKA3NiOTkLUFg8/LL3sKj9xYu30
-         0ARtcALzrjTCCUZ1C2e/7cpTwyPDlGsYn2Rxbp1mHHmu4W/e5540h/Ell/oC8R4p+fOO
-         73UUTz7GF/9ObJLMQv3Q8fSOhNjO14rCy3qm1wvxSwSCt/556DJWr6u6lnMN12RtpAsU
-         p3Hf3cX8CzIi08DVxdQQY3sIlbd41YechTE6UnnLerK8MX+4Qm870a1OkC7of1HwAg+K
-         5+5/t5kS+fCqrqmKOLVNDDWOMTS90VELTTQhfNTRmRL7J1PRQ3HoC6WACM+B3I/BYqYF
-         HK5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZxsnTEp7eX4f4i/Fy2GQLnqAledGCydbwvua89w/Ht/u7rPYTRYI1Lh56mOy17YmwYN7ekMdbYZER@vger.kernel.org, AJvYcCV+b+yYkJ2g38tuRye3ERI2AJQvqHB9X6mCCC7uBlJ8n5WhPykPUCDWxhWfjnsvDBM//NOJtEU+mH9ly9q9@vger.kernel.org, AJvYcCVeYtxUOLLTtFRBzVk21YQ2tPaUZK7jHJsOQbDLHvZIrngqp5pIk4ovjusEi2ZbNEh67Wz0xY4isGFx@vger.kernel.org, AJvYcCVusz5u8dWyqZnoSRf3R2fyL1Yt3iDErXKH3dkjZSrutYApMpspFASULxA6ntYv7r5U3Ti5GkgOitQD@vger.kernel.org, AJvYcCVwci6IK2rrcgzUoslFFHmlguNGy1NtfU8IVv+xJeLYekGvZD21twK87LPqAM2/+zuOG9C1IfIshI8=@vger.kernel.org, AJvYcCWciWM5nv7qFX+DQTbsBx0RPViyi4SDAHEKUB5U9kP0zpwzkmGWAvHqvpV6WT6gE3rF39baxKhvNnmxywBKCtTSh3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh+serDkK7WtJPcqrpt6HtzAqVFqmT+4ejmU2JGY+xz7NqyTmo
-	2SwXWg2bRwLyyyG4lFG9kCG4XiW6NvdKuLhi3AhfBkqmk0Y80nB3Yjzfpn//
-X-Google-Smtp-Source: AGHT+IEmwzQ4S21ySvIXl6lnzyeEe5/Tmdjn9/vqEVzOfpRH8NvZm0XibBuRYOEO0Uy0dRT2nJmMOg==
-X-Received: by 2002:a05:690c:6a86:b0:6dd:fe5e:8828 with SMTP id 00721157ae682-6e2c72b2c16mr146723657b3.42.1728400615300;
-        Tue, 08 Oct 2024 08:16:55 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e30e745d7esm3695727b3.74.2024.10.08.08.16.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 08:16:54 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6d6891012d5so47861267b3.2;
-        Tue, 08 Oct 2024 08:16:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUF6Ko1eAfISunr5S7d2Yjd4Fd/x57pGQfwgXkKNc7e7HRu5bhUjVXVh2An2Z55Bviuu+0kAR0gIp40Iv5B@vger.kernel.org, AJvYcCV09BBm8FNLG10sCg9pF9njqXJwc4IjqrDNTIXboGvYd2Xq0tuZi1I0jiTfYFFmEmVOr7Z+qhcLEinD@vger.kernel.org, AJvYcCVLiH+I5QcKlBg5Vo4/f4cJbXD9/BJnqPQtDmuodr+Bk55ETA+SP3wMR6SjxUtbHSO9kDfwEfGdHZ8t@vger.kernel.org, AJvYcCVWjNnu7RDx1ZZMV2mkS8D3M89Awj27SDhX4BsCEYWXy/KhJeLAaR35Ir/r63f4lz/52PUcSTsWzwqT@vger.kernel.org, AJvYcCVsR4jc0UeCphLYY4QlE19OtC1F80fZIAqdbj5G20uREiWV36/7z9+abIon3xVqBWge8Ad0ukW+sUA=@vger.kernel.org, AJvYcCXmXP+9+bInS6s9nld1Plb7b0lkJTiT/zfq0M1L5dnn1W5GdTdMzNa7unmSpI2jDjl+2PivrQ6m2vKpFAoIqbvu5dk=@vger.kernel.org
-X-Received: by 2002:a05:690c:f88:b0:6e2:3e17:1849 with SMTP id
- 00721157ae682-6e2ecb69a8amr76258537b3.2.1728400613366; Tue, 08 Oct 2024
- 08:16:53 -0700 (PDT)
+	s=arc-20240116; t=1728400659; c=relaxed/simple;
+	bh=T3GldDOFhUWBJ2biZPCYKw05Uo8+TqI/hbq80bxSfZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cpSQSsOzWVwmT9EpGZ8ydpDYgVW6UcEbiknhyfRo/CjZMpe0ZM7CiknaEz9fwPEHMONHsNzWBQ7+WiBtg3lL0YHCerfVR2OxB1dgnD3k+EuWriTLubtmvTlpffDO1U22syRdrWN6qTitx5dL4sjv/sO3XjT48DzPdDRga8ZQdTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b9ligKLw; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728400655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bWHqjOELOWE9vLZrRmf/09or4tmrdFcp8GvUzAK+AxA=;
+	b=b9ligKLwgXqQPezu6NO84L1SuMlBJaKX1ePlcETOjs7JOoDBJ0jeB/M9oOlm8boQ3aZj5t
+	K9YEV27/lQ1gKy38Q67H68rmpdkEHMIz86vB9kT/FSCOrFxaxdXeZTWIzgJEZPM0J2z34L
+	tfLtQaoT63KOgOqJCe8FFyg0Dy+/Y6M=
+From: Wen Yang <wen.yang@linux.dev>
+To: Joel Granados <j.granados@samsung.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
+	Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	linux-kernel@vger.kernel.org,
+	Wen Yang <wen.yang@linux.dev>,
+	Dave Young <dyoung@redhat.com>
+Subject: [RESEND PATCH v4 5/5] sysctl: delete six_hundred_forty_kb to save 4 bytes
+Date: Tue,  8 Oct 2024 23:17:00 +0800
+Message-Id: <20241008151700.12588-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-16-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240822152801.602318-16-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Oct 2024 17:16:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXbNRO--0ZGO4owi3At5n1dTMMWo4PTaubyNWEkVnPFFA@mail.gmail.com>
-Message-ID: <CAMuHMdXbNRO--0ZGO4owi3At5n1dTMMWo4PTaubyNWEkVnPFFA@mail.gmail.com>
-Subject: Re: [PATCH 15/16] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com, 
-	ulf.hansson@linaro.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Claudiu,
+By directly encoding specific numbers into the min/max field,
+unnecessary global variable six_hundred_forty_kb can be removed,
+saving 4 bytes
 
-On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable USB support (host, device, USB PHYs and sysc).
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Joel Granados <j.granados@samsung.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/sysctl.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-Thanks for your patch!
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 05197d46007d..c8460b5e0605 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -90,13 +90,6 @@ EXPORT_SYMBOL_GPL(sysctl_long_vals);
+ 
+ #if defined(CONFIG_SYSCTL)
+ 
+-/* Constants used for minimum and maximum */
+-
+-#ifdef CONFIG_PERF_EVENTS
+-static const int six_hundred_forty_kb = 640 * 1024;
+-#endif
+-
+-
+ static const int ngroups_max = NGROUPS_MAX;
+ static const int cap_last_cap = CAP_LAST_CAP;
+ 
+@@ -1964,10 +1957,10 @@ static struct ctl_table kern_table[] = {
+ 		.procname	= "perf_event_max_stack",
+ 		.data		= &sysctl_perf_event_max_stack,
+ 		.maxlen		= sizeof(sysctl_perf_event_max_stack),
+-		.mode		= 0644,
++		.mode		= 0644 | SYSCTL_FLAG_MIN | SYSCTL_FLAG_MAX,
+ 		.proc_handler	= perf_event_max_stack_handler,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= (void *)&six_hundred_forty_kb,
++		.min		= 0,
++		.max		= 640 * 1024,
+ 	},
+ 	{
+ 		.procname	= "perf_event_max_contexts_per_stack",
+-- 
+2.25.1
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> @@ -144,3 +188,20 @@ &sdhi1 {
->         max-frequency =3D <125000000>;
->         status =3D "okay";
->  };
-> +
-> +&sysc {
-> +       status =3D "okay";
-> +};
-> +
-
-To avoid regressions (/sys/devices/soc0/ disappearing), enabling sysc
-is a dependency for "[PATCH 05/16] soc: renesas: sysc: Move RZ/G3S
-SoC detection on SYSC driver", so I think it makes sense to change
-its status to "okay" in r9a08g045.dtsi instead, and spin that off into
-its own patch.  I am not super-worried, so doing the driver and DTS
-changes in separate patches should be fine, as long as they meet each
-other in next or upstream.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
