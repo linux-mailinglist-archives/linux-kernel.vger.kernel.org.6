@@ -1,310 +1,207 @@
-Return-Path: <linux-kernel+bounces-354582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90053993F66
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B9F993FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86DA9B238DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989321C23296
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2828198A20;
-	Tue,  8 Oct 2024 06:51:15 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2611DF73D;
+	Tue,  8 Oct 2024 06:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dEwTCqEn"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577E6189F59;
-	Tue,  8 Oct 2024 06:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34BC14A0B8;
+	Tue,  8 Oct 2024 06:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370275; cv=none; b=C5yaAAmo09LmMMJQBSdLQEN5m2i4K/GwUeUPaEGZl0kJVZlhGcLV53OuilAL1vgUhyR2TxCnQ/I8FgnwZ6nWC7P8LcfFaVo6eDIFW6sZZXAR5p/YrBxpQA9mun0HNfmW9S+avK0Xpn4wvsjL7osIeemy5aMkKVz3eHDDagsRwsI=
+	t=1728368944; cv=none; b=dieRtz0LJVHZbiQ9uKeKv9K9dtLXQ7LkEcBWaV2VVgCvlzGOnPLMVY/5G0+qH1IcCevpNYu1XufuZNVM4nxf7jwkHzDVXj58MEdNnTUji7hmK25IIq7mvnBG4wc709gLgOTiq8++oVnRs6X4NZHGph0YUJnxfZW1fhxZLyxzlHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370275; c=relaxed/simple;
-	bh=aBhMMc0z1xLqYQUA9NZ2tp+ctsltxUmNbPPcVsphsmk=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=UQQqOpfiDCL3w70i7Usd00ZRtQr8OTvzLZ2du+zrYtJap6NuwjNLSDWeGLKzEUh3JVfLj1dUyvIiXSw+wwnNo5ARpzJg/vLMQHvq8ATNajlTzAdbSk6HQMLoCOjuWyXYJ9q4K2MIVCQRZhPH5God0f666ZTBnkIn3rT4earq/wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C57F200081;
-	Tue,  8 Oct 2024 08:51:06 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 22A74202309;
-	Tue,  8 Oct 2024 08:51:06 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7ACB9183B725;
-	Tue,  8 Oct 2024 14:51:04 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ASoC: fsl_xcvr: reset RX dpath after wrong preamble
-Date: Tue,  8 Oct 2024 14:27:53 +0800
-Message-Id: <1728368873-31379-3-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1728368873-31379-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1728368873-31379-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728368944; c=relaxed/simple;
+	bh=XfcCA7GBdsZVtnUU6+wVEgKZoMQ1JO+TzKlxKNhCcwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G3u9GFQBDqGikjhwNqf8oHKonrdZM0HrDS+7U4OJ1JtdtRIS+voFMs+4reOtYeRRI/VOOCZ5mw3E1/gB77mBu/b5cVUGzjwDeV4KJBxBm/1VMFaimU+JNNTwiFZYlypJyZikD0JLVg6YSdyLQS4iCyevZl4kgtPkRsl/g2IajpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dEwTCqEn; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 49FC560002;
+	Tue,  8 Oct 2024 06:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728368940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wMjB+ql8r09QyY3NNz0RWv1F2k3haxl0jC1S2UqOXoE=;
+	b=dEwTCqEnJPizC1pSETrTjRK7qew2H+iFZgrzoSdQ+tZnKMgnaDNYU03GZp2ZxP3Yr7HR8J
+	dNgx+7GMWC2PYEj5Di09COk3ODG4mBy2FmInVndSEv0CoTvpewESi1CZW21+dhEHKebIgs
+	9SY9HBM0FMWc4itxHE9HG9l6SqtURExsZHphX+Z9e77qNsgAtIjw7JBNzTZWkQ5mGyNh8T
+	+NDBqO3io6Jmlpq0M+CxtStJdL8RPgGHV1CNPOkReFWDDKfY+3QnbTiOtirY0dZIqhYa4l
+	FKOgJx6fNrJcKXHNz9ASoz9JDzXcpM/XDL9aORW2yp/M0bvCimaXo0r27PxfuA==
+Date: Tue, 8 Oct 2024 08:28:57 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 0/9] Allow isolating PHY devices
+Message-ID: <20241008082857.115a2272@device-21.home>
+In-Reply-To: <ZwQD_ByawFLEQ1MZ@shell.armlinux.org.uk>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+	<ZwAfoeHUGOnDz1Y1@shell.armlinux.org.uk>
+	<20241007122513.4ab8e77b@device-21.home>
+	<ZwQD_ByawFLEQ1MZ@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Below preamble error means wrong preamble of IEC958 received,
-the channel order may be wrong at the moment.
+Hi Russell,
 
-FSL_XCVR_IRQ_PREAMBLE_MISMATCH
-FSL_XCVR_IRQ_UNEXP_PRE_REC
-FSL_XCVR_IRQ_M_W_PRE_MISMATCH
-FSL_XCVR_IRQ_B_PRE_MISMATCH
+On Mon, 7 Oct 2024 16:53:32 +0100
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-All above errors may cause channel swap, to avoid such issues,
-need to reset the DMAC path.
+> On Mon, Oct 07, 2024 at 12:25:13PM +0200, Maxime Chevallier wrote:
+> > Hello Russell
+> > 
+> > On Fri, 4 Oct 2024 18:02:25 +0100
+> > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> >   
+> > > I'm going to ask a very basic question concerning this.
+> > > 
+> > > Isolation was present in PHYs early on when speeds were low, and thus
+> > > electrical reflections weren't too much of a problem, and thus star
+> > > topologies didn't have too much of an effect. A star topology is
+> > > multi-drop. Even if the PCB tracks go from MAC to PHY1 and then onto
+> > > PHY2, if PHY2 is isolated, there are two paths that the signal will
+> > > take, one to MAC and the other to PHY2. If there's no impediance match
+> > > at PHY2 (e.g. because it's in high-impedance mode) then that
+> > > transmission line is unterminated, and thus will reflect back towards
+> > > the MAC.
+> > > 
+> > > As speeds get faster, then reflections from unterminated ends become
+> > > more of an issue.
+> > > 
+> > > I suspect the reason why e.g. 88x3310, 88E1111 etc do not support
+> > > isolate mode is because of this - especially when being used in
+> > > serdes mode, the topology is essentially point-to-point and any
+> > > side branches can end up causing data corruption.  
+> > 
+> > I suspect indeed that this won't work on serdes interfaces. I didn't
+> > find any reliable information on that, but so far the few PHYs I've
+> > seen seem to work that way.
+> > 
+> > The 88e1512 supports that, but I was testing in RGMII.  
+> 
+> Looking at 802.3, there is no support for isolation in the clause 45
+> register set - the isolate bit only appears in the clause 22 BMCR.
+> Clause 22 registers are optional for clause 45 PHYs.
+> 
+> My reading of this is that 802.3 has phased out isolation support on
+> the MII side of the PHY on more modern PHYs, so this seems to be a
+> legacy feature.
+> 
+> Andrew has already suggested that we should default to isolate not
+> being supported - given that it's legacy, I agree with that.
+> 
+> > > So my questions would be, is adding support for isolation mode in
+> > > PHYs given todays network speeds something that is realistic, and
+> > > do we have actual hardware out there where there is more than one
+> > > PHY in the bus. If there is, it may be useful to include details
+> > > of that (such as PHY interface type) in the patch series description.  
+> > 
+> > I do have some hardware with this configuration (I'd like to support
+> > that upstream, the topology work was preliminary work for that, and the
+> > next move would be to send an RFC for these topolopgies exactly).
+> > 
+> > I am working with 3 different HW platforms with this layout :
+> > 
+> >       /--- PHY
+> >       |
+> > MAC  -|  phy_interface_mode == MII so, 100Mbps Max.
+> >       |
+> >       \--- PHY
+> > 
+> > and another that is similar but with RMII. I finally have one last case
+> > with MII interface, same layout, but the PHYs can't isolate so we need
+> > to make sure all but one PHYs are powered-down at any given time.  
+> 
+> You have given further details in other response to Andrew. I'll
+> comment further there.
+> 
+> > I will include that in the cover.  
+> 
+> Yes, it would be good to include all these details in the cover message
+> so that it isn't spread out over numerous replies.
+> 
+> > Could we consider limiting the isolation to non-serdes interfaces ?
+> > that would be :
+> > 
+> >  - MII
+> >  - RMII
+> >  - GMII
+> >  - RGMII and its -[TX|RX] ID flavours
+> >  - TBI and RTBI ?? (I'm not sure about these)
+> > 
+> > Trying to isolate a PHY that doesn't have any of the interfaces above
+> > would result in -EOPNOTSUPP ?  
+> 
+> I think the question should be: which MII interfaces can electrically
+> support multi-drop setups.
+> 
+> 22.2.4.1.6 describes the Clause 22 Isolate bit, which only suggests
+> at one use case - for a PHY connected via an 802.3 defined connector
+> which shall power up in isolated state "to avoid the possibility of
+> having multiple MII output drivers actively driving the same signal
+> path simultaneously". This connector only supports four data signals
+> in each direction, which precludes GMII over this defined connector.
+> 
+> However, it talks about isolating the MII and GMII signals in this
+> section.
+> 
+> Putting that all together, 802.3 suggests that it is possible to
+> have multiple PHYs on a MII or GMII (which in an explanatory note
+> elsewhere, MII means 100Mb/s, GMII for 1Gb/s.) However, it is
+> vague.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_xcvr.c | 90 ++++++++++++++++++++++++++++++++++------
- sound/soc/fsl/fsl_xcvr.h |  4 ++
- 2 files changed, 81 insertions(+), 13 deletions(-)
+Yes it's vague, as as testing showed, vendors are pretty liberal with
+how/if they implement this feature :(
 
-diff --git a/sound/soc/fsl/fsl_xcvr.c b/sound/soc/fsl/fsl_xcvr.c
-index 9e24d6462c01..1e0bfd59d511 100644
---- a/sound/soc/fsl/fsl_xcvr.c
-+++ b/sound/soc/fsl/fsl_xcvr.c
-@@ -53,6 +53,8 @@ struct fsl_xcvr {
- 	struct snd_aes_iec958 rx_iec958;
- 	struct snd_aes_iec958 tx_iec958;
- 	u8 cap_ds[FSL_XCVR_CAPDS_SIZE];
-+	struct work_struct work_rst;
-+	spinlock_t lock; /* Protect hw_reset and trigger */
- };
- 
- static const struct fsl_xcvr_pll_conf {
-@@ -663,7 +665,10 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct fsl_xcvr *xcvr = snd_soc_dai_get_drvdata(dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
--	int ret;
-+	unsigned long lock_flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&xcvr->lock, lock_flags);
- 
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
-@@ -675,7 +680,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 FSL_XCVR_EXT_CTRL_DPTH_RESET(tx));
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Failed to set DPATH RESET: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		if (tx) {
-@@ -687,7 +692,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 						   FSL_XCVR_ISR_CMDC_TX_EN);
- 				if (ret < 0) {
- 					dev_err(dai->dev, "err updating isr %d\n", ret);
--					return ret;
-+					goto release_lock;
- 				}
- 				fallthrough;
- 			case FSL_XCVR_MODE_SPDIF:
-@@ -696,7 +701,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 FSL_XCVR_TX_DPTH_CTRL_STRT_DATA_TX);
- 				if (ret < 0) {
- 					dev_err(dai->dev, "Failed to start DATA_TX: %d\n", ret);
--					return ret;
-+					goto release_lock;
- 				}
- 				break;
- 			}
-@@ -707,14 +712,14 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 FSL_XCVR_EXT_CTRL_DMA_DIS(tx), 0);
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Failed to enable DMA: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		ret = regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_IER0,
- 					 FSL_XCVR_IRQ_EARC_ALL, FSL_XCVR_IRQ_EARC_ALL);
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Error while setting IER0: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		/* clear DPATH RESET */
-@@ -723,7 +728,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 0);
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Failed to clear DPATH RESET: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		break;
-@@ -736,14 +741,14 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 FSL_XCVR_EXT_CTRL_DMA_DIS(tx));
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Failed to disable DMA: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		ret = regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_IER0,
- 					 FSL_XCVR_IRQ_EARC_ALL, 0);
- 		if (ret < 0) {
- 			dev_err(dai->dev, "Failed to clear IER0: %d\n", ret);
--			return ret;
-+			goto release_lock;
- 		}
- 
- 		if (tx) {
-@@ -754,7 +759,7 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 					 FSL_XCVR_TX_DPTH_CTRL_STRT_DATA_TX);
- 				if (ret < 0) {
- 					dev_err(dai->dev, "Failed to stop DATA_TX: %d\n", ret);
--					return ret;
-+					goto release_lock;
- 				}
- 				if (xcvr->soc_data->spdif_only)
- 					break;
-@@ -768,17 +773,20 @@ static int fsl_xcvr_trigger(struct snd_pcm_substream *substream, int cmd,
- 				if (ret < 0) {
- 					dev_err(dai->dev,
- 						"Err updating ISR %d\n", ret);
--					return ret;
-+					goto release_lock;
- 				}
- 				break;
- 			}
- 		}
- 		break;
- 	default:
--		return -EINVAL;
-+		ret = -EINVAL;
-+		break;
- 	}
- 
--	return 0;
-+release_lock:
-+	spin_unlock_irqrestore(&xcvr->lock, lock_flags);
-+	return ret;
- }
- 
- static int fsl_xcvr_load_firmware(struct fsl_xcvr *xcvr)
-@@ -1198,6 +1206,34 @@ static const struct regmap_config fsl_xcvr_regmap_cfg = {
- 	.cache_type = REGCACHE_FLAT,
- };
- 
-+static void reset_rx_work(struct work_struct *work)
-+{
-+	struct fsl_xcvr *xcvr = container_of(work, struct fsl_xcvr, work_rst);
-+	struct device *dev = &xcvr->pdev->dev;
-+	unsigned long lock_flags;
-+	u32 ext_ctrl;
-+
-+	dev_dbg(dev, "reset rx path\n");
-+	spin_lock_irqsave(&xcvr->lock, lock_flags);
-+	regmap_read(xcvr->regmap, FSL_XCVR_EXT_CTRL, &ext_ctrl);
-+
-+	if (!(ext_ctrl & FSL_XCVR_EXT_CTRL_DMA_RD_DIS)) {
-+		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
-+				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS,
-+				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS);
-+		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
-+				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET,
-+				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET);
-+		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
-+				   FSL_XCVR_EXT_CTRL_DMA_RD_DIS,
-+				   0);
-+		regmap_update_bits(xcvr->regmap, FSL_XCVR_EXT_CTRL,
-+				   FSL_XCVR_EXT_CTRL_RX_DPTH_RESET,
-+				   0);
-+	}
-+	spin_unlock_irqrestore(&xcvr->lock, lock_flags);
-+}
-+
- static irqreturn_t irq0_isr(int irq, void *devid)
- {
- 	struct fsl_xcvr *xcvr = (struct fsl_xcvr *)devid;
-@@ -1269,6 +1305,29 @@ static irqreturn_t irq0_isr(int irq, void *devid)
- 		dev_dbg(dev, "CMDC status update\n");
- 		isr_clr |= FSL_XCVR_IRQ_CMDC_STATUS_UPD;
- 	}
-+	if (isr & FSL_XCVR_IRQ_PREAMBLE_MISMATCH) {
-+		dev_dbg(dev, "Preamble mismatch\n");
-+		isr_clr |= FSL_XCVR_IRQ_PREAMBLE_MISMATCH;
-+	}
-+	if (isr & FSL_XCVR_IRQ_UNEXP_PRE_REC) {
-+		dev_dbg(dev, "Unexpected preamble received\n");
-+		isr_clr |= FSL_XCVR_IRQ_UNEXP_PRE_REC;
-+	}
-+	if (isr & FSL_XCVR_IRQ_M_W_PRE_MISMATCH) {
-+		dev_dbg(dev, "M/W preamble mismatch\n");
-+		isr_clr |= FSL_XCVR_IRQ_M_W_PRE_MISMATCH;
-+	}
-+	if (isr & FSL_XCVR_IRQ_B_PRE_MISMATCH) {
-+		dev_dbg(dev, "B preamble mismatch\n");
-+		isr_clr |= FSL_XCVR_IRQ_B_PRE_MISMATCH;
-+	}
-+
-+	if (isr & (FSL_XCVR_IRQ_PREAMBLE_MISMATCH |
-+		   FSL_XCVR_IRQ_UNEXP_PRE_REC |
-+		   FSL_XCVR_IRQ_M_W_PRE_MISMATCH |
-+		   FSL_XCVR_IRQ_B_PRE_MISMATCH)) {
-+		schedule_work(&xcvr->work_rst);
-+	}
- 
- 	if (isr_clr) {
- 		regmap_write(regmap, FSL_XCVR_EXT_ISR_CLR, isr_clr);
-@@ -1415,11 +1474,16 @@ static int fsl_xcvr_probe(struct platform_device *pdev)
- 			fsl_xcvr_comp.name);
- 	}
- 
-+	INIT_WORK(&xcvr->work_rst, reset_rx_work);
-+	spin_lock_init(&xcvr->lock);
- 	return ret;
- }
- 
- static void fsl_xcvr_remove(struct platform_device *pdev)
- {
-+	struct fsl_xcvr *xcvr = dev_get_drvdata(&pdev->dev);
-+
-+	cancel_work_sync(&xcvr->work_rst);
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-diff --git a/sound/soc/fsl/fsl_xcvr.h b/sound/soc/fsl/fsl_xcvr.h
-index ce27b13698e7..c72cb05184df 100644
---- a/sound/soc/fsl/fsl_xcvr.h
-+++ b/sound/soc/fsl/fsl_xcvr.h
-@@ -166,6 +166,10 @@
- 					 FSL_XCVR_IRQ_FIFO_UOFL_ERR | \
- 					 FSL_XCVR_IRQ_HOST_WAKEUP | \
- 					 FSL_XCVR_IRQ_CMDC_STATUS_UPD |\
-+					 FSL_XCVR_IRQ_B_PRE_MISMATCH |\
-+					 FSL_XCVR_IRQ_M_W_PRE_MISMATCH |\
-+					 FSL_XCVR_IRQ_PREAMBLE_MISMATCH |\
-+					 FSL_XCVR_IRQ_UNEXP_PRE_REC |\
- 					 FSL_XCVR_IRQ_ARC_MODE)
- 
- #define FSL_XCVR_ISR_CMDC_TX_EN		BIT(3)
--- 
-2.34.1
+> Now... I want to say more, but this thread is fragmented and the
+> next bit of the reply needs to go elsewhere in this thread,
+> which is going to make reviewing this discussion later on rather
+> difficult... but we're being drip-fed the technical details.
+
+TBH I wasn't expecting this series on isolation to be the place to
+discuss the multiplexing use-cases, hence why I didn't include a full
+descriptin of every setup I have in the cover.
+
+Given what Andrew replied, this whole series on controling isolation
+from userspace isn't relevant.
+
+Let me start a proper discussion thread and summarize what has been
+said so far.
+
+Maxime
 
 
