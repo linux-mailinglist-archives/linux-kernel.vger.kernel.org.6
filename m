@@ -1,78 +1,95 @@
-Return-Path: <linux-kernel+bounces-354829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ED0994317
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:59:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5447994312
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0AF1F294CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:59:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0F71C24411
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691431DCB09;
-	Tue,  8 Oct 2024 08:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956821D2B25;
+	Tue,  8 Oct 2024 08:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="OpwYvbnr"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B06C19340A;
-	Tue,  8 Oct 2024 08:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsokQ1M5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA981D094B;
+	Tue,  8 Oct 2024 08:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377474; cv=none; b=aOqD3GACPSJjFvBh3PaUvp1zilK0nCVqDLppUABw1lKnmuuN/NVeh9jvrhrlhfXdQPmrTVQW7xA991ulY7a+lLDaplcp1cc/PY610iyArDI5086foRkYMAHsJO9kZHfMGvGDfw7cmXMiJoPhSxpAG36fx2AAVoj3rW7ffXip7KY=
+	t=1728377429; cv=none; b=K9oqR9EW4AVLqbPaj5RGprILWMfDsMyf3INmVoh030yDiJoBfuYA0rzdpdU2zGYsIBekOU53CFp+9kUmVGO/m9Zx0WcqWbhp5igqU9uneWRSfArxWmm2JlszdtejZ430p9cuMnfkKOJ62U0Mj6c+i2wmVUn0CpoTwkRTyYmLA+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377474; c=relaxed/simple;
-	bh=5EYqTaH65chTt/LnuwJZgF8ia3vSrrdnjA7snFEHGqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duAWVfjJkDRXABRup8g+bhsDBtzlllHJM64cszRqXjWB3Ncz+WXdvQUrijFTyA9jTkLyRVrMluPFeqRtHpbkbdOcgno1jFE21VkBIpodfZHqtXMxoSNHk1XRCNkMIEAVe+LAuumvk2HswhgY8ge3L7SUsTajF5W7XH2xn0HyoXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=OpwYvbnr; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=PJZdc22OCR844nkMs2ao6cs66z7059vtXIHCyFffkPk=;
-	b=OpwYvbnrgpjlqKX5BnUpeI3nMk3cUj6Xfs7mEVUIQD6IwhgjOfyo1ayZvAC1mh
-	MAonW5dn/A+cQLzU8rFn+BI2rb3ZVaIRJrjZl4rMBf0H/cpGV44/etOSUx8Nh2Y9
-	12DsQZH3pn0fOKo+RTLQRsin7/LPVpK7xWFqMsYHGbdZo=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDnlx5O8gRnBRXTAQ--.54852S3;
-	Tue, 08 Oct 2024 16:50:23 +0800 (CST)
-Date: Tue, 8 Oct 2024 16:50:21 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux@ew.tq-group.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ARM: dts: imx6qdl: Add reserved memory area for CMA
- memory
-Message-ID: <ZwTyTZH4+CS8lm0Q@dragon>
-References: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1728377429; c=relaxed/simple;
+	bh=1wUAZhoZVygiFNyWjWPKnwduky1SuDymb4RxDcT3/UM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cjZEzSsOYmHnAnpli7y0yVQ4S+cOH5UcJLa43C40okeElXAT8vNnTTciOQpr2OPancGJX6fryNqUwz5tekS2HWGKGgx6CeAxq5/LwTzVkY6AHasfHmfRTbXUiaPO4IpFSw562Jv12eJJHy4y1ygU833RXQ4NwQQASPD2KecA6Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsokQ1M5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FA7C4CEC7;
+	Tue,  8 Oct 2024 08:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728377427;
+	bh=1wUAZhoZVygiFNyWjWPKnwduky1SuDymb4RxDcT3/UM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=NsokQ1M5wnp6nzu8ElnIo/ajNtQcIXkJZlJXR5xFDBTye+mIhcxYUCn/EwEKkbSc+
+	 lmjl+ZXPzqMWn2CuuyElClP+xx3ADABY7Z9teOWKBe+vnf3G4tJtW6+sNC5tfhHpRy
+	 +vDgIN/73WcPR14mxrCxeuKL4/HwzSPekrWnHQYUMe06lApnr93ltvFZgqPMPLmyj6
+	 HQC5GvdT727CKcQv+bSmyxs9YI9BwfwjzsYyK4iM/bkyPv62s7Xn0nPd+wfLf7ctcC
+	 1nzXXve1j1tHaKU90HjIcd2qDbbOinD8AcrnvGSBlRVNEkASu1nqdvDsrWmSB8FNQZ
+	 iFPKbzaDpxDFg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD5E3810938;
+	Tue,  8 Oct 2024 08:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:M88vCgDnlx5O8gRnBRXTAQ--.54852S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVxR6UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCR9yZWcEqhjkVQAAsh
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3 0/2] fix ti-am65-cpsw-nuss module removal
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172837743149.451237.11798001139573438705.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 08:50:31 +0000
+References: <20241004041218.2809774-1-nico@fluxnic.net>
+In-Reply-To: <20241004041218.2809774-1-nico@fluxnic.net>
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, grygorii.strashko@ti.com, vigneshr@ti.com,
+ rogerq@kernel.org, npitre@baylibre.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2024 at 04:24:58PM +0200, Alexander Stein wrote:
-> Default CMA size is too small for HDMI output and VPU usage. Increase the
-> default size by providing a CMA memory area.
+Hello:
+
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri,  4 Oct 2024 00:10:32 -0400 you wrote:
+> Fix issues preventing rmmod of ti-am65-cpsw-nuss from working properly.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> v3:
+> 
+>   - more patch submission minutiae
+> 
+> v2: https://lore.kernel.org/netdev/20241003172105.2712027-2-nico@fluxnic.net/T/
+> 
+> [...]
 
-Changed subject prefix to "ARM: dts: imx6qdl-mba6: "
+Here is the summary with links:
+  - [net,v3,1/2] net: ethernet: ti: am65-cpsw: prevent WARN_ON upon module removal
+    https://git.kernel.org/netdev/net/c/47f9605484a8
+  - [net,v3,2/2] net: ethernet: ti: am65-cpsw: avoid devm_alloc_etherdev, fix module removal
+    https://git.kernel.org/netdev/net/c/03c96bc9d3d2
 
-Applied, thanks!
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
