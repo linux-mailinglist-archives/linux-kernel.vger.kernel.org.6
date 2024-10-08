@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-355296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D9299501F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 440E2994F56
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB2B288089
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0474628439D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03401E00A0;
-	Tue,  8 Oct 2024 13:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC51D1DF985;
+	Tue,  8 Oct 2024 13:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="j+nRcyis";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="ssqSsqUy"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eN+nz3cZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AzGHFmqZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BA0190055;
-	Tue,  8 Oct 2024 13:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3001DF97A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394299; cv=none; b=bfyDeN6r21ku+7sNpfJtaH46TOm7vrFVs5NHFSueWgaHaEGREtei+94+0awU5w6o1rm4TEA0oDZUkGRbt+fq7cgzrSW9RZrmo5X4xCG8EG2qbPIZZP8cO+fnCITmqvX995YSwgez1gkxX6czOJE2ppA7UBC/bdtk77foNKQeagU=
+	t=1728393861; cv=none; b=hSR7tQw0SXVsEv+fAtwn0+XhI3yXsBet04F9+73PaQ4UIBXxAz2V61i4S129QOMSox29UjTNYTmw+UZ1TKp8bQ22ST6UY/BkPmmPGsyyJYjTH3oaTYLDLE56bvfOkP0aaoAXf3ysHNPF42IGAk9APEv0xOb55TiPGuOn2aL5Idc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394299; c=relaxed/simple;
-	bh=95R7frcox+BpLSzcSxD73QmPKcWo05sbLhvOIqrwt/o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O5gKLafA+vO5Jpdqtr6nx4jfCQRXQNFOIVKtkwOZLqQfDqMi+N9FUlqRQhA7MO/1yQslyH+Re/Z+3iCbxMxZoXCc0vvci5fFWBnE9ncBGU3M1+As03uN1yTHljSdDiMtdIJIvFx/7LFrvdYc81GpmbykAEvSuqDbFo/BTbGBUvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=j+nRcyis; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=ssqSsqUy; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com B763FE0018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1728394294; bh=6Jaz5KTsUcnqJMhBopv+w18+cRGcBKKrscV7xAds5Og=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=j+nRcyisDDBz2ua7jQ4Dh0AyjzagptYvj8CoBQh9AqW3v4r+hYdKc3egCm3AskhC1
-	 Gs1YyDhIHPAJc944m3rrGS2uoGKvqk666V9Gfd+QswtajqMlozOSP3ZIvtfTS/0fNJ
-	 Fada7l6fcj7sgsSnwrT06EC6rE3B5QZ2ZQwFU89nGD7Y21c8f9/7HqRGsRvDOCdFL0
-	 0mRHCccM0Uq837GTYXEps7k4gJ52Brdc9lgZQCzA81Y+zhao1CNAYLNxPUo6cNJ2fK
-	 qaEdTAKQy/EZAlCzTvfRdpyuni5HyUb+h60L0F/Fd6skoK3qarp9uCuy55VbiBdRYh
-	 3iU9Pj+E4u9bA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1728394294; bh=6Jaz5KTsUcnqJMhBopv+w18+cRGcBKKrscV7xAds5Og=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ssqSsqUysxs+G5+oHMP3hAOWr6Bib0345pyP1q9/8MFyXSY36p7EqohomWU/WwKZt
-	 9MyzfF73BCjC6BcAGO8+TGy6mKRi59K9Qd5rCEXBJ0c/0pk+GpePhHEHR+tkQzGr+n
-	 FQCpONT4T9t6GCCKK0kAUJVlMjTaFKkVhvuiXTnBDksFd/e4nll9Y+zzvr9m7CoQiQ
-	 8g9mSTH2bkgNTwLpH39f1uN5kJxHaYhR34OBaoC9/fX58/Xk/rYa5MeFr3BILOMrHl
-	 gsalMwXzLGfEJpHBoEIO5sDNKVktpTU9oQLVDJVQfx41xB4ksLxoAVmiMkL7RO7Vxg
-	 7i9CYHOlRA3ag==
-From: Anastasia Kovaleva <a.kovaleva@yadro.com>
-To: <target-devel@vger.kernel.org>
-CC: <njavali@marvell.com>, <GR-QLogic-Storage-Upstream@marvell.com>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<bvanassche@acm.org>, <quinn.tran@cavium.com>, <nab@linux-iscsi.org>,
-	<himanshu.madhani@cavium.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux@yadro.com>
-Subject: [PATCH 3/3] scsi: qla2xxx: Remove incorrect trap
-Date: Tue, 8 Oct 2024 16:24:02 +0300
-Message-ID: <20241008132402.26164-4-a.kovaleva@yadro.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241008132402.26164-1-a.kovaleva@yadro.com>
-References: <20241008132402.26164-1-a.kovaleva@yadro.com>
+	s=arc-20240116; t=1728393861; c=relaxed/simple;
+	bh=mAWGVEP0Tff4m0qPzMENJwzWY5jd52I9IgyhRsmYiAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHWT1iTZOm8xEagCKLbTQWsD1DtNb+7b2HS01Q3rYMRX9J3kuKqRNlhHB+T2DkhhaIhBzsq/uAol4MuDL3h0+Zii2HJ8+R6UXM02lse/4Ey28gau6wu4c4crC6rX8+K6y4NdP3hOqX9oUCAVCIHnpNQZuctkpA5agLeqDTZ+tfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eN+nz3cZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AzGHFmqZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Oct 2024 15:24:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728393857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgGbsUtuLsNszLGe/2acSB1ElUiMRIBZM1C9nZ1HZkc=;
+	b=eN+nz3cZjtoneQMBCbPV3bCAe5YSRiZ61tEsSLaT/UTvFSiXU9SIUw7SBfiWiBZygr9pKo
+	TtsTdhi4CnF6/vnz0fQ+1/BwsSOC6HTxYd3e0b/7NBPDevJ6Tu0RuAcGiLyejNOvkyyVY5
+	vZzErr18BmfdELmCIOZ7U1XhniG58alfKCkmL8XgeDrwbi1ToW+7tIfn7SUHzRZVuEFrNu
+	hKX02TXMRVequltzpykVM7x6QxV08hSdeah0MCFI3iQbswI1NbrhxfSmEKzgELV1+J//yV
+	iF2R88BK9lWY5TEl33Z6m/18zPU+kVqP+ZGijlTfnwlwJcw800FYDEeguk4IoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728393857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgGbsUtuLsNszLGe/2acSB1ElUiMRIBZM1C9nZ1HZkc=;
+	b=AzGHFmqZz/TC/eca1cpQftyXcnHk1MEzN3X/lJO4aTE9UkVRedHorQ7TuEXeVvXbMLWXBR
+	VQyd2egHeDqa5vDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
+	efault@gmx.de, Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH 3/5] sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT
+Message-ID: <20241008132416.9cVldCGG@linutronix.de>
+References: <20241007074609.447006177@infradead.org>
+ <20241007075055.441622332@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: T-EXCH-08.corp.yadro.com (172.17.11.58) To
- T-EXCH-09.corp.yadro.com (172.17.11.59)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241007075055.441622332@infradead.org>
 
-This BUG_ON() is triggered when there is no fc_port with a certain
-loop ID in the scsi host vp_fcports list, but there is one in
-lport_loopid_map. As these two data structures do not change
-simultaneously and atomically, such a trap is invalid.
+On 2024-10-07 09:46:12 [+0200], Peter Zijlstra wrote:
+> In order to enable PREEMPT_DYNAMIC for PREEMPT_RT, remove PREEMPT_RT
+> from the 'Preemption Model' choice. Strictly speaking PREEMPT_RT is
+> not a change in how preemption works, but rather it makes a ton more
+> code preemptible.
+> 
+> Notably, take away NONE and VOLATILE options for PREEMPT_RT, they make
+> no sense (but are techincally possible).
 
-Cc: stable@vger.kernel.org
-Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
-Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
-Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
----
- drivers/scsi/qla2xxx/qla_target.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+So this is what we do. Okay. This means we can enable the DYNAMIC mode
+on PREEMPT_RT enabled kernels and switch between "full" and the "lazy"
+mode(s).
+On PREEMPT_RT enabled kernels with PREEMPT_DYNAMIC the UTS_VERSION
+string is set to PREEMPT_RT and PREEMPT_DYNAMIC is not exposed. Is this
+on purpose or just happened?
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index bc7feef6ee79..9a5dbd00de01 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -5190,15 +5190,7 @@ static int qlt_24xx_handle_els(struct scsi_qla_host *vha,
- 		ql_dbg(ql_dbg_disc, vha, 0x20fc,
- 		    "%s: logo %llx res %d sess %p ",
- 		    __func__, wwn, res, sess);
--		if (res == 0) {
--			/*
--			 * cmd went upper layer, look for qlt_xmit_tm_rsp()
--			 * for LOGO_ACK & sess delete
--			 */
--			BUG_ON(!sess);
--			res = 0;
--		} else {
--			/* cmd did not go to upper layer. */
-+		if (res) {
- 			if (sess) {
- 				qlt_schedule_sess_for_deletion(sess);
- 				res = 0;
--- 
-2.40.1
+Clark was asking for a file to expose whether or not PREEMPT_RT is
+enabled and I was pointing him to UTS_VERSION but then suggested that it
+might be possible if we expose the current setting of the preemption
+model and use this. 
+But with this it won't work.
+I am not sure if PREEMPT_DYNAMIC is needed to be exposed and if
+everybody is happy parsing UTS_VERSION (we used to have a
+/sys/kernel/realtime file in the RT queue).
 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+Sebastian
 
