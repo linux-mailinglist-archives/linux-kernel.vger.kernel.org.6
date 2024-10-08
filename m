@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-355978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639C8995A0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:26:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF9C995A13
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE93D282FBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F068F1C2108E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5434B216446;
-	Tue,  8 Oct 2024 22:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A95216440;
+	Tue,  8 Oct 2024 22:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BcJ7mDDi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="G4vtp/9X"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32038215005;
-	Tue,  8 Oct 2024 22:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D30215039
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 22:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728426382; cv=none; b=Qors2qJerpWeo6ykh8AHEJEmV8FrTY04NZy/S6D9TgwUHJQ6TGxOvuxaSTlkBeJWdbbBi5lpkRhNy9sezX2EJvPV6oQFi/sS9Ii1JtGmX5FXWgC0OLgKzUivk2N5n9ApTl20UV7HRfbU+IAWQ4BAB/syeyPcZNp5WUdxRggTHd4=
+	t=1728426487; cv=none; b=BggiuMJ7hfWHbE5AxAlgtvU9Rd4W/RfvL9Gyn68KTU4xH0amBtMuprXKrsUyJk0Wvd2hofo1FZyejSvRJE7w+hEEuLRNer+IBbgehVnUKSbCQFcJek5AKcVYiLjGp+vaAyRcpY6KNLYTXqvEILPmUdiaAI+LrBEyQgZyT/AwWFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728426382; c=relaxed/simple;
-	bh=BEN+Imuy9+OSJ/g5BEyh4iCRtXORsG6ZCXrGS4TpajA=;
+	s=arc-20240116; t=1728426487; c=relaxed/simple;
+	bh=PeQ+3ZqZao8FTskqbH9VfwLkZaZ1/LLm/N0vThJthsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAWWB/l4w/Cp4/7usaKv8cgy3nWLhr1Icry5cNGdv75tYRefmSuJqsL5CDfxoX5hQqzDJj/yi8XgHvygjcXstXtTb4XceN5Lz6k8qDKglod/1qiQ3UcsgemO7+A/JU4GRvCHBowV90n8l2+xAgmUtadBGCCeKG/5KG2bkTaWhEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BcJ7mDDi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=/tQgqoykOqtITtW4+3hZ4DRT8pHz+6Smc5S01M5iIBg=; b=Bc
-	J7mDDidO5lxkneR+wsaAezc6SZh3Tpg2WJtraXNn99w7CB9jRQ3QmPsvFJjLc+3K5elD+fZqTWX6L
-	J3JdfqF6VfAJovlZaAYLGoyE0unwrzTx4ynqhBXVAxMPFgrofJqk9WpbqWFi1DmTwd27m5m/fr6sB
-	F+OzLrflP62rj4w=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syIeW-009Q4p-RL; Wed, 09 Oct 2024 00:26:00 +0200
-Date: Wed, 9 Oct 2024 00:26:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <32e97ba4-a47b-488a-b098-725faae21d7d@lunn.ch>
-References: <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
- <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
- <ZwRq7PzAPzCAIBVv@boqun-archlinux>
- <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
- <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
- <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
- <ZwWp9C2X_QIrTJEq@boqun-archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xawjsgm+KREBLU8nGMjCE/OKyglTtxmLauqZcqcCjweaJ7y0pjC12AMRoy9hXtdOI49LyUR8n5+et3rpHRja2FIK6m5126n5I9pRxtxhJt23Yk/qX3w207jft92ofWXT2TnSgi/OUgwvx1qAQANdkblntEo+xmMVo8lCyV7o4wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=G4vtp/9X; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e28b75dbd6so819704a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 15:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1728426485; x=1729031285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5GpPyK5gRQWrst+Fyr+Lsx8V+lp2jzKPbwoFf+V+Wos=;
+        b=G4vtp/9XxuXOyk84EUhUcPlEV5RmXOskkza4Mx0E/x+ObEIANVfRH2EzsGCbQZpIt9
+         Bub+bhikT1AvbLSWiGU8v3nE3iL8a7/DiDb1fyoBmSs6nPBVaIYKB4A/+NGaF8foZW6W
+         MuSkcJTkpD5lYufFmFK8vMMSZkH8ZjDC+9GXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728426485; x=1729031285;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GpPyK5gRQWrst+Fyr+Lsx8V+lp2jzKPbwoFf+V+Wos=;
+        b=P0U7U/ncJr2TvSxibYB1KaM/pRToXqB4nhDC37bb5zB77tMt1iCt7lJJbg5n9ndilP
+         ljtt34m9KWZmRidNMqHwNxQtsKk/PtjFMqipBiZY5UfvghhHuoONluCp67I8BdSbEhCm
+         KYIWnTSxsxF4rgfLQCd1081K3DNa8fV0eo0JBcyki2xQQkgUecYtx/SeiwMH1JVCtKkK
+         cEH5tn9o9vt+2iwnsxs3DP+Y0QtHm3pQUPwE/iSBL3ZzaJMXf5/f2/BNFjaP1bc1/FPk
+         /GjWpIldvAYoWukf+iAHfCpRqRl3bVhshdwh2iTX86w3gogcFxYL2s3IsutGPLE9P+cT
+         X7+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfji8Pp0V/Zhx5Pi26pItH9XZrYY0zo5lz4wmHuMm705Q0POtffhZlXYxZtRmHZdt5P9XGOs2TC4F5rc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwktcjIo5iXuxZuoiL5ykfjApCIxBz6YZyLISYq5CPu2dAvRwFX
+	9HlR5MecImErXzMncUpp07N8plUsoaHVvNEsqjGGwW2hGjbqFr3RuigWicdafWg=
+X-Google-Smtp-Source: AGHT+IE1tXuqOdJ2//PwSHKA9ssLoCKqnAz9+E7C6N37yGYWDeMO+zE60t4b/4luCg6NBXDD2oLj/g==
+X-Received: by 2002:a17:90a:db07:b0:2d8:3fe8:a195 with SMTP id 98e67ed59e1d1-2e2a22e6e31mr558509a91.4.1728426485495;
+        Tue, 08 Oct 2024 15:28:05 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139a32e1sm59872155ad.296.2024.10.08.15.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 15:28:05 -0700 (PDT)
+Date: Tue, 8 Oct 2024 15:28:01 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v4 5/9] net: napi: Add napi_config
+Message-ID: <ZwWx8V1kQBDLFT6i@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241001235302.57609-1-jdamato@fastly.com>
+ <20241001235302.57609-6-jdamato@fastly.com>
+ <20241008151701.6f8bb389@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwWp9C2X_QIrTJEq@boqun-archlinux>
+In-Reply-To: <20241008151701.6f8bb389@kernel.org>
 
-On Tue, Oct 08, 2024 at 02:53:56PM -0700, Boqun Feng wrote:
-> On Tue, Oct 08, 2024 at 07:16:42PM +0200, Andrew Lunn wrote:
-> > On Tue, Oct 08, 2024 at 03:14:05PM +0200, Miguel Ojeda wrote:
-> > > On Tue, Oct 8, 2024 at 2:13 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > >
-> > > > As far as i see, might_sleep() will cause UAF where there is going to
-> > > > be a UAF anyway. If you are using it correctly, it does not cause UAF.
-> > > 
-> > > This already implies that it is an unsafe function (in general, i.e.
-> > > modulo klint, or a way to force the user to have to write `unsafe`
-> > > somewhere else, or what I call ASHes -- "acknowledged soundness
-> > > holes").
-> > > 
-> > > If we consider as safe functions that, if used correctly, do not cause
-> > > UB, then all functions would be safe.
-> > 
-> > From what i hear, klint is still WIP. So we have to accept there will
-> > be bad code out there, which will UAF. We want to find such bad code,
+On Tue, Oct 08, 2024 at 03:17:01PM -0700, Jakub Kicinski wrote:
+> On Tue,  1 Oct 2024 23:52:36 +0000 Joe Damato wrote:
+> >  static inline void netdev_set_defer_hard_irqs(struct net_device *netdev,
+> >  					      u32 defer)
+> >  {
+> > +	unsigned int count = max(netdev->num_rx_queues,
+> > +				 netdev->num_tx_queues);
+> >  	struct napi_struct *napi;
+> > +	int i;
+> >  
+> >  	WRITE_ONCE(netdev->napi_defer_hard_irqs, defer);
+> >  	list_for_each_entry(napi, &netdev->napi_list, dev_list)
+> >  		napi_set_defer_hard_irqs(napi, defer);
+> > +
+> > +	if (netdev->napi_config)
 > 
-> If you don't believe in klint
+> Could this ever be NULL ?
 
-I did not say that. It is WIP, and without it i assume nothing is
-detecting at compile time that the code is broken. Hence we need to
-find the problem at runtime, which is what might_sleep() is all about.
+Ah, good catch. I think this was an artifact from a previous
+revision where it could have been. But, I'll double check.
 
-> might_sleep() is useful because it checks preemption count and task
-> state, which is provided by __might_sleep() as well. I don't think
-> causing UAF helps we detect atomic context violation faster than what
-> __might_sleep() already have. Again, could you provide an example that
-> help me understand your reasoning here?
-
-> > while (1) {
-> >     <reader>                        <updater>
-> >     rcu_read_lock();
-> >     p = rcu_dereference(gp);
-> >     mutex_lock(&lock)
-> >     a = READ_ONCE(p->a);
-> >     mutex_unlock(&lock)
-> >     rcu_read_unlock();
-> > }
-
-The mutex lock is likely to be uncontested, so you don't sleep, and so
-don't trigger the UAF. The code is clearly broken, but you survive.
-Until the lock is contested, you do sleep, RCU falls apart, resulting
-in a UAF.
-
-Now if you used might_sleep(), every time you go around that loop you
-do some of the same processing as actually sleeping, so are much more
-likely to trigger the UAF.
-
-might_sleep() as you pointed out, is also active when
-CONFIG_DEBUG_ATOMIC_SLEEP is false. Thus it is also going to trigger
-the broken code to UAF faster. And i expect a lot of testing is done
-without CONFIG_DEBUG_ATOMIC_SLEEP and CONFIG_PROVE_LOCKING.
-
-Once klint is completed, and detects all these problems at compile
-time, we can then discard all this might_sleep stuff. But until then,
-the faster code explodes, the more likely it is going to be quickly
-and cheaply fixed.
-
-	Andrew
+In the current proposed implementation, however, I don't think it
+can be NULL as it is always allocated.
 
