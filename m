@@ -1,71 +1,68 @@
-Return-Path: <linux-kernel+bounces-355035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75917994647
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE75699464A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2213E1F29087
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839841F28B0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7481D0944;
-	Tue,  8 Oct 2024 11:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA1D1C2443;
+	Tue,  8 Oct 2024 11:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ta/y6hj/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kttiiXoY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9391CFEB9;
-	Tue,  8 Oct 2024 11:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736A93C0C;
+	Tue,  8 Oct 2024 11:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385833; cv=none; b=PQcO/5j6DyUu5K1YwkBRrc/i5LgmyCe4nCkndpQUyYoZafca6TimpaAN9669wrfVd5GjA7SfPon/KiajRl2Hu6SpDAQwUTJ9RNVzDx7qW85MMLKpVIt+RaGATTNkbd3gbcQiSLPu0CHDxKVO4nIPjrkNfkScl0SS7Kns6cEAogA=
+	t=1728385919; cv=none; b=sDoLhHIekrzdH5qFd42Tr6OOpiyzwPGXPRXg8u05qMo71b/t4OwiwbBQGaHxpxvo8NwIsA3NTdZevLTmpXDpsQSbW/0R6BWGQqQrfSIsD66P4JLw1l0VsrLsZRDVwA8pKwZdl3U2zKtU+WYwHCbv65ZwoQuJ4TtjVXcbWyox1dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385833; c=relaxed/simple;
-	bh=3ET1Qz3wXIHI+cCAf3eMU+xCAZXNWSg8aYu3dyeJxn8=;
+	s=arc-20240116; t=1728385919; c=relaxed/simple;
+	bh=naL5B/VSTo91io3s6IeOCOzEAtjuPXeG0p40Aa+ePN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4K13tWDsOirvc+15vWI779Kq3639smPHR/7MvfBIgdpX3QfcSO3paxRZTigPv2XYLZc+HO04Rh/PMH4qmnUGJG2G0kasLqH3QOH/55hJ0sg7iWOFlyvtLzBJHfPord4GR58dG9iPUFj89tJ1zemSAgOMyaUDsoDuN+hlsp3N3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ta/y6hj/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRgVsYt62emE+YhoT1feUUKwS36cje5DAqoQK6j+2a19g+9Wh9MxA5QDyRPVTr5Zo1zyByX1BoAVFWBBfy9s/z0RxsR87uu02pooirBjW9sKicubm0ulS9MsCAuf8jsnja6LTdGXDiBhyE1eZQmj0TiLte3XwLxG1jEkz20W46Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kttiiXoY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QEKJ8M3LnDCbZQxwZJbLvUnxjOuG9PsICmqV9wsjbug=; b=ta/y6hj/pdJH2yYbxBJtAjF3S0
-	bVH9eFmq5tu/lXqgki4OY1cihMEt0OT/p4ID4OCxSY/DPnsXfsH2ZznnQFwMpboSynWzillR74V9O
-	cHslranDZjjLzAPPSpGGrtb/CLmd4gXG9q9+TUG2cuQQ9Z5mWFc3JUTjcSp4yLdQcxQemnWwJS+T+
-	VmYTsA6BjZ5hr9cae1FJMd5yyI0AkLydzhkYZyB10ir181rOOS0KHWahk+ebJ+/YABaUfAohIwEZ8
-	tLQHaTDRnQ37jVjaquYwWD5rtJdG2IebGOV3J7/vQRr5DfjaRvt5RKK/oWOI4i27HtftrNyuQXBQ/
-	ZNwWGviA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56822)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sy86X-0007Ko-0Y;
-	Tue, 08 Oct 2024 12:10:12 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sy86R-00058l-1r;
-	Tue, 08 Oct 2024 12:10:07 +0100
-Date: Tue, 8 Oct 2024 12:10:07 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: check validity of 10GbE
- link-partner advertisement
-Message-ID: <ZwUTDw0oqJ1dvzPq@shell.armlinux.org.uk>
-References: <fb736ae9a0af7616c20c36264aaec8702abc84ae.1728056939.git.daniel@makrotopia.org>
- <8fb5c25d-8ef5-4126-b709-0cfe2d722330@lunn.ch>
- <ZwBmycWDB6ui4Y7j@makrotopia.org>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kMDTZwF7KT+Vr9VLbyVkqYrAge3SOzGmoRLC+FokyxU=; b=kttiiXoY46MsOp5E+WyIsuZJGl
+	ysCb7gUxPT+AelusEN+3Blmq1lacVgaYHA2GAb55+xm/hgRvDa7ypWIDhrPbqmWuU8vACIXK1RaaF
+	fy9nz0fb3QzdPmDhue4KFgM2YhKmkykkbgYTR8i2FVmY1hMjcR3rWAdFv6ixtr+8UR/61XYhkdDHO
+	9C2bFbjWLzkP6UmQbpLEM+UZoRwVyWJFCbQu0c2TrvDKJkBV1zN8UT78bQHzcXppc6gDyZoXg/SZE
+	LlFTyDHqYVSrumgmjwwCavqaCok3SwdW/L6M4mj6u9+b1dtqiW91eXKGnmfvNexGeHuLIQLXgFNUf
+	6+93GdZQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy887-00000002ALL-0lhg;
+	Tue, 08 Oct 2024 11:11:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6A89430057A; Tue,  8 Oct 2024 13:11:50 +0200 (CEST)
+Date: Tue, 8 Oct 2024 13:11:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <20241008111150.GD17263@noisy.programming.kicks-ass.net>
+References: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
+ <20241003084743.GC33184@noisy.programming.kicks-ass.net>
+ <20241003092707.GD33184@noisy.programming.kicks-ass.net>
+ <20241003122824.GE33184@noisy.programming.kicks-ass.net>
+ <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
+ <20241003142240.GU5594@noisy.programming.kicks-ass.net>
+ <7b14822a-ee98-4e46-9828-1e41b1ce76f3@paulmck-laptop>
+ <20241003185037.GA5594@noisy.programming.kicks-ass.net>
+ <20241004133532.GH33184@noisy.programming.kicks-ass.net>
+ <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,64 +71,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwBmycWDB6ui4Y7j@makrotopia.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
 
-On Fri, Oct 04, 2024 at 11:06:01PM +0100, Daniel Golle wrote:
-> On Fri, Oct 04, 2024 at 11:17:28PM +0200, Andrew Lunn wrote:
-> > On Fri, Oct 04, 2024 at 04:50:36PM +0100, Daniel Golle wrote:
-> > > Only use link-partner advertisement bits for 10GbE modes if they are
-> > > actually valid. Check LOCALOK and REMOTEOK bits and clear 10GbE modes
-> > > unless both of them are set.
-> > > This prevents misinterpreting the stale 2500M link-partner advertisement
-> > > bit in case a subsequent linkpartner doesn't do any NBase-T
-> > > advertisement at all.
-> > > 
-> > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > > ---
-> > >  drivers/net/phy/realtek.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> > > index c4d0d93523ad..d276477cf511 100644
-> > > --- a/drivers/net/phy/realtek.c
-> > > +++ b/drivers/net/phy/realtek.c
-> > > @@ -927,6 +927,10 @@ static int rtl822x_read_status(struct phy_device *phydev)
-> > >  		if (lpadv < 0)
-> > >  			return lpadv;
-> > >  
-> > > +		if (!(lpadv & MDIO_AN_10GBT_STAT_REMOK) ||
-> > > +		    !(lpadv & MDIO_AN_10GBT_STAT_LOCOK))
-> > > +			lpadv = 0;
-> > > +
-> > >  		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising,
-> > >  						  lpadv);
-> > 
-> > I know lpadv is coming from a vendor register, but does
-> > MDIO_AN_10GBT_STAT_LOCOK and MDIO_AN_10GBT_STAT_REMOK apply if it was
-> > also from the register defined in 802.3? I'm just wondering if this
-> > test should be inside mii_10gbt_stat_mod_linkmode_lpa_t()?
+On Sun, Oct 06, 2024 at 01:44:53PM -0700, Paul E. McKenney wrote:
+
+> With your patch, I got 24 failures out of 100 TREE03 runs of 18 hours
+> each.  The failures were different, though, mostly involving boost
+> failures in which RCU priority boosting didn't actually result in the
+> low-priority readers getting boosted.  
+
+Somehow I feel this is progress, albeit very minor :/
+
+> There were also a number of "sched: DL replenish lagged too much"
+> messages, but it looks like this was a symptom of the ftrace dump.
 > 
-> Yes, it does apply and I thought the same, but as
-> mii_10gbt_stat_mod_linkmode_lpa_t is used in various places without
-> checking those two bits we may break other PHYs which may not use
-> them (and apparently this is mostly a problem on RealTek PHYs where
-> all the other bits in the register persist in case of a non-NBase-T-
-> capable subsequent link-partner after initially being connected to
-> an NBase-T-capable one).
+> Given that this now involves priority boosting, I am trying 400*TREE03
+> with each guest OS restricted to four CPUs to see if that makes things
+> happen more quickly, and will let you know how this goes.
 > 
-> Maybe we could introduce a new function
-> mii_10gbt_stat_mod_linkmode_lpa_validate_t()
-> which calls mii_10gbt_stat_mod_linkmode_lpa_t() but checks LOCOK and
-> REMOK as a precondition?
+> Any other debug I should apply?
 
-Isn't the link status supposed to indicate link down of LOCOK
-is clear?
+The sched_pi_setprio tracepoint perhaps?
 
-Maybe checking these bits should be included in the link status
-check, and if not set, then phydev->link should be cleared?
+I've read all the RCU_BOOST and rtmutex code (once again), and I've been
+running pi_stress with --sched id=low,policy=other to ensure the code
+paths in question are taken. But so far so very nothing :/
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+(Noting that both RCU_BOOST and PI futexes use the same rt_mutex / PI API)
+
+You know RCU_BOOST better than me.. then again, it is utterly weird this
+is apparently affected. I've gotta ask, a kernel with my patch on and
+additionally flipping kernel/sched/features.h:SCHED_FEAT(DELAY_DEQUEUE,
+false) functions as expected?
+
+
+One very minor thing I noticed while I read the code, do with as you
+think best...
+
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 1c7cbd145d5e..95061119653d 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -1071,10 +1071,6 @@ static int rcu_boost(struct rcu_node *rnp)
+ 	 * Recheck under the lock: all tasks in need of boosting
+ 	 * might exit their RCU read-side critical sections on their own.
+ 	 */
+-	if (rnp->exp_tasks == NULL && rnp->boost_tasks == NULL) {
+-		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+-		return 0;
+-	}
+ 
+ 	/*
+ 	 * Preferentially boost tasks blocking expedited grace periods.
+@@ -1082,10 +1078,13 @@ static int rcu_boost(struct rcu_node *rnp)
+ 	 * expedited grace period must boost all blocked tasks, including
+ 	 * those blocking the pre-existing normal grace period.
+ 	 */
+-	if (rnp->exp_tasks != NULL)
+-		tb = rnp->exp_tasks;
+-	else
++	tb = rnp->exp_tasks;
++	if (!tb)
+ 		tb = rnp->boost_tasks;
++	if (!tb) {
++		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++		return 0;
++	}
+ 
+ 	/*
+ 	 * We boost task t by manufacturing an rt_mutex that appears to
 
