@@ -1,235 +1,126 @@
-Return-Path: <linux-kernel+bounces-354567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210A8993F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233DD993FC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449B01C23DDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68AB287158
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BD31DFE02;
-	Tue,  8 Oct 2024 06:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101EA1E04B2;
+	Tue,  8 Oct 2024 06:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvvR5449"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aWfl61/n"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA592381B1;
-	Tue,  8 Oct 2024 06:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D518718CBEA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728369931; cv=none; b=EPbGk9VX1UPEeadGA9RbL24lJS/L7+3Un7PclV08RXwwTIT4LPw0/Oo8FGov0UHkK9d9YeeQ7/P30s7DM1bcGl9gxJjHL7UJPwIHR97JNCb/h65BV4eP/vf1p1+l2NPgTtkmi4i3scE6aoM5n/jT71d54IOcihCb9Ladxl9MHBQ=
+	t=1728369937; cv=none; b=nSLPSSEn8iY8GPOek87INA0qs9RJ6dhGf9+FDmksd5wu7qg8C6ipthwroRvpmWkI5Qv9bM1buEZGKCS4To3s4FFLLgFolHLz9CTCJSSkdOk1KZtZngp3Aok+WfRznsFOvw7WMd/T7V/mXElux2tzjOtLf99b7+hxT2/eauPI8Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728369931; c=relaxed/simple;
-	bh=cIrzPxQeyCDdavc8DlxXD3nlhNwGLYImI5FKpYJP0Sg=;
+	s=arc-20240116; t=1728369937; c=relaxed/simple;
+	bh=fbbZr49zyO/Qt7cshVbga6lryqPHcq3MB9S08PHeyPQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dYF7m7VA3lexh2mVcCg76zOk0iEYtfKLYSTX5XMA0nB+Q2dJvxx4qJOgn8zx3W9HtZiOVDuo1Lc1plBBwy7x3rq9Ks0H82G0FAL4lKWx+Q2hXrTUqo9zstQBK74evFQanWzkoQJ5fPVtR15KtONc1en3eXGzIpDQYBOxb3rufvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvvR5449; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F436C4CED1;
-	Tue,  8 Oct 2024 06:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728369930;
-	bh=cIrzPxQeyCDdavc8DlxXD3nlhNwGLYImI5FKpYJP0Sg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fvvR5449c6iPXu2st1ZGLSrOVvguj0dAcYEeSMI+6fPkIoeRnjf9Vu6EhburhzzB3
-	 kV5mSLFufsRvF30srsxrnxtrB5+ywnEdjb6Z8SeL/p1znl74inhLpXlGE03MxGDAlc
-	 G5os05yPmllLaImj5FK1Tk6hMDF0tBdtahAv8lPuw4Eh7y6sx0eLcvs3YnAsOGbqYT
-	 FEw2IqVeXpvi4aMKcas0QgCJXD0gXYErtdWemVcMfRWeQADGn6CAhjufVQxOyO61/m
-	 7DDPUMXxXWFrk33HzX83wSxClblvFypvSQSLG1GNNYK9jzQPcVdFSRRGgUucdet153
-	 JrkgnTTd7Dpsg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5399041167cso8162122e87.0;
-        Mon, 07 Oct 2024 23:45:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjXSGaim4oGeSskz3WM3+Ndvblg7RIqb79p2rr60tFcz9wPQEiniKirCIA+/N+vipyZI3zWDgXwJVLe9MT@vger.kernel.org, AJvYcCWljEhAZ9lKoogYhyXSQ1de4MSWvknt/nj/69jwZGxeVUUml+74Gth/x8hMMTGarqWVdFMJUooaqw6S@vger.kernel.org, AJvYcCX67szMPXtGmDHGeBPLl7D1BUIRh3hy/Li2IeU2kaclpz+YCUCVFlMSvEdJ5SHEGWNFd4raMUBq6w59@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOqbU93LIYh5VBP2tEK1qJbsBVukDEmwin8VhRHe0J6be68vLT
-	IUdd849NTg4DeqtjUCPOfO5BDpeDkC6NPmJglHz3fqREGFXBStQDZXFYrFp3TWumxluwP94kkM1
-	wRiee/yXwDbM7Pwc/d3aPhZe9gHc=
-X-Google-Smtp-Source: AGHT+IH9nOMIZJOGcbEoCN3DtRbRftdvs9l+cZ858rssHYvQK4KnM+9x1fmsQNv2btEyHreGeJaqSsz1oxRF5agCZWo=
-X-Received: by 2002:a05:6512:33ca:b0:536:a4f1:d214 with SMTP id
- 2adb3069b0e04-539ab86693emr11035544e87.19.1728369928526; Mon, 07 Oct 2024
- 23:45:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=e7dza8uJ/ngAw218dMBaAf25QHudFw5lCqdX8DkQjnAUDrhhMWc4BEmYV2CFSz+FEqCZj04j3O/mZLclnIKVii+sFsJbWtCJXePXgwZ4bb1eT0Sj/+S2qLLdd2uSDXmrpN4Mc5Bwb8GeRvQwjEVytjFT4Cr+j5fUYlibW3OLnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aWfl61/n; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fac63abf63so50068041fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2024 23:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728369934; x=1728974734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5N200fvxTREEyrxekftq3ggWOWagokPaTUYSEaBWtcI=;
+        b=aWfl61/ngzOtzfqlzMU176KQqlL7JsO1ug0yx1AXxsGdLaTGQZJjBonR9uBrRb4R6X
+         rMf6u+2SnoHL/elIFQm2ZC0eqL/XmFHVg5xFtJyyEKiPtxfw6ny9Gn4mdtoMkLPChlsk
+         nFO+Djkpdt7d06myJOnYN4cvPDTpZKugDAc5Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728369934; x=1728974734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5N200fvxTREEyrxekftq3ggWOWagokPaTUYSEaBWtcI=;
+        b=ZIH+HzoQWIR8Lit4FJnUdjZnzyjcFgiqQ5PsW2C4F6eMA0E4hxxRpkCYQ75a5M+4eF
+         q6a2foQzuXYpUO1oycbjg1stBpErBqGlM07dOF2s4mMGaT6v/evOuR51mgBlPjxBSnft
+         HcdyUggfoY0hV7L//oBP+xcbQ0tn9bkpaYSxsNjNyd9/0EzIgFFz39nGpxlQy59dD+7d
+         z8VV9WCaLiTgQEHiQY4BDYZ4TIyTbzPuzg13P7kkagfCj8JF8L9U+YQhbXnsBabMFz2C
+         KibRFJ48ehIcBevVzgJVPHjW0R4qUu1bzjWliXrGWtDxVtcx4Fbl4v0FjD6tvjfrqCJN
+         VYVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZKsr9eMaAXnqw/PcU17MY6HQwsAnYs8ES9K+cuuvuUzqqq33S72952JtjZzuHwOSyhNxbMo2W+AMUr0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHN7Uk6Vmnz31Ad1IYruzZuVcjhNw0tbhtjkCO1HJJvlHJiksJ
+	x23HYFcCYmBlz6rDyEiKkvCponSbLg0sA2NqryH4m6L7t8ypRm1b8OkXlL0jVtELUSU3S7pguW2
+	FDZowmY6nl09awXV5pW6/y6mGfcTZxkcYJlL9
+X-Google-Smtp-Source: AGHT+IECT4esT7ue1aARCMGP0UOMUnxo/PP5VibgnFTCBR5NhImNPoYeKUOnemVNGvm97mlnoQmK4bDcS1hCoUrx8yU=
+X-Received: by 2002:a05:6512:3e0f:b0:52e:74d5:89ae with SMTP id
+ 2adb3069b0e04-539ab9e4165mr7000253e87.39.1728369933828; Mon, 07 Oct 2024
+ 23:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006153611.1165482-1-kobak@nvidia.com>
-In-Reply-To: <20241006153611.1165482-1-kobak@nvidia.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 8 Oct 2024 08:45:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHmOzcOPKgBzWn0DSQ0Ez4Yji1X9axnYmoprs1rDVL7-Q@mail.gmail.com>
-Message-ID: <CAMj1kXHmOzcOPKgBzWn0DSQ0Ez4Yji1X9axnYmoprs1rDVL7-Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2 V6] acpi/prmt: find block with specific type
-To: KobaK <kobak@nvidia.com>
-Cc: Matt Ochs <mochs@nvidia.com>, James Morse <james.morse@arm.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, 
-	linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20241008053514.6800-1-macpaul.lin@mediatek.com>
+In-Reply-To: <20241008053514.6800-1-macpaul.lin@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 8 Oct 2024 14:45:22 +0800
+Message-ID: <CAGXv+5HVBP31H2hr8BuAy-4jNkS-T12L_mdmPSCV2po1FnO81g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Fix dtbs_check error for tphy
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Seiya Wang <seiya.wang@mediatek.com>, 
+	Tinghan Shen <tinghan.shen@mediatek.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
+	Sen Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 6 Oct 2024 at 17:36, KobaK <kobak@nvidia.com> wrote:
+On Tue, Oct 8, 2024 at 1:35=E2=80=AFPM Macpaul Lin <macpaul.lin@mediatek.co=
+m> wrote:
 >
-> From: kobak <kobak@nvidia.com>
->
-> PRMT needs to find the correct type of block to
-> translate the PA-VA mapping for EFI runtime services.
->
-> The issue arises because the PRMT is finding a block of
-> type EFI_CONVENTIONAL_MEMORY, which is not appropriate for
-> runtime services as described in Section 2.2.2 (Runtime
-> Services) of the UEFI Specification [1]. Since the PRM handler is
-> a type of runtime service, this causes an exception
-> when the PRM handler is called.
->
->     [Firmware Bug]: Unable to handle paging request in EFI runtime service
->     WARNING: CPU: 22 PID: 4330 at drivers/firmware/efi/runtime-wrappers.c:341
->         __efi_queue_work+0x11c/0x170
->     Call trace:
+> The u3phy1 node in mt8195.dtsi was triggering a dtbs_check error.
+> The error message was:
+>   t-phy@11e30000: 'power-domains' does not match any of the regexes:
+>     '^(usb|pcie|sata)-phy@[0-9a-f]+$', 'pinctrl-[0-9]+'
+> Fix this issue by dropping 'power-domains' of u3phy1 node.
 
-You can drop the call trace from the commit log.
+You should also mention why this fix is correct from a hardware viewpoint,
+i.e. why removing the power domain won't break the device.
 
->       __efi_queue_work+0x11c/0x170
->       efi_call_acpi_prm_handler+0x68/0xd0
->       acpi_platformrt_space_handler+0x198/0x258
->       acpi_ev_address_space_dispatch+0x144/0x388
->       acpi_ex_access_region+0x9c/0x118
->       acpi_ex_write_serial_bus+0xc4/0x218
->       acpi_ex_write_data_to_field+0x168/0x218
->       acpi_ex_store_object_to_node+0x1a8/0x258
->       acpi_ex_store+0xec/0x330
->       acpi_ex_opcode_1A_1T_1R+0x15c/0x618
->       acpi_ds_exec_end_op+0x274/0x548
->       acpi_ps_parse_loop+0x10c/0x6b8
->       acpi_ps_parse_aml+0x140/0x3b0
->       acpi_ps_execute_method+0x12c/0x2a0
->       acpi_ns_evaluate+0x210/0x310
->       acpi_evaluate_object+0x178/0x358
->       acpi_proc_write+0x1a8/0x8a0 [acpi_call]
->       proc_reg_write+0xcc/0x150
->       vfs_write+0xd8/0x380
->       ksys_write+0x70/0x120
->       __arm64_sys_write+0x24/0x48
->       invoke_syscall.constprop.0+0x80/0xf8
->       do_el0_svc+0x50/0x110
->       el0_svc+0x48/0x1d0
->       el0t_64_sync_handler+0x15c/0x178
->       el0t_64_sync+0x1a8/0x1b0
->
-> Find a block with specific type to fix this.
-> prmt find a block with EFI_RUNTIME_SERVICES_DATA for prm handler and
-> find a block with EFI_RUNTIME_SERVICES_CODE for prm context.
-
-This is outdated now
-
-> If no suitable block is found, a warning message will be prompted
-> but the procedue continues to manage the next prm handler.
-
-procedure
-
-> However, if the prm handler is actullay called without proper allocation,
-
-actually
-
-> it would result in a failure during error handling.
->
-> By using the correct memory types for runtime services,
-> Ensure that the PRM handler and the context are
-
-ensure
-
-please capitalize PRM and PRMT consistently
-
-> properly mapped in the virtual address space during runtime,
-> preventing the paging request error.
->
-
-The issue is really that only memory that has been remapped for
-runtime by the firmware can be used by the PRM handler, and so the
-region needs to have the EFI_MEMORY_RUNTIME attribute.
-
-> [1] https://uefi.org/sites/default/files/resources/UEFI_Spec_2_10_Aug29.pdf
-> Fixes: cefc7ca46235 ("ACPI: PRM: implement OperationRegion handler for the PlatformRtMechanism subtype")
-> Signed-off-by: Koba Ko <kobak@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and evaluation =
+board")
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 > ---
-> V2:
-> 1. format the changelog and add more about error handling.
-> 2. replace goto
-> V3: Warn if parts of handler are missed during va-pa translating.
-> V4: Fix the 0day
-> V5: Fix typo and pr_warn warning
-> V6: use EFI_MOMOERY_RUNTIME to find block and split goto refactor as a single
-> patch
-> ---
->  drivers/acpi/prmt.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> index 1cfaa5957ac4..970207bc8f4a 100644
-> --- a/drivers/acpi/prmt.c
-> +++ b/drivers/acpi/prmt.c
-> @@ -79,8 +79,10 @@ static u64 efi_pa_va_lookup(u64 pa)
->         u64 page = pa & PAGE_MASK;
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/d=
+ts/mediatek/mt8195.dtsi
+> index ade685ed2190..1c6f08dde31c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> @@ -1920,7 +1920,6 @@ u3phy1: t-phy@11e30000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+>                         ranges =3D <0 0 0x11e30000 0xe00>;
+> -                       power-domains =3D <&spm MT8195_POWER_DOMAIN_SSUSB=
+_PCIE_PHY>;
+>                         status =3D "disabled";
 >
->         for_each_efi_memory_desc(md) {
-> -               if (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)
-> +               if ((md->attribute & EFI_MEMORY_RUNTIME) &&
-> +                       (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)) {
-
-Please indent with 4 spaces so the ( line up vertically
-
->                         return pa_offset + md->virt_addr + page - md->phys_addr;
-> +               }
->         }
->
->         return 0;
-> @@ -149,8 +151,20 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
->
->                 guid_copy(&th->guid, (guid_t *)handler_info->handler_guid);
->                 th->handler_addr = (void *)efi_pa_va_lookup(handler_info->handler_address);
-> +               if (!th->handler_addr)
-> +                       pr_warn("Idx: %llu, failed to find VA for handler_addr(GUID: %pUL, PA: %p)",
-> +                               cur_handler, &th->guid, th->handler_addr);
-> +
->                 th->static_data_buffer_addr = efi_pa_va_lookup(handler_info->static_data_buffer_address);
-> +               if (!th->static_data_buffer_addr)
-> +                       pr_warn("Idx: %llu, failed to find VA for data_addr(GUID: %pUL, PA: %p)",
-> +                               cur_handler, &th->guid, (void *)th->static_data_buffer_addr);
-> +
->                 th->acpi_param_buffer_addr = efi_pa_va_lookup(handler_info->acpi_param_buffer_address);
-> +               if (!th->acpi_param_buffer_addr)
-> +                       pr_warn("Idx: %llu, failed to find VA for param_addr(GUID: %pUL, PA: %p)",
-> +                               cur_handler, &th->guid, (void *)th->acpi_param_buffer_addr);
-> +
-
-Can we move this warning into efi_pa_va_lookup() so we don't need to
-duplicate it three times?
-
->         } while (++cur_handler < tm->handler_count && (handler_info = get_next_handler(handler_info)));
->
->         return 0;
-> @@ -277,6 +291,12 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
->                 if (!handler || !module)
->                         goto invalid_guid;
->
-> +               if (!handler->handler_addr || !handler->static_data_buffer_addr ||
-> +                       !handler->acpi_param_buffer_addr) {
-
-Please split the condition into three lines, and use 4 spaces of
-indentation on the continuation lines.
-
-> +                       buffer->prm_status = PRM_HANDLER_ERROR;
-> +                       return AE_OK;
-> +               }
-> +
->                 ACPI_COPY_NAMESEG(context.signature, "PRMC");
->                 context.revision = 0x0;
->                 context.reserved = 0x0;
+>                         u2port1: usb-phy@0 {
 > --
-> 2.43.0
->
+> 2.45.2
 >
 
