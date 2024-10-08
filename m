@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-355838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F689957CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24C09957C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BFC1C20D7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CC61F24E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338621500A;
-	Tue,  8 Oct 2024 19:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9A213EEA;
+	Tue,  8 Oct 2024 19:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e/eiE22c"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N19JJlND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB45213ED9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A72E213EDF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728416541; cv=none; b=YXTkilqf1lrWzdqfK6t7Kfc+APYADu2XTNOPPGIGYdTTF1imSVPD3o6O5qCMKCNPIQu7ayg2yDmsKjIdyRVvwKGIxc9YdOW8sMIvg7YowXVfFTBMLDtm4SKxrnzDSlm0veks/iUaI88lPdoUVqGKy7ELo8ysBvlsaL7zoPafXwo=
+	t=1728416539; cv=none; b=F73MAEyABt6Bjc+Rb1YDJViuHtIdLPJxh+MnOoswjTapsquAw7vdLmAleE1x6AZxEW0ehJ+2aPmByYWcfBBhHSLBlHnqwIHCp1RvjNelYBA2VCRCJBu1yffJj2EEYN7EddTvIqMTz0mR48zCM2AWSV/+QsLb3i83lKOokDPap1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728416541; c=relaxed/simple;
-	bh=lFhTMzC9ORLMqoRTjpZ6veDLc7aVhr/WeQGwgTd9GPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+NtZ4GluZsMKOdTXPlc1ldQ6qk4GYcW4SzsM8rThw9VpAXeulqtoSDQqiqBe48kOMO3NJVeQQ6+MJEMMimY8TyGtvz1XDvgGiBRcDgFpsaYDKkqHXXXFmG+MGgfzFfwDoR4i1WS0Bj6P37sQ8N/YnBkQgdancHz3rbwCyMRsn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e/eiE22c; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37ccfba5df5so3874930f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728416538; x=1729021338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztVVxm7jB9ef2OrCWlXv+wilSMfWclaP+y3yiehlVbA=;
-        b=e/eiE22cIJdkIQ8iLFVYr88Aan09oXzRwqd/W3cUdl65Zb51ARrRbYZFn1zyOfpP53
-         TnWo1sdtHGdTwf87kQPl5uB24f0LLyErO8Hg/gPc6wxpmqszbuVzRo8ynC96dw8Dqo21
-         e5nkKaTjWb6BScyh7WrrRabpnfNUPRlLx7NdjRl5UPybGBX1b3rj3aXEkglVsvE/4OHR
-         CANW75vi1fMLGupJDv3Z451hrUXP0tY4XFV42pbQW5anc573VQyjb4dx9h/YC5BP1RAs
-         yd9Yt23G+CwY0/20I4WJXLRis4ah5uDEcmWrvpUJNj0Z4dSvjdXoyAaORwxNgriHjEmj
-         W7CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728416538; x=1729021338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ztVVxm7jB9ef2OrCWlXv+wilSMfWclaP+y3yiehlVbA=;
-        b=C0KlP0rkLy/L0Oxdtva//MzEh58aJn+c982NP/r+h9dWcQo3+32jtFNLcx9P/HzuRi
-         UV8wIcchYATZbh6potb3MKRtR1itOyQkjiyBM8IKQUYP7sKdjr2gb4rUmLBPEp0ZY7zu
-         68v1XaF08TD+zzy8k0I4L9xTVuELiS5PTVDweucurjzhrAaJrl1Ukc7Xw089EdkFIzco
-         SN8k3tMQ6eg/13fJzhM9OCja2xkzL+qFlwEG2H3+IfpoMtNi9DO8J0GvljoGjk1vdTHN
-         WXBqIJRWhi/pkNFXtMvmCpZn/pdweDzwG38pVidNEBfY/1+mKLNH835JNurh7qVpSI7u
-         qZtg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+s782KAJH0cRhNoOS8FwWrS15Ec67R0EW9APcmKOfncsiXtgGFly5Lb/BzDBVt+qsN+QHtyicJuoXCow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyisbSJ6iRlGmhJvk0h97K6L6hHnmlmPwBvE2nZQFDjHXYD/ImY
-	/fg4wOurne+UKA/Wz21hJ7lK/zFRGbPVRxcH9CIpMuqw79fM8PL+l501G0HPdIn0vmCw62WmpLI
-	gISVS29DdpsuUCmOZbkWaNNcf0HhpLoWLo1of
-X-Google-Smtp-Source: AGHT+IFKhUFF3WNNTqlJrPLbMTLLVQI7WWrZ92xfITFsK6a9htkf5fdYkPlN2t3yWnT5FJDTTlAF2/N3Ch6veoWI5bQ=
-X-Received: by 2002:a5d:6112:0:b0:374:b9a7:5ed6 with SMTP id
- ffacd0b85a97d-37d3a9d7dd4mr6614f8f.22.1728416537596; Tue, 08 Oct 2024
- 12:42:17 -0700 (PDT)
+	s=arc-20240116; t=1728416539; c=relaxed/simple;
+	bh=QBxXkPAxgYlOWFZROC4O+JdUqTQA0L2XZo0nH/QH6uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=If2koYib2mcvmCN3LVPatQYqxThRTXNcCQ1Yy8pPj3L20nQfELNy8JTSsevEYcCQnoz5GMSG6af5nc4NMBHzpFn4KBkuZRwD403uwYxYWLQ2Ke9k8lz9zUp4Dx053hEMyHB/St5UnZRiuvZEMtk6iGl7vsAwArC4Cn5m3e8MxSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N19JJlND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45AFC4CEC7;
+	Tue,  8 Oct 2024 19:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728416538;
+	bh=QBxXkPAxgYlOWFZROC4O+JdUqTQA0L2XZo0nH/QH6uw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=N19JJlNDcapryMvVg08suzFOhPGmduTIaCW9XJSRtMG8W4MeOPXaKFOBReoTHGPYh
+	 W8bMnP9jnyr1K9/ecxJghasoILrakXRt5YkPJ690IB7M/dxm/1WplMutt+kDkdi9g+
+	 IttwK8S9XOVJOcEXuH45bSaNUMbbTUHDuHIiAGxvIz50h2qrblRWttrq1dzzzikhjN
+	 BihiGWFi5xEQbxTQx+SjEdfWbU3N2iBN6XWn9HySnFizQRaFOBaDQ9OXvbP/zUe8Vg
+	 zSsW5cZ0r7aSsFOJrJ5jTTCdJo495ZRzhEMXqjVBDfb9OV6zgoYOITove68jRMfZhR
+	 mUtDyEJ7gJnJA==
+Date: Tue, 8 Oct 2024 09:42:16 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	sched-ext@meta.com, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: [GIT PULL] sched_ext: Fixes for v6.12-rc2
+Message-ID: <ZwWLGKG4fsUYQyub@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com> <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 8 Oct 2024 21:42:05 +0200
-Message-ID: <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com>
-Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Oct 8, 2024 at 9:00=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> On Wed, Oct 9, 2024 at 2:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-> > index 057305eae85c..08d5b7177ea8 100644
-> > --- a/scripts/Makefile.compiler
-> > +++ b/scripts/Makefile.compiler
-> > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD=
-_EXTMOD))/).tmp_$$$$
-> >  # automatically cleaned up.
-> >  try-run =3D $(shell set -e;              \
-> >         TMP=3D$(TMPOUT)/tmp;              \
-> > +       export RUSTC_BOOTSTRAP=3D1;       \
->
->
-> try-run is not Rust-specific.
->
-> Is there any reason why you did not add it
-> to __rustc-option?
->
->
-> __rustc-option =3D $(call try-run,\
->        RUSTC_BOOTSTRAP=3D1 $(1) $(2) $(3) --crate-type=3Drlib
-> $(srctree)/rust/probe.rs --out-dir=3D$$TMP,$(3),$(4))
+The following changes since commit 95b873693a0841e02b812e693296a884362fdd51:
 
-I had an explanation for this in the commit message, but it looks like
-it got lost when I rewrote it for v2. Anyway, the reason is that I'd
-have to modify both __rustc-option and rustc-option-yn to do that, and
-putting it here seemed more future-proof against making the same
-mistake in any rustc-* commands added in the future.
+  sched_ext: Remove redundant p->nr_cpus_allowed checker (2024-09-27 10:23:45 -1000)
 
-But I realize that it's not clear-cut. I'm happy to move it if you prefer,
-or perhaps add a try-run-rust. Let me know what you think.
+are available in the Git repository at:
 
-> I guess it is still suspicious because the top-level Makefile
-> exports RUCTC_BOOTSTRAP.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc2-fixes
 
-Moving the declaration of RUSTC_BOOTSTRAP to the top of the Makefile
-seems to fix it. I guess moving it is probably a better solution than
-adding it in scripts/Makefile.compiler.
+for you to fetch changes up to e0ed52154e866a1e9e9b97ded50b164698f0a222:
 
-Not that I really understand why that is. The existing invocations are
-in scripts/Makefile.kasan which is invoked after RUSTC_BOOTSTRAP is
-declared.
+  sched_ext: Documentation: Update instructions for running example schedulers (2024-10-08 08:49:18 -1000)
 
+----------------------------------------------------------------
+sched_ext: Fixes for v6.12-rc2
 
-Alice
+- ops.enqueue() didn't have a way to tell whether select_task_rq_scx() and
+  thus ops.select() were skipped. Some schedulers were incorrectly using
+  SCX_ENQ_WAKEUP. Add SCX_ENQ_CPU_SELECTED and fix scx_qmap using it.
+
+- Remove a spurious WARN_ON_ONCE() in scx_cgroup_exit().
+
+- Fix error information clobbering during load.
+
+- Add missing __weak markers to BPF helper declarations.
+
+- Doc update.
+
+----------------------------------------------------------------
+Devaansh-Kumar (1):
+      sched_ext: Documentation: Update instructions for running example schedulers
+
+Tejun Heo (5):
+      sched_ext: Improve error reporting during loading
+      sched_ext: scx_cgroup_exit() may be called without successful scx_cgroup_init()
+      sched/core: Make select_task_rq() take the pointer to wake_flags instead of value
+      sched/core: Add ENQUEUE_RQ_SELECTED to indicate whether ->select_task_rq() was called
+      sched_ext, scx_qmap: Add and use SCX_ENQ_CPU_SELECTED
+
+Vishal Chourasia (1):
+      sched_ext: Add __weak markers to BPF helper function decalarations
+
+ Documentation/scheduler/sched-ext.rst    |  2 +-
+ kernel/sched/core.c                      | 21 ++++++++++++++-------
+ kernel/sched/ext.c                       | 32 ++++++++++++++++++++------------
+ kernel/sched/sched.h                     |  3 +++
+ tools/sched_ext/include/scx/common.bpf.h |  6 +++---
+ tools/sched_ext/scx_qmap.bpf.c           |  4 ++--
+ 6 files changed, 43 insertions(+), 25 deletions(-)
+
+-- 
+tejun
 
