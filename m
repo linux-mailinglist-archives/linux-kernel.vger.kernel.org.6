@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-355951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168A49959C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2EF9959C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625EDB22E5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E465128674D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34370215033;
-	Tue,  8 Oct 2024 22:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BE5215F54;
+	Tue,  8 Oct 2024 22:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FvTdkP+M"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0wnRx5r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9D4213EE2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 22:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9B1208AD;
+	Tue,  8 Oct 2024 22:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728424992; cv=none; b=SEIn/huJhzPdVeEbshacPJNiGODvoNL457UtzXBTvK6Gka36cnVHnRaUr5/iN1iHx11NgPofJ6cMWbPGSSjt1Dt0urmuT16kaGXuK6EIPyh5C7bs+ZNc7kVUZ//sfgRgxak7mvkQkxZwTT4RZnoVSmVIjRuj9h1Ljxp+3M2CUfY=
+	t=1728425065; cv=none; b=YNDPJ9hJ8h/pF/TYgiqRWyT74E9dt4aNG4MeO18KNnkHRg479EEwf1fCUnTjxnTSn3OqrdMc+5LxroY9e7GiMfHo6tGwCTqdneevgs/CjkoGQyHM5mo2qnvynhNRpOGyQYDJo7XSj5wTRfqf6WVnL9+/KfsKX7oXk5zWg5CgVNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728424992; c=relaxed/simple;
-	bh=BXAmuJ7ILq+rT+k8LO3lE0/nVu01ECozpjquJa006AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CVReZ5DTXyxmqgFWx3FXBSkAyYfGeAYKM6A8ijuD9OTRx2VTw6NkrfcjzlGfpkUHOAr+QHZZlx0SemGWNTWPilHVzAkk00CianmyrBPqyEqploD+gpklkjhv1utkp0FDs44v6FBjLoPP9JCkRaOQgXUC2pm+by240WDl93BSSE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FvTdkP+M; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82cdb749598so260415039f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 15:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728424990; x=1729029790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8k/h1zc1if6v/PtO4/Z0OMrVugcpBclAQ9weFD2DFTs=;
-        b=FvTdkP+MnPJQYu87Gkf3KG7l+uMDDNd3Xz/q1cunLFadjCr5ckCZrAeCoTA9l+d1bs
-         p93dn09mo1Bpf9xB+pwBWoR/7helGIDcHFoq9/VrbbR3S7uC6hkEnyqogV2qvjYCKBft
-         3/G1VAEIVC1lDCQe8zMKr08TVAB64NULVpDFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728424990; x=1729029790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8k/h1zc1if6v/PtO4/Z0OMrVugcpBclAQ9weFD2DFTs=;
-        b=ql3iQS5f/KsRHzTP6XEqQKGGdfAO8Mvh27xLZKW7Iwu/fEGlkYOEQWbtJY0DtTQshT
-         bL6OT1FotsGkJJm3TrfvGiplyU+YRcpGYl4AGBeqcZmFaaL1w7uyCCgGXHMPc0QcCyJa
-         CQh2qidGnWZhhBdvI1z7qeYpstWn6Ot0OkVKWBaRwPXD1XiGpGLd+bWMywQLNMRjVhlK
-         c3TcDYWRCVSWr0FFNloU+91b1DvVHZq7daIT4ZOlB26XDgPx7N1Kl6xnmK5rVPB7A86k
-         Wc793RDXMaceSIbVFmVRrDsnBFeZydLbIPP4+NzS5O/QHUOLKYYhIkyZjY+/Qkcs5ysC
-         /fOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCV9YlGZBN4qK74oovaX2Qrf2sF3l1nwAvmLngFVz03MN6N70UPb4h5RjRQWHOTmfgwYYbdasmOifsjKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmkDDH0dtqzzBnanL70bBRuLRbw9lIYGd1luE3q8Bt8uFvBqhm
-	9+Ma4Tszf1eBMj4g81HBRWKz5wU83gjO6ROF1QJe9YH3JsW3MhTeO36BchORL4ffWBxaUPgLgPL
-	Z
-X-Google-Smtp-Source: AGHT+IEbwfQqS1rnCN/fqKqbgzAthDXhnK25PIZwnEuU6F500jfrAspi+MkyW7GIBwdWt2QIv/P83g==
-X-Received: by 2002:a05:6e02:1a2c:b0:3a0:9a32:dedc with SMTP id e9e14a558f8ab-3a397cf78e6mr4402395ab.6.1728424990268;
-        Tue, 08 Oct 2024 15:03:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db7db303besm1461620173.107.2024.10.08.15.03.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 15:03:09 -0700 (PDT)
-Message-ID: <b1659a9a-66a4-4a07-a76a-31222bf8cfc5@linuxfoundation.org>
-Date: Tue, 8 Oct 2024 16:03:08 -0600
+	s=arc-20240116; t=1728425065; c=relaxed/simple;
+	bh=iow1JAe/82UMDIUstBevpkrdK9xWZnfdRJ6+IethTys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=js9IxkBnOHr56WtGG6dXJEOO2XxfD2gj5W/jcN9Sbhh751j17mbk3s4q6tuxsngHKFnrwNWscEXxYUSdZEBTMuklO83m2vK9W330Pe3/FEZ/lFrzQZNhwSAV+qCrmjiwH0xklk8LWgf7ery6MI6OXwmpY/KPJQSffxFmOnkHPzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0wnRx5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EED1C4CEC7;
+	Tue,  8 Oct 2024 22:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728425065;
+	bh=iow1JAe/82UMDIUstBevpkrdK9xWZnfdRJ6+IethTys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e0wnRx5rjoLNrS4vpGE4v5saqkSKNgOSvij8i+fdhoyS+pQVFuAg+jmBVOicGvjYA
+	 ynzvMGBQsfTh6kM+SehJvK38H4isiV/wqpCdpq4L1fWWyJhzFyTOfdaMEiBcyKzC3M
+	 zLkBuR/nSuDfkZia0pepICsYBMO7fsUJDklOA/2vxIUI9mGzcR1f5DF4Xsp4SbO/ge
+	 q4+CZWSRD2qw2UJy/FHJl4FgCWR5XyQB5r2vrYkj3mRVFe32O6AYlxhAexyKtM5six
+	 mBdTgP2alF9lfIdvk8GzrZrRFsJu1XgmOJzsjaH8/jgBcB5kaLTu/M4ZOsX5i7A7L8
+	 FcKaZz9Y24E9w==
+Date: Tue, 8 Oct 2024 16:04:22 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>
+Cc: hch@lst.de, dlemoal@kernel.org, cassel@kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matias =?iso-8859-1?Q?Bj=F8rling?= <matias.bjorling@wdc.com>
+Subject: Re: [PATCH 0/2] nvme: add rotational support
+Message-ID: <ZwWsZvOrQGQ2UR2P@kbusch-mbp>
+References: <20241008145503.987195-1-m@bjorling.me>
+ <ZwVMLIt4iFX9MUjV@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241008115648.280954295@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwVMLIt4iFX9MUjV@kbusch-mbp>
 
-On 10/8/24 06:01, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.14 release.
-> There are 482 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, Oct 08, 2024 at 09:13:48AM -0600, Keith Busch wrote:
+> I still hope to see nvmet report this. It would be great to test this
+> with HDD backed nvme-loop target.
 
-Compiled and booted on my test system. No dmesg regressions.
+I took the liberty to write one up. Looks like everything is reporting
+as expected.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+---
+diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
+index 954d4c0747704..e167c9a2ff995 100644
+--- a/drivers/nvme/target/admin-cmd.c
++++ b/drivers/nvme/target/admin-cmd.c
+@@ -685,6 +685,35 @@ static void nvmet_execute_identify_ctrl_nvm(struct nvmet_req *req)
+ 		   nvmet_zero_sgl(req, 0, sizeof(struct nvme_id_ctrl_nvm)));
+ }
+ 
++static void nvmet_execute_id_cs_indep(struct nvmet_req *req)
++{
++	struct nvme_id_ns_cs_indep *id;
++	u16 status;
++
++	status = nvmet_req_find_ns(req);
++	if (status)
++		goto out;
++
++	id = kzalloc(sizeof(*id), GFP_KERNEL);
++	if (!id) {
++		status = NVME_SC_INTERNAL;
++		goto out;
++	}
++
++	id->nstat = NVME_NSTAT_NRDY;
++	id->anagrpid = req->ns->anagrpid;
++	id->nmic = NVME_NS_NMIC_SHARED;
++	if (req->ns->readonly)
++		id->nsattr |= NVME_NS_ATTR_RO;
++	if (req->ns->bdev && !bdev_nonrot(req->ns->bdev))
++		id->nsfeat |= NVME_NS_ROTATIONAL;
++
++	status = nvmet_copy_to_sgl(req, 0, id, sizeof(*id));
++	kfree(id);
++out:
++	nvmet_req_complete(req, status);
++}
++
+ static void nvmet_execute_identify(struct nvmet_req *req)
+ {
+ 	if (!nvmet_check_transfer_len(req, NVME_IDENTIFY_DATA_SIZE))
+@@ -729,6 +758,9 @@ static void nvmet_execute_identify(struct nvmet_req *req)
+ 			break;
+ 		}
+ 		break;
++	case NVME_ID_CNS_NS_CS_INDEP:
++		nvmet_execute_id_cs_indep(req);
++		return;
+ 	}
+ 
+ 	pr_debug("unhandled identify cns %d on qid %d\n",
+--
 
