@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-355871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DB099583D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C955D995840
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4A21C215B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7455B1F233F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4B5212EFB;
-	Tue,  8 Oct 2024 20:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098E7212D23;
+	Tue,  8 Oct 2024 20:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H/7Rb7GO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEGPmfNr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D272905;
-	Tue,  8 Oct 2024 20:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3722905
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728418548; cv=none; b=tIFKrN2yRUC34tWK/NypggGUKeTDExJ6nk1d64CwRNbhFoGCnuyK7TZQS1EzBL5fK4ch2r0GyMifVLBiETutoXDuAWjBMphkhjzhdG9yIwNhM0k+cvLg7tdLZaCdiAYx7mPKBAmGdeW0xHhz72CE6pzWfzyxa6v0TD2SSlwuZs4=
+	t=1728418614; cv=none; b=T0s7fMZuaG8UhYg21us9LgKsAu7hBA5uWN80VHe6RulNYS2UinTJdL91jmurEPhzqj3Ank7pRNSHn83okJmlMkeGbpsbh4/eUm7k8Kl8a0mxhbZYRudsZbd7z2+KFCkmiUuPcqqBZPNucTQZO1VldGVvEOvRv8tYaAY7jj5pHnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728418548; c=relaxed/simple;
-	bh=n2FBiFxmYSaN3U3i8P5zvn41rNXwwG1yy49owTMKNu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p2CJYcCe+LGsyvxeY+Zo9m6rUcNLgkXdkFVzPzrHnwjx3+xZp4JPFcQbKu1nfL1IbSjZQF0khZjSECN53qXYf1/BAB3aWfu88sZ3Q5Wd50enFy4EIZemcrfjNtvjmD2lVC9ryRyzqnkfL4mbaxVd4g7dMQ30lHnKG8mt65ja2Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=H/7Rb7GO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728418544;
-	bh=YsvkAocHjBpsnJ3/Y80ZYcmUzu3NBL669eqeSD4DIqM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=H/7Rb7GOXxAvVVcRS6zKw7CgkzJggEjXXyvvow3VsffcSusyH4xKSGiWrJ5cPETI0
-	 dxAot5JASofbiyCJNEUUWEEhuilmLimV5k3NO1J/hZ5AeKcZFVKLGGcasESCqjAkpq
-	 IlG/EH9XqIghxwv2ohuHDPfJT5Jq6sWLWvVB/ZopxP8Gk14ZifZTv88JCfPEaXNecM
-	 2LnRjKcBdTXRbZx0Oz9v5tFFosF9yMjhvop3T6DHsxu2e5vROgY0HSe0T4RXfYxUpi
-	 8hRNTuqJYNXRHWh+Saqkavp0e3Kwnd0gQ+2gK0KUxcI6eQMc7JV1TjV12oPoQOg1ab
-	 NbS9LbMHmCgsQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNS273rDZz4wc1;
-	Wed,  9 Oct 2024 07:15:43 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 07:15:43 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@kernel.org>
-Cc: Hsin-Yi Wang <hsinyi@chromium.org>, Hsin-Te Yuan
- <yuanhsinte@chromium.org>, Daolong Zhu
- <jg_daolongzhu@mediatek.corp-partner.google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the mediatek tree
-Message-ID: <20241009071543.5230cf79@canb.auug.org.au>
+	s=arc-20240116; t=1728418614; c=relaxed/simple;
+	bh=5Z1/Pbl1kheIgR2IiY7OnSGpGIemuG8rlErbiD37TXI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VpcFsHe9izX3BABuhgn8Kriqo+llIcIzKBAQMHMYiIYK0WTsl34jqC39IdVRaSczjypdYEmdSZgTD46yzdI3ZxCH+2dEYx5AfcAWMUMslPwMTO3DrIbgNoDFWiwiKKOikA8FH/HAbO79WCweXNRL/e8q9kqEXaD7A/ZhcpVttMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEGPmfNr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0338EC4CECE;
+	Tue,  8 Oct 2024 20:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728418614;
+	bh=5Z1/Pbl1kheIgR2IiY7OnSGpGIemuG8rlErbiD37TXI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=GEGPmfNr788NCe9FtwHeUByHQ/HUoINE/tHAshVyzA8kWjiWqEQo9uraeDPD8S7MN
+	 M8qYUQLxqzceB87nAAiYqfftM20IwJriULDVS050jV1NRi6BdBN6w2oaYu6ZCyH9y/
+	 rCnoTMrorEGcmstVeXMu+j0/lTpga9c3ucSO44V6RX8gT37R2yl+/Ooziw4Bv3HNFA
+	 Ah+0gwNzr3vmJ8bY7durZ6xT4ECm7GPVsbRB00+PkgoG9HMtLlg24Wk2ptGnbQn19O
+	 PNVyNEsdrTwctRYbfpfmCW34A3oqRu7VyLut3Jold3k64wvOGxplSaKQ0iS0+VOkRR
+	 4129ltm3AI5sw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 719BA3A8D14D;
+	Tue,  8 Oct 2024 20:16:59 +0000 (UTC)
+Subject: Re: [GIT PULL] sched_ext: Fixes for v6.12-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZwWLGKG4fsUYQyub@slm.duckdns.org>
+References: <ZwWLGKG4fsUYQyub@slm.duckdns.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZwWLGKG4fsUYQyub@slm.duckdns.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc2-fixes
+X-PR-Tracked-Commit-Id: e0ed52154e866a1e9e9b97ded50b164698f0a222
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 75b607fab38d149f232f01eae5e6392b394dd659
+Message-Id: <172841861809.670710.18320164342723865748.pr-tracker-bot@kernel.org>
+Date: Tue, 08 Oct 2024 20:16:58 +0000
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>, sched-ext@meta.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DYzTh.EFi+lZ2+DK_NFAGfh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/DYzTh.EFi+lZ2+DK_NFAGfh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Tue, 8 Oct 2024 09:42:16 -1000:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc2-fixes
 
-Commits
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/75b607fab38d149f232f01eae5e6392b394dd659
 
-  65b99309a9c1 ("arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-dela=
-y-ns")
-  025869564bf8 ("arm64: dts: mt8183: cozmo: add i2c2's i2c-scl-internal-del=
-ay-ns")
-  3d3bc7cb46e8 ("arm64: dts: mt8183: burnet: add i2c2's i2c-scl-internal-de=
-lay-ns")
-  5bbddfd0470f ("arm64: dts: mt8183: fennel: add i2c2's i2c-scl-internal-de=
-lay-ns")
-(The above also has an empty Reviewed-by tag)
-  ca80f75083f6 ("arm64: dts: mt8183: set DMIC one-wire mode on Damu")
+Thank you!
 
-are missing a Signed-off-by from their authors.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DYzTh.EFi+lZ2+DK_NFAGfh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcFku8ACgkQAVBC80lX
-0GyPXwf/YOaodA/VD1cUSr8xB4Qg5ybeE/oKl5XWdWxwRQFZ+rcbETUr4KS4FgNe
-mLL4nYQvLeq8eYIpZ1xuqoBShtIkMdp9TJO93cKuEPFOrCPCJfxetlPZF64F+FmP
-DebhJWn3Nzonr0BG5S3NcyEDdX8ZJ6R/HhaZ9FGiWNHQoa374QDJcuRNV8PyJbpc
-BlwbWAx0gWEkuCzd5tY6JQXEGKCS/pytsEETltAbZrniY1o2/Kf8XgDro28n7lvO
-6dGiFAS5pMT9SPezyidhSjvmQD3L1djigZa62Yvjz0vBjw+VqTwY0koiqqYE3QZD
-XfS7+zSdd0lwVaZvtEjJU7EKSN0LYQ==
-=Y1hk
------END PGP SIGNATURE-----
-
---Sig_/DYzTh.EFi+lZ2+DK_NFAGfh--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
