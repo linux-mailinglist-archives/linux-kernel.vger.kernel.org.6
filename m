@@ -1,204 +1,164 @@
-Return-Path: <linux-kernel+bounces-355232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EB5994D10
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:01:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B29D994E0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9609A1C2519D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99173B26639
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982341DED4E;
-	Tue,  8 Oct 2024 13:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AD51DED74;
+	Tue,  8 Oct 2024 13:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Jr+LQZcw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kXfEDZ1h"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B1918F2FA;
-	Tue,  8 Oct 2024 13:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637FA1DFD1;
+	Tue,  8 Oct 2024 13:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392460; cv=none; b=sSddg0IZ5jkGQe35m/7bSCjj2N1LJpoqeZ2yLanngd6FjY8ekNdrB2wF2dlSj+8+8Zce8ajHhlX7zDcJ8syxSZGja7nCTo1oZpB9d23XOyCUugQuMluoS1JJgU1oQXUzRDAGYLjquposa6eMEBcBzgtqr2yCcDQtIT6HtKEUdpg=
+	t=1728392895; cv=none; b=Tt/+Fr5VGISQSN8a0RBGAzv+uekzKLksWQjuGKSTtaCdtul+V/MFqcBDen6NLCZHFwLzjdzWWGZ5XaTkfzs8r4M0FcjIX2t21OWy9DBCSsrzZ9MdXTm/Uja2lPv2W7hlMIkGgQrNe6KJuagdr+R5nnP5eHcJ7oQjG8ZZgnYPs/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392460; c=relaxed/simple;
-	bh=h0eqizrzvYl6Uq7wcFh5HCi7VcoChZjTWjuB7JRAYw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJQbpyB+axKR0R9Ac71cX1H92ZYE+JETlwuuyKxwS8ptjpS+hyUrhhsEBZa9JtBtAJVbMKCS52GlkvOqsku4k1z1/sz85YwjamrANPIiMSXPcwLpaidqpcZEf8rSAWBXPCVdMX768PqQu3mVoES1huCPexJtdsclmiVJx7Wlimk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Jr+LQZcw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=efcnzor9FQOZgn8Q7CqORQfIwqJ3qUcW4F3Xo2K+mYQ=; b=Jr+LQZcwGpvAIqdCVIyWaSeeLx
-	+FWB4e1QxTJcCs1P7UO2dV4mpqu+5RQRwr4cdyHD5VAAHxF3y2kVJSyASrVn6WYK9z5zrtqpiv7m4
-	rCE3RIwjFN97YvWg73XhE80Sju8BaUWx6Ik9heVUSKvR6Os9Zcob9ENm9bF/N2BfDDaQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sy9pd-009N4E-PT; Tue, 08 Oct 2024 15:00:53 +0200
-Date: Tue, 8 Oct 2024 15:00:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
- get and set phy configuration
-Message-ID: <f1af0323-23f5-44fd-a980-686815957b5a@lunn.ch>
-References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
- <20241004161601.2932901-8-maxime.chevallier@bootlin.com>
- <4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
- <ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
- <20241007123751.3df87430@device-21.home>
- <6bdaf8de-8f7e-42db-8c29-1e8a48c4ddda@lunn.ch>
- <20241007154839.4b9c6a02@device-21.home>
- <b71aa855-9a48-44e9-9287-c9b076887f67@lunn.ch>
- <20241008092557.50db7539@device-21.home>
+	s=arc-20240116; t=1728392895; c=relaxed/simple;
+	bh=1s8jDLz4xsPK7rdXBwFDX7m1XmwgNdlX1mlSZLpHbZ4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=c9R+EQ7oQSkhrBC8GSP/ojLCdG/ObiwZ0GgcZ7kA+d+dLKU6jd67OHl6T9rrLamTBkgIAwhERjRMYPaygRr7zd7scZvJsts2jjiscHSDM1DirgV77ZwzpyW+0pb0RWA2PsHUWfk44qQR5EyhIhpMAwY0hKLD0A6TYv1wb48seOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kXfEDZ1h; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498CtsVf006392;
+	Tue, 8 Oct 2024 13:07:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:date:from:message-id:subject:to; s=corp-2023-11-20; bh=rjSoOMSa
+	uMzXhjoJcHAzY8r8uKcpbwQWm8/vJhmG4qM=; b=kXfEDZ1hPJL8/YY0Mbce0Q0H
+	kthEycWPzKjHz4CYwdYDMkBEfw6K97XR6smfnUAJxpbW4wfHsY1wZvDaeYXsEbYx
+	Pf140liBmBcqoksnfdhbbrIfi9fUhkwQ/EV4V0EN8DRevF5p3xDhOm6bUig0mKHy
+	tLzH8deTsDW9LdrjIPitX7gLyW+SofUJ+vuEUjQgFKWTiSEhGpID/S+lra7sop8f
+	4MlRpZZlhILspBA1DqSDZHDnvrOol2/yboR0lpowWSaMKK87TXUjL+tu2grfCD8M
+	IpmhnNHMS/JzorgCi3NUTjZZilCvYsRttZ1UWHoVk8BgkLSmzeEWI02gKTgK2Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 422yyv5rt1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 08 Oct 2024 13:07:04 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 498C6r8B001243;
+	Tue, 8 Oct 2024 13:07:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw75ryp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 08 Oct 2024 13:07:03 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 498D720i035615;
+	Tue, 8 Oct 2024 13:07:02 GMT
+Received: from gkennedy-linux.us.oracle.com (gkennedy-linux.us.oracle.com [10.152.170.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 422uw75rwg-1;
+	Tue, 08 Oct 2024 13:07:02 +0000
+From: George Kennedy <george.kennedy@oracle.com>
+To: ravi.bangoria@amd.com
+Cc: george.kennedy@oracle.com, harshit.m.mogalapalli@oracle.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dongli.zhang@oracle.com,
+        stable@vger.kernel.org
+Subject: [PATCH] [PATCH v3] perf/x86/amd: check event before enable to avoid GPF
+Date: Tue,  8 Oct 2024 08:00:53 -0500
+Message-Id: <1728392453-18658-1-git-send-email-george.kennedy@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-08_11,2024-10-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=889 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410080083
+X-Proofpoint-GUID: Csx44xj9ZCE0QeYwfVVPYRjwsxjGHVxN
+X-Proofpoint-ORIG-GUID: Csx44xj9ZCE0QeYwfVVPYRjwsxjGHVxN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008092557.50db7539@device-21.home>
 
-> > So you have at least regulators under Linux control? Is that what you
-> > mean by power down? Pulling the plug and putting it back again is
-> > somewhat different to isolation. All its state is going to be lost,
-> > meaning phylib needs to completely initialise it again. Or can you
-> > hide this using PM? Just suspend/resume it?
-> 
-> Ah no, I wasn't referring to regulators but rather the BMCR PDOWN bit to
-> just shut the PHY down, as in suspend.
+On AMD machines cpuc->events[idx] can become NULL in a subtle race
+condition with NMI->throttle->x86_pmu_stop().
 
-Ah! I wounder what 802.3 says about PDOWN? Does it say anything about
-it being equivalent to ISOLATE? That the pins go HI-Z? Are we talking
-about something semi-reliable, or something which just happens to work
-for this PHY?
+Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
+This appears to be an AMD only issue.
 
-> Indeed the state is lost. The way I'm supporting this is :
-> 
->  - If one PHY has the link, it keeps it until link-down
->  - When link-down, I round-robin between the 2 phys: 
-> 
->   - Attach the PHY to the netdev
->   - See if it can establish link and negotiate with LP
->   - If there's nothing after a given period ( 2 seconds default ), then
-> I detach the PHY, attach the other one, and start again, until one of
-> them has link.
+Syzkaller reported a GPF in amd_pmu_enable_all.
 
-This sounds pretty invasive to the MAC driver. I don't think you need
-to attach/detach each cycle, since you don't need to send/receive any
-packets. You could hide this all in phylib. But that should be
-considered as part of the bigger picture.
+INFO: NMI handler (perf_event_nmi_handler) took too long to run: 13.143
+    msecs
+Oops: general protection fault, probably for non-canonical address
+    0xdffffc0000000034: 0000  PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x00000000000001a0-0x00000000000001a7]
+CPU: 0 UID: 0 PID: 328415 Comm: repro_36674776 Not tainted 6.12.0-rc1-syzk
+RIP: 0010:x86_pmu_enable_event (arch/x86/events/perf_event.h:1195
+    arch/x86/events/core.c:1430)
+RSP: 0018:ffff888118009d60 EFLAGS: 00010012
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000034 RSI: 0000000000000000 RDI: 00000000000001a0
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+R13: ffff88811802a440 R14: ffff88811802a240 R15: ffff8881132d8601
+FS:  00007f097dfaa700(0000) GS:ffff888118000000(0000) GS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200001c0 CR3: 0000000103d56000 CR4: 00000000000006f0
+Call Trace:
+ <IRQ>
+amd_pmu_enable_all (arch/x86/events/amd/core.c:760 (discriminator 2))
+x86_pmu_enable (arch/x86/events/core.c:1360)
+event_sched_out (kernel/events/core.c:1191 kernel/events/core.c:1186
+    kernel/events/core.c:2346)
+__perf_remove_from_context (kernel/events/core.c:2435)
+event_function (kernel/events/core.c:259)
+remote_function (kernel/events/core.c:92 (discriminator 1)
+    kernel/events/core.c:72 (discriminator 1))
+__flush_smp_call_function_queue (./arch/x86/include/asm/jump_label.h:27
+    ./include/linux/jump_label.h:207 ./include/trace/events/csd.h:64
+    kernel/smp.c:135 kernel/smp.c:540)
+__sysvec_call_function_single (./arch/x86/include/asm/jump_label.h:27
+    ./include/linux/jump_label.h:207
+    ./arch/x86/include/asm/trace/irq_vectors.h:99 arch/x86/kernel/smp.c:272)
+sysvec_call_function_single (arch/x86/kernel/smp.c:266 (discriminator 47)
+    arch/x86/kernel/smp.c:266 (discriminator 47))
+ </IRQ>
 
-I assume it is not actually 2 seconds, but some random number in the
-range 1-3 seconds, so when both ends are searching they do eventually
-find each other?
+Reported-by: syzkaller <syzkaller@googlegroups.com>
+Signed-off-by: George Kennedy <george.kennedy@oracle.com>
+---
+ Suggested comment now with the code.
 
-> > That explains the hardware, but what are the use cases? How did the
-> > hardware designer envision this hardware being used?
-> 
-> The use-case is link redundancy, if one PHY loses the link, we hope
-> that we still have link on the other one and switchover. This is one of
-> the things I discussed at netdev 0x17.
+ arch/x86/events/amd/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> > If you need to power the PHY off, you cannot have dynamic behaviour
-> > where the first to have link wins. But if you can have the media side
-> > functional, you can do some dynamic behaviours.
-> 
-> True.
-> 
-> > Although, is it wise
-> > for the link to come up, yet to be functionally dead because it has no
-> > MAC connected?
-> 
-> Good point. What would you think ? I already deal with the identified
-> issue which is that both PHYs are link-up with LP, both connected to
-> the same switch. When we switch between the active PHYs, we send a
-> gratuitous ARP on the new PHY to refresh the switch's FDB.
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 920e3a640cad..6615ace15f5d 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -762,7 +762,12 @@ static void amd_pmu_enable_all(int added)
+ 		if (!test_bit(idx, cpuc->active_mask))
+ 			continue;
+ 
+-		amd_pmu_enable_event(cpuc->events[idx]);
++		/*
++		 * FIXME: cpuc->events[idx] can become NULL in a subtle race
++		 * condition with NMI->throttle->x86_pmu_stop().
++		 */
++		if (cpuc->events[idx])
++			amd_pmu_enable_event(cpuc->events[idx]);
+ 	}
+ }
+ 
+-- 
+2.39.3
 
-It seems odd to me you have redundant cables going to one switch? I
-would have the cables going in opposite directions, to two different
-switches, and have the switches in at a minimum a ring, or ideally a
-mesh.
-
-I don't think the ARP is necessary. The link peer switch should flush
-its tables when the link goes down. But switches further away don't
-see such link events, yet they learn about the new location of the
-host. I would also expect the host sees a loss of carrier and then the
-carrier restored, which probably flushes all its tables, so it is
-going to ARP anyway.
-
-> 
-> Do you see that as being an issue, having the LP see link-up when the
-> link cannot actually convey data ? Besides the energy detect feature
-> you mention, I don't see what other options we can have unfortunately :(
-
-Maybe see what 802.3 says about advertising with no link
-modes. Autoneg should complete, in that the peers exchange messages,
-but the result of the autoneg is that they have no common modes, so
-the link won't come up. Is it clearly defined what should happen in
-this case? But we are in a corner case, similar to ISOLATE, which i
-guess rarely gets tested, so is often broken. I would guess power
-detection would be more reliable when implemented. 
-
-> > There are some Marvell Switches which support both internal Copper
-> > PHYs and a SERDES port. The hardware allows first to get link to have
-> > a functional MAC. But in Linux we have not supported that, and we
-> > leave the unused part down so it does not get link.
-> 
-> My plan is to support these as well. For the end-user, it makes no
-> difference wether the HW internally has 2 PHYs each with one port, or 1
-> phy with 2 ports. So to me, if we want to support phy_mux, we should
-> also support the case you mention above. I have some code to support
-> this, but that's the part where I'm still getting things ironed-out,
-> this is pretty tricky to represent that properly, especially in DT.
-> 
-> >
-> > Maybe we actually want energy detect, not link, to decide which PHY
-> > should get the MAC?  But i have no real idea what you can do with
-> > energy detect, and it would also mean building out the read_status()
-> > call to report additional things, etc.
-> 
-> Note that I'm trying to support a bigger set of use-cases besides the
-> pure 2-PHY setup. One being that we have a MUX within the SoC on the
-> SERDES lanes, allowing to steer the MII interface between a PHY and an
-> SFP bus (Turris Omnia has such a setup). Is it possible to have an
-> equivalent "energy detect" on all kinds of SFPs ?
-
-The LOS pin, which indicates if there is light entering the SFP.
-
-> As a note, I do see that both Russell and you may think you're being
-> "drip-fed" (I learned that term today) information, that's not my
-> intent at all, I wasn't expecting this discussion now, sorry about that.
-
-It is a difficult set of problems, and you are addressing it from the
-very niche end first using mechanisms which i expect are not reliably
-implemented. So we are going to ask lots of questions.
-
-You probably would of got less questions if you have started with the
-use cases for the Turris Omnia and Marvell Ethernet switch, which are
-more mainstream, and then extended it with your niche device. But i
-can understand this order, you probably have a customer with this
-niche device...
-
-	Andrew
 
