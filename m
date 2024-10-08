@@ -1,113 +1,143 @@
-Return-Path: <linux-kernel+bounces-354857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136839943B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5BA9943B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642EEB29241
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECF11F22E0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944BA19306A;
-	Tue,  8 Oct 2024 09:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7802178CC8;
+	Tue,  8 Oct 2024 09:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZsrRmWc3"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E8418C900;
-	Tue,  8 Oct 2024 09:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FrYa7Z+l"
+Received: from mail-8160.188.com (mail-8160.188.com [60.191.81.60])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB21762D2;
+	Tue,  8 Oct 2024 09:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.81.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728378295; cv=none; b=W+YF1zWmDtXriqcsfxvsqQDbe5M4m8hANHf5WCyE9m6PUoi+4zYKUa3I4JsX/uBSJJKmbPeyIThJDpp1Z36tKPlhV4XEFWdmdYQ2SwzbKfd9PG1iD+6A2PyrPBuynfrw11kctugPYB1JejqATP2/tO1jPJv1jFrZBxUDA6YYQgk=
+	t=1728378503; cv=none; b=E/jHpN9HhoZpIYjMQVONSkhZ5v6fCl8Kv8zSyBBcJlRMKMJ+XQ8IVNDzjR7WlS+ArgflRGrMaCmLtKTZs+fWCJq9BHE0kLjJc/WXWZOfWZ6lO8fg8LxKdiz2ubwlnZCPqEn60ndi+tR05eUO+6uuan1j80Bd9SPZ/FpJeQTa7Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728378295; c=relaxed/simple;
-	bh=vOeNwF5HYjy+FpU+6wB3oyl5C8h4PqkMYqgOx3rhiRo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fty9uGV52yqnrSGlez/wlqT1uT/T7iKm08ZPVhHj44IC6l+daOTnfjl+5r4JmVzd1o5EinFGQaOf3726R4A3gpQVJi0I2Zb4FTZ6QQt9jbIg2/TZfuhMC61fhWTaHp6EMsSz5PK+Pt22Mtq8d4OONwKo1hBMzXx+pFZTinGQPCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZsrRmWc3; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728378273; x=1728983073; i=markus.elfring@web.de;
-	bh=vOeNwF5HYjy+FpU+6wB3oyl5C8h4PqkMYqgOx3rhiRo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ZsrRmWc3L2v62MGTOa/X+IxK9OQxL+HultWO8TpBUj288rHoYj/qLAwvIARKKzVN
-	 wnMCZ76v+WTkvBVQETLfXxGwfoyqeKMa4NlUgeCNHKHOKoExLt4mIA4sSCYB5Y/S4
-	 Ak6Ut+L7vazDw8NaSNbtFXu1ZfhOmK7FLCZA+G61La0RqLtM+lHjQb9DDners4t6X
-	 H/v4Z/wHVF7RwIgZj0g463pho2tzibzveYxpFAK28d0FtVqHCgKvef4swO9YTdIjV
-	 4CKJJPBslQrdhY3YP4dTdO3nPUydJqc7azRJFCzOJ75Ta+J0Pv2w8oU7xs2ctdf5P
-	 KbVLlkaPSV5m0dAKtQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mpl4x-1tlgRI30SD-00nObo; Tue, 08
- Oct 2024 11:04:33 +0200
-Message-ID: <a862e4fe-af97-469b-8fd5-b2b0bafc6601@web.de>
-Date: Tue, 8 Oct 2024 11:04:32 +0200
+	s=arc-20240116; t=1728378503; c=relaxed/simple;
+	bh=xp/68Cx4JRlTeL+tOib/NRX+oEcRL3V4NdWuBHUXf3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U82phmCo0+hnB8mLIJZDu9nqQtgvwqRGrPUaXA5hK8YBFBu7kXhXWuKpp8djIiU6Gepfb6rwWE6iTyo1Cfo45ZUW2kWm2LWsLmfNrlOndAn0JbtgvxEHnyg8yaLs7LVLI60tYGAKeD2CR5+xcBS8ZoRRWuYqegP/q3n6+oPF7Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FrYa7Z+l; arc=none smtp.client-ip=60.191.81.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=yXkETMi/gK2MJh7u9gvD7PcmwNOwvmahYOded8umsZ8=;
+	b=FrYa7Z+lriH5elBiljxR0b6E/mRPZqy2Cbhq5tdiPuKblf3MA+0w3cIhFrKryj
+	tTtZFlc1fXWsQpIRoCfszLI4iA5LJdHMeur2bWuC/h81s9dxHoS56XhxfJ2QSpQu
+	dKQLKeej9seIsUzZ27nbx7BQpQJYUVh4FsYXoLeRG0V7g=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgC3Z9q19QRnWp7VAQ--.58757S3;
+	Tue, 08 Oct 2024 17:04:56 +0800 (CST)
+Date: Tue, 8 Oct 2024 17:04:53 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: Re: [PATCH v2 0/4] arm64: dts: imx8mm-kontron: Add HDMI and LVDS
+ display support
+Message-ID: <ZwT1tUhrO/avFG+4@dragon>
+References: <20240828074753.25401-1-frieder@fris.de>
+ <3280f47c-f1e4-4e12-8b48-4e5f68b7a606@kontron.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Alex Lanzano <lanzano.alex@gmail.com>,
- Mehdi Djait <mehdi.djait@bootlin.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org,
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Shuah Khan <skhan@linuxfoundation.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-References: <20241008030341.329241-1-lanzano.alex@gmail.com>
-Subject: Re: [PATCH v10 0/2] Add driver for Sharp Memory LCD
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241008030341.329241-1-lanzano.alex@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hN+eO2bYOu7RJGSr0CIoJXNI3UqnDjFeiXWoWVNFHP/KqYR2jvi
- MM0ca7NBKFAvFsSaynK85R2DSpzOTFuFdHiuQEu/Fiakz/o/5Ic9sXxTeOF1LMGXWsAPWGH
- LOljMGnJ90/9jKwRPS1WqTWnmw4jUBGzuuo6miu6qS6yQHm797SHnwDb0gMn8z6nWB3rWYw
- jAyOkjBQ8RVpNomLzseYA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gPyJ1herBSE=;3VAUm4TJSoHdSIHai2gWjdyPJNV
- umTBQzUn3h4triRCkF45qq8KEKHx8ex30h+d7ev5omN3le/OTT4Z22fqbC9PEwPPqIqTJkEdm
- 9BhfNLDsfepLvJ6/zMJIq6e6kBKaMcvYLPqV5iCLEgwzmnjnit4n/CJpd+AENrsi+NXpQzdbB
- 9E6ScGAF07HXj7NsWe1HMhkdR0ZM1WnFuDGyCqg3fm5yfJuzEkAnR+q3QK/wDiwlqjPpg26Vi
- 2WKwGQXHd5cRyGbfaK1hyoiwuz7F5EDCbjpWf2tMo6998GE3lZBdk+X4xKMKiy+MmbJ0+BqTo
- mvwuVb3xJnIOpmJIV2I0XEXiUWqaCgQpx0Lpl+I3EG9qZcXUOr+J73UesOE57PnQH1gl3GG49
- rRp/Ypb8GXhrvA3gco7CGhui60XubaOzhLGu/nCsU/SfudjSnqD3JLTrYr0Dq1UaBDXd5QDqH
- pwnT3rcs1x6T+fUyQuOOaHtTaqqCnLC8iDKRc4l28z5/JeM8YlxrCc42+k5CmdhjfWvhGOb5q
- OZ2BgnyTZEM1cfynj8RWIUBkyIxmkWE8BWYG9TqZTpurgOOmW931vCdVuRscliR8XgFM0fJUI
- HJThPSevXYfyVQ0QAX+R3kP3k7IEMtaUdP/COEmyqkSTNSyj2DGOAFIDdjHQokpO6vwDYKG4D
- TK8R0VQL6rMJE1OMG2Ft7iRRTnnxgwQmNnKx/i8jkkGz3/P3K5Kpgkzyw4Tx9Z0iCpH3dJUqR
- YDXywdYxs71hiVFvrFwig7WoIHVhe7nank/qQ9tTAET6zhAgRunFpY8LGQdG8Hz9m4HC5ecE/
- j5B5pheCMY2VzLrkbWfNhPLQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3280f47c-f1e4-4e12-8b48-4e5f68b7a606@kontron.de>
+X-CM-TRANSID:Mc8vCgC3Z9q19QRnWp7VAQ--.58757S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ur4xZrWUtrW7ZryUurWDCFg_yoW8Cw4xpF
+	Z5W39rtrykGr15ArZrXwn5WrWjywn8JF43KwsYq34DKa4rAF1aqr1SkrW5ur4UuF4fWa9Y
+	kF4qgr9aqr98JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgiSQUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgxyZWcErZHkMQAAsD
 
-> This patch series add support for the monochrome Sharp Memory LCD panels=
-.
-=E2=80=A6
-> ---
-> Changes in v10:
-=E2=80=A6
+On Tue, Oct 08, 2024 at 09:21:05AM +0200, Frieder Schrempf wrote:
+> On 28.08.24 9:46 AM, Frieder Schrempf wrote:
+> > From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> > 
+> > This add support for the display bridges (DSI->LVDS and DSI->HDMI)
+> > on the BL i.MX8MM and the 7" LVDS panel in a separate overlay.
+> > 
+> > Only one of the interfaces (HDMI or LVDS) is supported at the same
+> > time. Enabling the LVDS overlay will disable the HDMI interface.
+> > 
+> > * Patch 1 and 2: Add the necessary binding changes
+> > * Patch 3: Extend the BL devicetree
+> > * Patch 4: Add the LVDS panel overlay
+> > 
+> > Changes for v2:
+> > * Patch 1: Add link to commit message
+> > * Patch 2: Add Conors A-b tag
+> > * Patch 3: Remove blank lines from hdmi node
+> > * Patch 3: Fix order of lvds and hdmi nodes within i2c
+> > * Patch 3: Remove the unneeded deletion of samsung,pll-clock-frequency
+> > * Patch 3: Use the existing MIPI DSI output port from imx8mm.dtsi
+> > * Patch 4: Update copyright year
+> > * Patch 4: Use exisitng MIPI DSI output port from imx8mm.dtsi
+> > * Patch 4: Fix pinctrl for GPIO hogs
+> > * Patch 4: Fix property order in i2c2 node
+> > * Patch 4: Use generic node name for touchscreen
+> > 
+> > Frieder Schrempf (4):
+> >   dt-bindings: vendor-prefixes: Add Jenson Display
+> >   dt-bindings: display: panel-lvds: Add compatible for Jenson
+> >     BL-JT60050-01A
+> >   arm64: dts: imx8mm-kontron: Add support for display bridges on BL
+> >     i.MX8MM
+> >   arm64: dts: imx8mm-kontron: Add DL (Display-Line) overlay with LVDS
+> >     support
+> 
+> Gentle ping for this series. Neil proposed to apply path 1 and 2 to
+> drm-misc-next. Shawn, can you review/apply patch 3 and 4, please?
 
-Is the support for the application of scope-based resource management
-still ignored here?
+I'm getting this:
 
-Regards,
-Markus
+  OVL     arch/arm64/boot/dts/freescale/imx8mm-kontron-dl.dtb
+Failed to apply 'arch/arm64/boot/dts/freescale/imx8mm-kontron-dl.dtbo': FDT_ERR_NOTFOUND
+make[4]: *** [../scripts/Makefile.dtbs:83: arch/arm64/boot/dts/freescale/imx8mm-kontron-dl.dtb] Error 1
+
+Shawn
+
 
