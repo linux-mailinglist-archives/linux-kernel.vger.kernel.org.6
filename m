@@ -1,176 +1,155 @@
-Return-Path: <linux-kernel+bounces-354981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4967399457B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AC499457E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD45F2883A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A82C1F21FD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC461D359E;
-	Tue,  8 Oct 2024 10:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC861C1AB5;
+	Tue,  8 Oct 2024 10:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ldUoZrFe"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KBghyJgc"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57503192B6F;
-	Tue,  8 Oct 2024 10:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D956A17B4EC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 10:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728383395; cv=none; b=LwePZwJwDovqoXc7RqJzLmHBiRPsWqCE3s6BDxYQ0/q/4Mqq3+IIPhN8jcjurh4L8gUSmTzSL8nptOf2gJmZbA3ll3QXBLNc8AVPaaCd07Kf+QwLjyVdLKaj2wlCXWpT9qNpF70cqpXBBUS7tr0b2w9u/MyXTekZ1Y55gKFNUJ4=
+	t=1728383454; cv=none; b=mtgkEgpJM4vyvTf6mi5LFxYjI47GWTEA6YDmQuHfNqLZI4AIMkcsOEbPecaeByDY3SymMb/Pyk+v4T/E7cSup9gCLLxD2nFlf1i3ySPzVjofxPfEMd8PTIRVoZZB/MoJKg2PJiLAMH2fwFwemrrauN+FFc66WTcDdOqSWO4D/20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728383395; c=relaxed/simple;
-	bh=5a0Oxf7lFMAgi2SILZFtB1/bra4shl5qEpwMA/a01jk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LH7WRCyjmmIXzj8Hd8dtH1yehfa/xys6R5sAeZFR1PdD28qk96C6DA/5ziFeW3J2MQkF+zI5U/9gEPs2bqYSj54MEc8SYVmxp3rNYO+A+iJhF6zPt2VSfe5iQCMCAmi9HPCwoRvUaXZq3GDLdO3Zt8u8AsEXA7iej4yb0GyATbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ldUoZrFe; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 45EEEE000D;
-	Tue,  8 Oct 2024 10:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728383385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ANQX8H7crnEHXkyTrpbWnxCPQMuaKFHhdRyusFeiLjE=;
-	b=ldUoZrFei8MWb9I7J39PmFVdEQubxARTCjr9daNCIvTUXc18GUm0WZnEr1qCPG83UXGMmY
-	mNdWfc64N3H57bgBsq+hCv/AjRPAZsAJiVggLUfoOSRBTRzrxDuFDIihgfXWKfSp+lS7FQ
-	+lPc3Pyiib3wGbUZGgpvRIawbvt/ZFYkq3VhJ5Hgqu+fQFijIB3BiE+ywpgoS0CVw5PuTX
-	3x5t1lS3SvY8ECgJkfDmpZr7tBJSexZmo2wIORGMVEfASUWuegIHlqEzZmPQ4Ry30II2Qw
-	hZnlJ5o6sGI8ggVF8jT2K6sC6p9olLZAcbvsont0B/4jDwm0ojcFIApuG21JjQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 08 Oct 2024 12:29:43 +0200
-Subject: [PATCH 4/4] i2c: nomadik: support >=1MHz speed modes
+	s=arc-20240116; t=1728383454; c=relaxed/simple;
+	bh=gRzWGABLBOYGZ5156Vsju1jZYGhriRM78cFt0cWliaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TL9DDwEEgz6TNCvdKAKrTohFeOqofenpQO7gzNXIrT98xV+ICBgbu6Qt4PLEE8Wak84cpipZGK5axtDGD64mnbQk2egv64MXDGoS5T2u3q7FodJjp6arKw0y/xO5xYy8UokHBPYI8NvkkPto4xF1NATqBbhwD/Rt0rwa19XGwYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KBghyJgc; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e042f4636dso3284794b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 03:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728383452; x=1728988252; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RaHMxhDG9Q5VfYwqCidMK07jWJtcWPqFxkIOCBw9G7M=;
+        b=KBghyJgceIwJhY5YKVjX/Mu4NdqBigrke4dJGuKwykJUd1xowQS5V8dBVPo9fHuFlb
+         DJSc2y4Omi9K6o0vegq9K9xhlydHkmLGTjhaLePBU5ZxM9aXRczbTGwhfFNmg9Khpwde
+         Wx57JLXAMpufJYPI1RDg0czJ7bugsOwAbFzOD5zDcPdXcJa09GKb2+xnIonIO+gG7Y+E
+         L0icWPiFG2s7kQN6Ix6eMrUyX5wi+eggxKZ2yoF3eT4fXyw0BmMPqKG9saJYHj675c42
+         5oGSNCvJlYiqFq3Z2oB6sWShqLFl/e8uvRuy3vyuYsB8DmOLfmb3RZ2A9v4rM+UHnGtK
+         DCdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728383452; x=1728988252;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RaHMxhDG9Q5VfYwqCidMK07jWJtcWPqFxkIOCBw9G7M=;
+        b=OEYWn+KB5EDyunou6PBOwKFaw70yUEm1vsXZUR9dK9pv2yQzFEXBoCWYHSiGWMmwvR
+         b+yGFuPw7D2+KDD+HvttkNTzJyfW0pyQV1hcDFg339QgDjXtcfvFgYXG0VNro+u5uH5a
+         4aVSTVMpagn5p/UQagQI1sKS4hduIFm9RdNNY8NS27pdK666uexYvY8xWkhLBaTpJqBo
+         DNmkS/nRMtSEZaQW5JiinT5p/zHIEq/7sdk04Sq8oXkEjV6ijhKPWDkusv9sjP0ZacIY
+         Q3LxOJd7AYDenm4a8EBkJgJb8p+x1NjLjQJ12XYMkYFJjPFintT7jL9tuTovbnrJql4m
+         jg+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qXagUxhglr4MADEETA3QiJ83MMPmzYZH8QOHvhlHwv3QPubvG/+6Nw2x+WXXSAU4qHc75L1+AhfHPp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdxAww+f5Pff4RKWAo8ynKOYrCjsDUDfmScvdikm7AevUJcJLj
+	CqcOjyh22Iwskdwj6JHYMjr7QEJxqLCIEWAdVAyTEFiHSkXJ2Stnf10HWmTamRRJ94ioDypg8jA
+	XoJHPgMO7HfXCKrjub2Lo2rfOMwZzjQMd8B+jsg==
+X-Google-Smtp-Source: AGHT+IECvbGsHbDZVwRBHFdZOxOBV8fzhLQbc98HH+KbY0vj5cIu1DHOWiwPL1MGN/TExuJHK09aKSFF/Y+e5zkJckg=
+X-Received: by 2002:a05:6808:1927:b0:3e0:49c6:d580 with SMTP id
+ 5614622812f47-3e3c177c251mr9658210b6e.33.1728383451979; Tue, 08 Oct 2024
+ 03:30:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241008-mbly-i2c-v1-4-a06c1317a2f7@bootlin.com>
-References: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
-In-Reply-To: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: theo.lebrun@bootlin.com
+References: <20241002201555.3332138-1-peter.griffin@linaro.org>
+ <20241002201555.3332138-2-peter.griffin@linaro.org> <ZwN/d8l7Mk6x2GHP@vaman>
+In-Reply-To: <ZwN/d8l7Mk6x2GHP@vaman>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 8 Oct 2024 11:30:41 +0100
+Message-ID: <CADrjBPrRrwEyg0p+6kfVoZGbPdvW6K3fa9paUoLyg_bHHScgHg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] phy: Add UFS phy hibernate modes
+To: Vinod Koul <vkoul@kernel.org>
+Cc: kishon@kernel.org, krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, kernel-team@android.com, 
+	willmcvicker@google.com, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
- - BRCR value must go into the BRCR1 field when in high-speed mode.
-   It goes into BRCR2 otherwise.
+Hi Vinod,
 
- - Remove fallback to standard mode if priv->sm > I2C_FREQ_MODE_FAST.
+Thanks for your review.
 
- - Set SM properly in probe; previously it only checked STANDARD versus
-   FAST. Now we set STANDARD, FAST, FAST_PLUS or HIGH_SPEED.
+On Mon, 7 Oct 2024 at 07:28, Vinod Koul <vkoul@kernel.org> wrote:
+>
+> Hi Peter,
+>
+> On 02-10-24, 21:15, Peter Griffin wrote:
+> > Some UFS phys need to write hibernation specific values
+> > when entering and exiting hibernate state.
+> >
+> > Add two new UFS phy modes to the phy framework so that this
+> > is possible. One such platform that requires this is Pixel 6
+> > which uses the gs101 SoC.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  include/linux/phy/phy.h | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> > index 03cd5bae92d3..1874e55e2bb9 100644
+> > --- a/include/linux/phy/phy.h
+> > +++ b/include/linux/phy/phy.h
+> > @@ -42,7 +42,9 @@ enum phy_mode {
+> >       PHY_MODE_MIPI_DPHY,
+> >       PHY_MODE_SATA,
+> >       PHY_MODE_LVDS,
+> > -     PHY_MODE_DP
+> > +     PHY_MODE_DP,
+> > +     PHY_MODE_UFS_HIBERN8_ENTER,
+> > +     PHY_MODE_UFS_HIBERN8_EXIT,
+>
+> I am not sure I like this. why should this be the model? Phy drivers
+> should listen to pm events and handle this in pm_suspend/resume calls,
+> why do we need this special mode here...
 
- - Remove all comment sections saying we only support low-speeds.
+There are a couple of reasons I added it here:
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/i2c/busses/i2c-nomadik.c | 40 ++++++++++++++++------------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
+1) Whilst link hibern8 mode can be used as part of runtime PM and
+system PM, it is also used outside of those contexts by ufshcd.c. The
+host controller can enable UFSHCD_CAP_HIBERN8_WITH_CLK_GATING (which
+will be the case for gs101 / Pixel 6) and the UFS clocks are gated and
+link put into hibern8 mode for periods of inactivity. When that
+happens the rest of the system isn't entering any sort of sleep state.
 
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
-index 68ce39352d67477fa22424e2dc0f8d1741498cd1..82571983bbca5ebcd8a689d4d717ea96eb3d2ad2 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -396,7 +396,7 @@ static u32 load_i2c_mcr_reg(struct nmk_i2c_dev *priv, u16 flags)
-  */
- static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- {
--	u32 brcr1, brcr2;
-+	u32 brcr;
- 	u32 i2c_clk, div;
- 	u32 ns;
- 	u16 slsu;
-@@ -443,7 +443,7 @@ static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- 	/*
- 	 * The spec says, in case of std. mode the divider is
- 	 * 2 whereas it is 3 for fast and fastplus mode of
--	 * operation. TODO - high speed support.
-+	 * operation.
- 	 */
- 	div = (priv->clk_freq > I2C_MAX_STANDARD_MODE_FREQ) ? 3 : 2;
- 
-@@ -451,33 +451,22 @@ static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- 	 * generate the mask for baud rate counters. The controller
- 	 * has two baud rate counters. One is used for High speed
- 	 * operation, and the other is for std, fast mode, fast mode
--	 * plus operation. Currently we do not supprt high speed mode
--	 * so set brcr1 to 0.
-+	 * plus operation.
- 	 *
- 	 * BRCR is a clock divider amount. Pick highest value that
- 	 * leads to rate strictly below target.
- 	 */
--	brcr1 = FIELD_PREP(I2C_BRCR_BRCNT1, 0);
--	brcr2 = FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_freq * div) + 1);
-+	brcr = i2c_clk / (priv->clk_freq * div) + 1;
-+
-+	if (priv->sm == I2C_FREQ_MODE_HIGH_SPEED)
-+		brcr = FIELD_PREP(I2C_BRCR_BRCNT1, brcr);
-+	else
-+		brcr = FIELD_PREP(I2C_BRCR_BRCNT2, brcr);
- 
- 	/* set the baud rate counter register */
--	writel((brcr1 | brcr2), priv->virtbase + I2C_BRCR);
-+	writel(brcr, priv->virtbase + I2C_BRCR);
- 
--	/*
--	 * set the speed mode. Currently we support
--	 * only standard and fast mode of operation
--	 * TODO - support for fast mode plus (up to 1Mb/s)
--	 * and high speed (up to 3.4 Mb/s)
--	 */
--	if (priv->sm > I2C_FREQ_MODE_FAST) {
--		dev_err(&priv->adev->dev,
--			"do not support this mode defaulting to std. mode\n");
--		brcr2 = FIELD_PREP(I2C_BRCR_BRCNT2,
--				   i2c_clk / (I2C_MAX_STANDARD_MODE_FREQ * 2));
--		writel((brcr1 | brcr2), priv->virtbase + I2C_BRCR);
--		writel(FIELD_PREP(I2C_CR_SM, I2C_FREQ_MODE_STANDARD),
--		       priv->virtbase + I2C_CR);
--	}
-+	/* set the speed mode */
- 	writel(FIELD_PREP(I2C_CR_SM, priv->sm), priv->virtbase + I2C_CR);
- 
- 	/* set the Tx and Rx FIFO threshold */
-@@ -1018,11 +1007,14 @@ static void nmk_i2c_of_probe(struct device_node *np,
- 	if (of_property_read_u32(np, "clock-frequency", &priv->clk_freq))
- 		priv->clk_freq = I2C_MAX_STANDARD_MODE_FREQ;
- 
--	/* This driver only supports 'standard' and 'fast' modes of operation. */
- 	if (priv->clk_freq <= I2C_MAX_STANDARD_MODE_FREQ)
- 		priv->sm = I2C_FREQ_MODE_STANDARD;
--	else
-+	else if (priv->clk_freq <= I2C_MAX_FAST_MODE_FREQ)
- 		priv->sm = I2C_FREQ_MODE_FAST;
-+	else if (priv->clk_freq <= I2C_MAX_FAST_MODE_PLUS_FREQ)
-+		priv->sm = I2C_FREQ_MODE_FAST_PLUS;
-+	else
-+		priv->sm = I2C_FREQ_MODE_HIGH_SPEED;
- 	priv->tft = 1; /* Tx FIFO threshold */
- 	priv->rft = 8; /* Rx FIFO threshold */
- 
+2) From looking at the existing code upstream ufs-qcom.c and
+phy-qcom-qmp-ufs.c look to have similar requirements in that it needs
+to program a set of specific register values depending on the UFS
+gear. To achieve that they added PHY_MODE_UFS_HS_B and
+PHY_MODE_UFS_HS_A modes here and then use phy_set_mode_ext() API in
+ufs_qcom_power_up_sequence() to signal to the phy driver the UFS gear,
+which is then used to choose which set of values to program to the
+phy.
 
--- 
-2.46.2
+The two new UFS phy modes added here for hibern8 are for a very
+similar purpose (to choose a bunch of register values to program), so
+I considered it consistent with what was already being done upstream
+to signal between UFS host drivers and UFS phy drivers. Arguably I
+guess we could have one "mode" PHY_MODE_UFS_HIBERN8 and use the
+submode parameter to indicate whether we are entering (1) or exiting
+(0) from it. I wasn't really sure what the rules/guidelines for the
+submode parameter were though.
 
+Thanks,
+
+Peter
 
