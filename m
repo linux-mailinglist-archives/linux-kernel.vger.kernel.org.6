@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-355400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655BD9951B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989F09951B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23187283007
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01FD282D00
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54CC1E0B63;
-	Tue,  8 Oct 2024 14:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3951DFE3F;
+	Tue,  8 Oct 2024 14:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="d5Mfbreg"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Swn+8EiC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594CF1DF97C;
-	Tue,  8 Oct 2024 14:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B47E1DFE01;
+	Tue,  8 Oct 2024 14:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397659; cv=none; b=SK5vuoyg029W3v/03SgRmjxhFUAck2D4Zbi8zVTi8PNNOy8Lh0zXUSI/EaN7IIONfxJy48xJRFfEXx5S2ODiJ16VJd/Y58d1edY9iQee/4krVuLm3DUzrtSeUXU829pkBCTtzzYIWNancpo5GK4FnJmutG5adJgZxEvjE2JLzX0=
+	t=1728397727; cv=none; b=I41ZKelonFQ38X5Tj397SeTZxnsDLMt1h9WF0rja59NPI2WpO6vglf/OuWtyhp1N6wj/fyOxBhr8Jpd++ASbs9V82LpowxydxbEvMvl1r5rDm/CTiW7biHLZMT/sz9fqFj9TmXSwqlVJYdOvRWOVUhdGWBiH7bHftNou4maS/qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397659; c=relaxed/simple;
-	bh=cqF1IIkxJrWVAPrYmX/qgSgwLz6GPiFD607tDN6UK9Q=;
+	s=arc-20240116; t=1728397727; c=relaxed/simple;
+	bh=BtF+69VuIRUK1uTxBr4lzaNIIAyljbKUCyvoyJAl0BU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsiIG+01OPoiVYu/DusRmzaesB8/1PC1oxIea8IAF+ABBItNEvwsuT4xcpE39cCvzG8erG4rgFQcoL3QqEeGAGzO/MVEPz+lQzdymu0P0pzi+VSpM8zqZBNPZTLFTLJRZGU2sgNZdSYntAoMsz0q6jK8Gb19sHv51sGZsLYM7ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=d5Mfbreg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=a+DkmiR6iBjQTpDltHH1Nmd5nsx6wlgZv69FbKbaRbM=; b=d5MfbregxMAtRARB3jZ6BQgusn
-	johk4FaL3qHonV14S90IKc0bNPwO40xd0c7mEyOe3oLPuyJZz+EQkI+9cSuHgiva0c5s85T6f6Tnn
-	hRPqemOze8k1kwmDgwNTxdQalrff+O4WPXR0ZD1vt20eCm6ld06KeqTvKfS62duZmNwdeKNFbwVZX
-	J1zajTQqDPcfKGyRMve5v+/fSzQsj6ChQVgz4wLhnIwmiTD+n0bsL6SzJGCTi1Sb13PgtYO08BCEd
-	whNlaB6two9xhcOqj8UojT/38nzjyYVHeAyu40pbzjQYnjy0RtQjp7k6qgYl0U6zY7A/KCQufnfd6
-	vQhq1vag==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46250)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1syBBO-0007bI-0Z;
-	Tue, 08 Oct 2024 15:27:25 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1syBBK-0005GB-02;
-	Tue, 08 Oct 2024 15:27:22 +0100
-Date: Tue, 8 Oct 2024 15:27:21 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: check validity of 10GbE
- link-partner advertisement
-Message-ID: <ZwVBSaS7UGCwbqDs@shell.armlinux.org.uk>
-References: <fb736ae9a0af7616c20c36264aaec8702abc84ae.1728056939.git.daniel@makrotopia.org>
- <8fb5c25d-8ef5-4126-b709-0cfe2d722330@lunn.ch>
- <ZwBmycWDB6ui4Y7j@makrotopia.org>
- <ZwUTDw0oqJ1dvzPq@shell.armlinux.org.uk>
- <ZwUelSBiPSP_JDSy@makrotopia.org>
- <ZwUpT9HRdl33gv_G@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYKuJb5u9n8uwk2zwXpIx43kt784xT9udWcND5cqNekwl80ibJlHVAkpEOyO6cO8daJCWtcyFG0w7/UtS7KOzzmqTL/x8w7OIvE3PiwlFu2ja3QMfKS08EJJlCOgC2l9o8Hz/8OqrbdTCPofMaZ4ymUOHN/1oL20B/fFdWJ2oko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Swn+8EiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F499C4CEC7;
+	Tue,  8 Oct 2024 14:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728397727;
+	bh=BtF+69VuIRUK1uTxBr4lzaNIIAyljbKUCyvoyJAl0BU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Swn+8EiCXtFOKeIG+2gplGfRpU2qKSBgOMOi1MaAoqX/MYCsE2fKRSTcv+GvnX+zo
+	 wXnDUPnv7ND9HtZcfUc4T36rZGIq++EjaIUcWOlN22eIgyhybOZ67fEwrurw4PEPl6
+	 Av+owJjgIGE/JuxPYxGnxcFgq+mY5Z7kBwWDYHfthDh0cbIcmrqrYn9HBrr/mjsvdH
+	 M7Ckaso6eaenNnSBFZHD6HiL0tO4z9VGpiAnKXg30tfD1kZZB9WHTxauGiUepvQKGq
+	 EzIJ4ZILwvioZ4E47z3YwcR3ZcIgjMrhkfCABJWOfSuc/hogPGliPs1ClQ1ZzC2R/Z
+	 lMhUC1HgVSgWw==
+Date: Tue, 8 Oct 2024 16:28:38 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v9 07/29] rust: alloc: add module `allocator_test`
+Message-ID: <ZwVBliUmvM_1P4a2@cassiopeiae>
+References: <20241004154149.93856-1-dakr@kernel.org>
+ <20241004154149.93856-8-dakr@kernel.org>
+ <ZwUvT4Zsg-1Dww8b@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,151 +65,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwUpT9HRdl33gv_G@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <ZwUvT4Zsg-1Dww8b@boqun-archlinux>
 
-On Tue, Oct 08, 2024 at 01:45:03PM +0100, Russell King (Oracle) wrote:
-> Let's start checking what we're doing with regards to this register.
+On Tue, Oct 08, 2024 at 06:10:39AM -0700, Boqun Feng wrote:
+> On Fri, Oct 04, 2024 at 05:41:11PM +0200, Danilo Krummrich wrote:
+> > `Allocator`s, such as `Kmalloc`, will be used by e.g. `Box` and `Vec` in
+> > subsequent patches, and hence this dependency propagates throughout the
+> > whole kernel.
+> > 
+> > Add the `allocator_test` module that provides an empty implementation
+> > for all `Allocator`s in the kernel, such that we don't break the
+> > `rusttest` make target in subsequent patches.
+> > 
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > Reviewed-by: Gary Guo <gary@garyguo.net>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/alloc.rs                |  9 +++++++--
+> >  rust/kernel/alloc/allocator_test.rs | 19 +++++++++++++++++++
+> >  2 files changed, 26 insertions(+), 2 deletions(-)
+> >  create mode 100644 rust/kernel/alloc/allocator_test.rs
+> > 
+> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> > index 91b2a26faf3d..f8ddc8d96da9 100644
+> > --- a/rust/kernel/alloc.rs
+> > +++ b/rust/kernel/alloc.rs
+> > @@ -2,12 +2,17 @@
+> >  
+> >  //! Extensions to the [`alloc`] crate.
+> >  
+> > -#[cfg(not(test))]
+> > -#[cfg(not(testlib))]
+> > +#[cfg(not(any(test, testlib)))]
+> >  pub mod allocator;
+> >  pub mod box_ext;
+> >  pub mod vec_ext;
+> >  
+> > +#[cfg(any(test, testlib))]
+> > +pub mod allocator_test;
+> > +
+> > +#[cfg(any(test, testlib))]
+> > +pub use self::allocator_test as allocator;
+> > +
+> >  /// Indicates an allocation error.
+> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> >  pub struct AllocError;
+> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > new file mode 100644
+> > index 000000000000..4785efc474a7
+> > --- /dev/null
+> > +++ b/rust/kernel/alloc/allocator_test.rs
+> > @@ -0,0 +1,19 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#![allow(missing_docs)]
+> > +
+> > +use super::{AllocError, Allocator, Flags};
+> > +use core::alloc::Layout;
+> > +use core::ptr::NonNull;
+> > +
+> > +pub struct Kmalloc;
+> > +
+> > +unsafe impl Allocator for Kmalloc {
+> > +    unsafe fn realloc(
+> > +        _ptr: Option<NonNull<u8>>,
+> > +        _layout: Layout,
 > 
-> 7.33.11 (Link Partner 10GBASE-T capability) states that this is only
-> valid when the Page received bit (7.1.6) has been set. This is the
-> BMSR_ANEGCOMPLETE / MDIO_AN_STAT1_COMPLETE bit.
-> 
-> Looking at rtl822x_read_status, which is called directly as a
-> .read_status() method, it reads some register that might be the
-> equivalent of MMD 7 Register 33 (if that's what 0xa5d, 0x13 is,
-> 0xa5d, 0x12 seems to be MDIO_AN_10GBT_CTRL) whether or not the link
-> is up and whether or not AN has completed. It's only conditional on
-> Autoneg being enabled.
-> 
-> However, we don't look at 7.1.6, which is wrong according to 802.3.
-> So I think the first thing that's needed here is that needs fixing
-> - we should only be reading the LP ability registers when (a) we
-> have link, and (b) when the PHY indicates that config pages have
-> been received.
-> 
-> The next thing that needs fixing is to add support for checking
-> these LOCOK/REMOK bits - and if these are specific to the result of
-> the negotiation (there's some hints in 802.3 that's the case, as
-> there are other registers with similar bits in, but I haven't
-> looked deeply at it) then, since the resolution is done in core
-> PHY code, I think we need another method into drivers to check
-> these bits once resolution has occurred.
+> The `old_layout` parameter is missing here.
 
-Okay, I think the problem is down to the order in which Realtek is
-doing stuff.
+Thanks, good catch.
 
-genphy_read_status() calls genphy_update_link(), which updates
-phydev->link and phydev->autoneg_complete from the BMSR, and then
-goes on to call genphy_read_lpa().
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index f8ddc8d96da9..28281d600492 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -193,6 +193,7 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
+     }
+ }
 
-Looking at genphy_read_lpa():
++#[allow(dead_code)]
+ /// Returns a properly aligned dangling pointer from the given `layout`.
+ pub(crate) fn dangling_from_layout(layout: Layout) -> NonNull<u8> {
+     let ptr = layout.align() as *mut u8;
+diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+index 4785efc474a7..c5d325506f0c 100644
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@ -12,6 +12,7 @@ unsafe impl Allocator for Kmalloc {
+     unsafe fn realloc(
+         _ptr: Option<NonNull<u8>>,
+         _layout: Layout,
++        _old_layout: Layout,
+         _flags: Flags,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+         panic!();
 
-        if (phydev->autoneg == AUTONEG_ENABLE) {
-                if (!phydev->autoneg_complete) {
-                        mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising,
-                                                        0);
-                        mii_lpa_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
-                        return 0;
-                }
-
-So, if BMSR_ANEGCOMPLETE is not set, then we zero the 1G FD/HD,
-Autoneg, Pause, Asym Pause and 100/10M FD/HD fields in the LPA leaving
-everything else alone - and then do nothing further. In other words,
-we don't read the LPA registers and update these bits.
-
-Looking at genphy_c45_read_lpa():
-
-        if (!(val & MDIO_AN_STAT1_COMPLETE)) {
-                linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-                                   phydev->lp_advertising);
-                mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
-                mii_adv_mod_linkmode_adv_t(phydev->lp_advertising, 0);
-                phydev->pause = 0;
-                phydev->asym_pause = 0;
-
-                return 0;
-
-So that's basically the same thing - if the MDIO_AN_STAT1_COMPLETE
-is clear, then we clear the 10G stuff. I think that
-mii_adv_mod_linkmode_adv_t() is wrong here, it should be
-mii_lpa_mod_linkmode_lpa_t().
-
-However, the principle here is that if !autoneg_complete, then the
-modes that would've been set by the respective function need to be
-cleared.
-
-Now, rtl822x_read_status() reads the 10G status, modifying
-phydev->lp_advertising before then going on to call
-rtlgen_read_status(), which then calls genphy_read_status(), which
-in turn will then call genphy_read_lpa().
-
-First, this is the wrong way around. Realtek needs to call
-genphy_read_status() so that phydev->link and phydev->autoneg_complete
-are both updated to the current status.
-
-Then, it needs to check whether AN is enabled, and whether autoneg
-has completed and deal with both situations.
-
-Afterwards, it then *possibly* needs to read its speed register and
-decode that to phydev->speed, but I don't see the point of that when
-it's (a) not able to also decode the duplex from that register, and
-(b) when we've already resolved it ourselves from the link mode.
-What I'd be worried about is if the PHY does a down-shift to a
-different speed _and_ duplex from what was resolved - and thus
-whether we should even be enabling downshift on this PHY. Maybe
-there's a bit in 0xa43 0x12 that gives us the duplex as well?
-
-In other words:
-
-static int rtl822x_read_status(struct phy_device *phydev)
-{
-	int lpadv, ret;
-
-	ret = rtlgen_read_status(phydev);
-	if (ret < 0)
-		return ret;
-
-	if (phydev->autoneg == AUTONEG_DISABLE)
-		return 0;
-
-	if (!phydev->autoneg_complete) {
-		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
-		return 0;
-	}
-
-	lpadv = phy_read_paged(phydev, 0xa5d, 0x13);
-	if (lpadv < 0)
-		return lpadv;
-
-	mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, lpadv);
-	phy_resolve_aneg_linkmode(phydev);
-
-	return 0;
-}
-
-That should at least get proper behaviour in the link partner
-advertising bitmap rather than the weirdness that Realtek is doing.
-(BTW, other drivers should be audited for the same bug!)
-
-Now, if we still have the stale 2500M problem, then I'd suggest:
-
-	if (phydev->speed >= 2500 && !(lpadv & MDIO_AN_10GBT_STAT_LOCOK)) {
-		/* Possible stale advertisement causing incorrect
-		 * resolution.
-		 */
-		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
-		phy_resolve_aneg_linkmode(phydev);
-	}
-
-here.
-
-However, if we keep the rtlgen_decode_speed() stuff, and can fix the
-duplex issue, then the phy_resolve_aneg_linkmode() calls should not
-be necessary, and it should be moved _after_ this to ensure that
-phydev->speed (and phydev->duplex) are correctly set.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+We also have to fix an intermediate dead code warning for `dangling_from_layout`
+in the `rusttest` target, until we start using it when we implement `Cmalloc`
+in this module.
 
