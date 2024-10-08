@@ -1,216 +1,135 @@
-Return-Path: <linux-kernel+bounces-356059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72CD995BA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:27:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACDF995BA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2474EB21BE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE42E1C20DD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54958217915;
-	Tue,  8 Oct 2024 23:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BE1218581;
+	Tue,  8 Oct 2024 23:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1eLQbNq"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lWQm2yGh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFE12178FE;
-	Tue,  8 Oct 2024 23:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0978D2178FE;
+	Tue,  8 Oct 2024 23:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728430063; cv=none; b=ZW/toIRWuWRDPkC7LE8AiUtgxDzUCub/yU51hORs8KTA2Lxr4S6cSDuSZYwk68bMzCJK5kMB9R3EQsw/ygtzrC6ilikpde8kHnmgHVRnHkuFi1PqII9Z8qgRjD1XR2htOq46FFcXHeX2JaVPfx937+pb/Bcm5nTWjcF2GQOXHNE=
+	t=1728430079; cv=none; b=Po1UsGSq/2qgPxQjJui4I6IgOs49/9kUE78LdTH4iaz/mV+isoCwdp0gq2UpnwhBGp10bdNv5Ffr7w+vpF0dmEkqFMSMwxK0S4bquAczhSOSLi9JUe57fzFPw1l4cMfZonoEs35bqatIhYedYkV9oEr9zNS1n4ZhHy7y2XkwWpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728430063; c=relaxed/simple;
-	bh=vdtEsmXJT3wve2O6pQuPZ14Hb482hs87xR59pTW8i5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AEhLRhDbpL8EFE888ZwzPL5gWv8sMWxEHsVA/Yrc7sQzyTPjUglDfh7DQsrdYNt2MgzHwQficOrsS3eRlRPZ4Q6ePP6NzdAaWJR6dp+7yFCStCZxcYhkG/m2TNDgsJRm3u7v9GN1uGxvFAKimAv9v3o7k4+wX538m19scw7gwt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1eLQbNq; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e29522f0f1so672633a91.0;
-        Tue, 08 Oct 2024 16:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728430061; x=1729034861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=WPAgXuOBQUvSa+7Ar+VJpB36qiWIAixSpKmgUg69p94=;
-        b=i1eLQbNq3mrQhu0Bq3QlWXSaNNObPhGJwWYpqREyrficHj3HSUEavfiWEx1Crkf91O
-         s/YYt0axy/mWd1f05cgUife3757vvXcLhgfxnt1xuzh3gcNIUu01+E/uyvDHuFTZJu3a
-         dDWWwSWlf8Y8c9d3M6Ob1ED9wf+WcN4aROqoNu8RGWy4SZEh4Hc74mwNhEo6BTGRSdXr
-         9BPYgw+OsVPChjzsa3Lcsh7/3WcpCNP5u4lIVniAF/doGZM5pvw70fEXDgKSE2bq9YGz
-         Ds0eYrHG6Er+zNM2/kcnSLybf+BMeZGHQHeuFQJr+4/A2j3L4hoqRXlWJbxkDiSNefzi
-         K9rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728430061; x=1729034861;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WPAgXuOBQUvSa+7Ar+VJpB36qiWIAixSpKmgUg69p94=;
-        b=hyRTZmJ49tEaq30GtRPzV7G2HyBWghzpiYctlRGsVhtXcmTGaamPy2DnU/v2Oi6HoP
-         C3RqXF5HnVAuRt+IY+uLbg+YLLeKR91YFBzLahD4uKjd4b7iLRD6m8bWSPUCgRcXQ9qu
-         Wq255SqpfluBxDf+2MDi4SjJVleNi0K1uBUapS9bGKMSS6PG3x6eX2HFYVc6e+eAsiWz
-         IncjJymk4Y/5NTf+JOhsHuyVopJ0wBnEgPyeeQXy1jDBob04HsMRGV11JRq8CELf/ZRv
-         Azq+rQbW6Ngkp5Zpe04Yv+ojkUctCwCQBUlMbDxzu27PUpTZTm6TBwNyAWWnIxpoWAqu
-         B6Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCU44mDTWOLAmDPnuixx+MceV34L43RpqBcUyIUXtpiEkKIukxCh1v/eBUJRvXhElcDNBuM+ObMc0Paduhl3UGvX@vger.kernel.org, AJvYcCUSk0cwTAEuEV/q8Vm8xgk49gSHVMlABO6A5ONCUj/zwIV7gXv2i3i6hrZCVHCOdZX2Zct/J4UGZxKo@vger.kernel.org, AJvYcCUbvoKGrh5WyFvYWDQhximrlr8x4RnEer78ZF7GP5JqzX1GWcmOMiO6J5FDH0S8EdStvCzCDors5Lye53hB@vger.kernel.org, AJvYcCUdSjQq7a/+HsaxdoS2yy5vVXZxbof3MWZrMtnJ0rxOmKh1yv9OyEtq14XYQbjyGL+Di8fyhUZ5jq4x@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR5PnU4hPd3s+3HvXEXEqGMXCpNnZflq0EgAo4s3siYeWfRd5H
-	a0Sjdt2GkaFrBD8tzzfQxRZ0AaIld5a3YHEPe5a9LHsNUwb0v6B8
-X-Google-Smtp-Source: AGHT+IE7vJl5NwmkITb5nr7A6xWeqUgwaHStS4JpHCRMULaY96hgbBwFCRXGZ6E/b/2vgw5IdT0SVw==
-X-Received: by 2002:a17:90a:68c7:b0:2e1:92bb:54a9 with SMTP id 98e67ed59e1d1-2e2a23343b7mr689757a91.12.1728430061030;
-        Tue, 08 Oct 2024 16:27:41 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a5965e9csm151387a91.41.2024.10.08.16.27.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 16:27:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <594e8e50-8322-480e-ae34-3f8e14f3fe18@roeck-us.net>
-Date: Tue, 8 Oct 2024 16:27:37 -0700
+	s=arc-20240116; t=1728430079; c=relaxed/simple;
+	bh=+qVfB+S3INz5fiqXcuLpGrRFhIFW3Zcau90fn5k/1EY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eO28H4M5upZPYLhBYLhPhwgCflX/asle838dzjTP0zVJxnz8Qokc6zoFqZG81hi/gHRuyphnSW/gxeHxTxIhdV1HgyQOyqRwRxHrjWLkh7FOl+76lYsJkvpWds469gFbnQb4tTjgxzdis6rTVxkIrnVPi/O31sV9mhg/EVOQTmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lWQm2yGh; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728430078; x=1759966078;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=+qVfB+S3INz5fiqXcuLpGrRFhIFW3Zcau90fn5k/1EY=;
+  b=lWQm2yGh8nXRQ8Q56bNoAXTgF52ZMHWSfuzGbJx2dwU/GjuLg7hX7l0B
+   q3OKylXjpQ+HKJhH42aF/lE7RzJfHA3cws3hYYMO0pJSgVydDJTspA59X
+   x2DFMbGk3NcWXpFuA801zto3McSNZ91KNzgLUzGx4HIGERZOOc13UsvfE
+   aJOqgD4HKQg4EKk8gsSiw5RpGsGLWrquIx2Dep6r0I3p/ChNwnPd2BJsD
+   V0d9PXJxWBgiPyY5xh2Zto836eXhWqA72yTHR1zeyJOk7wvGd0ki2gfHE
+   VG6+cQhvZIo3RORQF8CiUX+RotspLU5ZDKFE5Hgj8gMq159qa3kccxc9r
+   w==;
+X-CSE-ConnectionGUID: zUbdipYHTviW1+xNM+8yMw==
+X-CSE-MsgGUID: ZF4P/Fe+RxaZkCIBampRnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27138938"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="27138938"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:27:55 -0700
+X-CSE-ConnectionGUID: gO7tB19vTNyY94WhrO/gbQ==
+X-CSE-MsgGUID: LDtKNg6PSsSP5iBwrKOusA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="99378577"
+Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.110.176]) ([10.125.110.176])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 16:27:53 -0700
+Message-ID: <3fb7cc3fab054ad5b2af8a5ae5fd7dbdace774a2.camel@linux.intel.com>
+Subject: Re: [PATCH v1 4/8] perf stat: Drop metric-unit if unit is NULL
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
+ <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, Will
+ Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, Mike Leach
+ <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Yicong Yang
+ <yangyicong@hisilicon.com>, Weilin Wang <weilin.wang@intel.com>, Thomas
+ Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 08 Oct 2024 16:27:52 -0700
+In-Reply-To: <20241004234120.1495209-5-irogers@google.com>
+References: <20241004234120.1495209-1-irogers@google.com>
+	 <20241004234120.1495209-5-irogers@google.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with
- struct clk_parent_data
-To: Stephen Boyd <sboyd@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- patches@lists.linux.dev, kunit-dev@googlegroups.com,
- linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J.Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Daniel Latypov
- <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20240718210513.3801024-1-sboyd@kernel.org>
- <ba88a29c-f05e-4ca3-82d1-0a634613caee@roeck-us.net>
- <4216b852-11a2-41ae-bb01-5f9b578ee41b@roeck-us.net>
- <879831a8-2039-4cdb-bce2-aefdeb7ab25f@linuxfoundation.org>
- <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org>
- <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net>
- <4a8abb5f501279de7907629f4dd6be24.sboyd@kernel.org>
- <3e1de608-008c-4439-acd2-647a288dcdc0@roeck-us.net>
- <cd31493888acc2b64a4986954dfa43ae.sboyd@kernel.org>
- <cb1e0119-6e3e-4fd2-92ea-3fec18f5843d@roeck-us.net>
- <ccd372f2754e80d6c01e38a9596bed34.sboyd@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ccd372f2754e80d6c01e38a9596bed34.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10/8/24 16:12, Stephen Boyd wrote:
-> Quoting Guenter Roeck (2024-10-03 21:52:09)
->> On 10/3/24 17:42, Stephen Boyd wrote:
->>>
->>> Can you please describe how you run the kunit test? And provide the qemu
->>> command you run to boot arm64 with acpi?
->>>
->>
->> Example command line:
->>
->> qemu-system-aarch64 -M virt -m 512 \
->>        -kernel arch/arm64/boot/Image -no-reboot -nographic \
->>        -snapshot \
->>        -bios /opt/buildbot/rootfs/arm64/../firmware/QEMU_EFI-aarch64.fd \
->>        -device virtio-blk-device,drive=d0 \
->>        -drive file=rootfs.ext2,if=none,id=d0,format=raw \
->>        -cpu cortex-a57 -serial stdio -monitor none -no-reboot \
->>        --append "kunit.stats_enabled=2 kunit.filter=speed>slow root=/dev/vda rootwait earlycon=pl011,0x9000000 console=ttyAMA0"
->>
->> That works fine for me. Configuration is arm64 defconfig plus various
->> debug and kunit options. I built the efi image myself from sources.
->> The root file system is from buildroot with modified init script.
->> kunit tests are all built into the kernel and run during boot.
-> 
-> Thanks. I figured out that I was missing enabling CONFIG_ACPI. Here's my
-> commandline
-> 
-> ./tools/testing/kunit/kunit.py run --arch=arm64 \
-> 	--kunitconfig=drivers/of \
-> 	--qemu_args="-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd -smp 2" \
-> 	--kconfig_add="CONFIG_ACPI=y" \
-> 	--kernel_args="earlycon=pl011,0x9000000"
-> 
-> Now I can boot and reproduce the failure, but there's another problem.
-> ACPI disables itself when it fails to find tables.
-> 
->   ACPI: Unable to load the System Description Tables
-> 
-> This calls disable_acpi() which sets acpi_disabled to 1. This happens
-> before the unit test runs, meaning we can't reliably use 'acpi_disabled'
-> as a method to skip.
-> 
-> The best I can come up with then is to test for a NULL of_root when
-> CONFIG_ARM64 and CONFIG_ACPI are enabled, because the tests
-> intentionally don't work when both those configs are enabled and the
-> 'of_root' isn't populated. In all other cases the 'of_root' missing is a
-> bug. I'll probably make this into some sort of kunit helper function in
-> of_private.h and send it to DT maintainers.
+On Fri, 2024-10-04 at 16:41 -0700, Ian Rogers wrote:
+> Avoid cases like:
+> ```
+> $ perf stat -a -M topdownl1 -j -I 1000
+> ...
+> {"interval" : 11.127757275, "counter-value" : "85715898.000000", "unit" :=
+ "", "event" : "IDQ.MITE_UOPS", "event-runtime" : 988376123, "pcnt-running"=
+ : 100.00, "metric-value" : "0.000000", "metric-unit" : "(null)"}
+> ...
+> ```
+>=20
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/stat-display.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-displa=
+y.c
+> index e392ee5efb45..9b65968e37d1 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -470,8 +470,9 @@ static void print_metric_json(struct perf_stat_config=
+ *config __maybe_unused,
+>  	struct outstate *os =3D ctx;
+>  	FILE *out =3D os->fh;
+> =20
+> -	fprintf(out, "\"metric-value\" : \"%f\", ", val);
+> -	fprintf(out, "\"metric-unit\" : \"%s\"", unit);
+> +	fprintf(out, "\"metric-value\" : \"%f\"", val);
+> +	if (unit)
+> +		fprintf(out, ", \"metric-unit\" : \"%s\"", unit);
 
-Sounds good. Thanks a lot for tracking this down.
+I think if there's no metric unit, we should skip printing metric value as =
+a metric
+of 0 has no meaning.
 
-That makes me wonder though why only arm64 has that restriction. Both
-riscv and loongarch have ACPI enabled in their defconfig files but call
-unflatten_device_tree() unconditionally.
-
-Oh well ...
-
-Thanks,
-Guenter
+Tim
+>  	if (!config->metric_only)
+>  		fprintf(out, "}");
+>  }
 
 
