@@ -1,173 +1,210 @@
-Return-Path: <linux-kernel+bounces-356044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D619995B72
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B873995B79
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2886283C19
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2462841F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56A62178EA;
-	Tue,  8 Oct 2024 23:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96321643A;
+	Tue,  8 Oct 2024 23:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAr3j8s5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fWo+Fr9m"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C57E33986;
-	Tue,  8 Oct 2024 23:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ADC213EFB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 23:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728429396; cv=none; b=UTD6Yj1+f6hKQ9qimjGn4RQZTfmq0X4Zar3PLyfto2rTiKDE2EtoY2z8HT4eUO1q+pp3CCR0Bk3JO1wXaauMjLggsE/KOGj0+XQ/GlSyDm5anY9PvkekcsKZNEAUrqbim9gRvOZ+SPOhmwUwADntNW/txH2dKnncgRsDAnktWKs=
+	t=1728429473; cv=none; b=q1B5YKe3BiLPcAbu8EfrNn3AXG6l3m74GK/3E1swDAyl0G+G9Ua+L2DzOWwJBwC6Q2Yba88ZO2pNestUGVL2ywvOAl6QWDFjydSLEPCSl5lKwGlOIJJVRHMXNQ+nQmREOk/xEs9KP1rluIOSyryErggWWZ6heL3u3scTD1/iOko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728429396; c=relaxed/simple;
-	bh=sgRdB6GHGNFkcHdj8XNl55fFHOIehVfGXwJ3yVIuoHs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lEwngF7674lYsBr8maCrZDXIZWJBFdRr/BKKhrj1k2g5vBWaHYTVvaNehwWYaI7DEBfvdgvxw5fMQ8GO8FGIsNzLnUTnWFemJn/QGbFsGf2jUVSgVbwkSNrpEnzNqO4pKFp1R4Tf+6ltxfcuXa2G1f1TJPQQVRQvdPgY804zarI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAr3j8s5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A457EC4CEC7;
-	Tue,  8 Oct 2024 23:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728429395;
-	bh=sgRdB6GHGNFkcHdj8XNl55fFHOIehVfGXwJ3yVIuoHs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DAr3j8s5ni9LSRzFbT4nXGcCy6z4CXH2+SXbxT+4C2czApXDu6hAf8uKLK06sjlUT
-	 T9CRF0/cPlftvxNjMd4VP/mDKCc6XaPYF+qwxhuAXWEhtC1VJrMcUK1Z51ZC/f2BKZ
-	 VUdCCPip6ds+y72ZE9AF1aaCL3D8zB9nJWLoOBAh+/QbN29w2uzs3P2S2vaANko1Sw
-	 cpPJEpPiAphyropwX+JLu9p/xlKBJaP+ARankm1sjNPSFp8WpJeBSSW4lB75q4riah
-	 IH7Zc48yga+Mr4P9IV93GkakkBCf7649DnUTR3n1oTCsCF06x75kgdS5YyF0oovwAD
-	 wxQiYFbsCnXOw==
-From: djakov@kernel.org
-To: broonie@kernel.org
-Cc: ruanjinjie@huawei.com,
-	dmitry.baryshkov@linaro.org,
-	dan.carpenter@linaro.org,
-	naresh.kamboju@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Georgi Djakov <djakov@kernel.org>,
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Subject: [PATCH] spi: geni-qcom: Fix boot warning related to pm_runtime and devres
-Date: Wed,  9 Oct 2024 02:16:15 +0300
-Message-Id: <20241008231615.430073-1-djakov@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728429473; c=relaxed/simple;
+	bh=CzD38ZoFkgG9d1H2++XkkVz+Mfbolc0I0BV6YX0ZnoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFtpmp03KQi9+0AdwNH3YnaPxlZJeYAqSErZABN6nPIqpnFPc1FJMapPnY0zK15ohYShyq43x/NuMKPULfwB5PLjP0HH9fRb3Ro6kAqm/+drVY5LLmHisy9NdIOI7rb2dSoW/dVvhi0lxP+y4nLNtA8VR7BXr4SwqQm+hjmh1VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fWo+Fr9m; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7c1324be8easo215166a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 16:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728429471; x=1729034271; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=84oqUYHHA4jnRjNWhrPRTTubksgbEji8zyCvQWhxvkk=;
+        b=fWo+Fr9mdBUeTJIbpXTTPPaL0wwvNmyvBm/204yPl2OuSoYkPhksT13m6iW7XoI3CV
+         xTFvHgqwy3UP5RsdcBwjM0+GWAg6pFKzEOFNwWcYaX1CIbeZvno3g0R4z7C1pf0yhwAi
+         dG9guae+6n74xhaw8tuTqokoWnFLlPdQLqc3MnMxc3Ir/DfSfnZ2pvF9fqPJoQ1C7mLY
+         bJCjU9i1cp4Gj3YvMD85Hxa3GayE2igy1e5uEtKKdcFX/zKzmzHp3Kz5V6hB6/iEYtJO
+         PYC93kDv9N8pXMgKslIiYiHqRmScaWHrhLpjxHcgMi+yZjXJqV/fN9nNMhznHyA5cJhI
+         eZcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728429471; x=1729034271;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=84oqUYHHA4jnRjNWhrPRTTubksgbEji8zyCvQWhxvkk=;
+        b=rYkbAKwpISpPK5OtmTdmVxJNMF/cNsoTU+RGBaKx6jFO3KB92fF5PcV2c2OG1n1gUP
+         TjW3Xy7OxK3Pb42LB8RkEJXZJTj+odIFylpmYvEqgZbHkhK7uo+KrEdN/zJaAXDR3gqU
+         RebgzGDLq9En3fIztTPvKfY0DDErtdg9Uni5+AEdX5E75sQdzXSvb2cMjE8NfEZFSSQw
+         zmYgF8NzKsidxF2R0NYMtS8A1lqCAX9gOquwEW2RARYDrT3hws/tbGTJMFJ9SX2ssIm2
+         IebyWl8zd9pPa9zAlOVWH3hLP9lc3K71yS7q61q54ugu0RkUGf2M6aFwmYk3+I+wUmTj
+         NVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaB1J4TxMzlNGwPWXdQBcNQ6m9dvRHjamQ2IAOavBRHZGOh+4m9KMzzVEg2vKACC4ZHmfSan6V2PWSakk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3uRQJpDkYhLwPaIID4vYz0dnu0VC/Q2Znxk/+HQohLW8ZJ8BE
+	hOSeMCzCopVsVGnFFoSbMfFoT3hQVMK0LHoSKW6l/NZ+4TVpk2yZ7H9EtbmHe0Y=
+X-Google-Smtp-Source: AGHT+IGxbclCqX1bt/+XMXoEabpsMwXOYl+1J5QNTxY9IdVlmLlwPn5SdI2aGJZaqusXEkmXDVEomQ==
+X-Received: by 2002:a17:90a:d384:b0:2e2:7f8f:3ad5 with SMTP id 98e67ed59e1d1-2e27f8f3c85mr7490705a91.2.1728429470996;
+        Tue, 08 Oct 2024 16:17:50 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a5caa753sm140231a91.54.2024.10.08.16.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 16:17:50 -0700 (PDT)
+Date: Tue, 8 Oct 2024 16:17:47 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "robh@kernel.org" <robh@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor@kernel.org" <conor@kernel.org>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"jim.shu@sifive.com" <jim.shu@sifive.com>,
+	"alistair.francis@wdc.com" <alistair.francis@wdc.com>,
+	"cleger@rivosinc.com" <cleger@rivosinc.com>,
+	"kito.cheng@sifive.com" <kito.cheng@sifive.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"samitolvanen@google.com" <samitolvanen@google.com>,
+	"evan@rivosinc.com" <evan@rivosinc.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"atishp@rivosinc.com" <atishp@rivosinc.com>,
+	"andybnac@gmail.com" <andybnac@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"charlie@rivosinc.com" <charlie@rivosinc.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"richard.henderson@linaro.org" <richard.henderson@linaro.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"alexghiti@rivosinc.com" <alexghiti@rivosinc.com>
+Subject: Re: [PATCH v6 16/33] riscv/shstk: If needed allocate a new shadow
+ stack on clone
+Message-ID: <ZwW9m6pqcTFBovuG@debug.ba.rivosinc.com>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-16-60d9fe073f37@rivosinc.com>
+ <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
 
-From: Georgi Djakov <djakov@kernel.org>
+On Tue, Oct 08, 2024 at 10:55:29PM +0000, Edgecombe, Rick P wrote:
+>On Tue, 2024-10-08 at 15:36 -0700, Deepak Gupta wrote:
+>> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+>> +					   const struct kernel_clone_args *args)
+>> +{
+>> +	unsigned long addr, size;
+>> +
+>> +	/* If shadow stack is not supported, return 0 */
+>> +	if (!cpu_supports_shadow_stack())
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * If shadow stack is not enabled on the new thread, skip any
+>> +	 * switch to a new shadow stack.
+>> +	 */
+>> +	if (!is_shstk_enabled(tsk))
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * For CLONE_VFORK the child will share the parents shadow stack.
+>> +	 * Set base = 0 and size = 0, this is special means to track this state
+>> +	 * so the freeing logic run for child knows to leave it alone.
+>> +	 */
+>> +	if (args->flags & CLONE_VFORK) {
+>> +		set_shstk_base(tsk, 0, 0);
+>> +		return 0;
+>> +	}
+>> +
+>> +	/*
+>> +	 * For !CLONE_VM the child will use a copy of the parents shadow
+>> +	 * stack.
+>> +	 */
+>> +	if (!(args->flags & CLONE_VM))
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * reaching here means, CLONE_VM was specified and thus a separate shadow
+>> +	 * stack is needed for new cloned thread. Note: below allocation is happening
+>> +	 * using current mm.
+>> +	 */
+>> +	size = calc_shstk_size(args->stack_size);
+>> +	addr = allocate_shadow_stack(0, size, 0, false);
+>> +	if (IS_ERR_VALUE(addr))
+>> +		return addr;
+>> +
+>> +	set_shstk_base(tsk, addr, size);
+>> +
+>> +	return addr + size;
+>> +}
+>
+>A lot of this patch and the previous one is similar to x86's and arm's. It great
+>that we can have consistency around this behavior.
+>
+>There might be enough consistency to refactor some of the arch code into a
+>kernel/shstk.c.
+>
+>Should we try?
 
-During boot, users sometimes observe the following warning:
+Yeah you're right. Honestly, I've been shameless in adapting most of the flows
+from x86 `shstk.c` for risc-v. So thank you for that.
 
-[7.841431] WARNING: CPU: 4 PID: 492 at
-drivers/interconnect/core.c:685 __icc_enable
-(drivers/interconnect/core.c:685 (discriminator 7))
-[..]
-[7.841494] CPU: 4 PID: 492 Comm: (udev-worker) Not tainted 6.1.111-rc1 #1
-[7.841497] Hardware name: Thundercomm Dragonboard 845c (DT)
-[7.841499] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[7.841502] pc : __icc_enable (drivers/interconnect/core.c:685
-(discriminator 7))
-[7.841505] lr : icc_disable (drivers/interconnect/core.c:708)
-[..]
-[7.841541] Call trace:
-[7.841542] __icc_enable (drivers/interconnect/core.c:685 (discriminator 7))
-[7.841545] icc_disable (drivers/interconnect/core.c:708)
-[7.841547] geni_icc_disable (drivers/soc/qcom/qcom-geni-se.c:862)
-[7.841553] spi_geni_runtime_suspend+0x3c/0x4c spi_geni_qcom
-[7.841561] pm_generic_runtime_suspend (drivers/base/power/generic_ops.c:28)
-[7.841565] __rpm_callback (drivers/base/power/runtime.c:395)
-[7.841568] rpm_callback (drivers/base/power/runtime.c:532)
-[7.841570] rpm_suspend (drivers/base/power/runtime.c:672)
-[7.841572] rpm_idle (drivers/base/power/runtime.c:504 (discriminator 1))
-[7.841574] update_autosuspend (drivers/base/power/runtime.c:1662)
-[7.841576] pm_runtime_disable_action (include/linux/spinlock.h:401
-drivers/base/power/runtime.c:1703 include/linux/pm_runtime.h:599
-drivers/base/power/runtime.c:1517)
-[7.841579] devm_action_release (drivers/base/devres.c:720)
-[7.841581] release_nodes (drivers/base/devres.c:503)
-[7.841583] devres_release_all (drivers/base/devres.c:532)
-[7.841585] device_unbind_cleanup (drivers/base/dd.c:531)
-[7.841589] really_probe (drivers/base/dd.c:710)
-[7.841592] __driver_probe_device (drivers/base/dd.c:785)
-[7.841594] driver_probe_device (drivers/base/dd.c:815)
-[7.841596] __driver_attach (drivers/base/dd.c:1202)
-[7.841598] bus_for_each_dev (drivers/base/bus.c:301)
-[7.841600] driver_attach (drivers/base/dd.c:1219)
-[7.841602] bus_add_driver (drivers/base/bus.c:618)
-[7.841604] driver_register (drivers/base/driver.c:246)
-[7.841607] __platform_driver_register (drivers/base/platform.c:868)
-[7.841609] spi_geni_driver_init+0x28/0x1000 spi_geni_qcom
-[7.841615] do_one_initcall (init/main.c:1298)
-[7.841619] do_init_module (kernel/module/main.c:2469)
-[7.841623] load_module (kernel/module/main.c:2878)
-[..]
+Now that we've `ARCH_HAS_USER_SHADOW_STACK` part of multiple patch series (riscv
+shadowstack, clone3 and I think arm64 gcs series as well). It's probably the
+appropriate time to find common grounds.
 
-This occurs when the spi-geni driver receives an -EPROBE_DEFER error
-from spi_geni_grab_gpi_chan(), causing devres to start releasing all
-resources as shown below:
+This is what I suggest
 
-[7.138679] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
-[7.138751] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
-[7.138827] geni_spi 880000.spi: DEVRES REL ffff800081443800 pm_runtime_disable_action (16 bytes)
-[7.139494] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pm_opp_config_release (16 bytes)
-[7.139512] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_spi_release_controller (8 bytes)
-[7.139516] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_clk_release (16 bytes)
-[7.139519] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_ioremap_release (8 bytes)
-[7.139524] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_region_release (24 bytes)
-[7.139527] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (22 bytes)
-[7.139530] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pinctrl_release (8 bytes)
-[7.139539] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (40 bytes)
+- move most of the common/arch agnostic shadow stack stuff in kernel/shstk.c
+   This gets part of compile if `ARCH_HAS_USER_SHADOW_STACK` is enabled/selected.
 
-The issue here is that pm_runtime_disable_action() results in a call to
-spi_geni_runtime_suspend(), which attempts to suspend the device and
-disable an interconnect path that devm_icc_release() has just released.
+- allow arch specific branch out guard checks for "if cpu supports", "is shadow stack
+   enabled on the task_struct" (I expect each arch layout of task_struct will be
+   different, no point finding common ground there), etc.
 
-Resolve this by calling geni_icc_get() before enabling runtime PM. This
-approach ensures that when devres releases resources in reverse order,
-it will start with pm_runtime_disable_action(), suspending the device,
-and then proceed to free the remaining resources.
+I think it's worth a try. 
+If you already don't have patches, I'll spend some time to see what it takes to
+converge in my next version. If I end up into some roadblock, will use this thread
+for further discussion.
 
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/r/CA+G9fYtsjFtddG8i+k-SpV8U6okL0p4zpsTiwGfNH5GUA8dWAA@mail.gmail.com
-Fixes: 89e362c883c6 ("spi: geni-qcom: Undo runtime PM changes at driver exit time")
-Signed-off-by: Georgi Djakov <djakov@kernel.org>
----
- drivers/spi/spi-geni-qcom.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index f6e40f90418f..768d7482102a 100644
---- a/drivers/spi/spi-geni-qcom.c
-+++ b/drivers/spi/spi-geni-qcom.c
-@@ -1116,6 +1116,11 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	init_completion(&mas->tx_reset_done);
- 	init_completion(&mas->rx_reset_done);
- 	spin_lock_init(&mas->lock);
-+
-+	ret = geni_icc_get(&mas->se, NULL);
-+	if (ret)
-+		return ret;
-+
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 250);
- 	ret = devm_pm_runtime_enable(dev);
-@@ -1125,9 +1130,6 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	if (device_property_read_bool(&pdev->dev, "spi-slave"))
- 		spi->target = true;
- 
--	ret = geni_icc_get(&mas->se, NULL);
--	if (ret)
--		return ret;
- 	/* Set the bus quota to a reasonable value for register access */
- 	mas->se.icc_paths[GENI_TO_CORE].avg_bw = Bps_to_icc(CORE_2X_50_MHZ);
- 	mas->se.icc_paths[CPU_TO_GENI].avg_bw = GENI_DEFAULT_BW;
 
