@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-354749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F37E99420F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632F2994208
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BD2907D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9517A1C2150D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6531EABA2;
-	Tue,  8 Oct 2024 08:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C6E1E884D;
+	Tue,  8 Oct 2024 08:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AL1uiv3l"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coDN9b8B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269051E9096
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DBF13B797;
+	Tue,  8 Oct 2024 08:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728374536; cv=none; b=c2wHY6AU6wiWFgQdNY/zpp8afNVqF/wdZ1+5RiUKg2/uIDRjAPh6zolTvJ+r+UzKYloH/V1DBgHdY3rHb1z7auhyJuFKKlvVUhOGLNr+Y6E40oZ07OrhUUKDYRJlOaXuzVYluahBJ7ghH97ak9MPGo1IrUkQxqKFqyBahl2vjHc=
+	t=1728374489; cv=none; b=dcyE7/Xt2j1jLks3WnS6cMfleD8ynNSkt5Ynh8WLCX38OYW6SA2EV8DXwS7+apKf38xfnlM3U2jN7wUOnHy/0p8Wm5VN8kYnfDManKkUcgaXeSC4T6XIDAH3UWqGApuRnqiw8Iz69ScUXD0600pt5mlPNQSeVgOmjiCBgTYMRos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728374536; c=relaxed/simple;
-	bh=7VehN6/sA7scoHVq/2vjZajmO4qxvPaVz+856WDXYgU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kIU59sz9X289b1WJlVNOBiuCvBGtAxUopNc4wz4xUyqcUazmfuHuvFloycYBKhXj4rSnJUIEOdYPrZ/7B9V52JI6m9r7kYiXjFpHs+84+usXgvZrflbjxIJboDgQ6vmtHs/YJfswn2+my/r5XKYufDSfM1UnGp70mWOek5sGPSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AL1uiv3l; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c89f3f28b6so7670356a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 01:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728374533; x=1728979333; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ASSyEZaEK+fjzPx/loN6jK2Ph/Q6/tnmWzvvgqi9yto=;
-        b=AL1uiv3liwgRg4LmXAS1T2MGUjO5tjfLxkMCrHZ2uojoAH+oL1KK+YohU9R75inpyg
-         v6c4ZvGl00vbPRRyB58ZuXAIksv4hbpe09gSzMfQZFgAisRnW+WO9WOll3L0IxFedz7o
-         NlQxua/xAVrhLRuiI9IId1w+KzjeU59abOiQeYCZEcsFSZDp3fN2iKgNxe/321EyTWaL
-         lyvMRUB83TVty/dTX/T9Fz+v8NLaGOQfyqJ/DTkfV8BRElSQAhBgLYIy0M07EXHL7Ysd
-         VS2bMtjGLpvERPTv18g9I4BbF1olCxvAkUSjhkYxyp/BbtyuXjR5owd9LH6d0DSZrvop
-         YXHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728374533; x=1728979333;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ASSyEZaEK+fjzPx/loN6jK2Ph/Q6/tnmWzvvgqi9yto=;
-        b=ad13pyrLkyZRcRIsft4QZT7VvzkjKLPpbhBFLTU9LRteJ1dyhIvHc7oV722TTy1HoX
-         in6i0P4WtiqmBZ4xLBTBn5mJWnQvysnUvOqutsUSYTZSP1m6IHbIUF2YzsNE2Sg/zmQM
-         XeXlC4cEnGnXh2T11mrQFBToqzWzN+xv/f5xhHN8bVjuGM7vGwb8AcwV+z5FRipN0+DZ
-         DQtazMjwLorYPs3Jvcl/EAEWLVF8PWsR+qXTD+y7eDyHufYqb1o2AD85wG1olWcnMcHb
-         nvGR/S6jUn/XFaWD5WvcJr+Q4FZoN6g31B+Ym8ch73YyuUElpPCSLcsPDDsWgocTs/vw
-         vRjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBXSL/+Xd3SJvi/ws8s9dlOF80l8a9cKjViqwAlzx76GxjMbw66xutB/zvS/KwGIlA07yQBkQh3eemVvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi6KryApExn3z80gyZdfhDeSQKye9lBBPSRF7UDW7kJDhV1rzz
-	RC2R32p8fvMQ5elJs+RbaFJeraHJ4fGttH72YKctIpV9F4tagDXm
-X-Google-Smtp-Source: AGHT+IGkp0hHD6UVYzNqnXUxluHgElIZySQvi4pC+lBzmHcz26wsCD3h182nTDZ82oFp+oBWJUqAyA==
-X-Received: by 2002:a05:6402:4584:b0:5c8:a29f:be92 with SMTP id 4fb4d7f45d1cf-5c8d2e25765mr12699596a12.20.1728374532915;
-        Tue, 08 Oct 2024 01:02:12 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:e0:9843:5500:80c9:ead7:b605:3ea7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0594f55sm4054851a12.13.2024.10.08.01.02.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2024 01:02:12 -0700 (PDT)
-From: Omer Faruk BULUT <m.omerfarukbulut@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: pkshih@realtek.com,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Omer Faruk BULUT <m.omerfarukbulut@gmail.com>
-Subject: [PATCH] Staging: rtl8192ee: Remove unused macros in rtl8192ee/reg.h
-Date: Tue,  8 Oct 2024 11:01:13 +0300
-Message-Id: <20241008080113.7005-1-m.omerfarukbulut@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728374489; c=relaxed/simple;
+	bh=guRDJSNm1jLV49nMWB/ODja9G0sOuerELEtacRXKRhg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sqI0MzkmyZbts8MGMplENlX5O+W8fXpFno5C0Qb9zbJR0mMOGHmIkz5034d7+CG8uqe/ncVdgKSsaVABIepjTVaxyAKEnGGlPTCnvf0XxRKcJe42nNbCrbmMXr0IkbcehCceXoktdTEs5mlodVPV69QTM5+xfEwCliJ/sJ6NCaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coDN9b8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2436C4CED3;
+	Tue,  8 Oct 2024 08:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728374487;
+	bh=guRDJSNm1jLV49nMWB/ODja9G0sOuerELEtacRXKRhg=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=coDN9b8BUsdyWUZnIfbBR21jc87SYaJ5KDToA6KrNlwRio213CcJy20kt5SpOZbAI
+	 LZaOoQXiGH55AFZ/9xjrkXK9/pNAgF8JVJppz67rVulmB+MlWBVhtNYrcq77/QZt00
+	 kc3PxAA9JO45pWMvm1qPNUVscx7z2nOVOwvtWOe4bQMaskQsicHVY9+cm/0sInphVC
+	 uPJna6uwha07A4kBrAj9O4iHlQ9PwjFHhK5arJagQK5qzADzxBT3esVoNFfeKOgbAB
+	 q9BqtFkr0f57MHAovs5BUcmG/Ra/3uBdgshHB3XOx7czJoFArGEMFtQPUbt2Y3pJU2
+	 HsSN4UDLZlgVQ==
+Message-ID: <045fa597-8977-44c5-8dcc-3233623ad7e9@kernel.org>
+Date: Tue, 8 Oct 2024 10:01:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: iio: light: veml6030: add veml7700
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241007-veml7700-v1-0-fb85dd839d63@gmail.com>
+ <20241007-veml7700-v1-2-fb85dd839d63@gmail.com>
+ <4w7vnp56jvo67crvpxufb5nifjlobyohxgpg4kkpzzj553s5rb@z25g7rwcn3av>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4w7vnp56jvo67crvpxufb5nifjlobyohxgpg4kkpzzj553s5rb@z25g7rwcn3av>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Remove unused macros.
+On 08/10/2024 09:56, Krzysztof Kozlowski wrote:
+> On Mon, Oct 07, 2024 at 10:36:37PM +0200, Javier Carrasco wrote:
+>> The veml7700 contains the same chip as the veml6030 in a different
+>> package with no interrupt line and no pin to select the I2C address,
+>> which makes it suitable to be supported by the same bindings.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>  .../devicetree/bindings/iio/light/vishay,veml6030.yaml   | 16 +++++++++++++++-
+>>  1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml
+>> index 6218273b0e86..53b55575efd3 100644
+>> --- a/Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml
+> 
+> There is no such file in next.
 
-Signed-off-by: Omer Faruk BULUT <m.omerfarukbulut@gmail.com>
----
- .../wireless/realtek/rtlwifi/rtl8192ee/reg.h  | 28 -------------------
- 1 file changed, 28 deletions(-)
+There was no in next from 4th of October, but I found it now. However
+the diff chunks still do not fit. It seems you are sending multiple,
+related patches. Organize your entire work in one patchset, so big
+picture will be visible and any dependencies will be clear.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/reg.h b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/reg.h
-index 0164e006f43e..da48ac7c08e4 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/reg.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/reg.h
-@@ -1206,34 +1206,6 @@
- 
- #define	HAL_8192C_HW_GPIO_WPS_BIT		BIT(2)
- 
--#define	RPMAC_RESET				0x100
--#define	RPMAC_TXSTART				0x104
--#define	RPMAC_TXLEGACYSIG			0x108
--#define	RPMAC_TXHTSIG1				0x10c
--#define	RPMAC_TXHTSIG2				0x110
--#define	RPMAC_PHYDEBUG				0x114
--#define	RPMAC_TXPACKETNUM			0x118
--#define	RPMAC_TXIDLE				0x11c
--#define	RPMAC_TXMACHEADER0			0x120
--#define	RPMAC_TXMACHEADER1			0x124
--#define	RPMAC_TXMACHEADER2			0x128
--#define	RPMAC_TXMACHEADER3			0x12c
--#define	RPMAC_TXMACHEADER4			0x130
--#define	RPMAC_TXMACHEADER5			0x134
--#define	RPMAC_TXDADATYPE			0x138
--#define	RPMAC_TXRANDOMSEED			0x13c
--#define	RPMAC_CCKPLCPPREAMBLE			0x140
--#define	RPMAC_CCKPLCPHEADER			0x144
--#define	RPMAC_CCKCRC16				0x148
--#define	RPMAC_OFDMRXCRC32OK			0x170
--#define	RPMAC_OFDMRXCRC32ER			0x174
--#define	RPMAC_OFDMRXPARITYER			0x178
--#define	RPMAC_OFDMRXCRC8ER			0x17c
--#define	RPMAC_CCKCRXRC16ER			0x180
--#define	RPMAC_CCKCRXRC32ER			0x184
--#define	RPMAC_CCKCRXRC32OK			0x188
--#define	RPMAC_TXSTATUS				0x18c
--
- #define	RFPGA0_RFMOD				0x800
- 
- #define	RFPGA0_TXINFO				0x804
--- 
-2.17.1
+Best regards,
+Krzysztof
 
 
