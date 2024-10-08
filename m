@@ -1,115 +1,146 @@
-Return-Path: <linux-kernel+bounces-354502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CE4993E60
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4063993E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9F51C22AA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF7D1C21E82
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 05:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D4B13B2A8;
-	Tue,  8 Oct 2024 05:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE4C13D2B2;
+	Tue,  8 Oct 2024 05:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lH1Bl53d"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M3fMCfHo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A699537E9;
-	Tue,  8 Oct 2024 05:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B68C41A80
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 05:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728365731; cv=none; b=MPBPX6v0fi1vf7V+tccUfg7B+xPvWIy1p7e5Ye0zGqX57NDZe0SY9dS+lfoiOQYbdnUQ86GnLt8xOhAI0UI3J8QtDsYhX3A1eJa/DeFPvj3TOYTC74tvgsWe66JUmjOmKExiEOaBEZ5sfbqxG9AxKxfeT+jfKsl61SxV9fOLFOg=
+	t=1728365860; cv=none; b=BAy6MtVj7TY9o//vMmfXvY1+tvK6mMEG4RuzdNtpAJEK/bwNfCDZXabIo/fTvPHkupPBZaRE9Xtczc4m//AWwnXgAU0DGMmjyC4LBQ+c2aemDm/5YrURuFqsJq6Pz9Nrq+CpCDALX1yOp4dK3ALMK2+OGgSFsB6/UUgzAOaNS4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728365731; c=relaxed/simple;
-	bh=12iFWAGuYqVegUKv2XvUqypjHAcv15i5//z9v97RCAo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=US9V2kTDAwO8Fw4pYzYdAqPSerJ7VU73T/vFiLk6D3Z+FrOqx7zCwGQQPRUDHCKcL07hxzUwsTCmBF+Zwuv8z5LU/QYZsb/mbGcNGI11BE+h+fnQQ7SZ0Gf3KLfuXAoJoGRWfPOY9qHPNfc0ByuXrgv62HDfbu42WpDWpjcCWGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lH1Bl53d; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1b2a8f8c853711ef88ecadb115cee93b-20241008
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=HS3tPk/Ro6nvmssbl8jCPjzSSvvRaPxaiNB1dtDOYN4=;
-	b=lH1Bl53dwG8Y/L4XLrJ4PMjMskDwc5eiOQPXkaQ0yYdHVdCMfMXrAOpILxdTE6HFMq5jDF9+aodFfDmkzhl9g1CqJybM2RzVQkn3YjK02+2zOyZztDjt6tFPl1nVwbJ3y2L2jMxM+p5VIDarpOLqd4fdnW1i+ilXiaxrZpvg07I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:f5ec6e57-1606-4014-a009-ed0f0e67b9a6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:470a7426-5902-4533-af4f-d0904aa89b3c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1b2a8f8c853711ef88ecadb115cee93b-20241008
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 720692166; Tue, 08 Oct 2024 13:35:19 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 8 Oct 2024 13:35:18 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 8 Oct 2024 13:35:18 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Seiya Wang <seiya.wang@mediatek.com>,
-	Tinghan Shen <tinghan.shen@mediatek.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
- Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH] arm64: dts: mediatek: mt8195: Fix dtbs_check error for tphy
-Date: Tue, 8 Oct 2024 13:35:14 +0800
-Message-ID: <20241008053514.6800-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728365860; c=relaxed/simple;
+	bh=5bGqT5cG+g0suqPMvIhI/iPquao/pCryXnCeO9M5BUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDuWZQMevWrByufA5wwI+6L5KiutwdR6+7o4XE4soU5iddBMU97FlgRUUDPS2p0o0Rx82m8VNXuGFbBe5zCn49nIRkbg5LAflGyriZ/Xx+HNRY24OXhe7P5kMAcCkX9e9Is5HPcJgE27lZ3OydsS3dFVDuebq6Segt/4zrY3i9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M3fMCfHo; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728365859; x=1759901859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5bGqT5cG+g0suqPMvIhI/iPquao/pCryXnCeO9M5BUQ=;
+  b=M3fMCfHoQiS3/gX12w8UeEVfdZqNQHomJGIrk7k06/TCSK3xYe/1O5Q3
+   eYllR1uAb2XRqby+MVW2Ik71maeyXVYFA1G8EaMS8elUVtogAICVsUMav
+   9aXllmS8QPku4afQihFMrzQVdltHYe+OnrYSZ8iN0zMlWQo9/SWCPCQkk
+   8g+oB+xU1Vg+BW+Q3PCi9cjHGck2RRVKwN7mtG9aCHc9k6LPS4nFHTHeQ
+   DVyQ2YyfZ/itoYeebc7goO9nxOCI6DGthodwCyo5CbqbR1NWWMcJPI+TV
+   pCvhu7Xb8jewyDDz7V1mDE70Sf7T4e5X1tgJxwqajr4m6wxwSGJUQFxIX
+   g==;
+X-CSE-ConnectionGUID: wUhiT28+S72GDKFfMlHarw==
+X-CSE-MsgGUID: IsYeMrUyT/WcuwwWl+awdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="52943720"
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="52943720"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 22:37:38 -0700
+X-CSE-ConnectionGUID: q1I5LljeSRWJnBqG7AjxNw==
+X-CSE-MsgGUID: 83/VUB4bRMGUhI0pqGi5tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="75955281"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 07 Oct 2024 22:37:35 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sy2ub-0005wS-19;
+	Tue, 08 Oct 2024 05:37:33 +0000
+Date: Tue, 8 Oct 2024 13:37:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v4 9/9] mm: Consolidate common checks in
+ hugetlb_get_unmapped_area
+Message-ID: <202410081210.uNLbf3Jk-lkp@intel.com>
+References: <20241007075037.267650-10-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007075037.267650-10-osalvador@suse.de>
 
-The u3phy1 node in mt8195.dtsi was triggering a dtbs_check error.
-The error message was:
-  t-phy@11e30000: 'power-domains' does not match any of the regexes:
-    '^(usb|pcie|sata)-phy@[0-9a-f]+$', 'pinctrl-[0-9]+'
-Fix this issue by dropping 'power-domains' of u3phy1 node.
+Hi Oscar,
 
-Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and evaluation board")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index ade685ed2190..1c6f08dde31c 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -1920,7 +1920,6 @@ u3phy1: t-phy@11e30000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0 0 0x11e30000 0xe00>;
--			power-domains = <&spm MT8195_POWER_DOMAIN_SSUSB_PCIE_PHY>;
- 			status = "disabled";
- 
- 			u2port1: usb-phy@0 {
+[auto build test WARNING on s390/features]
+[also build test WARNING on brauner-vfs/vfs.all akpm-mm/mm-everything linus/master v6.12-rc2 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oscar-Salvador/mm-mmap-Teach-generic_get_unmapped_area-_topdown-to-handle-hugetlb-mappings/20241007-155328
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+patch link:    https://lore.kernel.org/r/20241007075037.267650-10-osalvador%40suse.de
+patch subject: [PATCH v4 9/9] mm: Consolidate common checks in hugetlb_get_unmapped_area
+config: mips-cavium_octeon_defconfig (https://download.01.org/0day-ci/archive/20241008/202410081210.uNLbf3Jk-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081210.uNLbf3Jk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410081210.uNLbf3Jk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/hugetlb.h:789,
+                    from kernel/fork.c:53:
+   arch/mips/include/asm/hugetlb.h: In function 'prepare_hugepage_range':
+>> arch/mips/include/asm/hugetlb.h:20:24: warning: unused variable 'h' [-Wunused-variable]
+      20 |         struct hstate *h = hstate_file(file);
+         |                        ^
+
+
+vim +/h +20 arch/mips/include/asm/hugetlb.h
+
+50a41ff292fafe David Daney     2009-05-27  13  
+78d6e4e8ea8700 Alexandre Ghiti 2018-10-26  14  #define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+50a41ff292fafe David Daney     2009-05-27  15  static inline int prepare_hugepage_range(struct file *file,
+50a41ff292fafe David Daney     2009-05-27  16  					 unsigned long addr,
+50a41ff292fafe David Daney     2009-05-27  17  					 unsigned long len)
+50a41ff292fafe David Daney     2009-05-27  18  {
+50a41ff292fafe David Daney     2009-05-27  19  	unsigned long task_size = STACK_TOP;
+50a41ff292fafe David Daney     2009-05-27 @20  	struct hstate *h = hstate_file(file);
+50a41ff292fafe David Daney     2009-05-27  21  
+50a41ff292fafe David Daney     2009-05-27  22  	if (len > task_size)
+50a41ff292fafe David Daney     2009-05-27  23  		return -ENOMEM;
+50a41ff292fafe David Daney     2009-05-27  24  	if (task_size - len < addr)
+50a41ff292fafe David Daney     2009-05-27  25  		return -EINVAL;
+50a41ff292fafe David Daney     2009-05-27  26  	return 0;
+50a41ff292fafe David Daney     2009-05-27  27  }
+50a41ff292fafe David Daney     2009-05-27  28  
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
