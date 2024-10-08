@@ -1,176 +1,182 @@
-Return-Path: <linux-kernel+bounces-355221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99221994D12
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:01:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCACD994BD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F895B2A1C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C47E2833BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1A91DF271;
-	Tue,  8 Oct 2024 12:55:02 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFC61DE894;
+	Tue,  8 Oct 2024 12:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yTeiFA5M"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7E1D31A0;
-	Tue,  8 Oct 2024 12:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F57B1C9B61
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 12:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392102; cv=none; b=K/jW7e/HM01hAX4nZc7tCXWKx0TNBrET0+h/2MvQ+oNeUQKLBwalknTsEG1e83RHOsUwmnfdcLqrR+hgwdBdpihGXPMQ0OcNf5m7G19K4uSG74tgX+iGsTMe4jtT6/GIHn5hLBsty91/Z2kkQ6ANae2eXw7fpmJrFme4bMPaZDw=
+	t=1728391637; cv=none; b=e8uyoUx93ySjuPqrQ+n4kBid5eiBFXsAGuNlD6/ryJ+H2McgSONA2fUr1+OXBtLfn+sBmbNanHaW/cZj9RcAgZRBf5icIrdcPjAb7bw9tAmGa8Pf5OK1eBf9CBr+Amp1nWv9YfU6Ho9DeHdrKdgQYSrugjKi0TxRY2yeOuycIPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392102; c=relaxed/simple;
-	bh=mbL2L04DT/7upGeDcFNTeOwgtjMd7+dRAsBUcQanlCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UkBBh5due2x9B+baHYwjIgoR+Pd9YL9QoQdabDu/31VPeZDxupbmwg+q9UVLmKeOoyauWRDARyxTM7PQN8QnlBLhAzbRzGjExqNf6AjFXb1ut4q/6S0J9KEdXJhHbgAsAmmi79ulFGg9Z8RwZo0tfQV8AYkgp7OEc3g1q0V7o60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XNGF90XTXz4f3jsT;
-	Tue,  8 Oct 2024 20:54:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id D88A01A058E;
-	Tue,  8 Oct 2024 20:54:53 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH24eUKwVn3q2iDQ--.54651S2;
-	Tue, 08 Oct 2024 20:54:52 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: dhowells@redhat.com,
-	jarkko@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenridong@huawei.com
-Subject: [PATCH v2] security/keys: fix slab-out-of-bounds in key_task_permission
-Date: Tue,  8 Oct 2024 12:46:39 +0000
-Message-Id: <20241008124639.70000-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728391637; c=relaxed/simple;
+	bh=OcgUl6AxtIjr+qvFs98OfcZQB6DjipjZ9W7QLlv8vno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eHIZZO7BtgCTe4zFNU8WTOOioIWc/ufqqZkPmJ2EDqCDYSR8eLctCMmx0p6r8MImyHNXYslDEZrBRPmOITRm4OL5E6S/yi9TaD66BjPmqQ7ttQesHXTEvnk8YKIY1tfFefjX6Y3JNPwtl4Z4Cje2whm3lELxjlHmv+HhbIX/w5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yTeiFA5M; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c883459b19so6530876a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 05:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728391634; x=1728996434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+AZj4mSWxdQvLc3IIceeRNXHM4Bz2hFoj7c5V1+w6fw=;
+        b=yTeiFA5MBXIgbhYEqhmQb1H+hnPOqYdGRkNpuJQ0alH52OSnmxNeqG0NspyRJUregg
+         tqKdGl+ope1ayYw7dm4q0EWLxaRKGgZ4vpTR8InS1hFIZ3cJ0twBaqRfFDkUsp5Dnr0U
+         0udIn1FEX39gAFYZzSydaNucVPqjZbXb6oUZDbwH21o9fS8nfZakIJe38uR4bLpcV/NA
+         LnDXs94Ubxu6jfBQg06IFBo3ZeMc2Tsy1GUuQZjGZLQVG0rLNSgaAP+PrmINHa+7sf3K
+         /WD+McuOfor51z1aEA0TIY3czbBNCVpQhAwoTP3qUQ3EWvkvPZJXQP0xdxc3qF110JWW
+         bZQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728391634; x=1728996434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+AZj4mSWxdQvLc3IIceeRNXHM4Bz2hFoj7c5V1+w6fw=;
+        b=gihb88ekOJBRBSlghW0NzsLfIIpcUHAXPYl6T7625huErj+PfZBwySgN0HjJ8XiQxu
+         yI5oZFFuTS530zRLksaMEYfFrWXSYz7pYtuEP1w0elvGc4uZRPv4taPT6dXwrh+beLmt
+         LRBIJkiQ6Jd4cEvY5ezRcwrnjzkv3DM1T/2DHVd/WaW0v/6lVGLtExwLcNmPo/dx3RJ/
+         RdGpFGKGmxkgJhoWSwnkgG+r5kO6RddE/e+JN/zpGAuBbjhEbjKZhbSm0xCKc5NBpkDz
+         2mI//DTgfdv+nmC44Wx1P2nsB/pd93UXrikAHRBxcJza5VN7DROFJnIuoVO4EUxan35g
+         T4VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqqTUMXTlFeDGZ0rEWkb8ERY4T8ewqcdu56zyNyu60b47m2SLvyevGVeisBJtBNwAfctvF0hDpBxQgCAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzt6t4fh2qj9/gf091vNSj08CtyPBdhw7xiTEl7dBZIuzOGCBE
+	qcreAB1nK3nxnpNeiM6pPW0mk4HAnqDEk/np4fC4T7zSRctiTkuepu8exidWqaD61Rnk9asEzRD
+	oGnuIerLPatwcTlGRPe0ykCstiJFthxdDwVXi
+X-Google-Smtp-Source: AGHT+IF85dD7JaN/CC0IFqXbSSkWjOdAjTE69GjxbZuJ37iHmVY0wqA4eSL1ZRKSeoLjrczL2VUUVCZCjqlqulBV1MY=
+X-Received: by 2002:a05:6402:2747:b0:5c8:df9a:749b with SMTP id
+ 4fb4d7f45d1cf-5c8df9a750emr10909813a12.28.1728391633387; Tue, 08 Oct 2024
+ 05:47:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCH24eUKwVn3q2iDQ--.54651S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rZFyDCr4xGw1UWF4kZwb_yoWrGFWxpr
-	Z0gF4jyr40yF9aqr18Aa1UWw1rXFs0k3W7Gr4fW3y5Z3Z8Zr1kXF92kFyFgryfCr4IyFyY
-	yF43XwsavFn0v3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQ6p9UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20230830112600.4483-1-hdanton@sina.com> <f607a7d5-8075-f321-e3c0-963993433b14@I-love.SAKURA.ne.jp>
+ <20230831114108.4744-1-hdanton@sina.com> <CANn89iLCCGsP7SFn9HKpvnKu96Td4KD08xf7aGtiYgZnkjaL=w@mail.gmail.com>
+ <20230903005334.5356-1-hdanton@sina.com> <CANn89iJj_VR0L7g3-0=aZpKbXfVo7=BG0tsb8rhiTBc4zi_EtQ@mail.gmail.com>
+ <20230905111059.5618-1-hdanton@sina.com> <CANn89iKvoLUy=TMxW124tiixhOBL+SsV2jcmYhH8MFh3O75mow@mail.gmail.com>
+ <CA+G9fYvskJfx3=h4oCTAyxDWO1-aG7S0hAxSk4Jm+xSx=P1dhA@mail.gmail.com> <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com>
+In-Reply-To: <CADvbK_fxXdNiyJ3j0H+KHgMF11iOGhnjtYFy6R18NyBX9wB4Kw@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 8 Oct 2024 14:47:00 +0200
+Message-ID: <CANn89iJBUAC6-tKhU0C95+rB4fk_FJD2B_sQRbKnGAJ3KkG+FA@mail.gmail.com>
+Subject: Re: selftests: net: pmtu.sh: Unable to handle kernel paging request
+ at virtual address
+To: Xin Long <lucien.xin@gmail.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Hillf Danton <hdanton@sina.com>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Netdev <netdev@vger.kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+On Sun, Oct 6, 2024 at 8:08=E2=80=AFPM Xin Long <lucien.xin@gmail.com> wrot=
+e:
+>
+> Sorry for bringing up this issue, it recently occurred on my aarch64 kern=
+el
+> with blackhole_netdev backported. I tracked it down, and when deleting
+> the netns, the path is:
+>
+> In cleanup_net():
+>
+>   default_device_exit_batch()
+>     unregister_netdevice_many()
+>       addrconf_ifdown() -> call_rcu(rcu, fib6_info_destroy_rcu) <--- [1]
+>     netdev_run_todo()
+>       rcu_barrier() <- [2]
+>   ip6_route_net_exit() -> dst_entries_destroy(net->ip6_dst_ops) <--- [3]
+>
+> In fib6_info_destroy_rcu():
+>
+>   dst_dev_put()
+>   dst_release() -> call_rcu(rcu, dst_destroy_rcu) <--- [5]
+>
+> In dst_destroy_rcu():
+>   dst_destroy() -> dst_entries_add(dst->ops, -1); <--- [6]
+>
+> fib6_info_destroy_rcu() is scheduled at [1], rcu_barrier() will wait
+> for fib6_info_destroy_rcu() to be done at [2]. However, another callback
+> dst_destroy_rcu() is scheduled() in fib6_info_destroy_rcu() at [5], and
+> there's no place calling rcu_barrier() to wait for dst_destroy_rcu() to
+> be done. It means dst_entries_add() at [6] might be run later than
+> dst_entries_destroy() at [3], then this UAF will trigger the panic.
+>
+> On Tue, Oct 17, 2023 at 1:02=E2=80=AFPM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Tue, 5 Sept 2023 at 17:55, Eric Dumazet <edumazet@google.com> wrote:
+> > >
+> > > On Tue, Sep 5, 2023 at 1:52=E2=80=AFPM Hillf Danton <hdanton@sina.com=
+> wrote:
+> > > >
+> > > > On Mon, 4 Sep 2023 13:29:57 +0200 Eric Dumazet <edumazet@google.com=
+>
+> > > > > On Sun, Sep 3, 2023 at 5:57=3DE2=3D80=3DAFAM Hillf Danton <hdanto=
+n@sina.com>
+> > > > > > On Thu, 31 Aug 2023 15:12:30 +0200 Eric Dumazet <edumazet@googl=
+e.com>
+> > > > > > > --- a/net/core/dst.c
+> > > > > > > +++ b/net/core/dst.c
+> > > > > > > @@ -163,8 +163,13 @@ EXPORT_SYMBOL(dst_dev_put);
+> > > > > > >
+> > > > > > >  void dst_release(struct dst_entry *dst)
+> > > > > > >  {
+> > > > > > > -       if (dst && rcuref_put(&dst->__rcuref))
+> > > > > > > +       if (dst && rcuref_put(&dst->__rcuref)) {
+> > > > > > > +               if (!(dst->flags & DST_NOCOUNT)) {
+> > > > > > > +                       dst->flags |=3D DST_NOCOUNT;
+> > > > > > > +                       dst_entries_add(dst->ops, -1);
+> > > > > >
+> So I think it makes sense to NOT call dst_entries_add() in the path
+> dst_destroy_rcu() -> dst_destroy(), as it does on the patch above,
+> but I don't see it get posted.
+>
+> Hi, Eric, would you like to move forward with your patch above ?
 
-KASAN reports an out of bounds read:
-BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
-BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]
-BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-security/keys/permission.c:54
-Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+I am planning to send it soon.
 
-CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15
-Call Trace:
- __dump_stack lib/dump_stack.c:82 [inline]
- dump_stack+0x107/0x167 lib/dump_stack.c:123
- print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
- __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
- kasan_report+0x3a/0x50 mm/kasan/report.c:585
- __kuid_val include/linux/uidgid.h:36 [inline]
- uid_eq include/linux/uidgid.h:63 [inline]
- key_task_permission+0x394/0x410 security/keys/permission.c:54
- search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+>
+> Or we can also move the dst_entries_add(dst->ops, -1) from dst_destroy()
+> to dst_release():
 
-This issue was also reported by syzbot [1].
+If we remove the code from dst_destroy(), we must do it from its two caller=
+s,
+dst_release() and dst_release_immediate()
 
-It can be reproduced by following these steps(more details [2]):
-1. Obtain more than 32 inputs that have similar hashes, which ends with the
-   pattern '0xxxxxxxe6'.
-2. Reboot and add the keys obtained in step 1.
+No big deal, I am adding a helper to make this a bit cleaner.
 
-The reproducer demonstrates how this issue happened:
-1. In the search_nested_keyrings function, when it iterates through the
-   slots in a node(below tag ascend_to_node), if the slot pointer is meta
-   and node->back_pointer != NULL(it means a root), it will proceed to
-   descend_to_node. However, there is an exception. If node is the root,
-   and one of the slots points to a shortcut, it will be treated as a
-   keyring.
-2. Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
-   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
-   ASSOC_ARRAY_PTR_SUBTYPE_MASK.
-3. When 32 keys with the similar hashes are added to the tree, the ROOT
-   has keys with hashes that are not similar (e.g. slot 0) and it splits
-   NODE A without using a shortcut. When NODE A is filled with keys that
-   all hashes are xxe6, the keys are similar, NODE A will split with a
-   shortcut. Finally, it forms the tree as shown below, where slot 6 points
-   to a shortcut.
 
-                      NODE A
-              +------>+---+
-      ROOT    |       | 0 | xxe6
-      +---+   |       +---+
- xxxx | 0 | shortcut  :   : xxe6
-      +---+   |       +---+
- xxe6 :   :   |       |   | xxe6
-      +---+   |       +---+
-      | 6 |---+       :   : xxe6
-      +---+           +---+
- xxe6 :   :           | f | xxe6
-      +---+           +---+
- xxe6 | f |
-      +---+
+>
+> Note, dst_destroy() is not used outside net/core/dst.c, we may delete
+> EXPORT_SYMBOL(dst_destroy) in the future.
 
-4. As mentioned above, If a slot(slot 6) of the root points to a shortcut,
-   it may be mistakenly transferred to a key*, leading to a read
-   out-of-bounds read.
+Which version are you looking at ?
 
-To fix this issue, one should jump to descend_to_node if the ptr is a
-shortcut, regardless of whether the node is root or not.
+Upstream got this already.
 
-[1] https://lore.kernel.org/all/000000000000cbb7860611f61147@google.com/T/
-[2] https://lore.kernel.org/linux-kernel/1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com/
+commit 03ba6dc035c60991033529e630bd1552b2bca4d7
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Fri Feb 2 17:37:46 2024 +0100
 
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Reported-by: syzbot+5b415c07907a2990d1a3@syzkaller.appspotmail.com
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- security/keys/keyring.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 4448758f643a..f331725d5a37 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -772,8 +772,11 @@ static bool search_nested_keyrings(struct key *keyring,
- 	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
- 		ptr = READ_ONCE(node->slots[slot]);
- 
--		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
--			goto descend_to_node;
-+		if (assoc_array_ptr_is_meta(ptr)) {
-+			if (node->back_pointer ||
-+			    assoc_array_ptr_is_shortcut(ptr))
-+				goto descend_to_node;
-+		}
- 
- 		if (!keyring_ptr_is_keyring(ptr))
- 			continue;
--- 
-2.34.1
-
+    net: dst: Make dst_destroy() static and return void.
 
