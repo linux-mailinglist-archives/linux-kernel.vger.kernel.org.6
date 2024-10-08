@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-356003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2695995A9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:45:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249A1995AB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6AC2815E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:45:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9210CB2575D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BA4220808;
-	Tue,  8 Oct 2024 22:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C02221E3C;
+	Tue,  8 Oct 2024 22:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtQixc9l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="apcjcLNn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AFld67In"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8320D218596;
-	Tue,  8 Oct 2024 22:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E0B221E4F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 22:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728427122; cv=none; b=V+2YBhhhr/GpbSbygMKltf9VGf4MxM4vO+3ztenUa3DtWlRHFZZ4fzptfyMH88RtbCRiUKTAj0wVAC5EoZHsZCf0c17v7sQd52bILXkp+ZNNVn3t8bNl/cPIavm/awdEje5VItLA823/D4zSdMmnzgK9IHytb/8E/C1dgk0daKU=
+	t=1728427132; cv=none; b=NR5xHSoXQw5CXXRj/3OFrL5cMy+YRXY9KEBAaOCBtELwb4jxHojlsN7LeE92RryHE5Z7JvXfhM86IhKqMW3R1rtoQlN1DnsTc2GOGRKed9Yhewr+RybgX4MpfeGt+W0tbkahyuZiBD2tFfCxJsz2SCST6poaxwRrgo1ZC6jK0vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728427122; c=relaxed/simple;
-	bh=R4s7bdL4TN/Dk7rqy2FARS7dOHWyRfaaOtooebE4K78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hY9AufXpR9iWB5xrP612CJzoRYXB32FiX74HV1b1kmL/3aHai7WLWZ2yWvyTE2RSNuLJRLWhV/JLmuiBtaHuAMl8pQoZEl/YpItXWFAJEJLAqTAw3HNCfEmBfdD4eXm7VsIDvLyLAWKdchwEr7A1EIBnNgsVEe28bNhxXAoKWDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtQixc9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A916C4CEDB;
-	Tue,  8 Oct 2024 22:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728427122;
-	bh=R4s7bdL4TN/Dk7rqy2FARS7dOHWyRfaaOtooebE4K78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VtQixc9lKEl08XIss7QJIFGiZrzjMtbnhJWMO1SRa0mL3J2VQzlpX2hmHKVmLbpNH
-	 yMoBc3HVEPK3HV7vD3FBEI/w2BRcYRFaYYZZitKTq8plUJX/LRJ0Yb/eQI6ygxWp3o
-	 K2djWkrLnoev9LTUtGBm3r+gZWgCDe1Pm1ZCzfGae6rzTmN5PA8hmy9hXcAmTjftf/
-	 n0Ij+epRf5atXU66dYzIt4p+Dktz0dA5iisfH0CYvnqhxYVzABiuFgUA/ZKYgme2D+
-	 PraGRabOBTNI2wNb47TQo6wNBhckBvGgQ73e7JV0cfovDyS5pykKa2QcsHh/9qgMQB
-	 wFjIRCPIsLu2w==
-Date: Tue, 8 Oct 2024 15:38:39 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/8] perf stat: Display "none" for NaN with metric
- only json
-Message-ID: <ZwW0b8km5DnaOETr@google.com>
-References: <20241004234120.1495209-1-irogers@google.com>
- <20241004234120.1495209-4-irogers@google.com>
+	s=arc-20240116; t=1728427132; c=relaxed/simple;
+	bh=vdt0BFkXg/F8vam3hFh2SekFTx3Y4X2xLSskb8nBBVY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XRcZv7WEIIWYSWUvnzOorTCYfsDsvGf6LlOtRIarcpvID/jFswlLPtDB3iHZfhb9SB/T9znwxC0+4MxUWLNzO+h8+mdXZqdUoI4+jyogKI88D0ggiOdijaUZGPnYeAkk9xhuGYfURB+5plsvd974XHv47GtQidfTrxRfHDkTmqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=apcjcLNn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AFld67In; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728427128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vbJPGi4LXURvqwE6imdzbJITS0vamNpNMhgomK1oaXA=;
+	b=apcjcLNnvmR8ZG7sOI7wJmHUjg18GhHyZCNngoncJkw7vzB19yKepo3m5XLYt8OfZ0CLIG
+	2Zhf/5BW+MNBkKWCWEuUJO2vSu8DXxPutGbIz7uVQlJGWVJThXP4xBAp8l0JSroqVpTdRJ
+	dv/phWE0QOziXTdxRJG1kdGQCFUmZu3AEGdEEYCnhxljAqrN9T8yPyGNmry61lwNdsoMy4
+	DSVuItmpANWlySuIKhbYGnNiuZ/E45p1yJcabN5ff57itJa1ZSkwoS7WufeDL5gnbh5vpf
+	FDECWrHBrXAjOCgxqhejAr/e1Cz3a+gXHzT6E7KDB5caJsE03rJuTDUxeASCfQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728427128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vbJPGi4LXURvqwE6imdzbJITS0vamNpNMhgomK1oaXA=;
+	b=AFld67InhiiphUtCZWUWLad+Q0U1b2Ss6LjhpXc9xujCgAO6KTz+YtnVcYOrden2LgF75k
+	jgR6Do72DuTYOOBw==
+To: "Liang, Kan" <kan.liang@linux.intel.com>, peterz@infradead.org,
+ mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: Oliver Sang <oliver.sang@intel.com>, Dhananjay Ugwekar
+ <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH 1/2] perf/x86/rapl: Move the pmu allocation out of CPU
+ hotplug
+In-Reply-To: <ed3c066f-5040-4573-a91f-3ee95014c951@linux.intel.com>
+References: <20240913171033.2144124-1-kan.liang@linux.intel.com>
+ <875xq2tv05.ffs@tglx>
+ <3b65fd68-8f5b-4029-8dbd-46c0b2cc34c7@linux.intel.com>
+ <87ploas5rb.ffs@tglx> <87msjes56x.ffs@tglx>
+ <ed3c066f-5040-4573-a91f-3ee95014c951@linux.intel.com>
+Date: Wed, 09 Oct 2024 00:38:47 +0200
+Message-ID: <87ed4qrzig.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241004234120.1495209-4-irogers@google.com>
+Content-Type: text/plain
 
-On Fri, Oct 04, 2024 at 04:41:15PM -0700, Ian Rogers wrote:
-> Return earlier for an empty unit case. If snprintf of the fmt doesn't
-> produce digits between vals and ends, as happens with NaN, make the
-> value "none" as happens in print_metric_end.
+On Tue, Oct 08 2024 at 17:05, Kan Liang wrote:
+> On 2024-10-08 4:36 p.m., Thomas Gleixner wrote:
+>>>
+>>>  1) Start your kernel with maxcpus=2 (not recommended, but ...)
+>>>  2) Load the module
+>>>  3) Online the rest of the CPUs from userspace
+>>>
+>>> If your machine has more than one die you might be surprised...
+>
+> Thanks. I will find a 2 sockets machine and give it a try.
+>
+>> 
+>> You can make this work because the new topology code allows you to
+>> retrieve the possible number of cores/dies/packages even when they have
+>> not been onlined yet. 
+>>
+>
+> Actually, I think the possible CPU mask should be good enough here. The
+> init_rapl_pmu() just intends to allocate the space for a pmu in each die.
+>
+> The worst case of using a possible mask is that some space may be
+> wasted, when there is no online CPUs on a die. But it should be an
+> unusual case. It should be harmless.
 
-Then it could be "NaN" or is there any other case?  But probably "none"
-would be more generic.
+Right, but you can't use the regular topology functions which are used
+by cpu to rapl ID for that because they depend on the CPU being
+online. The x86 specific ones which parse the APIC ID topology
+information can provide that information.
+
+I.e. you only need
+
+     topology_max_packages()
+     topology_max_dies_per_package()
+     topology_num_cores_per_package()
+
+which provide you the required information to allocate upfront. Later
+when the CPUs are actually online the existing mapping functions work.
 
 Thanks,
-Namhyung
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/stat-display.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> index 5402998881c4..e392ee5efb45 100644
-> --- a/tools/perf/util/stat-display.c
-> +++ b/tools/perf/util/stat-display.c
-> @@ -609,19 +609,22 @@ static void print_metric_only_json(struct perf_stat_config *config __maybe_unuse
->  {
->  	struct outstate *os = ctx;
->  	FILE *out = os->fh;
-> -	char buf[64], *vals, *ends;
-> +	char buf[64], *ends;
->  	char tbuf[1024];
-> +	const char *vals;
->  
->  	if (!valid_only_metric(unit))
->  		return;
->  	unit = fixunit(tbuf, os->evsel, unit);
-> +	if (!unit[0])
-> +		return;
->  	snprintf(buf, sizeof(buf), fmt ?: "", val);
-> -	ends = vals = skip_spaces(buf);
-> +	vals = ends = skip_spaces(buf);
->  	while (isdigit(*ends) || *ends == '.')
->  		ends++;
->  	*ends = 0;
-> -	if (!unit[0] || !vals[0])
-> -		return;
-> +	if (!vals[0])
-> +		vals = "none";
->  	fprintf(out, "%s\"%s\" : \"%s\"", os->first ? "" : ", ", unit, vals);
->  	os->first = false;
->  }
-> -- 
-> 2.47.0.rc0.187.ge670bccf7e-goog
-> 
+        tglx
 
