@@ -1,189 +1,69 @@
-Return-Path: <linux-kernel+bounces-354913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E79994479
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8FF994474
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAAE1C247B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE2B1F25889
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0765E18E368;
-	Tue,  8 Oct 2024 09:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A281818BC3B;
+	Tue,  8 Oct 2024 09:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iQ6TFrB8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="buvISG00"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62BF184551;
-	Tue,  8 Oct 2024 09:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB55F42A9F;
+	Tue,  8 Oct 2024 09:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728380350; cv=none; b=DmntDA+4wZknXvWYXc+YrJYfdFKbPalW3XED2hgFJiS0cmrxFLr2Anoy8P97qNQ5cPkNN5RloEECJ35+xiWhm4DNeo4fKTzSZFY7C8dDkcNwVKBNP9RPMcTap7LfbGrGk4SsBncFTEqsW+9TC5th5vEEanCSZ9Vv5wAUSRSCOJo=
+	t=1728380349; cv=none; b=izwxUKZ9tpAVaU7MDw+PRI7VQpuJoMGzQw9nai/c/IXjBFz8W5QtAPT6GzSNF5FaqrCFdgfSjObrT8O8xzLQyafjnJcjBBixy0GkdTbssbUlgBu1xzc2D5FePV1nNxSlGKqFFJ2bXPR/ub5OMAULg6oKMLf5h48iR7xfNj0n7Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728380350; c=relaxed/simple;
-	bh=9z/cJJVc5YTvNuiK49ul3aPqJ+/9WhArwBDPx5yF/Kw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GkgXVQkLpSuoM8SjuUFATYf3E1fjjd3yPR7B18K2a090TLfKW8D3Tb5iyn0fj10686h3dMlITKhoIJMEob8NUOi1RDRZp87tq28vBaRIupqgX2b6QJMkkn29IyzrQSzLqJtxe/FKE0TPZTZOsd+Mr/lxM5DK6vFnu7ysIKPe8V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iQ6TFrB8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4986in9T026816;
-	Tue, 8 Oct 2024 09:39:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	a3T3UzKLu9ltViqwnfnBybuDfhJZbIfLFf2Zb3zliP8=; b=iQ6TFrB8iPIW/nNU
-	JK2KRjxrkFtKoaM8kk+Ria4E0mv70ixlHZPEk9ENB5H+7/txpcPzkCu/+UC4fOk+
-	IAlw120zml3/dTUZ/k3V8rU8eaYQ9rRlpRADLhVG2qHeZ6q5RFRHrKQ9b9DzXHGz
-	9v61fFmGnpE4H7CwweCJGsWY+bEksc1a+HaqxKrbV7QLC8wrEgTPXe4QUr5G9Zyq
-	Pv1K0Fv9eEIRN/DErUsnBpcs+Mhs+mYMFR4mxvaw41y+XqmqaACO9l08IBkOHZk5
-	P1oxM5NNj2U3hBCnkBCecPSdx0Om7IVIj5bSqOtKsk/tfl/s7v/GGq9ACAAz0N5o
-	Gj3l6A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xq9xwhb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 09:39:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4989d3ko023539
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 09:39:03 GMT
-Received: from [10.217.216.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
- 02:38:59 -0700
-Message-ID: <b900d558-8ab0-436f-87bd-7a3d83e3dea0@quicinc.com>
-Date: Tue, 8 Oct 2024 15:08:56 +0530
+	s=arc-20240116; t=1728380349; c=relaxed/simple;
+	bh=Wz8kTljSILuTYZOl5bM/xW/73KrGlZD7xjnmRVvn0S4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Li6yI4sRUkp6XsVtaUkqi6YwYTkLYc/ODcixb70DaPEW3/I7FOjmPuLxyn7X7oEke/D+u5/67M7Yp2WaU5REc4A8XmtD/CvVfvEn1O8+qKeXeWm/Abjw1VFU2sb2DmTsXGjDRZlIz6rCEg8rKWwWbe8AelolmTtLZfN1xaEvyfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=buvISG00; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Wz8kTljSILuTYZOl5bM/xW/73KrGlZD7xjnmRVvn0S4=; b=buvISG00YXgIanP2As416hs6G0
+	L5NRfu8a9vc1c/LG6gM3X7Zg5xfW3FONiXGyf+pBwE5UOxcv6I8inJ3TZrc8yhanIDXgE0HkM01ND
+	bIpxboEAVEq3ms68Ob47ujrRN0hmjfR3Xia1n5AhFxPBsEUREa0qGDOV2VlXkOEAiENTBlKCfATsZ
+	U5jpZwxORc2J0YKGZ3hOIWXCBAeNhrvR9zO27xKl/gSumD3FSswwYCBFAfUKXOk45lKutQGY0fgTi
+	3sGUOfaaWnCQ3lkBm+poWv7nEGK5cvm33IveyQPSBoWOhikQHcoc//Waz7HLQ8J56tByCRcZb6Pm0
+	+U+RoFmw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy6gN-00000005KuZ-2Tk8;
+	Tue, 08 Oct 2024 09:39:07 +0000
+Date: Tue, 8 Oct 2024 02:39:07 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 00/12] btrfs reads through iomap
+Message-ID: <ZwT9u9Aox11sny_-@infradead.org>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490: Allow UFS regulators load/mode
- setting
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_kamalw@quicinc.com>,
-        <quic_jprakash@quicinc.com>
-References: <20241004080110.4150476-1-quic_kotarake@quicinc.com>
- <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l>
-Content-Language: en-US
-From: Rakesh Kota <quic_kotarake@quicinc.com>
-In-Reply-To: <jid5coqe4tpsafbi2haem6ye4vrpwyymkepduxkporfxzdi6cx@bfbodoxoq67l>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1euXo7adzyRVhTVUxUO76-tQsoulUmOF
-X-Proofpoint-GUID: 1euXo7adzyRVhTVUxUO76-tQsoulUmOF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=843
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080063
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1728071257.git.rgoldwyn@suse.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+Please also add the linux-xfs list per the MAINTAINERS file,
+I only noticed this now because I'm a little behind on my fsdevel
+mailbox.
 
-
-On 10/7/2024 1:37 AM, Dmitry Baryshkov wrote:
-> On Fri, Oct 04, 2024 at 01:31:10PM GMT, Rakesh Kota wrote:
->> The UFS driver expects to be able to set load (and by extension, mode)
->> on its supply regulators. Add the necessary properties to make that
->> possible.
->>
->> While at it, UFS rails have different voltage requirement for UFS2.x
->> v/s UFS3.x. Bootloader sets the proper voltage based on UFS type.
->> There can be case where the voltage set by bootloader is overridden
->> by HLOS client.
->>
->> To prevent above issue, add change to remove voltage voting support
->> for dedicated UFS rails.
-> 
-> add change to remove smth doesn't sound correct to me.
-> Please don't depend on the bootloader and describe hardware > configuration. If there can be two types of IDP boards and you can not
-> identify the voltage via other means, please create something like
-> qcm6490-idp-ufs3.dts. Please add proper Fixes tags.
-> Last, but not least, as Bjorn wrote, please split into two patches.
-> 
-sure, i will split the change into two.
-
-Since we can’t differentiate IDP boards based on UFS versions while 
-loading the DT and we have only single board ID for the IDP's, it’s not 
-possible to create separate UFS-based DT files like qcm6490-idp-ufs3.dts 
-and ufs2.dtsi... etc.
-
-And also UFS driver does not vote for voltage on UFS rails & they just 
-vote on load only.
-Hence to support both UFS 2.x and 3.x, we need to remove the voltage
-min/max voting. if add the min and max voltages in DT, then those
-initial voltage set by bootloader is overridden by regulator
-framework with min voltage specified in DT.
-
-Note: Bootloader have capability to detect the UFS version (where as 
-HLOS does not have that capability)
-
-Thank you for quick review!!
->>
->> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 12 ++++++++----
->>   1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> index 84c45419cb8d..8a4df9c2a946 100644
->> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> @@ -258,13 +258,15 @@ vreg_l6b_1p2: ldo6 {
->>   			regulator-name = "vreg_l6b_1p2";
->>   			regulator-min-microvolt = <1140000>;
->>   			regulator-max-microvolt = <1260000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->>   		vreg_l7b_2p952: ldo7 {
->>   			regulator-name = "vreg_l7b_2p952";
->> -			regulator-min-microvolt = <2400000>;
->> -			regulator-max-microvolt = <3544000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> @@ -277,8 +279,8 @@ vreg_l8b_0p904: ldo8 {
->>   
->>   		vreg_l9b_1p2: ldo9 {
->>   			regulator-name = "vreg_l9b_1p2";
->> -			regulator-min-microvolt = <1200000>;
->> -			regulator-max-microvolt = <1304000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> @@ -467,6 +469,8 @@ vreg_l10c_0p88: ldo10 {
->>   			regulator-name = "vreg_l10c_0p88";
->>   			regulator-min-microvolt = <720000>;
->>   			regulator-max-microvolt = <1050000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> -- 
->> 2.34.1
->>
-> 
 
