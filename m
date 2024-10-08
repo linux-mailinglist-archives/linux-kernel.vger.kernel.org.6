@@ -1,221 +1,156 @@
-Return-Path: <linux-kernel+bounces-354304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4A1993B8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D9C993B92
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 02:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11D5CB22216
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5EA91C23823
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 00:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC5328EF;
-	Tue,  8 Oct 2024 00:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464D92566;
+	Tue,  8 Oct 2024 00:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="TksOl07n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q4VOCa8X"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msOndidB"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF7E161;
-	Tue,  8 Oct 2024 00:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4846E625;
+	Tue,  8 Oct 2024 00:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728345808; cv=none; b=gxcyqvDUhhYGLZ5bMIBifmjCOvrLcV8dSu1KWxnNeYRVIjINNsrUj0WzN44VB9H7oCNZ8ymXL3AteqKRH0chS7RfgnpMuNyvvrwOyUXXft79qguKCL9/20blvCxC9SKqKohdz9sqZqqeXY1kQzy5+zbkNQvlG8fKNTyUp5Ig/Hw=
+	t=1728346067; cv=none; b=PVRMv+hHuPaxwhekIF2RQMutrEqpO5kg4xvAc8B2stZEsrEMMM9KJHpy7BRcJwPKfZ7wqQsoJY88YRh/qBoUOGuvkBIIyr1kQKUMH6Zp7xyl9YMeUetSqldQQbifpJ8LFKY7ATyibDM/+GyW8Z89us3lCvRKPZOlc/udguFqmMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728345808; c=relaxed/simple;
-	bh=Cu4+U/gMUXam8NpVoE1pV0ZCDtIx8CcL7ANq2dH81bw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=vAXTE37bBP9+PYkkHwA5MQ5tBZKwjsgnWfeV1210siDjljl3saaw8TjhAH2r7SqIS47SOs5vn3uKlMmXK4aoXO/hK48z0RRFu77YgWvMjjrnnRUDOQhGv3AsrXCLQAWaAjv7cVF7MFefAVrjiKV6iQVpB+Fh3O9J/I409wZjHiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=TksOl07n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q4VOCa8X; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6544613805A0;
-	Mon,  7 Oct 2024 20:03:24 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Mon, 07 Oct 2024 20:03:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1728345804;
-	 x=1728432204; bh=1J18bIWQDPi6tzheZ/xJ6X1URWbY94iGyaG7rhPqMK4=; b=
-	TksOl07nTcNhSHz8dHXSkkh9O469wCAqBvxFjsNDWEMt6/dD2/VoqVW/kSdHjayc
-	E7LxcVxyqJXHoGOj8i3biP2Gt7MgB5M+cMdObZlLklVaCom48ydJpDM15FoNZz+Z
-	vIEOmnIHNGKyNyhNTv/SXZ+4pDet6KmDXCKnvdS38PS2lG7xtdq3x5S5Ec1UI4aL
-	h4dvt+Lj3OgME56oPmlZuMEhuj3NWneMnET7X3g9nQ6eQF9Tjn8JuhmU4kJurB/M
-	Ftzxg2OROuPMScZ8Aj3xAFSujQh3TtMEOjLjeIi9tyM12uGcWqNziLxiP5pQeun8
-	U1ipO8BevEcouvrUPYg7+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728345804; x=
-	1728432204; bh=1J18bIWQDPi6tzheZ/xJ6X1URWbY94iGyaG7rhPqMK4=; b=Q
-	4VOCa8XOMSeHlLcdY8/MgaMXKg/OqlWMEAlCTAqIQBcbkRpyO/JjaXZmo0lQu9P2
-	tAyat7Jk07ogHx2KBUBAWX0cnQg/PrhfQDEix3Yd18k5GTvY/i8uoJXizXchC+Kw
-	MN8tjipau7QYz6RNIKsU2+ZRnHDpZK2dVahLHsPT3JQDzAepEAV0+Di9VRQ5Fp2h
-	OUQqo/Qa0YPlzSt7LCoKWutkv24G1G7aHp1wjvYmewcu+PWRVh6V38J8nFlUqGiJ
-	bgjD7I5AvqORpJ9Q3L0Pv7TJCPK/b1Rx+kvInzMSPOlXWDRpA7GCGtfu632vsmne
-	hqi63GpMx3tMZ3R0KWZLg==
-X-ME-Sender: <xms:zHYEZ8H2ClWEFcp3W3Cc4OO6RFM7KRhnfF9lT3K8kTPIZY4jj40hPQ>
-    <xme:zHYEZ1WSPi85JweBHzqwMYnljaqjj-WbRFdm5gFW6oUIukco-rMGbUlB-qCAnkI0V
-    8WSAn_S_gbKignzfBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeftddgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeevteelkeefueeuleejveetueetvefggfeuledvhfdv
-    gedvheelfeelkefhgfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhho
-    nhgvshdruggvvhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphhordhjrg
-    hrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggvghho
-    vgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhi
-    vhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:zHYEZ2IE2ei_QQhW95lk1NHvjojAYFdhfDqXQaRTQcu9aLTVea2QsA>
-    <xmx:zHYEZ-FVkmnrZgFQGmZBq_4dT6Tz96Q_viPTwZAqTgbDiMxu66A2Nw>
-    <xmx:zHYEZyV7JvKSeZjjbxlP0w6wedppydtE8FneU7-18F_8B4AhMsvgvg>
-    <xmx:zHYEZxNJCMrhCVIZRJkHEi8v5lyyUs1oHv_86nIkhSu30mBLdKvWMA>
-    <xmx:zHYEZwzmiyLoSdjtbZ_TH1NWzARF036SsPMdAKBoyVkidHpUN0F3FjAX>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E6BB83360077; Mon,  7 Oct 2024 20:03:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728346067; c=relaxed/simple;
+	bh=0ZiPvMVxIXnmgpbTOX9Pm5lEjwMw7/tpiKgJMEpIy68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwz6dxmw00a5THHcgETfub6WQ0xPqRA+UcIrzKcwjzeRjc7lGrfJ+0v86Rua6dh2gDuAU4t2dMJOvdxhMftLL3DZ4TuadkDokboS8/jsCBv2O7YM2jpt05egyoey+2kErtPspmVInM+l0IJ/A/SPlIe87zrtNsPS+C69jV2+tpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msOndidB; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e18856feb4so4209953a91.3;
+        Mon, 07 Oct 2024 17:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728346066; x=1728950866; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=miFjzeWy++5orkxZQhpnOaD2jAcQZeozu/hleuos2cM=;
+        b=msOndidB1TtMUqCSI0/Ux9TZjzDEID7H84HhTke1Nr40uqxehypZNQVu8Xg1/EHtOe
+         nTz8FyklTZTrR9z0Zb/SoFFTfmhcQh72ejNRTvbKpuWvEo8foTVPUsZTCcwydmd+0twP
+         6dto9TjeXrEa/VilqJnzS/z/Dz9y9g5L3RwmizTJQQ3U1gkbPtbzz+TRi0/+lbaIiXXz
+         X7HnPcFuuqw76jzFTgJR71EUnkF/NtiufKXJZJoA6Qi0lNjFDjjuwWQsN5DCcF1QnKe/
+         QFmSDUvHmFi6TcNMmxdXyqWt4UqgEEKtXGZHFy0ImmgoVq7gH/vx2dnFqnN/20tre1qu
+         Ws2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728346066; x=1728950866;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miFjzeWy++5orkxZQhpnOaD2jAcQZeozu/hleuos2cM=;
+        b=jDROP3g/+ZVQu72GS9dqQyU0jjD8RVgElZHY27tK2pSEPOxgQVdiAi+J4pZiSvugW+
+         cFg9pyovbZIm+al41qHMYUwJqOju8Qp1lhhdn76Ep8hCTI4p48RVI3ZzIUw9meajfTza
+         CJW8+1CJWHQ8G3u7Jo0gMVC8RkP77Ld2eOtUxiNu/8nQo+cCxWuZHDm1Rxp025AmWo+D
+         qZpIxBr/xWONvulbkilay7dreSSfq0GdR3k76GdkujswhkOk1d5iqIPP7Ph5NlPn+TIM
+         wbMsrnfcpHvTxTrHxPlfF2M/k1Js0q55HtergB8dRDPO1tPnJC7qTkwTTGA1r6eAtPIJ
+         +R3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCDETsqBp3BDLGP9psbWzE/CLbCOdM85m1nHXrbGycBnai+mwGR29hP2eUhy+deVfdMcs63yH1+E0GBrJz9Q==@vger.kernel.org, AJvYcCVuwbtOgCwIh5W/9donSWWtvDGh/RfPnVDbwWm+4Gah3hdWo8Dw3tdZOyG9fUTyJ/xe/lp4pf8AI6dW@vger.kernel.org, AJvYcCW3Hb/Ji3xjZZ977AFcwlrRWWi51xb/qLGUH1WZ+7sgWYi5ym4BriXR1dYrHL6MmBgGU+tJp+vxMvNClH8K@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp3pRlkM5quWVfstMxCcdZdfzFDRL+DKid32xkdGx9MoMu2PUd
+	Cdcn6tpoFTQtOGlObEJ4aa46NQ6lBGoTyj0I+S9gtAEU8Om/ERLS
+X-Google-Smtp-Source: AGHT+IF0RBKwgW4tthfAQBSAoJIijBpe1n0ZQjkbJYge4bFLQtS9TcqoaC+egoNNjETfPykOZdtVwg==
+X-Received: by 2002:a17:90a:43c4:b0:2c9:7ebd:b957 with SMTP id 98e67ed59e1d1-2e1e621e54bmr16491664a91.11.1728346065564;
+        Mon, 07 Oct 2024 17:07:45 -0700 (PDT)
+Received: from localhost.localdomain ([103.149.249.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e83cabbasm7921653a91.9.2024.10.07.17.07.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 17:07:45 -0700 (PDT)
+Date: Tue, 8 Oct 2024 08:08:03 +0800
+From: Jianhua Lu <lujianhua000@gmail.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sm8250-xiaomi-elish: Add wifi
+ node
+Message-ID: <ZwR341pdImJf_z_b@localhost.localdomain>
+References: <20241007130251.125022-1-lujianhua000@gmail.com>
+ <20241007130251.125022-2-lujianhua000@gmail.com>
+ <181d03f6-9a1d-449f-a8af-b4d0fcc8b188@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 08 Oct 2024 13:03:03 +1300
-From: "Luke Jones" <luke@ljones.dev>
-To: "Hans de Goede" <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
-Cc: platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- corentin.chary@gmail.com, "Mario Limonciello" <superm1@kernel.org>
-Message-Id: <d7e2a19c-f65f-4064-b945-62173075f5cc@app.fastmail.com>
-In-Reply-To: <e8107624-cb9c-4eaf-9760-073424b38b3c@app.fastmail.com>
-References: <20240926095344.1291013-1-luke@ljones.dev>
- <5c21455c-c688-4287-a4ad-d047efa180eb@redhat.com>
- <e8107624-cb9c-4eaf-9760-073424b38b3c@app.fastmail.com>
-Subject: Re: [PATCH 0/3] platfom/x86: asus-wmi: revert ROG Ally quirks
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <181d03f6-9a1d-449f-a8af-b4d0fcc8b188@quicinc.com>
 
+On Mon, Oct 07, 2024 at 11:40:48AM -0700, Jeff Johnson wrote:
+> On 10/7/2024 6:02 AM, Jianhua Lu wrote:
+> > Add wifi node and this wifi module is connected to pice port.
+> 
+> s/pici/pcie/ (or perhaps better: PCIe)
+> 
+Acked
+> > The following is qca6390 probe message:
+> >   ath11k_pci 0000:01:00.0: Adding to iommu group 12
+> >   ath11k_pci 0000:01:00.0: BAR 0 [mem 0x60400000-0x604fffff 64bit]: assigned
+> >   ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+> >   ath11k_pci 0000:01:00.0: MSI vectors: 32
+> >   ath11k_pci 0000:01:00.0: qca6390 hw2.0
+> >   ath11k_pci 0000:01:00.0: chip_id 0x0 chip_family 0xb board_id 0xff soc_id 0xffffffff
+> >   ath11k_pci 0000:01:00.0: fw_version 0x10121492 fw_build_timestamp 2021-11-04 11:23 fw_build_id
+> > 
+> > Signed-off-by: Jianhua Lu <lujianhua000@gmail.com>
+> > ---
+> > changes in v2:
+> > 1. add ath11k-calibration-variant property.
+> > 
+> >  .../dts/qcom/sm8250-xiaomi-elish-common.dtsi  | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> > index ebea283f56ea..7a55e271c3ac 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> > @@ -680,6 +680,25 @@ &pcie0_phy {
+> >  	status = "okay";
+> >  };
+> >  
+> > +&pcieport0 {
+> > +	wifi@0 {
+> > +		compatible = "pci17cb,1101";
+> > +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> > +
+> > +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+> > +		vddaon-supply = <&vreg_pmu_aon_0p59>;
+> > +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+> > +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
+> > +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+> > +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+> > +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
+> > +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+> > +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+> > +
+> > +		qcom,ath11k-calibration-variant = "Xiaomi_Pad_5Pro";
+> 
+> Are you going to submit the board file per the guidance Dmitry provided?
 
-
-On Sun, 6 Oct 2024, at 8:48 AM, Luke Jones wrote:
-> Hi Hans,
->
-> On Sun, 6 Oct 2024, at 3:37 AM, Hans de Goede wrote:
->> Hi Luke,
->>
->> On 26-Sep-24 11:53 AM, Luke D. Jones wrote:
->>> The ASUS ROG Ally (and Ally X) quirks that I added over the last year
->>> are not required. I worked with ASUS to pinpoint the exact cause of
->>> the original issue (MCU USB dev missing every second resume) and the
->>> result is a new MCU firmware which will be released on approx 16/10/24.
->>
->> First of all let me say that it is great that you have gotten Asus
->> to come up with a fixed firmware, thank you.
->>
->> With that said I believe that it is way too early to revert these quirks,
->> users are usually not great at installing BIOS updates and that assumes
->> this will be handled as part of a BIOS update, if it requires running
->> a separate tool then the chances of users not installing the update
->> will likely be even worse.
->>
->> So IMHO for now we should keep these quirks around to avoid regressions
->> for users who don't have the MCU update.
->
-> I wasn't sure how best to handle it, mostly the intention was to 
-> publicise things. In any case the quirks don't affect the new FW update 
-> at all and most folks won't ever notice.
->
->> Related, have you seen this series:
->>
->> https://lore.kernel.org/platform-driver-x86/20240922172258.48435-1-lkml@antheas.dev/
->>
->> that seems to fix the same issue ?
->
-> The history of that is here 
-> https://lore.kernel.org/linux-pm/20240919171952.403745-1-lkml@antheas.dev/#t
->
->> And it does so in another, arguably better way.
->
-> It is a variation of the many many things I've tried while building a 
-> comprehensive set of data for ASUS to work with. You can achieve a 
-> similar thing with only s2idle_pm callbacks and Mario's patches to 
-> export the DSM screen-off as an external symbol. Better is subjective 
-> since it still fails to fix the initial reason this work ever started - 
-> fixing the Ally - unless delays are added.
->
->> Although unfortunately as patch 3/5 shows just calling the global
->> "display off" callback before suspending devices is not enough
->> fixing things still requires inserting a sleep using a DMI quirk :|
->
-> This is because the issue can only be fully fixed in FW. What is 
-> happening here is just another variation of the quirk and the things I 
-> mentioned above. It gets worse with different compiler such as clang, 
-> or different kernel config, or even distro. The cause of issues is that 
-> a particular signal the MCU is waiting on may not occur and that 
-> becomes wildly unpredictable depending on kernel config, compiler etc.
->
-> Even Windows can have the issue we have here.
->
->> Still that series including the DMI quirk might be a cleaner way
->> to deal with this and if that is merged then dropping the quirks
->> from asus-wmi makes sense.
->
-> All of this is fully negated by the coming firmware. Having said that, 
-> *if* there are any issues with these patches then those issues will 
-> never come to light with the new MCU FW either as it fixes the root 
-> cause of the issues seen.
->
-> The mentioned patches achieve a similar result to using Mario's s2idle 
-> callback patches and using those in s2idle_pm_ops. But as seen above, 
-> the timing issue becomes apparent - and this is fixed only by using 
-> fixed FW.
-
-Hi Mario,
-
-I am now wondering if there is some merit still in upstreaming your original series plus the asus-wmi patch based on those. The benefit for asus-wmi is that it is cleaned up a lot, and the delay can be reduced.
-
-I can likely achieve the same thing using the CSEE calls manually but shifting to the s2idle_pm callback for suspend since the main thing is just ensuring device recovery with no regard for powersave.
-
-The main reason for this consideration now is due to requiring some form of it to remain for a while as Hans requests. I already know from testing that there is zero negative effect on the coming MCU update and most users won't notice at all, but I would very much like to improve the current hack.
-
-One other consideration though is that I've found it pretty difficult to get some kind of safe HID request done through asus-wmi to fetch the MCU FW version and disable this quirk based on that, but I could possibly go in the other direction and have the hid-asus-* drivers find the asus-ally driver data and flip a switch to on/off these quirks. That would apply only for suspend/resume and not the reboot fix though.
-
-
-> Kind regards,
-> Luke.
->
->> Regards,
->>
->> Hans
->>
->>
->>
->>
->>> All users should update to MCU FW as soon as released to:
->>> - Ally 1: v319
->>> - Ally X: v313
->>> 
->>> Luke D. Jones (3):
->>>   Revert "platform/x86: asus-wmi: ROG Ally increase wait time, allow MCU
->>>     powersave"
->>>   Revert "platform/x86: asus-wmi: disable USB0 hub on ROG Ally before
->>>     suspend"
->>>   platfom/x86: asus-wmi: cleanup after Ally quirk reverts
->>> 
->>>  drivers/platform/x86/asus-wmi.c | 39 +--------------------------------
->>>  1 file changed, 1 insertion(+), 38 deletions(-)
->>>
+I want to get comment for this patch, then send board file.
+I have send board file to ath11k@lists.infradead.org now.
+> 
+> Note that I am not up to speed on the firmware/board maintenance procedures so
+> we'll need to wait for Kalle to have bandwidth to handle the request (and show
+> me how he handles it).
+> 
+> /jeff
+> 
 
