@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-355933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851B999595B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509DE995960
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEF32B23988
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8D8284FCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D68215024;
-	Tue,  8 Oct 2024 21:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A62215F47;
+	Tue,  8 Oct 2024 21:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tdkGR0qn"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ovSq+9zt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD74120CCF7
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 21:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523591DF241;
+	Tue,  8 Oct 2024 21:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728423582; cv=none; b=EgJIqJw59C0ScyC25X1b2i3Utqs6/7CF7JQ+UCho7Ml7eka27uGITRZYeCyaYPsyjDqTfaZ4+WakA955Fv9c+Np7KB1oPNnuoi9a6dP8e7v8HtDNM1s4XzMjmarmKNT7/dVeE+XVI8WHbDxBYqFw6qV0+fnNg0yOjlCF2e1mJms=
+	t=1728423654; cv=none; b=UBPHsjbxHq6aheqUi7YrE7CZ3oXawd98Iti3lIPKbOlRGpnwlO4BcDosZ9D0gPHH/79C4QlKGes5rKLfM7s4issK507YCkN60TXtil/xEo+POh43dJIiw4PvswbThtpBMhxeVCFzZmsximHYTgf3qu1wz6/8bYzU/ExqDOAEVWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728423582; c=relaxed/simple;
-	bh=7Fk9hEbyJa/5s/TjAYnY21mhwMhyHGcSiSWIhGqiyj0=;
+	s=arc-20240116; t=1728423654; c=relaxed/simple;
+	bh=mjuZtvbvN6yB1MZfQJAXHp9GY1DzfjRXz1ozIEosAVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYdKwpP852EYl/Ou1gUueTizuhvokqEKo4YdTB3ng5WkagwDoILgs7azdLxLV5Bou932zg0tU1DDYPYovljar60KnEZ1vIagLOOJbRatXYbhRHOAC7kpm2m0o38pNT9CnuMFHnaKCz8IyIfwWTZUSQiipfQtfejbHV4KE+MGRmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tdkGR0qn; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 8 Oct 2024 14:39:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728423577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=upcROJIFe0W5gBFb4ALFX5lsfVgqMc+rHei4YQkYfl0=;
-	b=tdkGR0qnlVBzBzEZBwL+0FMRxd1cajezHtvnnvFP+/jvi4Y9uNrcinS8xppfVjW9wDnC68
-	NU2LDbgF9gBaG6svpO6+RS6qH8CJ8Ec5PeHL8YG/a01AEpdrvXjQW6aAfaHFUU096bd7dl
-	GVwka/+eDZ7Y9Kdxw9HuOn1I31F09Dc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Rik van Riel <riel@surriel.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH] bpf: use kvzmalloc to allocate BPF  verifier environment
-Message-ID: <rf7i4y4zsm5yspnvebn6msj5r5dfvde3qvkti65fnhngcueqj3@landndtl6she>
-References: <20241008170735.16766766@imladris.surriel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIj5L7G6RKbLk+/B+lgSIdOCpcRFsLgp84N+7eihXM8K79QOTVwH975T6U9E34Nq6pqjNjdIH8c3/6iOVZcUxr4ZZA4QXaQzGktBED9wzkm9t68AAOcXs390t3KS991BkYzRJj4d7AIkd3LEvt5z9qv3UjzxPd1X3SVbMo2slCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ovSq+9zt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5GDTP1p+hoBPmsPFl/Dm1EEMqKTI/kABb/RyAjvIxKg=; b=ovSq+9ztKTA8KREnlnYOIje66D
+	evoCNhByMSyy7VtR1OySgXKEO/uXs6D0BEVOevVGz1Zb7Q5/GYOdNrGiHR+Ae11LdugEdaXNt/HBv
+	c7pmGNQWqOLD7gWOlHOTfQbMsT6nV9BlJc/lPg9qJKfag09lWjd4GmZqYQ/FCDPCqfmM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syHwe-009PsY-NC; Tue, 08 Oct 2024 23:40:40 +0200
+Date: Tue, 8 Oct 2024 23:40:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v0] net: phy: aquantia: poll status register
+Message-ID: <5f4a8026-0057-48dd-b51e-6888d79c3d76@lunn.ch>
+References: <20241006213536.3153121-1-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,24 +61,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008170735.16766766@imladris.surriel.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241006213536.3153121-1-aryan.srivastava@alliedtelesis.co.nz>
 
-On Tue, Oct 08, 2024 at 05:07:35PM GMT, Rik van Riel wrote:
-> The kzmalloc call in bpf_check can fail when memory is very fragmented,
-> which in turn can lead to an OOM kill.
+On Mon, Oct 07, 2024 at 10:35:36AM +1300, Aryan Srivastava wrote:
+> The system interface connection status register is not immediately
+> correct upon line side link up. This results in the status being read as
+> OFF and then transitioning to the correct host side link mode with a
+> short delay. This results in the phylink framework passing the OFF
+> status down to all MAC config drivers, resulting in the host side link
+> being misconfigured, which in turn can lead to link flapping or complete
+> packet loss in some cases.
 > 
-> Use kvzmalloc to fall back to vmalloc when memory is too fragmented to
-> allocate an order 3 sized bpf verifier environment.
-> 
-> Admittedly this is not a very common case, and only happens on systems
-> where memory has already been squeezed close to the limit, but this does
-> not seem like much of a hot path, and it's a simple enough fix.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Mitigate this by periodically polling the register until it not showing
+> the OFF state. This will be done every 1ms for 10ms, using the same
+> poll/timeout as the processor intensive operation reads.
 
-It seems like a temporary allocation, so using kvmalloc* seems
-reasonable.
+Does the datasheet say anything about when MDIO_PHYXS_VEND_IF_STATUS
+is valid?
 
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_XAUI	4
+>  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_SGMII	6
+>  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_RXAUI	7
+> +#define MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF	9
+>  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_OCSGMII	10
+>  
+>  #define MDIO_AN_VEND_PROV			0xc400
+> @@ -342,9 +343,18 @@ static int aqr107_read_status(struct phy_device *phydev)
+>  	if (!phydev->link || phydev->autoneg == AUTONEG_DISABLE)
+>  		return 0;
+>  
+> -	val = phy_read_mmd(phydev, MDIO_MMD_PHYXS, MDIO_PHYXS_VEND_IF_STATUS);
+> -	if (val < 0)
+> -		return val;
+> +	/**
+> +	 * The status register is not immediately correct on line side link up.
+> +	 * Poll periodically until it reflects the correct ON state.
+> +	 */
+> +	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_PHYXS,
+> +					MDIO_PHYXS_VEND_IF_STATUS, val,
+> +					(FIELD_GET(MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK, val) !=
+> +					MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF),
+> +					AQR107_OP_IN_PROG_SLEEP,
+> +					AQR107_OP_IN_PROG_TIMEOUT, false);
+> +	if (ret)
+> +		return ret;
+
+I don't know if returning ETIMEDOUT is the correct thing to do
+here. It might be better to set phydev->link to false, since there is
+no end to end link yet.
+
+	Andrew
 
