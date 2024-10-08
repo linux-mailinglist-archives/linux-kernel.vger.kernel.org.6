@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-355663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387CD995574
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42909995578
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C841D2838F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:17:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC7AB260FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636951F9AAF;
-	Tue,  8 Oct 2024 17:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DB31FA240;
+	Tue,  8 Oct 2024 17:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fAh0ynRY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cv4/rBQL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A781F943E;
-	Tue,  8 Oct 2024 17:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77AC1F9AAA;
+	Tue,  8 Oct 2024 17:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728407824; cv=none; b=gdVFzvDBhp4k4Zb6lkY4J9fwaDv2iq3UGYGwZicDcjznEgJC2gpgdan87RDht6hYl7LRvLzrUx4oNi8h9SmAbzgKvvWozo0LdmmIDacRbluXGgxZUyik0Cjt+BKJRF6f+iToC51gn1xjNxOKUDeEvcfe/Vh9cVnvW3H3YKoE4nw=
+	t=1728407859; cv=none; b=hbugAWmMbujoZ85lVv+/CtDeQ4gWhI+YkrYlvYBJ3Y/ju2yPXd8R+S15KvvvCPBVcjkrs+sXN3uGWiDx9SrLMg9LqOmTiC+6l2/dqHk0uSXQhw/PcuZ7FTuV7Hshwl1I9dOtJBFKssD/mDGGHwuWgVepZGrvVnOfGJUXa6PDEJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728407824; c=relaxed/simple;
-	bh=OjUSR2PF13JtkSK4P44cBDx3HSO9zrtYh8NlSmy4W0Q=;
+	s=arc-20240116; t=1728407859; c=relaxed/simple;
+	bh=Fy+Wq9ZxfFcFigNOpkbzmgAg/wR1mFMZq7h7mkjs+gM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJH4KVrzh6ePu7LTgV6QskhYXjRMnRn3KpjLMnywLrYRjF/6WnfFqT6gos/nqk1Q1TOBgyQmosmLEHwhhyqFSUINJvyfkbCYYzz22zLDh3dRRJGVDTWO+VCXzHZE8W++TQP0Jq6mjYL4CBPMafK4RmeQBgK9YPrTCF3HwNhauXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fAh0ynRY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=BYelIuhdwCMOp3hSfF4Y8G97oI/WtzSte+kcZyAyHKI=; b=fA
-	h0ynRYZ6/Vf0avTjGHz/KkJjBpq7V/rlFiFTnOM68+y0adeEbG3leHqJkp8wG1zoFleHFHqoVjP2K
-	6RQmBUEfm3r6/nvcPH+S5kckWJDDn7+TIkRAGO/FEkGi4T3Rago9VvFaULgFtqnk1xc3Me4e83vaH
-	oS22lCoY8zM6u2g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syDpC-009Ob7-R5; Tue, 08 Oct 2024 19:16:42 +0200
-Date: Tue, 8 Oct 2024 19:16:42 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] rust: Add read_poll_timeout function
-Message-ID: <df2c9ea8-fa3a-416e-affd-b3891b2ab3f7@lunn.ch>
-References: <ZwG8H7u3ddYH6gRx@boqun-archlinux>
- <e17c0b80-7518-4487-8278-f0d96fce9d8c@lunn.ch>
- <ZwPT7HZvG1aYONkQ@boqun-archlinux>
- <0555e97b-86aa-44e0-b75b-0a976f73adc0@lunn.ch>
- <CAH5fLgjL9DA7+NFetJGDdi_yW=8YZCYYa_5Ps_bkhBTYwNCgMQ@mail.gmail.com>
- <ZwPsdvzxQVsD7wHm@boqun-archlinux>
- <5368483b-679a-4283-8ce2-f30064d07cad@lunn.ch>
- <ZwRq7PzAPzCAIBVv@boqun-archlinux>
- <c3955011-e131-45c9-bf74-da944e336842@lunn.ch>
- <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjLRz0qHe0kI6klh2p920uLDmOtpGfUXqThnf7GNWfLQgmwD0hyzZFXEszw5QIHiT487zX5Odz3x8AJkHdQXXhZlzuxB6mUfk+WlTYc5Zwpv6M28aO3O//NlpVFd0GRWxNLudHyPft3UZAkaXuArj0ER8USxHJ8aN5SZC5IZ5yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cv4/rBQL; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728407858; x=1759943858;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Fy+Wq9ZxfFcFigNOpkbzmgAg/wR1mFMZq7h7mkjs+gM=;
+  b=cv4/rBQLJDxfvh1m6OUrFqTvz+eeBPF7VFF67lBXKl4TSeAaqIS8Zonl
+   e2qsmb2MLOf4f7slIvFnM4+KBPYIVzeM4vPco1t9/VqdbxvRg2WlKxmyB
+   EubYXWhZFXXXTqLExBHZhb+hJIYFdxLRqtVFxBjcZq5ftQsTM+IfpmIwA
+   ZaR3QJp+DjCrFAcA8+QxiY4V7j6qlXgDM6Apkza+qEhmCnkMoIybxRGBk
+   rbrbMXWQBTAjRIBV09odJieQ9mFK4fd4+aFG/PM1xauhfE8ZQ1LVwVZiX
+   2gYEtQcSRMriibzy/Pv8/tWOtHRKGA7OdlXh3IUqn2l/r5sQpR8BdaWfN
+   g==;
+X-CSE-ConnectionGUID: ndQrMn+/Rn+X2cxQRePg0g==
+X-CSE-MsgGUID: YPqfRgHVQgie0aghJXSqqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="53035764"
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="53035764"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 10:17:37 -0700
+X-CSE-ConnectionGUID: MKR+Nn0RRaGCDY7iiRW3GA==
+X-CSE-MsgGUID: 4zxQgl0fTUaE1kVU6CM4Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="75782957"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 08 Oct 2024 10:16:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id AEEA620F; Tue, 08 Oct 2024 20:16:57 +0300 (EEST)
+Date: Tue, 8 Oct 2024 20:16:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH v1 4/4] dmaengine: Unify checks in dma_request_chan()
+Message-ID: <ZwVpCYxiifl2mS65@black.fi.intel.com>
+References: <20241007150852.2183722-1-andriy.shevchenko@linux.intel.com>
+ <20241007150852.2183722-5-andriy.shevchenko@linux.intel.com>
+ <ZwQG5II6xsOwKwxz@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72m3WFj9Eb2iRUM3mLFibWW+cupAoNQt+cqtNa4O9=jq7Q@mail.gmail.com>
+In-Reply-To: <ZwQG5II6xsOwKwxz@lizhi-Precision-Tower-5810>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Oct 08, 2024 at 03:14:05PM +0200, Miguel Ojeda wrote:
-> On Tue, Oct 8, 2024 at 2:13 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > As far as i see, might_sleep() will cause UAF where there is going to
-> > be a UAF anyway. If you are using it correctly, it does not cause UAF.
+On Mon, Oct 07, 2024 at 12:05:56PM -0400, Frank Li wrote:
+> On Mon, Oct 07, 2024 at 06:06:48PM +0300, Andy Shevchenko wrote:
+> > Use firmware node and unify checks accordingly in dma_request_chan().
+> > As a side effect we get rid of the node dereferencing in struct device.
 > 
-> This already implies that it is an unsafe function (in general, i.e.
-> modulo klint, or a way to force the user to have to write `unsafe`
-> somewhere else, or what I call ASHes -- "acknowledged soundness
-> holes").
+> suggest:
 > 
-> If we consider as safe functions that, if used correctly, do not cause
-> UB, then all functions would be safe.
+> Use dev_fwnode() to simple check logic for device tree and ACPI in
+> dma_request_chan().
 
-From what i hear, klint is still WIP. So we have to accept there will
-be bad code out there, which will UAF. We want to find such bad code,
-and the easiest way to find it at the moment is to make it UAF as fast
-as possible. might_sleep() does that, __might_sleep() does not, and
-using neither is the slowest way.
+Sure, thanks!
 
-	Andrew
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
