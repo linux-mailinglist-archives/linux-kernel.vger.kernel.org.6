@@ -1,159 +1,114 @@
-Return-Path: <linux-kernel+bounces-355282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCBC994FA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:29:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5B7994F76
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AC6B25D0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B562873EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071C91DFE04;
-	Tue,  8 Oct 2024 13:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FR/gX1cE"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400D31DFE2B;
+	Tue,  8 Oct 2024 13:25:11 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368231DFE21
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6664B1DF722;
+	Tue,  8 Oct 2024 13:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728393887; cv=none; b=ug7jIAOfopVhHmGp5UIWxnxDQDDc0o96yBwWLT1prhe/tGV72YguxJ8QXzu9IU+tt9NPo3Hp26fDTchFiGZ8dRQehwYccFdbqLzwRjDBv+nUKtCsnWde0zHjIKpAXCxy90nKTMFET1UJ+eYZIT+QwZhPrzGwZK9GjAx3cdNHJuY=
+	t=1728393910; cv=none; b=JiV1nrOzLXLPij090sJLiQJUuWGeFrXmuxcNyYYPwcfImyJa/N0DmLLAmXBQ7T8IdcEdfXR5DMuYw31Dnc3obywFzNTasbdXW1WdolLb7rv29m9GKp+GyOn+STcGSBioY33u6cQbXGZQUNuISj3xL9Tc/M06i5onQt94MYM+Azg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728393887; c=relaxed/simple;
-	bh=1JLses5T18eVEvY7yJFIthwSZIRfibQxel3VlN8/p1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQ8hrzCLy0Z9XP96hu7EHIdC09agen1xLPErXxBkm4SQJVVf7pUvpSpmYVUH8EhF4p24NVzTZz/quQEZPTYjyEe3TlAVzvJXtaKja3SAhjwWvigSp/j3uqHEkWJ6HnKu1IpUX4RmmzhUtd4QPIOq+x3164tjybWMTFeDDheSbEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FR/gX1cE; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82ce603d8daso206437639f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728393884; x=1728998684; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=28072l0Erbe4n22Upxqml8PWOL8yMC/7DRp754ESGqE=;
-        b=FR/gX1cE+Ua4vk1IVYUdrjsVnIp5UNRU7l67u1mcqoJ+oSNhFlsSwHFHnCfYDFZcLX
-         +9CLd3aLqq1o7wrQX3CJcdFv4AEWawoLsiv4R3hJa8z+ULU2PUv/ZWcPhrsZjVw8pCzW
-         8hZjoQNJM+AFCzoNAqxWNKgjb3gmArLRvMe4Z2sTD7raLHSKjFVT1fVf1PZ1gHM5/OI0
-         oMeuZQ662oBWCQWhlrZ4VUn6Sl8y7/YffDfPlK9Zd+Hj3k2QGCfI0/SiE46sxF4dbNle
-         hAqBlSXTbHR/gBndJ4YEsSuVbxUpAaoGHXJFRcQhVSFShiy0faYRRwYEzj6jTO+aPENp
-         M+kw==
+	s=arc-20240116; t=1728393910; c=relaxed/simple;
+	bh=8cPQ18ZYxStSBAQyPBEV3/pACcDlNo2MF0tRAhLZyKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nU2lg/RLIxPgnwiSn881vOsCs3EOgiLulLt4d9sINiEWfmUmWEChnxbl88jyIHRSzzJH/JS2D9g9KAmRGV4zNL7AmJiQxgiyhtMxj6p/utbzitc6jpXUNUcGgqoD88wjNI2MGUZefZ3I0wDRaA6cxuo3a6rJRKhVpZxIFILVJ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2d36343caso30992717b3.2;
+        Tue, 08 Oct 2024 06:25:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728393884; x=1728998684;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=28072l0Erbe4n22Upxqml8PWOL8yMC/7DRp754ESGqE=;
-        b=YwvVD6JrZCoO+0pCfFz4n+hS9rtZalt36Lul1Fm0mg+QriIL4Tu73rCdQryGuMM63J
-         1mKaiC/w/BMG2lt0zvtpmu/cPlVC3Bmxhj+1+UuNMF2MYAzsF8mpROJSWSnZN+ZOXSwj
-         ACKB4PRxuWTLQ7Me/eqquTJH+R3f/5Qs96axYQqqdnFc3GHlumVg4IZTSYUh4EMgy17r
-         4bLJRwIUfIjajRsRjNgn9Pg57PCYQosMhZjFyZNfTVG4gTvipd1aLDJcvh+8EEbl4KHO
-         GP2d/tdm1L6xiyiKzT4yVL9PBtWAXdIsVZfrebVcPI+A1SFyg2ncB0KVDwGKW55bDd5m
-         056w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDyJcy8dAwPx1+tfyN4+HRggEQ06FgP+FbNc0OB17fa0QxU/HcybQzlp/QxP5mtdHmPhGIDpigRaoYw0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtp1rqN7EROnIU9szdaYG+jnIZWhIlR9x8d74Xys4B/deQc3+h
-	0JAkPQO6xog6QKjJ8UznRp3iC0NPkgoa7mOQzmNunG/7xi8i7fqlUXkHfVaLYqM=
-X-Google-Smtp-Source: AGHT+IGfOZKIuFNdtMdRAw3DEguCQsc9zo5vlP2DhGPcapergjoIAvlXruUxK0+QvW4hpGWp34IswQ==
-X-Received: by 2002:a05:6e02:1e0d:b0:3a1:a57a:40a1 with SMTP id e9e14a558f8ab-3a375976f0bmr148548075ab.5.1728393883943;
-        Tue, 08 Oct 2024 06:24:43 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db6ec2a7c8sm1649767173.128.2024.10.08.06.24.41
+        d=1e100.net; s=20230601; t=1728393907; x=1728998707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+nSn19YtBYesjA0jHORDHT8Ybkkt74qSl6rAXa4U574=;
+        b=lv9362xw59ncHpX2vCjw+kI4GgJW3Ykl/xjkWet9jsGZODOhKNIw0qvfYerLMv1kRH
+         wc474zpLqgfiIbncQweRKaLrtJbOZo3zu8F0u8G9+UwjjMZsy5bNR6Ud9D6hIHWOfVEZ
+         FzNAbEMkIsqAh7IKdz7iioUCWfGM3PD3ijB9SnEw44S+cCIbr0BZ8oR8m6k/bre4vKY6
+         Pc5KRj1Ilh9IbLch4Pgdc9jEPRz52TtFzqjqSLdjUkAcnUcdNZF+tGNR0bVRoZppbbp3
+         nolAE/9rgn+6d01sJ82cYpf8sWKUFew04+odVxEd2lqyaU5fIYS7AIfYkNPWIrmBscjI
+         vaMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2LW/IJzrUQ2duHwWUERNZwzVdmpmFlhrwGncTL2SyoSyozwQ4T2kxtrGTHKXuymSMt322XfV+yoxowAM5@vger.kernel.org, AJvYcCVDjP+9DeIsXQ8dx94tQH65IUFSJZZXeN4TzsOtWlc1sNkFjCDm/xH63eVyTxP1AnvwnIvl2hnjydp3@vger.kernel.org, AJvYcCVhFHZxiKTMoGnZ4+nwZ1AZVFQiXr5w9BUeKuyvSbA0V7p1h7cliBQfXHe2KJxAANI2dBYbhX7xvraA@vger.kernel.org, AJvYcCVyP9xJkPFnIIfAs8CljQRclIB/GqT8pvOKMiho0ZXGUgymPJTOnr0/Nv6r8IPNkdYHt0vRFjMj91R0@vger.kernel.org, AJvYcCX5mXDwxxOTerJZ81MC20QV1qOyVyfc4jC+z6A9trrwmZAN0Zd/uJBLE8aaaFI/+77NvVw9sz8UNxI=@vger.kernel.org, AJvYcCXXjiJwKo+QqufEO6u5N86IBnbGt+LNgiqW4Zxx1PaMCF4es9y3fEgIoKYb+pXLOqNOMQ+KbKzNdg/hDZ7jWAQnqBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFgvU247Hofi+m/3vq+qTz+FRt73EUa5dkOIMK0nZC0BJjWERC
+	Lb9j9cxuWDdph+6kz1O8tpitPmxXCyNSWP961vo8X3WNUQqvNz4ULyAiPSyD
+X-Google-Smtp-Source: AGHT+IEVXmJv+lKoyHQ3MS8mqKn+VCRIcPc3y8remeQQ+xKEiSjX0SIylKUkfZT7qpy+zr+8vCMgkA==
+X-Received: by 2002:a05:690c:6484:b0:6e3:182f:f974 with SMTP id 00721157ae682-6e3182ffbc9mr8724307b3.45.1728393906775;
+        Tue, 08 Oct 2024 06:25:06 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93d6eedsm14209307b3.78.2024.10.08.06.25.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 06:24:43 -0700 (PDT)
-Message-ID: <fe10ee8f-1220-4a1d-a25b-efaaa314699a@kernel.dk>
-Date: Tue, 8 Oct 2024 07:24:41 -0600
+        Tue, 08 Oct 2024 06:25:05 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6de14e0f050so43213957b3.0;
+        Tue, 08 Oct 2024 06:25:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUZUm2U2jAZ4wQi7fHEQNmu7Qf/ZK7I/cgSsUtmTgwTiTRkm8dm3I7SLsDTdKRy0W61lxNGZqTJ7VsTPUFltjIHuSw=@vger.kernel.org, AJvYcCUlqWozA0Z4WWFYdmoJkPZYCAoPJi+iPZA24jg0DMy/xWDTYon45w0lPhPsMV6jMpkGXLHjgaOXCFZa@vger.kernel.org, AJvYcCW0TBSpVT86NtDgQYMaIJyxbu7fYSIvyFCbnkEAgew4nwrjF79gfvXiNT8btN7rtHVK/5qn7fEj6h4s@vger.kernel.org, AJvYcCWfQH9n1NJilMUNoPU8KkmeHZ3YTBVTQW/vs2ud0S4thypsCcQJkRhPeyYQt8mnjjRIhUjQ5pL/EzI4URC8@vger.kernel.org, AJvYcCXAVYz4ITXVAS3Vq55KVi98xDDd8w/dwTrMFRhIYKXDd/1p/nNbrb79tn/9cqfw0FCNLvHWNgaJP+w=@vger.kernel.org, AJvYcCXXokzrEKfJS6xpKfwA7aqbcJ4VAQ3R/6fKV/z0sIJa78Z8N2P8SITe+XWQ8JhMsjLR62TrErwmFG+c@vger.kernel.org
+X-Received: by 2002:a05:690c:7007:b0:6dd:d407:4568 with SMTP id
+ 00721157ae682-6e2c7262e78mr141049967b3.26.1728393905298; Tue, 08 Oct 2024
+ 06:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] block: partition table OF support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
- INAGAKI Hiroshi <musashino.open@gmail.com>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Ming Lei <ming.lei@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>,
- Christian Heusel <christian@heusel.eu>, Avri Altman <avri.altman@wdc.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Riyan Dhiman <riyandhiman14@gmail.com>,
- Mikko Rapeli <mikko.rapeli@linaro.org>,
- Jorge Ramirez-Ortiz <jorge@foundries.io>, Li Zhijian
- <lizhijian@fujitsu.com>,
- Dominique Martinet <dominique.martinet@atmark-techno.com>,
- Jens Wiklander <jens.wiklander@linaro.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com,
- Christoph Hellwig <hch@infradead.org>,
- Christian Marangi <ansuelsmth@gmail.com>
-References: <20241002221306.4403-1-ansuelsmth@gmail.com>
- <172833255295.162249.16483920948700467749.b4-ty@kernel.dk>
- <CAPDyKFoueMwVfN+P+tG7zT+-iUs=hghsRu+i9mNiHGw_9tcwBw@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAPDyKFoueMwVfN+P+tG7zT+-iUs=hghsRu+i9mNiHGw_9tcwBw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Oct 2024 15:24:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWOTtVcSu36orjrsnNykPcNCmHpXmGz7mV9WGW-aN9WZg@mail.gmail.com>
+Message-ID: <CAMuHMdWOTtVcSu36orjrsnNykPcNCmHpXmGz7mV9WGW-aN9WZg@mail.gmail.com>
+Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
+ #reset-cells for RZ/G3S
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
+	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com, 
+	ulf.hansson@linaro.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/24 3:10 AM, Ulf Hansson wrote:
-> On Mon, 7 Oct 2024 at 22:22, Jens Axboe <axboe@kernel.dk> wrote:
->>
->>
->> On Thu, 03 Oct 2024 00:11:40 +0200, Christian Marangi wrote:
->>> this is an initial proposal to complete support for manually defining
->>> partition table.
->>>
->>> Some background on this. Many OEM on embedded device (modem, router...)
->>> are starting to migrate from NOR/NAND flash to eMMC. The reason for this
->>> is that OEM are starting to require more and more space for the firmware
->>> and price difference is becoming so little that using eMMC is only benefits
->>> and no cons.
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/6] block: add support for defining read-only partitions
->>       commit: 03cb793b26834ddca170ba87057c8f883772dd45
->> [2/6] docs: block: Document support for read-only partition in cmdline part
->>       commit: 62adb971e515d1bb0e9e555f3dd1d5dc948cf6a1
->> [3/6] block: introduce add_disk_fwnode()
->>       commit: e5f587242b6072ffab4f4a084a459a59f3035873
->> [4/6] mmc: block: attach partitions fwnode if found in mmc-card
->>       commit: 45ff6c340ddfc2dade74d5b7a8962c778ab7042c
->> [5/6] block: add support for partition table defined in OF
->>       commit: 884555b557e5e6d41c866e2cd8d7b32f50ec974b
->> [6/6] dt-bindings: mmc: Document support for partition table in mmc-card
->>       commit: 06f39701d0666d89dd3c86ff0b163c7139b7ba2d
->>
-> 
-> I think we may need another merging strategy for this as I quite big
-> changes in the pipe for the mmc block device this cycle.
-> 
-> Would it be possible for you to drop the mmc patches and instead share
-> an immutable branch with the block changes that I can pull in, so I
-> can take the mmc changes?
+On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The RZ/G3S System controller has registers to control signals that need
+> to be de-asserted/asserted before/after different SoC areas are power
+> on/off. This signals are implemented as reset signals. For this document
+> the #reset-cells property.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I mean we can, but the mmc changes in here are pretty self contained.
-I'd rather avoid rebasing the block tree for that, given how small the
-changes are. If it conflicts, should be easy enough to resolve.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-You an also just pull in the block tree now and resolve the conflict.
-There's not a whole lot in there yet outside of this series.
+Gr{oetje,eeting}s,
 
--- 
-Jens Axboe
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
