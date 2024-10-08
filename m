@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-355816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D1D995781
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:16:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D8E99577A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531171C25BF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A52C28996A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE05212644;
-	Tue,  8 Oct 2024 19:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756BA213ED7;
+	Tue,  8 Oct 2024 19:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iA7pBZk4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="WX7IjV8G"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB5613541B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88612139C6;
+	Tue,  8 Oct 2024 19:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728414962; cv=none; b=bKv2KAFaZJ2mX94Id/13eKDbTqG8+WzCHueGTWmukYfAi3ucNvliugEAXfQPVqjid1ROiEEvVHerx2TspwRA967bFVbGNcO5YYMH7/E6xRN49Aq7Y6/TMK9wHEiF1dhtMM50/fFduTnfQGIGJm4hxguSCLDyH2J3I/amwwAaFi4=
+	t=1728414906; cv=none; b=Y54zxVliqKKiaeI7xmr16gOLDOu3t8LoAWq6zJctR1arg7UmVDV3pgMK5K0UGwtFtyqf7VNoBO6mPaWgGLbIatacAdUcglzgNasWmHfn1/+cNS5dxod8nxOkMUhLkgcrahp1t45uOQaCRMQXFSTUzweI/NZWxW/slzXvJe4ABvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728414962; c=relaxed/simple;
-	bh=TxBO9VR/XnPErLZzuLD3zeVVWu30037Kl7xHFMJLT4U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UYmMJGwaYWitvtpXo/UkusCd80PjI9wmv6rNbtyxoC63SveQdK5HbGYkNBvWAbk+GqAmTGz0dElEU3rq7OJGhQVfTFxoGXvV7jxfQQaLABHooOp5wwuUYAvM6/x1e2DyH5dVZJedRRRyaSRWIMlCbpn+Cm9Vv9QRYCxhodupkLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iA7pBZk4; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728414962; x=1759950962;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TxBO9VR/XnPErLZzuLD3zeVVWu30037Kl7xHFMJLT4U=;
-  b=iA7pBZk4it8b973hOj1VPg0/aM+RgmWpy68Wu60/VtuXkoybIYMViNAG
-   HFGLvb5SDynbeSGeZe9zJ1lCc+KZ9B+5vAkj35YT4696kYPsa0cPpN+he
-   YOKh6Akz2fkclcfaelrbwT2Eoxkut/uUBR+Xig/92/g1tYqX6oAv/3awQ
-   bjod1evHawolsSVQr0fYO4dQ/BFSpAtZZQT9NHUY90QA0+tFdsIdyjofb
-   +LBO8prmrcyzApLPPhwdLb/BI/R5nHmMjVK16yQT5hhLUsI/VmGZb8uDj
-   y4kPsLSH2JUUImXFG2DWXks4FUTydjKWQ6xb61tIsQC7+cuJa2vL4i3/B
-   Q==;
-X-CSE-ConnectionGUID: X+MogFkGT9aC4tIuaxIBPg==
-X-CSE-MsgGUID: VDIIQOQITiClH4cX1U2ajQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38216010"
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="38216010"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 12:16:01 -0700
-X-CSE-ConnectionGUID: EqO+XfN9RnG0gMv1b1EVuQ==
-X-CSE-MsgGUID: IuMbrWGESd+l96IMpYNy2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
-   d="scan'208";a="106793393"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 08 Oct 2024 12:15:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D684426B; Tue, 08 Oct 2024 22:15:56 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: [PATCH v2 1/1] x86/reboot: KVM: Guard nmi_shootdown_cpus_on_restart() with ifdeffery
-Date: Tue,  8 Oct 2024 22:14:40 +0300
-Message-ID: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1728414906; c=relaxed/simple;
+	bh=prS89wcRs1TYAU2cj3Y+917IRIMLyK69URTcnbz4Yws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIp50/3U9JJ5NyzwWHreDDycqShWADUqVOc0M1+4OsMMtfKyGrqVtqbq5hOYljLhClPnxOFuZxEhBJjyG1XQdqT8z1fcZSKeHhhkGBAUzlHiaf8NWZnBL3j2wzceI7wFyM+qJHEAsmvzxBZUdyR0bZISjlxLbGozzuo4I8/mzvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=WX7IjV8G; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id C0C361C006B; Tue,  8 Oct 2024 21:14:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1728414895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/w1aogAyOiGPWnSUUY74elVIpm4VgSG30sCYa+lrAI=;
+	b=WX7IjV8GUnH4x9RzGfjmufXt6JF/3sghZpcgiV1kJVNBZR2XfmpvO0eSlyaS32/XLewiw1
+	d/eKLbmEgeKtC9DcNY6fwJ6oD40Tv/1dOgFc65OiEzgXEoPMsC5kmOGXLl+HzPRsihcfPg
+	BkILLvEDgqUQNQ/OXvNSQO5N25B4Jrc=
+Date: Tue, 8 Oct 2024 21:14:55 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: leds: Document "rc-feedback" trigger
+Message-ID: <ZwWEr6E+Br597eaR@duo.ucw.cz>
+References: <20241007205315.2477060-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wKL8NukTjWVemHFV"
+Content-Disposition: inline
+In-Reply-To: <20241007205315.2477060-1-heiko@sntech.de>
 
-The nmi_shootdown_cpus_on_restart() in some cases may be not used.
-This, in particular, prevents kernel builds with clang, `make W=1`
-and CONFIG_WERROR=y:
 
-arch/x86/kernel/reboot.c:957:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
-  957 | static inline void nmi_shootdown_cpus_on_restart(void)
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--wKL8NukTjWVemHFV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by guarging the definitions with the respective KVM ifdeffery.
+On Mon 2024-10-07 22:53:15, Heiko Stuebner wrote:
+> Document the "rc-feedback" trigger which is used to control LEDs by
+> remote control device activity. This is an existing trigger used in
+> existing DTs, document it so validation of those DTs would pass.
+>=20
+> It was originally introduced into the Linux kernel in 2013 with
+> commit 153a60bb0fac ("[media] rc: add feedback led trigger for rc keypres=
+ses")
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v1: suggested by Dave Hansen
-v2: rebased on top of the latest changes in the file
- arch/x86/kernel/reboot.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documen=
+tation/devicetree/bindings/leds/common.yaml
+> index bf9a101e4d42..9cd89f30fa7c 100644
+> --- a/Documentation/devicetree/bindings/leds/common.yaml
+> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> @@ -118,6 +118,8 @@ properties:
+>              # No trigger assigned to the LED. This is the default mode
+>              # if trigger is absent
+>            - none
+> +            # LED indicates remote control feedback
+> +          - rc-feedback
+>              # LED indicates camera torch state
+>            - torch
+>              # LED indicates USB gadget activity
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 615922838c51..67551c474203 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -528,9 +528,9 @@ static inline void kb_wait(void)
- 	}
- }
- 
-+#if IS_ENABLED(CONFIG_KVM_X86)
- static inline void nmi_shootdown_cpus_on_restart(void);
- 
--#if IS_ENABLED(CONFIG_KVM_X86)
- /* RCU-protected callback to disable virtualization prior to reboot. */
- static cpu_emergency_virt_cb __rcu *cpu_emergency_virt_callback;
- 
-@@ -954,12 +954,6 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	 */
- }
- 
--static inline void nmi_shootdown_cpus_on_restart(void)
--{
--	if (!crash_ipi_issued)
--		nmi_shootdown_cpus(NULL);
--}
--
- /*
-  * Check if the crash dumping IPI got issued and if so, call its callback
-  * directly. This function is used when we have already been in NMI handler.
-@@ -987,9 +981,19 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	/* No other CPUs to shoot down */
- }
- 
--static inline void nmi_shootdown_cpus_on_restart(void) { }
--
- void run_crash_ipi_callback(struct pt_regs *regs)
- {
- }
- #endif
-+
-+#if IS_ENABLED(CONFIG_KVM_X86)
-+#if defined(CONFIG_SMP)
-+static inline void nmi_shootdown_cpus_on_restart(void)
-+{
-+	if (!crash_ipi_issued)
-+		nmi_shootdown_cpus(NULL);
-+}
-+#else /* !CONFIG_SMP */
-+static inline void nmi_shootdown_cpus_on_restart(void) { }
-+#endif /* !CONFIG_SMP */
-+#endif
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
+--wKL8NukTjWVemHFV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwWErwAKCRAw5/Bqldv6
+8uy1AKCpRg+HFXm1ZzCpM4JnL98g143PYACfV8vxc4pbWM8ru7O58s4QKBnUqBo=
+=f5qB
+-----END PGP SIGNATURE-----
+
+--wKL8NukTjWVemHFV--
 
