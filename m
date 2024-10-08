@@ -1,93 +1,196 @@
-Return-Path: <linux-kernel+bounces-354631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854DE994071
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B353994074
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312FF1F25778
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83EA41C24BF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289381FB3C4;
-	Tue,  8 Oct 2024 07:07:32 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF3F1FB3FE;
+	Tue,  8 Oct 2024 07:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kZ0XPRxJ"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4030C7DA87;
-	Tue,  8 Oct 2024 07:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3E11D2F7C;
+	Tue,  8 Oct 2024 07:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728371251; cv=none; b=WSwmdG/04w1XmVOwau9PPp6wwnGhTDj+OySGZHX6AJ1yQpfQ1JhJ8FSJ+aW902kqyxkYCrj5YVZYWFQs1SMnAt8xtib9/ujigFFtAWOViDx9DIP5BBKn9nUfp3sZ99wDRgoCDuGoA1HjM1OIEl1WXFJj16N0IjMdGPqlfqO+elk=
+	t=1728371263; cv=none; b=PqJDidt+/1NBUHKVz+m0zpG+BCE5wRizl7Zd1PjyszEa3Qz+5KUoIBZAnHUVtXq/xMvF1+Td8QkluBHE25zbXRORz4v1wI+f33Q4lDx9O1nWswR/JiGQXwsCzamLpXz7YTUrJOsScGnC0WEOjgJoBzI6AF3Ul91RaN97JMUjlMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728371251; c=relaxed/simple;
-	bh=PFGxxiXD3oPhRgGJAOwWR0H9h0aNGOfHAbG9WJYWG1M=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=U2njwl/U3B7genhpCLSTRRm2wag/afI+12XAxMJCF0jGAIIalACm255nxf5zq5FCCif1DBYMt5raC3Xflxj3i8iEMFk7yJpYDT5HnhvlXTtwpB/q31mWG8Q1JkRe65l8rIurSG73KBjY11CzF0+iTDZhYC5QbjERPZd8fIM+7PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XN6Vc3JcMz1P9Yl;
-	Tue,  8 Oct 2024 15:05:44 +0800 (CST)
-Received: from kwepemm600009.china.huawei.com (unknown [7.193.23.164])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44C151800DE;
-	Tue,  8 Oct 2024 15:07:26 +0800 (CST)
-Received: from [10.174.176.73] (10.174.176.73) by
- kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Oct 2024 15:07:25 +0800
-Subject: Re: [PATCH] md/raid5-ppl: Use atomic64_inc_return() in
- ppl_new_iounit()
-To: Uros Bizjak <ubizjak@gmail.com>, <linux-raid@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Song Liu <song@kernel.org>, "yangerkun@huawei.com" <yangerkun@huawei.com>
-References: <20241007084831.48067-1-ubizjak@gmail.com>
-From: Yu Kuai <yukuai3@huawei.com>
-Message-ID: <8de92255-dc6f-eb42-3ee5-5d7259c7616d@huawei.com>
-Date: Tue, 8 Oct 2024 15:07:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1728371263; c=relaxed/simple;
+	bh=30/cEViZT/Hi8EnHVhYa2xu53TnHpaJSOqZs9SJ6Fns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=joVJ+ZtJWW6+oBhfkCYSYsjW0dW4nAq9s9GsELMpCGO5Bu3cLZwQhi2Zds0a4kzKojvfV/yk/7SR5GeC9lYiUzRdwJVFcDUmS+zyjeTgt21Iu2hRPZ2CzFPF1tBZ6QQsCCNFc0z4hSEoGILMaNL4M+xBo0zKYwxtGjMh8Qa4R7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kZ0XPRxJ; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D52F60008;
+	Tue,  8 Oct 2024 07:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728371259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lbzvM8Iqy/HPhTE298uvLOOoVXhYuvVMDXaMB13C1zo=;
+	b=kZ0XPRxJZGJ0y25nCCLv3gdBSWmPkZhq4YHYHKsu4hbgZ9qwyBX/z5ULxTuJ0UPgoJExAF
+	7mY4kKX+6CuAdTKKVcp1U9oW3ytpePbw4g149w55C5PE+eATnNRgZz/4vFHlIIF8oDwBN4
+	MO+Qp9GQQ4mgYmeWnfGoaykCeSnmw/L+suT8MBlm+ywPX1oLtFAnO8qLRQHff7avjXLHsW
+	6CEj0hMbo8kL/En6h7708u174Cn9cSRBZ7bc05dmN5VvI2SsY5mysXq1lSnaXXbUTOKUNf
+	VUiEs2qdE8jdedg4IGQ+9sqbRggA8bzIe+rLo8CdV2oKUD/e2toWKIbyH9HtfQ==
+Date: Tue, 8 Oct 2024 09:07:37 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 7/9] net: phy: introduce ethtool_phy_ops to
+ get and set phy configuration
+Message-ID: <20241008090737.1023cd87@device-21.home>
+In-Reply-To: <ZwQIEDkWQZzglbAq@shell.armlinux.org.uk>
+References: <20241004161601.2932901-1-maxime.chevallier@bootlin.com>
+	<20241004161601.2932901-8-maxime.chevallier@bootlin.com>
+	<4d4c0c85-ec27-4707-9613-2146aa68bf8c@lunn.ch>
+	<ZwA7rRCdJjU9BUUq@shell.armlinux.org.uk>
+	<20241007123751.3df87430@device-21.home>
+	<6bdaf8de-8f7e-42db-8c29-1e8a48c4ddda@lunn.ch>
+	<20241007154839.4b9c6a02@device-21.home>
+	<ZwQIEDkWQZzglbAq@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007084831.48067-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600009.china.huawei.com (7.193.23.164)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-ÔÚ 2024/10/07 16:48, Uros Bizjak Ð´µÀ:
-> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-> to use optimized implementation and ease register pressure around
-> the primitive for targets that implement optimized variant.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Song Liu <song@kernel.org>
-> Cc: Yu Kuai <yukuai3@huawei.com>
+On Mon, 7 Oct 2024 17:10:56 +0100
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/raid5-ppl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> On Mon, Oct 07, 2024 at 03:48:39PM +0200, Maxime Chevallier wrote:
+> > Sure thing. There are multiple devices out-there that may have multiple
+> > PHYs accessible from the MAC, through muxers (I'm trying to be generic
+> > enough to address all cases, gpio muxers, mmio-controlled muxers, etc.),
+> > but let me describe the HW I'm working on that's a bit more problematic.
+> > 
+> > The first such platform I have has an fs_enet MAC, a pair of LXT973
+> > PHYs for which the isolate mode doesn't work, and no on-board circuitry to
+> > perform the isolation. Here, we have to power one PHY down when unused :
+> > 
+> >                 /--- LXT973
+> > fs_enet -- MII--|
+> >                 \--- LXT973
+> > 
+> > 
+> > The second board has a fs_enet MAC and a pair of KSZ8041 PHYs connected
+> > in MII.
+> > 
+> > The third one has a pair of KSZ8041 PHYs connected to a
+> > ucc_geth MAC in RMII.
+> > 
+> > On both these boards, we isolate the PHYs when unused, and we also
+> > drive a GPIO to toggle some on-board circuitry to disconnect the MII
+> > lines as well for the unused PHY. I'd have to run some tests to see if
+> > this circuitry could be enough, without relying at all on PHY
+> > isolation :
+> > 
+> >                    /--- KSZ8041
+> >                    |
+> >       MAC ------ MUX
+> >                  | | 
+> >   to SoC <-gpio--/ \--- KSZ8041
+> > 
+> > 
+> > One point is, if you look at the first case (no mux), we need to know
+> > if the PHYs are able to isolate or not in order to use the proper
+> > switching strategy (isolate or power-down).
+> > 
+> > I hope this clarifies the approach a little bit ?  
 > 
-> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-> index a70cbec12ed0..37c4da5311ca 100644
-> --- a/drivers/md/raid5-ppl.c
-> +++ b/drivers/md/raid5-ppl.c
-> @@ -258,7 +258,7 @@ static struct ppl_io_unit *ppl_new_iounit(struct ppl_log *log,
->   	memset(pplhdr->reserved, 0xff, PPL_HDR_RESERVED);
->   	pplhdr->signature = cpu_to_le32(ppl_conf->signature);
->   
-> -	io->seq = atomic64_add_return(1, &ppl_conf->seq);
-> +	io->seq = atomic64_inc_return(&ppl_conf->seq);
->   	pplhdr->generation = cpu_to_le64(io->seq);
->   
->   	return io;
+> What I gather from the above is you have these scenarios:
 > 
+> 1) two LXT973 on a MII bus (not RMII, RGMII etc but the 802.3 defined
+>    MII bus with four data lines in each direction, a bunch of control
+>    signals, clocked at a maximum of 25MHz). In this case, you need to
+>    power down each PHY so it doesn't interfere on the MII bus as the
+>    PHY doesn't support isolate mode.
+
+Correct
+
+> 
+> 2) two KSZ8041 on a MII bus to a multiplexer who's exact behaviour is
+>    not yet known which may require the use of the PHYs isolate bit.
+
+Correct as well
+
+> 
+> I would suggest that spending time adding infrastructure for a rare
+> scenario, and when it is uncertain whether it needs to be used in
+> these scenarios is premature.
+> 
+> Please validate on the two KSZ8041 setups whether isolate is
+> necessary.
+
+I'll do
+
+> Presumably on those two KSZ88041 setups, the idea is to see which PHY
+> ends up with media link first, and then switch between the two PHYs?
+
+Indeed. I already have code for that (I was expecting that whole
+discussion to happen in the RFC for said code :D )
+
+> Lastly, I'm a little confused why someone would layout a platform
+> where there are two identical PHYs connected to one MAC on the same
+> board. I can see the use case given in 802.3 - where one plugs in
+> the media specific attachment unit depending on the media being
+> used - Wikipedia has a photo of the connector on a Sun Ultra 1 -
+> but to have two PHYs on the same board doesn't make much sense to
+> me. What is trying to be achieved with these two PHYs on the same
+> board?
+
+The use-case is redundancy, to switch between the PHYs when the link
+goes down on one side. I don't know why bonding isn't used, I suspect
+this is because there's not enough MACs on the device to do that. These
+are pretty old hardware platforms that have been in use in the field
+for quite some time and will continue to be for a while.
+
+I've been trying to decompose support for what is a niche use-case into
+something that can benefit other devices :
+
+ - Turris omnia for example uses a MII mux at the serdes level to
+switch between a PHY and an SFP bus. We could leverage a phy_mux infra
+here to support these related use-cases
+
+ - I've always considered that this is similar enough ( from the
+end-user perspective ) to cases like MCBin or other switches that have
+2 ports connected to the same MAC. 
+
+In the end, we have 1 netdev, 2 ports, regardless of wether there are 2
+PHYs or 1. Of course, the capabilities are not the same, we can't
+detect link/power simultaneously in all situations, but I'm keeping
+that in mind in the design, and I've talked about this a few weeks ago
+at LPC [1].
+
+Thanks,
+
+Maxime
+
+[1] : https://bootlin.com/pub/conferences/2024/lpc/chevallier-phy-port/chevallier-phy-port.pdf
 
