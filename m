@@ -1,145 +1,186 @@
-Return-Path: <linux-kernel+bounces-355507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F78995354
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E75799533E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 850FFB22EDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54C7281422
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79FD1E0DD2;
-	Tue,  8 Oct 2024 15:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1011E04BA;
+	Tue,  8 Oct 2024 15:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HK7Aoff2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hv8RLVWU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pzg4cZ6D"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536291E0B90
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0FA1E049E;
+	Tue,  8 Oct 2024 15:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400889; cv=none; b=tTomEMOXoJlqNcaB0S0uZxqfnAp8SNznts4Mq4WgLJ3DU7CYmh0rataR3nUGdvtAkOhnddxNNpRT0uMrZPY4iGlyvoQoUiqXy936kq6BaGinfRAws5OF7l404T0gscCwF6JAXFm30iZ83WuYiFXjsQ4xZDMjGHWAshCiUmH0reE=
+	t=1728400883; cv=none; b=Br3tbaYhSRiWNyIjxCFz1djcJG4vhFE+sVtcL6/7KpJZ/LubNs0NM8UK5LaoTdHpaZ/oX5O3y6FxvkayKPUepFnOGoGkMI9j3iYIUohJBAe1h+tD2OhKH6XYGoAy/j1CLQjmapQ7Lu16P7kKup9W+AnuRZAj8+16NjR0QeYuovI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400889; c=relaxed/simple;
-	bh=V6wv7UuW3HAgTnvx4RGFnn4y4Ee+TSsmIYQNAmcoo/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rb552tbhnRdQJPgq2jkKjAEhfuZDWM+u6mU0ZPqI96k4khUC9eTUT0YeOWCgFvSPSKmyNal731U15XSdNE7HkqOUZtmrtkPsQNqalLQrWNZ4MUkj4qyKo42fGsYt++3dbnqRHo1HNU+fHZFWDnrBEnsrIkKclOYk/4u1ZbO/VmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HK7Aoff2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728400885;
+	s=arc-20240116; t=1728400883; c=relaxed/simple;
+	bh=433XxIHpU9T7s7INXr8uSL9mwO5qKnfKc1yNBcVny4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J7o0SxMe5WbsglJQvZ+zgRhj9Y9dRqjqO9cO/i7awNv3W5xi0zWWLwbBtaNJQJhSnablaXYHUxBCTxvaF+5B/yKJMGjKwgWzt0ADLdlHYYF1/47BInPzlL1R2i/Dnq5fwitktzO9a7RuE+z/4mq3mEn0Ru3fjrXLmoFplN7QzPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hv8RLVWU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pzg4cZ6D; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728400879;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ruYSLgW7gfmln5kN4ADH0+uUUeJjmQiMQYi2GHJLhGM=;
-	b=HK7Aoff28qaYRPW+oEg61pRvs5yX643eJBrrHhXXrs3FckMrnWyI5GHz4mDzjsBJGneAO0
-	xT1eyIpwFx5sYJ2WU7dHMClAJ4Kzlc5kv6S9nJhv54M2IIJIlW8wPy0DyVgZ1pcZyFqfXm
-	CN1ksvPrNR0v9wXvevho3FrPv5BvjYo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-19-BuiWbL8bPueyNVxlgpUhdA-1; Tue,
- 08 Oct 2024 11:21:22 -0400
-X-MC-Unique: BuiWbL8bPueyNVxlgpUhdA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19AB51955F3D;
-	Tue,  8 Oct 2024 15:21:19 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.71])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 68A7219560A7;
-	Tue,  8 Oct 2024 15:21:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  8 Oct 2024 17:21:05 +0200 (CEST)
-Date: Tue, 8 Oct 2024 17:20:57 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org,
-	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz,
-	mingo@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 0/5] uprobes,mm: speculative lockless
- VMA-to-uprobe lookup
-Message-ID: <20241008152056.GA9508@redhat.com>
-References: <20241001225207.2215639-1-andrii@kernel.org>
+	bh=+uLeRZLnttHb34vsWR35vegqVbPeYjV996KCqrj9XyQ=;
+	b=Hv8RLVWU/D5aAnA7/bJpuDDFvJ3gk9zslzZIUoM/qKsAA6WQ23jG5DpueioGf3PHNBQKLN
+	A7GaOOyxHiAuEHL2rhxXyMpUyEM0G7fxsnQdWNHsgIx+mbzfSUR5TgeTDf8P1Icb4uevyz
+	oFzPhtcQs79BUR/J949AncdIDfzlGpQq6NZBCx9ZEX/xvDqc3fBrvMJkBeGdCbTy0ljt7G
+	yrylMSzWbHnWWivOE8SaCbCHLgRMBOTbILybGjB2ysGZ7zdtR9eszZ5TVsD5T8pixzHCHB
+	/6Emuc589kuOY6jZ7K4BX+NCMALws263lx2WkYeH5PcNaNT5b5tx8zRSZEeC8A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728400879;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+uLeRZLnttHb34vsWR35vegqVbPeYjV996KCqrj9XyQ=;
+	b=Pzg4cZ6DABoFz7DpoUM9JiurvlEMFou2t+PJ856YhcjBBWeKsJOVM8U+5M1/Lq/zaVRfg5
+	DWbUEpEOjnsFHXCQ==
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar
+ <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, Benno Lossin <benno.lossin@proton.me>,
+ Daniel
+ Almeida <daniel.almeida@collabora.com>, Gary Guo <gary@garyguo.net>, Miguel
+ Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson
+ Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo
+ <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v6 3/3] rust: sync: Add SpinLockIrq
+In-Reply-To: <9f580260866a202d7608f902464b7fae087dd6c6.camel@redhat.com>
+References: <20240916213025.477225-1-lyude@redhat.com>
+ <20240916213025.477225-4-lyude@redhat.com> <8734lew7jn.ffs@tglx>
+ <0a802e5fc0623ac8ae4653a398d0dfd73c479b96.camel@redhat.com>
+ <87a5fgunoc.ffs@tglx>
+ <9f580260866a202d7608f902464b7fae087dd6c6.camel@redhat.com>
+Date: Tue, 08 Oct 2024 17:21:19 +0200
+Message-ID: <878quytyc0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001225207.2215639-1-andrii@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain
 
-Well. I am in no position to ack these changes.
+On Mon, Oct 07 2024 at 14:30, Lyude Paul wrote:
+> On Mon, 2024-10-07 at 14:01 +0200, Thomas Gleixner wrote:
+> So actually the new solution I suggested a little after that original email
+> wouldn't need to call local_irq_save() directly - sorry, I just explained it
+> kind of poorly and it hadn't been in my head for very long. I think you'll
+> like this solution a lot more though, lemme explain:
+>
+> Basically instead of having functions like with_interrupts_disabled, we would
+> instead introduce a new trait that can be implemented by locks with context
+> tokens: BackendWithContext:
+>
+> pub trait BackendWithContext: Backend {
+> type ContextState;
+>
+> unsafe fn lock_first(ptr: *Self::State)
+> -> (Self::Context, Self::ContextState, Self::GuardState);
+>
+> unsafe fn unlock_last(
+> ptr: *Self::State,
+> context_state: Self::ContextState,
+> guard_state: &Self::GuardState
+> );
+> }
+>
+> Where the idea is that a type like SpinlockIrq would define ContextState to be
+> a u64 (holding the flags argument from spin_lock_irqsave). lock_first() would
+> use spin_lock_irqsave and create the token, unlock_last() would use
+> spin_unlock_irqrestore with the saved ContextState. Then we could use those
+> unsafe primitives to implement a method on Lock like this:
+>
+> impl<T: ?Sized, B: BackendWithContext> Lock<T, B> {
+> pub fn lock_with_new<'a>(
+> &self,
+> cb: impl FnOnce(Self::Context, &mut Guard<'a, T, B>) -> R
+> ) -> R;
+> }
+>
+> What lock_with_new would do is:
+>
+>  * call B::first_lock() (which would be spin_lock_irqsave)
+>  * call cb() with a LocalInterruptsDisabled token and a &mut to the Guard (so
+>    that the caller can't drop the lock before exiting the noirq context)
+>  * Call B::last_unlock() with the ContextState that was passed to first_lock()
+>    (which would be spin_unlock_irqrestore)
+>
+> So we'd absolutely still be modeling around the locking primitives
+> spin_lock_irqsave() and spin_unlock_irqrestore(). And subsequently we could
+> still nest lock contexts like normal. with_irqs_disabled() wouldn't be needed
+> in this arrangement - but we would still need the Interrupt tokens (which
+> would be fine since they're just for enforcing correctness anyway).
 
-But let me say that I personally like this series and I see nothing wrong,
-except perhaps 5/5 needs some data_race/etc annotations as we have already
-discussed.
+Makes sense.
+
+>> The above example really should not end up in 3 guard contexts, but in
+>> two by combining #1 and #2 into one. In C this looks like:
+>> 
+>>     scoped_guard(spinlock_irqsave)(&A) {
+>>         // Allows to operate on resources which are exclusively
+>>         // protected by A (DataA)
+>>         
+>>  scoped_guard(spinlock)(&B) {
+>>            // Allows to operate on resources which are exclusively
+>>            // protected by B (DataB)
+>>         }
+>>     }
+>> 
+>> Nesting B into lock A is required to keep some aspects of DataA and
+>> DataB consistent. But the other parts of DataB require only B to be
+>> held.
+>> 
+>> For extended fun lock B is not necessarily required to be acquired with
+>> interrupts disabled. The fact that it nests into lock A does not make it
+>> mandatory.
+>> 
+>> A lock is only required to be acquired with interrupts disabled if it
+>> can be taken in interrupt context. That's a per lock property.
+>
+> I think you misunderstood something somewhere - this has always been the case
+> with the bindings I submitted that you don't need a context for all locks,
+> only locks that define one. That is why we reimplement lock() to look like
+> this (where T is the data protected by the lock and B is the backend):
+>
+> pub fn lock<'a>(&'a self) -> Guard<'a, T, B>
+> where
+> B::Context<'a>: Default
+> {
+> self.lock_with(Default::default())
+> }
+>
+> So SpinLock's B::Context is (), which implements Default - meaning you can
+> acquire it simply like this:
+>
+> some_lock.lock();
+>
+> But that wouldn't work for SpinLockIrq with a context of IrqDisabled<'a>,
+> since IrqDisabled doesn't implement Default.
+
+Thanks for clarification. It's clear now.
 
 Thanks,
 
-Oleg.
-
-On 10/01, Andrii Nakryiko wrote:
->
-> Implement speculative (lockless) resolution of VMA to inode to uprobe,
-> bypassing the need to take mmap_lock for reads, if possible. Patch #1 by Suren
-> adds mm_struct helpers that help detect whether mm_struct were changed, which
-> is used by uprobe logic to validate that speculative results can be trusted
-> after all the lookup logic results in a valid uprobe instance. Patch #2
-> follows to make mm_lock_seq into 64-bit counter (on 64-bit architectures).
->
-> Patch #3 adds back RCU-delayed freeing for FMODE_BACKING files, which is
-> necessary to make speculation safe to access struct file's memory in any
-> possible situation.
->
-> Patch #4 is a simplification to uprobe VMA flag checking, suggested by Oleg.
->
-> And, finally, patch #5 is the speculative VMA-to-uprobe resolution logic. See
-> corresponding patch for details and benchmarking results.
->
-> v1->v2:
-> - adjusted vma_end_write_all() comment to point out it should never be called
->   manually now, but I wasn't sure how ACQUIRE/RELEASE comments should be
->   reworded (previously requested by Jann), so I'd appreciate some help there
->   (Jann);
-> - int -> long change for mm_lock_seq, as agreed at LPC2024 (Jann, Suren, Liam);
-> - kfree_rcu_mightsleep() for FMODE_BACKING (Suren, Christian);
-> - vm_flags simplification in find_active_uprobe_rcu() and
->   find_active_uprobe_speculative() (Oleg);
-> - guard(rcu)() simplified find_active_uprobe_speculative() implementation.
->
-> Andrii Nakryiko (4):
->   mm: switch to 64-bit mm_lock_seq/vm_lock_seq on 64-bit architectures
->   fs: add back RCU-delayed freeing of FMODE_BACKING file
->   uprobes: simplify find_active_uprobe_rcu() VMA checks
->   uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
->
-> Suren Baghdasaryan (1):
->   mm: introduce mmap_lock_speculation_{start|end}
->
->  fs/file_table.c           |  2 +-
->  include/linux/mm.h        |  6 ++--
->  include/linux/mm_types.h  |  7 ++--
->  include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
->  kernel/events/uprobes.c   | 46 ++++++++++++++++++++++++-
->  kernel/fork.c             |  3 --
->  6 files changed, 114 insertions(+), 22 deletions(-)
->
-> --
-> 2.43.5
->
-
+        tglx
 
