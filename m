@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-355119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D049947A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA5F9947A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A919D1F23780
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3105E1F22594
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7216A1D6DD4;
-	Tue,  8 Oct 2024 11:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718CF1D7E50;
+	Tue,  8 Oct 2024 11:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JteG29r4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpCkgrxW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B54176FA7;
-	Tue,  8 Oct 2024 11:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8F4176FA7;
+	Tue,  8 Oct 2024 11:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728388179; cv=none; b=dQYjb5GVd+/ElujCllmx/uMvzHDTNNRjRsQNqdXVIVGSFXrsingdnUQ8Kz2V5baWgGoW47Ll9vgY6odnzLY5tHUe62Nqe9IN/p1rZKFQ+9b3EXVczy7A1jfpbhZVBfwk4TeWrtU55EzyQ0dOMxitpmSXRVlPGzWCOIx1/m6bla4=
+	t=1728388193; cv=none; b=rBFHQ5BitMAFqrBbjRFossPatZi/AWvEkk16+ubPUDU+rCtxMr/3HQ4koPlHvzPqMXYhJfnDFJ410zhqvpMU3f9kZKX0N6mPzeivK4UKTdIwQKCr9kbE+lz/xAeFZZosC7izmNUEao/NX1+hoTGDAcbQg/xOdI/leWAivD3Bw2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728388179; c=relaxed/simple;
-	bh=oNbUcL+CWC8MEQpExAL16Ue2D7U2ea9NJhkt7zF3eb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YT2TpgsSuupAxQY91Q64FiVxr0TenevP8xEG+S+iQHA+18I/is98roXpcn187BLV5ofo0t+yIO0NqrO6fsN1wojUykzglc2TfxUcLhKwcQ8rDW1woZAHX1dhS8vROHRmTWi0adI44J3UhCIqswHH/rDfsBQJLAr1xEuB2OnYsSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JteG29r4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=awNsU8kM1gVB2hmGRFW5nD6DpdqCrn8A9zApWM8go6M=; b=JteG29r4u7xWDca3q521WGut1p
-	+W3eln9BohXAIUrXhRM6XRBWCUs6mMh15B8wUEdnqCOz56ViTP0Sw/+Wvt+nufSaS/pzC7P0suvka
-	3zhloUFhkynsKq7ADkTSLRMM7hmfnqnCB8r+xQZrHT7RbWTd+1FhM2MRpOxtIpowWyNodfiJ1+1WL
-	oafDlRbcEokBkwzHyBv+OGAKvfntAeYfKS9NY+Ju0NjSMdL0clrF6Eozpdw30yI+n6ELNEFa8aqR4
-	K981aSZJ0O5YhTu9Npmh0LGyxxKz+zqGLsp0HKXfjFqL1zi6l95XMWx9FEJpbVYVq1i9xh3pprrwH
-	/3ROin+A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy8id-00000005h9k-2aVa;
-	Tue, 08 Oct 2024 11:49:35 +0000
-Date: Tue, 8 Oct 2024 04:49:35 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 1/2] fs/super.c: introduce get_tree_bdev_by_dev()
-Message-ID: <ZwUcT0qUp2DKOCS3@infradead.org>
-References: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728388193; c=relaxed/simple;
+	bh=iGDe2ejC273W/b7Fx+jlcrlAtupspEtxmXufPT8YOdk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=qLJ+DL9y5bSOfW9oJp9OsypNt/qVeiZxrDQW9L2pDB0O19uE/nuPKT7EU4Z7E0WH2PiV1qekZV8jtaeJ9vQu5vGx0p6OZkduAGArZAPPnTS3NaEZAoa1sdUS+VjnewJA2C13SBvfoYgDRLBGlf802jH7U4/FMvC3GluFzSEz498=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpCkgrxW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52015C4CEC7;
+	Tue,  8 Oct 2024 11:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728388193;
+	bh=iGDe2ejC273W/b7Fx+jlcrlAtupspEtxmXufPT8YOdk=;
+	h=From:To:Subject:Date:From;
+	b=CpCkgrxW4yfsnx1U8XbIOizPJ+1TSW3CxWkvrXqWx5YeeCDEJ5yvftnDnhKDrRgq1
+	 dXwy2sbBnWiLAfN/BgCtGc3fOaDDCaknTH7qxEWd7+0SYSrOS2Eg0Sa5F/ZvU7tmAC
+	 1hKLhIlBOvW2+ZCnVTPTDEIHw49iPqURiQQc+G5XONtpFme9Ek8L+4mEEM9nWkP0O/
+	 SeK5nuZJecq3HO/FQcInyD2Q7TqfmKCjE69eOq7/JT4lMlHR0WHEAqnFLsetrZJV6O
+	 nALhUVjW3w1NUWvisZrGpmY0ZVo0qsd9+kGiLd8nZwFTO2Iloj0EFyKqlkNvFqx52T
+	 wNbZg5Vsb637g==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	puranjay12@gmail.com
+Subject: [PATCH bpf-next v4 0/2] Implement mechanism to signal other threads
+Date: Tue,  8 Oct 2024 11:49:38 +0000
+Message-Id: <20241008114940.44305-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008095606.990466-1-hsiangkao@linux.alibaba.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 05:56:05PM +0800, Gao Xiang wrote:
-> As Allison reported [1], currently get_tree_bdev() will store
-> "Can't lookup blockdev" error message.  Although it makes sense for
-> pure bdev-based fses, this message may mislead users who try to use
-> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
-> then.
-> 
-> Add get_tree_bdev_by_dev() to specify a device number explicitly
-> instead of the hardcoded fc->source as mentioned in [2], there are
-> other benefits like:
->   - Filesystems can have other ways to get a bdev-based sb
->     in addition to the current hard-coded source path;
-> 
->   - Pseudo-filesystems can utilize this method to generate a
->     filesystem from given device numbers too.
-> 
->   - Like get_tree_nodev(), it doesn't strictly tie to fc->source
->     either.
+This set implements a kfunc called bpf_send_signal_task() that is similar
+to sigqueue() as it can send a signal along with a cookie to a thread or
+thread group.
 
-Do you have concrete plans for any of those?  If so send pointers.
-Otherwise just passing a quiet flag of some form feels like a much
-saner interface.
+The send_signal selftest has been updated to also test this new kfunc under
+all contexts.
+
+Changes in v4:
+v3: https://lore.kernel.org/all/20241007103426.128923-1-puranjay@kernel.org/
+- Fix the selftest to make it work for big-endian archs.
+- Fix a build warning on 32-bit archs.
+- Some style changes and code refactors suggested by Andrii
+
+Changes in v3:
+v2: https://lore.kernel.org/all/20240926115328.105634-1-puranjay@kernel.org/
+- make the cookie u64 instead of int.
+- re use code from bpf_send_signal_common
+
+Changes in v2:
+v1: https://lore.kernel.org/bpf/20240724113944.75977-1-puranjay@kernel.org/
+- Convert to a kfunc
+- Add mechanism to send a cookie with the signal.
+
+Puranjay Mohan (2):
+  bpf: implement bpf_send_signal_task() kfunc
+  selftests/bpf: Augment send_signal test with remote signaling
+
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/trace/bpf_trace.c                      |  52 +++++--
+ .../selftests/bpf/prog_tests/send_signal.c    | 133 +++++++++++++-----
+ .../bpf/progs/test_send_signal_kern.c         |  35 ++++-
+ 4 files changed, 175 insertions(+), 46 deletions(-)
+
+-- 
+2.40.1
 
 
