@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-355029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CEF994633
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:10:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6211D994605
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B86C6B24D48
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:10:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE62B24D58
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592EB1DFDA2;
-	Tue,  8 Oct 2024 11:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427A418C92F;
+	Tue,  8 Oct 2024 11:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdLwnxd5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cadpvkDU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8SLKbtsT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0821DFD8E;
-	Tue,  8 Oct 2024 11:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC8016FF2A;
+	Tue,  8 Oct 2024 11:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385531; cv=none; b=deDm7bSpJD9d16AKB9ZrKclujU+MZNvCQdjKaA4Y8YxfpYTLV/PTkkP4/Ker0gDwlKW35cnPj94QQLryngodYKiI4baROLhTVr2eChDbYpLm660ZsQwRSgeWAj1yMwxGVAmCxMqGLFkm0GBt7046b2xZf2IOPRzT62xySkHVaGQ=
+	t=1728385513; cv=none; b=otsusHqxlQIeUg0sdPXFDhc4jGhIlW8j+Q3lm/PspYuWen3KLFun2+Y4tcb9jmU2ilkuBdLtVkf1rVFUFGjwo/yZFfJ78+YVk22J7CjCsS3up3+R9Eq+xucwnKowo9ucOtF3oxlUUDUkpJm4+Yjb8AdKMvp7NAsBAGiUrBS4TLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385531; c=relaxed/simple;
-	bh=mSK/tD+BAnWk+pvXOR9WpkVpN2TCVM22yMkgEFX/05I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fvXZ6DfvJ207CLKgLCG/eBO84Crm66/NrScvVps2BfHFQaENDLRcnDCGtyotrhjTykI8w1unHRflbB/h5RP8ce1dipm0Ln6WM28e+hRwNj2XoN97W+QWyNvajIINFvqHZu1B/Y+xfaqftC8VkGAQJ3/InaVo6XrX78ME9VeD/pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdLwnxd5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73B2C4CECE;
-	Tue,  8 Oct 2024 11:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728385531;
-	bh=mSK/tD+BAnWk+pvXOR9WpkVpN2TCVM22yMkgEFX/05I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UdLwnxd5HbfbqZs9ib+ABdPnE5XpM0FH/3sdjQ7yOBMWWGfYIpijzgRers3/bxNAk
-	 DNSh3SKqWD88Pc5PgbiZQ/7Upz8dupURTwl+uYhXSZQsvakudwCKI4QknSoTJAjXfq
-	 3FFu3Q82Q1ZBbnay1LX5VJfXUuFwyuLg3BlGRCuqV5Q+moW2VabKsW87FPcNNxPQpz
-	 FRFrwYD6T85XwJXrMgTLiZEmDbKvmRChjvlLrKpQrYUkGZXm2uNY2n1kPfZvum6cfE
-	 bpTeEBJu1CELwloUmdcGjDQsQXO0eRo9Y6fJnklK5KikiuC3geNCX3y7vhCqVPjtGy
-	 JSVH9Q6GWwzbA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 08 Oct 2024 13:04:55 +0200
-Subject: [PATCH net 4/4] mptcp: pm: do not remove closing subflows
+	s=arc-20240116; t=1728385513; c=relaxed/simple;
+	bh=ZmUUuIY+lUu0Cnw3nXqrX3rD/MQoX3xHCD+2uj0VAjU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=bRPIWU081z9kPrSDSGscTQDQUz4gVGeSMdnTUN/M5NlGWP2iRrBgvxyI9oqOlFPhENIdM4aV2DjImX3k4HpBnmENQEll/lE0hCY+x2Jix3RT6k8+IG8ZW/+bgbTPfJGK5jYXzYZZl8dX+Nx48E2I8qhMwmPqQdD0B+zacBXNgvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cadpvkDU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8SLKbtsT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Oct 2024 11:05:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728385510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=98ltt3FAoq86ddFp/Hhattb2KtiU3rH6jFcEOWu9wnQ=;
+	b=cadpvkDUprv/uNMJj5DRCR+74hk+tXi5VUNUBlqpFSP7f5fnqw3OTfrK9zPjsjM/ylrOgd
+	pIVxFcAXqpvt3/bkJ4pXrUJQyW3HhAJpEvTcBOf/UyO8gI2zkmQWnnl6l3v4pA90nf8bnE
+	3JSqNNCvnjkFUUEh0MmdcOOm1Cazu+OIWrjP4q5AQO8CF927gvpPEDPXbO84kMwUrV6mY3
+	6426mwbX4VRtuyZwLWaofV80+Za2o1LzT/6HFlGnCn5vMd2Apbil9XdgltBcCieeN/1N9q
+	La65tMaX8ZD9HM5WR5fb+fmwBnj8yDowGmdNvg4OieLqJrOQjfIBuMjXM0hFNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728385510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=98ltt3FAoq86ddFp/Hhattb2KtiU3rH6jFcEOWu9wnQ=;
+	b=8SLKbtsTiLCbc9JvcIvSlQLNPPu+9DFDcvxSa1tEEGPmPDYukZmdjBseNlUyICK3c2FU0u
+	Xdq1YpQH3qt0McAg==
+From: "tip-bot2 for Breno Leitao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86/amd: Warn only on new bits set
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Breno Leitao <leitao@debian.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Sandipan Das <sandipan.das@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241001141020.2620361-1-leitao@debian.org>
+References: <20241001141020.2620361-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <172838550950.1442.11370441097683144204.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-net-mptcp-fallback-fixes-v1-4-c6fb8e93e551@kernel.org>
-References: <20241008-net-mptcp-fallback-fixes-v1-0-c6fb8e93e551@kernel.org>
-In-Reply-To: <20241008-net-mptcp-fallback-fixes-v1-0-c6fb8e93e551@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Florian Westphal <fw@strlen.de>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1419; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=mSK/tD+BAnWk+pvXOR9WpkVpN2TCVM22yMkgEFX/05I=;
- b=kA0DAAgB9reCT0JpoHMByyZiAGcFEeugOYizzAHqrnJSwnGJtz2T+QU8eXvkiA7vlv43jcCoR
- YkCMwQAAQgAHRYhBOjLhfdodwV6bif3eva3gk9CaaBzBQJnBRHrAAoJEPa3gk9CaaBzDhMP/2oV
- QZoJkvOtQrz7yPCxD3/UPqMMVMY2eZE7QnG9orhqq1qz9yGhlRQrLCw/6B8rclb/IgUUOJGgsdc
- C0VLDo1kOyWqDrI4YrbUvL/bYos+OiE+9fuungdpe7oADdv1jIWEL09sHA8qef4H49QbMIlihsI
- RH5XMAZ/vUAvvMjPTFxoHvRoC51jmWi/1qr2ToQ1lqMS+z5sk8ftO/W16jfvfJlCxGCY6tg4ze1
- WD4qIGLLmVmqIrAtzFc54gmbJameCeDBq/6oN8HFXhvvw3ckx7Jvi1wAJjLowegWTPyBN9JrmiX
- 0JOz+oymvau6EW/4MFQ9jOpArulPk4zYH/M06WN+O1H1HpLA2DKH4ricDFoHoMX9cHFJ9omZUTs
- X6KZc4T6rEcCw4cFJfGsnNnynZgkLn7WCZBeenrZOR8eM8Bfb/dQxsxhHbPl8TzgXjue6jNB50i
- r4Q4qyFnfm6xk60XhbKorCoKB9lBzui8aJJFKTG72UgJ8HIssS+MTUzvUzL1+vB/SiZa4lBMpzS
- Sxbx8fd316b1KJ2ehuZAuaotHkAJ380cWqv6PL7Bz4JA5O2kbjkDw9gq6YtSWFBgKPQ6OgiGJ6e
- gFeEJjC6qkDwPfhLJaSZe7ogv7I3pLCE9U47qlsUR41j8vw64HzrYKbde4vC5M6WendorsjbirH
- BB4rY
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-In a previous fix, the in-kernel path-manager has been modified not to
-retrigger the removal of a subflow if it was already closed, e.g. when
-the initial subflow is removed, but kept in the subflows list.
+The following commit has been merged into the perf/core branch of tip:
 
-To be complete, this fix should also skip the subflows that are in any
-closing state: mptcp_close_ssk() will initiate the closure, but the
-switch to the TCP_CLOSE state depends on the other peer.
+Commit-ID:     de20037e1b3c2f2ca97b8c12b8c7bca8abd509a7
+Gitweb:        https://git.kernel.org/tip/de20037e1b3c2f2ca97b8c12b8c7bca8abd509a7
+Author:        Breno Leitao <leitao@debian.org>
+AuthorDate:    Tue, 01 Oct 2024 07:10:19 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 07 Oct 2024 09:28:46 +02:00
 
-Fixes: 58e1b66b4e4b ("mptcp: pm: do not remove already closed subflows")
-Cc: stable@vger.kernel.org
-Suggested-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+perf/x86/amd: Warn only on new bits set
+
+Warning at every leaking bits can cause a flood of message, triggering
+various stall-warning mechanisms to fire, including CSD locks, which
+makes the machine to be unusable.
+
+Track the bits that are being leaked, and only warn when a new bit is
+set.
+
+That said, this patch will help with the following issues:
+
+1) It will tell us which bits are being set, so, it is easy to
+   communicate it back to vendor, and to do a root-cause analyzes.
+
+2) It avoid the machine to be unusable, because, worst case
+   scenario, the user gets less than 60 WARNs (one per unhandled bit).
+
+Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Sandipan Das <sandipan.das@amd.com>
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Link: https://lkml.kernel.org/r/20241001141020.2620361-1-leitao@debian.org
 ---
- net/mptcp/pm_netlink.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/events/amd/core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 64fe0e7d87d7323583ef9ee5909c833a78e727c2..f6f0a38a0750f82bc909f02a75beec980d951f1f 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -860,7 +860,8 @@ static void mptcp_pm_nl_rm_addr_or_subflow(struct mptcp_sock *msk,
- 			int how = RCV_SHUTDOWN | SEND_SHUTDOWN;
- 			u8 id = subflow_get_local_id(subflow);
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 920e3a6..b4a1a25 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++	static atomic64_t status_warned = ATOMIC64_INIT(0);
++	u64 reserved, status, mask, new_bits, prev_bits;
+ 	struct perf_sample_data data;
+ 	struct hw_perf_event *hwc;
+ 	struct perf_event *event;
+ 	int handled = 0, idx;
+-	u64 reserved, status, mask;
+ 	bool pmu_enabled;
  
--			if (inet_sk_state_load(ssk) == TCP_CLOSE)
-+			if ((1 << inet_sk_state_load(ssk)) &
-+			    (TCPF_FIN_WAIT1 | TCPF_FIN_WAIT2 | TCPF_CLOSING | TCPF_CLOSE))
- 				continue;
- 			if (rm_type == MPTCP_MIB_RMADDR && remote_id != rm_id)
- 				continue;
-
--- 
-2.45.2
-
+ 	/*
+@@ -1012,7 +1013,12 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ 	 * the corresponding PMCs are expected to be inactive according to the
+ 	 * active_mask
+ 	 */
+-	WARN_ON(status > 0);
++	if (status > 0) {
++		prev_bits = atomic64_fetch_or(status, &status_warned);
++		// A new bit was set for the very first time.
++		new_bits = status & ~prev_bits;
++		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
++	}
+ 
+ 	/* Clear overflow and freeze bits */
+ 	amd_pmu_ack_global_status(~status);
 
