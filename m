@@ -1,148 +1,78 @@
-Return-Path: <linux-kernel+bounces-355149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB38994836
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:07:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1999E994806
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECD91C20A1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:07:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642ACB25A6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408C51DDA1E;
-	Tue,  8 Oct 2024 12:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787361DD552;
+	Tue,  8 Oct 2024 12:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cWcst3/J"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AO+O5Wu5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4851A320F;
-	Tue,  8 Oct 2024 12:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B9018CC12;
+	Tue,  8 Oct 2024 12:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728389261; cv=none; b=QAulj+y1lCNmiomBVKA83PPimieAR8vYf/SpRbAQ2PVETuZAGcF/mL/tdz8DvWjlE6UGOFtQzJjTxEMOwP1IHX4/IQ9C6Ih+OcGeJGT8JWH4PAIK1YcYOZKhUMMvUe3aU15mzKJEWq2KkgHaioTwydQ/ZOMkAQZFCppZCkfg+lU=
+	t=1728389180; cv=none; b=WgsiBjbRph92/slTET69fzD/O1K4GtEt1BIOHlHyBtAqDYB1bs6oDHJDTg6SNrU7+66+iSOcHlh2MLQiM44dJi0TOCz/8ErV/MclQTGGMU3P6uphQvdARCOXZIVUjDxnaPZycNFLc3EaPJqEMCZ9fHQcVb/NNbg9/3w22oIrlZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728389261; c=relaxed/simple;
-	bh=ouw2dRtToBF6p95IrVv+WiiU9tAPxLpXAEGKU0/rb8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=olNbvlB+LQIN3LrBnorcGfpymOoyOwpKvK00Pc0TMMFgz/H5jsyvVWJaCfnbQQIExGGcpmkQF7PBsvwcYzIYEJrBZfCcZw9ykIAP+wh8IXO9IuYfJaM0jy5iZvbFffA7AbTdsT8U6Dy9kVN5013o+zEPIiWLXZYOkDhux2CsLfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cWcst3/J; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4988IBAf001669;
-	Tue, 8 Oct 2024 12:07:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8pZorrKXub6AQq6yToKSpksBjU3BFYCO9H+0Yb6Ceys=; b=cWcst3/J89CzOzqx
-	wAvlvxOmN1WSrxmOkTIlDr/pkHgcA0nqARVRloTWS/1JaU15CXYDZXVJYrNk548N
-	T8SqWY1w/n63N8ZtGJthbmd8NgyfSnSfHQeDVaGWxq31eFoJoe1NChwkF9jAc65e
-	hubNVNNC61LOzN3PCYT6JNctQ0NRy+u3tCSHFLbTmcNxiIkehufh76qsH52YB7NJ
-	l3JCKq2UP8B8nwEEd4YiYzqGjNWRDgTxIjGBymBuzqogUn9mZaRlDO9xgMTKwPUr
-	Gsqz2Wxm4u3Y+MzCy9H6YgN5fRFJqDeHKyUibZTMNgvkPdVtGeKIKFV0lQeOAw/h
-	hVDtmQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42513u0nwv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 12:07:10 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498C79eH015515
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 12:07:10 GMT
-Received: from [10.50.59.162] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
- 05:07:01 -0700
-Message-ID: <999ff0a1-1f8c-4220-a9d9-6dc1e0bddda6@quicinc.com>
-Date: Tue, 8 Oct 2024 17:36:06 +0530
+	s=arc-20240116; t=1728389180; c=relaxed/simple;
+	bh=+ScpvZ0QlXeAxwNbtaVwiaX3zMKD+MJlTzqcwjHPd+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfpDRi1Q5rjvDWmhn4ZffGxpjjDZpirxI4fpWItqsAvgOQN14DHQlllwa2JzKavpnq7unFbOzn1mOQ4gSUfXT2X7DJfRTPz0aigKor3ggm847gS7gfy+VjH5MPTghJeOYyW5IrAECQnQUC7hxxBR9gbbz+ISAsZSDmEPdoF+7N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AO+O5Wu5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0tWy0SL76XgWSi76ucMclQdZ5OChNy3Mlnv8Xk/2uik=; b=AO+O5Wu5i3+CiGysJHU7d1V8VN
+	qxzMmxQlBXSaUXSscR/ZJdFzg5jGCCcpa1V09567ZclIGoHq9KCwBEsWVqC1gEjhCJZwS559hXaLZ
+	1DZyMupKv+eh/CBKOAXnfcslZMn9I5qUsiDuBDsnasO74UJu5vvjtU7Wj/adVHZcHiB9/qGMET2HM
+	gkG0WUNTwzGGdjz0zgX2gSzkRzlbShtL2Fi56rL7L3KUhsNkE+ht87abCQZBJ46+TTD2LI8xJS9NF
+	oOyAh9gTq2oJIFcmNZsfum5BIXiVpwFVK1tVBUgf1a007OGLhhnf6dVHQUlG+HRvPNMzd3aYZmSpw
+	iTN/AkhQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sy8yp-00000005k6k-1WKG;
+	Tue, 08 Oct 2024 12:06:19 +0000
+Date: Tue, 8 Oct 2024 05:06:19 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: SurajSonawane2415 <surajsonawane0215@gmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v3] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+Message-ID: <ZwUgO-ASFxcSa1b6@infradead.org>
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008120413.16402-1-surajsonawane0215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: stmmac: allocate separate page for buffer
-To: Jakub Kicinski <kuba@kernel.org>, Suraj Jaiswal <quic_jsuraj@quicinc.com>
-CC: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu
-	<joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Prasad Sodagudi <psodagud@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>, Rob Herring <robh@kernel.org>,
-        <kernel@quicinc.com>
-References: <20240910124841.2205629-1-quic_jsuraj@quicinc.com>
- <20240910124841.2205629-2-quic_jsuraj@quicinc.com>
- <20240911165140.566d9fdb@kernel.org>
-Content-Language: en-US
-From: Sarosh Hasan <quic_sarohasa@quicinc.com>
-In-Reply-To: <20240911165140.566d9fdb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cr1C_KImqt6DsK2c9SePOldVk5UplyB_
-X-Proofpoint-GUID: cr1C_KImqt6DsK2c9SePOldVk5UplyB_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=657 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
- mlxscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410080076
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008120413.16402-1-surajsonawane0215@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+> +		struct bio *bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+>  				      bs);
 
+Overly long line here, plus now pretty weird positioning of the bs
+argument.
 
-On 9/12/2024 5:21 AM, Jakub Kicinski wrote:
-> On Tue, 10 Sep 2024 18:18:41 +0530 Suraj Jaiswal wrote:
->> Currently for TSO page is mapped with dma_map_single()
->> and then resulting dma address is referenced (and offset)
->> by multiple descriptors until the whole region is
->> programmed into the descriptors.
->> This makes it possible for stmmac_tx_clean() to dma_unmap()
->> the first of the already processed descriptors, while the
->> rest are still being processed by the DMA engine. This leads
->> to an iommu fault due to the DMA engine using unmapped memory
->> as seen below:
->>
->> arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402,
->> iova=0xfc401000, fsynr=0x60003, cbfrsynra=0x121, cb=38
->>
->> Descriptor content:
->>      TDES0       TDES1   TDES2   TDES3
->> 317: 0xfc400800  0x0     0x36    0xa02c0b68
->> 318: 0xfc400836  0x0     0xb68   0x90000000
->>
->> As we can see above descriptor 317 holding a page address
->> and 318 holding the buffer address by adding offset to page
->> addess. Now if 317 descritor is cleaned as part of tx_clean()
->> then we will get SMMU fault if 318 descriptor is getting accessed.
-> 
-> The device is completing earlier chunks of the payload before the entire
-> payload is sent? That's very unusual, is there a manual you can quote
-> on this?
-Here if as part of tx clean if first descriptor is cleaned before tx complete of next
-descriptor is done then we are running into this issue.
-for non tso case if we see xmit code has logic to alloc different page for each fragments and same logic
-we are trying for TSO case.
+Should be something like:
 
->> To fix this, let's map each descriptor's memory reference individually.
->> This way there's no risk of unmapping a region that's still being
->> referenced by the DMA engine in a later descriptor.
-> 
-> This adds overhead. Why not wait with unmapping until the full skb is
-> done? Presumably you can't free half an skb, anyway.
-> 
-> Please added Fixes tag and use "PATCH net" as the subject tag/prefix.
+		struct bio *bio = bio_alloc_clone(rq->q->disk->part0, bio_src,
+				gfp_mask, bs);
+
 
