@@ -1,201 +1,108 @@
-Return-Path: <linux-kernel+bounces-354758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C413994240
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAE1994237
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82AAF1C21201
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:40:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80A11C210F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503751F4FAA;
-	Tue,  8 Oct 2024 08:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E6F1F12E8;
+	Tue,  8 Oct 2024 08:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="obtu8m6B";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="SQuWrrNc"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wcslBufv"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890841F4724;
-	Tue,  8 Oct 2024 08:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728375117; cv=pass; b=YYPLgwCc8RII+qOfx2ikcPK9pn+4UQVtihVrbBcizmirlT9ykWWgA5tCB8gsJSZpgUMtrKevqJZIZBr9KQy0EjoWTz3fn+KjzhAMrnTL0ISZnzBzGt+jYS03OMdZwIhRnHg09YPreFcYw0xA3PtHd5dWh+OLFfwvQc/TWzbsDLU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728375117; c=relaxed/simple;
-	bh=h9i0o/1q0Gf4jw4N1lgAM4ETvwOBlfdJyKqa7KZdD8A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PyPAIPDjc0CsZ/li3VR8SlxuSFAi3e+RHrm/T5Fe1WVkb4zXd0cZ8X2wjIK2TOrsSyWy+ot+zBiUXQzeEPW0NHlYj7Fgs+B0xCbDtzqpia7D4pJhttGJ7hZR2lGlrkWe/vM+E3WShG2MsrycqBD2ZUjuiigqAgJoDCe/DmvDJGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=obtu8m6B; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=SQuWrrNc; arc=pass smtp.client-ip=85.215.255.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1728374918; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=bm0fcqklE/r1IgDmhc0hOwQBIvQT++428OZtvcJVD7E/l717XzpwtzYZGqbSmABO0P
-    P8+y4T4JumnPwCNo4pzUCMO9BDF3Wf9IhoxYJnb97UpyPjL/JgrePS1HN9cXVPIiaJb+
-    VlfSI6ZvmeoDEaJbUXYoBfEEFMnXlmw6ySa4rKkr7KZ1kuAguCkeg0qrafYdJI7n1SIP
-    XZDOgJUUAupHjfdb/DcXUj+yIjLQtEIfQ9t2iSuf/xtFJAcGATOuneGJBzugnXI7kBz6
-    Psh5ROedv9y898QM1Fu2wd8VemT6q6uSi+a6n4Fi0Y2aT0gGQuwrvPkD3GMOrc5cWfG4
-    Vzlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1728374918;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=yKl5OWSMF42JLcdBC+gk/wIRhgqjVkOOCGpY66MSD24=;
-    b=T2cyx6JfBYhM9xpkXyUKKGz1sRGa/pQ4r2nQXABvtAIvfWsVCdo9mI9Kbu0axixk+I
-    nAtPNPlGuaupijyurFFz596O1g1FqBNfM171nnm7fDRcwR9Bsj9b2P8O4H2vG2NANAWk
-    eT+ti3V+LABSpwjMnMAKAh8kM3CHUKVXx4ORNL3g3aABPjlmZVtd1CuIagV/fg8/rXIT
-    oY4U1Eyhl8etNDVdAvElc6j22EoIRdtoJY6zzXmqkux8VchfpGPVc7Z1aOKSWfUk3JOG
-    n2V9THO2ly9zwfqKXGQldcxXRpkHPOfivEumHe2tmBppesubt3D9I4zj/bl+zTILR0RQ
-    OQ3A==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1728374918;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=yKl5OWSMF42JLcdBC+gk/wIRhgqjVkOOCGpY66MSD24=;
-    b=obtu8m6BlrjbH7r7tE4+p43IuVstZ8OtkfKft4j+27uV97mlnwVZ5+ib5tWP4Cbgup
-    JYZei2sWmvHz3ufiMmrJ2po86MZH8Oc8g0yh0dTeHfMnz1tCrKuiTKMKEWTLJ6XM/RXQ
-    Gd0mEmzoBs//pErxhuuMJ3PoGvrbpTJyGC0POq+Ib4xAw8wQnDuMITeQZBgbvpt8+yjR
-    r+7s3z34s2vgQb82wawcLMU6KjS46nXxRiqvQ5Zs5jfOTT4+Bq+36piSYmlcKACCsHDg
-    CKisjTWmaLSgcBsu3uZM6YuUk7xwWQgbatTEpObqY4MmJVnWJfY3g4kQefwXeU6xnj+U
-    8iaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1728374918;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=yKl5OWSMF42JLcdBC+gk/wIRhgqjVkOOCGpY66MSD24=;
-    b=SQuWrrNc1LHH7eQ7O52JWEyqERGeO7Cajj6O7Rb5qZO6jGgt5ZBuZuh/zceIkKsEx6
-    bhTobvldIELt8ZwS9rAA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfzkZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.7 DYNA|AUTH)
-    with ESMTPSA id Qd0dc209888bWCN
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Tue, 8 Oct 2024 10:08:37 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A921EF94F;
+	Tue,  8 Oct 2024 08:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728374969; cv=none; b=ff62gyhWqoaNztou3ELv48Z+A9adViZizBECmjrQtKKkm3i+gu8kG0eYyOaYlrmkdkSQzcPbLEVdrb4FoSuuwfh5Km+GynfQxh5ULTHVu71hUSCnoEmjweTCwBsjWpVulbbPiM6O4NvAxmNVNi4NvehZrlWkswx2dllJSMf4Oyw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728374969; c=relaxed/simple;
+	bh=8TWrMAqz+8PV+QIuzBMLugBELPe9nkZP3HMj0ti5P9Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6zhlpeK42xPjHmZ51dvvGyXAMQVs8QHqXSpggpGZqBSt1NKMG4AUM7e653OSUuZr59wH7Ash78Ys1EY9plPf3aL/gWVC2CPlPauSLwCYhwNBBVM0/F8tmv7lMlRdLsMWnsUEHMQMwT8LPBs2snsxIA1//WAeXrv2Pr/EP1rWz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wcslBufv; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728374958; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=4wuyDbSs+jQNbrvshTJAPkFNX8Ga8obk7ExF2kgCdfQ=;
+	b=wcslBufvmRepU86iHhX/TEHpV3BGjTzDKeU4EbrLOdYGUQbtzz5Z27p9QzF/xxRCtQOZG9PBK4m0GX9+aUoORKRynhWJHkcwbdyMiBr21K/YP9qNf8AjrhXPhzrPdHLT4Jy+HoKTvTIOfiBgCSXEGhY7K6so3L4XhiyzMpk/exQ=
+Received: from localhost(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WGcMLEf_1728374956)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Oct 2024 16:09:17 +0800
+From: Philo Lu <lulie@linux.alibaba.com>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	xuanzhuo@linux.alibaba.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next] bpf: Add rcu ptr in btf_id_sock_common_types
+Date: Tue,  8 Oct 2024 16:09:16 +0800
+Message-Id: <20241008080916.44724-1-lulie@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: BUG: "iommu: Retire bus ops" breaks omap-iommu and omap3isp
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20241007121543.GM1365916@nvidia.com>
-Date: Tue, 8 Oct 2024 10:08:27 +0200
-Cc: Robin Murphy <robin.murphy@arm.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Christoph Hellwig <hch@lst.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Jerry Snitselaar <jsnitsel@redhat.com>,
- Joerg Roedel <jroedel@suse.de>,
- tony Lindgren <tony@atomide.com>,
- Andreas Kemnade <andreas@kemnade.info>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-media@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <66572BFA-4501-4087-8B2D-83DB30247CFC@goldelico.com>
-References: <A7C284A9-33A5-4E21-9B57-9C4C213CC13F@goldelico.com>
- <20241007121543.GM1365916@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Jason,
+Sometimes sk is dereferenced as an rcu ptr, such as skb->sk in tp_btf,
+which is a valid type of sock common. Then helpers like bpf_skc_to_*()
+can be used with skb->sk.
 
-> Am 07.10.2024 um 14:15 schrieb Jason Gunthorpe <jgg@nvidia.com>:
->=20
-> On Sun, Oct 06, 2024 at 09:40:00AM +0200, H. Nikolaus Schaller wrote:
->> Hi,
->>=20
->> I found that the camera on our OMAP3 based system (GTA04) stopped =
-working with v6.8-rc1.
->> There was no bug in the camera driver but the OMAP3 ISP (image signal =
-processor) emits
->>=20
->> [   14.963684] omap3isp 480bc000.isp: failed to create ARM IOMMU =
-mapping
->> [   15.010192] omap3isp 480bc000.isp: unable to attach to IOMMU
->> [   15.023376] omap3isp 480bc000.isp: isp_xclk_set_rate: cam_xclka =
-set to 24685714 Hz (div 7)
->> [   15.065399] omap3isp: probe of 480bc000.isp failed with error -12
->>=20
->> Deeper analyses lead to this patch breaking operation. It is not =
-fixed up to v6.12-rc1.
->>=20
->> What seems to happen (in 6.8-rc1 code):
->>=20
->> - omap_iommu_probe() passes &omap_iommu_ops to =
-iommu_device_register()
->> - iommu_device_register() stores the ops in iommu->ops (only)
->> - __iommu_probe_device tries to read the ops from some fw_spec but =
-not iommu->ops
->=20
-> Maybe like this?
->=20
-> @@ -1233,6 +1233,12 @@ static int omap_iommu_probe(struct =
-platform_device *pdev)
->               err =3D iommu_device_register(&obj->iommu, =
-&omap_iommu_ops, &pdev->dev);
->               if (err)
->                       goto out_sysfs;
-> +               /*
-> +                * omap has a DT reprensetation but can't use the =
-common DT
-> +                * code. Setting fwnode to NULL causes probe to be =
-called for
-> +                * every device.
-> +                */
-> +               obj->iommu.fwnode =3D NULL;
->               obj->has_iommu_driver =3D true;
->       }
+For example, the following prog will be rejected without this patch:
+```
+SEC("tp_btf/tcp_bad_csum")
+int BPF_PROG(tcp_bad_csum, struct sk_buff* skb)
+{
+	struct sock *sk = skb->sk;
+	struct tcp_sock *tp;
 
-Doesn't seem to solve the problems:
+	if (!sk)
+		return 0;
+	tp = bpf_skc_to_tcp_sock(sk);
 
-root@letux:~# uname -a
-Linux letux 6.8.0-rc1-letux+ #19506 SMP PREEMPT Tue Oct  8 08:48:26 CEST =
-2024 armv7l GNU/Linux
-root@letux:~# dmesg|fgrep iommu
-[    0.402862] iommu: Default domain type: Translated
-[    0.402893] iommu: DMA domain TLB invalidation policy: strict mode
-[    0.405303] omap-iommu 480bd400.mmu: 480bd400.mmu registered
-[    0.405944] platform 480bc000.isp: Adding to iommu group 0
-[   24.829071] omap3isp 480bc000.isp: iommu configuration for device =
-failed with -ETIMEDOUT
-[   24.880920] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-root@letux:~# dmesg|fgrep isp
-[    0.000000] OMAP3630/DM3730 ES1.2 (l2cache iva sgx neon isp =
-192mhz_clk)
-[    0.405944] platform 480bc000.isp: Adding to iommu group 0
-[   12.349334] omapdss_dss 48050000.dss: bound 48050400.dispc (ops =
-dsi_vc_flush_receive_data [omapdrm])
-[   24.821441] omap3isp 480bc000.isp: deferred probe timeout, ignoring =
-dependency
-[   24.829071] omap3isp 480bc000.isp: iommu configuration for device =
-failed with -ETIMEDOUT
-[   24.887329] omap3isp 480bc000.isp: supply vdd-csiphy1 not found, =
-using dummy regulator
-[   24.928680] omap3isp 480bc000.isp: supply vdd-csiphy2 not found, =
-using dummy regulator
-[   24.951904] omap3isp 480bc000.isp: Revision 15.0 found
-[   24.958160] omap3isp 480bc000.isp: failed to attach device to VA =
-mapping
-[   24.994232] omap3isp 480bc000.isp: unable to attach to IOMMU
-[   25.013671] omap3isp: probe of 480bc000.isp failed with error -16
-root@letux:~#
+	return 0;
+}
+```
 
-I'll dig deeper.
+Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+---
+ kernel/bpf/verifier.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-BR and thanks,
-Nikolaus=
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 9a7ed527e47e..3e7ce448ae03 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -8362,6 +8362,7 @@ static const struct bpf_reg_types btf_id_sock_common_types = {
+ 		PTR_TO_XDP_SOCK,
+ 		PTR_TO_BTF_ID,
+ 		PTR_TO_BTF_ID | PTR_TRUSTED,
++		PTR_TO_BTF_ID | MEM_RCU,
+ 	},
+ 	.btf_id = &btf_sock_ids[BTF_SOCK_TYPE_SOCK_COMMON],
+ };
+-- 
+2.32.0.3.g01195cf9f
+
 
