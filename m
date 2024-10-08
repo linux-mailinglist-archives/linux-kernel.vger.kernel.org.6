@@ -1,205 +1,315 @@
-Return-Path: <linux-kernel+bounces-354700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B223994136
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A259A9942B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2185B27AA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD81F22180
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20301E0B7A;
-	Tue,  8 Oct 2024 07:50:39 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20F71DFE2A;
+	Tue,  8 Oct 2024 08:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="B4dTXIaI"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A3F1E04AE;
-	Tue,  8 Oct 2024 07:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C9D1DFE31;
+	Tue,  8 Oct 2024 08:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728373839; cv=none; b=MeFBPMarrm402iWWrxg5wNgQYw3bmTuCjmZMN0/6jJe2cAnIRVBrABbXP5APgkFDi9ZsB1D+exkKnMNQ9GGgof5wt/Io0QdB0siqRVCDwVBJ34qe9CbCefU35kTGyDUJGH39YxPW1DGVi1Y+/ts5gPCxfnpl0M6udjFkT9NPo0o=
+	t=1728375896; cv=none; b=XOS5IQBm6k4xZdsz8e5yusmznbVcLAZoTZZSSW7uTqR7qTpQTWYkmxfhWuyygpCaoCwy8nVbuD0ZgD8TdKR2uD+hx+7NFTmHjh1HdZ9WplDTuqZjYgskHNs2SYJsk5bEHW+eXNJl5O5TLVMOsuExm/RdJHTqWKghxGkUK3GkFD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728373839; c=relaxed/simple;
-	bh=2YVKqK8qdPwBNwhXjtlQ2NETdbx0YBzrRgxdzyXwlfw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZilSRKuVjziRRt6ICzQGoBn+rPoZdKLrdVRRKdQtNzQYYRkNvm82UYAuofpOQwPRHO1HFeENGn7+Fre86yKAS1rZvyttfTDRyauwTq77uBo/YuqzO1o2AZovlGbUtHxvCjrgU0ZAV8HGtWieJPrpjX0r/x8Q4GXoxvHfsjR+0L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XN7Tf5BVbzCt48;
-	Tue,  8 Oct 2024 15:49:58 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id 418BB14035E;
-	Tue,  8 Oct 2024 15:50:34 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by kwepemd200010.china.huawei.com
- (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 8 Oct
- 2024 15:50:33 +0800
-From: Zheng Zengkai <zhengzengkai@huawei.com>
-To: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<mark.rutland@arm.com>, <maz@kernel.org>, <rafael@kernel.org>,
-	<lenb@kernel.org>
-CC: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <zhengzengkai@huawei.com>
-Subject: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
-Date: Tue, 8 Oct 2024 16:24:29 +0800
-Message-ID: <20241008082429.33646-1-zhengzengkai@huawei.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1728375896; c=relaxed/simple;
+	bh=p8O/sEYZVbUMhVZQJSEP2Q1Ny12LP28b8VlON+FkH54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhzjUp86UIQ3+XPvtRe+QRtkn/fno2Hk4O1bgMBZHU9b1A39stkTLqUDtb/NgMTQwp7H1lrtJqeD/qTfkCQHeY9LK+JhvIhG9Z1YURXhpW5wVJ7e28q7jW+HzB9JmnHEHruXHGhPJgKwOl/oi7fpDHXhqXbaXk910Gq1DlHYa/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=B4dTXIaI; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1728375885; bh=p8O/sEYZVbUMhVZQJSEP2Q1Ny12LP28b8VlON+FkH54=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B4dTXIaI6Bnt8yB3TnEYNb+az8JLv5lvmWJWGjc/PndukWyuiXbT9Tlz9E15MOno+
+	 Jat56Qrgcnp7/9QHOYWs0XxBOri4ClVwyX21PQoRbSKiZBNwdPJp486SzvcMgGbKah
+	 HEoHAQ2tHIc2ahMaJXIZ4r2rJKTygL3eZgaPEW189J37JQwN03ZbelxqmuomDBxqD2
+	 80qpZ5CrfNEAzRjY6XMB2407NhusmJxUX5Kbx7TqFhgK7TttLa3bU9zuv5D3hk3Jm/
+	 1eeAGoF6kQbZIYIFKqvAx4R2CD8Fg42Fk+EThx1l24gLu/pK13701yAmaRlr0LsXNu
+	 j3pVd79uFS35g==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id 6C2DC1002BF; Tue,  8 Oct 2024 09:24:45 +0100 (BST)
+Date: Tue, 8 Oct 2024 09:24:45 +0100
+From: Sean Young <sean@mess.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, unicorn_wang@outlook.com,
+	inochiama@outlook.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: Re: [PATCH v3 2/3] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Message-ID: <ZwTsTQiTkFFu3pwX@gofer.mess.org>
+References: <cover.1728355974.git.unicorn_wang@outlook.com>
+ <57cf7ac3b4c092df1a6962d310b6d2603ca26995.1728355974.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200010.china.huawei.com (7.221.188.124)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57cf7ac3b4c092df1a6962d310b6d2603ca26995.1728355974.git.unicorn_wang@outlook.com>
 
-According to GTDT Table Structure of ACPI specification, the result of
-expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
-with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
-in function acpi_gtdt_init(), so the condition of the "invalid timer
-data" check will never be true, remove the EINVAL error check branch
-and change to void return type for acpi_gtdt_init() to simplify the
-function implementation and error handling by callers.
+On Tue, Oct 08, 2024 at 11:04:14AM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/pwm/Kconfig             |  10 ++
+>  drivers/pwm/Makefile            |   1 +
+>  drivers/pwm/pwm-sophgo-sg2042.c | 180 ++++++++++++++++++++++++++++++++
+>  3 files changed, 191 insertions(+)
+>  create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
+> 
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 0915c1e7df16..ec85f3895936 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -584,6 +584,16 @@ config PWM_SL28CPLD
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-sl28cpld.
+>  
+> +config PWM_SOPHGO_SG2042
+> +	tristate "Sophgo SG2042 PWM support"
+> +	depends on ARCH_SOPHGO || COMPILE_TEST
+> +	help
+> +	  PWM driver for the PWM controller on Sophgo SG2042 SoC. The PWM
+> +	  controller supports outputing 4 channels of PWM waveforms.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm_sophgo_sg2042.
+> +
+>  config PWM_SPEAR
+>  	tristate "STMicroelectronics SPEAr PWM support"
+>  	depends on PLAT_SPEAR || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 9081e0c0e9e0..539e0def3f82 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -53,6 +53,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
+>  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+>  obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+>  obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
+> +obj-$(CONFIG_PWM_SOPHGO_SG2042)	+= pwm-sophgo-sg2042.o
+>  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+>  obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
+>  obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+> new file mode 100644
+> index 000000000000..198019b751ad
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Sophgo SG2042 PWM Controller Driver
+> + *
+> + * Copyright (C) 2024 Sophgo Technology Inc.
+> + * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
+> + *
+> + * Limitations:
+> + * - After reset, the output of the PWM channel is always high.
+> + *   The value of HLPERIOD/PERIOD is 0.
+> + * - When HLPERIOD or PERIOD is reconfigured, PWM will start to
+> + *   output waveforms with the new configuration after completing
+> + *   the running period.
+> + * - When PERIOD and HLPERIOD is set to 0, the PWM wave output will
+> + *   be stopped and the output is pulled to high.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +
+> +#include <asm/div64.h>
+> +
+> +/*
+> + * Offset RegisterName
+> + * 0x0000 HLPERIOD0
+> + * 0x0004 PERIOD0
+> + * 0x0008 HLPERIOD1
+> + * 0x000C PERIOD1
+> + * 0x0010 HLPERIOD2
+> + * 0x0014 PERIOD2
+> + * 0x0018 HLPERIOD3
+> + * 0x001C PERIOD3
+> + * Four groups and every group is composed of HLPERIOD & PERIOD
+> + */
+> +#define SG2042_HLPERIOD(chan) ((chan) * 8 + 0)
+> +#define SG2042_PERIOD(chan) ((chan) * 8 + 4)
+> +
+> +#define SG2042_PWM_CHANNELNUM	4
+> +
+> +/**
+> + * struct sg2042_pwm_ddata - private driver data
+> + * @base:		base address of mapped PWM registers
+> + * @clk_rate_hz:	rate of base clock in HZ
+> + */
+> +struct sg2042_pwm_ddata {
+> +	void __iomem *base;
+> +	unsigned long clk_rate_hz;
+> +};
+> +
+> +static void pwm_sg2042_config(void __iomem *base, unsigned int chan, u32 period, u32 hlperiod)
+> +{
+> +	writel(period, base + SG2042_PERIOD(chan));
+> +	writel(hlperiod, base + SG2042_HLPERIOD(chan));
+> +}
+> +
+> +static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			    const struct pwm_state *state)
+> +{
+> +	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
+> +	u32 hlperiod;
+> +	u32 period;
+> +
+> +	if (state->polarity == PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+> +
+> +	if (!state->enabled) {
+> +		pwm_sg2042_config(ddata->base, pwm->hwpwm, 0, 0);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Period of High level (duty_cycle) = HLPERIOD x Period_clk
+> +	 * Period of One Cycle (period) = PERIOD x Period_clk
+> +	 */
+> +	period = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->period, NSEC_PER_SEC), U32_MAX);
+> +	hlperiod = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->duty_cycle, NSEC_PER_SEC), U32_MAX);
+> +
+> +	if (hlperiod > period) {
+> +		dev_err(pwmchip_parent(chip), "period < hlperiod, failed to apply current setting\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(pwmchip_parent(chip), "chan[%u]: period=%u, hlperiod=%u\n",
+> +		pwm->hwpwm, period, hlperiod);
+> +
+> +	pwm_sg2042_config(ddata->base, pwm->hwpwm, period, hlperiod);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pwm_sg2042_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+> +				struct pwm_state *state)
+> +{
+> +	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
+> +	unsigned int chan = pwm->hwpwm;
+> +	u32 hlperiod;
+> +	u32 period;
+> +
+> +	period = readl(ddata->base + SG2042_PERIOD(chan));
+> +	hlperiod = readl(ddata->base + SG2042_HLPERIOD(chan));
+> +
+> +	if (!period && !hlperiod)
+> +		state->enabled = false;
+> +	else
+> +		state->enabled = true;
+> +
+> +	state->period = DIV_ROUND_UP_ULL((u64)period * NSEC_PER_SEC, ddata->clk_rate_hz);
+> +	state->duty_cycle = DIV_ROUND_UP_ULL((u64)hlperiod * NSEC_PER_SEC, ddata->clk_rate_hz);
+> +
+> +	state->polarity = PWM_POLARITY_NORMAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops pwm_sg2042_ops = {
+> +	.apply = pwm_sg2042_apply,
+> +	.get_state = pwm_sg2042_get_state,
+> +};
+> +
+> +static const struct of_device_id sg2042_pwm_ids[] = {
+> +	{ .compatible = "sophgo,sg2042-pwm" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, sg2042_pwm_ids);
+> +
+> +static int pwm_sg2042_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct sg2042_pwm_ddata *ddata;
+> +	struct pwm_chip *chip;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	chip = devm_pwmchip_alloc(dev, SG2042_PWM_CHANNELNUM, sizeof(*ddata));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +	ddata = pwmchip_get_drvdata(chip);
+> +
+> +	ddata->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(ddata->base))
+> +		return PTR_ERR(ddata->base);
+> +
+> +	clk = devm_clk_get_enabled(dev, "apb");
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get base clk\n");
+> +
+> +	ret = devm_clk_rate_exclusive_get(dev, clk);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
+> +
+> +	ddata->clk_rate_hz = clk_get_rate(clk);
+> +	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
+> +
+> +	chip->ops = &pwm_sg2042_ops;
 
-Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
-GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
-not be called with parameter platform_timer_count set to NULL and we
-can explicitly initialize the integer variable which is used for storing
-the number of platform timers by caller to zero, so there is no need to
-do null pointer check for platform_timer_count in acpi_gtdt_init(),
-remove it to make code a bit more concise.
+I think you can add here:
 
-Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
----
-Changes in v2:
-- initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
+	chip->atomic = true;
 
-v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
----
- drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
- drivers/clocksource/arm_arch_timer.c |  6 ++----
- include/linux/acpi.h                 |  2 +-
- 3 files changed, 11 insertions(+), 28 deletions(-)
+As far as I can see, the driver does not do any sleeping operations
+in pwm_sg2042_apply(). This probably should be tested with 
+CONFIG_PWM_DEBUG and CONFIG_DEBUG_ATOMIC_SLEEP just to be sure.
 
-diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-index c0e77c1c8e09..7fe27c0edde7 100644
---- a/drivers/acpi/arm64/gtdt.c
-+++ b/drivers/acpi/arm64/gtdt.c
-@@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
-  * @table:			The pointer to GTDT table.
-  * @platform_timer_count:	It points to a integer variable which is used
-  *				for storing the number of platform timers.
-- *				This pointer could be NULL, if the caller
-- *				doesn't need this info.
-- *
-- * Return: 0 if success, -EINVAL if error.
-  */
--int __init acpi_gtdt_init(struct acpi_table_header *table,
-+void __init acpi_gtdt_init(struct acpi_table_header *table,
- 			  int *platform_timer_count)
- {
--	void *platform_timer;
- 	struct acpi_table_gtdt *gtdt;
- 
- 	gtdt = container_of(table, struct acpi_table_gtdt, header);
- 	acpi_gtdt_desc.gtdt = gtdt;
- 	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
- 	acpi_gtdt_desc.platform_timer = NULL;
--	if (platform_timer_count)
--		*platform_timer_count = 0;
- 
- 	if (table->revision < 2) {
- 		pr_warn("Revision:%d doesn't support Platform Timers.\n",
- 			table->revision);
--		return 0;
-+		return;
- 	}
- 
- 	if (!gtdt->platform_timer_count) {
- 		pr_debug("No Platform Timer.\n");
--		return 0;
-+		return;
- 	}
- 
--	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
--	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
--		pr_err(FW_BUG "invalid timer data.\n");
--		return -EINVAL;
--	}
--	acpi_gtdt_desc.platform_timer = platform_timer;
--	if (platform_timer_count)
--		*platform_timer_count = gtdt->platform_timer_count;
--
--	return 0;
-+	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-+	*platform_timer_count = gtdt->platform_timer_count;
- }
- 
- static int __init gtdt_parse_timer_block(struct acpi_gtdt_timer_block *block,
-@@ -377,7 +362,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
- {
- 	void *platform_timer;
- 	struct acpi_table_header *table;
--	int ret, timer_count, gwdt_count = 0;
-+	int ret = 0, timer_count = 0, gwdt_count = 0;
- 
- 	if (acpi_disabled)
- 		return 0;
-@@ -394,8 +379,8 @@ static int __init gtdt_sbsa_gwdt_init(void)
- 	 * to re-initialize them with permanent mapped pointer values to let the
- 	 * GTDT parsing possible.
- 	 */
--	ret = acpi_gtdt_init(table, &timer_count);
--	if (ret || !timer_count)
-+	acpi_gtdt_init(table, &timer_count);
-+	if (!timer_count)
- 		goto out_put_gtdt;
- 
- 	for_each_platform_timer(platform_timer) {
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 03733101e231..4ca06aba68a4 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -1741,7 +1741,7 @@ static int __init arch_timer_mem_acpi_init(int platform_timer_count)
- /* Initialize per-processor generic timer and memory-mapped timer(if present) */
- static int __init arch_timer_acpi_init(struct acpi_table_header *table)
- {
--	int ret, platform_timer_count;
-+	int ret, platform_timer_count = 0;
- 
- 	if (arch_timers_present & ARCH_TIMER_TYPE_CP15) {
- 		pr_warn("already initialized, skipping\n");
-@@ -1750,9 +1750,7 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
- 
- 	arch_timers_present |= ARCH_TIMER_TYPE_CP15;
- 
--	ret = acpi_gtdt_init(table, &platform_timer_count);
--	if (ret)
--		return ret;
-+	acpi_gtdt_init(table, &platform_timer_count);
- 
- 	arch_timer_ppi[ARCH_TIMER_PHYS_NONSECURE_PPI] =
- 		acpi_gtdt_map_ppi(ARCH_TIMER_PHYS_NONSECURE_PPI);
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 4d5ee84c468b..2e2b168f3790 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -750,7 +750,7 @@ int acpi_reconfig_notifier_register(struct notifier_block *nb);
- int acpi_reconfig_notifier_unregister(struct notifier_block *nb);
- 
- #ifdef CONFIG_ACPI_GTDT
--int acpi_gtdt_init(struct acpi_table_header *table, int *platform_timer_count);
-+void __init acpi_gtdt_init(struct acpi_table_header *table, int *platform_timer_count);
- int acpi_gtdt_map_ppi(int type);
- bool acpi_gtdt_c3stop(int type);
- int acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem, int *timer_count);
--- 
-2.20.1
+Thanks,
+Sean
 
+> +
+> +	ret = devm_pwmchip_add(dev, chip);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver pwm_sg2042_driver = {
+> +	.driver	= {
+> +		.name = "sg2042-pwm",
+> +		.of_match_table = sg2042_pwm_ids,
+> +	},
+> +	.probe = pwm_sg2042_probe,
+> +};
+> +module_platform_driver(pwm_sg2042_driver);
+> +
+> +MODULE_AUTHOR("Chen Wang");
+> +MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.34.1
+> 
 
