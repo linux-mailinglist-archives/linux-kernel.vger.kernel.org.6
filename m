@@ -1,146 +1,104 @@
-Return-Path: <linux-kernel+bounces-354940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415C99944DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0ED09944DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D83286209
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658181F232BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B19B192586;
-	Tue,  8 Oct 2024 09:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TL4Mg+6O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727718C93F;
-	Tue,  8 Oct 2024 09:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E4D18E368;
+	Tue,  8 Oct 2024 09:56:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B352817E006;
+	Tue,  8 Oct 2024 09:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728381354; cv=none; b=SAxS0+CV7cV3ydkadAXqRcO6xyYrxuymH8WOvnrwU+Gpc1owJD5xITgBAqJCRa0REEiBV6JkTI0i6fbf62H2BHu0dRAgsgVQTfPtIOuEEKyqobhN7qb/J9VTedKRCLtERGxRX3s3C3fFakN5EWA7YUVMvlLcyPqtNg2KGBVm07E=
+	t=1728381369; cv=none; b=GwlQ++XAzKs5nHdQxbB28UI3qzFTKkECpnESH91JvVCqOjDuKJJyWCVULHkxp4yaou51pzdauLYQnqKDEk/1/YVQNlRVRnHncLngTUkolCRYafG4Ltuk1QJecaj19MMsCm4autsv513YJPtPND9Jh5bjpaXMzWhOxupFwDSZC2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728381354; c=relaxed/simple;
-	bh=LvfAntT0wXbH5X1IhTvf7CykMVcP9BvX/yjWZiYGSvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLuMONcHUSAjOgHC+gr+ZfPmi1lCFF+2sLDYR/NKjx3p7Qgco+T4psadlwAJ4IxXAJAJ6nEHi0ZlAtwbM4Dmzjl3DVBIc49k9r4Zjenw9A+iEhxVuOm1u5uOi83bXQMH/3rCqTeTxqIfklz92RFzMKydrJ46KKGeakhYjTpXN6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TL4Mg+6O; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728381353; x=1759917353;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LvfAntT0wXbH5X1IhTvf7CykMVcP9BvX/yjWZiYGSvg=;
-  b=TL4Mg+6OUYq8LnHqNeOtJ4ly71487k8WiJL0iQRr2e68kZQj204i9ivr
-   TXdOaW8DFATF3yExta+jifaZd6NPDoqAH/dDLygwUE2FnUlm5ezpugMcM
-   jGE8/2IbdrYfAy5MdcCz7LzIY33cdGn1xzQKr5kv52knGXWSkMizPFY/x
-   jSK2heF/duEEqKm+ybe3tG0lj81FGeW1bIzpUDleFJf5L1GW697JexTyG
-   yGwEnR08QLWQ5k4xyDwmsoL9R3LWYccUBT3Z82cIJ0VdkEWgju11+uiYZ
-   rMnPIdrIksW7mAHFxtPSWWekKh26Khnv/D9Iv/Naer5YA2WUs6FZB95vk
-   A==;
-X-CSE-ConnectionGUID: NNPncPgNS+Og83fDvy9ZTA==
-X-CSE-MsgGUID: UiIgue69T6aRKRPqcX164g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27442860"
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="27442860"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 02:55:52 -0700
-X-CSE-ConnectionGUID: Aq0MOba5SQyEs6fMt25THw==
-X-CSE-MsgGUID: 1A0DACjuQ1yLc+P0ti9lQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
-   d="scan'208";a="75755815"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 08 Oct 2024 02:55:49 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sy6wU-0006Du-2F;
-	Tue, 08 Oct 2024 09:55:46 +0000
-Date: Tue, 8 Oct 2024 17:55:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA
- to load the firmware
-Message-ID: <202410081704.Zo2k0SZQ-lkp@intel.com>
-References: <20241007131620.2090104-8-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1728381369; c=relaxed/simple;
+	bh=sflavb67v+3jMqz9cuuU/EBMb/bUrsBD/FaAW31LevQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXx4kfU76Tfqffa+6xC/gzQte+bZr60ylc0aAKJIKFXRcH1s/D3DYvUXImvK0eVKVTvx2Oe1YZ89ALbUb7doFfdje5nTdikjA1XsngfxGZKKNdb+yOZ05HTzy+s1XOCCWit4a0HUX8kV8alHjEFevNzcJbuNdAO+6iBmOOOKmPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94059DA7;
+	Tue,  8 Oct 2024 02:56:36 -0700 (PDT)
+Received: from [10.1.26.27] (unknown [10.1.26.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13B3C3F640;
+	Tue,  8 Oct 2024 02:56:03 -0700 (PDT)
+Message-ID: <fa2f15b1-1602-4fd0-80ff-9d33303b7b5a@arm.com>
+Date: Tue, 8 Oct 2024 10:56:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007131620.2090104-8-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Anjali K <anjalik@linux.ibm.com>, Qais Yousef <qyousef@layalina.io>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
+ <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240728184551.42133-1-qyousef@layalina.io>
+ <ae65e4aa-3407-4fb0-b1f1-eb7c2626f768@linux.ibm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <ae65e4aa-3407-4fb0-b1f1-eb7c2626f768@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Arnaud,
+On 10/7/24 18:20, Anjali K wrote:
+> Hi, I tested this patch to see if it causes any regressions on bare-metal power9 systems with microbenchmarks.
+> The test system is a 2 NUMA node 128 cpu powernv power9 system. The conservative governor is enabled.
+> I took the baseline as the 6.10.0-rc1 tip sched/core kernel.
+> No regressions were found.
+> 
+> +------------------------------------------------------+--------------------+----------+
+> |                     Benchmark                        |      Baseline      | Baseline |
+> |                                                      |  (6.10.0-rc1 tip   | + patch  |
+> |                                                      |  sched/core)       |          |
+> +------------------------------------------------------+--------------------+----------+
+> |Hackbench run duration (sec)                          |         1          |   1.01   |
+> |Lmbench simple fstat (usec)                           |         1          |   0.99   |
+> |Lmbench simple open/close (usec)                      |         1          |   1.02   |
+> |Lmbench simple read (usec)                            |         1          |   1      |
+> |Lmbench simple stat (usec)                            |         1          |   1.01   |
+> |Lmbench simple syscall (usec)                         |         1          |   1.01   |
+> |Lmbench simple write (usec)                           |         1          |   1      |
+> |stressng (bogo ops)                                   |         1          |   0.94   |
+> |Unixbench execl throughput (lps)                      |         1          |   0.97   |
+> |Unixbench Pipebased Context Switching throughput (lps)|         1          |   0.94   |
+> |Unixbench Process Creation (lps)                      |         1          |   1      |
+> |Unixbench Shell Scripts (1 concurrent) (lpm)          |         1          |   1      |
+> |Unixbench Shell Scripts (8 concurrent) (lpm)          |         1          |   1.01   |
+> +------------------------------------------------------+--------------------+----------+
+> 
+> Thank you,
+> Anjali K
+> 
 
-kernel test robot noticed the following build errors:
+The default CPUFREQ_DBS_MIN_SAMPLING_INTERVAL is still to have 2 ticks between
+cpufreq updates on conservative/ondemand.
+What is your sampling_rate setting? What's your HZ?
+Interestingly the context switch heavy benchmarks still show -6% don't they?
+Do you mind trying schedutil with a reasonable rate_limit_us, too?
 
-[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
+Regards,
+Christian
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241007-212358
-base:   9852d85ec9d492ebef56dc5f229416c925758edc
-patch link:    https://lore.kernel.org/r/20241007131620.2090104-8-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-config: parisc-randconfig-001-20241008 (https://download.01.org/0day-ci/archive/20241008/202410081704.Zo2k0SZQ-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081704.Zo2k0SZQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410081704.Zo2k0SZQ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_load_fw':
->> (.text+0xa8): undefined reference to `tee_shm_register_kernel_buf'
->> hppa-linux-ld: (.text+0x160): undefined reference to `tee_client_invoke_func'
->> hppa-linux-ld: (.text+0x178): undefined reference to `tee_shm_free'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_register':
->> (.text+0x2f4): undefined reference to `tee_client_open_session'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_unregister':
->> (.text+0x3d4): undefined reference to `tee_client_close_session'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_probe':
->> (.text+0x478): undefined reference to `tee_client_open_context'
->> hppa-linux-ld: (.text+0x4f8): undefined reference to `tee_client_close_context'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_remove':
-   (.text+0x558): undefined reference to `tee_client_close_session'
-   hppa-linux-ld: (.text+0x59c): undefined reference to `tee_client_close_context'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_start':
->> (.text+0x68c): undefined reference to `tee_client_invoke_func'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_stop':
-   (.text+0x7c8): undefined reference to `tee_client_invoke_func'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_get_loaded_rsc_table':
-   (.text+0x92c): undefined reference to `tee_client_invoke_func'
-   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_release_fw':
-   (.text+0xb18): undefined reference to `tee_client_invoke_func'
->> hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o:(.data+0x8): undefined reference to `tee_bus_type'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for REMOTEPROC_TEE
-   Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
-   Selected by [y]:
-   - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
