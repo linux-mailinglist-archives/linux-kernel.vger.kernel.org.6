@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-355510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA92499534E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAC399534F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E8285441
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1752F1C25942
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F2B1E0DA2;
-	Tue,  8 Oct 2024 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134F91E0498;
+	Tue,  8 Oct 2024 15:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZtI11w+j"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XlC7qGRQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4831DE2A2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFC51DF73A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728400928; cv=none; b=VG4tmNbKZOr8hawHk7GG0drGZEs++nydKeRKren95L/78PGNnM9LEmfxgSDCvGwAO2xmR/llYwZj7KHh+Njm4+rC/8TjvuJBSbuGvfakCJ8oxOhFNoscrHj0i+Lkdl/4PHIJC4vrBY/6Hf0JtKN65JK20D8xznpoCyCVzh18dsk=
+	t=1728400955; cv=none; b=G3yRfmQkPYG9IyP0Lqy1ImL7d134kFwEuexd+NfrFtNm4abc/zhlrNHlZL9m7DSoHbhFAGYCAS/p0So1/Fnmxy+feVI1JAWPLEYGszVunSllkFXThlIei5bQewAvOLukC3oTFa6rqoIraNB+h9G8F2B02F20iW1nwH/AVB3MSo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728400928; c=relaxed/simple;
-	bh=3hNLYOGxFEk/QG9fzsv0VGS8Q4v9VUxQyk8dxvdDmAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuDpbMmjX8/fsTwG1Bgl3nr1r9EbwEo6kcEBkwS8ZXqxKWuUqqcsy8ICwM/8Xps/LzK7nnXBwEjigZNJHEqmcBLoHEaxpqQKHeYaWApOypZJWwjnlOTLguDUTU4Di0XG+/uhIa/rT6Cx9JGIX6MAc4FyEp/K/iuktoyErbRNN0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZtI11w+j; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9ab721058so572198685a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1728400926; x=1729005726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XZ67u8RxgzRAwx2Ool9AQUwW74l6Qtl1I/8HA1yVK7o=;
-        b=ZtI11w+jtp1wDLPTjJriENfyaUN27ukJSDZhn15aAnQRJx/DBCvy/KPwEeie3UiXdV
-         wPphXu0ZVmC2AGClKeFDgb0RPNtlFloUN+LhSVwM72Jgr87IyXFG4QobA3qqD16pTwyF
-         baVW1m/sZffmaLNEIKIJDXdaDFsDObIouFDmYz/04Z/JRmPKHj7Xe3Gt+AyKZdUf+vSV
-         7O++oZciC3rCCR3Wgjkxza8/pB62u5gB0iGg9AuB1YoY/cLCkgoBM70rZf+Rk4prJCgA
-         pPnC+7BJNt3WE7RV03SNgESnOB+UbEJ+vfdM7KpRdTzZUOtUhiIRFLEeXYhzFOxABHyM
-         gxHQ==
+	s=arc-20240116; t=1728400955; c=relaxed/simple;
+	bh=36sM4Q1sOGw+kCcI2rfQ73ppgLkiGCgftyKTRR1ozZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=k1OXEo+zbqaWu9GPqJG6V5tWWD7woImRWJ0Cg/ZRxEPX/rz+jTaFxHomfjDQtHOQiuhXal1brwFrDjvufGfAvgiaEWhOsL3iQ3ISFdUaPZDbttrnAsbcOyg2QuTvaOludZHN+/7u3IjldOv/aN1cvOr99NsxvjGuFRGLGwBhoIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XlC7qGRQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728400952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Rr2UnGu4H8vXDUXzwYqapeIqTXFZ0Lq9umuLzat/RKs=;
+	b=XlC7qGRQ3OoVDie52zvh4QmA1dHRR6SMB6sMjTr0De+ZkMZHdb0gYTQkG9APCOgZu8JaGN
+	OrphUjFulywVaK86IVvG5deEYqPd2O8S1PCB9C9ovi9ZY7bFGKioWDUlBM30GPhmyZZDcc
+	q5qc1hI+BTUMhwry2M3zsr/GLnpL4nA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-jEOa7NPrPq64nu7pjy0KwQ-1; Tue, 08 Oct 2024 11:22:30 -0400
+X-MC-Unique: jEOa7NPrPq64nu7pjy0KwQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cae209243so37211155e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:22:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728400926; x=1729005726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZ67u8RxgzRAwx2Ool9AQUwW74l6Qtl1I/8HA1yVK7o=;
-        b=RNxSaI/Pi7ru0X4/VVIC+TvbW5/WLJDfJpQv80h792whWqHLCnU/OfogMZU5HgXJ/A
-         vRLZoExXOt+2SJ6JSkd8tBoQ8/bVMYfqTB24XKVanC87/r+rq/SqSHymLSFXJbnhbeqg
-         X0KH+C/RuKhapVkiw/6Kl0z7V1rQLASEiyOwResjqRJHT9MCATkzlSDp6iRJ85r19PsE
-         EXOTqO/RL7p+UEXo+I/2ptXEuoTduYNTXN6/MK3N/tZF/KOi4nizte0Uzflt5doo+veR
-         ykw6uRC0pfxh6PMRnjgCa0yGfpER8r/jRB+u67uX1w9Ll0M3EKxyfew2A0knVxcrpKEb
-         4PFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUORbESz3phcOK/v7erobRnTa6k/udjILCb3iVghpY5CkvKgGKhyUX2f0T5lQWIOMhwtx3ISfNYhtMVqQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4SN+jHNsr69c3b67fIoyRscLNQbF1ETCOmb3DM+7jDWBBAO0V
-	GdlOfz5mOPq/bXocZGEJA6VRz4p72cAF9A/Jo4/qIvO4mpScAHpNJgFoFyLHJD04NErhBNQ+7M5
-	K
-X-Google-Smtp-Source: AGHT+IGMO0Tvvi9+VmcOsgILzXspWMlWZQ5WxVaJLr0S8i8w6Q2UsaoDkhwE/bfLc/fA5kw9BP3AeA==
-X-Received: by 2002:a05:620a:1791:b0:7a9:95f6:e372 with SMTP id af79cd13be357-7afcf03a0e9mr69595385a.2.1728400925668;
-        Tue, 08 Oct 2024 08:22:05 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7562caf3sm361427285a.36.2024.10.08.08.22.04
+        d=1e100.net; s=20230601; t=1728400949; x=1729005749;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rr2UnGu4H8vXDUXzwYqapeIqTXFZ0Lq9umuLzat/RKs=;
+        b=kSZkFdXRbZFZ7+H26P6Zi1Cxqdr8yUZgHiBJkX/sdl/xdfwtunhEuUU9+3t8T8JUFG
+         tZH5XXddsGzaQLLGvy+INppsIKXb/diKz0uzWZYmPVGL3dWDPYtM2OsH2P3yQPp4i5KV
+         2bNf982oDOVhcmwI4TqBKjuCGR3Gkpshjh4Mibu2niVggyLpApX3/Rpju+P8p7gBPGka
+         68OctjGzTnnY42reJ+aBO72dQwIE96xZrdv9IZs9kimNCkZ7b+Pw3Kmoh+aykmUEXDLr
+         z0E0vrKhnl8GqyKAETw+79CSnuzyKx3sdKaqxQ0L4jSzlnkoQV/6YuTsRDioQfWqUS2x
+         MXUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPWCUsiXxXfQt0q1OsLcfFtgF5UwxBtDGym6VjzNv5vs/QxwhVZxypsqfnxOcfA6IzE/CCDsJcADy8+hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJS6a387wX59sOvjab/qn+8/tII+KrmFgOqXXS/JazFn1x/j8M
+	wMaHiFR7hCrrcZmWtV/+jTK+ChHpYNxS4taEcW4QRfvcyg/PtcxOhBYMIM6Nnbqs4lQiR2vyzGd
+	Nn4tsJ5auExzSjHPz79SP9fBkjswVwpt9Mv1yaaxzlVBdf1pUrLrnbqur6plKHw==
+X-Received: by 2002:a05:600c:5359:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43054a45cebmr16890585e9.34.1728400949188;
+        Tue, 08 Oct 2024 08:22:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDjeKQpJKtmhnu6B+7yIWSsUC27Cui6eNPRY5RNqL+CL26Nk9sjrZOhlZRKG0N5F0ozKpyGg==
+X-Received: by 2002:a05:600c:5359:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43054a45cebmr16890395e9.34.1728400948809;
+        Tue, 08 Oct 2024 08:22:28 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-206.as13285.net. [80.47.4.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43055e5616bsm15218255e9.6.2024.10.08.08.22.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 08:22:05 -0700 (PDT)
-Date: Tue, 8 Oct 2024 11:21:55 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-cxl@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
-	akpm@linux-foundation.org, dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com, alison.schofield@intel.com,
-	rrichter@amd.com, terry.bowman@amd.com, lenb@kernel.org,
-	dave.jiang@intel.com, ira.weiny@intel.com
-Subject: Re: [PATCH 1/3] memory: extern memory_block_size_bytes and
- set_memory_block_size_order
-Message-ID: <ZwVOE6JRS8Fd9_a8@PC2K9PVX.TheFacebook.com>
-References: <20241008044355.4325-1-gourry@gourry.net>
- <20241008044355.4325-2-gourry@gourry.net>
- <039e8c87-c5da-4469-b10e-e57dd5662cff@redhat.com>
- <ZwVG8Z3GRYLoL_Jk@PC2K9PVX.TheFacebook.com>
- <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
+        Tue, 08 Oct 2024 08:22:28 -0700 (PDT)
+Date: Tue, 8 Oct 2024 16:22:26 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Futex hash_bucket lock can break isolation and cause priority
+ inversion on RT
+Message-ID: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 05:02:33PM +0200, David Hildenbrand wrote:
-> On 08.10.24 16:51, Gregory Price wrote:
-> > > > +int __weak set_memory_block_size_order(unsigned int order)
-> > > > +{
-> > > > +	return -ENODEV;
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(set_memory_block_size_order);
-> > > 
-> > > I can understand what you are trying to achieve, but letting arbitrary
-> > > modules mess with this sounds like a bad idea.
-> > > 
-> > 
-> > I suppose the alternative is trying to scan the CEDT from inside each
-> > machine, rather than the ACPI driver?  Seems less maintainable.
-> > 
-> > I don't entirely disagree with your comment.  I hummed and hawwed over
-> > externing this - hence the warning in the x86 machine.
-> > 
-> > Open to better answers.
-> 
-> Maybe an interface to add more restrictions on the maximum size might be
-> better (instead of setting the size/order, you would impose another upper
-> limit).
+Hello,
 
-That is effectively what set_memory_block_size_order is, though.  Once
-blocks are exposed to the allocators, its no longer safe to change the
-size (in part because it was built assuming it wouldn't change, but I
-imagine there are other dragons waiting in the shadows to bite me).
+A report concerning latency sensitive applications using futexes on a
+PREEMPT_RT kernel brought me to (try to!) refresh my understanding of
+how futexes are implemented. The following is an attempt to make sense
+of what I am seeing from traces, validate that it indeed might make
+sense and possibly collect ideas on how to address the issue at hand.
 
-So this would basically amount to a lock-bit being set in the architecture,
-beyond which block size can no longer be changed and a big ol' splat
-can be generated that says "NO TOUCH".
+Simplifying what is actually a quite complicated setup composed of
+non-realtime (i.e., background load mostly related to a containers
+orchestrator) and realtime tasks, we can consider the following
+situation:
 
-> Just imagine having various users of such an interface ..
+ - Multiprocessor system running a PREEMPT_RT kernel
+ - Housekeeping CPUs (usually 2) running background tasks + “isolated”
+   CPUs running latency sensitive tasks (possibly need to run also
+   non-realtime activities at times)
+ - CPUs are isolated dynamically by using nohz_full/rcu_nocbs options
+   and affinity, no static scheduler isolation is used (i.e., no
+   isolcpus=domain)
+ - Threaded IRQs, RCU related kthreads, timers, etc. are configured with
+   the highest priorities on the system (FIFO)
+ - Latency sensitive application threads run at FIFO priority below the
+   set of tasks from the former point
+ - Latency sensitive application uses futexes, but they protect data
+   only shared among tasks running on the isolated set of CPUs
+ - Tasks running on housekeeping CPUs also use futexes
+ - Futexes belonging to the above two sets of non interacting tasks are
+   distinct
 
-I don't wanna D:
+Under these conditions the actual issue presents itself when:
 
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+ - A background task on a housekeeping CPUs enters sys_futex syscall and
+   locks a hb->lock (PI enabled mutex on RT)
+ - That background task gets preempted by a higher priority task (e.g.
+   NIC irq thread)
+ - A low latency application task on an isolated CPU also enters
+   sys_futex, hash collision towards the background task hb, tries to
+   grab hb->lock and, even if it boosts the background task, it still
+   needs to wait for the higher priority task (NIC irq) to finish
+   executing on the housekeeping CPU and eventually misses its deadline
+
+Now, of course by making the latency sensitive application tasks use a
+higher priority than anything on housekeeping CPUs we could avoid the
+issue, but the fact that an implicit in-kernel link between otherwise
+unrelated tasks might cause priority inversion is probably not ideal?
+Thus this email.
+
+Does this report make any sense? If it does, has this issue ever been
+reported and possibly discussed? I guess it’s kind of a corner case, but
+I wonder if anybody has suggestions already on how to possibly try to
+tackle it from a kernel perspective.
+
+Thanks!
+Juri
+
 
