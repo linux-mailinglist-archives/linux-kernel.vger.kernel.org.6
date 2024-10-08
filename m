@@ -1,160 +1,223 @@
-Return-Path: <linux-kernel+bounces-355571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F42995435
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:17:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E28995437
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4592D1C22A63
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6DAD2868C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A0B4502B;
-	Tue,  8 Oct 2024 16:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F303F1DF964;
+	Tue,  8 Oct 2024 16:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh5p2v75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kPHL+Wfk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70EB33986;
-	Tue,  8 Oct 2024 16:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831A76F2F3;
+	Tue,  8 Oct 2024 16:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728404245; cv=none; b=C9Q4s/+1xNwbRaNPbkU4WUTOk0WTKj76C40x6bWA3mk3kdjL+sN+jyf/spPKkTc1rnhJEtUG47JBINMitOe4p6eGgagnGq+eNt0pk0scK3yb8ME5vM2DaL/cc3Bbom82JltuFi3ehNxRTpuRszFovAILKMCu4Z92lUCzTAWdCw0=
+	t=1728404269; cv=none; b=VUbbr0Q+mEp7x9t7gkQZ1obc1BIHDIQM70sEWL4nCFgCaM5j/vN6xY+QpoXgBClsNw2zVL6lSYF8EWWS/eVhxKqCi1FbnHoz5SbuWHHww8FPb1payV/lPh5YLS0jdOpPkwIop1ckNUbT6jQxj+5dZ/1TSCQkWNUm8MbltIZfXn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728404245; c=relaxed/simple;
-	bh=5sJgUKLYp3tZ9et6ymOPVCIytCIoWndZUy/ubGUBJww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2CT2FHUrBGsg+nW4TXvZ1V7sSSxGtFlIm6Xf5QLPUPMYCYHrwux1dMfcRfzbai5p12gPHUGZR3FAFYVi3ovdwijiz4e37YeB46Y8T+uY0VUC690obDxEnji7lmScOqST4WDIJQMUoX0sSILMHLsvqHTMzMHOQ407Q6yo+kQD0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jh5p2v75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E462C4CEC7;
-	Tue,  8 Oct 2024 16:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728404245;
-	bh=5sJgUKLYp3tZ9et6ymOPVCIytCIoWndZUy/ubGUBJww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jh5p2v75JB9c6YxFvIR59GTVIA1ie1Eazh0hURVSjQKU6nURA5UTPgksSQbav6H9y
-	 V3Hqf9KjyBXD6OjHlRASh36AfnUNagMtkOnGszULE0hfnAihl46dY/55pUF4W9YejC
-	 /TkjfRN2yg3Y7tKBN+IKMEovkd76UGkIy21rJH3NAJaK+E4ivPMq9+uLKvcg3x6YT7
-	 QefzMaK1FPSrVR+v54Iv/Z8YsMc10TIvrrbBza5+q/N+BiMPlPTY8wvJZwcCE9ut3q
-	 6VwGuAaLBU1YpGO5qOjbrV+pvX32aoCZ969lRzB/9oHoN/+cnL3ce5A8mjMnoPnNAI
-	 ZhOUUR49SpVxQ==
-Date: Tue, 8 Oct 2024 17:17:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: wenliang yan <wenliang202407@163.com>
-Cc: linux@roeck-us.net, jdelvare@suse.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH linux dev-6.11 2/2] dt-bindings: modified ina2xx to
- match SY24655(SQ52205)
-Message-ID: <20241008-unlatch-frying-d7576b77f99a@spud>
-References: <7c155638-8c33-4873-9534-17a9454c83e6@roeck-us.net>
- <20240911122518.41393-1-wenliang202407@163.com>
- <20240911122518.41393-2-wenliang202407@163.com>
- <20240911-cahoots-wildland-0ea4d25d8cd8@spud>
- <6dcf956c.c4f1.1926bff1453.Coremail.wenliang202407@163.com>
+	s=arc-20240116; t=1728404269; c=relaxed/simple;
+	bh=sR6JvFTxNGC3GiWb6Y6Qt0YBiKYIfxLCrL9a5v+HpdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lv7tF+wxK2DhrSvs6Dq0jhfFp2fkhOhdkjfhOIgDf8T86sFUGCuzBkXx2cg/mgjp4rpbB871DAcbnahl8+ivsud3VhNP7EVzMFkahXJKJK35OpZVL4ZcnGYg8a2GsqFh/GjR8Vb2sWucfB9j6M/lurzdymD2qwq/OtoImBOyjSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kPHL+Wfk; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728404267; x=1759940267;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sR6JvFTxNGC3GiWb6Y6Qt0YBiKYIfxLCrL9a5v+HpdU=;
+  b=kPHL+WfkvV9kLHj9y8yHbkdV9pxmtx//LgLi0RWYIaI2z1Vt7sIApR2n
+   lzOA9zNjk0cbe0yCVEQaA9s5n8IUnEmRcJb03VUX4ViDkQDrZyNlwbeGz
+   6d4jhyF8K2DnfN3P5BWdmr7L49dCvtCItQPkWF29U8c0/7zKEi4ljRDdt
+   NwwUY40jCYQCvYpaRXWQNaBQ8Z+YTmgtIUExupm/8LZETZy07v2v0yPr7
+   2F5u/EYT4iMlEYxH0NPcomMYO7AOVfLPhMG0Cg+RFMqiclSkEyAnflDfu
+   9L5qsVFqsu9tm3uV2R+DRc6at0zjF4BAsMiWHFwa7FP/ZCUoM8l+Hj5RJ
+   w==;
+X-CSE-ConnectionGUID: Fk3vD3K2Siy8s3wmT88v9A==
+X-CSE-MsgGUID: 9KVvViZPTfOtg8nhr/SX7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31319855"
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="31319855"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:17:47 -0700
+X-CSE-ConnectionGUID: prEA0tJQTyyzchkjNIRhmw==
+X-CSE-MsgGUID: 1RajqlD7SrGhHjU/qK4tTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,187,1725346800"; 
+   d="scan'208";a="76249134"
+Received: from ryizhaki-mobl.amr.corp.intel.com (HELO [10.125.160.131]) ([10.125.160.131])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 09:17:45 -0700
+Message-ID: <b6d33fd0-cdee-4cfa-819f-3ad2b54867d6@linux.intel.com>
+Date: Tue, 8 Oct 2024 09:17:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qFwHXDDGM35DQfTn"
-Content-Disposition: inline
-In-Reply-To: <6dcf956c.c4f1.1926bff1453.Coremail.wenliang202407@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] x86/bugs: Clean-up verw mitigations
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, hpa@zytor.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pawan.kumar.gupta@linux.intel.com
+References: <20240924223140.1054918-1-daniel.sneddon@linux.intel.com>
+ <20240924223140.1054918-7-daniel.sneddon@linux.intel.com>
+ <20241007193726.m5mzkjjy4yscge6x@treble>
+Content-Language: en-US
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+In-Reply-To: <20241007193726.m5mzkjjy4yscge6x@treble>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/7/24 12:37, Josh Poimboeuf wrote:
+> On Tue, Sep 24, 2024 at 03:31:40PM -0700, Daniel Sneddon wrote:
+>> +static void __init md_clear_select_mitigation(void)
+>> +{
+>>  	/*
+>> -	 * X86_FEATURE_CLEAR_CPU_BUF is now enabled. Update MDS, TAA and MMIO
+>> -	 * Stale Data mitigation, if necessary.
+>> +	 * If no CPU bug needs VERW, all VERW mitigations are disabled, or all
+>> +	 * mitigations are disabled we bail.
+>>  	 */
+> 
+> It's already clear what the code is doing, no comment necessary.
+> 
+Will remove.
+>> -	if (mds_mitigation == MDS_MITIGATION_OFF &&
+>> -	    boot_cpu_has_bug(X86_BUG_MDS)) {
+>> +	if (!cpu_bug_needs_verw() || verw_mitigations_disabled() ||
+>> +	    cpu_mitigations_off()) {
+>> +		mds_mitigation = MDS_MITIGATION_OFF;
+>> +		taa_mitigation = TAA_MITIGATION_OFF;
+>> +		mmio_mitigation = MMIO_MITIGATION_OFF;
+>> +		rfds_mitigation = RFDS_MITIGATION_OFF;
+>> +		goto out;
+>> +	}
+> 
+> In the case of verw_mitigations_disabled() it's weird to write the
+> variables again if they're already OFF.  That should be a separate
+> check.
+> 
+Sure. I will separate them out.
+>> +
+>> +	/* Check that at least one mitigation is using the verw mitigaiton.
+>> +	 * If the cpu doesn't have the correct ucode or if the BUG_* is mitigated
+>> +	 * by disabling a feature we won't want to use verw. Ignore MMIO
+>> +	 * for now since it depends on what the others choose.
+>> +	 */
+> 
+> Again I think this comment isn't needed as the code is pretty
+> straightforward.  The only surprise is the MMIO dependency on
+> X86_FEATURE_CLEAR_CPU_BUF, but that's called out below.
+> 
+Will remove.
+>> +
+>> +	if (boot_cpu_has_bug(X86_BUG_MDS)) {
+>>  		mds_mitigation = MDS_MITIGATION_FULL;
+>>  		mds_select_mitigation();
+>> +	}  else {
+>> +		mds_mitigation = MDS_MITIGATION_OFF;
+>>  	}
+>> -	if (taa_mitigation == TAA_MITIGATION_OFF &&
+>> -	    boot_cpu_has_bug(X86_BUG_TAA)) {
+>> +	if (boot_cpu_has_bug(X86_BUG_TAA)) {
+>>  		taa_mitigation = TAA_MITIGATION_VERW;
+>>  		taa_select_mitigation();
+>> +	} else {
+>> +		taa_mitigation = TAA_MITIGATION_OFF;
+>>  	}
+>> -	/*
+>> -	 * MMIO_MITIGATION_OFF is not checked here so that mmio_stale_data_clear
+>> -	 * gets updated correctly as per X86_FEATURE_CLEAR_CPU_BUF state.
+>> -	 */
+>> +	if (boot_cpu_has_bug(X86_BUG_RFDS)) {
+>> +		rfds_mitigation = RFDS_MITIGATION_VERW;
+>> +		rfds_select_mitigation();
+>> +	} else {
+>> +		rfds_mitigation = RFDS_MITIGATION_OFF;
+>> +	}
+> 
+> This spaghetti can be simplifed by relying on *_select_mitigation() to
+> set the mitigation, for example:
+> 
+> static void __init mds_select_mitigation(void)
+> {
+> 	if (!boot_cpu_has_bug(X86_BUG_MDS))
+> 		mds_mitigation = MDS_MITIGATION_OFF;
+> 	else if (boot_cpu_has(X86_FEATURE_MD_CLEAR))
+> 		mds_mitigation = MDS_MITIGATION_VERW;
+> 	else
+> 		mds_mitigation = MDS_MITIGATION_VMWERV;
+> }
+> 
+> Then you can just do:
+> 
+> 	mds_select_mitigation();
+> 	taa_select_mitigation();
+> 	rfds_select_mitigation();
+> 
+> 
+You're right. That is much cleaner. Will fix.
+>> +	if (mds_mitigation == MDS_MITIGATION_FULL ||
+>> +	    taa_mitigation == TAA_MITIGATION_VERW ||
+>> +	    rfds_mitigation == RFDS_MITIGATION_VERW)
+> 
+> For consistency can we rename MDS_MITIGATION_FULL to
+> MDS_MITIGATION_VERW?
+> 
+Will do!
+>> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+>> +
+>> +	/* Now handle MMIO since it may not use X86_FEATURE_CLEAR_CPU_BUF */
+> 
+> I would clarify this a bit, something like:
+> 
+> 	/*
+> 	 * The MMIO mitigation has a dependency on
+> 	 * X86_FEATURE_CLEAR_CPU_BUF so this must be called after it
+> 	 * gets set.
+> 	 */
+> 
+Will update.
+>>  	if (boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA)) {
+>>  		mmio_mitigation = MMIO_MITIGATION_VERW;
+>>  		mmio_select_mitigation();
+>> +	} else {
+>> +		mmio_mitigation = MMIO_MITIGATION_OFF;
+>>  	}
+>> -	if (rfds_mitigation == RFDS_MITIGATION_OFF &&
+>> -	    boot_cpu_has_bug(X86_BUG_RFDS)) {
+>> -		rfds_mitigation = RFDS_MITIGATION_VERW;
+>> -		rfds_select_mitigation();
+>> -	}
+>> +
+>> +	/* handle nosmt */
+> 
+> Again I think this comment is superfluous.
+> 
+Will remove.
+>> +	if (!boot_cpu_has(X86_BUG_MSBDS_ONLY) &&
+>> +	    (mds_nosmt || cpu_mitigations_auto_nosmt()))
+>> +		cpu_smt_disable(false);
+>> +
+>> +	if (taa_nosmt || mmio_nosmt || cpu_mitigations_auto_nosmt())
+>> +		cpu_smt_disable(false);
+>> +
+> 
 
---qFwHXDDGM35DQfTn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the review!
 
-Hey,
-
-On Tue, Oct 08, 2024 at 07:58:51PM +0800, wenliang yan wrote:
-> Modified the binding of ina2xx to make it compatible with SY24655.=20
->=20
->=20
->=20
->=20
-> Signed-off-by: Wenliang <wenliang202407@163.com>
->=20
-> ---
->=20
->=20
->=20
->=20
-> SY24655 is a fixed gain power monitor from Silergy, with a power supply
->=20
-> of 2.7-5.5V and communication mode of IIC capable of detecting bus voltage
->=20
-> and voltage on shunt resistors. Its first 5 registers are identical to
->=20
-> ina226, and also have alert and limit functions. So, the sy24655 is
->=20
-> compatible with the ina2xx devices.
-
-This should be above the signoff and --- line. Your patch is pretty
-badly malformed, did you use b4 or git send-email to submit it?
-
-Cheers,
-Conor.
-
->=20
->=20
->=20
->=20
->  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 1 +
->=20
->  1 file changed, 1 insertion(+)
->=20
->=20
->=20
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Doc=
-umentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->=20
-> index 6ae961732e6b..05a9cb36cd82 100644
->=20
-> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->=20
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->=20
-> @@ -20,6 +20,7 @@ description: |
->=20
->  properties:
->=20
->    compatible:
->=20
->      enum:
->=20
-> +      - silergy,sy24655
->=20
->        - ti,ina209
->=20
->        - ti,ina219
->=20
->        - ti,ina220
->=20
-> --=20
->=20
-> 2.17.1
->=20
->=20
-
---qFwHXDDGM35DQfTn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwVbEQAKCRB4tDGHoIJi
-0iwQAQDbWxYff2PbrxzCJq7RCXsWrg6/BXo3TOEkUGvAXrvz7AD9H9vexHzz+KOJ
-9ItTMS3wmwKI6SzZojMatysuiil1iAo=
-=2YUE
------END PGP SIGNATURE-----
-
---qFwHXDDGM35DQfTn--
 
