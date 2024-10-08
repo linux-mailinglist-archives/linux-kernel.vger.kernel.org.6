@@ -1,160 +1,173 @@
-Return-Path: <linux-kernel+bounces-356043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96180995B6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:15:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D619995B72
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8FE1C224EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2886283C19
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3125D2178EE;
-	Tue,  8 Oct 2024 23:15:24 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56A62178EA;
+	Tue,  8 Oct 2024 23:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAr3j8s5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBBD21264F;
-	Tue,  8 Oct 2024 23:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C57E33986;
+	Tue,  8 Oct 2024 23:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728429323; cv=none; b=DfTq+rTkrpjosfDg0Fc3dUyNeIoUJfZA3fovmvw8mnf45jTdghIxqZNkiIy13SZji3sbI2UpyqNs9cgca0HsWZ0hN2Vh9LxY0IVE8wzw/HkMhnnma685y1P+WjetHXMClXN0UiYfjD2FB2oKokldKpasmlSJ48Pr8WgxTKM7CNk=
+	t=1728429396; cv=none; b=UTD6Yj1+f6hKQ9qimjGn4RQZTfmq0X4Zar3PLyfto2rTiKDE2EtoY2z8HT4eUO1q+pp3CCR0Bk3JO1wXaauMjLggsE/KOGj0+XQ/GlSyDm5anY9PvkekcsKZNEAUrqbim9gRvOZ+SPOhmwUwADntNW/txH2dKnncgRsDAnktWKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728429323; c=relaxed/simple;
-	bh=UBe9cFKnQOBsg9HTbpgJGUx1WksSoSj07Oz2tCtQwis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOF89B9Mds8uPHW7IYjqdaCKkUI33B3GWwx+IthQz2E3U9vBcODTFNoc7fI6tEwh7tMUzTjry0YmeHSpy2tZSj44wFV/+3m8gbEhPT72BvrIvlxTUcbrvG+fOCLme6cfQc452M/6VrRCGPMOtcxxH2o0PiunrpOmzuoOLqOiKUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syJQ5-000000002aM-1OOp;
-	Tue, 08 Oct 2024 23:15:09 +0000
-Date: Wed, 9 Oct 2024 00:15:05 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: check validity of 10GbE
- link-partner advertisement
-Message-ID: <ZwW8-Xi8sStL50uw@makrotopia.org>
-References: <fb736ae9a0af7616c20c36264aaec8702abc84ae.1728056939.git.daniel@makrotopia.org>
- <8fb5c25d-8ef5-4126-b709-0cfe2d722330@lunn.ch>
- <ZwBmycWDB6ui4Y7j@makrotopia.org>
- <ZwUTDw0oqJ1dvzPq@shell.armlinux.org.uk>
- <ZwUelSBiPSP_JDSy@makrotopia.org>
- <ZwUpT9HRdl33gv_G@shell.armlinux.org.uk>
- <ZwVBSaS7UGCwbqDs@shell.armlinux.org.uk>
+	s=arc-20240116; t=1728429396; c=relaxed/simple;
+	bh=sgRdB6GHGNFkcHdj8XNl55fFHOIehVfGXwJ3yVIuoHs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lEwngF7674lYsBr8maCrZDXIZWJBFdRr/BKKhrj1k2g5vBWaHYTVvaNehwWYaI7DEBfvdgvxw5fMQ8GO8FGIsNzLnUTnWFemJn/QGbFsGf2jUVSgVbwkSNrpEnzNqO4pKFp1R4Tf+6ltxfcuXa2G1f1TJPQQVRQvdPgY804zarI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAr3j8s5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A457EC4CEC7;
+	Tue,  8 Oct 2024 23:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728429395;
+	bh=sgRdB6GHGNFkcHdj8XNl55fFHOIehVfGXwJ3yVIuoHs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DAr3j8s5ni9LSRzFbT4nXGcCy6z4CXH2+SXbxT+4C2czApXDu6hAf8uKLK06sjlUT
+	 T9CRF0/cPlftvxNjMd4VP/mDKCc6XaPYF+qwxhuAXWEhtC1VJrMcUK1Z51ZC/f2BKZ
+	 VUdCCPip6ds+y72ZE9AF1aaCL3D8zB9nJWLoOBAh+/QbN29w2uzs3P2S2vaANko1Sw
+	 cpPJEpPiAphyropwX+JLu9p/xlKBJaP+ARankm1sjNPSFp8WpJeBSSW4lB75q4riah
+	 IH7Zc48yga+Mr4P9IV93GkakkBCf7649DnUTR3n1oTCsCF06x75kgdS5YyF0oovwAD
+	 wxQiYFbsCnXOw==
+From: djakov@kernel.org
+To: broonie@kernel.org
+Cc: ruanjinjie@huawei.com,
+	dmitry.baryshkov@linaro.org,
+	dan.carpenter@linaro.org,
+	naresh.kamboju@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Georgi Djakov <djakov@kernel.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: [PATCH] spi: geni-qcom: Fix boot warning related to pm_runtime and devres
+Date: Wed,  9 Oct 2024 02:16:15 +0300
+Message-Id: <20241008231615.430073-1-djakov@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwVBSaS7UGCwbqDs@shell.armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-Hi Russell,
+From: Georgi Djakov <djakov@kernel.org>
 
-On Tue, Oct 08, 2024 at 03:27:21PM +0100, Russell King (Oracle) wrote:
-> Okay, I think the problem is down to the order in which Realtek is
-> doing stuff.
-> [...]
-> Now, rtl822x_read_status() reads the 10G status, modifying
-> phydev->lp_advertising before then going on to call
-> rtlgen_read_status(), which then calls genphy_read_status(), which
-> in turn will then call genphy_read_lpa().
-> 
-> First, this is the wrong way around. Realtek needs to call
-> genphy_read_status() so that phydev->link and phydev->autoneg_complete
-> are both updated to the current status.
+During boot, users sometimes observe the following warning:
 
-First of all thanks a lot for diving down that rabbit hole with me!
+[7.841431] WARNING: CPU: 4 PID: 492 at
+drivers/interconnect/core.c:685 __icc_enable
+(drivers/interconnect/core.c:685 (discriminator 7))
+[..]
+[7.841494] CPU: 4 PID: 492 Comm: (udev-worker) Not tainted 6.1.111-rc1 #1
+[7.841497] Hardware name: Thundercomm Dragonboard 845c (DT)
+[7.841499] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[7.841502] pc : __icc_enable (drivers/interconnect/core.c:685
+(discriminator 7))
+[7.841505] lr : icc_disable (drivers/interconnect/core.c:708)
+[..]
+[7.841541] Call trace:
+[7.841542] __icc_enable (drivers/interconnect/core.c:685 (discriminator 7))
+[7.841545] icc_disable (drivers/interconnect/core.c:708)
+[7.841547] geni_icc_disable (drivers/soc/qcom/qcom-geni-se.c:862)
+[7.841553] spi_geni_runtime_suspend+0x3c/0x4c spi_geni_qcom
+[7.841561] pm_generic_runtime_suspend (drivers/base/power/generic_ops.c:28)
+[7.841565] __rpm_callback (drivers/base/power/runtime.c:395)
+[7.841568] rpm_callback (drivers/base/power/runtime.c:532)
+[7.841570] rpm_suspend (drivers/base/power/runtime.c:672)
+[7.841572] rpm_idle (drivers/base/power/runtime.c:504 (discriminator 1))
+[7.841574] update_autosuspend (drivers/base/power/runtime.c:1662)
+[7.841576] pm_runtime_disable_action (include/linux/spinlock.h:401
+drivers/base/power/runtime.c:1703 include/linux/pm_runtime.h:599
+drivers/base/power/runtime.c:1517)
+[7.841579] devm_action_release (drivers/base/devres.c:720)
+[7.841581] release_nodes (drivers/base/devres.c:503)
+[7.841583] devres_release_all (drivers/base/devres.c:532)
+[7.841585] device_unbind_cleanup (drivers/base/dd.c:531)
+[7.841589] really_probe (drivers/base/dd.c:710)
+[7.841592] __driver_probe_device (drivers/base/dd.c:785)
+[7.841594] driver_probe_device (drivers/base/dd.c:815)
+[7.841596] __driver_attach (drivers/base/dd.c:1202)
+[7.841598] bus_for_each_dev (drivers/base/bus.c:301)
+[7.841600] driver_attach (drivers/base/dd.c:1219)
+[7.841602] bus_add_driver (drivers/base/bus.c:618)
+[7.841604] driver_register (drivers/base/driver.c:246)
+[7.841607] __platform_driver_register (drivers/base/platform.c:868)
+[7.841609] spi_geni_driver_init+0x28/0x1000 spi_geni_qcom
+[7.841615] do_one_initcall (init/main.c:1298)
+[7.841619] do_init_module (kernel/module/main.c:2469)
+[7.841623] load_module (kernel/module/main.c:2878)
+[..]
 
-> 
-> Then, it needs to check whether AN is enabled, and whether autoneg
-> has completed and deal with both situations.
-> 
-> Afterwards, it then *possibly* needs to read its speed register and
-> decode that to phydev->speed, but I don't see the point of that when
-> it's (a) not able to also decode the duplex from that register, and
-> (b) when we've already resolved it ourselves from the link mode.
-> What I'd be worried about is if the PHY does a down-shift to a
-> different speed _and_ duplex from what was resolved - and thus
-> whether we should even be enabling downshift on this PHY. Maybe
-> there's a bit in 0xa43 0x12 that gives us the duplex as well?
-> 
-> In other words:
-> 
-> static int rtl822x_read_status(struct phy_device *phydev)
-> {
-> 	int lpadv, ret;
-> 
-> 	ret = rtlgen_read_status(phydev);
-> 	if (ret < 0)
-> 		return ret;
-> 
-> 	if (phydev->autoneg == AUTONEG_DISABLE)
-> 		return 0;
-> 
-> 	if (!phydev->autoneg_complete) {
-> 		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
-> 		return 0;
-> 	}
-> 
-> 	lpadv = phy_read_paged(phydev, 0xa5d, 0x13);
-> 	if (lpadv < 0)
-> 		return lpadv;
-> 
-> 	mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, lpadv);
-> 	phy_resolve_aneg_linkmode(phydev);
-> 
-> 	return 0;
-> }
-> 
-> That should at least get proper behaviour in the link partner
-> advertising bitmap rather than the weirdness that Realtek is doing.
-> (BTW, other drivers should be audited for the same bug!)
+This occurs when the spi-geni driver receives an -EPROBE_DEFER error
+from spi_geni_grab_gpi_chan(), causing devres to start releasing all
+resources as shown below:
 
-Got it, always do genphy_read_status() first thing, as that will
-clear things and set autoneg_complete.
+[7.138679] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
+[7.138751] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_icc_release (8 bytes)
+[7.138827] geni_spi 880000.spi: DEVRES REL ffff800081443800 pm_runtime_disable_action (16 bytes)
+[7.139494] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pm_opp_config_release (16 bytes)
+[7.139512] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_spi_release_controller (8 bytes)
+[7.139516] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_clk_release (16 bytes)
+[7.139519] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_ioremap_release (8 bytes)
+[7.139524] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_region_release (24 bytes)
+[7.139527] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (22 bytes)
+[7.139530] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_pinctrl_release (8 bytes)
+[7.139539] geni_spi 880000.spi: DEVRES REL ffff800081443800 devm_kzalloc_release (40 bytes)
 
-Similarly, when dealing with the same PHY in C45 mode, I noticed that
-phy->autoneg_complete never gets set, but rather we have to check it
-via genphy_c45_aneg_done(phydev) and clear bits set by
-mii_stat1000_mod_linkmode_lpa_t().
+The issue here is that pm_runtime_disable_action() results in a call to
+spi_geni_runtime_suspend(), which attempts to suspend the device and
+disable an interconnect path that devm_icc_release() has just released.
 
-Doing so for C45 access, and following your suggestion above for C22
-resolves the issue without any need to check MDIO_AN_10GBT_STAT_LOCOK
-or MDIO_AN_10GBT_STAT_REMOK.
+Resolve this by calling geni_icc_get() before enabling runtime PM. This
+approach ensures that when devres releases resources in reverse order,
+it will start with pm_runtime_disable_action(), suspending the device,
+and then proceed to free the remaining resources.
 
-> [...]
-> However, if we keep the rtlgen_decode_speed() stuff, and can fix the
-> duplex issue, then the phy_resolve_aneg_linkmode() calls should not
-> be necessary, and it should be moved _after_ this to ensure that
-> phydev->speed (and phydev->duplex) are correctly set.
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/r/CA+G9fYtsjFtddG8i+k-SpV8U6okL0p4zpsTiwGfNH5GUA8dWAA@mail.gmail.com
+Fixes: 89e362c883c6 ("spi: geni-qcom: Undo runtime PM changes at driver exit time")
+Signed-off-by: Georgi Djakov <djakov@kernel.org>
+---
+ drivers/spi/spi-geni-qcom.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-PHY Specific Status Register, MMD 31.0xA434 also carries duplex
-information in bit 3 as well as more useful information.
-Probably rtlgen_decode_speed() should be renamed to rtlgen_decode_physr()
-and decode most of that.
-
-I'll post a series taking care of all of that shortly.
-
-
-Again, thanks a lot for the extremely insightful lesson!
-
-
-Cheers
-
-
-Daniel
+diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+index f6e40f90418f..768d7482102a 100644
+--- a/drivers/spi/spi-geni-qcom.c
++++ b/drivers/spi/spi-geni-qcom.c
+@@ -1116,6 +1116,11 @@ static int spi_geni_probe(struct platform_device *pdev)
+ 	init_completion(&mas->tx_reset_done);
+ 	init_completion(&mas->rx_reset_done);
+ 	spin_lock_init(&mas->lock);
++
++	ret = geni_icc_get(&mas->se, NULL);
++	if (ret)
++		return ret;
++
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 250);
+ 	ret = devm_pm_runtime_enable(dev);
+@@ -1125,9 +1130,6 @@ static int spi_geni_probe(struct platform_device *pdev)
+ 	if (device_property_read_bool(&pdev->dev, "spi-slave"))
+ 		spi->target = true;
+ 
+-	ret = geni_icc_get(&mas->se, NULL);
+-	if (ret)
+-		return ret;
+ 	/* Set the bus quota to a reasonable value for register access */
+ 	mas->se.icc_paths[GENI_TO_CORE].avg_bw = Bps_to_icc(CORE_2X_50_MHZ);
+ 	mas->se.icc_paths[CPU_TO_GENI].avg_bw = GENI_DEFAULT_BW;
 
