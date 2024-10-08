@@ -1,299 +1,205 @@
-Return-Path: <linux-kernel+bounces-354538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B9B993EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73907993EE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5989F1F210EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E712A1F259DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA381C6F41;
-	Tue,  8 Oct 2024 06:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8741C2DAD;
+	Tue,  8 Oct 2024 06:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhWyvaCv"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wlm/JxEY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0612190463;
-	Tue,  8 Oct 2024 06:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FCF190463;
+	Tue,  8 Oct 2024 06:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368569; cv=none; b=VvdiK5oCYsg21WxND/J+0RZnarW8GSZO0SPENRyRA9Cxs01Gib0y0GaDUMidTeh7I4J0LiewAwSUtI+LtPoMZEZUMbpQINRjrknIGZgcU4ElbLfOSC/VLkYefQEYiSuoeRbWcXXRv+liY5Y2fbZ5t+EY378UwNlHzP6yMNM6nck=
+	t=1728368562; cv=none; b=AyfkUsh03jn1Vl58OONpT0Xamd+kj4HREbbjxjZI8Pf1X119cK70k+qVFE5xnxSGB+t6LMo0uJMTFd6b7ugf9vJoGcI+TJ2AZALyjUePZxVz8li9GwqM2sOyi34cQnBnXUZlGk/r9MFcMp6cyjoKautAbb7TRjbFTY3+tz9mb/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728368569; c=relaxed/simple;
-	bh=86UgX/mbty8uWpIMTjQSPIXrHh3bYdC5nmoLRupt7Kc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s23RhAFSNC3/7V7Qfg0/ctKY+1/371s4aF/jidfmve5wk1lG+Id/bkCLzl8HqU5+5uDXTWTu/4Pavd2l+2oeW6YnIE6qTckAGlyl9pBhF+Tm/fJPJIIjJ36j8m7QjG77tDRAnwoR678x8khFa3FBOX+yRUpxuVgGykMiKn/RVok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhWyvaCv; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db908c9c83so3296971a12.2;
-        Mon, 07 Oct 2024 23:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728368567; x=1728973367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CREL76g3HNxkv23W1Xe5cLsUMj2uTYl1300sEXcL2Wo=;
-        b=NhWyvaCvfcOjziqSYVQxjdRbGyo1Lyj2fieNaOAKwC8SomjlDRlzk0c9Rp5EJfNy8f
-         I3/SSba6lwVejEya8ttMs6asIOV9CLLk78JEg4nrGnDb2NH8yiIomYw5exIvdYwwwphl
-         tDIW7Au/cm1VJrU9z2HzHKQjzZajPn0v7MnZqWkfSvEQa32W7tLjb0XgcHyG+QAABFgN
-         3u4MbfnEsHznU7cfjuDdeKo30kLyFaG+9UWW7XJdCqT9kjnE1rydHod+Q4PZ/rUApTlk
-         kl7gXjBelUND4yOFdSc04h8liZB+B/ZZlA1EI6YHUcZLWxYxYrPBEm7LLCew5CW378Q0
-         mfwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728368567; x=1728973367;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CREL76g3HNxkv23W1Xe5cLsUMj2uTYl1300sEXcL2Wo=;
-        b=ZRi0c6r/pwJ0invsjAOryp8r7px83sXt5K9ByEUmrGZB1XBMWNdSdA69Ke9p410aCa
-         kwRglLs1A0K6Xqct95ISB2iUbUV5z7Znk4fOS9kD+jHQmE1PNJID43WmCKzyS7ZjJUrP
-         saF6ivqdhW9QU18WrHjqYKqkingyiVn9XB5UCUV/wxd70xDyOB71SZEBa/7vqnkKxCiA
-         4dVVzTF4Iy/pUkO3QjhiIr9dmuKE8xtwcopT24JC/50rsk7jLmMuLkRjH4hGO0iCuTZ7
-         GVjtzV7DdSlNlqBnbt9qrHZmYWq7mCkJniKUqyR8bK0MxgkbFaCLuODLb+EgS8Zo2Q4L
-         BYCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQnANmGWIzFxfMuxi9COiVnD9cFedjt7JUG0Ddemyk6vVpqbZ3CcKAm/csczAqsCuwTq6G72poSsSEngA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP4kjsi7joxCuQcUEoqOuMPdbtm8ZKFi12rIAVv/k1R7vNz9T5
-	yCIuaweM8V0/DBQ1GF9AGjtEK82KQtBCxvwiVKcRc2By3kAzVgceqz/Uu5qf0+0=
-X-Google-Smtp-Source: AGHT+IEGVu1GOoUdoVNewOPD2PejpPcmOyTHW1Lx20GCF66jj3PCbYeYhczjd4kPCVGPEEQ30XNeFQ==
-X-Received: by 2002:a17:90b:b14:b0:2d8:ebef:547 with SMTP id 98e67ed59e1d1-2e1e63bbf13mr16444269a91.35.1728368566981;
-        Mon, 07 Oct 2024 23:22:46 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.105.70])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e85c8fd1sm8357525a91.18.2024.10.07.23.22.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2024 23:22:46 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	hannes@cmpxchg.org,
-	surenb@google.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2 4/4] sched: Fix cgroup irq accounting for CONFIG_IRQ_TIME_ACCOUNTING
-Date: Tue,  8 Oct 2024 14:19:51 +0800
-Message-Id: <20241008061951.3980-5-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20241008061951.3980-1-laoar.shao@gmail.com>
-References: <20241008061951.3980-1-laoar.shao@gmail.com>
+	s=arc-20240116; t=1728368562; c=relaxed/simple;
+	bh=SVYof9aY9xTJDK3KwZvp+rugri1ytEmahNQ0cFbUZow=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mqw+3fIhZVT46iHqLLauEiPDg013VHKJMgnbgPL9S94nEFVg0VFCh554DbFaLzQmi+6DbCNrtdK2DKEZKOTb1MfI5UfhRF6ayC8LtYL4dLGsP+boPGt2wg2XCb37cbOH03z0OW5auvwxKKsURunbmT1EIGRawj45pJ4EbEzp0FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wlm/JxEY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497J0n4v005200;
+	Tue, 8 Oct 2024 06:22:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sF52L5mXGtB6UiRr/3lh/Bsm
+	cEnzkJAfB6CtnjlOadI=; b=Wlm/JxEY2g900/Wdw+EJe+RQ1JyStCA94jgP1CiC
+	yOgKm0UvqCEYcdeqp4kFaykrDXmQTlaliqyrQpOIn/ZUDsD41yLwqG4WYdsA8mRw
+	altYZETbfS+Tvrw18ZAHi99DMwqZvUtzY+OthBrIVJOnQiw/bGxUci88JLuomBSF
+	RViND/Vb5g2qyzE3uFoAFF86avCF4w6zEYseme45tZ0Ovz9ZDVFCfkuv+mkEJur5
+	P2IMjOVhCk8VbMpYBc7s8f8Btzy83IOIUt2EyfBLRxryvL3f+7UPjeyz5P9PGfeW
+	MpY4MK6+kyddxEXCn3ZpGbee3qh+98PXLpxkx27O5Rn/qQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424ndy97ww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Oct 2024 06:22:23 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4986M77r014437
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 06:22:07 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 7 Oct 2024 23:22:03 -0700
+Date: Tue, 8 Oct 2024 11:51:54 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <neil.armstrong@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+Message-ID: <ZwTPghV36CSIpkE4@hu-mojha-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+ <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+ <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wHphFz5b20QGW6tqJl3-WYnEpXdCfPm7
+X-Proofpoint-ORIG-GUID: wHphFz5b20QGW6tqJl3-WYnEpXdCfPm7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410080040
 
-After enabling CONFIG_IRQ_TIME_ACCOUNTING to monitor IRQ pressure in our
-container environment, we observed several noticeable behavioral changes.
+On Mon, Oct 07, 2024 at 08:22:39PM +0530, Mukesh Ojha wrote:
+> On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
+> > On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > > translation for remote processors is managed by QHEE and if the same SoC
+> > > run under KVM, remoteproc carveout and devmem region should be IOMMU
+> > > mapped from Linux PAS driver before remoteproc is brought up and
+> > > unmapped once it is tear down and apart from this, SHM bridge also need
+> > > to set up to enable memory protection on both remoteproc meta data
+> > > memory as well as for the carveout region.
+> > > 
+> > > Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> > > hypervisors.
+> > > 
+> > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > ---
+> > >   drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+> > >   1 file changed, 40 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > index ac339145e072..13bd13f1b989 100644
+> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > @@ -122,6 +122,7 @@ struct qcom_adsp {
+> > >   	struct qcom_devmem_table *devmem;
+> > >   	struct qcom_tzmem_area *tzmem;
+> > > +	unsigned long sid;
+> > >   };
+> > >   static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+> > > @@ -310,9 +311,21 @@ static int adsp_start(struct rproc *rproc)
+> > >   	if (ret)
+> > >   		return ret;
+> > > +	ret = qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, true, true, adsp->sid);
+> > > +	if (ret) {
+> > > +		dev_err(adsp->dev, "iommu mapping failed, ret: %d\n", ret);
+> > > +		goto disable_irqs;
+> > > +	}
+> > > +
+> > > +	ret = qcom_map_devmem(rproc, adsp->devmem, true, adsp->sid);
+> > > +	if (ret) {
+> > > +		dev_err(adsp->dev, "devmem iommu mapping failed, ret: %d\n", ret);
+> > > +		goto unmap_carveout;
+> > > +	}
+> > > +
+> > >   	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+> > >   	if (ret < 0)
+> > > -		goto disable_irqs;
+> > > +		goto unmap_devmem;
+> > >   	ret = clk_prepare_enable(adsp->xo);
+> > >   	if (ret)
+> > > @@ -400,6 +413,10 @@ static int adsp_start(struct rproc *rproc)
+> > >   	clk_disable_unprepare(adsp->xo);
+> > >   disable_proxy_pds:
+> > >   	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
+> > > +unmap_devmem:
+> > > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> > > +unmap_carveout:
+> > > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> > >   disable_irqs:
+> > >   	qcom_q6v5_unprepare(&adsp->q6v5);
+> > > @@ -445,6 +462,9 @@ static int adsp_stop(struct rproc *rproc)
+> > >   			dev_err(adsp->dev, "failed to shutdown dtb: %d\n", ret);
+> > >   	}
+> > > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
+> > > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> > > +
+> > >   	handover = qcom_q6v5_unprepare(&adsp->q6v5);
+> > >   	if (handover)
+> > >   		qcom_pas_handover(&adsp->q6v5);
+> > > @@ -844,6 +864,25 @@ static int adsp_probe(struct platform_device *pdev)
+> > >   	}
+> > >   	platform_set_drvdata(pdev, adsp);
+> > > +	if (of_property_present(pdev->dev.of_node, "iommus")) {
+> > > +		struct of_phandle_args args;
+> > > +
+> > > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		rproc->has_iommu = true;
+> > > +		adsp->sid = args.args[0];
+> > > +		of_node_put(args.np);
+> > > +		ret = adsp_devmem_init(adsp);
+> > > +		if (ret)
+> > > +			return ret;
+> > 
+> > Why don't you get this table from the firmware like presumably QHEE does ?
+> 
+> Well, AFAIK, QHEE(EL2) has this information statically present and does
+> not get it from anywhere., but will confirm this twice..
 
-One of our IRQ-heavy services, such as Redis, reported a significant
-reduction in CPU usage after upgrading to the new kernel with
-CONFIG_IRQ_TIME_ACCOUNTING enabled. However, despite adding more threads
-to handle an increased workload, the CPU usage could not be raised. In
-other words, even though the container’s CPU usage appeared low, it was
-unable to process more workloads to utilize additional CPU resources, which
-caused issues.
+Double confirmed, device memory region required by remoteproc is
+statically present with QHEE.
 
-This behavior can be demonstrated using netperf:
+-Mukesh
 
-  function start_server() {
-      for j in `seq 1 3`; do
-          netserver -p $[12345+j] > /dev/null &
-      done
-  }
-
-  server_ip=$1
-  function start_client() {
-    # That applies to cgroup2 as well.
-    mkdir -p /sys/fs/cgroup/cpuacct/test
-    echo $$ > /sys/fs/cgroup/cpuacct/test/cgroup.procs
-    for j in `seq 1 3`; do
-        port=$[12345+j]
-        taskset -c 0 netperf -H ${server_ip} -l ${run_time:-30000}   \
-                -t TCP_STREAM -p $port -- -D -m 1k -M 1K -s 8k -S 8k \
-                > /dev/null &
-    done
-  }
-
-  start_server
-  start_client
-
-We can verify the CPU usage of the test cgroup using cpuacct.stat. The
-output shows:
-
-  system: 53
-  user: 2
-
-The CPU usage of the cgroup is relatively low at around 55%, but this usage
-doesn't increase, even with more netperf tasks. The reason is that CPU0 is
-at 100% utilization, as confirmed by mpstat:
-
-  02:56:22 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-  02:56:23 PM    0    0.99    0.00   55.45    0.00    0.99   42.57    0.00    0.00    0.00    0.00
-
-  02:56:23 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-  02:56:24 PM    0    2.00    0.00   55.00    0.00    0.00   43.00    0.00    0.00    0.00    0.00
-
-This behavior is unexpected. We should account for IRQ time to the cgroup
-to reflect the pressure the group is under.
-
-After a thorough analysis, I discovered that this change in behavior is due
-to commit 305e6835e055 ("sched: Do not account irq time to current task"),
-which altered whether IRQ time should be charged to the interrupted task.
-While I agree that a task should not be penalized by random interrupts, the
-task itself cannot progress while interrupted. Therefore, the interrupted
-time should be reported to the user.
-
-The system metric in cpuacct.stat is crucial in indicating whether a
-container is under heavy system pressure, including IRQ/softirq activity.
-Hence, IRQ/softirq time should be accounted for in the cpuacct system
-usage, which also applies to cgroup2’s rstat.
-
-This patch reintroduces IRQ/softirq accounting to cgroups.
-
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- kernel/sched/core.c  | 39 +++++++++++++++++++++++++++++++++++++--
- kernel/sched/psi.c   | 15 +++------------
- kernel/sched/stats.h |  7 ++++---
- 3 files changed, 44 insertions(+), 17 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8b633a14a60f..533e015f8777 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5587,7 +5587,24 @@ void sched_tick(void)
- 	rq_lock(rq, &rf);
- 
- 	curr = rq->curr;
--	psi_account_irqtime(rq, curr, NULL);
-+
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+	if (static_branch_likely(&sched_clock_irqtime)) {
-+		u64 now, irq;
-+		s64 delta;
-+
-+		now = cpu_clock(cpu);
-+		irq = irq_time_read(cpu);
-+		delta = (s64)(irq - rq->psi_irq_time);
-+		if (delta > 0) {
-+			rq->psi_irq_time = irq;
-+			psi_account_irqtime(rq, curr, NULL, now, delta);
-+			cgroup_account_cputime(curr, delta);
-+			/* We account both softirq and irq into softirq */
-+			cgroup_account_cputime_field(curr, CPUTIME_SOFTIRQ, delta);
-+		}
-+	}
-+#endif
- 
- 	update_rq_clock(rq);
- 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
-@@ -6667,7 +6684,25 @@ static void __sched notrace __schedule(int sched_mode)
- 		++*switch_count;
- 
- 		migrate_disable_switch(rq, prev);
--		psi_account_irqtime(rq, prev, next);
-+
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+		if (static_branch_likely(&sched_clock_irqtime)) {
-+			u64 now, irq;
-+			s64 delta;
-+
-+			now = cpu_clock(cpu);
-+			irq = irq_time_read(cpu);
-+			delta = (s64)(irq - rq->psi_irq_time);
-+			if (delta > 0) {
-+				rq->psi_irq_time = irq;
-+				psi_account_irqtime(rq, prev, next, now, delta);
-+				cgroup_account_cputime(prev, delta);
-+				/* We account both softirq and irq into softirq */
-+				cgroup_account_cputime_field(prev, CPUTIME_SOFTIRQ, delta);
-+			}
-+		}
-+#endif
-+
- 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
- 
- 		trace_sched_switch(preempt, prev, next, prev_state);
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 49d9c75be0c8..ffa8aa372fbd 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -992,16 +992,14 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- }
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
--void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
-+void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev,
-+			 u64 now, s64 delta)
- {
- 	int cpu = task_cpu(curr);
- 	struct psi_group *group;
- 	struct psi_group_cpu *groupc;
--	u64 now, irq;
--	s64 delta;
- 
--	if (static_branch_likely(&psi_disabled) ||
--	    !static_branch_likely(&sched_clock_irqtime))
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	if (!curr->pid)
-@@ -1012,13 +1010,6 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
- 	if (prev && task_psi_group(prev) == group)
- 		return;
- 
--	now = cpu_clock(cpu);
--	irq = irq_time_read(cpu);
--	delta = (s64)(irq - rq->psi_irq_time);
--	if (delta < 0)
--		return;
--	rq->psi_irq_time = irq;
--
- 	do {
- 		if (!group->enabled)
- 			continue;
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 237780aa3c53..7c5979761021 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -111,10 +111,11 @@ void psi_task_change(struct task_struct *task, int clear, int set);
- void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- 		     bool sleep);
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
--void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
-+void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-+			 struct task_struct *prev, u64 now, s64 delta);
- #else
- static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
--				       struct task_struct *prev) {}
-+				       struct task_struct *prev, u64 now, s64 delta) {}
- #endif /*CONFIG_IRQ_TIME_ACCOUNTING */
- /*
-  * PSI tracks state that persists across sleeps, such as iowaits and
-@@ -197,7 +198,7 @@ static inline void psi_sched_switch(struct task_struct *prev,
- 				    struct task_struct *next,
- 				    bool sleep) {}
- static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
--				       struct task_struct *prev) {}
-+				       struct task_struct *prev, u64 now, s64 delta) {}
- #endif /* CONFIG_PSI */
- 
- #ifdef CONFIG_SCHED_INFO
--- 
-2.43.5
-
+> 
+> -Mukesh
+> 
 
