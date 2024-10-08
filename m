@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-354731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BD59941E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E289941E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07273287F75
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90621F2B237
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BC31E47BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22631E47DE;
 	Tue,  8 Oct 2024 07:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fXqeG095";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KSbtIF3n"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wm64nhBF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tTeqg54J"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB081E3DFE;
-	Tue,  8 Oct 2024 07:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2D81E3DF4;
+	Tue,  8 Oct 2024 07:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728374182; cv=none; b=pI4NM6krX7PGWL5ttHPumSmknuWFPAwUKtAA9O5c93GQhBFzrxvpasHUbYGOj2nithJSyLN6FLQwnkdXdbr6fug/skhQA9r+FTmT5l7FMmHFCjDC3MOPY1VqQQa0q/fxZ0nWmulU/J0+zR7P8PDm3cZQbuLpogwE93IfTQs73aU=
+	t=1728374183; cv=none; b=YRTU58L81gm5SeVSXsNBtcx2PGacK2c6sMrwImG6nHW1iUdWEkjrejC3RPgcsjS593GnmQ9DOcnflUJh6LWxv3Jir7OwVUvMqeiGvgj9pL+gwurGn9qWRZgYVfYYsh68f64d3W2dCqRdIgbTpcNtQMYTi995PlfDHPYmGV/LqcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728374182; c=relaxed/simple;
-	bh=aIajaEl+IF7nFk/y3Ko0qxXmvCZ5hoEDD+uf8rZvuQg=;
+	s=arc-20240116; t=1728374183; c=relaxed/simple;
+	bh=v+Nz6zuH4iplykh8bRKyTaIdnBD5oQgOoQP2WDbHX1o=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Cc/WL2QbhQCel5N6bXBXCfb09X9rgq1zwdsSPA3US5aIyD9MjqZmnSxYSCvuGH9nIA19fcWZo1fxSb75hUAwITnnlzhsJILg/UrVGsA303f1DCdXaEAFTpPAg/ybtlf9Ezh+CkFgigcqmDeQZRB/qZ37cBH8eN6BXXkkOffIT6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fXqeG095; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KSbtIF3n; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=eO4y1cKwAP3q6SERsvTaExjk9mLHbsb2+mwx7unNjjBCYwMDYdA2+mGkjwZ7ZvHKeDY9j/DqGrdYN9W9if92L5pf6N1Xzavj5csPakN9WE34Dv2fvJGmocl3oaHY+rQoIacecNpaavkG+01HDDiNjOm5+yGi/AWlp+8u/cbY3Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wm64nhBF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tTeqg54J; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 07:56:18 -0000
+Date: Tue, 08 Oct 2024 07:56:19 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728374179;
+	s=2020; t=1728374180;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C5enLbY+hmqMP9TpBEBbw3O4WiT7ZupgNv6Px4p4+SY=;
-	b=fXqeG095EooUe6bzTQsaonwIE9evL1YH7O8sGeUzMZ+otojQIEKRAzsqZ54XWzVbYrwuCb
-	IQrLxZm+B89BHTcVBKSncKGIdjT4YoFBmqyUFzH2n2h/ViTCb/E+MRUkn6iRnV0GLV7IZA
-	+Ejdfv+RLOjudGE3mcN8ZPtxmhVDyeiEAV6c29y+KPPtm/T9kD4adgtiobltyjO4Q75GLQ
-	ZzLex5Z9AHOglmzQa05KsXWyhT00oaemY+B3kkUx0lSeO5YPgPCoMzhctPDHlG6Irpi+qo
-	7vFut3VXRY5gYqcsS+YXvqafpzoXYUXPJNQBZ0FjfZn3JdJ04tDvwq5N6pAuCw==
+	bh=kclRuTWIwTkQ70kMONDP5vx9FIxAGeMDvX8rbl97yPk=;
+	b=Wm64nhBFGy61qZVg1kKjD/K053kwnpJ8MASJSY3AxnRJdKIho10Ny4vuvVOaJpncRFdnHR
+	EwvSIho/fGkaQABF3QmF1HeeWUcH3M7vppSqn2n9w7aCnPrd30LrvL4NlbhYmTK5fHYFsI
+	0WrK7gYj4RzMWmD9Agx597Sx+6BZsvW41xSrbQtiF9N9s9ppV2xyZv9Q3Lx6Rm5B9JQ+Xb
+	4YaR7SbYLWZ3RPKBTwGjK+4WqxQ5A7WojAL26uVqhJnxR9RxM34nDTKJa7K7m3e/B4SwBS
+	veJVkXMFLdOU+iQq0MQFNFc7XzmIzzj2py7wSYI1VcGd3iasw/vyq2h6nw2g9Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728374179;
+	s=2020e; t=1728374180;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C5enLbY+hmqMP9TpBEBbw3O4WiT7ZupgNv6Px4p4+SY=;
-	b=KSbtIF3nO/YEnlYbSBO5NHkYNIKHRLiZcrwNdzFsoTc3Hv+M/3YMRwBiFXomk0evLcv6Ge
-	SgnHbe+sk4dL+hCQ==
+	bh=kclRuTWIwTkQ70kMONDP5vx9FIxAGeMDvX8rbl97yPk=;
+	b=tTeqg54JMO9nIKWG/NyT9qCuFQTz/HRezIZcjQk1Gwy/lzT8g0f4neG3olh8uAqkGOFIW3
+	Zr0+xeSC2vuF5CAw==
 From: "tip-bot2 for Huang Shijie" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: fix the comment for PREEMPT_SHORT
+Subject: [tip: sched/core] sched/fair: remove the DOUBLE_TICK feature
 Cc: Huang Shijie <shijie@os.amperecomputing.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- "Christoph Lameter (Ampere)" <cl@linux.com>, x86@kernel.org,
+ "Christoph Lameter (Ampere)" <cl@linux.com>,
+ Vishal Chourasia <vishalc@linux.ibm.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241001070456.10939-1-shijie@os.amperecomputing.com>
-References: <20241001070456.10939-1-shijie@os.amperecomputing.com>
+In-Reply-To: <20241001065451.10356-1-shijie@os.amperecomputing.com>
+References: <20241001065451.10356-1-shijie@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172837417826.1442.12422643016094212444.tip-bot2@tip-bot2>
+Message-ID: <172837417940.1442.13398867634108590845.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,37 +83,60 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     b15148ce21c11373ade7389202c12cabf4eba6cf
-Gitweb:        https://git.kernel.org/tip/b15148ce21c11373ade7389202c12cabf4eba6cf
+Commit-ID:     e31488c9df27aaea2cdffba688129fdeb3869650
+Gitweb:        https://git.kernel.org/tip/e31488c9df27aaea2cdffba688129fdeb3869650
 Author:        Huang Shijie <shijie@os.amperecomputing.com>
-AuthorDate:    Tue, 01 Oct 2024 15:04:56 +08:00
+AuthorDate:    Tue, 01 Oct 2024 14:54:51 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 07 Oct 2024 09:28:41 +02:00
+CommitterDate: Mon, 07 Oct 2024 09:28:40 +02:00
 
-sched/fair: fix the comment for PREEMPT_SHORT
+sched/fair: remove the DOUBLE_TICK feature
 
-We do not have RESPECT_SLICE, we only have RUN_TO_PARITY.
-Change RESPECT_SLICE to RUN_TO_PARITY, makes it more clear.
+The patch "5e963f2bd46 sched/fair: Commit to EEVDF"
+removed the code following the DOUBLE_TICK:
+	-
+	-       if (!sched_feat(EEVDF) && cfs_rq->nr_running > 1)
+	-               check_preempt_tick(cfs_rq, curr);
+
+The DOUBLE_TICK feature becomes dead code now, so remove it.
 
 Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Christoph Lameter (Ampere) <cl@linux.com>
-Link: https://lkml.kernel.org/r/20241001070456.10939-1-shijie@os.amperecomputing.com
+Reviewed-by: "Christoph Lameter (Ampere)" <cl@linux.com>
+Reviewed-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Link: https://lore.kernel.org/r/20241001065451.10356-1-shijie@os.amperecomputing.com
 ---
- kernel/sched/features.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c     | 6 ------
+ kernel/sched/features.h | 1 -
+ 2 files changed, 7 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 225b31a..c9e3b8d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5680,12 +5680,6 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ 		resched_curr(rq_of(cfs_rq));
+ 		return;
+ 	}
+-	/*
+-	 * don't let the period tick interfere with the hrtick preemption
+-	 */
+-	if (!sched_feat(DOUBLE_TICK) &&
+-			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+-		return;
+ #endif
+ }
+ 
 diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 7c22b33..a3d331d 100644
+index 2908740..7c22b33 100644
 --- a/kernel/sched/features.h
 +++ b/kernel/sched/features.h
-@@ -19,7 +19,7 @@ SCHED_FEAT(PLACE_REL_DEADLINE, true)
-  */
- SCHED_FEAT(RUN_TO_PARITY, true)
+@@ -56,7 +56,6 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
+ 
+ SCHED_FEAT(HRTICK, false)
+ SCHED_FEAT(HRTICK_DL, false)
+-SCHED_FEAT(DOUBLE_TICK, false)
+ 
  /*
-- * Allow wakeup of tasks with a shorter slice to cancel RESPECT_SLICE for
-+ * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
-  * current.
-  */
- SCHED_FEAT(PREEMPT_SHORT, true)
+  * Decrement CPU capacity based on time not spent running tasks
 
