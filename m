@@ -1,160 +1,96 @@
-Return-Path: <linux-kernel+bounces-355323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19D49950AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258A29950BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212281C24DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92841F2566D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2CA1DF743;
-	Tue,  8 Oct 2024 13:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D6A1DFE1D;
+	Tue,  8 Oct 2024 13:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="MZUiqWFi"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B57gxDuv"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3239726ADD;
-	Tue,  8 Oct 2024 13:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDA51DFE0F;
+	Tue,  8 Oct 2024 13:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395559; cv=none; b=oTnBHSDgECgz3qFY/Mu6YXkC05uvQndcvGWqIIoK/aWzPd0XkOzmTpQyfI+KxCkTt6rN+aNrJyaQn+Z45R/lhBZC5VJiaswsk5opsZ0yrZCBK6dKtSk60b5/CJd5I17Gi7viuFl97+D7FKyOjCBsq/iaQw5mAw3vGxIJK65HHo4=
+	t=1728395646; cv=none; b=km/pmVO9o4tIUbi0qGt9cyXrKchp8gpsPSOTTF25FUQzNle7vSA39/ak4ievCtcYJczQHJIEPCGEE+w+qES2qTgwAhL2UagxbeKtp5KSlum5F5bc5bszviczDPM3gBGo0AW1VhF8y0UVmsYisBXrvMRKiSm6IBZ8pBEIHsi02YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395559; c=relaxed/simple;
-	bh=ZMS+Rl5TsaGNB9WGoe+0owkn3i/R060CfQBCn5OKDWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaxkqSmRqE3iBDcdBbru7xEnKjCgNjjYY/uqIxdOklI8JBLQE/fX+IXcjcdzGQ2r8W1TNMXiJzbCIJUYiGtk1wQEyR2051yE4NUcT6NRUzIMW/oJ1TqNBAceMXSuv2X5NK7PijcfNd7Y4OrWgKXAN10ReHbPpL0IQr1a90czbdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=MZUiqWFi; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=K3XwwW061KgN1orzCcgKcqHnOvhEmFckEUZYuHPC+9U=; t=1728395557;
-	x=1728827557; b=MZUiqWFicqC9auoJJbqmEDPwoTxIKyhzwAZ51CRo+wqNHYe1Wy9RUnPRFWHK4
-	fLN3kTLH3zpUpBad0LDFfHGMWy0TF3xJ8CNml7VYVUm0qB3/8kNhHRInYJY4ZBBFmtzh6rnXE8Qia
-	SOv3D1b5Zhl6lAnWCj1h5nNu68zXFLihuRdj3a6XEHJJhB3JG2EFrDrUNUpWdk7gHe7DqlWuIehsr
-	DZPJP6a57S9Voi6CbpFc6AOTL/SMlu6vNWyfWOSW7x8HEEI6iKvQ5KNW64BqIFS55bV3OOm4ZUEfJ
-	1liAxr2RKE+lJT2PEmkvRlMfPS6dhnrAbciYzdYoLL5PyQjHnQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1syAdH-0005fT-74; Tue, 08 Oct 2024 15:52:11 +0200
-Message-ID: <bd933e11-7836-462f-9b6b-5172301f188b@leemhuis.info>
-Date: Tue, 8 Oct 2024 15:52:10 +0200
+	s=arc-20240116; t=1728395646; c=relaxed/simple;
+	bh=aaY+wIaEEkC9xHfCZFhVigmMZCz9c2xpl5FhmVqMai8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JV47JrSAe1K+F7WjhkcinnIeNZLvMw1ZV1aNy417sEcgoPrCdcnxEw+zoxxcoDZgiyiL6Gf+dysOGkTffH/Il3hujwJKQWn6xbKI7ZIZ9bBtZfL+6ZUj3fkRxvMYqe1zYzIx+wEWnrky5Fwq73jmz6YLs3i4YKh6FO525NGqTMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B57gxDuv; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so1319233b3a.0;
+        Tue, 08 Oct 2024 06:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728395644; x=1729000444; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aaY+wIaEEkC9xHfCZFhVigmMZCz9c2xpl5FhmVqMai8=;
+        b=B57gxDuv4aPPcgxqa6QLwHmqxklNplm7Sb/o1IoEnkf1wAYQOOCR13Wm+OefCnZ01A
+         TIP7PI9t6+YLnk6Jg4rdUTM0fm5Iwz2+zdkG9wXcXFpkdqDRISVZnISwViYDyOcyyQKh
+         xPYnqcZmQpHHfR9AfqYbVqwWFXMFoM2/nG+tdgoE8xTif2+PvKQV80jOvPmQzSk/BX01
+         Ic/HiX9UGF982hRZg6bisQtfVz/1jgDa5MKsOWdADBIFbhadnfp11AavWzUmHf1dNCF8
+         u4V1QdgAI4uOCqWVS8PoTFCkx/MN1Omh6utK3D336A4xbZgMGVRmyyod8jn6O0huQF/b
+         lseQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728395644; x=1729000444;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aaY+wIaEEkC9xHfCZFhVigmMZCz9c2xpl5FhmVqMai8=;
+        b=rKuw8A6alH2mPvtrpzjyvCGaAxv11kgZRB7iOVixeshzzqF8SoDtvn10UUC3+0RaYH
+         V5ttKHb2oRk7/uTrWZWxrHeQVqoZUYO84JU1WSzgH3p/S0xULfOFcBrBdnHUUlTSx0Y4
+         dqcxoGHqUqKQq8/vd9vzuI/C1eS4OPlM2lpGvjorRhgL3C1+adj8LeGRmUBmfLLmUMvz
+         oEuAW/9iLXlexNttjg3m7EYtRpHfOlYZeCL9b3sqjrwtvSe/on1oXeaeVnQYytxCt6U+
+         4HqvKtlsLlyqZUDy0HZLIHmFJzvl6fhfBI9Xf4k51Ao5KHu1yQbYUPM/yRFC6uyempcF
+         kMUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGynItPwJNWV6hIISSPCck6fpmfkdb1VW28tLSOZxJIb485b6kZ1SiFqHjs54s7K3aAdtZkfP0W5LrPWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx7GVhoLbXBwDWTH5j2wenQ3+foM+SZ0F41besIhY/ydT30CyW
+	A9EdxHnnVC14KdlfGnnvCpHKg4pxEjN40QrCB4I9ZUvPK4inFx46hN4LQ+W941mB3hvmuDHRMxR
+	C2ITcnFiQtdWCLdTWgefhgZVJFlk=
+X-Google-Smtp-Source: AGHT+IEF48iWWfah22/+IwUfbLh6mcogYteMnbU9jKCbOCBu+OSShZtUZfNBxWfDdFikULL4IyG3L3ZF/7fwoj81Iz4=
+X-Received: by 2002:a05:6a20:2d22:b0:1d2:bc91:d49 with SMTP id
+ adf61e73a8af0-1d6dfabadffmr23416866637.31.1728395643274; Tue, 08 Oct 2024
+ 06:54:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/3] Fix dosemu vm86() fault
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
- Brian Gerst <brgerst@gmail.com>, antonio.gomez.iglesias@linux.intel.com,
- daniel.sneddon@linux.intel.com, stable@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1728395557;fb0b07a4;
-X-HE-SMSGID: 1syAdH-0005fT-74
+From: Haoyu Li <lihaoyu499@gmail.com>
+Date: Tue, 8 Oct 2024 21:53:52 +0800
+Message-ID: <CAPbMC76hAA3sonOM7LvXPAF0r19uSo8sWcqL42M+iR6JCBLGMg@mail.gmail.com>
+Subject: [net/netlink] Question about the function `genl_init`
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, chenyuan0y@gmail.com, 
+	Zijie Zhao <zzjas98@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+Dear Linux developers of NETWORKING,
 
-Is there hope that patches like these makes it to mainline any time
-soon? I fully understand that this it a hard problem, but in the end
-what triggered this were at least two regression reports afaics:
-https://bugzilla.kernel.org/show_bug.cgi?id=218707
-https://lore.kernel.org/lkml/IdYcxU6x6xuUqUg8cliJUnucfwfTO29TrKIlLGCCYbbIr1EQnP0ZAtTxdAM2hp5e5Gny_acIN3OFDS6v0sazocnZZ1UBaINEJ0HoDnbasSI=@protonmail.com/
+We are curious about the function `genl_init` at
+https://elixir.bootlin.com/linux/v6.11.2/source/net/netlink/genetlink.c#L1912.
 
-Sure, the older one was in April, so one week more or less now won't
-make much of a difference. But I think it still would be great to get
-this fixed rather sooner than later. Or where those issues meanwhile
-fixed through other patches without me noticing and I'm making a fool of
-myself here?
+According to a history patch commit
+(https://github.com/torvalds/linux/commit/5559cea2d5aa3018a5f00dd2aca3427ba09b386b),
+it seems that pernet operations should be registered before
+registering the generic netlink family. So we wonder if the order of
+function calls in the `genl_init` should be adjusted.
 
-This yet again makes me wonder if some "[regression fix]" in the subject
-or "CC: regressions@lists.linux.dev" in the patches would help to make
-the regression aspect obvious to everyone involved. But it would create
-yet another small bit of overhead... :-/
+Do you think a patch is needed for this?
+Please kindly correct us if we missed any key information. Thanks!
 
-Pawan Gupta, btw: many thx for working on this and sticking to it!
-
-Ciao, Thorsten
-
-On 26.09.24 00:25, Pawan Gupta wrote:
-> Changes in v7:
-> - Using %ss for verw fails kselftest ldt_gdt.c in 32-bit mode, use safer %cs instead (Dave).
-> 
-> v6: https://lore.kernel.org/r/20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com
-> - Use %ss in 64-bit mode as well for all VERW calls. This avoids any having
->   a separate macro for 32-bit (Dave).
-> - Split 32-bit mode fixes into separate patches.
-> 
-> v5: https://lore.kernel.org/r/20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com
-> - Simplify the use of ALTERNATIVE construct (Uros/Jiri/Peter).
-> 
-> v4: https://lore.kernel.org/r/20240710-fix-dosemu-vm86-v4-1-aa6464e1de6f@linux.intel.com
-> - Further simplify the patch by using %ss for all VERW calls in 32-bit mode (Brian).
-> - In NMI exit path move VERW after RESTORE_ALL_NMI that touches GPRs (Dave).
-> 
-> v3: https://lore.kernel.org/r/20240701-fix-dosemu-vm86-v3-1-b1969532c75a@linux.intel.com
-> - Simplify CLEAR_CPU_BUFFERS_SAFE by using %ss instead of %ds (Brian).
-> - Do verw before popf in SYSEXIT path (Jari).
-> 
-> v2: https://lore.kernel.org/r/20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com
-> - Safe guard against any other system calls like vm86() that might change %ds (Dave).
-> 
-> v1: https://lore.kernel.org/r/20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com
-> 
-> Hi,
-> 
-> This series fixes a #GP in 32-bit kernels when executing vm86() system call
-> in dosemu software. In 32-bit mode, their are cases when user can set an
-> arbitrary %ds that can cause a #GP when executing VERW instruction. The
-> fix is to use %ss for referencing the VERW operand.
-> 
-> Patch 1-2: Fixes the VERW callsites in 32-bit entry path.
-> Patch   3: Uses %ss for VERW in 32-bit and 64-bit mode.
-> 
-> The fix is tested with below kselftest on 32-bit kernel:
-> 
-> 	./tools/testing/selftests/x86/entry_from_vm86.c
-> 
-> 64-bit kernel was boot tested. On a Rocket Lake, measuring the CPU cycles
-> for VERW with and without the %ss shows no significant difference. This
-> indicates that the scrubbing behavior of VERW is intact.
-> 
-> Thanks,
-> Pawan
-> 
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> ---
-> Pawan Gupta (3):
->       x86/entry_32: Do not clobber user EFLAGS.ZF
->       x86/entry_32: Clear CPU buffers after register restore in NMI return
->       x86/bugs: Use code segment selector for VERW operand
-> 
->  arch/x86/entry/entry_32.S            | 6 ++++--
->  arch/x86/include/asm/nospec-branch.h | 6 ++++--
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> ---
-> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
-> change-id: 20240426-fix-dosemu-vm86-dd111a01737e
-> 
-> Best regards,
-
-#regzbot poke
+Best,
+Haoyu Li
 
