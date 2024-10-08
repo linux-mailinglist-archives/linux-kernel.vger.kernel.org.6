@@ -1,237 +1,182 @@
-Return-Path: <linux-kernel+bounces-355431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C148995224
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F644995230
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B442A284E82
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE14A1F233EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653341DFD97;
-	Tue,  8 Oct 2024 14:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FE11DFE11;
+	Tue,  8 Oct 2024 14:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nCM2aK4G"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="mqbEA6uk"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A6F1DF730;
-	Tue,  8 Oct 2024 14:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B1617578
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728398605; cv=none; b=JS+fZPx/sKzYb7I2gKJkmQ5KnNFxTeK7Xe56lr8uW4mJY8iY21rLYQQYLfhX8hHamfd5KZV6RRGeh5RncECj8ZLYaGKqOXhLvLrjm4BCMxMhjtb87qaSBLoitqQ3nm4+B6WXigeipkJ+vCc7lEblN3dYcD/K5NPDMS94BsalABc=
+	t=1728398749; cv=none; b=G8jcedycxiWKYUGFwBxtfXlvPhVBZ4h7qtpWBAmspcKaPqYfQZ73tEDqeHzlKwiqh1ELq5Kv10D+GyTW/2HQRubrywmzViThHjIceo8CVcAZFKD5ClopPZI4ZJOChSqYusQa1FbPDSR6C55Ch9FAWaIq2Vhq78SHZQpN1q5u3DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728398605; c=relaxed/simple;
-	bh=YTAF6QXU43/H1NucUPap1RM8bKotRWI14KyyhF3ievo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=EDR+7xU4eyLmGn8zv9kHr1omlBOldvyrfnlAFGuB22ec3D2CZpzpyB6h+OagQQSmsM0VOm4ND35qFxBGFoz2npWksaqfzzyYW3dwCsHPfC7QBwz/NfpU+ua3mTodJtYS4kcfzgmMARNHskWW/slY/03xIqqlyRD0t3Uf4fSib9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nCM2aK4G; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6306FFF802;
-	Tue,  8 Oct 2024 14:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728398601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o1ZfW+l/q+cUZrpMcLspT8DrOEscOap+ktfFc2SQPnU=;
-	b=nCM2aK4Gc1XPmsXVEP96VKilIHajWRxmGOXP3ZY9lanOkhE2jQ5tLxXLgHsTaPcsjC1UXP
-	uUEFiR7E7vPIl4pka8Htl6cfERdf1j93C4sTN3rn6+VHi6hP/5tzZZFY9pvCtB2Hgda8x7
-	bnV9+/s1SSCNEcomcbw21PtTrSwTw0NW3dXsPN2eFgD5nEgE3orUWY5wua71htCTGd7MNP
-	spfqgNaghgIrQ5OiFvNwyGgcfhjYgAzSN8n4NV3xLXfC+mwp4eXYXwdqULais03/0FR/pY
-	cl6C8YIhS6f92PJ0xAEaH3to5Hwu2cq/bx2Mar2B6xfkuEB9cRtbJAuuuj+S5Q==
+	s=arc-20240116; t=1728398749; c=relaxed/simple;
+	bh=OEPIoOSafXbHth2X0cZbo48ef5bM+/sWgUUWroovlLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrJDLz71qRNWLZw+ViiMlRXfZJuiLjaulNi7KemEU7ZOL4RWXzVtbwmb3KxsIY5wqBXbdwllbl69X1dxp2OlX07aYT0wa0QkAbIrZ6/CGZ/718PGFPT2FVAyCdnFcaX4Xs100JcAgcguDCePyTa4aBJTc2ftjb41H/7Vr8JLtno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=mqbEA6uk; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d375ddfc0so261446f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728398746; x=1729003546; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gyA0o4MkgtBHEt4wv5eC/jzDocCl8Fg8KhFwA03Dsp8=;
+        b=mqbEA6ukgwRZPTNdc2kPHjiM9uSGj1BnQSJjJ1K9EDj06ZEMlXAtW3i/zQYdOyaeZm
+         5uPWd4ykWGei3+M78ZBoXtT4vGcaalVQz+BD6badABHDCF6fSUDailtzXq5WMJ3K/AJ/
+         8DQVk2z9jlEt+axc3MMyCwvPXNlOqMwFtTgjmHneJWgKPByhOIAEsMxk6yTIsEgkz3LW
+         F9FBxbfEq4hUkuiGCKpN+Tc+fby099a+oJJBFrC4AmNVMMlka3GF4rsCMeq/ozMtoRTy
+         NxOz1G5aAWDt3IpCSbahgtNoptgssqDgzvzAdJWJ0/ppNP8a3fY4vYR1bs+m5+jl6rvs
+         7gEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728398746; x=1729003546;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gyA0o4MkgtBHEt4wv5eC/jzDocCl8Fg8KhFwA03Dsp8=;
+        b=ayliv19LMfiqcVHxBEN+b9uxkXs813Z9X6P55LGlZ37FA05Imhj2YerBrmre01hXmO
+         ADRR6F7zeP7+UG/jT8qQkzdsUO8lj+nZ41wqwX7b41Fpepd/58BGdXEY0OFm+ZXq05WT
+         w5FF3/FUotHXIZQR9yN6qRp5s1kzt8AownXswuVUF+jl+Nb/4pnSzi9qhhU+bPeXFziT
+         yczzewfwXY5MBnnAtAKeoMSrLiVimglLGPEk5KuH6ICRBvIOAK+/6Tl/VBiNFOfjlApR
+         K8zINrZZIqQy6tX1Mb2YdGRiozrtPOZIA8KK87QbrJw4vRP9SoOuEUdmFqJWx+VT4NcJ
+         kXgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIZsBFXstI82UMnaE1+R+GQQiURgXdA4ThfpNLD9lRUr+ckc3CgHPGxFWJsL7iw3MUFSWCTUaCXA0AyL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhpUwb3jEGsHyCmGXkod74cZFejSiZeBiwj6tGFJM8fMRxD62T
+	mgK7b93pTdqqptFh8kwEUKiEmKHWp62o8DmrBx28f/ZuDoVgSA5UQNb2a+eX9gY=
+X-Google-Smtp-Source: AGHT+IHnpqRbMJPQQ/KRJ6k8Ul3NfjlAwYMFqUBQC1j92wKGfsiXs0AaFgp4Y7hJhUm28QP/eeU1yQ==
+X-Received: by 2002:a5d:5c88:0:b0:37d:370a:5248 with SMTP id ffacd0b85a97d-37d370a5384mr837280f8f.39.1728398746139;
+        Tue, 08 Oct 2024 07:45:46 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1697024fsm8246403f8f.95.2024.10.08.07.45.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 07:45:45 -0700 (PDT)
+Message-ID: <8f285237-757b-4637-a76d-a35f27e4e748@blackwall.org>
+Date: Tue, 8 Oct 2024 17:45:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bridge: use promisc arg instead of skb flags
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Amedeo Baragiola <ingamedeo@gmail.com>, Roopa Prabhu <roopa@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241005014514.1541240-1-ingamedeo@gmail.com>
+ <c06d9227-dcac-4131-9c2d-83dace086a5d@blackwall.org>
+ <ZwVCC3DYWw0aiOcJ@calendula>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <ZwVCC3DYWw0aiOcJ@calendula>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Oct 2024 16:43:19 +0200
-Message-Id: <D4QI63B6YQU5.3UPKA7G75J445@bootlin.com>
-Subject: Re: [PATCH 2/4] i2c: nomadik: support Mobileye EyeQ6H I2C
- controller
-Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Andi Shyti"
- <andi.shyti@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
- <20241008-mbly-i2c-v1-2-a06c1317a2f7@bootlin.com>
- <oxcxs6n7y4bw33yfgaacd2cayf7otfochvlaofva2kabzjim6h@d6pam3gciepl>
-In-Reply-To: <oxcxs6n7y4bw33yfgaacd2cayf7otfochvlaofva2kabzjim6h@d6pam3gciepl>
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hello Krzysztof,
+On 08/10/2024 17:30, Pablo Neira Ayuso wrote:
+> Hi Nikolay,
+> 
+> On Sat, Oct 05, 2024 at 05:06:56PM +0300, Nikolay Aleksandrov wrote:
+>> On 05/10/2024 04:44, Amedeo Baragiola wrote:
+>>> Since commit 751de2012eaf ("netfilter: br_netfilter: skip conntrack input hook for promisc packets")
+>>> a second argument (promisc) has been added to br_pass_frame_up which
+>>> represents whether the interface is in promiscuous mode. However,
+>>> internally - in one remaining case - br_pass_frame_up checks the device
+>>> flags derived from skb instead of the argument being passed in.
+>>> This one-line changes addresses this inconsistency.
+>>>
+>>> Signed-off-by: Amedeo Baragiola <ingamedeo@gmail.com>
+>>> ---
+>>>  net/bridge/br_input.c | 3 +--
+>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+>>> index ceaa5a89b947..156c18f42fa3 100644
+>>> --- a/net/bridge/br_input.c
+>>> +++ b/net/bridge/br_input.c
+>>> @@ -50,8 +50,7 @@ static int br_pass_frame_up(struct sk_buff *skb, bool promisc)
+>>>  	 * packet is allowed except in promisc mode when someone
+>>>  	 * may be running packet capture.
+>>>  	 */
+>>> -	if (!(brdev->flags & IFF_PROMISC) &&
+>>> -	    !br_allowed_egress(vg, skb)) {
+>>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
+>>>  		kfree_skb(skb);
+>>>  		return NET_RX_DROP;
+>>>  	}
+>>
+>> This is subtle, but it does change behaviour when a BR_FDB_LOCAL dst
+>> is found it will always drop the traffic after this patch (w/ promisc) if it
+>> doesn't pass br_allowed_egress(). It would've been allowed before, but current
+>> situation does make the patch promisc bit inconsistent, i.e. we get
+>> there because of BR_FDB_LOCAL regardless of the promisc flag.
+>>
+>> Because we can have a BR_FDB_LOCAL dst and still pass up such skb because of
+>> the flag instead of local_rcv (see br_br_handle_frame_finish()).
+>>
+>> CCing also Pablo for a second pair of eyes and as the original patch
+>> author. :)
+>>
+>> Pablo WDYT?
+>>
+>> Just FYI we definitely want to see all traffic if promisc is set, so
+>> this patch is a no-go.
+> 
+> promisc is always _false_ for BR_FDB_LOCAL dst:
+> 
+>         if (dst) {
+>                 unsigned long now = jiffies;
+> 
+>                 if (test_bit(BR_FDB_LOCAL, &dst->flags))
+>                         return br_pass_frame_up(skb, false);
+> 
+>                 ...
+>         }
+> 
+>         if (local_rcv)
+>                 return br_pass_frame_up(skb, promisc);
+> 
+>>> -	if (!(brdev->flags & IFF_PROMISC) &&
+>>> -	    !br_allowed_egress(vg, skb)) {
+>>> +	if (!promisc && !br_allowed_egress(vg, skb)) {
+> 
+> Then, this is not equivalent.
+> 
+> But, why is br_allowed_egress() skipped depending on brdev->flags & IFF_PROMISC?
+> 
+> I mean, how does this combination work?
+> 
+> BR_FDB_LOCAL dst AND (brdev->flags & IFF_PROMISC) AND BR_INPUT_SKB_CB(skb)->vlan_filtered
 
-On Tue Oct 8, 2024 at 3:39 PM CEST, Krzysztof Kozlowski wrote:
-> On Tue, Oct 08, 2024 at 12:29:41PM +0200, Th=C3=A9o Lebrun wrote:
-> > Add EyeQ6H support to the nmk-i2c AMBA driver. It shares the same quirk
-> > as EyeQ5: the memory bus only supports 32-bit accesses. Avoid writeb()
-> > and readb() by reusing the same `priv->has_32b_bus` flag.
-> >=20
-> > It does NOT need to write speed-mode specific value into a register;
-> > therefore it does not depend on the mobileye,olb DT property.
-> >=20
-> > Refactoring is done using is_eyeq5 and is_eyeq6h boolean local
-> > variables. Sort variables in reverse christmas tree to try and
-> > introduce some logic into the ordering.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  drivers/i2c/busses/i2c-nomadik.c | 22 +++++++++++-----------
-> >  1 file changed, 11 insertions(+), 11 deletions(-)
-> >=20
-> > diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-=
-nomadik.c
-> > index ad0f02acdb1215a1c04729f97bb14a4d93f88456..ea511d3a58073eaedb63850=
-026e05b59427a69c6 100644
-> > --- a/drivers/i2c/busses/i2c-nomadik.c
-> > +++ b/drivers/i2c/busses/i2c-nomadik.c
-> > @@ -6,10 +6,10 @@
-> >   * I2C master mode controller driver, used in Nomadik 8815
-> >   * and Ux500 platforms.
-> >   *
-> > - * The Mobileye EyeQ5 platform is also supported; it uses
-> > + * The Mobileye EyeQ5 and EyeQ6H platforms are also supported; they us=
-e
-> >   * the same Ux500/DB8500 IP block with two quirks:
-> >   *  - The memory bus only supports 32-bit accesses.
-> > - *  - A register must be configured for the I2C speed mode;
-> > + *  - (only EyeQ5) A register must be configured for the I2C speed mod=
-e;
-> >   *    it is located in a shared register region called OLB.
-> >   *
-> >   * Author: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
-> > @@ -1046,8 +1046,6 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev=
- *priv)
-> >  	struct regmap *olb;
-> >  	unsigned int id;
-> > =20
-> > -	priv->has_32b_bus =3D true;
-> > -
-> >  	olb =3D syscon_regmap_lookup_by_phandle_args(np, "mobileye,olb", 1, &=
-id);
-> >  	if (IS_ERR(olb))
-> >  		return PTR_ERR(olb);
-> > @@ -1070,13 +1068,15 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_d=
-ev *priv)
-> > =20
-> >  static int nmk_i2c_probe(struct amba_device *adev, const struct amba_i=
-d *id)
-> >  {
-> > -	int ret =3D 0;
-> > -	struct nmk_i2c_dev *priv;
-> > -	struct device_node *np =3D adev->dev.of_node;
-> > -	struct device *dev =3D &adev->dev;
-> > -	struct i2c_adapter *adap;
-> >  	struct i2c_vendor_data *vendor =3D id->data;
-> > +	struct device_node *np =3D adev->dev.of_node;
-> > +	bool is_eyeq6h =3D of_device_is_compatible(np, "mobileye,eyeq6h-i2c")=
-;
-> > +	bool is_eyeq5 =3D of_device_is_compatible(np, "mobileye,eyeq5-i2c");
->
-> You should use match data, not add compatibles in the middle of code.
-> That's preferred, scallable pattern. What you added here last time does
-> not scale and above change is a proof for that.
+The bridge should see all packets come up if promisc flag is set, regardless if the
+vlan exists or not, so br_allowed_egress() is skipped entirely. As I commented
+separately the patch changes that behaviour and suddenly these packets
+(BR_FDB_LOCAL fdb + promisc bit set on the bridge dev) won't be sent up to
+the bridge. I think the current code should stay as-is, but wanted to get
+your opinion if we can still hit the warning that was fixed because we can
+still hit that code with a BR_FDB_LOCAL dst with promisc flag set and
+the promisc flag will be == false in that case.
 
-I would have used match data if the driver struct had a .of_match_table
-field. `struct amba_driver` does not. Are you recommending the approach
-below?
 
-I don't see how it brings much to the driver but I do get the scaling
-issue as the number of support compatibles increases. This is a fear
-based on what *could* happen in the future though.
 
-------------------------------------------------------------------------
 
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-noma=
-dik.c
-index 82571983bbca..98fc40dfcbfc 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -26,6 +26,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-@@ -1061,28 +1062,46 @@ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *=
-priv)
- 	return 0;
- }
 
-+#define NMK_I2C_EYEQ_FLAG_32B_BUS	BIT(0)
-+#define NMK_I2C_EYEQ_FLAG_IS_EYEQ5	BIT(1)
-+
-+static const struct of_device_id nmk_i2c_eyeq_match_table[] =3D {
-+	{
-+		.compatible =3D "mobileye,eyeq5-i2c",
-+		.data =3D (void*)(NMK_I2C_EYEQ_FLAG_32B_BUS | NMK_I2C_EYEQ_FLAG_IS_EYEQ5=
-),
-+	},
-+	{
-+		.compatible =3D "mobileye,eyeq6h-i2c",
-+		.data =3D (void*)(NMK_I2C_EYEQ_FLAG_32B_BUS),
-+	},
-+};
-+
- static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *i=
-d)
- {
- 	struct i2c_vendor_data *vendor =3D id->data;
- 	struct device_node *np =3D adev->dev.of_node;
--	bool is_eyeq6h =3D of_device_is_compatible(np, "mobileye,eyeq6h-i2c");
--	bool is_eyeq5 =3D of_device_is_compatible(np, "mobileye,eyeq5-i2c");
- 	u32 max_fifo_threshold =3D (vendor->fifodepth / 2) - 1;
-+	const struct of_device_id *match;
- 	struct device *dev =3D &adev->dev;
-+	unsigned long match_flags =3D 0;
- 	struct nmk_i2c_dev *priv;
- 	struct i2c_adapter *adap;
- 	int ret =3D 0;
-
-+	match =3D of_match_device(nmk_i2c_eyeq_match_table, dev);
-+	if (match)
-+		match_flags =3D (unsigned long)match->data;
-+
- 	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
-
- 	priv->vendor =3D vendor;
- 	priv->adev =3D adev;
--	priv->has_32b_bus =3D is_eyeq5 || is_eyeq6h;
-+	priv->has_32b_bus =3D match_flags & NMK_I2C_EYEQ_FLAG_32B_BUS;
- 	nmk_i2c_of_probe(np, priv);
-
--	if (is_eyeq5) {
-+	if (match_flags & NMK_I2C_EYEQ_FLAG_IS_EYEQ5) {
- 		ret =3D nmk_i2c_eyeq5_probe(priv);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed OLB lookup\n");
-
-------------------------------------------------------------------------
-
-Thanks Krzysztof,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
 
