@@ -1,112 +1,188 @@
-Return-Path: <linux-kernel+bounces-355911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDE99958B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:41:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF289958BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260C91F27F52
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFB7B226A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42761215024;
-	Tue,  8 Oct 2024 20:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62A81F8F1E;
+	Tue,  8 Oct 2024 20:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wtv0usUj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umito.nl header.i=@umito.nl header.b="TN1IVjM+"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6C21E104B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C6A137C2A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 20:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728420105; cv=none; b=atr6MlpMMmMwQc+EH/Loq3vFhPY2QWVx02z4Ai+xOx6t590MfzwTd23cZt6K1Y+D/gt6behooNtyGElF7XIcTPe1MJMBJpSlW1wzFyxlAA6pUeqQGkUMYUoqvsnhLqtKkEImxwZQXrHPtkCbwV90MeT46Sc0Ld7U6o0CoBk7YJE=
+	t=1728420503; cv=none; b=ehYW1Affu72OXzmEawTjSW+bPvLEKLFXbUCwjQ0PQWB4tGLuFvdiUH5Lr4fxyfN7bcplR9mYLO9Ki48npUtKw1C0ifc9wWFIffkMyK14kbG7juD5pZidtc6+9svkJ8AZbPKXJeD8VM/gFwIDU0N91r774CXPaOXXBMFtPq/taks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728420105; c=relaxed/simple;
-	bh=T903sHO+EkFLMCyABsc44I2YY74tKguRpzo4nCqXIRs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=c4PInIR0rrq6Xru650zLMRFgfaS/0IS5coZcK+9GQ9RIzp7mJt/9ZzlgDlNJonIizJfLpsfN5YHuMlY18x4FLC7EErTG2/b10SAiNaVPq0uWR88jLf9xFeUNMQ9OpAK9RiylxyiDVbI0LswBi3LSGzRHmagOiWo5qdpjLPeDmAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wtv0usUj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498F3FS4018162;
-	Tue, 8 Oct 2024 20:41:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bTBlXqBEX5S1Gz7vdC4dkE1aCMpb1UuwuzYdO+JgWM0=; b=Wtv0usUjZDg4FWaX
-	SUnOL569HFAtrSmYfMViiXZtiWmWNpcRwB3WZT4y2hwuAsWgDxx4HLJXFwIGngVz
-	m3PTUas7ePAgOllBtWYcJa6o2WmVI8Z+7GDlUufD01vM1af3buxLNGvPf0Cp4gaU
-	+Ko8m4gKCRAwp91/f9hldvDSOy9ylwfo5cEPE0o+QgWpfVSiG0zHL2f1PC1d8tYx
-	WO7WkLCS+QuDAretLTRztw6k00hL9IiHvz14dx0EoqBY0megNsPO58VHRbQB85JP
-	9OxzqdI0j5BzDmQxmX+Xlz3VRUL8ZN2s49PaQhxOU6e45vhSx602LAGw442FtNwr
-	RO7/Mg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xs4gqq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Oct 2024 20:41:33 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 498KfWco028341
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 20:41:32 GMT
-Received: from [10.110.106.40] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Oct 2024
- 13:41:29 -0700
-Message-ID: <df41b180-d669-4829-8d71-77c9cc575b7d@quicinc.com>
-Date: Tue, 8 Oct 2024 13:41:29 -0700
+	s=arc-20240116; t=1728420503; c=relaxed/simple;
+	bh=1IrNQaLMmQPuqt6YLHqTz5XFx3PCafIkuPh2qJ2OANA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vvzr4K4zYxaVwRnyBe2eJBxE/qoBHLCYl7Yy1EuLUog0pQKKx7DxHvxSCGJVD9sb2BtyxjExZPh2UMs64VfCnMiNGHlDuffTCVLWgAgtBxaSyQ5briyPakcceWMEzmmdVoRTpuOiHkMFiLZRjwQnKgu8R/gIxem6MigNcYkka0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umito.nl; spf=pass smtp.mailfrom=umito.nl; dkim=pass (2048-bit key) header.d=umito.nl header.i=@umito.nl header.b=TN1IVjM+; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umito.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umito.nl
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c89f3f28b6so8573695a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 13:48:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umito.nl; s=google; t=1728420499; x=1729025299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J6bNuJgolCoIOR/xZEoXXuT40xjDacSmmZKqFqXimDA=;
+        b=TN1IVjM+n9/5OCamtLVBRYGOb2DPcxdei+wUynLt3zKYy8qUxeZSYBwSbv+c7K5oSl
+         njNQrRX4Hsfnlk0m8LXKYQ01zTpqPLIAa2AxGMmsA1v2m6RnlsSVEP/rt7lWKfg+d4LS
+         Ex0QaeeU1d6D8fARwWt8KHyZfFRgjFB71/+8IIr632itL70kZ4FKVDVlnu4LAZ6NIAvF
+         G07+0JFg5BT6FU3YEnuzAH4QCt8bEeo0jnHiRc7jjRXIIP4P2tKVN1nRndZaS5sXeGPI
+         4C4JKXHQ3Z/xDhd5Ic9Uww0HSHlIBWuR6JQ0GUhJASE+Qodi1MjIcHR89Zs3R19ELgUx
+         tRxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728420499; x=1729025299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J6bNuJgolCoIOR/xZEoXXuT40xjDacSmmZKqFqXimDA=;
+        b=KV2lo61+husLCqgviNOmigHAcgt864p0czNHQJfUYNgU9MTNQ3BKjU48S/mlW/0u+V
+         8h6SA6Tr2jvWRHC0Kx4sdk6mqQw+su53qbMBcBE1SzpCnmqBN5y2Fh4hA38qP9dwEPCC
+         589ziIXq4oRg9gVPVkpKZtP1Y6QoMOZ21WN7X+48R37UBD5gEJ+mPc9dsdDpe7cb3/Wx
+         wdlPuAeuDBDx+VyumGiH1aknWmaGSFEZYpomuYPqySFBBbwCnZfAa56D0YtG/UPKl5Xj
+         9mNpICQqafox6NVSOIFwKL1mWdFyugj3Bv8vouh7+WjvBjPwgVqfc6m0m+o6o2psfQ9A
+         8JSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfSY7caSSUKN8+mmvBOltGf00sgGI20USuN4CDJLfPVQWfBSb5I3O0EIC6DiIQkdGd30UE1lpVlmJtIq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzns1H9ydw4dVv2/DoST9Wa4DtLTF4l4obiFKrrLP43g5gx1Hy4
+	mf1ifZjl2p5zR2wvldHNCtAGNjwHbyg5kbqv/DsQOaVlNZlEl5bn10gsd0HfJW44m+i25yv7HBG
+	h5JjxHuLE0eiIq1SugBq48qQiBHK3QjmT/5vTAg==
+X-Google-Smtp-Source: AGHT+IFbpJ+7cQNNnJVJ0a+/1F1q+a02uDKJndFdbshTqsp/81SlELOFblReWcu/RskzpGSoDl78MRKm+mZUsPuxGBI=
+X-Received: by 2002:a05:6402:13c1:b0:5c3:cd88:a0a with SMTP id
+ 4fb4d7f45d1cf-5c91d63d98cmr123210a12.18.1728420498538; Tue, 08 Oct 2024
+ 13:48:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v1] arm64: defconfig: enable WCD937x driver as module
-From: Trilok Soni <quic_tsoni@quicinc.com>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <krzysztof.kozlowski@linaro.org>
-References: <20241007082312.2136358-1-quic_mohs@quicinc.com>
- <9d105bdb-b0d7-44b8-8bab-a5c161759567@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <9d105bdb-b0d7-44b8-8bab-a5c161759567@quicinc.com>
+References: <20241008073014.16411-1-alex.vinarskis@gmail.com>
+In-Reply-To: <20241008073014.16411-1-alex.vinarskis@gmail.com>
+From: Peter de Kraker <peterdekraker@umito.nl>
+Date: Tue, 8 Oct 2024 22:48:07 +0200
+Message-ID: <CAD=vdcG+KKN1qisSktTqG2Lc4RST5-iccWgx3EXAYoDrU0p8SQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] drm/edp-panel: Add panels used by Dell XPS 13 9345
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Bryan.Kemp@dell.com, tudor.laurentiu.oss@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TunuYcJi5RMqx03DdYcyIOBiIqPCIlK4
-X-Proofpoint-GUID: TunuYcJi5RMqx03DdYcyIOBiIqPCIlK4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=615
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410080134
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/2024 1:40 PM, Trilok Soni wrote:
-> On 10/7/2024 1:23 AM, Mohammad Rafi Shaik wrote:
->> Enable the Qualcomm WCD937x codec driver as module as
->> is now used on the QCM6490 platform.
-> 
-> Rephrase this sentence a bit. "Enable Qualcomm WCD937x
-> codec driver as modules since it now used on the QCM6490
-				^^ it is
-			
-> platform" ? or better?
-> 
+On Tue, Oct 8, 2024 at 9:30=E2=80=AFAM Aleksandrs Vinarskis
+<alex.vinarskis@gmail.com> wrote:
+>
+> Introduce low-res IPS and OLED panels for mentioned device.
+>
+> SHP panel's timings were picked experimentally, without this patch or wit=
+h
+> `delay_200_500_e50` panel sometimes fails to boot/stays black on startup.
+>
+> LGD panel's timings were copied from other LGD panels and tested to be
+> working.
+>
+> Particular laptop also comes in high-res IPS variant, which unfortunately
+> I do not have access to verify.
+>
+> The raw edid for SHP panel is:
+>
+> 00 ff ff ff ff ff ff 00 4d 10 93 15 00 00 00 00
+> 2c 21 01 04 a5 1d 12 78 07 ee 95 a3 54 4c 99 26
+> 0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 f0 7b 80 90 70 b0 52 45 30 20
+> 36 00 20 b4 10 00 00 18 00 00 00 fd 00 1e 78 9a
+> 9a 20 01 0a 20 20 20 20 20 20 00 00 00 fe 00 4b
+> 4a 46 47 52 80 4c 51 31 33 34 4e 31 00 00 00 00
+> 00 02 41 0c 32 00 01 00 00 0b 41 0a 20 20 01 ef
+>
+> 70 20 79 02 00 20 00 13 8c 52 19 93 15 00 00 00
+> 00 2c 17 07 4c 51 31 33 34 4e 31 21 00 1d 40 0b
+> 08 07 80 07 b0 04 88 3d 8a 54 cd a4 99 66 62 0f
+> 02 45 54 d0 5f d0 5f 00 34 12 78 26 00 09 02 00
+> 00 00 00 00 01 00 00 22 00 14 5e d7 04 05 7f 07
+> 8f 00 2f 00 1f 00 af 04 50 00 02 00 05 00 25 01
+> 09 5e d7 04 5e d7 04 1e 78 80 81 00 0b e3 05 80
+> 00 e6 06 01 01 6a 6a 39 00 00 00 00 00 00 ce 90
+>
+> The raw edid for LGD panel is:
+>
+> 00 ff ff ff ff ff ff 00 30 e4 78 07 00 00 00 00
+> 00 22 01 04 b5 1d 12 78 06 96 65 b0 4f 3c b9 23
+> 0b 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 ef 83 40 a0 b0 08 34 70 30 20
+> 36 00 20 b4 10 00 00 1a 00 00 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 fe 00 44
+> 48 39 50 57 80 31 33 34 57 54 31 0a 00 00 00 00
+> 00 04 04 03 28 00 01 00 00 2b 01 0a 20 20 01 d4
+>
+> 70 20 79 02 00 20 00 13 3c e6 24 78 07 00 00 00
+> 00 00 18 07 31 33 34 57 54 31 0a 21 00 1d 41 0b
+> 08 07 40 0b 08 07 88 06 6b 4f c3 a3 b9 35 82 0b
+> 02 45 54 40 5e 1a 60 18 10 23 78 26 00 09 04 00
+> 00 00 00 00 41 00 00 22 00 14 55 27 05 85 3f 0b
+> 9f 00 2f 80 1f 00 07 07 33 00 02 00 05 00 25 01
+> 09 55 27 05 55 27 05 3c 3c 00 81 00 0b e3 05 80
+> 00 e6 06 05 01 6d 60 02 00 00 00 00 00 00 31 90
+>
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 
--- 
----Trilok Soni
+Tested on OLED XPS 9345, panel related errors are no longer present in
+dmesg, and display functionality works as expected.
 
+Tested-by: Peter de Kraker <peterdekraker@umito.nl>
+
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
+nel-edp.c
+> index 767e47a2b0c1..8566e9cf2f82 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1977,11 +1977,13 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('L', 'G', 'D', 0x0567, &delay_200_500_e200_d200, =
+"Unknown"),
+>         EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, =
+"Unknown"),
+>         EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, =
+"Unknown"),
+> +       EDP_PANEL_ENTRY('L', 'G', 'D', 0x0778, &delay_200_500_e200_d200, =
+"134WT1"),
+>
+>         EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140=
+M1JW48"),
+>         EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M=
+1JW46"),
+>         EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140=
+T1JH01"),
+>         EDP_PANEL_ENTRY('S', 'H', 'P', 0x154c, &delay_200_500_p2e100, "LQ=
+116M1JW10"),
+> +       EDP_PANEL_ENTRY('S', 'H', 'P', 0x1593, &delay_200_500_p2e100, "LQ=
+134N1"),
+>
+>         EDP_PANEL_ENTRY('S', 'T', 'A', 0x0100, &delay_100_500_e200, "2081=
+116HHD028001-51D"),
+>
+> --
+> 2.45.2
+>
 
