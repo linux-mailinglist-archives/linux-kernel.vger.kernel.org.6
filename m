@@ -1,265 +1,568 @@
-Return-Path: <linux-kernel+bounces-355849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E349957F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12B29957F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65111C21DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80AE3286C2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F2921642E;
-	Tue,  8 Oct 2024 19:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FE9215000;
+	Tue,  8 Oct 2024 19:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M7d1AgAr"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010061.outbound.protection.outlook.com [52.101.69.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C0VlMrnF"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA6A215007;
-	Tue,  8 Oct 2024 19:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417287; cv=fail; b=CmXAfdI6d2ws/V5lMNUF+KDIBuVEjo1Nx92VpRjs6mJuY6NWyalpVH//hbuo6lHRQR92ud1BeG/aUCqSML2hkhYctvGK9xbHg7GvyfOtObhM5lSYE84L/JzzxjaXjrgVn9vYXSO5mTooTQ7g44qErhJsIKI8ISwhSvXtYxH+vE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417287; c=relaxed/simple;
-	bh=MSaZLUc5PtP8YnYAS2wnuP2FJ1mAuEYhZZgffyYJ450=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Fs77h+lWEmtaTz9vb+G4MndKynGMc+2C0N1fhst/S2I1dqWJCQApZCAHTd5DBczlILZavyMuXl+DSY3DSH6EM9/R92KHd6TUrS2DTr+fvk429Z0+9weMj3lktK2C9v0ce/N6Ec1s2SqlS472C+Nq6tziXm3a+z4v/KkYW+8Y+HM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M7d1AgAr; arc=fail smtp.client-ip=52.101.69.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pygt9Dsp0bHKz3QMbU7AKJB2OYsa0Y/skkVDnvyJAgjj/wvRJfnQ4XoeQeBK/oMg4eLgJEVTA2ndp3HQ+V/dJYAm35P0zQ2IyA5JDp3A9L8K79lemppxGchQrpDZhLKkCXraC50NTxNhf8w7kGiVL3W6RpGFw3A8N9VHiBjvlYdZhToKnYX81ck6oWjHYBjf37BbJt38iJTkVDIlB7sO2dnuyvBlvmxlUJVYIkW5HD/nytSHokRaf2KnnzeJG+Q3Ih8oA4hiNnWNqJiCAkgWq3xOXDurQB3nKQEqZAJxTTl7Gfauu/cgy9/EG5g6SP+0FqNUlq9wnJ/CaOt894M/hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VXHYIwoka3iYigA8Wm0ay+xHwGBdoHK3DHRGpBMZUZ0=;
- b=TVTvqHVex77kYewmtiE3vSfPgwPb9eqdsSq6EnNqwpKFgFnlBc1LIMYQTTSJvDxEtX2kvTYPLP11kpPF4MGweVbubNYKqgj+arN1cDfSSNKJVHln9w61WbsuQYPQjGbBe3Z8WqZ5KYNqexuwg/81dlDhXaiU/n3NJJ3om3y3HuqU3IW9g74LH0cpm98wgkw0Etazrn1Wku5VUUDGNQ87MkVMLqiNTVxlulNaMWkrr2IFTLTyWwjjFTMi1LKVMPPyEO/9Cleqfwpu7aYQTLjf5oh8Camzazf99smRIWQn0DXWp5BCPytyXrnFzb71BrvkNW8ElHOL5lEbcYLhTHb0ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VXHYIwoka3iYigA8Wm0ay+xHwGBdoHK3DHRGpBMZUZ0=;
- b=M7d1AgArY3fSWzBAnzBN1GDkrlBjZjQtxUltB/xlHOV0IaNDaFeyeXCn3izOW1KwSLHviVoAJzfqOaR4XqAuJkB59JV1cnq7tD783WTW+ViWpMd1WVZn5y5NYGIdUfE2YuhlFNChRI6J3Wm4EMtYZZl5xT7RT1t2/GRBgBaxD+yIqz2dh5NwdHDOAEEeCbhfEIEUFzD3mYiSko0pdMMEBiGNnUna3w9QSUmTg7eBAvr20jTBTQWgsadB4vo5Th085OAWfOOXfoXWOkJiBoqUoOTWpeDjKsygF2VqidiE4okzygdK2PWoxUGGKVYZKBWkJCwe+TBfMWYlodYiID6Ypg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by PA1PR04MB10577.eurprd04.prod.outlook.com (2603:10a6:102:493::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Tue, 8 Oct
- 2024 19:54:39 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8026.019; Tue, 8 Oct 2024
- 19:54:39 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Tue, 08 Oct 2024 15:54:00 -0400
-Subject: [PATCH v4 3/3] PCI: imx6: Remove cpu_addr_fixup()
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-pci_fixup_addr-v4-3-25e5200657bc@nxp.com>
-References: <20241008-pci_fixup_addr-v4-0-25e5200657bc@nxp.com>
-In-Reply-To: <20241008-pci_fixup_addr-v4-0-25e5200657bc@nxp.com>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728417259; l=2455;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=MSaZLUc5PtP8YnYAS2wnuP2FJ1mAuEYhZZgffyYJ450=;
- b=2BbU2aQgzOxJ1q4XsiXSgRbKVGk+ZRGBAI/9m1Nmljg4YUiqIrzbXe2gsNLEaPCgmlshWIC32
- Juf0XOnGXaWDIPSjMcFRUFLw7JCd/VjY3jiolhfnB7TfwFpXc2imZDK
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR05CA0195.namprd05.prod.outlook.com
- (2603:10b6:a03:330::20) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DD9136982
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728417370; cv=none; b=iB2tWj7IiSgYueV1EbXlWbpORlpr4H0nc3nDK4TNuGOaTlR13gKenpGwfza6JYd/PabhBlHdrRGc8V2g1W7cu8bnaZdkIV+qJKZ00DzLzNDMnsnseDDFTdccjyCDoqWDSRLY/QiVbnb63/IQzQip4GjMediJGr5HC+mmHPPlTcQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728417370; c=relaxed/simple;
+	bh=BlMociG+9VPQCetw24ErmbohkXazpLpbe9/p/hgBKFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mXjvpEzMSr4sQlOcB2/osdFCiFLKveQBDFJ3an9vTeuZ1r/HDFIJnAWaQA57nMNjJq9382ist2goGb/zraGsVw3+QcUJDF4Q+BHCgzs6EgL3NeWjrqLihTnMRdr9FThdk8skSBeaEiIPyiTdWTfFcEETMw8CT5fy4e0lM7eRT7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C0VlMrnF; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a0c9ff90b1so21231775ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728417368; x=1729022168; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j4vn+4lLSvAqRJ8lycEHTPdIKM80bx3ygsBdojCZ4zw=;
+        b=C0VlMrnFHDY4arpocTRu/6UapXOjBehKj8U4UmOZFjLA0oHNCCrq89ue1FpKCLvxTM
+         yQlr06iTUrTGAgJcaCYW4iVgttjXFO1e3eSyH/ApOyLLtcipOlfItSb8j8hlDeAqHLMn
+         MX3pegAC1bVEhJ2OdHLOK2x1XsLnvF+X4GGYQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728417368; x=1729022168;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j4vn+4lLSvAqRJ8lycEHTPdIKM80bx3ygsBdojCZ4zw=;
+        b=qrqv1etUTNnQRzFD/YXtpAbdtHynWgH6DBuu7dyxjq+HLBBBtzUXqQ+lDXQul2/pqh
+         +lsPEQBL+r9/MJsZR634E0O0lnjVsCgFQXN8wPeJGZ0VQ+AWt80UVTNAfUJCBXhd6CPP
+         23EEjV+CYqA73t0fUXeSwKZHdkD+RwNc7Ws6zzjWEfCc5BuCPFUP4tpdLGqmRh3Of8ua
+         CPH7MVG4U42qzSn91LriKodBEqrvoKhHmgSfMtGKfPJ2FVAHVIOZqHID/7BKlGpziHEo
+         XWciu/OuAIoTyh88dZVzIy+5CIgkn7TUwfuoVZnKycLgA+KfVUqdiKBlD/9GfLllnGbc
+         7YAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVa6BvvO0Fgwf02c359ofWuUryLiiMvSqwITiAjvQYBLOmz00T41sPg+NoLttvLAVvzyrRxY3FgrkGk37U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHHIca0UXrFURMpJnCi23r5lIZwSvuHKaUES++Ixij+DOpshWG
+	R+L0Bix2T3H0ShAONFsabFn5f7R7hrINiFOmX7Q+Ksi982AgRaL+4Y3nicGAL9Q=
+X-Google-Smtp-Source: AGHT+IGy1JUD7mrjzrplO29fC4VCeuozkUy5c3M+kAWfdgfyzeeyzoIph75DLODLXY/7EB1kP/WFgQ==
+X-Received: by 2002:a05:6e02:b41:b0:3a3:67b1:3080 with SMTP id e9e14a558f8ab-3a397ce4ed9mr475555ab.7.1728417367678;
+        Tue, 08 Oct 2024 12:56:07 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db900b6b4dsm738208173.98.2024.10.08.12.56.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 12:56:07 -0700 (PDT)
+Message-ID: <cb1acab0-a4c9-4e31-b6f6-70b8049f1663@linuxfoundation.org>
+Date: Tue, 8 Oct 2024 13:56:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PA1PR04MB10577:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84d3e4b2-6370-4bae-2cb8-08dce7d30af6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZGtVV3NiS2hmb1E0eG41NnJlbUdZY1dkblRkcHJUN3h3U2pxeVZCaGpHdk1x?=
- =?utf-8?B?V3BMN3NSTUtNWGo3cldVUU00azJFNTZCanNoSCtkTmxsekRrdWQ0SHZGNFhT?=
- =?utf-8?B?SXdZeithcUZIamhmOXQ1N1l3T0l2clJybE1pTnJVenlXVDVpaUtaSTcrQnVC?=
- =?utf-8?B?RXpsanptUTBiazE1OVNDM2t4T28rWmZuTGEzNzIwMXU3SnoxaVlhWkRKalBo?=
- =?utf-8?B?M1ZobmtOL3FEblN1VWdXNytYUC9HZVhtVFVNZkgrcjVueWF4WkdtMGNVamVs?=
- =?utf-8?B?U3hIS0NzWjdSVWNzcXhUeFhsbVJXVXA0bFBIK2FHL3VIcVlzMWRTVWdVcVFN?=
- =?utf-8?B?bS9lbXJ4NkFUcm5YcVZmSVhlYkM1cWZkTGtBeU9JMlptZkFXeWoxNzUrZU1h?=
- =?utf-8?B?YVdzSHFRbENVT2Z3d01IU2JRdTVRbWhEeTFYRm0zclQzSW9OMkZwL0d4TXNX?=
- =?utf-8?B?cGtnVy96aDUzbjdTcW5jNDNKc1pZVW45bXlwbG90aHhQTGRIa3Y3VlF4MVlo?=
- =?utf-8?B?VWlxaG9WTVY4ZW1zN3Q5RjEycGQ3a282bmZzY1NVMFNnMzVtVS9aWXREUVNl?=
- =?utf-8?B?dmtSVHVNcWRQWXluUFZxV0VKTXVoNGdXUTlKWk5UNmxjdGc4UlBTNEMrYW1E?=
- =?utf-8?B?YmJWR0FqcHgwQXE3TWxLZVNXUEhMOVhoK2lHeUswYituRnBncFJvaTdXS3V6?=
- =?utf-8?B?NkpNbStqN0V2VjVLaVFpbE9HL21ZZ2ppamhPRkhBRjdId2ZRNWY3c0V3VENv?=
- =?utf-8?B?QmEybWg1dGN3a0tkSE5LM3dybzZ4T1pMQlZ0TUNpZXBXOTMrcWdsQ203WU1l?=
- =?utf-8?B?MEdFNEZLUHFBN1ZnMktnS0FPZWtJUVJyK0ozTitYcTB0S0RyS1dpWVRsSmVr?=
- =?utf-8?B?TFBOUmZiY1BidTc1MEwwT1NFVWJpZS9IMjg3KytwS3JGNzJrWElzb3JBakUr?=
- =?utf-8?B?U2lLeHdEdWhwdWk2cXEzaXlrd2lMVG5selZCcGNwVkJQUHFaTExOdkpsZkp4?=
- =?utf-8?B?RWJiWHR5YzQyamJkeFB6RktRYVNXeUNJOUdRTFdMV2JDWlRtcWhGVWhYclNP?=
- =?utf-8?B?WDBIWWF0b21kUGR4VjJlNmtzTnREbytzY3E2WW5SOGwzYy92OFI2K1dUMnlz?=
- =?utf-8?B?VjlKU3VibGtJaEwzbDcwaGxYcWgzNWVJcDFqRHY1Yk9mZEdBSDlLZEZFbmdO?=
- =?utf-8?B?VnVTYVlSQVk3K3l5ZmUvZ2FqSHdJQk1uczB5MnNNQTlzUmsydzN0UDQrd3lq?=
- =?utf-8?B?cWE0TmRzTkxaaWtscllSU3lBUVNXM3NSZE1IN2kvSDI3Q1dMYTV3SDZZUTNp?=
- =?utf-8?B?OGtnVjZrM1BadWFWQy82MTBOMHFLdFNzeWVWUzVqQVpYM203UmVXRkE5dzNo?=
- =?utf-8?B?QUxZS0JicDlrSzl4Wmk0Tk8zT0hyVm5kMU41V0ZGZWVKSDhncmlmWXo4R083?=
- =?utf-8?B?Sk1kckVZZWRBazhoS0k0aUxiRzBoVWpXVFRDNCtYblVoOUJEUFRrS1ZtSVN6?=
- =?utf-8?B?RGk0eVpVVzZGWHFDTG5yNlBGYTJNMzFKZ2tiK3d2S0FZeWlVNWt4d0hwOG5U?=
- =?utf-8?B?VDJBOTZ2Nmh0bm16a2kyVTR5aEpWYlNnSkkrRnlIblo1WFRCbldVb05Kd0Vu?=
- =?utf-8?B?bEVPckZHdVRqam5halVSTUt0UlJiaEF2ZUVWUkd2QXgrc2JVNHZNMTdtN0lH?=
- =?utf-8?B?REVTeWtYdGhvUWVzZGZTRUE1eG9iZkVmU1B2OHRwbFk2azZPSkw3VzUzT1hK?=
- =?utf-8?B?UTlsVUFuQUR3aGt4K2pJS3lRdGthSnVFanl0WTdnUGs0eEc2V2xKZlZrQThH?=
- =?utf-8?Q?6/fifYeM3176yVtjH0YTIDCxEhYbYhvBk+sKo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RVZTcDd6TkRqdFRYVmVkL1NZT2l4dGdsMXNndHptdjArWVVRWmRtL2dHVEdB?=
- =?utf-8?B?NWdTazNhbXlIVjRLS3Bsckh5bVBhQzE5ck50YjhYT2xURFUzNjNOTnFmK0xD?=
- =?utf-8?B?aEM2T0Z5Z3FlY1lhdVEzaFpoY2MrVWFPRFU1OHZyZmJZVUkveGJIaDFUb041?=
- =?utf-8?B?UUxrOW4rckZLZjhaWWxrRnh4NnRTdWUzcjU4OXdKUlVxbjM0OE4zd2orbEgy?=
- =?utf-8?B?cWY3UndXUU02Y2FDTkxQVnRNY2VGalp5UnJpTGhCUUtlaCtpUzZUdmw3U29s?=
- =?utf-8?B?TWkyNVFELzVHSXhOajMxOEM5YU53ZmNwSU8zcklXN2Y4U0UvYTFuRFFrQi8x?=
- =?utf-8?B?SXZxaTZUSjAybk9QeUFZSVIrMWNsd0JyMVpVSmtBMVh4cWZDWWNyNW1XdW1w?=
- =?utf-8?B?SkdqSXFBczJTQlhpVVhhMHRuS0M4OWJVeVIrV3lSQ0NwT1M4YVUreTFzbm1S?=
- =?utf-8?B?M0w0UkZRSXhUZWgwT0N5MktmOTFwT1o1YWlPZUdvSXFDb0diSkIxWFJaWSty?=
- =?utf-8?B?MjF2WVA1a1JLalJaRWhKcFR2WWI0RnY5SmxmV1RIT2NKMGlhVjNkNUMyR3hB?=
- =?utf-8?B?bGVPaC9OSzJqa2xXS2xIeVFyT2ZmbWdFbGNkK05mejJXMmR4L0xsT0NiQWpL?=
- =?utf-8?B?dUluM2cvRkk2TEVkZHhhazZBWEUwRUh6UE94aTdydkJHOWgyRGRRUjhVVmw4?=
- =?utf-8?B?VmtwM2lvbjNrem0vSnh2RHQ0YUFEU0NvaVB5SzdFU2xodDM5OG1WVlJCa2k4?=
- =?utf-8?B?Q0dxNlRSaFRHZ3RDVWJKK3Y0SFFxV1NEQk51NDhrYVFaRzQyTDYwTERCUFpo?=
- =?utf-8?B?cUxNUzVRR013NzdHMkhhcFBOWlJGclBDbkYxeHlCYldVRnk5Z0U0RGEyK1d2?=
- =?utf-8?B?cnovcVJMRlhOZzFlT2xjWFpBSldwL3FHK20vbHN6bnNUZVF5bVFrK2M0ZmxJ?=
- =?utf-8?B?UzdVNmE4akV0dkxIeU5tam1WZXVQdkYzNHRzMElER25jM04yam9SWUtMcFpB?=
- =?utf-8?B?aC91S01WaFA0QlIyWDBnRDlzQWQzQWhqeTUzOHZGa1d1VXpST1NjWUwyOWhk?=
- =?utf-8?B?a3BWalArbFY3MHhzcEtRMHJwNEtMajJXdkt6Q0drVWxlRXZVOTlVS2syOW1x?=
- =?utf-8?B?OVV0YmttdTR3c2xDcFYzaWZrOGsxSXo4Qit3Q3NaaVYrYUpxTXB5MXVOMTBS?=
- =?utf-8?B?M1Z1WUNBV0lxWnBUV2pKcG9lVEswenNpMHNBSGw1M2ErMnkxeWtjV0pXVG1k?=
- =?utf-8?B?RG1LNWEzc3RNcWRxd2h1OWM4VDZ4QXdMNXdCSGdXN2pOOVJxNWVUditFajJx?=
- =?utf-8?B?a21iV1k2TXZkcVpqR0lyT25XOUZjTUJWTS9MY3Fqc09UU2d0RzcraXZtUDFO?=
- =?utf-8?B?VDcwMEUrSzhpNUIvWmRUZnFvZnNpMHVvKzUzbkxBa1ltUmIzeHNVRHdkSmRm?=
- =?utf-8?B?UGRIZEF5amZtQldYTlEzMlljNlNJRUEwc2pUajN3dnZzclFIZFVYcnBheGtn?=
- =?utf-8?B?eHlDSkNyTWJObDhNMFRnWGhTRDBlTVpUR3hOaDIwbVVCdGpoSWI5eXljWEhz?=
- =?utf-8?B?b0MycEM5MWthMFU3WWdDblprcDd1Tk94SXF3cXJGSW16eGtRNS81TnJEZ0x4?=
- =?utf-8?B?clFPUE5nRjNoQjFRRE5VclB1OFlKQmlVZlcyNHI5bGE3TnkzcUVtd2c1aEo4?=
- =?utf-8?B?aSs4TU05YVgrWGw1SFJQejcrbkFvRXJMQkVNMVlWZ2Nldk5OYmJ0MllnTFkz?=
- =?utf-8?B?QXhzRzBXSGZQbWVnZFFqdWhiekIrQklaOFg5dytBT1J4RjdNRFk5czFlUXJv?=
- =?utf-8?B?d1MzcnBxMXBOMzM3V0l6ZTVQMk1OVVpPakNydmVLR1Azc250ZEVPeEJGUVFG?=
- =?utf-8?B?VzJDSUJkSGFSYkpuQ3F2UkhnL09zenVxR3A1OFg3OGtLQUYyTU80RllSVW9O?=
- =?utf-8?B?aURweHNqTGp4NmpWU21BNVdUS2dTR0JkNVhJQ0dCbmR4WEFidGQ4N1Q0dUxM?=
- =?utf-8?B?bEs3QTQxajJKNWhWeWxEU2hFeE1MVHRLU1NKUGJrUkRjL3RoaHhKcGRlRUMr?=
- =?utf-8?B?SUdTTkxvSHlSM0VuVzNjQlF3c2tCR0JCTDJXbGtNbXkxRHpkclp5WVFWWTdC?=
- =?utf-8?Q?cUzfmc5+jOVj83/un8TiiGbyK?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84d3e4b2-6370-4bae-2cb8-08dce7d30af6
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 19:54:39.0406
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Nmtj3Z+h5FgNr/9f/Mp9YY3mXJFj+Sh1YD7pjTwvhpGtGrN3TyjFpz8NujOkJHD5NA/2wxZUTc0mLpWKmeK6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10577
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v20 01/14] mm: page_frag: add a test module for
+ page_frag
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexander Duyck <alexander.duyck@gmail.com>,
+ Alexander Duyck <alexanderduyck@fb.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241008112049.2279307-1-linyunsheng@huawei.com>
+ <20241008112049.2279307-2-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241008112049.2279307-2-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove cpu_addr_fixup() because dwc common driver already handle address
-translate.
+On 10/8/24 05:20, Yunsheng Lin wrote:
+> The testing is done by ensuring that the fragment allocated
+> from a frag_frag_cache instance is pushed into a ptr_ring
+> instance in a kthread binded to a specified cpu, and a kthread
+> binded to a specified cpu will pop the fragment from the
+> ptr_ring and free the fragment.
+> 
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Reviewed-by: Alexander Duyck <alexanderduyck@fb.com>
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v2 to v4
-- none
-Change from v1 to v2
-- set using_dtbus_info true
----
- drivers/pci/controller/dwc/pci-imx6.c | 22 ++--------------------
- 1 file changed, 2 insertions(+), 20 deletions(-)
+Signed-off-by should be last. Same comment on all the other
+patches in this series. When you have 4 patches, it is a good
+practice to add cover-letter.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 1e58c24137e7f..94f3411352bf0 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -82,7 +82,6 @@ enum imx_pcie_variants {
- #define IMX_PCIE_FLAG_HAS_PHY_RESET		BIT(5)
- #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
- #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
--#define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
- 
- #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
- 
-@@ -1015,22 +1014,6 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
- 		regulator_disable(imx_pcie->vpcie);
- }
- 
--static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
--{
--	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
--	struct dw_pcie_rp *pp = &pcie->pp;
--	struct resource_entry *entry;
--
--	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
--		return cpu_addr;
--
--	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
--	if (!entry)
--		return cpu_addr;
--
--	return cpu_addr - entry->offset;
--}
--
- static const struct dw_pcie_host_ops imx_pcie_host_ops = {
- 	.init = imx_pcie_host_init,
- 	.deinit = imx_pcie_host_exit,
-@@ -1039,7 +1022,6 @@ static const struct dw_pcie_host_ops imx_pcie_host_ops = {
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.start_link = imx_pcie_start_link,
- 	.stop_link = imx_pcie_stop_link,
--	.cpu_addr_fixup = imx_pcie_cpu_addr_fixup,
- };
- 
- static void imx_pcie_ep_init(struct dw_pcie_ep *ep)
-@@ -1459,6 +1441,7 @@ static int imx_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	pci->using_dtbus_info = true;
- 	if (imx_pcie->drvdata->mode == DW_PCIE_EP_TYPE) {
- 		ret = imx_add_pcie_ep(imx_pcie, pdev);
- 		if (ret < 0)
-@@ -1598,8 +1581,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
- 	},
- 	[IMX8Q] = {
- 		.variant = IMX8Q,
--		.flags = IMX_PCIE_FLAG_HAS_PHYDRV |
--			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP,
-+		.flags = IMX_PCIE_FLAG_HAS_PHYDRV,
- 		.clk_names = imx8q_clks,
- 		.clks_cnt = ARRAY_SIZE(imx8q_clks),
- 	},
+> ---
+>   tools/testing/selftests/mm/Makefile           |   3 +
+>   tools/testing/selftests/mm/page_frag/Makefile |  18 ++
+>   .../selftests/mm/page_frag/page_frag_test.c   | 173 ++++++++++++++++++
+>   tools/testing/selftests/mm/run_vmtests.sh     |   8 +
+>   tools/testing/selftests/mm/test_page_frag.sh  | 171 +++++++++++++++++
+>   5 files changed, 373 insertions(+)
+>   create mode 100644 tools/testing/selftests/mm/page_frag/Makefile
+>   create mode 100644 tools/testing/selftests/mm/page_frag/page_frag_test.c
+>   create mode 100755 tools/testing/selftests/mm/test_page_frag.sh
+> 
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index 02e1204971b0..acec529baaca 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -36,6 +36,8 @@ MAKEFLAGS += --no-builtin-rules
+>   CFLAGS = -Wall -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+>   LDLIBS = -lrt -lpthread -lm
+>   
+> +TEST_GEN_MODS_DIR := page_frag
+> +
+>   TEST_GEN_FILES = cow
+>   TEST_GEN_FILES += compaction_test
+>   TEST_GEN_FILES += gup_longterm
+> @@ -126,6 +128,7 @@ TEST_FILES += test_hmm.sh
+>   TEST_FILES += va_high_addr_switch.sh
+>   TEST_FILES += charge_reserved_hugetlb.sh
+>   TEST_FILES += hugetlb_reparenting_test.sh
+> +TEST_FILES += test_page_frag.sh
+>   
+>   # required by charge_reserved_hugetlb.sh
+>   TEST_FILES += write_hugetlb_memory.sh
+> diff --git a/tools/testing/selftests/mm/page_frag/Makefile b/tools/testing/selftests/mm/page_frag/Makefile
+> new file mode 100644
+> index 000000000000..58dda74d50a3
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/page_frag/Makefile
+> @@ -0,0 +1,18 @@
+> +PAGE_FRAG_TEST_DIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+> +KDIR ?= $(abspath $(PAGE_FRAG_TEST_DIR)/../../../../..)
+> +
+> +ifeq ($(V),1)
+> +Q =
+> +else
+> +Q = @
+> +endif
+> +
+> +MODULES = page_frag_test.ko
+> +
+> +obj-m += page_frag_test.o
+> +
+> +all:
+> +	+$(Q)make -C $(KDIR) M=$(PAGE_FRAG_TEST_DIR) modules
+> +
+> +clean:
+> +	+$(Q)make -C $(KDIR) M=$(PAGE_FRAG_TEST_DIR) clean
+> diff --git a/tools/testing/selftests/mm/page_frag/page_frag_test.c b/tools/testing/selftests/mm/page_frag/page_frag_test.c
+> new file mode 100644
+> index 000000000000..eeb2b6bc681a
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/page_frag/page_frag_test.c
+> @@ -0,0 +1,173 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
--- 
-2.34.1
+I think this would throw a checkpatch warning about
+comment should be "/*" and not "//"
+> +
+> +/*
+> + * Test module for page_frag cache
+> + *
+> + * Copyright (C) 2024 Yunsheng Lin <linyunsheng@huawei.com>
+> + */
+> +
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/completion.h>
+> +#include <linux/ptr_ring.h>
+> +#include <linux/kthread.h>
+> +
+> +static struct ptr_ring ptr_ring;
+> +static int nr_objs = 512;
+> +static atomic_t nthreads;
+> +static struct completion wait;
+> +static struct page_frag_cache test_nc;
+> +static int test_popped;
+> +static int test_pushed;
+> +
+> +static int nr_test = 2000000;
+> +module_param(nr_test, int, 0);
+> +MODULE_PARM_DESC(nr_test, "number of iterations to test");
+> +
+> +static bool test_align;
+> +module_param(test_align, bool, 0);
+> +MODULE_PARM_DESC(test_align, "use align API for testing");
+> +
+> +static int test_alloc_len = 2048;
+> +module_param(test_alloc_len, int, 0);
+> +MODULE_PARM_DESC(test_alloc_len, "alloc len for testing");
+> +
+> +static int test_push_cpu;
+> +module_param(test_push_cpu, int, 0);
+> +MODULE_PARM_DESC(test_push_cpu, "test cpu for pushing fragment");
+> +
+> +static int test_pop_cpu;
+> +module_param(test_pop_cpu, int, 0);
+> +MODULE_PARM_DESC(test_pop_cpu, "test cpu for popping fragment");
+> +
+> +static int page_frag_pop_thread(void *arg)
+> +{
+> +	struct ptr_ring *ring = arg;
+> +
+> +	pr_info("page_frag pop test thread begins on cpu %d\n",
+> +		smp_processor_id());
+> +
+> +	while (test_popped < nr_test) {
+> +		void *obj = __ptr_ring_consume(ring);
+> +
+> +		if (obj) {
+> +			test_popped++;
+> +			page_frag_free(obj);
+> +		} else {
+> +			cond_resched();
+> +		}
+> +	}
+> +
+> +	if (atomic_dec_and_test(&nthreads))
+> +		complete(&wait);
+> +
+> +	pr_info("page_frag pop test thread exits on cpu %d\n",
+> +		smp_processor_id());
+> +
+> +	return 0;
+> +}
+> +
+> +static int page_frag_push_thread(void *arg)
+> +{
+> +	struct ptr_ring *ring = arg;
+> +
+> +	pr_info("page_frag push test thread begins on cpu %d\n",
+> +		smp_processor_id());
+> +
+> +	while (test_pushed < nr_test) {
+> +		void *va;
+> +		int ret;
+> +
+> +		if (test_align) {
+> +			va = page_frag_alloc_align(&test_nc, test_alloc_len,
+> +						   GFP_KERNEL, SMP_CACHE_BYTES);
+> +
+> +			WARN_ONCE((unsigned long)va & (SMP_CACHE_BYTES - 1),
+> +				  "unaligned va returned\n");
+> +		} else {
+> +			va = page_frag_alloc(&test_nc, test_alloc_len, GFP_KERNEL);
+> +		}
+> +
+> +		if (!va)
+> +			continue;
+> +
+> +		ret = __ptr_ring_produce(ring, va);
+> +		if (ret) {
+> +			page_frag_free(va);
+> +			cond_resched();
+> +		} else {
+> +			test_pushed++;
+> +		}
+> +	}
+> +
+> +	pr_info("page_frag push test thread exits on cpu %d\n",
+> +		smp_processor_id());
+> +
+> +	if (atomic_dec_and_test(&nthreads))
+> +		complete(&wait);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init page_frag_test_init(void)
+> +{
+> +	struct task_struct *tsk_push, *tsk_pop;
+> +	ktime_t start;
+> +	u64 duration;
+> +	int ret;
+> +
+> +	test_nc.va = NULL;
+> +	atomic_set(&nthreads, 2);
+> +	init_completion(&wait);
+> +
+> +	if (test_alloc_len > PAGE_SIZE || test_alloc_len <= 0 ||
+> +	    !cpu_active(test_push_cpu) || !cpu_active(test_pop_cpu))
+> +		return -EINVAL;
+> +
+> +	ret = ptr_ring_init(&ptr_ring, nr_objs, GFP_KERNEL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	tsk_push = kthread_create_on_cpu(page_frag_push_thread, &ptr_ring,
+> +					 test_push_cpu, "page_frag_push");
+> +	if (IS_ERR(tsk_push))
+> +		return PTR_ERR(tsk_push);
+> +
+> +	tsk_pop = kthread_create_on_cpu(page_frag_pop_thread, &ptr_ring,
+> +					test_pop_cpu, "page_frag_pop");
+> +	if (IS_ERR(tsk_pop)) {
+> +		kthread_stop(tsk_push);
+> +		return PTR_ERR(tsk_pop);
+> +	}
+> +
+> +	start = ktime_get();
+> +	wake_up_process(tsk_push);
+> +	wake_up_process(tsk_pop);
+> +
+> +	pr_info("waiting for test to complete\n");
+> +
+> +	while (!wait_for_completion_timeout(&wait, msecs_to_jiffies(10000)))
+> +		pr_info("page_frag_test progress: pushed = %d, popped = %d\n",
+> +			test_pushed, test_popped);
+> +
+> +	duration = (u64)ktime_us_delta(ktime_get(), start);
+> +	pr_info("%d of iterations for %s testing took: %lluus\n", nr_test,
+> +		test_align ? "aligned" : "non-aligned", duration);
+> +
+> +	ptr_ring_cleanup(&ptr_ring, NULL);
+> +	page_frag_cache_drain(&test_nc);
+> +
+> +	return -EAGAIN;
+> +}
+> +
+> +static void __exit page_frag_test_exit(void)
+> +{
+> +}
+> +
+> +module_init(page_frag_test_init);
+> +module_exit(page_frag_test_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Yunsheng Lin <linyunsheng@huawei.com>");
+> +MODULE_DESCRIPTION("Test module for page_frag");
+> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+> index c5797ad1d37b..2c5394584af4 100755
+> --- a/tools/testing/selftests/mm/run_vmtests.sh
+> +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> @@ -75,6 +75,8 @@ separated by spaces:
+>   	read-only VMAs
+>   - mdwe
+>   	test prctl(PR_SET_MDWE, ...)
+> +- page_frag
+> +	test handling of page fragment allocation and freeing
+>   
+>   example: ./run_vmtests.sh -t "hmm mmap ksm"
+>   EOF
+> @@ -456,6 +458,12 @@ CATEGORY="mkdirty" run_test ./mkdirty
+>   
+>   CATEGORY="mdwe" run_test ./mdwe_test
+>   
+> +CATEGORY="page_frag" run_test ./test_page_frag.sh smoke
+> +
+> +CATEGORY="page_frag" run_test ./test_page_frag.sh aligned
+> +
+> +CATEGORY="page_frag" run_test ./test_page_frag.sh nonaligned
+> +
+>   echo "SUMMARY: PASS=${count_pass} SKIP=${count_skip} FAIL=${count_fail}" | tap_prefix
+>   echo "1..${count_total}" | tap_output
+>   
+> diff --git a/tools/testing/selftests/mm/test_page_frag.sh b/tools/testing/selftests/mm/test_page_frag.sh
+> new file mode 100755
+> index 000000000000..d750d910c899
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/test_page_frag.sh
+> @@ -0,0 +1,171 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2024 Yunsheng Lin <linyunsheng@huawei.com>
+> +# Copyright (C) 2018 Uladzislau Rezki (Sony) <urezki@gmail.com>
+> +#
+> +# This is a test script for the kernel test driver to test the
+> +# correctness and performance of page_frag's implementation.
+> +# Therefore it is just a kernel module loader. You can specify
+> +# and pass different parameters in order to:
+> +#     a) analyse performance of page fragment allocations;
+> +#     b) stressing and stability check of page_frag subsystem.
+> +
+> +DRIVER="./page_frag/page_frag_test.ko"
+> +CPU_LIST=$(grep -m 2 processor /proc/cpuinfo | cut -d ' ' -f 2)
+> +TEST_CPU_0=$(echo $CPU_LIST | awk '{print $1}')
+> +
+> +if [ $(echo $CPU_LIST | wc -w) -gt 1 ]; then
+> +	TEST_CPU_1=$(echo $CPU_LIST | awk '{print $2}')
+> +	NR_TEST=100000000
+> +else
+> +	TEST_CPU_1=$TEST_CPU_0
+> +	NR_TEST=1000000
+> +fi
+> +
+> +# 1 if fails
+> +exitcode=1
+> +
+> +# Kselftest framework requirement - SKIP code is 4.
+> +ksft_skip=4
+> +
+> +#
+> +# Static templates for testing of page_frag APIs.
+> +# Also it is possible to pass any supported parameters manually.
+> +#
+> +SMOKE_PARAM="test_push_cpu=$TEST_CPU_0 test_pop_cpu=$TEST_CPU_1"
+> +NONALIGNED_PARAM="$SMOKE_PARAM test_alloc_len=75 nr_test=$NR_TEST"
+> +ALIGNED_PARAM="$NONALIGNED_PARAM test_align=1"
+> +
+> +check_test_requirements()
+> +{
+> +	uid=$(id -u)
+> +	if [ $uid -ne 0 ]; then
+> +		echo "$0: Must be run as root"
+> +		exit $ksft_skip
+> +	fi
+> +
+> +	if ! which insmod > /dev/null 2>&1; then
+> +		echo "$0: You need insmod installed"
+> +		exit $ksft_skip
+> +	fi
+> +
+> +	if [ ! -f $DRIVER ]; then
+> +		echo "$0: You need to compile page_frag_test module"
+> +		exit $ksft_skip
+> +	fi
+> +}
+> +
+> +run_nonaligned_check()
+> +{
+> +	echo "Run performance tests to evaluate how fast nonaligned alloc API is."
+> +
+> +	insmod $DRIVER $NONALIGNED_PARAM > /dev/null 2>&1
+> +	echo "Done."
+> +	echo "Check the kernel ring buffer to see the summary."
+> +}
+> +
+> +run_aligned_check()
+> +{
+> +	echo "Run performance tests to evaluate how fast aligned alloc API is."
+> +
+> +	insmod $DRIVER $ALIGNED_PARAM > /dev/null 2>&1
+> +	echo "Done."
+> +	echo "Check the kernel ring buffer to see the summary."
+> +}
+> +
+> +run_smoke_check()
+> +{
+> +	echo "Run smoke test."
+> +
+> +	insmod $DRIVER $SMOKE_PARAM > /dev/null 2>&1
+> +	echo "Done."
+> +	echo "Check the kernel ring buffer to see the summary."
+> +}
+> +
+> +usage()
+> +{
+> +	echo -n "Usage: $0 [ aligned ] | [ nonaligned ] | | [ smoke ] | "
+> +	echo "manual parameters"
+> +	echo
+> +	echo "Valid tests and parameters:"
+> +	echo
+> +	modinfo $DRIVER
+> +	echo
+> +	echo "Example usage:"
+> +	echo
+> +	echo "# Shows help message"
+> +	echo "$0"
+> +	echo
+> +	echo "# Smoke testing"
+> +	echo "$0 smoke"
+> +	echo
+> +	echo "# Performance testing for nonaligned alloc API"
+> +	echo "$0 nonaligned"
+> +	echo
+> +	echo "# Performance testing for aligned alloc API"
+> +	echo "$0 aligned"
+> +	echo
+> +	exit 0
+> +}
+> +
+> +function validate_passed_args()
+> +{
+> +	VALID_ARGS=`modinfo $DRIVER | awk '/parm:/ {print $2}' | sed 's/:.*//'`
+> +
+> +	#
+> +	# Something has been passed, check it.
+> +	#
+> +	for passed_arg in $@; do
+> +		key=${passed_arg//=*/}
+> +		valid=0
+> +
+> +		for valid_arg in $VALID_ARGS; do
+> +			if [[ $key = $valid_arg ]]; then
+> +				valid=1
+> +				break
+> +			fi
+> +		done
+> +
+> +		if [[ $valid -ne 1 ]]; then
+> +			echo "Error: key is not correct: ${key}"
+> +			exit $exitcode
+> +		fi
+> +	done
+> +}
+> +
+> +function run_manual_check()
+> +{
+> +	#
+> +	# Validate passed parameters. If there is wrong one,
+> +	# the script exists and does not execute further.
+> +	#
+> +	validate_passed_args $@
+> +
+> +	echo "Run the test with following parameters: $@"
 
+Is this marker good enough to isolate the test results in the
+dmesg? Include the test name in the message.
+
+
+> +	insmod $DRIVER $@ > /dev/null 2>&1
+> +	echo "Done."
+
+Is this marker good enough to isolate the test results in the
+dmesg? Include the test name in the message.
+
+> +	echo "Check the kernel ring buffer to see the summary."
+
+Usually the test would run dmesg and filter out the test results
+from the dmesg and include them in the test script output.
+
+You can refer to other tests that do that: powerpc/scripts/hmi.sh
+is one example.
+
+> +}
+> +
+> +function run_test()
+> +{
+> +	if [ $# -eq 0 ]; then
+> +		usage
+> +	else
+> +		if [[ "$1" = "smoke" ]]; then
+> +			run_smoke_check
+> +		elif [[ "$1" = "nonaligned" ]]; then
+> +			run_nonaligned_check
+> +		elif [[ "$1" = "aligned" ]]; then
+> +			run_aligned_check
+> +		else
+> +			run_manual_check $@
+> +		fi
+> +	fi
+> +}
+> +
+> +check_test_requirements
+> +run_test $@
+> +
+> +exit 0
+
+thanks,
+-- Shuah
 
