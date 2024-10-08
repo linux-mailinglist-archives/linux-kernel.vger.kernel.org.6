@@ -1,230 +1,215 @@
-Return-Path: <linux-kernel+bounces-354699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFBA994134
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:23:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2559941CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 10:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A3BB278BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CA21F29C48
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89901E04B5;
-	Tue,  8 Oct 2024 07:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2819C209677;
+	Tue,  8 Oct 2024 07:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rf+RlCPQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="b9BlkmiZ";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="fv/UTuli"
+Received: from smtpout145.security-mail.net (smtpout145.security-mail.net [85.31.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C301E04AE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728373824; cv=none; b=f1goz+iq4QLF7liEJwYFSRtzepip0VovqGreF8cgu+k75kPqE+Vg5v07JJNPri4T7BPudmIH7kILXGuAHLJR9Jjb/T2b5Ov9aR7hulod5ix8CYL6fpWzxlx6y30Er6BNWJhwVmj520317h8O9sUFEvLBXL+pGP2mTkEboXLa3fs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728373824; c=relaxed/simple;
-	bh=aONYALUEi47AhYG18AZ8I3Jue6GwQ11/Z7xT2lcouw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCv2JEA/GgzYzqIGiW2khESJl5GnUXZ9hpz8Q/zRkNaNqmndim4czbKBOC/crZbLSNVKjhwIcf6utnbA0SPVNb5d0wEArQf7DgEHqehvCHrcarHvWi6DB4+H0BmJcWdzvrOgMrjrWCy7c098VNPiQzovJ62YRbGz0rvshgr2P6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rf+RlCPQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728373821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8xv2thTV3Zvu6oGxZvIbDIQfodchFrQbt6h0I4tmoIY=;
-	b=Rf+RlCPQ23o2coZV/7MI5WrouVMZB4MkT+2pAjXPVQTezVWocVUz5AvsKCD/6UUzNBxrYN
-	JYyvJ6/uO/8/ID9F/fGEZWiJGBUkPgJX6nQPyxwauC5tcC+WhOTx93aYU8NMDFLb0mGVdc
-	77FUbWli7usSYZuA1vzDQh196BD3x3A=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-c2OoEOAQPeOXExbckwALKQ-1; Tue, 08 Oct 2024 03:50:18 -0400
-X-MC-Unique: c2OoEOAQPeOXExbckwALKQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42ca8037d9aso34942625e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 00:50:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728373817; x=1728978617;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8xv2thTV3Zvu6oGxZvIbDIQfodchFrQbt6h0I4tmoIY=;
-        b=q44wIyYDsk9M1CY6dMuGx8NXfcoIjIhDk9DkCcLjXLwzUcnyTJCUHeEDZzyn6Z49o5
-         4NuKGVHMd3UNLtmVa410t09cfvirIC+CvuliI8v1XEVzY8wiF9O97sCSYRWisJ5TbBeX
-         WCfk7FoMMwmDUDBZecJ6knrO/kG1kEnTKTdV7CmrI7L5ywjWSWeOm7h5Z9mANJj7V0sA
-         aR9/NCCoaF/yGeBm6jYnsd/XDGG2WbWdWy/4C0JzTlEvLOX+uhnuhpVx7aYbI9hYsqbh
-         qHlgru2UIsWO8vTylLEEAJWE2vSIaCJgephcnoazYrHShCPHgVqwhELgTloDSLFonT6r
-         F4VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKftzc589wquod18rRwXByEcPx4kJIaAVaOYHTQKogcunGQojEY7Jbt0IuxDxu90rKMYY6HhhSeiy62io=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo768E1VPJf3XfTgM8C0MbvgcGGQ0dgplNz5XLCKl2WbERlaYM
-	mAjff8HLaFIEo2BzazVnxSXmVgATwsWuOsQmKSLSkr2lI0m2I7StHvC0QtAClhmWF8dSG+oq0Ew
-	FArmc++NimzAqHyqb7SxomNnZBnVLOlFQ92KQm4BDLq7h6PBcK6rJEyHuppVg4w==
-X-Received: by 2002:a05:600c:1d0f:b0:42c:b9b1:8342 with SMTP id 5b1f17b1804b1-42f91e2a687mr38306895e9.19.1728373816826;
-        Tue, 08 Oct 2024 00:50:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFg6ruzLn8LDKgfXnV6MKx6jltNtVtvGccSyCiFxaUA0QIsJGSSjTpd1hqO4U9OGDmYchlXgg==
-X-Received: by 2002:a05:600c:1d0f:b0:42c:b9b1:8342 with SMTP id 5b1f17b1804b1-42f91e2a687mr38306785e9.19.1728373816396;
-        Tue, 08 Oct 2024 00:50:16 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:c700:a76f:473d:d5cf:25a8? (p200300cbc72fc700a76f473dd5cf25a8.dip0.t-ipconnect.de. [2003:cb:c72f:c700:a76f:473d:d5cf:25a8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86a20595sm117161735e9.14.2024.10.08.00.50.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 00:50:15 -0700 (PDT)
-Message-ID: <316dadcb-b199-4b94-8d07-94b40bf534df@redhat.com>
-Date: Tue, 8 Oct 2024 09:50:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C792209663
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 07:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.145
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728374113; cv=fail; b=cbL4oD0VcJ5NS/wz2fQbK5zenfQX9XcQVwHwy5pDOpePJLfFl+H6BGBF2O80DuzChLlr0Jv0iFAiLleYrn8Mi/NFvT9d3NIgSGIyU3g23zZ2iCb/M5fKkvzDIhCl+Jfnkz2bxk78zuTXH/gk3olbMxcXhjCv3yTG47Jb88SLHQA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728374113; c=relaxed/simple;
+	bh=hinrUjmTJyMFC+GlrSoYvq0PtBWDs1LfJfjfukhAmZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=czZQ5/76FiFq2asfsjhUCNrva0aY3Bg2wLFxUHbnBqbWzqIgaVzTkmHwOsL+HNwfiMYeP4ZXo97Crw3uYLbikhclR8d+D6braLoFLaDB/zvmF9dcz7jzpAEktVtkt/HRvbBxJt9frUuNMGcoMak5cX+EF2mcq2TiOqJL1hHDzN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=b9BlkmiZ; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=fv/UTuli reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (fx405.security-mail.net [127.0.0.1])
+	by fx405.security-mail.net (Postfix) with ESMTP id 9FC4B33604E
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 09:51:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1728373876;
+	bh=hinrUjmTJyMFC+GlrSoYvq0PtBWDs1LfJfjfukhAmZc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=b9BlkmiZ0k7l8z2BRzkbVNDFVuv9iVfJ9B4lWw3uYTZZeIpumPtsianbp/6gBmKEm
+	 OHzKRVL/U/r1pLTA27nOHAvWyS07VpGl4zC7xPLiE5LnxInBjm72fYw3Cjlsc5VoFs
+	 p6WsRlQOuDTisWGO7LGXqB+pjbky7PaRMbhMK72A=
+Received: from fx405 (fx405.security-mail.net [127.0.0.1]) by
+ fx405.security-mail.net (Postfix) with ESMTP id 7B9B3335C68; Tue, 08 Oct
+ 2024 09:51:15 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011024.outbound.protection.outlook.com
+ [40.93.76.24]) by fx405.security-mail.net (Postfix) with ESMTPS id
+ E5B24335C96; Tue, 08 Oct 2024 09:51:13 +0200 (CEST)
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
+ by MR1P264MB2194.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:5::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Tue, 8 Oct
+ 2024 07:51:12 +0000
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.8026.020; Tue, 8 Oct 2024
+ 07:51:12 +0000
+X-Secumail-id: <b7ec.6704e471.9f783.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LfMRiSnZk8ARdyawIQBORoqJpB0JPUaJr64Sz4bRucPkKASnVIb8U0XJojNk0c8djd3L8O2lXlOdYi8RpvZV6oHT6Vq8DEnMp00DiqT6jz5HWdJUJAOsbYZHg9q2ukoEkudg1c9bYbk5asgr41IxEjidClVr6JWi/0AX8GcAHccuO61WBRgd2hxkJVMnma7W12f9fSf1y8o5wygknWzZF/U+3XJ5gYlbjqPh3JF3lN7nTDXFdUFebqRwzBV7+b38Mnhw+NinOa5pQtDhC7NQ6IoFF3T819bxGtkfcTYC6ISm4y3j1zHLcfj3U0arun1JWpIAIv7aNAqRDzNHX1hAhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MDnaKk0Zu2uRUJUJIaFrEIfQZw4RUJ8OEETWLcJkAIw=;
+ b=Lj85ZUWyDZcbdqGga/zGwkBCpOfFVVJAGq5sgSMih5/qIK0KeLgbIO/KJdi8JP7cVGnFr6B4Fq/k2NeGb+X5BOXTY9RDLMqoNAq9XgQTbX2lHShnszKTdWu/8kNC3oVyfpbAz5jmgcWHquDxhuVInckqenxn2yp9wV67dN4LosP3OGCLejoAl8VctU5OJbD+t4EIVtOKViVvQTtV+C8yLev97jpwurDqskT9zLES0qQjp+suRcpHkvxemy+eN4IeG3xtfsl+qaBLuxRU+9C0OZ7xDFCswzsN5Epg4mfbsIINrB4WL/zoLItsdBX/DIz1EbYPOrurx7FCW7Vad4JEHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MDnaKk0Zu2uRUJUJIaFrEIfQZw4RUJ8OEETWLcJkAIw=;
+ b=fv/UTulirp05NevGUWA6FS1IPV745crJBd9rtQH/TjWlOkFqDKXxJbHfyJYKRGkOJPmcLNdqPytxGDCdUWQLtX2yhVjMRYUSWP97iFHfmPOf7qZN8QoxIJqgNnQMc/zRxZyOQJueaP6qertr5IJYx2Cr0IlVZCKXhVj1UI5VtnU4gTQq7nh3fLzPJDuDnLQR0nICYBvWJTvJmvrHJnkTqLeLFw9eA4XcK8kRRJFKnF5YjX4QKQBDNVQWfT24CAU1gsndFcR+SdcZDv5M5CwiiAdtHm1Ra0KLwvXQD7sPS/lOfBZ/EspLgblYbKFXRgryM1Ij2CZPwLkouZG/f1dbXQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+From: Julian Vetter <jvetter@kalrayinc.com>
+To: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Richard Henderson
+ <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ Matt Turner <mattst88@gmail.com>, "James E . J . Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Richard Weinberger
+ <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes
+ Berg <johannes@sipsolutions.net>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Niklas Schnelle <schnelle@linux.ibm.com>, Manivannan
+ Sadhasivam <manivannan.sadhasivam@linaro.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav
+ Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-sound@vger.kernel.org, Yann Sionneau
+ <ysionneau@kalrayinc.com>, Julian Vetter <jvetter@kalrayinc.com>
+Subject: [PATCH v8 06/14] alpha: Align prototypes of IO memcpy/memset
+Date: Tue,  8 Oct 2024 09:50:14 +0200
+Message-ID: <20241008075023.3052370-7-jvetter@kalrayinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241008075023.3052370-1-jvetter@kalrayinc.com>
+References: <20241008075023.3052370-1-jvetter@kalrayinc.com>
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM4PR07CA0019.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::32) To PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:118::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
-To: Jann Horn <jannh@google.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, willy@infradead.org, hughd@google.com,
- lorenzo.stoakes@oracle.com, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|MR1P264MB2194:EE_
+X-MS-Office365-Filtering-Correlation-Id: 293b32ef-b983-4ea1-1e9e-08dce76dfa98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info: NQhxMmreuPsD9jenC8sUnZZuDqNjJDGzCsNeGS9/tXEw5i2uIA/dFNcQk0qEyUgcOc/8mYNtqe7wWNuF7DA0frfBn3mCJL+ZRejHShRH7WS2awHx+mL/Hr6pTgJMPjEKvAbUn+uELkRirvKPfxsIQeNb5W3cDHYQMS4nKlSAaHK92QLRntmYUyXs0QkZ4g7I/f6LMKdNCM+VUFvjmxyZ0PkhPlOOstrwcqt8OhvOF8SwNGQh7XYEDiWGmCrp1R7QS6qqZxWpPof1dX+GQc/g4+V+9qjgss/h5Y/FgY1IYCpt1Ik7H0csLxF5ti7GPC1k9P8hKud5XgRKND4dxykl+V4IJnEs2EhKANpNADCxdq5ejgT/HGBJXs28yR5f99BeTlers0Mxqs5QRIIZHFy7zw2rPO6aEqYoe6JKh3J9sg4+hlfRQOxdZBLLr7xj2oLYI+YheemlCCujEftm6X8GEyKCIkLtV9FBfD0DMHf08Pl2SFJEzHGLfCRfnzNbX7EcbjgBk7NipFyE6bg5waZhXHWhNKH6viDwQ56X5MNcLrA4+gwWGJDyzySP7Eh2PlZdQLQ2GSsWrp6xoBVISCQTyrudpeTGAVbA8NHTcJaO9XA1w6IoGbFUh6V8E/08pc699H1rRU7v6D9ROeKcLN2Lo4SWGItEakk9mQN1iRvkH2g6mw2qG/+XG59TfPYnUiNwadOSTaERL4sf4zxzQC/QYKLqQPcCHs9i9fvRiGqh+N7Q4miZnIZnfO2gR8S4r7CQvuq68kJGrC7CFwJOsCKjDyKB7Vq+USv3O6DPjW0T3ZT0eF6oNt3iT82KL8RSp4c0zMX68WRRpxZDq1kiVvr4kCL6IqXP+3cm2za+Dp3G63+YmpH+L0r+j7THp/5S/Wzp4Z9e4QOqZ0QaaVHaFlF3bvDvP5jmQA4qoqyhmYWdvkFsKdJaza32xVio4LYbWxi1TQC
+ O0yYwA37LM/Ml0NnX3K70s+bbmg+Qv6FNI7Jc7Oaj4FN/CMzUeiddoHEP3Eny6JW0XIUwRoVarO5iZYxmmL9BrmGuaKgJXCVlxLnj2eT8arxvHDhNduUGlrRTQEy23hk84LkHBGLKb3nPkPFlmYaNKCNXvsdDym+jbzRHK6RU+3C7gKf4FZ4l6hKJe50aM4yM6Hcvz7ag3Li2C3DpRiX6zckSrRIFz6OTTEIa1LX3BJ+BqIezMXjceu5IYdZF3jSjB1N1exVGnt0aG1jJ/6uUDtYa27LXfxier3YWEHQqwUpAc70PgBNXSht5cYnwqRSWETdi7oqopan975VgETROlAuXUrP2vXiHeXgoQ6Cou6SPvrm2Yf7A5+NOzGAPgAKYPEt8k/oHTVaP8SRJJWeQPKxVhJ70tksf8MWf1XA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: VwgAgWVrRxvijl/grluZNEGPGDE0xU9VNbJWW+Rq0Vv92XIT4zbB7PQjjQXiVGg4OF+51bMOvxduGcE8lIP06hxuIYlW/UvwXtt5TKog7SP5FPwccX+IrX8UX2nN1KsBpxXNecZmTqJ9mW20sQFtvfVUXBaYtJzOpChbTgzELTLTs1RvrptPH/iwKxUKt0psM/OWEubmXQIK0QJ5CgZXDSYwMQLIL2I9ShIC/GocW03kmHqHlD92xkzVp4GZZzYO7sbpn0adV6tXz3N8TKK3IG83E+HWWXAKprRI7uMWnu2xV2QhTGq4cPkjebCJpYXKkw+6p/+K2QSH8T7ifNU9kYZ8iAmwz2JpNxiT6Rkx7kbTyFhIa0fS1Vz9wgvDLeLUIEPuHbULMkJiS5rciLuBQGI9C6U9StSETudJAxMfnUypW5QwBZQvIgV3pUUhCHeOCRUzB3xNECV/5fDScwOsCNwLgF69KiAI89Mp1H2eR/WHizB6IgVNVpEt5PnWS9irVCacqbTzxNWBKJ/GZVeN+YXlGZJuqfCxroPk6My0nnJNPzx1+se7tI4GBs8IMtCR+g6S4ruoU2VqR16tnEBlCtzQE7pn9Cius10puMfaaDxG0yXDNk1NbZHBFAR5N1xbY1lUh1UGwN69cni2iPvrWOz6sQyYdXKLKECPr8LIeWrYcLwHzLlVqQS3OeElYr24C3E0nEOAfsjWPslWcjd94u1VmVmQ7A6P3ZjXn9qPIELigZR86j0wgAzMWyThRVZpIpLyOfKohfZLsjHGiLAhzMi1eUy4ynCDoCMU7su7x9dtctDPp46JJeN05s+Yb19FW2WSlKJEcS94XgKevhQVnWm6n2Vsh+yMy61T+eeQlTDjgK8RrTbr3xL+aMSJfBhqXAgMi7sLB31dcP1QsnaC6qbFe3CoKUktBBhgEGuC7zLviph5mdFHplMDZEBCZeGd
+ WVVPgLTQuHsnsWtS71L4Qoa00LnOwQPdQLTxp/ujukK1nTrkxi8zqSqPXhwAIoJmHKeGJLzhiqku/dvyc80HGS2pTqiAWkkOsKaE3xLwNd1WCYNdWeJWEI+p8aX7zBWL50BZhx3vEcMbXv3pTwnHf7c3XgEmKAUI3JNvcMI6QcIasRgWkXKqkpLS5QXLAQs5ocOYH+Tfxe8er7G2gi2zP3LUW1Sd60gU8ncOHMg9AzHvpXkDLvp1YxhbBNxiIU18Na0KmZs8g8j7p8r6Hbx+mRdrPr/KdLOR2PPvP/XejyRXPGrGET/68948v+w/+N02bzYLoY8s4lPTOBYNxqMZNMFwtKRpJLKPJS9Z4qy2jOggmf6kEhT7rcw7xdrcXQQDyO6OiOpng6Z+rL1MQhIeiM8NTLyMMD7ARl/UJ025Jvc8LilEgToA46MB5KmySSL+PvW4p6oR4gxGzVEoV3BerMAcJRpRFvH9qcHov4PdIGOzLL88w1eLwBVTfyt7Jc9C5/10V4dQQ8fK2W6a/ABYfGho5qDNrXlKfE5+8mbgoOJAqMgvAwlcWH5BAXNNWOphS3mP9LaHwWjTZPJVbx3qsT6Xq7ao865g0UibOKeFCl1vT/wzKzdbFkarNFncgHJK
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 293b32ef-b983-4ea1-1e9e-08dce76dfa98
+X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2024 07:51:12.2963
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GBLUTiaqh7zUwNF3cxPQeC2EKQyfQ2Jj0y8HcYlLWMQYBP5+w9tg1/yMzzVfPXizVPbUYqMVLCNBc7v9BbyM8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB2194
+Content-Type: text/plain; charset=utf-8
+X-ALTERMIMEV2_out: done
 
-On 07.10.24 23:42, Jann Horn wrote:
-> In mremap(), move_page_tables() looks at the type of the PMD entry and the
-> specified address range to figure out by which method the next chunk of
-> page table entries should be moved.
-> At that point, the mmap_lock is held in write mode, but no rmap locks are
-> held yet. For PMD entries that point to page tables and are fully covered
-> by the source address range, move_pgt_entry(NORMAL_PMD, ...) is called,
-> which first takes rmap locks, then does move_normal_pmd().
-> move_normal_pmd() takes the necessary page table locks at source and
-> destination, then moves an entire page table from the source to the
-> destination.
-> 
-> The problem is: The rmap locks, which protect against concurrent page table
-> removal by retract_page_tables() in the THP code, are only taken after the
-> PMD entry has been read and it has been decided how to move it.
-> So we can race as follows (with two processes that have mappings of the
-> same tmpfs file that is stored on a tmpfs mount with huge=advise); note
-> that process A accesses page tables through the MM while process B does it
-> through the file rmap:
-> 
-> 
-> process A                      process B
-> =========                      =========
-> mremap
->    mremap_to
->      move_vma
->        move_page_tables
->          get_old_pmd
->          alloc_new_pmd
->                        *** PREEMPT ***
->                                 madvise(MADV_COLLAPSE)
->                                   do_madvise
->                                     madvise_walk_vmas
->                                       madvise_vma_behavior
->                                         madvise_collapse
->                                           hpage_collapse_scan_file
->                                             collapse_file
->                                               retract_page_tables
->                                                 i_mmap_lock_read(mapping)
->                                                 pmdp_collapse_flush
->                                                 i_mmap_unlock_read(mapping)
->          move_pgt_entry(NORMAL_PMD, ...)
->            take_rmap_locks
->            move_normal_pmd
->            drop_rmap_locks
-> 
-> When this happens, move_normal_pmd() can end up creating bogus PMD entries
-> in the line `pmd_populate(mm, new_pmd, pmd_pgtable(pmd))`.
-> The effect depends on arch-specific and machine-specific details; on x86,
-> you can end up with physical page 0 mapped as a page table, which is likely
-> exploitable for user->kernel privilege escalation.
-> 
-> 
-> Fix the race by letting process B recheck that the PMD still points to a
-> page table after the rmap locks have been taken. Otherwise, we bail and let
-> the caller fall back to the PTE-level copying path, which will then bail
-> immediately at the pmd_none() check.
-> 
-> Bug reachability: Reaching this bug requires that you can create shmem/file
-> THP mappings - anonymous THP uses different code that doesn't zap stuff
-> under rmap locks. File THP is gated on an experimental config flag
-> (CONFIG_READ_ONLY_THP_FOR_FS), so on normal distro kernels you need shmem
-> THP to hit this bug. As far as I know, getting shmem THP normally requires
-> that you can mount your own tmpfs with the right mount flags, which would
-> require creating your own user+mount namespace; though I don't know if some
-> distros maybe enable shmem THP by default or something like that.
-> 
-> Bug impact: This issue can likely be used for user->kernel privilege
-> escalation when it is reachable.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1d65b771bc08 ("mm/khugepaged: retract_page_tables() without mmap or vma lock")
-> Closes: https://project-zero.issues.chromium.org/371047675
-> Co-developed-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> @David: please confirm we can add your Signed-off-by to this patch after
-> the Co-developed-by.
+Align the prototypes of the memcpy_{from,to}io and memset_io functions
+with the new ones from iomap_copy.c and remove function declarations,
+because they are now declared in asm-generic/io.h.
 
-Sure, thanks for sending this out!
+Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+---
+Changes for v8:
+- Mask the argument with 0xff because now it's an int and not a u8
+  anymore
+---
+ arch/alpha/include/asm/io.h | 6 ++----
+ arch/alpha/kernel/io.c      | 4 ++--
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
+index b191d87f89c4..e7d52c8159b0 100644
+--- a/arch/alpha/include/asm/io.h
++++ b/arch/alpha/include/asm/io.h
+@@ -591,13 +591,11 @@ extern inline u64 readq_relaxed(const volatile void __iomem *addr)
+ /*
+  * String version of IO memory access ops:
+  */
+-extern void memcpy_fromio(void *, const volatile void __iomem *, long);
+-extern void memcpy_toio(volatile void __iomem *, const void *, long);
+ extern void _memset_c_io(volatile void __iomem *, unsigned long, long);
+ 
+-static inline void memset_io(volatile void __iomem *addr, u8 c, long len)
++static inline void memset_io(volatile void __iomem *dst, int c, size_t count)
+ {
+-	_memset_c_io(addr, 0x0101010101010101UL * c, len);
++	_memset_c_io(dst, 0x0101010101010101UL * (c & 0xff), count);
+ }
+ 
+ #define __HAVE_ARCH_MEMSETW_IO
+diff --git a/arch/alpha/kernel/io.c b/arch/alpha/kernel/io.c
+index c28035d6d1e6..69c06f1b158d 100644
+--- a/arch/alpha/kernel/io.c
++++ b/arch/alpha/kernel/io.c
+@@ -481,7 +481,7 @@ EXPORT_SYMBOL(outsl);
+  * Copy data from IO memory space to "real" memory space.
+  * This needs to be optimized.
+  */
+-void memcpy_fromio(void *to, const volatile void __iomem *from, long count)
++void memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
+ {
+ 	/* Optimize co-aligned transfers.  Everything else gets handled
+ 	   a byte at a time. */
+@@ -535,7 +535,7 @@ EXPORT_SYMBOL(memcpy_fromio);
+  * Copy data from "real" memory space to IO memory space.
+  * This needs to be optimized.
+  */
+-void memcpy_toio(volatile void __iomem *to, const void *from, long count)
++void memcpy_toio(volatile void __iomem *to, const void *from, size_t count)
+ {
+ 	/* Optimize co-aligned transfers.  Everything else gets handled
+ 	   a byte at a time. */
 -- 
-Cheers,
+2.34.1
 
-David / dhildenb
+
+
+
 
 
