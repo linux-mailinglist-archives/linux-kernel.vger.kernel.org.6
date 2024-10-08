@@ -1,117 +1,287 @@
-Return-Path: <linux-kernel+bounces-355642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C84399553D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:02:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802B2995541
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A031C25400
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0343E1F280EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A851E0DE2;
-	Tue,  8 Oct 2024 17:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQZHJC5X"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E7F1E1044;
+	Tue,  8 Oct 2024 17:04:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7806F2F3;
-	Tue,  8 Oct 2024 17:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA66224CC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728406963; cv=none; b=Ws9CVzZCF7diB5fiVuKjFYY+a6YK4YMe7WqJKVxn5q2r6cG1oF4vmvKcuq6lO9P/WRbHFIkt6Zv16EdXvBXY1LbVPUFKpzUlS/md/WBs0T1pAIBrbrn712Ai0e277kwQ7ksXuvLW+aml3FvlR/3qLcblPpnB04bQceEKWzIhIH4=
+	t=1728407054; cv=none; b=luUCpipqaOfGB5j6u++y7TGKVdpBTfhMIFsGTZ5q20bFZgkqfR3+sOFRbTizUVUcPMVy5Uk8U++7vbkMKDmiFANvJJw+DHecLAVqcXte+gmvfdHZEvkQPlKpE/JvnCWGrnih5JLCCmlvF3zlizmIr5u+vGKJRhJXjD9VKl8ULjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728406963; c=relaxed/simple;
-	bh=sMbNsoCJrjOwNF0YWvFzRa1qE1wyTBhsxmOAUFS8/fM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nfXyvDZmRaWwqBsvOdkHZ7Fi1R3ubZhNZ+vIGnWTs+6ALU3LV5XDpyMrIVZ9cD3gh0mFcI2Rf5vdGiZhLTiD84A8iBMOxU78zp82GslaVWkGCYGjsTPL0z1WsCNvIoqSUPwwbr1VvDE0dwG870pFFq0AvPtTpX1cwqr3cVZ/8vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQZHJC5X; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7aa086b077so680137966b.0;
-        Tue, 08 Oct 2024 10:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728406960; x=1729011760; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fH6Q+86lLIPQsPYsHY5BtMivrSzj8a09vJ6dNtdDv1s=;
-        b=aQZHJC5XIJgl70SCF758rTY2xT/IapzrivQldtR1Gh4+rfWZR46RiIaSZlp1yQm8aL
-         B0IQAxsgtDmaRIWPx4zzO0w/GMTBBVFOKYYy7QSCGKq1nuNcMsCNJQVMZsl4FjScsF5Y
-         fZYB2RwcNfGRsgVmoDA13a2ALrdPKwG60SWJE6nEFh1RdznIpVh326JGNRQI7FzWE6qi
-         Xay4gEOv8cjZiFyLZxrKmDq9tssBR7K5Ta+RS20YUC6S2Yjk7A2EcW6Xdmi4v7PiQeIM
-         GamDoCd+mdJwvQEKiVjfzB16hyvRC25gqKIURBMG9TsH6u1YQa6tsiWo80cBdvuVyrHQ
-         IOlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728406960; x=1729011760;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fH6Q+86lLIPQsPYsHY5BtMivrSzj8a09vJ6dNtdDv1s=;
-        b=Ho203injxEqQgtHG2tPGRFQvo+/mKCb8r00Wez7rRO5e2QXfoePeaWHNK/HiGEAI/W
-         2ZiNVup5vXfJz7/F0uAAQhfdQbl/Sz8MSiyrd2rsGCjzlzr1beW1zOx69LabKNvHjpNu
-         nXKtJbQblw5cge5wDxbVX6pCLgAmVkKaYNGp1iSHyCFhcOfd7qMRnVjZd8PUbgTx/OVt
-         KGnXrMY5ZjRvCyBluas2n0GWINh/EmbfwZb68dAmGLKdTgMXQ013V+mNJcRvm12silDI
-         OgCLi565samcyNb9M3NRgQHmhEK3UPva6jeHWMUHZwnIv/AwJ3uTZgZfhfSFQW1s7Je5
-         xn+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWJcFYa2wUxLgKnkeJHT+zBz7ak8BGOcQlA4IfrUmnUvfUgQD/y0xrSduMM9vBKJdMeK2RX/8UR0khvKhg=@vger.kernel.org, AJvYcCXgHEk+1gwqrXp5OmUo3W+oPvdHH2PPV0/OPmTqQJZ3ToCO6uz7Fk8oj1Vj6wTZGn48HWkYNg4i4U1YoI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxChu9TpB2kXXuPiFKJYAy09d8k+r9Mi/bc1c6/UgYbI0NxGsEq
-	1dtQJsJsfqoZPVN088v537baHaxowt1J+oAeuu7lKPjg7d/5Tz4DgxS5Bw==
-X-Google-Smtp-Source: AGHT+IFQrL6WPapulu3Wh3pTUUGiA9lYvQ+jaBWiSMotTWC9FnG/h70fI58S0W4VNXMe9Y7uBJN+aA==
-X-Received: by 2002:a17:907:97c6:b0:a99:61f2:49eb with SMTP id a640c23a62f3a-a9961f2967amr478404266b.42.1728406959493;
-        Tue, 08 Oct 2024 10:02:39 -0700 (PDT)
-Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a993c1b353dsm473226366b.35.2024.10.08.10.02.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 10:02:38 -0700 (PDT)
-Message-ID: <d4ff08fa-199d-4114-bae1-fd36f6a9313c@gmail.com>
-Date: Tue, 8 Oct 2024 18:02:37 +0100
+	s=arc-20240116; t=1728407054; c=relaxed/simple;
+	bh=UKNMGSkZ+V1fkAicUqPJOmhDOGpOc3lT7VSrNpUDHKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUK3bCh4q0CSz8oWk/MAViT7Anqyg8Vg78HTwXW+MQ55FYwqGLfyAaQyOqw7VLurvA295ILE6nLX5NAYS2RCfnfFHp7SXMu617RhzGwmSPUrrmB3WlOB+PIV7lQVHZVK/EmJqRaMjX0RDEPuDmdr/1FsVzXYWGCwxGx/zkFDbDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syDcw-0002JG-6O; Tue, 08 Oct 2024 19:04:02 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syDcr-000PcA-R3; Tue, 08 Oct 2024 19:03:57 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syDcr-000SM4-2L;
+	Tue, 08 Oct 2024 19:03:57 +0200
+Date: Tue, 8 Oct 2024 19:03:57 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 12/12] net: pse-pd: tps23881: Add support for
+ PSE events and interrupts
+Message-ID: <ZwVl_eaUO6twk1Fs@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Jack Yu <jack.yu@realtek.com>, linux-sound@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-Subject: re: ASoC: rt721-sdca: Add RT721 SDCA driver
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Jack,
+On Wed, Oct 02, 2024 at 06:28:08PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> Add support for PSE event reporting through interrupts. Set up the newly
+> introduced devm_pse_irq_helper helper to register the interrupt. Events are
+> reported for over-current and over-temperature conditions.
+> 
+> This patch also adds support for an OSS GPIO line to turn off all low
+> priority ports in case of an over-current event.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
+>  drivers/net/pse-pd/tps23881.c | 123 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 122 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
+> index ddb44a17218a..03f36b641bb4 100644
+> --- a/drivers/net/pse-pd/tps23881.c
+> +++ b/drivers/net/pse-pd/tps23881.c
+> @@ -17,6 +17,13 @@
+>  
+>  #define TPS23881_MAX_CHANS 8
+>  
+> +#define TPS23881_REG_IT		0x0
+> +#define TPS23881_REG_IT_MASK	0x1
+> +#define TPS23881_REG_IT_IFAULT	BIT(5)
+> +#define TPS23881_REG_IT_SUPF	BIT(7)
+> +#define TPS23881_REG_FAULT	0x7
+> +#define TPS23881_REG_SUPF_EVENT	0xb
+> +#define TPS23881_REG_TSD	BIT(7)
+>  #define TPS23881_REG_PW_STATUS	0x10
+>  #define TPS23881_REG_OP_MODE	0x12
+>  #define TPS23881_OP_MODE_SEMIAUTO	0xaaaa
+> @@ -25,6 +32,7 @@
+>  #define TPS23881_REG_PW_PRIO	0x15
+>  #define TPS23881_REG_GEN_MASK	0x17
+>  #define TPS23881_REG_NBITACC	BIT(5)
+> +#define TPS23881_REG_INTEN	BIT(7)
+>  #define TPS23881_REG_PW_EN	0x19
+>  #define TPS23881_REG_2PAIR_POL1	0x1e
+>  #define TPS23881_REG_PORT_MAP	0x26
+> @@ -59,6 +67,7 @@ struct tps23881_priv {
+>  	struct pse_controller_dev pcdev;
+>  	struct device_node *np;
+>  	struct tps23881_port_desc port[TPS23881_MAX_CHANS];
+> +	struct gpio_desc *oss;
+>  };
+>  
+>  static struct tps23881_priv *to_tps23881_priv(struct pse_controller_dev *pcdev)
+> @@ -1088,11 +1097,112 @@ static int tps23881_flash_sram_fw(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> +static void tps23881_turn_off_low_prio(struct tps23881_priv *priv)
+> +{
+> +	dev_info(&priv->client->dev,
+> +		 "turn off low priority ports due to over current event.\n");
+> +	gpiod_set_value_cansleep(priv->oss, 1);
+> +
+> +	/* TPS23880 datasheet (Rev G) indicates minimum OSS pulse is 5us */
+> +	usleep_range(5, 10);
+> +	gpiod_set_value_cansleep(priv->oss, 0);
 
-With respect to the recent commit in linux-next:
+Ah, now I understand why 1 bit priority mode is used. The "fast" shutdown
+path is done over interrupt and gpio bitbang.
 
-commit 86ce355c1f9ab943bbe099ea7d0b8a3af2247f65
-Author: Jack Yu <jack.yu@realtek.com>
-Date:   Tue Oct 1 09:17:38 2024 +0000
+It is not your fault...
 
-     ASoC: rt721-sdca: Add RT721 SDCA driver
+> +}
+> +
+> +static int tps23881_irq_handler(int irq, struct pse_irq_data *pid,
+> +				unsigned long *dev_mask)
+> +{
+> +	struct tps23881_priv *priv = (struct tps23881_priv *)pid->data;
+> +	struct i2c_client *client = priv->client;
+> +	struct pse_err_state *stat;
+> +	int ret, i;
+> +	u16 val;
+> +
+> +	*dev_mask = 0;
+> +	for (i = 0; i < TPS23881_MAX_CHANS; i++) {
+> +		stat = &pid->states[i];
+> +		stat->notifs = 0;
+> +		stat->errors = 0;
+> +	}
+> +
 
+Please add comment that two registers are read here in one run.
 
-I'm flagging up an issue in function rt721_sdca_dmic_set_gain_get there 
-are a bunch of nested if statements as follows:
+> +	ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT);
+> +	if (ret < 0)
+> +		return PSE_FAILED_RETRY;
+> +
+> +	val = (u16)ret;
+> +	if (val & TPS23881_REG_IT_SUPF) {
+> +		ret = i2c_smbus_read_word_data(client, TPS23881_REG_SUPF_EVENT);
+> +		if (ret < 0)
+> +			return PSE_FAILED_RETRY;
+> +
+> +		if (ret & TPS23881_REG_TSD) {
+> +			for (i = 0; i < TPS23881_MAX_CHANS; i++) {
+> +				stat = &pid->states[i];
+> +				*dev_mask |= 1 << i;
+> +				stat->notifs = PSE_EVENT_OVER_TEMP;
+> +				stat->errors = PSE_ERROR_OVER_TEMP;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (val & (TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_IFAULT << 8)) {
 
-                 if (!adc_vol_flag) /* boost gain */
-                         ctl = regvalue / boost_step;
-                 else { /* ADC gain */
-                         if (adc_vol_flag)
-                                 ctl = p->max - (((vol_max - regvalue) & 
-0xffff) / interval_offset);
-                         else
-                                 ctl = p->max - (((0 - regvalue) & 
-0xffff) / interval_offset);
-                 }
+Ok, i see, you are reading two registers in one run and wont to test if
+mask and status bits are active. In this code you will get true every
+time the interrupt handler is executed.
 
-The last else statement ctl = p->max - (((0 - regvalue) & 0xffff) / 
-interval_offset) is redundant, since this is the !adc_vol_flag checked 
-for in the first boost gain if clause.
+> +		ret = i2c_smbus_read_word_data(client, TPS23881_REG_FAULT);
+> +		if (ret < 0)
+> +			return PSE_FAILED_RETRY;
+> +
+> +		val = (u16)(ret & 0xf0f);
+> +
+> +		/* Power cut detected, shutdown low priority port */
+> +		if (val && priv->oss)
+> +			tps23881_turn_off_low_prio(priv);
+> +
+> +		*dev_mask |= val;
+> +		for (i = 0; i < TPS23881_MAX_CHANS; i++) {
+> +			if (val & BIT(i)) {
+> +				stat = &pid->states[i];
+> +				stat->notifs = PSE_EVENT_OVER_CURRENT;
+> +				stat->errors = PSE_ERROR_OVER_CURRENT;
+> +			}
+> +		}
+> +	}
+> +
+> +	return PSE_ERROR_CLEARED;
+> +}
+> +
+> +static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
+> +{
+> +	int errs = PSE_ERROR_OVER_CURRENT | PSE_ERROR_OVER_TEMP;
+> +	struct i2c_client *client = priv->client;
+> +	struct pse_irq_desc irq_desc = {
+> +		.name = "tps23881-irq",
+> +		.map_event = tps23881_irq_handler,
+> +		.data = priv,
+> +	};
+> +	int ret;
+> +	u16 val;
+> +
+> +	val = TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_SUPF |
+> +	      TPS23881_REG_IT_IFAULT << 8 | TPS23881_REG_IT_SUPF << 8;
+> +	ret = i2c_smbus_write_word_data(client, TPS23881_REG_IT_MASK, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = i2c_smbus_read_word_data(client, TPS23881_REG_GEN_MASK);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	val = (u16)(ret | TPS23881_REG_INTEN | TPS23881_REG_INTEN << 8);
+> +	ret = i2c_smbus_write_word_data(client, TPS23881_REG_GEN_MASK, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return devm_pse_irq_helper(&priv->pcdev, irq, 0, errs, &irq_desc);
+> +}
+> +
+>  static int tps23881_i2c_probe(struct i2c_client *client)
+>  {
+>  	struct device *dev = &client->dev;
+>  	struct tps23881_priv *priv;
+> -	struct gpio_desc *reset;
+> +	struct gpio_desc *reset, *oss;
+>  	int ret;
+>  	u8 val;
+>  
+> @@ -1169,6 +1279,17 @@ static int tps23881_i2c_probe(struct i2c_client *client)
+>  				     "failed to register PSE controller\n");
+>  	}
+>  
+> +	oss = devm_gpiod_get_optional(dev, "oss", GPIOD_OUT_LOW);
+> +	if (IS_ERR(oss))
+> +		return dev_err_probe(&client->dev, PTR_ERR(oss), "Failed to get OSS GPIO\n");
+> +	priv->oss = oss;
+> +
+> +	if (client->irq) {
+> +		ret = tps23881_setup_irq(priv, client->irq);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return ret;
+>  }
+>  
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
-Colin
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
