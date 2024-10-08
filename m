@@ -1,100 +1,147 @@
-Return-Path: <linux-kernel+bounces-355513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE9B99535C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F4299535E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED661C25747
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D831F27CA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF01E04B6;
-	Tue,  8 Oct 2024 15:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086AE1E04A0;
+	Tue,  8 Oct 2024 15:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d5rmxPWE"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zAqFEIvd"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC1F1DF73A;
-	Tue,  8 Oct 2024 15:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93844C97
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 15:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728401155; cv=none; b=NJTdBX6wIva7bYHXDsO6Q7O556smmc1ZOe+C1pniFaolA0zP1gGTU1NtdaXlN9Y0RYakwXzoAD69eBvQjbAmzE9Ds5c2B0ScRmrZtVmVYBSVvVLPQFxwhOdoshZnYluZtRPDcPnN63Xlk6lebz+cnkMMq37aSeCgQ66huhTddQo=
+	t=1728401211; cv=none; b=jmNxAqSC7Wnjvt0kxt/fHLGyZAHcIZvBx8jhS02BxAnQmEc+pPhDLumYH0AvrJ42/RzS7c+YpizfRtCX1vDiYMWqZ9R51tQi857ySyejL34VhsqE/TP1Ihdtdi4BqjX2tFuje31/8r+gIVZFIVRw6h5qzqkTzAwMQ6g6TVqIWvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728401155; c=relaxed/simple;
-	bh=U6xjsviuuR0pgvkjEMDMUpNLEHGTOTQ1nZ34SCNH2XM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=alLFozny02e3Icq4z9oMC9TeRiTHlKr2dL69qJAAvmUHcJhQMFT2cnUr8hgRx+USRlKzhlnBL43RRTBiwPNTwA+K2FUGpeTDx94RfUyg52ii/0IRn7xL9ltNOaZ4Sv/85PGCvHBnS127JD2xfV2AA/OdsCInglR4MCzVsYbOZpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d5rmxPWE; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728401116; x=1729005916; i=markus.elfring@web.de;
-	bh=U6xjsviuuR0pgvkjEMDMUpNLEHGTOTQ1nZ34SCNH2XM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=d5rmxPWEaNDJyYsF9k8keCl+35OxgtQq2OMdHtL7MTbaVgY80YQ0ypmBoPB/susx
-	 a05VZu+1WZ7/s6GyKK9zigQyLU4rEMYL6IKFXP/Pc2c0edXRxGBeo0zBSimyTokTu
-	 XhZnQ7Ujykm94KIYwrJrc3yl3tpsCe5qMW+vrI8saYMOQMGuNquHOi4x+kl4mnIGc
-	 3sCPgL4JFhOLjc03HtowWYh40p13GmMW4Yj1eYYPVyvCeN36lPVuk0A1KcXXFpyE5
-	 PFzEnbPbUZns+uhZ1RSb8yMvD1SEt3s5yKUsxMR/9LxImeQZVUw5qwgAOFtdc5dJ8
-	 NWmesyi/fE8VerKQwQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpCqb-1tm8lH1i4V-00mqLv; Tue, 08
- Oct 2024 17:25:16 +0200
-Message-ID: <8481e803-a2bf-46be-b5f9-a39570ed330f@web.de>
-Date: Tue, 8 Oct 2024 17:25:10 +0200
+	s=arc-20240116; t=1728401211; c=relaxed/simple;
+	bh=vKKxSkoKFnogkBx39S1SpQG/+QwYvL+sCYJlUmloRwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mpBhzvH7kwRW9ekcXDL/iPM2b66yOOLXhawBFbk8m4TsM3GfPW/DVjmJfe2Uoil6IKFREfnITi9/azS40eA0GyV0CYfDp55oZ8YitGqX+8hgm3n0X+0gi5uAAehqI5PTSaGzSmH5XYW/VY8j3afrDiYY48ZQO3TAlqL9w5k8tk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zAqFEIvd; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fac47f0b1aso68964101fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 08:26:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728401208; x=1729006008; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZTAFSL6jcdadW5qIrfK3DEadzWBZ/GHH3F8iUzhjI/U=;
+        b=zAqFEIvd01SpthaDmSwVnpr9caMF8g5LVEY9AabmyCgQoYN4yYfNGY/gAC1prVh0Ed
+         W4VcCMXyskqnrslgTRWu7iVY7EYEZwiG5fksI03V41YiWy1pEP8rIuIdPVJasspDIIHl
+         i5vaWi/xm2iA2Cu+xuV0k6SI1oi6J0SK3GveqOuiy+GugSmgAAmwzXlDj66M0UIaFpwK
+         rjBAar+YX5duB88UbOnJW3OytmEHxuKKqOIMtSO+7855e6ZkD4HF6kdVQXNX5MB+2+9E
+         l3sH+XkSSC+aQXtoGpNEBaKRluuzoG2iw+J9wAOuFs2TRYjgGmSkJXxdBWp/BEol0xJw
+         LztQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728401208; x=1729006008;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZTAFSL6jcdadW5qIrfK3DEadzWBZ/GHH3F8iUzhjI/U=;
+        b=tWFcGkKxK0cXi1KNvF8CoVlK+XMNNQ0iSHphKQhwZjldYhGQy46PabFwRc8rN1pDPJ
+         ERqKoR90cbTgVRTq7b096kw6o4S/lmfBYpe2fQWJlESIJMs7FGiVjQL5grA9xpulC414
+         6fNNJv65bHY/YvvFYDtmKD7Ea9AS9lOVbgxCiNLk74nGvYt/RQCbwHDFxjZhMbEMBdm2
+         68GAj8PSR9S9ZNncGmYuuWGafkIQ+zJV+0hrjMe/EuZS4yLkTWfV3WNt2KoBfv8SVgfV
+         wVQSUhuRFWn8AgihdmLKe7jovk5CE036P2qhakEtPKpA5WQh1U4G8kaZBoQrzqBP8+Kk
+         LHXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXYjvbDpZlZHWir9w4XKyt8hfGjtKyMeH1syvtgIZ7iteaTYEDlbS/XedHvNHWMfZbaCuyG94p+krW1No=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH+ncvgZmpXL7HBCO1P/zRH7TI8dEOmaGI4Uzh/3i7Ln5tjXZH
+	cvqyuGg4QOhFL50tOBxF7UaA4AoshBae2R5Z22YojmEEXHBR/gYjpbGPz1+vOFqELZ/eyqedx3t
+	NB3inlfyCbRZnD8myvTxZgqwaaOwV5VQAshWong==
+X-Google-Smtp-Source: AGHT+IEFfQhyAux2gJRZld7c2HZIzFN00gwATDRdJg+IsahVVBkamrqyhvu0kAa6KgQJs7Q8V9hVCCjoB7lrAdx5VJs=
+X-Received: by 2002:a2e:4601:0:b0:2fa:d386:c8a4 with SMTP id
+ 38308e7fff4ca-2faf3c146demr66217621fa.12.1728401207755; Tue, 08 Oct 2024
+ 08:26:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Christian Lamparter <chunkeey@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>,
- Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241007235711.5714-1-rosenp@gmail.com>
-Subject: Re: [PATCH net] net: ibm: emac: mal: fix wrong goto
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241007235711.5714-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:3GMogz2CLho5gDLcT4FBTlDDaPDFTju7aFd9F4ipDZyTOka+X8s
- En+yYpr9ci6OuHYaziLciWqGNH3Fb2MZpTQTq+N40PRgclzX4JhXEoND4ptEpz36TmVah3e
- VZtFwGLMRQPVg47kIH6UCJISxJmaiBu/Vu2uaFXShuf8qwupkIyaVNM9DYlI8XtwP9NEeVO
- qnw25HFF4KfCOK9IYfjJw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eIe9Ahons8c=;3Iv7q3JSYwyYxD9KHmwuRhgb3xb
- 2LPnmjYRqogTAzOrV8et2dAFsIEZb8/iT4N2ncL1n6PUkTbUAtY2jkV4ldzjISe1hORnF5DMS
- miHobOmEbWc50xs/f0JBfOvMYhCgu+uP0w0MP0W2SJgAkehpJ4kPl5SItmEBUYsU9IMDaOrfb
- r5/YxmtjbdGU1lyqMisl0ngUC6Lep8ZDUod3F5D+bJu/d2UL0F91TthE+PjCSUHNkGma8NH2N
- G2VYK/7lSmRz+B5Z8N8bo9o71f1oN1+/CqDA/imTsKQjHZ4knm3HM5ycNmnMGhvhQop3s5XjX
- NKJ/n6i4DXGMxHYG7Y6Jcr9FED814lT5LpXSToLvYhrGS5mcSA8KbXnE0O9BON4QmJVQREofu
- tJ1aGAEx2wQ04N7CNEg8IEppGNWcpw2/zurMVRO+CF8iKfAwAKuFgYlN0M3dc30cJN2WSvHd0
- UHhMXWMx4aOfbadtzIlFXpHXbnsbvhEEXeSeYWrXUbcG8xvzwAQnruLN9hNidOsfuEH4UPYH1
- g42fyS5E5yW3eJxNyMeowoCmtsWM5aPZv6lLIu0pMx/I7xX+jWH15ONFCNUT8UZvNmPth9Tut
- 1xjZ7KORDeyRHOU7KEFchK2Udr0YfhSYyS3FCf6b8UPy8TYLcJpbCjp3r9qFv9UVoE/QJXZPW
- XUcdIjcZHBvtudt3Htmlj7KAlJS3S8H7ssP5pR+NF1lxCD3DqmpRw42uHiYh1uuRBnE/SVhdr
- oQswphJjKfRMbszTEHknb6tsJc8f1OjvGaYbXnGqgaTsZ10S8UL5EW89LvJcov+XMEnFqUQsl
- EIdTUU5Tl76kEeTo88+l+lQw==
+References: <20241008143159.35e26d8e@canb.auug.org.au>
+In-Reply-To: <20241008143159.35e26d8e@canb.auug.org.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Oct 2024 17:26:10 +0200
+Message-ID: <CAPDyKFqvG+Vcz8eVY6q9tkOnxMpudtQUuc2BBao74inDyOg=xQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Avri Altman <avri.altman@wdc.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> dcr_map is called in the previous if and therefore needs to be unmapped.
+On Tue, 8 Oct 2024 at 05:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the mmc tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> drivers/mmc/core/block.c:53:10: fatal error: asm/unaligned.h: No such file or directory
+>    53 | #include <asm/unaligned.h>
+>       |          ^~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   251377c52fde ("mmc: core: Adjust ACMD22 to SDUC")
+>
+> interatcing with commit
+>
+>   5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+>
+> from Linus' tree (in v6.12-rc2).
+>
+> I applied the following merge fix patch.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 8 Oct 2024 14:25:34 +1100
+> Subject: [PATCH] fix up for "mmc: core: Adjust ACMD22 to SDUC"
+>
+> interacting with "move asm/unaligned.h to linux/unaligned.h" from
+> Linus' tree.
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/mmc/core/block.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 66de5ccbb432..9752ecac6c5b 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -50,7 +50,7 @@
+>  #include <linux/mmc/sd.h>
+>
+>  #include <linux/uaccess.h>
+> -#include <asm/unaligned.h>
+> +#include <linux/unaligned.h>
+>
+>  #include "queue.h"
+>  #include "block.h"
+> --
+> 2.45.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
 
-How do you think about to choose an additional imperative wording
-for an improved change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc2#n94
+Stephen, thanks for reporting!
 
-Regards,
-Markus
+Avri, no action needed. I will rebase my tree on Monday on the latest
+rc and amend the offending patch according to Stephen's change.
+
+Kind regards
+Uffe
 
