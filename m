@@ -1,153 +1,91 @@
-Return-Path: <linux-kernel+bounces-354529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5E6993EAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E7D993EAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 08:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A362B20E4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D55282C06
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 06:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EFB17995E;
-	Tue,  8 Oct 2024 06:18:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481D113AA47
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 06:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06E0178CC8;
+	Tue,  8 Oct 2024 06:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzGAxsUb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D22E1779B8;
+	Tue,  8 Oct 2024 06:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728368307; cv=none; b=NS8sILDX1FURLN1pun+uFXu5Ne1JZvhY9jO7TxprXDUQZt4kYT/tORDjZSYoD/Ff/IHfUQ0SUnsKMkldBWfWbWw035bxopDd/wzOiG5GXcPF1FHCwfRbMVDta5zdvQTk/pMoLaFgn8czu/m/MTtpq/2ec4112cxHYkvbL2f95Zg=
+	t=1728368307; cv=none; b=Aj40RzAnbWmOVzdbeGwj9Gj+Toc6re7z7mmQWqfMuvegihYHI9ENvbKo6bVEPhq+tM9Q/MzkLylN5FsFxRZPto9rupgSi6iw0qY/joIsIWz8ZOuhaxo2umSEm4clQTzgkTeWTPX3qlBkx9YiiooRUeUNU2VvL1qOi1sX+0EFV0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728368307; c=relaxed/simple;
-	bh=N32P+d4hMhLobPDqT7RJO/7/otDqGCIEPXjh7ObafuE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ArzwdoPLyb/4TfJ+DTAvmRuUdWIxbTmYlu6RUnWHkPqLnY2459mSO0KTWbUldYgm+pF046ZVs6sREdblrq5RJmO3uRBTP+jl7fWVt6DHeR3UtkKvcw3XXlmVJ93QwGR2R7UFiYsmeqdX8DCCPPXmpDl6Cy4TPf4ZzUg83hEmxV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B0C4DA7;
-	Mon,  7 Oct 2024 23:18:55 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.43.142])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8AA563F73F;
-	Mon,  7 Oct 2024 23:18:16 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	mark.rutland@arm.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	jglisse@google.com,
-	wangkefeng.wang@huawei.com,
-	ziy@nvidia.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v7 2/2] mm: Allocate THP on hugezeropage wp-fault
-Date: Tue,  8 Oct 2024 11:47:46 +0530
-Message-Id: <20241008061746.285961-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241008061746.285961-1-dev.jain@arm.com>
-References: <20241008061746.285961-1-dev.jain@arm.com>
+	bh=n10ylxYJNCTo9eFTFVFmOaP6y9TdnURNNxWzpNeUPw4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hGUJCwwb1AnXzDZE5hwmGg88ownQEVGQDfMZsh1r0eWSdbs/Pw1AOmVv8kwPthkQGCXqtbcbdHqY1Yt5/83AoKbc1daQGzOfbFG87L3hIw4YtkWooffSb95WK3PjkDkqnvTzdiihbOSxt0znncGHQo8SzSYBMsoJY0eAi2rJdJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzGAxsUb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B38C4CEC7;
+	Tue,  8 Oct 2024 06:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728368306;
+	bh=n10ylxYJNCTo9eFTFVFmOaP6y9TdnURNNxWzpNeUPw4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=JzGAxsUb/XABKxtvpycH88Iibs8xM2fmpQ2VGo7tUgHPaYHNywj6s6RVGXnnYY918
+	 P6H3cNk7OSmZYwB2QQa4OAlQOR0F5vyw3+EB6/lsrhlB41Gz7ydEKmGoRS1ycgWEnR
+	 5BDODZ6V2/+UwZrsRy2r1iegqj7jp+aUkjpKtduroiJBm1Mw4NvX6Iz73XpcudIA8X
+	 oTa5gz8mJzBr6DIBNFbFMdleeVNHQx0QqYK2O4j4K6jNAQQaRNp9Q3E91pZPZJB92G
+	 wCAjCzTt8wYgi3Jgai1oGd0aPi7LfBec+PVOdrK3tpzNnvCv7bwzJ5LcMbQhl3LemH
+	 N1JYGU6th3Ycw==
+Message-ID: <cab577ea-c84b-4450-af6f-62ab99ac937f@kernel.org>
+Date: Tue, 8 Oct 2024 14:18:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>
+Subject: Re: [syzbot] [hfs?] possible deadlock in hfsplus_file_extend
+To: syzbot <syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com>,
+ aha310510@gmail.com, akpm@linux-foundation.org, brauner@kernel.org,
+ jack@suse.cz, jlayton@kernel.org, josef@toxicpanda.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, willy@infradead.org
+References: <66f774b7.050a0220.46d20.002d.GAE@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <66f774b7.050a0220.46d20.002d.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-replace it with a PMD-mapped THP. Remember to flush TLB entry
-corresponding to the hugezeropage. In case of failure, fallback
-to splitting the PMD.
+#syz fix: hfsplus: fix to avoid false alarm of circular locking
 
-Acked-by: David Hildenbrand <david@redhat.com> 
-Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com> 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/huge_memory.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e21c4f759e00..606ed782a15a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1790,6 +1790,38 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
- 	spin_unlock(vmf->ptl);
- }
- 
-+static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf)
-+{
-+	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct mmu_notifier_range range;
-+	struct folio *folio;
-+	vm_fault_t ret = 0;
-+
-+	folio = vma_alloc_anon_folio_pmd(vma, vmf->address);
-+	if (unlikely(!folio))
-+		return VM_FAULT_FALLBACK;
-+
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-+				haddr + HPAGE_PMD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-+		goto release;
-+	ret = check_stable_address_space(vma->vm_mm);
-+	if (ret)
-+		goto release;
-+	(void)pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-+	map_anon_folio_pmd(folio, vmf->pmd, vma, haddr);
-+	goto unlock;
-+release:
-+	folio_put(folio);
-+unlock:
-+	spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+	return ret;
-+}
-+
- vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- {
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-@@ -1802,8 +1834,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
- 
--	if (is_huge_zero_pmd(orig_pmd))
-+	if (is_huge_zero_pmd(orig_pmd)) {
-+		vm_fault_t ret = do_huge_zero_wp_pmd(vmf);
-+
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+
-+		/* Fallback to splitting PMD if THP cannot be allocated */
- 		goto fallback;
-+	}
- 
- 	spin_lock(vmf->ptl);
- 
--- 
-2.30.2
+On 2024/9/28 11:15, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit be4edd1642ee205ed7bbf66edc0453b1be1fb8d7
+> Author: Chao Yu <chao@kernel.org>
+> Date:   Fri Jun 7 14:23:04 2024 +0000
+> 
+>      hfsplus: fix to avoid false alarm of circular locking
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16c5f59f980000
+> start commit:   90d35da658da Linux 6.8-rc7
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=70429b75d4a1a401
+> dashboard link: https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159253ee180000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11afd4fe180000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> #syz fix: hfsplus: fix to avoid false alarm of circular locking
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 
