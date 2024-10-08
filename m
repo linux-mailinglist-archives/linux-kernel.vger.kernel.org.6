@@ -1,128 +1,113 @@
-Return-Path: <linux-kernel+bounces-355922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C66D9958F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:10:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E19C9958FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FAD1F25721
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE751C20F28
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE356216428;
-	Tue,  8 Oct 2024 21:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760B6216426;
+	Tue,  8 Oct 2024 21:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="iMrmLS85"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DF5213ED6;
-	Tue,  8 Oct 2024 21:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eBNO0PQh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD121DF99B;
+	Tue,  8 Oct 2024 21:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728421821; cv=none; b=PMSmSjTLLqTeT8NbtAGfebFPAqKmg2h+E7FxYNdRwA1Z02+iGtpvonocC5Y0p1R4m1LZ0R06B2ilaxIu/YWzJFdVC3O69B36ce7X/M4RmoTIgzJ0SrkNDUFd3LKTbEEzjy1v6N8X3M4C0aZRJcLIt1cB1GgO4bwCyhWrnfdYhMo=
+	t=1728422056; cv=none; b=d8IrkF1hBYvRztp3Yr3YuIruKfBeAdi9jdVgxg7w89BGaB8DmqesSM4ke2snQ0PNMVp0VNy8n1z/xZSj9kub++WEvcoXbFapFuIM1D8mPnuDNlRxVJY/YgeotQJywfrt6hNcklufnZxWNBEjPjvIrwy2FyKbXW8geyaocbBShqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728421821; c=relaxed/simple;
-	bh=lp34xle93S64JDLrFewD47jcAq158vsvHfk6XjoYYqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JRZIs3dROzz1LiAW0BOa7J/7flq55Wi33ml+cMCPq0hjdSKGd9UmiJPoRcy/Pb0YlAeqeRJkDXk8j8REiE5kxbftORTeBjkpWhP1AJChDHsFeF7rFO6g1cpK0fufnobcVPqYwfHm3uUH848swBK71eVVRYDZZ0CvPFBCv4OheoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=iMrmLS85; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1728421817; bh=lp34xle93S64JDLrFewD47jcAq158vsvHfk6XjoYYqs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iMrmLS853loo0HAldVopE0pLNxAhpMt24hXWKsvcwmLTsDeZSG04JOrEnQzzfggRM
-	 ofvMczhyer48zQmPTwav/TKFaxsM+EIr3gfFL4XT70bkSsmLLPGFNJ7WjavDMoMXCM
-	 XQj1sjDApUXfQPp+bZ9WnjJA9yXBjNE/hIClhpddnYP9KfkxP0YeMO/au0d56okYC/
-	 qkQxZSz5pjO76hqsBrUoSvDeO2xJn75o6Qu7EDdM0HN/Dudg+Kzas2c6zOezzHn4Bn
-	 5jvoz2IBa5x8DhtrRiA9lEciZ/UWnlwAI3PGdL4AtFfyu4jXOV5J2k9oDKeVFTwzPh
-	 mo8xWu4/HRz3OP9zDqYMRDBMRIlNnwV3+AIOeQdvulDyarO1aThWhkV5pAuVhXcUA+
-	 +pqKIRRBEC+v6oZ/v7kD2bDp0laVA6SrCU4fFKgDQefPxpu9jw3yMbYqwcIREvi0yc
-	 AuuImkurDVtHLpF1zlV80lmB3YzYkWGNusrV3ztK3u1DWiojUqrYdfoyuNTXhBHF0B
-	 CmQueOQvzubkRB4/wkqS/xyXAQS7QeAZB1u41plaYuyhn3uT/u1+TkUiBqlpaazMSU
-	 tkjLb6hx2PgM+lGKL6qNtLeILttuJOm75VODMsxHEkzkCRln8oiywPxcg1ftROmPM6
-	 J4Q+Tp55TrdaQoWq+2JNaWVc=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 0420C16B16D;
-	Tue,  8 Oct 2024 23:10:16 +0200 (CEST)
-Message-ID: <1b9afb20-d608-464c-ae6b-c535564b7e5a@ijzerbout.nl>
-Date: Tue, 8 Oct 2024 23:10:14 +0200
+	s=arc-20240116; t=1728422056; c=relaxed/simple;
+	bh=/dliGEewKRZribczQoNeiV6X+4qsNadUl7k0K75up9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIIMf5uFo5yaryukwc25CelnmxBpRmhnlHpXrZZ1A1juCfSCor0i9jdIST6UlPfJ7v1c79X7HoUcZ/tkyQi9xfrTlU7P7hGkrrcHjMhX/mMCqcc3dvak6qY8Fz3vaXorLK30Te/nI8ENaaXaFKeaFfwNmFhRTrMkO8FMhTFprbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eBNO0PQh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=fXa2rjQqSmEEprIVSsvVh1O3dTW7jIaPiGYIOj8vgEM=; b=eBNO0PQh9wrStrPWtR3+RdCmzS
+	sZ3xchEC5hgUFjuibTqsvYiII76/6KkDsPUZjeWacGXigWFVqbEn1dsHjSmqHzbmuHjlIvS2BpWfO
+	2jqiOak5ArKMU/IccXFpcGH9JmtJnLigHycizAvV+mnXyhmfwPRRJkop5A+E/vlvkJ+4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syHWn-009Pka-Jq; Tue, 08 Oct 2024 23:13:57 +0200
+Date: Tue, 8 Oct 2024 23:13:57 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	=?utf-8?B?UGF3ZcWC?= Owoc <frut3k7@gmail.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/2] net: phy: aquantia: allow forcing order
+ of MDI pairs
+Message-ID: <c5339983-d768-4a1c-a951-dbc99ae16b21@lunn.ch>
+References: <7ccf25d6d7859f1ce9983c81a2051cfdfb0e0a99.1728058550.git.daniel@makrotopia.org>
+ <9ed760ff87d5fc456f31e407ead548bbb754497d.1728058550.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v8,09/12] drm/msm/a6xx: Add traces for preemption
-To: Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Akhil P Oommen <quic_akhilpo@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20241003-preemption-a750-t-v8-9-5c6cb9f256e0@gmail.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20241003-preemption-a750-t-v8-9-5c6cb9f256e0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ed760ff87d5fc456f31e407ead548bbb754497d.1728058550.git.daniel@makrotopia.org>
 
-Op 03-10-2024 om 18:12 schreef Antonino Maniscalco:
-> Add trace points corresponding to preemption being triggered and being
-> completed for latency measurement purposes.
->
-> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Tested-by: Rob Clark <robdclark@gmail.com>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> ---
->   drivers/gpu/drm/msm/adreno/a6xx_preempt.c |  6 ++++++
->   drivers/gpu/drm/msm/msm_gpu_trace.h       | 28 ++++++++++++++++++++++++++++
->   2 files changed, 34 insertions(+)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> index 21e333cb6342d33425eb96f97bcc853e9b041b36..6803d5af60cc8fb0f2a52ee160ffdbf0e8ef0209 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> @@ -7,6 +7,7 @@
->   #include "a6xx_gpu.h"
->   #include "a6xx_gmu.xml.h"
->   #include "msm_mmu.h"
-> +#include "msm_gpu_trace.h"
->   
->   /*
->    * Try to transition the preemption state from old to new. Return
-> @@ -174,6 +175,8 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
->   
->   	set_preempt_state(a6xx_gpu, PREEMPT_NONE);
->   
-> +	trace_msm_gpu_preemption_irq(a6xx_gpu->cur_ring->id);
-> +
->   	/*
->   	 * Retrigger preemption to avoid a deadlock that might occur when preemption
->   	 * is skipped due to it being already in flight when requested.
-> @@ -294,6 +297,9 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
->   	 */
->   	ring->restore_wptr = false;
->   
-> +	trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id,
-> +		ring ? ring->id : -1);
-> +
-There is no need for the ternary operator. "ring" should be non-NULL, 
-otherwise the code would have already crashed.
-So the change can just be
-     trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id, ring->id);
--- 
-Kees
+On Fri, Oct 04, 2024 at 05:18:16PM +0100, Daniel Golle wrote:
+> Despite supporting Auto MDI-X, it looks like Aquantia only supports
+> swapping pair (1,2) with pair (3,6) like it used to be for MDI-X on
+> 100MBit/s networks.
+> 
+> When all 4 pairs are in use (for 1000MBit/s or faster) the link does not
+> come up with pair order is not configured correctly, either using
+> MDI_CFG pin or using the "PMA Receive Reserved Vendor Provisioning 1"
+> register.
+> 
+> Normally, the order of MDI pairs being either ABCD or DCBA is configured
+> by pulling the MDI_CFG pin.
+> 
+> However, some hardware designs require overriding the value configured
+> by that bootstrap pin. The PHY allows doing that by setting a bit in
+> "PMA Receive Reserved Vendor Provisioning 1" register which allows
+> ignoring the state of the MDI_CFG pin and another bit configuring
+> whether the order of MDI pairs should be normal (ABCD) or reverse
+> (DCBA). Pair polarity is not affected and remains identical in both
+> settings.
+> 
+> Introduce property "marvell,mdi-cfg-order" which allows forcing either
+> normal or reverse order of the MDI pairs from DT.
+> 
+> If the property isn't present, the behavior is unchanged and MDI pair
+> order configuration is untouched (ie. either the result of MDI_CFG pin
+> pull-up/pull-down, or pair order override already configured by the
+> bootloader before Linux is started).
+> 
+> Forcing normal pair order is required on the Adtran SDG-8733A Wi-Fi 7
+> residential gateway.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
