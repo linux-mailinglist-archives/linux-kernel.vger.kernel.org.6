@@ -1,208 +1,109 @@
-Return-Path: <linux-kernel+bounces-355360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E75995123
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:10:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD5E995142
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD691C25406
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABD47B29555
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CDF1DF987;
-	Tue,  8 Oct 2024 14:10:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9621E498;
-	Tue,  8 Oct 2024 14:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918D11DF978;
+	Tue,  8 Oct 2024 14:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jj80nJOD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E43A1DF72E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728396626; cv=none; b=bXy5hG5yo3UQ1mjXYvcI9TiS0u3gthxPnqg4TdRQb/V9fHRJCsm7WMg65Re1faxEmRTp7pEZwXcA5qSqIUXbldDGpL+NCnKjBhactXW31BmXRxPd9qJjTTXD42TnNWDPeOey6Wx75FmITINQZp72GUSINQaZ5hP8Xke9RFnFMgY=
+	t=1728396314; cv=none; b=Hgho6oCuOWSO1eLNGRQ+fTUNQ4u87DQSd2OZrWeWTJXIYIo6o7awKY8kUoBM5R1nN1YSehZcRe56Bt7ahMbXhOYE+udL8/5PadZmpwdLVEHQPtFmoCPfgH0S2oL6NcyZ2j6G8wkVJcLikvoCbdjyC6bREdS7k4tvNNuabAWGkSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728396626; c=relaxed/simple;
-	bh=X9lin3b7HbeitALc5ioC0RccoJqey9uuak2xuuhFkQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDstu9onNFpG5Et9N4HLE2dH+Gkmq3QJnQZxEaGha33F8V4vxzRT6nzZ9HY8+Jg6ZE89UbBxXl/HzHON621RAhZ5RE9KfZkgccOrISDstPn9m+9HJFKGs5ON8fiMuQys2EqhKdt/Lz5JKB4nbXeR6wj7tMnIH6by2CmxtWLCJQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78ED0DA7;
-	Tue,  8 Oct 2024 07:10:53 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA68E3F64C;
-	Tue,  8 Oct 2024 07:10:21 -0700 (PDT)
-Date: Tue, 8 Oct 2024 15:10:19 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-arm-kernel@lists.infread.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
-	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
-	justin.chen@broadcom.com, opendmb@gmail.com,
-	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] firmware: arm_scmi: Give SMC transport precedence over
- mailbox
-Message-ID: <ZwU9S2I8oT5sGku-@pluto>
-References: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
- <ZwPLgcGeUcFPvjcz@pluto>
- <a4f403e8-44eb-4fb4-8696-ca8ad7962a00@broadcom.com>
- <ZwUuSTYkWrZYIcBM@bogus>
+	s=arc-20240116; t=1728396314; c=relaxed/simple;
+	bh=F/zAtiWZQI7SQwrRf3j8mFudmNdtJgba/frtTc8eoX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bhNpPxUjuhCMb8b7Sh14zEuQYTVodLoBKpIOf3V2WVOXFrlSBrcc8AJV68nFQLwZSjzH928aKMw6DpoXBjZogrR0YCqE1HI0rwzkK/k9W0oNOcOWbtB0oFIYkx14qhHs50MYVDzyaPnMqlGMMGw/jC/riG5L47G57lNku6+Bqhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jj80nJOD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53994aadb66so5121095e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728396311; x=1729001111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F/zAtiWZQI7SQwrRf3j8mFudmNdtJgba/frtTc8eoX8=;
+        b=jj80nJODha1dlCx2y9/E0MowoKSZLlvro6pslO4Kh5Es0TNNs52060QpnlNLpgiTyp
+         voXNlOz/IoT1rd1ckri8zFVCTyUQZNVLHXRr8rtbOsQ1Jpregw1Nuq1OKVFSBKrP+HHM
+         wfgI919uvLrvQueqEG4257VkVrx2xJMnGqHaqvaUYPfIvtZRHER+VOO1KUCmoUUTztiJ
+         /u+ClM8CLjvAYc7eypNeU62EIRvLa2YMrPsQ3nhYH6RcOAikWA/cBrKQwzoKbS+sASe9
+         oHE3cTOA598Lg7WqR95oZOYxR+BbwZymf6o1RIUZSseZ5hSh31P8V+hawCofj0iixQye
+         soQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728396311; x=1729001111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F/zAtiWZQI7SQwrRf3j8mFudmNdtJgba/frtTc8eoX8=;
+        b=ckw2pQGbCcutDJBX4PPt3G5ExLwTd1HUiReCxqb34CnnzjdHUqlbidSyj4IvwIg1RN
+         zf7Ba1ZuOcj2y6nAKFaSLAYdBECBHQ0/TIN0pfw5u127zCYGvdX9laRmuRCgZGGktaid
+         GIHZjAp9ZZMq0QwOAhlorCaoav50VdhNfz41EKy4VcBrHTitc9hfqdJ1sXW/Wc/jFMqo
+         KKWjzA8lBDY81zzchGYHz9CPE4LkofAFjqnU4dbs4Al9z57N7QR9x/RKg18D10pV19bh
+         Z4w2v2sG9g1HOrVWB9oFqbwcZ/mreS79C/OO5bAa0yvbUN1wrBOmXqieVfO4gyQdjayv
+         KHxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKOoQ1OPxne5SbOdEdDIt0wup72L05IYiINiM9Mq8Nc27KM030yDuyxM3bL9Zp82mzCeO+cwOVyTt7oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ztrP+RL5IoaobXYypd//ViXKo8ohTbWuYIlfS7yrKMGP6K5Y
+	8wa7uoYaQM0vdlxRV2dPfNiWDTXbI54MxHC1/zFRk1PPSxK8Epcui0lIPWyMHjI/pOTomkIc1QP
+	1tQkU3ZD2skaX3pasuMvE6fCPb0oyuFLbHIDUJg==
+X-Google-Smtp-Source: AGHT+IH1k+VS7+QOkdRfKiZ/ppDlZVYCrXPrQ0PrBFHAOvGlq7s9Ltc5V63YkuZv1c4KqrPzzDwk1k5PEzavj/a9qU8=
+X-Received: by 2002:a05:6512:12d3:b0:535:69ee:9717 with SMTP id
+ 2adb3069b0e04-539ab84a7cfmr8460693e87.3.1728396310565; Tue, 08 Oct 2024
+ 07:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwUuSTYkWrZYIcBM@bogus>
+References: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
+In-Reply-To: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 8 Oct 2024 16:04:59 +0200
+Message-ID: <CAMRc=Md4BOsdv=w+ju00X_R1Z_RAXz2vidVMrb7riaE2HoS9kw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Add Aspeed G7 gpio support
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com, Peter.Yin@quantatw.com, 
+	Jay_Zhang@wiwynn.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 02:06:17PM +0100, Sudeep Holla wrote:
-> Hi Florian,
-> 
-> Thanks for the detailed explanation.
-> 
-> On Mon, Oct 07, 2024 at 10:07:46AM -0700, Florian Fainelli wrote:
-> > Hi Cristian,
-> >
-> > On October 7, 2024 4:52:33 AM PDT, Cristian Marussi
-> > <cristian.marussi@arm.com> wrote:
-> > > On Sat, Oct 05, 2024 at 09:33:17PM -0700, Florian Fainelli wrote:
-> > > > Broadcom STB platforms have for historical reasons included both
-> > > > "arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
-> > > > string.
-> > >
-> > > Hi Florian,
-> > >
-> > > did not know this..
-> >
-> > It stems from us starting with a mailbox driver that did the SMC call, and
-> > later transitioning to the "smc" transport proper. Our boot loader provides
-> > the Device Tree blob to the kernel and we maintain backward/forward
-> > compatibility as much as possible.
-> >
-> 
-> IIUC, you need to support old kernel with SMC mailbox driver and new SMC
-> transport within the SCMI. Is that right understanding ?
-> 
-> > >
-> > > >
-> > > > After the commit cited in the Fixes tag and with a kernel
-> > > > configuration that enables both the SCMI and the Mailbox transports, we
-> > > > would probe the mailbox transport, but fail to complete since we would
-> > > > not have a mailbox driver available.
-> > > >
-> > > Not sure to have understood this...
-> > >
-> > > ...you mean you DO have the SMC/Mailbox SCMI transport drivers compiled
-> > > into the Kconfig AND you have BOTH the SMC AND Mailbox compatibles in
-> > > DT, BUT your platform does NOT physically have a mbox/shmem transport
-> > > and as a consequence, when MBOX probes (at first), you see an error from
-> > > the core like:
-> > >
-> > >    "arm-scmi: unable to communicate with SCMI"
-> > >
-> > > since it gets no reply from the SCMI server (being not connnected via
-> > > mbox) and it bails out .... am I right ?
-> >
-> > In an unmodified kernel where both the "mailbox" and "smc" transports are
-> > enabled, we get the "mailbox" driver to probe first since it matched the
-> > "arm,scmi" part of the compatible string and it is linked first into the
-> > kernel. Down the road though we will fail the initialization with:
-> >
-> > [    1.135363] arm-scmi arm-scmi.1.auto: Using scmi_mailbox_transport
-> > [    1.141901] arm-scmi arm-scmi.1.auto: SCMI max-rx-timeout: 30ms
-> > [    1.148113] arm-scmi arm-scmi.1.auto: failed to setup channel for
-> > protocol:0x10
-> 
-> IIUC, the DTB has mailbox nodes that are available but fail only in the setup
-> stage ? Or is it marked unavailable and we are missing some checks either
-> in SCMI or mailbox ?
-> 
-> IOW, have you already explored that this -EINVAL is correct return value
-> here and can't be changed to -ENODEV ? I might be not following the failure
-> path correctly here, but I assume it is
-> 	scmi_chan_setup()
-> 	info->desc->ops->chan_setup()
-> 	mailbox_chan_setup()
-> 	mbox_request_channel()
-> 
-> > [    1.155828] arm-scmi arm-scmi.1.auto: error -EINVAL: failed to setup
-> > channels
-> > [    1.163379] arm-scmi arm-scmi.1.auto: probe with driver arm-scmi failed
-> > with error -22
-> >
-> > Because the platform device is now bound, and there is no mechanism to
-> > return -ENODEV, we won't try another transport driver that would attempt to
-> > match the other compatibility strings. That makes sense because in general
-> > you specify the Device Tree precisely, and you also have a tailored kernel
-> > configuration. Right now this is only an issue using arm's
-> > multi_v7_defconfig and arm64's defconfig both of which that we intend to
-> > keep on using for CI purposes.
-> >
-> >
-> > >
-> > > If this is the case, without this patch, after this error and the mbox probe
-> > > failing, the SMC transport, instead, DO probe successfully at the end, right ?
-> >
-> > With my patch we probe the "smc" transport first and foremost and we
-> > successfully initialize it, therefore we do not even try the "mailbox"
-> > transport at all, which is intended.
-> >
-> > >
-> > > IOW, what is the impact without this patch, an error and a delay in the
-> > > probe sequence till it gets to the SMC transport probe 9as second
-> > > attempt) or worse ? (trying to understand here...)
-> >
-> > There is no recovery without the patch, we are not giving up the arm_scmi
-> > platform device because there is no mechanism to return -ENODEV and allow
-> > any of the subsequent transport drivers enabled to attempt to take over the
-> > platform device and probe it again.
-> >
-> 
-> OK this sounds like you have already explored returning -ENODEV is not
-> an option ? It is fair enough, but just want to understand correctly.
-> I still think I am missing something.
+On Tue, Oct 8, 2024 at 10:14=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.c=
+om> wrote:
+>
+> The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+> GPIO pins and another with 216 GPIO pins. The main difference from the
+> previous generation is that the control logic has been updated to support
+> per-pin control, allowing each pin to have its own 32-bit register for
+> configuring value, direction, interrupt type, and more.
+> This patch serial also add low-level operations (llops) to abstract the
+> register access for GPIO registers and the coprocessor request/release in
+> gpio-aspeed.c making it easier to extend the driver to support different
+> hardware register layouts.
+>
 
-Having a quick look at dd.c it seems to me that the probe error from
-the first matched driver->probe is propagated back to the callchain
-(and the driver that fails the probe in any way is NOT bound at that
-point) till driver_probe_device() 
-
-THEN, on one side, in  __driver_attach() then the retval is ignored:
-
-dd.c::__driver_attach()
-
- /*                                                                                                                                                     
-  * Lock device and try to bind to it. We drop the error
-  * here and always return 0, because we need to keep trying
-  * to bind to devices and some drivers will return an error                                                                                            
-  * simply if it didn't support the device.
-  *
-  * driver_probe_device() will spit a warning if there
-  * is an error.
-
-
-...while, on the other side, looking at __device_attach_driver() it DOES
-report the error from driver_probe_device() BUT the __device_attach_driver()
-routine is called by bus_for_eachdrv() inside __device_attach() and DOES
-cause such loop (bus_for_each_drv() to bail out with an error...BUT, again,
-no more driver match/probe is attempted and I suppose that if you restart
-somehow such sequence you will endup again failing at the same point on the
-same first-match driver...
-
-So seems a sort of structural issue...also because indeed you have something
-that is somehow a malformed DT so the device_match succeeds for good reasons...
-
-I may have miss a lot more, though :D
+I picked up the first two patches for v6.12. The rest conflicts with
+my v6.13 branch so I'll send the fixes to Torvalds, wait for rc3 and
+then apply the rest.
 
 Thanks,
-Cristian
+Bart
 
