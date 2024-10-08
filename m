@@ -1,198 +1,91 @@
-Return-Path: <linux-kernel+bounces-355684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BDD9955AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:33:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D1F9955B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE190B256B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52ED28A4CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 17:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B8720ADC3;
-	Tue,  8 Oct 2024 17:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mmSRVWTe"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4481A20ADC7;
+	Tue,  8 Oct 2024 17:33:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6291413CA93
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 17:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52A1E0B84;
+	Tue,  8 Oct 2024 17:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728408775; cv=none; b=HJbflbEb3+mtCG5ZDxVxVFO4PGNVUw9S3TF61EIFRZXTJLs7s9ni2HOQvOxdVUnoRrZQ5SDGCWjnfS4Mnb9V3UMrOBIfQG/jp3EJOI1SOEecqQ2W9VbHGY6NdPYQerbhvNSPOCqZHH28fDpL0Lkx6P8/C6rgppUerStJsFWH14A=
+	t=1728408807; cv=none; b=LjbSpB337OqVu7xQT3nPg9g3xwvNg+pFT+I54mwHE1lHP8utgYWSqsagClV2Nf90c9VYiAWnq+5bprZauUZtFU1vR9TsT5aD+cQCSwMKlKZ1IwzcDjXwH7kgi1Cxxfigu3GQ4mgjNJj8mLlekLKYWjCXuIoTqSJLJfCY5ct3Qtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728408775; c=relaxed/simple;
-	bh=z7EQ2ig9cjE6D99U3+xtPYCE3cc+3J+C5Qs8yl9IAXc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C3ih0YrWAKEeSDlMqz4ngLumDSm4QyyloxNGtmhIoMdeD1FCqeY3Etjc2XX42yXx3hMcFeZq4qhFDO2v51CrN/Zeqm3XqydinOF3HRPin6NJOmmgNJVB4c1GszH1mrT8kyYbtWLSX1Ds4OcpL8Fyrsdo9BavkmoJgJAFxxaFACo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mmSRVWTe; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e258c0e02a9so8073060276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 10:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728408772; x=1729013572; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K9V3+KdjHbhSzCFcQ9VsqfbZ9dT/SRjHShMTAr1Mnns=;
-        b=mmSRVWTePN0ioJEksU5DfA/zdID/HbSRMJa8jW7Au/oUsBw8xOV0wHjHaPLXmPSNdo
-         TJzckne79mCuOXFuV+PBIvx6Dn8X49eehpZaiBCbsUImSJC0WXg1DS+ixkuLtOli4K1x
-         Uv97wyhHhDYmjTn7tp4eWzgPICGAzAFYe5eIwu4/pcb5+qDUi7A0cMV7TsD8nUuLqiKy
-         l+pGYOu3UOIYp9oT1xtiPiscKjAFwvi+p01uQ9srtOx+NeCWH8D/7844RIcpg0Hzv99R
-         IAgyw0aBvChFCnws+mKsynGd87dR4EKwNDXKRYUXnIJhI8zShKYdBvMhXtMsHrkBAA8D
-         AXGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728408772; x=1729013572;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K9V3+KdjHbhSzCFcQ9VsqfbZ9dT/SRjHShMTAr1Mnns=;
-        b=grURR5GpEVg1/KDt/fjhDg76CB19wbxreDUcOZyeL7HFUHGCf9pDOe0LcLb1rSeX1V
-         +sLvQrpRH7JLH+Tp8ypHUoWG8IgV6r9LARl5NzHMCMX+UkeKkg/nVWRBrSldSr0v9WLO
-         x8Qlx/Ar32gTnb9m4GrydHVW+JzITLNJVbhuWfRwmGCWScNAF38BJBRKvpJUON8PD6pS
-         Amqk/N2Zws5XVNz9k/tn9vkONjJr+ZO+8L3vMPCtkHftijkTFvodHB40uIPgrvbP49S6
-         zfDjZ3Hc/VRmM960paYvTj/L3PntTGQuJJS4jnkB4bE4nSQLqtlhYJiCFHnKnXZpfZuP
-         lCUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk/UwEnzDhjxwdhljeRLKB4jB1oXfztTnj9ZhfqAqTgxs33gXXQsSp8h5Vhs6Gw5ZNJTtun0OAnP70Xno=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/rEMCnfcJtF1Tk7Ryx0mmruKgBatbciUXB8nRPJy3dBNPy0D
-	mAhxMarElBE60Mu/5DH3QCeWwF7563J77rCQGkf6BgrLSv7/2b+CpOza5dM+2mlrMhK/s83tNFE
-	gP/Wyw7h1/wLFXg==
-X-Google-Smtp-Source: AGHT+IFbafOWdlfZ9N2QUOG3z6snGs4EAIlosLdm8iUthl9i/lxwZzLY1Ty4ETXaz8NvjfdITcEa/v6JPfUVS1o=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a25:dcc7:0:b0:e28:f19c:fd4 with SMTP id
- 3f1490d57ef6-e28f19c1259mr1592276.11.1728408772240; Tue, 08 Oct 2024 10:32:52
- -0700 (PDT)
-Date: Tue, 08 Oct 2024 17:32:33 +0000
+	s=arc-20240116; t=1728408807; c=relaxed/simple;
+	bh=V/O67xgHBvSlN/RwcF5jeWewjjQlkU+oj9wOlfQfWhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ikm9K1vjwl7K3Ma6CZnU07l8rwz0uLK7wa22qWQruqQXtqgnrE5zyaRwpKBcEzVzTfoeO98Y0s83MTaz78yxfSISeSno/8pltxrs934NsP2yLHijQgzh/jjSkw2feA5r0G3nsU6o5WuZ44UNUsaiJWKVih4QkE2YjQN9r9HiOWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95454C4CEC7;
+	Tue,  8 Oct 2024 17:33:22 +0000 (UTC)
+Date: Tue, 8 Oct 2024 13:33:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH] ftrace: Make ftrace_regs abstract from direct use
+Message-ID: <20241008133325.47b7b457@gandalf.local.home>
+In-Reply-To: <20241008145852.27223-E-hca@linux.ibm.com>
+References: <20241007204743.41314f1d@gandalf.local.home>
+	<20241007205458.2bbdf736@gandalf.local.home>
+	<20241008145852.27223-E-hca@linux.ibm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIALBsBWcC/4WNQQ6CMBBFr0Jm7ZhORVBW3sOwoGUKTZQhbSUaw
- t2tXMDl+/n//RUiB88RmmKFwIuPXqYM+lCAHbtpYPR9ZtBKl6TUBcMrJosyp1xEI5JiCt2Mlar
- 5bNyJqLSQx3Ng59+7+N5mHn1MEj77z0K/9K9yISS8slGVrqgvXX0bRIYHH608od227QuYMio0v QAAAA==
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3950; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=z7EQ2ig9cjE6D99U3+xtPYCE3cc+3J+C5Qs8yl9IAXc=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnBWy7jrn2VYOgx95pcs0nykyBeqFL0iliRor7J
- CboJ0lOYAKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZwVsuwAKCRAEWL7uWMY5
- Rg8ED/9IPvLoJkBpTeX1lQPOD9mPWHoqPar9tLDvdYbO6zNfpcL815e4RfblxSHw9KEmb53yAVF
- zTGz/NQTjq0DizAFP6NFqFzOpwXrRLCnmxDykeRsGn2Qoreby0/JQMkTRzEdVkj3NCa5UkEr4nR
- fLlqnqSKfSRSehHwEsvD1tF/O0ZcuKtTG+i0TKv0Soi7kPHk5QZLPzQsGfUAEsMcFqj8R1/mopC
- GJQxb/BhbjJ55lLppSMUg4qXyj9ZcB6kk+aKhDb2bc8nGv3BTyvoCIcjE+/zTIm8yVD5l3Ra69/
- mT04VbHmh4a/1CUUFmjykGVCeKydZ21rkWReoRKYEMmKj5NQR0f77NaRJ096JW894sYAqcNOz3j
- U9HAPb6YSzIgvYlGuVVFhHA5C+hJJvRBHmLZf8zgCYZUZcAN4Xxqsjdq+opYqFi9zFbCvdaLYmw
- sLhcA5bEIrtYY+rKBH0vkBa0SE41azadeqC2mCSk53ahIXOpL1LzLziVvn4aoepUG0q/oS3uake
- OgSmMzNfPvzhmDZT7yxUUNxOykb9O9tLEpLdB3W1UFWdDMiWxxruLWWy6YbN+JhbtofHbPRqwhE
- pgUovIZIFkfB2J2omtWQ3pOurwA5PbooL9pfozenCajyy/8pC0yTLZv8OxwvWT5eER3sj/Cqu+Y ck3hQNAKND7Hiyg==
-X-Mailer: b4 0.13.0
-Message-ID: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
-Subject: [PATCH v2] Kbuild: fix issues with rustc-option
-From: Alice Ryhl <aliceryhl@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix a few different compiler errors that cause rustc-option to give
-wrong results.
+On Tue, 8 Oct 2024 16:58:52 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-If KBUILD_RUSTFLAGS or the flags being tested contain any -Z flags, then
-the error below is generated. The RUSTC_BOOTSTRAP environment variable
-is added to fix this error.
+> On Mon, Oct 07, 2024 at 08:54:58PM -0400, Steven Rostedt wrote:
+> > On Mon, 7 Oct 2024 20:47:43 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > #define arch_ftrace_get_regs(fregs)	({ &arch_ftrace_regs(fregs)->regs; })
+> > 
+> > I may send a v2 (tomorrow).  
+> 
+> Could you also write against which tree this patch is?
+> It doesn't apply on top of Linus' master branch.
 
-	error: the option `Z` is only accepted on the nightly compiler
-	help: consider switching to a nightly toolchain: `rustup default nightly`
-	note: selecting a toolchain with `+toolchain` arguments require a rustup proxy;
-	      see <https://rust-lang.github.io/rustup/concepts/index.html>
-	note: for more information about Rust's stability policy, see
-	      <https://doc.rust-lang.org/book/appendix-07-nightly-rust.html#unstable-features>
-	error: 1 nightly option were parsed
+Ah, sorry, I should have specified. It applies to my ftrace/for-next branch
+(which is also part of linux-next). I just checked out linux-next, and it
+still applies but with some shifts, so updates from other trees do affect
+it slightly.
 
-The probe may also fail incorrectly with the below error message. To fix
-it, the /dev/null argument is replaced with a new rust/probe.rs file
-that doesn't need even the core part of the standard library.
+If you want it to apply cleanly, use this tree:
 
-error[E0463]: can't find crate for `std`
-  |
-  = note: the `aarch64-unknown-none` target may not be installed
-  = help: consider downloading the target with `rustup target add aarch64-unknown-none`
-  = help: consider building the standard library from source with `cargo build -Zbuild-std`
+  https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/  ftrace/for-next
 
-The -o and --out-dir parameters are altered to fix this warning:
-
-	warning: ignoring --out-dir flag due to -o flag
-
-I verified that the Kconfig version of rustc-option doesn't have the
-same issues.
-
-Fixes: c42297438aee ("kbuild: rust: Define probing macros for rustc")
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Changes in v2:
-- Add `export` to RUSTC_BOOTSTRAP.
-- Fix error about core being missing.
-- Fix warning about -o flag.
-- Link to v1: https://lore.kernel.org/r/20241008-rustc-option-bootstrap-v1-1-9eb06261d4f7@google.com
----
- rust/probe.rs             | 7 +++++++
- scripts/Makefile.compiler | 5 +++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/rust/probe.rs b/rust/probe.rs
-new file mode 100644
-index 000000000000..bf024e394408
---- /dev/null
-+++ b/rust/probe.rs
-@@ -0,0 +1,7 @@
-+//! Nearly empty file passed to rustc-option by Make.
-+//!
-+//! The no_core attribute is needed because rustc-option otherwise fails due to
-+//! not being able to find the core part of the standard library.
-+
-+#![feature(no_core)]
-+#![no_core]
-diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-index 057305eae85c..08d5b7177ea8 100644
---- a/scripts/Makefile.compiler
-+++ b/scripts/Makefile.compiler
-@@ -21,6 +21,7 @@ TMPOUT = $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/).tmp_$$$$
- # automatically cleaned up.
- try-run = $(shell set -e;		\
- 	TMP=$(TMPOUT)/tmp;		\
-+	export RUSTC_BOOTSTRAP=1;	\
- 	trap "rm -rf $(TMPOUT)" EXIT;	\
- 	mkdir -p $(TMPOUT);		\
- 	if ($(1)) >/dev/null 2>&1;	\
-@@ -76,7 +77,7 @@ ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
- # __rustc-option
- # Usage: MY_RUSTFLAGS += $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-coverage)
- __rustc-option = $(call try-run,\
--	$(1) $(2) $(3) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",$(3),$(4))
-+	$(1) $(2) $(3) --crate-type=rlib $(srctree)/rust/probe.rs --out-dir=$$TMP,$(3),$(4))
- 
- # rustc-option
- # Usage: rustflags-y += $(call rustc-option,-Cinstrument-coverage,-Zinstrument-coverage)
-@@ -86,4 +87,4 @@ rustc-option = $(call __rustc-option, $(RUSTC),\
- # rustc-option-yn
- # Usage: flag := $(call rustc-option-yn,-Cinstrument-coverage)
- rustc-option-yn = $(call try-run,\
--	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",y,n)
-+	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib $(srctree)/rust/probe.rs --out-dir=$$TMP,y,n)
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241008-rustc-option-bootstrap-607e5bf3114c
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
-
+-- Steve
 
