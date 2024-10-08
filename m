@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-356026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64FE995B1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9B1995B1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F21228A8AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815E01C21E7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 22:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC13B21A705;
-	Tue,  8 Oct 2024 22:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8082185B0;
+	Tue,  8 Oct 2024 22:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ERUsqzFi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y84tVgX+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2LBx9qQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979A8219CBA;
-	Tue,  8 Oct 2024 22:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CA52185A7;
+	Tue,  8 Oct 2024 22:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728427543; cv=none; b=tIG5lszUMqajHUCC0C0KvoaDox+d+YlWSZrYz7oDVFmJMFwKdlraSieX0lRiyXeRJbzTiqlBYbevyv1zA7VUL33Ec8rd5eHJ0JtER28IgBeKrCi3chaZwvXIOO8jLXXfWOvjfWnyqoVTDBPzJPDA/2DHFuJawmJByKF4beOhVAY=
+	t=1728427677; cv=none; b=eaqo3Qk4byhKcgss/Pj/rU1WbRLQPeYkw/7RyioLtmq6CxL+FUYVqd5LFQi49SInkuje/0gBPptzARQf6I5SI1LZW0GV+ja0rt1zEH6e5oJBOrdTGmUCV430U2q9F5keSUtZJUM4nJa5+f0FWlv7sma7S9zE3fbEXP/j7uA1/8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728427543; c=relaxed/simple;
-	bh=TQQX8Csg4kP6lybog7K7pewGEW6T8xqdqpF8ZqELGEQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=FBXIbe5QsAJHk5lqFcNm6ejfvWd8PgeIxHcNTErcBV8E2ya3+hAwnCEeI9sS7qw0et1qiTr5Hj+iJkhDQWdDysb/5tnNBgnar/Rz09PSwa/3dKQ4oN7OtEgBqzxq3ViJsg+6QjuT2sUlkw9R9h6ppHEaFDu3dJ10i1eDIw8DpHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ERUsqzFi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y84tVgX+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 22:45:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728427539;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Mt4yy3RuYZhnpIR2LUoOy19zX2CRq0snwn2ZZpXFDgw=;
-	b=ERUsqzFif0k0h3gMzdkuqsssTz5mz/qIE3B4aL95zrfrzx8CbiCxLpD+AvxWyWhiujccuj
-	nfI4x1uGw7FeL8yNBqQ/IpFfPz+WX0xYlLTeBD95yxJlHqODwEVCvR77Di6/VXL83MCmd3
-	uVsaCGhBY9XlG2ZqpuP+BaTowQTfjMBA7mwU8ew7RQgK7ADr9AO8Opvj9HfUYTdgj/iX95
-	SoDs3VXczymjPllkH/uLD78Jut+V9Z5InEKh8J/Q6GOXEZoovrXb61DPdL7eh49RC7MaF4
-	CpDyHNPw3BXw2y/WSre8DDJlIS4b7cf6Sjx3++g4DTav8VAYXAL58XNymtJb6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728427539;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Mt4yy3RuYZhnpIR2LUoOy19zX2CRq0snwn2ZZpXFDgw=;
-	b=y84tVgX+ZZZhG5P3eyYwUJPy7jnWoQCmmHA4UQ5tIztXEijcLAgBikPWeCyMMKa3vKN+dT
-	I3aMVAl3A5xVaDDw==
-From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/entry_32: Do not clobber user EFLAGS.ZF
-Cc: Jari Ruusu <jariruusu@protonmail.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1728427677; c=relaxed/simple;
+	bh=+BXdZ3zQPkkzxjR3ggrkQdPNF82eoHjHNOvZ+K+Qy7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DArqGrWtWSB3mZAVBWxOhn3Oy0OrRc9CHzrA7Rz/jUw5ijbFLS+lV4qARw8l/nXe3lYT/xps5V3BtqtkeZZ37dxMXinevAtTtAmgz5sjtBcyXUIF+ZINvQxrfjmoYDfUZfS7Rs73EAfHBNtxcJ+Ix2eB6O9xQDP2Rh0ISzFGW5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2LBx9qQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2A57C4CEC7;
+	Tue,  8 Oct 2024 22:47:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728427677;
+	bh=+BXdZ3zQPkkzxjR3ggrkQdPNF82eoHjHNOvZ+K+Qy7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b2LBx9qQlzGk5HT0/EaId6Nl17KJ8wByd/CNG+XpZmkQaMFJwiH5CboYsPOvaV6q6
+	 WmpblW3zjSlG4/f0ih2u9oO60edERC2Fxrk1GMO6kFAYR3wLr0kc1zQ0NJCAPmA/ts
+	 L0u7BtT0cFthfolfeUfpeoyc8Hq3wy2w83dpoP3scpUwPxwVxMHuZiD+HOpzSaLG2b
+	 xIFbzf1q5zPrawxj4zfgZWyRC9lBBTbsnoezGmnoVDcxRebvESrpey4XNv259KKWn3
+	 YSkH6nL56Pkh1Kz7rV1CPvNTAAPMJrufqXJTS6J/zPeu/tFMlCTuSJWnhgFQOg8HQe
+	 7+RFI8Swbu7+w==
+Date: Tue, 8 Oct 2024 15:47:55 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/8] CSV/JSON metric thresholds, fix printf modifiers
+Message-ID: <ZwW2m5D2cnIabE_z@google.com>
+References: <20241004234120.1495209-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172842753839.1442.13022117843861983618.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241004234120.1495209-1-irogers@google.com>
 
-The following commit has been merged into the x86/urgent branch of tip:
+Hi Ian,
 
-Commit-ID:     2e2e5143d4868163d6756c8c6a4d28cbfa5245e5
-Gitweb:        https://git.kernel.org/tip/2e2e5143d4868163d6756c8c6a4d28cbfa5245e5
-Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Wed, 25 Sep 2024 15:25:38 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 08 Oct 2024 15:16:28 -07:00
+On Fri, Oct 04, 2024 at 04:41:12PM -0700, Ian Rogers wrote:
+> Metric thresholds are being computed for CSV and JSON output but not
+> displayed. Rename the color that encodes the threshold as enum values
+> and use to generate string constants in a CSV column or json
+> dictionary value.
 
-x86/entry_32: Do not clobber user EFLAGS.ZF
+IIUC it'd show "good" or "bad" when the metric defines a threshold and
+show "good", "less good", "nearly bad" or "bad" for the legacy shadow
+stats?  Anyway it's nice to show if the value is good or not.
 
-Opportunistic SYSEXIT executes VERW to clear CPU buffers after user EFLAGS
-are restored. This can clobber user EFLAGS.ZF.
+> 
+> Add printf attribute to functions in color.h that could support
+> it. Fix bad printf format strings that this detected.
+> 
+> Ian Rogers (8):
+>   perf color: Add printf format checking and resolve issues
+>   perf stat: Fix/add parameter names for print_metric
+>   perf stat: Display "none" for NaN with metric only json
+>   perf stat: Drop metric-unit if unit is NULL
+>   perf stat: Change color to threshold in print_metric
+>   perf stat: Display metric threshold value in CSV output
+>   perf stat: Add metric-threshold to json output
+>   perf stat: Disable metric thresholds for CSV/JSON metric-only mode
 
-Move CLEAR_CPU_BUFFERS before the user EFLAGS are restored. This ensures
-that the user EFLAGS.ZF is not clobbered.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Closes: https://lore.kernel.org/lkml/yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com/
-Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Reported-by: Jari Ruusu <jariruusu@protonmail.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc:stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240925-fix-dosemu-vm86-v7-1-1de0daca2d42%40linux.intel.com
----
- arch/x86/entry/entry_32.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks,
+Namhyung
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index d3a814e..9ad6cd8 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -871,6 +871,8 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 
- 	/* Now ready to switch the cr3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	/* Clobbers ZF */
-+	CLEAR_CPU_BUFFERS
- 
- 	/*
- 	 * Restore all flags except IF. (We restore IF separately because
-@@ -881,7 +883,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
--	CLEAR_CPU_BUFFERS
- 
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
+> 
+>  tools/perf/Documentation/perf-stat.txt        |   1 +
+>  tools/perf/arch/x86/util/iostat.c             |   2 +-
+>  tools/perf/builtin-sched.c                    |   2 +-
+>  tools/perf/builtin-script.c                   |   6 +-
+>  tools/perf/builtin-stat.c                     |   8 ++
+>  tools/perf/builtin-trace.c                    |   2 +-
+>  .../tests/shell/lib/perf_json_output_lint.py  |   5 +-
+>  tools/perf/tests/shell/stat+csv_output.sh     |  24 ++--
+>  tools/perf/util/arm-spe.c                     |   2 +-
+>  tools/perf/util/color.h                       |   9 +-
+>  tools/perf/util/intel-bts.c                   |   2 +-
+>  tools/perf/util/intel-pt.c                    |   2 +-
+>  tools/perf/util/s390-cpumsf.c                 |   2 +-
+>  tools/perf/util/s390-sample-raw.c             |   6 +-
+>  tools/perf/util/stat-display.c                |  85 +++++++++---
+>  tools/perf/util/stat-shadow.c                 | 128 ++++++++++--------
+>  tools/perf/util/stat.h                        |  16 ++-
+>  17 files changed, 191 insertions(+), 111 deletions(-)
+> 
+> -- 
+> 2.47.0.rc0.187.ge670bccf7e-goog
+> 
 
