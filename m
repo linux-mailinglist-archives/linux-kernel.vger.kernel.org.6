@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-355398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B899951AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7459951B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 16:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D555286793
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94872287639
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8811DFE24;
-	Tue,  8 Oct 2024 14:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FDD1E04AA;
+	Tue,  8 Oct 2024 14:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmR2jjcb"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGkV9mJe"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FD01DFDBD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 14:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62F1DF997;
+	Tue,  8 Oct 2024 14:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728397597; cv=none; b=Ds33fkRXeZDrWqRmlg3WajrGQAMNGaq9JG01kLNgu5itwiIlb8Zr24vaNUAcggY974zNOhS/PEEczA1sXNIfRc/MVlUg/q7ZS5JweIN9U0/8UzEBPyIkZlKtTxkmq4u3P4s3o6aRd997wixn9u6tjtpvIMuaBV/boeHnHsW1ynM=
+	t=1728397611; cv=none; b=kgZrFgyB/eW80yWxTBPMIXbV05pLEJmzNOobNNXYoCxvsP5Q4fpbPA/qh1PRtueXTJX1x+FKfNGB5xdHGSgG4nwNqAcBT4VwtxwW2pd1ksITz3819xDzljYmM56Jcz4qH+0wvplxPVP6o5+HBIEO3tfL4duRONwrQ+crn9tTl88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728397597; c=relaxed/simple;
-	bh=TmUBpUepqVlnT0qr1EwgPa94/qNFoMONwgGxzm7MGQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYVqtUxiQtPoazf0dnx6y2klUQCBEfJRE7VPg8o8sIA7nPVSLePZmOVZvtWCVH0Y+Ti6C44zP719gjAHRRNQqqUXn+1ZexzWsui0kVayrPRm9s+NTDZKZyypODosAwsRhMY09wlsBlpg1vbdE3g+dIRskT9xSiEX1NJ1HPu0cWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QmR2jjcb; arc=none smtp.client-ip=209.85.216.42
+	s=arc-20240116; t=1728397611; c=relaxed/simple;
+	bh=5ou9s79hZP7IJi0atBe2w+sGV08MvzEwGEPv46Ev4SI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=gjX4nOV4vijc+kfV6MNE3yJmt/JgQcSCequDUujSBoCOEry1Nr5ITruQIW0GKnFGvNiZwJ48ZEaOfd0oA6R8dpgIYwrf/BF7P+xoXjW9cPWn774T0HDQAGl8UgjsLz/fg6kTgJSvwyToaIbbf0PGj/QyJmVQ51zzeDOjNVL6qt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGkV9mJe; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e28b75dbd6so476859a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 07:26:35 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbc565ec74so3539386d6.2;
+        Tue, 08 Oct 2024 07:26:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728397595; x=1729002395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sw6CxlKnAgsfYfl3XBxMutIKXdxiAngOK+rc8wr9wbw=;
-        b=QmR2jjcbLpS7bkwnuWwjp200dlO7xnXi5wrUzYJw8BFpaDmwOYQ7K1a+sLb7+p2pHT
-         XAT9d53bhgg6dxL1oc99mbb3Zgo2jc0BYS0BBg7fAZ19aC9PDBU5uC+c70sjy2BGsqEj
-         QlArVCVhWSXLsNxQ6gUga+R6odmzxDSro/U3NaCPDwqqzAY6sdMi32e813oaXKb1Zi+C
-         KClmmlGxXCsCyVBY7nMoYpwr3WSqv3sBF8/diGb88IAe5gCZ8UgQK+rwEis7vOrfnKLN
-         GcdX7qXfqxe42U0EaUsharoNCN9wjN6kPlo9+KqKogyPkqEPCOVcRQlbw/YWT3O3fl1m
-         k7+Q==
+        d=gmail.com; s=20230601; t=1728397609; x=1729002409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uxRQHc+uPQaV16IH3xwpSF/k0OvqVA7/Q2MK0pWFB0=;
+        b=fGkV9mJe++P67WGU3YuBanHFL4keij/yVyBudh7+o+oZrJS4LRV9y5ICD6XjYfnkA5
+         1TfhEmXXr1vD46M1xhQMEewoA4pxhUOCIhUAHw1XG6UAm9WwSOKRnYgxkI6vaQAcYBax
+         X2qsDnKkJ7zVyn3Pz5rudRkOI9oyOl5Qio5QZKdT3XkLaV3sbYksvRWqf2ciatQLjjYj
+         uisGc/cvswUg247Udl81qDLqAOxOCnkihyi9RKZ/GNFf5hfFnz9J0m7fVjlcyPFjhDk8
+         GHBFvpZbZVe4uAfehMh1EFUzccZf7i+grzCAsegr6yMZ5FyDyVklQNlatzWhbq2F4GRv
+         q9xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728397595; x=1729002395;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sw6CxlKnAgsfYfl3XBxMutIKXdxiAngOK+rc8wr9wbw=;
-        b=QWlT30jmf4o8K2yqgFcozAzofVZFCvlxlypXcV66ygOYW4z4ILUbgCwX+iK0Rsr4bg
-         0zsDKDy1DYp+WiHTsrhUyosRGrNLVrKOksb4hEsHo/Avq9h8ku4XQAdxqS7nZb6NhoHr
-         7EraMg71Zrl2fm4A1sHo4/a9nHwaAbYgYhnseb6H80dXcqUDADii3A9QSAKVdKO47tbC
-         WQ/xC+AhhKbwkVIMXxMixzUHhiZBDMtoSZqCfKodcGtJOqtEccyqnjZpQFYVvGBPIK8n
-         45/vJn+sllYBqUrMHZESUsBWmQDb4LGqgrNykdJbiLCyfpf0824r+g73Cq/Lbc7642wr
-         4RTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXut6IeemJ1gPuHslr49rIbl8sukUd0rW6b8upMZeuwIVlKpR9j5VYgheya4E3BTr8Cu2Ozpf13Dn4l0r0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtHejknX5WC+aEvE6OLTTGrLq2hQvIBHrfp+waPr6A3l4zM4JD
-	M8XqXp8/HObJGYovroO7VGAQ3p5EQ3m/IMpnuIHkcj7wFTazDDSJ
-X-Google-Smtp-Source: AGHT+IGqXokPPs2Icz7ZcX1duypmdWZe/qqNphwyXaTrf5WJLHGd0tx0q9aJG/3O3M1pPlrWFp7ckg==
-X-Received: by 2002:a17:90a:d991:b0:2e2:8bce:3d02 with SMTP id 98e67ed59e1d1-2e28bce3e7fmr2151126a91.30.1728397595170;
-        Tue, 08 Oct 2024 07:26:35 -0700 (PDT)
-Received: from fedora.. ([106.206.105.174])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2848d28f4sm1720997a91.24.2024.10.08.07.26.31
+        d=1e100.net; s=20230601; t=1728397609; x=1729002409;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+uxRQHc+uPQaV16IH3xwpSF/k0OvqVA7/Q2MK0pWFB0=;
+        b=QbYZRy+5mlCBk+g8oD6/epcV0AzRZieflNp6z2LgHYc/0g7bN9xhpE6iLBv5vfOIjy
+         mgupqWZeQl3E4bXOR7sf973L9ejGIlqH6q2OsU6Siezdgw/yfmcT6ZrHZxbDDi8aAw50
+         fEYPXW/pAkzEo4bbsiGE3O9jznlI4gvXm4gtjnAJHn0RYUKdrpSL4IEq9ZmfNQkVWJlH
+         eOL6+BOH5ztFpyE2IOURCa6CxQa3BXMglASHpVHvmMMQAUZK1T+515HmUh2J8Hg0ZBhP
+         JoozEot2mB4hUAjxPzFeib+hcbyxPiQduxOVGjODf8bUYc5jHaqQMkk/5mKiSZqfs2p/
+         iTSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOtqDmsSc8u4UCMwwa9FWlRddl5Q7C2Ie78LMoZR4bV31OEVbO/ygyFx3XaJbSCUsuik4lgg+grJaG9YTKX4+k@vger.kernel.org, AJvYcCXsb388X/WitTeC2cVcZQr5wA5lArFJEGSVjpI89dc39ty4N6yFn3W36kHvbpk8XnEZ3uHJIDCHYpWpt80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/lEhax0BJddRM12QwP2beepSLMW4h8rXqkCZRAPNLZa4mvxkJ
+	OcGf6EJImxBuPaa8Ins8ipJBhzi6M8bvgRYwa7oi3Oyv8GlJVf1l
+X-Google-Smtp-Source: AGHT+IE4jKK4xIe2uPWyxTBGz2FMwZiAjK08LFfGYKVQi7oYYTllFNlIG9gucViV8dF0Wew1mIKE3g==
+X-Received: by 2002:a05:6214:3c98:b0:6cb:3c08:30a0 with SMTP id 6a1803df08f44-6cb9a49d136mr282176306d6.49.1728397608977;
+        Tue, 08 Oct 2024 07:26:48 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46e3a8bsm36099356d6.58.2024.10.08.07.26.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 07:26:33 -0700 (PDT)
-From: Devaansh-Kumar <devaanshk840@gmail.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: Devaansh-Kumar <devaanshk840@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: Documentation: Update instructions for running example schedulers
-Date: Tue,  8 Oct 2024 19:56:20 +0530
-Message-ID: <20241008142622.3601647-1-devaanshk840@gmail.com>
-X-Mailer: git-send-email 2.46.2
+        Tue, 08 Oct 2024 07:26:48 -0700 (PDT)
+Date: Tue, 08 Oct 2024 10:26:47 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Gur Stavi <gur.stavi@huawei.com>, 
+ Gur Stavi <gur.stavi@huawei.com>
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ linux-kselftest@vger.kernel.org
+Message-ID: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch>
+In-Reply-To: <05852e3043d2b0a7a5ca51d456e82966dcb72f03.1728382839.git.gur.stavi@huawei.com>
+References: <cover.1728382839.git.gur.stavi@huawei.com>
+ <05852e3043d2b0a7a5ca51d456e82966dcb72f03.1728382839.git.gur.stavi@huawei.com>
+Subject: Re: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket
+ is not RUNNING
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Since the artifact paths for tools changed, we need to update the documentation to reflect that path.
+Gur Stavi wrote:
+> PACKET socket can retain its fanout membership through link down and up
+> and leave a fanout while closed regardless of link state.
+> However, socket was forbidden from joining a fanout while it was not
+> RUNNING.
+> 
+> This patch allows PACKET socket to join fanout while not RUNNING.
+> 
+> Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
+> ---
+>  net/packet/af_packet.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index f8942062f776..fb2cca73d953 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock *sk, struct fanout_args *args)
+>  	err = -EINVAL;
+>  
+>  	spin_lock(&po->bind_lock);
+> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> -	    match->type == type &&
+> +	if (match->type == type &&
+>  	    match->prot_hook.type == po->prot_hook.type &&
+>  	    match->prot_hook.dev == po->prot_hook.dev) {
 
-Signed-off-by: Devaansh-Kumar <devaanshk840@gmail.com>
----
- Documentation/scheduler/sched-ext.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Remaining unaddressed issue is that the socket can now be added
+before being bound. See comment in v1.
 
-diff --git a/Documentation/scheduler/sched-ext.rst b/Documentation/scheduler/sched-ext.rst
-index 6c0d70e2e27d..7b59bbd2e564 100644
---- a/Documentation/scheduler/sched-ext.rst
-+++ b/Documentation/scheduler/sched-ext.rst
-@@ -66,7 +66,7 @@ BPF scheduler and reverts all tasks back to CFS.
- .. code-block:: none
- 
-     # make -j16 -C tools/sched_ext
--    # tools/sched_ext/scx_simple
-+    # tools/sched_ext/build/bin/scx_simple
-     local=0 global=3
-     local=5 global=24
-     local=9 global=44
--- 
-2.46.2
+>  		err = -ENOSPC;
+>  		if (refcount_read(&match->sk_ref) < match->max_num_members) {
+> -			__dev_remove_pack(&po->prot_hook);
+> -
+>  			/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
+>  			WRITE_ONCE(po->fanout, match);
+>  
+>  			po->rollover = rollover;
+>  			rollover = NULL;
+>  			refcount_set(&match->sk_ref, refcount_read(&match->sk_ref) + 1);
+> -			__fanout_link(sk, po);
+> +			if (packet_sock_flag(po, PACKET_SOCK_RUNNING)) {
+> +				__dev_remove_pack(&po->prot_hook);
+> +				__fanout_link(sk, po);
+> +			}
+>  			err = 0;
+>  		}
+>  	}
+> -- 
+> 2.45.2
+> 
+
 
 
