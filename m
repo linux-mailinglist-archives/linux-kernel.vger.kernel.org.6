@@ -1,161 +1,239 @@
-Return-Path: <linux-kernel+bounces-355317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D391399509D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CE89950A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37561C23F1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13191F21060
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3E51DF740;
-	Tue,  8 Oct 2024 13:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D31DF96E;
+	Tue,  8 Oct 2024 13:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b81IJVsg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MrXuKXHh"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7B31DEFCE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78AD1DF722
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395370; cv=none; b=RxJfM9aGZLIAa/ZxE4hAHCoi5d+JppayBSABZDJCapUoj8JdyuE36XvO1+3p8/mjgLTCb0Ow7ZKr1FN0RaODAd0Gl8MhdhEjVC+ugktQDAmJfypcrNDc3PC+crb3WNoEsILrIwD6kV+pdu0vh7oa8rhokiSdXFvCkvdFmV8iQ9g=
+	t=1728395413; cv=none; b=l3wNRNJDzh/zTv2Bsyp17zU93nC9BAppOOJlJuqWDifk7vVKrAZlBqqcno/yZaysps+Wr2dq8iBGrXrsekzJOMbntpElohyT207Tzpq3p7fRH7qqBWX0nxLlC6gQRNZ2ptpBJYiy/ZvTLU00n4IQ6F/jNqhNCb5kbkib1hU3p+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395370; c=relaxed/simple;
-	bh=C7myXz1PzgO5KntaMzSJdRvlacDd6/XrNcUeuxTsbuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RNYGj04azPPIOiM6EzwOesm2EVq5w3juAabnze/jgGp4H7Kjsuvo0sZ/4SsaIyPImbNi6LKjgZjaVX/Sso1voi1N2HpCmuBldosP6gVjMKjFBYYwW3eMVDQki8lVQFAtpWYNuIILsNI3g0wH1hrSEhsHVf4woclRJgy6yWokK0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b81IJVsg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728395366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2rDSgv3l5eJFW/isc5zWXHEc/hfh9FE/9/H5LJ8JrEs=;
-	b=b81IJVsgFYbNVcV1T4ayeseVmoJYBJwR+4RZQ2Nn42uHgo76kZGlT5r0zvBJP7pL70BNbG
-	HtQtYft4GYNKXank7lWx0HCUuNjvvcGtL5Ejmo15zE4ASJFwykIU7WwLx1nrj4Ttw1bbVg
-	hbEAB0bR4XqPwvaEq99Z7hmix1PxnRI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-365-Bkf9L6FqOoWpTD8ktDtm0g-1; Tue, 08 Oct 2024 09:49:25 -0400
-X-MC-Unique: Bkf9L6FqOoWpTD8ktDtm0g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42f8ceb8783so25308885e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:49:25 -0700 (PDT)
+	s=arc-20240116; t=1728395413; c=relaxed/simple;
+	bh=VlikFOOadkZ0FXGNOiqEJI3JCeW2l+bF3hf/oo4lAtQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lDsZFYj73l6KnGBvRnpq88uAimQuHTqyC6xRqzyNcz8ed9C7uhDSMvLIeFhjG2CPEYe+pLtVKVI5SqlfQgR2tg9srouHuLDKCwQr60VRFKfFcEXvg5+36DbtqVPftHMem7OMehaTvNdQJLUzuH0qH1MBTisLNGrPJQ8I1t19TQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MrXuKXHh; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398bc32bd9so627273e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 06:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728395410; x=1729000210; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WpfdK0DkSLSW2fAjRxdwV8F/aWadlnjGjQ8QBOWzH/4=;
+        b=MrXuKXHh3mN/uRnW4sDK9jQT8B4hXgwY1k3dKUFxViPw4wFXmsBaIA7zLxp5UsN+nd
+         wZzZhFlMglTx9/ge2Lj4bs7suP+eoZYXA7Eif6e0Rt7Yz5uqePfOJjrHPqjhBCAL33Lt
+         QWvVU1ftBg3dMyWCiMCyGJLQMJc10KUid2EuJbELJeqEEHAve+qJVKqozwTQzlhaLCQR
+         jIkAYfHpkwvHYrmHILKVCM2QKoThKQhQ9CidZ2HxOXluPN4nS5hTIn3G+bcl+Yv6klA+
+         Je312ZEojkify6kwzS0Zu1aFVCRKkjrvZioMY7U4B61ojE7YIikPcNb00qQWVfurfqpy
+         eSUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728395364; x=1729000164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2rDSgv3l5eJFW/isc5zWXHEc/hfh9FE/9/H5LJ8JrEs=;
-        b=vD6l+/QPsfmAkoewwROFSVEKWCqa/1j6k2UTJj0G/+g8HP3OH1hS3MbjlFoE/r+4xF
-         kr+Cv21naWurWxjpp4CRzrJQj00zERhE24HFkgP6eDLSkHXa3BWR12luhgzD/QxGmtN5
-         tbOkkqQfeG71kokz0+d6enEP6NetVPUczCndf77vCB+WXwiDX0riTWNHurpxcLb/fQzE
-         yxoYbBtJ+w59KrCV/m1AejY80WyTgQy8v8n4HXl02BMDvMWb5hAjEyPNUTj50FmnTYsf
-         ZwxJQNtaap+OEXnfIZSy0CyJzunTc75Wfc6mo32pRrCNuYu0JQIxym2vL0sz0HGkSO5V
-         ZiJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaOvkTftP7AbMGz0SfjfZgITX+YRh0YoeyGZqlCaEqi1qkTD7gM3h31qSuNczqROHAtJvATIry8U0xj90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM4wP6WkhUH6KSLIN7MoVPN5QHFlcLOh1Nz6i50hHppZc91HMJ
-	SBGd29a34UNjcY5DM9jAC9Smm4jS8oCXf5F4RiKYg5H4E6xCWOzFtJyDOW8NbU1H/ly8oZ7Qdxq
-	ikGPwk76pip3w/Inv9imY70VJKfXDyxf79x/j3v1ViydgsF2TE6Cl/E1vSpSBFQ==
-X-Received: by 2002:a05:600c:1ca4:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f85ae9d41mr133159275e9.26.1728395364034;
-        Tue, 08 Oct 2024 06:49:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEd8VsV5d3a42MkvhyaGQpxAWiPPuXxOfVyKhGcSzEVblc23t5A1J2pfaLTuLp+DD7aI+pjIA==
-X-Received: by 2002:a05:600c:1ca4:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f85ae9d41mr133159075e9.26.1728395363600;
-        Tue, 08 Oct 2024 06:49:23 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82d43760013399881f4bcf5cb.dip.versatel-1u1.de. [2001:16b8:2d43:7600:1339:9881:f4bc:f5cb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ead666sm109780275e9.28.2024.10.08.06.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 06:49:22 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH] vdpa: solidrun: Fix UB bug with devres
-Date: Tue,  8 Oct 2024 15:49:13 +0200
-Message-ID: <20241008134912.30295-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.1
+        d=1e100.net; s=20230601; t=1728395410; x=1729000210;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WpfdK0DkSLSW2fAjRxdwV8F/aWadlnjGjQ8QBOWzH/4=;
+        b=MSHr+3FeRtmtCXdxECwSqxZks5JwjxV/h2wfpMg8kt+776WB74quYAjjDYmbx6wbPq
+         gHyGKSUysKCRFNNawQDWztT+zPolUvoRoP3QUhRLrM9pyu4qqyF7efMkmHLJIuDKNbiQ
+         111saNfP6mCKXDU6YeHa+7KbMn/wM54p89Y1dErTKRTl23UD9ObvGOIDl1D5VQRutf5E
+         4QVaPBmvCPumEBQ1l5htFzKDIzkepc5b15aCal4Zlugj1pBrlH+Ieo4of/cuSfI39Dea
+         d5B9FCffuHMptQQX31NCn61mdyNX/K86DyyhYcaOnQ3hkhu+VSTPS43qnBHBOqotNXxy
+         hNHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVQus1nCARJUKUV3+kOmOZNp2AugVsqIl8REWAF89pgz4N47uSLzy/CsbGdIQ15OWggP3P4pg9JxmQTBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVi6T6gC383QKiS8IVtknB1yfS9Lgwvm4GKtDCGqgwzqmKLNB4
+	XAWn8+Gco/pnxsPm1i74xSIUwaZsjiGge6QWp2NV0nsmYJrdmMgfm8a7S97ET/0=
+X-Google-Smtp-Source: AGHT+IGGDDy/C3JNq8sdXqLgFX4dPMMWga1oSVN0B8s30L1lSj5q2xVN4nsf1rKLRKkvbZcCirzniA==
+X-Received: by 2002:a05:6512:158e:b0:536:7c0d:e54c with SMTP id 2adb3069b0e04-539ab9ec64cmr2040832e87.9.1728395409820;
+        Tue, 08 Oct 2024 06:50:09 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec84f7sm1219959e87.92.2024.10.08.06.50.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 06:50:09 -0700 (PDT)
+Message-ID: <2b5f4043-1e23-446a-aba4-96e40fb8d197@linaro.org>
+Date: Tue, 8 Oct 2024 16:50:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+Content-Language: en-US
+To: Depeng Shao <quic_depengs@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, krzk+dt@kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>, mchehab@kernel.org,
+ robh@kernel.org, todor.too@gmail.com, rfoss@kernel.org, conor+dt@kernel.org
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+ <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+ <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
+ <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
+ <6eadc285-f413-4bf0-8795-59ff19c734da@linaro.org>
+ <6562a958-47e9-4a49-b235-fe8deba3c051@linaro.org>
+ <cab95caa-9ffb-446a-858b-342939e80811@mleia.com>
+ <4e94106d-5ca9-485b-8c51-c18dcd4e64b0@linaro.org>
+ <b779182f-a963-400a-8fc1-2468710082d2@linaro.org>
+ <a0f66292-fb97-40ae-9fb1-d79160e70bb3@quicinc.com>
+ <53d2b30d-6480-41eb-8dc8-7b3970ad82ef@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <53d2b30d-6480-41eb-8dc8-7b3970ad82ef@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed to
-pcim_iomap_regions() is placed on the stack. Neither
-pcim_iomap_regions() nor the functions it calls copy that string.
+Hi Depeng.
 
-Should the string later ever be used, this, consequently, causes
-undefined behavior since the stack frame will by then have disappeared.
+On 9/30/24 12:26, Depeng Shao wrote:
+> Hi Bryan,
+> 
+> On 9/25/2024 11:40 PM, Depeng Shao wrote:
+>> Hi Vladimir, Bryan,
+>>
+>> On 9/18/2024 7:16 AM, Vladimir Zapolskiy wrote:
+>>> Hi Bryan,
+>>>
+>>> On 9/18/24 01:40, Bryan O'Donoghue wrote:
+>>>> On 13/09/2024 06:06, Vladimir Zapolskiy wrote:
+>>>>> On 9/13/24 01:41, Bryan O'Donoghue wrote:
+>>>>>> On 12/09/2024 21:57, Vladimir Zapolskiy wrote:
+>>>>>>>> 3. Required not optional in the yaml
+>>>>>>>>
+>>>>>>>>         => You can't use the PHY without its regulators
+>>>>>>>
+>>>>>>> No, the supplies shall be optional, since it's absolutely possible to
+>>>>>>> have
+>>>>>>> such a board, where supplies are merely not connected to the SoC.
+>>>>>>
+>>>>>> For any _used_ PHY both supplies are certainly required.
+>>>>>>
+>>>>>> That's what the yaml/dts check for this should achieve.
+>>>>>
+>>>>> I believe it is technically possible by writing an enormously complex
+>>>>> scheme, when all possible "port" cases and combinations are listed.
+>>>>>
+>>>>> Do you see any simpler way? Do you insist that it is utterly needed?
+>>>>
+>>>> I asked Krzysztof about this offline.
+>>>>
+>>>> He said something like
+>>>>
+>>>> Quote:
+>>>> This is possible, but I think not between child nodes.
+>>>> https://elixir.bootlin.com/linux/v6.11-rc7/source/Documentation/
+>>>> devicetree/bindings/example-schema.yaml#L194
+>>>>
+>>>> You could require something in children, but not in parent node. For
+>>>> children something around:
+>>>> https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/
+>>>> devicetree/bindings/net/qcom,ipa.yaml#L174
+>>>>
+>>>> allOf:
+>>>>      - if:
+>>>>          required:
+>>>>            - something-in-parent
+>>>>        then:
+>>>>          properties:
+>>>>            child-node:
+>>>>              required:
+>>>>                - something-in-child
+>>>>
+>>>> I will see if I can turn that into a workable proposal/patch.
+>>>>
+>>>
+>>> thank you for pushing my review request forward.
+>>>
+>>> Overall I believe making supply properties as optional ones is
+>>> sufficient,
+>>> technically straightforward and merely good enough, thus please let me
+>>> ask you to ponder on this particular variant one more time.
+>>>
+>>
+>> So, we are discussing two things.
+>>
+>> 1# Use separate supplies for each CSI block, looks like there is no
+>> doubt about it anymore. So, I will update it just like based on suggestion.
+>>
+>> csiphyX-vdda-phy-supply
+>> csiphyX-vdda-pll-supply
+>>
+>> Then I will need below items in the required list if they are required.
+>> required:
+>>     - csiphy0-vdda-phy-supply
+>>     - csiphy0-vdda-pll-supply
+>>     - csiphy1-vdda-phy-supply
+>>     - csiphy1-vdda-pll-supply
+>> ...
+>>     - csiphy7-vdda-phy-supply
+>>     - csiphy7-vdda-pll-supply
+>>
+>> 2# Regarding the CSI supplies, if they need to be making as optional?
+>> Looks like there is no conclusion now.
+>>
+>> @Bryan, do you agree with this?
+>>
+> 
+> I'm preparing the new version patches, and will send out for reviewing
+> in few days. I will follow Vladimir's comments if you have no response,
+> it means making supply properties as optional one, so they won't be
+> added to the required list.
+> 
 
-Fix the bug by allocating the strings on the heap through
-devm_kasprintf().
+Recently I published the change, which moves regulator supplies from CSID
+to CSIPHY, I believe it makes sense to base the SM8550 change and regulators
+under discussion on top of the series:
 
-Cc: stable@vger.kernel.org	# v6.3
-Fixes: 51a8f9d7f587 ("virtio: vdpa: new SolidNET DPU driver.")
-Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Closes: https://lore.kernel.org/all/74e9109a-ac59-49e2-9b1d-d825c9c9f891@wanadoo.fr/
-Suggested-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/vdpa/solidrun/snet_main.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+https://lore.kernel.org/all/20240926211957.4108692-1-vladimir.zapolskiy@linaro.org/
 
-diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
-index 99428a04068d..c8b74980dbd1 100644
---- a/drivers/vdpa/solidrun/snet_main.c
-+++ b/drivers/vdpa/solidrun/snet_main.c
-@@ -555,7 +555,7 @@ static const struct vdpa_config_ops snet_config_ops = {
- 
- static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- {
--	char name[50];
-+	char *name;
- 	int ret, i, mask = 0;
- 	/* We don't know which BAR will be used to communicate..
- 	 * We will map every bar with len > 0.
-@@ -573,7 +573,10 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- 		return -ENODEV;
- 	}
- 
--	snprintf(name, sizeof(name), "psnet[%s]-bars", pci_name(pdev));
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
-+	if (!name)
-+		return -ENOMEM;
-+
- 	ret = pcim_iomap_regions(pdev, mask, name);
- 	if (ret) {
- 		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-@@ -590,10 +593,13 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- 
- static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
- {
--	char name[50];
-+	char *name;
- 	int ret;
- 
--	snprintf(name, sizeof(name), "snet[%s]-bar", pci_name(pdev));
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "snet[%s]-bars", pci_name(pdev));
-+	if (!name)
-+		return -ENOMEM;
-+
- 	/* Request and map BAR */
- 	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
- 	if (ret) {
--- 
-2.46.1
+Note, that SM8250 regulators are not changed, however their names are wrong,
+the correction shall be a separate change later on...
 
+Next, I developed my opinion regarding the supply regulator property names:
+
+1) voltage supply regulator property names match the pattern "*v*-supply",
+    and the most common name is "vdd*-supply", the match to the pattern shall
+    be preserved,
+2) also it would be much better and it will exclude any confusion, if SoC pin
+    names are put into the name, like it is done in a multitude of similar
+    cases.
+
+So, in my opinion for SM8550 CAMSS a proposed set of voltage supply regulator
+names should be this one:
+
+- vdda-csi01-0p9-supply
+- vdda-csi01-1p2-supply
+- vdda-csi23-0p9-supply
+- vdda-csi23-1p2-supply
+- vdda-csi46-0p9-supply
+- vdda-csi46-1p2-supply
+- vdda-csi57-0p9-supply
+- vdda-csi57-1p2-supply
+
+Comments, corrections and objections are always welcome.
+
+--
+Best wishes,
+Vladimir
 
