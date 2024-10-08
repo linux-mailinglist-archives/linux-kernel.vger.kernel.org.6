@@ -1,149 +1,100 @@
-Return-Path: <linux-kernel+bounces-355810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA2799576B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13A8995771
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40AFB1C25BF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678632867A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21320212EF2;
-	Tue,  8 Oct 2024 19:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BC22139B6;
+	Tue,  8 Oct 2024 19:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Itm35YcE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AJYdrgjb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qLdXnwme"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F3D1E0DFB;
-	Tue,  8 Oct 2024 19:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854C91E0DFB;
+	Tue,  8 Oct 2024 19:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728414603; cv=none; b=NT+OfeDGdTns7AhA69tZXqi74JE/MmkTc8ADFN2amPIzw8xiqBi0vXi21AdKuZawjIskFWchZGc97rPLkaJ32WO+3F8GkjvjIbSD5KGT4t1L7gxFZwvzda6LTeISeavP1M5ZTu76eSyTkbLp0NH0DMuREGdSuF/8hy0Jh/Htksg=
+	t=1728414791; cv=none; b=Q/LhEFxyJmZFgpA/O6Rx0yJStMIfX9fUhHlALzinCHtQFjDR0W47cspt7ppKDOe05uaORJC22UwMJumHVtBKQ7CQxSMsmiWqFsRy5U3SxBkxNrGMw0P1lkdXmxig6NuWyrjMp+KrX6sX/zO35uzQW0GBo1LFW8VI1wFpg2jzGvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728414603; c=relaxed/simple;
-	bh=eVFXChcSE1y5iVt9xbcGXm04MsrQ7CLHg40eTmq/7UA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C3dlsH2C4Rq0wg85MmotsfroL8YJCSVicql1aSL/Vw1EpVqwVeAlnLTOIGodF6B2cF+HOQ1G0L+8u1mfemFPpjTOfP3tcX2riPsr1ztKcttCoKfE3dpAt6lxLgzg/KDbDqsWM9Lz/zPb2xmU2yufDOhbWfPgHIJN/HNcE3UwZxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Itm35YcE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AJYdrgjb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Oct 2024 19:09:58 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728414599;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AxaBzUMQAsZ7cehIe5i1n1s+VKKhw+DeEzQzMhn6iTc=;
-	b=Itm35YcE/kx30WtZYlQp+xvbatidj4tKV/L+Lii/qZTV5bxHRtC1LDh/sZw0bHIZOwO8p1
-	QGYB2DaSP4Tqc/DT4eRjAPsj58LhLY+TYKTQkuzfPnyyY5TvtXZhXlhtoFQlUw+WxwbDEo
-	OK/J2FwvMTXavzF0p6L4DyKOcA6ttOW+rQxTR7mEloUmf7AqsMI5MVX6Nl9XhTudjSMhfV
-	3KYkHU5FbJ4VYulOYqf7+xtTSxX+k46qwgewCdzXg2Svuw7jT7GXsurV6Unt6M/TUoOxfn
-	7Ea+uGtFlGu2Q8KLCvXs545aBHncby2Ygxax5bf6wLeiFXcmir+XiSmBpGwqFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728414599;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AxaBzUMQAsZ7cehIe5i1n1s+VKKhw+DeEzQzMhn6iTc=;
-	b=AJYdrgjb3trK0qIYriLTk7e/kA0i/1F3Ft2T8GswhbPfy5SQDeKF2k7gkGGFMzsYwN67eS
-	QJY2HAz5b+t10pCw==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/resctrl: Annotate get_mem_config() functions as __init
-Cc: Nathan Chancellor <nathan@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Reinette Chatre <reinette.chatre@intel.com>,  <stable@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C20240917-x86-restctrl-get=5Fmem=5Fconfig=5Fintel-i?=
- =?utf-8?q?nit-v3-1-10d521256284=40kernel=2Eorg=3E?=
-References: =?utf-8?q?=3C20240917-x86-restctrl-get=5Fmem=5Fconfig=5Fintel-in?=
- =?utf-8?q?it-v3-1-10d521256284=40kernel=2Eorg=3E?=
+	s=arc-20240116; t=1728414791; c=relaxed/simple;
+	bh=kdhDIQr6x2S5P5866h6FlTn+jW0YicIiTTjLvHlc1+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bJjsRnajfpDk/Ysok19mLtYSeZTqz+1ZR2Gj4hw8hz5bKyfxDl23IWhEwZpzuD1/bk1h2EUw+QEQ+p3DkZA57Jjs7fweg2ga/cCHRcj92XIYZ2c2+BaQmAJe0BdY8tU9YunAEKcXIo1iG0yzJwYEp28sN3REaVC2k28QxzKPzIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qLdXnwme; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Pfemj97Szu5rqGkLgAB+jA3DEc9X/IUNSyYuIAE3eMs=; b=qLdXnwmeMYsXBHBHqAkQeyPNEz
+	UyzGtTaZkUy/Dlkz0BmXHiCvsVM+zF22z4IyeOncv4uB9IZI+LEC7Eiv7FK608fqjHOT5RonpjCsW
+	crXvPFx1JVvrBOcENkXDeOF2y4TOxItA1jfa+oAlkhKOpjDeq9EKGk5atI5bHK07ceN9nKTxudVoj
+	cF4eCuWro2ojKPlFkbz8HyRjFvSAsvpReJpWhlhuRsEo1cMJVUPOMUw9SwFtQ2ckPbm5si53Q33ky
+	5ETNbTJnyzA+91xDTM3eMlbT9Y+id+V8CuIVUP2Pl9KAFZfy8/yuQac3bif7PkF8A4e93FjLuDr3f
+	mdmopz/g==;
+Received: from i53875ad9.versanet.de ([83.135.90.217] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1syFdk-0006jR-9B; Tue, 08 Oct 2024 21:13:00 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	linux-clk@vger.kernel.org,
+	jbx6244@gmail.com,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	linux-rockchip@lists.infradead.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v2 0/3] rk3328 cru dt-binding conversion
+Date: Tue,  8 Oct 2024 21:12:57 +0200
+Message-ID: <172841476778.2559610.12687245532264895912.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240930215001.1999212-1-heiko@sntech.de>
+References: <20240930215001.1999212-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172841459857.1442.1559612433807217622.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, 30 Sep 2024 23:49:58 +0200, Heiko Stuebner wrote:
+> Johan already did the heavy lifting of converting the binding in [0].
+> The binding conversion itself already got a Reviewed-by from dt-people
+> only dropping the superfluous compatibles needed a bit more investigation.
+> 
+> So I did go through the mainline kernel and also the vendor kernel,
+> looking for any obscure usage.
+> 
+> [...]
 
-Commit-ID:     d5fd042bf4cfb557981d65628e1779a492cd8cfa
-Gitweb:        https://git.kernel.org/tip/d5fd042bf4cfb557981d65628e1779a492cd8cfa
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Tue, 17 Sep 2024 09:02:53 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 08 Oct 2024 21:05:10 +02:00
+Applied, thanks!
 
-x86/resctrl: Annotate get_mem_config() functions as __init
+[1/3] dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML
+      commit: 5011cc7ad9aeea98029385f8a0e81a0ebfc45bed
+[2/3] arm64: dts: rockchip: fix compatible string rk3328 cru node
+      commit: 17a50042b9f63f7c5e9d7f1d1a285387e2b2d955
+[3/3] arm64: rockchip: add clocks property to cru node rk3328
+      commit: bc639b0ff7a8121bd72954bf8354a81f074dbf42
 
-After a recent LLVM change [1] that deduces __cold on functions that only call
-cold code (such as __init functions), there is a section mismatch warning from
-__get_mem_config_intel(), which got moved to .text.unlikely. as a result of
-that optimization:
-
-  WARNING: modpost: vmlinux: section mismatch in reference: \
-  __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
-
-Mark __get_mem_config_intel() as __init as well since it is only called
-from __init code, which clears up the warning.
-
-While __rdt_get_mem_config_amd() does not exhibit a warning because it
-does not call any __init code, it is a similar function that is only
-called from __init code like __get_mem_config_intel(), so mark it __init
-as well to keep the code symmetrical.
-
-CONFIG_SECTION_MISMATCH_WARN_ONLY=n would turn this into a fatal error.
-
-Fixes: 05b93417ce5b ("x86/intel_rdt/mba: Add primary support for Memory Bandwidth Allocation (MBA)")
-Fixes: 4d05bf71f157 ("x86/resctrl: Introduce AMD QOS feature")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Cc: <stable@kernel.org>
-Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
-Link: https://lore.kernel.org/r/20240917-x86-restctrl-get_mem_config_intel-init-v3-1-10d521256284@kernel.org
----
- arch/x86/kernel/cpu/resctrl/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 8591d53..b681c2e 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -207,7 +207,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
- 	return false;
- }
- 
--static bool __get_mem_config_intel(struct rdt_resource *r)
-+static __init bool __get_mem_config_intel(struct rdt_resource *r)
- {
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
- 	union cpuid_0x10_3_eax eax;
-@@ -241,7 +241,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
- 	return true;
- }
- 
--static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
-+static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
- {
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
- 	u32 eax, ebx, ecx, edx, subleaf;
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
