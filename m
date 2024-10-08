@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-356053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C22A995B8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBAC995B90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79AAB21C7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517D1B24671
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 23:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579DE21949B;
-	Tue,  8 Oct 2024 23:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBFD219CAF;
+	Tue,  8 Oct 2024 23:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pun3BpjZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfD7NWBj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4401218D71;
-	Tue,  8 Oct 2024 23:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272D5219C9C;
+	Tue,  8 Oct 2024 23:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728429632; cv=none; b=RG/mwUggF/DfCFOvNPOXbQwlavO0BnRc1QVtNFdFRPcdcBEQ8KFtOlWfLIpJ5vULnAy6nHjK2tw6x0NvPCK14H0kUSBRKsiMMQd+BItnHui0mKxedoxngi/JAP2fve3iEst8ix3rzdqG2ITUJMand009Bcjlxs445pc8BFAY9XM=
+	t=1728429635; cv=none; b=M70h4DJmaN/wK3rEtimoLFtJVjMD8SFGWnbLKUf9/gAKVtSva1zqin9GXIDlwFQzGgpE3JajAHcXwguNAzYP7sjPZtkS3kykzDxepXeQrlswQCWv/zh3iGwVum3iwUKV28zJcTZII8qE1gnyGSFvUefWT5UgbcBCE2bjLY8gCnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728429632; c=relaxed/simple;
-	bh=3t0vYqaUuvs+E138RMMNvcD37CTwjo7vjK1Pl/GHwVg=;
+	s=arc-20240116; t=1728429635; c=relaxed/simple;
+	bh=s6GlbP8OJ1MJm4pGr4Tvsiz8CQseoJ6ksn1gXjU6EwU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=islTJxOXntIgmJLqnSP9AGOyY9QptlIhS6h5k3Y0CbhramesWUXrp8PeW9SqUo4uIR56fVM97w+Q0VDc29VvdnBWAXJ41hTuUSxCJ9zhypOTY+3Q/APiA2LLZpVKMlpU1fzNSHZdGHB2C+w96jiDxdNgek8Ma2bMsevqNGs61q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pun3BpjZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 440A5C4CED0;
-	Tue,  8 Oct 2024 23:20:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rvMXJJ7henthcihVKmp8OYH5RdaOIXQDg6sgQKOOHGw5HG38a34eb6DhqzWXem2U/zqMWyOzUl7tDMhg2HdEsWbTLfsUqdhN5xK5/HDoaQ7PIc90gxrf/ueYDDV7JWeA3rJbpFLW/9jpAb/CXT1xCyl+bTUrhdjVr6cd0hpy1iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfD7NWBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 017D2C4CECD;
+	Tue,  8 Oct 2024 23:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728429632;
-	bh=3t0vYqaUuvs+E138RMMNvcD37CTwjo7vjK1Pl/GHwVg=;
+	s=k20201202; t=1728429635;
+	bh=s6GlbP8OJ1MJm4pGr4Tvsiz8CQseoJ6ksn1gXjU6EwU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Pun3BpjZD7/oKaOAU1jVf2fsPDg4svEYG7bBJKEEa4LF1pMaUWw9KnerCXvycF+yT
-	 XEKF8hn68ep9MrUCNzzyEHbxkD8iRq3q6MUX18ZjS0VfdFu+ac5dTGCzXV+xQ2eH4l
-	 6Zi/9tMWDi7s9M3jNtxkcb9EXde60+tvvBVcPmu1RXFzb3/A5ssPyJWDc+LcPhrEnL
-	 zbr4fISJ4voTCTVfW/iTEL9V/IrVPwhDjFY/y63DvL0GHGUtWveygHi7BccLNgwWfF
-	 PQrvh0QB20vF32HvG5ApYsV+5Sjz5WYEZELHEKEm+wpDLJOru2alXoZ0a4RJV4bEDn
-	 bxgZfY7yrM0Ew==
+	b=dfD7NWBjpH4qjir0vz0l1u1xqrb2gIlUEOyR2BqfBy+fxEU9pqFJ0ihdwIXCCvQdo
+	 7CafPJSWYdHVjcPnBGV/zu/EFrB9A34MOW6Ra6lqcViPL91m5Uh02OwlmGFzFYpSzK
+	 5Qv7aHR7g3xWcChhFq4mM0ws4kVIrZY12E/PX0L0R186toHLBbNA2CtGAlMLBvyNtI
+	 0IP+a1iU8Wd7SDE6EfD/roGjoxoplBKDYe5OU+zRCnP2jJX9VQsX8ozejZ8E4SAlgo
+	 DmWvWNlJTw3s0EpRoESmTiFWWnmguAgtIRb9UEpvv/WBu5etFAaIiDUskKFMGCYu0Y
+	 JdZ08fDQH+TaQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF6E3A8D14D;
-	Tue,  8 Oct 2024 23:20:37 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C003A8D14D;
+	Tue,  8 Oct 2024 23:20:40 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,35 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] caif: Remove unused cfsrvl_getphyid
+Subject: Re: [PATCH net-next] chelsio/chtls: Remove unused chtls_set_tcb_tflag
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172842963625.718280.1977924503014171367.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Oct 2024 23:20:36 +0000
-References: <20241007004456.149899-1-linux@treblig.org>
-In-Reply-To: <20241007004456.149899-1-linux@treblig.org>
+ <172842963898.718280.1085931231285223325.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 23:20:38 +0000
+References: <20241007004652.150065-1-linux@treblig.org>
+In-Reply-To: <20241007004652.150065-1-linux@treblig.org>
 To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ayush.sawal@chelsio.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon,  7 Oct 2024 01:44:56 +0100 you wrote:
+On Mon,  7 Oct 2024 01:46:52 +0100 you wrote:
 > From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> cfsrvl_getphyid() has been unused since 2011's commit
-> f36214408470 ("caif: Use RCU and lists in cfcnfg.c for managing caif link layers")
+> chtls_set_tcb_tflag() has been unused since 2021's commit
+> 827d329105bf ("chtls: Remove invalid set_tcb call")
 > 
 > Remove it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] caif: Remove unused cfsrvl_getphyid
-    https://git.kernel.org/netdev/net-next/c/3fe3dbaf2672
+  - [net-next] chelsio/chtls: Remove unused chtls_set_tcb_tflag
+    https://git.kernel.org/netdev/net-next/c/35213cfeefa5
 
 You are awesome, thank you!
 -- 
