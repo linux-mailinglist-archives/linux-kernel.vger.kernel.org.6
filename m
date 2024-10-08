@@ -1,64 +1,92 @@
-Return-Path: <linux-kernel+bounces-355292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F682995010
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:32:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF5D995015
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 421992884AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93701F2596B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE3A1DFE37;
-	Tue,  8 Oct 2024 13:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B316F1DF722;
+	Tue,  8 Oct 2024 13:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RLkdU8Pk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QPmH7t6k"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="jrzJscVt"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FD01DFE0C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 13:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394276; cv=none; b=kbvUme8EmcFH3It4HOb24hIHDWZ8IvpabxTHYfN/d299tEeEaJPLMozoix2BceYMZghlX0pFUM0Wg8+Fte5oP+b2rfeM2v/2zxFANYohmLdof6XDbhfoOua/WpbIRpWSRdSL3ViTdvoVn4YSuU08me3Uaak6Z46b/seezWCJH9w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394276; c=relaxed/simple;
-	bh=lxNZsxtGBlFl8eADXUABqyLvfdhrx3VgXl4xYSoH7Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sEDMUeZ+JqJK1akUcfbI6TpJ3ab+i6KQDJrAjS7/WthUJr/uUs1Uh1jqEZgt8uolTPoJXMnT1unTEdIIqlwLCaV0pXxP/+9ULDxb5vF5eRxAgc2p0BV+5SB9QGFDIgSb9GRI5GYl0LJ9k+R3WB5EocF5iJ8SzC4XdGIjPrrNLXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RLkdU8Pk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QPmH7t6k; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Oct 2024 15:31:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728394272;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36401DF729;
+	Tue,  8 Oct 2024 13:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728394287; cv=fail; b=gKqhIKg3/Gankb8CybVAH4R1QlkYRXTT+FRrw3VJP7KJYadNqCGUT2OmPYTkHpGEGmYzp7iVMmVO4Wd/r4SpBYKpYKWx9AkNSMtH/1nnLb7LqVEpqk2h8S+PnI2zY9CFWt7YY6oktgSMuIu/Bj6efxFbqgDOETbJUQMtLVV9dC0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728394287; c=relaxed/simple;
+	bh=BfeOqdeV7G2DU+eXLL5PaWIQnBpyUyKA0ntzebVM8QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7hVMfMAzbq6MV7/+zhFhT7mjBPsyCerMLIXt9KZfwBTrXEK/vTus4s1jAUH39QQvaiYCoZxIC25G5LCbGUwQL7fBZMFLyIITrBZbl5dHlGCvPkZxaZiPAOUI1d3dOFosqVhz8KiC2TGZiy4Ii9wJ1Q3LRGp2pkfYU9jvcy8uRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=jrzJscVt; arc=fail smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4XNH3W4CTvz49PyG;
+	Tue,  8 Oct 2024 16:31:19 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1728394279;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=gDEhOQtahYLtopKkCcWgKtqFkw83ei278di84r+ISIg=;
-	b=RLkdU8PklPFShUQ0ZkaNSFvVnBkRfNojUbGYcETidFlTF0YDWf6MVIMa5nZdaLoJ9TKD4H
-	odjopfwvSzfgGFSZ95HAYCoX4hGb4J/o58PDLiKgc9T/szmTkRo9iN0/4Kf3q3ZZpU1JnV
-	nDpgcNll20UtlN/elYD0JJ4NCdxE6gFebaAAwtUGjsiEUKtBhZlat9jFSr2XnmnB2hHNX0
-	SjefYuXkoesGhYc6+8KBqOpXU3D5VcWE3jYItlgMCRa3Nc2QrEMlR35xuavvKO9/2g/fki
-	HnagwrFSc11LagQ0QXE8fvSQioW8UFlY5+2/sysHLBTTpKYdHwkqvWmzTOoozg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728394272;
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kftToYm0djzngiyLTS5l7DC7KUiCFKab6TYyxhOQK70=;
+	b=jrzJscVtITBvcYBARbXvgI+Al0z4nravlXTAhJTHT9KMaqvrM/EuHqmS0uVDClOkKHP74M
+	mmy8DyIJyxKDF/DLP222ZMM8gZuWp4F2KA5oR+7aZ3Ml3T7LScjsGsYBC0yGiuZIT/tY5X
+	791jQHuoPFFJz6mBHmO4yBWUCNiu+H/q7XRYH9sUvDqjVEX81RY+faB3sdxS82q+JNH7XL
+	pPWYtiC6YKVLhyb2MJp8v9hc8ib94UyMQNZEDBhDW+KkyaqoQNO8LPrStphC5hJYvXBc5R
+	uPOtNEroRkaMkFFYPJtUT8ZDKYYrgXd0bvUJ4F5joe1XUkXIitPOg4ans/7+nQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1728394279;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=gDEhOQtahYLtopKkCcWgKtqFkw83ei278di84r+ISIg=;
-	b=QPmH7t6kCn4lFfT5H5YMyYA1BWRgGtjIPdnJpg9QgoYbh42kfMc5HsHMia//Ock8DEHib2
-	0PhDI1QW3avNPgCw==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: x86-cpuid@lists.linux.dev, Borislav Petkov <bp@alien8.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [ANNOUNCE] x86-cpuid-db: Release v2.0
-Message-ID: <ZwU0HtmCTj2rF2T8@lx-t490>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kftToYm0djzngiyLTS5l7DC7KUiCFKab6TYyxhOQK70=;
+	b=i4boPEjHo30ijxKCsjtDwebJFhyx3ZO4XebH/RLQ06WpoLDMPrFAnuwmrKQXUBYH6vEVeO
+	qt1YDPCk9qB9TlgojPHB0o52ayfXkiCqNhXmnNAsKNyL4iaxTcVBZXF3Du4rlJWj753+9p
+	By640qR3yfdpXG0VD97WvcBJRDZ0NzD1Y/n1BjeVSLvP/pqBDkn3gEbzxSHH2UdUlnWjtI
+	TA89mG/soh017S6B6bEvxga9rvImED0EgnYEgdVyhsSKWW07hwVmLKMo0+mM1DutqduG/R
+	evlZiB+liHN6nKbPego0N9BFBaRI+SASUI25/A6do9VJhSPA8lgeHIshYHs89g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1728394279; a=rsa-sha256;
+	cv=none;
+	b=RYmfeyKutlmXwfSqY3POuqnqtJO8ziApDPreJoqpraEqFsLWG6Ov17xDlysw+1CChTSDtl
+	0W/UQesrOYb32JDqcCooeHAlOkb1gzFe/hyKZfSG1hwXPFOBn4IXkKMHBdHCLwNQ5IepZ5
+	Jtc8TM5lD6BEHgtFyKUxQKAhZOMeE6ulroHBoNYh1Ntj62ai18qZtKjDJ9uRCjWJQQSTo7
+	JwkguljNpgBck5pe6P6FbW/wn1xkQBEYHMdDMKgX9YtFiErpky50o5lJD0wCrB8j7M1/Sn
+	EAV8xvbg2FJpcXfoxDpGVye631w7AX7oRu9DYKBhS1VizdR4sMyE7fRUFEO4Rg==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 4CE14634CA9;
+	Tue,  8 Oct 2024 16:31:19 +0300 (EEST)
+Date: Tue, 8 Oct 2024 13:31:19 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] media: uvcvideo: Refactor uvc_query_ctrl
+Message-ID: <ZwU0JyfBPRpkINCu@valkosipuli.retiisi.eu>
+References: <20241008-uvc-readless-v1-0-042ac4581f44@chromium.org>
+ <20241008-uvc-readless-v1-2-042ac4581f44@chromium.org>
+ <ZwUfD5Kfzv93-46f@valkosipuli.retiisi.eu>
+ <CANiDSCu5ho_CFCgRQVdUzaWtfSi_eNk+N7c-DGxcO+6Ks_Vmvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,108 +95,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CANiDSCu5ho_CFCgRQVdUzaWtfSi_eNk+N7c-DGxcO+6Ks_Vmvg@mail.gmail.com>
 
-Hi,
+Hi Ricardo,
 
-I'm happy to announce release 2.0 of the x86-cpuid-db project:
+On Tue, Oct 08, 2024 at 09:22:25PM +0800, Ricardo Ribalda wrote:
+> Hi Sakari!
+> 
+> On Tue, 8 Oct 2024 at 20:01, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> >
+> > Hi Ricardo,
+> >
+> > On Tue, Oct 08, 2024 at 07:06:15AM +0000, Ricardo Ribalda wrote:
+> > > Move the query control error logic to its own function.
+> > > There is no functional change introduced by this patch.
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_video.c | 45 ++++++++++++++++++++++-----------------
+> > >  1 file changed, 26 insertions(+), 19 deletions(-)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > > index 853dfb7b5f7b..a57272a2c9e1 100644
+> > > --- a/drivers/media/usb/uvc/uvc_video.c
+> > > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > > @@ -67,30 +67,12 @@ static const char *uvc_query_name(u8 query)
+> > >       }
+> > >  }
+> > >
+> > > -int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+> > > -                     u8 intfnum, u8 cs, void *data, u16 size)
+> > > +static int uvc_query_ctrl_error(struct uvc_device *dev, u8 intfnum, void *data)
+> > >  {
+> > >       int ret;
+> > >       u8 error;
+> > >       u8 tmp;
+> > >
+> > > -     ret = __uvc_query_ctrl(dev, query, unit, intfnum, cs, data, size,
+> > > -                             UVC_CTRL_CONTROL_TIMEOUT);
+> > > -     if (likely(ret == size))
+> > > -             return 0;
+> > > -
+> > > -     if (ret > 0 && ret < size) {
+> > > -             memset(data + ret, 0, size - ret);
+> > > -             return 0;
+> > > -     }
+> > > -
+> > > -     if (ret != -EPIPE) {
+> > > -             dev_err(&dev->udev->dev,
+> > > -                     "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
+> > > -                     uvc_query_name(query), cs, unit, ret, size);
+> > > -             return ret ? ret : -EPIPE;
+> > > -     }
+> > > -
+> > >       /* Reuse data[0] to request the error code. */
+> > >       tmp = *(u8 *)data;
+> > >
+> > > @@ -135,6 +117,31 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+> > >       return -EPIPE;
+> > >  }
+> > >
+> > > +int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+> > > +                u8 intfnum, u8 cs, void *data, u16 size)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     ret = __uvc_query_ctrl(dev, query, unit, intfnum, cs, data, size,
+> > > +                            UVC_CTRL_CONTROL_TIMEOUT);
+> > > +     if (likely(ret == size))
+> > > +             return 0;
+> > > +
+> > > +     if (ret == -EPIPE)
+> > > +             return uvc_query_ctrl_error(dev, intfnum, data);
+> > > +
+> > > +     dev_err(&dev->udev->dev,
+> > > +             "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
+> > > +             uvc_query_name(query), cs, unit, ret, size);
+> >
+> > This message should probably be printed after the check below.
+> 
+> If the device is returning less bytes, the hardware is not behaving
+> according to spec and it is good information, specially if you are
+> bringing up a new device.
+> I could make it  a dev_warn() (or even uvc_debug) if ret <size. WDYT?
 
-  https://gitlab.com/x86-cpuid.org/x86-cpuid-db
-  https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/releases/v2.0
+What I also came to think whether this is worth an explicit quirk flag.
+There could well be devices that have other bugs that would still fall
+under the same check.
 
-Changelog v2.0
---------------
+Either way, there should not be a message every single time this workaround
+is applied. Isn't uvc_query_ctrl() also used in some IOCTLs outside probe?
 
-- Introduce a new transformer, which generates one Linux kernel C header
-  file for all the cpuid leaves' bitfields.
+> 
+> 
+> >
+> > I'd actually move the below check before the ret == -EPIPE check as it's a
+> > successful case (and changing the condition to <= would make the ret ==
+> > size check redundant).
+> 
+> something like this?
+> 
+> if (ret > 0)  {
+>    if (ret != size) {
+>       print_error();
+>       memcpy();
+>    }
+>    return 0;
+> }
 
-  (A single linux kernel C header file, with version tag on top, shall be
-   easier to maintain than multiple headers; Linux x86 PQ pending)
+Well, if you think it's reasonable to keep the error message (should be a
+warning in that case IMO), then the original code makes sense.
 
-- Introduce the cpuidgen --kheaders option to invoke that transformer.
+I wonder what Laurent thinks.
 
-- Extend the cpuid database bitfields coverage:
+> 
+> >
+> > > +
+> > > +     if (ret > 0 && ret < size) {
+> > > +             memset(data + ret, 0, size - ret);
+> > > +             return 0;
+> > > +     }
+> > > +
+> > > +     return ret ? ret : -EPIPE;
+> > > +}
+> > > +
+> > >  static const struct usb_device_id elgato_cam_link_4k = {
+> > >       USB_DEVICE(0x0fd9, 0x0066)
+> > >  };
+> > >
+> >
 
-  - Add Transmeta vendor tags to the appropriate bitfields at leaves
-    0x0, 0x01, and from leaves 0x80000000 to 0x80000006.
+-- 
+Kind regards,
 
-  - Add the Transmeta-specific CPUID leaves 0x03, and 0x80860000 to
-    0x80860007.
-
-  - Add Centaur/Zhaoxin leaves 0xc0000000 and 0xc0000001, along with
-    Zhoaxin's exclusive feature bits.
-
-- Add some documentation in the schema for the <linux> annotation tag.
-
-CPUID bitfields coverage
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-In total, this release increases the x86-cpuid database bitfield
-coverage to:
-
-    CPUID leaves:        63 leaves
-    CPUID bitfields:     907 entries
-
-Changes to generated files styling
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Beside the new cpuid leaves and bitfields, the generated Linux kernel C
-structures has changed from:
-
-    /*
-     * CPUID leaf 0
-     */
-
-    struct leaf0_sl0 {
-        ...;
-    };
-
-    /*
-     * CPUID leaf 7
-     */
-
-    struct leaf7_sl0 {
-        ...;
-    };
-
-    struct leaf7_sl1 {
-        ...;
-    };
-
-to:
-
-    /*
-     * Leaf 0x0
-     * Maximum standard leaf number + CPU vendor string
-     */
-
-    struct leaf_0x0_0 {
-        ...;
-    };
-
-    /*
-     * Leaf 0x7
-     * Extended CPU features enumeration
-     */
-
-    struct leaf_0x7_0 {
-        ...;
-    };
-
-    struct leaf_0x7_1 {
-        ...;
-    };
-
-Overall, this removes ambiguity for IDs like 0x16, and improves kernel
-code greppability (x86 PQ pending).
-
-Finally, the generated CSV and C header files can be quickly checked in
-full from the release artifacts at:
-
-  https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/releases/v2.0
-
-Thanks,
-
---
-Ahmed S. Darwish
-Linutronix GmbH
+Sakari Ailus
 
