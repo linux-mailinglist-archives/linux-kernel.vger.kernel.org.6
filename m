@@ -1,573 +1,158 @@
-Return-Path: <linux-kernel+bounces-355853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78D69957FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:58:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B109957FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 21:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AC54B22A8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB58AB24270
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 19:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08EB213EFC;
-	Tue,  8 Oct 2024 19:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA024215006;
+	Tue,  8 Oct 2024 19:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THJEGaZd"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sNLVO2Y+"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16921136982;
-	Tue,  8 Oct 2024 19:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BE0213EEE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 19:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417497; cv=none; b=DeNpaxenHZOC+yJ9wRR4SMBMcn0ly1Int+8nDT9ayhwCCAUSUncS0maOeVBCMrIE0rAUEJ8CnNJG/AzO1eFDgS3Q4EC/Jg+k4cCdgU/07a1i9DJG9H9u3EvTD/rIRL80zxEoELd4BQXyFjTt9FF5N7ulNEOZe5ZJXaVOSYWRfCk=
+	t=1728417409; cv=none; b=GM7NR8KJKjJGIuWtqUlUgiefXODT1ZhLqvcoQnqz83gaGob8X6A6bcT/fvBC85oTyCgtqqa/2c8UW/LR898KwsiE5ofIMiiBV/EVvMLXOktNg4Pzh+oNg7I7Tw+kL6K4qoZEpim8xq7zLHCR/nfWJbAguvE+P5Uzq5zEOmy+w0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417497; c=relaxed/simple;
-	bh=IOPWXwyVTHtGv0Pt9rzgQAS8jQ32O9lRVdzR9a8kHQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=piq6Uf7okZUMpjo52ScCTCu3k3mwHNEzfJ/LsalfZnzN6OmA4Reo8z/8UOLSSAwBHpVwOYXqArJjpy+/FjoRwDSKQjSbb63DrmtOykGbn0F7A3Lh9xv1i1yEC1rABaOIZVOdvVRjztg28/y9nFG/ZhD//W7ITqDXgelMrkmcH8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THJEGaZd; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71dfc1124cdso132241b3a.1;
-        Tue, 08 Oct 2024 12:58:15 -0700 (PDT)
+	s=arc-20240116; t=1728417409; c=relaxed/simple;
+	bh=lJ13KuCMxM+rGS6o4c5nzT7RJcxdk/8pPHoQ2SxGCac=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iBvOf0pPfuVjK58lwDVbWBR4wysK74XhRDkF39ZZB8irQhM6anFwrKzZXO7+gLfV/XIFekYd2A3uMZYqONURhza+nujatvEaY+AxuYpvMcdI/W4vM+NTLU8Rq2mtPdaTlGQop0w9lvV2xfh3Pk/Q9VInnXqHYtg+779PNHZW14A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sNLVO2Y+; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6818fa37eecso6455184a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 12:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728417495; x=1729022295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKFOxWTZB3gDwU1tSyYxwo5WVBBbD0qnN+dc9is7c3k=;
-        b=THJEGaZdOGu7BXEvZxvA4msQWbwEF+oPCtgvIJCwrwC+arl0VxyFXJn49+CzWEFTQ+
-         lqMv44esbR/KNC+zKvXFd2orbNrM6q7/+VZlXw4K+U9bnKyNzgIC57S6X0Gu39sYO8ka
-         qkr63tGy4UtV5mUtDbospvBiw71Bqjzabn6yo920T2YeUE69ufX34SKcb6866x+XXEZ4
-         O0K5TYyFj7c2yC1bJ+4Ylzjr6yNdZzM+yidy/zmb+XYPhnimvxU2IyP0/U7kUFBviUdO
-         zLmGUBLfENE5xn6A0PuRY1Mx8d0fkaUUxlDw24oBEy3MzY6LlHSMCHSAJJIjjnMStGo2
-         yjtQ==
+        d=google.com; s=20230601; t=1728417407; x=1729022207; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/G+V8S+q0QrqWGrvEamJlOg78EP9KmYBGMaK7S1DW0=;
+        b=sNLVO2Y+ZGXrk6RtwKZE7YqHM8bPryppBG+/7hGML41/pnL1cb/uihynRVuhIT/ZlK
+         cEwInNPyDzNquXLvfArwe/FIvYjCqrfFqMVPo9YBdimTTB3u5To4uIPlvkhkF748E7Om
+         QRoUSnsGVY4AEmlp8cAy0t+w3o34FsIJ4zekxPBKrX5qiAPJFuuV+StMJmL/OjgW9uJR
+         weCi/a0VosIKdn14acfTv5m6inmMw4+RIUY4EUsf8TqW4ADgB4qU/4iL7danprnteY8T
+         GuhehGFM9f9i/mHNwXs4BLpZWYbdu251+bcluXcYp4lpNXny8gE408jDLn+bMn6mtE0/
+         n7HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728417495; x=1729022295;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKFOxWTZB3gDwU1tSyYxwo5WVBBbD0qnN+dc9is7c3k=;
-        b=w45p6p7Syxbn3cYC+iyb4+7vV3p/T4SuMeynLddlC0wotOduQm6KOIjoagHdRjPoaL
-         Bm6g/alcaIBS1F9YxP0zLo4SwocmoObTSh7N5BKTfNVGdtRyMFtRsrtdCizGVG9/2iPZ
-         1r8mHRlQISngN3veI3LlN3EtiVYAj/y3jdabikYS8nZCthoCj579wUk5awTdY3/wy1V9
-         LmdCnc9+NYUcQQxaQ5IWuTtVcVfRJon2JnTlq++bffrMQQFvqKg+nYz6dGEKVnifxbhc
-         0FdbctDH1ScUKkACE0NSE/uVx2OdPygrQBLQIVxqHzsQv7RnSb8u6ISqmJxej7M2FjqA
-         44XA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1dA5Mz2vGwuY8XWm05BkDa/Ie73MUH8FQN3j39kxGNfLveJgfhgwfRIcFAqu6kbvXyI4aNPkaX7N2huM=@vger.kernel.org, AJvYcCXPTj7rwONp6n5UOWaKcNowj54xnRXMwl4M+TQzkBL5Cj0urkRqO/23KpvRxy58HoxRnULxaq4oWhWSA/BDs9cDpZIHvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHC0U1dybySvGgU9/1XRNYxU7hRux/B3W0Sp1r9Rcn9xDrns5v
-	xOSPTyduoA3Q4U+gAuHiMyu8Y7MlhwECabyXFVFC3SB7HOia7CmE
-X-Google-Smtp-Source: AGHT+IHH5+riDou6ZwsQCY3XHySn2U90KjpLfshvxNB6PXBjb5hJeSjnSdWDlIiaA7mT2k+MrLBnUA==
-X-Received: by 2002:a05:6a00:318f:b0:71d:ecf3:4551 with SMTP id d2e1a72fcca58-71e1052a5e3mr6078462b3a.10.1728417495134;
-        Tue, 08 Oct 2024 12:58:15 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbceb1sm6722753b3a.13.2024.10.08.12.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 12:58:14 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Dell.Client.Kernel@dell.com
-Subject: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
-Date: Tue,  8 Oct 2024 16:56:43 -0300
-Message-ID: <20241008195642.36677-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241007093324.49631-3-kuurtb@gmail.com>
-References: <20241007093324.49631-3-kuurtb@gmail.com>
+        d=1e100.net; s=20230601; t=1728417407; x=1729022207;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/G+V8S+q0QrqWGrvEamJlOg78EP9KmYBGMaK7S1DW0=;
+        b=Yhrqd9j7vh9tSdmwJ+5ZbiHpdHhcDE7ldDE+JtQ9CnM2yBy1d9xAKZBoR/K3yU/n2k
+         ih9TRTKgbQzRlC4axQJWVZrnFkV8b72S2hO85EbJSozbwOd7+OdGbt1ICPegieZfAU5b
+         hX1O1Zcfej8Wffw8JMk6Jv6Fa6vL9KykHuPkZDO5dDg3IVvtzWbElu0QMCNIgZutXqO9
+         NwLXBR8Xz858CTfQzNKIYklTpGuWV9voLMhxVkfHs+/vz5pYWCsCOs/FYy6nCSJlSlkA
+         tF1k7NzPI1l7GyGHzbK75OhhwLxbxPXW4Oti1S9sFVsd1iIYw7MsGXAmr+rjbp9RpJ8s
+         m79A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQRGC28jsOD1RT64nWWvj8CUhdL+8m78mtJs9cSxn4CATLn7165dgmFAfjkhhufBRnNOkQubTnxUyIy40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpFrPbmdUUU8sxIXACxJkcO0PCf73N/Ecew6+w7zYNktz8jKED
+	j0YVSfAGpZn2m+T40mHglpzCBoCszvhVoeaNn365JlSJUEMRvatgGsgZw5i2LO/S0wSoJbPSrxD
+	6TA==
+X-Google-Smtp-Source: AGHT+IHyx9QyjvcH0QuqsTJ5s9OSvQOQBKzDDSMtuR28E1GHQRe/I98C0rGCGAu3RxyW1QfCFMI9GKgHUE4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a63:f151:0:b0:7e9:f98c:e9f7 with SMTP id
+ 41be03b00d2f7-7ea320f3304mr172a12.10.1728417406827; Tue, 08 Oct 2024 12:56:46
+ -0700 (PDT)
+Date: Tue, 8 Oct 2024 12:56:45 -0700
+In-Reply-To: <diqz1q0qtqnd.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <e8f55fef-1821-408e-88ed-b25200ef66c9@amazon.co.uk> <diqz1q0qtqnd.fsf@ackerleytng-ctop.c.googlers.com>
+Message-ID: <ZwWOfXd9becAm4lH@google.com>
+Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
+ guest_memfd mmap
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Patrick Roy <roypat@amazon.co.uk>, quic_eberman@quicinc.com, tabba@google.com, 
+	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
+	fvdl@google.com, jthoughton@google.com, pbonzini@redhat.com, 
+	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
+	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
+	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
+	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
+	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
+	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
+	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
+	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org, 
+	jgowans@amazon.com, kalyazin@amazon.co.uk, derekmn@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-This patch adds platform_profile support for Dell devices which implement
-User Selectable Thermal Tables (USTT) that are meant to be controlled by
-Alienware Command Center (AWCC). These devices may include newer Alienware
-M-Series, Alienware X-Series and Dell's G-Series. This patch, was tested
-by me on an Alienware x15 R1.
+On Tue, Oct 08, 2024, Ackerley Tng wrote:
+> Patrick Roy <roypat@amazon.co.uk> writes:
+> > For the "non-CoCo with direct map entries removed" VMs that we at AWS
+> > are going for, we'd like a VM type with host-controlled in-place
+> > conversions which doesn't zero on transitions,
 
-It is suspected that Alienware Command Center manages thermal profiles
-through the WMI interface, specifically through a device with identifier
-\_SB_.AMW1.WMAX. This device was reverse engineered and the relevant
-functionality is documented here [1]. This driver interacts with this
-WMI device and thus is able to mimic AWCC's thermal profiles functionality
-through the platform_profile API. In consequence the user would be able
-to set and retrieve thermal profiles, which are just fan speed profiles.
+Hmm, your use case shouldn't need conversions _for KVM_, as there's no need for
+KVM to care if userspace or the guest _wants_ a page to be shared vs. private.
+Userspace is fully trusted to manage things; KVM simply reacts to the current
+state of things.
 
-This driver was heavily inspired on inspur_platform_profile, special
-thanks.
+And more importantly, whether or not the direct map is zapped needs to be a
+property of the guest_memfd inode, i.e. can't be associated with a struct kvm.
+I forget who got volunteered to do the work, but we're going to need similar
+functionality for tracking the state of individual pages in a huge folio, as
+folio_mark_uptodate() is too coarse-grained.  I.e. at some point, I expect that
+guest_memfd will make it easy-ish to determine whether or not the direct map has
+been obliterated.
 
-Notes:
- - Performance (FullSpeed) profile is a special profile which has it's own
-   entry in the Firmware Settings of the Alienware x15 R1. It also changes
-   the color of the F1 key. I suspect this behavior would be replicated in
-   other X-Series or M-Series laptops.
- - G-Mode is a profile documented on [1] which mimics the behavior of
-   FullSpeed mode but it does not have an entry on the Firmware Settings of
-   the Alienware x15 R1, this may correspond to the G-Mode functionality on
-   G-Series laptops (activated by a special button) but I cannot test it. I
-   did not include this code in the driver as G-Mode causes unexpected
-   behavior on X-Series laptops.
+The shared vs. private attributes tracking in KVM is still needed (I think), as
+it communicates what userspace _wants_, whereas he guest_memfd machinery will
+track what the state _is_.
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > so if KVM_X86_SW_PROTECTED_VM ends up zeroing, we'd need to add another new
+> > VM type for that.
 
----
-v3:
- - Removed extra empty line
- - 0x0B named WMAX_ARG_GET_CURRENT_PROF
- - Removed casts to the same type on functions added in this patch
- - Thermal profile to WMAX argument is now an static function and makes
-   use of in-built kernel macros
- - Platform profile is now removed only if it was created first
- - create_platform_profile is now create_thermal_profile to avoid
-   confusion
- - profile_get and profile_set functions renamed too to match the above
-v2:
- - Moved functionality to alienware-wmi driver
- - Added thermal and gmode quirks to add support based on dmi match
- - Performance profile is now GMODE for devices that support it
- - alienware_wmax_command now is insize agnostic to support new thermal
-   methods
----
- drivers/platform/x86/dell/Kconfig         |   1 +
- drivers/platform/x86/dell/alienware-wmi.c | 238 ++++++++++++++++++++--
- 2 files changed, 226 insertions(+), 13 deletions(-)
+Maybe we should sneak in a s/KVM_X86_SW_PROTECTED_VM/KVM_X86_SW_HARDENED_VM rename?
+The original thought behind "software protected VM" was to do a slow build of
+something akin to pKVM, but realistically I don't think that idea is going anywhere.
 
-diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-index 68a49788a..b06d634cd 100644
---- a/drivers/platform/x86/dell/Kconfig
-+++ b/drivers/platform/x86/dell/Kconfig
-@@ -21,6 +21,7 @@ config ALIENWARE_WMI
- 	depends on LEDS_CLASS
- 	depends on NEW_LEDS
- 	depends on ACPI_WMI
-+	select ACPI_PLATFORM_PROFILE
- 	help
- 	 This is a driver for controlling Alienware BIOS driven
- 	 features.  It exposes an interface for controlling the AlienFX
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index f5ee62ce1..e3ef4b10b 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -10,6 +10,7 @@
- #include <linux/acpi.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/platform_profile.h>
- #include <linux/dmi.h>
- #include <linux/leds.h>
- 
-@@ -25,6 +26,10 @@
- #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
- #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
- #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
-+#define WMAX_METHOD_THERMAL_INFORMATION	0x14
-+#define WMAX_METHOD_THERMAL_CONTROL	0x15
-+
-+#define WMAX_ARG_GET_CURRENT_PROF	0x0B
- 
- MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
- MODULE_DESCRIPTION("Alienware special feature control");
-@@ -49,11 +54,22 @@ enum WMAX_CONTROL_STATES {
- 	WMAX_SUSPEND = 3,
- };
- 
-+enum WMAX_THERMAL_PROFILE {
-+	WMAX_THERMAL_QUIET = 0xA3,
-+	WMAX_THERMAL_BALANCED = 0xA0,
-+	WMAX_THERMAL_BALANCED_PERFORMANCE = 0xA1,
-+	WMAX_THERMAL_PERFORMANCE = 0xA4,
-+	WMAX_THERMAL_GMODE = 0xAB,
-+	WMAX_THERMAL_LOW_POWER	= 0xA5,
-+};
-+
- struct quirk_entry {
- 	u8 num_zones;
- 	u8 hdmi_mux;
- 	u8 amplifier;
- 	u8 deepslp;
-+	u8 thermal;
-+	u8 gmode;
- };
- 
- static struct quirk_entry *quirks;
-@@ -64,6 +80,8 @@ static struct quirk_entry quirk_inspiron5675 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_unknown = {
-@@ -71,6 +89,8 @@ static struct quirk_entry quirk_unknown = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_x51_r1_r2 = {
-@@ -78,6 +98,8 @@ static struct quirk_entry quirk_x51_r1_r2 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_x51_r3 = {
-@@ -85,6 +107,8 @@ static struct quirk_entry quirk_x51_r3 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 1,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm100 = {
-@@ -92,6 +116,8 @@ static struct quirk_entry quirk_asm100 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm200 = {
-@@ -99,6 +125,8 @@ static struct quirk_entry quirk_asm200 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 0,
- 	.deepslp = 1,
-+	.thermal = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm201 = {
-@@ -106,6 +134,17 @@ static struct quirk_entry quirk_asm201 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 1,
- 	.deepslp = 1,
-+	.thermal = 0,
-+	.gmode = 0,
-+};
-+
-+static struct quirk_entry quirk_x15_r1 = {
-+	.num_zones = 2,
-+	.hdmi_mux = 0,
-+	.amplifier = 0,
-+	.deepslp = 0,
-+	.thermal = 1,
-+	.gmode = 0,
- };
- 
- static int __init dmi_matched(const struct dmi_system_id *dmi)
-@@ -169,6 +208,15 @@ static const struct dmi_system_id alienware_quirks[] __initconst = {
- 		     },
- 	 .driver_data = &quirk_asm201,
- 	 },
-+	 {
-+	 .callback = dmi_matched,
-+	 .ident = "Alienware x15 R1",
-+	 .matches = {
-+		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R1")
-+		    },
-+	 .driver_data = &quirk_x15_r1,
-+	},
- 	 {
- 	 .callback = dmi_matched,
- 	 .ident = "Dell Inc. Inspiron 5675",
-@@ -218,6 +266,7 @@ static struct platform_device *platform_device;
- static struct device_attribute *zone_dev_attrs;
- static struct attribute **zone_attrs;
- static struct platform_zone *zone_data;
-+static struct platform_profile_handler pp_handler;
- 
- static struct platform_driver platform_driver = {
- 	.driver = {
-@@ -500,7 +549,7 @@ static void alienware_zone_exit(struct platform_device *dev)
- 	kfree(zone_attrs);
- }
- 
--static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
-+static acpi_status alienware_wmax_command(void *in_args, size_t insize,
- 					  u32 command, int *out_data)
- {
- 	acpi_status status;
-@@ -508,7 +557,7 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
- 	struct acpi_buffer input;
- 	struct acpi_buffer output;
- 
--	input.length = (acpi_size) sizeof(*in_args);
-+	input.length = (acpi_size) insize;
- 	input.pointer = in_args;
- 	if (out_data) {
- 		output.length = ACPI_ALLOCATE_BUFFER;
-@@ -541,8 +590,8 @@ static ssize_t show_hdmi_cable(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
--				   (u32 *) &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_HDMI_CABLE, (u32 *) &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-@@ -562,8 +611,8 @@ static ssize_t show_hdmi_source(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
--				   (u32 *) &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_HDMI_STATUS, (u32 *) &out_data);
- 
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 1)
-@@ -589,7 +638,8 @@ static ssize_t toggle_hdmi_source(struct device *dev,
- 		args.arg = 3;
- 	pr_debug("alienware-wmi: setting hdmi to %d : %s", args.arg, buf);
- 
--	status = alienware_wmax_command(&args, WMAX_METHOD_HDMI_SOURCE, NULL);
-+	status = alienware_wmax_command(&args, sizeof(args),
-+					WMAX_METHOD_HDMI_SOURCE, NULL);
- 
- 	if (ACPI_FAILURE(status))
- 		pr_err("alienware-wmi: HDMI toggle failed: results: %u\n",
-@@ -642,8 +692,8 @@ static ssize_t show_amplifier_status(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
--				   (u32 *) &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_AMPLIFIER_CABLE, (u32 *) &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-@@ -694,8 +744,8 @@ static ssize_t show_deepsleep_status(struct device *dev,
- 	struct wmax_basic_args in_args = {
- 		.arg = 0,
- 	};
--	status = alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STATUS,
--					(u32 *) &out_data);
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_DEEP_SLEEP_STATUS, (u32 *) &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-@@ -723,8 +773,8 @@ static ssize_t toggle_deepsleep(struct device *dev,
- 		args.arg = 2;
- 	pr_debug("alienware-wmi: setting deep sleep to %d : %s", args.arg, buf);
- 
--	status = alienware_wmax_command(&args, WMAX_METHOD_DEEP_SLEEP_CONTROL,
--					NULL);
-+	status = alienware_wmax_command(&args, sizeof(args),
-+					WMAX_METHOD_DEEP_SLEEP_CONTROL, NULL);
- 
- 	if (ACPI_FAILURE(status))
- 		pr_err("alienware-wmi: deep sleep control failed: results: %u\n",
-@@ -760,6 +810,160 @@ static int create_deepsleep(struct platform_device *dev)
- 	return ret;
- }
- 
-+/*
-+ * Thermal Profile control
-+ *  - Provides thermal profile control through the Platform Profile API
-+ */
-+#define PROFILE_MASK		GENMASK(15,8)
-+#define PROFILE_ACTIVATE	BIT(0)
-+
-+static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
-+{
-+	return FIELD_PREP(PROFILE_MASK, prof) | PROFILE_ACTIVATE;
-+}
-+
-+static int thermal_profile_get(struct platform_profile_handler *pprof,
-+				enum platform_profile_option *profile)
-+{
-+	acpi_status status;
-+	u32 in_args = WMAX_ARG_GET_CURRENT_PROF;
-+	u32 out_data;
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_INFORMATION, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EOPNOTSUPP;
-+
-+	if (out_data == 0xFFFFFFFF)
-+		return -EBADRQC;
-+
-+	switch (out_data) {
-+	case WMAX_THERMAL_LOW_POWER:
-+		*profile = PLATFORM_PROFILE_LOW_POWER;
-+		break;
-+	case WMAX_THERMAL_QUIET:
-+		*profile = PLATFORM_PROFILE_QUIET;
-+		break;
-+	case WMAX_THERMAL_BALANCED:
-+		*profile = PLATFORM_PROFILE_BALANCED;
-+		break;
-+	case WMAX_THERMAL_BALANCED_PERFORMANCE:
-+		*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
-+		break;
-+	case WMAX_THERMAL_PERFORMANCE:
-+	case WMAX_THERMAL_GMODE:
-+		*profile = PLATFORM_PROFILE_PERFORMANCE;
-+		break;
-+	default:
-+		return -ENODATA;
-+	}
-+
-+	return 0;
-+}
-+
-+static int thermal_profile_set(struct platform_profile_handler *pprof,
-+				enum platform_profile_option profile)
-+{
-+	acpi_status status;
-+	u32 in_args;
-+	u32 out_data;
-+
-+	switch (profile) {
-+	case PLATFORM_PROFILE_LOW_POWER:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_LOW_POWER);
-+		break;
-+	case PLATFORM_PROFILE_QUIET:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_QUIET);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED_PERFORMANCE);
-+		break;
-+	case PLATFORM_PROFILE_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_PERFORMANCE);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EOPNOTSUPP;
-+
-+	if (out_data == 0xFFFFFFFF)
-+		return -EBADRQC;
-+
-+	return 0;
-+}
-+
-+static int gmode_thermal_profile_set(struct platform_profile_handler *pprof,
-+				     enum platform_profile_option profile)
-+{
-+	acpi_status status;
-+	u32 in_args;
-+	u32 out_data;
-+
-+	switch (profile) {
-+	case PLATFORM_PROFILE_LOW_POWER:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_LOW_POWER);
-+		break;
-+	case PLATFORM_PROFILE_QUIET:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_QUIET);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED_PERFORMANCE);
-+		break;
-+	case PLATFORM_PROFILE_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EOPNOTSUPP;
-+
-+	if (out_data == 0xFFFFFFFF)
-+		return -EBADRQC;
-+
-+	return 0;
-+}
-+
-+static int create_thermal_profile(void)
-+{
-+	pp_handler.profile_get = thermal_profile_get;
-+
-+	if (quirks->gmode > 0)
-+		pp_handler.profile_set = gmode_thermal_profile_set;
-+	else
-+		pp_handler.profile_set = thermal_profile_set;
-+
-+	set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_BALANCED, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
-+
-+	return platform_profile_register(&pp_handler);
-+}
-+
-+static void remove_thermal_profile(void)
-+{
-+	if (quirks->thermal > 0)
-+		platform_profile_remove();
-+}
-+
- static int __init alienware_wmi_init(void)
- {
- 	int ret;
-@@ -807,6 +1011,12 @@ static int __init alienware_wmi_init(void)
- 			goto fail_prep_deepsleep;
- 	}
- 
-+	if (quirks->thermal > 0) {
-+		ret = create_thermal_profile();
-+		if (ret)
-+			goto fail_prep_thermal_profile;
-+	}
-+
- 	ret = alienware_zone_init(platform_device);
- 	if (ret)
- 		goto fail_prep_zones;
-@@ -817,6 +1027,7 @@ static int __init alienware_wmi_init(void)
- 	alienware_zone_exit(platform_device);
- fail_prep_deepsleep:
- fail_prep_amplifier:
-+fail_prep_thermal_profile:
- fail_prep_hdmi:
- 	platform_device_del(platform_device);
- fail_platform_device2:
-@@ -834,6 +1045,7 @@ static void __exit alienware_wmi_exit(void)
- 	if (platform_device) {
- 		alienware_zone_exit(platform_device);
- 		remove_hdmi(platform_device);
-+		remove_thermal_profile();
- 		platform_device_unregister(platform_device);
- 		platform_driver_unregister(&platform_driver);
- 	}
--- 
-2.46.2
+Alternatively, depending on how KVM accesses guest memory that's been removed from
+the direct map, another solution would be to allow "regular" VMs to bind memslots
+to guest_memfd, i.e. if the non-CoCo use case needs/wnats to bind all memory to
+guest_memfd, not just "private" mappings.
 
+That's probably the biggest topic of discussion: how do we want to allow mapping
+guest_memfd into the guest, without direct map entries, but while still allowing
+KVM to access guest memory as needed, e.g. for shadow paging.  One approach is
+your RFC, where KVM maps guest_memfd pfns on-demand.
+
+Another (slightly crazy) approach would be use protection keys to provide the
+security properties that you want, while giving KVM (and userspace) a quick-and-easy
+override to access guest memory.
+
+ 1. mmap() guest_memfd into userpace with RW protections
+ 2. Configure PKRU to make guest_memfd memory inaccessible by default
+ 3. Swizzle PKRU on-demand when intentionally accessing guest memory
+
+It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
+instead of to usersepace memory.
+
+The benefit of the PKRU approach is that there are no PTE modifications, and thus
+no TLB flushes, and only the CPU that is access guest memory gains temporary
+access.  The big downside is that it would be limited to modern hardware, but
+that might be acceptable, especially if it simplifies KVM's implementation.
+
+> > Somewhat related sidenote: For VMs that allow inplace conversions and do
+> > not zero, we do not need to zap the stage-2 mappings on memory attribute
+> > changes, right?
+
+See above.  I don't think conversions by toggling the shared/private flag in
+KVM's memory attributes is the right fit for your use case.
 
