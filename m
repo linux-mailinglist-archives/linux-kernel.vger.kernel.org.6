@@ -1,107 +1,82 @@
-Return-Path: <linux-kernel+bounces-356317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4D0995F7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722EE995F86
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1A3282E02
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300C028531A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB43416BE20;
-	Wed,  9 Oct 2024 06:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P3rgBjT9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F936D;
-	Wed,  9 Oct 2024 06:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6994D16BE20;
+	Wed,  9 Oct 2024 06:13:54 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E284736D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728454288; cv=none; b=K/TF/HHArMOZjvlY+br0AakXMYAZw7u5EDXj18/AYf5kzpei/6b+JU2keovWOhFgKqmVWzp30Z5O4xNfMLnaoRWx40YDHN13rh6t+8AWGYO34cw7Fa75bsDSwasomEcjGi+hm7f9rHs+VX0bWSvkJpFbQqQHF/EGak2roKjP1BQ=
+	t=1728454434; cv=none; b=fERY7PLaldMiP50BWWQY5ijMkeTTfYodrIYqxEsYmKcDRLw+IyAAFnKBUdkHDBcG5GZTAeDAcrX/PUyh563ahD8vYyLRRNyarXR5enkyXTZSIJ60fP3iLY9G4vR9JelxK1986STFkQ156xG1WIydljMrkRbRxaqf/U1fxF6GU8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728454288; c=relaxed/simple;
-	bh=IwNYGEjSRprLLWrgfeF9psb8bwhoUuY4fiHwPthxkVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJE80q4PwkR+rTEcuQWGh5zwCgwcNgJqkdc+Q6u1Cqphwflg/dN9mF9qr8oqNJIWuHZ+mqQ1jhqcstsaVVuNHBSEIbrsbouDvlRD5EPLBEq5ZPEbzIbaTNUbfH2xgAoCtEK19U5lx6z+fCgsrY4diIvc+mfJOAGHGqDTbs8MC6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P3rgBjT9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8172940E0191;
-	Wed,  9 Oct 2024 06:11:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id pinXfuKkQPDS; Wed,  9 Oct 2024 06:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728454279; bh=mte4q73hd97cfC/NKQCV7JLzWpmDLpTUP99N/916jIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P3rgBjT9ToVYKwlsDMVXWlxim/L1EFJUYboVY0uXAFBGJBGGUiHhzmgQWvAOyCjHB
-	 selONYgMcpEI+xSCGzeOpHK3e/HjCW5NBx9s0Dc6OpqvRILIr1N8uKr60NnXfx5a+4
-	 I01znC19tpfPvD7uRuzHV3RA2a3zScw25raZ+9OavTA2uoilFIZ4XTq/8f94QxZbl3
-	 3u6nK+Y+IP04i76YNmS7PrSWkQ+38B9OLGlrmYCc85IjZCttEYYehSNeETxlGvnnJj
-	 V1kZho+PLdZFsaioKIXyt2Sd6fg9Dtj1uOCYif6fqYnV1gySbBO1chINgl+d6qh4bR
-	 0tmRA47rI/MujI/6HWrVGO0r1z3jFpOD6P3VsOxkn9MIASbVcKIkokdcvsCJ4HyABM
-	 5wEB+TqWTXJo2lyt7Y2pxrJgKZeLneIaMHwU8cBNxbq7BZ3SRXr74J63Ix4EpAT4pv
-	 bco0G1Ng7er6Yz4N+c1CkA26LOkwXUewe80jd4sLWJ/F/gXrK61UGfmktSHkhTPEi1
-	 +8cv1FyaxOHAD4zhROfMUbRd7JElrfH3wcBYBfDr4NbOgmrTqsZPa4jLvBLE2Gockr
-	 0icZwiDJTDJnlPEX/jfp+0QJKnn/jBEmF7kIPSWVEkeRCZ6HWgu9ZD91N3VieSYla2
-	 AY1CFtKGygXIOLttyecXKt9I=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E61740E0163;
-	Wed,  9 Oct 2024 06:11:08 +0000 (UTC)
-Date: Wed, 9 Oct 2024 08:11:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Robert Gill <rtgill82@gmail.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>, stable@vger.kernel.org,
-	#@tip-bot2.tec.linutronix.de, 5.10+@tip-bot2.tec.linutronix.de,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org
-Subject: Re: [tip: x86/urgent] x86/bugs: Use code segment selector for VERW
- operand
-Message-ID: <20241009061102.GBZwYediMceBEfSEFo@fat_crate.local>
-References: <172842753652.1442.15253433006014560776.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1728454434; c=relaxed/simple;
+	bh=8uX7coThDMx+v6d/K4EqGqvh2dB7LoVg1MFCQaOjfII=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WAj3fBh104cIklAUR1k6DbOLFlnKoTMwxZerMnJGn94oDAp7vXIrsR29Uf5KIfM6t2CdpXU1cTSGz+L3/TfLElGUzvGfDgg7xlB/SyvCo/jImVn/Fx4Z4Af2yG9/m2qvtFlWlCrlDpHF1J//64iTjtcNOpQG5Vg3xUcRVh5rXEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee967061f1431e-f032b;
+	Wed, 09 Oct 2024 14:13:41 +0800 (CST)
+X-RM-TRANSID:2ee967061f1431e-f032b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee767061f04bae-d9472;
+	Wed, 09 Oct 2024 14:13:41 +0800 (CST)
+X-RM-TRANSID:2ee767061f04bae-d9472
+From: Ba Jing <bajing@cmss.chinamobile.com>
+To: linux@dominikbrodowski.net
+Cc: bajing@cmss.chinamobile.com,
+	quic_jjohnson@quicinc.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pcmcia: i82365: remove unused macro
+Date: Tue,  8 Oct 2024 17:40:27 +0800
+Message-Id: <20241008094027.39377-1-bajing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <172842753652.1442.15253433006014560776.tip-bot2@tip-bot2>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 10:45:36PM -0000, tip-bot2 for Pawan Gupta wrote:
->  .macro CLEAR_CPU_BUFFERS
-> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> +#ifdef CONFIG_X86_64
-> +	ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
-> +#else
-> +	/*
-> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
-> +	 * segments may not be usable (vm86 mode), and the stack segment may not
-> +	 * be flat (ESPFIX32).
-> +	 */
-> +	ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
-> +#endif
+By reading the code, I found the macro IS_UNKNOWN is
+never referenced in the code. Just remove it.
 
-So why didn't we ifdef the "verw mds_verw_sel(%rip)" and "verw
-%cs:mds_verw_sel" macro argument instead of adding more bigger ugly ifdeffery?
+Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+---
+ drivers/pcmcia/i82365.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/pcmcia/i82365.c b/drivers/pcmcia/i82365.c
+index 86a357837a7b..3b045cd87107 100644
+--- a/drivers/pcmcia/i82365.c
++++ b/drivers/pcmcia/i82365.c
+@@ -183,7 +183,6 @@ enum pcic_id {
+ #define IS_VADEM	0x0001
+ #define IS_CIRRUS	0x0002
+ #define IS_VIA		0x0010
+-#define IS_UNKNOWN	0x0400
+ #define IS_VG_PWR	0x0800
+ #define IS_DF_PWR	0x1000
+ #define IS_REGISTERED	0x2000
 -- 
-Regards/Gruss,
-    Boris.
+2.33.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+
 
