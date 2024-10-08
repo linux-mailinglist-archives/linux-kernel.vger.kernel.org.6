@@ -1,143 +1,174 @@
-Return-Path: <linux-kernel+bounces-355036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE75699464A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BF799464C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839841F28B0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E80D3B22AF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 11:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA1D1C2443;
-	Tue,  8 Oct 2024 11:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5181D094B;
+	Tue,  8 Oct 2024 11:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kttiiXoY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DeqEEctK"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736A93C0C;
-	Tue,  8 Oct 2024 11:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA91C16FF2A;
+	Tue,  8 Oct 2024 11:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728385919; cv=none; b=sDoLhHIekrzdH5qFd42Tr6OOpiyzwPGXPRXg8u05qMo71b/t4OwiwbBQGaHxpxvo8NwIsA3NTdZevLTmpXDpsQSbW/0R6BWGQqQrfSIsD66P4JLw1l0VsrLsZRDVwA8pKwZdl3U2zKtU+WYwHCbv65ZwoQuJ4TtjVXcbWyox1dc=
+	t=1728385947; cv=none; b=qd6td5D197lBcI+pv7lG9x5/BAlpwUYQpNuQg92+4R/1RGGSVNLHL8iu1XKZYv9OYTA/uZotaLW+keogLfKFzzzqmcpA5Q6kx1a0GVbLKTpktFFo4GUrw0t0YPCOfP09NCfvqW0vdI9o656ksCUMAX7E26haTYrw5pbTFREW0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728385919; c=relaxed/simple;
-	bh=naL5B/VSTo91io3s6IeOCOzEAtjuPXeG0p40Aa+ePN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRgVsYt62emE+YhoT1feUUKwS36cje5DAqoQK6j+2a19g+9Wh9MxA5QDyRPVTr5Zo1zyByX1BoAVFWBBfy9s/z0RxsR87uu02pooirBjW9sKicubm0ulS9MsCAuf8jsnja6LTdGXDiBhyE1eZQmj0TiLte3XwLxG1jEkz20W46Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kttiiXoY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kMDTZwF7KT+Vr9VLbyVkqYrAge3SOzGmoRLC+FokyxU=; b=kttiiXoY46MsOp5E+WyIsuZJGl
-	ysCb7gUxPT+AelusEN+3Blmq1lacVgaYHA2GAb55+xm/hgRvDa7ypWIDhrPbqmWuU8vACIXK1RaaF
-	fy9nz0fb3QzdPmDhue4KFgM2YhKmkykkbgYTR8i2FVmY1hMjcR3rWAdFv6ixtr+8UR/61XYhkdDHO
-	9C2bFbjWLzkP6UmQbpLEM+UZoRwVyWJFCbQu0c2TrvDKJkBV1zN8UT78bQHzcXppc6gDyZoXg/SZE
-	LlFTyDHqYVSrumgmjwwCavqaCok3SwdW/L6M4mj6u9+b1dtqiW91eXKGnmfvNexGeHuLIQLXgFNUf
-	6+93GdZQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sy887-00000002ALL-0lhg;
-	Tue, 08 Oct 2024 11:11:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6A89430057A; Tue,  8 Oct 2024 13:11:50 +0200 (CEST)
-Date: Tue, 8 Oct 2024 13:11:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <20241008111150.GD17263@noisy.programming.kicks-ass.net>
-References: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
- <20241003084743.GC33184@noisy.programming.kicks-ass.net>
- <20241003092707.GD33184@noisy.programming.kicks-ass.net>
- <20241003122824.GE33184@noisy.programming.kicks-ass.net>
- <83d29a0c-dab2-4570-8be0-539b43237724@paulmck-laptop>
- <20241003142240.GU5594@noisy.programming.kicks-ass.net>
- <7b14822a-ee98-4e46-9828-1e41b1ce76f3@paulmck-laptop>
- <20241003185037.GA5594@noisy.programming.kicks-ass.net>
- <20241004133532.GH33184@noisy.programming.kicks-ass.net>
- <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
+	s=arc-20240116; t=1728385947; c=relaxed/simple;
+	bh=3T5gumFYtWt9UscSLgj+TkRypVkU2q5vWbwQZBEgr7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OI2ZJK5lamHPR0ith2/rpBAuVjnbRC7F2rtVnYyl7kq0UaIzXNHI3e0s9JTanFAhbhKkO7Xca9XboJUC7kpHd/oRZWfCeeJVy6SUZYKlgVz72U+bxT9ozJK2y4axOpw12cAhs5d8UrXR9V67XOQBRQp+JepB1tStRSlKXWr+Ka8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DeqEEctK; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 498BC6FE108699;
+	Tue, 8 Oct 2024 06:12:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728385926;
+	bh=VDFWXMl2aCJutFVdh13RSnu4NjcswFFV8lBqiNDhU1o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=DeqEEctKrZTGQOCWeCO4ZGnOUKJATRLG1shIW3oIH3h/OAZCX2jxo7izCj1Qzp3iO
+	 EWdNeTccKKth/ElSsTtvYPmtGTCS4j5GsyfVkEqGoaZZngx7S2CUtC2NrIzlUH2afP
+	 I/a8USFK85cSWKbSIWmWA+087xNURdhnTiB8NS5o=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 498BC6UQ026906
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Oct 2024 06:12:06 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Oct 2024 06:12:06 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Oct 2024 06:12:05 -0500
+Received: from [10.249.128.176] ([10.249.128.176])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 498BC2tE082826;
+	Tue, 8 Oct 2024 06:12:03 -0500
+Message-ID: <b8598c92-b511-4e83-ac21-717ffc915d31@ti.com>
+Date: Tue, 8 Oct 2024 16:42:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9961cb9c-70f0-405b-b259-575586905ae0@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62-main: Update otap/itap values
+To: Judith Mendez <jm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth
+ Menon <nm@ti.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20240924195335.546900-1-jm@ti.com>
+Content-Language: en-US
+From: Bhavya Kapoor <b-kapoor@ti.com>
+In-Reply-To: <20240924195335.546900-1-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Oct 06, 2024 at 01:44:53PM -0700, Paul E. McKenney wrote:
+Looks good to me !
 
-> With your patch, I got 24 failures out of 100 TREE03 runs of 18 hours
-> each.  The failures were different, though, mostly involving boost
-> failures in which RCU priority boosting didn't actually result in the
-> low-priority readers getting boosted.  
-
-Somehow I feel this is progress, albeit very minor :/
-
-> There were also a number of "sched: DL replenish lagged too much"
-> messages, but it looks like this was a symptom of the ftrace dump.
-> 
-> Given that this now involves priority boosting, I am trying 400*TREE03
-> with each guest OS restricted to four CPUs to see if that makes things
-> happen more quickly, and will let you know how this goes.
-> 
-> Any other debug I should apply?
-
-The sched_pi_setprio tracepoint perhaps?
-
-I've read all the RCU_BOOST and rtmutex code (once again), and I've been
-running pi_stress with --sched id=low,policy=other to ensure the code
-paths in question are taken. But so far so very nothing :/
-
-(Noting that both RCU_BOOST and PI futexes use the same rt_mutex / PI API)
-
-You know RCU_BOOST better than me.. then again, it is utterly weird this
-is apparently affected. I've gotta ask, a kernel with my patch on and
-additionally flipping kernel/sched/features.h:SCHED_FEAT(DELAY_DEQUEUE,
-false) functions as expected?
-
-
-One very minor thing I noticed while I read the code, do with as you
-think best...
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 1c7cbd145d5e..95061119653d 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1071,10 +1071,6 @@ static int rcu_boost(struct rcu_node *rnp)
- 	 * Recheck under the lock: all tasks in need of boosting
- 	 * might exit their RCU read-side critical sections on their own.
- 	 */
--	if (rnp->exp_tasks == NULL && rnp->boost_tasks == NULL) {
--		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
--		return 0;
--	}
- 
- 	/*
- 	 * Preferentially boost tasks blocking expedited grace periods.
-@@ -1082,10 +1078,13 @@ static int rcu_boost(struct rcu_node *rnp)
- 	 * expedited grace period must boost all blocked tasks, including
- 	 * those blocking the pre-existing normal grace period.
- 	 */
--	if (rnp->exp_tasks != NULL)
--		tb = rnp->exp_tasks;
--	else
-+	tb = rnp->exp_tasks;
-+	if (!tb)
- 		tb = rnp->boost_tasks;
-+	if (!tb) {
-+		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+		return 0;
-+	}
- 
- 	/*
- 	 * We boost task t by manufacturing an rt_mutex that appears to
+On 25/09/24 01:23, Judith Mendez wrote:
+> Update itap/itap values according to device datasheet [0].
+>
+> Now that we have fixed timing issues for am62x [1], lets
+> change the otap/itap values back according to the device
+> datasheet.
+>
+> [0] https://www.ti.com/lit/ds/symlink/am625.pdf
+> [1] https://lore.kernel.org/linux-mmc/20240913185403.1339115-1-jm@ti.com/
+>
+> Signed-off-by: Judith Mendez <jm@ti.com>
+Reviewed-by: Bhavya Kapoor<b-kapoor@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 47 ++++++++++++------------
+>   1 file changed, 23 insertions(+), 24 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> index 5b92aef5b284..7194603fd3bc 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> @@ -561,10 +561,9 @@ sdhci0: mmc@fa10000 {
+>   		ti,clkbuf-sel = <0x7>;
+>   		ti,otap-del-sel-legacy = <0x0>;
+>   		ti,otap-del-sel-mmc-hs = <0x0>;
+> -		ti,otap-del-sel-ddr52 = <0x5>;
+> -		ti,otap-del-sel-hs200 = <0x5>;
+> -		ti,itap-del-sel-legacy = <0xa>;
+> -		ti,itap-del-sel-mmc-hs = <0x1>;
+> +		ti,otap-del-sel-hs200 = <0x6>;
+> +		ti,itap-del-sel-legacy = <0x0>;
+> +		ti,itap-del-sel-mmc-hs = <0x0>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -577,17 +576,17 @@ sdhci1: mmc@fa00000 {
+>   		clock-names = "clk_ahb", "clk_xin";
+>   		bus-width = <4>;
+>   		ti,clkbuf-sel = <0x7>;
+> -		ti,otap-del-sel-legacy = <0x8>;
+> +		ti,otap-del-sel-legacy = <0x0>;
+>   		ti,otap-del-sel-sd-hs = <0x0>;
+> -		ti,otap-del-sel-sdr12 = <0x0>;
+> -		ti,otap-del-sel-sdr25 = <0x0>;
+> -		ti,otap-del-sel-sdr50 = <0x8>;
+> -		ti,otap-del-sel-sdr104 = <0x7>;
+> -		ti,otap-del-sel-ddr50 = <0x4>;
+> -		ti,itap-del-sel-legacy = <0xa>;
+> -		ti,itap-del-sel-sd-hs = <0x1>;
+> -		ti,itap-del-sel-sdr12 = <0xa>;
+> -		ti,itap-del-sel-sdr25 = <0x1>;
+> +		ti,otap-del-sel-sdr12 = <0xf>;
+> +		ti,otap-del-sel-sdr25 = <0xf>;
+> +		ti,otap-del-sel-sdr50 = <0xc>;
+> +		ti,otap-del-sel-sdr104 = <0x6>;
+> +		ti,otap-del-sel-ddr50 = <0x9>;
+> +		ti,itap-del-sel-legacy = <0x0>;
+> +		ti,itap-del-sel-sd-hs = <0x0>;
+> +		ti,itap-del-sel-sdr12 = <0x0>;
+> +		ti,itap-del-sel-sdr25 = <0x0>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -600,17 +599,17 @@ sdhci2: mmc@fa20000 {
+>   		clock-names = "clk_ahb", "clk_xin";
+>   		bus-width = <4>;
+>   		ti,clkbuf-sel = <0x7>;
+> -		ti,otap-del-sel-legacy = <0x8>;
+> +		ti,otap-del-sel-legacy = <0x0>;
+>   		ti,otap-del-sel-sd-hs = <0x0>;
+> -		ti,otap-del-sel-sdr12 = <0x0>;
+> -		ti,otap-del-sel-sdr25 = <0x0>;
+> -		ti,otap-del-sel-sdr50 = <0x8>;
+> -		ti,otap-del-sel-sdr104 = <0x7>;
+> -		ti,otap-del-sel-ddr50 = <0x8>;
+> -		ti,itap-del-sel-legacy = <0xa>;
+> -		ti,itap-del-sel-sd-hs = <0xa>;
+> -		ti,itap-del-sel-sdr12 = <0xa>;
+> -		ti,itap-del-sel-sdr25 = <0x1>;
+> +		ti,otap-del-sel-sdr12 = <0xf>;
+> +		ti,otap-del-sel-sdr25 = <0xf>;
+> +		ti,otap-del-sel-sdr50 = <0xc>;
+> +		ti,otap-del-sel-sdr104 = <0x6>;
+> +		ti,otap-del-sel-ddr50 = <0x9>;
+> +		ti,itap-del-sel-legacy = <0x0>;
+> +		ti,itap-del-sel-sd-hs = <0x0>;
+> +		ti,itap-del-sel-sdr12 = <0x0>;
+> +		ti,itap-del-sel-sdr25 = <0x0>;
+>   		status = "disabled";
+>   	};
+>   
 
