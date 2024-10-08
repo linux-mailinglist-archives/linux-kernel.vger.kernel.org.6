@@ -1,215 +1,109 @@
-Return-Path: <linux-kernel+bounces-355734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAA399562D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:07:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1962C995632
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 20:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D991C24F07
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:07:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9672DB25EC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 18:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAA3212642;
-	Tue,  8 Oct 2024 18:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C6D212650;
+	Tue,  8 Oct 2024 18:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0UVTqauF"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="a4DHs6Ha"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9DF1E0086
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2024 18:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8347A139587;
+	Tue,  8 Oct 2024 18:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728410842; cv=none; b=Uz5N6OKV1uRrijO8I6AKYOHPMGSPDWw+d1nCCLMQGl5AUaemK+7BurXo5/Uqvvc3JbqKtp3LwG154bdkLmrlnXlmsBjMX+cU35YChzexmFUXCLNrKtpUZXAd5fgOwm/PXYEJIco3PLAn3cRBU3sRw+4+PRpsgznetNWf65Fp7MY=
+	t=1728410948; cv=none; b=vEJHmmiEj12GJcralIrogtNgc0fpH0EJMzAv/YfRUA8u760lJ3LkZnzHuAuw5e0gLyUSRkaxZTs2pH4ZwmDCXLHhBD10Xk5AZ0JVwl0YxImkt7l1V1ykvJCrlx9lfkBY683mOl2RqVR4p6MXBwWrFUvkm4js/4LshqsxQfosl98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728410842; c=relaxed/simple;
-	bh=VPMRHqyb/Q9/e87LgvAazduHaCf7alPCxSWbVHZyZAM=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=D9PYxlXKpHpVqu9PbF0KDq3U8KWEZoPzgw0l+5xemmKgEDPjzFazOdfnJPnX78uDnRCb1Fp7HlXQacVXREroqb0jEpzekAa6mem4J9OgQLaSfa/wF/m+OfOMZhPx3E4VKv+67fJUaQf7CvuyI42kXizix5oVyFsfVzKPLnNaztE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0UVTqauF; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2270a147aso89674747b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 11:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728410840; x=1729015640; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=E+Uxs2xH4NoLlbk4hH0dKufZ3jGhZXR1OulYKjDzCf8=;
-        b=0UVTqauFm8zMhfk8+6zr8OPGexX4vM46se2Xmsn4QgKdFhFC/WQLQK+mZP+lTaQ5vE
-         v8o+sH+AdAQXbEpz7Wz+399DQPj9nvaH8fFIuW9WGNLl9IcknoIUjg72rnf42BnYEZbT
-         fce+FfpaYn6Ej3AOa3fKYPM29ND8HCWBVEyEBLw5hNKnds5zsVNgufJ4kLmU6ZHtfjEd
-         U5r4U7JVSbpuafkOYZ6XvoSVh3vfmqg2rtrI8MkVx3qAIga5XV2C1UGDyyZNklJR0lcQ
-         WVj/tRJcf8gBmegnNhQOxBDa/xERRkXUfo+qB76eiZp8ROOgjz9yjnY82PYk8uYuiXNX
-         c0eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728410840; x=1729015640;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+Uxs2xH4NoLlbk4hH0dKufZ3jGhZXR1OulYKjDzCf8=;
-        b=Gv5Wyv0TqgidaVeh+pAPOoEhwgJika9ePHbvSzT9bFXljxwaRCj0Db0Jebf1Xw3xPn
-         MwrK4lE0nbg/BjHCfr9mFsST29fCIUdh75dw/gqL0f9T8nYmOhyRSHYbLVYiFKTIiNeS
-         6bjDWD0NcinVMSN3b3vo8h7K/1gkBhEOPzL7O/9TuLsKxcRksvAJCflklxJcrLbXMILS
-         +awPS0BMfRI1gd+dKYbWjrENZ2BdA/gM/paIPYtyk2TBcMSEBoZqXIj0GmG5Ze/RgnyE
-         PliIdffs7lLginuiOwQhOqUD9qbI6rLlNQWPJmqBwd1RtoH6jTEjQDm6um/6jlO5mO72
-         bUBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi6uwe9vm0tgmAphIIkrht/ezY/YK7gH9BTq6rGekwdKhy6SfcqYqIK6zCp9joaeYU39lqbcAajNEwlt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC9Tjiaw+O5gwSOzUPMrOensueMLXB9rlAPB+CgE6G1d5xslqw
-	M+qloMZpn8d57tuUdJbCjgUb6eVlwXAEgJhuuPmKeT2Ii9sLRQReiEe4opVRsWgdmc2/LZmNW5n
-	KS3Fo3l6ppi2cUrMozi1lQg==
-X-Google-Smtp-Source: AGHT+IE9oeDn9TjYqmz9fnNZvA2vGhI22YX38uYS3CQQYmwwAnoN7YG1nYKm0OprX/ZwSMpbDB3n14/P1EgAWSj+Kg==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:146:b875:ac13:a9fc])
- (user=ackerleytng job=sendgmr) by 2002:a05:6902:4a8:b0:e28:e4a7:3206 with
- SMTP id 3f1490d57ef6-e28e4a732e6mr33127276.8.1728410839734; Tue, 08 Oct 2024
- 11:07:19 -0700 (PDT)
-Date: Tue, 08 Oct 2024 18:07:18 +0000
-In-Reply-To: <e8f55fef-1821-408e-88ed-b25200ef66c9@amazon.co.uk> (message from
- Patrick Roy on Mon, 7 Oct 2024 16:56:42 +0100)
+	s=arc-20240116; t=1728410948; c=relaxed/simple;
+	bh=SRNkTxxM1vPLx+kwHD1EDvBg+ML8QGlG2cblvhEIQq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gpcOCrtQPekvGniMICH8RQVBODEZDPwJfNZbXxVHYlSJ/DG2jKECl6lQjdEQhPDrIYgzk7/ew6AGY9vuuwWKuzrBek0Hwsnx+eiYzUV0SWVv3U2xPVEkESQZ1+LzGCNeg64XWn3pdFaplpC9ZWjxuz6oZMafxT+dTJtRohjkmB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=a4DHs6Ha; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XNPD15zS6z6ClY9T;
+	Tue,  8 Oct 2024 18:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1728410940; x=1731002941; bh=2lkWYtnPI63MLIiTQSgMVVz/
+	sT/tHkUhdRp9WuQ8oFo=; b=a4DHs6Hajgb0x18wO1l3wug+QvsJz8yJJu8jz4lM
+	tfMzv7Pm9wuqW/dfCm03oHGTMzvavdfpmYUDmF4kG3o0wzZRX8cFlxg+PUGwem9J
+	JYcRe4HlaeGBGCFzPqGlTrsCVB8ZNW9HXqy2ZSEIoazCs0Y8YezIQsz9OSQcL7+u
+	lZiv9bDxLIUQEd0OWioDxNFTvKAl4yeuHqLQMIAjvX2+fqjmEdAWF9Vc3SB22dQH
+	fwZFUJIiDXRBXxbn7h9EuJn9oD0yB1dLLRRE7H+lmRY1EpjAsqDy6u9u3lmt+PVg
+	Oawmj7o/gGmNsosPrvDO1dCmh8zqyrh9VA/I51OI9cKwkQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id cSgM-UPnMHOQ; Tue,  8 Oct 2024 18:09:00 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XNPCr2v1Xz6ClY9M;
+	Tue,  8 Oct 2024 18:08:55 +0000 (UTC)
+Message-ID: <683f30d7-ba8c-4072-b4a9-70383052bb49@acm.org>
+Date: Tue, 8 Oct 2024 11:08:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqz1q0qtqnd.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-From: Ackerley Tng <ackerleytng@google.com>
-To: Patrick Roy <roypat@amazon.co.uk>
-Cc: quic_eberman@quicinc.com, tabba@google.com, jgg@nvidia.com, 
-	peterx@redhat.com, david@redhat.com, rientjes@google.com, fvdl@google.com, 
-	jthoughton@google.com, seanjc@google.com, pbonzini@redhat.com, 
-	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
-	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
-	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org, 
-	jgowans@amazon.com, kalyazin@amazon.co.uk, derekmn@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] scsi: ufs: core: Add
+ UFSHCI_QUIRK_DME_RESET_ENABLE_AFTER_HCE
+To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-2-git-send-email-shawn.lin@rock-chips.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1728368130-37213-2-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Patrick Roy <roypat@amazon.co.uk> writes:
+On 10/7/24 11:15 PM, Shawn Lin wrote:
+> +	/*
+> +	 * Do dme_reset and dme_enable if a UFS host controller need
+> +	 * this procedure to actually finish HCE.
+> +	 */
 
-> Hi Ackerley,
->
-> On Thu, 2024-10-03 at 22:32 +0100, Ackerley Tng wrote:
->> Elliot Berman <quic_eberman@quicinc.com> writes:
->>
->>> On Tue, Sep 10, 2024 at 11:44:01PM +0000, Ackerley Tng wrote:
->>>> Since guest_memfd now supports mmap(), folios have to be prepared
->>>> before they are faulted into userspace.
->>>>
->>>> When memory attributes are switched between shared and private, the
->>>> up-to-date flags will be cleared.
->>>>
->>>> Use the folio's up-to-date flag to indicate being ready for the guest
->>>> usage and can be used to mark whether the folio is ready for shared OR
->>>> private use.
->>>
->>> Clearing the up-to-date flag also means that the page gets zero'd out
->>> whenever it transitions between shared and private (either direction).
->>> pKVM (Android) hypervisor policy can allow in-place conversion between
->>> shared/private.
->>>
->>> I believe the important thing is that sev_gmem_prepare() needs to be
->>> called prior to giving page to guest. In my series, I had made a
->>> ->prepare_inaccessible() callback where KVM would only do this part.
->>> When transitioning to inaccessible, only that callback would be made,
->>> besides the bookkeeping. The folio zeroing happens once when allocating
->>> the folio if the folio is initially accessible (faultable).
->>>
->>> From x86 CoCo perspective, I think it also makes sense to not zero
->>> the folio when changing faultiblity from private to shared:
->>>  - If guest is sharing some data with host, you've wiped the data and
->>>    guest has to copy again.
->>>  - Or, if SEV/TDX enforces that page is zero'd between transitions,
->>>    Linux has duplicated the work that trusted entity has already done.
->>>
->>> Fuad and I can help add some details for the conversion. Hopefully we
->>> can figure out some of the plan at plumbers this week.
->>
->> Zeroing the page prevents leaking host data (see function docstring for
->> kvm_gmem_prepare_folio() introduced in [1]), so we definitely don't want
->> to introduce a kernel data leak bug here.
->>
->> In-place conversion does require preservation of data, so for
->> conversions, shall we zero depending on VM type?
->>
->> + Gunyah: don't zero since ->prepare_inaccessible() is a no-op
->> + pKVM: don't zero
->> + TDX: don't zero
->> + SEV: AMD Architecture Programmers Manual 7.10.6 says there is no
->>   automatic encryption and implies no zeroing, hence perform zeroing
->> + KVM_X86_SW_PROTECTED_VM: Doesn't have a formal definition so I guess
->>   we could require zeroing on transition?
->
-> Maybe for KVM_X86_SW_PROTECTED_VM we could make zero-ing configurable
-> via some CREATE_GUEST_MEMFD flag, instead of forcing one specific
-> behavior.
+need -> needs
 
-Sounds good to me, I can set up a flag in the next revision.
+> +
+> +	/*
+> +	 * This quirks needs to be enabled if host controller need to
+> +	 * do dme_reset and dme_enable after hce.
+> +	 */
 
-> For the "non-CoCo with direct map entries removed" VMs that we at AWS
-> are going for, we'd like a VM type with host-controlled in-place
-> conversions which doesn't zero on transitions, so if
-> KVM_X86_SW_PROTECTED_VM ends up zeroing, we'd need to add another new VM
-> type for that.
->
-> Somewhat related sidenote: For VMs that allow inplace conversions and do
-> not zero, we do not need to zap the stage-2 mappings on memory attribute
-> changes, right?
->
+quirks -> quirk
 
-Here are some reasons for zapping I can think of:
+Thanks,
 
-1. When private pages are split/merged, zapping the stage-2 mappings on
-   memory attribute changes allows the private pages to be re-faulted by
-   KVM at smaller/larger granularity.
+Bart.
 
-2. The rationale described here
-   https://elixir.bootlin.com/linux/v6.11.2/source/arch/x86/kvm/mmu/mmu.c#L7482
-   ("Zapping SPTEs in this case ensures KVM will reassess whether or not
-   a hugepage can be used for affected ranges.") probably refers to the
-   existing implementation, when a different set of physical pages is
-   used to back shared and private memory. When the same set of physical
-   pages is used for both shared and private memory, then IIUC this
-   rationale does not apply.
-
-3. There's another rationale for zapping
-   https://elixir.bootlin.com/linux/v6.11.2/source/virt/kvm/kvm_main.c#L2494
-   to do with read vs write mappings here. I don't fully understand
-   this, does this rationale still apply?
-
-4. Is zapping required if the pages get removed/added to kernel direct
-   map?
-
->> This way, the uptodate flag means that it has been prepared (as in
->> sev_gmem_prepare()), and zeroed if required by VM type.
->>
->> Regarding flushing the dcache/tlb in your other question [2], if we
->> don't use folio_zero_user(), can we relying on unmapping within core-mm
->> to flush after shared use, and unmapping within KVM To flush after
->> private use?
->>
->> Or should flush_dcache_folio() be explicitly called on kvm_gmem_fault()?
->>
->> clear_highpage(), used in the non-hugetlb (original) path, doesn't flush
->> the dcache. Was that intended?
->>
->>> Thanks,
->>> Elliot
->>>
->>>>
->>>> <snip>
->>
->> [1] https://lore.kernel.org/all/20240726185157.72821-8-pbonzini@redhat.com/
->> [2] https://lore.kernel.org/all/diqz34ldszp3.fsf@ackerleytng-ctop.c.googlers.com/
->
-> Best,
-> Patrick
 
