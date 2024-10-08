@@ -1,165 +1,86 @@
-Return-Path: <linux-kernel+bounces-355186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A32B9949E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B194B9949E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 14:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BC9E1C2103B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6727128308C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 12:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD38E1DE89F;
-	Tue,  8 Oct 2024 12:27:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CD8EEC8;
-	Tue,  8 Oct 2024 12:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45F61DF27B;
+	Tue,  8 Oct 2024 12:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rapY8Ysu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041581DF25A;
+	Tue,  8 Oct 2024 12:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728390420; cv=none; b=n8dGd2F4D6ewbI/Hf2ytyf5Lic/C5q8cwW15g6Cdfafym/Ro92vHcnhh1x33cXSH2acsoCZU81RX1o9fWVZPQuaNJmIZIsZLfWb9rwXnMmKwJUrJSk2NDpk+reQCq65aK3KujCuEwR0w4vR3NgLLuczvsFzSTrcyN3B2jIwWnKM=
+	t=1728390433; cv=none; b=qiWjcIWXClnjlr22I1g2Khd1ZNY+EYSWcIYigs1FarrYZd76V/zyNM66QhJJdA/BadM0Nc3DivR+y7KLLmm+DIm9IXai3W/myKPLRK1Vx8/MfDsIxjGep0blW6TOgxX6QEwvjr8CrRKeu1vCG2SoTh6+gjSSv/AW4SHdK2EpQak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728390420; c=relaxed/simple;
-	bh=5Nl+OeJMY5uGxZFls6uVPJ503vuF3Ttr1J15r5Ex7IM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNvqy+PnShiLKpZGR8bG629YH0u0Xwuo/Z1Fq0QQo8bLg1q8FoW2/uZ1MhldjIaJB7dKTqeeCSWeYE3SUI6xYSdFRejb6l6+PJ9LfCx12JQWX4lfkQARYLKl2g+JQuvihVR8dlFO0voIUcTa8kDFuKjdTFSNq70QHy4oIjjiKNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF169DA7;
-	Tue,  8 Oct 2024 05:27:27 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47DC43F73F;
-	Tue,  8 Oct 2024 05:26:56 -0700 (PDT)
-Date: Tue, 8 Oct 2024 13:26:53 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-arm-kernel@lists.infread.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
-	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
-	justin.chen@broadcom.com, opendmb@gmail.com,
-	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] firmware: arm_scmi: Give SMC transport precedence over
- mailbox
-Message-ID: <ZwUlDT_YupBSZjMJ@pluto>
-References: <20241006043317.3867421-1-florian.fainelli@broadcom.com>
- <ZwPLgcGeUcFPvjcz@pluto>
- <a4f403e8-44eb-4fb4-8696-ca8ad7962a00@broadcom.com>
+	s=arc-20240116; t=1728390433; c=relaxed/simple;
+	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=P+p169Yx2ZynT9Q8N0FhYn+h3iLsFCoqF9ZqHoVqT21ERfg0C4F/AlAHg4LK/zevI5GBjAMuWtZj+NcY+D4KHMFDHmwruAYvoaY7kCgbqsFYOcklD2BVHWMrn/wAQ17xOlUwoyMB7jD2kfQnPCgRbCy3BMG/1YCdnq1WgG2kaKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rapY8Ysu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A0EC4CEC7;
+	Tue,  8 Oct 2024 12:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728390432;
+	bh=Bex9kWWkf1IYbePz5Dn+VZ9xnqyq7zc+PIKmCL23il4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rapY8YsuiXiFzuUBQL5TU17rlUmLVj37hlrfQRivl7bwl9HHMMPOU0Iwy7WBQAcER
+	 oSF/eHzWaovsjjwgTYof0BkZS9uTE4HOYbxpt0/Tg9/Sgpapb6VRukCQOX/jS+Ai2M
+	 JNeKBM1VQitYCvPk+w1MFX36u8ZX09huNpny5H5ZSBbtKOdLCr4//1LfNEPdQ7BH0Q
+	 UODVymhlRHO+7iT5EAkVe2tBQCtqVxf1Yb5vdY/7Ka54zKuibKdPQ3AHp+dEeFHkiV
+	 uy/xf689Z5/Z+PsU8AMie5ZR20sFo9h7cSedLxNBTJIlhTv6HDlJerz85wdue9fAOZ
+	 x4Sm3OShYZAVA==
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Andrew Kreimer <algonell@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20241008121602.16778-1-algonell@gmail.com>
+References: <20241008121602.16778-1-algonell@gmail.com>
+Subject: Re: [PATCH] fs/inode: Fix a typo
+Message-Id: <172839043123.1673124.6132955349484034928.b4-ty@kernel.org>
+Date: Tue, 08 Oct 2024 14:27:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4f403e8-44eb-4fb4-8696-ca8ad7962a00@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On Mon, Oct 07, 2024 at 10:07:46AM -0700, Florian Fainelli wrote:
-> Hi Cristian,
+On Tue, 08 Oct 2024 15:16:02 +0300, Andrew Kreimer wrote:
+> Fix a typo in comments: wether v-> whether.
 > 
-> On October 7, 2024 4:52:33 AM PDT, Cristian Marussi
-> <cristian.marussi@arm.com> wrote:
-> > On Sat, Oct 05, 2024 at 09:33:17PM -0700, Florian Fainelli wrote:
-> > > Broadcom STB platforms have for historical reasons included both
-> > > "arm,scmi-smc" and "arm,scmi" in their SCMI Device Tree node compatible
-> > > string.
-> > 
-> > Hi Florian,
-> > 
-> > did not know this..
-> 
-> It stems from us starting with a mailbox driver that did the SMC call, and
-> later transitioning to the "smc" transport proper. Our boot loader provides
-> the Device Tree blob to the kernel and we maintain backward/forward
-> compatibility as much as possible.
 > 
 
-OK.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-> > 
-> > > 
-> > > After the commit cited in the Fixes tag and with a kernel
-> > > configuration that enables both the SCMI and the Mailbox transports, we
-> > > would probe the mailbox transport, but fail to complete since we would
-> > > not have a mailbox driver available.
-> > > 
-> > Not sure to have understood this...
-> > 
-> > ...you mean you DO have the SMC/Mailbox SCMI transport drivers compiled
-> > into the Kconfig AND you have BOTH the SMC AND Mailbox compatibles in
-> > DT, BUT your platform does NOT physically have a mbox/shmem transport
-> > and as a consequence, when MBOX probes (at first), you see an error from
-> > the core like:
-> > 
-> >    "arm-scmi: unable to communicate with SCMI"
-> > 
-> > since it gets no reply from the SCMI server (being not connnected via
-> > mbox) and it bails out .... am I right ?
-> 
-> In an unmodified kernel where both the "mailbox" and "smc" transports are
-> enabled, we get the "mailbox" driver to probe first since it matched the
-> "arm,scmi" part of the compatible string and it is linked first into the
-> kernel. Down the road though we will fail the initialization with:
-> 
-> [    1.135363] arm-scmi arm-scmi.1.auto: Using scmi_mailbox_transport
-> [    1.141901] arm-scmi arm-scmi.1.auto: SCMI max-rx-timeout: 30ms
-> [    1.148113] arm-scmi arm-scmi.1.auto: failed to setup channel for
-> protocol:0x10
-> [    1.155828] arm-scmi arm-scmi.1.auto: error -EINVAL: failed to setup
-> channels
-> [    1.163379] arm-scmi arm-scmi.1.auto: probe with driver arm-scmi failed
-> with error -22
-> 
-> Because the platform device is now bound, and there is no mechanism to
-> return -ENODEV, we won't try another transport driver that would attempt to
-> match the other compatibility strings. That makes sense because in general
-> you specify the Device Tree precisely, and you also have a tailored kernel
-> configuration. Right now this is only an issue using arm's
-> multi_v7_defconfig and arm64's defconfig both of which that we intend to
-> keep on using for CI purposes.
->
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Ah ok so the issue derives from the fact that you have a single
-compatible line with 2 not compatbles that are not really "compatible"
-from the SCMI core point of view...
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-...also I suppose that if we "somehow" would trigger a
-device_release_drievr(), what will happen is that it will match probably
-again in the same order at the next attempt (beside being an ugly thing)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-> 
-> > 
-> > If this is the case, without this patch, after this error and the mbox probe
-> > failing, the SMC transport, instead, DO probe successfully at the end, right ?
-> 
-> With my patch we probe the "smc" transport first and foremost and we
-> successfully initialize it, therefore we do not even try the "mailbox"
-> transport at all, which is intended.
-> 
-> > 
-> > IOW, what is the impact without this patch, an error and a delay in the
-> > probe sequence till it gets to the SMC transport probe 9as second
-> > attempt) or worse ? (trying to understand here...)
-> 
-> There is no recovery without the patch, we are not giving up the arm_scmi
-> platform device because there is no mechanism to return -ENODEV and allow
-> any of the subsequent transport drivers enabled to attempt to take over the
-> platform device and probe it again.
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-Ok...so it is a workaround hack indeed....but it seems NOT to have bad
-side effects and there is definitely no cleaner way to make it bind
-properly...beside fixing your DTs for the future...
+[1/1] fs/inode: Fix a typo
+      https://git.kernel.org/vfs/vfs/c/e1a6efa9de95
 
-Thanks,
-Cristian
 
