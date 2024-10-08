@@ -1,82 +1,136 @@
-Return-Path: <linux-kernel+bounces-355291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-355271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AD399500D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:32:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26CD994F15
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 15:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B381C232D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FEB1F242CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 13:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB721DF97F;
-	Tue,  8 Oct 2024 13:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CB1DFDB3;
+	Tue,  8 Oct 2024 13:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h1e0UWeT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDv1TiPC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705251DF978;
-	Tue,  8 Oct 2024 13:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346DF1DED7A;
+	Tue,  8 Oct 2024 13:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728394272; cv=none; b=JW83h2Zpea1Hkv62pY+tzyiSk054+lc/sifAU9WsZibs88z1Hle3GcTaHxgi9lQULflEeE5IZO3TPBa/LjfuPBqNUslM6BODZRAmG3sXZ5JbYPUdJ1q37jUTXGmnGBIaNhFfM7aU2yWH35cBVBt8PzFZw3Pn6KjAYOU++lVzw+0=
+	t=1728393791; cv=none; b=fOCX6tyhUU3ELo0GHCZ7tw68cgfcCJ2L3Tvl0S9J8i7YukBsp/add84GIKX7WQ2n/pYDM1eIvR17dEmvjz9WUgFglTejl1yCxPfOuagJIq3tRK3kZatCKFCMZutkP9uBSmFdAbcA79+UCZ6cVE8focjXl1Twn2awJ7q+WVFTcI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728394272; c=relaxed/simple;
-	bh=Ka0LAzRHGohiEHtrGoJMIPegJU0CmUNQAZsdKWVj+98=;
+	s=arc-20240116; t=1728393791; c=relaxed/simple;
+	bh=Qo7uY7516n2CtfdCfqkenk2KagxCPBaQX2nSTTcau2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhKi/zREkAQUwg8stPxpNf50w2xx/ZnOLE7ODiSbbxQ6szh/MwoAFWFxyIrIPN7OKMi2B4czSJ/OvQ2GlZaMTua7ZpU4uc8H7/CadO6mpXsQ805AN6SiABgqoBWqf13wNO2mLJivy/fWZoKen4npSgRagXPk3xLH2vCWh8SyM/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h1e0UWeT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D1DC4CECD;
-	Tue,  8 Oct 2024 13:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728394272;
-	bh=Ka0LAzRHGohiEHtrGoJMIPegJU0CmUNQAZsdKWVj+98=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOh4ZS4ToEf2fYilDXL/1poUfX6fPie9382mkpcefZYSC1lwvOtvIqVJkXZyUSQzBLSRlLewd3MbQBiDQEVL3ccn1xC0euCry2nrpXGkztbcbCMj9ZHLXI+vXepcm4fB1We1iYX/PnE62XpX4vZyvjw6b4xCVc2/Vv+jfX6oLKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDv1TiPC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B98C4CEC7;
+	Tue,  8 Oct 2024 13:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728393791;
+	bh=Qo7uY7516n2CtfdCfqkenk2KagxCPBaQX2nSTTcau2s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h1e0UWeT9/XMcrLegnrhI+5IfBnv4BynAYs6MMbKA+8GjFI1xwdWlbvNA/EOk1wXj
-	 cMig09qVCflTAd1Qm91sxeFzoGixOFEPQNlkL24sTuMcqnjjibgl8xe0U5R2Hpfwdy
-	 12SpW74f5vKgrj9Bw4WdZIWt3cMj1WErrbWv8pOA=
-Date: Tue, 8 Oct 2024 15:22:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, linux-spi@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, heiko@sntech.de,
-	rafael@kernel.org, oss@helene.moe,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] driver core: Add device probe log helper
- dev_warn_probe()
-Message-ID: <2024100815-flaky-prelaunch-f5c0@gregkh>
-References: <cover.1727601608.git.dsimic@manjaro.org>
- <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
- <ZwPvcFvK4l7JT1X9@finisterre.sirena.org.uk>
+	b=sDv1TiPCHTi3QcPNjknsBvAZ/T4PnslpMU4RaLg+uEXI08OcrM43ZWZsqojeHdHT6
+	 ytOx6M/rncH1n8PU1R9hTbjsJVaz3/KlJS78hqUZIeEQ4mZO7PThcp3EBfGyvL4K8w
+	 Wtp8MGIWN6dHbAJ4S+YXNqntenOnzIVO0NQF01eCTBtaFU8u/fmurhJIiLj2HIeRly
+	 9LL+W/yUwbyjNEXMGGd3dWv0YA7LZjVKJ1JVnfnVZy05v7OBPac3u2rqXGvGiqD0+t
+	 cVbPKzP0sWjfcCvC+S2cM0meb2o1q0JYxb24QppjtrSvZdhplqVN0KDQr1SU1FKv+7
+	 hIe6yoj8SdK4g==
+Date: Tue, 8 Oct 2024 15:23:06 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: luca.boccassi@gmail.com, oleg@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, christian@brauner.io, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241008-kruste-aufguss-bd03e60997ab@brauner>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <20241008-parkraum-wegrand-4e42c89b1742@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZwPvcFvK4l7JT1X9@finisterre.sirena.org.uk>
+In-Reply-To: <20241008-parkraum-wegrand-4e42c89b1742@brauner>
 
-On Mon, Oct 07, 2024 at 03:25:52PM +0100, Mark Brown wrote:
-> On Sun, Sep 29, 2024 at 11:21:16AM +0200, Dragan Simic wrote:
-> > Some drivers can still provide their functionality to a certain extent even
-> > some of their resource acquisitions eventually fail.  In such cases, emitting
-> > errors isn't the desired action, but warnings should be emitted instead.
-> > 
-> > To solve this, introduce dev_warn_probe() as a new device probe log helper,
-> > which behaves identically as the already existing dev_err_probe(), while it
-> > produces warnings instead of errors.  The intended use is with the resources
-> > that are actually optional for a particular driver.
-> > 
-> > While there, copyedit the kerneldoc for dev_err_probe() a bit, to simplify
-> > its wording a bit, and reuse it as the kerneldoc for dev_warn_probe(), with
-> > the necessary wording adjustments, of course.
+> > +#ifdef CONFIG_CGROUPS
+> > +	if (request_mask & PIDFD_INFO_CGROUPID) {
+> > +		struct cgroup *cgrp;
+> > +
+> > +		guard(rcu)();
+> > +		cgrp = task_cgroup(task, pids_cgrp_id);
+> > +		if (!cgrp)
+> > +			return -ENODEV;
 > 
-> Greg, this makes sense to me - are you OK with me applying it?
+> Afaict this means that the task has already exited. In other words, the
+> cgroup id cannot be retrieved anymore for a task that has exited but not
+> been reaped. Frankly, I would have expected the cgroup id to be
+> retrievable until the task has been reaped but that's another
+> discussion.
+> 
+> My point is if you contrast this with the other information in here: If
+> the task has exited but hasn't been reaped then you can still get
+> credentials such as *uid/*gid, and pid namespace relative information
+> such as pid/tgid/ppid.
 
-No objection from me, now sent a reviewed-by
+Related to this and I just want to dump this idea somewhere:
 
+I'm aware that it is often desirable or useful to have information about
+a task around even after the task has exited and been reaped.
+
+The exit status comes to mind but maybe there's other stuff that would
+be useful to have.
+
+Since we changed to pidfs we know that all pidfds no matter if they
+point to the same struct file (e.g., dup()) or to multiple struct files
+(e.g., multiple pidfd_open() on the same pid) all point to the same
+dentry and inode. Which is why we switched to stashing struct pid in
+inode->i_private.
+
+So we could easily do something like this:
+
+// SKETCH SKETCH SKETCH
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 7ffdc88dfb52..eeeb907f4889 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -344,9 +344,24 @@ static const struct dentry_operations pidfs_dentry_operations = {
+        .d_prune        = stashed_dentry_prune,
+ };
+
++struct pidfd_kinfo {
++       // We could even move this back to file->private_data to avoid the
++       // additional pointer deref though I doubt it matters.
++       struct pid *pid;
++       int exit_status;
++       // other stuff;
++};
++
+ static int pidfs_init_inode(struct inode *inode, void *data)
+ {
+-       inode->i_private = data;
++       struct pidfd_kinfo *kinfo;
++
++       kinfo = kzalloc(sizeof(*info), GFP_KERNEL_ACCOUNT);
++       if (!kinfo)
++               return -ENOMEM;
++
++       kinfo->pid = data;
++       inode->i_private = kinfo;
+        inode->i_flags |= S_PRIVATE;
+        inode->i_mode |= S_IRWXU;
+        inode->i_op = &pidfs_inode_operations;
+
+and that enables us to persist information past task exit so that as
+long as you hold the pidfd you can e.g., query for the exit state of the
+task or something.
+
+I'm mostly thinking out loud but I think that could be potentially
+interesting.
 
