@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-354591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-354590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45945993FE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:44:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E99993FE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 09:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D48288725
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4C91F24203
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2024 07:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEEB1E2834;
-	Tue,  8 Oct 2024 06:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72E1E2607;
+	Tue,  8 Oct 2024 06:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBtt3wff"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3nAixXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711BB1E282B;
-	Tue,  8 Oct 2024 06:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F81E25E4;
+	Tue,  8 Oct 2024 06:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728370381; cv=none; b=a5bU/SYWglisuF7ie8cDsdLiYvKoPzQaq0NYo+1L395JfD8X+1mKBWsUunVf1steORqVuejyrY/hObBtFw4qWGHnGnlStSD6SDw2b97eMbxbzriJmLDUwrN4vKMiZ9h/CUn/xz56gRx/4NWu+pOi6RJRbIh9fNnY4VGkq/xQ7Bc=
+	t=1728370377; cv=none; b=EXO9O8zsdjdsTdwn8gUwc8ubPLIeMSYZU5JJ/3ds1bAnpUQANfFgy5eQGqU1UM01z/yVJlmHxoXPSKfQNH59OCBYl0X/bdriOshXS1GNtRJK642p1Ol3WwzHvd9USZ3Po5hPG9sWgXigk/ai+cigIj+5o40T82ulCQ+ZVB2HScc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728370381; c=relaxed/simple;
-	bh=9VUithL9olPT3+zRusGcptvwsS6sjrR7a4P+b6hBSlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AsttiN6o8UcizXKetDgrq29cBX9tjlZJTYzoxbMB5wtFOnd76zw3lAPQqJIVblh3ysXeyoAGQe0PHPJDkRfXPmGEf7ma3Qa9KRirfwBDl4NPXzRyzoI+TbiSdMACISCbZI4bIQrUbz+XsRYh7YVto49X3YtG1Jq9jKSvAnsp2ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBtt3wff; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea0ae67df5so1485884a12.2;
-        Mon, 07 Oct 2024 23:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728370380; x=1728975180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nZtsxSvHO0Hn2DKrEwb0Prd6BKwuA0KF0Jd0oWoumw=;
-        b=LBtt3wffS9RKyDJQ+DlaMK31Km6VWfEP4Q3uPAjxGS80Li4Ck7BYyqBA5EO2UJgBwE
-         CTDxEqBoi3yKKfXtfQq2+XA6WlRAMHaZPKSdgK21AWWBhGTMUF+arVg2C/EhGLNZx/fU
-         pZ7X4AGcUEzhSGOC2Q2DXAwyldi0eC2PKVPDFJ84RSeTfAPOOtYNCA/3hoJHvJfouCTH
-         nqjrDAlfsrGydzI/h1xfSt9eSkCdkW2zWruzfGsypW4SJSBpwxDsIztvE/YyLZW5epOA
-         3zGYpvVHcl7TjSBMtI7nsXAKm68Ijj+cW0hOlrUO4YJFvL/Sb8XXDnm7rYlSYVj2Ltrx
-         m0Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728370380; x=1728975180;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2nZtsxSvHO0Hn2DKrEwb0Prd6BKwuA0KF0Jd0oWoumw=;
-        b=SMadQikTWSUfmavBnmLKpyT44YP8UFWiVms3I/0ejAbGx7WAM10xrNOlXdOI6J2WFs
-         ywjpX0xCcqTHdB9NKLrQhjX87Dnskn4+dW7tWhCUb7hBfBzAaX05aZI2KTZiAc9muWSv
-         bTUT6vUNaCyGJQLDfWHcnLqcAthczY2iK4kuK869e9Kc/D1uhjm9FYcaGb5fWZqZF/wA
-         UD9zfqAMHtKkGkdCswBfJbnC0rus2mZEB7Yx7ULYarqCXCVnUEj51Z6j/Q8AjdOZ5lRq
-         jAT4jnP8oACs7a4ZDJMJ43IlbZ7bSEp5TRjWxwH83g+fHllvFkFrRCc7C0lQZFrb31Fj
-         c3NA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3sx4y3t4DCIl6TihA0/PGgVzBUiIK4kHRvbABwfcPbl9nl6LF2HjWFNYE/fedFcHOquY00R8oMLb7JJH90NTI@vger.kernel.org, AJvYcCW/Le2J4G+YJF8SWB87rtiKviD6t3XFM5Ol7JqeggVsdUJ/ulp9MKt55en8U9b2DD9G0ulAoJzgh75LT40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxET/VRXbP8YUBk3fVOzgMtUsGlsvDHCa9Qr73JhOoipy1bwQtF
-	B8/ahN5zkEjG7gWZJ4KoT8I58bsato/4XNuu05FcwvmDQgyZPFXk
-X-Google-Smtp-Source: AGHT+IENgOIl/uSh6Mzkir7ryCuR5icE44R9obsBFWfQKRnOm1drBbK/yT0nBJW3yiXIhu6dNe4jsA==
-X-Received: by 2002:a05:6a21:4d8a:b0:1d0:3a32:c3f8 with SMTP id adf61e73a8af0-1d6dfabc77amr21185781637.39.1728370379614;
-        Mon, 07 Oct 2024 23:52:59 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:bb25:5583:9ce3:ab6b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e28345fc46sm799826a91.50.2024.10.07.23.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 23:52:59 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: davidgow@google.com
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [RESEND PATCH v4] list: test: Check the size of every lists for list_cut_position*()
-Date: Tue,  8 Oct 2024 14:52:53 +0800
-Message-ID: <20241008065253.26673-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728370377; c=relaxed/simple;
+	bh=IoycYPJDZUZtbUYHl5wzuEWI24PAV+KkCdVO6xvTC/c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NErMBbjzsyyc182n8gLIE/E+JS56kJ2FO51H6bsnS/jEIVUdu0dCpYjzQr1WB6hxleyn4FTzbJGqpBtoNgv71Wgu11qRrGtxfIomj36t/X2kxJ94IijmnXMWJ5vils3tn29Q6tpU+shm+avK4son2XezNlbeuk51OSLNM3jHaWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3nAixXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EC81C4CED1;
+	Tue,  8 Oct 2024 06:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728370377;
+	bh=IoycYPJDZUZtbUYHl5wzuEWI24PAV+KkCdVO6xvTC/c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=F3nAixXmPAlXBaohbQRbyK6TErRmTtTVYp6jdga4oIrF67BprXKXawPDDWSbd/d90
+	 V3O3bSCsso91CaihvPUbKKRxV/nkTHjoXBR9pTYktTr+Fgtnpmq0muLETtEOHQjUZ5
+	 RksEERQ7XWPoH8voskUi7fByLMCGAwJirIR3OMBxU8BYDVepR3jh5d4admE6//Qu93
+	 10TuLZV5mocu3B5l22eVYIM8urenPI2l4Azd5iTy2+Ut24UiMkEO6MbSe7eLkJ0iZj
+	 j0WJixiB1s4sj0oVqGjn9z7dKi8ALwVCdF6luSbxQUPeKbDzt+UwswHoUYz/cdQ1nP
+	 PNZxmb5f1Wevg==
+Date: Tue, 8 Oct 2024 08:52:55 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Kees Cook <kees@kernel.org>
+cc: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    Erick Archer <erick.archer@outlook.com>, 
+    Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
+    linux-input@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] HID: ishtp-hid-client: replace fake-flex arrays with
+ flex-array members
+In-Reply-To: <20240923002249.it.617-kees@kernel.org>
+Message-ID: <nycvar.YFH.7.76.2410080852440.20286@cbobk.fhfr.pm>
+References: <20240923002249.it.617-kees@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Check the total number of elements in both resultant lists are correct
-within list_cut_position*(). Previously, only the first list's size was
-checked. so additional elements in the second list would not have been
-caught.
+On Sun, 22 Sep 2024, Kees Cook wrote:
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
----
-change in v4:
-	Amend the description of commit message, make it less confusing
-	and focus on the correct check which is performed now.
+> From: Erick Archer <erick.archer@outlook.com>
+> 
+> One-element arrays as fake flex arrays are deprecated[1] as the kernel
+> has switched to C99 flexible-array members instead. This case, however,
+> has more complexity because it is a flexible array of flexible arrays
+> and this patch needs to be ready to enable the new compiler flag
+> -Wflex-array-member-not-at-end (coming in GCC-14) globally.
+> 
+> So, define a new struct type for the single reports:
+> 
+> struct report {
+> 	uint16_t size;
+> 	struct hostif_msg_hdr msg;
+> } __packed;
+> 
+> but without the payload (flex array) in it. And add this payload to the
+> "hostif_msg" structure. This way, in the "report_list" structure we can
+> declare a flex array of single reports which now do not contain another
+> flex array.
+> 
+> struct report_list {
+> 	[...]
+>         struct report reports[];
+> } __packed;
+> 
+> Therefore, the "struct hostif_msg" is now made up of a header and a
+> payload. And the "struct report" uses only the "hostif_msg" header.
+> The perfect solution would be for the "report" structure to use the
+> whole "hostif_msg" structure but this is not possible due to nested
+> flexible arrays. Anyway, the end result is equivalent since this patch
+> does attempt to change the behaviour of the code.
+> 
+> Now as well, we have more clarity after the cast from the raw bytes to
+> the new structures. Refactor the code accordingly to use the new
+> structures.
+> 
+> Also, use "container_of()" whenever we need to retrieve a pointer to
+> the flexible structure, through which we can access the flexible array
+> if needed.
+> 
+> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#zero-length-and-one-element-arrays [1]
+> Closes: https://github.com/KSPP/linux/issues/333
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
+> Link: https://lore.kernel.org/r/AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com
+> [kees: tweaked commit log and dropped struct_size() uses]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  v2: - update based on feedback
+>  rfc: https://lore.kernel.org/lkml/AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com/
 
- lib/list-test.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Applied, thanks.
 
-diff --git a/lib/list-test.c b/lib/list-test.c
-index 37cbc33e9fdb..b4b3810c71d0 100644
---- a/lib/list-test.c
-+++ b/lib/list-test.c
-@@ -408,6 +408,8 @@ static void list_test_list_cut_position(struct kunit *test)
- 		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
- 		i++;
- 	}
-+
-+	KUNIT_EXPECT_EQ(test, i, 3);
- }
- 
- static void list_test_list_cut_before(struct kunit *test)
-@@ -436,6 +438,8 @@ static void list_test_list_cut_before(struct kunit *test)
- 		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
- 		i++;
- 	}
-+
-+	KUNIT_EXPECT_EQ(test, i, 3);
- }
- 
- static void list_test_list_splice(struct kunit *test)
 -- 
-2.43.0
+Jiri Kosina
+SUSE Labs
 
 
