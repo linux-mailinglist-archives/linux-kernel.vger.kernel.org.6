@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-356441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECF599611E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7136996126
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5154428233A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C2D01C2448E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4098183CAA;
-	Wed,  9 Oct 2024 07:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F886184523;
+	Wed,  9 Oct 2024 07:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lUN8gD02"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kTn4uDNn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFC017E01C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E6113A409;
+	Wed,  9 Oct 2024 07:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728459675; cv=none; b=oOMViWwobMNn47qiBfFg/rtozEiCyuvTO1wzi1zRh5ufqLDMv2fCe8t98YgXzQ1owQV7jAPTomQsQJ27tFY6/4mw5Uc+jEwByKrQ0eAqaxclZx6NQyX9sI8upPFXU1KGsgLl9jtFRGQfINTkd1j/YrMH2ap6IIOVrTGPzyJrrns=
+	t=1728459730; cv=none; b=QVeSSOraDVI3HrHlYGr0m5nM9bY8C86LyJ3icK3CSUz2Iypawp54pM1Mg/m4szT8XyKVjdLCggTVCMm+Pg3rf949iGo/VcXwbeU3EWFXKH9z1wWTdUaGaeGsNVtSmbZ4oAdwzg5c6ZbdX0BWs/HacpA3QggnXzdMe+TC+afhBeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728459675; c=relaxed/simple;
-	bh=8Om95y4F6es/Wxnlpk2uQdvoXMVAL2YO3FbbfSfgtM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqEluKPDeMkAC+M0OmuAB0v7zk25dKrEMPC0fn9GOCluROUnzdl8Imh2Tid1hA3XKLZ2NvYm1n+GIFsvqjFGr/9c2LaiaxZyi8o/WcV9IRZoVDj57CjrCWzG5RgOKQOsJxMSnAdOp7/eBhNn0mdkx2uHz8Haxf+1VQxTuEvRWIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lUN8gD02; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d3ecad390so150273f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:41:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728459671; x=1729064471; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y2viIowtWPbXMalgfD8+O9ZrcVwo57XCKNmEpCFwYjQ=;
-        b=lUN8gD02yxE0qRJ8Feslg8hK0KALM8ZjRnAs9aYwMBdFKtrlNDc0b2U5M7u3x5KP7d
-         uQgCI5vbIj/4AYO6IVSzUJKNSRZuFzndNmIaEfJClGynP7Nlc07/v1LOvH8/HY+8qbrz
-         mARjtAHkX4tpjvd1ewOAPZWIh0gN1vPYGYaMwl6Aply2tTCA24gn85GQwtLDhVehLcJx
-         06g+TQrgPfUHzJG6sIDEpZLIIEMKPvMopJrzlF+JG/MHEmjPogf44fn8MRdGtpiC5wF0
-         cEII5VQ+5za6iJYE6emU2WzL+usYTkSP7H4Ek1kL9ZotQBMb0jTcSaZ+9+rKsOds2tFn
-         4K0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728459671; x=1729064471;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y2viIowtWPbXMalgfD8+O9ZrcVwo57XCKNmEpCFwYjQ=;
-        b=DtddqnxGMmy9L17Bje9CXYKoJzIAeqMCOcvkADYAngp4k9Sdcxd9OTrFq6K3eVAHIf
-         f0Fc21R3qIDAqRRB9t6QF4SXPRKRUQ4NKVL/VV9rjq3FedsFfMp3caad7TMKeO/YwpT+
-         lakPuyA2+91UXz379B1AyjnLdVFeu9z25KpsYMy067Zyi487cfFCHq3mLidOl0ByoF4p
-         03dOVQ7752biX5WoWmhHNJww9A6ihyJjiiVRryXR5tzvAsPJs+Vx35p8reiMPVgyD9hh
-         GQIUJz/5IFrwdVYGOVk29YIPmwaKbvoNJxorFPORA3tXxCIy/J1THN1JmJdmdt5or55U
-         SSmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHPbRgtGLr+ZSMbBUgdDVQ4vNj9K+OTVpWcKgXNR1pJtIq7cidl8NazBN66GS6V6IhIDg/QVwCDeMgWLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVRdCqqM5Rdf4ZRUK4qr4LOPbe043GXtHUZd/qaNXHNHb6SjBg
-	m7gsEFo+awd/MvcFjzhjYVLeN5e54jzdaHFAbt3MFt1xobvU4Ch5oDegml0NfG4=
-X-Google-Smtp-Source: AGHT+IEyd05ui1VmLA1rJ5jgdYGapO6L5DJBjVw/NMVD99NroiPJMW7cLe8u+UN9UqCyNM8dGfTC/g==
-X-Received: by 2002:a05:6000:23c6:b0:37d:321e:ef0c with SMTP id ffacd0b85a97d-37d321ef108mr2946699f8f.11.1728459670763;
-        Wed, 09 Oct 2024 00:41:10 -0700 (PDT)
-Received: from localhost (p509151f9.dip0.t-ipconnect.de. [80.145.81.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d2e65d618sm3025569f8f.23.2024.10.09.00.41.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 00:41:10 -0700 (PDT)
-Date: Wed, 9 Oct 2024 09:41:08 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: kelvin.zhang@amlogic.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 0/2] Add support for Amlogic C3 PWM
-Message-ID: <nrrw2vvhyw2gsbqpne5pgw43yyp4uzkjq2ioskvjjwgfk4ahuo@rryumcqojbhm>
-References: <20240914-c3-pwm-v2-0-ac1f34c68ac2@amlogic.com>
+	s=arc-20240116; t=1728459730; c=relaxed/simple;
+	bh=CyyiE0jRGphoz/rcgGrg436VnyQp/QMVRyfnTGhKg3g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Turp3HNYXANm02VM22rz82m5EXY7dGjqk+HUR+n0miAiEo28xA3qwtgjhNJ9cxPQ8oAfQcmHZxiVIo60Xr0y0egfWXtm+A+VvdjeYumaeQ4HYKBcsFluWhGVJIkatBynSpbhKMFf4ZFd57/6jyP0Q76TKuo+4eC5B3j68P20xX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kTn4uDNn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498Nj9Mm000694;
+	Wed, 9 Oct 2024 07:41:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OjvSXWvuHNP3INf44TdQlC
+	EVcGlQf/PH5Zq7trzJbBo=; b=kTn4uDNnYhPnvDqDugOs1AQHEKAEv6X0iJX9i8
+	/JP4qJEBf4iYQx/qPtkK12d0j+UhwXGmLUCBhomypfvDqEKs53NCPPngy+M1YKg3
+	ClOh9Hq2N278tpFTC4YJSIett6pbPuMvJe7LtkEwtNU4w8eNNeFpZldcO2u7i6xD
+	v8MJUIlO7SzpBQX359Gmr+xeW9HEQmIC6FHFO/dKDczBFwkJadZyjYrE/cWbaHnD
+	8/zalHGqT3UifKDoXKGX6czg4aeeHyp+/xKmNyBIJ4iBtGL4P6KCpnLmyOcwlvzl
+	4meUeFEOfUDuPRKzIw62+gljpUijnkqWooJ/dHsHtvQ4z4sg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4252wsu06t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 07:41:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4997fn0J019085
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 07:41:49 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 00:41:42 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
+        <quic_mmanikan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v7 0/6] Add NSS clock controller support for IPQ9574
+Date: Wed, 9 Oct 2024 13:11:19 +0530
+Message-ID: <20241009074125.794997-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3g32dk24m6nlnxrf"
-Content-Disposition: inline
-In-Reply-To: <20240914-c3-pwm-v2-0-ac1f34c68ac2@amlogic.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: C2CCtANBlbKyPBNyGyeb5XfyCToTCgAH
+X-Proofpoint-GUID: C2CCtANBlbKyPBNyGyeb5XfyCToTCgAH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=798 priorityscore=1501 spamscore=0 mlxscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090049
 
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ9574. Also add support for gpll0_out_aux clock
+which serves as the parent for some nss clocks.
 
---3g32dk24m6nlnxrf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series depends on the below patch which adds support for NSS Huayra
+alpha pll
+https://lore.kernel.org/linux-arm-msm/20241004102342.2414317-2-quic_srichara@quicinc.com/
 
-On Sat, Sep 14, 2024 at 01:48:57PM +0800, Kelvin Zhang via B4 Relay wrote:
-> Add support for Amlogic C3 PWM, including the DT binding document and DTS.
->=20
-> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
-> ---
-> Changes in v2:
-> - Rebase this patchset due to recent upstream changes.
-> - Link to v1: https://lore.kernel.org/r/20240906-c3-pwm-v1-0-acaf17fad247=
-@amlogic.com
->=20
-> ---
-> Kelvin Zhang (2):
->       dt-bindings: pwm: amlogic: Document C3 PWM
->       arm64: dts: amlogic: Add Amlogic C3 PWM
->=20
->  .../devicetree/bindings/pwm/pwm-amlogic.yaml       |   1 +
->  arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 364 +++++++++++++++=
-++++++
->  2 files changed, 365 insertions(+)
-> ---
-> base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
-> change-id: 20240906-c3-pwm-d17072517826
+Changes in V7:
+	- Drop the 1st patch because it's posted as part of the IPQ5424
+	  minimal boot support series [1]
+	  1. https://lore.kernel.org/linux-arm-msm/20241004102342.2414317-1-quic_srichara@quicinc.com/
+	- Detailed change logs are added to the respective patches.
 
-Applied patch #1 to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-=2E I guess patch #2 will go in via arm-soc?
+V6 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241004080332.853503-1-quic_mmanikan@quicinc.com/
 
-Thanks
-Uwe
+V5 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
 
---3g32dk24m6nlnxrf
-Content-Type: application/pgp-signature; name="signature.asc"
+V4 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
 
------BEGIN PGP SIGNATURE-----
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240129051104.1855487-1-quic_devipriy@quicinc.com/
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcGM5EACgkQj4D7WH0S
-/k422Af/WeAeMG12qlVL9TxVyfgCoOaW67cCbyllbKGrSYC7OkgI+ujL4WpeqBw7
-S0buIREm1V5mtmzXBboD2scB1+QGKalmVSObFXMtgSfJnGszpUViETfwBI9c8az9
-oXC9IJSfmF7aqlfugMWcAhrlIZFXEn5I6RMQi8e4fM+F/i83G9aoXVJ6qqQKscr8
-uvcpfGZ+hXCdcjPLX2nryNaqNqmlHBk7RYncDYYLPsAnM1gVITTHf0rc/cjKotVj
-jcFV+dSSWr8bz6bR8ANt/Tv4reR+NVl3fzmEeQhkWT9gOZEy1YFsnjA+v7L+ect3
-+CVMHadCSQx0G3uAK1jTKvVf8PyFRw==
-=Njq5
------END PGP SIGNATURE-----
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
 
---3g32dk24m6nlnxrf--
+Devi Priya (6):
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   74 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   23 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   15 +
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3084 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 10 files changed, 3492 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+
+-- 
+2.34.1
+
 
