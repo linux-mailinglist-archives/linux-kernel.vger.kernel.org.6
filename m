@@ -1,140 +1,77 @@
-Return-Path: <linux-kernel+bounces-356092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D60B995C5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB8D995C60
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F48286507
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5A0286730
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1028F45;
-	Wed,  9 Oct 2024 00:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B769476;
+	Wed,  9 Oct 2024 00:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HoHRKTNh"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtK+RsZV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E203C39;
-	Wed,  9 Oct 2024 00:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12843C39;
+	Wed,  9 Oct 2024 00:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434393; cv=none; b=NhGQRBalBDTTgKrxo2bSTFSFLicgKEHc/0DmruSNXJDxvl18sQt6n6jNNMKVp0zWUaWyJqJDSFtHdDGcvoZDuzdh6RlPdunk5gXhh8kjh+3wv9MbElrHt8s3OWrwyYHmOP0eO9x8Bm3I7Y+G08v8OAylGCmgPgPnjeXnhLyr5vo=
+	t=1728434425; cv=none; b=LN4+7Qp+n/DuP9o4FJsUtmstqK8i07a94CM4Du0pHAsfE9kXGb3OECW7hJKqA7wi9H0Ivf1D6MEJBWXV8I719mhhVCCXX4xFVxO2VYrLrILA7IPrvul8iIINJ+YadTBI04NVroTIVwHnJE/n9snqwTXTdakgDugGcLRR+dwHFMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434393; c=relaxed/simple;
-	bh=njSVivvo/nAwZPNIqLrCFDbOZl+NfQmzA8hWJS5xmio=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qLeyGscjM8cWcsgArccJnp1UB0QtBmMU9EvW2RdCAcevRjGB6zHFDVktYeffF/iAHP541QLs5mhebJY5Dt5GOv66enxkwxgXAoGBRG3H6rgoUc2LSby3EwhyYhy7Od40sXy9qa4M8qJdwf5IArmtIfSLG6S191IxJc5pAaF1f98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HoHRKTNh; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=p4vNPXy7z2xM3i64+7rk4jsSR0YVoSda6kzvMXga2j4=; b=HoHRKTNhGa0I0/OD
-	35OblhAXSLtAz0UQMjByq/4BQpr2BOE6o567qPqdR5yNTdSYxSgbZNmFSzbLy80XbWLl0miDK1Kx/
-	V9TO67Mympgj4JzUIKFWVAeCe4NvUyc7RpDnSaqETnlB6cnfxMjocJeJ+oAHfzqBKqXfLsOCYlHqH
-	IN/Y504HuZX05u+OGqvcU6d/uWAsNIj5JJfsoRVVdTA0lKjbGT3w3m2sTCuYr3NTekgx5o0XO7uK7
-	teLEB+ULaKrciRJDVN1zbaJoj5VOqyTR5bclIm+1N2tBXIeS8xm4zc2TaPl0mB+fd3DaoGWtkmrkd
-	0wGjABFv8STprbS2yA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1syKjr-009q7Y-1q;
-	Wed, 09 Oct 2024 00:39:39 +0000
-From: linux@treblig.org
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf tools: Remove unused color_fwrite_lines
-Date: Wed,  9 Oct 2024 01:39:38 +0100
-Message-ID: <20241009003938.254936-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728434425; c=relaxed/simple;
+	bh=AkOCBbHEOfEQCI1+m3dmccijhcVNtg1Wx843sDOs1ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ra/2/0p+nD+HUf/Lu5J3cU6ZNQDHqdjW5WM++WusDd4L2mtz1GnuVDeHhdgTdzo17qhv7NJyMBNx4mWUaV09KtS3SwU6bb/Rq797e7EG/48f/9nfbrv559qVpQxOtcknfpfmHziR0TtWOFlugnejStYvCpEQTryYTP6QhNZKxzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtK+RsZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DEBC4CEC7;
+	Wed,  9 Oct 2024 00:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728434424;
+	bh=AkOCBbHEOfEQCI1+m3dmccijhcVNtg1Wx843sDOs1ys=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rtK+RsZVJkQz06cOHN6ZVaJzbp/CIafcX2kg9Tmf3XlYHmFz4Xok4DiAZaEqNVnr9
+	 aLVLQJ4EdDs76Wsg/2HOZRbhymGpq8MVdVSQnHp/jV4lUTd2xHQQUOBLTN/e+7KPgX
+	 YHuK9pJ2GutGnzyTXG/tUiKkoKMtbSaqz/MtkNqibbZ4EHNRetdLwsC9DWXjKnOqQ5
+	 SoI8ONie3gx3hcMqPHrGI72kOeErZovGvwJUnRXqS4OlFmhxPhth47KfazS0Vt360G
+	 QLj1wwn9pyfNyvz8fNRobafgo3XJlnyxykLS2IpwZWhDir9+KXsQ6mjHYX5NcmF7R7
+	 3zFoklXlU+Gow==
+Date: Tue, 8 Oct 2024 17:40:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
+ <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet
+ <edumazet@google.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
+ disabling napi_local
+Message-ID: <20241008174022.0b6d92b9@kernel.org>
+In-Reply-To: <20240925075707.3970187-2-linyunsheng@huawei.com>
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+	<20240925075707.3970187-2-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, 25 Sep 2024 15:57:06 +0800 Yunsheng Lin wrote:
+> Use rcu mechanism to avoid the above concurrent access problem.
+> 
+> Note, the above was found during code reviewing on how to fix
+> the problem in [1].
 
-color_fwrite_lines() was added by 2009's commit
-8fc0321f1ad0 ("perf_counter tools: Add color terminal output support")
-
-but has never been used.
-
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- tools/perf/util/color.c | 28 ----------------------------
- tools/perf/util/color.h |  1 -
- 2 files changed, 29 deletions(-)
-
-diff --git a/tools/perf/util/color.c b/tools/perf/util/color.c
-index bffbdd216a6a..e51f0a676a22 100644
---- a/tools/perf/util/color.c
-+++ b/tools/perf/util/color.c
-@@ -93,34 +93,6 @@ int color_fprintf(FILE *fp, const char *color, const char *fmt, ...)
- 	return r;
- }
- 
--/*
-- * This function splits the buffer by newlines and colors the lines individually.
-- *
-- * Returns 0 on success.
-- */
--int color_fwrite_lines(FILE *fp, const char *color,
--		size_t count, const char *buf)
--{
--	if (!*color)
--		return fwrite(buf, count, 1, fp) != 1;
--
--	while (count) {
--		char *p = memchr(buf, '\n', count);
--
--		if (p != buf && (fputs(color, fp) < 0 ||
--				fwrite(buf, p ? (size_t)(p - buf) : count, 1, fp) != 1 ||
--				fputs(PERF_COLOR_RESET, fp) < 0))
--			return -1;
--		if (!p)
--			return 0;
--		if (fputc('\n', fp) < 0)
--			return -1;
--		count -= p + 1 - buf;
--		buf = p + 1;
--	}
--	return 0;
--}
--
- const char *get_percent_color(double percent)
- {
- 	const char *color = PERF_COLOR_NORMAL;
-diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
-index 01f7bed21c9b..aecf56dae73f 100644
---- a/tools/perf/util/color.h
-+++ b/tools/perf/util/color.h
-@@ -39,7 +39,6 @@ int color_vsnprintf(char *bf, size_t size, const char *color,
- int color_vfprintf(FILE *fp, const char *color, const char *fmt, va_list args);
- int color_fprintf(FILE *fp, const char *color, const char *fmt, ...);
- int color_snprintf(char *bf, size_t size, const char *color, const char *fmt, ...);
--int color_fwrite_lines(FILE *fp, const char *color, size_t count, const char *buf);
- int value_color_snprintf(char *bf, size_t size, const char *fmt, double value);
- int percent_color_snprintf(char *bf, size_t size, const char *fmt, ...);
- int percent_color_len_snprintf(char *bf, size_t size, const char *fmt, ...);
--- 
-2.46.2
+The driver must make sure NAPI cannot be running while
+page_pool_destroy() is called. There's even an WARN()
+checking this.. if you know what to look for.
 
 
