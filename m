@@ -1,53 +1,57 @@
-Return-Path: <linux-kernel+bounces-357909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2619977B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:44:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51479977B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3741F214AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73010284C27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00D41E2831;
-	Wed,  9 Oct 2024 21:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0273F1E32AD;
+	Wed,  9 Oct 2024 21:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnXFoXFN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRFPMRsr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFD71E1C30
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC961E284D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510254; cv=none; b=ctCKJscRE5FHVrbVrTLBma7ykHyc+5J413YD8GRdKnxOv5dt2TDIk6EyzNrIwfI3NvpjzRkyWgMRHg3O0hNIcPi7fuhBQmzpd6u+DnI7IBu13gJslKgNmlJnc0TL3irWIYYdur3TxoXVBaH2OwHCDq9R4t9N72UnExLJgF0nEgE=
+	t=1728510255; cv=none; b=GCl0Nd6bl5KQrSmszGbYkBlD2F47cZkHbqEdDkzUbffSyb7c7NJ0s6oqsL4DjdCPGUgcjriH5DuG5awUUMt4iqk8sHg1kfQoqqNO+NVLCSI4m9cBXFrFY9iagYNS9GpKUFp2uLn8qKHo1Io6ogx2Z3yR+yTwGX3ZsWjdRjJqUic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510254; c=relaxed/simple;
-	bh=ZYm0poSjJGcLAV6auAlIuHSTxJRQgTFVtLqoUrc08Mg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/37xr2ZXlrw5ORrJ4tX+QNsiwDQc+FEziZFKk9xJx0aAaOvsYeqxJp8X2aIqaaR2yVWoXbcImt5tzmuNwqXlWjsG0x7h4P1eckHTb7gHAdAFJ2pPXBIKlD7iBRwpXcEVLQNANyI8BGarwgXuEnpllBQ5PVyzFAudBoTgnkaPrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnXFoXFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58F1C4CEC3;
-	Wed,  9 Oct 2024 21:44:13 +0000 (UTC)
+	s=arc-20240116; t=1728510255; c=relaxed/simple;
+	bh=+CrDYJebRAwpL/FBdD3hs8AEeNU9afUmJQfT5eC5qWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YBhc5we3YmzbWfaAXzEnAqgr1SxG4tEZ4jGDO29RvLidRBEMLVLS28kbOh86QPNDxMLF6DhBiAsSpgqLa/6MGmFIF4DwhJuUwBj1jN+yWn6tly6h0+bo4NzRteHI78y3+mOPooCObhgdc+UVUaAC6xSFw/rj2J4BP2qA+8BgWOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRFPMRsr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC257C4CECC;
+	Wed,  9 Oct 2024 21:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728510253;
-	bh=ZYm0poSjJGcLAV6auAlIuHSTxJRQgTFVtLqoUrc08Mg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YnXFoXFNKQgz6y5jVD3dYBl8mWnbKkqgkvEjhiTwAniUcgrrNFwd7oKSKOpIxFJsd
-	 YOKVnzOgs+Yd83yOWMYyy+rU4jY8deTUdPKLfAWTC0JJIMHPx1/nDTOJfWDxSi2vvS
-	 WzmW8z/ts6YIdOaHhASI5fiFOmDu395t7opXL1rlLbSbaxw9w0HxYXnlo7ytUAoPso
-	 xu7dbU7/yieYgf6VbBIuWB9sZGRh6NCweWlY78Y04n9ZscurE0RI56Y6vH81BR+IBY
-	 SIaCwUCJG+l7VSzTpD8XHGccYAOxiiscymnOTR+v+e4ve+RsI5+WhqldLzD/n8K3kZ
-	 RoK7VbYBLofqA==
+	s=k20201202; t=1728510254;
+	bh=+CrDYJebRAwpL/FBdD3hs8AEeNU9afUmJQfT5eC5qWU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oRFPMRsr6625zMZbn9midn2Dp4fvd5CSltWnk9hbomJaITUuDNAbUqT4VRmvGQG4/
+	 TFxNCj20pBohMh98EgztY53Rf/ufstWy5EeOu/8eyAOlZdS7slMInuhE3H77UzEtfv
+	 IaLSrbw584IFYVycWnY4U1YioNih4PaYHTS3pvvJcnM2C+Orq62HNt8UVhtxyggiHo
+	 C2QEO+TwtbxBAlzg42u5xawuOIZzJ8XhmGRu4HjT1sQU5oECaVRe3wNB97WyuvQAXP
+	 t7AAvF9SWYq5dMLvxatPR8TfUbBwDvPrU6iHuD+m2HPBZM7Epq3zOoqepKCYcKz+nv
+	 CGRiK7fdmc7jA==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	sched-ext@meta.com
-Subject: [PATCHSET sched_ext/for-6.12-fixes] sched_ext: Fix RCU and other stalls while iterating tasks during enable/disable
-Date: Wed,  9 Oct 2024 11:40:56 -1000
-Message-ID: <20241009214411.681233-1-tj@kernel.org>
+	sched-ext@meta.com,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 1/6] Revert "sched_ext: Use shorter slice while bypassing"
+Date: Wed,  9 Oct 2024 11:40:57 -1000
+Message-ID: <20241009214411.681233-2-tj@kernel.org>
 X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241009214411.681233-1-tj@kernel.org>
+References: <20241009214411.681233-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +60,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The enable/disable paths walk all tasks a couple times in bypass mode. There
-are a couple problems:
+This reverts commit 6f34d8d382d64e7d8e77f5a9ddfd06f4c04937b0.
 
-- Bypass mode incorrectly depends on ops.select_cpu() which must not be
-  trusted in bypass mode.
+Slice length is ignored while bypassing and tasks are switched on every tick
+and thus the patch does not make any difference. The perceived difference
+was from test noise.
 
-- scx_tasks_lock is held while walking all tasks. This can lead to RCU and
-  other stalls on a large heavily contended system with many tasks.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/ext.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Fix the former by always using the default select_cpu() in bypass mode and
-the latter by periodically dropping scx_tasks_lock while iterating tasks.
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 22e18aec4ee1..e08cfba33cb4 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -9,7 +9,6 @@
+ #define SCX_OP_IDX(op)		(offsetof(struct sched_ext_ops, op) / sizeof(void (*)(void)))
+ 
+ enum scx_consts {
+-	SCX_SLICE_BYPASS		= SCX_SLICE_DFL / 4,
+ 	SCX_DSP_DFL_MAX_BATCH		= 32,
+ 	SCX_DSP_MAX_LOOPS		= 32,
+ 	SCX_WATCHDOG_MAX_TIMEOUT	= 30 * HZ,
+@@ -1949,7 +1948,6 @@ static bool scx_rq_online(struct rq *rq)
+ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+ 			    int sticky_cpu)
+ {
+-	bool bypassing = scx_rq_bypassing(rq);
+ 	struct task_struct **ddsp_taskp;
+ 	unsigned long qseq;
+ 
+@@ -1967,7 +1965,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+ 	if (!scx_rq_online(rq))
+ 		goto local;
+ 
+-	if (bypassing)
++	if (scx_rq_bypassing(rq))
+ 		goto global;
+ 
+ 	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+@@ -2022,7 +2020,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+ 
+ global:
+ 	touch_core_sched(rq, p);	/* see the comment in local: */
+-	p->scx.slice = bypassing ? SCX_SLICE_BYPASS : SCX_SLICE_DFL;
++	p->scx.slice = SCX_SLICE_DFL;
+ 	dispatch_enqueue(find_global_dsq(p), p, enq_flags);
+ }
+ 
+-- 
+2.46.2
 
-This patchset contains the following patches:
-
- 0001-Revert-sched_ext-Use-shorter-slice-while-bypassing.patch
- 0002-sched_ext-Start-schedulers-with-consistent-p-scx.sli.patch
- 0003-sched_ext-Move-scx_buildin_idle_enabled-check-to-scx.patch
- 0004-sched_ext-bypass-mode-shouldn-t-depend-on-ops.select.patch
- 0005-sched_ext-Move-scx_tasks_lock-handling-into-scx_task.patch
- 0006-sched_ext-Don-t-hold-scx_tasks_lock-for-too-long.patch
-
- 0001 reverts an unnecessary earlier change.
-
- 0002 makes sure that p->scx.slice is consistent on scheduler load.
-
- 0003-0004 make bypass mode always use the default select_cpu().
-
- 0005-0006 make task iteration drop scx_tasks_lock periodically.
-
-and is also available in the following git branch:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-fix-task_iter-stalls
-
-diffstat follows. Thanks.
-
- kernel/sched/ext.c |  183 +++++++++++++++++++++++++++++++++++++-------------------------------
- 1 file changed, 100 insertions(+), 83 deletions(-)
-
---
-tejun
 
