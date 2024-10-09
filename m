@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-356409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D999960BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830099960C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2703DB22079
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379B81F22113
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884317E472;
-	Wed,  9 Oct 2024 07:24:23 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12959185924;
+	Wed,  9 Oct 2024 07:24:24 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C03178CC5;
-	Wed,  9 Oct 2024 07:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3754617C9B8;
+	Wed,  9 Oct 2024 07:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728458662; cv=none; b=P8scshNmUC7I8z4rITHnOmuA315yQNgoDA0+N+z/TYMctQBcFrM1PKxoEHGervlpsAGhIOcovDp6LVzbxAdFhJ2eDutk+d4NPGatL9LxhRTMOcQ9plkmrgmsLBtY1qCfXoJHrt3WRZwIcXvUF1f6e1WfV2w4/jiaGFUFonESYjk=
+	t=1728458663; cv=none; b=BY5rEAM5AuYf1nz87VlI+HJLzL2ksyfCFjSUciM5Q/wbmopzl5uqL8Y41dK2ru37ttQQS4urtW3uvuL4MYKobPzJjfdwtnRfvT7U26iDm+Mp8gVTWJ96G6tufdjqd4O7Y6xqpC1e/TfvYGyMlRvy6B6WOLrafwW5REm/egCpXXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728458662; c=relaxed/simple;
-	bh=E7Qrifk5KQQ3Q+LxLV8FxeEmNURwLkaI2/XTbKLqvRI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pU7x9I78bp8rVGXND8EPrWyRCcS57bilD/NC4r3in9Srig6qmcNP/oHFj61ClSu3K64JNCsQAoD+K7Lt7cYU7ljbI8cmfs1kcLZGwfDjKpqVUWR6WTz4ldTlgXKAdGQSciXHNyi5uqY1ttPEgwBngF1u36R8kRCILYRjNUmHg2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1728458663; c=relaxed/simple;
+	bh=O96UbTEsoJPPX4U/aIemGDnuhCKWsVXkJYZ65ZRSlRY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=huWeCbiB8zSxC/4EpGK2sAm6PcOyLn9reBpBcfCWtpxk3CpJWdw5eBMgt4ooLid4YrTuhQoLjJ7TjHoRwHoMAyJqVlmwhluEEHnzFB0qG8iYjcyza1bZ1isNrRdDvkyjs/xt3QNqMuH6zWWiZHpf8dQA+y3wR1zxE61FrVzDOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XNkqZ0BPVzZhkZ;
-	Wed,  9 Oct 2024 15:22:34 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XNkrL05HLz2DdHn;
+	Wed,  9 Oct 2024 15:23:14 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6DEDE18009B;
-	Wed,  9 Oct 2024 15:24:17 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 162DA140134;
+	Wed,  9 Oct 2024 15:24:19 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 9 Oct
- 2024 15:24:16 +0800
+ 2024 15:24:18 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
 	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
@@ -45,10 +46,12 @@ To: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
 	<UNGLinuxDriver@microchip.com>, <jstultz@google.com>,
 	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v5 RESEND 0/2] posix-clock: Fix missing timespec64 check for PTP clock
-Date: Wed, 9 Oct 2024 15:23:00 +0800
-Message-ID: <20241009072302.1754567-1-ruanjinjie@huawei.com>
+Subject: [PATCH v5 RESEND 1/2] posix-clock: Fix missing timespec64 check in pc_clock_settime()
+Date: Wed, 9 Oct 2024 15:23:01 +0800
+Message-ID: <20241009072302.1754567-2-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241009072302.1754567-1-ruanjinjie@huawei.com>
+References: <20241009072302.1754567-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,35 +63,66 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemh500013.china.huawei.com (7.202.181.146)
 
-Check timespec64 in pc_clock_settime() for PTP clock as
-the man manual of clock_settime() said.
+As Andrew pointed out, it will make sense that the PTP core
+checked timespec64 struct's tv_sec and tv_nsec range before calling
+ptp->info->settime64().
 
-Changes in v5 resend:
+As the man manual of clock_settime() said, if tp.tv_sec is negative or
+tp.tv_nsec is outside the range [0..999,999,999], it should return EINVAL,
+which include dynamic clocks which handles PTP clock, and the condition is
+consistent with timespec64_valid(). As Thomas suggested, timespec64_valid()
+only check the timespec is valid, but not ensure that the time is
+in a valid range, so check it ahead using timespec64_valid_strict()
+in pc_clock_settime() and return -EINVAL if not valid.
+
+There are some drivers that use tp->tv_sec and tp->tv_nsec directly to
+write registers without validity checks and assume that the higher layer
+has checked it, which is dangerous and will benefit from this, such as
+hclge_ptp_settime(), igb_ptp_settime_i210(), _rcar_gen4_ptp_settime(),
+and some drivers can remove the checks of itself.
+
+Cc: stable@vger.kernel.org
+Fixes: 0606f422b453 ("posix clocks: Introduce dynamic clocks")
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+v5 -> resend
 - Add Acked-by.
 - Also Cc John Stultz.
-
-Changes in v5:
+v5:
+- Update the commit message.
 - Use timespec64_valid_strict() instead of timespec64_valid()
   as Thomas suggested.
 - Add fix tag.
+v4:
+- Check it in pc_clock_settime().
 - Update the commit message.
+v3:
+- Adjust to check in more higher layer clock_settime().
+- Remove the NULL check.
+- Update the commit message and subject.
+v2:
+- Adjust to check in ptp_clock_settime().
+---
+ kernel/time/posix-clock.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v4:
-- Check it in pc_clock_settime() for PTP clock.
-- Update the commit message.
-
-Changes in v3:
-- Check it before call clock_set().
-- Update the commit message.
-
-Jinjie Ruan (2):
-  posix-clock: Fix missing timespec64 check in pc_clock_settime()
-  net: lan743x: Remove duplicate check
-
- drivers/net/ethernet/microchip/lan743x_ptp.c | 35 ++++++++------------
- kernel/time/posix-clock.c                    |  3 ++
- 2 files changed, 17 insertions(+), 21 deletions(-)
-
+diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
+index c2f3d0c490d5..316a4e8c97d3 100644
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -318,6 +318,9 @@ static int pc_clock_settime(clockid_t id, const struct timespec64 *ts)
+ 		goto out;
+ 	}
+ 
++	if (!timespec64_valid_strict(ts))
++		return -EINVAL;
++
+ 	if (cd.clk->ops.clock_settime)
+ 		err = cd.clk->ops.clock_settime(cd.clk, ts);
+ 	else
 -- 
 2.34.1
 
