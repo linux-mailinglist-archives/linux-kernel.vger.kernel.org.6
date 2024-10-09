@@ -1,137 +1,129 @@
-Return-Path: <linux-kernel+bounces-356934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6BA9968EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B19968F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E851F25E08
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18EA286D37
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E0B18785C;
-	Wed,  9 Oct 2024 11:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0BA191F89;
+	Wed,  9 Oct 2024 11:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EtiUtMGc"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXghI08I"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32B118FDDB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3C5191F6C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728473751; cv=none; b=F8yD5T1KfGSTUFMnaDXpW7xxmAyIkTCadq8NU/GBO+XvkxhPPRNu0tveE6/AkMKGi4BYT442/zmOUnAhJnVVxo4JGGbGZavkW9MmLhHoiLpoOTNbh99EoodPbMhFWIr1MVXs7WOyMKL4FwjxOSuc+9nss1xy2MPD5eMzGbbsjqM=
+	t=1728473799; cv=none; b=kKdj2BGiBQg+0ISuJINEG2g/I5zNsFXMH2t1yyrUcVDzRjo+SOl5VfmsEW9cekPnnFYSQDJiNOr/Kv/bT0NvezbbcWqIQlSfGC/sVXME2AK5/ioMQaDClQZO8nJncEDzGPQKo/aHxgZ0eJMiSZIzlAz7hjuD+/D3M2YiwqqEbZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728473751; c=relaxed/simple;
-	bh=iYh8icxS+03RcbNsz4+AeuY5qGQrXSCvfXvPNeyDKC0=;
+	s=arc-20240116; t=1728473799; c=relaxed/simple;
+	bh=2UcU/0RtPhKNhvF75glrExZYJbVt3PfbtvA++YZnAZU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AU8OVuYf+tZNj4f/bbueoBGrHlFcoB9AQGhwv7EG+S2l6B+T+CXdPxXZ7PtoV7VaPhGA0lJ0DOJDej1bkbmjitnmvgF6hBmXBRigXdTPtbLLx/owHt34t2tB8AQArCqprEFhlUWVyAWjxjd7MxI2jz+mUZG9CZB4bCh5YQjnqfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EtiUtMGc; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbc1638608so1390796d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:35:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=h1p03OTowhQGVETIJM0qvpDZOn8gelgd+AzrQuI4jsN0MbUux2H5RjsZLkt+rkbCTxQS3CzivLVR9ej/tMPmqb/i92gJLdMGgRmBVkVIlnBA/co8xCR0F1InmXWVhUe/vU+ech7MrgVwDYICqIZ1bwZfTxZZA7fupLV3ClNeYcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXghI08I; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so237875e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728473748; x=1729078548; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FurzM10u95VKmaZwS7ymh0VKZoWWm9NbSC/cRDUlyeU=;
-        b=EtiUtMGc3NDlkomLtveCeGMnWg8HDUKFKhwk+5SKFJRFv0pItzwVLyoFLDuvjKeTqX
-         2/ZyplA446ijC24QREn4OZKtmnvD2+IXWwVyhEpNyB3YDWKQ6AcskFW+ciiC7XwcMJ5Q
-         uo/cWTKiqOPq5YnAwmFRnqCX0tehhMaL/02i5YXtfPywIZmk0x2LnhsO8C0+JkYsYfJY
-         o97qu32fjFPP7PWl0uJ/t2zkRCJKsABXU5JM+zgaNpXrDF7xOh0GS166V6nZvmQUDlYb
-         9irwKuX82xe1eX95ZsKmMHPNEntaFtFUpBAc8AnBpFKExZVhDP9pAJ+NEDNqYHcGA5TJ
-         v92g==
+        d=google.com; s=20230601; t=1728473796; x=1729078596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=26JiU8VHKWoZ3njFmpEz3ylcfDTsVxNL+ck1QcmMiWk=;
+        b=JXghI08IJvHzsidCaZxISnDwGe/hyiLQN/VjsGk1vH6EPPiZcim29IozovgzYqXmJD
+         uirYLjl3WnXo7o20zIXgjrwV4h3D9S3MwsAgh/VXLOzCeEuGgtf1pyEuIHB0VK1Xyjan
+         YxLioLWQ5GC0Dy1+0t8ApNJodxiuBUSAZ+5U14c2V1GSf3TZk7ZrN+jsOEZjPO2XEfxH
+         XmTJ8LBx99dHrvVDxp2qWi4gsYupBbJ6ZUI/CXtnECncAf7fxahkxixGT6Aqq6lDpLn4
+         MF6L8Y3FuvNcdQ1fhvdf8ib4dShKg6ozHJdG+MWCvLXle+67s/asR6SdG6oZIQs90B3M
+         iYrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728473748; x=1729078548;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FurzM10u95VKmaZwS7ymh0VKZoWWm9NbSC/cRDUlyeU=;
-        b=as3Cghed7RbWBv1glPFjUrC6IfAXi2T+M4znwNNqaPDJpQhGT1SEK2QlHptAp68RNZ
-         ISnN64Zp09wofePwT+n6XWBV56PAE97muu+0+F0/vrza7nhaegLoM/jJAutQ+1VsCkT+
-         fsaZHBsF80QaEMjwhf3M0rwIR3Cm6d44ORh+UEoJVmR2B4qQ1FfpNdSNT7wBuYeq2f4V
-         yOLrJgERKkgJcZD+ZULn+EmA7/pvSJmlsduubs2ScYrPgXHrOl+F0PPEXIdw1tRaiEMM
-         1R4+9jBYvV41ty82KKvI63gwjK8LhRes2/sjRD8efJuXXhtvpXvz7o7ZcyUme9yio3nn
-         3bog==
-X-Forwarded-Encrypted: i=1; AJvYcCUA3alHHzMordxB6lX5gZcMtsIGZ7gTQzP9kV+fN2+U+ip0d2Mo4G1XTm7V4kie2p+Sxuh96/p1If+hYJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcjAOS+X8Zp9lcTWl/BJrLNaoIjhJXoCqOoFBnK59wrmujOkve
-	G5RrfWNHcA6H/qtAWkHbrU0uWu5UDdaUW941omwSkCOF8PYDeJ6Txzwwyfp8KIl1azDNYU2Iv3C
-	bwQGGXFSBeDloQMkZtco85GxMMCtTlSRPYBzESA==
-X-Google-Smtp-Source: AGHT+IGxVD61+vnO6Sd1PNMSaYrQo9NkwfAClZ0FVDtlnROBKd2JA5fPqspTbiQbddkGddY+tZ38AMM6AmjuFdGb7sY=
-X-Received: by 2002:a05:6214:5014:b0:6cb:6006:c98b with SMTP id
- 6a1803df08f44-6cbc932a05amr17137026d6.5.1728473747881; Wed, 09 Oct 2024
- 04:35:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728473796; x=1729078596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=26JiU8VHKWoZ3njFmpEz3ylcfDTsVxNL+ck1QcmMiWk=;
+        b=puQH3NZNNVJTk85Dkqlh4K6+qcPVcxuEgDhsfjl4Ycgjbe190Zx3ZZ+wqsCOhvh359
+         NKG8+MAN92CG4E/hv9gN9uvcxkXvy1Hn3xTO9IAAPBIWbeRpVHcejtA9H8j0giP1pbt+
+         c6x/1+PnwxYPe0cuFbXc+zzWNbN3lW5LiIJd5qy9RmCec10U6OAE4RnpakULWDdp2Oig
+         o3tTgaxnjNbz5Ge3+x/9a2DRpb7oYsQiBrTrWuwa73ATI72gUBTSZ2Q11F1SSfsR8e/F
+         X74QD/obprd4VSeGmvher6911km+RqaYxF5/Ndyiy1uoU0ef88XDb2Dqu+w9Qlh8hbRa
+         1pmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQtRTQbmXjsEQp58Gcp78XwJzCTTSuaR1wIqONAS2PGuMUQEDJRco40A0Yr/gC1CxCDxqH/bqt4Pdg4nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP733r6Ib8/FIUL4ux/dA7UQJ8F+1PtjOPTm0Kllknm/3rm6lU
+	tjIIm/hoSc7a6RZGoncfJy6hjF0pVF2GW6tRW74iPJfNzrebtmeGOQ6DUSH78ZDEzrhKa4H7JnG
+	MMZRuDrqLoYs0Az0sIXf5d1TGd9Ne7V0Omo9/
+X-Google-Smtp-Source: AGHT+IGKWLOazhBj7mWGSjUC0jjh31+NRgp4kNmDT13H0EjvYGZiGvvd2lLhjCqnoT37E/MkhleYdk7a/22l9VV0YdE=
+X-Received: by 2002:a05:600c:a015:b0:42c:abae:2ed5 with SMTP id
+ 5b1f17b1804b1-430c3a9a4b0mr3088625e9.3.1728473796283; Wed, 09 Oct 2024
+ 04:36:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008115648.280954295@linuxfoundation.org> <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
-In-Reply-To: <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 9 Oct 2024 13:35:36 +0200
-Message-ID: <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
-Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, LTP List <ltp@lists.linux.it>
+References: <20241009054429.3970438-1-guanyulin@google.com>
+ <20241009054429.3970438-4-guanyulin@google.com> <737eeb51-b5eb-4585-a9d2-f1578b21d86f@linux.intel.com>
+In-Reply-To: <737eeb51-b5eb-4585-a9d2-f1578b21d86f@linux.intel.com>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Wed, 9 Oct 2024 19:36:00 +0800
+Message-ID: <CAOuDEK1=X7NdWLMdbHzpO_g15p6JeU0_vb+YOs6TXc2hNfxmJQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] usb: add apis for sideband uasge tracking
+To: =?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
+	mathias.nyman@intel.com, stern@rowland.harvard.edu, elder@kernel.org, 
+	oneukum@suse.com, yajun.deng@linux.dev, dianders@chromium.org, 
+	kekrby@gmail.com, perex@perex.cz, tiwai@suse.com, tj@kernel.org, 
+	stanley_chang@realtek.com, andreyknvl@gmail.com, 
+	christophe.jaillet@wanadoo.fr, quic_jjohnson@quicinc.com, 
+	ricardo@marliere.net, grundler@chromium.org, niko.mauno@vaisala.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, badhri@google.com, albertccwang@google.com, 
+	quic_wcheng@quicinc.com, pumahsu@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 9 Oct 2024 at 08:22, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+On Wed, Oct 9, 2024 at 3:33=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
+<amadeuszx.slawinski@linux.intel.com> wrote:
 >
-> On Tue, 8 Oct 2024 at 17:42, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+> On 10/9/2024 7:42 AM, Guan-Yu Lin wrote:
 > >
-> > This is the start of the stable review cycle for the 6.10.14 release.
-> > There are 482 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+> > +void usb_sideband_get(struct usb_device *udev)
+> > +{
+> > +     struct usb_device *parent =3D udev;
 >
+> Is it really "parent" in this case? Perhaps better variable name would
+> just be "device".
 >
-> The LTP syscalls fanotify22 test failed  (broken).
-> This regression is noticed on linux.6.10.y, linux.6.11.y and linux.6.6.y.
+Thanks for the heads-up, will change it to "device" in the next patchset.
+> > +
+> > +     do {
+> > +             atomic_inc(&parent->sb_usage_count);
+> > +             parent =3D parent->parent;
+> > +     } while (parent);
+> > +}
+> > +EXPORT_SYMBOL_GPL(usb_sideband_get);
+> > +
 >
-> We are bisecting this issue.
+> Similarly here.
+>
+> > +
+> > +     do {
+> > +             atomic_dec(&parent->sb_usage_count);
+> > +             parent =3D parent->parent;
+> > +     } while (parent);
+> > +}
+> > +EXPORT_SYMBOL_GPL(usb_sideband_put);
+> > +
 
-The bisection pointed to patch b1a855f8a4fd ("ext4: don't set
-SB_RDONLY after filesystem errors")
-[ Upstream commit d3476f3dad4ad68ae5f6b008ea6591d1520da5d8 ]
-
-Reverting patch b1a855f8a4fd ("ext4: don't set SB_RDONLY after
-filesystem errors") makes
-ltp-syscalls/fanotify22 pass.
-
-That said, I also checked Linus tree and fanotify22 fails there too.
-Reverting the upstream
-patch d3476f3dad4a ("ext4: don't set SB_RDONLY after filesystem
-errors") from Linux tree
-v6.12-rc2-58-g75b607fab38d and run syscalls/fanotify22 it pass.
-
-Any ideas whats wrong here?
-
-Cheers,
-Anders
+Regards,
+Guan-Yu
 
