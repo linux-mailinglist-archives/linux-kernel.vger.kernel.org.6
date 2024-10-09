@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-357917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E970D9977C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:46:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FEE9977C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C48CB220F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 496F5B21E5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F121E22E9;
-	Wed,  9 Oct 2024 21:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E9C1E282E;
+	Wed,  9 Oct 2024 21:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B/X3ythS"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="VJfR5l6d"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208B10E4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B681D16BE3A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510399; cv=none; b=t1hQibio2fZRiq6D9u9xQhsPkXcZzLfaO9TyEIBdNVJS47kAi1lu42R/njFAe2CFyeF+v1c1Lab3hqSeNbRa1eoq2bz2W/fKALEmFHY9IaP5PPdkR/fq/7ImQXR7uzdKmum1W8YDV8h/8wLvRcAdr6ofi7FC2axps+vne5OhoC0=
+	t=1728510433; cv=none; b=NiZzX6zO9LOejCk7GZFCtBvy0kZnoxXtZvxVjYz+0t20BlyAsbEVRtqqRMs3E7kSqo7vJ0eCyGiRie8fB5ImT0904EPIXgadeQuM3eEdoHrzEs081MwcMrJlTNRrpMi92CUCuAxE1Qt4+SiMcXq6dBL+EMcls98/AQnFSYKtftg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510399; c=relaxed/simple;
-	bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
+	s=arc-20240116; t=1728510433; c=relaxed/simple;
+	bh=WRSEJpRqVGEx1p+7xonbAfeXiywHBYSCQGtICtTvn0c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qhTVNzrZgO8L6WcrK8Tk5iyG/ozcW0YEAPjz2PU9ZL64UkSY42Ldn8Vop3TuZ2VTNVvYO6/JBagU4Jfr7xLdUPi7pkAfVMV9N6lBl42qua9c0jrBWmdYGsTXaJm5TbsmO8ySUuFkiarKpNJkuwsrmpkWVB4TDlg1FDXs8IjJ/Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B/X3ythS; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e4244413so4070837b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:46:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=Gjj4K03yVxtqUAp0oivMVwuPY/VF9XVDrrgOMNmCi2rOdvBVyZZ0yyhpFi0AcckzOl69140t72+VStDd7l47hfrScuUca8I2S/URgKmmUNBsJP439ddB63kt1bcLmj3DLmOVBSV7J00lf53UhhmXhvSWPYQ4RToTGvB1PdaqULI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=VJfR5l6d reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9963e47b69so43357966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728510397; x=1729115197; darn=vger.kernel.org;
+        d=everestkc.com.np; s=everest; t=1728510430; x=1729115230; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
-        b=B/X3ythSrKMI89/NxEakD32iSxy/c2NB9RRw8mVDQbsX2nWcGUqYv78w7jxnuzKMRA
-         wlNbaGmBdNAz7o1wvgGmnVXp59HBbt7P4PufIxOH1mJ2DHpdlncOkA5OtYz2NahwW3/5
-         b4nsOJK9AzwHYDyqlRAGMCccHzBXvEtaXMiGCmcFyP3L0WWDC7mushMnqwn6nDbUqL7r
-         7wTQaTyr/iiHGBNziYX3Zv7rRyWM3s6Zd3ThVCYWBrtCHs4z8z/UKy9w3Izyd5jvDonY
-         JNg9K6P/taYyS/sHA5IoyY2m0EjGG5QNA5LpIee6HwJGzd7yFs4eH7HVtFiwiADHQiHd
-         UzIw==
+        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
+        b=VJfR5l6dtd9a/+JQt3YSOHQmUJKnatyiYlKK/SpEsJ+WUaD3I1DfHcZ81yosCdx/6/
+         LK1MI9LX+vZGsXAIL5JDJbj7sOe1CXbr5nk+GQGbF+nisFeDobhWY28+AZcC5cEdh7C9
+         floUWkv/R3XMzKGWiVQcfziqZ0//RhycRsCJYuMtqHC0ALrDpd2cWtgTCAAxoGa7iq1R
+         zA+AFZt7VvnpvHIB4ZvIKJc94hh2v1cYgI3b3tPishACbnjJSJtTXgQ14RnYtPVqNOPl
+         MjyRWUd8AjgicLnVx+0GdB3ztC4Csg+mmgrVRtMO8MsM1mvUH5W+T8eLpf8GkS810jg3
+         LvUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510397; x=1729115197;
+        d=1e100.net; s=20230601; t=1728510430; x=1729115230;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
-        b=mKwTwe1eq4lfvIApt+CpXU0yQfrr49BrVnkFpR1PdwAOZ0C7+M+oFICJcIJ+lf4Bff
-         LE0J4W6dKfxpURsg6Ruumf3zAKxsvBjZ7Y0v07r5qsZEN5BLc2EnIer2IsXfVveXaTxq
-         yUaOn7ywYgk+huvkKN+IlPFFVdCaGftue76h4JQvXJeraiMZbovPXenUPDh9oVX3QTrx
-         6vdzUCfMcfjiSW/GHzEc1YN10MQOBHEyaCaNFVG2p7iRDyW5etodizgfOgEmXwWXC3qm
-         VRt9eyU8VZYDrKKW01nAkU8CUfE9InMv3aVpBcDSjwZXkQo6fBaPbakIrSZAdoKfsURW
-         bUQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCqk6bOS+wcXlQ1Yn1zt6S65aXSQuQGgVlq+pI8M1dp4fy9X9hC1aA0IeixCV7JbtUC2mG/XZ7la8fvAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFp76a8AXlxTvhNfRU2Jj1eRjxR2ajDt+mSq84qbGLPS7Zv7GI
-	CPc7lPioYnVJYtdFywxEaiECiVoxeqCSAAtwMzd+6GmB9V1TJ/Q6YkBua1iKnkhSvS2JURqQVu+
-	SKD/dJkUYVAduLR/GiErL09Wu5ciB1agtwv8b
-X-Google-Smtp-Source: AGHT+IE1D5PWRvqXNfRKyWsuevMOAJs9BGWU7JCR6FZfOmNBKloSiRVXNUTMQ9NwlRuQiTFERb3gOsFpYHbfeby7GkI=
-X-Received: by 2002:a05:690c:6a08:b0:6e2:547:5e7b with SMTP id
- 00721157ae682-6e32219f138mr44127597b3.43.1728510397381; Wed, 09 Oct 2024
- 14:46:37 -0700 (PDT)
+        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
+        b=IYgpN6keh5b9H4RpjWqHdREwNIx91uPbySVAoPgnBAMiWcGPb+IrhSxAOdpNyS5lCN
+         J43awlkaHnEU4rWoyt0FvwvEtOOd0zLiw14Ku3rS9Kvj5XaoTj/01SP8n3cQozefkV31
+         kbBp7etwFwF5iIKqoEI9vMmNXIY6qFAdb2cvg2urOFd53pPksGOCEZ1vTjLgVXKZoc5F
+         AnzPdem0ZVKCHYKmKUyr5XxcMq9XrAkYAnmH49aHLEG3w8XRJf/sm5QoPXFK0pjm+Q+r
+         Z4kT7eFvKyik3dyRQ5d1qRooG+1kqZHgsFpma2tK871JECIxHEyNhHXkjElHRlrdRYeX
+         ScEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWayYCc3Hog1EqUzpqKa4aUbaJmTjlkbqP2oChkIQ/9ch8ktHA2kBdAtnOCtdGwaRn15oqhGmmJmvlWzUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhMIGo04KXZnzMQ28Wd47FvuI/40zm0YELbBq5MCUS/Z+v3DaS
+	ydC9XxK7I81umWrJHEsejyNSJnsixHkxb8mB132Mt5VS8+YAyWfXT9X/O/wDl60DPtAPzMHRCth
+	2urW7Bw9hTFDuFuOJS/YXGp4nD9K1tOtR/xGilA==
+X-Google-Smtp-Source: AGHT+IE0zrBekMp0OzxByMeyrTa/R8Zyl4m1iSYWvDd5iqQvPvAHYK8tkB354xAtc2sJTVb+vxYrRLAQYa1UDXMGTC8=
+X-Received: by 2002:a17:907:7d8d:b0:a99:497f:317 with SMTP id
+ a640c23a62f3a-a999e8f7daemr122394266b.62.1728510430088; Wed, 09 Oct 2024
+ 14:47:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009203218.26329-1-richard@nod.at> <20241009213345.GC3714@breakpoint.cc>
-In-Reply-To: <20241009213345.GC3714@breakpoint.cc>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 Oct 2024 17:46:26 -0400
-Message-ID: <CAHC9VhSFHQtg357WLoLrkN8wpPxDRmD_qA55NHOUEwFpE_pbrg@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
-To: Florian Westphal <fw@strlen.de>
-Cc: Richard Weinberger <richard@nod.at>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, 
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net, 
-	kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, 
-	upstream+net@sigma-star.at
+References: <20241009200528.36343-1-everestkc@everestkc.com.np> <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
+In-Reply-To: <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 9 Oct 2024 15:46:58 -0600
+Message-ID: <CAEO-vhGcPRQxzZBjDZZA4GZoWwcaOjgK85tUydvr9t7CtD-HGw@mail.gmail.com>
+Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 5:34=E2=80=AFPM Florian Westphal <fw@strlen.de> wrot=
-e:
-> Richard Weinberger <richard@nod.at> wrote:
-> > When recording audit events for new outgoing connections,
-> > it is helpful to log the user info of the associated socket,
-> > if available.
-> > Therefore, check if the skb has a socket, and if it does,
-> > log the owning fsuid/fsgid.
+On Wed, Oct 9, 2024 at 2:38=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
 >
-> AFAIK audit isn't namespace aware at all (neither netns nor userns), so I
-> wonder how to handle this.
+> On 10/9/24 14:05, Everest K.C. wrote:
+> > Variable `now` is declared without initialization. The variable
+> > could be accessed inside the if-else statements following the
+> > variable declaration, before it has been initialized.
 >
-> We can't reject adding a -j AUDIT rule for non-init-net (we could, but I'=
-m sure
-> it'll break some setups...).
->
-> But I wonder if we should at least skip the uid if the user namespace is
-> 'something else'.
+> It could be, but it isn't. I am not sure if this change is needed.
+If you look at the full code then,  if  `ia_valid & ATTR_CTIME`
+evaluates to False then now is never initialized.
 
-This isn't unique to netfilter and the approach we take in the rest of
-audit is to always display UIDs/GIDs in the context of the
-init_user_ns; grep for from_kuid() in kernel/audit*.c.
-
---=20
-paul-moore.com
+> > This patch initializes the variable to
+> > `inode_set_ctime_current(inode)` by default.
+>
+> Instead of "This patch initializes", change it to "Initialize ..."
+> Do refer to submitting patches document for information on how
+> to write change logs.
+Will do that and send V2.
+> >
+> > This issue was reported by Coverity Scan.
+>
+> Include the the error/report from Coverity.
+Will do that and send V2.
+> >
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> > ---
+> >   fs/attr.c | 4 +---
+> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/fs/attr.c b/fs/attr.c
+> > index c614b954bda5..77523af2e62d 100644
+> > --- a/fs/attr.c
+> > +++ b/fs/attr.c
+> > @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
+> >   static void setattr_copy_mgtime(struct inode *inode, const struct iat=
+tr *attr)
+> >   {
+> >       unsigned int ia_valid =3D attr->ia_valid;
+> > -     struct timespec64 now;
+> > +     struct timespec64 now =3D inode_set_ctime_current(inode);
+> >
+> >       if (ia_valid & ATTR_CTIME) {
+> >               /*
+> > @@ -293,8 +293,6 @@ static void setattr_copy_mgtime(struct inode *inode=
+, const struct iattr *attr)
+> >                */
+> >               if (ia_valid & ATTR_DELEG)
+> >                       now =3D inode_set_ctime_deleg(inode, attr->ia_cti=
+me);
+> > -             else
+> > -                     now =3D inode_set_ctime_current(inode);
+>
+> The code is clear and easy to read the way it is since it handles both ca=
+ses
+> and does appropriate initialization.
+Yes, I agree, but if we initialize now to the current time during its
+declaration then the else
+condition won't be necessary.
+>
+> >       } else {
+> >               /* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be =
+either. */
+> >               WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+>
+> I will leave it up to the maintainers to decide whether to take
+> this change or not.
+>
+> thanks,
+> -- Shuah
 
