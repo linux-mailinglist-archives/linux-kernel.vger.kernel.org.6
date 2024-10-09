@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-357140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656FA996C4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:37:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18552996C52
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7F6B24C9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:37:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B454B27964
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC371991D3;
-	Wed,  9 Oct 2024 13:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402131991B5;
+	Wed,  9 Oct 2024 13:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8qsbq8d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fog81OU1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF104198E86
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955C1198A25;
+	Wed,  9 Oct 2024 13:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481053; cv=none; b=KcqA6scZVxLcj+np63k+Ll8R/SHND7XeaW2MerIhILFP9f1bLTgiHCZAKSR3ENB6xYDVCpTqaiRnJazoKdhPohvKXASaz4qFc3biC4pYWwCGMr/pj4KNGz08ztn5/j03eveXK29RxVIzCOgIuuCCWdm1qvd/RcQxXiKvJU4FJ44=
+	t=1728481072; cv=none; b=ES2NIbi0KWbocD7wOBQ80Q4foe02hD4ZUhQbfbnJqfDPN/4wFz30S2IacmhhaEoR/g4V7AcVcApwQXVl6GrOD6RoptT1iAmwr8sNf1uCtM/TyLpgoI4N8e7gL0jxdI4KaxsQg6R57/l2DsL7XAA7KQfxiJUxyn6dO5wEdpfww+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481053; c=relaxed/simple;
-	bh=TXvaZhDlsmJn+4Pd4Fgmr8fAWFhUCywRYgjrA1ZOGbw=;
+	s=arc-20240116; t=1728481072; c=relaxed/simple;
+	bh=FRa49j8KQxaEOnV6Aimw0MapA9Lysb1eUV6fb8guLTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNo8B4l9yv4Nnrj14TYN76T2bzq1W7UYPobJbxz8AH/D8/T+qZge8eFTR59+mO9qguUIaetVikfodnSBasSW04bg4WevdzY6kFawnak+pPRIRoQ/eq5ZGQ+bNo6Gkt4l7sOW8J7sqbrbNeZWRuIym/AHY3jejb4UqqyKAc39LOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8qsbq8d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7710BC4CEC5;
-	Wed,  9 Oct 2024 13:37:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx043RvB1YrrbMW2CAo4BF6WsteAOAJzHDPzQNXf76Lkkwd9ZNz8CdYkueqqFZrJXEdvmzKh6ljUsXFQHtoKD9J5pe9LTFSfPkiEBcGWGwdVmjyEi+r9l6FE7gEVEz1RY3poor3cwAFc8L/abTHL4Hp2PRatTciKVkvsKYLv00s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fog81OU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F61C4CEC5;
+	Wed,  9 Oct 2024 13:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728481052;
-	bh=TXvaZhDlsmJn+4Pd4Fgmr8fAWFhUCywRYgjrA1ZOGbw=;
+	s=k20201202; t=1728481072;
+	bh=FRa49j8KQxaEOnV6Aimw0MapA9Lysb1eUV6fb8guLTs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f8qsbq8d/7+jq/TZGJHfG5mZq41VfrWJRUTXP7l4ky+nbU4KxEbSqGatCpk+L1CUp
-	 5gnrrYsXPYUS3adlS44ygpoF+nyTCHzmIXudGx0tl2p/ZyXiUL3XD7UAjJSemC5rlO
-	 MxeXOBO897D5UEBQNcBdFJoPuMfL8QdL9QopdUpj7kzLIrsIVkd5/Q6f2W96PbGfNv
-	 CpHQCXTNd60YgYHtK1E7GtXsTrDLbVONH1IIHI9oFJGN6PEhjzN0ILiMEZrE3n6zfD
-	 SVf5qCRNH991QCKfUk1OS8Xac2Lken8XPqU8kjuvZ2jCY3q4Ey2fJ5lT1MxUxuEZ6o
-	 0rLEcPcaVSP4g==
-Date: Wed, 9 Oct 2024 15:37:30 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 11/15] regulator: core: Use fsleep() to get best sleep
- mechanism
-Message-ID: <ZwaHGmXUGRSRLKlo@localhost.localdomain>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-11-b0d3f33ccfe0@linutronix.de>
+	b=Fog81OU15SqVibKE4ULX0GWqPjxySqR9iQkFhoG7Qrgh+sjEKjEI8tC+1B2JX0nAh
+	 IifWunaa7QikR0rVQ1mLepIc7/nT2omPiDKEVMDN4NZxKdihVGI+2sIHIFIVsYXcwH
+	 O3zbBwAooir1zCCX3T0np3XdueXnN/axVJhr23NJ6RWZd4JdRHBikE0IztdTttyN/G
+	 pwGOQkAjJgzq3ftVPi76dQRFZyndfjPASz2cXJajiTQoLybbwRaCl32A65R7x4MhQu
+	 7vcSit3RFdj/9CfoOG5geujoSiyr8TOsywt53nbMATEnLbPCCmxiN3BSkfbM123OU+
+	 daPaJN9FqRkaA==
+Date: Wed, 9 Oct 2024 14:37:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com,
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com,
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v7 03/12] net: tunnel: make
+ skb_vlan_inet_prepare() return drop reasons
+Message-ID: <20241009133746.GA99782@kernel.org>
+References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
+ <20241009022830.83949-4-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-11-b0d3f33ccfe0@linutronix.de>
+In-Reply-To: <20241009022830.83949-4-dongml2@chinatelecom.cn>
 
-Le Wed, Sep 11, 2024 at 07:13:37AM +0200, Anna-Maria Behnsen a écrit :
-> _regulator_delay_helper() implements the recommondation of the outdated
-> documentation which sleep mechanism should be used. There is already a
-> function in place which does everything and also maps to reality called
-> fsleep().
+On Wed, Oct 09, 2024 at 10:28:21AM +0800, Menglong Dong wrote:
+> Make skb_vlan_inet_prepare return the skb drop reasons, which is just
+> what pskb_may_pull_reason() returns. Meanwhile, adjust all the call of
+> it.
 > 
-> Use fsleep() directly.
-> 
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v5:
+> - make skb_vlan_inet_prepare() return drop reasons, instead of introduce
+>   a wrapper for it.
+> v3:
+> - fix some format problems,  as Alexander advised
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
