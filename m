@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-357986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7FD9978C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:01:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0375A9978CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6231C226AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8697283E73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEB61917C0;
-	Wed,  9 Oct 2024 23:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC5E1917C0;
+	Wed,  9 Oct 2024 23:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd5imAp+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCbGk142"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A492A1C9;
-	Wed,  9 Oct 2024 23:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA828F5;
+	Wed,  9 Oct 2024 23:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728514881; cv=none; b=KQi51htAV6659lMISVIervrufqrp+eTXctxW8N7+mkN2NWdV3rkpbNA1SljFYdiaXmpZaQyt62yDE51y8HI9TrelWSfx4GBGsuLXbY3HDBT9CSaE3J3i+yqk/hQ+UfRD5eG9ql7fsu1kAEOMDDjpVshB6IvBoyieQN2l1gTfrGE=
+	t=1728514907; cv=none; b=uGLqLuVukoBcOc1YN1iuOl89AA3LGy54hyPn6uRraRLjx6x5SXzAa0P7RlyPnJVpxhPLmWCwxOPcnYPIv6N8fxFsvBZa49vHcsByHFgGZCDwiHf24RyVWDkozJthE7TgMap2tRriUfF2IODEOF/TmGtR3gNWi9mo69iIecOGGrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728514881; c=relaxed/simple;
-	bh=uGdAjmstr/NYDBu5FtcI7luJ+EBjhJ14RKCnRsBkAyA=;
+	s=arc-20240116; t=1728514907; c=relaxed/simple;
+	bh=vmw6SJWQe8SICYrRf6J/NKeTEhnmkp9sXHM+NZbJeCw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ilVZu8lwaKNio8o99aJZNQGklHyCwhX2pxmy/AUydSdE3oTon2k8vTYazNcx/u3puHFqor7qPZ3PrJ1YAVN7moCytboqWCfFaSecnq+u0odgpdgX0Dtb9HJRiH58IO3QllbIcomq6FxUZdk4DWsLDV7dRQGmMeR27OYFh+iMvA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd5imAp+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9054C4CEC3;
-	Wed,  9 Oct 2024 23:01:19 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=LJfnQQK+jSSE0aCLG1g+CA3QgCuu28GCXVCk0t8cR4zh1jkpy96G75cvGdctK5VPIMEIGyuRLW53D8hg3Q9VAxFGvPbLh8frL23Yqf3SchMPPEldDmlkipnGA3i0hfFGvXfRpjXSNFan7QCo3zode1FlsNKH+2VjQ7JjQzDaRrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCbGk142; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A944C4CECE;
+	Wed,  9 Oct 2024 23:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728514879;
-	bh=uGdAjmstr/NYDBu5FtcI7luJ+EBjhJ14RKCnRsBkAyA=;
+	s=k20201202; t=1728514907;
+	bh=vmw6SJWQe8SICYrRf6J/NKeTEhnmkp9sXHM+NZbJeCw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Wd5imAp+fA/EiUB0kuhPCKGpACEC5xw97OM/1pOTvaJzer+QSsqMfU3Q6I3effOdZ
-	 yv/QYfVtuzl7u/hQreEhSjAiPrPpfyZFs4qmSfE4duUH8zCVyU8eKAuvYrk3CLPpBe
-	 nNp9pifXvENEmBI/0RlOt97n4d+qjrRJ9r1Mw7m8cDZr8UGuuxHFn8TYh2BvO1uEG+
-	 kA9IMUF22GW72x7HB2n4pJD+Urmhibm2rB0+258gupLfNAd2TFdAOfQau1l+gpPEw/
-	 cL6+tTyEgXbcNxPKs+mslJ9W1b3RbKw+1Q5U2wsZCE9z4qye19s5QcPdE5pYLBVkaR
-	 5bBiAbBSKB2gQ==
-Message-ID: <93bf1c44c5a6e763e9a9590aaf752ec7.sboyd@kernel.org>
+	b=CCbGk142gr0+izaVFRXP/QZEs8GTqTbZ4+nmpLAL7CFCLye4rovCfQMjmFy0G7Mh+
+	 xKN+WxjJyLk2Iq9LI3KR5cH2R6PV73V6WRsxJXR9K/5gKFuh074PSIJziJJxVwZ4Ml
+	 tHSzkxeRwZv3BimvhiToiBqM1hhjDt4QwnSQaXXD6Uk7zeaMHlJbV4g/N6FpdsWdA2
+	 dlSriQAgOlkXxAt3zYINlrwAHSS1AMaca6d2mxY3cx8iCzQw8T1Zcn6AyQxbPKoZmC
+	 Il4Poqo0TCI1nHEXvl5uUIBGrp8g8SUMkpDN5dx/HEHwsZs/fImNR0zqN3wAzvi2yr
+	 lWZQd551MZzaQ==
+Message-ID: <b8f0036b3775c49ec10c949c1ddb3ceb.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,22 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240918123925.41511-1-david.hunter.linux@gmail.com>
-References: <20240918123925.41511-1-david.hunter.linux@gmail.com>
-Subject: Re: [PATCH v3 1/1] clk: clk-qoriq: Replace of_node_put() with __free()
+In-Reply-To: <20240918123150.1540161-9-u.kleine-koenig@baylibre.com>
+References: <20240918123150.1540161-9-u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH] clk: Drop explicit initialization of struct i2c_device_id::driver_data to 0
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: David Hunter <david.hunter.linux@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com, shuah@kernel.org
-To: David Hunter <david.hunter.linux@gmail.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 09 Oct 2024 16:01:17 -0700
+Cc: Max Filippov <jcmvbkbc@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Wed, 09 Oct 2024 16:01:45 -0700
 User-Agent: alot/0.10
 
-Quoting David Hunter (2024-09-18 05:39:23)
-> Use __free() to have automatic cleanup instead of calling of_node_put()
-> manually.
+Quoting Uwe Kleine-K=C3=B6nig (2024-09-18 05:31:51)
+> These drivers don't use the driver_data member of struct i2c_device_id,
+> so don't explicitly initialize this member.
 >=20
-> Compiled without errors or warnings.
+> This prepares putting driver_data in an anonymous union which requires
+> either no initialization or named designators. But it's also a nice
+> cleanup on its own.
 >=20
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 > ---
 
 Applied to clk-next
