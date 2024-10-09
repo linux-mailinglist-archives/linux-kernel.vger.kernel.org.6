@@ -1,149 +1,316 @@
-Return-Path: <linux-kernel+bounces-357772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633569975C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C209975C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1C42826CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F23C1F2307A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4211E1C38;
-	Wed,  9 Oct 2024 19:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B8D1E103B;
+	Wed,  9 Oct 2024 19:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBxCPJXj"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbBynD0y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E12F40849;
-	Wed,  9 Oct 2024 19:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99B240849;
+	Wed,  9 Oct 2024 19:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728502649; cv=none; b=YKwb01Xh2gnHktWyeEvcAJ2eKUVs5Or8/JZXZ7Rg50HJVDGMV3jtiGCjD68HUunEIHJIgHT780nUD5o7uuz7FvPe/CBtMvuMp9u0Fi3sMvyv0o3eoXt9c5NfFZsXazgxJfkKvkNCCsM7lYdm1SwlnvzyQCX1SEMEIERL+cRcFvE=
+	t=1728502823; cv=none; b=Ig+9On+T3eY4sZHNWtdCj6w09heRnwMy9vLZ7uuzLtcZRUvIaNnYKrPIZZioOpXZtKT2LOetqqVKqzdokvUJoe1C5GOvFbyn3D5HbfK2cbiebSjkw5wOULZ72g9YaKVM1DaJzvY8UYNuvOApKOg3KfqTjbtfhDcbMfb6LT0KtyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728502649; c=relaxed/simple;
-	bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
+	s=arc-20240116; t=1728502823; c=relaxed/simple;
+	bh=aKfGHvxtx2jHudoi3yqdcvhArPGA54mqJWauC72y1rU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OAHZr9H+uAJh2hXDMJC8/k9HWyfin/6tna9APOR+QOytS0jzMLOgYTEM2D/O4a2pc5BMInMype/Fu6KzStnD6uwJKzSvJzrpQrVxkDsfXD72x2ZvUildMuxbbczJvSagItCIMj/V8ZJF3pSd+Z/40fjs+od+XGINQev2+EFkgaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBxCPJXj; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so187502a91.2;
-        Wed, 09 Oct 2024 12:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728502646; x=1729107446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
-        b=nBxCPJXj/etTM/acDt/CILdJ15C661g6JWVBHkX0MBZ6rLOm4lcOixcJGMdezjcpEJ
-         zit07TX9y0LwDXh+5XRX9GVaN63b2Y47y0GFYaBY5YeB/Z/cJRW8spzNw770c76no6zq
-         5lrP73FyLCRksYlh73fO863Snuy6oAYovRnOX6jcMkdnDyx1URTDxVDjKUVijyR73mAT
-         HnpMColFtx2g+vIFfQ6tX9XFzpMW9Fk3nESii3v0WxdTM+SX7YFpmV6mrp8/RDrrNJOP
-         wEHyaZbn3uC4VKWvBgFaycEJMqrDeb23wriZa2Rd53NMiCO0Jiaa2u7D02SF3t6u0tDI
-         OhHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728502646; x=1729107446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
-        b=C9d/AI/FL0fIx379+mB8O6wdrjoASlfIr6C0MBfnXF5012AdyZu0knXl/wWC8Ir5wD
-         A9+V1EY6ezxRyz0DenoVhkPN7fBi/avlQWOKitxrixfe7hzqRcHD1rljQzFYSPClars9
-         jii3wEbJSar3E061r20YnyJ2q/oISNmAme6+hqHLg8LXqHb21UWQN8C/n40Cxwn7e9Z2
-         E8c+ehd4e2KD5lbxUxfpqwKzYcvGc7LQ+k8ldGhcoFEycVqGI5wPZ8VQnEjMb1IExwwi
-         MLSLCiMZeCNyeAusewVRp1QRG0X2wN8XQhrE2/NIf4qwqfLPsCCcg3BeZA1omkGFg/pI
-         1Uag==
-X-Forwarded-Encrypted: i=1; AJvYcCUkAKKHv/Sk1sTS/L1+EckHQX0kjyf+HQhMNyc3PPX23LlDwaYzwqPcMKcSARneEWWAEfc=@vger.kernel.org, AJvYcCV5WbEeWhHGFvjnGxEMeCaNBigTkk2AgBJHgfti5ngV7ps3yk8bU+hukahC1Wc2vpeuipUkS9cMEz+oCXbehvuhsa4H@vger.kernel.org, AJvYcCWYWK8nK6QIsqoNTT0zQxJs7OlgoEQ0HEra4aAXwyiOfuIpu7aJH/G/3WTTr9gU/o03SimLoNF9X1bAejIj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBuVA1HonodQE1UPynkEPJItl8yHoYE/p+/o3KgHA2VM7YYI88
-	oofGf2Vz8e77YKOByQbVYDKOswVw2aCSQnC/1XY9FLAU7G5c6FWE+wr/diI6yOAYUE7JoaytCV3
-	b9YputUTy42Xx7uIc+o1pRKHkMkA=
-X-Google-Smtp-Source: AGHT+IGGmW/6/MnDDSXp8paozBcmrsqqmQRDfwgUCq1zX2ea1Ia9vKFqUtc48dIbbLDp6MvD9w2LMyx3qwM9Vn6jZTg=
-X-Received: by 2002:a17:90a:db8e:b0:2d8:e7db:9996 with SMTP id
- 98e67ed59e1d1-2e2c6333812mr1421771a91.13.1728502646371; Wed, 09 Oct 2024
- 12:37:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=buaY4EYMxZHrXdRr53VUCQeP5zFItQJGFQcMKFrJNAIVRGpIlQSVyYn/OSf/LgHcp1CyU/uqZa1RVfAUKhKB9TiZLutnYVVE7UXuF9Yp7q/VngLY2W8MFQR5SyGgdR3JdFN+A9Wcc2enYEc54lX/iDEz21/qTDkcR2Jj9ToSmvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbBynD0y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B985C4CED2;
+	Wed,  9 Oct 2024 19:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728502822;
+	bh=aKfGHvxtx2jHudoi3yqdcvhArPGA54mqJWauC72y1rU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tbBynD0yvF3GFOeBgNpWPasatK5W43BJWif/HOnpJ+1qpJqtLEd0Wq8YXGrGIW+13
+	 3dfGbXiioVBCDWZ7vZems22ea8zq0LuFqlBcGIgSAUMs4UYPVZ+dp302IybmQtJ9Ct
+	 DzEg6EP2bOn4rHOb3vLYGhuUZCJtgeygOvAx3JhJAfu6bmK6zPOjvVnh0aL+1fb32K
+	 1sjUUvKN2C3tTwgTojfA3MZBKobI6wICf1xgnkv1z7+MJQwTIz1aFMs1unmUUsrD8b
+	 QdFzadkzsqBPYAujBqM8lA2J0P98EOtpGxsUX9RclJEiX7CAbJUCSZs7qUjbw/Wg2r
+	 eh/HoTSyymLdg==
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e3e7b0ee6eso110972b6e.2;
+        Wed, 09 Oct 2024 12:40:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU762qXQXv/5XRMWJ2noQwpc4F1HE29fMfxwR3Fj/S8Jb1G6oyxc03esxVJCEakrHHh47xPQFzhGS/b5BXw@vger.kernel.org, AJvYcCXDMnK2a6BgCtN6NaViQDjgvntw4dpVihH0w3xwGH4B+DOtoJHoz2xh5zs/4KXvqEUqPmOwFzeOSsBA@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu0Dc2HjN9cWrLj9jdBMJwzj57orNIVbvov6ov/NAN8r0eoBPr
+	EhsEz3ueFGQIMsRN0hAhyYfY+HVptRDL/dSSSazWosun1Dm/bBZWRlwFugJ6yoM40cFsCgdJoaE
+	4VbTnn7iqOqtuDBIwQ2sDvsIIpic=
+X-Google-Smtp-Source: AGHT+IFJ609ZL8gemgxVGu+HNY0V1JQcHHfVROXRen2YkNvjEyWFyWpjthck5EejbuzdeTIak0KNM89ZoagfkoVy1Xo=
+X-Received: by 2002:a05:6808:2218:b0:3e2:7e10:5fd2 with SMTP id
+ 5614622812f47-3e3e66b3afemr2926913b6e.11.1728502821740; Wed, 09 Oct 2024
+ 12:40:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001225207.2215639-1-andrii@kernel.org> <20241001225207.2215639-4-andrii@kernel.org>
- <20241003-lachs-handel-4f3a9f31403d@brauner> <20241004-holzweg-wahrgemacht-c1429b882127@brauner>
- <CAEf4BzY5fy1VVykbSdcLbVhaHRuT6pRNYNgpYteaD79vRM7N5A@mail.gmail.com> <20241009-eisvogel-zugelangt-d211199df267@brauner>
-In-Reply-To: <20241009-eisvogel-zugelangt-d211199df267@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 9 Oct 2024 12:37:13 -0700
-Message-ID: <CAEf4Bzb_=Qk3GgLfKE+JAhUudYfLMsQypu-33uKRi4q-kmGiqg@mail.gmail.com>
-Subject: Re: [PATCH v2 tip/perf/core 3/5] fs: add back RCU-delayed freeing of
- FMODE_BACKING file
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, mingo@kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>
+References: <20241004204845.970951-1-arnd@kernel.org> <CAJZ5v0immr4obYsu2qNKKY2DKxzLDR1a=6B4xY_YTHfPF5kADg@mail.gmail.com>
+ <641307d3-3fe5-401a-ba22-96ad5ef25fed@app.fastmail.com>
+In-Reply-To: <641307d3-3fe5-401a-ba22-96ad5ef25fed@app.fastmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Oct 2024 21:40:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jBY91TDXPMfmLPeoDLeQCKFD+sHBgkOwPusQAMpZJc6A@mail.gmail.com>
+Message-ID: <CAJZ5v0jBY91TDXPMfmLPeoDLeQCKFD+sHBgkOwPusQAMpZJc6A@mail.gmail.com>
+Subject: Re: [PATCH] acpi: allow building without CONFIG_HAS_IOPORT
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 3:36=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
+On Mon, Oct 7, 2024 at 9:23=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Fri, Oct 04, 2024 at 12:58:00PM GMT, Andrii Nakryiko wrote:
-> > On Fri, Oct 4, 2024 at 1:01=E2=80=AFAM Christian Brauner <brauner@kerne=
-l.org> wrote:
-> > >
-> > > On Thu, Oct 03, 2024 at 11:13:54AM GMT, Christian Brauner wrote:
-> > > > On Tue, Oct 01, 2024 at 03:52:05PM GMT, Andrii Nakryiko wrote:
-> > > > > 6cf41fcfe099 ("backing file: free directly") switched FMODE_BACKI=
-NG
-> > > > > files to direct freeing as back then there were no use cases requ=
-iring
-> > > > > RCU protected access to such files.
-> > > > >
-> > > > > Now, with speculative lockless VMA-to-uprobe lookup logic, we do =
-need to
-> > > > > have a guarantee that struct file memory is not going to be freed=
- from
-> > > > > under us during speculative check. So add back RCU-delayed freein=
-g
-> > > > > logic.
-> > > > >
-> > > > > We use headless kfree_rcu_mightsleep() variant, as file_free() is=
- only
-> > > > > called for FMODE_BACKING files in might_sleep() context.
-> > > > >
-> > > > > Suggested-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > > ---
-> > > >
-> > > > Reviewed-by: Christian Brauner <brauner@kernel.org>
-> > >
-> > > Fwiw, I have another patch series for files that I'm testing that wil=
-l
-> > > require me to switch FMODE_BACKING to a SLAB_TYPSAFE_BY_RCU cache. Th=
-at
-> > > shouldn't matter for your use-case though.
+> On Mon, Oct 7, 2024, at 16:04, Rafael J. Wysocki wrote:
+> > On Fri, Oct 4, 2024 at 10:48=E2=80=AFPM Arnd Bergmann <arnd@kernel.org>=
+ wrote:
+> >>
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> CONFIG_HAS_IOPORT will soon become optional and cause a build time
+> >> failure when it is disabled but a driver calls inb()/outb(). At the
+> >> moment, all architectures that can support ACPI have port I/O, but
+> >> this is not necessarily the case in the future.
 > >
-> > Correct, we assume SLAB_TYPESAFE_BY_RCU semantics for the common case
-> > anyways. But hopefully my change won't cause major merge conflicts
-> > with your patch set.
+> > Can addressing this be deferred to that point?
 >
-> Please drop this patch and pull the following tag which adds
-> SLAB_TYPE_SAFE_BY_RCU protection for FMODE_BACKING files aligning them
-> with regular files lifetime (even though not needed). The branch the tag
-> is based on is stable and won't change anymore:
+> Yes. I would like to have all of arm64 and riscv be able to turn
+> off HAS_IOPORT eventually, but nothing depends on doing this
+> when ACPI is enabled.
 >
-> git pull -S git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git tag=
-s/vfs-6.13.for-bpf.file
+> >> Since the embedded controller can only exist when port I/O is
+> >> active, it makes sense to disable that code on targets that don't
+> >> have it. The same is true for anything using acpi_os_read_port()
+> >> and similar functions.
+> >>
+> >> Add compile-time conditionals around all of those and their callers.
+> >>
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> ---
+> >> Should this be split up into smaller patches?
+> >
+> > No need, but the ACPICA part is kind of nasty.
+>
+> Right, I see.
+>
+> >> --- a/drivers/acpi/acpica/evhandler.c
+> >> +++ b/drivers/acpi/acpica/evhandler.c
+> >> @@ -358,12 +358,13 @@ acpi_ev_install_space_handler(struct acpi_namesp=
+ace_node *node,
+> >>                         handler =3D acpi_ex_system_memory_space_handle=
+r;
+> >>                         setup =3D acpi_ev_system_memory_region_setup;
+> >>                         break;
+> >> -
+> >> +#ifdef CONFIG_HAS_IOPORT
+> >>                 case ACPI_ADR_SPACE_SYSTEM_IO:
+> >>
+> >>                         handler =3D acpi_ex_system_io_space_handler;
+> >>                         setup =3D acpi_ev_io_space_region_setup;
+> >>                         break;
+> >> +#endif
+> >
+> > All changes like the above in the ACPICA code potentially increase the
+> > number of times when upstream ACPICA patches will have to be ported to
+> > Linux manually, which in turn increases the number of potential
+> > mistakes in the process.
+> >
+> > I'd rather avoid making them, if possible.
+>
+> Understood. Does that mean that on the flip-side we can change
+> the drivers/acpi/osl.c portion to turn acpi_os_read_port()
+> and acpi_os_write_port() into a runtime error for configurations
+> without port I/O, without causing the same maintenance overhead?
 
-Ok, will drop. It will on Peter to pull this tag into tip/perf/core,
-but I'll mention all this in the cover letter (and will pull locally
-for testing, of course). Thanks.
+Yes, that can be done.
+
+> The version below builds fine and doesn't touch acpica but
+> it's a bit harder to predict what would happen at runtime.
+
+Sure.
+
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index b8924077163b..5ec58c4e0332 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -134,6 +134,7 @@ config ACPI_REV_OVERRIDE_POSSIBLE
+>
+>  config ACPI_EC_DEBUGFS
+>         tristate "EC read/write access through /sys/kernel/debug/ec"
+> +       depends on HAS_IOPORT
+>         help
+>           Say N to disable Embedded Controller /sys/kernel/debug interfac=
+e
+>
+> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+> index 61ca4afe83dc..132357815324 100644
+> --- a/drivers/acpi/Makefile
+> +++ b/drivers/acpi/Makefile
+> @@ -41,7 +41,7 @@ acpi-y                                +=3D resource.o
+>  acpi-y                         +=3D acpi_processor.o
+>  acpi-y                         +=3D processor_core.o
+>  acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) +=3D processor_pdc.o
+> -acpi-y                         +=3D ec.o
+> +acpi-$(CONFIG_HAS_IOPORT)      +=3D ec.o
+>  acpi-$(CONFIG_ACPI_DOCK)       +=3D dock.o
+>  acpi-$(CONFIG_PCI)             +=3D pci_root.o pci_link.o pci_irq.o
+>  obj-$(CONFIG_ACPI_MCFG)                +=3D pci_mcfg.o
+> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> index 16917dc3ad60..535d6a72ce1b 100644
+> --- a/drivers/acpi/bus.c
+> +++ b/drivers/acpi/bus.c
+> @@ -1356,7 +1356,8 @@ static int __init acpi_bus_init(void)
+>          * Do that before calling acpi_initialize_objects() which may tri=
+gger EC
+>          * address space accesses.
+>          */
+> -       acpi_ec_ecdt_probe();
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               acpi_ec_ecdt_probe();
+>
+>         status =3D acpi_enable_subsystem(ACPI_NO_ACPI_ENABLE);
+>         if (ACPI_FAILURE(status)) {
+> @@ -1391,7 +1392,8 @@ static int __init acpi_bus_init(void)
+>          * Maybe EC region is required at bus_scan/acpi_get_devices. So i=
+t
+>          * is necessary to enable it as early as possible.
+>          */
+> -       acpi_ec_dsdt_probe();
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               acpi_ec_dsdt_probe();
+
+The above two changes mean that it is not necessary to compile either
+acpi_ec_ecdt_probe() or acpi_ec_dsdt_probe() at all if
+CONFIG_HAS_IOPORT is not enabled.
+
+>
+>         pr_info("Interpreter enabled\n");
+>
+> @@ -1464,7 +1466,8 @@ static int __init acpi_init(void)
+>         acpi_arm_init();
+>         acpi_riscv_init();
+>         acpi_scan_init();
+> -       acpi_ec_init();
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               acpi_ec_init();
+
+And this means that the whole EC driver is not going to work at all then.
+
+>         acpi_debugfs_init();
+>         acpi_sleep_proc_init();
+>         acpi_wakeup_device_init();
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index b73b3aa92f3f..326b73ae77a9 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1017,7 +1017,8 @@ static int cpc_read(int cpu, struct cpc_register_re=
+source *reg_res, u64 *val)
+>         *val =3D 0;
+>         size =3D GET_BIT_WIDTH(reg);
+>
+> -       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_IO) {
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT) &&
+> +           reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_IO) {
+>                 u32 val_u32;
+>                 acpi_status status;
+>
+> @@ -1090,7 +1091,8 @@ static int cpc_write(int cpu, struct cpc_register_r=
+esource *reg_res, u64 val)
+>
+>         size =3D GET_BIT_WIDTH(reg);
+>
+> -       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_IO) {
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT) &&
+> +           reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_IO) {
+>                 acpi_status status;
+>
+>                 status =3D acpi_os_write_port((acpi_io_address)reg->addre=
+ss,
+> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> index 78a81969d90e..04d3864073ba 100644
+> --- a/drivers/acpi/osl.c
+> +++ b/drivers/acpi/osl.c
+> @@ -642,6 +642,11 @@ acpi_status acpi_os_read_port(acpi_io_address port, =
+u32 *value, u32 width)
+>  {
+>         u32 dummy;
+>
+> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
+> +               *value =3D BIT_MASK(width);
+> +               return AE_NOT_IMPLEMENTED;
+> +       }
+> +
+>         if (value)
+>                 *value =3D 0;
+>         else
+> @@ -665,6 +670,9 @@ EXPORT_SYMBOL(acpi_os_read_port);
+>
+>  acpi_status acpi_os_write_port(acpi_io_address port, u32 value, u32 widt=
+h)
+>  {
+> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               return AE_NOT_IMPLEMENTED;
+> +
+>         if (width <=3D 8) {
+>                 outb(value, port);
+>         } else if (width <=3D 16) {
+
+The above two changes look reasonable to me.
+
+> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
+rflib.c
+> index 4265814c74f8..8be453d89ef8 100644
+> --- a/drivers/acpi/processor_perflib.c
+> +++ b/drivers/acpi/processor_perflib.c
+> @@ -455,7 +455,8 @@ int acpi_processor_pstate_control(void)
+>  {
+>         acpi_status status;
+>
+> -       if (!acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_control)
+> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT) ||
+> +           !acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_control)
+>                 return 0;
+
+All of the existing callers of acpi_processor_pstate_control() are x86
+which has CONFIG_HAS_IOPORT AFAICS.
+
+And if you care about the code size, acpi_processor_notify_smm() can
+go away for !CONFIG_HAS_IOPORT too.
+
+>         pr_debug("Writing pstate_control [0x%x] to smi_command [0x%x]\n",
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 7ecc401fb97f..9d5e6dd542bf 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -2293,7 +2293,8 @@ static int acpi_bus_attach(struct acpi_device *devi=
+ce, void *first_pass)
+>         if (device->handler)
+>                 goto ok;
+>
+> -       acpi_ec_register_opregions(device);
+> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               acpi_ec_register_opregions(device);
+
+I'd rather have an empty stub of acpi_ec_register_opregions() for
+!CONFIG_HAS_IOPORT instead.
+
+>
+>         if (!device->flags.initialized) {
+>                 device->flags.power_manageable =3D
 
