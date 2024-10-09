@@ -1,170 +1,146 @@
-Return-Path: <linux-kernel+bounces-357237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BA996E46
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4309996E4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ECBC282D7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56AEE1F21829
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3132114A0AB;
-	Wed,  9 Oct 2024 14:39:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB02C127E18;
-	Wed,  9 Oct 2024 14:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B311991AF;
+	Wed,  9 Oct 2024 14:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1mjMCoJ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66093BBEB;
+	Wed,  9 Oct 2024 14:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484772; cv=none; b=fOWaSPVO9gFW4QRRC8kdVmB2t3wi6eW0JkF7qCQzMCjzrLFzvSIgbFP/NUbwbBfCIrWiSTjOW2GZb//GKYQonylobZ7dotTkDJwnKdzl6kr/XhU0qoQt7gGjpZmic5Eq794GMYcFpE9j9PZxMVCbOGbyVIBT6C7B+BrOpNTz+0Y=
+	t=1728484803; cv=none; b=nVIlDR3ZI3ajDeVxxephkIMEU0kHQ9aJrYJl/9xxsnsGWg30+09bh8lekKNF5d7lAS4tUAQS+kryUdmQd2QyW/Iu0DT/9j0SQBAcEJfJaMn/xUcHjCmZnaUojL8uZJ4UuMeqLM1h6Th/kOW0ghdWNeXSP6cpgpcDf85rAQ4OO0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484772; c=relaxed/simple;
-	bh=E2Q/Z9HmKJzZCPdr6+3P8OqkCoRO4OHda0l6tZENExs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pZGmbs7ysrua32L2QgphZxoSGlrtwlE5B9wZ6llmgquE8HOHjNFkFBIKI0ZEKO+mW5jZ52Iwe9D78n46aiFw21vSeFqVgVrYCMm4RWK38dbpIwplFIA8u/SZAXEWLwRz1BArf6HeWers8EpKUSqAS9aKWdAtl4CDTwzw049fsaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CB79FEC;
-	Wed,  9 Oct 2024 07:39:59 -0700 (PDT)
-Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94B053F58B;
-	Wed,  9 Oct 2024 07:39:28 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	quic_sibis@quicinc.com,
-	johan@kernel.org,
-	konradybcio@kernel.org,
-	johan+linaro@kernel.org
-Subject: [PATCH] firmware: arm_scmi: Skip opp duplicates
-Date: Wed,  9 Oct 2024 15:39:05 +0100
-Message-ID: <20241009143905.2440438-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.46.1
-Reply-To: 20241007060642.1978049-3-quic_sibis@quicinc.com
+	s=arc-20240116; t=1728484803; c=relaxed/simple;
+	bh=WIxVQAkTWICRZjnmzg7/+ehtFeF1lYh/jn7EQ5extqY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZwWanaR3Er+wCZpqcRHxZO2XKfuiFlQYHbZ51rQ9rs7Uu+ct/kT0rtY4xZFvjjyeAxs4j+bV+lx3e5zhYMAQlM1SuMPOuwqGqTgupXeWj1joiQ90j4/3ACKM2qkV8wEFjGcQQgX9hZr243jMxx6DPMLBZyReQ2rVKJ75CvGdrBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1mjMCoJ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9943897c07so609913766b.3;
+        Wed, 09 Oct 2024 07:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728484800; x=1729089600; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fQH4Rjgx8wyc4kWG1BHXE6ckcwQoBaKiq9RmNTLAvtQ=;
+        b=Z1mjMCoJEOh00FmiAQvJgxQDC3okeyhKdytIMP3GJBqZXQ6Jad1fM/Mxs42tWdR1mz
+         s7J5bM7/72JZGDioxnz94K2D4VFGvz1OaH8uNqMIO/oW7zuxGa+hm2xaSy/J1UEl9S9n
+         6vsHQOS/aYxftUWONwbpnK/2SpzbN4gBghgZhZrXft6cEjbN8uUcfLb6Fz97Bfn6b/zg
+         MoZqD/DsxuUMbns/6dr8MNoTbhrXJa4TUwA34U8ptDUwEObrLcTPYlOFaII/sOkcshG+
+         bgu+anzcPWQMqr+InHWNfrg70yKBY4XC+3Thdh5UaNcciFUcfapWP5pYwF4DJ6sinG+Q
+         PilQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728484800; x=1729089600;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fQH4Rjgx8wyc4kWG1BHXE6ckcwQoBaKiq9RmNTLAvtQ=;
+        b=tctQWVQLVRK97Qm8hz5hhyOYocmjFx9MP4QE/eXtSwnnOWV9PcyYjDdNBXgRktHZRu
+         nivLH+X5Tp2S61k4/wR/MhePvdUFH5XG7Yhczphh3VKOmygyfLQ0dbdyGWiDPBl4TBVk
+         2KKTAxiiC5M9NaT+tL5inHsZhEYKubemEpeBdhjiCmYUMnfZd6xyAGJ0Ek0P5JrRS5SA
+         Ro1yLfSRK72jjXACB5W0DVpkoX4QM0Dkp1ulVEIIJ0KqncAh1HtJSMvGElNep8MCQnBJ
+         o93S9/7I4iwGc0h/GbIRPmJFSwUv06Q8RzasC5xIw/Pc+CQRUc0EkwZn2hzugB4V7Ia/
+         9Z3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZYnxZLevoA+O0Uq5+cGe6if2s699Oyzde2B5k46sLij3VnKw5nmiskltly59fylsA/YjhmJpAPjpk@vger.kernel.org, AJvYcCUd20exIu2I3r8LqPt7eY1dbiT9NTUmnAMwRxQbJrhhUy8sl67Nx/Q4f6Ywpqcd1KfaVbEwmyQgcvaoEzX2@vger.kernel.org, AJvYcCVrA3r3gl8O6FjAsb6lGIe7yqRBxj7g641eLcaSadvve7/RAU99IUUx29rmzUxmJ0m3kECXBWkbhuMYkCo=@vger.kernel.org, AJvYcCXZc1U0hR9cPbynGWSS0MrCZwcS3tgXugfjnajB8SJLhegivr1qoztDUviNYgFHufeaULOT11Rn1RhC@vger.kernel.org, AJvYcCXfMiEGZ3b6+lOhOXbW7cY0hbggSwe3rwZPdAvyUb4Y/ICkTcb2XtRiNfWIbpGfGOhuokaxd0Qqvksj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRy/irq1d36ykPGtYSJYjXBeNrbcW1BKcyl4Hc8iLXCzDr8LbY
+	ggKwaF/I6mHHvfqXDB0YbJXUS3uLqtJedcd05rTotPuyffLwMfet
+X-Google-Smtp-Source: AGHT+IGf82so3ncJqcp1r2jhONc3QpN1q4ZExW5+Xw94byLu7PFFtYP9NN/erIT9QH3fFHdER/oNEQ==
+X-Received: by 2002:a17:907:7d9f:b0:a99:8abf:3610 with SMTP id a640c23a62f3a-a998d197392mr214942866b.14.1728484799774;
+        Wed, 09 Oct 2024 07:39:59 -0700 (PDT)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994610bccdsm532582766b.1.2024.10.09.07.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 07:39:59 -0700 (PDT)
+Message-ID: <facfe06f51a815f4ff5604aeacd8bd6ed0629be4.camel@gmail.com>
+Subject: Re: [PATCH v4 5/8] iio: adc: ad7606: Add compatibility to fw_nodes
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Guillaume Stols <gstols@baylibre.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com,  dlechner@baylibre.com, jstephan@baylibre.com,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Date: Wed, 09 Oct 2024 16:39:58 +0200
+In-Reply-To: <20241009-ad7606_add_iio_backend_support-v4-5-6971a8c0f1d5@baylibre.com>
+References: 
+	<20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
+	 <20241009-ad7606_add_iio_backend_support-v4-5-6971a8c0f1d5@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Buggy firmware can reply with duplicated PERF opps descriptors.
+On Wed, 2024-10-09 at 09:19 +0000, Guillaume Stols wrote:
+> On the parallel version, the current implementation is only compatible
+> with id tables and won't work with fw_nodes, this commit intends to fix
+> it.
+>=20
+> Doing so required to declare ad7606_chip_info structures in the .h file
+> so to make them accessible to all the driver files that can set a
+> pointer to the corresponding chip as the driver data.
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+> =C2=A0drivers/iio/adc/ad7606.c=C2=A0=C2=A0=C2=A0=C2=A0 | 283 ++++++++++++=
+++++++++++++-------------------
+> =C2=A0drivers/iio/adc/ad7606.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 32 +++--
+> =C2=A0drivers/iio/adc/ad7606_par.c |=C2=A0 30 +++--
+> =C2=A0drivers/iio/adc/ad7606_spi.c |=C2=A0 96 +++++++++------
+> =C2=A04 files changed, 254 insertions(+), 187 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 5b276d087ec3..dfbdea8c28ba 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -78,6 +78,155 @@ static const unsigned int ad7616_oversampling_avail[8=
+] =3D {
+>=20
+...
 
-Ensure that the bad duplicates reported by the platform firmware doesn't
-get added to the opp-tables.
+> +const struct ad7606_chip_info ad7616_info =3D {
+> +	.channels =3D ad7616_channels,
+> +	.init_delay_ms =3D 15,
+> +	.name =3D "ad7616",
+> +	.num_channels =3D 17,
+> +	.oversampling_avail =3D ad7616_oversampling_avail,
+> +	.oversampling_num =3D ARRAY_SIZE(ad7616_oversampling_avail),
+> +	.os_req_reset =3D true,
+> +	.scale_setup_cb =3D ad7606_16bit_chan_scale_setup,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(ad7616_info, IIO_AD7606);
+>=20
 
-Reported-by: Johan Hovold <johan+linaro@kernel.org>
-Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-A new version to include in this series that should address the limit case
-described by Sibi...not tested, of course :P
----
- drivers/firmware/arm_scmi/perf.c | 40 ++++++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 10 deletions(-)
+Maybe my eyes are tricking me but I'm not seeing any MODULE_IMPORT_NS() in =
+the
+drivers?
 
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 2d77b5f40ca7..32f9a9acd3e9 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -373,7 +373,7 @@ static int iter_perf_levels_update_state(struct scmi_iterator_state *st,
- 	return 0;
- }
- 
--static inline void
-+static inline int
- process_response_opp(struct device *dev, struct perf_dom_info *dom,
- 		     struct scmi_opp *opp, unsigned int loop_idx,
- 		     const struct scmi_msg_resp_perf_describe_levels *r)
-@@ -386,12 +386,16 @@ process_response_opp(struct device *dev, struct perf_dom_info *dom,
- 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
- 
- 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
--	if (ret)
-+	if (ret) {
- 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
- 			 opp->perf, dom->info.name, ret);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
--static inline void
-+static inline int
- process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 			struct scmi_opp *opp, unsigned int loop_idx,
- 			const struct scmi_msg_resp_perf_describe_levels_v4 *r)
-@@ -404,9 +408,11 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
- 
- 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
--	if (ret)
-+	if (ret) {
- 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
- 			 opp->perf, dom->info.name, ret);
-+		return ret;
-+	}
- 
- 	/* Note that PERF v4 reports always five 32-bit words */
- 	opp->indicative_freq = le32_to_cpu(r->opp[loop_idx].indicative_freq);
-@@ -415,13 +421,21 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 
- 		ret = xa_insert(&dom->opps_by_idx, opp->level_index, opp,
- 				GFP_KERNEL);
--		if (ret)
-+		if (ret) {
- 			dev_warn(dev,
- 				 "Failed to add opps_by_idx at %d for %s - ret:%d\n",
- 				 opp->level_index, dom->info.name, ret);
- 
-+			/* Cleanup by_lvl too */
-+			xa_erase(&dom->opps_by_lvl, opp->perf);
-+
-+			return ret;
-+		}
-+
- 		hash_add(dom->opps_by_freq, &opp->hash, opp->indicative_freq);
- 	}
-+
-+	return 0;
- }
- 
- static int
-@@ -429,16 +443,22 @@ iter_perf_levels_process_response(const struct scmi_protocol_handle *ph,
- 				  const void *response,
- 				  struct scmi_iterator_state *st, void *priv)
- {
-+	int ret;
- 	struct scmi_opp *opp;
- 	struct scmi_perf_ipriv *p = priv;
- 
--	opp = &p->perf_dom->opp[st->desc_index + st->loop_idx];
-+	opp = &p->perf_dom->opp[p->perf_dom->opp_count];
- 	if (PROTOCOL_REV_MAJOR(p->version) <= 0x3)
--		process_response_opp(ph->dev, p->perf_dom, opp, st->loop_idx,
--				     response);
-+		ret = process_response_opp(ph->dev, p->perf_dom, opp,
-+					   st->loop_idx, response);
- 	else
--		process_response_opp_v4(ph->dev, p->perf_dom, opp, st->loop_idx,
--					response);
-+		ret = process_response_opp_v4(ph->dev, p->perf_dom, opp,
-+					      st->loop_idx, response);
-+
-+	/* Skip BAD duplicates received from firmware */
-+	if (ret)
-+		return ret == -EBUSY ? 0 : ret;
-+
- 	p->perf_dom->opp_count++;
- 
- 	dev_dbg(ph->dev, "Level %d Power %d Latency %dus Ifreq %d Index %d\n",
--- 
-2.46.1
+- Nuno S=C3=A1
+
 
 
