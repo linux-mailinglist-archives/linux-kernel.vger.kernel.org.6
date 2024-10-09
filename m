@@ -1,150 +1,93 @@
-Return-Path: <linux-kernel+bounces-357583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9229972EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:20:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAB59972F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D3628468A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:20:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B478B25D44
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1F1E1029;
-	Wed,  9 Oct 2024 17:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0E11DF964;
+	Wed,  9 Oct 2024 17:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gm/b2v0F"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOyPHDv1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAF01E04B3;
-	Wed,  9 Oct 2024 17:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E80D1A2547;
+	Wed,  9 Oct 2024 17:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728494397; cv=none; b=dVUObo/cQJsfT4K8T4l4qDQchbPPCivuUEsSXl/voOYbXjw4upavXYxPoJom61NpD8ZRVnVBt31Z7te/mcdVcI54EpQ5oJ99boE40vXBcWftmQPleBPftb7BxInFTDH2bC1EdpZ07MOJb6wAZcNLkXm7DgHBojz1+K+L1f9RS9M=
+	t=1728494454; cv=none; b=gFz3hIJ436FquVUu37MtsZ9jM9U7tOdMjf5PhYIrU5MTVhxhm+rKA/j1B67mi4E5L1+VVeL4VfdP/p3v45iOLbGo+0lVH8RyKP3bYhjtivvpouhxSCDjYfjbaPr4kMWbbAAv/5p75B/25xyXAjuXeTToHe30x3oRjd1MJE8jLJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728494397; c=relaxed/simple;
-	bh=6XO3QHVsI2FrTm/T4grPmVZTTWhumn93WxIxXZX4PAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asRj2LjMD1BFd/sLc9IfzuPAXKUI19zrJ4SfF0+VhPHOQq1xz1XjNZwqPy6oBR5bWwMXK27qHzUPb29gc1PZrk5FwKu4p7PzK7PokBioibLYs0G45jQ4smOKSPw88I7xx7TJhaLOX012p98zKPp9JO2m+USHzkGSR+IN3UWOakg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gm/b2v0F; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b90ab6c19so76257295ad.0;
-        Wed, 09 Oct 2024 10:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728494396; x=1729099196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBIl3ppuyOTFiyulZToWVK1cyteAW6nYjEsK1BP48mQ=;
-        b=gm/b2v0F6UvQWrGqUI3mtWaiwkWJPrBQ2OBBjXlDRIPuO/tzv1x5JlagtrQFl2ELrv
-         HscktrN4hAh17oJ7innH2V0SA3UZjJXXPg90l/eq5a42QPR0vJXuFURAH29XN5a/1N1n
-         6xMzBXxJh9fh8fJ4sH5Qhx/Dh4ucLPMnNpvuIUkEw0ASfyWERObW0neA6gZpadu8wcug
-         xbw6l53r2Pw7JBs2wrKPDTuURljNz49Ll45saLcSjOTJPsevt3bcZs4TSS/XRrRM3DOw
-         80wJ5O/QdorkspZYzNTPxE7XSywkAvVwd+OVvU5Ul0IaSnk704a31eTl7olScVCnZie3
-         dUcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728494396; x=1729099196;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBIl3ppuyOTFiyulZToWVK1cyteAW6nYjEsK1BP48mQ=;
-        b=V+aKoxS1peO7BOlRvtVVXoPMglDTxhasTEf1+WQAE+sFkmsD0copMYcQgxBFrqw4tj
-         kt3GeOoGomjPjkdAmWJCLld5EsGOLbLK5oZpwcl5fuRgTWlszmLNK7A5WsQxAwhZ8ZBr
-         skvOTHb7o/MtWeEsLUGM3dpJLWIJg6HzoJBpM7LqJFZNWZlYf3FUpOVVAnZIJuoVLXjK
-         ohD/wzCPtl8JxXFH6wjayt92hGtdk0TmTypI+JwkO4C85RNKk8wG3YrroXzleouhR1a1
-         mpNRLRNnAQUgonCkS87t2M7sW6YUjC+nfSWZrrNZfXKJt7u6zdU3ladOuGsQPqd9H0FH
-         10EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8817o5PPc5q/j/04nuMqya3yGu/onLAPsEVYA62usm3QS+EByibsoE+9dvuagqkxWUxZkhU/8b8ZI5uE=@vger.kernel.org, AJvYcCXaaIEcNUWzLZL1PONYn5Mpuff98kZAiar8wauvIjgEZjwotzXecE0dof5ffiE0iHrUxdzGNICo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwstjGA5urnBJjYBbVCx9hMgFC9BnLMeQ4x3r7g2WFwXaVPX9BA
-	uIuxJsopALvxsQXeY+UDrJyC4mcolCXRKwZqjAmfW8LewSgk6Kw6
-X-Google-Smtp-Source: AGHT+IFncdsW7+yrkVxSkHVLCowFqbtZx8qhTN/bRvczM/0qiogXC3KEuOZFaT2x9Cvi9fd5QhV80w==
-X-Received: by 2002:a17:902:db0e:b0:205:709e:1949 with SMTP id d9443c01a7336-20c637963fcmr40556565ad.57.1728494395627;
-        Wed, 09 Oct 2024 10:19:55 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13939c3bsm73161265ad.151.2024.10.09.10.19.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 10:19:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e08f9ba0-66f3-488a-a6cc-b087527b2cb9@roeck-us.net>
-Date: Wed, 9 Oct 2024 10:19:52 -0700
+	s=arc-20240116; t=1728494454; c=relaxed/simple;
+	bh=pTakB2z6V4uiToCgJJtCQlYbxtbwkcxm3E81tLbKCnI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=alLpkMQ/2sm2AV2vwIMg68OGnRxzV9Ap8KFNb8E/FbSZnTsg3aDbIpUYrNYTAUjEy5JZ6NczKiFP+We80Vqn8g5BN2MeIHc/X8HizAiHrt1cESVNvF2RCgXYYI+M5GBCUnJbYHks5XTJ6Fh5/GVd+Ri8PwJOayvVvjohLeC8drI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOyPHDv1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3740C4CECF;
+	Wed,  9 Oct 2024 17:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728494453;
+	bh=pTakB2z6V4uiToCgJJtCQlYbxtbwkcxm3E81tLbKCnI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SOyPHDv1QmrqRwmz6qAgLxSxWIdLod9XcWAluWqm4XHsOTEsZ3vEHW8j6uzhktKsW
+	 4CH6+1XMmaiexqo502utA0OABJSNHM6vKc7/KLL2aHenOiOU8cxjtxFnaWV1ChA8j+
+	 KN4mrEkqeEXht0wSFkvraxoeNVyNuRKVnL2yR6c24ikUuRyMHyh7IY8ntU0Qo3BXkJ
+	 MydKU5Smi3iYx37lsWbHJZtT4tsSTxVliKPlRquVdXT92ypDtMfhWwbpVgnF0hdu18
+	 co5bhjGmDqdpNF3t0Q+Bz7s8DElcoPt3BEda2GZG4atm5FZxFGZu7s2dbcr4HqwV5b
+	 9K35T9aOA86vQ==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e3dfae8b87so33303b6e.2;
+        Wed, 09 Oct 2024 10:20:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3HXj/rto7m9TyL6WK1yYFtoC+E5uCgP02I8/p1QwVShLP6SUJ5YMF8iYB+BtSYygDPoWsMHJT@vger.kernel.org, AJvYcCX5pYZh10f6QDNH2Ea5yC2NllgDqtAz34egLkWDCHV2CouFkPVK/bz/fjFNaX4+45O4Cpi5mBWY8shqQKQ=@vger.kernel.org, AJvYcCXbs6TIL9znhDXV5RSJrn6pzY+s4yb1zKvL6VHBx7mm2rubUUmgmtxSfStVlZ/TVBGoZHH9/mkLd0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6i/sGtyY2JYHavIf+sAOpTKjp6lg9b7IcXbj03xvJKJcovRKa
+	Z0Rhu253Z1KSs8nJvGLGjI4qV9uK3HWKp/VpPQUHEPgrA1uu+JWA5Eug7WdqTN6OoyZ1LpyRpUm
+	0Cqn/usXlrbuoG5CexIRFEhz9qvM=
+X-Google-Smtp-Source: AGHT+IHC3PCSE9gREtvrXYE4GaDqSOZHeOSFGIw0ZwDYBHAUhhll2B10WHGikC79xTN91cGN+CHyfkEfNtesUXV6GWo=
+X-Received: by 2002:a05:6808:201a:b0:3e0:4263:46f1 with SMTP id
+ 5614622812f47-3e3e66d6117mr2935298b6e.11.1728494453194; Wed, 09 Oct 2024
+ 10:20:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: fec: don't save PTP state if PTP is unsupported
-To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
- csokas.bence@prolan.hu, shenwei.wang@nxp.com, xiaoning.wang@nxp.com
-Cc: imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241008061153.1977930-1-wei.fang@nxp.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241008061153.1977930-1-wei.fang@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241009072001.509508-1-rui.zhang@intel.com> <20241009163344.GA25814@ranerica-svr.sc.intel.com>
+In-Reply-To: <20241009163344.GA25814@ranerica-svr.sc.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Oct 2024 19:20:42 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h0=cyvOw6a6nvgigS-71Q2W3pcZOsGyLRhvMucRubvxA@mail.gmail.com>
+Message-ID: <CAJZ5v0h0=cyvOw6a6nvgigS-71Q2W3pcZOsGyLRhvMucRubvxA@mail.gmail.com>
+Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
+ timer shutdown
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com, x86@kernel.org, 
+	linux-pm@vger.kernel.org, hpa@zytor.com, peterz@infradead.org, 
+	thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com, 
+	len.brown@intel.com, srinivas.pandruvada@intel.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/7/24 23:11, Wei Fang wrote:
-> Some platforms (such as i.MX25 and i.MX27) do not support PTP, so on
-> these platforms fec_ptp_init() is not called and the related members
-> in fep are not initialized. However, fec_ptp_save_state() is called
-> unconditionally, which causes the kernel to panic. Therefore, add a
-> condition so that fec_ptp_save_state() is not called if PTP is not
-> supported.
-> 
-> Fixes: a1477dc87dc4 ("net: fec: Restart PPS after link state change")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/lkml/353e41fe-6bb4-4ee9-9980-2da2a9c1c508@roeck-us.net/
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+On Wed, Oct 9, 2024 at 6:28=E2=80=AFPM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
+>
+> On Wed, Oct 09, 2024 at 03:20:01PM +0800, Zhang Rui wrote:
+> > This 12-year-old bug prevents some modern processors from achieving
+> > maximum power savings during suspend. For example, Lunar Lake systems
+>
+> Two nits:
+>
+> > gets 0% package C-states during suspend to idle and this causes energy
+> > star compliance tests to fail.
+>
+> s/gets/get/
+> s/energy start/Energy Star/
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
+Thanks for pointing these out!
 
