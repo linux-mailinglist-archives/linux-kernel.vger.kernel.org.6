@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-357083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4FB996B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A70C996B52
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADF61F21B3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77531F2113C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E531A196D9A;
-	Wed,  9 Oct 2024 13:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8BA198E83;
+	Wed,  9 Oct 2024 13:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KGo/OZ7C"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rXIacV4Z"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F283194C6B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FC4198A25;
+	Wed,  9 Oct 2024 13:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728478973; cv=none; b=lWajHkStMQleKpN+ICcPwXWOrIwrWA/YgJDdj1bhQgjpZQFy4Nz7bIG9TJLwgVEz5ASj6xTPUE5V0s90Rd4ZdcT30nz+Nu6Tw3G175KW8mVICxzsflVsW/8Ln/aKl8LQznaSru3HyM3UJvBuIwhVAzG0casEhTYvxQlO4mUsiec=
+	t=1728478998; cv=none; b=lTRvpK8igGLM/vFSZ3G7SrepMwCGDnZ7tAC9Y5WjcJwqJoy1V+i2yVtPdVVSLsXY4mCzcK9bd/Pzr4R3HJiT02zkSpDLXj3dXnhN8Zzw5GPlhk5LV8IQ0zRcwQdioMW8GtBiek2XeOYT4cMWm0o0gx6MGOvtq8RvzdiFUY82UZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728478973; c=relaxed/simple;
-	bh=GjnPV5sOZgTZMm2KQG/PI/BeyRDCSFbmBjidp8mCRPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lTA0FlCeC4ShcCxOEplHkekxfnrgXDhUXCpPBq/ewzP8KT3nUNIo7t4xl8v1rmmo0UhDkJAFefxX+Fk5yC5K62RPmZFGhY0m5jP+AbYysjQUTN4wsZuQUG2MVFWXu1HEeLtBOzxrgycYoGqTriHPPBXG4WC+xKObUYZcZQa5IZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KGo/OZ7C; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53994aadb66so6202235e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728478970; x=1729083770; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XQ4P68ZRxv+hHVO0lABXJo+8ycp2fDd9E94BHF6XTqI=;
-        b=KGo/OZ7CeSkYNepRjkbja0zq7ynXI/m82wP2RCVicKaN3jIUkehf2Cw8AqOiqOW7ja
-         b1+nTpNCYkCvkim+AB0qAy5qaCkXGzX8eeWWdkWeNSc8Q8tbiCN06pS+QXXTyepLwHu2
-         WqL5zhbb0/d5NtEi+HLRoIbU/dqq8UHAFeL4HDpvrsUGWHtV6oV66jWzUwPTd4bWzz17
-         uAsyb3y+rY1lF/0r2sIQwEd8sqpdyMOKQ79dG0PK9rMoan/QkPFuSF35D6F7ImqsOnFH
-         j7KOb/ylNcaZwDqNWSm3MtiHA7mRhuSFmWTDn7vAxwwqlXdhjE+ms5GwQbIJ8YIgOj9N
-         bn5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728478970; x=1729083770;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQ4P68ZRxv+hHVO0lABXJo+8ycp2fDd9E94BHF6XTqI=;
-        b=YrZ78alLbwXn0zeWwPfpjQEtzKTABtqTHqi3mmCcxa4l6b+pre1YHRWj7kdTcq0HHf
-         WkIFUSq3sWF+9Lyd74TXgLZMYtcNnxWDCI+3TVjhFBOBjUZ8N+UIkU3sRFVH4yIoJP8w
-         L8F3meFHzZSXoopQF/0YrRP0B/ibBjJ0hML3UedEqZUH/eomP1+Kr6m0GOrjRXXPmK4d
-         Z6UE8In/2qQUe7uvLBKe2xi2s5u8jfDx8OINzJZIDQ6XYEaQ/ZyGALEWz+q/tf6QeeQr
-         qvHkTMiHJ3xKai32jpgbWuf2Kill2CANv+oindbbiWJeXIuR4HaQMmoHmd+a4tqSftuo
-         XgDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWimYz9XwhwMbbE+zo4DvPxaCqzxB9xktAyBKVpx4RM04gYMRafMynN/EnVMOYdUldZbMgtozUez57oY2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ6X2mYSY+KIHq3//ZmfWJNEYplgFox7pMybw1lqD/OGlTjRcb
-	zSHpu5VZl0HBMaE3otI9OtQOwGQGxLmcxZgbMKrqeRdJog5tJfuU2PDbUWg9Zjk=
-X-Google-Smtp-Source: AGHT+IELZkj89u1afBb7PSQ9wwNotzJkcSezbWUcteXtw7nUEW52WKbZA04/L2zb0pBTJV+mK2zu8Q==
-X-Received: by 2002:a2e:d1a:0:b0:2fa:de13:5c2a with SMTP id 38308e7fff4ca-2fb187a1883mr12341611fa.25.1728478969628;
-        Wed, 09 Oct 2024 06:02:49 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05c0dc1sm5461539a12.52.2024.10.09.06.02.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 06:02:49 -0700 (PDT)
-Message-ID: <58958e05-882d-4866-809b-1daec897f59a@linaro.org>
-Date: Wed, 9 Oct 2024 14:02:48 +0100
+	s=arc-20240116; t=1728478998; c=relaxed/simple;
+	bh=cJYQT3pUHI0vJPwt6Xk5wsgZHy+Q8X5/iiS5hUoKyZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HldFbsaAhTlXgQb/PaJdk8dQ/0nPFyqQnzyWhWBiw0iJhQrYBSzh5w0KjBgcbumXEtzhUtjNhgCYAI/TOuLKt+w47NrzkJjuyjzIkU0VbDmuNwnh3bdV2Di+eoCNXLMojluYz9xV0GFvpNh3w6aZJVESvibZ2N7DhnzB71id5BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rXIacV4Z; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W4vAvWfJ3r8piE5vQC7Xpi8Qfy+6fcrJmdiJulu4Dig=; b=rXIacV4ZasTLVgie3bNrUpp4nR
+	QEB9ZDFEP6lMNW1VVe7ORy/lvZQqVYcZrKnWruvjsH6IM7KbluG8AGm74fDmANJGVZEPvJBx6xcdn
+	dztpoSqD7Mm+t7RTjJeyoC5e2ArRm6i1j9JC9gQvNR75GvkeBDEHApVPs9GjfIMmfvu0LbZ/KYGT6
+	p0FZMcByEghwrfl1ZogJdBLp31eArNfaw9Tl4mIK5sh6ZBXLeyvahgwriMGZrJjxdATwROm3EacUU
+	xdxRZuBMUpw7D28iKNhgIiPJJN40OIaOvYfyCrtdx8pQA7iTO5Wfwzuy0vXXuQRDQ0wnno8g+2gEm
+	SC4C1GWw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syWLM-00000004xYw-18dM;
+	Wed, 09 Oct 2024 13:03:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E283730057A; Wed,  9 Oct 2024 15:03:07 +0200 (CEST)
+Date: Wed, 9 Oct 2024 15:03:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, ankur.a.arora@oracle.com, efault@gmx.de,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 3/3] riscv: add PREEMPT_LAZY support
+Message-ID: <20241009130307.GN17263@noisy.programming.kicks-ass.net>
+References: <20241009105709.887510-1-bigeasy@linutronix.de>
+ <20241009105709.887510-4-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] media: dt-bindings: Add OmniVision OV08X40
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jason Chen <jason.z.chen@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20241005-b4-master-24-11-25-ov08x40-v5-0-5f1eb2e11036@linaro.org>
- <20241005-b4-master-24-11-25-ov08x40-v5-2-5f1eb2e11036@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241005-b4-master-24-11-25-ov08x40-v5-2-5f1eb2e11036@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009105709.887510-4-bigeasy@linutronix.de>
 
-On 05/10/2024 11:31, Bryan O'Donoghue wrote:
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: /schemas/media/video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          data-lanes:
-> +            oneOf:
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +                  - const: 3
-> +                  - const: 4
-> +
-> +        required:
-> +          - data-lanes
-> +          - link-frequencies
+On Wed, Oct 09, 2024 at 12:50:57PM +0200, Sebastian Andrzej Siewior wrote:
+> From: Jisheng Zhang <jszhang@kernel.org>
+> 
+> riscv has switched to GENERIC_ENTRY, so adding PREEMPT_LAZY is as simple
+> as adding TIF_NEED_RESCHED_LAZY related definitions and enabling
+> ARCH_HAS_PREEMPT_LAZY.
+> 
+> [bigeasy: Replace old PREEMPT_AUTO bits with new PREEMPT_LAZY ]
+> 
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: linux-riscv@lists.infradead.org
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/riscv/Kconfig                   | 1 +
+>  arch/riscv/include/asm/thread_info.h | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 62545946ecf43..3516c58480612 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -39,6 +39,7 @@ config RISCV
+>  	select ARCH_HAS_MMIOWB
+>  	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>  	select ARCH_HAS_PMEM_API
+> +	select ARCH_HAS_PREEMPT_LAZY
+>  	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+>  	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
+>  	select ARCH_HAS_PTE_SPECIAL
+> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+> index 9c10fb180f438..8b5a5ddea4293 100644
+> --- a/arch/riscv/include/asm/thread_info.h
+> +++ b/arch/riscv/include/asm/thread_info.h
+> @@ -107,6 +107,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
+>   * - pending work-to-be-done flags are in lowest half-word
+>   * - other flags in upper half-word(s)
+>   */
+> +#define TIF_NEED_RESCHED_LAZY	0       /* Lazy rescheduling needed */
+>  #define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+>  #define TIF_SIGPENDING		2	/* signal pending */
+>  #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
 
-I had some offline discussion with Laurent about this since, the logical 
-conclusion of this would be anything from 
-schemas/media/video-interfaces.yaml# would be valid.
-
-And I'll admit I looked @ upstream examples and copied/pasted which also 
-implies that the upstream examples aren't correct.
-
-So, I'll v6 this with
-
-    properties:
-      endpoint:
-        $ref: /schemas/media/video-interfaces.yaml#
-        _additionalProperties_: false
-
-        properties:
-          link-frequencies: true
-          data-lanes:
-            oneOf:
-              - items:
-                  - const: 1
-                  - const: 2
-              - items:
-                  - const: 1
-                  - const: 2
-                  - const: 3
-                  - const: 4
-
-        required:
-          - data-lanes
-          - link-frequencies
-
-and then change the relevant upstream examples of unevaluatedProperties: 
-false to additionalProperties: false.
-
----
-bod
+So for x86 I shuffled the flags around to have the two NEED_RESCHED ones
+side-by-side. Not strictly required ofcourse, but...
 
