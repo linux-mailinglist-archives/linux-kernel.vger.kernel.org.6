@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-357682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A52D9973FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E81D997401
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F6C2829B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369041F24214
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472D61E1C11;
-	Wed,  9 Oct 2024 18:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAqYAhVs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274941E131F;
+	Wed,  9 Oct 2024 18:04:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1291E1A14;
-	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753121A0AFA;
+	Wed,  9 Oct 2024 18:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496976; cv=none; b=IXoLV5ZnIJ0rY9orzLrM+uqCMfwz70c8Mn/s+g+5SeS1SJTKnGdJl6BBFfruIoeLcw+yH4hbr7FURBSllZZ3Wy3TGvzV6mCqIS9lPMqXif8oljGM3M6vsVHw5cMP4H9RwONJf6XyUahTu4a5INOqyXBBBLNfINoJHS40qW/YlDc=
+	t=1728497044; cv=none; b=HJdI3T8AjpEzvN2ZpTrsv+d25l2LBZjCRupZWQKoPFvdRItW23RvTcyI89fhOqE5FAGzJNr7pcrTXMlpq4aX3MbGlMKfTUXwjUnxkHcrcnEegfbBGnl4eiqy46q6IuY4We3UM6A4ktEv2EFBAvu3s7XQpdnH/7PrIytOmvzKT7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496976; c=relaxed/simple;
-	bh=8bI82NBJXXQerlOKPpjrxuDV+Y+lBIYfZla/GLPfrVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yb24VGbWDvF+DjU00SkNy4KZQlbXzagtbVJPWpEcd7qkBWuovTRq6FBlcwJ4ME2AZh6O/SklHcJocjufOwvUZDh9hsCzkJ6KznSqbqwYn7MXXS8X4p+f4yN4HZIMZW+Fnm926nUzT9yZ78THZy89rmE6WWd/46kb7n37wj3RC48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAqYAhVs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FDDFC4CED5;
-	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728496976;
-	bh=8bI82NBJXXQerlOKPpjrxuDV+Y+lBIYfZla/GLPfrVk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hAqYAhVsgWurbGEIaXzR9RW8pea34iKeT0zxT44wWSI13+xqFWG8yMt7eK/Zp3ULf
-	 Ylyy14DqsrJTTxAbJtjVFjGxQbqVv/XmX0VSa9qK2aWhUPhPAwsz4EYntCtAYDob0W
-	 IDoR+BX+Pnvmi6CRI7pEJvxHFk+80VfHr00ek0Iedswg8R+X1pZG6H5YPbKK4pA6zr
-	 ih+S69AZqRgUgj6WMYokpp9FBCVvppOjsHf6IbmxSspSCCi8syCmDNX3TEDC7gXeP6
-	 h+3QuaEmR8i+G928W0XjhBDR6DNQ1ijyUAxlHGKh9ONSSz53RrOlxF39UKbXX0fPDB
-	 Vsu+jgCORzG3Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CFA38CE0E61; Wed,  9 Oct 2024 11:02:55 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: frederic@kernel.org,
-	rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 5/5] rcutorture: Avoid printing cpu=-1 for no-fault RCU boost failure
-Date: Wed,  9 Oct 2024 11:02:53 -0700
-Message-Id: <20241009180253.777965-5-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
-References: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
+	s=arc-20240116; t=1728497044; c=relaxed/simple;
+	bh=QLVGJ3iUM6M7egVEwdhZvZ9wMeXkHUm6sKMK2XPCmyY=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EuzU7TzQ+OH/py6m1iC0API0nl6CNqcKSP+ghVJFo8ssdUlqu7Y/c+v7Yx6wRf+kuFjvl+2Mf+TiFmmwAhow//q2MzHmMM4LsTyq9MAbOCiS9osFCf4ACgAZmeLZQ1b9BrEgtcMm+s3lImuQKtTP+JbjOBAABBNH+L3n9nffH6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XP0yb2KCYz6L6xf;
+	Thu, 10 Oct 2024 01:59:35 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA562140CB9;
+	Thu, 10 Oct 2024 02:03:54 +0800 (CST)
+Received: from GurSIX1 (10.204.104.225) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
+ 2024 20:03:48 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
+In-Reply-To: <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
+Date: Wed, 9 Oct 2024 21:03:41 +0300
+Message-ID: <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAAYj2w
+Content-Language: en-us
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-If a CPU runs throughout the stalled grace period without passing
-through a quiescent state, RCU priority boosting cannot help.
-The rcu_torture_boost_failed() function therefore prints a message
-flagging the first such CPU.  However, if the stall was instead due to
-(for example) RCU's grace-period kthread being starved of CPU, there will
-be no such CPU, causing rcu_check_boost_fail() to instead pass back -1
-through its cpup CPU-pointer parameter.
+> Gur Stavi wrote:
+> > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock *sk,
+> struct fanout_args *args)
+> > >>  	err = -EINVAL;
+> > >>
+> > >>  	spin_lock(&po->bind_lock);
+> > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > >> -	    match->type == type &&
+> > >> +	if (match->type == type &&
+> > >>  	    match->prot_hook.type == po->prot_hook.type &&
+> > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
+> > >
+> > > Remaining unaddressed issue is that the socket can now be added
+> > > before being bound. See comment in v1.
+> >
+> > I extended the psock_fanout test with unbound fanout test.
+> >
+> > As far as I understand, the easiest way to verify bind is to test that
+> > po->prot_hook.dev != NULL, since we are under a bind_lock anyway.
+> > But perhaps a more readable and direct approach to test "bind" would be
+> > to test po->ifindex != -1, as ifindex is commented as "bound device".
+> > However, at the moment ifindex is not initialized to -1, I can add such
+> > initialization, but perhaps I do not fully understand all the logic.
+> >
+> > Any preferences?
+> 
+> prot_hook.dev is not necessarily set if a packet socket is bound.
+> It may be bound to any device. See dev_add_pack and ptype_head.
+> 
+> prot_hook.type, on the other hand, must be set if bound and is only
+> modified with the bind_lock held too.
+> 
+> Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD also
+> succeeds in case bind() was not called explicitly first to bind to
+> a specific device or change ptype.
 
-Therefore, the current message complains about a mythical CPU -1.
+Please clarify the last paragraph? When you say "also succeeds" do you
+mean SHOULD succeed or MAY SUCCEED by mistake if "something" happens ???
 
-This commit therefore checks for this situation, and notes that all CPUs
-have passed through a quiescent state.
+Do you refer to the following scenario: socket is created with non-zero
+protocol and becomes RUNNING "without bind" for all devices. In that case
+it can be added to FANOUT without bind. Is that considered a bug or does
+the bind requirement for fanout only apply for all-protocol (0) sockets?
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/rcutorture.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+What about using ifindex to detect bind? Initialize it to -1 in
+packet_create and ensure that packet_do_bind, on success, sets it
+to device id or 0?
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index b4cb7623a8bfc..3ac8c69dd5bc9 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1061,8 +1061,13 @@ static bool rcu_torture_boost_failed(unsigned long gp_state, unsigned long *star
- 			// At most one persisted message per boost test.
- 			j = jiffies;
- 			lp = READ_ONCE(last_persist);
--			if (time_after(j, lp + mininterval) && cmpxchg(&last_persist, lp, j) == lp)
--				pr_info("Boost inversion persisted: No QS from CPU %d\n", cpu);
-+			if (time_after(j, lp + mininterval) &&
-+			    cmpxchg(&last_persist, lp, j) == lp) {
-+				if (cpu < 0)
-+					pr_info("Boost inversion persisted: QS from all CPUs\n");
-+				else
-+					pr_info("Boost inversion persisted: No QS from CPU %d\n", cpu);
-+			}
- 			return false; // passed on a technicality
- 		}
- 		VERBOSE_TOROUT_STRING("rcu_torture_boost boosting failed");
--- 
-2.40.1
+psock_fanout, should probably be extended with scenarios that test
+"all devices" and all/specific protocols. Any specific scenario
+suggestions?
+
 
 
