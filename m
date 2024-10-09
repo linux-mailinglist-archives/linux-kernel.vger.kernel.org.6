@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-357135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F76996C3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8A0996C40
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286CF1C21BF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A91F22025
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7216F19ABAA;
-	Wed,  9 Oct 2024 13:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01D8198E61;
+	Wed,  9 Oct 2024 13:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UxVfI2im"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cx4zIR+/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEC5199FAC;
-	Wed,  9 Oct 2024 13:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534727462
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480892; cv=none; b=pzZ7NTkR5h8r20ylQ9kI9fHKHKFCUP1bx9unXjnoJwwG+cioU5TIjhhh+PcIBy9B4hqrEdVt7GbGWAgwuQ/cSaxx/NM9KfkkbdW16BiDYh2zEOMNeEObP6u+8mo+ob6nK7VPyHEyQBMDG+a0fyuZ45DSymrwQr0Ao6EImCWsxC8=
+	t=1728480957; cv=none; b=qzxLM88zJzYSmlldygZfl0iNvbasn28N/YMdqJXT7EEftr1U+hDTqK7bU5vNABH4CA04q8ZPzNtGk8+HSOY3mP0Ixk3JHhD11z0eZ0GXqprjep3F+f6oOEKGl+9KRJPjEhEaywFD6fUAfMFQvna29Zohr+/2p7vLU0ni6IWGrKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480892; c=relaxed/simple;
-	bh=/ZTDffNFDZKxF0g3qi5U9UZvxfincxZ36E4W2KgCM5A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=ORp4R5oK/2tgxrAAGuuyXkK9uujkI7P8AkLcXhrB0byjWXmDmvZ9k0N71vTO4j6enMOoIGjJ66xnZ4W1ylSLFjctCdRK77CxqO6Ijg9ypUa9sH73x8ooUYXpsxPhJgcrL0/rDMNmJCl9RZ26IbkYX+EjjFPIblbuVrUaVujiwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UxVfI2im; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 22F3CFF80B;
-	Wed,  9 Oct 2024 13:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728480888;
+	s=arc-20240116; t=1728480957; c=relaxed/simple;
+	bh=LTn9Q1UNSWj7OlHWyAZrNKUkL9Mk+IyYUH2jvXbnwFE=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UfRvp+mCe1xK4VEhZnBzi9oH1odAjTbKhSbIdLgtL5bVt10cGlPC8o398vWlKFctUHYs6qo0sJIpoJFimQ8buzxIUQzR9w7XSHnrC+ZMirewx7LvyjrI2GPD9HM/mEfiJSoeBSjGooX8iVqg+oPONBgDoOZX+Eb6clZ+goCsrRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cx4zIR+/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728480954;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F0MBrQbOMuGChrtybxaDhn3GkZqM1N0vWTYl1Zb6rdQ=;
-	b=UxVfI2imCfvFG2o3d/gCVGRp4YiBJ1/zSytR9U9hdzsUs5s9Tv7kE+Y4EFzomrXLD2rR2/
-	AqmEvPUznit5LZzXQ2zYw6vlUHJhACH6D5+Xq4AJN3JzpiwofVjJs0wZ/PRiFQEIMBAExH
-	+q5qik0dpm2w2EOgoQrK7qx7DQWjWS1UAyN7tCdLBikaoksD1XAsr3gdgONASQITHJ9DsU
-	IGX97Uy+iVGNAPzSZoNoKo/qfj5KgO6ZMA/l+NpwTHVd3GvUro2+bTdzYaEXiETLbCORhN
-	FN3Bc3UtAqfhZvb+qQAfJdb8W7AMB5/qcsbPKrwpCYINIxtx1iuw4lydId74mA==
+	bh=LJQzvy49Hn1kMmcTf5nPqycKWVWVnY3L+6/8l4CtbzQ=;
+	b=Cx4zIR+/UKSCqDQ+vUuxgHhDseLUROHLtLrF6nN23y3blqQkr6WtX6MXY1Ivr/JSaOF1nK
+	jyc9TrNNF1eUwkszcgrNWEOebnwlsK1AfNNpYtNVu16C83ymNyuIT8jN3dSZ0Q0DC6umIT
+	hhiA3cKc+0dPnLxrhL6CJEsNw8qkyRM=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-97-ivqIbnzzPNiZ_K9J8oecww-1; Wed, 09 Oct 2024 09:35:53 -0400
+X-MC-Unique: ivqIbnzzPNiZ_K9J8oecww-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e291d608feso1279453a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:35:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728480952; x=1729085752;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJQzvy49Hn1kMmcTf5nPqycKWVWVnY3L+6/8l4CtbzQ=;
+        b=sdhxWAHQ8U9DbhxFft4ZuOR2qQ+v5ViN9kwXUx02FaGvOa7IoiaaGrBmrfeWq76az8
+         lyhJkw3QFmVh+9jJ0r162s5r3bvuUFO/bHXNCiP7IQEOlG4PzigRsWwPu0SasGCVtacg
+         tS6HhZ+cf2PMee9/QJXjT983dH4ht/D2Z2/rgn2R/00dhMkVeLZ3Z0P5XbjVd9qyBSMe
+         VqPWXmhN+DJB+PaAr0GfJPz/nXc68chQ3R5OhG6/YMrCZpbbcMfESj8Mp7AGP3Bd9DiW
+         zkkwTj7pMSRyz4oMB1YIevh0SWYTgDNu1UcubT5zmfcn2M1IzMsTLuyDEriwgJZeNfiF
+         S3+g==
+X-Gm-Message-State: AOJu0YypHHN6yKK1Q4+udBexr3QPGpb33JYCwapsVVRs/SpQX0Hp/TOw
+	/CsYMPE6lCzysBqYP/az+Dkj6rL4XPsrYDQDs7bg6fEPzlLGr2mQkVqJp6+flNHUJ7LTZ1Q8UWI
+	RXXPGsslJCDbBjcvY7pInXFtnz1FyDKOeQtDHaupVfhX6YuEjBLZD74LrHlfWUg==
+X-Received: by 2002:a17:90a:e518:b0:2da:505e:77ad with SMTP id 98e67ed59e1d1-2e2a22e5140mr2795634a91.6.1728480951949;
+        Wed, 09 Oct 2024 06:35:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlF5Zvq2yt8/Ei5PZUf7UA6Z2KNSSSvIfcbnTnbi53v9SI3VdTdEvm/KwCcTzr5zQztIcCPg==
+X-Received: by 2002:a17:90a:e518:b0:2da:505e:77ad with SMTP id 98e67ed59e1d1-2e2a22e5140mr2795615a91.6.1728480951607;
+        Wed, 09 Oct 2024 06:35:51 -0700 (PDT)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a55f9855sm1649695a91.2.2024.10.09.06.35.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 06:35:51 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <ea3ebd17-981f-4269-aa22-a4ca31be335c@redhat.com>
+Date: Wed, 9 Oct 2024 09:35:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Oct 2024 15:34:47 +0200
-Message-Id: <D4RBC5VO5DLQ.PATCQSM33ORM@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 5/6] i2c: nomadik: fix BRCR computation
-Cc: "Andi Shyti" <andi.shyti@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Linus Walleij"
- <linus.walleij@linaro.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com>
- <20241009-mbly-i2c-v2-5-ac9230a8dac5@bootlin.com>
- <CACRpkdZyyFR1niN+w_t43uE0XASKMzkUHGHuHWdj_VXCKLTR-g@mail.gmail.com>
- <D4RB9IS3O0L1.2G9E2688BL4PZ@bootlin.com>
-In-Reply-To: <D4RB9IS3O0L1.2G9E2688BL4PZ@bootlin.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] sched: Miscellaneous isolation related cleanups
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Phil Auld <pauld@redhat.com>
+References: <20240921190720.106195-1-longman@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20240921190720.106195-1-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Oct 9, 2024 at 3:31 PM CEST, Th=C3=A9o Lebrun wrote:
-> On Wed Oct 9, 2024 at 1:34 PM CEST, Linus Walleij wrote:
-> > On Wed, Oct 9, 2024 at 12:23=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@b=
-ootlin.com> wrote:
-> > > --- a/drivers/i2c/busses/i2c-nomadik.c
-> > > +++ b/drivers/i2c/busses/i2c-nomadik.c
-> > > @@ -454,9 +454,12 @@ static void setup_i2c_controller(struct nmk_i2c_=
-dev *priv)
-> > >          * operation, and the other is for std, fast mode, fast mode
-> > >          * plus operation. Currently we do not supprt high speed mode
-> > >          * so set brcr1 to 0.
-> > > +        *
-> > > +        * BRCR is a clock divider amount. Pick highest value that
-> > > +        * leads to rate strictly below target.
-> > >          */
-> >
-> > You could push in some more details from the commit message here so it'=
-s not
-> > so terse.
+On 9/21/24 3:07 PM, Waiman Long wrote:
+>   v4:
+>    - Make "isolcpus=nohz" equivalent to "nohz_full" as suggested by
+>      Federic.
+>    - Update the scheduler code to use HK_TYPE_KERNEL_NOISE.
 >
-> Most of the details from the commit message come from behavior changes:
-> what was done previously versus what is the new behavior we implement.
+>   v3:
+>    - Fix incorrect housekeeping_nohz_full_setup() flags setting.
 >
-> Having a clock divider picking the bus rate that is below the target
-> speed rather than above sounds rather intuitive. Eg when you ask for
-> 400kHz you want <=3D400kHz, not >=3D400kHz.
+>   v2:
+>    - Remove HK_TYPE_SCHED and related dead code
+>    - Change consolidated name from HK_TYPE_NOHZ_FULL to
+>      HK_TYPE_KERNEL_NOSISE as suggested by Frederic and update
+>      isolation.c as well.
 >
-> I'll add that last sentence "Eg when you ask for 400kHz you want a bus
-> rate <=3D400kHz (and not >=3D400kHz)". It is straight forward and easy to
-> understand.
+> This series contains a number of miscellaneous sched/isolation related
+> cleanups. Other than reducing the number of cpumasks in the housekeeping
+> structure, there should be no other functional change.
 >
-> > >         brcr1 =3D FIELD_PREP(I2C_BRCR_BRCNT1, 0);
-> > > -       brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_fr=
-eq * div));
-> > > +       brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_fr=
-eq * div) + 1);
-> >
-> > Doesn't the last part correspond to something like
-> > #include <linux/math.h>
-> > u64 scaler =3D DIV_ROUND_DOWN_ULL(i2c_clk, (priv->clk_freq * div));
-> > brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, (u32)scaler);
-> >
-> > Certianly one of the in-kernel division helpers like DIV_ROUND_DOWN
-> > round_up() etc are better to use IMO, but I might not be understanding =
-the
-> > fine details of the math here.
+> [v1] https://lore.kernel.org/lkml/20240818234520.90186-1-longman@redhat.com/
+> [v2] https://lore.kernel.org/lkml/20240904171441.1048072-1-longman@redhat.com/
+> [v3] https://lore.kernel.org/lkml/20240904183650.1053708-1-longman@redhat.com/
 >
-> Indeed what we want is:
-> 	DIV_ROUND_DOWN(i2c_clk, priv->clk_freq * div)
+> Waiman Long (4):
+>    sched/core: Remove HK_TYPE_SCHED
+>    sched/isolation: Make "isolcpus=nohz" equivalent to "nohz_full"
+>    sched/isolation: Consolidate housekeeping cpumasks that are always
+>      identical
+>    sched: Unify HK_TYPE_{TIMER|TICK|MISC} to HK_TYPE_KERNEL_NOISE
+>
+>   .../admin-guide/kernel-parameters.txt         |  4 +++-
+>   include/linux/sched/isolation.h               | 21 +++++++++++-------
+>   kernel/sched/core.c                           | 12 +++++-----
+>   kernel/sched/fair.c                           | 19 +++-------------
+>   kernel/sched/isolation.c                      | 22 ++++++++-----------
+>   5 files changed, 34 insertions(+), 44 deletions(-)
+>
+Peter, are you fine with the changes in this series? I got the acks from 
+Frederic, but I haven't receive any comments after that.
 
-s/DIV_ROUND_DOWN/DIV_ROUND_UP/
-(sorry for the confusion)
-
->
-> I see no reason to use DIV_ROUND_DOWN_ULL(). It would be useful if
-
-s/DIV_ROUND_DOWN_ULL/DIV_ROUND_UP_ULL/
-
-> 	i2c_clk + (priv->clk_freq * div)
-> had a chance to overflow.
->
-> Worst case is:
-> 	3_400_000 + (48_000_000 * 3) =3D 147_400_000
->
-> Will send v3 straight away as this is a significant change,
-> thanks Linus!
->
-> --
-> Th=C3=A9o Lebrun, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
-Regards,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Longman
 
 
