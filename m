@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-357461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D60997184
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6293899718C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855E4284C05
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87B871C21115
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765471BE869;
-	Wed,  9 Oct 2024 16:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTx+AqnA"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9081E8834;
+	Wed,  9 Oct 2024 16:24:46 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609B51E00BD;
-	Wed,  9 Oct 2024 16:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206DB1946C8;
+	Wed,  9 Oct 2024 16:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491049; cv=none; b=ZtoOIeTnmsyBRquvkHvZ/Ta8Jf/ptiu6e2e6k8SBL75xHDqQCfCkBuIRNKYrCGbEVhgFNF3uHLNrtXpvjzGE8XfNQB24jMHTQzfvCb6ci+mET+Xj//x8eySHaQcA6MGBN2Cr56M/n30rnpHCUZhXCN97hFPUpM8cQfAALaqIo58=
+	t=1728491086; cv=none; b=mXUMuVPJAo0cAxki0s07V/rg0Ew+W8HnDNUHhsWHdpI9aIzmt4+WRoQ/bWOm5t1fU3Q8EzROtKKKuiKnQn4ta7fJK3vrWa2BxxHC6oCMlFrx53JBgGvs4t0/ihERiRT6gZZwatYViuKzznlnk/xYhR/nWwmz8GKbt5ZS+s+65MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491049; c=relaxed/simple;
-	bh=lSqKr7ujv2pq7bGJq1M2LimIU35mzssWOxO7oJPtrHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dENAiY2FrufHmFXQGrHBdU1LlynfSfqQuFeWLXUY7kIcGahb81X1L5VXva0L7VMAhjMbU7R+7+fe9F0wg4a4AbEHsY7lrNeM7HeVP321bhyC0mhAhAyA2u0tJIC98XkRhpRlvVCYiWmDhUuNHzvCEPJc25xjCjpJSTKfehS6nqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTx+AqnA; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbc7c77c99so232486d6.3;
-        Wed, 09 Oct 2024 09:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728491046; x=1729095846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujutxpaq9CZiYtd3me9TLwpkpP+oG02z8shTk8cW3us=;
-        b=DTx+AqnAFZ8K9mTmUDr2f+K0+umzQCsvL24WMWew4AdLdqBSNpyZ1gngArC4YkPzh3
-         mhRC/W3ZJvK4EDLKmdgXpFrq7zW/ZIzrGdpzDj0xyjAY7b2OWmX9u+ZvQ4WgtdIjWmKT
-         aa4Ku0RIRYe7+cLmtfkqtjbOIB5wJHT37NAauIZU548qlzHNC+8WuS8BczAWFFrjAo5q
-         UDRX6eHHdBkvtL/ThCaKsG3KpNaRUMcNU/DcKQelB4iX+y+o6appBHM+fory7MxSyfj7
-         ag/QKBxHXn0Dpw/uc12liuppwclMSeoFpEwIvPGc5LTySlyBUnAYx45dyPX6Oz3DxIII
-         W5hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728491046; x=1729095846;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ujutxpaq9CZiYtd3me9TLwpkpP+oG02z8shTk8cW3us=;
-        b=TdA2l7u1AzosYiA+nFOhUPG71qaiSSIVijVhDzrCC5F9BsWjn2qC/DnVjxH1+0VyWG
-         HKksQMBoeM/uGdMWuY43S9npHq4QYTCImsE8iNyyl5hXZ+JOtqR1cRnfo8d7S9GOwddr
-         FpKCvEtbpF337/JeX+qQvCwM8r34k652GymdqieSa+xDxyCoLSVzszY1ZVDqPLgUdeok
-         mSjOLzp9SaKh8nEmXK2Im2sL5vge1nNVFrCprT3WvZOLlkTV9bTahLll1oNYZdX8kp6/
-         IanyNuAxnBqulMiXECUl7n72XkhVBS1NJE5m8bEbcF5nvTraw+/7AMkGbhZ7dKlzLgEa
-         TGeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwrnxnndxmcjM3vxYM7u69Zh8k/JnXeRRzmD86mj+9jIQoJzPMY7njA/PvnRubVNrviSDHEaVgy5GGMOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp9ex+MvFijpDYb3n+KvSlvfqvYHnawgS+fGStn1ycjAJq8s+L
-	jv8lEZEQ1GYuP6vxXVsvEThFJBXZC7tFfgweIXaVsh2njhXBkjRkE9fiN1bT
-X-Google-Smtp-Source: AGHT+IEhzl2yBkieCTYVSOyYm1n4jbWf3LryjJ79u5MZZHDut8Zn/bszLCE70uhwqwcf5y3Hr6zAng==
-X-Received: by 2002:a05:6214:3287:b0:6c3:5a86:6a29 with SMTP id 6a1803df08f44-6cbc9321ef0mr45731476d6.21.1728491046219;
-        Wed, 09 Oct 2024 09:24:06 -0700 (PDT)
-Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbc48e691dsm15015956d6.68.2024.10.09.09.24.05
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 09 Oct 2024 09:24:05 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: improve grammar in commentary
-Date: Wed,  9 Oct 2024 12:23:58 -0400
-Message-ID: <20241009162358.27735-1-tamird@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728491086; c=relaxed/simple;
+	bh=cPDY6DRM/8+Jf0IhF/3ZWCf+7ZyeYPERaB2SfibvR7s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X2uF5lwa93iGHUxYZIUPvJgKMztysSRBl+K8lU4w+/b21AFCYmYSVf4Kb2egnLJSyzqG6MUdzWtAPZj7UtvWWq4AeLusvxPPdcJQnfqBbfSbCrN2jWKaw525qUQlZtjBvfMnxdtV3ZCcbAmI8Ceir2n5RGt755gy9VQl7tELC88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNyPw40bgz9v7Hs;
+	Thu, 10 Oct 2024 00:04:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 51C761400CA;
+	Thu, 10 Oct 2024 00:24:40 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAHSzJArgZn9+6FAg--.60142S2;
+	Wed, 09 Oct 2024 17:24:39 +0100 (CET)
+Message-ID: <aa987698a5b36713f5d85e1c4c2ce9b6e2abf06c.camel@huaweicloud.com>
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
+ linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
+ ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 09 Oct 2024 18:24:29 +0200
+In-Reply-To: <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwAHSzJArgZn9+6FAg--.60142S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1UKry5AryDXF17JrW7CFg_yoW8WFyDpa
+	yag3W5Gr1ktrZI9rWftFZruaySk3yxWF4DJwnrJw1vvas3ur1jqryrCw1ru345GryIy34I
+	qF1agwn8Cw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
+	MKDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGcF5ngMWwAAsl
 
-Commit e26fa546042a ("rust: kbuild: auto generate helper exports")
-added an errant "the" where one was not needed; remove it.
+On Wed, 2024-10-09 at 11:36 -0400, Paul Moore wrote:
+> On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> >=20
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Move out the mutex in the ima_iint_cache structure to a new structure
+> > called ima_iint_cache_lock, so that a lock can be taken regardless of
+> > whether or not inode integrity metadata are stored in the inode.
+> >=20
+> > Introduce ima_inode_security() to simplify accessing the new structure =
+in
+> > the inode security blob.
+> >=20
+> > Move the mutex initialization and annotation in the new function
+> > ima_inode_alloc_security() and introduce ima_iint_lock() and
+> > ima_iint_unlock() to respectively lock and unlock the mutex.
+> >=20
+> > Finally, expand the critical region in process_measurement() guarded by
+> > iint->mutex up to where the inode was locked, use only one iint lock in
+> > __ima_inode_hash(), since the mutex is now in the inode security blob, =
+and
+> > replace the inode_lock()/inode_unlock() calls in ima_check_last_writer(=
+).
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/ima/ima.h      | 26 ++++++++---
+> >  security/integrity/ima/ima_api.c  |  4 +-
+> >  security/integrity/ima/ima_iint.c | 77 ++++++++++++++++++++++++++-----
+> >  security/integrity/ima/ima_main.c | 39 +++++++---------
+> >  4 files changed, 104 insertions(+), 42 deletions(-)
+>=20
+> I'm not an IMA expert, but it looks reasonable to me, although
+> shouldn't this carry a stable CC in the patch metadata?
+>=20
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- rust/exports.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks, will add in the new version.
 
-diff --git a/rust/exports.c b/rust/exports.c
-index e5695f3b45b7..fd278e272751 100644
---- a/rust/exports.c
-+++ b/rust/exports.c
-@@ -3,9 +3,9 @@
-  * A hack to export Rust symbols for loadable modules without having to redo
-  * the entire `include/linux/export.h` logic in Rust.
-  *
-- * This requires the Rust's new/future `v0` mangling scheme because the default
-- * one ("legacy") uses invalid characters for C identifiers (thus we cannot use
-- * the `EXPORT_SYMBOL_*` macros).
-+ * This requires Rust's new/future `v0` mangling scheme because the default one
-+ * ("legacy") uses invalid characters for C identifiers (thus we cannot use the
-+ * `EXPORT_SYMBOL_*` macros).
-  *
-  * All symbols are exported as GPL-only to guarantee no GPL-only feature is
-  * accidentally exposed.
--- 
-2.47.0
+Roberto
+
 
 
