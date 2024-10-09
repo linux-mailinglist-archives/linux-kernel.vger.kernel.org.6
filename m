@@ -1,296 +1,144 @@
-Return-Path: <linux-kernel+bounces-357759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AEA997582
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879E3997584
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332AEB2216E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2998E281F79
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D617B500;
-	Wed,  9 Oct 2024 19:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A201E1A34;
+	Wed,  9 Oct 2024 19:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1dGaH2u"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hKq5LyrD"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71286178378;
-	Wed,  9 Oct 2024 19:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CE15CD49;
+	Wed,  9 Oct 2024 19:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728501622; cv=none; b=AAGS+itOCH9EzvAjnta0+0RB/VEYosE5hvWw6VTgkJXaahkUQJzcc/80W/HDvv/ersMz3foy02m9CBpw7RO0dc5rkpyAL430JV5wgWH4HyyMQdeLG6jZCQhmd5ZhIFavPFWvaf63U+SXr+Yj1GfxPcjC1vym0siW+DbTcVjjPEs=
+	t=1728501632; cv=none; b=NyZ4E0WzPohsKz2w9t8u+HM6yxItPjN+/AziHMnz/o93OsJA+HL+LgpiBAojRb0/s9gEDSb9fxfRdMOAIQ6yy2rLUjTmWcRXshAcdlsgtCKPmQhLvpC0suwDMMqKSLcHC0+bb+2ifTOX2omk8pvlKQTmrvZg7tG8b4DnKoVg8g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728501622; c=relaxed/simple;
-	bh=IWJ+joWcbxEjc5vmr8FrcsLUPOFIrcSoKDwl3HL2oiE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPZLhWJ4MgX9PfgT9WCO2rcjnxVJhrC9eQJI+U0vr88CcZXFWahTCQkjgU6d527hI4y20+MGdbllrQetamKb0N/8R6ExeJTsKOZw6D7aL3LLH8G5O/hE2TIDvBkZnG2jsq7CSdGlj2CRVrgkp81LV5cgwiwqUCYghGEELLBxgBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1dGaH2u; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso94531a12.2;
-        Wed, 09 Oct 2024 12:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728501620; x=1729106420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f7gxaELvNEFT5M2VIuGKrg16utiwOuClRCF4Ot5zkoA=;
-        b=W1dGaH2ue7TKBDueoZiqNh1oo1IJLFEPRGbSiMvDAzCnQkLFDpmkCGq1Noci5qUOi6
-         Ix6X/qJYDUrdnEhwicmLflgh2EuhnXAd/Ndb8rtzmzMD3eViJhGZqPdpMK5FwzOiQSH5
-         UCQgneMvQo6wAdQ+b4Tiya/kqAlJouOjm4GB7j2MCkRDk4pqTwhNT/TPh9hZu8v2cZN3
-         n8yn9uxfRVqTKG/MG1h0dT8Sf+/KkCaFuexI7NJ966EhawrUtVfFWar1dDYH4yI+7YP9
-         nll0p+Da6c6a81Cbr1AaP+31ChFKSQN6k6FXIJlEEXCj7ywMHzER+kBMS6ZrC0gj16aM
-         gbJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728501620; x=1729106420;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f7gxaELvNEFT5M2VIuGKrg16utiwOuClRCF4Ot5zkoA=;
-        b=Gx84VISSWQmtZBWlVlZmw5PcGudKofTUym4oEInwajchRaI9HyP1LbwZ8PaZYxlCuS
-         x4rwhB13OjejAiOwQggsizt4BJWGz9iIx+mysoIz45HAhpcv8OkmLQ9LhIGPKB9t+1d8
-         SqgBQbwdmqrTB9sdrsuExuYdWdUbW7GlG872sFGtNDCuS29vVmzgnMnP4H/9Ra6Eq2mn
-         cGWz7OQrKhHe+mz/H41Rp44dlpxIhF8QenxYJgBndX+QgA5UQ79pLmSxgDwW6YoSkFy8
-         Qydf2YPE/jldutOezC+RKwpVCwkiIiEmHMwtFXa+MvQ8kib1bAJyb46XhqMU3M54LIx1
-         BqYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTh1rVGNasIAOfEvkhB1yNRDJd9z5aGGCYq0u7VDKlYNAuQnbIlDMrF20nxeLHjIZAZeleYaLL5P89iioW@vger.kernel.org, AJvYcCVs+6uwnErxFR8oU04sy/qpK/HfE4jEDktKkVw1JfrBRNZaIWvYFizHR4NINi5zc4sLlrWxabN6Yv3k2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkdLh3HUYWlOBZN/8hhpS3ZWfZQ3ZCt+q+Y8hriYIzIGnditRy
-	2FwmDsQoatqtffklQjUO7BRKGK1TpHtwRo010qHITsouzVDO3jeFl6hHmoTB
-X-Google-Smtp-Source: AGHT+IHi9T66i4vzoFuac6fUCJSS5dD1g+T3MdMOTGUOUUhH5/ZWr/CEMJzgKmZ50eLt60hmBtz9Ig==
-X-Received: by 2002:a05:6a21:3511:b0:1d8:a3ab:7220 with SMTP id adf61e73a8af0-1d8a3b5cac9mr5390238637.0.1728501619571;
-        Wed, 09 Oct 2024 12:20:19 -0700 (PDT)
-Received: from localhost (fwdproxy-prn-012.fbsv.net. [2a03:2880:ff:c::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d47804sm8112688b3a.137.2024.10.09.12.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 12:20:19 -0700 (PDT)
-From: Sanman Pradhan <sanman.p211993@gmail.com>
-To: netdev@vger.kernel.org
-Cc: alexanderduyck@fb.com,
-	kuba@kernel.org,
-	kernel-team@meta.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	horms@kernel.org,
-	mohsin.bashr@gmail.com,
-	sanmanpradhan@meta.com,
-	andrew@lunn.ch,
-	linux-hwmon@vger.kernel.org,
-	sanman.p211993@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v5] eth: fbnic: Add hardware monitoring support via HWMON interface
-Date: Wed,  9 Oct 2024 12:20:18 -0700
-Message-ID: <20241009192018.2683416-1-sanman.p211993@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728501632; c=relaxed/simple;
+	bh=vaFkN0y+BNJI4hpWx9vTBvxzUz2+CG3St1LnByGwgBQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sv9uL2l2MeE1EJ1bMUuCRl1xLW5WF7bCC+ANTsXSCnjJoANVyGfieclaAoLp2rldrP7fJ79hPOjeC1uCoW8Y3bzfByN1NiCYM831A8W+YKWVHQOS76CnRNWhOw1LHXy8kO2YXRMBCZ0EK2WIkVIQVccFHmG0eNNqHfUtFmSAgGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hKq5LyrD; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B673742B27
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728501629; bh=NFviVX6j8uoh4WNDflXHr0jIuDjjpUm7uym8YfejszM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hKq5LyrDtlrqbNzbqYGA0gOoNl8uPiRPMtFw5Ajbk+izIzknVl0BhuHHdtTNbnvve
+	 t1UVx8u5j3B2I536JDmlzFtss1/mJcszQFlrSsO5Rltktd1IQPIKaJ/SlGa+WS5P7y
+	 uxZuCU9MBkH3k5KmgElcu9z0WFiBxNDuItiiOfIqFaOC8DZIjm9CW05nV4j7LtDyXa
+	 pAVq0b2uwt3JcKddIKZLzBoGz/tjaynGzXTxF38/UgrabPOrGzjPNvVE9JdL/YwkaU
+	 yDdm72ub45A1Hbhi+zuq0nZ89O0rK3K/G9dA7XU9eHrQVgrpwQfu8vVUIMIjtVqNdt
+	 FR5aKKQ2a56gA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B673742B27;
+	Wed,  9 Oct 2024 19:20:29 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org
+Cc: christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+In-Reply-To: <20241008121930.869054-1-luca.boccassi@gmail.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+Date: Wed, 09 Oct 2024 13:20:28 -0600
+Message-ID: <87msjd9j7n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Sanman Pradhan <sanmanpradhan@meta.com>
+luca.boccassi@gmail.com writes:
 
-This patch adds support for hardware monitoring to the fbnic driver,
-allowing for temperature and voltage sensor data to be exposed to
-userspace via the HWMON interface. The driver registers a HWMON device
-and provides callbacks for reading sensor data, enabling system
-admins to monitor the health and operating conditions of fbnic.
+> As discussed at LPC24, add an ioctl with an extensible struct
+> so that more parameters can be added later if needed. Start with
+> returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> optionally.
 
-Signed-off-by: Sanman Pradhan <sanmanpradhan@meta.com>
+I was looking this over, and a couple of questions came to mind...
 
----
-v5:
-  - Drop hwmon_unregister label from fbnic_pci.c
+> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> ---
 
-v4: https://patchwork.kernel.org/project/netdevbpf/patch/20241008143212.2354554-1-sanman.p211993@gmail.com/
+[...]
 
-v3: https://patchwork.kernel.org/project/netdevbpf/patch/20241004204953.2223536-1-sanman.p211993@gmail.com/
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 80675b6bf884..15cdc7fe4968 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/anon_inodes.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+> +#include <linux/cgroup.h>
+>  #include <linux/magic.h>
+>  #include <linux/mount.h>
+>  #include <linux/pid.h>
+> @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+>  	return poll_flags;
+>  }
+>  
+> +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
+> +	size_t usize = _IOC_SIZE(cmd);
+> +	struct pidfd_info kinfo = {};
+> +	struct user_namespace *user_ns;
+> +	const struct cred *c;
+> +	__u64 request_mask;
+> +
+> +	if (!uinfo)
+> +		return -EINVAL;
+> +	if (usize < sizeof(struct pidfd_info))
+> +		return -EINVAL; /* First version, no smaller struct possible */
+> +
+> +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
+> +		return -EFAULT;
 
-v2: https://patchwork.kernel.org/project/netdevbpf/patch/20241003173618.2479520-1-sanman.p211993@gmail.com/
+You don't check request_mask for unrecognized flags, so user space will
+not get an error if it puts random gunk there.  That, in turn, can make
+it harder to add new options in the future.
 
-v1: https://lore.kernel.org/netdev/153c5be4-158e-421a-83a5-5632a9263e87@roeck-us.net/T/
+> +	c = get_task_cred(task);
+> +	if (!c)
+> +		return -ESRCH;
 
----
- drivers/net/ethernet/meta/fbnic/Makefile      |  1 +
- drivers/net/ethernet/meta/fbnic/fbnic.h       |  4 +
- drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c | 81 +++++++++++++++++++
- drivers/net/ethernet/meta/fbnic/fbnic_mac.h   |  7 ++
- drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |  3 +
- 5 files changed, 96 insertions(+)
- create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
+[...]
 
-diff --git a/drivers/net/ethernet/meta/fbnic/Makefile b/drivers/net/ethernet/meta/fbnic/Makefile
-index ed4533a73c57..41494022792a 100644
---- a/drivers/net/ethernet/meta/fbnic/Makefile
-+++ b/drivers/net/ethernet/meta/fbnic/Makefile
-@@ -11,6 +11,7 @@ fbnic-y := fbnic_devlink.o \
- 	   fbnic_ethtool.o \
- 	   fbnic_fw.o \
- 	   fbnic_hw_stats.o \
-+	   fbnic_hwmon.o \
- 	   fbnic_irq.o \
- 	   fbnic_mac.o \
- 	   fbnic_netdev.o \
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic.h b/drivers/net/ethernet/meta/fbnic/fbnic.h
-index 0f9e8d79461c..2d3aa20bc876 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic.h
-@@ -18,6 +18,7 @@
- struct fbnic_dev {
- 	struct device *dev;
- 	struct net_device *netdev;
-+	struct device *hwmon;
+> +
+> +	/*
+> +	 * If userspace and the kernel have the same struct size it can just
+> +	 * be copied. If userspace provides an older struct, only the bits that
+> +	 * userspace knows about will be copied. If userspace provides a new
+> +	 * struct, only the bits that the kernel knows about will be copied and
+> +	 * the size value will be set to the size the kernel knows about.
+> +	 */
+> +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> +		return -EFAULT;
 
- 	u32 __iomem *uc_addr0;
- 	u32 __iomem *uc_addr4;
-@@ -127,6 +128,9 @@ void fbnic_devlink_unregister(struct fbnic_dev *fbd);
- int fbnic_fw_enable_mbx(struct fbnic_dev *fbd);
- void fbnic_fw_disable_mbx(struct fbnic_dev *fbd);
+Which "size value" are you referring to here; I can't see it.
 
-+void fbnic_hwmon_register(struct fbnic_dev *fbd);
-+void fbnic_hwmon_unregister(struct fbnic_dev *fbd);
-+
- int fbnic_pcs_irq_enable(struct fbnic_dev *fbd);
- void fbnic_pcs_irq_disable(struct fbnic_dev *fbd);
+If user space has a bigger struct, should you perhaps zero-fill the part
+the kernel doesn't know about?
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c b/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
-new file mode 100644
-index 000000000000..bcd1086e3768
---- /dev/null
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) Meta Platforms, Inc. and affiliates. */
-+
-+#include <linux/hwmon.h>
-+
-+#include "fbnic.h"
-+#include "fbnic_mac.h"
-+
-+static int fbnic_hwmon_sensor_id(enum hwmon_sensor_types type)
-+{
-+	if (type == hwmon_temp)
-+		return FBNIC_SENSOR_TEMP;
-+	if (type == hwmon_in)
-+		return FBNIC_SENSOR_VOLTAGE;
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static umode_t fbnic_hwmon_is_visible(const void *drvdata,
-+				      enum hwmon_sensor_types type,
-+				      u32 attr, int channel)
-+{
-+	if (type == hwmon_temp && attr == hwmon_temp_input)
-+		return 0444;
-+	if (type == hwmon_in && attr == hwmon_in_input)
-+		return 0444;
-+
-+	return 0;
-+}
-+
-+static int fbnic_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-+			    u32 attr, int channel, long *val)
-+{
-+	struct fbnic_dev *fbd = dev_get_drvdata(dev);
-+	const struct fbnic_mac *mac = fbd->mac;
-+	int id;
-+
-+	id = fbnic_hwmon_sensor_id(type);
-+	return id < 0 ? id : mac->get_sensor(fbd, id, val);
-+}
-+
-+static const struct hwmon_ops fbnic_hwmon_ops = {
-+	.is_visible = fbnic_hwmon_is_visible,
-+	.read = fbnic_hwmon_read,
-+};
-+
-+static const struct hwmon_channel_info *fbnic_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
-+	HWMON_CHANNEL_INFO(in, HWMON_I_INPUT),
-+	NULL
-+};
-+
-+static const struct hwmon_chip_info fbnic_chip_info = {
-+	.ops = &fbnic_hwmon_ops,
-+	.info = fbnic_hwmon_info,
-+};
-+
-+void fbnic_hwmon_register(struct fbnic_dev *fbd)
-+{
-+	if (!IS_REACHABLE(CONFIG_HWMON))
-+		return;
-+
-+	fbd->hwmon = hwmon_device_register_with_info(fbd->dev, "fbnic",
-+						     fbd, &fbnic_chip_info,
-+						     NULL);
-+	if (IS_ERR(fbd->hwmon)) {
-+		dev_notice(fbd->dev,
-+			   "Failed to register hwmon device %pe\n",
-+			fbd->hwmon);
-+		fbd->hwmon = NULL;
-+	}
-+}
-+
-+void fbnic_hwmon_unregister(struct fbnic_dev *fbd)
-+{
-+	if (!IS_REACHABLE(CONFIG_HWMON) || !fbd->hwmon)
-+		return;
-+
-+	hwmon_device_unregister(fbd->hwmon);
-+	fbd->hwmon = NULL;
-+}
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_mac.h b/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
-index 476239a9d381..05a591653e09 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
-@@ -47,6 +47,11 @@ enum {
- #define FBNIC_LINK_MODE_PAM4	(FBNIC_LINK_50R1)
- #define FBNIC_LINK_MODE_MASK	(FBNIC_LINK_AUTO - 1)
+> +	return 0;
+> +}
 
-+enum fbnic_sensor_id {
-+	FBNIC_SENSOR_TEMP,		/* Temp in millidegrees Centigrade */
-+	FBNIC_SENSOR_VOLTAGE,		/* Voltage in millivolts */
-+};
-+
- /* This structure defines the interface hooks for the MAC. The MAC hooks
-  * will be configured as a const struct provided with a set of function
-  * pointers.
-@@ -83,6 +88,8 @@ struct fbnic_mac {
+Thanks,
 
- 	void (*link_down)(struct fbnic_dev *fbd);
- 	void (*link_up)(struct fbnic_dev *fbd, bool tx_pause, bool rx_pause);
-+
-+	int (*get_sensor)(struct fbnic_dev *fbd, int id, long *val);
- };
-
- int fbnic_mac_init(struct fbnic_dev *fbd);
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-index a4809fe0fc24..ef9dc8c67927 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
-@@ -289,6 +289,8 @@ static int fbnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-
- 	fbnic_devlink_register(fbd);
-
-+	fbnic_hwmon_register(fbd);
-+
- 	if (!fbd->dsn) {
- 		dev_warn(&pdev->dev, "Reading serial number failed\n");
- 		goto init_failure_mode;
-@@ -345,6 +347,7 @@ static void fbnic_remove(struct pci_dev *pdev)
- 		fbnic_netdev_free(fbd);
- 	}
-
-+	fbnic_hwmon_unregister(fbd);
- 	fbnic_devlink_unregister(fbd);
- 	fbnic_fw_disable_mbx(fbd);
- 	fbnic_free_irqs(fbd);
---
-2.43.5
+jon
 
