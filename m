@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-357647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB59973C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FBB9973C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054362888E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E4C1F22F17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7061E1A12;
-	Wed,  9 Oct 2024 17:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910841E1C1A;
+	Wed,  9 Oct 2024 17:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N+OLYdhF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TEmHu0RP"
 Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B21E0DFA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F81E1331
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496211; cv=none; b=gkv07717+jfyEwfmePDYJMEv3vo9NU/KP+S+4JMJEPDW5gXWfklyO1grbNe6TwPBYRvB7lQGavw6znwzPZCMGHSGMXPxc+5ypamzy8j+vXBZ7YvhD7m1OzMRB5z51ycijRsQIO+hIKjqG0q/y1SuZQbcrMKa2uCtjdXiFKUtYs8=
+	t=1728496212; cv=none; b=i67Hxzteb2IIG/UXxpNq1LtBFidkr3cClZuz3Q3xSbzYAm01mDk9SGENR+kk8SP/AfR703RHuIRApIRjsyhW/+SkwT+7w/9lhQT5nX5pPnGtuWuONn8uDZ8c6D4Kxs9b01Y8XBwvzuXNe78cMBKuM+oayVs5VMztK+6IgpJ5SHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496211; c=relaxed/simple;
-	bh=XGN8QmzWeMv16qVKiSYSJZttp2ea5qDKnmkRDQ95LS0=;
+	s=arc-20240116; t=1728496212; c=relaxed/simple;
+	bh=SGkZJcqM6l7cc+bXFGwWYrJw06CpvtpeZuEcwNGJSXM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lqSndvucfBHyTVx9CiRNTZOyOH/kPxhJcjfoqzuEkie+Smt2hWQVd2H1KkvxqFGTevjbDrYf+CIIMSjEjE6m8KBGUbxqTjJXcNvFTkPOdDxfAN/uMziNiCGEF1nyYqGqvEEridWIS8dKJZ4TCTjXJXwlwXX9+JvOSzYU9l4gGVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N+OLYdhF; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=DVvdI4x83CYQcBW7HCuEyJuphSLh29MbaG8T2h7egQrtwer9hmtaOJ9W8MLI6yDrJ2tyE9DiME3gGbswVeAwLv5y9SdTROKUXeWaSqvtf7tH2yODVdmz15iJMWZxN+FHFvcIwdVBoFSpPIKthmF+lMFjDSqYsdvzg9qxC7xUqeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TEmHu0RP; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e04c42fecso77555b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:50:09 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e0228d71dso63252b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728496209; x=1729101009; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728496211; x=1729101011; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KKX3lXTCaUFVYVr2zKh6PXHZREG1pYDrjz48FgujYw=;
-        b=N+OLYdhFhjRpVAneqIR7aaUH0cdtto9w74D2lARz0jNhD92MZ1YJsTBhyyzA0lCT1m
-         1mKfCDaVNCi4C0ObUyw0cIEPNxAWk4BJHbZ7mLoNbs1a8+edDg+Fvva+6N9kd3GCAYZy
-         Zd0ulDwrRn0D4P4VjL6gRkf2HBMsHWnRX3QOXAvNsLXCJEVfCMXI4kLDJ76vDUA9odlN
-         f4svU1Vm3TD+LWGX5vdAibGjHqLS76AdQwTPfp751Q+iuKvQGu0KqvmK4TmLtUcm2jHF
-         cr2vAgVZ8EpwKk8Y4kDCOksD8Zi9I1ldVyf1Z4U4csZEDQDGE2FiP70GHbgkmt8/MkCC
-         zMxg==
+        bh=AwyBAzSnZj8uKv6KW6XIzrczvMSQb4MHq6nrZHBBhJE=;
+        b=TEmHu0RPEu+YlIiSTs4vjdGaYVOcftqmesl7VGz8OmdCiuqiT2sJjcy4OYPYzsPa2F
+         eOv97SOzPLJ92DnZlI2foFGr5cF6ASnvRrSRs2dNw9KTyZHG8ZVc9ymmzbSkgmDtW68d
+         5gwahUPt3KNJW+93W+MhnIlKALRD1TbsM0XLePqD6gknLgH+FmjCIUvAZ9M9zV1C75A9
+         kLdPao7oIpPJlxmYze+YLVKXIOMU5bF+LG2lWMebeXgEllRhJdimq2Apz8q6ZHnp5iRg
+         LmKESrObjbpbt9V9D2GWBtw9NKk7+nSN9HP68i/17k7EJxk0XeZmx8DZ3rsCY82aCQvf
+         BZLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728496209; x=1729101009;
+        d=1e100.net; s=20230601; t=1728496211; x=1729101011;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+KKX3lXTCaUFVYVr2zKh6PXHZREG1pYDrjz48FgujYw=;
-        b=HBokij/9q7oBKTE4zM9Dg5jbNXNKPToYEQBeUp5mJ5M8cQl81PdoT9W2aT0wUHOaU7
-         /DiH53k3n9XceSScn+fvuWa5waUc3MR0NBOQaQZS403H7FhoZWLnBOlL+7uGGeZYhMc3
-         AsatIfxXt37LCOnfNUyVzChb1xl2q/tn+enHfTwTKGruaGbeshC7koeNKZIdmjKSmpCd
-         dCTfo381/CF387ikRmseqFc/8sxIvwjf/ATM5Y5ERYXoULjwt/InN1yFixazPKxC2jyZ
-         htWz59KG2/YQIQcxNvPzMYAYCXnIjn8ClJTYMbosTi727AbhY8G3CKrezJi0daoIMeT+
-         OcyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQp4ztJ6A3qiyiRWvGr8Mhc03okbc/ZLvCC2wUg+Hyu5h/zhWXo0vWwivls8LpiFqISNxa9oIQws/pudk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdscu+pXGdwbRlxiWXi7wAtCNzi74e219k9M9blqrKKSWVGtNS
-	lFKVaoKpVF6mD/xJzYzGSP2+t8VDMaAiy488yyj+RL3TF2Ncb2cZC1oMuNEohlZE7OE3GmX86UO
-	vHg==
-X-Google-Smtp-Source: AGHT+IEVGupj+lzuaWgALZWozBmfxi8I2JGdBW0Fd7qPciWqwQBnx+E5KfqkSKSPrS5ywaRa+QgHUrupAV8=
+        bh=AwyBAzSnZj8uKv6KW6XIzrczvMSQb4MHq6nrZHBBhJE=;
+        b=oP+zGlgOyT57l+pgf6wUsYw9ARF2UhaDJ7AZsk76+njacO5TTaV2twXAL9T4Ar1rjw
+         7/nIcmP0brJ1OI0Tss/z5LVhwVFoKgHRip8gqev5oG04o5bApsdZB1Mt1raxM1pM4MdK
+         KD3sxG8yWYhFQWqh+05zjOEJyTKC6F8EhnPY9X5XcWwiA8lOVfsuQ+rFj1wnnI1Q5g1O
+         hqCWJmj23W92GH/a18PWaH13wjl9rF9gXNmED0qVCqVaFMvoT6ifvYO0NDCs7Pf3UVpg
+         Bw21tTg7OlOWaMd1puJ468otULUruP1+JCXr5XKPLMHme2gqXkAvd18qKUS7gduG3eG5
+         Hs+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUChC/CjHtdWeY9Dtk/BvrqGTm/YM8TErAkZAnrXAHTvLtsl+9S63A+YQOlLqep7BwSTjncXWrH3IT6hqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlwIHnbRdKuUgTCO6eeNSPtRNqvnOXj/Ak4QeEqm/jJlGAbKQM
+	K3HxM9LUsX9pVYdeCLOXNqfU1TnLUkiGIJDhufBUwPwAqtaY9gKdS0tfcA5vo70kQa8KoEbemA0
+	pJg==
+X-Google-Smtp-Source: AGHT+IEUDzIOqyoe2fHUURoFuYYcS3+r+FH0yq7uJsmpfcv/LkNzTroW0jRCSQ+Vt3s4Kg9OOtr2wC8SkO0=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f44:b0:71e:268b:845e with SMTP id
- d2e1a72fcca58-71e26e53c16mr1169b3a.1.1728496208598; Wed, 09 Oct 2024 10:50:08
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:9199:b0:71e:1e8:e337 with SMTP id
+ d2e1a72fcca58-71e1dbe467fmr3709b3a.4.1728496210470; Wed, 09 Oct 2024 10:50:10
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  9 Oct 2024 10:50:00 -0700
+Date: Wed,  9 Oct 2024 10:50:01 -0700
 In-Reply-To: <20241009175002.1118178-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,76 +75,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241009175002.1118178-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241009175002.1118178-3-seanjc@google.com>
-Subject: [PATCH v4 2/4] KVM: VMX: reset the segment cache after segment init
- in vmx_vcpu_reset()
+Message-ID: <20241009175002.1118178-4-seanjc@google.com>
+Subject: [PATCH v4 3/4] KVM: x86: Add lockdep-guarded asserts on register
+ cache usage
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Maxim Levitsky <mlevitsk@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Maxim Levitsky <mlevitsk@redhat.com>
+When lockdep is enabled, assert that KVM accesses the register caches if
+and only if cache fills are guaranteed to consume fresh data, i.e. when
+KVM when KVM is in control of the code sequence.  Concretely, the caches
+can only be used from task context (synchronous) or when handling a PMI
+VM-Exit (asynchronous, but only in specific windows where the caches are
+in a known, stable state).
 
-Reset the segment cache after segment initialization in vmx_vcpu_reset()
-to harden KVM against caching stale/uninitialized data.  Without the
-recent fix to bypass the cache in kvm_arch_vcpu_put(), the following
-scenario is possible:
+Generally speaking, there are very few flows where reading register state
+from an asynchronous context is correct or even necessary.  So, rather
+than trying to figure out a generic solution, simply disallow using the
+caches outside of task context by default, and deal with any future
+exceptions on a case-by-case basis _if_ they arise.
 
- - vCPU is just created, and the vCPU thread is preempted before
-   SS.AR_BYTES is written in vmx_vcpu_reset().
-
- - When scheduling out the vCPU task, kvm_arch_vcpu_in_kernel() =>
-   vmx_get_cpl() reads and caches '0' for SS.AR_BYTES.
-
- - vmx_vcpu_reset() => seg_setup() configures SS.AR_BYTES, but doesn't
-   invoke vmx_segment_cache_clear() to invalidate the cache.
-
-As a result, KVM retains a stale value in the cache, which can be read,
-e.g. via KVM_GET_SREGS.  Usually this is not a problem because the VMX
-segment cache is reset on each VM-Exit, but if the userspace VMM (e.g KVM
-selftests) reads and writes system registers just after the vCPU was
-created, _without_ modifying SS.AR_BYTES, userspace will write back the
-stale '0' value and ultimately will trigger a VM-Entry failure due to
-incorrect SS segment type.
-
-Invalidating the cache after writing the VMCS doesn't address the general
-issue of cache accesses from IRQ context being unsafe, but it does prevent
-KVM from clobbering the VMCS, i.e. mitigates the harm done _if_ KVM has a
-bug that results in an unsafe cache access.
-
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-Fixes: 2fb92db1ec08 ("KVM: VMX: Cache vmcs segment fields")
-[sean: rework changelog to account for previous patch]
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/vmx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kvm/kvm_cache_regs.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 12dd7009efbe..a11faab67b4a 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4901,9 +4901,6 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	vmx->hv_deadline_tsc = -1;
- 	kvm_set_cr8(vcpu, 0);
+diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+index b1eb46e26b2e..36a8786db291 100644
+--- a/arch/x86/kvm/kvm_cache_regs.h
++++ b/arch/x86/kvm/kvm_cache_regs.h
+@@ -43,6 +43,18 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
+ BUILD_KVM_GPR_ACCESSORS(r15, R15)
+ #endif
  
--	vmx_segment_cache_clear(vmx);
--	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
--
- 	seg_setup(VCPU_SREG_CS);
- 	vmcs_write16(GUEST_CS_SELECTOR, 0xf000);
- 	vmcs_writel(GUEST_CS_BASE, 0xffff0000ul);
-@@ -4930,6 +4927,9 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	vmcs_writel(GUEST_IDTR_BASE, 0);
- 	vmcs_write32(GUEST_IDTR_LIMIT, 0xffff);
- 
-+	vmx_segment_cache_clear(vmx);
-+	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
++/*
++ * Using the register cache from interrupt context is generally not allowed, as
++ * caching a register and marking it available/dirty can't be done atomically,
++ * i.e. accesses from interrupt context may clobber state or read stale data if
++ * the vCPU task is in the process of updating the cache.  The exception is if
++ * KVM is handling a PMI IRQ/NMI VM-Exit, as that bound code sequence doesn't
++ * touch the cache, it runs after the cache is reset (post VM-Exit), and PMIs
++ * need to access several registers that are cacheable.
++ */
++#define kvm_assert_register_caching_allowed(vcpu)		\
++	lockdep_assert_once(in_task() || kvm_arch_pmi_in_guest(vcpu))
 +
- 	vmcs_write32(GUEST_ACTIVITY_STATE, GUEST_ACTIVITY_ACTIVE);
- 	vmcs_write32(GUEST_INTERRUPTIBILITY_INFO, 0);
- 	vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS, 0);
+ /*
+  * avail  dirty
+  * 0	  0	  register in VMCS/VMCB
+@@ -53,24 +65,28 @@ BUILD_KVM_GPR_ACCESSORS(r15, R15)
+ static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
+ 					     enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
+ static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
+ 					 enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+ }
+ 
+ static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
+ 					       enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
+ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+ 					   enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+ }
+@@ -84,6 +100,7 @@ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+ static __always_inline bool kvm_register_test_and_mark_available(struct kvm_vcpu *vcpu,
+ 								 enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return arch___test_and_set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
