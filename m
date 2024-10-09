@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-356153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1495995D12
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:37:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3644995D26
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5BBB21828
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F0B28659D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD7D2BB1B;
-	Wed,  9 Oct 2024 01:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEDB29429;
+	Wed,  9 Oct 2024 01:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWVsC8JT"
-Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VuBYQ7NJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766B9DF5C;
-	Wed,  9 Oct 2024 01:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19318EBF
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728437865; cv=none; b=U74IQttCSBb6j2QtVGiR+301wjccfn2qNs5WSVQzThes/08tB+1PYhQnnDK1/sh2BUvS8vlQyWKBuaVyy6F0RNKRVJMh/gwB6BoCJ2BNhCP+1svrRVMEPlgirYmwGJvmAN04FzchL6JBbSFxWc+b2/IPByh8oG/zyn9L3id/BkI=
+	t=1728438097; cv=none; b=sGeQg0w89UeBtrEqPbM7F+QTESDdbnNj4nE6699Dwfee8F2iC37ydHjXn5bspnknuSVfAUDPtAsPpk+wc4GD4U2pLa/4fGuzfuJRMoeJ09cCh6wHAfZWLLBG4CcTjJpWr6N/y0zn674mm7MkdMDohPzebmnC41VRBYmBiYjwhwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728437865; c=relaxed/simple;
-	bh=AC8IwYKlZAhnwoZcAD6OoeZEyUqbSufuj24gP/xiK1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RKs6ub/TC6tBO59RByz8Z2eqI84fKJB7JFEButkk3D7+coxaIP387TpOVD7/hnZP3t0QOHPr2FakheBu6WlVerSj6NDwAWjBY7Nl5cuq1tbueAzLMDMRyvs+JH6JYzYYwlStA8aMjrD5SFBRj3hh0ujbOxGhVr0V/AfgSXXd73I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWVsC8JT; arc=none smtp.client-ip=209.85.219.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e25cc9e94eeso5473419276.3;
-        Tue, 08 Oct 2024 18:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728437863; x=1729042663; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RS25rCHgbp954RpgJrtXdePW+X6k0WGqVouYZKkE5ds=;
-        b=RWVsC8JTIbohMqHdLult+vB1jMHsi0zMOkeuLSqgBOzzCVJtvwk+eVc1gzyCj4Cp5w
-         lTXVmT1P/Roih6qLPnF/MRexHFapJQ1lFrS1Vspxh4JNPDdryajbKlt1gCGXdkFpR/Cn
-         ghF7GScjZyKEjyMWDtqA+QuLqUaS4TpHSSB0rDR/pugxw7HC2oe4MkRenOOYop6F4ei1
-         1dQDAz1z5lY0DFS+tF9BywkyTTpqS++PP2X/Iw6VrhQT+LFosV6b24XOB7DmeCAt1M7G
-         Vjh0w9kWOlvrmToVaGAw1bwBWfZaWrpRGSMGJB88I/MR0L+MBY5YBq7OfQNyAoS/xcmY
-         B9Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728437863; x=1729042663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RS25rCHgbp954RpgJrtXdePW+X6k0WGqVouYZKkE5ds=;
-        b=wLmCcyiSKkmigVwty5hLWSihfjC1B5gtgXSV4rZWQq19b84tZ5ILPzV1UQHfw/w1N3
-         WYkYi1mnWBR1FEtqDqhyRszI5vmzboWUz2iByk6WDiVoacvPgY6VEfFxz/uOn779z4S2
-         Hmhi7V7ORcX8ARXAWN3jG9n7fRz9Zx1SRpB93Bw4Ch6RJLNzxmQazYPAvE6d3trXwU29
-         2iA/hU1v0z5YVBZ9r4v9/yRXEmPDzQIyfP0GHuuiWldCTDoMeH3dSxr1T5QRXY9yQnhW
-         ZLGgfnYvI+T0m1mKMN5eQb8tRd39+SMhc3HAx9NyJmTSbsYShTV3awSEwB9hDILfwMrM
-         C86A==
-X-Forwarded-Encrypted: i=1; AJvYcCWmwVjmUklAL25F0sE95NrqO665sxM4NI5Y97fjxsmEv/8AvlhrjhRO438bR5E1k97M6Z5DD26g@vger.kernel.org, AJvYcCXJQEjnsDE9frWVgdtuLfErzB0iuXfiJ9Ofk2tmvGYAwV98i5vKk89liy/AlvG3H4Eoz6VpJKMpyk/dF4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdnBRzcWVkX7G+J9PesXl18LvK34SGftGOFEk5CthudgbfeTuY
-	btLWA0CQThkPe6co0DgT/5ZEuuMuDOWTLXIP63OmAbBmvDz5uwtOlqfsslEibzFGaqjzgsCErPE
-	egHsYz58PSaLLsGPkyx7O7lMc5Y0=
-X-Google-Smtp-Source: AGHT+IGXqaXDkVzInEgcQTMSVlyW15Rolm0VIc13duHSVUbMuqDQh02Kb0C6MXj1H4s8yqIRAGRoflEkHZOm9lc/kfE=
-X-Received: by 2002:a05:6902:150d:b0:e26:3701:71fe with SMTP id
- 3f1490d57ef6-e28fe409162mr816393276.42.1728437863317; Tue, 08 Oct 2024
- 18:37:43 -0700 (PDT)
+	s=arc-20240116; t=1728438097; c=relaxed/simple;
+	bh=UwgAQVZ1IPNTaU++Fsk1Wxl2yWzNBWufNRTZ6AyHv1o=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WmENacSwUsdlNAm8gYtClY7CbJAu7mgBkwgPym59j8ntG1z/lB1MduNo7i+5VRVLY/Uvk+Cq+PIdkMCoJKfzuwupTYjnrLGeYSTDsYoTzWSwiLDPPnt8IxtrmXq0fM1W/1x2C4MznGRw36hp5W8s0eCkbRP2DJOd0h/35q5hCN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VuBYQ7NJ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728438097; x=1759974097;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UwgAQVZ1IPNTaU++Fsk1Wxl2yWzNBWufNRTZ6AyHv1o=;
+  b=VuBYQ7NJAwINVDgM9mnp6YVxrv4pB01Ibiv/GYM8e0WC/t/1yryMhfL3
+   7U8+wQ/U8T6Mco4VrJ7YkVD/X7E6PcCBpFSzV8N0Ol02HmZLO+y24q2BX
+   sVtl2qFTZbWTRrgOzf4RRif88xg5eQvCskGopSZOkcp0ZnikPrMMat2tq
+   LFb2xfOdJV7PgvH+ORhdsCAGn2eYtD+1yLDkKFLRnzN8OOFdkWybIK8/s
+   OQ92JvyqOJ5HlWG2L5Q755mc883PCUm/KdWI2u9m46BANLIhxo93o+Gvc
+   qV9WUK0TYH9r1Bf18KGzQNXeGee9LAEVNj/qaINSJheMfL9yF0e4BB0DP
+   w==;
+X-CSE-ConnectionGUID: wr2somzHRqeqF10emK8TPw==
+X-CSE-MsgGUID: Qe+LEFZ5TpyOJ3A06igjUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27600641"
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="27600641"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 18:41:20 -0700
+X-CSE-ConnectionGUID: p0YnptwTRR6qShrCSjERpw==
+X-CSE-MsgGUID: Ce4WEcpgRCKxWwyPlDIIIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
+   d="scan'208";a="99419168"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 18:41:18 -0700
+Message-ID: <370ca3fe-41bf-4dab-a678-a499d606d6bf@linux.intel.com>
+Date: Wed, 9 Oct 2024 09:41:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008142300.236781-1-dongml2@chinatelecom.cn>
- <20241008142300.236781-9-dongml2@chinatelecom.cn> <ZwV0cjdg2x67URMx@debian>
-In-Reply-To: <ZwV0cjdg2x67URMx@debian>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 9 Oct 2024 09:38:24 +0800
-Message-ID: <CADxym3ZDkjuu9TJQ_vmbky75T+bn32XMrMhQRi=rVtxgRXC_Zw@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 08/12] net: vxlan: use kfree_skb_reason() in vxlan_xmit()
-To: Guillaume Nault <gnault@redhat.com>
-Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
-	horms@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	bpoirier@nvidia.com, b.galvani@gmail.com, razor@blackwall.org, 
-	petrm@nvidia.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu: Remove iommu_present()
+To: Jason Gunthorpe <jgg@nvidia.com>
+References: <20240930004235.69368-1-baolu.lu@linux.intel.com>
+ <20241001175458.GH1365916@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241001175458.GH1365916@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 9, 2024 at 2:05=E2=80=AFAM Guillaume Nault <gnault@redhat.com> =
-wrote:
->
-> On Tue, Oct 08, 2024 at 10:22:56PM +0800, Menglong Dong wrote:
-> > Replace kfree_skb() with kfree_skb_reason() in vxlan_xmit(). Following
-> > new skb drop reasons are introduced for vxlan:
-> >
-> > /* no remote found for xmit */
-> > SKB_DROP_REASON_VXLAN_NO_REMOTE
-> > /* packet without necessary metadata reached a device which is in
-> >  * "eternal" mode
->
-> That should be "external" mode (with an "x").
->
-> > +     /**
-> > +      * @SKB_DROP_REASON_TUNNEL_TXINFO: packet without necessary metad=
-ata
-> > +      * reached a device which is in "eternal" mode.
->
-> Here too.
->
+On 2024/10/2 1:54, Jason Gunthorpe wrote:
+> On Mon, Sep 30, 2024 at 08:42:35AM +0800, Lu Baolu wrote:
+>> The last callsite of iommu_present() is removed by commit <45c690aea8ee>
+>> ("drm/tegra: Use iommu_paging_domain_alloc()"). Remove it to avoid dead
+>> code.
+>>
+>> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
+>> ---
+>>   include/linux/iommu.h |  6 ------
+>>   drivers/iommu/iommu.c | 25 -------------------------
+>>   2 files changed, 31 deletions(-)
+> Also think the fixes should be removed
 
-Oh, my eyes!
+Okay. I will send a v2 with the fixes tag removed.
 
-I checked this document one by one, and I'm sure there
-are no more typos besides this one.
+Thanks,
+baolu
 
-And I'm sending the V7 now.
 
-Thanks!
-Menglong Dong
-
-> > +      */
-> > +     SKB_DROP_REASON_TUNNEL_TXINFO,
-> >       /**
-> >        * @SKB_DROP_REASON_LOCAL_MAC: the source MAC address is equal to
-> >        * the MAC address of the local netdev.
-> > --
-> > 2.39.5
-> >
->
 
