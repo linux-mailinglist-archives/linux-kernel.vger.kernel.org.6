@@ -1,87 +1,270 @@
-Return-Path: <linux-kernel+bounces-357194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29CE996D56
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:11:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E204996D65
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974E62842BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB831F25940
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3703199FB0;
-	Wed,  9 Oct 2024 14:11:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DEA19C552;
+	Wed,  9 Oct 2024 14:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALgkL42W"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D38190059
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104CD224DC;
+	Wed,  9 Oct 2024 14:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483066; cv=none; b=lWixX5CtJ1QCee4CH5VlPs8u7kV2mw57xm5GMwTXOsKCch5+XI6xfUdipR6VfkAgNFO1KhtZaLYVB8bzImOeOQIFUaIslytEDk9Xac9q5TWkiZkRiS+/KGxXglubGHz/Rre0qInUqu/JQ5BHg2dl/9agMVEeAtjCJQKInKvajBw=
+	t=1728483396; cv=none; b=ffb9HUugidRh/+4ua7f+CADF2AZgzshiBD0vsqgwyyxrR4T3UiLKof07C/YwkTMPbN2E9JfeYyA83ZwQWhOpj2srxf7IcLZE3hIlAdQL9iN7PgEUH0pH+/fl+BJj/4nnLWycZ8DRHZFTEODKNTdRmvxE3n7RgjukwqkxOiPii2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483066; c=relaxed/simple;
-	bh=E5VlqSK5Yy5eCZCXGBIXuXrYZYLY8dv4qDK2ZJ2suZQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eiFOJ0Qp+rdb5yeuyFDJXFX2tNYrYNmKM2zlWOUhUf7g1AQoc0dDtuXdsPJVT57Mp5l/TYQvKnsPEvqLrjPVI9QOw8PWvdVAW3wEms3LkSpsMpvGymBtsCSUyhG+D9fYGnzdZG0jT+8UbUdu8VRYx957Ul/g2S1O3RzvpoEKbjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a8b992d3so8033245ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:11:03 -0700 (PDT)
+	s=arc-20240116; t=1728483396; c=relaxed/simple;
+	bh=IK1OLhrx9tWJZ2BzoLbXXEsFYlGdVp5fhAhRBn0gU2M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Uoiy+EclAqnrnAg82nCPNlvkmrnp51CFHuU1C1ZYTgCBsehBtA8abqV4CCZaIXq8oe4KFrq5GX9BemFEKretGuP9tnw2ZszoNJUJSYA7g28Cw8WzXG7GfbHjWhQVHxYXKQozVk4QOaG2iZbkRnGWC0ezWW90FrkoVHfpbqNfBeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALgkL42W; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbcd8ce5f9so4287356d6.2;
+        Wed, 09 Oct 2024 07:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728483392; x=1729088192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lwUJ5xd0Av6g1K9sahKQhjBzI47UHsFOKCYr26Xj2dI=;
+        b=ALgkL42WMNqMRc1pWq1JqbtqaYmC7bakScHYAUNMCvyJSAbJmEJIgS1dTIioMgf2uK
+         GwKAwgHcvJPb/a6BGQdbfPwjoTDO6Rnizsy5X+sbMcA8ADEsHblPs1RGijyOD9YSADBn
+         7T1hSoYRjNBK2O0jdcLwUVkYyLMO86JJsPdnImDUJV3nsN7h6R1qZwsYe4dqFdcjVh+2
+         TlWtf+R9y20GNv8Uo+l+G8JAcQKTw359pWhYSF1oDvGWVFuBphfKypPtOnEOXPuQC5AK
+         VsXKefAcPtZXfwQrnZwmlMZQibxajmYRUeffiTkmCTvHMRjx1zny0eXSczU06PcuNhV6
+         ddHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728483063; x=1729087863;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H1nZyo7VbE3Qv+IxUbo0n80jVbJCFKyUqITSpcktzNc=;
-        b=Sd4IrZEwVVePaHqmDoUEDjqBikRz6ZtGd0PHQGRI1KaWo5kW+DRDhnsFQlPpovz5ru
-         fTcAMob/qFNd1h+r/n9wQx8wLuUJTafLntq8aGwHt8TTV77aIhomceOr5Ofn4pKjf19q
-         t2qWGUtU8dFRCgb82ELZwk0W5JfzaY+8WFDZjNGglpjRAOl+vEMBHV0vamD3J90DWW7K
-         qZTZWrnsAYRSDfJT2CxVVQy1HFLVMg0Dg5sHPO1itM8zpAwoGOtpmLyuKwdVxxPgIDMm
-         Hyh2E8744UUnAWfs/vCGrVFF4KJQAHWN5PXXnGcRTI8xhErqIGb9NlcmMi8n7sLlvhuS
-         KyYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOX2xd1u7JgWHNScHGATNgBgQz5eEJijoF3zyZt3Cb/rZA+sH0r8EmGwDe6T/H8bBFSevtpoE9rmH4Jxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPb92Z1jWFigNzsOFHEbWeY76z/yHUqBXLaBTbBr9Hnh2jzI/
-	a/CCre55Qw1xY0c8dtjECQ8nWRr2OqaDdPi7WNlykKTper3Zh6yge8wlstzbGQpWgKJ6ixERFho
-	GGFJvpTtmv+2iRhEXMifCz8fNNrqvLKT6WqjE7Azku97uaryb73LmgMA=
-X-Google-Smtp-Source: AGHT+IE+ZykMCQTpL/RnyU1NUHCey1wwJP5n5CXtJ6e0BjTYsGNs3GZkFjIzfNNIUVKOtByYxRSovKlh1PjeW6+LIOMnSdcE8dym
+        d=1e100.net; s=20230601; t=1728483392; x=1729088192;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lwUJ5xd0Av6g1K9sahKQhjBzI47UHsFOKCYr26Xj2dI=;
+        b=dkKVG9K1qMi6bGUP+VZ3nSCU9UQ9/M7bYKogM5zHK6c675Goswz2823+HfaYH9vQz5
+         fazUYFk3tnoSh9jcKnnyGQ5JTrzJbOZ3YnHada0jYrO3n7GTzxGbRaq0bwHbYSbwuWVq
+         k5BS+KTLGxlUXTSuM1Eqw9HvmV6XuDdtswol7LEDuKZrsazOvpVGlvSJ+z5GsVRd1VE4
+         0t9LsMMk3oxH8B9OL86VmqTsRmCuU/8QSN7CDmBHTSgd4ieMqE7Tm+XMp9fVjbNXaFV9
+         h8YeBPYn4oetR5C5Wb2bOrllf+QEBMgf5CzXE3cUeqb9lpfCtXpiy4ti2KJxsBOBue5O
+         9uiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCaD1sh+VdsQ12Dd+Csrpza8mCnPfu4rut1QJszyWNfrcqNVIjG1n5pbXjKaRPREQQ5Oi6ETV2+kn/nq97@vger.kernel.org, AJvYcCWiLL6MYZxI4wcKDE7apQL956RvvX9NK2+vAbLSiPWfEZVRAQ8Mvk865KUw9EJCzXx2pzRJO/PG+reTrRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqF7+DXZiNSwmkkq7M1oWzgGbgVRa4llLLV+oGsj4SXRp4RtGu
+	4ns9ddaWKHwfZvu1an2yhFTmZfg3xG36hcoePZg7/Rn0XmdMKXAE+RssME8F
+X-Google-Smtp-Source: AGHT+IHmRmowFBDuaTzkupq9utWVBF1+SBX3+EQOOv8UysqXyYt/E8MCpInfQo0leZlNn7EIqjk/Dw==
+X-Received: by 2002:a05:6214:449d:b0:6cb:61b0:fa4f with SMTP id 6a1803df08f44-6cbc92ea508mr47314606d6.6.1728483392351;
+        Wed, 09 Oct 2024 07:16:32 -0700 (PDT)
+Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbc7b81fe9sm10769686d6.64.2024.10.09.07.16.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 07:16:31 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Fiona Behrens <me@kloenk.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	=?UTF-8?q?=C3=8D=C3=B1igo=20Huguet?= <ihuguet@redhat.com>,
+	Kris Van Hees <kris.van.hees@oracle.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH v3] rust: query the compiler for dylib path
+Date: Wed,  9 Oct 2024 10:07:49 -0400
+Message-ID: <20241009140750.3356-2-tamird@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAJ-ks9neMso9pL_LPOeOwLGZG7Wy9RxV-ixKsDv=Wfzy7yKVBA@mail.gmail.com>
+References: <CAJ-ks9neMso9pL_LPOeOwLGZG7Wy9RxV-ixKsDv=Wfzy7yKVBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc6:b0:3a1:f6ac:621e with SMTP id
- e9e14a558f8ab-3a3974fe61dmr21633515ab.7.1728483063110; Wed, 09 Oct 2024
- 07:11:03 -0700 (PDT)
-Date: Wed, 09 Oct 2024 07:11:03 -0700
-In-Reply-To: <tencent_11642C456F589720E8CEEC46CD2879666E0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67068ef7.050a0220.1139e6.0001.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_inline
-From: syzbot <syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Rust proc-macro crates are loaded by the compiler at compile-time, so
+are always dynamic libraries; on macOS, these artifacts get a .dylib
+extension rather than .so.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Replace hardcoded paths ending in .so with paths obtained from the
+compiler.
 
-Reported-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
-Tested-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+Co-developed-by: Fiona Behrens <me@kloenk.dev>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+V2 -> V3: Added .strip() to rustc output to remove errant newline.
+V1 -> V2: De-duplicated and sorted imports. Changed Signed-off-by to
+Co-developed-by.
 
-Tested on:
+ .gitignore                        |  1 +
+ Makefile                          |  2 +-
+ rust/Makefile                     | 21 ++++++++++++---------
+ scripts/generate_rust_analyzer.py | 15 +++++++++++----
+ 4 files changed, 25 insertions(+), 14 deletions(-)
 
-commit:         75b607fa Merge tag 'sched_ext-for-6.12-rc2-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11060f07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-dashboard link: https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=142c5780580000
+diff --git a/.gitignore b/.gitignore
+index a61e4778d011..088696a6a46a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -22,6 +22,7 @@
+ *.dtb.S
+ *.dtbo.S
+ *.dwo
++*.dylib
+ *.elf
+ *.gcno
+ *.gcda
+diff --git a/Makefile b/Makefile
+index a9e723cb0596..470e6f20c513 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1513,7 +1513,7 @@ MRPROPER_FILES += include/config include/generated          \
+ 		  certs/x509.genkey \
+ 		  vmlinux-gdb.py \
+ 		  rpmbuild \
+-		  rust/libmacros.so
++		  rust/libmacros.so rust/libmacros.dylib
+ 
+ # clean - Delete most, but leave enough to build external modules
+ #
+diff --git a/rust/Makefile b/rust/Makefile
+index 0856fd6bc610..94ae550ae8b3 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -11,9 +11,6 @@ always-$(CONFIG_RUST) += exports_core_generated.h
+ obj-$(CONFIG_RUST) += helpers/helpers.o
+ CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
+ 
+-always-$(CONFIG_RUST) += libmacros.so
+-no-clean-files += libmacros.so
+-
+ always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
+ obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o
+ always-$(CONFIG_RUST) += exports_alloc_generated.h exports_helpers_generated.h \
+@@ -36,9 +33,15 @@ always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.c
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated.o
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.o
+ 
+-# Avoids running `$(RUSTC)` for the sysroot when it may not be available.
++# Avoids running `$(RUSTC)` when it may not be available.
+ ifdef CONFIG_RUST
+ 
++libmacros_name := $($(RUSTC) --print file-names --crate-name macros --crate-type proc-macro - < /dev/null)
++libmacros_extension := $(patsubst libmacros.%,%,$(libmacros_name))
++
++always-$(CONFIG_RUST) += $(libmacros_name)
++no-clean-files += $(libmacros_name)
++
+ # `$(rust_flags)` is passed in case the user added `--sysroot`.
+ rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
+ rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
+@@ -118,10 +121,10 @@ rustdoc-alloc: $(RUST_LIB_SRC)/alloc/src/lib.rs rustdoc-core rustdoc-compiler_bu
+ 	+$(call if_changed,rustdoc)
+ 
+ rustdoc-kernel: private rustc_target_flags = --extern alloc \
+-    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
++    --extern build_error --extern macros=$(objtree)/$(obj)/$(libmacros_name) \
+     --extern bindings --extern uapi
+ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-macros \
+-    rustdoc-compiler_builtins rustdoc-alloc $(obj)/libmacros.so \
++    rustdoc-compiler_builtins rustdoc-alloc $(obj)/$(libmacros_name) \
+     $(obj)/bindings.o FORCE
+ 	+$(call if_changed,rustdoc)
+ 
+@@ -342,10 +345,10 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
+ 		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
+ 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
+ 		--crate-type proc-macro \
+-		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
++		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) $<
+ 
+ # Procedural macros can only be used with the `rustc` that compiled it.
+-$(obj)/libmacros.so: $(src)/macros/lib.rs FORCE
++$(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
+ 	+$(call if_changed_dep,rustc_procmacro)
+ 
+ quiet_cmd_rustc_library = $(if $(skip_clippy),RUSTC,$(RUSTC_OR_CLIPPY_QUIET)) L $@
+@@ -424,7 +427,7 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
+ $(obj)/kernel.o: private rustc_target_flags = --extern alloc \
+     --extern build_error --extern macros --extern bindings --extern uapi
+ $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.o \
+-    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
++    $(obj)/$(libmacros_name) $(obj)/bindings.o $(obj)/uapi.o FORCE
+ 	+$(call if_changed_rule,rustc_library)
+ 
+ endif # CONFIG_RUST
+diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+index d2bc63cde8c6..04ff5b25b851 100755
+--- a/scripts/generate_rust_analyzer.py
++++ b/scripts/generate_rust_analyzer.py
+@@ -8,6 +8,7 @@ import json
+ import logging
+ import os
+ import pathlib
++import subprocess
+ import sys
+ 
+ def args_crates_cfgs(cfgs):
+@@ -35,8 +36,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     crates_cfgs = args_crates_cfgs(cfgs)
+ 
+     def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
+-        crates_indexes[display_name] = len(crates)
+-        crates.append({
++        crate = {
+             "display_name": display_name,
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+@@ -47,7 +47,15 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+             "env": {
+                 "RUST_MODFILE": "This is only for rust-analyzer"
+             }
+-        })
++        }
++        if is_proc_macro:
++            proc_macro_dylib_name = subprocess.check_output(
++                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
++                stdin=subprocess.DEVNULL,
++            ).decode('utf-8').strip()
++            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
++        crates_indexes[display_name] = len(crates)
++        crates.append(crate)
+ 
+     # First, the ones in `rust/` since they are a bit special.
+     append_crate(
+@@ -77,7 +85,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+         [],
+         is_proc_macro=True,
+     )
+-    crates[-1]["proc_macro_dylib_path"] = f"{objtree}/rust/libmacros.so"
+ 
+     append_crate(
+         "build_error",
+-- 
+2.47.0
 
-Note: testing is done by a robot and is best-effort only.
 
