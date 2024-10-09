@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-357576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BE19972DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8919972DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4177CB22008
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9B21C216E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D41A2547;
-	Wed,  9 Oct 2024 17:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375821D318A;
+	Wed,  9 Oct 2024 17:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="kDDdgsYC"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+4JQTBY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE3A13F43A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC5013F43A;
+	Wed,  9 Oct 2024 17:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728494323; cv=none; b=MFmBDJeXyD9dFxd/RdhHYkrayOlDxIXC1QqLdlpQKqjaMsJoawXJZXMStbtOx4I5dJuo7+itLVGEFvA4rvmaht0FSsJ44N/DsS0Gov6YchcdNt+3RyFY5xz99SNgYrUKkXbMlpxGRy3Z1EKrJG82hduuHG7jCL11w7xznGqIkV4=
+	t=1728494336; cv=none; b=PRK9wFAnGVPeubBwwQ+EFkgfDYYLogl4ZJpsO4oEkIclM6NczmzzxR+nj6zr/H4ICbkRIA4/Mw3amnEA/Z/s0q5YW8sbZLuY0LJelSmx+7gnT8Qk2Gbp9RxdFFC+bSZulUsHdS9K55xUqzgOxN65Ze6wINz2vwwNe8dquSFVnqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728494323; c=relaxed/simple;
-	bh=gfDfkb6E6BuglUSYEE7UIx2AT6P6NtLzD1hcTyfxqgY=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=p+KojloglJnBpdmV5KW5AzfDYZC3suN4ixFD9YefiUGvSiQNlSQfaAU73WZa/SvYe1tAgDKn6J+VbfW3Aere9L8ywQ9aODXSyfPTT8mTU3Y23T58jyHzyWHUo6HfykBfoDUPUSLYpF2ml/owjLi8TB9bC6r8ulTraV41AmAoxeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=kDDdgsYC; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e0b93157caso892262a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:18:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1728494321; x=1729099121; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tE15ibMGDi+NxxTDjcKlwgS0dglI70fk+X+ersajG3M=;
-        b=kDDdgsYCktzXRfjI6W9WOCWEy19wJdluLXSgV8qnHWsUv8q4vBN458O0E0f7IrC0Zu
-         c4rSYLf3xSoM0JkhqJEXeiNQfZ/q4ELn/kQkzgHvnO1bAMqecrVSE7pXCRnc8BXPGPLm
-         1IqI2TDtU2UsMxTDZfyOm2wqarLFscK1hx25QHO9zYntJJgrYukZYY0sRqzD4p8DffEz
-         +G29TkM16/6d/0BF0m/Dlb2acqahN3MBPsaTlKOxnuZNWw5wb4QK0FyimQedEkQQGO2q
-         M1XZwHSnmW4TUA8bGbMAGKFf19bX+HimHwcIMdy/1ZKsEWAMRusPUNz+fwhQ8W7Uy4s6
-         PV7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728494321; x=1729099121;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tE15ibMGDi+NxxTDjcKlwgS0dglI70fk+X+ersajG3M=;
-        b=SLLjUAXCIPYyQcu7iU9AcL88GtWdo+5w//RedlyO3Fc5++RLfRai4HURRvgoYeyLc4
-         XuWMp4kLTPzSshSg3kWWY92eVVofimOB1jL/cJbWjV+h9Mz6seMbpUxyUdrGiYoTsTUd
-         /0152JxJ4bm6m0uc+KOIHlni9Y492PsxICXeDK8HAGPefeHBiOcvXwRxemEMrgAXREgk
-         Xn0Uzdjb2I1CVTwxBDg75iM660v+wUYdI0WYDHGBIkYVx7u5r4AMqv/yivXTp0zcczYb
-         8SNR26y2Q5yrfsELFJDRSnlK45uh6jpLm9zJPcRN81qSv6+vkadCpg8LGRvgjd6wcQub
-         tuTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbRDfF8X0ZJiPVLy/6qH9ibQ6zMmAlGU5nS5NmWQ9gB4oxCxyU0kxd6hir4KXeo2YyZh9KES+/OBua4dY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD2hPRICuaSriri46zZX4yHFDB0PbWNI52ZeYD8kCP6PvEeRls
-	qU4ceObHsMPzEd5GOTSJQNfM5OVibiRGR4ynzGokNTGCjD1jH91tgGP0+yLMlWb3winnIeU6RwM
-	q
-X-Google-Smtp-Source: AGHT+IH+dUdqWJdilHkcfNrwnO/4bpYGAbPTeUc897OZzGRUfL0r6Othkiqnq9rjY7iXezEC0dz7jw==
-X-Received: by 2002:a17:90a:d913:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e2c805fe05mr543826a91.11.1728494320877;
-        Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a8dd0fa9sm1849185a91.50.2024.10.09.10.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
-Date: Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
-X-Google-Original-Date: Wed, 09 Oct 2024 10:18:38 PDT (-0700)
-Subject:     Re: [PATCH] tools: add forwarding header for arch/riscv/include/asm/fence.h
-In-Reply-To: <mvm5xq44bqh.fsf@suse.de>
-CC: linux-riscv@lists.infradead.org, Charlie Jenkins <charlie@rivosinc.com>,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, parri.andrea@gmail.com, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: schwab@suse.de
-Message-ID: <mhng-adb76a44-07c8-442c-8bcf-6f29d061c031@palmer-ri-x1c9>
+	s=arc-20240116; t=1728494336; c=relaxed/simple;
+	bh=kIETc19XyvfPXak3jYGzq8Y6vHynD/hT0YCmQOmgqDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tL8hWVtwefnqtb4NXnVAVTr9EF6BEi0wcM3SHsskTpk/Q91gBW52orzaJ1FLREaXjwSvnWpdA1nGQws8YM+RX7Pq0Lf7a7gjTg3SC79Uf4G6ppp7soo8osvxYS6YK/Qt+YucGhHmkbk8sBKDQ9oFmwQVOEMZcDShmYooNlXQbok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+4JQTBY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626B3C4CEC3;
+	Wed,  9 Oct 2024 17:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728494336;
+	bh=kIETc19XyvfPXak3jYGzq8Y6vHynD/hT0YCmQOmgqDk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=X+4JQTBYh/MZYKPrUB2onNKZJfK1pzUXul4h8Acf7ITMvKBXNLq4cag+SGf/sITBK
+	 IY5rV02QZ71t6cItRlnfE8ddNH3r1XhWMdAV/st0r44XkRHB1QmQP2G2DhDkhEp52L
+	 DjzQcM5BRnc268elJR28X6r9DFvEVdrvC+5DweLT0Q0EhYqvJ4npW5myvdXucvlH1B
+	 Z/5ueOO43kvCX46YvndlslYVPlYoDHjPePUs6s6gY6rZxpuKwXnBi9ULhij0FGMJ/4
+	 IAvqMaHvzNmrRbGKqSyrR9u0xjFjwUGrnlMX+NDEX2dBRMyodK83t6zOJY6E/8Rayi
+	 dh1avwk97UaTw==
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a377534e00so363775ab.3;
+        Wed, 09 Oct 2024 10:18:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYQJVoGhCa3DMzD0cXSXEw1HZf5jPM1FE9zx6PWljv4L/rXxf3N+aHlxzczV0gBPqQ32rNIR9VHhnLvOj/@vger.kernel.org, AJvYcCUskU2KL17cVEVdmZQdhtw2DYyexThdZ1f3YNFESL119CEDt8GMbFBZAi/FYi1g43UltjBaIBRaG9Gy8DcdzJfgiQ==@vger.kernel.org, AJvYcCV/hzDnJA0oI3f3jWtcZWEKy1LMWICoWsTlI6I05xOC/Fdr0csgdc5uPBbM0ftdjKJ6Y3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOrwxXy2PlrdLR2shQUGPi2Vq3nCshCv52inHBluwZsodq3XA1
+	eXHEpAsg8UBq9Iqj/iTEIIJ7iMNGqm0udtjTF3CGfW6P8pYPa/w7K8cx6WdECwPCk9nqlj3oN6m
+	npFPFPkDxdB4+nUJtGko8ZEXoJGE=
+X-Google-Smtp-Source: AGHT+IHYKr3MtibCuhIfqINOiTac2JFiK0PnnYE1ex6z3e1u0veE0fV/hQ/P6tHKnKexhifdFdAhk3wCzVAOyKmCuOE=
+X-Received: by 2002:a92:ca0a:0:b0:3a1:a163:ba58 with SMTP id
+ e9e14a558f8ab-3a397d1d064mr37851245ab.26.1728494335811; Wed, 09 Oct 2024
+ 10:18:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20240916014318.267709-1-wutengda@huaweicloud.com> <20240916014318.267709-2-wutengda@huaweicloud.com>
+In-Reply-To: <20240916014318.267709-2-wutengda@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 9 Oct 2024 10:18:44 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6wrwcMYLufVfu-R9OzPBfspJD0w-pZUr68UBRSZExc=A@mail.gmail.com>
+Message-ID: <CAPhsuW6wrwcMYLufVfu-R9OzPBfspJD0w-pZUr68UBRSZExc=A@mail.gmail.com>
+Subject: Re: [PATCH -next v3 1/2] perf stat: Support inherit events during
+ fork() for bperf
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 07 Oct 2024 00:24:06 PDT (-0700), schwab@suse.de wrote:
-> This is needed so that <asm/barrier.h> can find <asm/fence.h> on riscv.
+On Sun, Sep 15, 2024 at 6:53=E2=80=AFPM Tengda Wu <wutengda@huaweicloud.com=
+> wrote:
 >
-> Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
-> Signed-off-by: Andreas Schwab <schwab@suse.de>
-> ---
->  tools/include/asm/fence.h | 3 +++
->  1 file changed, 3 insertions(+)
->  create mode 100644 tools/include/asm/fence.h
+> bperf has a nice ability to share PMUs, but it still does not support
+> inherit events during fork(), resulting in some deviations in its stat
+> results compared with perf.
 >
-> diff --git a/tools/include/asm/fence.h b/tools/include/asm/fence.h
-> new file mode 100644
-> index 000000000000..917a173059a4
-> --- /dev/null
-> +++ b/tools/include/asm/fence.h
-> @@ -0,0 +1,3 @@
-> +#if defined(__riscv)
-> +#include "../../arch/riscv/include/asm/fence.h"
-> +#endif
+> perf stat result:
+> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
+>
+>    Performance counter stats for './perf test -w sqrtloop':
+>
+>        2,316,038,116      cycles
+>        2,859,350,725      instructions
+>
+>          1.009603637 seconds time elapsed
+>
+>          1.004196000 seconds user
+>          0.003950000 seconds sys
+>
+> bperf stat result:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+>
+>    Performance counter stats for './perf test -w sqrtloop':
+>
+>           18,762,093      cycles
+>           23,487,766      instructions
+>
+>          1.008913769 seconds time elapsed
+>
+>          1.003248000 seconds user
+>          0.004069000 seconds sys
+>
+> In order to support event inheritance, two new bpf programs are added
+> to monitor the fork and exit of tasks respectively. When a task is
+> created, add it to the filter map to enable counting, and reuse the
+> `accum_key` of its parent task to count together with the parent task.
+> When a task exits, remove it from the filter map to disable counting.
+>
+> After support:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+>
+>  Performance counter stats for './perf test -w sqrtloop':
+>
+>      2,316,252,189      cycles
+>      2,859,946,547      instructions
+>
+>        1.009422314 seconds time elapsed
+>
+>        1.003597000 seconds user
+>        0.004270000 seconds sys
+>
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
 
-Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+The solution looks good to me. Question on the UI: do we always
+want the inherit behavior from PID and TGID monitoring? If not,
+maybe we should add a flag for it. (I think we do need the flag).
 
-Happy to pick this up via the RISC-V tree if you want.  Thanks!
+One nitpick below.
+
+Thanks,
+Song
+
+[...]
+>
+> +struct bperf_filter_value {
+> +       __u32 accum_key;
+> +       __u8 exited;
+> +};
+nit:
+Can we use a special value of accum_key to replace exited=3D=3D1
+case?
+
+> +
+>  #endif /* __BPERF_STAT_U_H */
+> --
+> 2.34.1
+>
 
