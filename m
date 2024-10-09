@@ -1,130 +1,89 @@
-Return-Path: <linux-kernel+bounces-356440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1D0996119
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DD6996112
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B0591C23DF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D311C21553
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F16D187FEA;
-	Wed,  9 Oct 2024 07:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NTsv2DQ+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CB5183CD9;
-	Wed,  9 Oct 2024 07:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEB7185B77;
+	Wed,  9 Oct 2024 07:39:52 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DCC17C9AC;
+	Wed,  9 Oct 2024 07:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728459597; cv=none; b=Pd/02B/RQWpi2g6SKpz7eCBrhTtQ4smlkeJsxLuOrNVrFnxTFXBPhYSHXrOI6CaZ6eIH7xiaQHuDUvVnSroFyDWWXVp6oEKIA3L+Umg5Y8vi1ScdiLDkD++RKCIWKONFzGP1OiKlrFX3v0Xevj8u9SONAz9d518WmT41qCvCkS8=
+	t=1728459592; cv=none; b=aXym6hmotRHVE3vK7rAKeSnUBqVfvFZkVZA2SroFmRGIn4QBdcTb+yZ+roCCivWsNu6FqQOSTQ2ZES0cK0bamE5xhxY0iS0X0nq0mwGHOCdp8dg2NBTVdCX42mbnLJmTe6lQ8ipzZz484NoyLJNriBEi+RZ5Yd1pZvWlGQmzzXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728459597; c=relaxed/simple;
-	bh=ZXALps+EHwY7XPezKlK/CkIw6NgcRIiespUxDFCgz7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k8jYmZHFPVjZLOvd6TGqRg0y8QVjI8d/bU55cpuqdmh7/23HfQTMWZmhUP6rpxIZUCIEkrCTtD7yjH7nDbauzBfFR4HF3tcl4FQ+uf/Dp6YO2jmFbxBtpkEBfwVYNRZRavgVzG7stwe+oBrEFWfBez1xV3SrIOOMkC6wELGkDWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NTsv2DQ+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498MMg02000677;
-	Wed, 9 Oct 2024 07:39:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vnsPQONfZ61MaZhMi/vcxe9LQ679D9pa2oHkYGdMnqs=; b=NTsv2DQ+2lpXJdUy
-	7YTQ6IuB/wGcEmL6xmIOYpcJL9ffprnUL9fh4+H2CWLWkczXtjmatlNYgkb5JYeR
-	e5JZ9O3qQ8QHLYDSCfXHQ+xRa2WVAQdVguSq+tyyqivHSg2SikwciZ+5RHoDs1Hv
-	QlVQo0oXj700MFE05QJSD6xkqo6SXytnXMw5EjGZFx4tKJVkH0yiCOr7yZ2uURhX
-	egQy9BFNPIa7mdR4xaM8rD+MIxgarg1ziHnQ7SL+CRrgdePnA19w2+cfEXGe4Zn7
-	sAcFDGhkLhmMzTxpqLenPMpjTanjqkPpsphPxynyQNrPk5C4YjzxorYT8r5RCYBK
-	P3STdg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4252wstyyx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 07:39:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4997dbPO014720
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 07:39:37 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
- 00:39:30 -0700
-Message-ID: <7383268f-4655-433a-9b9b-ebc9ac3d57ea@quicinc.com>
-Date: Wed, 9 Oct 2024 13:09:27 +0530
+	s=arc-20240116; t=1728459592; c=relaxed/simple;
+	bh=EIblVUPShlUFmQ/WUe97ldk8Qs/Ts9lujgAx4hFJObo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=u1mU7EfsZKMVHXh03III5Fq2r+aA7AbpIHPFD8DZ2iMnfy9Jl/6cTPN0w3uOTQwk/zFPDYkR+A/spDx9byTW4A8cSzbI66PEVXl3ddtdflRVcl+EvlCdLaHUYDXC3g0Z4GFQCNY8NX/IH7Zr8+ry85K/z40SaWz1IVLDaRdmFRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee36706333b87f-ba099;
+	Wed, 09 Oct 2024 15:39:40 +0800 (CST)
+X-RM-TRANSID:2ee36706333b87f-ba099
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5670633392e0-dec45;
+	Wed, 09 Oct 2024 15:39:40 +0800 (CST)
+X-RM-TRANSID:2ee5670633392e0-dec45
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: tiwai@suse.com
+Cc: perex@perex.cz,
+	wangweidong.a@awinic.com,
+	andriy.shevchenko@linux.intel.com,
+	heiko@sntech.de,
+	kuninori.morimoto.gx@renesas.com,
+	nathan@kernel.org,
+	zhujun2@cmss.chinamobile.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH] ASoC: codecs: Fix error handling in aw_dev_get_dsp_status function
+Date: Wed,  9 Oct 2024 00:39:38 -0700
+Message-Id: <20241009073938.7472-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
- <20241004080332.853503-6-quic_mmanikan@quicinc.com>
- <72r4uowjwoxkeqq6bxhdv72wq4rqogirb3yyp2ku66rr2cnzbs@i2lk6sgfvenh>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <72r4uowjwoxkeqq6bxhdv72wq4rqogirb3yyp2ku66rr2cnzbs@i2lk6sgfvenh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cumxdSoADtOksco1skilAfCwCTXFKRac
-X-Proofpoint-GUID: cumxdSoADtOksco1skilAfCwCTXFKRac
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=727 priorityscore=1501 spamscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090049
+
+Added proper error handling for register value check that
+return -EPERM when register value does not meet expected condition
+
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ sound/soc/codecs/aw88399.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
+index 8dc2b8aa6832..bba59885242d 100644
+--- a/sound/soc/codecs/aw88399.c
++++ b/sound/soc/codecs/aw88399.c
+@@ -656,7 +656,7 @@ static int aw_dev_get_dsp_status(struct aw_device *aw_dev)
+ 	if (ret)
+ 		return ret;
+ 	if (!(reg_val & (~AW88399_WDT_CNT_MASK)))
+-		ret = -EPERM;
++		return -EPERM;
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
 
 
-On 10/7/2024 1:32 AM, Dmitry Baryshkov wrote:
-> On Fri, Oct 04, 2024 at 01:33:30PM GMT, Manikanta Mylavarapu wrote:
->> From: Devi Priya <quic_devipriy@quicinc.com>
->>
->> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
->> devices.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in V6:
->> 	- Remove 'nsscc_ipq9574_desc' and use 'nss_cc_ipq9574_desc' in
->> 	  probe()
->> 	- Drop of_clk_get() and clk_prepare_enable() in probe() because
->> 	  ethernet node will subscribe to GCC_NSSCC_CLK and enable it.
-> 
-> Does the cllock supply the clock controller? If not, it should be
-> dropped from bindings too.
-> 
-Hi Dmitry,
-
-Since GCC_NSSCC_CLK is the source for the NSS clock controller, there is no need to drop it from the bindings.
-
-Thanks & Regards,
-Manikanta.
 
