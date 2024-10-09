@@ -1,178 +1,170 @@
-Return-Path: <linux-kernel+bounces-356228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF602995E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:45:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCF4995E50
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BE81F26176
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D211C216A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615A5152E02;
-	Wed,  9 Oct 2024 03:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D88155A2F;
+	Wed,  9 Oct 2024 03:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="cRkNNU4A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P5pybmcO"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E48F13BADF
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 03:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7930814D71E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 03:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728445523; cv=none; b=NmUwxfEAB/3v80jt87eGtiffjj3lZXTOQL9EB45SdOu9SFpCEoFkJwn0uTrh6P1v7YpKvKc1pPT9xcJhhEhgRo/iE+mfCmuEufCbklOgW68HkVsSxW4BpAgeYkRuRNyaXsqT+kY/Hmu5uceXc6zce2ZTvxk4A4N6kmg5zJFSf9Y=
+	t=1728445618; cv=none; b=gr2Hwy2uN9pz9FgLX+tPAwfKzy1kpw4Be72sWaE2Mn8iRT1yvH2i54RoSml2kr6BeBBWcKeUnTVbY0k6CafSk11Psvem07XXumnmvCyDbrHkDK6DUzJ794bfUKIiNIYeNDCwyKMDZAXLbNvKrVrDGA+NiTDAz4KrhKY3Ftr/bBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728445523; c=relaxed/simple;
-	bh=obcfYlmfpRGEOwdQKnvQ3FWG6OMvdtTplhrm9CAAs48=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kzXzqE1WlrJw4AbDsrtTyCV3EC2SgRGatdgJkRIqzKcGDJYeXktnJ+TxhWX+cFJSrLl/h5RiCQVwavYM+AS2yfmgQWKJQwq4Tpy2Oebhd9XgHJpSTvn/ummf39Wb/5V5+q5RgcGnmHvg8v5puO/0+YHh5iYg4mLLKEkYNT1Aqyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=cRkNNU4A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1728445516;
-	bh=pZuu3o1/QXy3Kpc4hDvCdZCAIADV5doFTEXg/x1Cdbw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cRkNNU4AAaf7i2pxNnIvQgJWOUqs5VTwvNgWJ3ecwGcdUc6A1+B8U8K6tE8sP67/x
-	 tDg1X3o7yk2YK6779HDVAJK6mDWgf000Q8Sy2zW5Zn+ftAfkmk/In5s6WiGZu/mVaw
-	 Ou5fU5tnqcrc3W6eu1zJOlg26kxhIzliWWAFzrsw54GFrBembr7Ets2MLDr3RISkpl
-	 OfmiKoBpXk6M3AycrIVZKcrTQh9V47HwMx7P8KjLTBZrAv1tfCsZhUOYL0gJSG4CxQ
-	 dlobwTaYZWmguYIfqBr/NdOQEbLE1NYv7fXPwi030OYYgeUHfAX3QQwNx4DbP16HYq
-	 BXH34Z3xxc6rQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNf0q6plnz4wnr;
-	Wed,  9 Oct 2024 14:45:15 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Peter Bergner
- <bergner@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH] powerpc/vdso: Should VDSO64 functions be flagged as
- functions like VDSO32 ?
-In-Reply-To: <6abb373f-10fc-470e-b52a-05e990ee2961@csgroup.eu>
-References: <6fa86f3de610ffc180ae0f5dbd511453e7473b36.1726208058.git.christophe.leroy@csgroup.eu>
- <875xqtr8qw.fsf@mail.lhotse>
- <6abb373f-10fc-470e-b52a-05e990ee2961@csgroup.eu>
-Date: Wed, 09 Oct 2024 14:45:15 +1100
-Message-ID: <87frp66it0.fsf@mail.lhotse>
+	s=arc-20240116; t=1728445618; c=relaxed/simple;
+	bh=pb6yhkx76bsqIiXofIrxSSi6PG3q1gsUs+PXt3xN6s8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qnWmMfzHVIQ2ybYXPQ1Y6qpUsf42Y5+eb2eMwkPkOBR3g8iPVEAE5GF8bkXGLyBe6K7cOFYssUPE6MoEY4TazdR1lBbt1zH4VKXboTzSq0JckjQbb9b3OoNgI5c1vq1MyW3UYVB2or/qhWpkLxUaF+4RIAJtQGZP82ErkN+A0yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=P5pybmcO; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1c943cc885f111ef8b96093e013ec31c-20241009
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=54xyWz4a2D85QI+xC3BxVKJ9XDsv9VZMASkib0bdO84=;
+	b=P5pybmcOqV+bqsin6NMA6k+Nzb0a64kYg9IKtuftGLntqxYOBZlokXD9r6u7wUyq85+dYCGX5GMOYFKPQrOo7P4M425rUEsQ9HqelZrl9QRmSiy5WxtLgKM70XJvas7/9GXt3qP8aE7q6NmyGLPEXqXVGu2Ov3PXmh5OqPj7iy0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:705f8a3c-520c-45b9-b2b8-fe434a76bd10,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:20a8f940-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1c943cc885f111ef8b96093e013ec31c-20241009
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 175938099; Wed, 09 Oct 2024 11:46:48 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 9 Oct 2024 11:46:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 9 Oct 2024 11:46:46 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Adam Thiede <me@adamthiede.com>, Yassine Oudjana
+	<yassine.oudjana@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: Shawn Sung <shawn.sung@mediatek.com>, Alper Nebi Yasak
+	<alpernebiyasak@gmail.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Nancy
+ Lin" <nancy.lin@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v11 0/5] Fix degradation problem of alpha blending series
+Date: Wed, 9 Oct 2024 11:46:41 +0800
+Message-ID: <20241009034646.13143-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--12.487700-8.000000
+X-TMASE-MatchedRID: Bmel4SMifV92eFocrSghDt8tWTI1R8epCt4iaV1DkEPXIZTIUrehXn/s
+	DLdkieHykxyCprbGHp2Z4TZMmYnlr2NvKIW9g24ouHNkj91+t04hotH7bEpEMlvo8FSqar5SuI1
+	3sJeM6KfZU73Z3Yt4Vn/OPC6s46aMrcd0tH16JfGzI1v7J4hECoEcpMn6x9cZZ3q824boKrIc17
+	njdGO+ZQPsLEg6BY+lZlmpNfxAMbQAzT8btdR14x+WEMjoO9WWfS0Ip2eEHnz3IzXlXlpamPoLR
+	4+zsDTtJC9jS54qtzUFGfLQlTTMHhdwYvuMXwInYYXWMPWzMtso/HuGXyGdWg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--12.487700-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	96CF009706D716DBD987DC11F0397D6490E6F2BA6C6C9BAFB14B8775034B70DB2000:8
+X-MTK: N
 
-Christophe Leroy <christophe.leroy@csgroup.eu> writes:
-> Hi Michael,
->
-> Le 18/09/2024 =C3=A0 04:33, Michael Ellerman a =C3=A9crit=C2=A0:
->> Christophe Leroy <christophe.leroy@csgroup.eu> writes:
->>> On powerpc64 as shown below by readelf, vDSO functions symbols have
->>> type NOTYPE.
->>>
->>> $ powerpc64-linux-gnu-readelf -a arch/powerpc/kernel/vdso/vdso64.so.dbg
->>> ELF Header:
->>>    Magic:   7f 45 4c 46 02 02 01 00 00 00 00 00 00 00 00 00
->>>    Class:                             ELF64
->>>    Data:                              2's complement, big endian
->>>    Version:                           1 (current)
->>>    OS/ABI:                            UNIX - System V
->>>    ABI Version:                       0
->>>    Type:                              DYN (Shared object file)
->>>    Machine:                           PowerPC64
->>>    Version:                           0x1
->>> ...
->>>
->>> Symbol table '.dynsym' contains 12 entries:
->>>     Num:    Value          Size Type    Bind   Vis      Ndx Name
->>> ...
->>>       1: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LI=
-NUX_2.6.15
->>> ...
->>>       4: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
->>>       5: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LI=
-NUX_2.6.15
->>>
->>> Symbol table '.symtab' contains 56 entries:
->>>     Num:    Value          Size Type    Bind   Vis      Ndx Name
->>> ...
->>>      45: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
->>>      46: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __kernel_ge=
-tcpu
->>>      47: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __kernel_cl=
-ock_getres
->>>
->>> To overcome that, commit ba83b3239e65 ("selftests: vDSO: fix vDSO
->>> symbols lookup for powerpc64") was proposed to make selftests also
->>> look for NOTYPE symbols, but is it the correct fix ?
->>>
->>> VDSO32 functions are flagged as functions, why not VDSO64 functions ?
->>> Is it because VDSO functions are not traditional C functions using
->>> the standard API ?
->>=20
->> Yes. There's some explanation in the original commit:
->>=20
->>      Note that the symbols exposed by the vDSO aren't "normal" function =
-symbols, apps
->>      can't be expected to link against them directly, the vDSO's are bot=
-h seen
->>      as if they were linked at 0 and the symbols just contain offsets to=
- the
->>      various functions.  This is done on purpose to avoid a relocation s=
-tep
->>      (ppc64 functions normally have descriptors with abs addresses in th=
-em).
->>      When glibc uses those functions, it's expected to use it's own tram=
-polines
->>      that know how to reach them.
->>=20
->>  From https://github.com/mpe/linux-fullhistory/commit/5f2dd691b62da9d9cc=
-54b938f8b29c22c93cb805
->>=20
->> The descriptors it's talking about are the OPD function descriptors used
->> on ABI v1 (big endian).
->>=20
->>> But it is exactly the same for VDSO32 functions, allthough they are
->>> flagged as functions.
->>=20=20=20
->> It's not quite the same because of the function descriptors.
->>=20
->> On ppc64/ABIv1 a function pointer for "F" points to an opd, which then
->> points to ".F" which has the actual text. It's the ".F" symbol that has
->> type "function".
->>=20
->>> So lets flag them as functions and revert the selftest change.
->>>
->>> What's your opinion on that ?
->>=20
->> I think it's fine on ppc64le, I worry slightly that it risks breaking
->> glibc or something else on big endian.
->>=20
->> It is more correct for the text symbol to have type function, even if
->> there's no function descriptor for it.
->>=20
->> glibc has a special case already for handling the VDSO symbols which
->> creates a fake opd pointing at the kernel symbol. So changing the VDSO
->> symbol type to function shouldn't affect that AFAICS.
->>=20
->> I think the only cause of breakage would be if something is explicitly
->> looking for NOTYPE symbols, which seems unlikely, but you never know.
->>=20
->> So I think we could attempt to take this change for v6.13, giving it
->> lots of time to get some test coverage in next before going to mainline.
->
-> Will you take the RFC as is for 6.13 or would you like me to include the=
-=20
-> above explainations and repost as non-RFC ?
+Some SoCs do not support the ignore_pixl_alpha flag, which breaks the
+XRGB8888 format. Some SoCs do not support pre-multiplied pixel formats
+and extending configuration of OVL pre-multiplied color formats,
+such as MT8173.
 
-If you can come up with a consolidated changelog and post a non-RFC
-version that would help, thanks.
+Fix the SoC degradation problem by this series.
 
-cheers
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+
+Change in v11:
+Fix typo in commit message.
+
+Change in v10:
+1. Fix the commit message and comment for OVL_CON_AEN
+
+Change in v9:
+1. Add the fix patch for the XRGB8888 downgrade issue of MT8173
+2. Add the refine patch for ignore_pixel_alpha statement
+
+Change in v8:
+Remove blend_modes for not supported pre-multiplied SoCs to fix the
+return error from drm_plane_create_blend_mode_property().
+
+Change in v7:
+1. Add the remove color format comment patch for OVL
+2. Fix warning: 'const' type qualifier on return type has no effect
+
+Chnage in v6:
+1. Use blend_modes instead of function pointer in OVL
+2. Use ethdr instead of mdp_rdma to get blend_modes
+3. Add 0 checking for adding blend_mode property for mtk_plane
+
+Change in v5:
+Add fix patch for mtk_plane
+
+Change in v4:
+Add lost cases of mtk_ovl_fmt_convert_with_blend
+
+Change in v3:
+Change MACRO approach to function pointer in driver data
+
+Change in v2:
+Fix build error and typo
+
+Change in v1:
+Add fix patch for OVL unsupport color format settings by driver data
+
+---
+
+Jason-JH.Lin (5):
+  drm/mediatek: ovl: Fix XRGB format breakage for blend_modes
+    unsupported SoCs
+  drm/mediatek: ovl: Refine ignore_pixel_alpha comment and placement
+  drm/mediatek: ovl: Remove the color format comment for
+    ovl_fmt_convert()
+  drm/mediatek: ovl: Add blend_modes to driver data
+  drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c           |  1 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  2 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h       | 10 +++
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  2 +
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 70 ++++++++++++++-----
+ .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  7 ++
+ drivers/gpu/drm/mediatek/mtk_ethdr.c          |  7 ++
+ drivers/gpu/drm/mediatek/mtk_ethdr.h          |  1 +
+ drivers/gpu/drm/mediatek/mtk_plane.c          | 15 ++--
+ drivers/gpu/drm/mediatek/mtk_plane.h          |  4 +-
+ 10 files changed, 92 insertions(+), 27 deletions(-)
+
+-- 
+2.43.0
+
 
