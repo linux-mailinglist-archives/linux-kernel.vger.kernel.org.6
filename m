@@ -1,184 +1,149 @@
-Return-Path: <linux-kernel+bounces-356728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AAA9965CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0087D9965CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C811C22248
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328D71C22014
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF5E18C34D;
-	Wed,  9 Oct 2024 09:46:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95228EF;
-	Wed,  9 Oct 2024 09:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3781B18DF8B;
+	Wed,  9 Oct 2024 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fTMch+0M"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA40D189B98
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467210; cv=none; b=U0XvfHdyQnQmYJ6dxiSjydViq3zkd9jWvUgBXd+3wU3Jz+5q5rY/xLjkYLamFbp5JwQTQNJLmn9ZJt6IaU0y13tLJqJvYmQxKzdmkolljnz/RwGiAcS30R+D2nbmjR4BP+MjLv4Q2nOQ/T8Jx8axlBufLdZ/AKgMKZf19cYoYR4=
+	t=1728467211; cv=none; b=mUM9fM3c5/ImDvIg9GXLNPJrVCDj5Bc1mrw8YjbrU3X+YFfZyAmLBIOZNdzxxtBEmx6eEl7Ut/4m52kU67CPS7Q4O8FL6+WiNfhWKjpFXyQpvcRjDPIGLMTcIv+M+Cn2vfEHNZkJqOKDO3iX9yrRStPgciy64YpHIXpByMe2auk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467210; c=relaxed/simple;
-	bh=+/1qdEErw7r4OmVk0Wcg57j8okPyhJ1yRcVclaa3YsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUWfR2mkayc/1+ZMj67W2/A6po1zkRu+IzqlV+7zbkLg7evVnxsKLiO10HYfOLPSNU+gQ8HpzfESz/N5S/uKxBld9yXwWsJo44SXK2RTkuRTgDLeSj8eCsGCwDGc7o3sMoNVWXnTON5EtuvNLcxbr21xWVBuAMGFO8x18bdR+3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2FF0FEC;
-	Wed,  9 Oct 2024 02:47:16 -0700 (PDT)
-Received: from e130802.arm.com (unknown [10.1.25.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 05F4C3F64C;
-	Wed,  9 Oct 2024 02:46:43 -0700 (PDT)
-Date: Wed, 9 Oct 2024 10:46:35 +0100
-From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-To: mathieu.poirier@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org, robin.murphy@arm.com
-Cc: Adam.Johnston@arm.com, Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com,
-	andersson@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	liviu.dudau@arm.com, lpieralisi@kernel.org, sudeep.holla@arm.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-Message-ID: <20241009094635.GA14639@e130802.arm.com>
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <ce534365-0110-4aba-b8b5-0a46c5ea81d0@arm.com>
+	s=arc-20240116; t=1728467211; c=relaxed/simple;
+	bh=53Nh+bEplBVbs0zV/cyO8t024zexodrxGsQttn0GpW8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A3xBIDBGEsWAiD2P35S0/DU6u3y8h/dsbg78NygR08rcCuLh9kJEPM51ea/f7kfHWCRQa1h5quZP8VHsZleBnFrjeFvmBj8ItkkkIC0mtl3pGNZ97LRViYKp+SgMSEGFFfWkTm1A/C2XxL3zKnhLyVyuRW15Xu/m7jsA1fo7LZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fTMch+0M; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c91c8b868bso394450a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 02:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1728467208; x=1729072008; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lhZgnFyuM8SgvpJoZRKyHqTXMMEi3TdG50jgPEoCE7E=;
+        b=fTMch+0Mxr/Iag+OB66CkldSWj/syx+mnd0709yhzJcGZ74qbTodypwL1Mm+icOlBN
+         nKEC3/TSGsiASBNNUdevC7vTkOkmmSCURItSkaWgYGc3W79No3thgV9fxGKZTg18RS/L
+         Dt3mPobpCyJ5K2tISnTYc5A1X/KuFPul8jFrKLs2cGQcHNm3Tz0EB7ZaUQ/XJUskTv8A
+         /zqlvt4gxTNyJFTdjv+pyIR/iWy2Co+DPBPVYaClCPIhgTckmtO2LdUz6PEJaF+H6RbY
+         z4/PD846LS9ay2DBO+5mhn7gBDNNQ/SjSvTBOa1JgfkrJRXaDaPCpZqp6nV3VIcau4SM
+         oaaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728467208; x=1729072008;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lhZgnFyuM8SgvpJoZRKyHqTXMMEi3TdG50jgPEoCE7E=;
+        b=jnfyoczCOmKQlfKy4pfBmDd445ESdlqVS58L9Tl74YrXaMorAxZa/sCiq+m2FKznMX
+         JAT9cSXattR6deaBzXzRNMghOcabirkIOBf9inbZ/NoU7/Gr5VhZUA3WwjEgSbYUyekw
+         ahaS/1OIhNcoGj2cT+9C21lLAGkhivhTUCw5tPrducRFrQqIdRng+YB95e5LWMrc/n3i
+         qEdptp1licq5aVkFyt34lHkW2bmvTzyC1HebyD2FHEtg625h+QIBz7XgyyGe5bv+mjW9
+         9U5FolqBiB9holw/uFG1qrZPEHf0G3IBaR/+svec9yHJa6+bVazOfgiX2BTxixU7DWC7
+         6YAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBW6h6bu4gngvSu+V9La5lsdYFjXoXfaU7ArEw63X4i9Wv5fjKB216CUflwTTBP4OrjcunmckYr4nOJ48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrPBJ8pqpuRW21ASVWI44YJu2zMu88NYJoTD3lDs0SRgNyU8a2
+	dbRxVt3aS2toqNjnyAc8eHOHMhLAQUOBLnsmmtHHutSP+NTAxQaNL5gTrxt3Atg=
+X-Google-Smtp-Source: AGHT+IG4cNVjOEesVWSACXwwQY8hX5Stv0q/oZHMaAlspaJFSGno3IILGnC/kciYx9ypFzzo30mTsQ==
+X-Received: by 2002:a05:6402:13c2:b0:5c9:1beb:b971 with SMTP id 4fb4d7f45d1cf-5c91d624472mr2200554a12.24.1728467208199;
+        Wed, 09 Oct 2024 02:46:48 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:506b:2dc::49:1d6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05940b1sm5282163a12.9.2024.10.09.02.46.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 02:46:47 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: Andrii Nakryiko <andrii@kernel.org>,  Eduard Zingerman
+ <eddyz87@gmail.com>,  Mykola Lysenko <mykolal@fb.com>,  Alexei Starovoitov
+ <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  Martin KaFai
+ Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>,  John Fastabend <john.fastabend@gmail.com>,  KP
+ Singh <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao
+ Luo <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
+ <shuah@kernel.org>,  bpf@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
+ fixes
+In-Reply-To: <ab60e5c2-90a1-43c3-936b-10520c751dfb@rbox.co> (Michal Luczaj's
+	message of "Wed, 2 Oct 2024 10:27:40 +0200")
+References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
+	<87y159yi5m.fsf@cloudflare.com>
+	<249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
+	<87ttfxy28s.fsf@cloudflare.com>
+	<42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
+	<877cccqnvj.fsf@cloudflare.com>
+	<e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
+	<0d4edea2-f989-484f-88bc-d8fb6acd7572@rbox.co>
+	<87ikuh78z5.fsf@cloudflare.com>
+	<ab60e5c2-90a1-43c3-936b-10520c751dfb@rbox.co>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Wed, 09 Oct 2024 11:46:45 +0200
+Message-ID: <87y12xy5fe.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce534365-0110-4aba-b8b5-0a46c5ea81d0@arm.com>
+Content-Type: text/plain
 
-Hello folks,
+I'm back after a short break. Sorry for delay.
 
-> On 22/08/2024 6:09 pm, Abdellatif El Khlifi wrote:
-> > Add devicetree binding schema for the External Systems remote processors
-> > 
-> > The External Systems remote processors are provided on the Corstone-1000
-> > IoT Reference Design Platform via the SSE-710 subsystem.
-> > 
-> > For more details about the External Systems, please see Corstone SSE-710
-> > subsystem features [1].
-> > 
-> > [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
-> > 
-> > Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> > ---
-> >   .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
-> >   1 file changed, 90 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> > new file mode 100644
-> > index 000000000000..827ba8d962f1
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> > @@ -0,0 +1,90 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: SSE-710 External System Remote Processor
-> 
-> Thing is, this is not describing SSE-710. As far as I can work out, it is
-> describing the firmware and hardware that a particular example
-> implementation of the Corstone-1000 kit has chosen to put in the "external
-> system" hole in the SSE-710 within that kit.
-> 
-> If I license SSE-710 alone or even the Corstone-1000 kit, I can put whatever
-> I want in *my* implementation of those subsystems, so there clearly cannot
-> possibly be a common binding for that.
-> 
-> For instance what if I decide to combine a Cortex-M core plus a radio and
-> some other glue as my external subsystem? Do we have dozens of remoteproc
-> bindings and drivers for weird fixed-function remoteprocs whose
-> "firmware-name" implies a Bluetooth protocol stack? No, we treat them as
-> Bluetooth controller devices. Look at
-> devicetree/bindings/sound/fsl,rpmsg.yaml - it's even unashamedly an rpmsg
-> client, but it's still not abusing the remoteproc subsystem because its
-> function to the host OS is as an audio controller, not an arbitrarily
-> configurable processor.
-> 
-> As I said before, all SSE-710 actually implements is a reset mechanism, so
-> it only seems logical to model it as a reset controller, e.g. something
-> like:
-> 
-> 	hbsys: syscon@xyz {
-> 		compatible = "arm,sse710-host-base-sysctrl", "syscon";
-> 		reg = <xyz>;
-> 		#reset-cells = <1>;
-> 	};
-> 
-> 	something {
-> 		...
-> 		resets = <&hbsys 0>;
-> 	};
-> 
-> 	something-else {
-> 		...
-> 		resets = <&hbsys 1>;
-> 	};
-> 
-> 
-> Then if there is actually any meaningful functionality in the default
-> extsys0 firmware preloaded on the FPGA setup then define a binding for
-> "arm,corstone1000-an550-extsys0" to describe whatever that actually does. If
-> a user chooses to create and load their own different firmware, they're
-> going to need their own binding and driver for whatever *that* firmware
-> does.
-> 
-> FWIW, driver-wise the mapping to the reset API seems straightforward -
-> .assert hits RST_REQ, .deassert clears CPUWAIT (.status is possibly a
-> combination of CPUWAIT and RST_ACK?)
+On Wed, Oct 02, 2024 at 10:27 AM +02, Michal Luczaj wrote:
+> On 9/27/24 11:15, Jakub Sitnicki wrote:
+>> On Fri, Sep 27, 2024 at 12:54 AM +02, Michal Luczaj wrote:
+>>> ...
+>>> Here's a follow up: my guess is that some checks are missing. I'm not sure
+>>> if it's the best approach, but this fixes things for me:
+>> 
+>> So you have already found a bug with a negative test. Nice.
+>> 
+>> Your patch makes sense to me.
+>
+> Great, I'll submit it properly.
+>
+> Another thing I've noticed is that unsupported (non-TCP) sk_msg redirects
+> fail silently, i.e. send() is successful, then packet appears to be
+> dropped, but because the BPF_SK_MSG_VERDICT program is never run, the
+> verdict[SK_DROP] isn't updated. Is this by design?
 
-We are happy to follow what Robin recommended.
+That's curious. We don't override the proto::sendmsg callback for
+protocols which don't support sk_msg redirects, like UDP:
 
-This can be summarized in two parts:
+https://elixir.bootlin.com/linux/v6.12-rc2/source/net/ipv4/udp_bpf.c#L114
 
-Part 1: Writing an SSE-710 reset controller driver
+The packet should get delivered to the peer socket as w/o sockmap.
+I will have to double check that.
 
-    An SSE-710 reset controller driver that switches on/off the external system.
-    The driver will be helpful for products using SSE-710. So whoever licenses
-    Corstone-1000 or SSE-710 will find the reset controller driver helpful.
-    They can use it with their implementation of the external system.
+> Also, for unsupported af_vsock sk_skb-to-ingress we hit the warning:
+>
+> [  233.396654] rx_queue is empty, but rx_bytes is non-zero
+> [  233.396702] WARNING: CPU: 11 PID: 40601 at net/vmw_vsock/virtio_transport_common.c:589 virtio_transport_stream_dequeue+0x2e5/0x2f0
+>
+> I'll try to fix that. Now, the series begin to grow long. Should the fixes
+> come separately?
 
-    Note: It's likely that the external systems the end user will be using in
-    their products will be different from the Corstone-1000 external system
-    given as an example. Differences in the memory configuration, subsystem
-    involved, boot roms configurations, ...
-    These differences mean that the end user will need to write their own driver
-    which might or might not be a remoteproc driver (e.g: Bluetooth, audio, ...).
+Thanks. And yes - if possible, better to push fixes separately. Because
+they go through the bpf tree, and they will still land in the upcoming
+-rc releases (and get backported).
 
-Part 2: Corstone-1000 remoteproc driver
+While improvements go through bpf-next. Of course that sometimes makes
+life more difficult if the improvements depend on some fixes...
 
-    Corstone-1000 HW is being upgraded to support memory sharing between the
-    Cortex-A35 (Linux) and the external system (Cortex-M3).
-
-    Once the HW is ready, we can write a Corstone-1000 remoteproc driver able
-    to reload the external system firmware and doing communication with the MHUs.
-    This remoteproc driver can use the reset subsystem APIs to call the SSE-710
-    reset controller driver to switch on/off the external system (already
-    developed in part 1).
-
-Impact on the current patchset:
-
-- The current remoteproc patchset will be paused until the HW is upgraded.
-- In CY25Q1, I'll send to the mailing list the SSE-710 reset controller bindings
-  and a driver under the Reset Controller subsystem.
-
-Thank you for your support and expertise.
-
-Cheers,
-Abdellatif
+Not sure if anything from bpf-next gets backported if it has a Fixes
+tag. We can ask the stable kernel maintainers, if needed.
 
