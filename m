@@ -1,180 +1,115 @@
-Return-Path: <linux-kernel+bounces-356739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88510996607
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0CE9965F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B921C2471E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C6D286012
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E218E750;
-	Wed,  9 Oct 2024 09:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826FE18D640;
+	Wed,  9 Oct 2024 09:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EzBK/GVZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mQNccgmj"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284D418DF65;
-	Wed,  9 Oct 2024 09:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2C518B46B;
+	Wed,  9 Oct 2024 09:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467594; cv=none; b=JQoDcW/sBwdDMm2/Rf29qRTBj9Surt+jerh8hnOM+CiAI97ipiPoBB8vdfcRXdrKkIWFyJh+p3mfZ6bgv7us2yxslnHEYjTxGRcn+o6bl0R+s9LKMJ2wC8F0FIJ3YYY4ZDzNM0XTiIWccTeuwqHhE3eMFD13COWRsixU57QBeXQ=
+	t=1728467570; cv=none; b=q+NdF2yW4gNSWD7gtyKyr6QHMYZZSe0YWvC1BVUYgvTcFtZZUJi1ahh0LZuZlSaN3L24rb88GEpv8kp4G94i7nFpvhVOuD+Pgh9d+fl++xYXlCLBhpImmVrS+q0NN7YzVch4LRxgBwUcgUuwSC5SEyKBoUe7CrftohRd9ZlnpBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467594; c=relaxed/simple;
-	bh=lPPE2ybB860dOVW+u2UW17xbPLNdG/vbXkTiBVYcZj8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHVeXhFDUXNwhDLi2jcC78/4oA9EIud+/v51SrzHQW7dTI3K4DttE88uusxasmPn0p4fm9I3TMjfS45mswedwHtEyn0gAYlp3xUvGGRMUn2hNPCUG2TLacwQCLx4x+neRExtMquk2ZxWneFP/h3/PkP08fAvK8K2R9NDNDoEK6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EzBK/GVZ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728467593; x=1760003593;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lPPE2ybB860dOVW+u2UW17xbPLNdG/vbXkTiBVYcZj8=;
-  b=EzBK/GVZpCmgIhBHhlGiBZN7dYSRZWArDYyFl8S5XZhNGbnnK3GOe9bE
-   spJykN1UebDMokyANt0TWtjfpDNnSvTSuQh0WFVyVKEf6mKRXm4ssx681
-   Rus8MV1L+iWge/FPMegb3/A0qtcv8FLG3oP1iFE1MCtcLblWXXLVpZhs7
-   A2DLILFLz8NRf0FJhhpXPG/imwLZJan0gQXoIBhWrzII3FtzTxBqNiVcR
-   jikPm+DTkwN0r7hyxFKdvwSXTyDrcZZQ0aaSrFAG5pa2CCAx3lEHhf/bZ
-   9qTfe29gVS4x3iHnxMNj4imr/BnbVdOQBTwk6wYTzs+Kmy1biaEX3XlAy
-   g==;
-X-CSE-ConnectionGUID: Ilm8ml+xSiOn9ol9ty/jVg==
-X-CSE-MsgGUID: lf6vFL25QVaznDExJrBRsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38322803"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="38322803"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:53:12 -0700
-X-CSE-ConnectionGUID: Gvh7v3wYQu2/P84owVVHrQ==
-X-CSE-MsgGUID: bBKcGyUOQ46Mv827kY313Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="76506809"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.41])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:53:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v8 3/8] PCI: Refactor pcie_update_link_speed()
-Date: Wed,  9 Oct 2024 12:52:18 +0300
-Message-Id: <20241009095223.7093-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
-References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1728467570; c=relaxed/simple;
+	bh=b0ZbQneXmo6dvdqwYl843ohgOyb8+AdpviLApC1gU+g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=CytNTPGz9VsmmzJh6RwK3NheZZVHSJHDotBViJbBeF71w7zg/GR1f1DR9HmgibpthCd9+cwTt5fRbVLeLz957g3NrtSMq5EmD13WCIAmkx5KLFHANaXuPixD771C/a7ehTDMgOLJtro1OA5ICn/xj0AJmtFJeY7hh0FzdIGgRTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mQNccgmj; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728467541; x=1729072341; i=markus.elfring@web.de;
+	bh=b0ZbQneXmo6dvdqwYl843ohgOyb8+AdpviLApC1gU+g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mQNccgmj+GGuMxY0hnCHZtsXw0MLprYAqGNGYzBtN6QpCxC95xN4jVOHeyEY26GP
+	 V496DoB/OczRyFbWyUacA0vuOJBl7/5rtUB4+M7Ukedc8ecvWpYB6Yng6iCwUA4p2
+	 f8SjLT25RLdzLf92fxVQLqafw+bowugIKs8AiQJtwuR29/h20El3B8XehQEIuYu1q
+	 gY1m+KD8UMBKKrYq46ZoykWbdVJI92nNqkX3F9/cTqvClYg8WcxnV7TyCu6grx2a8
+	 KFBCB0jl1hQfe6A1E5gS0zr5T9J3ZCygg3cCSTC3SkCckundJwn7N9wyP+DDhxF1E
+	 nBXDOSXqaqNYQcNOEQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkElP-1tj7vg09If-00k7Ko; Wed, 09
+ Oct 2024 11:52:21 +0200
+Message-ID: <36ec69a0-4412-497b-9efc-fe9e980059ed@web.de>
+Date: Wed, 9 Oct 2024 11:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
+ "Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+References: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: [PATCH v2] ALSA: scarlett2: Add error check after retrieving PEQ
+ filter values
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kwJKxbcCqTJXdcUoNSlif8Wg4Gd+7Xq/uXThOP/+wdPeTCN70+l
+ +qku761SoPK6W8HjEOj810tWDJ9QcXbEQA3EG27KCkU5bMUnC25KlIqTas9PCZl23PH+rY5
+ n03cMzhmY5w4sS+cM5PSsRDiIN6pE5UtP5M2kGBd/xPg7zg9UDmdOB9fMkeM0MPr/NGFCJu
+ 3ApFHGHMlh2rXGIkjAGmw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rLOrM/0n6C0=;vDYcfc8q8mlJ+EFx7vGU6RrZF5j
+ 1baS06f2oKbS6Nip330vp/de6ZNvQxeXXwzrYxCD1jcn3tVW+ptlmYPplbVekzB5zDotahqK1
+ CNtC7WKox7h3NuAQla88ur18uwnSHe67qFxob36WPo1viEfWU+1RySLKABD3tCqmZRVlw6clj
+ nOIbA1nMOndh3CySrwqYswNdMcZrDUgLYbnOQJiqNlpEyt76VomlES7CnArbEKOQKZ9lNmfp8
+ ZF+2rEtHzcb+UcF+fPo04I9j/vCQqcK6+PxAJKNPLWuhOHY+N09450nsurCNWKjkq4J5N/x+n
+ 0GrZedCmDr3gPS32JAqkTI6cH4MQnsrkEXQjjwCgRJjR5YKHxFdN3cSn5CTnjTsuzpdsP7Di5
+ lkCLIxe5hKG1rHkdeHl9q+n70HUxvJVz979fBTbuGX1PykT+yKEUGJ/IgKpkcZB57WUllMvBR
+ Vl8K7/+RjDfQeGQCUFFBTGCBGL89YMOA6JREXS7uOWcVfOa3gbXNlYeQLkmLldXg7Vh9E5FH6
+ JkWaVyiEIO1noCG46peuwdYNjeOC9cqoZSsAELJGPFdpvg5ojfvhQHQB8kfUA20nEu/1MZ8K9
+ SumNPz8xWjde03gVIyJT3VyqxIvJTSaCywJxl+u9F3Bdxs6B+qo/cKTukxgqB1EBlA0bpbF8l
+ jJ2USnhg3MVa2u+NYuDhTkFZLTUA7NZ8g2vJKgBivjVVzZEcZ3fFqOOwUKg623wkX6YaRErEQ
+ I3Aedqg/AcauO11aG1maemtOvtcGhcjIgcaqVR4w8LBC+V36XGzI3sw2jt5WPY4TimBQtoLpJ
+ Uz4DRCH7U5SXA5g/DCoElzLg==
 
-pcie_update_link_speed() is passed the Link Status register but not all
-callers have that value at hand nor need the value.
+=E2=80=A6
+> Cc: <stable@vger.kernel.org>
 
-Refactor pcie_update_link_speed() to include reading the Link Status
-register and create __pcie_update_link_speed() which can be used by the
-hotplug code that has the register value at hand beforehand (and needs
-the value for other purposes).
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n262
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/hotplug/pciehp_hpc.c |  2 +-
- drivers/pci/pci.h                |  7 ++++++-
- drivers/pci/probe.c              | 12 +++++++-----
- 3 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 736ad8baa2a5..bb5a8d9f03ad 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -319,7 +319,7 @@ int pciehp_check_link_status(struct controller *ctrl)
- 		return -1;
- 	}
- 
--	pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
-+	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
- 
- 	if (!found) {
- 		ctrl_info(ctrl, "Slot(%s): No device found\n",
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 14d00ce45bfa..6e827d47aa85 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -378,7 +378,12 @@ enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
- enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
- void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
- void pcie_report_downtraining(struct pci_dev *dev);
--void pcie_update_link_speed(struct pci_bus *bus, u16 link_status);
-+
-+static inline void __pcie_update_link_speed(struct pci_bus *bus, u16 linksta)
-+{
-+	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
-+}
-+void pcie_update_link_speed(struct pci_bus *bus);
- 
- /* Single Root I/O Virtualization */
- struct pci_sriov {
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index af153a8e8225..c138daf78961 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -742,9 +742,13 @@ const char *pci_speed_string(enum pci_bus_speed speed)
- }
- EXPORT_SYMBOL_GPL(pci_speed_string);
- 
--void pcie_update_link_speed(struct pci_bus *bus, u16 linksta)
-+void pcie_update_link_speed(struct pci_bus *bus)
- {
--	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
-+	struct pci_dev *bridge = bus->self;
-+	u16 linksta;
-+
-+	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
-+	__pcie_update_link_speed(bus, linksta);
- }
- EXPORT_SYMBOL_GPL(pcie_update_link_speed);
- 
-@@ -827,13 +831,11 @@ static void pci_set_bus_speed(struct pci_bus *bus)
- 
- 	if (pci_is_pcie(bridge)) {
- 		u32 linkcap;
--		u16 linksta;
- 
- 		pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
- 		bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
- 
--		pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
--		pcie_update_link_speed(bus, linksta);
-+		pcie_update_link_speed(bus);
- 	}
- }
- 
--- 
-2.39.5
+> ---
+> V1 -> V2:
+> - commit wit a dot
 
+A dot was appended to a change description.
+
+
+> - add tag "Cc"
+=E2=80=A6
+
+Do you expect that the tag =E2=80=9CFixes=E2=80=9D will be added by an oth=
+er contributor finally?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n145
+
+Regards,
+Markus
 
