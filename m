@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-357644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E2C9973BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718319973B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4131F23866
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1471F22F2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481681E1C0B;
-	Wed,  9 Oct 2024 17:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DAC1E1A2A;
+	Wed,  9 Oct 2024 17:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYvYnS/Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqSiY4lT"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37611D318A;
-	Wed,  9 Oct 2024 17:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935DC1D318A;
+	Wed,  9 Oct 2024 17:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496054; cv=none; b=b39vsXxgvJYAXHV0EP0Oy4eftYMTKNzNIzgvvd8achtzHPhfOdv7NHsGTPNrxQ/DfpP2pDQHPKYunjIjmih7qeRLZiV4KnR0zbsyrsFJjthC+wEsYCjGsqcCNNT/qZnNO/2zE3kLp5rXjSXFkqN9GevA1/11Xj5gSBMaS27rY6E=
+	t=1728496046; cv=none; b=VOoAZuIGIvCidtBov95sQBBbcsUNamdYNmLFCousY3xCjyuJH2oraD1gDrfRVXcH714UNSTzF/kSgQFP0PXPErT75tkhKDnD3eDjZxX1sgbEQ10UG4wM0EBMFMGxBUPVmTfRFP3/PUrbjxhBWTC7x834EHfvvEQ/4iS0LgR03G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496054; c=relaxed/simple;
-	bh=5owhw/5zc7/FmgXaGEaLIGRnrnC/DN+HTBTsPQucvWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TmTCVupbXfegy+CsQXhO2khBCVitBkpqaWkapzqto7IEl0bOpMgwmn/JaqgviYDQEZcBmzdry2H38IOHXihJHb+5BB0C3S60E0fiADcj78tfuQNv1y8bFKJaWUoKDY4OV3vvS4Myh/JnoSRxwquvDJBjODhd15NfpAlOxRLOyPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYvYnS/Z; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728496053; x=1760032053;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5owhw/5zc7/FmgXaGEaLIGRnrnC/DN+HTBTsPQucvWU=;
-  b=UYvYnS/Z1rP62ZT8FQsK6o6+dvV511mIHw1521xWKgbjRCdgZW2fsjHd
-   6xPN3KQ6zJKGYE/yq+TpPbrl9x1MRVmSO23S9BDQSBt4rkic8d24NzDqx
-   py69gvnY3cP/lo0te0f9XKcEhka0NbxhkokeVPSYiYUHa7UfuM6npTsEz
-   0O7IT/sMChK07HUIwCFlQzRzBsHVHa8ekxnRX8uZNExXhsPUL6QE3H/CL
-   DKnkoJZeWkRBoAag1EqeVGytn6r8Fqhqj/SPmEgmNM1rb6kdk0b7QQvQ0
-   RbmZ/ET47fzbv0zYlPBXQybkjXVDqdli0T6TlaIcwOUzrEpL5Am4jd0Rc
-   w==;
-X-CSE-ConnectionGUID: sWQ/eF9UQVC2aTSYGz1XLw==
-X-CSE-MsgGUID: MrFl5L8ETM60gwscNFX07Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38942712"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="38942712"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:47:24 -0700
-X-CSE-ConnectionGUID: bTHO+195SemDrWLFww8K9A==
-X-CSE-MsgGUID: D2O/ikGbRaqmcNTYRpFIAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80889213"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:47:21 -0700
-Message-ID: <f568dbbc-ac60-4c25-80d1-87e424bd649c@intel.com>
-Date: Wed, 9 Oct 2024 10:47:19 -0700
+	s=arc-20240116; t=1728496046; c=relaxed/simple;
+	bh=hrduq5hX72SJbr+Ep+RCPMEc9rDr01SBnYcCDcMmYbM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8CaJbgxzXYV2HyEhkiABRuqWc/0GCj2Typqi4ezlNfciP13jydUzICgVRNC0y0k0U7VTHYXU6lnNLUY8rTBTd8cyxCPNj7ErNieaCm9vuZ17IOySRI4qyRa2F7RKX0ejLx9/Q+/6cpvFIsVp/1E29oIF865NiGbfyiqV/VbHHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqSiY4lT; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dde476d3dfso1127857b3.3;
+        Wed, 09 Oct 2024 10:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728496043; x=1729100843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UC1+s/+UBvzxoqZUG6QZubGws8xau17tsJaWekZSoEE=;
+        b=gqSiY4lT/WpoYkClexk4gSxjYO66pCZ26pMyWFseAJxcEsGN/1iqRh+80f9R35eeX1
+         Ei6TLD4d394N/H5DAgJI2eWMjcX32B9UwOX9/MsL+Zxvt4gtmMKctGTwXk2HgTj8iixd
+         PUnD7MaEylOffSyThRHb3QMfywy6cX0R2kEbkx/8IbiYtKMfDTiO1LhYOWCX+aDC0NRq
+         cEymwr1MJ92YEZgOtomtVww0U+Az+oSwNhIgEg8edZhVmlbD75cpKpCqJ0N1jVsIuUeu
+         PBRl0eKdtKGjAsv2ovPQsMJdClFWhvNETKDVqbcMm4m1Q/Vsu9GjjRJ1qE4EqBOTa/dB
+         3dZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728496043; x=1729100843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UC1+s/+UBvzxoqZUG6QZubGws8xau17tsJaWekZSoEE=;
+        b=KjiRVxJShlNWZgB16KNkBAn+bmAI/xaPFYkhPhIy38lRARgH9acxb4oY0QaMjZ9fNp
+         YaBp98J45+OJmDG25qaxmc2W3Xx+VNTh+yopDvZ1T6wGpW7Y0a4S+cfcmodHHrAWstBQ
+         PnhUpYpmMX9Am+ByzzkGinDMafPI4osHaxl+EA2KsvsZ2HQfEFGydIK2fnKVS5j87vLO
+         hywERyjsRJpf/Wpv3MpjgDkiFYU+6pofmu11c1uUTg2fImJREzRVmf0/Q3dGXCgxYqTT
+         IXUU1yl3LRc/ZoPQNWZ1qNt+lLg4WoE2GiZmRrbKp/zACAy+wPNs6qAd3KXrO2xhyM/2
+         kBOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqIQB21zH/+BsM89/2e0iWBExKDKi1Y3tuf59FOL23l/69XyJM2JhAueVijYV2yY1hm43sy6K9vYMBHg==@vger.kernel.org, AJvYcCUtC5DduCXuvLEQ1S56ETX8XoB3n1+L8BJcaIPTV7BtE6XCMMExdQkKUaaH/iOwigYvXOHNqsKHpdmk@vger.kernel.org, AJvYcCVdN00GtlgUMEalDJR6nvwB0qEeyjyXbh8qgUYv4l+ZCnQpG8XtRDNyGmi33j5wK76k5eXIfZL6fBsA@vger.kernel.org, AJvYcCX4jJV+9+fHzDyGnaMcOIP6TG2IMEE0V9RXWF/2dQHMiU7DFk2ftfYMtTMJ8NwylhSjS6AGRGfg5LMZKc90@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZFXfgnhbYFZdj2bf8ItzLzg5ZnRgiupo0Y4ucIU93fY/E1gxH
+	hgW6vMf+fcF8jh4WO9Ol/Dk4nUi3oRB+PHMomD3prw0aYE4m/Ymm
+X-Google-Smtp-Source: AGHT+IF7Ewv221Glscvu1OZcOfztkqBqsRZZI6mFeYxOjowv6x9OgIFXt36jk+9E6Y2K+UdD8DipVA==
+X-Received: by 2002:a05:690c:6a05:b0:6e2:63e:f087 with SMTP id 00721157ae682-6e3221f8577mr35924477b3.42.1728496043387;
+        Wed, 09 Oct 2024 10:47:23 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93f7d31sm19219847b3.135.2024.10.09.10.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 10:47:23 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Wed, 9 Oct 2024 10:47:20 -0700
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/28] cxl/pci: Delay event buffer allocation
+Message-ID: <ZwbBqNnKXfNMTGEF@fan>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-6-c261ee6eeded@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
- timer shutdown
-To: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
- x86@kernel.org, linux-pm@vger.kernel.org
-Cc: hpa@zytor.com, peterz@infradead.org, thorsten.blum@toblux.com,
- yuntao.wang@linux.dev, tony.luck@intel.com, len.brown@intel.com,
- srinivas.pandruvada@intel.com, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241009072001.509508-1-rui.zhang@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241009072001.509508-1-rui.zhang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-dcd-type2-upstream-v4-6-c261ee6eeded@intel.com>
 
-On 10/9/24 00:20, Zhang Rui wrote:
-> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-> index 6513c53c9459..d1006531729a 100644
-> --- a/arch/x86/kernel/apic/apic.c
-> +++ b/arch/x86/kernel/apic/apic.c
-> @@ -441,6 +441,10 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
->  	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
->  	apic_write(APIC_LVTT, v);
->  	apic_write(APIC_TMICT, 0);
+On Mon, Oct 07, 2024 at 06:16:12PM -0500, Ira Weiny wrote:
+> The event buffer does not need to be allocated if something has failed in
+> setting up event irq's.
+> 
+> In prep for adjusting event configuration for DCD events move the buffer
+> allocation to the end of the event configuration.
+> 
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
+
+> ---
+> Changes:
+> [iweiny: keep tags for early simple patch]
+> [Davidlohr, Jonathan, djiang: move to beginning of series]
+> 	[Dave feel free to pick this up if you like]
+> ---
+>  drivers/cxl/pci.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index 37164174b5fb..0ccd6fd98b9d 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -764,10 +764,6 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return 0;
+>  	}
+>  
+> -	rc = cxl_mem_alloc_event_buf(mds);
+> -	if (rc)
+> -		return rc;
+> -
+>  	rc = cxl_event_get_int_policy(mds, &policy);
+>  	if (rc)
+>  		return rc;
+> @@ -781,6 +777,10 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return -EBUSY;
+>  	}
+>  
+> +	rc = cxl_mem_alloc_event_buf(mds);
+> +	if (rc)
+> +		return rc;
 > +
-> +	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
-> +		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
+>  	rc = cxl_event_irqsetup(mds);
+>  	if (rc)
+>  		return rc;
+> 
+> -- 
+> 2.46.0
+> 
 
-One last thing, and this is a super nit.  We presumably have the actual
-APIC_LVTT value (v) sitting in a register already.  Is there any
-difference logically between a X86_FEATURE_TSC_DEADLINE_TIMER check and
-an APIC_LVTT check for APIC_LVT_TIMER_TSCDEADLINE?
-
-I suspect this will generate more compact code:
-
-	if (v & APIC_LVT_TIMER_TSCDEADLINE)
-		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
-
-Does it have any downsides?
-
-Oh, and how hot is this path?  Is this wrmsr() going to matter?  I
-presume it's pretty cheap because it's one of the special
-architecturally non-serializing WRMSRs.
+-- 
+Fan Ni
 
