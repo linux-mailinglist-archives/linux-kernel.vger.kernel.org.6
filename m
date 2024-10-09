@@ -1,83 +1,158 @@
-Return-Path: <linux-kernel+bounces-357172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D9B996CE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BF1996CE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E301F23DFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150A41F23C0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6BB199920;
-	Wed,  9 Oct 2024 13:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E5D199EA8;
+	Wed,  9 Oct 2024 13:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f5/KPgYw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdfACbuL"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64FF1946AA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4972B188722;
+	Wed,  9 Oct 2024 13:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482204; cv=none; b=CMoQKgRGIE88sauTTSvr2yKhvOawZINjTOgvufgGpqvMO4uYSvXN7YjiHdjBddFZ+lE6AG4auvZ1Zs++Aoo2myVnIKtniIvA8QQksk2Ssb6+tf02YsNXJFlwGGSDBbE5+VwA7MDQzf5wfgxTIcZzyzndCIcEdzDbgvaqZGV16R4=
+	t=1728482249; cv=none; b=UAjEOmdbZAFEAjOKZBJHy3XwOsgJWAaYQ4pKXV0Uainmay7KmDE6X9Xs5q2tusBBBt7hSNMn6hy6RxkVfI/nJLunzTXjkcCevg6tzy1d4NCcu4wmQ0JxbZSgQmKJR1DK++LYU2gQCLKa1wy3FxCxyqbjCP4bMyEoPQS8rESLG8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482204; c=relaxed/simple;
-	bh=f1WNeDQy81Nf04b9aTKMhVeGeJr6Ew198lgSZ1UNL6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OL0qvE0Sf/QEnUaNnzUJ6/xsAvhkMrZekKeLbMFy/Ybu9qCh5DuX5a/gd2TjeHF6nLjui8S/GHtcwqU+0Kag9aKUpzqbrRrJ00XQVeElr2wNYhr3r0v0Uk6XvP6M0kPsIB4gPiwOVR4Uen3xTxcxy7ga6t6DbWjtFbRA+Q8C4oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f5/KPgYw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F22C4CEC3;
-	Wed,  9 Oct 2024 13:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728482203;
-	bh=f1WNeDQy81Nf04b9aTKMhVeGeJr6Ew198lgSZ1UNL6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5/KPgYw2Yw6U2tUPnniHoYkaNHeHG7JXquqyK8Jl+3CC90uOYyVJrbuns7J3yYIh
-	 ZyQKltfNH4wGIhaNYYU3ZhjkjLjff0i+kdzf03po79SB+xdDIFnfL84G9Mymj9fffK
-	 PxOfPeSjUmQ3RADYCp7YZvHTUUi8zPwMUcxgzBxk=
-Date: Wed, 9 Oct 2024 15:56:40 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "cve@kernel.org" <cve@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: CVE-2024-42308: drm/amd/display: Check for NULL pointer
-Message-ID: <2024100917-launder-hamper-723b@gregkh>
-References: <2024081751-CVE-2024-42308-562d@gregkh>
- <2fc2ba4addfbe40f7de3a5dfb146a3bdd3fc3edf.camel@oracle.com>
+	s=arc-20240116; t=1728482249; c=relaxed/simple;
+	bh=X0LDCmpcnc1adz2fnYJm3D5QrEBMDrL3aPUwWCtc1TQ=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=YkUKctUhAR2q/oVeUOf+/riexQBNnM6aBqifNaauLK4TSs1NQoG+DtpEDS5EsQ7TpTGWLAh6huzCL2XojGaNoTrVwZWo5f/k0QH08eJKehd54mvGMSq/YpN65bpUwUa9Vh33sFemKPUZAWFBlTYCpfLMvNwSFbWYxkW6r1/qZik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdfACbuL; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbc14b3b09so10501356d6.1;
+        Wed, 09 Oct 2024 06:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728482247; x=1729087047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0n1Wq+38z4bNzMcF/qhs9zhsIpvH1Zsp4bf0q5tWWSY=;
+        b=WdfACbuLpC9i/zkrJbGPWwb82WcD8sLLkf76n+jt40Nr6qAOkbh699rQKHbyC0sgPc
+         n5n8hFze//KPRvNV5AcIPT3lqicIvrCTfKGGJJ2IUtU8nOynU9OWqHyVaRq4k+6yX8NY
+         AIsJaI6DV5y66fO+uz9F09RqpamMgSNdbfhmuOsd8/V+sb1bxr7CDESlMwOq2Y+DPqm+
+         Z7/vO63lmcljgrsJ9hUuS7s3gQrRxF1Tk2FPfVNEwNuiPwa6xGmkP5NlT8zxDpdHHtFr
+         E+5f0ozAtilAKcmmNzBu5QKYFeke+TEWvVtM0/p36CIwIfyZMwGyzUQ8HNiwMBZ6/t6L
+         Q5Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728482247; x=1729087047;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0n1Wq+38z4bNzMcF/qhs9zhsIpvH1Zsp4bf0q5tWWSY=;
+        b=Biavd1nTabGhcETSKFeEKkpvx8kmnsfdWnvBb/5tk2PdoEmhkI72Yzcc7jaP1wfNNg
+         YIdd2ShwwQ3WvHOMLCSHeY8ZwhXiPa2ePYBuGrHvYF8gqorcPpswt+LYAwHr0urdRtiW
+         2fcwqPEB0ZThi83DIhRkSu8uNIyUvqMq+D341gfCn8IZLPDVtAA7EWVm2nLsoCnVfapc
+         nXqOSxCCWSBgqAYbkoG1K3kwBCVbn2Wwe6qTtnhwHltBYGEFCBh90c2FdkgE2iryheXu
+         GzYzgVJvx2HNtQLId3XxyeSeZzpOGSOkD8lKPd5YaVRDlIv2y7xl7tWUPnJOiOticEPX
+         XBRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXqmYFO0rxLrkx7A2Dw2p87RU35TpmN3IBFcOvWKGN9LLwtO7ZF3Z2i6OxAgSullAkhuXoZrw2@vger.kernel.org, AJvYcCUiClVLhyzSH34RbtPW7Jw7Ds6gPXDv31nstBIQsbk/gLx+7kzSkc1R6RGV1WZv9mu10Rw=@vger.kernel.org, AJvYcCVdRMcsGB3jVRLoJfCifBuaLwSPsBlGCNaKpPN1vzAj18MeZ8Wjt9csEH0ndp1OhUGIle1IhsVH7R5N2bF51QBk@vger.kernel.org, AJvYcCWJyo5HxtjR1tGd6MrVtvOnUh6ZxbV+JZ6NFvenjxtyjXrXgbF3dZCuQGZXbJYH5z4OTaEOsLhAHtegEcyz@vger.kernel.org, AJvYcCXZmoHMKAQVUvOB0cbwCvtqN+QI+Fz4bXi17gwIJJNYF0CANRhwnezK5br2r/4Z43XfNYYMaPmeco0N@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMq8SZTpXbcOzD3G69LW4fp5LL1Q3sSdYpLs8JcQA22Vl0q6VL
+	6kGRQAc/xkM3Xj/lEcqFcwJM39GxpvyLej/i1KPdraPfWCsxdXSpmR5/pw==
+X-Google-Smtp-Source: AGHT+IFUArp5gUmYDVIuWKhH6zF8j9clE1t5vMCXq60kkQC+UxDtHZpBVpw09F8q0h35bvO2uTTdrQ==
+X-Received: by 2002:a05:6214:46a0:b0:6cb:bdf8:e736 with SMTP id 6a1803df08f44-6cbc95bafc2mr50228846d6.37.1728482247004;
+        Wed, 09 Oct 2024 06:57:27 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba476159bsm46166076d6.123.2024.10.09.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 06:57:26 -0700 (PDT)
+Date: Wed, 09 Oct 2024 09:57:25 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, 
+ linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, 
+ gur.stavi@huawei.com, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+Message-ID: <67068bc5283a3_1cca3129482@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241008-rss-v5-6-f3cf68df005d@daynix.com>
+References: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
+ <20241008-rss-v5-6-f3cf68df005d@daynix.com>
+Subject: Re: [PATCH RFC v5 06/10] tun: Introduce virtio-net hash reporting
+ feature
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fc2ba4addfbe40f7de3a5dfb146a3bdd3fc3edf.camel@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 11:01:59AM +0000, Siddh Raman Pant wrote:
-> On Sat, 17 Aug 2024 11:10:13 +0200, Greg Kroah-Hartman wrote:
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > drm/amd/display: Check for NULL pointer
-> > 
-> > [why & how]
-> > Need to make sure plane_state is initialized
-> > before accessing its members.
-> > 
-> > (cherry picked from commit 295d91cbc700651782a60572f83c24861607b648)
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-42308 to this issue.
+Akihiko Odaki wrote:
+> Allow the guest to reuse the hash value to make receive steering
+> consistent between the host and guest, and to save hash computation.
 > 
-> This commit is no-op / doesn't make any difference, as there is an
-> implicit NULL check rigth above it, as plane_state cannot be NULL
-> (checked at the start of function).
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> ---
+>  Documentation/networking/tuntap.rst |   7 +++
+>  drivers/net/Kconfig                 |   1 +
+>  drivers/net/tap.c                   |  45 ++++++++++++++--
+>  drivers/net/tun.c                   |  46 ++++++++++++----
+>  drivers/net/tun_vnet.h              | 102 +++++++++++++++++++++++++++++++-----
+>  include/linux/if_tap.h              |   2 +
+>  include/uapi/linux/if_tun.h         |  48 +++++++++++++++++
+>  7 files changed, 223 insertions(+), 28 deletions(-)
 > 
-> So this CVE should be invalid.
+> diff --git a/Documentation/networking/tuntap.rst b/Documentation/networking/tuntap.rst
+> index 4d7087f727be..86b4ae8caa8a 100644
+> --- a/Documentation/networking/tuntap.rst
+> +++ b/Documentation/networking/tuntap.rst
+> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it::
+>        return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+>    }
+>  
+> +3.4 Reference
+> +-------------
+> +
+> +``linux/if_tun.h`` defines the interface described below:
+> +
+> +.. kernel-doc:: include/uapi/linux/if_tun.h
+> +
+>  Universal TUN/TAP device driver Frequently Asked Question
+>  =========================================================
+>  
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 9920b3a68ed1..e2a7bd703550 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -395,6 +395,7 @@ config TUN
+>  	tristate "Universal TUN/TAP device driver support"
+>  	depends on INET
+>  	select CRC32
+> +	select SKB_EXTENSIONS
+>  	help
+>  	  TUN/TAP provides packet reception and transmission for user space
+>  	  programs.  It can be viewed as a simple Point-to-Point or Ethernet
+> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> index 9a34ceed0c2c..5e2fbe63ca47 100644
 
-Yeah, tricky code, I see why the static tools got this wrong.  I'll go
-invalidate this now, thanks for the report!
-
-greg k-h
+Merge the earlier tiny patch 2 into this one.
 
