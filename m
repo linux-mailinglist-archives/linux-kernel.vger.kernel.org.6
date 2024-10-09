@@ -1,343 +1,167 @@
-Return-Path: <linux-kernel+bounces-356206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022FE995DE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CDD995DE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 390ECB2101F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65211C21DE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E9613BADF;
-	Wed,  9 Oct 2024 02:37:23 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD4013A244;
+	Wed,  9 Oct 2024 02:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhZqrEQt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084A11C6BE;
-	Wed,  9 Oct 2024 02:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF31C6BE;
+	Wed,  9 Oct 2024 02:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728441442; cv=none; b=CQynom1QeyiZaSG/ybaF6W6yqaGhJkS69XXxX658DjwRgDuAMomMWtBIcKlKp4pN1eFqmU3ApwASLsAvFBTVYS3m+Xyd+v4lIi+53qXc1lbBWCQlsvu8Rfoo5GUwgaoradgajNIPp+V0zmQRPE316fMTxnEgtaOdNkNuKqW86oI=
+	t=1728441673; cv=none; b=L0MpWHHpG26Gkx/OUhLwT97KoiLjSkDnS4lduCyK4cDxN6RItbeHg+CLt31d/KMm8hRmXX84U9Ao/SLdJw6yPqTbr2ZROXY8ktU+9IJTSy+WlLvQUMFHHukrOhGjslPeC//DlTCbFUuIikLGOmIbtiTpG4zYcuT6kqZ7SC29XDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728441442; c=relaxed/simple;
-	bh=ke+cx/U8Sjvi4bxCZyHFXJr+dGotHmeW77I7vgAAiaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rhyCobiA0cPMVSj5RzsHFDHJhETYIwlornJ20bFpuLBWSmlRxluJWgEm7Wd1ZH3dr7y4tiFQkVlGckQRPgLFAcFtxzVIF4FT7Nva3q8fBDqzExKYGNrXCmrIZv4c6lTKOIhoIcZKKHqG57HyRi1bskZR3wBav5WhDetc+ERvgh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XNcTg56XYz20pj7;
-	Wed,  9 Oct 2024 10:36:39 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id D7A7E1A016C;
-	Wed,  9 Oct 2024 10:37:15 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 9 Oct
- 2024 10:37:14 +0800
-Message-ID: <f8a1f85b-c4bf-4c38-81bf-728f72a4f2fe@huawei.com>
-Date: Wed, 9 Oct 2024 10:37:12 +0800
+	s=arc-20240116; t=1728441673; c=relaxed/simple;
+	bh=tWcCI7B/nBfXzxAzaQyAbDJ9sH6IVxl0E8KQwMd/1Q8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KpI6VsE2o1bwEJ0yCRDhYdiRkzqhHnuK2g9osmgy7WjsxzojWl2D+oYE7BQXTLzalzARjppKAF4oF5x5NEMfXrTNaQ91Iwli12dDSQEmJQui1grjedmE0VNnvOOD5ZkUaVbUFKaQ7+77tH+OiAkP7LMD2uHRFdqQ3amIkKkfLjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhZqrEQt; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99791e4defso70087766b.0;
+        Tue, 08 Oct 2024 19:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728441670; x=1729046470; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/Ss/99gPuDRFIjlaq/q3W+/ZoBlmKmsOT2xO3zXC4o=;
+        b=mhZqrEQtbJfXBww2C7/qTSpgiet5Hp/LnEc6fWuTzLFoLS2F+H1d4nzY/WMjNAf7Xe
+         i2TDTQUMasnYgsOuzNgxCdK6mAoDueEDBo78etmWEuIH7EbMJobXtXhjdb7TzHqFaAIo
+         Ey3hiGjKlNVEv1ofSXd8CCc6KKDPtcAPefXJJbtbWQcV+fqg4x/QH0xeCNLaF7TyCa82
+         bEjmGGl7WAxS+RfT1hH/m6LBEkA2mRrd6GTr6oyC5jgrDYHtdXTgamt8zy0FJrEHeB9D
+         54jSaZ3TNdbKTdAJrgetalTv2AD7yfsbAV+HCOJWOO80uWUGQ+9AnrihCUZ8fD8sxHUM
+         1aFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728441670; x=1729046470;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/Ss/99gPuDRFIjlaq/q3W+/ZoBlmKmsOT2xO3zXC4o=;
+        b=AMoF4CpwpcNon/XlS90mFFx7K7JmrUGj3IL1EOY6MW/blQ3lnG+0gEhBruCL+c/O8m
+         x1GlFEBYJu/FN9/pVh7/lS2j87O+qPnHQW5eeByEAMlmjQKfKo36KWdIrZJW+0Fdtafs
+         plPWlGa43AtZSPPBaTkkxfxwqKVLBdcg35WyeBYJEaGpfoWKitG2AnxF53Ta554AoaOc
+         TWsqFowz7zqjsI9QMONA0G/NCNilBo1PkmLpkO/TNpuQ1mBV3c3bGPKWDI6w3cj56vMC
+         gIlY0ss259+/mbVrQXUAaHTrWSUgil+oq2t2M04hu3SvTQbczMWjTr1vW/A2kMEf5Su+
+         7IFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPvbQl8/ls2uEsOUCvCs+70G0M0m6+hGsiJmKEeUM5yHYywKQMEvHYfHAVLiZlyHK9ipWMbybDKe9SCI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9/3pr0MWBZboXmcTFTFCtYg9YhKs78SE8xLC/3lKHBwvD50I1
+	V+V5OqTL1NNa1wwJIBe+MhPHRq7sU4amrxOGDA0FWDg4vJHSlYzv6ToSsf/7i4V+Z9CbjnDIi1w
+	hTJl3wHrJu74YMoLaKcKcBPjfuUmA30Qw6URb8D5A
+X-Google-Smtp-Source: AGHT+IHk1Dxo1jP+8mNvf0VnFXCfSvCSqXGfB1r6qIrhNfWdAP1tlrASuyP9kfDVwOUAbkNMQDnt97BPxCuaYbnRPsA=
+X-Received: by 2002:a05:6402:1f4f:b0:5c5:da5e:68e with SMTP id
+ 4fb4d7f45d1cf-5c91d527013mr910764a12.3.1728441669777; Tue, 08 Oct 2024
+ 19:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/11] Enable haltpoll on arm64
-To: Ankur Arora <ankur.a.arora@oracle.com>, <linux-pm@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <pbonzini@redhat.com>,
-	<wanpengli@tencent.com>, <vkuznets@redhat.com>, <rafael@kernel.org>,
-	<daniel.lezcano@linaro.org>, <peterz@infradead.org>, <arnd@arndb.de>,
-	<lenb@kernel.org>, <mark.rutland@arm.com>, <harisokn@amazon.com>,
-	<mtosatti@redhat.com>, <sudeep.holla@arm.com>, <cl@gentwo.org>,
-	<misono.tomohiro@fujitsu.com>, <maobibo@loongson.cn>,
-	<joao.m.martins@oracle.com>, <boris.ostrovsky@oracle.com>,
-	<konrad.wilk@oracle.com>, Jie Zhan <zhanjie9@hisilicon.com>,
-	<lihuisong@huawei.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+References: <20241008064849.1814829-1-haisuwang@tencent.com> <20241008161228.GA796369@zen.localdomain>
+In-Reply-To: <20241008161228.GA796369@zen.localdomain>
+From: hs wang <iamhswang@gmail.com>
+Date: Wed, 9 Oct 2024 10:40:57 +0800
+Message-ID: <CALv5hoR5zq0doKyBTCu0_0K5cqAvvCw=8V+JDjnFNcqCeetgtQ@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix the length of reserved qgroup to free
+To: Boris Burkov <boris@bur.io>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com, 
+	dsterba@suse.com, wqu@suse.com, linux-kernel@vger.kernel.org, 
+	Haisu Wang <haisuwang@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Transfer-Encoding: quoted-printable
 
+Boris Burkov <boris@bur.io> =E4=BA=8E2024=E5=B9=B410=E6=9C=889=E6=97=A5=E5=
+=91=A8=E4=B8=89 00:12=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, Oct 08, 2024 at 02:48:46PM +0800, iamhswang@gmail.com wrote:
+> > From: Haisu Wang <haisuwang@tencent.com>
+> >
+> > The dealloc flag may be cleared and the extent won't reach the disk
+> > in cow_file_range when errors path. The reserved qgroup space is
+> > freed in commit 30479f31d44d ("btrfs: fix qgroup reserve leaks in
+> > cow_file_range"). However, the length of untouched region to free
+> > need to be adjusted with the region size.
+> >
+> > Fixes: 30479f31d44d ("btrfs: fix qgroup reserve leaks in cow_file_range=
+")
+> > Signed-off-by: Haisu Wang <haisuwang@tencent.com>
+>
+> Good catch and fix, thank you!
+> Reviewed-by: Boris Burkov <boris@bur.io>
+>
+Thanks for the review.
 
+> Can you please share more information about how you reproduced and
+> tested this issue for the fix? In one of the other emails in the chain,
+> you also mentioned a CVE, so explaining the specific impact of the bug
+> is helpful too.
+>
 
-On 2024/9/26 7:24, Ankur Arora wrote:
-> This patchset enables the cpuidle-haltpoll driver and its namesake
-> governor on arm64. This is specifically interesting for KVM guests by
-> reducing IPC latencies.
-> 
-> Comparing idle switching latencies on an arm64 KVM guest with 
-> perf bench sched pipe:
-> 
->                                      usecs/op       %stdev   
-> 
->   no haltpoll (baseline)               13.48       +-  5.19%
->   with haltpoll                         6.84       +- 22.07%
-> 
-> 
-> No change in performance for a similar test on x86:
-> 
->                                      usecs/op        %stdev   
-> 
->   haltpoll w/ cpu_relax() (baseline)     4.75      +-  1.76%
->   haltpoll w/ smp_cond_load_relaxed()    4.78      +-  2.31%
-> 
-> Both sets of tests were on otherwise idle systems with guest VCPUs
-> pinned to specific PCPUs. One reason for the higher stdev on arm64
-> is that trapping of the WFE instruction by the host KVM is contingent
-> on the number of tasks on the runqueue.
-> 
-> Tomohiro Misono and Haris Okanovic also report similar latency
-> improvements on Grace and Graviton systems (for v7) [1] [2].
-> 
-> The patch series is organized in three parts: 
-> 
->  - patch 1, reorganizes the poll_idle() loop, switching to
->    smp_cond_load_relaxed() in the polling loop.
->    Relatedly patches 2, 3 mangle the config option ARCH_HAS_CPU_RELAX,
->    renaming it to ARCH_HAS_OPTIMIZED_POLL.
-> 
->  - patches 4-6 reorganize the haltpoll selection and init logic
->    to allow architecture code to select it. 
-> 
->  - and finally, patches 7-11 add the bits for arm64 support.
-> 
-> What is still missing: this series largely completes the haltpoll side
-> of functionality for arm64. There are, however, a few related areas
-> that still need to be threshed out:
-> 
->  - WFET support: WFE on arm64 does not guarantee that poll_idle()
->    would terminate in halt_poll_ns. Using WFET would address this.
->  - KVM_NO_POLL support on arm64
->  - KVM TWED support on arm64: allow the host to limit time spent in
->    WFE.
-> 
-> 
-> Changelog:
-> 
-> v8: No logic changes. Largely respin of v7, with changes
-> noted below:
-> 
->  - move selection of ARCH_HAS_OPTIMIZED_POLL on arm64 to its
->    own patch.
->    (patch-9 "arm64: select ARCH_HAS_OPTIMIZED_POLL")
->    
->  - address comments simplifying arm64 support (Will Deacon)
->    (patch-11 "arm64: support cpuidle-haltpoll")
-> 
-> v7: No significant logic changes. Mostly a respin of v6.
-> 
->  - minor cleanup in poll_idle() (Christoph Lameter)
->  - fixes conflicts due to code movement in arch/arm64/kernel/cpuidle.c
->    (Tomohiro Misono)
-> 
-> v6:
-> 
->  - reordered the patches to keep poll_idle() and ARCH_HAS_OPTIMIZED_POLL
->    changes together (comment from Christoph Lameter)
->  - threshes out the commit messages a bit more (comments from Christoph
->    Lameter, Sudeep Holla)
->  - also rework selection of cpuidle-haltpoll. Now selected based
->    on the architectural selection of ARCH_CPUIDLE_HALTPOLL.
->  - moved back to arch_haltpoll_want() (comment from Joao Martins)
->    Also, arch_haltpoll_want() now takes the force parameter and is
->    now responsible for the complete selection (or not) of haltpoll.
->  - fixes the build breakage on i386
->  - fixes the cpuidle-haltpoll module breakage on arm64 (comment from
->    Tomohiro Misono, Haris Okanovic)
-> 
-> 
-> v5:
->  - rework the poll_idle() loop around smp_cond_load_relaxed() (review
->    comment from Tomohiro Misono.)
->  - also rework selection of cpuidle-haltpoll. Now selected based
->    on the architectural selection of ARCH_CPUIDLE_HALTPOLL.
->  - arch_haltpoll_supported() (renamed from arch_haltpoll_want()) on
->    arm64 now depends on the event-stream being enabled.
->  - limit POLL_IDLE_RELAX_COUNT on arm64 (review comment from Haris Okanovic)
->  - ARCH_HAS_CPU_RELAX is now renamed to ARCH_HAS_OPTIMIZED_POLL.
-> 
-> v4 changes from v3:
->  - change 7/8 per Rafael input: drop the parens and use ret for the final check
->  - add 8/8 which renames the guard for building poll_state
-> 
-> v3 changes from v2:
->  - fix 1/7 per Petr Mladek - remove ARCH_HAS_CPU_RELAX from arch/x86/Kconfig
->  - add Ack-by from Rafael Wysocki on 2/7
-> 
-> v2 changes from v1:
->  - added patch 7 where we change cpu_relax with smp_cond_load_relaxed per PeterZ
->    (this improves by 50% at least the CPU cycles consumed in the tests above:
->    10,716,881,137 now vs 14,503,014,257 before)
->  - removed the ifdef from patch 1 per RafaelW
-> 
-> Please review.
-> 
-> [1] https://lore.kernel.org/lkml/TY3PR01MB111481E9B0AF263ACC8EA5D4AE5BA2@TY3PR01MB11148.jpnprd01.prod.outlook.com/
-> [2] https://lore.kernel.org/lkml/104d0ec31cb45477e27273e089402d4205ee4042.camel@amazon.com/
-> 
-> Ankur Arora (6):
->   cpuidle: rename ARCH_HAS_CPU_RELAX to ARCH_HAS_OPTIMIZED_POLL
->   cpuidle-haltpoll: condition on ARCH_CPUIDLE_HALTPOLL
->   arm64: idle: export arch_cpu_idle
->   arm64: select ARCH_HAS_OPTIMIZED_POLL
->   cpuidle/poll_state: limit POLL_IDLE_RELAX_COUNT on arm64
->   arm64: support cpuidle-haltpoll
-> 
-> Joao Martins (4):
->   Kconfig: move ARCH_HAS_OPTIMIZED_POLL to arch/Kconfig
->   cpuidle-haltpoll: define arch_haltpoll_want()
->   governors/haltpoll: drop kvm_para_available() check
->   arm64: define TIF_POLLING_NRFLAG
-> 
-> Mihai Carabas (1):
->   cpuidle/poll_state: poll via smp_cond_load_relaxed()
-> 
->  arch/Kconfig                              |  3 +++
->  arch/arm64/Kconfig                        |  7 +++++++
->  arch/arm64/include/asm/cpuidle_haltpoll.h | 24 +++++++++++++++++++++++
->  arch/arm64/include/asm/thread_info.h      |  2 ++
->  arch/arm64/kernel/idle.c                  |  1 +
->  arch/x86/Kconfig                          |  5 ++---
->  arch/x86/include/asm/cpuidle_haltpoll.h   |  1 +
->  arch/x86/kernel/kvm.c                     | 13 ++++++++++++
->  drivers/acpi/processor_idle.c             |  4 ++--
->  drivers/cpuidle/Kconfig                   |  5 ++---
->  drivers/cpuidle/Makefile                  |  2 +-
->  drivers/cpuidle/cpuidle-haltpoll.c        | 12 +-----------
->  drivers/cpuidle/governors/haltpoll.c      |  6 +-----
->  drivers/cpuidle/poll_state.c              | 22 +++++++++++++++------
->  drivers/idle/Kconfig                      |  1 +
->  include/linux/cpuidle.h                   |  2 +-
->  include/linux/cpuidle_haltpoll.h          |  5 +++++
->  17 files changed, 83 insertions(+), 32 deletions(-)
->  create mode 100644 arch/arm64/include/asm/cpuidle_haltpoll.h
-> 
+Instead of hitting this in the real world, I get this while backporting the
+CVE-2024-46733 fixes. I need to understand the full story and the extent
+reservation/clean up context, found the free data region mismatch to the
+dealloc region and the potential risky. So i write the fix of the inconsist=
+ent
+size.
 
-Hi Ankur,
+> As far as I can tell, we risk freeing too much space past the real
+> desired range if start gets bumped before this free, which could lead to
+> prematurely freeing some other rsv marked data past end. This naturally
+> leads to incorrect accounting, And I think would allow us to reserve
+> this same range again. Though perhaps delalloc extent range stuff would
+> prevent that. Between that, and the changesets gating most of the qgroup
+> freeing, it's hard to actually see what happens :)
+>
+> Long ramble short: do you have a reproducer?
+>
 
-Thanks for the patches!
+Sadly, i don't have a reproducer yet.
 
-We have tested these patches on our machine, with an adaptation of ACPI LPI
-states rather than c-states.
+In another mail of the chain, Wenruo suggested it is possible to
+polish the usage
+of @startand @extent_reserved to make it more clear/safe. I will check more=
+ to
+finish this in another patch, together with generic fstest at least.
 
-Include polling state, there would be three states to get in. Comparing idle
-switching latencies of different state with perf bench sched pipe:
+Thanks,
+Haisu Wang
 
-                                     usecs/op       %stdev   
-
-  state0(polling state)                7.36       +-  0.35%
-  state1                               8.78       +-  0.46%
-  state2                              77.32       +-  5.50%
-  
-It turns out that it works on our machine.
-
-Tested-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-
-The adaptation of ACPI LPI states is shown below as a patch. Feel free to
-include this patch as part of your series, or I can also send it out after
-your series being merged.
-
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-
-ACPI: processor_idle: Support polling state for LPI
-
-Initialize an optional polling state besides LPI states.
-
-Wrap up a new enter method to correctly reflect the actual entered state
-when the polling state is enabled.
-
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
----
- drivers/acpi/processor_idle.c | 39 ++++++++++++++++++++++++++++++-----
- 1 file changed, 34 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 44096406d65d..d154b5d77328 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -1194,20 +1194,46 @@ static int acpi_idle_lpi_enter(struct cpuidle_device *dev,
- 	return -EINVAL;
- }
- 
-+/* To correctly reflect the entered state if the poll state is enabled. */
-+static int acpi_idle_lpi_enter_with_poll_state(struct cpuidle_device *dev,
-+			       struct cpuidle_driver *drv, int index)
-+{
-+	int entered_state;
-+
-+	if (unlikely(index < 1))
-+		return -EINVAL;
-+
-+	entered_state = acpi_idle_lpi_enter(dev, drv, index - 1);
-+	if (entered_state < 0)
-+		return entered_state;
-+
-+	return entered_state + 1;
-+}
-+
- static int acpi_processor_setup_lpi_states(struct acpi_processor *pr)
- {
--	int i;
-+	int i, count;
- 	struct acpi_lpi_state *lpi;
- 	struct cpuidle_state *state;
- 	struct cpuidle_driver *drv = &acpi_idle_driver;
-+	typeof(state->enter) enter_method;
- 
- 	if (!pr->flags.has_lpi)
- 		return -EOPNOTSUPP;
- 
-+	if (IS_ENABLED(CONFIG_ARCH_HAS_OPTIMIZED_POLL)) {
-+		cpuidle_poll_state_init(drv);
-+		count = 1;
-+		enter_method = acpi_idle_lpi_enter_with_poll_state;
-+	} else {
-+		count = 0;
-+		enter_method = acpi_idle_lpi_enter;
-+	}
-+
- 	for (i = 0; i < pr->power.count && i < CPUIDLE_STATE_MAX; i++) {
- 		lpi = &pr->power.lpi_states[i];
- 
--		state = &drv->states[i];
-+		state = &drv->states[count];
- 		snprintf(state->name, CPUIDLE_NAME_LEN, "LPI-%d", i);
- 		strscpy(state->desc, lpi->desc, CPUIDLE_DESC_LEN);
- 		state->exit_latency = lpi->wake_latency;
-@@ -1215,11 +1241,14 @@ static int acpi_processor_setup_lpi_states(struct acpi_processor *pr)
- 		state->flags |= arch_get_idle_state_flags(lpi->arch_flags);
- 		if (i != 0 && lpi->entry_method == ACPI_CSTATE_FFH)
- 			state->flags |= CPUIDLE_FLAG_RCU_IDLE;
--		state->enter = acpi_idle_lpi_enter;
--		drv->safe_state_index = i;
-+		state->enter = enter_method;
-+		drv->safe_state_index = count;
-+		count++;
-+		if (count == CPUIDLE_STATE_MAX)
-+			break;
- 	}
- 
--	drv->state_count = i;
-+	drv->state_count = count;
- 
- 	return 0;
- }
--- 
-2.33.0
-
-
-
+> > ---
+> >  fs/btrfs/inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> > index b0ad46b734c3..5eefa2318fa8 100644
+> > --- a/fs/btrfs/inode.c
+> > +++ b/fs/btrfs/inode.c
+> > @@ -1592,7 +1592,7 @@ static noinline int cow_file_range(struct btrfs_i=
+node *inode,
+> >               clear_bits |=3D EXTENT_CLEAR_DATA_RESV;
+> >               extent_clear_unlock_delalloc(inode, start, end, locked_fo=
+lio,
+> >                                            &cached, clear_bits, page_op=
+s);
+> > -             btrfs_qgroup_free_data(inode, NULL, start, cur_alloc_size=
+, NULL);
+> > +             btrfs_qgroup_free_data(inode, NULL, start, end - start + =
+1, NULL);
+> >       }
+> >       return ret;
+> >  }
+> > --
+> > 2.39.3
+> >
 
