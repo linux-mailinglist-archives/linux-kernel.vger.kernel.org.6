@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-357678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E669973F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA38B9973F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CEE11F2648F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B317E287859
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA881E1A37;
-	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F471E1C06;
+	Wed,  9 Oct 2024 18:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxB+ZOsU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIK/bB2Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D2A1E1330;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CCD1E1A07;
 	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496976; cv=none; b=tFZfeiPTN5/vor2e9JSgJWuojFRakjepZGetSufC28B4Rw5QF9ulddbTnl5By+bAGNoaI+HoZS45+unfc4+py9GX/mXk89KtQXA0E4arkQ4cSfld1arngOZisnykfMKjqrSg4ggpGCVd+0SQQVvnemQkvzGrC1bhqrasWtuhS9M=
+	t=1728496976; cv=none; b=JNM2MRTD27o5XS83HtCCZCy9PWpY0L8IORDq41EomdqSdgC6eqcA5miIuFqT/eQctwiqlMQMkf/IGO8oOMh0a69qGzWbvGqegTrPX5jzHQfPjD1EDoQS5OZocXGjEdwWFZ7XXZoG6ut92FAonZsmUOaL9L5ugcQAqfPfTKKqHGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728496976; c=relaxed/simple;
-	bh=hlVg4FxJvZjim3cclQmUFm9AlIKDKpHkyjXaet4fHak=;
+	bh=oFO/7qMuKGNQ5tH6biPfmQ7RINtkm2aVrrRixQVm2/A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OHb/AZ05oHa/581uIjo0mt8ttZX6NLLr0NXgYPsBJjFCZmyeXzawUf83h7BTmhk6H6lfirwNTop/LWFKa2lvqVimmTElepFf3sYSCI4Y8Hvt9mOefy+TyAnc4ACf3rYhK6AkvW8Z3ajs04R9+n9Uxw1tjmKPkNA5rc7AdAxX0Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxB+ZOsU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BA8C4CED3;
+	 MIME-Version; b=t7BJDail+b25Olaw4Mx9br4R09kmSKdZK9zxzP3CDF0sbGzholqA4eCJfZ/Cg8LAi2zFZeZWnmT2kWAWDvlxWBGn5f1DgL5c4f7Ur3nheaL82Iguj5gnwbByphciQ+IlkL2ktfF1gWd0NcEzhwpxNPnc9nIFeyFDJHOW6UnGJHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIK/bB2Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E632C4CED2;
 	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1728496976;
-	bh=hlVg4FxJvZjim3cclQmUFm9AlIKDKpHkyjXaet4fHak=;
+	bh=oFO/7qMuKGNQ5tH6biPfmQ7RINtkm2aVrrRixQVm2/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MxB+ZOsUeIBNIEItVwZ6Q8RH+xmkzldz/yfwUaEGSwgCHfI/Tgxnz7C3Ce1WCASvp
-	 jAdeJIz/K1dzPaUpjmedqC7cxIFXrxFTYN2XoiNE/TLqG3dQSmXOqjeSa39iNVwBTL
-	 pPdcKxCuX5yTZ59kK5dhekImu+daBXMwD9RZUHzNT+8o4p/R+FKahrZc0NrPR5pbNk
-	 oIn2OQbS2y2ztJyRz/2NXE0DXgJlgv7LDZsHM/N1WxMZTQz0R7GBhhFPXn97ZIj7Z2
-	 64OOA9Aid/ih3wlIVM1SUsq0YsBpoH7ZpXLn+p6q6LZGZEDzqCs867wU9TY1xIF0XS
-	 4PMqbP4n5rcpw==
+	b=nIK/bB2QCU64nmffD0sqhTZlfydtXU1yOXRCqwI6I/aT1CXu4TX7AXx/e8Nv3jshm
+	 whwpQ66RfG6wCRT1RbR0j7ZOJ1AVLxhk6eIuBjTilVrJzWDAETAYAvlz097PAbeopv
+	 K5Qw/Wx/5qXHCvl1NBSAKovpp8MjHMQXFvTNZdfzGZib5XRlgJppWNPyz2jI1TJdhp
+	 ptT0pIb3dygH+SZmefnjROwsDNzXrhgYAlqpHGyOkyiklvSoNOXilZ4ZTekiEYpGev
+	 IDS4yolkqQs7MXmD6MBi5GhnjkMNMAFWk4PxytelgiHLswC/qdUAbpgWvv/XeuFxWG
+	 wQVM0KMxchtsA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C7993CE0B68; Wed,  9 Oct 2024 11:02:55 -0700 (PDT)
+	id CA5CECE0BB1; Wed,  9 Oct 2024 11:02:55 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: frederic@kernel.org,
 	rcu@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 2/5] torture: Add --no-affinity parameter to kvm.sh
-Date: Wed,  9 Oct 2024 11:02:50 -0700
-Message-Id: <20241009180253.777965-2-paulmck@kernel.org>
+Subject: [PATCH rcu 3/5] refscale: Correct affinity check
+Date: Wed,  9 Oct 2024 11:02:51 -0700
+Message-Id: <20241009180253.777965-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
 References: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
@@ -63,111 +63,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In performance tests, it can be counter-productive to spread torture-test
-guest OSes across sockets.  Plus the experimenter might have ideas about
-what CPUs individual guest OSes are to run on.  This commit therefore
-adds a --no-affinity parameter to kvm.sh to prevent it from running
-taskset on its guest OSes.
+The current affinity check works fine until there are more reader
+processes than CPUs, at which point the affinity check is looking for
+non-existent CPUs.  This commit therefore applies the same modulus to
+the check as is present in the set_cpus_allowed_ptr() call.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- .../rcutorture/bin/kvm-test-1-run-batch.sh    | 43 ++++++++++---------
- tools/testing/selftests/rcutorture/bin/kvm.sh |  6 +++
- 2 files changed, 29 insertions(+), 20 deletions(-)
+ kernel/rcu/refscale.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
-index c3808c490d92d..f87046b702d88 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
-@@ -56,27 +56,30 @@ do
- 	echo > $i/kvm-test-1-run-qemu.sh.out
- 	export TORTURE_AFFINITY=
- 	kvm-get-cpus-script.sh $T/cpuarray.awk $T/cpubatches.awk $T/cpustate
--	cat << '	___EOF___' >> $T/cpubatches.awk
--	END {
--		affinitylist = "";
--		if (!gotcpus()) {
--			print "echo No CPU-affinity information, so no taskset command.";
--		} else if (cpu_count !~ /^[0-9][0-9]*$/) {
--			print "echo " scenario ": Bogus number of CPUs (old qemu-cmd?), so no taskset command.";
--		} else {
--			affinitylist = nextcpus(cpu_count);
--			if (!(affinitylist ~ /^[0-9,-][0-9,-]*$/))
--				print "echo " scenario ": Bogus CPU-affinity information, so no taskset command.";
--			else if (!dumpcpustate())
--				print "echo " scenario ": Could not dump state, so no taskset command.";
--			else
--				print "export TORTURE_AFFINITY=" affinitylist;
-+	if test -z "${TORTURE_NO_AFFINITY}"
-+	then
-+		cat << '		___EOF___' >> $T/cpubatches.awk
-+		END {
-+			affinitylist = "";
-+			if (!gotcpus()) {
-+				print "echo No CPU-affinity information, so no taskset command.";
-+			} else if (cpu_count !~ /^[0-9][0-9]*$/) {
-+				print "echo " scenario ": Bogus number of CPUs (old qemu-cmd?), so no taskset command.";
-+			} else {
-+				affinitylist = nextcpus(cpu_count);
-+				if (!(affinitylist ~ /^[0-9,-][0-9,-]*$/))
-+					print "echo " scenario ": Bogus CPU-affinity information, so no taskset command.";
-+				else if (!dumpcpustate())
-+					print "echo " scenario ": Could not dump state, so no taskset command.";
-+				else
-+					print "export TORTURE_AFFINITY=" affinitylist;
-+			}
- 		}
--	}
--	___EOF___
--	cpu_count="`grep '# TORTURE_CPU_COUNT=' $i/qemu-cmd | sed -e 's/^.*=//'`"
--	affinity_export="`awk -f $T/cpubatches.awk -v cpu_count="$cpu_count" -v scenario=$i < /dev/null`"
--	$affinity_export
-+		___EOF___
-+		cpu_count="`grep '# TORTURE_CPU_COUNT=' $i/qemu-cmd | sed -e 's/^.*=//'`"
-+		affinity_export="`awk -f $T/cpubatches.awk -v cpu_count="$cpu_count" -v scenario=$i < /dev/null`"
-+		$affinity_export
-+	fi
- 	kvm-test-1-run-qemu.sh $i >> $i/kvm-test-1-run-qemu.sh.out 2>&1 &
- done
- for i in $runfiles
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
-index 7af73ddc148d1..42e5e8597a1a6 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
-@@ -42,6 +42,7 @@ TORTURE_JITTER_STOP=""
- TORTURE_KCONFIG_KASAN_ARG=""
- TORTURE_KCONFIG_KCSAN_ARG=""
- TORTURE_KMAKE_ARG=""
-+TORTURE_NO_AFFINITY=""
- TORTURE_QEMU_MEM=512
- torture_qemu_mem_default=1
- TORTURE_REMOTE=
-@@ -82,6 +83,7 @@ usage () {
- 	echo "       --kmake-arg kernel-make-arguments"
- 	echo "       --mac nn:nn:nn:nn:nn:nn"
- 	echo "       --memory megabytes|nnnG"
-+	echo "       --no-affinity"
- 	echo "       --no-initrd"
- 	echo "       --qemu-args qemu-arguments"
- 	echo "       --qemu-cmd qemu-system-..."
-@@ -220,6 +222,9 @@ do
- 		torture_qemu_mem_default=
- 		shift
- 		;;
-+	--no-affinity)
-+		TORTURE_NO_AFFINITY="no-affinity"
-+		;;
- 	--no-initrd)
- 		TORTURE_INITRD=""; export TORTURE_INITRD
- 		;;
-@@ -417,6 +422,7 @@ TORTURE_KCONFIG_KASAN_ARG="$TORTURE_KCONFIG_KASAN_ARG"; export TORTURE_KCONFIG_K
- TORTURE_KCONFIG_KCSAN_ARG="$TORTURE_KCONFIG_KCSAN_ARG"; export TORTURE_KCONFIG_KCSAN_ARG
- TORTURE_KMAKE_ARG="$TORTURE_KMAKE_ARG"; export TORTURE_KMAKE_ARG
- TORTURE_MOD="$TORTURE_MOD"; export TORTURE_MOD
-+TORTURE_NO_AFFINITY="$TORTURE_NO_AFFINITY"; export TORTURE_NO_AFFINITY
- TORTURE_QEMU_CMD="$TORTURE_QEMU_CMD"; export TORTURE_QEMU_CMD
- TORTURE_QEMU_INTERACTIVE="$TORTURE_QEMU_INTERACTIVE"; export TORTURE_QEMU_INTERACTIVE
- TORTURE_QEMU_MAC="$TORTURE_QEMU_MAC"; export TORTURE_QEMU_MAC
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index 639d1cfc657b2..af32331ef645a 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -863,7 +863,7 @@ ref_scale_reader(void *arg)
+ 		goto end;
+ 
+ 	// Make sure that the CPU is affinitized appropriately during testing.
+-	WARN_ON_ONCE(raw_smp_processor_id() != me);
++	WARN_ON_ONCE(raw_smp_processor_id() != me % nr_cpu_ids);
+ 
+ 	WRITE_ONCE(rt->start_reader, 0);
+ 	if (!atomic_dec_return(&n_started))
 -- 
 2.40.1
 
