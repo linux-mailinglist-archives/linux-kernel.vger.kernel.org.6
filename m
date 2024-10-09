@@ -1,194 +1,183 @@
-Return-Path: <linux-kernel+bounces-356496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6CE9961EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:10:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EAF99615D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386651F2284A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B59D1C21E48
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84487188917;
-	Wed,  9 Oct 2024 08:10:17 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF8183CD1;
+	Wed,  9 Oct 2024 07:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="o+cdpHiA"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61542187FEA;
-	Wed,  9 Oct 2024 08:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558E4181D00
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461417; cv=none; b=gkipsDNp7qeZyoNXljfz1VJN0yJsmDT5v1scHTMsdOvdBAW0taqmIGcPw+3ZbVkuu/s+0Bv1N074Mqlu1/rBOEWjCuq8Su7zhWC8RYiD21wjaK/biGWYfrdYUB3oNPJOLuYfYE4Wq9Rr0Gu9WORb4PkzTIZed/k/t4wasDlC/bc=
+	t=1728460060; cv=none; b=PftKz4EEzUhLywuMqv0VEcdfkl+mmIfZzZW4LKz+U8kBfCgro+cC61PET5p0Qn2bGmUcVPBfeueDRsfz5hkwckRg/LmkPP5nRoAGEviKVImd1QPIecwc92SOC3zEtM4hvKI0jo1C2Cujy6ZP9509zDzvz2og6Q/U3+7w//uaJ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461417; c=relaxed/simple;
-	bh=tFE5nv9zTJEDkzyKc8O9At/Af8djsSGyqcmqplt/6pI=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=nmfp3Z/9SxTxttWonXez5nmIIs/jJ+06NN4zrbneFCqt2eGp8aR5XCTwCb7PXybp8t7gkr2uw2Aad4n9S9sjse30MPfSx9OlQVK0titbvlCD7SIJ8BoGzIZe5ZXWKTfxaf44nCeVFbFPvqRjXz2RrFGFjugTa2l28UbamaIOS5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 124A41A27F8;
-	Wed,  9 Oct 2024 10:10:08 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CEA541A223E;
-	Wed,  9 Oct 2024 10:10:07 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 71A87183F0C0;
-	Wed,  9 Oct 2024 16:10:06 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chancel.liu@nxp.com
-Subject: [PATCH 2/2] ASoC: imx-card: Add CS42888 support
-Date: Wed,  9 Oct 2024 15:46:44 +0800
-Message-Id: <1728460004-364-3-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1728460004-364-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1728460004-364-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728460060; c=relaxed/simple;
+	bh=M3yxsY+9PPnN46n9uKc3CclIdd+jGD1Dvn1W9uL3vZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pj676/183SWOf+68jkC+1R6KKmyQA6mT8GFSdl0jSSHH9TYZQJXmzP3EFfOdjEtS2jfAcFUr38thzqjMuPhyCVfyTVSWDHZrrnNLjggZxWJiXFyX0dDY/UqbuGKrqjTZCie1yjvLbnLa4QsH6Pd2xajomHfouqyBpd5ZVhNjGx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=o+cdpHiA; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 73F483F5B5
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1728460048;
+	bh=64u7S06vuCARV2d1jETcvXWsb00VtP72rN9+doc72U8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=o+cdpHiAtVvX2YPnHUemaTziKTAM/meku++JoaUO/0+8dpV41bAfwBdcwqBy+9+Ud
+	 0kD1s0Zf2Ndek84RjeJt2udNO/5E1Vxt1uAfwVzcx9iS3YCqqNHRsL1oGGRvW/lA3c
+	 Kv+GKwKlxqSb83MFYuNm/wZxQ6bV/uqFHSYhAufF5ul+2AXc+oCfx9akwusZskdfaH
+	 ZPv+PqDTwp8VijuGsoGo3Zy4MZDjVqppFoJNxz05Bop5acVxqtjkEE3jDS8F+oUalx
+	 0W1zIuSmZaRwS1cjdFPf1okXX/i3Zf57q4uyD6d4w77vMpTc7PSQf6ID+C3U3pLJbG
+	 hXQrS/9nJ/0hQ==
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d2e7860d7so869889f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:47:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728460047; x=1729064847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=64u7S06vuCARV2d1jETcvXWsb00VtP72rN9+doc72U8=;
+        b=Mkjl50Rl9C01vloXOlA4OhilfeC8WHpH/vnB9v9wC9OliA70CgT4Cn+S1KbX7xPLP1
+         pc9CRzYMhfjemyv0nLCeAH3uo8MLD4+UQECDc6wHFCP4jXI8/qEZBbJqfLN/xWMu1jvL
+         3p1qEF4nVHctCICrx3tvxE0bpOgtdBOrx6GPNcJaC/i3aw56weFAt18sSFfQAQYVoJgI
+         khQDGc4smJlNsPIVzpsT5ioPmMrygYJAcjwnzZBsxzR5gBBmmizMLsrlqGPYmbSfgVcX
+         m5XGI64hyUjqz4G+2HbbVidc03Ip9oGEfKasjIthKqMqxaqNwj4wiGNxDwpnxIiVk0xO
+         gqiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnoOD5G7Zf8CfVqrsTL6IooA12h6+UejFOcEB0ePBlNYMkTnbr1SPwHxshIZNThUldnzEEXC02BZyeICw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHswVQzhsbKUx1aPfzWAK+qiCjQqBPCrmY8vO6p1c8s2irnbKk
+	CKSkgXD/OTtjw86qMNjgLRdWdAyPDA/aj2OYnmSlXKyW5SoUzMeZu6q9xN0x3NuCm0oJuxW/WRh
+	qDPowe1OVPEaFq6cHrKq7MkN8x64Ir698KM2hVl91tNgtHoMrTXHNKGGtSrPK9YbFX1rDN4ns6R
+	Twpg==
+X-Received: by 2002:a5d:5e11:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-37d3bada7a8mr652283f8f.45.1728460047169;
+        Wed, 09 Oct 2024 00:47:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjy0iSj86RuRw+Xk9XUJOj0zHUIng80b/tKMspPKiIgG0uuvHQFCiq0VNFpthVXphITx593A==
+X-Received: by 2002:a5d:5e11:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-37d3bada7a8mr652267f8f.45.1728460046709;
+        Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
+Received: from ?IPV6:2a02:3035:6e0:2015:a58c:a3d4:2675:9367? ([2a02:3035:6e0:2015:a58c:a3d4:2675:9367])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf51770sm11658085e9.22.2024.10.09.00.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
+Message-ID: <a3308767-eb30-446b-8c70-32b36a3075e4@canonical.com>
+Date: Wed, 9 Oct 2024 09:47:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
+ <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
+ <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
+ <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Chancel Liu <chancel.liu@nxp.com>
+On 09.10.24 09:34, Alexandre Ghiti wrote:
+> Hi Heinrich,
+> 
+> On 01/10/2024 17:24, Heinrich Schuchardt wrote:
+>> On 01.10.24 15:51, Alexandre Ghiti wrote:
+>>> Hi Heinrich,
+>>>
+>>> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
+>>>> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
+>>>> EFI binary does not rely on pages that are both executable and
+>>>> writable.
+>>>>
+>>>> The flag is used by some distro versions of GRUB to decide if the EFI
+>>>> binary may be executed.
+>>>>
+>>>> As the Linux kernel neither has RWX sections nor needs RWX pages for
+>>>> relocation we should set the flag.
+>>>>
+>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+>>>> ---
+>>>>   arch/riscv/kernel/efi-header.S | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi- 
+>>>> header.S
+>>>> index 515b2dfbca75..c5f17c2710b5 100644
+>>>> --- a/arch/riscv/kernel/efi-header.S
+>>>> +++ b/arch/riscv/kernel/efi-header.S
+>>>> @@ -64,7 +64,7 @@ extra_header_fields:
+>>>>       .long    efi_header_end - _start            // SizeOfHeaders
+>>>>       .long    0                    // CheckSum
+>>>>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
+>>>> -    .short    0                    // DllCharacteristics
+>>>> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
+>>>> DllCharacteristics
+>>>>       .quad    0                    // SizeOfStackReserve
+>>>>       .quad    0                    // SizeOfStackCommit
+>>>>       .quad    0                    // SizeOfHeapReserve
+>>>
+>>>
+>>> I don't understand if this fixes something or not: what could go 
+>>> wrong if we don't do this?
+>>>
+>>> Thanks,
+>>>
+>>> Alex
+>>>
+>>
+>>
+>> Hello Alexandre,
+>>
+>> https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/ 
+>> uefi-ca-memory-mitigation-requirements
+>> describes Microsoft's effort to improve security by avoiding memory 
+>> pages that are both executable and writable.
+>>
+>> IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI binary 
+>> that it does not use RWX pages. It may use the 
+>> EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
+>> executable (but not both).
+>>
+>> When using secure boot, compliant firmware will not allow loading a 
+>> binary if the flag is not set.
+> 
+> 
+> Great, so that's a necessary fix, it will get merged in the next rc or so:
+> 
+> Fixes: cb7d2dd5612a ("RISC-V: Add PE/COFF header for EFI stub")
 
-CS42888 codec provides 4 multi-bit ADC and 8 multi-bit DAC.
-Add support for this codec in imx-card ASoC machine driver.
+Thanks for reviewing.
 
-Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/imx-card.c | 54 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 47 insertions(+), 7 deletions(-)
+At the time of commit cb7d2dd5612a (2020-10-02) the requirement did not 
+exist. I guess a Fixes: tag is not applicable under these circumstances.
 
-diff --git a/sound/soc/fsl/imx-card.c b/sound/soc/fsl/imx-card.c
-index 2f3dbbd15791..306168b164d3 100644
---- a/sound/soc/fsl/imx-card.c
-+++ b/sound/soc/fsl/imx-card.c
-@@ -25,6 +25,7 @@ enum codec_type {
- 	CODEC_AK4458,
- 	CODEC_AK4497,
- 	CODEC_AK5552,
-+	CODEC_CS42888,
- };
- 
- /*
-@@ -185,6 +186,16 @@ static struct imx_akcodec_tdm_fs_mul ak5558_tdm_fs_mul[] = {
- 	{ .min = 512,	.max = 512,	.mul = 1024 },
- };
- 
-+static struct imx_akcodec_fs_mul cs42888_fs_mul[] = {
-+	{ .rmin = 8000,   .rmax = 48000,  .wmin = 256,  .wmax = 1024, },
-+	{ .rmin = 64000,  .rmax = 96000,  .wmin = 128,  .wmax = 512, },
-+	{ .rmin = 176400, .rmax = 192000, .wmin = 64,  .wmax = 256, },
-+};
-+
-+static struct imx_akcodec_tdm_fs_mul cs42888_tdm_fs_mul[] = {
-+	{ .min = 256,	.max = 256,	.mul = 256 },
-+};
-+
- static const u32 akcodec_rates[] = {
- 	8000, 11025, 16000, 22050, 32000, 44100, 48000, 88200,
- 	96000, 176400, 192000, 352800, 384000, 705600, 768000,
-@@ -210,6 +221,14 @@ static const u32 ak5558_tdm_channels[] = {
- 	1, 2, 3, 4, 5, 6, 7, 8,
- };
- 
-+static const u32 cs42888_channels[] = {
-+	1, 2, 4, 6, 8,
-+};
-+
-+static const u32 cs42888_tdm_channels[] = {
-+	1, 2, 3, 4, 5, 6, 7, 8,
-+};
-+
- static bool format_is_dsd(struct snd_pcm_hw_params *params)
- {
- 	snd_pcm_format_t format = params_format(params);
-@@ -241,6 +260,7 @@ static bool codec_is_akcodec(unsigned int type)
- 	case CODEC_AK4497:
- 	case CODEC_AK5558:
- 	case CODEC_AK5552:
-+	case CODEC_CS42888:
- 		return true;
- 	default:
- 		break;
-@@ -340,13 +360,15 @@ static int imx_aif_hw_params(struct snd_pcm_substream *substream,
- 			return ret;
- 		}
- 
--		ret = snd_soc_dai_set_tdm_slot(codec_dai,
--					       BIT(slots) - 1,
--					       BIT(slots) - 1,
--					       slots, slot_width);
--		if (ret && ret != -ENOTSUPP) {
--			dev_err(dev, "failed to set codec dai[%d] tdm slot: %d\n", i, ret);
--			return ret;
-+		if (format_is_tdm(link_data)) {
-+			ret = snd_soc_dai_set_tdm_slot(codec_dai,
-+						       BIT(slots) - 1,
-+						       BIT(slots) - 1,
-+						       slots, slot_width);
-+			if (ret && ret != -ENOTSUPP) {
-+				dev_err(dev, "failed to set codec dai[%d] tdm slot: %d\n", i, ret);
-+				return ret;
-+			}
- 		}
- 	}
- 
-@@ -609,6 +631,8 @@ static int imx_card_parse_of(struct imx_card_data *data)
- 				plat_data->type = CODEC_AK5558;
- 			else if (!strcmp(link->codecs->dai_name, "ak5552-aif"))
- 				plat_data->type = CODEC_AK5552;
-+			else if (!strcmp(link->codecs->dai_name, "cs42888"))
-+				plat_data->type = CODEC_CS42888;
- 
- 		} else {
- 			link->codecs	 = &snd_soc_dummy_dlc;
-@@ -766,6 +790,12 @@ static int imx_card_probe(struct platform_device *pdev)
- 		data->dapm_routes[i].sink = "ASRC-Capture";
- 		data->dapm_routes[i].source = "CPU-Capture";
- 		break;
-+	case CODEC_CS42888:
-+		data->dapm_routes[0].sink = "Playback";
-+		data->dapm_routes[0].source = "CPU-Playback";
-+		data->dapm_routes[1].sink = "CPU-Capture";
-+		data->dapm_routes[1].source = "Capture";
-+		break;
- 	default:
- 		break;
- 	}
-@@ -805,6 +835,16 @@ static int imx_card_probe(struct platform_device *pdev)
- 			plat_data->support_tdm_channels = ak5558_tdm_channels;
- 			plat_data->num_tdm_channels = ARRAY_SIZE(ak5558_tdm_channels);
- 			break;
-+		case CODEC_CS42888:
-+			plat_data->fs_mul = cs42888_fs_mul;
-+			plat_data->num_fs_mul = ARRAY_SIZE(cs42888_fs_mul);
-+			plat_data->tdm_fs_mul = cs42888_tdm_fs_mul;
-+			plat_data->num_tdm_fs_mul = ARRAY_SIZE(cs42888_tdm_fs_mul);
-+			plat_data->support_channels = cs42888_channels;
-+			plat_data->num_channels = ARRAY_SIZE(cs42888_channels);
-+			plat_data->support_tdm_channels = cs42888_tdm_channels;
-+			plat_data->num_tdm_channels = ARRAY_SIZE(cs42888_tdm_channels);
-+			break;
- 		default:
- 			break;
- 		}
--- 
-2.34.1
+Best regards
 
+Heinrich
 
