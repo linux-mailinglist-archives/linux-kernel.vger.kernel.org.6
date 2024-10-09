@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-357894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FEB997774
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E08E997777
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7F928287E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8271C219CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816FD1BE869;
-	Wed,  9 Oct 2024 21:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648E71E22E2;
+	Wed,  9 Oct 2024 21:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5/KnvYN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pkjP7rqp"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78811885BF;
-	Wed,  9 Oct 2024 21:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AAB1885BF
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509140; cv=none; b=gy1k77N5P/xDZV7xz+Uk9WHSVgxwS8dgYz2I384i1rJH475zLvQqtWqq4BzlNxAlwGr6BNZUOQPnDL+WPvGKs1w+UXGq+eQV//dr9zoGsGkfi3F6eM7TzFIrpFRGexOiJ8cJtaeRx4xyp40sKzU+YmGK06uhZSDPnGRtK6iZiPs=
+	t=1728509186; cv=none; b=nhh1qGbKZZYTxxJ1RhLGOa1APzzX6OpFkRJ4OJbuDi1pNb/9G/Su1VhYrEI1XfDLk5JauybiM8GyrRRRgGBl76PjcVEbMQkWH93bMykJJW1NuVSSCOad/8vE3LZ4bqhF8W6K5m0McdIiJyXGlVyW82gLl6+dQQ+M2RT7s2xZ5rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509140; c=relaxed/simple;
-	bh=oq7it/tBoxVfX5zXymvTWS15B74hVD8eo/0w703epQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lToTXTM5kNypv7/3EbfTsQ0y3/YwDKPKITiF2c4Dxsr4bjBpcoeY5WUlNXDJT2wQm4XQf8pp4UBV2za2ZsPp3UI3tcW1+Lo/rR/809KN3v4j41bv7MYqSxOqQ/oj8DVU/M3BlTeSJz2sWvqi6taPyVXe4y2gDcLP88hl85hdrRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5/KnvYN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5730C4CECC;
-	Wed,  9 Oct 2024 21:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728509140;
-	bh=oq7it/tBoxVfX5zXymvTWS15B74hVD8eo/0w703epQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S5/KnvYNrLg++QlWKethzkwCyccAWlQVNBj+8WIaUQHIwX3JiHVxkkxLe64Svu4Kh
-	 RtIdGDx7Qc6tc9ghtltaN9/kBHk777DBWlxiwIEhzWC9JjLtwWo4+Bbass3N4KbPwv
-	 LSPM+3roeeNF6KYP/bUfzJYAAxWgH1BHYNzZff7iuNqsg/GV5atFDQ+iQ9gWWRYxq3
-	 Z6VWhsDqvDR/6QI6Yf9CnfEwcdMtMEA4SfrtVBmkVnfKs9XL8Xhvp+5C97p5P+fO/B
-	 6xOKkb8XEaM4hgkhNP/kL+6FfKhtVYEZI4AnQOXVGjvJM0MHB1rKMQE0+zDP4KiT5Z
-	 mqGCvgFRLyzqQ==
-Date: Wed, 9 Oct 2024 14:25:40 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] XArray: minor documentation improvements
-Message-ID: <20241009212540.GG21836@frogsfrogsfrogs>
-References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
- <20241009205237.48881-2-tamird@gmail.com>
+	s=arc-20240116; t=1728509186; c=relaxed/simple;
+	bh=VpUot3Wk/hqPADAj63BdpEHXJlxUTjKifypWaSWAA+E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ujib951W97WIKvpIwR4ELCnNtsjfJ+hBJ8PJqLRpMVNSMevsuTD197fZVwX2CphVVPjZwNcB6yx2CECprbDtctkUmNqZFcDzyaWFy1RrMm53Oyteynq1uRWUw9zyFvTxPGBMIl+pKxRP08YmoMChVmPuuJcjjw/xggnUu7QzdIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pkjP7rqp; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-711009878ccso179651a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728509183; x=1729113983; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CKLu7KQ+mELVme63gzTjH18/L5l4LMgl1DhfRI52KK4=;
+        b=pkjP7rqpfi6gY0nYV/D40XBzolXQhPGxHsjSFN3EkbsKLfiNYHcMUiCvvpTnlVn4KE
+         Q8qkG+6KpIf0rBBFKv+46lM5O3s0nwtrQ4/lBBwedjHKwNMDVPNCrIMR85dwh0XJUEGv
+         35HLFtHHfyJYU3ppARyWFk/ooLibwzqnqIRX1qi9E2xCQZY1ZsxXa5Z+Oe0LdyG5P7cp
+         +hSC8TMJ88S2dbgXrUsMeBDczES2t8zZuttgStBuzLEBfXk8wdqroaWxhMr9NChDa/4+
+         TzulQjZzZ8QiesDWIYikXn8OchUIyOI2XQEYEmlzjuI1Stdb7YbTO7GGohSUzEXDVoDi
+         VV1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728509183; x=1729113983;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CKLu7KQ+mELVme63gzTjH18/L5l4LMgl1DhfRI52KK4=;
+        b=L2Bgcq/SNYpNf8ntDE1hJTuUsed8jM603MsCunFVJ+lfSsg3E8cSRfewh8uZ8bZIVd
+         wj5tHoo1lwRRak1rZIku9k20N1WmfhhPbKMp956ovEPlHErjU08W8vcUosjXwylVSWtN
+         UXL5ghSvZm2WOOtgCB7sEd/+K2/YYtJhYzJwZ0TEoNu0FzWyBGWEqQzFcTcbm/U62xzG
+         7v/sdicNixcv/PLJuAli1Y0vRkO7umQ2oMCDkRnA+lEgNCp5Gk0pP7n0XKX6UJuYg7do
+         55U3QOfZFEirnK0wzGogFVYqFzSFPqelVvsU+FTCtzLtIss+roRdKr9hwkifRPq0Bu89
+         BuYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLRq0EVB8aXol0x1FIIy9zsS+UMPRbpPce3Oz/AALp8mPhqqJIUrnm2tMtEynLW8jJIXKQnryRbF8yPWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9dXWQbnUazFsF+ijHCutmCXUL0KZ3a3TbeX00qTnHpPpnCYZA
+	jqpOnwAfST+TKRHLoivzUnCqj+XaZeQkyl7uSv3A/9BZc9KxJt57IW/4dnQVmW4=
+X-Google-Smtp-Source: AGHT+IHMGMW0vdYe4sQWwrO/xco4iIv+k6FsLUVoGcEY54rAXRy6QG9OZ6Zw9yBcr1oLrjyyCOLhIw==
+X-Received: by 2002:a05:6871:586:b0:277:eb15:5c60 with SMTP id 586e51a60fabf-2883425ad33mr3145988fac.10.1728509183473;
+        Wed, 09 Oct 2024 14:26:23 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287d706756fsm3696399fac.9.2024.10.09.14.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 14:26:22 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 09 Oct 2024 16:26:21 -0500
+Subject: [PATCH] iio: adc: ad7944: add namespace to T_QUIET_NS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009205237.48881-2-tamird@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-v1-1-a216357a065c@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAPz0BmcC/x2NQQrCMBBFr1Jm7UASQut4FZEyJKPOwqQmqQild
+ 2/o4vF5m/82qFJUKtyGDYr8tGpOXexlgPDm9BLU2B2ccd4aQ6iakWPoTOR9n4iJP1IXDoItY5u
+ /q0qbU0UmiSON5CZ7hX64FHnq/4zdH/t+AJiUQIx8AAAA
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On Wed, Oct 09, 2024 at 04:52:38PM -0400, Tamir Duberstein wrote:
-> - Replace "they" with "you" where "you" is used in the preceding
->   sentence fragment.
-> - Use "erasing" rather than "storing `NULL`" when describing multi-index
->   entries. Split this into a separate sentence.
-> - Add "call" parentheses on "xa_store" for consistency and
->   linkification.
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Add AD7944_ namespace to T_QUIET_NS. This is the preferred style. This
+way the bad style won't be copied when we add more T_ macros.
 
-/me reads about XA_FLAGS_ALLOC and is ok with this now.
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/adc/ad7944.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+index 0f36138a7144..a5aea4e9f1a7 100644
+--- a/drivers/iio/adc/ad7944.c
++++ b/drivers/iio/adc/ad7944.c
+@@ -80,7 +80,7 @@ struct ad7944_adc {
+ };
+ 
+ /* quite time before CNV rising edge */
+-#define T_QUIET_NS	20
++#define AD7944_T_QUIET_NS	20
+ 
+ static const struct ad7944_timing_spec ad7944_timing_spec = {
+ 	.conv_ns = 420,
+@@ -150,7 +150,7 @@ static int ad7944_3wire_cs_mode_init_msg(struct device *dev, struct ad7944_adc *
+ 	 * CS is tied to CNV and we need a low to high transition to start the
+ 	 * conversion, so place CNV low for t_QUIET to prepare for this.
+ 	 */
+-	xfers[0].delay.value = T_QUIET_NS;
++	xfers[0].delay.value = AD7944_T_QUIET_NS;
+ 	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
+ 
+ 	/*
 
---D
+---
+base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+change-id: 20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-a9ed69692718
 
-> ---
-> V1 -> V2: s/use/you/ (Darrick J. Wong)
-> 
->  Documentation/core-api/xarray.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-> index 77e0ece2b1d6..75c83b37e88f 100644
-> --- a/Documentation/core-api/xarray.rst
-> +++ b/Documentation/core-api/xarray.rst
-> @@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
->  to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
->  to retrieve the tag of an entry.  Tagged pointers use the same bits that
->  are used to distinguish value entries from normal pointers, so you must
-> -decide whether they want to store value entries or tagged pointers in
-> -any particular XArray.
-> +decide whether you want to store value entries or tagged pointers in any
-> +particular XArray.
->  
->  The XArray does not support storing IS_ERR() pointers as some
->  conflict with value entries or internal entries.
-> @@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
->  occupy a range of indices.  Once stored to, looking up any index in
->  the range will return the same entry as looking up any other index in
->  the range.  Storing to any index will store to all of them.  Multi-index
-> -entries can be explicitly split into smaller entries, or storing ``NULL``
-> -into any entry will cause the XArray to forget about the range.
-> +entries can be explicitly split into smaller entries. Erasing any entry
-> +will cause the XArray to forget about the range.
->  
->  Normal API
->  ==========
-> @@ -64,7 +64,7 @@ allocated ones.  A freshly-initialised XArray contains a ``NULL``
->  pointer at every index.
->  
->  You can then set entries using xa_store() and get entries
-> -using xa_load().  xa_store will overwrite any entry with the
-> +using xa_load().  xa_store() will overwrite any entry with the
->  new entry and return the previous entry stored at that index.  You can
->  use xa_erase() instead of calling xa_store() with a
->  ``NULL`` entry.  There is no difference between an entry that has never
-> -- 
-> 2.47.0
-> 
-> 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
