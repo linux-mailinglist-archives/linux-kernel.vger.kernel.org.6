@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-356523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369F0996295
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:29:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7CA9962B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4EAC1F2338B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55078B25148
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5D338DD3;
-	Wed,  9 Oct 2024 08:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E52718E379;
+	Wed,  9 Oct 2024 08:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R23PKmqX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QY2C6JuR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BGrwc7zb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84F117C21C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631718C91A;
+	Wed,  9 Oct 2024 08:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462549; cv=none; b=elQulaU16L6SP453uulLA5ZGSp1qKwdSLmxDZFIh9IIQaoJuK38ZK/d7/Gvj+oU4iIOIehF1gh4ir3szlPCBloPr8MvDw+Okb7fNnYyLA7eb0jtOQ5VirHqURLOPvE8/KHpGteS3OTN98AjE7zp6oyu3Ws+jhctxjvZLVFNjatI=
+	t=1728462561; cv=none; b=nx9LdiSEpu/n0o4ECOgCdm+vh2uu6/P1XPdV5DAMO9bGCSQ23f4xUmIqxhmg0q0LP7P6m+BL0Ibgy/XWdcL1th8GkOMkigUkLsGsZLfrDuZEwupT6jYtzeGG75l1igzXjiuOyHj7QpK2kr3PgJvid2yQLWCq5JDjPeEvAFuPHZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462549; c=relaxed/simple;
-	bh=6Z9HdBLhA6aRVoIzSoRahQ1izErTexQJRM+13vRShlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ud6HrnW0MXfp/m4kfgMqxa/q/HyFtxoqdkY9SNT5Od3IVjMjeVeWk+KjQwVmBiUmVSi57yvCHvsjvmngx3akS3MH5pQCzVwtFhrtEQdsU27q+3e+UwTVAG7b0JLanjquNKAKm0KB56sn+Z9MzUdxOK+BQzYtmh/nYD9jWC5gOVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R23PKmqX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728462546;
+	s=arc-20240116; t=1728462561; c=relaxed/simple;
+	bh=Lmnv1b2ucOFQSUA24R7e7ebxT8F4nIGS58fa4J9BytE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tbfaaLxS1xSARo4egNU5xtHm105rp72T7l2NsOrrRW/09EtAbGr1CuncGGKeXveUv/BnwPxv7vuTb5Z0oE/z+bTA4dq7TMjuS0dfWSU60yp6jQ9kZSkkpZHeFvaq4avDF59hxIRCPu/nLi4bpSfpKGTOfp9675em5Ti49zE8iE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QY2C6JuR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BGrwc7zb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728462556;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oI11tob+UZ2c2xTTRPXBNrTjqLa58MTZYOQ634//e9o=;
-	b=R23PKmqXzLozwP9Oy+QAVFG+TbTOeE1GlVavmxdWs2hMGP+NdEOPIQZ3lLPjO4BV8xk3g/
-	86z7FE6NENO5kbmyw1UdXaWfBG/4Yvh7KXzOty18byOnTAUyqw8RBEM7a1asLqTQC709Il
-	NMhRAnZazjNQN/mF33/d7UCp4YkCSZw=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-319-LcXcleyMPfWq5BUXCJDdzA-1; Wed, 09 Oct 2024 04:29:05 -0400
-X-MC-Unique: LcXcleyMPfWq5BUXCJDdzA-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbc8060744so14878536d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:29:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728462544; x=1729067344;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oI11tob+UZ2c2xTTRPXBNrTjqLa58MTZYOQ634//e9o=;
-        b=rL+I6pOmWP6QBPYUVxf178LZMGMNRLiKpnqGohDBlhNoFAD0CRcwlz0ZEdopcX7dY0
-         dLRLiwS61sTa9Ays2AhTw31GhXVQeHvNseQwQJIWVpbHykF4iAFj8E0Oq0sIZPlv4sWC
-         uP7cmbV2Z2grssEeONgjTzA6HnPiT3xKqHCrJLFYK7Qxqb4/F+37cCCytKV1YxtzMhj6
-         UIbQ3IGv55WeH8qb80CNeZ0XCwXEUzKzmvfVxRs/lspnrDYRPTFAU9MfDDGyjuAbw5SQ
-         eMAwzPalS8T660rfZGkhmnzyERndMoFmc3Pt0gn+xjzXyrHdpgKAP77dKFE42Ew8Uc/P
-         Zfew==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ3Lhw2U4khGn2NVvzgByhXcGDN6nN300zrv636cXPk2N+rNB++QC4XUdHZLJY02tGUJ12uUZf4N66WTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9mc+nrl/ZZpU/NY5OqA5n6+RvMv3iwl72D3f083JDY8hvT7aa
-	TM++aPGwezdFg5RK07ZkJpqRCeQyfBiRDwYILSVdysZkAlmctmun4h98FH1wwyHynOGx5O8T95f
-	dH0g2okaAgjICVK4uJSbeSlHMI9W4UI3T81m6aGUQNi/9wel2v2/RbewTLGrt5g==
-X-Received: by 2002:a05:6214:4287:b0:6cb:bfb5:6fc with SMTP id 6a1803df08f44-6cbc9329f35mr27806156d6.25.1728462544181;
-        Wed, 09 Oct 2024 01:29:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGy/d5kOlbTbSnAt+rUIOozCwkfUFVh0rGvwRdShbsXP/G+rUWWR+snVmksK2/SiBifoqrkpQ==
-X-Received: by 2002:a05:6214:4287:b0:6cb:bfb5:6fc with SMTP id 6a1803df08f44-6cbc9329f35mr27805956d6.25.1728462543875;
-        Wed, 09 Oct 2024 01:29:03 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-206.as13285.net. [80.47.4.206])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba47513e8sm43835386d6.75.2024.10.09.01.29.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:29:03 -0700 (PDT)
-Date: Wed, 9 Oct 2024 09:28:59 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: Futex hash_bucket lock can break isolation and cause priority
- inversion on RT
-Message-ID: <ZwY-y4h7LruimB0O@jlelli-thinkpadt14gen4.remote.csb>
-References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
- <b77b8a52-7b53-46c5-bece-621345fdd4ba@redhat.com>
+	bh=+gKqhrrEtuUuIiu1c0v+h4KjnR2UQ6QcFIf5LjmxyqA=;
+	b=QY2C6JuR4KT02bGdvaqaeEq8+eYbz7Phz512iuZBq1wlrQm0pZNc60ZLyyCqknXNfSn5Wb
+	/bZttYmgJ96ry3XvJd/jhcrty4wZMDK+yBBD+wcwZkod30U4GSFVHFIB+SDMsB6mHUzX3x
+	KqGMSYKUapxNsk+2DrUKBJu0SwBZ+nEfomXTKYww4rr95efxyd994/67rzqf/JAywkDhOl
+	syeLuOgLsksTmxRURzE2eQchWlzhSh7IfzAT7H2nRnZWqA0Ci++JPGpFkORm2ol8VkoQgF
+	eRbPbkgFk33WBSUMYknqU6PqgU9qWzL1ZC9cwn/auMLkj30WWN9VVSuQm57amw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728462556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+gKqhrrEtuUuIiu1c0v+h4KjnR2UQ6QcFIf5LjmxyqA=;
+	b=BGrwc7zbAeMl1Mei92Pf/PRBzcsi68gso2N2IljcxgYKXjZ6ewt+qOm5e5cXkeYIMshT/8
+	fQJ4SuWEOfTAh9BA==
+Date: Wed, 09 Oct 2024 10:29:00 +0200
+Subject: [PATCH v2 07/25] timekeeping: Move shadow_timekeeper into tk_core
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b77b8a52-7b53-46c5-bece-621345fdd4ba@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-7-554456a44a15@linutronix.de>
+References: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-0-554456a44a15@linutronix.de>
+In-Reply-To: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-0-554456a44a15@linutronix.de>
+To: John Stultz <jstultz@google.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Miroslav Lichvar <mlichvar@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Christopher S Hall <christopher.s.hall@intel.com>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Hi Waiman,
+From: Thomas Gleixner <tglx@linutronix.de>
 
-On 08/10/24 14:30, Waiman Long wrote:
-> On 10/8/24 11:22 AM, Juri Lelli wrote:
+From: Thomas Gleixner <tglx@linutronix.de>
 
-...
+tk_core requires shadow_timekeeper to allow timekeeping_advance() updating
+without holding the timekeeper sequence count write locked. This allows the
+readers to make progress up to the actual update where the shadow
+timekeeper is copied over to the real timekeeper.
 
-> > Now, of course by making the latency sensitive application tasks use a
-> > higher priority than anything on housekeeping CPUs we could avoid the
-> > issue, but the fact that an implicit in-kernel link between otherwise
-> > unrelated tasks might cause priority inversion is probably not ideal?
-> > Thus this email.
-> > 
-> > Does this report make any sense? If it does, has this issue ever been
-> > reported and possibly discussed? I guess it’s kind of a corner case, but
-> > I wonder if anybody has suggestions already on how to possibly try to
-> > tackle it from a kernel perspective.
-> 
-> Just a question. Is the low latency application using PI futex or the normal
-> wait-wake futex? We could use separate set of hash buckets for these
-> distinct futex types.
+As long as there is only a single timekeeper, having them separate is
+fine. But when the timekeeper infrastructure will be reused for per ptp
+clock timekeepers, shadow_timekeeper needs to be part of tk_core.
 
-AFAIK it uses normal futexes (or a mix at best). Also I believe it
-relies on libraries, so somewhat difficult to tell for certain.
+No functional change.
 
-Thanks,
-Juri
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+---
+ kernel/time/timekeeping.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index e747e46a1a2d..267b28cf2ab0 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -50,11 +50,11 @@ DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct {
+ 	seqcount_raw_spinlock_t	seq;
+ 	struct timekeeper	timekeeper;
++	struct timekeeper	shadow_timekeeper;
+ } tk_core ____cacheline_aligned = {
+ 	.seq = SEQCNT_RAW_SPINLOCK_ZERO(tk_core.seq, &timekeeper_lock),
+ };
+ 
+-static struct timekeeper shadow_timekeeper;
+ 
+ /* flag for if timekeeping is suspended */
+ int __read_mostly timekeeping_suspended;
+@@ -776,8 +776,7 @@ static void timekeeping_update(struct timekeeper *tk, unsigned int action)
+ 	 * timekeeper structure on the next update with stale data
+ 	 */
+ 	if (action & TK_MIRROR)
+-		memcpy(&shadow_timekeeper, &tk_core.timekeeper,
+-		       sizeof(tk_core.timekeeper));
++		memcpy(&tk_core.shadow_timekeeper, &tk_core.timekeeper, sizeof(tk_core.timekeeper));
+ }
+ 
+ /**
+@@ -2274,8 +2273,8 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
+  */
+ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ {
++	struct timekeeper *tk = &tk_core.shadow_timekeeper;
+ 	struct timekeeper *real_tk = &tk_core.timekeeper;
+-	struct timekeeper *tk = &shadow_timekeeper;
+ 	unsigned int clock_set = 0;
+ 	int shift = 0, maxshift;
+ 	u64 offset;
+
+-- 
+2.39.5
 
 
