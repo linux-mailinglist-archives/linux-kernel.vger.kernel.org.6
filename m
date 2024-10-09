@@ -1,234 +1,270 @@
-Return-Path: <linux-kernel+bounces-357756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76AD199756B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:07:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A97997565
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998831C22741
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:07:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC7DB20CBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4011E1330;
-	Wed,  9 Oct 2024 19:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GjHJQMPJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="aRRyPRUw"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7AA1E132A;
+	Wed,  9 Oct 2024 19:06:23 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F91E1037
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728500823; cv=fail; b=dSIYdWqZm/6nfJShSyZbcJmUYCyJX/FBUKL8Igmc2qYT562jfY9fbiEAyxgxGahr605LkJp3Gb+fhNMf3GniBw6+tOppae/Eq0sjxICoiPtrbntihlmWTaRuzvdFlHE9nX0XyiC3xoxs7oqxVBifcZ+xxHQUnX4dCUvINw77iGQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728500823; c=relaxed/simple;
-	bh=Efqkr8WPRqYu/tMWfS3qEfuy1inL5fnWC9c5IMOmgzY=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 Content-Type:MIME-Version; b=f4tY7u1bDSkzEvKMwfQebs5fBCyuGYx2R7dLzGi1JDHv+1HGNSGnSPhBmlbZ/8mTiaRCtAOryYs+ah8CG3daCN1ycn65R9/95c3LtGUswRZC1KRd49GRTGpmLr2tWHw8ZyIk58eKpw8Ys3UUGFeDTrIO0BUdqFzDWuauRcxJYNM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GjHJQMPJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=aRRyPRUw; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499IIQT2023392;
-	Wed, 9 Oct 2024 19:05:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=TiWNKCDPbAar2Z6KTc
-	KdUqS+CDqssjXVyvP6yp584kI=; b=GjHJQMPJSUrm7kxGN4vxFJM4DbZQGb+ImQ
-	Mu4ZdFX4x+YUnNss8PrmnB16u6yyGsOTW+rse1r5C/cc1wl2LznA1x17P7QRf02F
-	OjgFbAPLMd2TnN5b1DZpdlgEYtMn11g7ItEmZegC7hxqga2BwfyMSytCXeNhELwb
-	CL3me48W483A+u+QP0vcYDqUvHnLDK8YKZpk9NSnsi3JQAToe8+ZYYy8T2x5JjU4
-	oWmLRNUpF1r0RDgJfQdrIooyKIXa+5rQc9zmBUpBqj6jLXXgLRApTT/Ej9KnK1ve
-	wAfEHIOq0+fI+TgO1gbXvp3yNaYKa6dd4l+cBKzPfv+Iz65SUPFw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 422yyv96nx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 19:05:58 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 499HQREY015234;
-	Wed, 9 Oct 2024 19:05:57 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw926tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 19:05:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R8j7npMkTE91w4iC3qWp5Lr9Q0IAPaonM03EI5L5cVjCteoB3FNarmLQ3parWWtMa8OpoflbhyHRXg/6ywH+e2yOQBof9Wv9iSwuj8AzcgsHJ+9F+UrfBm79zISkxP6X8qXGsYf2iqOp614dsEaOZ86Ef7VhvVhfrOxlW3Cyigcj43jwk2x4vhUS4Oph+GrPnonj1fZ6YNxZxfvTdYyRpE/C1uwCSfAf9UUNwS5khrUUNqTM1zs+/0xTbkZCGp0+qMqHLb8CHMmG3D45HQ4qXCm1k7Y0w3ZaU4o/ANFIMF4YGefjMa9n1RcIMYi+w2wK9bOQpuYJ+rSGAbdacrXz2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TiWNKCDPbAar2Z6KTcKdUqS+CDqssjXVyvP6yp584kI=;
- b=jVDrjm7p9U4bEgslJnpIzqDT09HlfGoT//lUea3qT2aKIUBDCY/FixUhSmRcXdM0WWGwZX2/a5aZMtypiKUrrjjj7N/dsjcAiKTyRuuuCKpaJpvuWotuzNzsrHPUxM7irxkYkX1E1ojQadsPsIjWbZJ05O/pWhzZ8OK6rGjEZFRGe2TEfOhgZlK7dyaKPJFG2BzlCuGLF6IS5G1gx37cNZMDq9RIvYR8zHIJGt/TdSNnKkN4MScs09WxhEp80e9TWgv6nadRowsX1H+z8ZZj52Vow5brSHk91gZkHM5TkaZO6yd04/P7nFVD3J71ZPIZq/xZBW/KsFVubCIh40KEow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TiWNKCDPbAar2Z6KTcKdUqS+CDqssjXVyvP6yp584kI=;
- b=aRRyPRUwmPMpWXAx+7kFoxuFHTU4A2nxNAeEQzFxNqQrfhAnCgy0bCVVyh6h78XM4WSQFJHgpnWHDX9pOCGejY7FtEDce7FzjWONRspYSo/sUFn01SRU4wrQLgcgwE9+U0jOHwCzEk7zucGqdAqpVKVX40MH0wd8Uk+YQpnbzQc=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by CY8PR10MB6514.namprd10.prod.outlook.com (2603:10b6:930:5e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Wed, 9 Oct
- 2024 19:05:51 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%4]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 19:05:51 +0000
-References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
- <20241009165411.3426937-5-ankur.a.arora@oracle.com>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-        efault@gmx.de
-Subject: Re: [PATCH 4/7] rcu: handle quiescent states for PREEMPT_RCU=n,
- PREEMPT_COUNT=y
-In-reply-to: <20241009165411.3426937-5-ankur.a.arora@oracle.com>
-Date: Wed, 09 Oct 2024 12:05:47 -0700
-Message-ID: <87o73t9jw4.fsf@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4P221CA0014.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::19) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F246F17332C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728500782; cv=none; b=OdIN4nV1CLj6G5KlIb6Xeah84bv4cv4mWEMUQkavGCbOfS1TEUhPb4AHx7dXFTER0wRImBTzWZm0+2TRpORGveReb7fq3O6KiRbIm+jp8XFLPGpaxmuXh/0BiHZfNFeaE2yzHI7amfmhpSUi4PbYF4iGU75Zld8qU4LOL3eZAxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728500782; c=relaxed/simple;
+	bh=zIGYQuWfA+qFJ7Xx+1ifikjU4HlY7u50zWt3+EIbEfQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l6l36ZCp5mlNFbO7x+JqcNv0BSgIiJaj0XDwZPebDx5pgD3eL/FVRqL88DPmVhOI45WaxbzhZUyIyc5U8PYhqARaIrkaG1dOVuWKRAO8dNbx/fILTyGUmFDz6VuJ9VyzCEs0VzTDPMm7soum5pBkLhJbNObXZ7/50ACfL3DQ4DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a342e872a7so2280095ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:06:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728500780; x=1729105580;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m8+1MsHdf8XIh/QfUzj5hG+oyd4uiAdtzfmMugPu7Vk=;
+        b=ECS2F+peY4rlD7q81EepnX8mKEfZp/9inEknWbf6A4tN06+2TCrc5spPFaD9o8JV/g
+         7GLhlkSA/G71BTSdiiGwYZUz6k8M8qvfWP/txiT6iC/Nrv4l8sOuZ4jD7f3+OiLlFhvQ
+         lpT3byty5pW+F02Ac3uWICj3f2DbPo/A9hGJ19e/h6J86Nzkk6Zgjd80uP4jS+HNc8nW
+         7Wv7s3SFGFXjd8sB6HGJPE4wvmGdR6uwlrjCmU2nN9Q51IqVP4Q2yxBjwahhUeOFoDdp
+         xa/teJeTvm5++PHNB5VdCavejXWt49QMnZ6epYqIMvhffhlyWnGm4MbTj1PaapFCtwQB
+         pgHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Q1Rtdjknbqmme0gnZsKeKguzPhs9MmWDd3JWz4cBpCbrk3ngWmWFEO5WMWE6IS/AAyFfKzaAtRoKreo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuPKY6LIR3zb/4sqRickfA78KL/XQO/VUtSmB7b4HNkbLHuqm6
+	bZLNNwrLJOolns0fm22uMmdtFUz/xc13QhkISWnYfjPFy3dUjOnlxktoItHC+KkjuUvWKeivM7i
+	ZSdXWU6NeAEhPuPCbxNNmtIhFksB1ZBgVsD2C1kEpelSXxjqkbbt0vxE=
+X-Google-Smtp-Source: AGHT+IFuf3gOZrDMbm9O+d4ikZQfyM76iY7jexxLs1S6UKnh2ueB6OxJrYxhTfHM7lHZLJrp8e5oUjh6mc/BENoaySS1sdDDwDGV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CY8PR10MB6514:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13bcf6b9-0ebe-4829-3b9c-08dce895644a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GfSaVbXO8ndk1udw8WITzpuEiatxNCzWzloip7Yma/O3S9F+8KLQq8nGA4nx?=
- =?us-ascii?Q?DYkskRGNUZ1cQghbGp1NUSw8j26WSL7qKZUQETIW2K99E+ZPZZj6woog6ZsS?=
- =?us-ascii?Q?g/sXYJXcehxZYsn74pfLnhQYTX6ESHaVw4pJaCS+At3ael5/quY0mt6YfJaN?=
- =?us-ascii?Q?+OvAMb6P3SYjdDZaKEXVs+gbNvyNh4Y/RnwhJTZMBndCly7t9zrFJY/4zdxg?=
- =?us-ascii?Q?wrq7sow4pXgkgY55wibf9sVPno7nj+8f00LY90cngsZf4a4g3P3PidstHspV?=
- =?us-ascii?Q?zEEw6qDdb4zgkfd1R9Lggkq3fidSPDUzBP89QMSOKHytqcvH0lpfkJn8u/iR?=
- =?us-ascii?Q?JZq174XZRoeW2cCGpmDzbOUy2lVVa0SsnMJF2Y+od1twrDSTkzd/wmmUvlUL?=
- =?us-ascii?Q?8saOQxdpdSDf+AXNIWkw20M08uJ1FfEtBT+6TLHcfY099owo9khM/hVAlLQa?=
- =?us-ascii?Q?9AZqfz3yY+EAGrpHvXv48ORB+iEgIeccZV2ey3wLSexY6pmZGOzGxaa7ofAy?=
- =?us-ascii?Q?LsmNKFIgHUx+6Kd4UBkpMZkjaM9GleURNg1BIwfkByKG82QUrhKKy3AgvE0U?=
- =?us-ascii?Q?limECsXglJKd2urMeMrmVMEy2SNmzeOklYyGc2j+O9/aCtBWophBi+HVbXLF?=
- =?us-ascii?Q?7OnVl/Sa1ML8tRnTOpqT5FQudI+oYoz/BkkxFv2B+dt2FiFkC2owOwxZy9xE?=
- =?us-ascii?Q?yfDwMHmN4Mdu/c3ABWy+rUyvIikvwoq/7bHFHZnzPT3wuX2mYwNkQbMYd+Vy?=
- =?us-ascii?Q?Bp7UQnxb86NgJPvuB3hoDyln+6OwQ4+LKhA9FhvTLt7eOIHp9cegU7Z5w/qU?=
- =?us-ascii?Q?2xb/Dx+QWV9E0Ams+X88Ni/ZgMg0qiXOtWXEYIEaPZo+qHO/w4A0j8Nmbpa3?=
- =?us-ascii?Q?E3coB1RJMpfgflAltBREoLyRfw7HwQdLCd22Rnw8wU4gLvhOX3s2vlLkMaaQ?=
- =?us-ascii?Q?nSb3D7nskFx3vtPz6ZFInkq5HVAFxGLIu+bfy9UOWassb7L75LCvpx05GfaR?=
- =?us-ascii?Q?t3ei3/yx40iKjn+sHGAMaV+E7oEM6Y+1FPnuEuYLsHl9WXFTmd+9Ea/O8p8C?=
- =?us-ascii?Q?IMtgl+5eiNjslM0v0T+R9t2xMZriBi8hC1E5zHisLeZuuQ+K/lNMY5Oyr4ZI?=
- =?us-ascii?Q?630Ry4h2Ls3GmFi+me/xXyXh8kYBW5cPC4GHHbmZJ9Oz+d9Cixak8DBzHByX?=
- =?us-ascii?Q?8t4o4Mf+PK0Sb0sAaFhe9v+Oc/PWjAnSfDP9gbA1J90Oos2J4KOuG40iwvPq?=
- =?us-ascii?Q?5k4/2wcbRGRMmq8WytH4wwoIElKJAqPmnmpMfD105w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?P8ka6OseTl+UsO5Bkc9CL7PcPA09ucVP7UwciL35YmS7yMfcKY0uXRH6Eq5a?=
- =?us-ascii?Q?8Fl+e9HXR2ikVgjMVELKUO1xT69ZS3ITaAhdjfRE2bPg9wvQMNWbe6wf4ILs?=
- =?us-ascii?Q?sZDq4m4+CE5B8Nyt9ygYyOR95nSKWVsJ+QTcFoi7xR/x8xM76nsW9+fN9dMd?=
- =?us-ascii?Q?9jPv8M40e+ym9CkTwuuB9rBZOctSk136TbUvQ6AaDFdgPivgfZjwTB4/fHD8?=
- =?us-ascii?Q?xhLBLoPsbrjyAX9wG0EVTGYX1VsSC+Oehw1epn/MWCYmt0fnN7AlPX1Sk6vx?=
- =?us-ascii?Q?fNz8yG1ycy2eEUYXYM54Q8lODzz2PgImQuS45WcADK4931TIzI3fkwXlTb5I?=
- =?us-ascii?Q?xoidDeV1Dy18aDehUx1RoE9YO0cXpp1bucodXjhlxRUvHg4MztJ/WIOVxXYw?=
- =?us-ascii?Q?u3vEmtQbA1FI7pwcvZ6JvJhQOJYgzmuFsVseDzrobo9YM+2OMZN5waRCzKgy?=
- =?us-ascii?Q?HrbCm9uLVOBLnPL65p4JWMFY9TKySYByuPKwPS9DxlEaOyK6UzRQmP4zUvTX?=
- =?us-ascii?Q?nqaye04t/gQPVvUZmLDWrPjvnucx47fe2ncMxVFl7GaMgyHmHfPA+XWGKPbb?=
- =?us-ascii?Q?HUg+86nPRNoN9lL5nL2LxmNrDyVvGj0gKkvHEcZVbUMTyo+x1KmMS3ROIxJv?=
- =?us-ascii?Q?+eNMFYkVPbzK31QWqKRy5nEvZq1glfGZ7ldMHzT9o0Il8x79FFU3nOSy7UWE?=
- =?us-ascii?Q?EhzZXG0ctCJv0qr8M6s2Vwca6izLH7u1M0b/jF9jE3RxuY5pErPlpbcfFs9d?=
- =?us-ascii?Q?stpWbBvaTsIaqq7pUeqN7hM969JtUNyyJgDL9sIhOsmg+1vd282Lcc7LHoZh?=
- =?us-ascii?Q?vUJt+EB6AbVT5NVz4MBza2x0gSUAXxgXPaG/iDa+gSdZRhKAFJNriP2w2iBM?=
- =?us-ascii?Q?hweS+7zM8cnz7nh96ZaF6lJ94o2b/RnWu2rmix9tJgRNk1tDREh+1RaAIr4c?=
- =?us-ascii?Q?2IW18Lo/qo03i4kbM5ZCoTrxKNYZyYB86FTdWmiIpBJ2KAzsveWHv1A7KLNm?=
- =?us-ascii?Q?Dee9D9edIDTakqwajFkzWXsWxuP8aD4dL/p/3wnJL4dCZSWuM0wZTUEprqMQ?=
- =?us-ascii?Q?+SYs3W3VZl7CHcWrIpAahGEc3qwlHZ2Fu/ZqR7jJwdSNx90ULdkBk3ywXCSd?=
- =?us-ascii?Q?n8+nVmKY0bFZLxe+54Uis5esHTLuZgJx4HBiEOgY0ytu1E9MfiXkg0uH9TGY?=
- =?us-ascii?Q?HoqhBSyHLPJ/wQDf5QsXkeD12TLdNWjx5kK7UU3Ci2xXC1o0nXtL5juf/481?=
- =?us-ascii?Q?nlii229Uk1DdJP+4+G9Ur+xtw/7FFdPSBRaS+CqLy0msRzGNIHyXqbU7ceoc?=
- =?us-ascii?Q?0oIm7Sh3iG9WYxGlx/1y3X5OPriQ//X9FhMGyboOFEKzSNcgJxE7c47XqqDW?=
- =?us-ascii?Q?eTi+Oi1zc77cZvWKzMcsPHXe5hf5jjIY4m0PEzopxyPkZl/FXCPYZrHFJcwl?=
- =?us-ascii?Q?2XmKxQl+/ZoLOKnEI5GBg9MRONSCy7viOuIGKNbBXdWhAjDMIOf0bGUb5rKH?=
- =?us-ascii?Q?zhvKE0vKqLChHLmLjwgivWZpbCTrJ0S6HHcrLOor4P6p7EviAXKbVUNzbBbE?=
- =?us-ascii?Q?UyTMj6JZbcvso7gQRed1yFQAbPjSZwkZV5Jj4m5BzkQNhTaALmNsSxsoQIha?=
- =?us-ascii?Q?Hg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	L5Uu5CyoD/4epAvNiOV2LN5I3aurLSR+boFBBsnWBaFRiscMMYnS3jdjhCKS/clMe9aFkPQFR2JaKs8VX1gBgeVjtpLA2pPfp0iVS8tD3TDACLH/qCFDLlVnvAE6CxG7QLLTsxmiqTHaIyw4xwhFaDMKkxFT8PPcZRjsOWO6x6qTi23Kw9tTC+e8w6TJ9OWZi4zAOnM6ykGSgCO30inDL53uZZou5MKSv6ySvM1puN/GK6writGtHh1yZ2DRgKdy1pIlStj8Chh91w2M8Y5xnipQOKtuCJxsMaGSO3K/AG+8R5VOvXkHDL0ClJfKRnBxK8x1LmcD7P/OtTib/Plg+h9iX8k6lUthaqX/7fVZIiwq61U4GySDKYPvMLTMj8FzEyaAQIyl3MXMbHcivl0IDcHXGRCbgU/qrMyihy+uJGw38f/ttCUc4F6ubFOVQUVzT3O7jeu7qOxOorMh6c4GdYH/uRPGZTztAYR3ldwv0extpOZY44cJWe8uhzokW7/xZQdi1rY20SroXDsQ8ICFVNZ+ey6hXEz9KAoKS3uvzLwqFTb3g9OOYw3MsY802y3Y3yzblGNJ+Lp7He7+E73YioR9829aFTvXLTqS+iVlHtc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13bcf6b9-0ebe-4829-3b9c-08dce895644a
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 19:05:51.0793
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PjPfZDbudgZvowpsZrIowmHPfveGJ74tgc2so/KCv8CCtS9csx/2SlcqRdDZ4JuHuTuG7IkBJDJfOvKBQhtkpPw33xc43NVUCnw5FTqYKIA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6514
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_17,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=649 adultscore=0
- phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410090120
-X-Proofpoint-GUID: o3sbUCmOwkjMouN9lKdFk-e1ef_hjTLd
-X-Proofpoint-ORIG-GUID: o3sbUCmOwkjMouN9lKdFk-e1ef_hjTLd
+X-Received: by 2002:a05:6e02:1b02:b0:39f:36f3:1957 with SMTP id
+ e9e14a558f8ab-3a397cd8897mr31317115ab.3.1728500780133; Wed, 09 Oct 2024
+ 12:06:20 -0700 (PDT)
+Date: Wed, 09 Oct 2024 12:06:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6706d42c.050a0220.1139e6.000b.GAE@google.com>
+Subject: [syzbot] [nfs?] INFO: task hung in nfsd_nl_threads_set_doit
+From: syzbot <syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, chuck.lever@oracle.com, jlayton@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, syzkaller-bugs@googlegroups.com, tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    75b607fab38d Merge tag 'sched_ext-for-6.12-rc2-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e49f9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=667b897270c8ae6
+dashboard link: https://syzkaller.appspot.com/bug?extid=e7baeb70aa00c22ed45e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a7759a7b0126/disk-75b607fa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/734e9758ae9d/vmlinux-75b607fa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e23bee69aa18/bzImage-75b607fa.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com
+
+INFO: task syz.2.8721:28280 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00058-g75b607fab38d #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.8721      state:D stack:24848 pid:28280 tgid:28278 ppid:21973  flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6774
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ nfsd_nl_threads_set_doit+0x694/0xbe0 fs/nfsd/nfsctl.c:1671
+ genl_family_rcv_msg_doit+0x202/0x2f0 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x565/0x800 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x165/0x410 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg net/socket.c:744 [inline]
+ ____sys_sendmsg+0x9ae/0xb40 net/socket.c:2602
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2656
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2685
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5c35f7dff9
+RSP: 002b:00007f5c36d61038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f5c36136058 RCX: 00007f5c35f7dff9
+RDX: 0000000000008004 RSI: 0000000020000140 RDI: 0000000000000004
+RBP: 00007f5c35ff0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f5c36136058 R15: 00007ffcc9b7fe28
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by kworker/u8:1/12:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1212/0x1b30 kernel/workqueue.c:3204
+ #1: ffffc90000117d80 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_one_work+0x8bb/0x1b30 kernel/workqueue.c:3205
+1 lock held by khungtaskd/30:
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
+3 locks held by kworker/u8:9/3046:
+2 locks held by getty/4992:
+ #0: ffff88814ba810a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor/5223:
+2 locks held by syz-executor/18087:
+ #0: ffff888066cea0e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff888066cea0e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff888066cea0e0 (&type->s_umount_key#49){++++}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads+0x5b/0xf0 fs/nfsd/nfssvc.c:625
+1 lock held by syz.1.7378/23757:
+2 locks held by syz.2.8721/28279:
+ #0: ffffffff8fb61250 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0xe3/0x1b40 fs/nfsd/nfsctl.c:1964
+2 locks held by syz.2.8721/28280:
+ #0: ffffffff8fb61250 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x694/0xbe0 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor/28836:
+ #0: ffff8880543960e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff8880543960e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff8880543960e0 (&type->s_umount_key#49){++++}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads+0x5b/0xf0 fs/nfsd/nfssvc.c:625
+2 locks held by syz.0.8904/29170:
+ #0: ffff88807b2260e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88807b2260e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff88807b2260e0 (&type->s_umount_key#49){++++}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads+0x5b/0xf0 fs/nfsd/nfssvc.c:625
+2 locks held by syz-executor/29233:
+ #0: ffff88807bb580e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88807bb580e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff88807bb580e0 (&type->s_umount_key#49){++++}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads+0x5b/0xf0 fs/nfsd/nfssvc.c:625
+2 locks held by syz.2.8947/29381:
+ #0: ffffffff8fb61250 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x694/0xbe0 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor/29390:
+ #0: ffff88802e63a0e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88802e63a0e0 (&type->s_umount_key#49){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff88802e63a0e0 (&type->s_umount_key#49){++++}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+ #1: ffffffff8e1d1868 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads+0x5b/0xf0 fs/nfsd/nfssvc.c:625
+2 locks held by syz-executor/29649:
+1 lock held by syz.1.9007/29775:
+2 locks held by syz.1.9027/29961:
+1 lock held by syz.0.9047/30028:
+1 lock held by syz.2.9046/30029:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc2-syzkaller-00058-g75b607fab38d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xf0c/0x1240 kernel/hung_task.c:379
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 23757 Comm: syz.1.7378 Not tainted 6.12.0-rc2-syzkaller-00058-g75b607fab38d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:kernel_fpu_begin_mask+0x17b/0x270 arch/x86/kernel/fpu/core.c:443
+Code: 01 31 ff 89 de e8 45 b6 59 00 85 db 0f 85 ce 00 00 00 e8 f8 b3 59 00 48 b8 00 00 00 00 00 fc ff df 48 c7 44 05 00 00 00 00 00 <48> 8b 44 24 58 65 48 2b 04 25 28 00 00 00 0f 85 c6 00 00 00 48 83
+RSP: 0018:ffffc9000ac3f3d8 EFLAGS: 00000246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000ac4d000
+RDX: 0000000000040000 RSI: ffffffff813304c8 RDI: 0000000000000005
+RBP: 1ffff92001587e7b R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+R13: 0000000000001000 R14: 0000000000001000 R15: ffffc9000ac3f500
+FS:  00007faf7f5ea6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbfabe67d60 CR3: 000000002859c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ kernel_fpu_begin arch/x86/include/asm/fpu/api.h:42 [inline]
+ _sha256_update arch/x86/crypto/sha256_ssse3_glue.c:73 [inline]
+ _sha256_update+0xb7/0x220 arch/x86/crypto/sha256_ssse3_glue.c:58
+ ima_calc_file_hash_tfm+0x302/0x3e0 security/integrity/ima/ima_crypto.c:491
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+ ima_file_mmap+0x1b1/0x1d0 security/integrity/ima/ima_main.c:462
+ security_mmap_file+0x8bd/0x990 security/security.c:2977
+ vm_mmap_pgoff+0xdb/0x360 mm/util.c:584
+ ksys_mmap_pgoff+0x1c8/0x5c0 mm/mmap.c:542
+ __do_sys_mmap arch/x86/kernel/sys_x86_64.c:86 [inline]
+ __se_sys_mmap arch/x86/kernel/sys_x86_64.c:79 [inline]
+ __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:79
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faf7e77dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faf7f5ea038 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007faf7e935f80 RCX: 00007faf7e77dff9
+RDX: 00004000000000df RSI: 0000002000000004 RDI: 0000000000000002
+RBP: 00007faf7e7f0296 R08: 0000000000000404 R09: 0000300000000000
+R10: 0000000000040eb2 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007faf7e935f80 R15: 00007fffb2184568
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Ankur Arora <ankur.a.arora@oracle.com> writes:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> With PREEMPT_RCU=n, cond_resched() provides urgently needed quiescent
-> states for read-side critical sections via rcu_all_qs().
-> One reason why this was needed, was lacking preempt-count, the tick
-> handler has no way of knowing whether it is executing in a read-side
-> critical section or not.
->
-> With PREEMPT_LAZY=y, there can be configurations with PREEMPT_COUNT=y,
-> PREEMPT_RCU=n, where cond_resched() is a stub that does not provide
-> quiescent states via rcu_all_qs().
->
-> So, use the availability of preempt_count() to report quiescent states
-> in rcu_flavor_sched_clock_irq().
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-A note about the inverse of this case, where we might have long running
-loops which only temporarily enable preemption and thus would be
-unlikely to align themselves with the tick: in prior discussions [1]
-Paul had pointed the need for providing for forcing a context switch
-in such a scenario.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I had a patch which did that, but I think it is unnecessary since this
-clause in rcu_sched_clock_irq() should already handle it.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-   void rcu_sched_clock_irq(int user) {
-        ...
-        /* The load-acquire pairs with the store-release setting to true. */
-        if (smp_load_acquire(this_cpu_ptr(&rcu_data.rcu_urgent_qs))) {
-                /* Idle and userspace execution already are quiescent states. */
-                if (!rcu_is_cpu_rrupt_from_idle() && !user) {
-                        set_tsk_need_resched(current);
-                        set_preempt_need_resched();
-                }
-                __this_cpu_write(rcu_data.rcu_urgent_qs, false);
-        }
-
-Paul?
-
---
-ankur
+If you want to undo deduplication, reply with:
+#syz undup
 
