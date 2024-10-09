@@ -1,178 +1,179 @@
-Return-Path: <linux-kernel+bounces-357460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601C199716C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:29:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC390997188
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF171C22776
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330B2B2364B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31551E1023;
-	Wed,  9 Oct 2024 16:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2ydzcEvl"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2088.outbound.protection.outlook.com [40.107.93.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAEC1E32B1;
+	Wed,  9 Oct 2024 16:24:11 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D055D1957E7
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490969; cv=fail; b=YDnzGI3yFvMtc9eGNkeOtGwckCjL3t7cL9aWqL1qQ5mbjspRz+w/4sg53Zca+GtfhACu/amVsHpkz7JIlGLnYdadpRJaDXATlrcVBO/YO80FVR7WBYKfyw2kul02S+lJLmwZjMzLSGBotAPkQhR6zkSa7URsw1+Y6kGHGr6ume8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490969; c=relaxed/simple;
-	bh=pTjpxekufAFGoNF5HqXBwcaauRIiu6TSqHqMZm3fR+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dheg+ywyzeDiUZuMAw1RN/5bz9BZP1ukGwKIi4bX4+Hkph9e7e9xZfJtoO+KvHgDLXxTHz4+Himho1Wr85NXhIfUyvzbwCC7zOMEG+sCWkDXdkFu2Szr4LWT7R7s3zDjNtpEPyCmvRv3AfNJllPw/P1QNTBDX9nkpbM9STCOLrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2ydzcEvl; arc=fail smtp.client-ip=40.107.93.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DHmkjekh31A8aWhWzKG/z692+ruAkmHss02x6FEPd7eRm5D8MvSHc4aUU5WlaL4rKwxLSJ3NbR1I6R4ljEFlaoPmtqUl02gY2o06FK97Z99upsf6VTHYgjwFXPnDW40ENiNxK1/vnTD5dvAccJkl62bTS49q4JCm0R2YDzQsb3mOBHyjTOqujJ3fq45W7rnfhHbJ114ZN3YNmQB5Vv9urV3JREwmvT33FccVx0qlFJ6Cbsv0fDbH4FjDGC6TLgaZE+pcF4P/jwhAQpe8iLifIcQCyuf+p9PNoCDrwXMbRgWSQk73fVuiP4FCVDfQ32SrTBrH0x9eX+83zvTJLTML5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OTAf1tVzYg8W5+95LW/cO3Bja1AVIl84tc3L8vYgx/8=;
- b=Ep1fmCdVFyIm8HBXU8cFDrJmLKfsAf9MhppyHc+4AZ2eCRe11UNknAKy0NXBM7FULvA3seqotn4zXS9se5Kc0ve6MynDAJW+ivkG8qYY0u/2KVK0WadlSnJtIurknK0tHXfzIlpILD4YYIHSS3d1TUDy/hE81gnbj7aD0kMSsj/Nx2xgxTJ+T/pYerCI8QiLagLnVU7aY8/S/gcBHCphCCjvyrpqVTXvPEmhmAeG7Lo7g0hhMMRbEJ8Bp8IMlIRDW8tXNWmEkPPymyD3VmxyRdVjctPnESGJo0X030M4uONOASgyo3FIZdsWAbsE3JkxDMa4hj4RzM9RhPdoBZZt9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OTAf1tVzYg8W5+95LW/cO3Bja1AVIl84tc3L8vYgx/8=;
- b=2ydzcEvlHbbHwQu7sEndHky9opxntD83iKCGBKICvMwX17Ck2F/FKP1QOKXI1Lnf77/p6DbBlQY7aFSGv0mMcpv16PXvpOlyauheMWv4CoJ1J05xJ4GzIRijapnV6+qX/EnggbKdjT7jyjlfuZMPO9pGbLQrhgfE15uKWI3ShgU=
-Received: from BLAP220CA0020.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::25)
- by CY8PR12MB7146.namprd12.prod.outlook.com (2603:10b6:930:5e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Wed, 9 Oct
- 2024 16:22:40 +0000
-Received: from BL6PEPF0002256F.namprd02.prod.outlook.com
- (2603:10b6:208:32c:cafe::1d) by BLAP220CA0020.outlook.office365.com
- (2603:10b6:208:32c::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
- Transport; Wed, 9 Oct 2024 16:22:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0002256F.mail.protection.outlook.com (10.167.249.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 16:22:40 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
- 2024 11:22:39 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 9 Oct 2024 11:22:39 -0500
-Message-ID: <08835e82-f9e4-52e5-5d03-fa31ecf63314@amd.com>
-Date: Wed, 9 Oct 2024 09:22:38 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678981E32A2;
+	Wed,  9 Oct 2024 16:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728491051; cv=none; b=H62Vevg5GweeulcHVkm1/q7Cb067115ovoVlhMlVDKjgKuD63qRYmmQqX21h5fPy/md8hKWaek2d0hTnoC7stoztpsxg7su3RoxlT3S5f/LaP0x4avbEFL/LJ4E1UBrUk4ALUSpr3YxaX8ZmOU1qIROYZ2P30u6yt3Eu2KrgLrY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728491051; c=relaxed/simple;
+	bh=ss1vuC8T7I/NVqyQ4h0vf7uA1GYauhLiZhKzzJMIc+A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cehxZDPsFhh05zB669PK75fXAxtt19u4kOSW9M6t3dy+md0aQTWWdKOQTiBPwBScMa4q9RubVnqkSu46Vj1az1HAIbOHw7ANepLOkXsomRwu82lqbbeBA/0lT9sAgfjC4wz6Co0LmNJC2kxI41wuqJJ2WIapL/437Jr43FeBEuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNyPF3GXDz9v7Hk;
+	Thu, 10 Oct 2024 00:04:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 41D0E140413;
+	Thu, 10 Oct 2024 00:23:55 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwA3mMgQrgZnDq6LAg--.65260S2;
+	Wed, 09 Oct 2024 17:23:54 +0100 (CET)
+Message-ID: <1a1d106ea8bba8abc1d3f3cd6fdd71d03edcf764.camel@huaweicloud.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Shu Han <ebpqwerty472123@gmail.com>, syzbot
+ <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
+ akpm@linux-foundation.org, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  hughd@google.com, jmorris@namei.org,
+ linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,  linux-security-module@vger.kernel.org,
+ roberto.sassu@huawei.com,  serge@hallyn.com,
+ stephen.smalley.work@gmail.com,  syzkaller-bugs@googlegroups.com,
+ zohar@linux.ibm.com
+Date: Wed, 09 Oct 2024 18:23:40 +0200
+In-Reply-To: <CAHC9VhRt1BA_U2cEDFjHK_bmfW0ejx2AtbwZKgE5FFRDbUYNOg@mail.gmail.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+	 <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+	 <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+	 <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
+	 <CAHC9VhSEMSwzxjXUHLCWXoGj3ds8pQJ-nH6WQuRDzBkx6Svotw@mail.gmail.com>
+	 <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
+	 <CAHC9VhRt1BA_U2cEDFjHK_bmfW0ejx2AtbwZKgE5FFRDbUYNOg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3 11/11] accel/amdxdna: Add firmware debug buffer support
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240911180604.1834434-1-lizhi.hou@amd.com>
- <20240911180604.1834434-12-lizhi.hou@amd.com>
- <1a2bb8fc-0242-d86b-1de0-cc9eec1c61c0@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <1a2bb8fc-0242-d86b-1de0-cc9eec1c61c0@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0002256F:EE_|CY8PR12MB7146:EE_
-X-MS-Office365-Filtering-Correlation-Id: 862ef9c7-70af-43d9-45ce-08dce87e988a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZHllNlVDbWtOZWtvZTkyRW9EOGtLY1F1L0F2UnVRUHkwQVZxL25zcXFjTTQz?=
- =?utf-8?B?K3dlZUEvVnl0Unp0Yy9TS21mZkVsa1BWcUF3N3d5OXR4WjNMeTlwN1RkTlVR?=
- =?utf-8?B?TGs3TC9FMStPQ3BDNmJ1U09xcUZPZWtOc0RDbE5BVXZDWmwveTFPRWVYaTlm?=
- =?utf-8?B?RUpHZ1JNbElxWkg2RFBNS3JWeTNCNzFCUTJKalRENXpyd2hFSUtyUGpCS2p5?=
- =?utf-8?B?MEpLTkdzTjBvekJuZ2hRSGNXRHNibWtOM1NWMDM0NUpVSDQ4SFNmUmF5MG8y?=
- =?utf-8?B?WVNFckNPanpIQ3RaaEptV0NldmZ0Rm4vRDVmbThoazdmQ3ByR1Y0dXpOZEgv?=
- =?utf-8?B?RFNkbWRUV3U0ckh4MEIwKzJRUHE3anRTRU9wUTgvUXdBU2JFN244NnZxT0Ez?=
- =?utf-8?B?YWVtRGY1NURHbTYzYjAzR2JoUitEais1RnlJdHJOMEdDbk5ScGM2b2xpZC9Z?=
- =?utf-8?B?ZzV4K1kxSGhqVDVZTVkxZUhIa0cwWGVQTU9tbWxRQksrdTdhRjA5cmhSZ3JF?=
- =?utf-8?B?dFZXMlJBNCt0dzBwTzZ1bkRnWExha1pxVlM3MlVtK3Q4YWtFVDg4dTVxU0pp?=
- =?utf-8?B?aGFLUG1WZndxb2ZvQXRFNjdSTHN6NVpveDNodDAxczRZNE1GbUE5SDJEWVJj?=
- =?utf-8?B?bjZTZU1NWDdmRkFtNmdNY0FTNmg3b3BDWllzS2lRU0xnM1BGSjRSTTBIbWQx?=
- =?utf-8?B?UEMyKzA1WVFiQ1hOQmRITHF5ZFN6K1hKUkEwb3JCeDloOGdoemdXRjJDNzAw?=
- =?utf-8?B?Z012KzZGMlVDMHpOVEZ2MWVJUk9wdnh2bEpsTkFyVGVnRENJb0lRdEVkRWhJ?=
- =?utf-8?B?MkFZOFZrRmNaeUdqbXRoZWowcjBrQ0FWbEJXeVBXaUd6R2QxR3RRblh5QzV6?=
- =?utf-8?B?bk9iUEFJdnlVSlhGaXBnTXVJS1V4cGkvS3B1TXpLeHp2SnloQ3ZWL0xLRGhr?=
- =?utf-8?B?azY0UnR1WURGUlpwVnIxRkQvV2NvZGNyaXVUSU83RzVlTFg3ck82MkxrdnRp?=
- =?utf-8?B?cmJlZGJTR1BLWDFWZ3JPcERIeGRtWW1tVVlmVjdCcTVjUkpLZ05JL1U1WUZn?=
- =?utf-8?B?RE1TeE1XSE13Ync5RmpMSU9kaTlQSFBiK0JQcld1MHpDQXJaM1BLRkxONlha?=
- =?utf-8?B?ZWhyaUNOeVFKTkh2cEthbmhZWTAvb05FOExkUjIzM1RZc3Z0VWlRSW5kY0Ri?=
- =?utf-8?B?V3EveXY2czViZVVIbFh1cVFtZXBFQ2RmVmYxditqRXByd0w4K1RIT1lHR2Q1?=
- =?utf-8?B?VmxkSmM4UUNET2FvaEoyL1F2TWEwTE50QlMwdHo1WnR2QkVVTEhRa2FUSFJz?=
- =?utf-8?B?aHdGbTdwT3RiQ3VUS1p1cldGWjF1TFFnZ2dDSDUySHZ0dHhHV08yTWxtVjhi?=
- =?utf-8?B?T3hDRlg3V2IvKzBUMmlHbjlTL1NOWU5WdnByNWJBM3V1OUgvNlI3RnpjOVJC?=
- =?utf-8?B?VzZoMU9iQmVFZmxGMDdWc3F2TzFhNFRIZC81enJaakw1dWRWaU5nTjBlUjNB?=
- =?utf-8?B?eHJPVjdFaXRnaUxpcUU0Z3g0amJENXZyWjRZU0VnVTBzcUMzMEM3THVKU1l2?=
- =?utf-8?B?K1FLQ2FwemE3K2V6c0NMakd4dU1zUHdGM0lidzhYYU9lSEJlZEVLUjZhTmpj?=
- =?utf-8?B?NEM5V2lNVmJIT1ZsNkVHRGUwaUtjd1NXNWxVaVdxZko0cnViRTBRc041MzdY?=
- =?utf-8?B?aFdDYU1zS3hnQjZrNTRGdFhnVUlzT2JiTjd0enZuOU0xOWt4L1AvYWhOdVYw?=
- =?utf-8?B?UmlWL29vOCtnUk1Fb2RrNThneHJwazJEVUJxVVc4eUplT0wwMjVIODQ4QTZv?=
- =?utf-8?B?ZjlkM012QnNZa200VHg5emJKdUp5b2tvVzV3b2hQZUxQenNzeXp2QVg5cXlV?=
- =?utf-8?Q?/seqDvZDKoR+0?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 16:22:40.1708
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 862ef9c7-70af-43d9-45ce-08dce87e988a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0002256F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7146
+X-CM-TRANSID:GxC2BwA3mMgQrgZnDq6LAg--.65260S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF15Gw1kXr15Ar4UWr4kWFg_yoWrJw1fpF
+	9aga4Ikr4DtFy7Arn2yr1UW3W0y34UKryUWr95Jr18JF90vF1ktr17Jr1furyUGr95C342
+	qr4UWryfJw1DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7IUYkhLUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGcF5ngMVQACsp
 
+On Mon, 2024-10-07 at 12:58 -0400, Paul Moore wrote:
+> On Mon, Oct 7, 2024 at 12:49=E2=80=AFPM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Mon, 2024-10-07 at 12:35 -0400, Paul Moore wrote:
+> > > On Mon, Oct 7, 2024 at 11:31=E2=80=AFAM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
+> > > > > On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@=
+gmail.com> wrote:
+> > > > > >=20
+> > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > WARNING: possible circular locking dependency detected
+> > > > > > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+> > > > > > > ------------------------------------------------------
+> > > > > > > syz-executor369/5231 is trying to acquire lock:
+> > > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, a=
+t: inode_lock include/linux/fs.h:815 [inline]
+> > > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, a=
+t: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+> > > > > > >=20
+> > > > > > > but task is already holding lock:
+> > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write=
+_lock_killable include/linux/mmap_lock.h:122 [inline]
+> > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_r=
+emap_file_pages mm/mmap.c:1649 [inline]
+> > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_r=
+emap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+> > > > > > >=20
+> > > > > > > which lock already depends on the new lock.
+> > > > > >=20
+> > > > > > This issue (if not a false positive?) is due to the possible `p=
+rot`
+> > > > > > change caused by the processing logic for READ_IMPLIES_EXEC in =
+do_mmap(),
+> > > > > > so the remap_file_pages() must perform LSM check before calling=
+ do_mmap(),
+> > > > > > this is what the previous commit want to do.
+> > > > >=20
+> > > > > My apologies for the delay on this, I was traveling for a bit and
+> > > > > missed this issue while away.
+> > > > >=20
+> > > > > Looking quickly at the report, I don't believe this is a false po=
+sitive.
+> > > > >=20
+> > > > > > The LSM check is required to know what the `prot` is, but `prot=
+` must be
+> > > > > > obtained after holding the `mmap_write_lock`.
+> > > > > >=20
+> > > > > > If the `mmap_write_lock` is released after getting the `prot` a=
+nd before
+> > > > > > the LSM call in remap_file_pages(), it may cause TOCTOU.
+> > > > >=20
+> > > > > Looking at the IMA code, specifically the process_measurement()
+> > > > > function which is called from the security_mmap_file() LSM hook, =
+I'm
+> > > > > not sure why there is the inode_lock() protected region.  Mimi?
+> > > > > Roberto?  My best guess is that locking the inode may have been
+> > > > > necessary before we moved the IMA inode state into the inode's LS=
+M
+> > > > > security blob, but I'm not certain.
+> > > > >=20
+> > > > > Mimi and Roberto, can we safely remove the inode locking in
+> > > > > process_measurement()?
+> > > >=20
+> > > > I discussed a bit with Mimi. Her concern was the duplicate iint
+> > > > structure creation during concurrent file accesses. Now that inode
+> > > > integrity metadata have been moved to the inode security blob, we c=
+an
+> > > > take the iint->mutex out of the ima_iint_cache structure, and store=
+ it
+> > > > directly in the security blob. In this way, we can remove the inode
+> > > > lock.
+> > > >=20
+> > > > Will write a patch and see if it passes our tests.
+> > >=20
+> > > That's great, thanks Roberto.  Assuming all goes well we'll want to
+> > > backport this everywhere we merged the remap_file_pages() patch.
+> >=20
+> > Welcome. Probably it can go down only until the kernel where IMA and
+> > EVM are LSMs.
+>=20
+> Yes, we'll need to look at that once we solve this in Linus' tree.
 
-On 10/4/24 11:33, Jeffrey Hugo wrote:
-> On 9/11/2024 12:06 PM, Lizhi Hou wrote:
->> User application may allocate a debug buffer and attach it to an NPU
->> context through the driver. Then the NPU firmware prints its debug
->> information to this buffer for debugging.
->
-> I feel like I must be missing something. It looks like this patch 
-> accepts a buffer from the user, and stores it. However I don't see how 
-> the NPU firmware ever learns that this special buffer exists to then 
-> use it.
-
-The debug function is incomplete while I was creating the patch. Thus, I 
-put a line in TODO "Improve debug bo support".
-
-We made progress on this feature. Should I add the code to V4 patch? Or 
-I can add it within future patches.
-
-
-Thanks,
-
-Lizhi
+#syz test: https://github.com/robertosassu/linux.git ima-remove-inode-lock-=
+v1
 
 
