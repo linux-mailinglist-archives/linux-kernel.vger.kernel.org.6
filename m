@@ -1,117 +1,181 @@
-Return-Path: <linux-kernel+bounces-357976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2105B9978AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:47:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44BB9978AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD5B81F20610
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:47:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 260E9B21F0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C365188587;
-	Wed,  9 Oct 2024 22:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FEB188587;
+	Wed,  9 Oct 2024 22:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZvkI5mu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws1X2Aiw"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92E38DD6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ABA38DD6
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728514029; cv=none; b=pHWyhaGfLNuM7lBm+/T3kQ+mu6HS76L/gCnknfRPcUExZ/NjtzDKS1rqHlsaKIpheXKoT05t0iLtahDqkh3E6h2VA7hxYgATEDBc0rPGzFijEr+q8j9QZCHvzJh+/zU5am6tPrLfz9K0M4ElhDmas8wNEise5Deq77GRVywZ75E=
+	t=1728514056; cv=none; b=NTmMupQG9AZbpnR24i16Fu7c/j3BC0ah5y81J+iJFX6amzYHWicHXpg2hoC6pLSqSuClYfaIvxCnB8oxddfe8oz+HSuEHY0FqJzvo2VHlEuQ25+xsBChhlnfkqT1MQOvrAJ+Yl13v22shgBokBqL76akeXjTlSh9WtSKepNeBD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728514029; c=relaxed/simple;
-	bh=zezz4miSiEcAUWwCNxLP4M8HbD5Q3oG1LiX06x3IoAM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RRhHHJzDQosDNwsdlZJqth/8GISnoxmOoRMX8OO/LmjDczzl89i5ydbee+qC0i7J26hL8BNIehWcRgqZYcHG8yMi9u6Pvc34K4v9iVQ+vrg5BFE90M0/N4/WrYKWV4SiuZkYA+Ozz6UQXS/vkmqcUFFMQO9Z6IlvvMDzBkfvM18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZvkI5mu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12752C4CEC3;
-	Wed,  9 Oct 2024 22:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728514029;
-	bh=zezz4miSiEcAUWwCNxLP4M8HbD5Q3oG1LiX06x3IoAM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=sZvkI5muk6awGGVdIHrLvoDRdzZ21X2AHklId6MA8LcOAk40rNThbq+RWFi+ZZAan
-	 fyQmQD/z8xufkSYMulX16TXR81GuzFMTjAfIkcnHsPF1mH3b0z8CpSkyp/Ww4KG5bM
-	 vdScIWAbluxij52vhCH9E+O+N338aMMd3s3A8Yk9SBNajU6GgHzMdQvm2/9YBomupa
-	 yZoKu9bqw4pzvIs5pYDrzRMkRHrUiwA0a2cA6ht2isdML/EA+iJFFxjBy37zSvlT43
-	 f5xAt5S6ETrJC+IFpVSBVEbWPcHAnZ1IOtAV4iDBpPCowxdmojpJo0YJQIqfmMLpCo
-	 V+Ec4rCGtOfsg==
-Date: Wed, 9 Oct 2024 15:46:59 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Jan Beulich <jbeulich@suse.com>
-cc: Jiqian Chen <Jiqian.Chen@amd.com>, xen-devel@lists.xenproject.org, 
-    linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    Marek Marczykowski <marmarek@invisiblethingslab.com>
-Subject: Re: [PATCH] xen: Remove config dependency in XEN_PRIVCMD
- definition
-In-Reply-To: <73174eb0-380d-4f95-a2c3-097b86fac8db@suse.com>
-Message-ID: <alpine.DEB.2.22.394.2410091539260.471028@ubuntu-linux-20-04-desktop>
-References: <20241009062014.407310-1-Jiqian.Chen@amd.com> <73174eb0-380d-4f95-a2c3-097b86fac8db@suse.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1728514056; c=relaxed/simple;
+	bh=rKQ/7EiWM+14DprgcNRh2j9YbM9U6mTHjkfP6RNx+dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osS8WTZszj7nmzB/XOJOinV7sWvwRpiIzK8ypb9zRPgGD4sq8RRx5s/9CtJSsKLPR/OMp4Adgy7JAXSC5G2ON96u82RmJvulb5VnEzsmksuWMw0NyZifddkLtQklcATm/JeC2IjdTU8LFsYFyIye2yCpehtfE/ioQPTM/pq/Y9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ws1X2Aiw; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7afcf96affaso13102985a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 15:47:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728514054; x=1729118854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tD/taxiB32lIZLEVD63JN/O8iGf4YBa21I5+T7LszzY=;
+        b=Ws1X2AiwXfxcEpplRmPffdz0xaL2Mx0R6ugX9IC2QNsZftPXO9IzXru4FXDyKvpu55
+         MMtvrsfuT6HPw8rZWdK/esWLco8BlaepWZNL8NWZnSnCS5PnXC5WYGLxFfHPJ7ei1RtI
+         iWD+l2GUZDI15fZlwRjZNVLdotQbu5lY7+DhkL7E4Z+g5/0gtnj+H8kMZf2OWudggtNJ
+         KocLf990t7vlfo/VUlHOlvhzHbdfZm39iXByyxSyCajvr+CUcjGoMo0GnNw0RJt0AgGo
+         0Rbqxf791NnkRoVtNlt8eIwNaTwYYeIoVmTBPWNoVJ1O64qYMkAo6s3TE4dhHhGh7qD4
+         2vwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728514054; x=1729118854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tD/taxiB32lIZLEVD63JN/O8iGf4YBa21I5+T7LszzY=;
+        b=HyH591/pUhgAuVCvXn9Nq8VrFAuV1adl6TZoFVWQAJxqL68/gQwRnw7ofxPEQnkvAV
+         A2JdfaNCGGlgWMJh078yiltXuBtDGDHEOieFSI27da+cfwUy3ZFlPqZlZOXzALYJRjc8
+         jecJXfrNiWAMMvmHgptLFwee7L+DZnZ9IGRXL3kW7ihLyPem6F/xIPJsQcXbFDrShvYO
+         GjegxxknDsqJH3rmUfgQRIlAlK3a1m3ycRYHWe8zIoGFRUEVXnJLiNREK9+j6yJMHMgR
+         zqnqr9umvw0jTkWQgU47sgo2x0rrbY65ziijlTRTZgm07wCj4MuKYfZ+WeNPXHmvAaV6
+         VD3A==
+X-Forwarded-Encrypted: i=1; AJvYcCX+VLnHlF/Tr9eyqbwrOGhln4aRjMb7lencUQF9HmZw3zRNsUG4YZTJ6DOQdaBNSLUB0p1lzZPfu3QFljQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxshZPY9w9IsD724qWeMyuz1uepIArRz3el6P/KHrluKgC6jio
+	640tOoE+WQezNuz3BwFhnHoKqIm6f4OwmJKJ60ps/3KLRO9Pchi2
+X-Google-Smtp-Source: AGHT+IG8Yp3/vNWc1eVDjxHNF1J0kVXOD/+ZWc1QtlutbEWzZn6SSs9A5fEd+JETGfAPxWJo8KZwcw==
+X-Received: by 2002:a05:620a:290b:b0:7a9:a810:9930 with SMTP id af79cd13be357-7b07953e0c3mr704660685a.23.1728514054096;
+        Wed, 09 Oct 2024 15:47:34 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148c70basm1288185a.7.2024.10.09.15.47.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 15:47:33 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 526AF1200069;
+	Wed,  9 Oct 2024 18:47:33 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 09 Oct 2024 18:47:33 -0400
+X-ME-Sender: <xms:BQgHZ8FuoM8r3h0JC0NxBXZrnKQOTJxb7boOSHMyh2CKRfwmqC8Cmg>
+    <xme:BQgHZ1WqskpM_yrLO0gY1d5yrNwRY9Hp5lLO7btzyAiicMZfYqcopQM9TNmPPIsii
+    Ec15m7P8enzOOwx7g>
+X-ME-Received: <xmr:BQgHZ2I81wav1NXzesgQIcFzlQmRReh3Xnil-S36fJy-AK-bk7dydhvQpiCreA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefgedgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
+    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hllhhonhhgsehrvgguhhgrthdrtghomhdprhgtphhtthhopegsihhgvggrshihsehlihhn
+    uhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
+    pdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    epthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepfihilhhlsehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegsohhquhhnsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:BQgHZ-EtIDXpdXpqv9ceJJ_B96_ijfkKBq2zCiE58afiunp7kxk8NA>
+    <xmx:BQgHZyVzmy2fOBpZJ4BFkzuOGQpl_b2M0pV_EGMDoxMGlFlW9jF8hg>
+    <xmx:BQgHZxPhpdGiphFSBzsUVgyEcHCkoWY1RVD48h_pgDiOYaiWzpz7xQ>
+    <xmx:BQgHZ514-bVbiqqN1UEQkkFDplP9tDaxdOcul5N2LLPEHsJY9AJpSQ>
+    <xmx:BQgHZ7U1Av0KCw2GZfLfXTd5d_NwHZE1Rz1VApuQDY14Y71CsYpH9YMY>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Oct 2024 18:47:32 -0400 (EDT)
+Date: Wed, 9 Oct 2024 15:47:29 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 1/1] lockdep: Enable PROVE_RAW_LOCK_NESTING with
+ PROVE_LOCKING.
+Message-ID: <ZwcIAS-P28BQIAUx@boqun-archlinux>
+References: <20241009161041.1018375-1-bigeasy@linutronix.de>
+ <20241009161041.1018375-2-bigeasy@linutronix.de>
+ <a323429f-66e8-4951-a674-54dc25429a15@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a323429f-66e8-4951-a674-54dc25429a15@redhat.com>
 
-On Wed, 9 Oct 2024, Jan Beulich wrote:
-> On 09.10.2024 08:20, Jiqian Chen wrote:
-> > Commit 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
-> > adds a weak reverse dependency to the config XEN_PRIVCMD definition, its
-> > purpose is to pass the combination of compilation that CONFIG_XEN_PRIVCMD=y
-> > and CONFIG_XEN_PCIDEV_BACKEND=m, because in that combination, xen-pciback
-> > is compiled as a module but xen-privcmd is built-in, so xen-privcmd can't
-> > find the implementation of pcistub_get_gsi_from_sbdf.
-> > 
-> > But that dependency causes xen-privcmd can't be loaded on domU, because
-> > dependent xen-pciback is always not be loaded successfully on domU.
-> > 
-> > To solve above problem and cover original commit's requirement, just remove
-> > that dependency, because the code "IS_REACHABLE(CONFIG_XEN_PCIDEV_BACKEND)"
-> > of original commit is enough to meet the requirement.
-> > 
-> > Fixes: 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
-> > Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
+On Wed, Oct 09, 2024 at 12:50:39PM -0400, Waiman Long wrote:
 > 
-> This lacks a Reported-by:.
+> On 10/9/24 11:45 AM, Sebastian Andrzej Siewior wrote:
+> > With the printk issues solved, the last known splat created by
+> > PROVE_RAW_LOCK_NESTING is gone.
+> > 
+> > Enable PROVE_RAW_LOCK_NESTING by default as part of PROVE_LOCKING. Keep
+> > the defines around in case something serious pops up and it needs to be
+> > disabled.
+> > 
+> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > ---
+> >   lib/Kconfig.debug | 12 ++----------
+> >   1 file changed, 2 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index 7315f643817ae..5b67816f4a62f 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -1409,22 +1409,14 @@ config PROVE_LOCKING
+> >   	 For more details, see Documentation/locking/lockdep-design.rst.
+> >   config PROVE_RAW_LOCK_NESTING
+> > -	bool "Enable raw_spinlock - spinlock nesting checks"
+> > +	bool
+> >   	depends on PROVE_LOCKING
+> > -	default n
+> > +	default y
+> >   	help
+> >   	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
+> >   	 that the lock nesting rules for PREEMPT_RT enabled kernels are
+> >   	 not violated.
+> > -	 NOTE: There are known nesting problems. So if you enable this
+> > -	 option expect lockdep splats until these problems have been fully
+> > -	 addressed which is work in progress. This config switch allows to
+> > -	 identify and analyze these problems. It will be removed and the
+> > -	 check permanently enabled once the main issues have been fixed.
+> > -
+> > -	 If unsure, select N.
+> > -
+> >   config LOCK_STAT
+> >   	bool "Lock usage statistics"
+> >   	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
+> Acked-by: Waiman Long <longman@redhat.com>
 > 
-> > --- a/drivers/xen/Kconfig
-> > +++ b/drivers/xen/Kconfig
-> > @@ -261,7 +261,6 @@ config XEN_SCSI_BACKEND
-> >  config XEN_PRIVCMD
-> >  	tristate "Xen hypercall passthrough driver"
-> >  	depends on XEN
-> > -	imply XEN_PCIDEV_BACKEND
-> >  	default m
-> >  	help
-> >  	  The hypercall passthrough driver allows privileged user programs to
-> 
-> The report wasn't about a build problem, but a runtime one. Removing the
-> dependency here doesn't change anything in the dependency of xen-privcmd
-> on xen-pciback, as the use of pcistub_get_gsi_from_sbdf() continues to
-> exist.
->
-> Consider the case of XEN_PCIDEV_BACKEND=m and XEN_PRIVCMD=m, which
-> I guess is what Marek is using in his config. Both drivers are available
-> in such a configuration, yet loading of xen-privcmd then requires to
-> load xen-pciback first. And that latter load attempt will fail in a DomU.
-> The two drivers simply may not have any dependency in either direction.
 
-The idea is that there should be no hard dependency on
-pcistub_get_gsi_from_sbdf(). If it is available, the service will be
-used, otherwise an error will be reported.
+Thanks!
 
-The problem is that IS_REACHABLE is a compile-time check. What we need
-is a runtime check instead. Maybe symbol_get or try_module_get ?
+Queued in my lockdep branch:
 
+	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=lockdep-for-tip
 
+will send a PR to tip between -rc3 and -rc4.
+
+Regards,
+Boqun
 
