@@ -1,115 +1,160 @@
-Return-Path: <linux-kernel+bounces-356954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2113B996950
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F20996957
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AE76B26F51
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:55:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5B9B27669
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715EC192B88;
-	Wed,  9 Oct 2024 11:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA569192B86;
+	Wed,  9 Oct 2024 11:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJyOhibx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ah+NPHNi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4253192585;
-	Wed,  9 Oct 2024 11:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F991925AC;
+	Wed,  9 Oct 2024 11:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474893; cv=none; b=U3ycTTcAwOLWMZwgj8DKFPEkQLLpNC+EvuXL5zZYtIgZsKR2SA2kpA9aWL70Uk7yzkCHnT49Fe0fmaGXwYGNMGwDVmv7Qs9qLgcfWJTuCn0IxqJbY+c5PF7MgWHhs0laMiJeGce072ohmhgefoNR95JVekD19vUTY6GOYQ9QhHY=
+	t=1728474988; cv=none; b=topnNIx1+465xMaKF+I2ctivrgnD4t+mutm7nlJDJnZ7TcfOqWOqGwc0QJ/iBiEkwx4YyG+NgjglEdHF3MC5pIFo7Qma7sH3wK4v6j+NcrbNxuxv5UEdBoDOOvo9AK0Zvq+ry5Lk6rlSyr5f44HQPbdxNKU0X1OWnaYtL+NVNrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474893; c=relaxed/simple;
-	bh=6XboQiBiqtAshC35gbGlqSFQvI3cs+VP6vX2LqYcdAU=;
+	s=arc-20240116; t=1728474988; c=relaxed/simple;
+	bh=QU2Gz7IMgu47xLytuaP9hy7d2/cd7EjRuGwMRSoBSYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2m1qtHRjhkSxe59DZky1wKjqq6xhA5hSskpoDywtDwIlXm0y6wwn3FKlBpqa30ZvLVlypJ2oZCuUPAk77NIfWYn401Ttz8lwg21Xcz8nTOaYzwPYSd7RDPPdafaHdVj2mgrAU6fbAplrzZKHgpozv98rJXeUltA82PpJ9kMMgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJyOhibx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7496C4CEC5;
-	Wed,  9 Oct 2024 11:54:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKG/VHYAfsjIlTcSViK5sXxy97Nou35R8u4Lo9iXj4y0A6hZl3SP2X1rVpw9FlzPYWUSy+FM/ihQBwxOTVUbtlHMmGkuincMwESQOR02urFEA6q1cDtWuTJ9lTeO3r/inF36KR9/qmwLMOVXp0og7xvy99voiMFyVMrft1AOQho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ah+NPHNi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7BAC4CEC5;
+	Wed,  9 Oct 2024 11:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728474893;
-	bh=6XboQiBiqtAshC35gbGlqSFQvI3cs+VP6vX2LqYcdAU=;
+	s=k20201202; t=1728474987;
+	bh=QU2Gz7IMgu47xLytuaP9hy7d2/cd7EjRuGwMRSoBSYU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QJyOhibxLOBg5vY6YRhMNNS7Vtu28OgJ1B5TAucH0v5w/5hu3fZp1jx28xA7hca2S
-	 nGJrPlv6cjp4/XJyPBxP/Jsf13Mp8BHfjhRo4WddQ6JxOXdzWoyn8HoqOGda9GOwBR
-	 6u9y+oQ2RaqVDSlWcjh7fxhkRTK9fRCCmvIjykvMYRMBZm3gKhh7osMfu5Egb4Aeu7
-	 lwg4HxAE+3CLvOFhJ7isxMt7ys0qTL12BMTse52t21quhOtTaWOLIo4FaoqvtFkKJa
-	 jmGd97mlRapVEJ9T5CKQw46M4zhbErRpBEXYUHU5+4qHLasx9HT7w3O45gI0ZlP9wW
-	 m43x9BcUVXqCQ==
-Date: Wed, 9 Oct 2024 12:54:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, richardcochran@gmail.com, csokas.bence@prolan.hu,
-	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, linux@roeck-us.net,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: fec: don't save PTP state if PTP is unsupported
-Message-ID: <20241009115448.GJ99782@kernel.org>
-References: <20241008061153.1977930-1-wei.fang@nxp.com>
+	b=ah+NPHNiYy1Tfhpmtu2mOYXlGA60NlllcYsOLpKu+F9w+2+/NOmT6nXWLGI3sqOcJ
+	 UMb3f8leDtYUvqsvAzE7TbPYOD2UCl4JBdup7iKnyGRSETKdQWQQi/7W63KRtUPUrc
+	 vPs40974uYoEb6WhWrjUkeu2t/5f5VkC19EWFYRdfajVGKqPrffzfQ05GhYe9lDttn
+	 2/olRleGEYiBh0CCo2ZvlvJ170sUKoUiD6ZXVs1Ok1OI9hho3XMK5tm358FiY2jWDO
+	 5yYkagK97QPcbDzwRLxvZmeN0EBXqib1WqTbhbMdqOKV6EwznPrGVnx4CFXn5jZxJ4
+	 /ljyKLSplU7Gg==
+Date: Wed, 9 Oct 2024 13:56:20 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] sysctl: prepare sysctl core for const struct
+ ctl_table
+Message-ID: <20241009115620.mps3n2rfkwoltgej@joelS2.panther.com>
+References: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241008061153.1977930-1-wei.fang@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
 
-On Tue, Oct 08, 2024 at 02:11:53PM +0800, Wei Fang wrote:
-> Some platforms (such as i.MX25 and i.MX27) do not support PTP, so on
-> these platforms fec_ptp_init() is not called and the related members
-> in fep are not initialized. However, fec_ptp_save_state() is called
-> unconditionally, which causes the kernel to panic. Therefore, add a
-> condition so that fec_ptp_save_state() is not called if PTP is not
-> supported.
+On Mon, Aug 05, 2024 at 11:39:34AM +0200, Thomas Weiﬂschuh wrote:
+> Adapt the internal and external APIs of the sysctl core to handle
+> read-only instances of "struct ctl_table".
+
+Finally getting around to this. Testing for this has been done on
+sysctl-testing base:v6.11-rc6 and now on base:v6.12-rc2. Putting this in
+sysctl-next so it will get further testing on its way to v6.13. First
+patch (bugfix) will be ignored as it is already upstream.
+
+Best
+
 > 
-> Fixes: a1477dc87dc4 ("net: fec: Restart PPS after link state change")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/lkml/353e41fe-6bb4-4ee9-9980-2da2a9c1c508@roeck-us.net/
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Patch 1: Bugfix for the sysctl core, the bug can be reliably triggered
+>          with the series applied
+> Patch 2: Trivial preparation commit for the sysctl BPF hook
+> Patch 3: Adapts the internal sysctl APIs
+> Patch 4: Adapts the external sysctl APIs
+> Patch 5: Constifies the sysctl internal tables as proof that it works
+> Patch 6: Updates scripts/const_structs.checkpatch for "struct ctl_table"
+> 
+> Motivation
+> ==========
+> 
+> Moving structures containing function pointers into unmodifiable .rodata
+> prevents attackers or bugs from corrupting and diverting those pointers.
+> 
+> Also the "struct ctl_table" exposed by the sysctl core were never meant
+> to be mutated by users.
+> 
+> For this goal changes to both the sysctl core and "const" qualifiers for
+> various sysctl APIs are necessary.
+> 
+> Full Process
+> ============
+> 
+> * Drop ctl_table modifications from the sysctl core ([0], in mainline)
+> * Constify arguments to ctl_table_root::{set_ownership,permissions}
+>   ([1], in mainline)
+> * Migrate users of "ctl_table_header::ctl_table_arg" to "const".
+>   (in mainline)
+> * Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
+>   (in mainline)
+> * Prepare helpers used to implement proc_handlers throughout the tree to
+>   use "const struct ctl_table *". ([2], in mainline)
+> * Afterwards switch over all proc_handlers callbacks to use
+>   "const struct ctl_table *" in one commit. (in mainline)
+> * Switch over the internals of the sysctl core to "const struct ctl_table *" (this series)
+> * Switch include/linux/sysctl.h to "const struct ctl_table *" (this series)
+> * Transition instances of "struct ctl_table" through the tree to const (to be done)
+> 
+> This series is meant to be applied through the sysctl tree.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 > ---
->  drivers/net/ethernet/freescale/fec_main.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Changes in v2:
+> - Avoid spurious permanent empty tables (patch 1)
+> - Link to v1: https://lore.kernel.org/r/20240729-sysctl-const-api-v1-0-ca628c7a942c@weissschuh.net
 > 
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-> index 60fb54231ead..1b55047c0237 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -1077,7 +1077,8 @@ fec_restart(struct net_device *ndev)
->  	u32 rcntl = OPT_FRAME_SIZE | 0x04;
->  	u32 ecntl = FEC_ECR_ETHEREN;
->  
-> -	fec_ptp_save_state(fep);
-> +	if (fep->bufdesc_ex)
-> +		fec_ptp_save_state(fep);
-
-Hi,
-
-I am wondering if you considered adding this check to (the top of)
-fec_ptp_save_state. It seems like it would both lead to a smaller
-change and be less error-prone to use.
-
->  
->  	/* Whack a reset.  We should wait for this.
->  	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
-> @@ -1340,7 +1341,8 @@ fec_stop(struct net_device *ndev)
->  			netdev_err(ndev, "Graceful transmit stop did not complete!\n");
->  	}
->  
-> -	fec_ptp_save_state(fep);
-> +	if (fep->bufdesc_ex)
-> +		fec_ptp_save_state(fep);
->  
->  	/* Whack a reset.  We should wait for this.
->  	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
+> ---
+> Thomas Weiﬂschuh (6):
+>       sysctl: avoid spurious permanent empty tables
+>       bpf: Constify ctl_table argument of filter function
+>       sysctl: move internal interfaces to const struct ctl_table
+>       sysctl: allow registration of const struct ctl_table
+>       sysctl: make internal ctl_tables const
+>       const_structs.checkpatch: add ctl_table
+> 
+>  fs/proc/internal.h               |   2 +-
+>  fs/proc/proc_sysctl.c            | 100 +++++++++++++++++++++------------------
+>  include/linux/bpf-cgroup.h       |   2 +-
+>  include/linux/sysctl.h           |  12 ++---
+>  kernel/bpf/cgroup.c              |   2 +-
+>  scripts/const_structs.checkpatch |   1 +
+>  6 files changed, 63 insertions(+), 56 deletions(-)
+> ---
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> change-id: 20240729-sysctl-const-api-73954f3d62c1
+> 
+> Best regards,
 > -- 
-> 2.34.1
+> Thomas Weiﬂschuh <linux@weissschuh.net>
 > 
-> 
+
+-- 
+
+Joel Granados
 
