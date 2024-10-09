@@ -1,159 +1,277 @@
-Return-Path: <linux-kernel+bounces-357273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DCC996ED1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43598996EDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F3EB2477F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA837284F84
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F01B1A4E92;
-	Wed,  9 Oct 2024 14:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1161A0AFA;
+	Wed,  9 Oct 2024 14:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GQk9j3dN"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZJ9TgKjH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hia5RO0D";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZJ9TgKjH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hia5RO0D"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5600B1A3047
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFF3199E8C;
+	Wed,  9 Oct 2024 14:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728485639; cv=none; b=QDJxGIC6BSmqYnYKV4jTyoFC8DiAxSqqPp6I6AO+nyg7xbxKHkcsyS+C80bh2c4Q/yW0EXB85w8z7sC1wwWGvala9LHkMcHZr5o1c8GjmporYvcqB6BWolCUj4XsXGkSNS560kBH6eDdqcESDOf2azxvHINbKuD9nOoVpUY9A8g=
+	t=1728485722; cv=none; b=ldx+gEv+NXh2M/BPF2pTxts7lV+3rw7NfSA1oakN1fN4WrBI3pe/c3P4Ugv02LElgw3PFDKnJ6EE3RiXSMOl1aQUZvaK1NGmtRYfBMbJNilnPFd4uWEsPy3Sn7OCvMx5YwIDa6zMM/baZ0ZtPxlIat0ayLSB5g3FIjJGDvFnpdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728485639; c=relaxed/simple;
-	bh=Wcp+GqMmu1q63H/YE6QHbhgPAIl3ZjKVz6SCpWyow9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5Mj2m002dWcHLuxhbt0HKB3LuCB5zf6ZNiyqG/T7lGOFSwurYO/dSf33ZUSSsEWFcqWi+Jnh06bz90FVC7vi58yfI+pf/iKaojcGGRbdVezwvzYbQm5RxADXJFvX8BY9X7YS5SBwoRwLtFZF7UaR2tlMTOrodXTquGU3dZSF7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GQk9j3dN; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso8472248a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728485636; x=1729090436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+H0kOFP4T6igJRfk2BDJYURUAXD48fpn61B4tvG4AaA=;
-        b=GQk9j3dNZD8m37cnWnX8dl3uhCDRwTxXvvkI0LffXg3uHbvkhXPlMMNACl7/1oJTRN
-         yiVjoAUWDBunpylxOVj8pfD6wzFZA7Tl0Fdr0kX/NUnfey/qOclZplOjCvNOZtguXC9F
-         piQXEirzYCvDtHopOptlVJ7KHL0hlNM9p8TaWJw/Q7pOFUhVqoNrldyHio2KhD179+d+
-         YD0xJN6YYQlXEFVPSYMItFqIMxTvCf1vtBbyI9R80lNL8albUhn7PysZZJ/UobtDq7V5
-         9ii/lo0gMCDej1l0OBW0dLwiECrvn2s77cu1/I6aiI9bT/ha5fLRJyh9sVc4L59J1I9O
-         CzVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728485636; x=1729090436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+H0kOFP4T6igJRfk2BDJYURUAXD48fpn61B4tvG4AaA=;
-        b=Em8qTCwhhYHlTmkTkMkinMqFjdiqQlGwnqrHLwRBfw4w5Ia/tMjhs3AUFn/QJu7JkX
-         5Ep2FCRTBIS9U7MByZe1aRBPIgct1aX8fK0sXHeez8/7aokZnFAMzhSdxRtzfDWEnU/n
-         5NZW4p06TQD3FJ37GBzyJ3JbWO8QECsiR3iXVYGH4KzujLKfiTcBdHZCIgHSx5h3V0mP
-         3G9IvTbeFajLRPqTMUcCWx+Ck6MbtbT1Cz1fBv3DpuYwERClNxEveFdf57ASXU2PKumE
-         I7TnxaqTT3Czcxv8TcMzhkXDDzuE0AHNZvqL2ufDaTXgPchrCxhLWXCCeyvo1WoOATXI
-         LDTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz9cqVd6I1v1u0iieLaW/gPFHJs1eoyjztbXjd5wwi4zMYog0gjxKBKz043mRTuDxaJn18x6AboElNRek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4oaveE5S31QXHp+BNk2Dn4QdSpEczl2m/EX97TAgY+q7qWxN8
-	5+ZVng0SDeji/RH5CdYBatKknS9R8QhFhX9ervXycyuQSirWSxpAUNqf+e7kXh4=
-X-Google-Smtp-Source: AGHT+IEmgayneaJS0wgjiRp3q+Nwt/ZLsb7/5QU2fJv3JVDDkUIOa2C5YBb0EWyjxUDT/pKbrEA38A==
-X-Received: by 2002:a17:907:1c18:b0:a99:4d7f:138f with SMTP id a640c23a62f3a-a999e6e1ba1mr35003766b.29.1728485635259;
-        Wed, 09 Oct 2024 07:53:55 -0700 (PDT)
-Received: from ?IPV6:2a04:cec2:b:1ea2:d913:e3ce:8fdf:8180? ([2a04:cec2:b:1ea2:d913:e3ce:8fdf:8180])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9958923911sm403787966b.190.2024.10.09.07.53.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 07:53:54 -0700 (PDT)
-Message-ID: <d1229162-b97b-4261-9c4a-e1f83ef14378@baylibre.com>
-Date: Wed, 9 Oct 2024 16:53:52 +0200
+	s=arc-20240116; t=1728485722; c=relaxed/simple;
+	bh=dQ74uOIsA6iqlSUG/Js/0gIXFRGTJTUkhLtj9S0GdLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfO/W/E8Pmzt0lKwetFxmQ7wGHJ0/jxH7nMdDclUNeA9ryxpUpor+x1wxsTlGNxp0n++WIRSXabetDqjcDWSF0bSEUmymAzo0hXXEnkuCdVFOguAt5PKzYz5smEIflusVjrpCkIMgJWRRcqX4ULBk2cI62TPgN93sUh1uWvx4kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZJ9TgKjH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hia5RO0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZJ9TgKjH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hia5RO0D; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B1301F823;
+	Wed,  9 Oct 2024 14:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728485705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wNkRSgMEBFmbf3VBe2Yls7JA2XVD8KU/URoZo9DSqE=;
+	b=ZJ9TgKjHM7JqnTBECZAfgcL0bjvHDafo05LkhOksLlWRhcbIpIki6YFrbrKj7khr7D4u5i
+	WeM+zSc36J1SgIboZhIg0gVnIREH98Vg1Lz2pPkzH+3SmlnIxXUONhM3fYVRa2Efx9ZeSa
+	Fi45gsSyW4qDOpgC10wJi8qJW602Jk8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728485705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wNkRSgMEBFmbf3VBe2Yls7JA2XVD8KU/URoZo9DSqE=;
+	b=Hia5RO0DVW4Qh4AQhap8Plw4J6y9Ni7a+eXgNFw/PRZOzQiOpYe6vHMIE4Spudyg+Rlm4z
+	IyAaj8V1+GOub4AQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ZJ9TgKjH;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Hia5RO0D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728485705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wNkRSgMEBFmbf3VBe2Yls7JA2XVD8KU/URoZo9DSqE=;
+	b=ZJ9TgKjHM7JqnTBECZAfgcL0bjvHDafo05LkhOksLlWRhcbIpIki6YFrbrKj7khr7D4u5i
+	WeM+zSc36J1SgIboZhIg0gVnIREH98Vg1Lz2pPkzH+3SmlnIxXUONhM3fYVRa2Efx9ZeSa
+	Fi45gsSyW4qDOpgC10wJi8qJW602Jk8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728485705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wNkRSgMEBFmbf3VBe2Yls7JA2XVD8KU/URoZo9DSqE=;
+	b=Hia5RO0DVW4Qh4AQhap8Plw4J6y9Ni7a+eXgNFw/PRZOzQiOpYe6vHMIE4Spudyg+Rlm4z
+	IyAaj8V1+GOub4AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EBA5136BA;
+	Wed,  9 Oct 2024 14:55:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lzPtIkmZBmcKTQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 14:55:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4A76AA0896; Wed,  9 Oct 2024 16:55:05 +0200 (CEST)
+Date: Wed, 9 Oct 2024 16:55:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: Jan Kara <jack@suse.cz>, willy@infradead.org, akpm@linux-foundation.org,
+	chandan.babu@oracle.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm/page-writeback.c: Rename BANDWIDTH_INTERVAL to
+ UPDATE_INTERVAL
+Message-ID: <20241009145505.5ol3mushw6uqjefc@quack3>
+References: <20241002130004.69010-1-yizhou.tang@shopee.com>
+ <20241002130004.69010-2-yizhou.tang@shopee.com>
+ <20241003130127.45kinxoh77xm5qfb@quack3>
+ <CACuPKxmwZgNx242x5HgTUCpu6v6QC3XtFY2ZDOE-mcu=ARK=Ag@mail.gmail.com>
+ <20241007162311.77r5rra2tdhzszek@quack3>
+ <CACuPKx=-wmNOHbHFEqYEwnw6X7uzaZ+JU7pHqG+FCsAgKjePnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/8] iio: adc: ad7606: Add compatibility to fw_nodes
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
- <20241009-ad7606_add_iio_backend_support-v4-5-6971a8c0f1d5@baylibre.com>
- <facfe06f51a815f4ff5604aeacd8bd6ed0629be4.camel@gmail.com>
-Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <facfe06f51a815f4ff5604aeacd8bd6ed0629be4.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACuPKx=-wmNOHbHFEqYEwnw6X7uzaZ+JU7pHqG+FCsAgKjePnQ@mail.gmail.com>
+X-Rspamd-Queue-Id: 9B1301F823
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Tue 08-10-24 22:14:16, Tang Yizhou wrote:
+> On Tue, Oct 8, 2024 at 12:23 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Sun 06-10-24 20:41:11, Tang Yizhou wrote:
+> > > On Thu, Oct 3, 2024 at 9:01 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Wed 02-10-24 21:00:02, Tang Yizhou wrote:
+> > > > > From: Tang Yizhou <yizhou.tang@shopee.com>
+> > > > >
+> > > > > The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+> > > > > only used in the bandwidth update functions wb_update_bandwidth() and
+> > > > > __wb_update_bandwidth(), but also in the dirty limit update function
+> > > > > domain_update_dirty_limit().
+> > > > >
+> > > > > Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL to make things clear.
+> > > > >
+> > > > > This patche doesn't introduce any behavioral changes.
+> > > > >
+> > > > > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> > > >
+> > > > Umm, I agree BANDWIDTH_INTERVAL may be confusing but UPDATE_INTERVAL does
+> > > > not seem much better to be honest. I actually have hard time coming up with
+> > > > a more descriptive name so what if we settled on updating the comment only
+> > > > instead of renaming to something not much better?
+> > > >
+> > > >                                                                 Honza
+> > >
+> > > Thank you for your review. I agree that UPDATE_INTERVAL is not a good
+> > > name. How about
+> > > renaming it to BW_DIRTYLIMIT_INTERVAL?
+> >
+> > Maybe WB_STAT_INTERVAL? Because it is interval in which we maintain
+> > statistics about writeback behavior.
+> >
+> 
+> I don't think this is a good name, as it suggests a relation to enum
+> wb_stat_item, but bandwidth and dirty limit are not in wb_stat_item.
 
-On 10/9/24 16:39, Nuno Sá wrote:
-> On Wed, 2024-10-09 at 09:19 +0000, Guillaume Stols wrote:
->> On the parallel version, the current implementation is only compatible
->> with id tables and won't work with fw_nodes, this commit intends to fix
->> it.
->>
->> Doing so required to declare ad7606_chip_info structures in the .h file
->> so to make them accessible to all the driver files that can set a
->> pointer to the corresponding chip as the driver data.
->>
->> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
->> ---
->>   drivers/iio/adc/ad7606.c     | 283 ++++++++++++++++++++++++-------------------
->>   drivers/iio/adc/ad7606.h     |  32 +++--
->>   drivers/iio/adc/ad7606_par.c |  30 +++--
->>   drivers/iio/adc/ad7606_spi.c |  96 +++++++++------
->>   4 files changed, 254 insertions(+), 187 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
->> index 5b276d087ec3..dfbdea8c28ba 100644
->> --- a/drivers/iio/adc/ad7606.c
->> +++ b/drivers/iio/adc/ad7606.c
->> @@ -78,6 +78,155 @@ static const unsigned int ad7616_oversampling_avail[8] = {
->>
-> ...
->
->> +const struct ad7606_chip_info ad7616_info = {
->> +	.channels = ad7616_channels,
->> +	.init_delay_ms = 15,
->> +	.name = "ad7616",
->> +	.num_channels = 17,
->> +	.oversampling_avail = ad7616_oversampling_avail,
->> +	.oversampling_num = ARRAY_SIZE(ad7616_oversampling_avail),
->> +	.os_req_reset = true,
->> +	.scale_setup_cb = ad7606_16bit_chan_scale_setup,
->> +};
->> +EXPORT_SYMBOL_NS_GPL(ad7616_info, IIO_AD7606);
->>
-> Maybe my eyes are tricking me but I'm not seeing any MODULE_IMPORT_NS() in the
-> drivers?
+OK, so how about keeping BANDWIDTH_INTERVAL as is and adding
+DIRTY_LIMIT_INTERVAL with the same value? There's nothing which would
+strictly tie them to the same value.
 
-Hi Nuno,
+								Honza
 
-The ad7606_spi.c and ad7606_par.c use MODULE_IMPORT_NS(IIO_AD7606).
-
-Chip infos are used in the "coupling" structures, e.g:
-
-  static const struct ad7606_bus_info ad7616_bus_info = {
-      .chip_info = &ad7616_info,¬
-      .bops = &ad7616_spi_bops,¬
-  };¬
-
-Guillaume
-
-> - Nuno Sá
->
->
+> > > > > ---
+> > > > >  mm/page-writeback.c | 16 ++++++++--------
+> > > > >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > > > >
+> > > > > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> > > > > index fcd4c1439cb9..a848e7f0719d 100644
+> > > > > --- a/mm/page-writeback.c
+> > > > > +++ b/mm/page-writeback.c
+> > > > > @@ -54,9 +54,9 @@
+> > > > >  #define DIRTY_POLL_THRESH    (128 >> (PAGE_SHIFT - 10))
+> > > > >
+> > > > >  /*
+> > > > > - * Estimate write bandwidth at 200ms intervals.
+> > > > > + * Estimate write bandwidth or update dirty limit at 200ms intervals.
+> > > > >   */
+> > > > > -#define BANDWIDTH_INTERVAL   max(HZ/5, 1)
+> > > > > +#define UPDATE_INTERVAL              max(HZ/5, 1)
+> > > > >
+> > > > >  #define RATELIMIT_CALC_SHIFT 10
+> > > > >
+> > > > > @@ -1331,11 +1331,11 @@ static void domain_update_dirty_limit(struct dirty_throttle_control *dtc,
+> > > > >       /*
+> > > > >        * check locklessly first to optimize away locking for the most time
+> > > > >        */
+> > > > > -     if (time_before(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERVAL))
+> > > > > +     if (time_before(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL))
+> > > > >               return;
+> > > > >
+> > > > >       spin_lock(&dom->lock);
+> > > > > -     if (time_after_eq(now, dom->dirty_limit_tstamp + BANDWIDTH_INTERVAL)) {
+> > > > > +     if (time_after_eq(now, dom->dirty_limit_tstamp + UPDATE_INTERVAL)) {
+> > > > >               update_dirty_limit(dtc);
+> > > > >               dom->dirty_limit_tstamp = now;
+> > > > >       }
+> > > > > @@ -1928,7 +1928,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
+> > > > >               wb->dirty_exceeded = gdtc->dirty_exceeded ||
+> > > > >                                    (mdtc && mdtc->dirty_exceeded);
+> > > > >               if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > > > > -                                        BANDWIDTH_INTERVAL))
+> > > > > +                                        UPDATE_INTERVAL))
+> > > > >                       __wb_update_bandwidth(gdtc, mdtc, true);
+> > > > >
+> > > > >               /* throttle according to the chosen dtc */
+> > > > > @@ -2705,7 +2705,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+> > > > >        * writeback bandwidth is updated once in a while.
+> > > > >        */
+> > > > >       if (time_is_before_jiffies(READ_ONCE(wb->bw_time_stamp) +
+> > > > > -                                BANDWIDTH_INTERVAL))
+> > > > > +                                UPDATE_INTERVAL))
+> > > > >               wb_update_bandwidth(wb);
+> > > > >       return ret;
+> > > > >  }
+> > > > > @@ -3057,14 +3057,14 @@ static void wb_inode_writeback_end(struct bdi_writeback *wb)
+> > > > >       atomic_dec(&wb->writeback_inodes);
+> > > > >       /*
+> > > > >        * Make sure estimate of writeback throughput gets updated after
+> > > > > -      * writeback completed. We delay the update by BANDWIDTH_INTERVAL
+> > > > > +      * writeback completed. We delay the update by UPDATE_INTERVAL
+> > > > >        * (which is the interval other bandwidth updates use for batching) so
+> > > > >        * that if multiple inodes end writeback at a similar time, they get
+> > > > >        * batched into one bandwidth update.
+> > > > >        */
+> > > > >       spin_lock_irqsave(&wb->work_lock, flags);
+> > > > >       if (test_bit(WB_registered, &wb->state))
+> > > > > -             queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
+> > > > > +             queue_delayed_work(bdi_wq, &wb->bw_dwork, UPDATE_INTERVAL);
+> > > > >       spin_unlock_irqrestore(&wb->work_lock, flags);
+> > > > >  }
+> > > > >
+> > > > > --
+> > > > > 2.25.1
+> > > > >
+> > > > >
+> > > > --
+> > > > Jan Kara <jack@suse.com>
+> > > > SUSE Labs, CR
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
