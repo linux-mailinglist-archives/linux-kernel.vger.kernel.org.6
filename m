@@ -1,102 +1,94 @@
-Return-Path: <linux-kernel+bounces-357351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E43997038
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 994BD99703C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCC93B21059
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04A5BB231E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0BC1E1C29;
-	Wed,  9 Oct 2024 15:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A241E1C35;
+	Wed,  9 Oct 2024 15:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZCgrjAb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubTSdqyG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0C01A4F0C;
-	Wed,  9 Oct 2024 15:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF1E1925A0;
+	Wed,  9 Oct 2024 15:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488093; cv=none; b=eTqlEAj5FF4bgAHF7GfmYP9eN8lUWUeYog8uMXCGM8DR2Hm8TR1uP0OMnqasZgNiWTAvivpxi+PS6hWPVHdtoif7H7TIox9MCRy0csQ6tC8Rndf5EbE3YysCu3qYEPg/rQ7zmoKyieNQ79/8WNYWx8Q3VB/E8CDXkaxKiX2TBKs=
+	t=1728488131; cv=none; b=PnXAxWMc0BvykK9tz0d5OLbt6ozKyAEyZU+Jq3kKhqdfT1ayNgSVobSl0H5eUSz9hulfA2Z3H+DfGkhlJr5fQo6tOZ93mD1EUnkhU52xPX4THyTb9P8IrNIB7yA0Jv5yw4NvjU7xxoOP2KWJCvUda4hTdu98Nut+ucvWcEnK3SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488093; c=relaxed/simple;
-	bh=3RZzGcqZdE7ZKJybnV1LA3aUWw22/CmY0V4YrNl1LCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoa5xKxU90GChdtcXhlfvU35PDQOOr+bFVN0qj2M7xET3aSBxOGiQ9CVgwy9vfJVrV+A1t2tFfgapYihUopsLhdr+ACF9cTU3CQ7XmOUVR58aTcD5+4n4ZvXDbq10ql0cn+vulNYJSngdbyzFJvhyvpCLwmKVkNWW70X84FbWwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZCgrjAb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2FDBC4CECD;
-	Wed,  9 Oct 2024 15:34:51 +0000 (UTC)
+	s=arc-20240116; t=1728488131; c=relaxed/simple;
+	bh=3YKf4wKe97IZuGPzRWJvZsU/s9xM8HMmlYnkvbFJI0Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EwT32akgyE6666Cbf1n8HnyJu2rZKiActY0Crd0pX0Mdhwu8FkH6WQRkSE4ZiO2pJCdboxhhcLEdT4Bmbhe6063l05AQQ1m+/N44W2Ml6K2Nf1R6bSDw1ZPCVERvmI0TOsl7cfiDPshhdMjyXa7g6V03pz32yrItXPxXRVxRhDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubTSdqyG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D880BC4CEC3;
+	Wed,  9 Oct 2024 15:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728488093;
-	bh=3RZzGcqZdE7ZKJybnV1LA3aUWw22/CmY0V4YrNl1LCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZCgrjAbgo/Z7heWyrDGKIkrYQ8B4nCcutvZBc+1bev5ZbpzzagruM5BWOZZtN3xZ
-	 WYKlu7UTQci4wJ5tysbIU83ubJDZdnKuAwkVDOWvAVeNfokgDDh989kUbjsVZzXSKC
-	 BnTo8d9ANYPxAUzUQ5lnYeT8rFIm9AmhNcY47UT2tfbAolt1zZ56scfqCIX8Rq/B7D
-	 PgSrgLXeHJ8ErSZjIkCqM9Y0Cw6c9XVhC/DjgK8dsbAyJS6n5fZ2vSnAghxkhYAASO
-	 Q/u9M5oIZZIEO3KyM9OIkwOKyHL0dPjPtsGZmZR1qpWeXtLj/ZxtVLmad1vw8nOUIi
-	 4tvk+c7BNIBTQ==
-Date: Wed, 9 Oct 2024 16:34:48 +0100
-From: Will Deacon <will@kernel.org>
-To: ericvh@kernel.org
-Cc: lucho@ionkov.net, asmadeus@codewreck.org, oss@crudebyte.com,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
-	keirf@google.com, regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <20241009153448.GA12532@willie-the-truck>
-References: <20240923100508.GA32066@willie-the-truck>
+	s=k20201202; t=1728488130;
+	bh=3YKf4wKe97IZuGPzRWJvZsU/s9xM8HMmlYnkvbFJI0Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ubTSdqyGo6z5z/ZicbAqro0XaI2uqoDHton7yrxCOJ5efww9Qgvg3PPesV7zgkmPv
+	 BazLs0C6im+4Lygt+FLdjJEcFrqDJFFd5UKlLdh3qoaqGRBhL5E1QpC2COaKprk6Wu
+	 S9kyamdWcuY0PHosV+KOpuDDxDvoa6lhCo43RvULn5bn+cSc7Mq8xjDo701cXJ+gLq
+	 EoEHYn4YCDPWLvTH1fcsQz33nZuEjTPhPl+GscVEYNhHhr58apExEIeA9L2VYaaRRl
+	 QLkVYBrMnTOia9LBc26h0cj3oNqZRYBPs8Jemy7Bvf3PNshornxsm8zaT9W6IBkSG3
+	 TdSmAq+4cw8uw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Thomas Richard <thomas.richard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com
+In-Reply-To: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
+References: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
+Subject: Re: [PATCH v3 0/5] Congatec Board Controller drivers
+Message-Id: <172848812261.638400.481811844035668418.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 16:35:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923100508.GA32066@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Mon, Sep 23, 2024 at 11:05:08AM +0100, Will Deacon wrote:
-> Hi Eric,
+On Tue, 01 Oct 2024 13:53:26 +0200, Thomas Richard wrote:
+> This is the third iteration of the Congatec Board Controller series.
 > 
-> I'm trying to use kvmtool to run a simple guest under an Android host
-> but, for v6.9+ guest kernels, 'init' reliably fails to run from a 9pfs
-> mount because VFS emits this error:
+> There are only few changes for the GPIO driver (commit message, Kconfig,
+> remove useless cast).
+> I also rebased the series on Linux v6.12-rc1.
 > 
->   | VFS: Lookup of 'com.android.runtime' in 9p 9p would have caused loop
+> Best Regards,
 > 
-> The host directory being shared is a little odd, as it has symlinks out
-> to other mount points. In the guest, /apex is a symlink to /host/apex.
-> On the host, /apex/com.android.runtime is a mounted loopback device:
-> 
-> /dev/block/loop13 on /apex/com.android.runtime type ext4 (ro,dirsync,seclabel,nodev,noatime)
-> 
-> This used to work prior to 724a08450f74 ("fs/9p: simplify iget to remove
-> unnecessary paths") and it looks like Oleg ran into something similar
-> before:
-> 
->   https://lore.kernel.org/all/20240408141436.GA17022@redhat.com/
-> 
-> although he worked around it by driving QEMU with different options.
-> 
-> I can confirm that reverting the following commits gets mainline guests
-> working again for me:
-> 
-> 	724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
-> 	11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
-> 	10211b4a23cf "fs/9p: remove redundant pointer v9ses"
-> 	d05dcfdf5e16 " fs/9p: mitigate inode collisions"
-> 
-> Do you have any better ideas? I'm happy to test anything you might have,
-> since this is 100% reproducible on my setup.
+> [...]
 
-Adding the regression tracker as I've not heard anything back on this :(
+Applied, thanks!
 
-#regzbot introduced: 724a08450f74
+[1/5] mfd: add Congatec Board Controller mfd driver
+      commit: 6f1067cfbee72b04fc42234f7f1588f838cec0b6
+[2/5] gpio: Congatec Board Controller gpio driver
+      commit: 4342bf63b64b09561f4ad1537de2e1a971cfb197
+[3/5] i2c: Congatec Board Controller i2c bus driver
+      commit: 6894f640b8f3f48700ccc828419ba60704f5a405
+[4/5] watchdog: Congatec Board Controller watchdog timer driver
+      commit: 6f264047869e9683520ff8f7c235c07c1ca989d6
+[5/5] MAINTAINERS: Add entry for Congatec Board Controller
+      commit: 590bcce85e014a2e16afe910bc6a20b4c1b2b374
 
-Will
+--
+Lee Jones [李琼斯]
+
 
