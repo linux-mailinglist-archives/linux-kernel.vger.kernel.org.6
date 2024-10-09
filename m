@@ -1,141 +1,153 @@
-Return-Path: <linux-kernel+bounces-356643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D95996483
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96019996488
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16DC81C24ADF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C778B1C21CA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E336318BB9E;
-	Wed,  9 Oct 2024 09:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3ED18A6B1;
+	Wed,  9 Oct 2024 09:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apgg8LYb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="NsMO4m1B"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4F0137C2A;
-	Wed,  9 Oct 2024 09:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB918A6CD;
+	Wed,  9 Oct 2024 09:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465049; cv=none; b=NA+iMhkOQLp7Z+0Ztu+dFwvsr2rzz2jUNimp2UBLErZYTBL4ljoskOCPkX+cNDL4UDuGU1iURZg0E6XqKtrf+tyZLpDF1dQKxRhn/kiZZ1Y65AH6m0pTwFH1GQeEBjfNF8o6oE5RV1794OUnG6jdf5CkysHb9o7xlpt4SxNCv9Q=
+	t=1728465104; cv=none; b=uqlM5dqown/qnANUV44/WSmR9A6qXFbJS15EGuCKR5VbowQGXoyJGXiDe1lPiEEjnJuCkUc9N6fx6cLsV982jt39fWx0slwxwK4MU7H4MkSAZZVnU+bN5IzzX3tZQmsHm/0MOwAqTmJ0xJxWQMVp6Dmfpy92PsusHkDeDXoZfzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465049; c=relaxed/simple;
-	bh=SeiKUnM1DO48iG3Gr3JzhpZfh6fszoAqw+yG9jEe454=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aSTU9xhoZlwWrsDLTczz6mH6j/s3JFHC4ZDXX7HpVn03m0it4QI5lINv4BYsERaiTPaJE4upeb3Ax6p+hHxdZ9W3/9WBH6fO9J5k9YkK0WSg3UFkyWIZyaBhzroWFBQxjbuUxJjGh8wEb5vKKXnpbp6lv1ranLwJ2StGlq0VQ7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apgg8LYb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C87BC4CEC5;
-	Wed,  9 Oct 2024 09:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728465048;
-	bh=SeiKUnM1DO48iG3Gr3JzhpZfh6fszoAqw+yG9jEe454=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=apgg8LYblMD4qcg07qq3Mkgt0ywwQuc+3xw0JHmyyo9R1mWrfGxw8wTc4OdVdv86c
-	 9NvoStQW9y9swxeftz9Y/d+2+eWrhl8IJ+ehaoOKL5kcWGNnsVpJgR/dEBQtmS3u1T
-	 rdBzExB9GsjgYbIOJpmcB5A2VggPdQMDCHWytgB566ZNT/uK6NwYLIDILg88BAHeQz
-	 vk/SHdbAb6yjKubsySQAdtJ9+53NgxwB7giJMbQu+dDrvvT9iCnDXeZaC9YE6mq48L
-	 2OdUXj462FwW5nDBk2woP+WbDOgZfiJhnt/gsiFXjp+bfi2iB8hwnrHQlGtidEcPDH
-	 jr9p8eMo3AZKg==
-Message-ID: <5f785dda-b2d7-466f-96c3-23faf0b80975@kernel.org>
-Date: Wed, 9 Oct 2024 18:10:39 +0900
+	s=arc-20240116; t=1728465104; c=relaxed/simple;
+	bh=IVUQL/RYP1pypt4l4/4VPtvvoPQ0+Vk50Ex1eOQ6mhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvO/aUwylxRLl9tVbcJnk2Y/EpGjW9EM7PgUrXXB/xcVylmF1U5s5HTkLFX7Sw6AQvB+ZSV4k8R16pkKbP6cV2tjMiM9q+82eqsBlzuypuStES75rPUjAKWnZ3ib2UUveqdNWembqpvdFwwxS+5GeHPc66vjZaI5l9ZOesIAI6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=NsMO4m1B; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=41lRgjq+jYVfy53InEiK/LxoafTTsLIwL+NynDjl2xU=; b=NsMO4m1B4aGFYZt9fC4X1CKAiW
+	MIzvs2ZjbL6wZcQDQAOEs1GaikWr5p2AMSFZJxsBGsVRSjp96nvv3M5MX2hIaU5JWNtoh8I75TKyU
+	Z9nj0Wls79/pybLaeBOEJzIGNMB762OnaquwigElHpZech5HnZZMoyAjviXzqId1ygTG7QYOYIS0p
+	lgI+TDFByXZFiYyPWiVlYNV1kURd7gMYyXUCwMGQr3xFJHzRpMNse+ocTUx8qmwtaMWhbWZMPITXX
+	1aKA62WK/9jKLMx8JtQYtdQaPs5lCdUC748kGa+S1dijJB65QTQmjxAbsHvHqLi4aAGjB4yMH31zW
+	1zMVnTUw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1sySif-0032Cb-0j;
+	Wed, 09 Oct 2024 10:10:57 +0100
+Date: Wed, 9 Oct 2024 10:10:57 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Breno Leitao <leitao@debian.org>,
+	Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org,
+	kexec@lists.infradead.org, bhe@redhat.com, vgoyal@redhat.com,
+	tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net,
+	linux-integrity@vger.kernel.org
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+Message-ID: <ZwZIoQobJrltBpTX@earth.li>
+References: <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+ <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
+ <20240913-careful-maroon-crab-8a0541@leitao>
+ <5c525fe8f33fffebc0d275086cc7484e309dfae0.camel@HansenPartnership.com>
+ <87o74n5p05.fsf@email.froward.int.ebiederm.org>
+ <CAMj1kXF7EohKai9nyxSnvu32KNdUcNZxxP69Sz-vUZ-6nmvekg@mail.gmail.com>
+ <874j6e482p.fsf@email.froward.int.ebiederm.org>
+ <CAMj1kXEa4DSY8omHGhoTK0U5isvK2G-PJO9go-QK_Mzny=g6ow@mail.gmail.com>
+ <87setx3b8l.fsf@email.froward.int.ebiederm.org>
+ <CAMj1kXHtNrsdsHQWMXrq9jAyzxEJnTW0M7-OEA0kpb3KS2cZ=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 01/13] PCI: Prepare removing devres from pci_intx()
-To: Philipp Stanner <pstanner@redhat.com>, Niklas Cassel <cassel@kernel.org>,
- Sergey Shtylyov <s.shtylyov@omp.ru>,
- Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri Kosina
- <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov
- <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>,
- Manish Chopra <manishc@marvell.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
- Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Alex Williamson <alex.williamson@redhat.com>, Juergen Gross
- <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>,
- Ricky Wu <ricky_wu@realtek.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Breno Leitao <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Mostafa Saleh <smostafa@google.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
- Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Yi Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
- Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
- =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Rui Salvaterra <rsalvaterra@gmail.com>, Marc Zyngier <maz@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-staging@lists.linux.dev,
- kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-sound@vger.kernel.org
-References: <20241009083519.10088-1-pstanner@redhat.com>
- <20241009083519.10088-2-pstanner@redhat.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241009083519.10088-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHtNrsdsHQWMXrq9jAyzxEJnTW0M7-OEA0kpb3KS2cZ=w@mail.gmail.com>
 
-On 10/9/24 17:35, Philipp Stanner wrote:
-> pci_intx() is a hybrid function which sometimes performs devres
-> operations, depending on whether pcim_enable_device() has been used to
-> enable the pci_dev. This sometimes-managed nature of the function is
-> problematic. Notably, it causes the function to allocate under some
-> circumstances which makes it unusable from interrupt context.
+On Wed, Sep 18, 2024 at 09:36:06AM +0200, Ard Biesheuvel wrote:
+> On Wed, 18 Sept 2024 at 05:14, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> > Ard Biesheuvel <ardb@kernel.org> writes:
+> > > On Tue, 17 Sept 2024 at 17:24, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> > >> Ard Biesheuvel <ardb@kernel.org> writes:
+
+> > >> This should not be the kexec-on-panic kernel as that runs in memory
+> > >> that is reserved solely for it's own use.  So we are talking something
+> > >> like using kexec as a bootloader.
+> > >
+> > > kexec as a bootloader under TPM based measured boot will need to do a
+> > > lot more than pass the firmware's event log to the next kernel. I'd
+> > > expect a properly engineered kexec to replace this table entirely, and
+> > > include the hashes of the assets it has loaded and measured into the
+> > > respective PCRs.
+> > >
+> > > But let's stick to solving the actual issue here, rather than
+> > > philosophize on how kexec might work in this context.
+> >
+> > I am fine with that.  The complaint I had seen was that the table was
+> > being corrupted and asking how to solve that.  It seems I haven't read
+> > the part of the conversation where it was made clear that no one wants
+> > the tpm_log after kexec.
+> >
+> It was not made clear, that is why I raised the question. I argued
+> that the TPM log has limited utility after a kexec, given that we will
+> be in one of two situations:
+> - the kexec boot chain cares about the TPM and measured boot, and will
+> therefore have extended the TPM's PCRs and the TPM log will be out of
+> sync;
+> - the kexec boot chain does not care, and so there is no point in
+> forwarding the TPM log.
 > 
-> To, ultimately, remove the hybrid nature from pci_intx(), it is first
-> necessary to provide an always-managed and a never-managed version
-> of that function. Then, all callers of pci_intx() can be ported to the
-> version they need, depending whether they use pci_enable_device() or
-> pcim_enable_device().
-> 
-> An always-managed function exists, namely pcim_intx(), for which
-> __pcim_intx(), a never-managed version of pci_intx() had been
+> Perhaps there is a third case where kdump wants to inspect the TPM log
+> that the crashed kernel accessed? But this is rather speculative.
 
-s/had/has ? Not sure about this, English is not my first language :)
+Generally the kernel/host OS and the firmware are touching different
+PCRs in the TPM.
 
-> implemented.
-> 
-> Make __pcim_intx() a public function under the name
-> pci_intx_unmanaged(). Make pcim_intx() a public function.
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+The firmware eventlog covers what the firmware/bootloader measured;
+itself, option ROMs, secure boot details, bootloader, initial
+kernel/initrd (if we're talking grub as the initial bootloader). These
+details are not changed by a kexec, and provide the anchor of the
+software trust chain.
 
-Regardless of the above nit, looks OK to me.
+A kexec'd kernel will generally not touch the same PCRs. The primary way
+I know to carry kexec measurements / logs over to new kernels is using
+IMA, which will be configured to use one of the later PCRs (default of
+10).
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+That means that the firmware event log is still completely valid to
+subsequent kernels, and is still required to validate the
+firmware/bootloader trust chain. You then probably _also_ want to make
+use of the IMA log to validate the kexec'd kernel chain, but that's
+separate.
+
+> > If someone wants the tpm_log then we need to solve this problem.
+> Agreed.
+
+There's a real requirement and use for kexec'd kernels to be able to
+continue to access the firmware TPM event log; to the extent that there
+are also patches floating around to have this carried over via device
+tree on non-UEFI platforms.
+
+J.
 
 -- 
-Damien Le Moal
-Western Digital Research
+Avoid temporary variables and strange women.
+This .sig brought to you by the letter U and the number 37
+Product of the Republic of HuggieTag
 
