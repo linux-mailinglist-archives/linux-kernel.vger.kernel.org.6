@@ -1,88 +1,91 @@
-Return-Path: <linux-kernel+bounces-356636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D4499646C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:07:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E6799646D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5681C24056
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:07:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0158FB245D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88C189B8D;
-	Wed,  9 Oct 2024 09:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CF2189B8D;
+	Wed,  9 Oct 2024 09:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rFCKqrWi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jw5ag972"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CvZkDg+3"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC541898EA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A931188901
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464832; cv=none; b=ivBzvUfQJw+Y9RVhWO/uWuZC0UKUuVuysFCb/JUsc91QyUoGEaOIVLhKCAhrZE/+vhUnOCOaBw+OCYAX+jAuFJZnFX57Pu5rAWcDqhpjXWLZKAUroW+jZLKwDvKgbEJxjxYZGHUEyKwDqHXFdR9feGwlsIM9Kx+X1XGj3VHEXGw=
+	t=1728464852; cv=none; b=APkV69RQv5ZWw2Z1tBBQPR6bfYp0wBySVZiFrtOKJMFYJ+PxuUqBwGW0oGttrgLDBIpbC5uP6TSXHh11t5EPaAuXGsS1AxHExlylANhTiVw03sVroBOZ+ykqd3XYsudHrbrIBURnf4NJhX6ErooCjp2OuojT+isc6Zl9eIGlEwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464832; c=relaxed/simple;
-	bh=jOeSm0q51RNOoVF/d7UvmUtwoy632DU4CFObhbeogAM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=afQirXD7XNDyGOPGZj4jTxFETy1wO4WWRXm6dtG0QyxRIHhqvBczFu3LTjxaKltR6TbZNVuO5UXLlxrVOu1CZ7kOomyjlp/gKGAkdjpOY/RQpNcWOS/WNqJuCbkIA5o3kmIM4dXWwNIdUNZJmELqkme70A7yzSHWWMji1VE168M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rFCKqrWi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jw5ag972; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728464829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2xL73I3GcYaobKuOkzn020NkLG8YnUxl7u7/0V/Xf8g=;
-	b=rFCKqrWiA95IfRmS26qn6E4B64vu9pQEN/5VsKdiMkSYiqXrZJRNwgghdIJI4rZa8ab91O
-	iHITGiX2eUUdrtZ03fJoXdfMzWoZE9VkiQe/hOqxzQNvLkw5B3y1B+6Y8uXHZJSTPcSeYk
-	RYrxMNUuY9GTPtc5VQ/LdgV0kv3W9iKS/cukyj8Vh5q4magX3Y6vHqUVIZnKpW5+HbDr36
-	Ax+eLuP9psMk/GNDsHbs8h5wlqaIEt3cnOcsNx+/29XPHsmIqcgzCWBH0bLNyf3BZEbDc0
-	qC0FQXMSlxInGzt1takz7Ei38nTry7LU0REEKX0G594GcGL3bvpcCA/WiB8nSg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728464829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2xL73I3GcYaobKuOkzn020NkLG8YnUxl7u7/0V/Xf8g=;
-	b=jw5ag972d1+u4l1nK4xH7oXAWXkhAW0+Pwuxs7ct/RoXGINhFZR9UMBeHcLCQR4VFUz/ld
-	HoZ2WHcBP0u5l2DA==
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
- <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Bart Van Assche
- <bvanassche@acm.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 06/22] x86/acpi: Switch to irq_get_nr_irqs() and
- irq_set_nr_irqs()
-In-Reply-To: <20241008202601.3737326-7-bvanassche@acm.org>
-References: <20241008202601.3737326-1-bvanassche@acm.org>
- <20241008202601.3737326-7-bvanassche@acm.org>
-Date: Wed, 09 Oct 2024 11:07:09 +0200
-Message-ID: <87zfndr6f6.ffs@tglx>
+	s=arc-20240116; t=1728464852; c=relaxed/simple;
+	bh=+r78qbbCNfOf6aK/mEzWVJPQ00O9JIQKGxGWCaxnogk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3QVBBbeQ4J6EiAlRFbw6yTu9bTNZknmyD7o2orZLBKrahCgao647K2KKfOFAv8j2HbG1AvKZancC8BpOqOS6W65Nef6gjCuPpEZF4X5f3NRIDdeIPAV+SRP5+JCGlGOOGaDDdzAOg+kD1Ntyoe+u2P+fSXfKDdebpwOFlZLKtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CvZkDg+3; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728464847; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=czggiP137u8Kb+mEj3Ao6pjcVK0zEcYbz9Ra7LzBH+c=;
+	b=CvZkDg+3aVGIRyx9uh9unGgSDYp8DmMxsO1uAdoIwqlIULqblxfyqpDz7UOwAOK71nXYjiXpwCkR9boYByu89TYiyt5FuOn6QwrdmiE2iWJa55+pJLojXrFWIVd/kBrTQ0ijRLTLbVKSSSS9j0RWfLABwD80EDA2qgiVD1kXodM=
+Received: from 30.221.147.213(mailfrom:renyu.zj@linux.alibaba.com fp:SMTPD_---0WGiASfg_1728464845)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Oct 2024 17:07:26 +0800
+Message-ID: <fec25fa8-860f-4aa6-b074-a2404625d0c3@linux.alibaba.com>
+Date: Wed, 9 Oct 2024 17:07:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] perf/dwc_pcie: Fix typos in event names
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+ Shuai Xue <xueshuai@linux.alibaba.com>, Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241008231824.5102-1-ilkka@os.amperecomputing.com>
+ <20241008231824.5102-4-ilkka@os.amperecomputing.com>
+From: Jing Zhang <renyu.zj@linux.alibaba.com>
+In-Reply-To: <20241008231824.5102-4-ilkka@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08 2024 at 13:25, Bart Van Assche wrote:
-> Use the irq_get_nr_irqs() and irq_set_nr_irqs() functions instead of the
-> global variable 'nr_irqs'. This patch prepares for changing 'nr_irqs' from
-> an exported global variable into a variable with file scope.
+You are right.
 
-I asked you this before:
+Reviewed-by: Jing Zhang <renyu.zj@linux.alibaba.com>
 
- git grep 'This patch' Documentation/process/
-
-Please fix this up all over the place.
-
-Thanks,
-
-        tglx
+在 2024/10/9 上午7:18, Ilkka Koskinen 写道:
+> Fix a few typos in event names
+> 
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> ---
+>  drivers/perf/dwc_pcie_pmu.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index d752168733cf..6e2214a6d6d8 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -217,9 +217,9 @@ static struct attribute *dwc_pcie_pmu_time_event_attrs[] = {
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_update_fc_dllp, 0x601),
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_ack_dllp, 0x602),
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_update_fc_dllp, 0x603),
+> -	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_nulified_tlp, 0x604),
+> -	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_nulified_tlp, 0x605),
+> -	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_duplicate_tl, 0x606),
+> +	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_nullified_tlp, 0x604),
+> +	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_nullified_tlp, 0x605),
+> +	DWC_PCIE_PMU_LANE_EVENT_ATTR(rx_duplicate_tlp, 0x606),
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_memory_write, 0x700),
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_memory_read, 0x701),
+>  	DWC_PCIE_PMU_LANE_EVENT_ATTR(tx_configuration_write, 0x702),
 
