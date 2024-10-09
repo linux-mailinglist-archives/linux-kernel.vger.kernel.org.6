@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-356628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F844996455
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:02:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7766C996459
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6798B2593C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:01:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02140B2617A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FA7188906;
-	Wed,  9 Oct 2024 09:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395D918A959;
+	Wed,  9 Oct 2024 09:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U6g2TRzG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Uhrm+oI+"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC673BB48;
-	Wed,  9 Oct 2024 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07671166F00;
+	Wed,  9 Oct 2024 09:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464507; cv=none; b=k2f73jEHNIon2K+J1IKuCBQ4FODlk9bP4W6IWrPzhms/SEYVjp/7GwDl71/SKze6g5JZMM5/FYMu1XIZh7gtA0BJCjHShg0bA/UFwzC1xtR4YmwHf/Q7maUL233oF0R386/YYmYOkDt12oPa3R/15BuQJuitjOFzMHvrIii32xQ=
+	t=1728464526; cv=none; b=DqGiWdYaWsARClssfP68Zt2g4HxQVXyKRb7AQGf9vqLK8RQahkhUcJVkz5fGEZtdpgZkLsvT+TB8mKOGlZ1ayW+lPDoEt4pgR6qDzXcdF3QH40kvKk8VG6C4lkGwOUZ/3Zj83mQPUDqLYgyWcGymKxiHb4IJUWIBdtnmR524fqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464507; c=relaxed/simple;
-	bh=ZJVBHZGvtKxbvpjFmlBpj6KCGjNmtHop4yOFN0tcpYY=;
+	s=arc-20240116; t=1728464526; c=relaxed/simple;
+	bh=ESDpBhZRaGB14XgN7tzB2HQ8mkUIV3izuk6EsszNpc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rf/xJnk4hrZB/wUYnnnpvKf14L9+ngyGQM3UYIxmDBPMf27mavzbseh7px/u6/U955okl9j3g4JHcO1824Hb0G4FcStZ09B+Z+L1DEPL11axysfUNCzXOemvqeLpjrs6729gBT337ut5s1GFTPxftfJ9OvFy4YxJjFn9Q4tgf8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U6g2TRzG; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728464506; x=1760000506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZJVBHZGvtKxbvpjFmlBpj6KCGjNmtHop4yOFN0tcpYY=;
-  b=U6g2TRzGdCgtGHww1fl1E2BGMEGsaVT15zt0D4MKRsnm6EoYKRea2otT
-   NKD7zsv7C1kWCFUDF9LWY52iIcHER0MkfB5CtFX+zoE2xBGoYyOx7h74L
-   k4+Zj9npDNKEoFzzpksMb6acM13Bk/Z1xduneC7i7ppZUYq8y6Qbc0DVs
-   cKWvyvjSZ9Wkvtb13p8YgPoF7yp5UOSZor9WSgLW+0qJOzjFamHz9fbML
-   yxhNPPksqH+YYWfS5kJhgFeOzeIlalXqg1766el5LjSfTL2/4smupctOa
-   RFPI/qn4iqJK9+uANCHl0Ph2pDp5JnTDqdB3RdRFsw8x2gpB9HHf5CEXB
-   A==;
-X-CSE-ConnectionGUID: wTmf5pSCQZSnrqrhQPi15A==
-X-CSE-MsgGUID: Vt3hSNgxRn+QCTikSFsYsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31451012"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="31451012"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:01:45 -0700
-X-CSE-ConnectionGUID: wcu5qtTISe2Vnw8WgQXuow==
-X-CSE-MsgGUID: aHGKTm2kTe2d2jOBhrmJNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="75778756"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Oct 2024 02:01:44 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sySZh-00091w-0c;
-	Wed, 09 Oct 2024 09:01:41 +0000
-Date: Wed, 9 Oct 2024 17:01:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Zhang <yidong.zhang@amd.com>, linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org, mdf@kernel.org, hao.wu@intel.com,
-	yilun.xu@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, Yidong Zhang <yidong.zhang@amd.com>,
-	lizhi.hou@amd.com, DMG Karthik <Karthik.DMG@amd.com>,
-	Nishad Saraf <nishads@amd.com>,
-	Prapul Krishnamurthy <prapulk@amd.com>
-Subject: Re: [PATCH V1 1/3] drivers/fpga/amd: Add new driver for AMD Versal
- PCIe card
-Message-ID: <202410091652.aQHmRoj1-lkp@intel.com>
-References: <20241007220128.3023169-1-yidong.zhang@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ls/7t40Hg/y4txaFVcmgxuJUbp2NVwoPNyux9z5L9wKI83WR4eaT95a3kApEjUUUzHslE9VKmJOpIQe0o27x7wPr+nLgtHTQsYszV8EtQxgKsfW5ZhFpOlnFuv0lDB4Gg4Xn+enNrVhTKFgTIWIMyF67vU9rztZOXsP2XzjIB+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Uhrm+oI+; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.14])
+	by mail.ispras.ru (Postfix) with ESMTPSA id F41F440B2786;
+	Wed,  9 Oct 2024 09:01:54 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F41F440B2786
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1728464515;
+	bh=0tBlbvTpMjEqfjlFsN9StBxwVE8haftHBQAgLVgyA/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uhrm+oI+Y9xZzVZUh7+xdeLE6G2fr5xo3ziwvAT9SJePQNWwM2b1WgS1I95IB6+Yp
+	 9pUT/TbEC+igKD/12/XK08TTI5RK+0TXTL2AyZfi+CkpAVqXX7dplqhELc0cHWn8bG
+	 lMfGEU1mrp51lxkAC4luddzLdLYE8ai5Z1+k5k1E=
+Date: Wed, 9 Oct 2024 12:01:51 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Stephen Boyd <sboyd@kernel.org>, lvc-project@linuxtesting.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [lvc-project] [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+ <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+ <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+ <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241007220128.3023169-1-yidong.zhang@amd.com>
+In-Reply-To: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
 
-Hi David,
+Hi Andrew,
 
-kernel test robot noticed the following build warnings:
+On Tue, 08. Oct 23:58, Andrew Lunn wrote:
+> On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
+> > Quoting Alexandra Diupina (2024-09-24 06:14:44)
+> > > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> index 8701a58a5804..b32c6d4d7ee5 100644
+> > > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+> > > >>          div = get_div(double_div->reg1, double_div->shift1);
+> > > >>          div *= get_div(double_div->reg2, double_div->shift2);
+> > > >>   
+> > > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> > > >> +       if (!div) {
+> > > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
+> > > > hw->init is set to NULL after registration (see clk_register() code). If
+> > > > div is 0 what does the hardware do?
+> > > 
+> > > Thanks for noticing the error. Yes, hw->init is set to zero,
+> > > I will replace that code with clk_hw_get_name(hw).
+> > > If the value of div is 0, should I return 0 as stated in the
+> > > comment for .recalc_rate (in struct clk_ops) or should I
+> > > return parent_rate as in some other similar rate recalculation
+> > > functions (in some other drivers)?
+> > 
+> > It depends on what the hardware does. Does the hardware pass on the
+> > parent rate if the divider is zero? If so, then return parent_rate. Or
+> > does it turn off completely? If so, return zero.
+> 
+> I don't think anybody knows what the hardware does in this
+> condition. I also suspect it has never happened, or if it has, nobody
+> has complained.
+> 
+> I would say, let is divide by 0, so there is an obvious kernel stack
+> trace and hopefully a report of the issue. It can then be investigated
+> in a way we can then find out what the hardware actually is doing.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.12-rc2 next-20241008]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Zhang/drivers-fpga-amd-Add-communication-with-firmware/20241008-060253
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241007220128.3023169-1-yidong.zhang%40amd.com
-patch subject: [PATCH V1 1/3] drivers/fpga/amd: Add new driver for AMD Versal PCIe card
-config: x86_64-randconfig-121-20241009 (https://download.01.org/0day-ci/archive/20241009/202410091652.aQHmRoj1-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241009/202410091652.aQHmRoj1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410091652.aQHmRoj1-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/fpga/amd/vmgmt.c:33:14: sparse: sparse: symbol 'vmgmt_class' was not declared. Should it be static?
-
-vim +/vmgmt_class +33 drivers/fpga/amd/vmgmt.c
-
-    30	
-    31	static DEFINE_IDA(vmgmt_dev_minor_ida);
-    32	static dev_t vmgmt_devnode;
-  > 33	struct class *vmgmt_class;
-    34	static struct fpga_bridge_ops vmgmt_br_ops;
-    35	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Is it worth adding some kind of WARN assertions? Or actually just leave it
+for now as is?
 
