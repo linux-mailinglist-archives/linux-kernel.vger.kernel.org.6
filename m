@@ -1,133 +1,117 @@
-Return-Path: <linux-kernel+bounces-356099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0675C995C73
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:50:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645FD995C77
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297E91C220C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:50:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B40BB22199
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B64BA53;
-	Wed,  9 Oct 2024 00:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0685E11CA9;
+	Wed,  9 Oct 2024 00:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQhpULs6"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="PzJNVlEo"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD221345
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 00:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0F23C39;
+	Wed,  9 Oct 2024 00:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728435007; cv=none; b=EyPTTk6dHA1PYefk5OeJdz4O9E+vpqrp56xKAAaRNOVr9Ssr3aGpcn8EhGlHuYxRA06eQE9rJdpFzcxjreJD3k4qXk2M/I+XXP2dsuvn75eJRpljNIOLKakvYWTaBuTANMnFMxX2zoPMiVY7Z/AyCeZf8Cpj3SoEwQ21dWOnREw=
+	t=1728435106; cv=none; b=p/qOSxpzOG4B8V8I1mcfyGAo+YZm3sOQsPmvz+bA3tWFmoqtbiPC1V90K+8c058GbqklY1+95dTFYAe6xVAej0MFmISGgdRryrGjhFHUOi7Lt6H5UcgxTYN1/M5iNLsDK4c4OZ0YYnGSAcWL9iSvRMpZow/5BQQBAPQLSWT6FvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728435007; c=relaxed/simple;
-	bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=reDXx69jPH/LzyVUQcbJiJLPcTtsFg9kdqvcteaixI/6NMWZ2EEWrtVlmYeLCJfaz1xfeVN/3fA9iHJdH0EceWWcdJeJ2GLkKUNbR+1VogeE2JYVZ6hwHxy237fVEb8CZExhmzYWLdqu//nWD/t5EdrCJqCePdyrIcxm6GrEsIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQhpULs6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43111d23e29so8455e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 17:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728435005; x=1729039805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
-        b=wQhpULs6eJ3jSG2L+e4vjJ44HB5pmfIDFhHYLIvtGtycGlk072JDV2rO78H1awo/Bl
-         9CYQvG492yAoth9YColDI5pOCNQ/QkXNfD9xdnoUInBl5BZlF/LDuWd7Sq3IBdhsaWoj
-         KaE2mHf8Ceya7kd6xtdpaTLC6MVHs3UGfJsbhbuIvPHWJ3UvWBMQjNBO9HuC9/tvLtxH
-         PFK1iUcKcInGBWa1TtqClkFZ2+hrrbGLlWIN55CGGxl37i5pAhXR7lr3FSjBjDB3DkVT
-         8L1i2PVM54SHQDraaBpnaVk5vAWyU18c+3OshkuXSXbNOLWuiPJliZg/sGz/pc/z8otj
-         QbBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728435005; x=1729039805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
-        b=PI9Fbylacgil12dCo8oD4/xzON6BsGxWbEwZdEcInI9VdiIxsbey5sXypvzur5/B07
-         GF8uC7/HzQmnBWROEbzxUNuIivwkafwkIz2i0DDjOUCL/31GdCCdNOavMWEpRH8mga4K
-         FNEmcaOqhBOW4iXFUyDlDhOGKsARF98tnV8cPps+rdBvCoJG9kAwWNOU+970CEIxISnI
-         CxKJO8pjKLDfcHFI1/1ds595vtiouvuQ730wQ1g0GFKJumQOnh4VNqBCp8eXLhh8YXYx
-         DVKZQytUdyuYSs6du15KqUZ8/6xvmW8vvL9NUlyq5A43luWzmwpiBr9fVU04FtJrgdsr
-         4+zA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ghajN1cn6H5w0T7pLx8TMfAVXwFJT2EQ/nKkvh342txaFCRtAtpN0diKQ7lR6LheQxCJItaysXiPSw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsyUlsdccazKA6Pk3f2RgFUn7L6atAyyLQHGQkDcgiC+OZ8CGv
-	tmeUuntVCiU6egu2JYZLLmG13Psj3W5JMgkUAwzA7LCpjzWAdu1clqPnPTf4kqfknoPfOz1Hnun
-	FhbrbCcQpBV0t2RuOoHVhrq8rglUnE93U83wf
-X-Google-Smtp-Source: AGHT+IE8i1WoerH4tKasIfRlN/mHeEmDePbStRVFDY5RZAcV3AkdGjoAzKlazO6sInZgo+PAJdXEmCaNDOM+Ho3MuYA=
-X-Received: by 2002:a05:600c:cc3:b0:42c:9e35:cde6 with SMTP id
- 5b1f17b1804b1-43058cee8e2mr2199905e9.2.1728435004265; Tue, 08 Oct 2024
- 17:50:04 -0700 (PDT)
+	s=arc-20240116; t=1728435106; c=relaxed/simple;
+	bh=1XfTTdw5dQ3fF+V6PcEuPOr8WlFewqaZxrEX7tEQlPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FtleL6MWBpTNqUdeL9uvVTWsQF39iQjXp+5X1SNbl3+zGFI+hT/vkmZLPuiItUxjln1Vr22iCulCItYH/bfL8lYTnEmW9pP+Bm3xRY31ioriFzrz50EmRZkoyQe9HV5lAlxzIBnhJ0hE7z1Nnqzs8/+Q12vE4rC35i/p3yM+WYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=PzJNVlEo; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1728435101;
+	bh=1XfTTdw5dQ3fF+V6PcEuPOr8WlFewqaZxrEX7tEQlPA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PzJNVlEouMt6HNBOUo3QVQL3MlE4zwmQSabtdOsnLfFoDNUOq3YW8Qwo/1TUwiL0H
+	 8pxQQKGGOUXw/UamEbOIxadr0BngBmubpWM5HygCA4uoFVs4SITlsi8Q9qX93e8mUY
+	 zTIyogVfk1oeSZdCD3lkTOY8b/xHKCs3EhpjVLXpYWjSUCvjxW6es6soOntpM/vKMC
+	 SpiFVvSlxg557I1zyP706eW5Ve4vOc9LJpzlSnWn04+RKYkgNuu0iCDPvZ1xC2yvyj
+	 7+IxB59DAUR03NmVg13y6ayrUlxT3801qoqPSYTghbtPqe3Xbm8kUGreuAnJqQI6bs
+	 y6aob3kuK5hlA==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNZ8Y4Kx5zRwV;
+	Tue,  8 Oct 2024 20:51:41 -0400 (EDT)
+Message-ID: <cbd40019-9034-4aad-a632-f63f16a9c9e3@efficios.com>
+Date: Tue, 8 Oct 2024 20:49:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
- <CAEXW_YSxcPJG8SrsrgXGQVOYOMwHRHMrEcB7Rp2ya0Zsn9ED1g@mail.gmail.com>
-In-Reply-To: <CAEXW_YSxcPJG8SrsrgXGQVOYOMwHRHMrEcB7Rp2ya0Zsn9ED1g@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 9 Oct 2024 02:49:26 +0200
-Message-ID: <CAG48ez1ZMo0K0JU321vs0ovXXF2giMvVo14AxNDPzgpGMGZpDA@mail.gmail.com>
-Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org, 
-	willy@infradead.org, hughd@google.com, lorenzo.stoakes@oracle.com, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] tracing/ftrace: guard syscall probe with
+ preempt_notrace
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Michael Jeanson <mjeanson@efficios.com>
+References: <20241004145818.1726671-1-mathieu.desnoyers@efficios.com>
+ <20241004145818.1726671-3-mathieu.desnoyers@efficios.com>
+ <20241008191957.6cb66fa2@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20241008191957.6cb66fa2@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 9, 2024 at 1:58=E2=80=AFAM Joel Fernandes <joel@joelfernandes.o=
-rg> wrote:
-> On Mon, Oct 7, 2024 at 5:42=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
-> Not to overthink it, but do you have any insight into why copy_vma()
-> only requires the rmap lock under this condition?
->
-> *need_rmap_locks =3D (new_vma->vm_pgoff <=3D vma->vm_pgoff);
->
-> Could a collapse still occur when need_rmap_locks is false,
-> potentially triggering the bug you described? My assumption is no, but
-> I wanted to double-check.
+On 2024-10-09 01:19, Steven Rostedt wrote:
+> On Fri,  4 Oct 2024 10:58:12 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> +		      PARAMS(assign), PARAMS(print))			\
+>> +static notrace void							\
+>> +trace_event_raw_event_##call(void *__data, proto)			\
+>> +{									\
+>> +	guard(preempt_notrace)();					\
+>> +	do_trace_event_raw_event_##call(__data, args);			\
+>> +}
+>> +
+> 
+> Do we really need to use "guard()" for a single line function? Why make the
+> compiler do more work?
+> 
+> static notrace void							\
+> trace_event_raw_event_##call(void *__data, proto)			\
+> {									\
+> 	preempt_disable_notrace();					\
+> 	do_trace_event_raw_event_##call(__data, args);			\
+> 	preempt_enable_notrace();					\
+> }
+> 
+> Is more readable.
 
-Ah, that code is a bit confusing. There are actually two circumstances
-under which we take rmap locks, and that condition only captures (part
-of) the first one:
+I don't care. I'll do it your way (for all 3 patches).
 
-1. when we might move PTEs against rmap traversal order (we need the
-lock so that concurrent rmap traversal can't miss the PTEs)
-2. when we move page tables (otherwise concurrent rmap traversal could
-race with page table changes)
+Thanks,
 
-If you look at the four callsites of move_pgt_entry(), you can see
-that its parameter "need_rmap_locks" sometimes comes from the caller's
-"need_rmap_locks" variable (in the HPAGE_PUD and HPAGE_PMD cases), but
-other times it is just hardcoded to true (in the NORMAL_PUD and
-NORMAL_PMD cases).
-So move_normal_pmd() always holds rmap locks.
-(This code would probably be a bit clearer if we moved the rmap
-locking into the helpers move_{normal,huge}_{pmd,pud} and got rid of
-the helper move_pgt_entry()...)
+Mathieu
 
-(Also, note that when undoing the PTE moves with the second
-move_page_tables() call, the "need_rmap_locks" parameter to
-move_page_tables() is hardcoded to true.)
+> 
+> -- Steve
 
-> The patch looks good to me overall. I was also curious if
-> move_normal_pud() would require a similar change, though I=E2=80=99m incl=
-ined
-> to think that path doesn't lead to a bug.
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-Yeah, there is no path that would remove PUD entries pointing to page
-tables through the rmap, that's a special PMD entry thing. (Well, at
-least not in non-hugetlb code, I haven't looked at hugetlb in a long
-time - but hugetlb has an entirely separate codepath for moving page
-tables, move_hugetlb_page_tables().)
 
