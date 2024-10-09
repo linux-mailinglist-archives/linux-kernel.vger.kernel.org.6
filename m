@@ -1,175 +1,137 @@
-Return-Path: <linux-kernel+bounces-357155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF861996C9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:48:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1CA996C9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569111F238E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F7C1C20E86
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DAF19994B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E3C199E9C;
 	Wed,  9 Oct 2024 13:48:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FF3198A19
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D05E1991CA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481707; cv=none; b=LKxgpXrR0QTPIGL3UsjVcXSjU4fHweAFcCGBPdtjEB6dS2DrOYJgU1owKwDfNsRLRiaPKwgMF3PQrtQoDh20YPk4j5gV6VIQdxT8HzG4zQ6iql6Aia9YB//AfpdUuu+K7tK6q2FQF1cJc3QeRguv9nlOfIHe8X1FTYATdr52Vtg=
+	t=1728481707; cv=none; b=h93LL6GCh1yAxAWsKTgfg5CiThkLetmEFwl8uZ/ckV8Mrq39pKJtVMolYQSIGGOqxSYChVJZaOkaRTyfedunjqxlKYXB0dXX8JAvcVtvi2BHIWL0iVzsQmjwUJJBmqCroH1gm5brcHqrIEhDUbVueuIBuevkrh6W0S1INtvoEgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728481707; c=relaxed/simple;
-	bh=6enl91q7bgT05ijtZ5e8/GNmLtjyYGMDw8RvcA7oKyo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JWMQmW0c6Vn+WabZflKdY5h1gzcRSCqnIjwDOW8zQSW/oBohYtB/ToWLPpG6oZ6eUgkZbM6HKFBqZ/KjYL06jP6B9WxjcYP9LRjf3VlXNx8CSV+GjU5At4ELLRnL0n1j4bah3mHhyEPdyFD7LoD5YvXBMbvwKOpTFACBHZv6kAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	bh=sqyEKgaEIHBixzMZSz6UpRg/Re7a8fMiFsRaftKTxRc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E4KGA1nosMu9QDwFbcfyqYUskokBfoOjxRuc3Vl3DlW4TCCsZrwLMjocNVq8FPJ3JvA+xRgF/RAhCXBMBfeLAwUPyljvvl81mfyXTNzxul913StZqf/jKvfMSWHuIoB7X3QDKKYup+X328HXDQm7+sTcXaP2FkzeggLy6QfREaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a2762bfcbbso103509315ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:48:25 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19665ed40so7859535ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:48:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1728481705; x=1729086505;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/CsXp0E02F45cKBqSioNNV12BfJpSVpd3ncN/t0kmRk=;
-        b=o39ZjPf3h1iOOyQVVVz9h/Uok+miZ5ULji9368GAmIky/0kn0aIW0mIqOcPYjMm973
-         GCkhqAiAwx0F1aAW4BrWrQFhgkeqTJJxpoXRqsoYhejJAknztoGYq1z6L8Ledl35X9Lo
-         F188UlIH+fS0VNedaLtVAXMZt3lZ/Fac6/8tx/lcEHwVDuYGspJ0xhc/h8+b5U0BVsSv
-         xHw0RFbNMiY/i6R2VXEWHFQ/wTMGl9iAUaCAnQe5s9STERXcX2m91wOqFdFnn5GoOOw5
-         DElT+Wj5yyUfwl3huCBorfR51izfQyoNmFcISqw5tnntvKWhlFxdHdgp6+rOpRNBosBm
-         AC0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCViAbEUrHRwgwGAv8fNG2gGDOsMKk5/xCy4trHWbq5rXhfByvEwGoW97DNiLCza/R84Xc2A0cTzltf1XJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytUjRcE1cCCGYWwaLOiarV+UaXmPOzDve/wZ7FzZdN5SEXDqSu
-	HI4tcT6vjRvX8abpFLTmSy+Z5z8z1zcYBjUlgkXzIMj9jgePyZIsltmj2gURclSvEzbvOkYjla/
-	I8PjmNXHP0XiAzAvjZb9rditq+yLzZElUNE9ZLuoF/Px3pWoWjMvalXU=
-X-Google-Smtp-Source: AGHT+IEpWbToHcEU/to/iYP74kwcaUoX1RmAUHvA+R5IvVChNLej3YBwuwo9/LQc0H3DEz/Cf+b/g3U7RqwmCZwIYDA8Ni2EuVrS
+        bh=UBH+agA01deK2EnfnEgoMg09FaDLd24PoeelaCAABlk=;
+        b=WjoVlt2oK+18jVkovVk4wSXuwE7V1O+ILHYuUnGd4sTyehnUQ4Q5iXQfbm9VkI7aOu
+         xOBkCBGRgD0PJM8JqvISjZKLm70cudSTylt/souZYMY/OvXR07ZnQOShFcUBpvXprdUJ
+         O8ZGKFObySGQOCiOot9YeQdkrS/irLWaaOz7BXIw6uAssTHLiCuv3y0qba44tbiuZgEl
+         FLosmNCjGn4SOqPy+guBn6d2h4+2Js01fOf8dOI2j3B0pyEv0vH+cLU0ARuDBEFP02J/
+         Os/v4x9W6OYnds0KD6yRhGiX7yIfLdD7nwUgPm9o8YDxx3dR6nJ9/EgB2jKYhx2sKWpg
+         66NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlJbSau1Wa46JqTd0WojZ09m+MpE+yg1H+cbhA1VAfIT1XjfN4nqAunL8TRdNI7KN95VzxmeaiFtQfuNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA9DTgonol8BCquId0OFa9ubM5zdCzgxi/jfFQKQyXWJFsZk3P
+	ULNzdbx3egrFKAFEQBssiD/iT1+MXJyMOV7BfsgWTS2Pm4x8x2oRQsHmVwANF68azfOcJSwc4fz
+	UFiyRpO1m4/pTJajA2G1CeNfCoSUrymKcscLsjwii0algI5XScSzxN4Q=
+X-Google-Smtp-Source: AGHT+IHnMe5lc2Q03NLolZQmZ+SxAAXJagk4vihG3rU3/wbu5RXvNTAzmQuKlUs/gwZxmfyCClVkU8aNs0eqlhPt59da4so5AqSR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198c:b0:39f:5d96:1fde with SMTP id
- e9e14a558f8ab-3a397cdb1ccmr20198125ab.3.1728481705023; Wed, 09 Oct 2024
+X-Received: by 2002:a05:6e02:1548:b0:3a1:a2b4:6665 with SMTP id
+ e9e14a558f8ab-3a397546271mr23260295ab.12.1728481705316; Wed, 09 Oct 2024
  06:48:25 -0700 (PDT)
-Date: Wed, 09 Oct 2024 06:48:24 -0700
+Date: Wed, 09 Oct 2024 06:48:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670689a8.050a0220.67064.0046.GAE@google.com>
-Subject: [syzbot] [btrfs?] general protection fault in getname_kernel (2)
-From: syzbot <syzbot+cee29f5a48caf10cd475@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <670689a9.050a0220.67064.0047.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_tx_monitor
+From: syzbot <syzbot+26bc0430f38b1093a293@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    33ce24234fca Add linux-next specific files for 20241008
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10df97d0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4750ca93740b938d
-dashboard link: https://syzkaller.appspot.com/bug?extid=cee29f5a48caf10cd475
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160ce327980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ea7707980000
+HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17dd3b80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fb6ea01107fa96bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=26bc0430f38b1093a293
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ee8dc2df0c57/disk-33ce2423.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dc473c0fa06e/vmlinux-33ce2423.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4671f1ca2e61/bzImage-33ce2423.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-87d6aab2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7a670c730bf1/vmlinux-87d6aab2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/069744babdba/bzImage-87d6aab2.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cee29f5a48caf10cd475@syzkaller.appspotmail.com
+Reported-by: syzbot+26bc0430f38b1093a293@syzkaller.appspotmail.com
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5235 Comm: syz-executor338 Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
-Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
-RSP: 0018:ffffc90003b7f8a8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c5cda00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff901d3f2f R09: 1ffffffff203a7e5
-R10: dffffc0000000000 R11: fffffbfff203a7e6 R12: ffffffffffffffff
-R13: ffff888028a7e000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557da91380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1113 at net/mac80211/status.c:909 ieee80211_tx_monitor+0x202a/0x2520 net/mac80211/status.c:909
+Modules linked in:
+CPU: 0 UID: 0 PID: 1113 Comm: kworker/u32:9 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound macvlan_process_broadcast
+RIP: 0010:ieee80211_tx_monitor+0x202a/0x2520 net/mac80211/status.c:909
+Code: 0f 9e c2 84 c0 0f 95 c0 84 c2 0f 84 a0 eb ff ff 48 8b 7c 24 18 be 02 00 00 00 e8 51 50 66 f7 e9 8c eb ff ff e8 d7 d9 04 f7 90 <0f> 0b 90 48 c7 c7 00 cf be 8c e8 97 8c e4 f6 4c 89 ff e8 1f 8c 6b
+RSP: 0018:ffffc90000007c70 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 000000000000000d RCX: ffffffff8a8893e0
+RDX: ffff888026828000 RSI: ffffffff8a88a779 RDI: 0000000000000004
+RBP: ffffc90000007e00 R08: 0000000000000004 R09: 0000000000000000
+R10: 000000000000000d R11: 0000000000000000 R12: 000000000000000d
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88804f976140
+FS:  0000000000000000(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200000c0 CR3: 000000004fdaa000 CR4: 00000000003526f0
+CR2: 0000001b2e219ff8 CR3: 000000004f2e2000 CR4: 0000000000352ef0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
+ <IRQ>
+ __ieee80211_tx_status net/mac80211/status.c:1111 [inline]
+ ieee80211_tx_status_ext+0x1b13/0x2ca0 net/mac80211/status.c:1233
+ ieee80211_tx_status_skb+0x133/0x2d0 net/mac80211/status.c:1131
+ ieee80211_handle_queued_frames+0xf1/0x130 net/mac80211/main.c:443
+ tasklet_action_common+0x24c/0x3e0 kernel/softirq.c:784
+ handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
  <TASK>
- getname_kernel+0x1d/0x2f0 fs/namei.c:232
- kern_path+0x1d/0x50 fs/namei.c:2716
- is_good_dev_path fs/btrfs/volumes.c:760 [inline]
- btrfs_scan_one_device+0x19e/0xd90 fs/btrfs/volumes.c:1484
- btrfs_get_tree_super fs/btrfs/super.c:1841 [inline]
- btrfs_get_tree+0x30e/0x1920 fs/btrfs/super.c:2114
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- fc_mount+0x1b/0xb0 fs/namespace.c:1231
- btrfs_get_tree_subvol fs/btrfs/super.c:2077 [inline]
- btrfs_get_tree+0x652/0x1920 fs/btrfs/super.c:2115
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- vfs_cmd_create+0xa0/0x1f0 fs/fsopen.c:225
- __do_sys_fsconfig fs/fsopen.c:472 [inline]
- __se_sys_fsconfig+0xa1f/0xf70 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe8c78542a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd2c4992f8 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007ffd2c4994c8 RCX: 00007fe8c78542a9
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
-RBP: 00007fe8c78c7610 R08: 0000000000000000 R09: 00007ffd2c4994c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffd2c4994b8 R14: 0000000000000001 R15: 0000000000000001
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ netif_rx net/core/dev.c:5251 [inline]
+ netif_rx+0x93/0xb0 net/core/dev.c:5240
+ macvlan_broadcast+0x37d/0x680 drivers/net/macvlan.c:290
+ macvlan_multicast_rx drivers/net/macvlan.c:302 [inline]
+ macvlan_multicast_rx+0xd6/0x100 drivers/net/macvlan.c:296
+ macvlan_process_broadcast+0x225/0x690 drivers/net/macvlan.c:338
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
-Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
-RSP: 0018:ffffc90003b7f8a8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c5cda00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff901d3f2f R09: 1ffffffff203a7e5
-R10: dffffc0000000000 R11: fffffbfff203a7e6 R12: ffffffffffffffff
-R13: ffff888028a7e000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557da91380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005606b6327058 CR3: 000000004fdaa000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	fa                   	cli
-   1:	41 57                	push   %r15
-   3:	41 56                	push   %r14
-   5:	41 54                	push   %r12
-   7:	53                   	push   %rbx
-   8:	49 89 fe             	mov    %rdi,%r14
-   b:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
-  12:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  19:	fc ff df
-  1c:	48 89 fb             	mov    %rdi,%rbx
-  1f:	49 89 c4             	mov    %rax,%r12
-  22:	48 89 d8             	mov    %rbx,%rax
-  25:	48 c1 e8 03          	shr    $0x3,%rax
-* 29:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	75 12                	jne    0x44
-  32:	48 ff c3             	inc    %rbx
-  35:	49 8d 44 24 01       	lea    0x1(%r12),%rax
-  3a:	43                   	rex.XB
-  3b:	80                   	.byte 0x80
-  3c:	7c 26                	jl     0x64
-  3e:	01                   	.byte 0x1
 
 
 ---
@@ -182,10 +144,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
