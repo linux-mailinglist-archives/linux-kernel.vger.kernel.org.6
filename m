@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-357775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1633D9975CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:42:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03BB9975E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756B7282952
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110FA1F237B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F211E1C31;
-	Wed,  9 Oct 2024 19:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0C1E1A30;
+	Wed,  9 Oct 2024 19:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haTjw/NP"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QKhKPlfA"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8CC1D356C;
-	Wed,  9 Oct 2024 19:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21CE1D356C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728502895; cv=none; b=g1cC/aaL6EWSSH0Hag/8kR3uWC0lD61aWlT0m9Bs5EQuepG8JzgAntotFhOSskSW6QFYHt4e3UfxGNsok/klRqfbJZaMSnlZY8DFA099KAr9unM+4mBUITyVflL0O5JqFvKr8G3nBDbP5BhLFSE+fIm1FL02JSLhyKBzzJyWt1I=
+	t=1728503062; cv=none; b=IehR++8sFo6Hc1uwonWnRmzGLXtCRZm7ToW+ukDaoLXVz13M5LWXMpivsCc2T9N548amLVliF8qIMFD2mtJ+osJTp8ypuyAY8zSJfKqLIZLkzh1joi4xu2rGNWbf+zjT4jMGcu/CmEbX1KFvmJ3ojxDrC3gxmhT8uj3mpjYdh1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728502895; c=relaxed/simple;
-	bh=PDYidJaYfrjomUChvobIVbDDlDk1zVlAhYjbjjNl6kk=;
+	s=arc-20240116; t=1728503062; c=relaxed/simple;
+	bh=mATPx8c2voUWusUIBApRv+J1dsXwkVLU5ho/N9rL6TM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o+H6CCfb8S18xrvBoRqcrxuvK2RRal1DHcSnX2ZBkqtDbClthcm0cRGwortuoHHDu2cK1bhUCvdxzZRQqAXZKR40/e9WddzRxpcwGHlg4TlAXJO62R7Wswi5m0J0MtwmQqqcZd5aTdSD/EblOfl1EO6oF392m2GoH/6bKpoBKxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haTjw/NP; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5398e4ae9efso144254e87.1;
-        Wed, 09 Oct 2024 12:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728502891; x=1729107691; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Io1G2uneGwHsYKAwtaIvvynFX0xlOmokHD97rmisdy0=;
-        b=haTjw/NP+LFmeIQsSVNPf46SPLroR5wQ6AWCHPRSbBBpgw+F6LbzczPdcsxcj+Ntjb
-         Nz53fEVzXDtDgQNHs4YvCQFq3scwom4q7Jfy/LNzPIlpg3NjS37nVLmv76Yp9FkUm/kg
-         73M4DFwUZ2524KA7afsKQ6mC5Pd0PSaXtdRuveZK6UuySuZr2OvgF0+hDhkQ8SZzxkAG
-         g6xqFbldrYLghmZ79erydEMRhTRtzoGlntkYwY4GZhkHaa1ndHkSN+4U3G30rSQtJ011
-         DQ7bN805MPsPBhc76d1uB6IcsFmR1ph0njamTa6rC3IvoAUaAbLnGFbA7vNfoh2rb1aE
-         8uMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728502891; x=1729107691;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Io1G2uneGwHsYKAwtaIvvynFX0xlOmokHD97rmisdy0=;
-        b=TAHtC2oKWz/rC+oStk+Qrp/2m4qlyakCppJiS7x7wfGdcouh/eWmtns7uDUZj9Qw27
-         cBKExlIULxsPuMzdsRD6IxIppMFX5qOJTKaws07idfRt5yp4RYHKO6CqArLCTgat2aGe
-         1qICug8nF/H5/hkFTqwsKABKFTx2NUKj1+1bsDyU8y5T14uFzJKpDi2M79m46Gw0H9H0
-         Vb7NKBdFQxV+b/ABO9c17eksRs/f0AdxzCidUXTca2kdv7rQdLxoXUjZfajnC/+aquOx
-         lEf7h7VRvKUsrgyF8JMJZYR3hlBjvy1ZdG+mhrDaUiTnraDa9VRGX3hV7zbgaugt441Y
-         6Pzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+FoGUdopiBLaS396PRGQ1dcvifUv6/uOOjMI30S6hw3fkdIs7nB4JZ/qVJ95DMA1o5YQ=@vger.kernel.org, AJvYcCU22lMiFkBD47zTH1OVp42UllylRYTA8BaPK+5oeWsurulvQ+FZepWEvOQsJjjjFcXyOvhqkJgYunpWqOqI@vger.kernel.org, AJvYcCUQIOAiUh1+OhuV1XKs2WYqtdbhRK6gBiThEMqZ7QXlEf0FPi19sSH5QC0X63R6E0rKwjWqAykhCnB7A8c=@vger.kernel.org, AJvYcCUpn7+BKorWkP5TURiNPAFZkDACudsaiEgtA0rBqo3UPCz9+GDst1+fYYC71HJNqssh8sBzMKqIB4VtRvk=@vger.kernel.org, AJvYcCVHZSJTCpiYlUTG4ZzaCDn2rN5OfROlhYPZb3RzvEgCgNtQG60k2FcCfxV8ovfUKFZ5t7cL/mD0Xeh5@vger.kernel.org, AJvYcCVKQT4GGqBKq28G8wsXdWfAOZsHyzXXW7f8ubmcG9ZYwEWZ5VFX4ZLSEqjoICk2kNrlQELg9zcQ@vger.kernel.org, AJvYcCWm/ZJt1tfbyTgNklluDJ+yVCuB/1Lp6Qg+ebxjMwl2gQNVL7YiS26V+QQSIEG+uDA8Wh6WaoGSHlMAxTS69Jg=@vger.kernel.org, AJvYcCX7HocRTfGz+82QIOjFXYcnVjkZeWdZ4mo51gwqzInVN5VgXiiFeJfEsaqMh7j/xLAZWi1ZTrhccfqz@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywufx1+08hjwgh9xWcbKb/6OFM0cKZ9CbuFaDBBBwAsM56qqrra
-	zESJ3Bw/q7PzGQAIUJ+CZ/6u+0zoLRHL+9U3B/k8CRaRppt660RY
-X-Google-Smtp-Source: AGHT+IEJ7Hh7KYSEFQ7TnvOgBW+KHHTbn0YpY2aq9eVXupaQTxUm7Wi9eOrRO7yFgrSR7VO5SquDug==
-X-Received: by 2002:a05:6512:224b:b0:539:921a:44af with SMTP id 2adb3069b0e04-539c4967bbemr2532382e87.48.1728502891046;
-        Wed, 09 Oct 2024 12:41:31 -0700 (PDT)
-Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf5f3adsm28720915e9.22.2024.10.09.12.41.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 12:41:30 -0700 (PDT)
-Message-ID: <411f3c94-58b5-471e-bc58-e23d89d2078f@gmail.com>
-Date: Wed, 9 Oct 2024 21:41:25 +0200
+	 In-Reply-To:Content-Type; b=mU6g3YY6wmvc5k24fplq5KkSFE3hD6FbVbPPJmb4x06dcJzTUw5l9vHZgaAoooXJ4E+JlUXx+Y98nj3begmppEsrrl1r2p8jk6gcnFD+V2bhwxyvfdQmQ4ARlKMDkoNgqg7MKErV1069sf5DXOvn4qnE8kw7GwfgnT5w+MbxRUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QKhKPlfA; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TZ6rT2WT9yvw56zkrk//d+3wxBzpnHGZZMRlTHFdpy4=; b=QKhKPlfA/9jfWgKYFgNaV0KvAD
+	ah+NJy9R8HgYQIO14WSd9KP2oZzx+p0se8JhqHgHGMkhBpgvmaf5Gmp7adauL5SWlBpOFgnhLY7yt
+	F3rNgllUPSfqSLKKlMSLs1p5+AtifbofKhNwv23+J38qA35F3FvqstTFmsmeGZurr8u4Gu6c1nlo+
+	bC4AuBQ8YIZ+urk937O6L1/tnpYCVgXGnhxZ/TeAJlmtTylnqsO6RAnBiHw3J4mxSv1bABXmhzCwY
+	XZkcFHByfrLvqdDWRnCq40jnXfbUaLDJ0FDOSzMqQN+MUlZCAuwuhslNwantdEMWZ1CpPu0r7zGyM
+	l8TQCsMA==;
+Received: from [187.57.199.212] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sycbL-0074UU-Aq; Wed, 09 Oct 2024 21:44:03 +0200
+Message-ID: <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
+Date: Wed, 9 Oct 2024 16:43:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,92 +55,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 10/13] staging: rts5280: Use always-managed version of
- pci_intx()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philipp Stanner <pstanner@redhat.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Sergey Shtylyov <s.shtylyov@omp.ru>,
- Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri Kosina
- <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Alex Williamson <alex.williamson@redhat.com>, Juergen Gross
- <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>,
- Ricky Wu <ricky_wu@realtek.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Breno Leitao <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Mostafa Saleh <smostafa@google.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
- Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Yi Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
- Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
- =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Rui Salvaterra <rsalvaterra@gmail.com>, Marc Zyngier <maz@kernel.org>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-staging@lists.linux.dev,
- kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-sound@vger.kernel.org
-References: <20241009083519.10088-1-pstanner@redhat.com>
- <20241009083519.10088-11-pstanner@redhat.com>
- <2024100936-brunette-flannels-0d82@gregkh>
+Subject: Re: [PATCH v2] futex: Rewrite get_inode_sequence_number() to make
+ code simpler
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>
+References: <20241004085257.10908-1-ubizjak@gmail.com>
 Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <2024100936-brunette-flannels-0d82@gregkh>
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241004085257.10908-1-ubizjak@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/9/24 11:38, Greg Kroah-Hartman wrote:
-> On Wed, Oct 09, 2024 at 10:35:16AM +0200, Philipp Stanner wrote:
->> pci_intx() is a hybrid function which can sometimes be managed through
->> devres. To remove this hybrid nature from pci_intx(), it is necessary to
->> port users to either an always-managed or a never-managed version.
->>
->> rts5208 enables its PCI-Device with pcim_enable_device(). Thus, it needs the
->> always-managed version.
->>
->> Replace pci_intx() with pcim_intx().
->>
->> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
->> ---
->>   drivers/staging/rts5208/rtsx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Uros,
+
+Em 04/10/2024 05:52, Uros Bizjak escreveu:
+> Rewrite get_inode_sequence_number() to make code simpler:
 > 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> a) Rewrite FOR loop to a DO-WHILE loop with returns moved
+> out of the loop.
 > 
+> b) Use atomic64_inc_return() instead of atomic64_add_return().
+> 
+> c) Use !atomic64_try_cmpxchg_relaxed(*ptr, &old, new) instead of
+> atomic64_cmpxchg_relaxed (*ptr, old, new) != old.  x86 CMPXCHG
+> instruction returns success in ZF flag, so this change also saves
+> a compare instruction after CMPXCHG.
 
-Hi Philipp,
+Remember, it's easy to see in the diff that you replace the function, 
+but might be not so clear why you did so. I think it would be better to 
+understand if you write like:
 
-this driver (rts5208) will be removed soon - patch is send in.
+We are trying to set a value for the i_sequence, that we expect that is 
+zero, but if we fail to do so, we are happy to use the current non-zero 
+i_sequence value that we found. Instead of using 
+atomic64_cmpxchg_relaxed(), use atomic64_try_cmpxchg_relaxed() which 
+provides a better semantic for this situation.
 
-Discussion about removal:
-https://lore.kernel.org/linux-staging/2024100943-shank-washed-a765@gregkh/T/#t
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Darren Hart <dvhart@infradead.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: "André Almeida" <andrealmeid@igalia.com>
+> ---
+> v2: Explicitly initialize "old" to zero before the call to
+> atomic64_try_cmpxchg_relaxed(). Rewrite commit message to
+> state the motivation for the patch.
+> ---
+>   kernel/futex/core.c | 18 ++++++++----------
+>   1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+> index 136768ae2637..ac650f7ed56c 100644
+> --- a/kernel/futex/core.c
+> +++ b/kernel/futex/core.c
+> @@ -173,23 +173,21 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
+>   static u64 get_inode_sequence_number(struct inode *inode)
+>   {
+>   	static atomic64_t i_seq;
+> -	u64 old;
+> +	u64 old, new;
+>   
+>   	/* Does the inode already have a sequence number? */
+>   	old = atomic64_read(&inode->i_sequence);
+>   	if (likely(old))
+>   		return old;
+>   
+> -	for (;;) {
+> -		u64 new = atomic64_add_return(1, &i_seq);
+> -		if (WARN_ON_ONCE(!new))
+> -			continue;
+> +	do {
+> +		new = atomic64_inc_return(&i_seq);
+> +	} while	(WARN_ON_ONCE(!new));
+>   
+> -		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
+> -		if (old)
+> -			return old;
+> -		return new;
+> -	}
+> +	old = 0;
 
-Thanks for your support.
+Please initialize it in the variable declaration.
 
-Bye Philipp
-
+> +	if (!atomic64_try_cmpxchg_relaxed(&inode->i_sequence, &old, new))
+> +		return old;
+> +	return new;
+>   }
+>   
+>   /**
 
