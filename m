@@ -1,151 +1,435 @@
-Return-Path: <linux-kernel+bounces-356158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FDB1995D64
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED21995D65
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90AFA1C21A76
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:47:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76222823C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8333BB48;
-	Wed,  9 Oct 2024 01:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A774A41A84;
+	Wed,  9 Oct 2024 01:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="gv+rNex6"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6tBizck"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27BF383
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E733D9E;
+	Wed,  9 Oct 2024 01:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728438433; cv=none; b=PYwDVjRtthe5dqMuLFl4FWPe0zBrVUKk4wXh+Z4+pBffvVps2kc4vZogHQx0uUQM5hkL+VcaP7JoJTc7JxEn8uHBVRQeZYCos7kopXXhJWaeFv/HyvVUmhk60N2SopF5gCwKLJWZBGiymHtrNh6fLfjfmzIzIIrHC1wjtBWjOlo=
+	t=1728438498; cv=none; b=kAWRzUP9iqHOlgGSKb94Z/Qf9W2zV+pGr9i04f1irWozPJGBSgeXTqpbeGMP28uBfMXPMx65Rqxsnc21Kkx934ClHwBYVCmbVRnJGWFE+gGj5PMoOd0LJAQd25wzLpkJvQZPNHbFKtR4DjfMszx0IcKnw5qjSDMyONRye27YaD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728438433; c=relaxed/simple;
-	bh=VBm0hfq2DcbVBzfR35/h5cOzEtSAYZKed8pK56bnJXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B+NXe7jjrj8HljB/GH8vfb59oyi5NFXJMg43mVLSOqnIXoK2s8AllN/oUcXXopDpKx6eeMP13lKI1Osf4FGsZ69Jk/B759BT/BMTPxLYPfbFYQBBXh/4v0m6q+zmtfFdTwZLGeD0Mpk6W12FEFunj9aqiJ9/k2H/0Vkm7s29uyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=gv+rNex6; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e31413a196so11820007b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 18:47:11 -0700 (PDT)
+	s=arc-20240116; t=1728438498; c=relaxed/simple;
+	bh=QB5NCT+C5/RxLUryQmgEXrHDz+jvjJf41PoQ6PO9Ono=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=HJQrKIJfLHumqMX3M7UKFVgotTXM5iS266k/rVMwaUcyrj5cBXpNEiptU4OrZkXQvZuukSedu4o+ZZYi0QvUEvFppwSSRP/k4whxp2I+nmf6sggAry00CLnBhSCj5bgDONrPnphJtOw5R4+NIDkJyH1Kjc23zwIrBQNyDCsuOE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6tBizck; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e018dfb5fso238552b3a.2;
+        Tue, 08 Oct 2024 18:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1728438430; x=1729043230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VBm0hfq2DcbVBzfR35/h5cOzEtSAYZKed8pK56bnJXg=;
-        b=gv+rNex6TPTa/CWnYUNJH32Yi7FjIQgIJd6oEYrKf/6+Aa62FVEhBsNxTzaES+BtD2
-         cviJFixIqL5oe/TcCYR2NQ7NAv4Ud/PjzhICE54nc/RAcU9jXdRxI8H9A8lQPNX4YLkd
-         clJyh7rAyX+qG0E31wfWXqckwCtkX71HgjIx4=
+        d=gmail.com; s=20230601; t=1728438496; x=1729043296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JDSsl/cewZa/jFNzlIPSVBXNAxNEgjHI3CQK3ciJS1I=;
+        b=O6tBizck2xSoEqQDnhNvlHTPpf88Iup1rh3q/HOeqoMt9OqKNNgHCftcm4++WgVC3l
+         Z6NSa7NEpRa38fLBw2Id0YzCzwjwTxPZrU3owtv9j6IEf1uo8Y2qz7GMPmVF7b+NnjOf
+         tM54rCY+sdgjStpD2kRWDXEPpzGGZWm8pLuraf+hbXShMchGR0SVkhgzpiYnuT0PfzBN
+         gGLmz//DFiLsslRkUxUTxK7vx/F1921VJypabvvGwItCEukqA31EFrfH2oRvmnvx0Tb2
+         XPPFlq449V8frIaU1PIpkW/FFkkrnnLsZ3nDfL/DDPVhTJOHtBeFbA5nS0qmAVb0Xzom
+         FwfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728438430; x=1729043230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VBm0hfq2DcbVBzfR35/h5cOzEtSAYZKed8pK56bnJXg=;
-        b=eB0iGTia3T/7+uT3nrFfVSzTaoc64oxyHP6G/pLF0VmMdEyUeohAJHIqRPU2wLMrjc
-         CFaWD6EJ1zfxV8rhhPq/JPsHgxj3HfVY/SemRRc7SB3RHO5OqJKAWHtSbpqOovrTO7yx
-         Gdnfuf8JlXDN4MklaaxLatTn/DwvkrTR8YgE+qpdnpyDuziIrFeI5a54ZPxsX53wr9Jv
-         785wuGSYWsXSRe1Qo8/X4l7UURRN8ikt9Kcw35Wca0NxabxARB51wWWi3NhuHPbMJzaU
-         pB0Jn6pl1KjuWyXUmm6jqTmMp7I7CHkvOQrBgs3ldYUllqNDBlUjgoZEr2e6XtnsZbRy
-         rj8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXcR+JLqmNMZxr57uZYI66J+2mlnuNhWdqYaNPfqF826HWbKVuq4CB2zJPvSvEZJEZmSqHSW5ZGSgWi1vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznSfWv29yqwsjdz7hQ2BIsNhKL6HPZwq/0KBHC1Bp0KG86DSXo
-	TJSIkfPQpbR9nSA0/7BmPdQlaxd09/Iw4I2iCiRn7YVKkavCjQV22G14LHEs9sJSMd+E021HzHm
-	6hnHXrWDTiA5jTyhgp//HFM4b4UXgSJ+X81OWdw==
-X-Google-Smtp-Source: AGHT+IGpuyjOSuBdipJ6DMe3pkHIUBlBJLYPgayvZ5t0w/YPLCdD9uwweKmbCeluhi/jTwGh9EfTkRJrLji4HOdLVAo=
-X-Received: by 2002:a05:690c:e0d:b0:699:7b60:d349 with SMTP id
- 00721157ae682-6e32212b7e6mr10584667b3.11.1728438430556; Tue, 08 Oct 2024
- 18:47:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728438496; x=1729043296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JDSsl/cewZa/jFNzlIPSVBXNAxNEgjHI3CQK3ciJS1I=;
+        b=XDtcEt26bxAcakSoxHkXVE6k7ol/UDs6wOAoDBfzykEQUJETdCa0Vfgdin3IUboFyV
+         hbBdjYH/ZJATTLcdEM2BalCnsGeR8vo9NVvKG8cAo6QikbxHVBxQTTbk2S60A+oMPvgZ
+         KNyBtYVJ7cevyeYj5FkZJocCzYi+bIg0YdaMH6hnU91Lp26eDW4BjQCAuA81ep57IxBy
+         z9bHVei6Oic2HrnYRtmZCt5//q3Wse68dgPdLzKvnfW2WCFBe2jyW97r3eOO00AMg4SN
+         wI4DZLX3vj0wLSfnRdaamIK+AELVlXtweUz0ribdVghgRhDroB9kfkMq5QM4xOOapoxA
+         LDJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq8jyqepb4B8soJt3/RQy0gfQ8pbPzc8mXyP1jEk7EAzKrupMKfZHmZsL8LnIUncCH2PJQqyKsf/Sv7yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4vDO4ohkcXT4PYUGbZuljX78l/IkIDDr2KLodSKqRCKGLMljt
+	+Wt0MAbOfEkQIVSfOPQPzv+RoTgJ6tiFINl7VDbFdDaq88el7dh0YcCHi/r5
+X-Google-Smtp-Source: AGHT+IHJWk1/Xlu1M6LtsuGfH/TT2Je+u28M9Dr6MCIjmMG+qZy0ZvZ3vpLCMPkUVKft/RWb5+RWjw==
+X-Received: by 2002:a05:6a20:1582:b0:1cf:4903:7f66 with SMTP id adf61e73a8af0-1d8a3be2fc1mr673018637.2.1728438496328;
+        Tue, 08 Oct 2024 18:48:16 -0700 (PDT)
+Received: from archlinux.. ([138.94.103.170])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7e619sm6705918b3a.219.2024.10.08.18.48.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 18:48:16 -0700 (PDT)
+From: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH] rust: transmute: Add implementation for FromBytes trait
+Date: Tue,  8 Oct 2024 22:47:50 -0300
+Message-ID: <20241009014810.23279-1-christiansantoslima21@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
- <CAEXW_YSxcPJG8SrsrgXGQVOYOMwHRHMrEcB7Rp2ya0Zsn9ED1g@mail.gmail.com> <CAG48ez1ZMo0K0JU321vs0ovXXF2giMvVo14AxNDPzgpGMGZpDA@mail.gmail.com>
-In-Reply-To: <CAG48ez1ZMo0K0JU321vs0ovXXF2giMvVo14AxNDPzgpGMGZpDA@mail.gmail.com>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Tue, 8 Oct 2024 21:46:59 -0400
-Message-ID: <CAEXW_YTC0zJwxrweOLxm-k6gL+AcxZfopHPrJgGOihNrOKFJ3g@mail.gmail.com>
-Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
-To: Jann Horn <jannh@google.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org, 
-	willy@infradead.org, hughd@google.com, lorenzo.stoakes@oracle.com, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 8, 2024 at 8:50=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> On Wed, Oct 9, 2024 at 1:58=E2=80=AFAM Joel Fernandes <joel@joelfernandes=
-.org> wrote:
-> > On Mon, Oct 7, 2024 at 5:42=E2=80=AFPM Jann Horn <jannh@google.com> wro=
-te:
-> > Not to overthink it, but do you have any insight into why copy_vma()
-> > only requires the rmap lock under this condition?
-> >
-> > *need_rmap_locks =3D (new_vma->vm_pgoff <=3D vma->vm_pgoff);
-> >
-> > Could a collapse still occur when need_rmap_locks is false,
-> > potentially triggering the bug you described? My assumption is no, but
-> > I wanted to double-check.
->
-> Ah, that code is a bit confusing. There are actually two circumstances
-> under which we take rmap locks, and that condition only captures (part
-> of) the first one:
->
-> 1. when we might move PTEs against rmap traversal order (we need the
-> lock so that concurrent rmap traversal can't miss the PTEs).
+Add implementation and documentation for FromBytes trait.
 
-Ah ok, I see this mentioned in move_ptes(). Thanks for clarifying.
+Add new feature block in order to allow using ToBytes
+and bound to from_bytes_mut function.
 
-> 2. when we move page tables (otherwise concurrent rmap traversal could
-> race with page table changes)
+Link: https://github.com/Rust-for-Linux/linux/issues/1119
+Signed-off-by: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
+---
+ rust/kernel/lib.rs       |   2 +
+ rust/kernel/transmute.rs | 302 +++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 290 insertions(+), 14 deletions(-)
 
-Ah ok, and these are the 4 call sites you mention below. Makes sense.
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index dc37aef6a008..5215f5744e12 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -18,6 +18,8 @@
+ #![feature(lint_reasons)]
+ #![feature(new_uninit)]
+ #![feature(unsize)]
++#![feature(portable_simd)]
++#![feature(trivial_bounds)]
+ 
+ // Ensure conditional compilation based on the kernel configuration works;
+ // otherwise we may silently break things like initcall handling.
+diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+index 1c7d43771a37..f2d99c136017 100644
+--- a/rust/kernel/transmute.rs
++++ b/rust/kernel/transmute.rs
+@@ -12,24 +12,298 @@
+ /// # Safety
+ ///
+ /// All bit-patterns must be valid for this type. This type must not have interior mutability.
+-pub unsafe trait FromBytes {}
++pub unsafe trait FromBytes {
++    ///Converts a slice of Bytes into a Reference to Self
++    ///
++    /// # Examples
++    /// ```
++    ///    pub unsafe trait FromBytes {
++    ///        unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self;
++    ///        unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    ///        where
++    ///            Self: ToBytes;
++    ///    }
++    ///
++    ///unsafe impl FromBytes for u32 {
++    ///    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++    ///        let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++    ///        &*slice_ptr
++    ///    }
++    ///
++    ///    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    ///    where
++    ///        Self: ToBytes,
++    ///    {
++    ///        let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++    ///        &mut *slice_ptr
++    ///    }
++    ///}
++    ///
++    ///let slice_of_bytes : &[u8] = &[1, 2, 3, 4];
++    ///let result = u32::from_bytes(slice_of_bytes);
++    ///assert_eq!(*result, 0x4030201);
++    ///```
++    ///# Safety
++    ///
++    ///Guarantee that all values are initiliazed
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self;
++    ///Converts a mutabble slice of Bytes into a mutable Reference to Self
++    /// # Safety
++    ///
++    /// ToBytes in order to allow only types that implements ToBytes
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes;
++}
+ 
+-macro_rules! impl_frombytes {
+-    ($($({$($generics:tt)*})? $t:ty, )*) => {
+-        // SAFETY: Safety comments written in the macro invocation.
+-        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
+-    };
++// SAFETY: All bit patterns are acceptable values of the types below.
++unsafe impl FromBytes for u8 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
+ }
+ 
+-impl_frombytes! {
+-    // SAFETY: All bit patterns are acceptable values of the types below.
+-    u8, u16, u32, u64, usize,
+-    i8, i16, i32, i64, isize,
++unsafe impl FromBytes for u16 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for u32 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for u64 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for usize {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for i8 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for i16 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for i32 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for i64 {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++
++unsafe impl FromBytes for isize {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
++            &*slice_ptr
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
++            &mut *slice_ptr
++        }
++    }
++}
++// SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
++// patterns are also acceptable for arrays of that type.
++unsafe impl<T: FromBytes> FromBytes for [T] {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const T;
++            let slice_len = slice_of_bytes.len() / core::mem::size_of::<T>();
++            core::slice::from_raw_parts(slice_ptr, slice_len)
++        }
++    }
++
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut T;
++            let slice_len = slice_of_bytes.len() / core::mem::size_of::<T>();
++            core::slice::from_raw_parts_mut(slice_ptr, slice_len)
++        }
++    }
++}
++
++/// # Examples
++///```
++///let slice_of_bytes: &[u8] = &[
++///    1, 0, 0, 0,
++///    2, 0, 0, 0,
++///    3, 0, 0, 0,
++///    4, 0, 0, 0,
++///    5, 0, 0, 0,
++///    6, 0, 0, 0,
++///    7, 0, 0, 0,
++///    8, 0, 0, 0,
++///];
++///
++///let foo = <[u32; 8]>::from_bytes(slice_of_bytes);
++///let expected: [u32; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
++///
++///assert_eq!(*foo, expected);
++///```
++unsafe impl<T: FromBytes, const N: usize> FromBytes for [T; N] {
++    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *const T;
++            &*(slice_ptr as *const [T; N])
++        }
++    }
+ 
+-    // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
+-    // patterns are also acceptable for arrays of that type.
+-    {<T: FromBytes>} [T],
+-    {<T: FromBytes, const N: usize>} [T; N],
++    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
++    where
++        Self: ToBytes,
++    {
++        unsafe {
++            let slice_ptr = slice_of_bytes.as_ptr() as *mut T;
++            &mut *(slice_ptr as *mut [T; N])
++        }
++    }
+ }
+ 
+ /// Types that can be viewed as an immutable slice of initialized bytes.
+-- 
+2.46.2
 
-> If you look at the four callsites of move_pgt_entry(), you can see
-> that its parameter "need_rmap_locks" sometimes comes from the caller's
-> "need_rmap_locks" variable (in the HPAGE_PUD and HPAGE_PMD cases), but
-> other times it is just hardcoded to true (in the NORMAL_PUD and
-> NORMAL_PMD cases).
-> So move_normal_pmd() always holds rmap locks.
-> (This code would probably be a bit clearer if we moved the rmap
-> locking into the helpers move_{normal,huge}_{pmd,pud} and got rid of
-> the helper move_pgt_entry()...)
-
-Thanks for clarifying, this makes a lot of sense now. So the
-optimization is when we move ptes forward, we don't need the rmap lock
-because the rmap code is cool with that due to traversal order. Ok.
-And that definitely doesn't apply to move_normal_pmd() as you
-mentioned I guess :).
-
-> (Also, note that when undoing the PTE moves with the second
-> move_page_tables() call, the "need_rmap_locks" parameter to
-> move_page_tables() is hardcoded to true.)
-
-Sure.
-
-> > The patch looks good to me overall. I was also curious if
-> > move_normal_pud() would require a similar change, though I=E2=80=99m in=
-clined
-> > to think that path doesn't lead to a bug.
->
-> Yeah, there is no path that would remove PUD entries pointing to page
-> tables through the rmap, that's a special PMD entry thing. (Well, at
-> least not in non-hugetlb code, I haven't looked at hugetlb in a long
-> time - but hugetlb has an entirely separate codepath for moving page
-> tables, move_hugetlb_page_tables().)
-
-Makes sense. TIL ;-)
-
-thanks!
-
- - Joel
 
