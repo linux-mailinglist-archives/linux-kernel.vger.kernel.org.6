@@ -1,180 +1,303 @@
-Return-Path: <linux-kernel+bounces-357118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0656C996BBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:22:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C68A996BBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D961C20E0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502EB1C23A67
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B919B589;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9E019A28D;
 	Wed,  9 Oct 2024 13:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SOz/nLYu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37711126C0F;
-	Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511251990A7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480076; cv=none; b=m9w87yQZU8KCaNaoqa0D0FIhyrko4BTFjis52unWkuKRgyAvPem2WZc9SaXKJ+AOKCG/GhPGQ+fOJ1qgWJvM6oMqNh+i9QRSu37CKRrgsxMorLzpjzmvIH1lhpLH6z35XVcxyuoZby8VmnPkuYz20B8THIrYZRUCFa0WnX8AzcI=
+	t=1728480075; cv=none; b=DJJtrNesClhYC3riHGtKGbRlsnZTDCvcy9PhlwNR171NNzW8RpFHPHH3g4AOAqkoX8+41gOBy/qjxmUhfLLPGAky6p+yWkF9Yb00XQTKqBC6W5Vy5GGJumu3tjYweq6YNJHWhtlBLOcCdxYeWpBrO++6ZWhDrxuYEG5nM2/EZuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480076; c=relaxed/simple;
-	bh=id0daXtFOzbrelYtwicjbB38DtPm66zoZR+OFqNlhLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WO/npOqjvd9/iQHnOwij7GtY3jrrCk2p9eOKU9ipCXFdC9JWp+lXRGUQpXGBSPP0LfyGQ/H7uXIgnjydAIbznsRpfHObYDlnj/3PIrvuWBVRdArP18KnmfslU9DGDFgjBYKry+dQEdUQTSZPRAZhtrUgAL8XIswEID2uINvWN+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SOz/nLYu; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728480075; x=1760016075;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=id0daXtFOzbrelYtwicjbB38DtPm66zoZR+OFqNlhLY=;
-  b=SOz/nLYuPVtDKz3C1ianfm/jgpR88TjMThdpWI7oZhJjIHZPtDt9q7cg
-   +RsKCViKhRJCtb/cip0IUrDAaACFIY2Y3TjoBMf67COoHfFZ/TUY10iwA
-   4TPc/Fl8vDURDIJ553yjsZP771KCTdnmu53NP68JnqQm0ZzIzdY+SQkAR
-   XzgAEC8rjJd9ubrfdN6rsGFrxulO4+DFwGOkRwHuFtWXpbF7jO326yFHB
-   YQZsXCOvqNpHAq8mISa0aLnf+c/EtV0OQNFknrVVgCiBCKCWB/kWPxw2k
-   wEqhfoEN6hUcsoEdgHJ5gZpdX0abRhIVl2H0cz+Yt7HxHtl/6y1cq2wvi
-   A==;
-X-CSE-ConnectionGUID: nzCzdMzXSqagM2swKn5Gxg==
-X-CSE-MsgGUID: w4MlxcJ8S1uOg8geUA4o3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45246568"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="45246568"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 06:21:14 -0700
-X-CSE-ConnectionGUID: N651c8blRcCjdYDnrpfqYQ==
-X-CSE-MsgGUID: 0YREzMx2RYCssUEeog/gMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="76472441"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 06:21:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1syWcm-000000018Pi-1Da7;
-	Wed, 09 Oct 2024 16:21:08 +0300
-Date: Wed, 9 Oct 2024 16:21:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] cleanup: adjust scoped_guard() to avoid potential
- warning
-Message-ID: <ZwaDRJBs82oFMbZ8@smile.fi.intel.com>
-References: <20241009114446.14873-1-przemyslaw.kitszel@intel.com>
+	s=arc-20240116; t=1728480075; c=relaxed/simple;
+	bh=Bcv8LraOix12r5fxgeJoqI0y/02YPBmE2zsUVZYnCDY=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=WP2Irisj6+W4W8aq9DvWizPBicJ847KUGPSSW2Ssa/RUqeNTSEEzV/IwRQWuFlQPTiySXWyPjBnXn0VDw0JDRSrdUIfV+Jk+vm6B61VILiOQWapdiZPqEgyxWeamgQIR8LJbk5WLBhDSzWslY5vl7M58KN/P15O9+lMaswuoi8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE63BC4CECE;
+	Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1syWcy-0000000177n-1pPp;
+	Wed, 09 Oct 2024 09:21:20 -0400
+Message-ID: <20241009132120.300305643@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 09 Oct 2024 09:21:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [for-next][PATCH 5/6] tracing: Remove definition of trace_*_rcuidle()
+References: <20241009132104.470687911@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009114446.14873-1-przemyslaw.kitszel@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
 
-On Wed, Oct 09, 2024 at 01:44:17PM +0200, Przemek Kitszel wrote:
-> Change scoped_guard() to make reasoning about it easier for static
-> analysis tools (smatch, compiler diagnostics), especially to enable them
-> to tell if the given scoped_guard() is conditional (interruptible-locks,
-> try-locks) or not (like simple mutex_lock()).
-> 
-> Add compile-time error if scoped_cond_guard() is used for non-conditional
-> lock class.
-> 
-> Beyond easier tooling and a little shrink reported by bloat-o-meter:
-> add/remove: 3/2 grow/shrink: 45/55 up/down: 1573/-2069 (-496)
-> this patch enables developer to write code like:
-> 
-> int foo(struct my_drv *adapter)
-> {
-> 	scoped_guard(spinlock, &adapter->some_spinlock)
-> 		return adapter->spinlock_protected_var;
-> }
-> 
-> Current scoped_guard() implementation does not support that,
-> due to compiler complaining:
-> error: control reaches end of non-void function [-Werror=return-type]
-> 
-> Technical stuff about the change:
-> scoped_guard() macro uses common idiom of using "for" statement to declare
-> a scoped variable. Unfortunately, current logic is too hard for compiler
-> diagnostics to be sure that there is exactly one loop step; fix that.
-> 
-> To make any loop so trivial that there is no above warning, it must not
-> depend on any non-const variable to tell if there are more steps. There is
-> no obvious solution for that in C, but one could use the compound
-> statement expression with "goto" jumping past the "loop", effectively
-> leaving only the subscope part of the loop semantics.
-> 
-> More impl details:
-> one more level of macro indirection is now needed to avoid duplicating
-> label names;
-> I didn't spot any other place that is using the
-> "for (...; goto label) if (0) label: break;" idiom, so it's not packed
-> for reuse, what makes actual macros code cleaner.
-> 
-> There was also a need to introduce const true/false variable per lock
-> class, it is used to aid compiler diagnostics reasoning about "exactly
-> 1 step" loops (note that converting that to function would undo the whole
-> benefit).
-> 
-> Big thanks to Andy Shevchenko for help on this patch, both internal and
-> public, ranging from whitespace/formatting, through commit message
-> clarifications, general improvements, ending with presenting alternative
-> approaches - all despite not even liking the idea.
-> 
-> Big thanks to Dmitry Torokhov for the idea of compile-time check for
-> scoped_cond_guard(), and general improvements for the patch.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-...
+The trace_*_rcuidle() variant of a tracepoint was to handle places where a
+tracepoint was located but RCU was not "watching". All those locations
+have been removed, and RCU should be watching where all tracepoints are
+located. We can now remove the trace_*_rcuidle() variant.
 
-> @@ -149,14 +149,21 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
->   *      similar to scoped_guard(), except it does fail when the lock
->   *      acquire fails.
->   *
-> + *	Only for conditional locks.
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Link: https://lore.kernel.org/20241003181629.36209057@gandalf.local.home
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ include/linux/tracepoint.h        | 50 ++-----------------------------
+ include/trace/events/preemptirq.h |  8 -----
+ kernel/trace/trace_preemptirq.c   | 26 ++++------------
+ scripts/tags.sh                   |  2 --
+ 4 files changed, 8 insertions(+), 78 deletions(-)
 
-> + *
-
-Slipped redundant blank line.
-
->   */
-
-...
-
-> +/* helper for the scoped_guard() macro
-
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 2a29334bbc02..7e4af7b3633c 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -196,67 +196,25 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DO_TRACE_CALL(name, args)	__traceiter_##name(NULL, args)
+ #endif /* CONFIG_HAVE_STATIC_CALL */
+ 
+-/*
+- * ARCH_WANTS_NO_INSTR archs are expected to have sanitized entry and idle
+- * code that disallow any/all tracing/instrumentation when RCU isn't watching.
+- */
+-#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+-#define RCUIDLE_COND(rcuidle)	(rcuidle)
+-#else
+-/* srcu can't be used from NMI */
+-#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
+-#endif
+-
  /*
-  * This is wrong style of the comment block, it's not network
-  * related code where it's acceptable. Also, respect English,
-  * i.e. capitalisation and punctuation in the sentences.
+  * it_func[0] is never NULL because there is at least one element in the array
+  * when the array itself is non NULL.
   */
-
-> + *
-> + * Note that the "!__is_cond_ptr(_name)" part of the condition ensures
-> + * that compiler would be sure that for unconditional locks the body of
-> + * the loop could not be skipped; it is needed because the other
-> + * part - "__guard_ptr(_name)(&scope)" - is too hard to deduce (even if
-> + * could be proven true for unconditional locks).
-> + */
-
+-#define __DO_TRACE(name, args, cond, rcuidle)				\
++#define __DO_TRACE(name, args, cond)					\
+ 	do {								\
+ 		int __maybe_unused __idx = 0;				\
+ 									\
+ 		if (!(cond))						\
+ 			return;						\
+ 									\
+-		if (WARN_ONCE(RCUIDLE_COND(rcuidle),			\
+-			      "Bad RCU usage for tracepoint"))		\
+-			return;						\
+-									\
+ 		/* keep srcu and sched-rcu usage consistent */		\
+ 		preempt_disable_notrace();				\
+ 									\
+-		/*							\
+-		 * For rcuidle callers, use srcu since sched-rcu	\
+-		 * doesn't work from the idle path.			\
+-		 */							\
+-		if (rcuidle) {						\
+-			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
+-			ct_irq_enter_irqson();				\
+-		}							\
+-									\
+ 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
+ 									\
+-		if (rcuidle) {						\
+-			ct_irq_exit_irqson();				\
+-			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
+-		}							\
+-									\
+ 		preempt_enable_notrace();				\
+ 	} while (0)
+ 
+-#ifndef MODULE
+-#define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
+-	static inline void trace_##name##_rcuidle(proto)		\
+-	{								\
+-		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+-			__DO_TRACE(name,				\
+-				TP_ARGS(args),				\
+-				TP_CONDITION(cond), 1);			\
+-	}
+-#else
+-#define __DECLARE_TRACE_RCU(name, proto, args, cond)
+-#endif
+-
+ /*
+  * Make sure the alignment of the structure in the __tracepoints section will
+  * not add unwanted padding between the beginning of the section and the
+@@ -277,14 +235,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+-				TP_CONDITION(cond), 0);			\
++				TP_CONDITION(cond));			\
+ 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
+ 			WARN_ONCE(!rcu_is_watching(),			\
+ 				  "RCU not watching for tracepoint");	\
+ 		}							\
+ 	}								\
+-	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
+-			    PARAMS(cond))				\
+ 	static inline int						\
+ 	register_trace_##name(void (*probe)(data_proto), void *data)	\
+ 	{								\
+@@ -375,8 +331,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
+ 	static inline void trace_##name(proto)				\
+ 	{ }								\
+-	static inline void trace_##name##_rcuidle(proto)		\
+-	{ }								\
+ 	static inline int						\
+ 	register_trace_##name(void (*probe)(data_proto),		\
+ 			      void *data)				\
+diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
+index 3f249e150c0c..f99562d2b496 100644
+--- a/include/trace/events/preemptirq.h
++++ b/include/trace/events/preemptirq.h
+@@ -43,8 +43,6 @@ DEFINE_EVENT(preemptirq_template, irq_enable,
+ #else
+ #define trace_irq_enable(...)
+ #define trace_irq_disable(...)
+-#define trace_irq_enable_rcuidle(...)
+-#define trace_irq_disable_rcuidle(...)
+ #endif
+ 
+ #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
+@@ -58,8 +56,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
+ #else
+ #define trace_preempt_enable(...)
+ #define trace_preempt_disable(...)
+-#define trace_preempt_enable_rcuidle(...)
+-#define trace_preempt_disable_rcuidle(...)
+ #endif
+ 
+ #endif /* _TRACE_PREEMPTIRQ_H */
+@@ -69,10 +65,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
+ #else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
+ #define trace_irq_enable(...)
+ #define trace_irq_disable(...)
+-#define trace_irq_enable_rcuidle(...)
+-#define trace_irq_disable_rcuidle(...)
+ #define trace_preempt_enable(...)
+ #define trace_preempt_disable(...)
+-#define trace_preempt_enable_rcuidle(...)
+-#define trace_preempt_disable_rcuidle(...)
+ #endif
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index e37446f7916e..5c03633316a6 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -15,20 +15,6 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/preemptirq.h>
+ 
+-/*
+- * Use regular trace points on architectures that implement noinstr
+- * tooling: these calls will only happen with RCU enabled, which can
+- * use a regular tracepoint.
+- *
+- * On older architectures, use the rcuidle tracing methods (which
+- * aren't NMI-safe - so exclude NMI contexts):
+- */
+-#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+-#define trace(point)	trace_##point
+-#else
+-#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
+-#endif
+-
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ /* Per-cpu variable to prevent redundant calls when IRQs already off */
+ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+@@ -42,7 +28,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ void trace_hardirqs_on_prepare(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -53,7 +39,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+ void trace_hardirqs_on(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -75,7 +61,7 @@ void trace_hardirqs_off_finish(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+ 	}
+ 
+ }
+@@ -89,7 +75,7 @@ void trace_hardirqs_off(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+ 	}
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
+@@ -100,13 +86,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ void trace_preempt_on(unsigned long a0, unsigned long a1)
+ {
+-	trace(preempt_enable)(a0, a1);
++	trace_preempt_enable(a0, a1);
+ 	tracer_preempt_on(a0, a1);
+ }
+ 
+ void trace_preempt_off(unsigned long a0, unsigned long a1)
+ {
+-	trace(preempt_disable)(a0, a1);
++	trace_preempt_disable(a0, a1);
+ 	tracer_preempt_off(a0, a1);
+ }
+ #endif
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 191e0461d6d5..0d01c1cafb70 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -152,9 +152,7 @@ regex_c=(
+ 	'/^BPF_CALL_[0-9]([[:space:]]*\([[:alnum:]_]*\).*/\1/'
+ 	'/^COMPAT_SYSCALL_DEFINE[0-9]([[:space:]]*\([[:alnum:]_]*\).*/compat_sys_\1/'
+ 	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
+-	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
+ 	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
+-	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
+ 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/get_\1_slot/'
+ 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/free_\1_slot/'
+ 	'/^PAGEFLAG([[:space:]]*\([[:alnum:]_]*\).*/Page\1/'
 -- 
-With Best Regards,
-Andy Shevchenko
+2.45.2
 
 
 
