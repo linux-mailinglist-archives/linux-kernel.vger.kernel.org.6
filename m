@@ -1,159 +1,93 @@
-Return-Path: <linux-kernel+bounces-356336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CCF995FB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FA0995FB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403C01F2488D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865CA281B5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678FB175D4A;
-	Wed,  9 Oct 2024 06:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD8516ABC6;
+	Wed,  9 Oct 2024 06:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIf2J41x"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oA5HzNK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8B177102
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ACC28EF;
+	Wed,  9 Oct 2024 06:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728454972; cv=none; b=MWZjr1S8oyYSFsva9SVVEHoZf3QJPubyRRViay3VyHUZoLPxayNQxkDSq0MI1arIapCa/Rx6rTThlrRpyb3EgYRdnpl/MZEkbTTx/UVEVJ++OPVI+WWiPq3l5qC7eyrm/rKgkfyH4jmxM5vFvLIs80hbUSOd+w+jNtXsUAhL748=
+	t=1728454971; cv=none; b=tAqGgRuaYbf2C3Yu2rIcX8u2N5yr+ucLx165nc9F4janQGvmqg5W/4rFOGQyrHG+Lac5aPongnij4m9W4+VlEupyydBUa5UBNo9DLUjPS+he2QL/5wsyNQBV4OP7ZhtVHr9FO8dw+wU9epO9UKF9Qc7ecy6WYl4lvGsRSi+pwKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728454972; c=relaxed/simple;
-	bh=70XTPMcMP2KIi3tLbcqxxoESA7Ui9Epoi5qeJRsiekQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOIw2+TgKZnMS6WCyRW1xzgaQX85LF7+UUSnB3dqybQ+YPa6mIe42w/Q+8xWnkZgm5PjscVSmAWE6iOZ80whPJJgfQGztgYjvYJAjGZXgwygCiPDVcDRLrUr/rmhrSnZ4BE1c3vJnkkgcp3csLXHfBoeDJxvGh61T3jkeWMn/E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIf2J41x; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4a3a6532596so2198001137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 23:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728454970; x=1729059770; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RopoYYi2hlVFFuKNg1HoN6+xeEu++B4y+INQW7poSdo=;
-        b=EIf2J41x4NGT+uOTYTdKiGZeGO+VSJMRcnugn/JE1ft8HpH2g0sSp1LDRP1DmgxJpD
-         CpqyMYX3znbjLppgtATDVA+Ow+NTWDV1I0jGt0mN67tmI9WnRg1Fx5HrO0T0W8J7VzoO
-         dn0I6dxHE44YrxdKaFu2/S4YENdsolPW1FT3GpOKYYu9ckYcCBRVcpOIGn6KFuYzbH83
-         XhRg6Pc3jssO6elX0jq1m7/yHXbRGjVEozbYtUk839Wwn56FoFxFssCIb8xGEfCYp/JQ
-         3HSLeGMJ+05MfsVtA7RsJIsJDcPuehP03ohMgQWi1IrdluXGBM1F2dF/iMMCOsQTDQh2
-         2Wcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728454970; x=1729059770;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RopoYYi2hlVFFuKNg1HoN6+xeEu++B4y+INQW7poSdo=;
-        b=Yqr8VFfGziWLYJDgZg+2lxbJC8B/u8pG/omMOoY04kaTfeHhd9r40MA1OGnOHgVd+k
-         8oZVQU6h30G67P9Z6uk0MluKzW6kjt5ufbwWmjyUiUIwAVJk8HTS/4b0bwJJozKob4SU
-         8N0x8fPLubGI1kuxBU2xPhmDceUok6G6UA39toSYeNuZrmdMXjOA5TSWW7e+EdfDG5dD
-         XwydooRtZQ3rV46CgkFSNGC8KxHLnuwPMiPRKYZrWSManzVbSoFfEKDNBG7jtKoInNdN
-         Ic1tl25gPXJdUOFIPgyXoBxo1IauhDQaDVC+ZIeXBJJ6M+K7EDLaLY2sCnbWiXqjwSJh
-         ys2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWsibFZW+KROlvPEpWTlcsKrb1C3sYXSMHjNIBbvRsMYgfHLYDy8b7UtPA/Phans9m2MUBoKrUpyHLw/QM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuFNSItMwk+Aqv2ecuLrE7uA6cBbf4aJsDMuRSLYfcCUQ5gsHY
-	NpAoN35q5NSzjXT1hMJXRg2zyjHBVX/l8iqeeSam6TgVWsOy9pHB5nBLskPj9av4veeeW7n1O24
-	FUHcpXWrLCrDdesBu/uyslVxr0A2b3fzRGeRZdZr7OxFUv8LFDgI=
-X-Google-Smtp-Source: AGHT+IEAUqkOgdIyJ+oc3tAQuAWemtC8mERexWMYrIgvafEvJqHf5S3kt2FSt5RKqD7Xtn9v+WxuHwBHNNsPLb6nxAw=
-X-Received: by 2002:a05:6102:c48:b0:4a3:e55d:eff5 with SMTP id
- ada2fe7eead31-4a448d66a20mr868134137.9.1728454970015; Tue, 08 Oct 2024
- 23:22:50 -0700 (PDT)
+	s=arc-20240116; t=1728454971; c=relaxed/simple;
+	bh=VQDBI3P2v1glV69DXsoPdzq8y4H8cqcf/WnJRvLCTO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fJXInjMWdZ3mzyXP/dvdldhRHO5v60iOQPE6Jgr0IwOIkYUSMJ5/cGVoOTms9r7NYr6p/myvdzplvZ006KWVbWbBSryFinO2Vcq64Y4qxssWIwj5YWJLbZMsMA0CIajwlUgKrIPok/PyGfq9w0xXZMOKdUcgLNGKEZyAsAMr3uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oA5HzNK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF93FC4CEC5;
+	Wed,  9 Oct 2024 06:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728454971;
+	bh=VQDBI3P2v1glV69DXsoPdzq8y4H8cqcf/WnJRvLCTO4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oA5HzNK1yIaxzfcSCoe4IRBPT1nX3pv7QlI3vZQdbIGkOQGsPSRp0gBfNxGvOLfjX
+	 VB6m+sV6HKNMZrZqQ5hRXXAYJYTWXeS9sXYT221W+5EjflqSo083h9++JB1kMrK+PE
+	 E5C1KX2kYRT5go3saGurF1GjTJuq7ikV6SDmufURu+O/RkFis/S2Uigsk2jitBCqqB
+	 Nxlqv05RjrNYN+URYdlM45VAVJyivPC6sH6UczlJoDP56WTkcu4HkOrWilFxEgY9Bz
+	 KHWcgL50l7q9OeiqxuExvLeA7H2jzcAAy9df5htbBIRTP6ClOg0nZo+WI/Xocw6A38
+	 ZVwnMHa2y7yng==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Ben Gainey <ben.gainey@arm.com>
+Subject: [PATCH] perf evsel: Fix missing inherit + sample read check
+Date: Tue,  8 Oct 2024 23:22:50 -0700
+Message-ID: <20241009062250.730192-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008115648.280954295@linuxfoundation.org>
-In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 9 Oct 2024 11:52:38 +0530
-Message-ID: <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
-Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Oct 2024 at 17:42, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.10.14 release.
-> There are 482 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+It should not clear the inherit bit simply because the kernel doesn't
+support the sample read with it.  IOW the inherit bit should be kept
+when the sample read is not requested for the event.
 
+Fixes: 90035d3cd876cb71 ("tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events")
+Cc: Ben Gainey <ben.gainey@arm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/evsel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The LTP syscalls fanotify22 test failed  (broken).
-This regression is noticed on linux.6.10.y, linux.6.11.y and linux.6.6.y.
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index d8fd493af01458b7..507f526ccbbcfc36 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2112,7 +2112,8 @@ static int __evsel__prepare_open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 
+ static void evsel__disable_missing_features(struct evsel *evsel)
+ {
+-	if (perf_missing_features.inherit_sample_read)
++	if (perf_missing_features.inherit_sample_read && evsel->core.attr.inherit &&
++	    (evsel->core.attr.sample_type & PERF_SAMPLE_READ))
+ 		evsel->core.attr.inherit = 0;
+ 	if (perf_missing_features.branch_counters)
+ 		evsel->core.attr.branch_sample_type &= ~PERF_SAMPLE_BRANCH_COUNTERS;
+-- 
+2.47.0.rc0.187.ge670bccf7e-goog
 
-We are bisecting this issue.
-
- ltp-syscalls
-  - fanotify22
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Test log,
------------
-fanotify16.c:751[  452.527701] EXT4-fs error (device loop0):
-__ext4_remount:6522: comm fanotify22: Abort forced by user
-tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
-tst_test.c:1106: TINFO: Formatting /dev/loop0 with ext4 opts='' extra opts=''
-mke2fs 1.47.1 (20-May-2024)
-tst_test.c:1120: TINFO: Mounting /dev/loop0 to
-/scratch/ltp-6nPLv2EGcV/LTP_fanbDvQcT/test_mnt fstyp=ext4 flags=0
-tst_test.c:1733: TINFO: LTP version: 20240524
-tst_test.c:1617: TINFO: Timeout per run is 0h 02m 30s
-fanotify.h:122: TINFO: fid(test_mnt/internal_dir/bad_dir) =
-6bd2dab9.86fe4716.7e82.df82837f.0...
-fanotify.h:122: TINFO: fid(test_mnt/internal_dir) =
-6bd2dab9.86fe4716.7e81.beaa198d.0...
-fanotify22.c:278: TINFO: Umounting
-/scratch/ltp-6nPLv2EGcV/LTP_fanbDvQcT/test_mnt
-debugfs 1.47.1 (20-May-2024)
-debugfs 1.47.1 (20-May-2024)
-fanotify22.c:281: TINFO: Mounting /dev/loop0 to
-/scratch/ltp-6nPLv2EGcV/LTP_fanbDvQcT/test_mnt fstyp=ext4 flags=0
-fanotify.h:122: TINFO: fid(test_mnt) = 6bd2dab9.86fe4716.2.0.0...
-fanotify22.c:59: TINFO: Mounting /dev/loop0 to
-/scratch/ltp-6nPLv2EGcV/LTP_fanbDvQcT/test_mnt fstyp=ext4 flags=21
-fanotify22.c:59: TBROK: mount(/dev/loop0, test_mnt, ext4, 33,
-0x5659a1d5) failed: EROFS (30)
-
-HINT: You _MAY_ be missing kernel fixes:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=124e7c61deb2
-
-Summary:
-passed   0
-failed   0
-broken   1
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
