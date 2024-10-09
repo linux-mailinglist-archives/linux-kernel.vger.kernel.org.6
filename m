@@ -1,200 +1,112 @@
-Return-Path: <linux-kernel+bounces-356940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12DD996903
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F144F996910
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E601B21C25
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183871C232C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846C61922FC;
-	Wed,  9 Oct 2024 11:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115DE19258E;
+	Wed,  9 Oct 2024 11:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="soir9UwS"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2+yJsVy9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56397191F66
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A618718FC83;
+	Wed,  9 Oct 2024 11:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474125; cv=none; b=C+ykIvb/kuX9jxkXRdR8JXVitOmUk1JZQU4TQX35bEdT83WHAdnfQLx8dzmq1gWIcUB5FtDZOGrZ1NjuMvkI8Y7iae5lPF1PDiaOJ3afSjB6jjgJmvEwRkmwJcqW1m/vrw22NHkEMpqlbTszYHh5+2M/pqQ0t73QeAA56AitXc8=
+	t=1728474220; cv=none; b=idoJnBWB/L1mswfrSjdaNA32vmTmlpB9o/9tZTyQ2XWKIXc1xgMgY8cSLPSv2kyZKTOMU+8hU7xem5H+zY5qPSFW57vlX2G+FhZwpyRszPiGpQapyu0IN1kHxxKEqqVNp14lh3w0TTembtAPu011j1pvoWjZU/bFj+A1uke6F2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474125; c=relaxed/simple;
-	bh=7Uieg0D9YN0oUhi2khNoBmnN7VYZC4gmWG3bo/9Mysg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ye09fZj5Tc3nDbaodNMPvA3zqkHjqT7+v8oSfzUiayoSOEb8CsslhHCjxH5ZYWvRpOL1VFexJnmdaBUqouhp+3xCUxBOXXID9QO1Fwh1xlapRZxwFy3IjOUa1UHLDnskPpvCJtqg5gG2IMdAgGFDflx9EnFzGAT+pEMhIORHU0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=soir9UwS; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d9e31e66eeso121622717b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728474123; x=1729078923; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IAUuAv0vd3Anccife5Yx0gNRFmTC86lMZbLdrvvfjMc=;
-        b=soir9UwSKK9f57DVN0AcUL4j7CT39G3TMV5+yKuaxpm93+v0mbMhzTa836JL2BwZtS
-         u/zh2V1hygVQr+yB3svqYuUmy18wlU4DRbQgl+OpRX9atOMEcrupg9qi+C9b09TZ8qVt
-         svvqj0OP16SMIm2jORFrX3cq8wTQhUdbjOZbBMy3BR9Cmn9kytpBy3nFsw/bP4Es3dgt
-         ogeI4MvETB9jnbyxkn1jWjFY6mCM6gHnLrr9lhfsvBNkgaQomm5Jx6ouYmEM8G5UCMnh
-         gQsg3Tx3pqQCtCi6iykXVWDtjnEGeAqOU7mfKv87bUwk10U/3uUJwTmjjvqdhEA9Ntpw
-         NVGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728474123; x=1729078923;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IAUuAv0vd3Anccife5Yx0gNRFmTC86lMZbLdrvvfjMc=;
-        b=re77jAR0Fn7Oj5DTWy7Hc89shSovebr4HO54fyRwoMM5RA87GSthoLkpwuO2xMyVdP
-         43FwazeSCLB+x9dgMkB6SWa6nOq8HzNmbx+t5UUz6jkzHitjZaR6plxLBtrXvEqmmJi6
-         IJEJqauNXW82bNe+g0mC/TMkJG8qtLUouN71f0Ca1FS221fvyc9M8O6Vh9rhoEyrHCW3
-         UDkFPiZlhGgw+xg61t1dEIyNpCGaUVPR0Brg2bOieajEKm3PXvMRUTlo4ymSkNdXKLRn
-         HuvkzpOazT2UwrCyZKQCgvhWX+Ctj7lE3fT9kEOkhsPp8FuVod/EsohbTILKTgwZjKTa
-         /lew==
-X-Forwarded-Encrypted: i=1; AJvYcCVsSHuxEhYxu5b4sBjJuceE6QiLKHFHPtvtCYzzSh3XbIj1tCm4RJhWoUc5ibVLicfilBfMnsyevFgD+mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAp6V2RAhygZguBRE32ZpWaVIvhjExoGRgP/EAPp/YeMihbq/0
-	9nsKPKw2piRrTCGBnXHdoMfcY//SLTL2A6fJlPFIJF8EAII5P79vx90NSRNLLeFAyFy3CMUAXQS
-	8JxT+IoJLgDpNVw==
-X-Google-Smtp-Source: AGHT+IE8cDFTbiKZLSePbNsozgBWZg48ORVxVuun56/nByjyG39usuS8gE9EIEFCP7Abz4Sa7/7aSLsIAW1lPB8=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a25:d04c:0:b0:e05:6532:166 with SMTP id
- 3f1490d57ef6-e28fe334f9fmr15138276.1.1728474123115; Wed, 09 Oct 2024 04:42:03
- -0700 (PDT)
-Date: Wed, 09 Oct 2024 11:41:59 +0000
+	s=arc-20240116; t=1728474220; c=relaxed/simple;
+	bh=GiKm2C7tdhc3dZ/L+F0NUN76VQ7J4IRQ3C3VO5kmDzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qe4hbJnfY1RMtCcxTu6RrrAL0r87YNNhAJzop+wgqxbKugRzzyAdn7a0fcRCy0NBmfcEsObOKiwb3Fk/eS76bj6R2Ve8pw9C552FsqKrk/EoBI3HkYN4Dz/Fqv2EVvybE4+gCyMDZm1uzPD9UJD4Ecpv7eAzLf5RxfS9F/U3iJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2+yJsVy9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=kWHm4EzhmcRIg2+TkegJgMDV+hPGEBlUxndw3Jlx9rs=; b=2+yJsVy9LAMPiwBw1DaQUCVfFe
+	QyJY3aXFefdtcO1fkvZGljTkLYposSgsM7AZReMFMa5vMMuXMOgGVdcU9zQdIJwBYrbb16tnCmCtE
+	vNOARAY2QdRbLhLzwCmJJITCkzHE+z2s4LxbFJLnQnz72E/EgOytYrBCmqGlXUueTH43Zvn3iwPd5
+	vtEkG0pez/ZHGQMmeP+HFbbWklO8Hx4jhRbB8X2oYTSaDFCiFaZqmXPSiknGB7DisHeJxUIdziTnh
+	aK+QEe9gB1/Npt1KOI0PymNgFjaI09mZBm6jnkU8fF5L/BXNREkq5Tt9t1WB+iiUWzLTi/2D6PVUw
+	TOOwM4Jg==;
+Received: from 2a02-8389-2341-5b80-164d-fdb4-bac5-9f5e.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:164d:fdb4:bac5:9f5e] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syV6O-000000095ov-1DQp;
+	Wed, 09 Oct 2024 11:43:36 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: provide generic page_to_phys and phys_to_page implementations
+Date: Wed,  9 Oct 2024 13:43:21 +0200
+Message-ID: <20241009114334.558004-1-hch@lst.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAAZsBmcC/43NwQ6CMAyA4VchOzuzDhjgyfcwHtjoYIlass1FQ
- 3h3BzdPevyb9uvCAnqHgZ2KhXlMLjh65CgPBTNT/xiRuyE3k0JWIETL/TNEw2mOeZFrohii72e
- uRIO1tiVAZVg+nj1a99rhyzX35EIk/97/JNimP8kEHHiHWiipYKhscx6JxhseDd3ZZib5nyOzg wqhrnVrO1t+Oeu6fgBC19LdBQEAAA==
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4303; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=7Uieg0D9YN0oUhi2khNoBmnN7VYZC4gmWG3bo/9Mysg=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnBmwI9hGt3s3aP3mbnD/FZdJuKIthx/p0X1HUS
- JHguh2g8CmJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZwZsCAAKCRAEWL7uWMY5
- Rr9VD/9g+0YqkWNU3t4bXZNF7ZqEcm9DcGF5ItZ8HWwEjYeD9bOB9gfCiQmn25kfr/hogiJ1g06
- KXzDhkeNRLQl4H+O7/qlM4soluXqAa/+y/dtoTyHET3+mMZds9k73H5a5g7xs353tPdcTyH0RuY
- IlIce86urV74IzHda8QKtBc9xCitNMLI4wdfy3W59jlfRRvF7+TjahIkgzRv4q8EOm00Uq3q3yr
- tf3HsZ2ti6j6/NyiF3L+7tmQ4IxqxBzWnYOSI1QgtMVy3sC4qsx7e+nViJK6Li8GKJCwW6mqvBF
- 7Qk2VrszyootnR0boGO/+5kZECN7T97r3eXnvG010Kor6kmFviMAnybdBqmRflpCvzGwkEZuBxm
- SsTG6RdzS9yLVfc4hRxNz/XfUbtHni8NK33e+pvd3WQDDjwOJvxpzRYZJMuEZYibwXJ70t0oz7G
- Y+8bz9nBVEh+MHn156FWxO1qkJc7Oh90azJf4yTeBWu2HM252WHrLrRAsAZft8HZGHZG4wwfWBq
- e0zZ+aeysXvR/gPhSz2dei/ztWVbnL5IDvbbJIg07b68AS4WBQseRcQqndap0zWZqpwugB4+9fR
- 0OxR+VjzRdovzkpPaoNeocBsZMGd3QFj4ZfCK4rXS7cPfkKT70Wk48I0Pp6vzlhwseEX1PVtw+l U8hAmhmZZBTQY8g==
-X-Mailer: b4 0.13.0
-Message-ID: <20241009-rustc-option-bootstrap-v3-1-5fa0d520efba@google.com>
-Subject: [PATCH v3] Kbuild: fix issues with rustc-option
-From: Alice Ryhl <aliceryhl@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Fix a few different compiler errors that cause rustc-option to give
-wrong results.
+page_to_phys is duplicated by all architectures, and from some strange
+reason placed in <asm/io.h> where it doesn't fit at all.  
 
-If KBUILD_RUSTFLAGS or the flags being tested contain any -Z flags, then
-the error below is generated. The RUSTC_BOOTSTRAP environment variable
-is added to fix this error.
+phys_to_page is only provided by a few architectures despite having a lot 
+of open coded users.
 
-	error: the option `Z` is only accepted on the nightly compiler
-	help: consider switching to a nightly toolchain: `rustup default nightly`
-	note: selecting a toolchain with `+toolchain` arguments require a rustup proxy;
-	      see <https://rust-lang.github.io/rustup/concepts/index.html>
-	note: for more information about Rust's stability policy, see
-	      <https://doc.rust-lang.org/book/appendix-07-nightly-rust.html#unstable-features>
-	error: 1 nightly option were parsed
+Provide generic versions in <asm-generic/memory_model.h> to make these
+helpers more easily usable.
 
-Note that RUSTC_BOOTSTRAP is also defined in the top-level Makefile, but
-its value is unfortunately *not* inherited from the environment. That
-said, this is changing as of commit 98da874c4303 ("[SV 10593] Export
-variables to $(shell ...) commands"), which is part of Make 4.4.
-
-The probe may also fail with the error message below. To fix it, the
-/dev/null argument is replaced with a file containing the crate
-attribute #![no_core]. The #![no_core] attribute ensures that rustc does
-not look for the standard library. It's not possible to instead supply a
-standard library to rustc, as we need `rustc-option` before the Rust
-standard library is compiled.
-
-	error[E0463]: can't find crate for `std`
-	  |
-	  = note: the `aarch64-unknown-none` target may not be installed
-	  = help: consider downloading the target with `rustup target add aarch64-unknown-none`
-	  = help: consider building the standard library from source with `cargo build -Zbuild-std`
-
-The -o and --out-dir parameters are altered to fix this warning:
-
-	warning: ignoring --out-dir flag due to -o flag
-
-The --sysroot flag is provided as we would otherwise require it to be
-present in KBUILD_RUSTFLAGS. The --emit=obj flag is used to write the
-resulting rlib to /dev/null instead of writing it to a file in
-$(TMPOUT).
-
-I verified that the Kconfig version of rustc-option doesn't have the
-same issues.
-
-Fixes: c42297438aee ("kbuild: rust: Define probing macros for rustc")
-Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Based on top of:
-https://lore.kernel.org/r/20241009102821.2675718-1-masahiroy@kernel.org
----
-Changes in v3:
-- Use stdin instead of a rust/probe.rs file.
-- Fix --out-dir argument.
-- Move RUSTC_BOOTSTRAP to __rustc-option.
-- Add --sysroot and --emit=obj flags.
-- Rebase on top of [PATCH] kbuild: refactor cc-option-yn, cc-disable-warning, rust-option-yn macros
-- Link to v2: https://lore.kernel.org/r/20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com
-
-Changes in v2:
-- Add `export` to RUSTC_BOOTSTRAP.
-- Fix error about core being missing.
-- Fix warning about -o flag.
-- Link to v1: https://lore.kernel.org/r/20241008-rustc-option-bootstrap-v1-1-9eb06261d4f7@google.com
----
- scripts/Makefile.compiler | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-index 73d611d383b2..e0842496d26e 100644
---- a/scripts/Makefile.compiler
-+++ b/scripts/Makefile.compiler
-@@ -73,8 +73,11 @@ ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
- 
- # __rustc-option
- # Usage: MY_RUSTFLAGS += $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-coverage)
-+# TODO: remove RUSTC_BOOTSTRAP=1 when we raise the minimum GNU Make version to 4.4
- __rustc-option = $(call try-run,\
--	$(1) $(2) $(3) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",$(3),$(4))
-+	echo '#![allow(missing_docs)]#![feature(no_core)]#![no_core]' | RUSTC_BOOTSTRAP=1\
-+	$(1) --sysroot=/dev/null $(filter-out --sysroot=/dev/null,$(2)) $(3)\
-+	--crate-type=rlib --out-dir=$(TMPOUT) --emit=obj=- - >/dev/null,$(3),$(4))
- 
- # rustc-option
- # Usage: rustflags-y += $(call rustc-option,-Cinstrument-coverage,-Zinstrument-coverage)
-
----
-base-commit: 1ba227507e8459788bf0e192700347c941e3e218
-change-id: 20241008-rustc-option-bootstrap-607e5bf3114c
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
-
+Diffstat:
+ arch/alpha/include/asm/io.h         |    1 -
+ arch/arc/include/asm/io.h           |    3 ---
+ arch/arm/include/asm/memory.h       |    6 ------
+ arch/arm64/include/asm/memory.h     |    6 ------
+ arch/csky/include/asm/page.h        |    3 ---
+ arch/hexagon/include/asm/page.h     |    6 ------
+ arch/loongarch/include/asm/page.h   |    3 ---
+ arch/m68k/include/asm/virtconvert.h |    3 ---
+ arch/microblaze/include/asm/page.h  |    1 -
+ arch/mips/include/asm/io.h          |    5 -----
+ arch/nios2/include/asm/io.h         |    3 ---
+ arch/openrisc/include/asm/page.h    |    2 --
+ arch/parisc/include/asm/page.h      |    1 -
+ arch/powerpc/include/asm/io.h       |   12 ------------
+ arch/riscv/include/asm/page.h       |    3 ---
+ arch/s390/include/asm/page.h        |    2 --
+ arch/sh/include/asm/page.h          |    1 -
+ arch/sparc/include/asm/page.h       |    2 --
+ arch/um/include/asm/pgtable.h       |    2 --
+ arch/x86/include/asm/io.h           |    5 -----
+ arch/xtensa/include/asm/page.h      |    1 -
+ include/asm-generic/memory_model.h  |    3 +++
+ 22 files changed, 3 insertions(+), 71 deletions(-)
 
