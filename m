@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-357313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5733B996F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:23:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0733A996F91
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890C41C2168F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:23:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E0FBB20FDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828B51A2631;
-	Wed,  9 Oct 2024 15:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCA11DE4CE;
+	Wed,  9 Oct 2024 15:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEjTCNDy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2yn1ons"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29C72AD1C;
-	Wed,  9 Oct 2024 15:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AE41A255A;
+	Wed,  9 Oct 2024 15:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486746; cv=none; b=PrxaJ7q0TZZhhCvPa18CnFDojYBGj0MR+q+5h/MhXVtzF0cqQwq2B0/3BH+ybPVobIOm0E7XdpL0AXjpMlGp6zdao+MtSmvkbBAcq7aZn0JM5bmXbGlorSf00YJMbX/8Z21u3OmsIwk+rSI/sp5SPW4V/iMcvoGKG2RIXQj/SaQ=
+	t=1728486806; cv=none; b=SPzK3t7xfJAMNyEcTFwTQeAxuWpw2MjQ3TpgdpL3xQFpUtjlZucy2c/UCviMx/u7F3OUCDzdQ6KNJc7sUZ9dCNoRlZ8iFhpEKHV5ixZAEn/DPcO7HKKtJklZWMGALDYzy4jugkDR2E8x6eR6f5VXpum1BgYg48Smx5cVwPTLPVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486746; c=relaxed/simple;
-	bh=Nm+qU5w3dxZgTOqL/lq95V9u3ynP5UfvFPdgv/Ekz+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hI/YpWm5iEhg6dvHzwXNXoUlKap1QbP6XkiJtAsEKgl0Zg53CBVVwKpRHveVvjB0VWsqd+n8VZJVQOi/YaWlUmXes+aqDIvO/xq5tYixE7NMGd9YHa+mxn8lI7B5JJOieCkY4rNGbcXMFalsl5FGkcy3aqXK+z4/6iHoe7dJAWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEjTCNDy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AC2C4CEC3;
-	Wed,  9 Oct 2024 15:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728486745;
-	bh=Nm+qU5w3dxZgTOqL/lq95V9u3ynP5UfvFPdgv/Ekz+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEjTCNDylhVEyIt4djWXFTall6q8pE6U3D3idS7nQeL+nKUZhZLqlyXUXuMLxaeHc
-	 O+dBMvk9iIjzXVcR5p+FTMx0ydzvjXnRRxDL/KFALcLm2LsxsDn0hPVGzl4XqML15D
-	 T2pan7yiSkN9gUSQmbx9wtZ41/XG5w63RpambP84NCRR/SoAJIB0jhoddeYluB78Dg
-	 U8J0KjkgPQ1LW20ZUI9xBsBsesE2V5eYSjMvm1g9vC52o9uAvVPqECtwjFxk+EhJ1W
-	 9S38zVNF5v+vZQTyEAmHkkTMP1OGb9n5nLbGQ7Won5ZxgilwqCAGCJmD7GXLfLSIRC
-	 zlv6L+Bi8LYww==
-Date: Wed, 9 Oct 2024 10:12:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-	andrei.botila@oss.nxp.com, linux@armlinux.org.uk,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: tja11xx: add
- "nxp,rmii-refclk-out" property
-Message-ID: <20241009151223.GA522364-robh@kernel.org>
-References: <20241008070708.1985805-1-wei.fang@nxp.com>
- <20241008070708.1985805-2-wei.fang@nxp.com>
+	s=arc-20240116; t=1728486806; c=relaxed/simple;
+	bh=26zmDy5UoqTQK1n1AxRlDvukOxufHLjRuP41pT2T73I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pxPMObnWqFX4Z6aIjrEdobjKnFvYHGlJhLLLfIAR1/0Jy5/5azUVAL8xTmrRqYQrggJk4/jgEVig8QHU5S8Qq9oiqbdHKLQW3gh8OqNp/AaQnYPC18+SuNpFusdhWN6u4CyaGcxvR2nfsw4OND0HOn8dRaLpYHX75A2VmhKLa34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2yn1ons; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso102680621fa.3;
+        Wed, 09 Oct 2024 08:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728486803; x=1729091603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QdvWDk26/ZZBHPKCvwS0MvPf2U6fD5rvA9Tcc+fXWXk=;
+        b=f2yn1onsFAmgfolFtMNyKGoBrF0C+t89rk0GuFSdSAgTVk8h/Dgu1Smo+j/x12KPSz
+         W/YTbv2AX1zxiwrtp77815HWaI6saYUzPPqQeAFUyGYkbqUbCrh1cYK2N1CpkkMHDRPV
+         +A7+9P68U/gq8/W7mK8TXsALrl3jBGlryQUAYl2EyPPPeutYYhYKdQ1SoV9kjgmbx5kg
+         iKHexvu28dn1l+R6i0GSh9KzTOPBJ/FEQI9N6LjafFRi3+YMcJTMHXoUYj9Dxvy81BEd
+         6rwMV5u3I1d74XBlwugk+AUd2o+pzjkuuVwicLN9Aypddyg/WzNO0Rcdnvka6P4Q+Vsc
+         y+kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728486803; x=1729091603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QdvWDk26/ZZBHPKCvwS0MvPf2U6fD5rvA9Tcc+fXWXk=;
+        b=afSxKlxwaZpSrLgKZqwEUCEwlCyLC1HQJkRIKNYpLpAjq6v6wXsqe6aOJXC0imOmZJ
+         b7YY80KWdsAHtGzN50Rq1CuRPyZ094bw+sHG+xuKDp+jotP/Q3W5OYwUdse25tDmoBzH
+         WNK35GOhEp9iafI2p0tGZGipfpSws3B+BYicC6HmnSC5FGp6Gl6rPUQgVpGIdbdDNeSI
+         tGjc4Fp0K5f4YA8vguCakEvQt106u62ginI/UjDWsa0GVOF2NMtje7JD05VC7DJ6ANbd
+         B8uJITL4C3omZhmzuUZJ2v+LB5czR6MVpjnGPTPCk3/lEILeQYcSzvQrh0JwuCxJvbuR
+         kNRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5DEU/TQ4SFYGBRvbAnVtNNc/OCauv0+4u3UP9GKWiJ2ilYctbrzXiEc8GKGCbRWZFMCR0nDX42WvX@vger.kernel.org, AJvYcCXvNCUkrft718SoOPMQFg83xErzWmmhP7QEn5nygOZmFL6XkEHXuN9IY9qYwfiSnMpnsPy86i+6Q96cRJLB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEeG9pL6LHXJUnsSDUPPwOWqFgaoOjAFr6vp3q2XM0OkQ+teNV
+	ldcy4opigoQ2ocCYicWG8SsQow0su8Bbqns4sXVHAslLDZ8qbZf+gquk3A==
+X-Google-Smtp-Source: AGHT+IGAJI8bmysyk5Gsawk7h9nq4HXgCUZCOWp7QPaaj/2p02RU3yRJQwet8iHkONBs68wZSMJzCg==
+X-Received: by 2002:a2e:802:0:b0:2fb:cff:b535 with SMTP id 38308e7fff4ca-2fb1872fc57mr21823551fa.13.1728486802933;
+        Wed, 09 Oct 2024 08:13:22 -0700 (PDT)
+Received: from mfe-desktop.Sonatest.net (ipagstaticip-d73c7528-4de5-0861-800b-03d8b15e3869.sdsl.bell.ca. [174.94.156.236])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a992e7864besm666367366b.113.2024.10.09.08.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 08:13:22 -0700 (PDT)
+From: marc.ferland@gmail.com
+X-Google-Original-From: marc.ferland@sonatest.com
+To: Basavaraj.Natikar@amd.com
+Cc: Shyam-sundar.S-k@amd.com,
+	linus.walleij@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marc Ferland <marc.ferland@sonatest.com>
+Subject: [PATCH] pinctrl: amd: Fix two small typos
+Date: Wed,  9 Oct 2024 11:12:49 -0400
+Message-Id: <20241009151249.2086702-1-marc.ferland@sonatest.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008070708.1985805-2-wei.fang@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 03:07:07PM +0800, Wei Fang wrote:
-> Per the RMII specification, the REF_CLK is sourced from MAC to PHY
-> or from an external source. But for TJA11xx PHYs, they support to
-> output a 50MHz RMII reference clock on REF_CLK pin. Previously the
-> "nxp,rmii-refclk-in" was added to indicate that in RMII mode, if
-> this property is present, REF_CLK is input to the PHY, otherwise
-> it is output. This seems inappropriate now. Because according to
-> the RMII specification, the REF_CLK is originally input, so there
-> is no need to add an additional "nxp,rmii-refclk-in" property to
-> declare that REF_CLK is input.
-> 
-> Unfortunately, because the "nxp,rmii-refclk-in" property has been
-> added for a while, and we cannot confirm which DTS use the TJA1100
-> and TJA1101 PHYs, changing it to switch polarity will cause an ABI
-> break. But fortunately, this property is only valid for TJA1100 and
-> TJA1101. For TJA1103/TJA1104/TJA1120/TJA1121 PHYs, this property is
-> invalid because they use the nxp-c45-tja11xx driver, which is a
-> different driver from TJA1100/TJA1101. Therefore, for PHYs using
-> nxp-c45-tja11xx driver, add "nxp,rmii-refclk-out" property to
-> support outputting RMII reference clock on REF_CLK pin.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> V2 changes:
-> 1. Change the property name from "nxp,reverse-mode" to
-> "nxp,phy-output-refclk".
-> 2. Simplify the description of the property.
-> 3. Modify the subject and commit message.
-> V3 changes:
-> 1. Keep the "nxp,rmii-refclk-in" property for TJA1100 and TJA1101.
-> 2. Rephrase the commit message and subject.
-> V3 changes:
-> 1. Change the property name from "nxp,phy-output-refclk" to
-> "nxp,rmii-refclk-out", which means the opposite of "nxp,rmii-refclk-in".
-> 2. Refactor the patch after fixing the original issue with this YAML.
-> ---
->  .../devicetree/bindings/net/nxp,tja11xx.yaml   | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml b/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
-> index a754a61adc2d..1e688c7a497d 100644
-> --- a/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
-> +++ b/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
-> @@ -62,6 +62,24 @@ allOf:
->              reference clock output when RMII mode enabled.
->              Only supported on TJA1100 and TJA1101.
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - ethernet-phy-id001b.b010
-> +              - ethernet-phy-id001b.b013
-> +              - ethernet-phy-id001b.b030
-> +              - ethernet-phy-id001b.b031
-> +
-> +    then:
-> +      properties:
-> +        nxp,rmii-refclk-out:
-> +          type: boolean
-> +          description: |
+From: Marc Ferland <marc.ferland@sonatest.com>
 
-Don't need '|' if no formatting.
+Found those two while reading the code:
 
-> +            Enable 50MHz RMII reference clock output on REF_CLK pin. This
-> +            property is only applicable to nxp-c45-tja11xx driver.
+EDGE_TRAGGER -> EDGE_TRIGGER
+BOTH_EADGE -> BOTH_EDGES
 
-Reword this to not be about some driver.
+No functional changes, compile tested only.
 
-> +
->  patternProperties:
->    "^ethernet-phy@[0-9a-f]+$":
->      type: object
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 2 +-
+ drivers/pinctrl/pinctrl-amd.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 7f66ec73199a..fbeab2ddef82 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -506,7 +506,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		pin_reg &= ~BIT(LEVEL_TRIG_OFF);
+ 		pin_reg &= ~(ACTIVE_LEVEL_MASK << ACTIVE_LEVEL_OFF);
+-		pin_reg |= BOTH_EADGE << ACTIVE_LEVEL_OFF;
++		pin_reg |= BOTH_EDGES << ACTIVE_LEVEL_OFF;
+ 		irq_set_handler_locked(d, handle_edge_irq);
+ 		break;
+ 
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+index cf59089f2776..667be49c3f48 100644
+--- a/drivers/pinctrl/pinctrl-amd.h
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -60,12 +60,12 @@
+ #define DB_TYPE_PRESERVE_HIGH_GLITCH      0x2UL
+ #define DB_TYPE_REMOVE_GLITCH             0x3UL
+ 
+-#define EDGE_TRAGGER	0x0UL
++#define EDGE_TRIGGER	0x0UL
+ #define LEVEL_TRIGGER	0x1UL
+ 
+ #define ACTIVE_HIGH	0x0UL
+ #define ACTIVE_LOW	0x1UL
+-#define BOTH_EADGE	0x2UL
++#define BOTH_EDGES	0x2UL
+ 
+ #define ENABLE_INTERRUPT	0x1UL
+ #define DISABLE_INTERRUPT	0x0UL
+-- 
+2.34.1
+
 
