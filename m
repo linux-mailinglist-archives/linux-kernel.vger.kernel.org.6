@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-357781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148DC9975F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053799975FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449471C21242
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F271F230EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E911E105F;
-	Wed,  9 Oct 2024 19:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0362B1E1A0A;
+	Wed,  9 Oct 2024 19:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XiUKxv4Q"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A4FMgyUk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF2A1A265B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D617CD530;
+	Wed,  9 Oct 2024 19:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728503388; cv=none; b=o7j5UUq9M8XunI+bMw4Sa3RRguehP+Y4UgS7wcVcZLFVoTFFXctCP5uTRrGulu+zTuQ6ED9/Hnc6LMmouObru49o2y/SQOiyPYmoQ/Sp/NH7+Uq2cNGUoUtGgvySdBaXRI8SRjiyvw3t01YoERI4A+o+tX8VeQEqnpxPY/UpSlM=
+	t=1728503661; cv=none; b=kfZhqRBLfXbkSyr0HQFUIrkkO8Gwzt42bc1iTgtVRNcXV8iWPTDdm+2FX995YSWlU2xeEbQ1m8sMkMhEWfegleh0HU+pfWwngYtayh9sFJGI+xV/2ez54DZIgBm7qSLd5PPaPh8Jdz2bhdQpFEYk7bXwvW11f/f6t6dR1euAqHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728503388; c=relaxed/simple;
-	bh=B/cYCgvVyZ2EH5fC0WMa8Rs4RO5DAdkT4QHo08J5Fuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qUz5gNLEUsCFcMmT7SB1lpccH5LIcd/CrHtdIltDdq/Y16uSuAu0b7P/WdRRjDbDvoci6uC5Rlg628GwgTx2vdp/bcc8M7T/Ob04DDExnlagEWAL5oq+8ibgwpO7P4t67DxykUjLe2RZrvwtm82o61NTHKkuvuNR2HWIiyVFsos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XiUKxv4Q; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso1495971fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728503383; x=1729108183; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/L06Ja6eCp8GbRUC/+PsWSnm/5SpwuznlchqKiwSEc=;
-        b=XiUKxv4QNCJP5vG54OOeFH/4f2xVZEXTxjZQxYzQxWJszTMkkaaJpxLo4qPSZPoL+E
-         IFTuAGP2g2lheM7dm66R04c9op66WHp4+HFZ8KRZQwieqTd1RWedOuVjgYX8ZKpiVUh0
-         BGHEeO995dDtGirRBsQogK3RC3F9gzNAv/NLc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728503383; x=1729108183;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r/L06Ja6eCp8GbRUC/+PsWSnm/5SpwuznlchqKiwSEc=;
-        b=UWp1gzfgEEjNffOQrYJAdX40nqOqnciXAtMMUpUDpl6NHDw4vU3mX0vuZTYkYd7Pfs
-         vPBaJ4I7t3vJ38vfnonuqiD9NT0iGXomXnfxTtkiW3eq4xCXIe1mXeRyvU6fHAfd4WwG
-         +e2jicONzQA6MI3r3Z8oOb4SKI65k05Vki7PX1iCKM/e2zsrivoaVBF3iIqOEcJQHiUz
-         ldS8IGkiYJfwrNBEj/5nADlxJX4eVxII/keHZPc7MMVe1umPWAAn81AW0rNUeUwxQUqh
-         PybKX7o2B3HDRclS96kLQ+TA8HwMgsZyUKA0KAUoxmlmKEfzOuNb1xwQeMblnkfkiIk0
-         EE3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnZILOoE/r6e8QasRnJCRZedw4DKRGVCV+G6SOfuUmcZ2BADWdaNLInjHTqWsm7io6FoM+eewnGDK8QTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ztUqgWz76rm75WU2wZHhPyLLV/MoTsn5W1bHBY6Z3u4cQESD
-	Hr1pV6RgLpApLhqqCiEqmPx7UqH+GGH6RJcEWSAPvGLLacE3r5b4inkEwwlMJA2TRf1UteBU12M
-	vMVCCXQ==
-X-Google-Smtp-Source: AGHT+IHGygDlDuCkHr0hcnNz3iMN33ozVuIFDYzJsGonUppN2zwXbV78jzDM+cSi2eVVULG2+BLjbQ==
-X-Received: by 2002:a2e:e01:0:b0:2f7:4e8c:9bfa with SMTP id 38308e7fff4ca-2fb187ce906mr20042231fa.33.1728503382590;
-        Wed, 09 Oct 2024 12:49:42 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93353af24sm277882a12.71.2024.10.09.12.49.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 12:49:42 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a83562f9be9so23878066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:49:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8x37D27bLZAgq94C1/la3FgN/ajB1RjOmGrGJb5pI8HjSaAVjkwfTCkOTySNF5LFjZrrFMmROFnGCK3k=@vger.kernel.org
-X-Received: by 2002:a17:907:9493:b0:a86:7ba9:b061 with SMTP id
- a640c23a62f3a-a998d34d21dmr306848466b.64.1728503380729; Wed, 09 Oct 2024
- 12:49:40 -0700 (PDT)
+	s=arc-20240116; t=1728503661; c=relaxed/simple;
+	bh=NOaYz3TlwelIGEnX2xdqfYe4BwQqmCGC+13epwzxjTI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QLJjbFOr/z0BwY25Z418rEyAfHHaALetOchxSiDqubcjYijAfNV9FPOOK4COZrIdGrKTkXPNQKaFsCDzYaStYtNRv1ZxV5Hie02G2/fFNAwT9CDMDLgUlcA+GJdhVH0lbLRl6M5enQ/zCfacoCX9A47H3dDx/ESDihUe17Umgfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A4FMgyUk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499FDLjc022606;
+	Wed, 9 Oct 2024 19:54:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=h5NhgdrZThmxkhNJYKIxi+
+	89HThSLGgv6QLTXuhjyEg=; b=A4FMgyUk8rm3OdDhIgFwvD//AfM4G1RCOrK6xc
+	jtEPgwmM/J1YFPYXCBql92wuXQJjZI1Hlk0XFpwR6gmY5WRTt61oA8VSbJK/rhVM
+	5udMfIAkhhkL/3KPH35/jmJxm6zISF96tJn49rzx+bwJyzoUOm3a42RkiDod+423
+	62xPWQlS6Pu3jbTL/vk2nBX4LCr9Z0KkCtcJzpp3GvMC/uPLCay6AluWRo3MfCSB
+	jFJFtZcmBrqsnbOmKsSzFAN74e8yQCJg7iA5klMbpVoR1FwLDEyasXu7VtBkr5NN
+	kzLXREl6VbWK7i6/r7hW9K+Kg6nadXX+V8GXXF9xi3dA7y9g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaeyh4k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 19:54:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499Js6cT024599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 19:54:06 GMT
+Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 12:54:00 -0700
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Mantas Pucka <mantas@8devices.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <quic_ppratap@quicinc.com>,
+        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
+Subject: [PATCH 0/4] Add USB Support for QCS8300
+Date: Thu, 10 Oct 2024 01:23:44 +0530
+Message-ID: <20241009195348.2649368-1-quic_kriskura@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuwaasSf0ZzcYHiN@hpe.com>
-In-Reply-To: <ZuwaasSf0ZzcYHiN@hpe.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 9 Oct 2024 12:49:23 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whVb6ahr=-YpiVqvhCKj+GHME_J0cRi6tn21TPwV7B9SQ@mail.gmail.com>
-Message-ID: <CAHk-=whVb6ahr=-YpiVqvhCKj+GHME_J0cRi6tn21TPwV7B9SQ@mail.gmail.com>
-Subject: Re: [PATCH] misc: sgi-gru: Don't disable preemption in GRU driver
-To: Dimitri Sivanich <sivanich@hpe.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: urM4tLSNWLGsC9297-gwI_kDVBLRYlsE
+X-Proofpoint-GUID: urM4tLSNWLGsC9297-gwI_kDVBLRYlsE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=870 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090123
 
-On Thu, 19 Sept 2024 at 06:16, Dimitri Sivanich <sivanich@hpe.com> wrote:
->
-> Disabling preemption in the GRU driver is unnecessary, and clashes with
-> sleeping locks in several code paths.  Remove preempt_disable and
-> preempt_enable from the GRU driver.
+This series aims at enabling USB on QCS8300 which has 2 USB controllers.
+The primary controller is SuperSpeed capable and secondary one is
+High Speed only capable. Both the High Speed Phys are Femto phys and the
+SuperSpeed Phy is a QMP Uni Phy.
 
-I've applied this directly, since it didn't come in through any of the
-normal channels, and I don't see it pending anywhere in linux-next
-either.
+Device tree patches will sent separately. DT Binding checks done on
+the binding patches. Flashed and verified working of NCM over primary
+usb controller.
 
-I doubt it matters much in practice, but at least it should make
-smatch happier about this driver, and clearly the preemption disabling
-was always wrong.
+Krishna Kurapati (4):
+  dt-bindings: usb: qcom,dwc3: Add QCS8300 to USB DWC3 bindings
+  dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings for QCS8300
+  dt-bindings: phy: qcom,sc8280xp-qmp-usb3-uni: Add QCS8300 compatible
+  phy: qcom: qmp: Add qmp configuration for QCS8300
 
-              Linus
+ .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml   |  2 +
+ .../bindings/phy/qcom,usb-snps-femto-v2.yaml  |  1 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |  4 ++
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c       | 65 +++++++++++++++++++
+ 4 files changed, 72 insertions(+)
+
+-- 
+2.34.1
+
 
