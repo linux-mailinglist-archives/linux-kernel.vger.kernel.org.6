@@ -1,83 +1,66 @@
-Return-Path: <linux-kernel+bounces-356555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DD39962F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A54E6996306
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D361F262FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E7E1F267A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107EE18E052;
-	Wed,  9 Oct 2024 08:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A19418EFC9;
+	Wed,  9 Oct 2024 08:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M0qDHa0N"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TS6vRhlq"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39D118DF75
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F2A18C90C;
+	Wed,  9 Oct 2024 08:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462805; cv=none; b=peqAx6lZljmW/2PK/KMtq2JtN1wf7a/ix5g9A6jvtUvxjfOxvPNAp/YnKLCcB5Iwo+HSvkUwh1KeC4HkTO23Pa/hxybbJcR5I+e78wrcdFjCC70ld37AH6bPm2DJQy4hdUcCYZGghvPjmT90tMAQ6LpWHc/rBYRCJKeI43UY1mI=
+	t=1728462881; cv=none; b=GyDhRvt6Vk1g++WN7bN6RXkBVSNHy3koTYREtIQJjZbgBfNFWE14L613NlUKcwx9Ap+MPRX16Sgmp3oIrDZWnQIgRJmMjIBwl44sDOIJhO7f/IgOCOst7HVCHQ6uTcZE19afMzAnnojqRUfxCvJwwmE0eSnpCkdYzu+WeUYwlNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462805; c=relaxed/simple;
-	bh=Ryf35tvfF83VDaPTIrZxmZNZ3OrsFQJrFUI5iLLRkIc=;
+	s=arc-20240116; t=1728462881; c=relaxed/simple;
+	bh=DURfCzNm14S3kcD36oPUwdwkaRsCbyoEFVmAg+zXraQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k18FnWDGJTw82q8+x8mPE7Rg8koeJnpV/m8TBJwYt2cee29ycRSG5gGVb0WCKML0/OOhJ4zU06e3AnVOFKtL+97Exp4/mvFHLl97/dfeZCUZASH/RM5fTsis44S0bs9aqBK41FyBEiBNXPGProMFcupCGuhz1EtzPSOPfIqCrm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M0qDHa0N; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4583083d019so44711501cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728462802; x=1729067602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnxUKUa13w6tl42fc3nnF2dJEBWkq6juB+0sXuyGbc0=;
-        b=M0qDHa0N+q+jSE9tMWuRCJmduE2ZnqSAU7tGpNi5O5/bsVcwdZBZmWdzaZ7Haf61ex
-         kfugQ1LEQSX1YT6eahH70j4wVgwK5LscN7EGhho0rhn6xeOL73MZS5vE5+si0Hut0cJN
-         2edurFSAHbcCrXG+YV+9fZzy5LlIBiBoZbTPg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728462802; x=1729067602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fnxUKUa13w6tl42fc3nnF2dJEBWkq6juB+0sXuyGbc0=;
-        b=YdAKR7F83AcoDhJh2+g1KrfPUBlzmuCVIZgz7JvznIqswFWiWgg+NbMc/HEhJhjIca
-         kjqaHSlstRM1KiCzIAwf9ku3QH0yNQFjJKgcNma/axVXnbyI1LJQyW8cHo09ptYZH9+L
-         IzbetjUxwrK3CJeo+0AVdV9E+V58Sf6K0e8qQOZTTuqTjHdwxXW7W4f9+S/RbLA1Kyhl
-         7RL8XVd4Ggkj181PnThsX7xUypEqUPZREuJae7KMb4LwOhZ6qiQfkec0Bag4DcbuUO3O
-         ubw3OfBpIJtta1f1ybAKlxKw3XAGRYlDlet9zBg9vDWJ0v0R5v5EkDlLAsbqG/vIOjkg
-         vNnA==
-X-Gm-Message-State: AOJu0YwjV87LGUr3sK5hPbjILAjgdIbVI5Xn5zCOHwwQgpRs+l07fYrw
-	37mvDPTU4B21bxJ6xY2ffT0r3mGTf8bu2cRvBMBTqbqBqWa7755DIhXLzVITDA==
-X-Google-Smtp-Source: AGHT+IGrtcW5X9UCaKvtPP8MDxfWOnVzjW0YyKKeEVN2RHVfP/cLidzTH7KTA/WBR2DMJagUDfTRQQ==
-X-Received: by 2002:a05:6214:3b86:b0:6cb:8339:3443 with SMTP id 6a1803df08f44-6cbc942fdd0mr28167736d6.7.1728462802142;
-        Wed, 09 Oct 2024 01:33:22 -0700 (PDT)
-Received: from google.com (172.174.245.35.bc.googleusercontent.com. [35.245.174.172])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cde41sm44169356d6.14.2024.10.09.01.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:33:21 -0700 (PDT)
-Date: Wed, 9 Oct 2024 08:33:20 +0000
-From: Paz Zcharya <pazz@chromium.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maaara Canal <mairacanal@riseup.net>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/vkms: Add support for ABGR8888 pixel format
-Message-ID: <ZwY_0H-NWm_cHI0K@google.com>
-References: <20241007142814.4037157-1-pazz@google.com>
- <ZwQRhKHZuK4AgWuy@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvPrxZaTlFlQILOADsVmzPC36yzKqxtoPTU13OdRIyb38k5uFw9/TMUQ53Xpgwi/NFjLL/KUcU0Hu0sQcLSUaD7dD9dlXcAp9nAd4RzvcQ7tZ2c/ToQJsHcU8DOptgJOgu/N/IVz2rdDj980fsGV3E85IbkYDcC87bqR/j1tPX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TS6vRhlq; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PtwpbRKWqxB2jBjhgHzQ6zioERMfziYSGMTo9/kJ2vQ=; b=TS6vRhlq5SNkoce/bP7O1M8E76
+	PxYUMUtbhzChqYCRvFZDrdd7yARkRdDSZnozcoNr/Iokauy2kn8Q3zjWc+LQWWQ8HSXxPhqnnybca
+	HPrzUFVJEkNUrqwcxhM3edJnZ63jm6lMM3emzpQlh6p+vXLy50Po/lTBBPWI0izATqKHv9QK9s6Ml
+	MRXJSx6I01BAVKXbLnf6hKCH9TSwqbyMkFsAq4YtKNacX0LmQdp6wwKqvSzRdoY593cp9CMw35vXy
+	VR1qoe+1swhgdIb2S70TrTzyxWPG3ph+y2qsxFqxXVQ6rqR4kZEY71ACJ2AsZs+ABOh3sBj+j4So9
+	rd698BtQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1syRzS-007yYc-0Y;
+	Wed, 09 Oct 2024 16:34:28 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 09 Oct 2024 16:34:27 +0800
+Date: Wed, 9 Oct 2024 16:34:27 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <ZwZAExmK52txvHE8@gondor.apana.org.au>
+References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
+ <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+ <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
+ <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,157 +69,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwQRhKHZuK4AgWuy@fedora>
+In-Reply-To: <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
 
-On Mon, Oct 07, 2024 at 06:51:16PM +0200, Louis Chauvet wrote:
-> On 07/10/24 - 14:27, Paz Zcharya wrote:
-> > Add support for pixel format ABGR8888, which is the default format
-> > on Android devices. This will allow us to use VKMS as the default
-> > display driver in Android Emulator (Cuttlefish) and increase VKMS
-> > adoption.
-> 
-> Hi Paz,
-> 
-> Thank you for your contribution!
-> 
-> I am very happy to see new users for VKMS, and I will be glad to add new 
-> formats to VKMS!
-> 
-> However, as you can see [1], there is a significant rework of the VKMS 
-> formats and composition that should be merged soon.
-> 
-Thank you for highlighting this. Great work!
+On Mon, Oct 07, 2024 at 10:57:00PM +0200, Klaus Kudielka wrote:
+>
+> I would be happy to support development of a fix, by testing on my
+> spare Omnia.
 
-> This series introduces two key improvements: performance enhancements and 
-> YUV support. These changes involve substantial modifications to the 
-> vkms_format.c file, which may conflict with your work.
-> 
-> Additionally, I wrote a few patches [2] and [3] a few months ago to 
-> practice with VKMS, and they did not receive any comments, so I believe I 
-> will be able to merge them quickly after [1].
-> 
-> In [2], I added many new formats: ABGR, BGRA, RGBA, XBGR, RGBX, BGRX, 
-> BGR565, P010, P012, P016. 
-> Would you mind testing this version to see if it meets your needs?
-> 
-Yep, this is perfect!
+As a first step, please apply the following patch and send me the
+result kernel messages.
 
-> In [3], I did similar work for writeback, but it is not as complete, so I 
-> need to add a patch, almost identical to your code:
-> 
-> 	static void argb_u16_to_ABGR8888(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-> 		[...]
-> 
-> Added:	WRITE_LINE(XBGR8888_write_line, argb_u16_to_XBGR8888)
-> 
-> I need to send a v2 of [3] anyway because of conflicts, do you mind if I 
-> take your argb_u16_to_ABGR8888 to integrate it (with your signed-off-by 
-> obviously)?
-> 
-Yeah, that would be very helpful. Thank you so much!
+> If the above is true, the only other option I see is to declare the
+> driver BROKEN, since existing CESA users are likely sitting on a time
+> bomb. Some file systems do use hash algorithms, as far as I know?
 
-> In any case, if you have time to test, or even better review [1], [2] or 
-> [3], it could be amazing!
-> 
-Patches look great. I tested them locally after adding ABGR8888
-support, and things seem to be working.
-
-Let me know if I can assist you with anything else.
+I'll send a separate patch to disable the hash algorithms by lowering
+their priorities.
 
 Thanks,
-Paz Zcharya
-> Thank you,
-> Louis Chauvet
-> 
-> [1]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
-> [2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
-> [3]:https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
-> 
-> > Signed-off-by: Paz Zcharya <pazz@chromium.org>
-> > ---
-> > 
-> >  drivers/gpu/drm/vkms/vkms_formats.c   | 20 ++++++++++++++++++++
-> >  drivers/gpu/drm/vkms/vkms_plane.c     |  1 +
-> >  drivers/gpu/drm/vkms/vkms_writeback.c |  1 +
-> >  3 files changed, 22 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> > index 040b7f113a3b..9e9d7290388e 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> > @@ -73,6 +73,14 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
-> >  	out_pixel->b = (u16)src_pixels[0] * 257;
-> >  }
-> >  
-> > +static void ABGR8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
-> > +{
-> > +	out_pixel->a = (u16)src_pixels[3] * 257;
-> > +	out_pixel->b = (u16)src_pixels[2] * 257;
-> > +	out_pixel->g = (u16)src_pixels[1] * 257;
-> > +	out_pixel->r = (u16)src_pixels[0] * 257;
-> > +}
-> > +
-> >  static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
-> >  {
-> >  	__le16 *pixels = (__force __le16 *)src_pixels;
-> > @@ -176,6 +184,14 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
-> >  	dst_pixels[0] = DIV_ROUND_CLOSEST(in_pixel->b, 257);
-> >  }
-> >  
-> > +static void argb_u16_to_ABGR8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-> > +{
-> > +	dst_pixels[3] = DIV_ROUND_CLOSEST(in_pixel->a, 257);
-> > +	dst_pixels[2] = DIV_ROUND_CLOSEST(in_pixel->b, 257);
-> > +	dst_pixels[1] = DIV_ROUND_CLOSEST(in_pixel->g, 257);
-> > +	dst_pixels[0] = DIV_ROUND_CLOSEST(in_pixel->r, 257);
-> > +}
-> > +
-> >  static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-> >  {
-> >  	__le16 *pixels = (__force __le16 *)dst_pixels;
-> > @@ -234,6 +250,8 @@ void *get_pixel_conversion_function(u32 format)
-> >  		return &ARGB8888_to_argb_u16;
-> >  	case DRM_FORMAT_XRGB8888:
-> >  		return &XRGB8888_to_argb_u16;
-> > +	case DRM_FORMAT_ABGR8888:
-> > +		return &ABGR8888_to_argb_u16;
-> >  	case DRM_FORMAT_ARGB16161616:
-> >  		return &ARGB16161616_to_argb_u16;
-> >  	case DRM_FORMAT_XRGB16161616:
-> > @@ -252,6 +270,8 @@ void *get_pixel_write_function(u32 format)
-> >  		return &argb_u16_to_ARGB8888;
-> >  	case DRM_FORMAT_XRGB8888:
-> >  		return &argb_u16_to_XRGB8888;
-> > +	case DRM_FORMAT_ABGR8888:
-> > +		return &argb_u16_to_ABGR8888;
-> >  	case DRM_FORMAT_ARGB16161616:
-> >  		return &argb_u16_to_ARGB16161616;
-> >  	case DRM_FORMAT_XRGB16161616:
-> > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > index e5c625ab8e3e..8efd585fc34c 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > @@ -15,6 +15,7 @@
-> >  static const u32 vkms_formats[] = {
-> >  	DRM_FORMAT_ARGB8888,
-> >  	DRM_FORMAT_XRGB8888,
-> > +	DRM_FORMAT_ABGR8888,
-> >  	DRM_FORMAT_XRGB16161616,
-> >  	DRM_FORMAT_ARGB16161616,
-> >  	DRM_FORMAT_RGB565
-> > diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-> > index bc724cbd5e3a..04cb9c58e7ad 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_writeback.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-> > @@ -17,6 +17,7 @@
-> >  static const u32 vkms_wb_formats[] = {
-> >  	DRM_FORMAT_ARGB8888,
-> >  	DRM_FORMAT_XRGB8888,
-> > +	DRM_FORMAT_ABGR8888,
-> >  	DRM_FORMAT_XRGB16161616,
-> >  	DRM_FORMAT_ARGB16161616,
-> >  	DRM_FORMAT_RGB565
-> > -- 
-> > 2.47.0.rc0.187.ge670bccf7e-goog
-> > 
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+diff --git a/drivers/crypto/marvell/cesa/cesa.c b/drivers/crypto/marvell/cesa/cesa.c
+index 5fd31ba715c2..d1f069169f82 100644
+--- a/drivers/crypto/marvell/cesa/cesa.c
++++ b/drivers/crypto/marvell/cesa/cesa.c
+@@ -127,6 +127,8 @@ static irqreturn_t mv_cesa_int(int irq, void *priv)
+ 		if (!(status & mask))
+ 			break;
+ 
++		pr_err("mv_cesa_int: %d 0x%x 0x%x\n", engine->id, status, mask);
++
+ 		/*
+ 		 * TODO: avoid clearing the FPGA_INT_STATUS if this not
+ 		 * relevant on some platforms.
+diff --git a/drivers/crypto/marvell/cesa/hash.c b/drivers/crypto/marvell/cesa/hash.c
+index 8d84ad45571c..ec4e9db1c8ab 100644
+--- a/drivers/crypto/marvell/cesa/hash.c
++++ b/drivers/crypto/marvell/cesa/hash.c
+@@ -167,6 +167,8 @@ static void mv_cesa_ahash_std_step(struct ahash_request *req)
+ 	unsigned int digsize;
+ 	int i;
+ 
++	pr_err("mv_cesa_ahash_step_req: %d %p\n", engine->id, req);
++
+ 	mv_cesa_adjust_op(engine, &creq->op_tmpl);
+ 	if (engine->pool)
+ 		memcpy(engine->sram_pool, &creq->op_tmpl,
+@@ -397,6 +399,8 @@ static void mv_cesa_ahash_complete(struct crypto_async_request *req)
+ 	}
+ 
+ 	atomic_sub(ahashreq->nbytes, &engine->load);
++
++	pr_err("mv_cesa_ahash_complete: %d %p\n", engine->id, ahashreq);
+ }
+ 
+ static void mv_cesa_ahash_prepare(struct crypto_async_request *req,
+@@ -418,6 +422,8 @@ static void mv_cesa_ahash_req_cleanup(struct crypto_async_request *req)
+ 	struct ahash_request *ahashreq = ahash_request_cast(req);
+ 	struct mv_cesa_ahash_req *creq = ahash_request_ctx(ahashreq);
+ 
++	pr_err("mv_cesa_ahash_req_cleanup: %d %p\n", creq->base.engine->id, ahashreq);
++
+ 	if (creq->last_req)
+ 		mv_cesa_ahash_last_cleanup(ahashreq);
+ 
+@@ -796,6 +802,7 @@ static int mv_cesa_ahash_queue_req(struct ahash_request *req)
+ 	engine = mv_cesa_select_engine(req->nbytes);
+ 	mv_cesa_ahash_prepare(&req->base, engine);
+ 
++	pr_err("mv_cesa_ahash_queue_req: %d %p\n", engine->id, req);
+ 	ret = mv_cesa_queue_req(&req->base, &creq->base);
+ 
+ 	if (mv_cesa_req_needs_cleanup(&req->base, ret))
 
