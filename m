@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-356131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEAD995CE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:18:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62A4995CE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58258B2390D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:18:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217311F26057
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329BD364BA;
-	Wed,  9 Oct 2024 01:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068CF3F8F7;
+	Wed,  9 Oct 2024 01:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="A6YwTmDr"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="SeOTByFQ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260AB1D69E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037612629D
 	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728436664; cv=none; b=usTgrOz1alfXKaww0zLb/k6vG8KjOqYUMzMrpjcb+rZr8+Cr9t5EC3R3nAevfXHZ58o92uTAU6UkssJ9hiY6eWgDbMzkCdQy4gK33Daf26x9EgMmIUkpjSG4MgGiSx/Y5B6BdWpaWkdET9xdmUIwQ5ZXQFtObvvHsiBVZcrHVlg=
+	t=1728436665; cv=none; b=PBdHSCJ9kafqSt2prAMYxsrZUfDHn1r9LbIQC0MbvxTwGv/M8zgdrQNb8syWmA+c+pB1L5XGPzUErxLvzVKRuRikt/vWqD3PylxpdzKQ5YPSJd/ARTDTu4olAzezpHIkX2Ul4ijiT9mWdZIA7XCPwTwcR3hxrQaImDc0RxL4EA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728436664; c=relaxed/simple;
-	bh=F0fzJk3goWwHbOnHvEHn53C9HzZ826eUmoIuPWYk1H8=;
+	s=arc-20240116; t=1728436665; c=relaxed/simple;
+	bh=6Jh105ygnGzuYeaBOn+phhWRhYjkYI2HKwX1w694LOs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XUPtaeYTWvnJdKh/retGFqQCyhhGgfXDPoYFxlEj8zEhlSicFJUEteKsiNn/m1yPfgVTXebS46dAEGWzxC56nBAWcMOGSkCF+NqupZDX54Hlvts3V1UMb5C452BPUpTm3TiSk8mfVcdfq6EJNYSu98M3Qws98XAk+Y7dRr/Cndc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=A6YwTmDr; arc=none smtp.client-ip=209.85.214.178
+	 In-Reply-To:To:Cc; b=kQkHB2Td+bQWwGNzBerkqtEe5INd+09uOImhiCze9qw0M/l45tcy71AcXy7NEW9+uMvZGl0gxN3VZi/1tANmZ2O7HXxFNH4RDgBgGev6yh6E3N+Wq7UkFSW+UQz5/8/xlHUWYH3Xy10aBsSV9G1E4sThQYeT6upD+9nVDYSqkls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=SeOTByFQ; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b9b35c7c3so65883645ad.3
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b8be13cb1so67391245ad.1
         for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 18:17:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1728436662; x=1729041462; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1728436663; x=1729041463; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A0aqH8Nz3YTxyf3WOUwJPMSHP7Sz01anRaWLkW9KhzE=;
-        b=A6YwTmDreT8WhJmngBFDMbrFkVfQYjqM4kKYymCdM+sOROt9OhGDjuBHqkGpor3kdR
-         cccyflIMAOSf/hB8OiQculKZP5KSS2AVk9c62/tzIPbMQkJlTfcZ7y7qji5LSvwZSDDl
-         7eMRgog+MMS2EXMhx/35OeR0mAJkVShB+qcKTglLfO1enlHi/ggt9kdecAP4MSKunS8W
-         b8Ezo41TnqkXU/TXo2Rro54/PWcelpIouu/XnolPwPj/2opRLfGhHkYfq72OGZRXKMsh
-         WS7NTsQ2qk/2jc34RaHiOpApygrGyp6237NONZDgXH0Q+lIPaM7y/mFnKWz59Wgpca4W
-         IdhA==
+        bh=6rcvxYGMoOTRMXFV/E9b+WvC4bJSrWDz1gUOsF/dMGQ=;
+        b=SeOTByFQlZNBAqnii41dtxw5YLJQNv/A6fTo9vdXkF9L2wQ8Nq9Ls58v6ypX+rcayx
+         wpzTh27IHKeTQxv8mWrEFobHXuLAZagADKlyYPAIYJtMuP7oihnWZFOd+VnJXvKZRKw3
+         tYTTPgOR4TVN64RdbukP7W+La6vLcrvLVlMdQn/AAyRe0xS3vo9hl822F+ekZHw4ZNwq
+         DNJV2OAtoopf6rhah44md5gVLgVdIaVw+eV8kCNmCbzLTPreQGOgIHyFaEqiIUWluruW
+         F3jmI98HqvzlLAqGpZyRHi6Jjp1za96weHrF/oIP3GJR62d0at+UQw/3b1B179KO5Jxa
+         8zSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728436662; x=1729041462;
+        d=1e100.net; s=20230601; t=1728436663; x=1729041463;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A0aqH8Nz3YTxyf3WOUwJPMSHP7Sz01anRaWLkW9KhzE=;
-        b=vUG4pghsvCVhKm3FrvlqDAXd1SIqVZ7XX2GnytOzaU0EQVrh7XDFm0woaou4RFEyNc
-         nF4mtzT1hELs8I0o4Mp4NG3MzlKYrrytL/NYVa9x2/HHhZ62afMjh+0QlBSAVBDWl8Qw
-         5kW+3sO5YCJwa1ZlgJKp6wF8wAIQerrliEHR1hJAs/aVWnREQ/osqfgvrfq1VssQHrms
-         Jjetc2EZ7RN6WSNKZmDa1tT+F08HfxFmflicpGGE7FxenFY71NiyNbuhEY84UMPcsXgv
-         1A3qOxT3Vf302Rcqlb8GQHVbKoaH+FIXp1DVgjahUmt/3dRBCnb3QMeVu485w6vJ8D3g
-         xziQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Cixh2bFmKlYHLW45/S531DmxAMazTUWkQ2P7gfgNv76G1WU+z9+EjUmqbK1+fR3cFvrNtKCdoGohlAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1zMiXH4CPMr6AnWue1KtpdRYVhFQWy8LWbm57Kg2WA/V0OTxy
-	1X8FOFGozRF30e+JriRXvpitPBSO+yUoUdQPxYvd4FDOvwqbJbcYv1yntKMDMFI=
-X-Google-Smtp-Source: AGHT+IGI9taZWLdFpMIE4dgnATWsHC+Qt+VhRQuoR+YZVLfax+9lGozJReoLif1bhqH7Lg+Rw73W4g==
-X-Received: by 2002:a17:903:1107:b0:205:6a9b:7e3e with SMTP id d9443c01a7336-20c639172b2mr13200455ad.56.1728436662596;
-        Tue, 08 Oct 2024 18:17:42 -0700 (PDT)
+        bh=6rcvxYGMoOTRMXFV/E9b+WvC4bJSrWDz1gUOsF/dMGQ=;
+        b=CoEMDDmkRkvuqM2K7uj8V6zpcMvDavsYDdrw2+Sk8XTYNtjc+/2yNJDGMl24R+FkMj
+         WaiSF9bZIyxhcRFuICOVbS5G/8jntOZoxhXmRHExfitmPxT/n4aF+YhVRU52wq6x6Dg1
+         7e6zmsJxGbNeNy7n9zQok9AJ/9F6fEq01YJ85Ayu3N8FDlCcw9vaZJ0RoxMnTqKw9uSs
+         cqiiECheeGAy+x5Bb2FWQfuJAqeEl91ftqjvCZfPHjACj17LTCqKJH8SWYJ79NcjCq+l
+         OFPIEDjdKTmoCVBFWDdezSke8gy+zIOkDdFPPqu8piAbecyYRrmepc/Lsu2Bu7/lpaNX
+         JkrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWR6NzF565KCpYt9tn0HEsDJ2yfX7O+PNQxI0mMXzPDyfA0R2jKZYLU9mJVD/fEaf5wYC9MlrHSqoL6Vyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfrEwD/Bg0tO920rinclee2Nln1DRW/oB2cc+8VS3sUGBOLroc
+	BwYwZnYD2uLcqrBuWn7bGiTLP19JIfjHYthfa2NH1ygOoULxAdRv1R1Q0wQJ4L0=
+X-Google-Smtp-Source: AGHT+IEtnc4cCnA2h/Ncwk1hbYGngsttFCPHK379AweSgZoFPZhde5eOvn3TJ4RE9RdqiHPP0gLTfg==
+X-Received: by 2002:a17:903:1ce:b0:20b:bac2:88f6 with SMTP id d9443c01a7336-20c639155bemr10883575ad.52.1728436663352;
+        Tue, 08 Oct 2024 18:17:43 -0700 (PDT)
 Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138cbbc2sm61076365ad.78.2024.10.08.18.17.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138cbbc2sm61076365ad.78.2024.10.08.18.17.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 18:17:42 -0700 (PDT)
+        Tue, 08 Oct 2024 18:17:43 -0700 (PDT)
 From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Tue, 08 Oct 2024 18:16:47 -0700
-Subject: [PATCH v3 2/3] pinctrl: th1520: Convert thp->mutex to guarded
- mutex
+Date: Tue, 08 Oct 2024 18:16:48 -0700
+Subject: [PATCH v3 3/3] pinctrl: th1520: Convert dt child node loop to
+ scoped iterator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241008-th1520-pinctrl-fixes-v3-2-5b60db446a49@tenstorrent.com>
+Message-Id: <20241008-th1520-pinctrl-fixes-v3-3-5b60db446a49@tenstorrent.com>
 References: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
 In-Reply-To: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
 To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
@@ -87,44 +87,79 @@ Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
 X-Mailer: b4 0.14.1
 
-Convert th1520_pinctrl_dt_node_to_map() to use guarded mutex for
-thp->mutex.
+Convert th1520_pinctrl_dt_node_to_map() to use a scoped iterator with
+for_each_available_child_of_node_scoped(). As a result, there is no need
+to call of_node_put() anymore. The put_child label has been renamed to
+free_map which is now a more accurate description.
 
 Suggested-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
- drivers/pinctrl/pinctrl-th1520.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-th1520.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-index 265a75a78d5a..7ed3f82b9339 100644
+index 7ed3f82b9339..c8d2ee6defa7 100644
 --- a/drivers/pinctrl/pinctrl-th1520.c
 +++ b/drivers/pinctrl/pinctrl-th1520.c
-@@ -444,7 +444,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 		return -ENOMEM;
+@@ -417,7 +417,6 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 					 unsigned int *num_maps)
+ {
+ 	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
+-	struct device_node *child;
+ 	struct pinctrl_map *map;
+ 	unsigned long *configs;
+ 	unsigned int nconfigs;
+@@ -425,11 +424,10 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	int ret;
  
  	nmaps = 0;
--	mutex_lock(&thp->mutex);
-+	guard(mutex)(&thp->mutex);
- 	for_each_available_child_of_node(np, child) {
+-	for_each_available_child_of_node(np, child) {
++	for_each_available_child_of_node_scoped(np, child) {
+ 		int npins = of_property_count_strings(child, "pins");
+ 
+ 		if (npins <= 0) {
+-			of_node_put(child);
+ 			dev_err(thp->pctl->dev, "no pins selected for %pOFn.%pOFn\n",
+ 				np, child);
+ 			return -EINVAL;
+@@ -445,7 +443,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 
+ 	nmaps = 0;
+ 	guard(mutex)(&thp->mutex);
+-	for_each_available_child_of_node(np, child) {
++	for_each_available_child_of_node_scoped(np, child) {
  		unsigned int rollback = nmaps;
  		enum th1520_muxtype muxtype;
-@@ -531,7 +531,6 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		struct property *prop;
+@@ -458,7 +456,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		if (ret) {
+ 			dev_err(thp->pctl->dev, "%pOFn.%pOFn: error parsing pin config\n",
+ 				np, child);
+-			goto put_child;
++			goto free_map;
+ 		}
  
- 	*maps = map;
- 	*num_maps = nmaps;
--	mutex_unlock(&thp->mutex);
- 	return 0;
+ 		if (!of_property_read_string(child, "function", &funcname)) {
+@@ -524,7 +522,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 							  npins, (void *)muxtype);
+ 			if (ret < 0) {
+ 				dev_err(thp->pctl->dev, "error adding function %s\n", funcname);
+-				goto put_child;
++				goto free_map;
+ 			}
+ 		}
+ 	}
+@@ -535,8 +533,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
  
  free_configs:
-@@ -539,7 +538,6 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- put_child:
- 	of_node_put(child);
+ 	kfree(configs);
+-put_child:
+-	of_node_put(child);
++free_map:
  	th1520_pinctrl_dt_free_map(pctldev, map, nmaps);
--	mutex_unlock(&thp->mutex);
  	return ret;
  }
- 
 
 -- 
 2.34.1
