@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-357451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51701997159
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8BE99714E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8287B252CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367A2286CEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDC81E765D;
-	Wed,  9 Oct 2024 16:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201991E490B;
+	Wed,  9 Oct 2024 16:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Evxtcdys"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bXhiwuYf"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BB11991B6;
-	Wed,  9 Oct 2024 16:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2081A070D;
+	Wed,  9 Oct 2024 16:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490681; cv=none; b=EPCo5dce2m8cqZkcSdkHsWbJmtmNJbd69dCD3QfSiEvE7n97jksJBa7XelV9nb/H9+qtqsblX5ttLjm6dO4Xbe43ApB/qm6beivLUKsFgucuzSVw/HzjuXI7JXhZ8HVhvbRsF4db270jTjVwaHzJQSb1D7R45uXNsSkFa6IIS8M=
+	t=1728490658; cv=none; b=i9LWCf5vgQVrugddiJktvAnCV2/hTwo+ch8iFq1wbp13jzpVjO6qtpMnyaGIz9qXUpLyK1igjvAudfA7HcfvZdST1cnhu+DP1aoImEqzUjvyCLDLZwisaUC25wjVyOLZOFMUimm5qfW3gkwcmY8os3FNtfqGyUbuxZbpS/X98uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490681; c=relaxed/simple;
-	bh=7mcya0dQ16YUCdd0MtCNhc87iiZ1eu9QcqUo8uN0tE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TjGQds0vj1GGsPVJzERbi+i88dTu97hFMjdghKouEijloBEO0jofBTvHkCz/Pz26kLMbQ40ndsjDKGZhFyLo/ecpHN28Y6y/o5TQ8XXd4nVBMLbBcWVMtk6n1CSfgB15t/qKm87Jum6RxPbJtSb6Mn0pGJ4XmyANZKRiMpmJwOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Evxtcdys; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5E2C4CEC3;
-	Wed,  9 Oct 2024 16:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728490681;
-	bh=7mcya0dQ16YUCdd0MtCNhc87iiZ1eu9QcqUo8uN0tE4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EvxtcdysIn1KMGFpOHgZ4Hw3oCrCC6DN/ho2eeqCXtgBbHqjBKHVHmI84w+kvAQI+
-	 Z6Jz4pnlGGYflOg9jUFjDgC60Nn5uXuXPoyYeVUDywOv70u1B9Doc1k7K24V4WiChv
-	 eWJgufDd4ebI4YjoFO1fgjsebuvuuwiKamHcDJq7Taq9A5iwOk+oD7NMUnzTFrfk36
-	 qGFeiVQTf6ejtLKIQ9x41v1OXyRZ5sHGQeFPgbHmGD9WFDbSHCGq3pmvo1DX0rDc5i
-	 /aj6ZKov50g4bGoAzVWYCY7VSwmlrZxwFcmbtNMOnNHfRLqNSrAmcD0XYfkDVIO8wa
-	 SjkRwEFimzB1g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1syZO0-000000003uw-21xE;
-	Wed, 09 Oct 2024 18:18:05 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Date: Wed,  9 Oct 2024 18:17:15 +0200
-Message-ID: <20241009161715.14994-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728490658; c=relaxed/simple;
+	bh=KARoP1r9P4E8BDNACruU0r9q8IrSkct1shMbzcayT1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CHMn/JxOLxSL51QsvEf/5ulGECsaUcGMAy+dFpi3+rtr06Qu1XKZDU2WzT+OTTJeishxZ0knqv59cxxDu9wcCf9avZ06mYH7uWhWhvH9ReXl6xpRAuS/DzJVSL6lfUS925qAROEd6uq4EeJalKrLQiHykd7KDnR0HZ2rHoOHp4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bXhiwuYf; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E0A9440003;
+	Wed,  9 Oct 2024 16:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728490648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kvg1u7XmoQ2cLHKggXLRQHDXFMduqdF43sXHLjurawU=;
+	b=bXhiwuYfnC6VbQHd/shJX8Dl0FA4SkdmwMT6aVTsTf77jGa48C6Szcq+wp3pgIzL4Q1RL9
+	GLLqrki9UWaQgm5pnXMNr5icPBXADknvfVtyrsU/kSFPao1rQqdAcR8WhKO7mA/Sq0FNeP
+	Ftl+Bqk1Hs7/Sn6F5MP17Da5rC6tMij/K/0Q2bVCNxSBQ4nfuriGv5hanFdPWpvinkWX9b
+	UbqKourjPlK1chMhaiUE61XPzAPRfk3W5rAPVZkVse75vmu8njTOGw7itHZmIQHnf8C6gQ
+	fg+SY8k2hAMLBxiFjrnfgyxveJodVGlVyVB/OQH7f9SA5gP0+ia8UNCKN2zTYQ==
+Date: Wed, 9 Oct 2024 18:17:25 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
+Subject: Re: [PATCH net-next 04/12] net: pse-pd: tps23881: Add support for
+ power limit and measurement features
+Message-ID: <20241009181725.47ff98b8@kmaincent-XPS-13-7390>
+In-Reply-To: <ZwaeRL9z310dBBlh@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+	<20241002-feature_poe_port_prio-v1-4-787054f74ed5@bootlin.com>
+	<ZwYOboTdMppaZVmX@pengutronix.de>
+	<20241009110501.5f776c9b@kmaincent-XPS-13-7390>
+	<ZwaeRL9z310dBBlh@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-The DWC PCIe controller can be used with its internal MSI controller or
-with an external one such as the GICv3 Interrupt Translation Service
-(ITS).
+On Wed, 9 Oct 2024 17:16:20 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Add the msi-map properties needed to use the GIC ITS. This will also
-make Linux switch to the ITS implementation, which allows for assigning
-affinity to individual MSIs. This specifically allows NVMe and Wi-Fi
-interrupts to be processed on all cores (and not just on CPU0).
+> > > This is a common pattern in this driver, we read and write two regist=
+ers
+> > > in one run and then calculate bit offset for the channel, can you ple=
+ase
+> > > move it in to separate function. This can be done in a separate patch=
+ if
+> > > you like. =20
+> >=20
+> > The pattern is common but the operations are always different so I didn=
+'t
+> > found a clean way of doing it.
+> > Here is a listing of it:
+> > 	if (chan < 4)
+> > 		class =3D ret >> 4;
+> > 	else
+> > 		class =3D ret >> 12;
+> >=20
+> > 	if (chan < 4)
+> > 		val =3D (ret & 0xff00) | pol;
+> > 	else
+> > 		val =3D (ret & 0xff) | (pol << 8); =20
+> >=20
+> >         if (chan < 4)
+> > val =3D (u16)(ret | BIT(chan));                                  =20
+> >         else
+> > val =3D (u16)(ret | BIT(chan + 4));
+> >=20
+> > 	if (chan < 4)
+> > 		mW =3D (ret & 0xff) * TPS23881_MW_STEP;
+> > 	else
+> > 		mW =3D (ret >> 8) * TPS23881_MW_STEP;
+> >=20
+> >=20
+> > Any idea?
+> >  =20
+>=20
+> something like this:
 
-Note that using the GIC ITS on x1e80100 will cause Advanced Error
-Reporting (AER) interrupts to be received on errors unlike when using
-the internal MSI controller. Consequently, notifications about
-(correctable) errors may now be logged for errors that previously went
-unnoticed.
+Oh thanks, you rock!!
+Indeed this should work, thanks for sorting this out.
 
-Also note that PCIe5 (and PCIe3) can currently only be used with the
-internal MSI controller due to a platform (firmware) limitation.
-
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
-
-The PCIe Gen4 stability fixes [1] are now in 6.12-rc1 so that we can enable
-the GIC ITS without being flooded with link error notifications [2].
-
-Johan
-
-[1] https://lore.kernel.org/lkml/20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org/
-[2] https://lore.kernel.org/lkml/ZpDnSL8as7km9_0b@hovoldconsulting.com/
-
-Changes in v2
- - amend commit message with comment about PCIe3 and PCIe5 only
-   supporting the internal MSI controller
-
-
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 1743fe229ded..4d978fe936e5 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -2934,6 +2934,8 @@ pcie6a: pci@1bf8000 {
- 			linux,pci-domain = <6>;
- 			num-lanes = <4>;
- 
-+			msi-map = <0x0 &gic_its 0xe0000 0x10000>;
-+
- 			interrupts = <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
-@@ -3183,6 +3185,8 @@ pcie4: pci@1c08000 {
- 			linux,pci-domain = <4>;
- 			num-lanes = <2>;
- 
-+			msi-map = <0x0 &gic_its 0xc0000 0x10000>;
-+
- 			interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
-@@ -5773,8 +5777,6 @@ gic_its: msi-controller@17040000 {
- 
- 				msi-controller;
- 				#msi-cells = <1>;
--
--				status = "disabled";
- 			};
- 		};
- 
--- 
-2.45.2
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
